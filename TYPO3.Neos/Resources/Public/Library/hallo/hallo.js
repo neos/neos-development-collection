@@ -233,16 +233,36 @@ http://hallojs.org
         if (this.options.toolbarCssClass) {
           this.toolbar.addClass(this.options.toolbarCssClass);
         }
-        jQuery(this.element)[this.options.toolbar]({
+        this.element[this.options.toolbar]({
           editable: this,
           parentElement: this.options.parentElement,
           toolbar: this.toolbar
         });
         for (plugin in this.options.plugins) {
-          jQuery(this.element)[plugin]('populateToolbar', this.toolbar);
+          this.element[plugin]('populateToolbar', this.toolbar);
         }
-        jQuery(this.element)[this.options.toolbar]('setPosition');
+        this.element[this.options.toolbar]('setPosition');
         return this.protectFocusFrom(this.toolbar);
+      },
+      changeToolbar: function(element, toolbar, hide) {
+        var originalToolbar;
+        if (hide == null) {
+          hide = false;
+        }
+        originalToolbar = this.options.toolbar;
+        this.options.parentElement = element;
+        if (toolbar) {
+          this.options.toolbar = toolbar;
+        }
+        if (!this.toolbar) {
+          return;
+        }
+        this.element[originalToolbar]('destroy');
+        this.toolbar.remove();
+        this._prepareToolbar();
+        if (hide) {
+          return this.toolbar.hide();
+        }
       },
       _checkModified: function(event) {
         var widget;
@@ -493,6 +513,33 @@ http://hallojs.org
   })(jQuery);
 
   (function(jQuery) {
+    return jQuery.widget('IKS.halloblacklist', {
+      options: {
+        tags: []
+      },
+      _init: function() {
+        if (this.options.tags.indexOf('br') !== -1) {
+          return this.element.bind('keydown', function(event) {
+            if (event.originalEvent.keyCode === 13) {
+              return event.preventDefault();
+            }
+          });
+        }
+      },
+      cleanupContentClone: function(el) {
+        var tag, _i, _len, _ref, _results;
+        _ref = this.options.tags;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          tag = _ref[_i];
+          _results.push(jQuery(tag, el).remove());
+        }
+        return _results;
+      }
+    });
+  })(jQuery);
+
+  (function(jQuery) {
     return jQuery.widget('IKS.halloblock', {
       options: {
         editable: null,
@@ -580,7 +627,7 @@ http://hallojs.org
     return jQuery.widget("IKS.halloformat", {
       options: {
         editable: null,
-        uuid: "",
+        uuid: '',
         formattings: {
           bold: true,
           italic: true,

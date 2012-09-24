@@ -33,6 +33,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 //     VIE may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://viejs.org/
+
+/*global console:false exports:false require:false */
+
 var root = this,
     jQuery = root.jQuery,
     Backbone = root.Backbone,
@@ -455,17 +458,6 @@ VIE.prototype.getTypedEntityClass = function (type) {
   return TypedEntityClass;
 };
 
-// IE per default doesn't have a console API. For making sure this doesn't break
-// anything we define it here to not do anything.
-console = console || {
-    info: function(){},
-    log: function(){}
-};
-// IE in debug mode does have a console object but no console.warn
-if(!console.warn){
-    console.warn = console.info;
-}
-
 // ## Running VIE on Node.js
 //
 // When VIE is running under Node.js we can use the CommonJS
@@ -707,7 +699,7 @@ VIE.Util = {
 //     var uri = "<http://dbpedia.org/ontology/Person>";
 //     VIE.Util.toCurie(uri, false, ns); // --> dbp:Person
 //     VIE.Util.toCurie(uri, true, ns); // --> [dbp:Person]
-	toCurie : function (uri, safe, namespaces) {
+    toCurie : function (uri, safe, namespaces) {
         if (VIE.Util.isCurie(uri, namespaces)) {
             return uri;
         }
@@ -867,90 +859,90 @@ VIE.Util = {
             return VIE.Util._rdf2EntitiesNoRdfQuery(service, results);
         }
         try {
-	        var rdf = (results instanceof jQuery.rdf)? 
-	        		results.base(service.vie.namespaces.base()) : 
-	        			jQuery.rdf().base(service.vie.namespaces.base()).load(results, {});
-	
-	        /* if the service contains rules to apply special transformation, they are executed here.*/
-	        if (service.rules) {
-	            var rules = jQuery.rdf.ruleset();
-	            for (var prefix in service.vie.namespaces.toObj()) {
-	                if (prefix !== "") {
-	                    rules.prefix(prefix, service.vie.namespaces.get(prefix));
-	                }
-	            }
-	            for (var i = 0; i < service.rules.length; i++)if(service.rules.hasOwnProperty(i)) {
-	                var rule = service.rules[i];
-	                rules.add(rule['left'], rule['right']);
-	            }
-	            rdf = rdf.reason(rules, 10); /* execute the rules only 10 times to avoid looping */
-	        }
-	        var entities = {};
-	        rdf.where('?subject ?property ?object').each(function() {
-	            var subject = this.subject.toString();
-	            if (!entities[subject]) {
-	                entities[subject] = {
-	                    '@subject': subject,
-	                    '@context': service.vie.namespaces.toObj(true),
-	                    '@type': []
-	                };
-	            }
-	            var propertyUri = this.property.toString();
-	            var propertyCurie;
-	
-	            try {
-	                propertyCurie = service.vie.namespaces.curie(propertyUri);
-	                //jQuery.createCurie(propertyUri, {namespaces: service.vie.namespaces.toObj(true)});
-	            } catch (e) {
-	                propertyCurie = propertyUri;
-	                // console.warn(propertyUri + " doesn't have a namespace definition in '", service.vie.namespaces.toObj());
-	            }
-	            entities[subject][propertyCurie] = entities[subject][propertyCurie] || [];
+            var rdf = (results instanceof jQuery.rdf)? 
+                    results.base(service.vie.namespaces.base()) : 
+                        jQuery.rdf().base(service.vie.namespaces.base()).load(results, {});
+    
+            /* if the service contains rules to apply special transformation, they are executed here.*/
+            if (service.rules) {
+                var rules = jQuery.rdf.ruleset();
+                for (var prefix in service.vie.namespaces.toObj()) {
+                    if (prefix !== "") {
+                        rules.prefix(prefix, service.vie.namespaces.get(prefix));
+                    }
+                }
+                for (var i = 0; i < service.rules.length; i++)if(service.rules.hasOwnProperty(i)) {
+                    var rule = service.rules[i];
+                    rules.add(rule.left, rule.right);
+                }
+                rdf = rdf.reason(rules, 10); /* execute the rules only 10 times to avoid looping */
+            }
+            var entities = {};
+            rdf.where('?subject ?property ?object').each(function() {
+                var subject = this.subject.toString();
+                if (!entities[subject]) {
+                    entities[subject] = {
+                        '@subject': subject,
+                        '@context': service.vie.namespaces.toObj(true),
+                        '@type': []
+                    };
+                }
+                var propertyUri = this.property.toString();
+                var propertyCurie;
+    
+                try {
+                    propertyCurie = service.vie.namespaces.curie(propertyUri);
+                    //jQuery.createCurie(propertyUri, {namespaces: service.vie.namespaces.toObj(true)});
+                } catch (e) {
+                    propertyCurie = propertyUri;
+                    // console.warn(propertyUri + " doesn't have a namespace definition in '", service.vie.namespaces.toObj());
+                }
+                entities[subject][propertyCurie] = entities[subject][propertyCurie] || [];
 
-	            function getValue(rdfQueryLiteral){
-	                if(typeof rdfQueryLiteral.value === "string"){
-	                    if (rdfQueryLiteral.lang){
-	                        var literal = {
-	                            toString: function(){
-	                                return this["@value"];
-	                            },
-	                            "@value": rdfQueryLiteral.value.replace(/^"|"$/g, ''),
-	                            "@language": rdfQueryLiteral.lang
-	                        };
-	                        return literal;
-	                    }
-	                    else
-	                        return rdfQueryLiteral.value;
-	                    return rdfQueryLiteral.value.toString();
-	                } else if (rdfQueryLiteral.type === "uri"){
-	                    return rdfQueryLiteral.toString();
-	                } else {
-	                    return rdfQueryLiteral.value;
-	                }
-	            }
-	            entities[subject][propertyCurie].push(getValue(this.object));
-	        });
-	
-	        _(entities).each(function(ent){
-	            ent["@type"] = ent["@type"].concat(ent["rdf:type"]);
-	            delete ent["rdf:type"];
-	            _(ent).each(function(value, property){
-	                if(value.length === 1){
-	                    ent[property] = value[0];
-	                }
-	            });
-	        });
-	
-	        var vieEntities = [];
-	        jQuery.each(entities, function() {
-	            var entityInstance = new service.vie.Entity(this);
-	            entityInstance = service.vie.entities.addOrUpdate(entityInstance);
-	            vieEntities.push(entityInstance);
-	        });
-	        return vieEntities;
+                function getValue(rdfQueryLiteral){
+                    if(typeof rdfQueryLiteral.value === "string"){
+                        if (rdfQueryLiteral.lang){
+                            var literal = {
+                                toString: function(){
+                                    return this["@value"];
+                                },
+                                "@value": rdfQueryLiteral.value.replace(/^"|"$/g, ''),
+                                "@language": rdfQueryLiteral.lang
+                            };
+                            return literal;
+                        }
+                        else
+                            return rdfQueryLiteral.value;
+                        return rdfQueryLiteral.value.toString();
+                    } else if (rdfQueryLiteral.type === "uri"){
+                        return rdfQueryLiteral.toString();
+                    } else {
+                        return rdfQueryLiteral.value;
+                    }
+                }
+                entities[subject][propertyCurie].push(getValue(this.object));
+            });
+    
+            _(entities).each(function(ent){
+                ent["@type"] = ent["@type"].concat(ent["rdf:type"]);
+                delete ent["rdf:type"];
+                _(ent).each(function(value, property){
+                    if(value.length === 1){
+                        ent[property] = value[0];
+                    }
+                });
+            });
+    
+            var vieEntities = [];
+            jQuery.each(entities, function() {
+                var entityInstance = new service.vie.Entity(this);
+                entityInstance = service.vie.entities.addOrUpdate(entityInstance);
+                vieEntities.push(entityInstance);
+            });
+            return vieEntities;
         } catch (e) {
-        	console.warn("Something went wrong while parsing the returned results!", e);
-        	return [];
+            console.warn("Something went wrong while parsing the returned results!", e);
+            return [];
         }
     },
 
@@ -965,10 +957,8 @@ VIE.Util = {
       resArr = [];
       /* Try to find a label in the preferred language
       */
-      for (l = 0, _len = preferredLanguages.length; l < _len; l++) {
-        lang = preferredLanguages[l];
-        for (p = 0, _len2 = preferredFields.length; p < _len2; p++) {
-          property = preferredFields[p];
+      _.each(preferredLanguages, function (lang) {
+        _.each(preferredFields, function (property) {
           labelArr = null;
           /* property can be a string e.g. "skos:prefLabel"
           */
@@ -1033,8 +1023,8 @@ VIE.Util = {
               value: property.makeLabel(valueArr)
             });
           }
-        }
-      }
+        });
+      });
       /*
               take the result with the best score
       */
@@ -1130,15 +1120,15 @@ VIE.Util = {
             
             for (var i = 0; i < ancestors.length; i++) {
                 var supertype = (vie.types.get(ancestors[i]))? vie.types.get(ancestors[i]) :
-                    dataTypeHelper.call(vie, SchemaOrg["datatypes"][ancestors[i]].supertypes, ancestors[i]);
+                    dataTypeHelper.call(vie, SchemaOrg.datatypes[ancestors[i]].supertypes, ancestors[i]);
                 type.inherit(supertype);
             }
             return type;
         };
         
-        for (var dt in SchemaOrg["datatypes"]) {
+        for (var dt in SchemaOrg.datatypes) {
             if (!vie.types.get(dt)) {
-                var ancestors = SchemaOrg["datatypes"][dt].supertypes;
+                var ancestors = SchemaOrg.datatypes[dt].supertypes;
                 dataTypeHelper.call(vie, ancestors, dt);
             }
         }
@@ -1166,8 +1156,8 @@ VIE.Util = {
         
         var typeProps = function (id) {
             var props = [];
-            _.each(SchemaOrg['types'][id]['specific_properties'], function (pId) {
-                var property = SchemaOrg['properties'][pId];
+            _.each(SchemaOrg.types[id].specific_properties, function (pId) {
+                var property = SchemaOrg.properties[pId];
                 props.push({
                     'id'    : property.id,
                     'range' : property.ranges,
@@ -1184,7 +1174,7 @@ VIE.Util = {
            
             for (var i = 0; i < ancestors.length; i++) {
                 var supertype = (vie.types.get(ancestors[i]))? vie.types.get(ancestors[i]) :
-                    typeHelper.call(vie, SchemaOrg["types"][ancestors[i]].supertypes, ancestors[i], typeProps.call(vie, ancestors[i]));
+                    typeHelper.call(vie, SchemaOrg.types[ancestors[i]].supertypes, ancestors[i], typeProps.call(vie, ancestors[i]));
                 type.inherit(supertype);
             }
             if (id === "Thing" && !type.isof("owl:Thing")) {
@@ -1193,7 +1183,7 @@ VIE.Util = {
             return type;
         };
        
-        _.each(SchemaOrg['types'], function (typeDef) {
+        _.each(SchemaOrg.types, function (typeDef) {
             if (vie.types.get(typeDef.id)) {
                 return;
             }
@@ -1268,7 +1258,7 @@ VIE.Util = {
           case 'xsd:string':
             return 'Text';
           case 'xsd:date':
-            return 'Date'
+            return 'Date';
           case 'xsd:dateTime':
             return 'DateTime';
           case 'xsd:boolean':
@@ -1354,7 +1344,7 @@ VIE.Util = {
         function pad(n) {
             var s = n.toString();
             return s.length < 2 ? '0'+s : s;
-        };
+        }
 
         var yyyy = date.getFullYear();
         var mm1  = pad(date.getMonth()+1);
@@ -1382,50 +1372,51 @@ VIE.Util = {
 //          var langs = ["en", "de"];
 //          VIE.Util.extractLanguageString(someEntity, attrs, langs); // "Barack Obama";
     extractLanguageString : function(entity, attrs, langs) {
+        var p, attr, name, i, n;
         if (entity && typeof entity !== "string") {
-        	attrs = (_.isArray(attrs))? attrs : [ attrs ];
-        	langs = (_.isArray(langs))? langs : [ langs ];
-        	for (var p = 0; p < attrs.length; p++) {
-	            for (var l = 0; l < langs.length; l++) {
-	            	var lang = langs[l];
-	                var attr = attrs[p];
-	                if (entity.has(attr)) {
-	                    var name = entity.get(attr);
-	                    name = (_.isArray(name))? name : [ name ];
-                        for ( var i = 0; i < name.length; i++) {
-                        	var n = name[i];
-                        	if (n.isEntity) {
-                        		n = VIE.Util.extractLanguageString(n, attrs, lang);
-                        	} else if (typeof n === "string") {
-                        		n = n;
-                        	} else {
-                        		n = "";
-                        	}
+            attrs = (_.isArray(attrs))? attrs : [ attrs ];
+            langs = (_.isArray(langs))? langs : [ langs ];
+            for (p = 0; p < attrs.length; p++) {
+                for (var l = 0; l < langs.length; l++) {
+                    var lang = langs[l];
+                    attr = attrs[p];
+                    if (entity.has(attr)) {
+                        name = entity.get(attr);
+                        name = (_.isArray(name))? name : [ name ];
+                        for (i = 0; i < name.length; i++) {
+                            n = name[i];
+                            if (n.isEntity) {
+                                n = VIE.Util.extractLanguageString(n, attrs, lang);
+                            } else if (typeof n === "string") {
+                                n = n;
+                            } else {
+                                n = "";
+                            }
                             if (n && n.indexOf('@' + lang) > -1) {
                                 return n.replace(/"/g, "").replace(/@[a-z]+/, '').trim();
                             }
                         }
-	                }
-	            }
-        	}
-        	/* let's do this again in case we haven't found a name but are dealing with
-        	broken data where no language is given */
-        	for (var p = 0; p < attrs.length; p++) {
-                var attr = attrs[p];
+                    }
+                }
+            }
+            /* let's do this again in case we haven't found a name but are dealing with
+            broken data where no language is given */
+            for (p = 0; p < attrs.length; p++) {
+                attr = attrs[p];
                 if (entity.has(attr)) {
-                    var name = entity.get(attr);
+                    name = entity.get(attr);
                     name = (_.isArray(name))? name : [ name ];
-                    for ( var i = 0; i < name.length; i++) {
-                    	var n = name[i];
-                    	if (n.isEntity) {
-                    		n = VIE.Util.extractLanguageString(n, attrs, []);
-                    	}
+                    for (i = 0; i < name.length; i++) {
+                        n = name[i];
+                        if (n.isEntity) {
+                            n = VIE.Util.extractLanguageString(n, attrs, []);
+                        }
                         if (n && (typeof n === "string") && n.indexOf('@') === -1) {
                             return n.replace(/"/g, "").replace(/@[a-z]+/, '').trim();
                         }
                     }
                 }
-        	}
+            }
         }
         return undefined;
     },
@@ -1544,58 +1535,58 @@ VIE.Util = {
                           ];
                       };
                   }(service.vie.namespaces)
-              },
+              }
         ];
         return res;
     },
     
     getAdditionalRules : function (service) {
 
-    	var mapping = {
-			Work : "CreativeWork",
-			Film : "Movie",
-			TelevisionEpisode : "TVEpisode",
-			TelevisionShow : "TVSeries", // not listed as equivalent class on dbpedia.org
-			Website : "WebPage",
-			Painting : "Painting",
-			Sculpture : "Sculpture",
-	
-			Event : "Event",
-			SportsEvent : "SportsEvent",
-			MusicFestival : "Festival",
-			FilmFestival : "Festival",
-	
-			Place : "Place",
-			Continent : "Continent",
-			Country : "Country",
-			City : "City",
-			Airport : "Airport",
-			Station : "TrainStation", // not listed as equivalent class on dbpedia.org
-			Hospital : "GovernmentBuilding",
-			Mountain : "Mountain",
-			BodyOfWater : "BodyOfWater",
-	
-			Company : "Organization",
-			Person : "Person",
-    	};
+        var mapping = {
+            Work : "CreativeWork",
+            Film : "Movie",
+            TelevisionEpisode : "TVEpisode",
+            TelevisionShow : "TVSeries", // not listed as equivalent class on dbpedia.org
+            Website : "WebPage",
+            Painting : "Painting",
+            Sculpture : "Sculpture",
+    
+            Event : "Event",
+            SportsEvent : "SportsEvent",
+            MusicFestival : "Festival",
+            FilmFestival : "Festival",
+    
+            Place : "Place",
+            Continent : "Continent",
+            Country : "Country",
+            City : "City",
+            Airport : "Airport",
+            Station : "TrainStation", // not listed as equivalent class on dbpedia.org
+            Hospital : "GovernmentBuilding",
+            Mountain : "Mountain",
+            BodyOfWater : "BodyOfWater",
+    
+            Company : "Organization",
+            Person : "Person"
+        };
 
-		var additionalRules = new Array();
-		for ( var key in mapping) {
-			var tripple = {
-				'left' : [ '?subject a dbpedia:' + key, '?subject rdfs:label ?label' ],
-				'right' : function(ns) {
-					return function() {
-						return [ jQuery.rdf.triple(this.subject.toString(), 'a', '<' + ns.base() + mapping[key] + '>', {
-							namespaces : ns.toObj()
-						}), jQuery.rdf.triple(this.subject.toString(), '<' + ns.base() + 'name>', this.label.toString(), {
-							namespaces : ns.toObj()
-						}) ];
-					};
-				}(service.vie.namespaces)
-			};
-			additionalRules.push(tripple);
-		}
-		return additionalRules;
+        var additionalRules = [];
+        _.each(mapping, function (map, key) {
+            var tripple = {
+                'left' : [ '?subject a dbpedia:' + key, '?subject rdfs:label ?label' ],
+                'right' : function(ns) {
+                    return function() {
+                        return [ jQuery.rdf.triple(this.subject.toString(), 'a', '<' + ns.base() + map + '>', {
+                            namespaces : ns.toObj()
+                        }), jQuery.rdf.triple(this.subject.toString(), '<' + ns.base() + 'name>', this.label.toString(), {
+                            namespaces : ns.toObj()
+                        }) ];
+                    };
+                }(service.vie.namespaces)
+            };
+            additionalRules.push(tripple);
+        });
+        return additionalRules;
     }
 };
 //     VIE - Vienna IKS Editables
@@ -1800,6 +1791,102 @@ VIE.prototype.Entity = function(attrs, opts) {
             return Backbone.Model.prototype.unset.call(this, attr, opts);
         },
 
+        // Validation based on type rules.
+        //
+        // There are two ways to skip validation for entity operations:
+        //
+        // * `options.silent = true`
+        // * `options.validate = false`
+        validate: function (attrs, opts) {
+            if (opts && opts.validate === false) {
+                return;
+            }
+            var types = this.get('@type');
+            if (_.isArray(types)) {
+                var results = [];
+                _.each(types, function (type) {
+                    var res = this.validateByType(type, attrs, opts);
+                    if (res) {
+                        results.push(res);
+                    }
+                }, this);
+                if (_.isEmpty(results)) {
+                  return;
+                }
+                return _.flatten(results);
+            }
+
+            return this.validateByType(types, attrs, opts);
+        },
+
+        validateByType: function (type, attrs, opts) {
+            var messages = {
+              max: '<%= property %> cannot contain more than <%= num %> items',
+              min: '<%= property %> must contain at least <%= num %> items',
+              required: '<%= property %> is required'
+            };
+
+            if (!type.attributes) {
+                return;
+            }
+
+            var toError = function (definition, constraint, messageValues) {
+                return {
+                    property: definition.id,
+                    constraint: constraint,
+                    message: _.template(messages[constraint], _.extend({
+                        property: definition.id
+                    }, messageValues))
+                };
+            };
+
+            var checkMin = function (definition, attrs) {
+                if (!attrs[definition.id] || _.isEmpty(attrs[definition.id])) {
+                    return toError(definition, 'required', {});
+                }
+            };
+
+            // Check the number of items in attr against max
+            var checkMax = function (definition, attrs) {
+                if (!attrs[definition.id]) {
+                    return;
+                }
+
+                if (!attrs[definition.id].isCollection && !_.isArray(attrs[definition.id])) {
+                    return;
+                }
+
+                if (attrs[definition.id].length > definition.max) {
+                    return toError(definition, 'max', {
+                        num: definition.max
+                    });
+                }
+            };
+
+            var results = [];
+            _.each(type.attributes.list(), function (definition) {
+                var res;
+                if (definition.max && definition.max != -1) {
+                    res = checkMax(definition, attrs);
+                    if (res) {
+                        results.push(res);
+                    }
+                }
+
+                if (definition.min && definition.min > 0) {
+                    res = checkMin(definition, attrs);
+                    if (res) {
+                        results.push(res);
+                    }
+                }
+            });
+
+            if (_.isEmpty(results)) {
+              return;
+            }
+            return results;
+        },
+
         isNew: function() {
             if (this.getSubjectUri().substr(0, 7) === '_:bnode') {
                 return true;
@@ -1942,18 +2029,19 @@ VIE.prototype.Entity = function(attrs, opts) {
             if (!attr || !value)
                 return;
             options = (options)? options : {};
+            var v;
                 
             attr = VIE.Util.mapAttributeNS(attr, self.vie.namespaces);
             
             if (_.isArray(value)) {
-                for (var v = 0; v < value.length; v++) {
+                for (v = 0; v < value.length; v++) {
                     this._setOrAddOne(attr, value[v], options);
                 }
                 return;
             }
             
             if (attr === "@type" && value instanceof self.vie.Type) {
-            	value = value.id;
+                value = value.id;
             }
             
             var obj = {};
@@ -1979,14 +2067,14 @@ VIE.prototype.Entity = function(attrs, opts) {
                 this.change({});
             } else if (_.isArray(existing)) {
                 if (value.isCollection) {
-                	for (var v = 0; v < value.size(); v++) {
-                		this._setOrAddOne(attr, value.at(v).getSubject(), options);
-                	}
+                    for (v = 0; v < value.size(); v++) {
+                        this._setOrAddOne(attr, value.at(v).getSubject(), options);
+                    }
                 } else if (value.isEntity) {
-                	this._setOrAddOne(attr, value.getSubject(), options);
+                    this._setOrAddOne(attr, value.getSubject(), options);
                 } else if (typeof value === "object") {
-                	value = new this.vie.Entity(value);
-                	this._setOrAddOne(attr, value, options);
+                    value = new this.vie.Entity(value);
+                    this._setOrAddOne(attr, value, options);
                 } else {
                     /* yes, we (have to) allow multiple equal values */
                     existing.push(value);
@@ -2127,9 +2215,10 @@ VIE.prototype.Collection = Backbone.Collection.extend({
             throw new Error("No model given");
         }
 
-        if (_.isString(model) && collection.isReference(model)) {
+        if (_.isString(model)) {
           model = {
-            '@subject': model
+            '@subject': model,
+            id: model
           };
         }
 
@@ -2150,29 +2239,36 @@ VIE.prototype.Collection = Backbone.Collection.extend({
                     newAttribs[attribute] = value;
                     return true;
                 }
-                else if (existing.get(attribute) === value) {
-                    return true;
-                } else {
-                    //merge existing attribute values with new ones!
-                    //not just overwrite 'em!!
-                    var oldVals = existing.attributes[attribute];
-                    var newVals = value;
-                    if (oldVals instanceof collection.vie.Collection) {
-                        // TODO: Merge collections
+
+                if (attribute === '@subject') {
+                    if (model.isNew() && !existing.isNew()) {
+                        // Save order issue, skip
                         return true;
                     }
-                    if (options.overrideAttributes) {
-                       newAttribs[attribute] = value;
-                       return true;
-                    } 
-                    if (attribute === '@context') {
-                        newAttribs[attribute] = jQuery.extend(true, {}, oldVals, newVals);
-                    } else {
-                        oldVals = (jQuery.isArray(oldVals))? oldVals : [ oldVals ];
-                        newVals = (jQuery.isArray(newVals))? newVals : [ newVals ];
-                        newAttribs[attribute] = _.uniq(oldVals.concat(newVals));
-                        newAttribs[attribute] = (newAttribs[attribute].length === 1)? newAttribs[attribute][0] : newAttribs[attribute];
-                    }
+                }
+
+                if (existing.get(attribute) === value) {
+                    return true;
+                }
+                //merge existing attribute values with new ones!
+                //not just overwrite 'em!!
+                var oldVals = existing.attributes[attribute];
+                var newVals = value;
+                if (oldVals instanceof collection.vie.Collection) {
+                    // TODO: Merge collections
+                    return true;
+                }
+                if (options.overrideAttributes) {
+                   newAttribs[attribute] = value;
+                   return true;
+                } 
+                if (attribute === '@context') {
+                    newAttribs[attribute] = jQuery.extend(true, {}, oldVals, newVals);
+                } else {
+                    oldVals = (jQuery.isArray(oldVals))? oldVals : [ oldVals ];
+                    newVals = (jQuery.isArray(newVals))? newVals : [ newVals ];
+                    newAttribs[attribute] = _.uniq(oldVals.concat(newVals));
+                    newAttribs[attribute] = (newAttribs[attribute].length === 1)? newAttribs[attribute][0] : newAttribs[attribute];
                 }
             });
 
@@ -2223,10 +2319,10 @@ VIE.prototype.Collection = Backbone.Collection.extend({
 // for example to query easily for certain entities (e.g., you only need to query for *Person*s 
 // and not for all subtypes).
 if (VIE.prototype.Type) {
-	throw new Error("ERROR: VIE.Type is already defined. Please check your installation!");
+    throw new Error("ERROR: VIE.Type is already defined. Please check your installation!");
 }
 if (VIE.prototype.Types) {
-	throw new Error("ERROR: VIE.Types is already defined. Please check your installation!");
+    throw new Error("ERROR: VIE.Types is already defined. Please check your installation!");
 }
 
 // ### VIE.Type(id, attrs, metadata)
@@ -2535,7 +2631,7 @@ VIE.prototype.Types = function () {
                 this._types[t.id] = t;
                 return t;
             } else if (id instanceof this.vie.Type) {
-            	this._types[id.id] = id;
+                this._types[id.id] = id;
                 return id;
             } else {
                 throw new Error("Wrong argument to VIE.Types.add()!");
@@ -2680,9 +2776,8 @@ VIE.prototype.Types = function () {
         
         if (types.length === 0) return [];
         var copy = [ types[0] ];
-        
-        
-        for (var x = 1, tlen = types.length; x < tlen; x++) {
+        var x, tlen; 
+        for (x = 1, tlen = types.length; x < tlen; x++) {
             var insert = types[x];
             var insType = self.get(insert);
             if (insType) {
@@ -2698,11 +2793,11 @@ VIE.prototype.Types = function () {
         }
         
         //unduplicate
-        for (var x = 0; x < copy.length; x++) {
-        	if (copy.lastIndexOf(copy[x]) !== x) {
-        		copy.splice(x, 1);
-        		x--;
-        	}
+        for (x = 0; x < copy.length; x++) {
+            if (copy.lastIndexOf(copy[x]) !== x) {
+                copy.splice(x, 1);
+                x--;
+            }
         }
         
         if (!desc) {
@@ -3010,6 +3105,7 @@ VIE.prototype.Attributes = function (domain, attrs) {
 //
 //     personAttrs._inherit();
     this._inherit = function () {
+        var a, x, id;
         var attributes = jQuery.extend(true, {}, this._local);
         
         var inherited = _.map(this.domain.supertypes.list(),
@@ -3020,11 +3116,11 @@ VIE.prototype.Attributes = function (domain, attrs) {
 
         var add = {};
         var merge = {};
-        
-        for (var a = 0, ilen = inherited.length; a < ilen; a++) {
+        var ilen, alen; 
+        for (a = 0, ilen = inherited.length; a < ilen; a++) {
             var attrs = inherited[a].list();
-            for (var x = 0, alen = attrs.length; x < alen; x++) {
-                var id = attrs[x].id;
+            for (x = 0, alen = attrs.length; x < alen; x++) {
+                id = attrs[x].id;
                 if (!(id in attributes)) {
                     if (!(id in add) && !(id in merge)) {
                         add[id] = attrs[x];
@@ -3034,20 +3130,20 @@ VIE.prototype.Attributes = function (domain, attrs) {
                             merge[id] = {range : [], mins : [], maxs: [], metadatas: []};
                         }
                         if (id in add) {
-                            merge[id]["range"] = jQuery.merge(merge[id]["range"], add[id].range);
-                            merge[id]["mins"] = jQuery.merge(merge[id]["mins"], [ add[id].min ]);
-                            merge[id]["maxs"] = jQuery.merge(merge[id]["maxs"], [ add[id].max ]);
-                            merge[id]["metadatas"] = jQuery.merge(merge[id]["metadatas"], [ add[id].metadata ]);
+                            merge[id].range = jQuery.merge(merge[id].range, add[id].range);
+                            merge[id].mins = jQuery.merge(merge[id].mins, [ add[id].min ]);
+                            merge[id].maxs = jQuery.merge(merge[id].maxs, [ add[id].max ]);
+                            merge[id].metadatas = jQuery.merge(merge[id].metadatas, [ add[id].metadata ]);
                             delete add[id];
                         }
-                        merge[id]["range"] = jQuery.merge(merge[id]["range"], attrs[x].range);
-                        merge[id]["mins"] = jQuery.merge(merge[id]["mins"], [ attrs[x].min ]);
-                        merge[id]["maxs"] = jQuery.merge(merge[id]["maxs"], [ attrs[x].max ]);
-                        merge[id]["metadatas"] = jQuery.merge(merge[id]["metadatas"], [ attrs[x].metadata ]);
-                        merge[id]["range"] = _.uniq(merge[id]["range"]);
-                        merge[id]["mins"] = _.uniq(merge[id]["mins"]);
-                        merge[id]["maxs"] = _.uniq(merge[id]["maxs"]);
-                        merge[id]["metadatas"] = _.uniq(merge[id]["metadatas"]);
+                        merge[id].range = jQuery.merge(merge[id].range, attrs[x].range);
+                        merge[id].mins = jQuery.merge(merge[id].mins, [ attrs[x].min ]);
+                        merge[id].maxs = jQuery.merge(merge[id].maxs, [ attrs[x].max ]);
+                        merge[id].metadatas = jQuery.merge(merge[id].metadatas, [ attrs[x].metadata ]);
+                        merge[id].range = _.uniq(merge[id].range);
+                        merge[id].mins = _.uniq(merge[id].mins);
+                        merge[id].maxs = _.uniq(merge[id].maxs);
+                        merge[id].metadatas = _.uniq(merge[id].metadatas);
                     }
                 }
             }
@@ -3057,18 +3153,18 @@ VIE.prototype.Attributes = function (domain, attrs) {
         jQuery.extend(attributes, add);
         
         /* merges inherited attributes */
-        for (var id in merge) {
-            var mranges = merge[id]["range"];
-            var mins = merge[id]["mins"];
-            var maxs = merge[id]["maxs"];
-            var metadatas = merge[id]["metadatas"];
+        for (id in merge) {
+            var mranges = merge[id].range;
+            var mins = merge[id].mins;
+            var maxs = merge[id].maxs;
+            var metadatas = merge[id].metadatas;
             var ranges = [];
             //merging ranges
             for (var r = 0, mlen = mranges.length; r < mlen; r++) {
                 var p = this.vie.types.get(mranges[r]);
                 var isAncestorOf = false;
                 if (p) {
-                    for (var x = 0; x < mlen; x++) {
+                    for (x = 0; x < mlen; x++) {
                         if (x === r) {
                             continue;
                         }
@@ -3332,7 +3428,7 @@ VIE.prototype.Namespaces.prototype.get = function (prefix) {
 //     namespaces.addOrReplace("test", "http://test.ns");
 //     console.log(namespaces.getPrefix("http://test.ns")); // <-- "test"
 VIE.prototype.Namespaces.prototype.getPrefix = function (namespace) {
-    var prefix = undefined;
+    var prefix;
     if (namespace.indexOf('<') === 0) {
         namespace = namespace.substring(1, namespace.length - 1);
     }
@@ -3801,9 +3897,9 @@ VIE.prototype.DBPediaService.prototype = {
                 try {
                     var entities = VIE.Util.rdf2Entities(service, results);
                     entities = (_.isArray(entities))? entities : [ entities ];
-                    for (var e = 0; e < entities.length; e++) {
-                    	entities[e].set("DBPediaServiceLoad", VIE.Util.xsdDateTime(new Date()));
-                    }
+                    _.each(entities, function (entity) {
+                        entity.set("DBPediaServiceLoad", VIE.Util.xsdDateTime(new Date()));
+                    });
                     entities = (entities.length === 1)? entities[0] : entities;
                     loadable.resolve(entities);
                 } catch (e) {
@@ -3821,12 +3917,12 @@ VIE.prototype.DBPediaService.prototype = {
         if (!entities) {
             loadable.reject([]);
         } else {
-        	entities = (_.isArray(entities))? entities : [ entities ];
-        	var tmpEntities = [];
-        	for (var e = 0; e < entities.length; e++) {
-        		var tmpEnt = (typeof entities[e] === "string")? entities[e] : entities[e].id;
-        		tmpEntities.push(tmpEnt);
-        	}
+            entities = (_.isArray(entities))? entities : [ entities ];
+            var tmpEntities = [];
+            for (var e = 0; e < entities.length; e++) {
+                var tmpEnt = (typeof entities[e] === "string")? entities[e] : entities[e].id;
+                tmpEntities.push(tmpEnt);
+            }
                         
             this.connector.load(tmpEntities, success, error);
         }
@@ -3878,21 +3974,21 @@ VIE.prototype.DBPediaConnector.prototype = {
         "&query=";
         
         if (_.isArray(uri)) {
-        	var construct = "";
-        	var where = "";
-        	for (var u = 0; u < uri.length; u++) {
-        		var subject = (/^<.+>$/.test(uri[u]))? uri[u] : '<' + uri[u] + '>';
-        		if (u > 0) {
-        			construct += " .";
-        			where += " UNION ";
-        		}
-        		construct += " " + subject + " ?prop" + u + " ?val" + u;
-        		where     += " { " + subject + " ?prop" + u + " ?val" + u + " }";
-        	}
-        	url += encodeURIComponent("CONSTRUCT {" + construct + " } WHERE {" + where + " }");
+            var construct = "";
+            var where = "";
+            for (var u = 0; u < uri.length; u++) {
+                var subject = (/^<.+>$/.test(uri[u]))? uri[u] : '<' + uri[u] + '>';
+                if (u > 0) {
+                    construct += " .";
+                    where += " UNION ";
+                }
+                construct += " " + subject + " ?prop" + u + " ?val" + u;
+                where     += " { " + subject + " ?prop" + u + " ?val" + u + " }";
+            }
+            url += encodeURIComponent("CONSTRUCT {" + construct + " } WHERE {" + where + " }");
         } else {
-	        uri = (/^<.+>$/.test(uri))? uri : '<' + uri + '>';
-	        url += encodeURIComponent("CONSTRUCT { " + uri + " ?prop ?val } WHERE { " + uri + " ?prop ?val }");
+            uri = (/^<.+>$/.test(uri))? uri : '<' + uri + '>';
+            url += encodeURIComponent("CONSTRUCT { " + uri + " ?prop ?val } WHERE { " + uri + " ?prop ?val }");
         }
         var format = options.format || "application/rdf+json";
 
@@ -3967,9 +4063,9 @@ VIE.prototype.OpenCalaisService = function(options) {
         url: ["http://api.opencalais.com/enlighten/rest/"],
         timeout : 60000, /* 60 seconds timeout */
         namespaces : {
-        	opencalaisc:  "http://s.opencalais.com/1/pred/",
-        	opencalaiscr: "http://s.opencalais.com/1/type/er/",
-        	opencalaiscm: "http://s.opencalais.com/1/type/em/e/"
+            opencalaisc:  "http://s.opencalais.com/1/pred/",
+            opencalaiscr: "http://s.opencalais.com/1/type/er/",
+            opencalaiscm: "http://s.opencalais.com/1/type/em/e/"
         },
         /* default rules that are shipped with this service */
         rules : []
@@ -4012,11 +4108,11 @@ VIE.prototype.OpenCalaisService.prototype = {
         
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
        /* this.rules = jQuery.extend(this.rules, [{
-        	'left' : [
-        	          '?subject a opencalaiscm:Person',
+            'left' : [
+                      '?subject a opencalaiscm:Person',
                       '?subject opencalaisc:name ?name'
                 ],
-            	'right': function(ns) {
+                'right': function(ns) {
                     return function() {
                         return [
                             jQuery.rdf.triple(this.subject.toString(),
@@ -4169,8 +4265,8 @@ VIE.prototype.OpenCalaisConnector.prototype = {
 
         jQuery.ajax({
             success: function(a, b, c){
-            	var responseData = c.responseText.replace(/<!--[\s\S]*?-->/g, '');
-            	success(responseData);
+                var responseData = c.responseText.replace(/<!--[\s\S]*?-->/g, '');
+                success(responseData);
             },
             error: retryErrorCb,
             type: "POST",
@@ -4200,8 +4296,8 @@ VIE.prototype.OpenCalaisConnector.prototype = {
     },
     
     _prepareData : function (text) {
-    	return {
-    		licenseID: this.options.api_key,
+        return {
+            licenseID: this.options.api_key,
             calculareRelevanceScore: "true",
             enableMetadataType: "GenericRelations,SocialTags",
             contentType: "text/html",
@@ -4214,21 +4310,21 @@ VIE.prototype.OpenCalaisConnector.prototype = {
 
 
 (function(){
-	
-	VIE.prototype.RdfaRdfQueryService = function(options) {
-		var defaults = {
-	        name : 'rdfardfquery',
-	        namespaces : {},
-	        rules : []
-	    };
-	    /* the options are merged with the default options */
-	    this.options = jQuery.extend(true, defaults, options ? options : {});
+    
+    VIE.prototype.RdfaRdfQueryService = function(options) {
+        var defaults = {
+            name : 'rdfardfquery',
+            namespaces : {},
+            rules : []
+        };
+        /* the options are merged with the default options */
+        this.options = jQuery.extend(true, defaults, options ? options : {});
 
-	    this.views = [],
+        this.views = [];
 
-	    this.vie = null; /* will be set via VIE.use(); */
-	    /* overwrite options.name if you want to set another name */
-	    this.name = this.options.name;
+        this.vie = null; /* will be set via VIE.use(); */
+        /* overwrite options.name if you want to set another name */
+        this.name = this.options.name;
 };
 
 VIE.prototype.RdfaRdfQueryService.prototype = {
@@ -4243,7 +4339,7 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
         this.rules = jQuery.merge(this.rules, (this.options.rules) ? this.options.rules : []);
     },
-	    
+        
     analyze: function(analyzable) {
         // in a certain way, analyze is the same as load
         return this.load(analyzable);
@@ -4304,7 +4400,8 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
     
 };
 
-})();//     VIE - Vienna IKS Editables
+})();
+//     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
 //     (c) 2011 Szaby Grünwald, IKS Consortium
@@ -4314,6 +4411,7 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
 
 // ## VIE - RdfaService service
 // The RdfaService service allows ...
+/*global document:false */
 
 (function(){
 
@@ -4335,7 +4433,7 @@ VIE.prototype.RdfaService = function(options) {
         subjectSelector : "[about],[typeof],[src],html",
         predicateSelector : "[property],[rel]",
         /* default rules that are shipped with this service */
-        rules : [],
+        rules : []
     };
     /* the options are merged with the default options */
     this.options = jQuery.extend(true, defaults, options ? options : {});
@@ -4354,14 +4452,14 @@ VIE.prototype.RdfaService = function(options) {
         return new Date(value);
       },
       '<http://www.w3.org/2001/XMLSchema#integer>': function (value) {
-        return parseInt(value);
+        return parseInt(value, 10);
       }
     };
 
     this.datatypeWriters = {
       '<http://www.w3.org/2001/XMLSchema#dateTime>': function (value) {
         if (!_.isDate(value)) {
-          return date;
+          return value;
         }
         return value.toISOString();
       }
@@ -4420,7 +4518,7 @@ VIE.prototype.RdfaService.prototype = {
             element = loadable.options.element;
         }
 
-        entities = this.readEntities(element);
+        var entities = this.readEntities(element);
         loadable.resolve(entities);
     },
 
@@ -4999,6 +5097,7 @@ VIE.prototype.RdfaService.prototype = {
 //     VIE may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://viejs.org/
+/*global escape:false */
 
 // ## VIE - StanbolService service
 // The StanbolService service allows a VIE developer to directly query
@@ -5071,12 +5170,12 @@ VIE.prototype.StanbolService = function(options) {
             }
         ],
         enhancer : {
-        	chain : "default"
+            chain : "default"
         },
         entityhub : {
-        	/* if set to undefined, the Referenced Site Manager @ /entityhub/sites is used. */
-        	/* if set to, e.g., dbpedia, eferenced Site @ /entityhub/site/dbpedia is used. */
-        	site : undefined
+            /* if set to undefined, the Referenced Site Manager @ /entityhub/sites is used. */
+            /* if set to, e.g., dbpedia, eferenced Site @ /entityhub/site/dbpedia is used. */
+            site : undefined
         }
     };
     /* the options are merged with the default options */
@@ -5159,7 +5258,7 @@ VIE.prototype.StanbolService.prototype = {
             };
             
             var options = {
-        		chain : (analyzable.options.chain)? analyzable.options.chain : service.options.enhancer.chain
+                chain : (analyzable.options.chain)? analyzable.options.chain : service.options.enhancer.chain
             };
 
             this.connector.analyze(text, success, error, options);
@@ -5196,10 +5295,10 @@ VIE.prototype.StanbolService.prototype = {
         if (!correct) {throw "Invalid Findable passed";}
         var service = this;
         /* The term to find, * as wildcard allowed */
-        if(!findable.options.term) {
+        if (!findable.options.term) {
             console.info("StanbolConnector: No term to look for!");
             findable.reject([]);
-        };
+        }
         var term = escape(findable.options.term);
         var limit = (typeof findable.options.limit === "undefined") ? 20 : findable.options.limit;
         var offset = (typeof findable.options.offset === "undefined") ? 0 : findable.options.offset;
@@ -5220,8 +5319,8 @@ VIE.prototype.StanbolService.prototype = {
             var properties = findable.options.properties;
             findable.options.ldPath = _(properties)
             .map(function(property){
-                if(vie.namespaces.isCurie(property)){
-                    return vie.namespaces.uri(property) + ";"
+                if (vie.namespaces.isCurie(property)){
+                    return vie.namespaces.uri(property) + ";";
                 } else {
                     return property;
                 }
@@ -5256,10 +5355,10 @@ VIE.prototype.StanbolService.prototype = {
         var service = this;
 
         var entity = loadable.options.entity;
-        if(!entity){
+        if (!entity){
             console.warn("StanbolConnector: No entity to look for!");
             loadable.resolve([]);
-        };
+        }
         var success = function (results) {
             _.defer(function(){
                 var entities = VIE.Util.rdf2Entities(service, results);
@@ -5271,8 +5370,8 @@ VIE.prototype.StanbolService.prototype = {
         };
         
         var options = {
-    		site : (loadable.options.site)? loadable.options.site : service.options.entityhub.site,
-    		local : loadable.options.local
+            site : (loadable.options.site)? loadable.options.site : service.options.entityhub.site,
+            local : loadable.options.local
         };
         
         this.connector.load(entity, success, error, options);
@@ -5297,10 +5396,10 @@ VIE.prototype.StanbolService.prototype = {
          var service = this;
 
          var entity = savable.options.entity;
-         if(!entity){
+         if (!entity){
              console.warn("StanbolConnector: No entity to save!");
              savable.reject("StanbolConnector: No entity to save!");
-         };
+         }
          var success = function (results) {
              _.defer(function() {
                  var entities = VIE.Util.rdf2Entities(service, results);
@@ -5309,12 +5408,12 @@ VIE.prototype.StanbolService.prototype = {
          };
          
          var error = function (e) {
-        	 savable.reject(e);
+             savable.reject(e);
          };
          
          var options = {
-     		site : (loadable.options.site)? loadable.options.site : service.options.entityhub.site,
-     		local : loadable.options.local
+            site : (savable.options.site)? savable.options.site : service.options.entityhub.site,
+            local : savable.options.local
          };
          
          this.connector.save(entity, success, error, options);
@@ -5353,38 +5452,38 @@ VIE.prototype.StanbolService.prototype = {
 VIE.prototype.StanbolConnector = function (options) {
     
     var defaults =  {
-		/* you can pass an array of URLs which are then tried sequentially */
-	    url: ["http://dev.iks-project.eu/stanbolfull"],
-	    timeout : 20000, /* 20 seconds timeout */
+        /* you can pass an array of URLs which are then tried sequentially */
+        url: ["http://dev.iks-project.eu/stanbolfull"],
+        timeout : 20000, /* 20 seconds timeout */
         enhancer : {
-        	urlPostfix : "/enhancer",
-        	chain : "default"
+            urlPostfix : "/enhancer",
+            chain : "default"
         },
         entityhub : {
-        	/* if set to undefined, the Referenced Site Manager @ /entityhub/sites is used. */
-        	/* if set to, e.g., dbpedia, referenced Site @ /entityhub/site/dbpedia is used. */
-        	site : undefined,
-        	urlPostfix : "/entityhub",
-        	local : false
+            /* if set to undefined, the Referenced Site Manager @ /entityhub/sites is used. */
+            /* if set to, e.g., dbpedia, referenced Site @ /entityhub/site/dbpedia is used. */
+            site : undefined,
+            urlPostfix : "/entityhub",
+            local : false
         },
         sparql : {
-        	urlPostfix : "/sparql"
+            urlPostfix : "/sparql"
         },
         contenthub : {
-        	urlPostfix : "/contenthub",
-        	index : "contenthub"
+            urlPostfix : "/contenthub",
+            index : "contenthub"
         },
         ontonet : {
-        	urlPostfix : "/ontonet"
+            urlPostfix : "/ontonet"
         },
         factstore : {
-        	urlPostfix : "/factstore"
+            urlPostfix : "/factstore"
         },
         rules : {
-        	urlPostfix : "/rules"
+            urlPostfix : "/rules"
         },
         cmsadapter : {
-        	urlPostfix : "/cmsadapter"
+            urlPostfix : "/cmsadapter"
         }
     };
 
@@ -5398,7 +5497,7 @@ VIE.prototype.StanbolConnector = function (options) {
 };
 
 VIE.prototype.StanbolConnector.prototype = {
-		
+        
 // ### _init()
 // Basic setup of the stanbol connector.  This is called internally by the constructor!
 // **Parameters**:  
@@ -5407,23 +5506,23 @@ VIE.prototype.StanbolConnector.prototype = {
 // *nothing*  
 // **Returns**:  
 // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself. 
-	_init : function () {
-		var connector = this;
-		
-	    /* basic setup for the ajax connection */
-	    jQuery.ajaxSetup({
-	        converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
-	        timeout: connector.options.timeout
-	    });
-	    
-	    return this;
-	},
-	
-	_iterate : function (params) {
+    _init : function () {
+        var connector = this;
+        
+        /* basic setup for the ajax connection */
+        jQuery.ajaxSetup({
+            converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
+            timeout: connector.options.timeout
+        });
+        
+        return this;
+    },
+    
+    _iterate : function (params) {
         if (!params) { return; }
         
         if (params.urlIndex >= this.options.url.length) {
-        	params.error.call(this, "Could not connect to the given Stanbol endpoints! Please check for their setup!");
+            params.error.call(this, "Could not connect to the given Stanbol endpoints! Please check for their setup!");
             return;
         }
         
@@ -5441,20 +5540,20 @@ VIE.prototype.StanbolConnector.prototype = {
         if (typeof exports !== "undefined" && typeof process !== "undefined") {
             /* We're on Node.js, don't use jQuery.ajax */
             return params.methodNode.call(
-            		this, 
-            		params.url.call(this, params.urlIndex, params.args.options),
-            		params.args,
-            		params.success,
-            		retryErrorCb);
+                    this, 
+                    params.url.call(this, params.urlIndex, params.args.options),
+                    params.args,
+                    params.success,
+                    retryErrorCb);
         }
         
         return params.method.call(
-        		this, 
-        		params.url.call(this, params.urlIndex, params.args.options),
-        		params.args,
-        		params.success,
-        		retryErrorCb);
-	},
+                this, 
+                params.url.call(this, params.urlIndex, params.args.options),
+                params.args,
+                params.success,
+                retryErrorCb);
+    },
 
 // ### analyze(text, success, error, options)
 // This method sends the given text to Apache Stanbol returns the result by the success callback.  
@@ -5474,32 +5573,32 @@ VIE.prototype.StanbolConnector.prototype = {
 //                 function (res) { ... },
 //                 function (err) { ... });
     analyze: function(text, success, error, options) {
-    	options = (options)? options :  {};
-    	var connector = this;
+        options = (options)? options :  {};
+        var connector = this;
         
-    	connector._iterate({
-        	method : connector._analyze,
-        	methodNode : connector._analyzeNode,
-        	url : function (idx, opts) {
-        		var chain = (opts.chain)? opts.chain : this.options.enhancer.chain;
+        connector._iterate({
+            method : connector._analyze,
+            methodNode : connector._analyzeNode,
+            url : function (idx, opts) {
+                var chain = (opts.chain)? opts.chain : this.options.enhancer.chain;
                 
-        		var u = this.options.url[idx].replace(/\/$/, '');
-        		u += this.options.enhancer.urlPostfix + "/chain/" + chain.replace(/\/$/, '');
-        		return u;
-        	},
-        	args : {
-        		text : text,
-        		format : options.format || "application/rdf+json",
-        		options : options
-        	},
-        	success : success,
-        	error : error,
-        	urlIndex : 0
+                var u = this.options.url[idx].replace(/\/$/, '');
+                u += this.options.enhancer.urlPostfix + "/chain/" + chain.replace(/\/$/, '');
+                return u;
+            },
+            args : {
+                text : text,
+                format : options.format || "application/rdf+json",
+                options : options
+            },
+            success : success,
+            error : error,
+            urlIndex : 0
         });
     },
     
     _analyze : function (url, args, success, error) {
-    	jQuery.ajax({
+        jQuery.ajax({
             success: success,
             error: error,
             url: url,
@@ -5550,40 +5649,40 @@ VIE.prototype.StanbolConnector.prototype = {
 //                 function (err) { ... });
 
     load: function (uri, success, error, options) {
-    	var connector = this;
+        var connector = this;
         options = (options)? options :  {};
-    	
+        
         options.uri = uri.replace(/^</, '').replace(/>$/, '');
         
-    	connector._iterate({
-        	method : connector._load,
-        	methodNode : connector._loadNode,
-        	success : success,
-        	error : error,
-        	url : function (idx, opts) {
-        		var site = (opts.site)? opts.site : this.options.entityhub.site;
+        connector._iterate({
+            method : connector._load,
+            methodNode : connector._loadNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
+                var site = (opts.site)? opts.site : this.options.entityhub.site;
                 site = (site)? "/" + site : "s";
                 
                 var isLocal = opts.local;
                 
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (isLocal) {
-                	u += "/entity?id=" + escape(opts.uri);
+                    u += "/entity?id=" + escape(opts.uri);
                 } else {
-                	u += "/site" + site + "/entity?id=" + escape(opts.uri);
+                    u += "/site" + site + "/entity?id=" + escape(opts.uri);
                 }
-        		return u;
-        	},
-        	args : {
-        		format : options.format || "application/rdf+json",
-        		options : options
-        	},
-        	urlIndex : 0
+                return u;
+            },
+            args : {
+                format : options.format || "application/rdf+json",
+                options : options
+            },
+            urlIndex : 0
         });
     },
     
     _load : function (url, args, success, error) {
-    	jQuery.ajax({
+        jQuery.ajax({
             success: success,
             error: error,
             url: url,
@@ -5633,52 +5732,52 @@ VIE.prototype.StanbolConnector.prototype = {
 //                 function (res) { ... },
 //                 function (err) { ... });
     find: function(term, limit, offset, success, error, options) {
-    	options = (options)? options :  {};
+        options = (options)? options :  {};
         /* curl -X POST -d "name=Bishofsh&limit=10&offset=0" http://localhost:8080/entityhub/sites/find */
 
-    	var connector = this;
-    	
-    	if (!term || term === "") {
-    		error ("No term given!");
-    		return;
-    	}
-    	
-    	offset = (offset)? offset : 0;
+        var connector = this;
+        
+        if (!term || term === "") {
+            error ("No term given!");
+            return;
+        }
+        
+        offset = (offset)? offset : 0;
         limit  = (limit)? limit : 10;
         
-    	connector._iterate({
-        	method : connector._find,
-        	methodNode : connector._findNode,
-        	success : success,
-        	error : error,
-        	url : function (idx, opts) {
-        		var site = (opts.site)? opts.site : this.options.entityhub.site;
+        connector._iterate({
+            method : connector._find,
+            methodNode : connector._findNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
+                var site = (opts.site)? opts.site : this.options.entityhub.site;
                 site = (site)? "/" + site : "s";
                 
                 var isLocal = opts.local;
                 
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (isLocal) {
-                	u += "/sites/find";
+                    u += "/sites/find";
                 } else {
-                	u += "/site" + site + "/find";
+                    u += "/site" + site + "/find";
                 }
                 
-        		return u;
-        	},
-        	args : {
-        		term : term,
-        		offset : offset,
-        		limit : limit,
-        		format : options.format || "application/rdf+json",
-        		options : options
-        	},
-        	urlIndex : 0
+                return u;
+            },
+            args : {
+                term : term,
+                offset : offset,
+                limit : limit,
+                format : options.format || "application/rdf+json",
+                options : options
+            },
+            urlIndex : 0
         });
     },
     
     _find : function (url, args, success, error) {
-    	jQuery.ajax({
+        jQuery.ajax({
             success: success,
             error: error,
             url: url,
@@ -5727,36 +5826,36 @@ VIE.prototype.StanbolConnector.prototype = {
 // **Returns**:  
 // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
     lookup: function(uri, success, error, options) {
-    	options = (options)? options :  {};
-    	/*/lookup/?id=http://dbpedia.org/resource/Paris&create=false"*/
-    	var connector = this;
-     	
-     	uri = uri.replace(/^</, '').replace(/>$/, '');
+        options = (options)? options :  {};
+        /*/lookup/?id=http://dbpedia.org/resource/Paris&create=false"*/
+        var connector = this;
+        
+        uri = uri.replace(/^</, '').replace(/>$/, '');
 
-     	options.uri = uri;
-     	options.create = (options.create)? options.create : false;
+        options.uri = uri;
+        options.create = (options.create)? options.create : false;
          
-     	connector._iterate({
-         	method : connector._lookup,
-         	methodNode : connector._lookupNode,
-         	success : success,
-         	error : error,
-         	url : function (idx, opts) {
-         		 
+        connector._iterate({
+            method : connector._lookup,
+            methodNode : connector._lookupNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
+                 
                  var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                  u += "/lookup?id=" + escape(opts.uri) + "&create=" + opts.create;
-         		 return u;
-         	},
-         	args : {
-         		format : options.format || "application/rdf+json",
-         		options : options
-         	},
-         	urlIndex : 0
+                 return u;
+            },
+            args : {
+                format : options.format || "application/rdf+json",
+                options : options
+            },
+            urlIndex : 0
          });
      },
      
      _lookup : function (url, args, success, error) {
-     	jQuery.ajax({
+        jQuery.ajax({
              success: success,
              error: error,
              url: url,
@@ -5803,9 +5902,9 @@ VIE.prototype.StanbolConnector.prototype = {
 //                  function (res) { ... },
 //                  function (err) { ... });  
      referenced: function(success, error, options) {
-     	options = (options)? options :  {};
+        options = (options)? options :  {};
         var connector = this;
-     	
+        
         var successCB = function (sites) {
           if (!_.isArray(sites)) {
             sites = JSON.parse(sites);
@@ -5817,26 +5916,26 @@ VIE.prototype.StanbolConnector.prototype = {
           return success(sitesStripped);
         };
         
-     	connector._iterate({
-         	method : connector._referenced,
-         	methodNode : connector._referencedNode,
-         	success : successCB,
-         	error : error,
-         	url : function (idx, opts) {
+        connector._iterate({
+            method : connector._referenced,
+            methodNode : connector._referencedNode,
+            success : successCB,
+            error : error,
+            url : function (idx, opts) {
                  var u = this.options.url[idx].replace(/\/$/, '');
                  u += this.options.entityhub.urlPostfix + "/sites/referenced";
                  
-         		return u;
-         	},
-         	args : {
-         		options : options
-         	},
-         	urlIndex : 0
+                return u;
+            },
+            args : {
+                options : options
+            },
+            urlIndex : 0
          });
      },
      
      _referenced : function (url, args, success, error) {
-     	jQuery.ajax({
+        jQuery.ajax({
              success: success,
              error: error,
              url: url,
@@ -5875,30 +5974,30 @@ VIE.prototype.StanbolConnector.prototype = {
 // **Returns**:  
 // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
      sparql: function(query, success, error, options) {
-     	options = (options)? options :  {};
+        options = (options)? options :  {};
          var connector = this;
-      	
-      	connector._iterate({
-          	method : connector._sparql,
-          	methodNode : connector._sparqlNode,
-          	success : success,
-          	error : error,
-          	url : function (idx, opts) {
+        
+        connector._iterate({
+            method : connector._sparql,
+            methodNode : connector._sparqlNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
                 var u = this.options.url[idx].replace(/\/$/, '');
                 u += this.options.sparql.urlPostfix.replace(/\/$/, '');
               
-      		    return u;
-          	},
-          	args : {
-          		query : query,
-          		options : options
-          	},
-          	urlIndex : 0
+                return u;
+            },
+            args : {
+                query : query,
+                options : options
+            },
+            urlIndex : 0
           });
       },
       
       _sparql : function (url, args, success, error) {
-      	jQuery.ajax({
+        jQuery.ajax({
               success: success,
               error: error,
               url: url,
@@ -5939,46 +6038,46 @@ VIE.prototype.StanbolConnector.prototype = {
 // **Returns**:  
 // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
     ldpath: function(ldpath, context, success, error, options) {
-    	options = (options)? options :  {};
+        options = (options)? options :  {};
         var connector = this;
         
         context = (_.isArray(context))? context : [ context ];
         
         var contextStr = "";
-    	for (var c = 0; c < context.length; c++) {
-    		contextStr += "&context=" + context[c];
-    	}
-     	
-     	connector._iterate({
-         	method : connector._ldpath,
-         	methodNode : connector._ldpathNode,
-         	success : success,
-         	error : error,
-         	url : function (idx, opts) {
-         		var site = (opts.site)? opts.site : this.options.entityhub.site;
+        for (var c = 0; c < context.length; c++) {
+            contextStr += "&context=" + context[c];
+        }
+        
+        connector._iterate({
+            method : connector._ldpath,
+            methodNode : connector._ldpathNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
+                var site = (opts.site)? opts.site : this.options.entityhub.site;
                 site = (site)? "/" + site : "s";
                 
                 var isLocal = opts.local;
                 
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (!isLocal)
-                	u += "/site" + site;
+                    u += "/site" + site;
                 u += "/ldpath";
              
-     		    return u;
-         	},
-         	args : {
-         		ldpath : ldpath,
-         		context : contextStr,
-        		format : options.format || "application/rdf+json",
-         		options : options
-         	},
-         	urlIndex : 0
+                return u;
+            },
+            args : {
+                ldpath : ldpath,
+                context : contextStr,
+                format : options.format || "application/rdf+json",
+                options : options
+            },
+            urlIndex : 0
          });
      },
      
      _ldpath : function (url, args, success, error) {
-    	jQuery.ajax({
+        jQuery.ajax({
              success: success,
              error: error,
              url: url,
@@ -5995,7 +6094,7 @@ VIE.prototype.StanbolConnector.prototype = {
          var r = request({
              method: "POST",
              uri: url,
-             body : "ldpath=" + args.ldpath + context,
+             body : "ldpath=" + args.ldpath + args.context,
              headers: {
                  Accept: args.format
              }
@@ -6021,15 +6120,15 @@ VIE.prototype.StanbolConnector.prototype = {
 // **Returns**:  
 // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
       uploadContent: function(content, success, error, options) {
-      	options = (options)? options :  {};
+        options = (options)? options :  {};
         var connector = this;
-       	
-       	connector._iterate({
-           	method : connector._uploadContent,
-           	methodNode : connector._uploadContentNode,
-           	success : success,
-           	error : error,
-           	url : function (idx, opts) {
+        
+        connector._iterate({
+            method : connector._uploadContent,
+            methodNode : connector._uploadContentNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
                  var u = this.options.url[idx].replace(/\/$/, '');
                  u += this.options.contenthub.urlPostfix.replace(/\/$/, '');
                  
@@ -6038,18 +6137,18 @@ VIE.prototype.StanbolConnector.prototype = {
                  u += "/" + index.replace(/\/$/, '');
                  u += "/store";
                
-       		     return u;
-           	},
-           	args : {
-           		content: content,
-           		options : options
-           	},
-           	urlIndex : 0
+                 return u;
+            },
+            args : {
+                content: content,
+                options : options
+            },
+            urlIndex : 0
            });
        },
        
        _uploadContent : function (url, args, success, error) {
-       	   jQuery.ajax({
+           jQuery.ajax({
                success: success,
                error: error,
                url: url,
@@ -6090,179 +6189,179 @@ VIE.prototype.StanbolConnector.prototype = {
 //*nothing*  
 //**Returns**:  
 //*{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
-	  createFactSchema: function(url, schema, success, error, options) {
-		   	 options = (options)? options :  {};
-		     var connector = this;
-		     
-		     options.url = url;
-	    	
-	    	 connector._iterate({
-	        	method : connector._createFactSchema,
-	        	methodNode : connector._createFactSchemaNode,
-	        	success : success,
-	        	error : error,
-	        	url : function (idx, opts) {
-	              var u = this.options.url[idx].replace(/\/$/, '');
-	              u += this.options.factstore.urlPostfix.replace(/\/$/, '');
-	              
-	              u += "/facts/" + escape(opts.url);
-	            
-	    		  return u;
-	        	},
-	        	args : {
-	        		url : url,
-	        		schema : schema,
-	        		options : options
-	        	},
-	        	urlIndex : 0
-	        });
-	    },
-	    
-	    _createFactSchema : function (url, args, success, error) {
-	    	   jQuery.ajax({
-	            success: success,
-	            error: error,
-	            url: url,
-	            type: "PUT",
-	            data : args.schema,
-	            contentType : "application/json",
-	            dataType: "application/json"
-	        });
-	    },
-	
-	    _createFactSchemaNode: function(url, args, success, error) {
-	        var request = require('request');
-	        var r = request({
-	            method: "PUT",
-	            uri: url,
-	            body : args.schema,
-	            headers: {
-	                Accept: "application/json",
-	                "Content-Type" : "application/json"
-	            }
-	        }, function(err, response, body) {
-	            try {
-	                success({results: JSON.parse(body)});
-	            } catch (e) {
-	                error(e);
-	            }
-	        });
-	        r.end();
-	    },
-	    
-	    createFact: function(fact, success, error, options) {
-		   	 options = (options)? options :  {};
-		     var connector = this;
-		     
-		   	 connector._iterate({
-		       	method : connector._createFact,
-		       	methodNode : connector._createFactNode,
-		       	success : success,
-		       	error : error,
-		       	url : function (idx, opts) {
-		             var u = this.options.url[idx].replace(/\/$/, '');
-		             u += this.options.factstore.urlPostfix.replace(/\/$/, '');
-		             
-		             u += "/facts";
-		           
-		   		  return u;
-		       	},
-		       	args : {
-		       		fact : fact,
-		       		options : options
-		       	},
-		       	urlIndex : 0
-		       });
-	   },
-	   
-	   _createFact : function (url, args, success, error) {
-	   	   jQuery.ajax({
-	           success: success,
-	           error: error,
-	           url: url,
-	           type: "POST",
-	           data : args.fact,
-	           contentType : "application/json",
-	           dataType: "application/json"
-	       });
-	   },
-	
-	   _createFactNode: function(url, args, success, error) {
-	       var request = require('request');
-	       var r = request({
-	           method: "POST",
-	           uri: url,
-	           body : args.fact,
-	           headers: {
-	               Accept: "application/json",
-	               "Content-Type" : "application/json"
-	           }
-	       }, function(err, response, body) {
-	           try {
-	               success({results: JSON.parse(body)});
-	           } catch (e) {
-	               error(e);
-	           }
-	       });
-	       r.end();
-	   },
-	   
-	    queryFact: function(query, success, error, options) {
-		   	 options = (options)? options :  {};
-		     var connector = this;
-		     
-		   	 connector._iterate({
-		       	method : connector._queryFact,
-		       	methodNode : connector._queryFactNode,
-		       	success : success,
-		       	error : error,
-		       	url : function (idx, opts) {
-		             var u = this.options.url[idx].replace(/\/$/, '');
-		             u += this.options.factstore.urlPostfix.replace(/\/$/, '');
-		             
-		             u += "/query";
-		           
-		   		  return u;
-		       	},
-		       	args : {
-		       		query : query,
-		       		options : options
-		       	},
-		       	urlIndex : 0
-		       });
-	   },
-	   
-	   _queryFact : function (url, args, success, error) {
-	   	   jQuery.ajax({
-	           success: success,
-	           error: error,
-	           url: url,
-	           type: "POST",
-	           data : args.query,
-	           contentType : "application/json",
-	           dataType: "application/json"
-	       });
-	   },
-	
-	   _queryFactNode: function(url, args, success, error) {
-	       var request = require('request');
-	       var r = request({
-	           method: "POST",
-	           uri: url,
-	           body : args.query,
-	           headers: {
-	               Accept: "application/json",
-	               "Content-Type" : "application/json"
-	           }
-	       }, function(err, response, body) {
-	           try {
-	               success({results: JSON.parse(body)});
-	           } catch (e) {
-	               error(e);
-	           }
-	       });
-	       r.end();
-	   }
+      createFactSchema: function(url, schema, success, error, options) {
+             options = (options)? options :  {};
+             var connector = this;
+             
+             options.url = url;
+            
+             connector._iterate({
+                method : connector._createFactSchema,
+                methodNode : connector._createFactSchemaNode,
+                success : success,
+                error : error,
+                url : function (idx, opts) {
+                  var u = this.options.url[idx].replace(/\/$/, '');
+                  u += this.options.factstore.urlPostfix.replace(/\/$/, '');
+                  
+                  u += "/facts/" + escape(opts.url);
+                
+                  return u;
+                },
+                args : {
+                    url : url,
+                    schema : schema,
+                    options : options
+                },
+                urlIndex : 0
+            });
+        },
+        
+        _createFactSchema : function (url, args, success, error) {
+               jQuery.ajax({
+                success: success,
+                error: error,
+                url: url,
+                type: "PUT",
+                data : args.schema,
+                contentType : "application/json",
+                dataType: "application/json"
+            });
+        },
+    
+        _createFactSchemaNode: function(url, args, success, error) {
+            var request = require('request');
+            var r = request({
+                method: "PUT",
+                uri: url,
+                body : args.schema,
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type" : "application/json"
+                }
+            }, function(err, response, body) {
+                try {
+                    success({results: JSON.parse(body)});
+                } catch (e) {
+                    error(e);
+                }
+            });
+            r.end();
+        },
+        
+        createFact: function(fact, success, error, options) {
+             options = (options)? options :  {};
+             var connector = this;
+             
+             connector._iterate({
+                method : connector._createFact,
+                methodNode : connector._createFactNode,
+                success : success,
+                error : error,
+                url : function (idx, opts) {
+                     var u = this.options.url[idx].replace(/\/$/, '');
+                     u += this.options.factstore.urlPostfix.replace(/\/$/, '');
+                     
+                     u += "/facts";
+                   
+                  return u;
+                },
+                args : {
+                    fact : fact,
+                    options : options
+                },
+                urlIndex : 0
+               });
+       },
+       
+       _createFact : function (url, args, success, error) {
+           jQuery.ajax({
+               success: success,
+               error: error,
+               url: url,
+               type: "POST",
+               data : args.fact,
+               contentType : "application/json",
+               dataType: "application/json"
+           });
+       },
+    
+       _createFactNode: function(url, args, success, error) {
+           var request = require('request');
+           var r = request({
+               method: "POST",
+               uri: url,
+               body : args.fact,
+               headers: {
+                   Accept: "application/json",
+                   "Content-Type" : "application/json"
+               }
+           }, function(err, response, body) {
+               try {
+                   success({results: JSON.parse(body)});
+               } catch (e) {
+                   error(e);
+               }
+           });
+           r.end();
+       },
+       
+        queryFact: function(query, success, error, options) {
+             options = (options)? options :  {};
+             var connector = this;
+             
+             connector._iterate({
+                method : connector._queryFact,
+                methodNode : connector._queryFactNode,
+                success : success,
+                error : error,
+                url : function (idx, opts) {
+                     var u = this.options.url[idx].replace(/\/$/, '');
+                     u += this.options.factstore.urlPostfix.replace(/\/$/, '');
+                     
+                     u += "/query";
+                   
+                  return u;
+                },
+                args : {
+                    query : query,
+                    options : options
+                },
+                urlIndex : 0
+               });
+       },
+       
+       _queryFact : function (url, args, success, error) {
+           jQuery.ajax({
+               success: success,
+               error: error,
+               url: url,
+               type: "POST",
+               data : args.query,
+               contentType : "application/json",
+               dataType: "application/json"
+           });
+       },
+    
+       _queryFactNode: function(url, args, success, error) {
+           var request = require('request');
+           var r = request({
+               method: "POST",
+               uri: url,
+               body : args.query,
+               headers: {
+                   Accept: "application/json",
+                   "Content-Type" : "application/json"
+               }
+           }, function(err, response, body) {
+               try {
+                   success({results: JSON.parse(body)});
+               } catch (e) {
+                   error(e);
+               }
+           });
+           r.end();
+       }
 };
 })();
 
@@ -6298,7 +6397,7 @@ VIE.prototype.ZemantaService = function(options) {
         url: ["http://api.zemanta.com/services/rest/0.0/"],
         timeout : 20000, /* 20 seconds timeout */
         namespaces : {
-        	zemanta: "http://s.zemanta.com/ns#"
+            zemanta: "http://s.zemanta.com/ns#"
         },
         /* default rules that are shipped with this service */
         rules : [
@@ -6429,9 +6528,9 @@ VIE.prototype.ZemantaService.prototype = {
 VIE.prototype.ZemantaConnector = function (options) {
     
     var defaults =  {
-		/* you can pass an array of URLs which are then tried sequentially */
-	    url: ["http://api.zemanta.com/services/rest/0.0/"],
-	    timeout : 20000, /* 20 seconds timeout */
+        /* you can pass an array of URLs which are then tried sequentially */
+        url: ["http://api.zemanta.com/services/rest/0.0/"],
+        timeout : 20000, /* 20 seconds timeout */
         "api_key" : undefined
     };
 
@@ -6445,7 +6544,7 @@ VIE.prototype.ZemantaConnector = function (options) {
 };
 
 VIE.prototype.ZemantaConnector.prototype = {
-		
+        
 // ### _init()
 // Basic setup of the Zemanta connector.  This is called internally by the constructor!
 // **Parameters**:  
@@ -6454,23 +6553,23 @@ VIE.prototype.ZemantaConnector.prototype = {
 // *nothing*  
 // **Returns**:  
 // *{VIE.ZemantaConnector}* : The VIE.ZemantaConnector instance itself. 
-	_init : function () {
-		var connector = this;
-		
-	    /* basic setup for the ajax connection */
-	    jQuery.ajaxSetup({
-	        converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
-	        timeout: connector.options.timeout
-	    });
-	    
-	    return this;
-	},
-	
-	_iterate : function (params) {
+    _init : function () {
+        var connector = this;
+        
+        /* basic setup for the ajax connection */
+        jQuery.ajaxSetup({
+            converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
+            timeout: connector.options.timeout
+        });
+        
+        return this;
+    },
+    
+    _iterate : function (params) {
         if (!params) { return; }
         
         if (params.urlIndex >= this.options.url.length) {
-        	params.error.call(this, "Could not connect to the given Zemanta endpoints! Please check for their setup!");
+            params.error.call(this, "Could not connect to the given Zemanta endpoints! Please check for their setup!");
             return;
         }
         
@@ -6488,20 +6587,20 @@ VIE.prototype.ZemantaConnector.prototype = {
         if (typeof exports !== "undefined" && typeof process !== "undefined") {
             /* We're on Node.js, don't use jQuery.ajax */
             return params.methodNode.call(
-            		this, 
-            		params.url.call(this, params.urlIndex, params.args.options),
-            		params.args,
-            		params.success,
-            		retryErrorCb);
+                    this, 
+                    params.url.call(this, params.urlIndex, params.args.options),
+                    params.args,
+                    params.success,
+                    retryErrorCb);
         }
         
         return params.method.call(
-        		this, 
-        		params.url.call(this, params.urlIndex, params.args.options),
-        		params.args,
-        		params.success,
-        		retryErrorCb);
-	},
+                this, 
+                params.url.call(this, params.urlIndex, params.args.options),
+                params.args,
+                params.success,
+                retryErrorCb);
+    },
 
 // ### analyze(text, success, error, options)
 // This method sends the given text to Zemanta returns the result by the success callback.  
@@ -6521,43 +6620,43 @@ VIE.prototype.ZemantaConnector.prototype = {
 //                 function (res) { ... },
 //                 function (err) { ... });
     analyze: function(text, success, error, options) {
-    	options = (options)? options :  {};
-    	var connector = this;
+        options = (options)? options :  {};
+        var connector = this;
         
-    	connector._iterate({
-        	method : connector._analyze,
-        	methodNode : connector._analyzeNode,
-        	success : success,
-        	error : error,
-        	url : function (idx, opts) {
-        		var u = this.options.url[idx].replace(/\/$/, '');
-        		return u;
-        	},
-        	args : {
-    			text : text,
-        		format : options.format || "rdfxml",
-        		options : options
-        	},
-        	urlIndex : 0
+        connector._iterate({
+            method : connector._analyze,
+            methodNode : connector._analyzeNode,
+            success : success,
+            error : error,
+            url : function (idx, opts) {
+                var u = this.options.url[idx].replace(/\/$/, '');
+                return u;
+            },
+            args : {
+                text : text,
+                format : options.format || "rdfxml",
+                options : options
+            },
+            urlIndex : 0
         });
     },
     
     _analyze : function (url, args, success, error) {
-    	jQuery.ajax({
+        jQuery.ajax({
             success: function(a, b, c){
-	        	var responseData = c.responseText.replace(/<z:signature>.*?<\/z:signature>/, '');
-	        	success(responseData);
+                var responseData = c.responseText.replace(/<z:signature>.*?<\/z:signature>/, '');
+                success(responseData);
             },
             error: error,
             url: url,
             type: "POST",
             dataType: "xml",
             data: {
-            	method : "zemanta.suggest",
-            	text : args.text,
-            	format : args.format,
-            	api_key : this.options.api_key,
-            	return_rdf_links : args.options.return_rdf_links
+                method : "zemanta.suggest",
+                text : args.text,
+                format : args.format,
+                api_key : this.options.api_key,
+                return_rdf_links : args.options.return_rdf_links
             },
             contentType: "text/plain",
             accepts: {"application/rdf+json": "application/rdf+json"}
@@ -6586,6 +6685,7 @@ VIE.prototype.ZemantaConnector.prototype = {
 };
 })();
 
+/*global VIE:false Backbone:false _:false jQuery:false */
 if (!VIE.prototype.view) {
     VIE.prototype.view = {};
 }
@@ -6644,9 +6744,20 @@ VIE.prototype.view.Collection = Backbone.View.extend({
         }
 
         var childType = entity.get('@type');
-        var childTypeName = childType.id;
-
-        if (!this.canAdd(childTypeName)) {
+        var childTypeName;
+        if (_.isArray(childType)) {
+          _.each(childType, function (type) {
+            if (this.canAdd(type.id)) {
+              childTypeName = type.id;
+            }
+          }, this);
+        } else {
+          if (this.canAdd(childType.id)) {
+            childTypeName = childType.id;
+          }
+        }
+          
+        if (!childTypeName) {
             return;
         }
 
@@ -6723,16 +6834,16 @@ VIE.prototype.view.Collection = Backbone.View.extend({
     },
 
     refreshItems: function(collection) {
-        var view = this;
         _.each(this.entityViews, function(view, cid) {
           jQuery(view.el).remove();
         });
         this.entityViews = {};
         collection.forEach(function(entity) {
-            view.addItem(entity, collection);
-        });
+            this.addItem(entity, collection);
+        }, this);
     }
 });
+/*global VIE:false Backbone:false _:false */
 if (!VIE.prototype.view) {
     VIE.prototype.view = {};
 }
@@ -6743,8 +6854,9 @@ VIE.prototype.view.Entity = Backbone.View.extend({
         this.vie = options.vie;
 
         // Ensure view gets updated when properties of the Entity change.
-        _.bindAll(this, 'render');
+        _.bindAll(this, 'render', 'renderAbout');
         this.model.bind('change', this.render);
+        this.model.bind('change:@subject', this.renderAbout);
     },
 
     // Rendering a view means writing the properties of the Entity back to
@@ -6757,6 +6869,10 @@ VIE.prototype.view.Entity = Backbone.View.extend({
             to(this.service).
             execute();
         return this;
+    },
+
+    renderAbout: function () {
+        this.vie.service(this.service).setElementSubject(this.model.getSubjectUri(), this.el);
     }
 }); 
 // Based on [Julian Aubourg's xdr.js](https://github.com/jaubourg/ajaxHooks/blob/master/src/ajax/xdr.js)  
@@ -6764,58 +6880,59 @@ VIE.prototype.view.Entity = Backbone.View.extend({
 // Their solution we use is called XDomainRequest. This module is a wrapper for 
 // XDR using jQuery ajaxTransport, jQuery's way to support such cases.
 // Author: Szaby Grünwald @ Salzburg Research, 2011
+/*global XDomainRequest:false console:false jQuery:false */
 var root = this;
 (function( jQuery ) {
 
 if ( root.XDomainRequest ) {
-	jQuery.ajaxTransport(function( s ) {
-		if ( s.crossDomain && s.async ) {
-			if ( s.timeout ) {
-				s.xdrTimeout = s.timeout;
-				delete s.timeout;
-			}
-			var xdr;
-			return {
-				send: function( _, complete ) {
-					function callback( status, statusText, responses, responseHeaders ) {
-						xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
-						xdr = undefined;
-						complete( status, statusText, responses, responseHeaders );
-					}
-					xdr = new XDomainRequest();
-					// For backends supporting header_* in the URI instead of real header parameters,
-					// use the dataType for setting the Accept request header. e.g. Stanbol supports this.
-					if(s.dataType){
-					    var headerThroughUriParameters = "header_Accept=" + encodeURIComponent(s.dataType);
-					    s.url = s.url + (s.url.indexOf("?") === -1 ? "?" : "&" ) + headerThroughUriParameters;
-					}
-					xdr.open( s.type, s.url );
-					xdr.onload = function(e1, e2) {
-						callback( 200, "OK", { text: xdr.responseText }, "Content-Type: " + xdr.contentType );
-					};
-					// XDR cannot differentiate between errors, 
-					// we call every error 404. Could be changed to another one.
-					xdr.onerror = function(e) {
-					    console.error(JSON.stringify(e));
-						callback( 404, "Not Found" );
-					};
-					if ( s.xdrTimeout ) {
-						xdr.ontimeout = function() {
-							callback( 0, "timeout" );
-						};
-						xdr.timeout = s.xdrTimeout;
-					}
-					xdr.send( ( s.hasContent && s.data ) || null );
-				},
-				abort: function() {
-					if ( xdr ) {
-						xdr.onerror = jQuery.noop();
-						xdr.abort();
-					}
-				}
-			};
-		}
-	});
+  jQuery.ajaxTransport(function( s ) {
+    if ( s.crossDomain && s.async ) {
+      if ( s.timeout ) {
+        s.xdrTimeout = s.timeout;
+        delete s.timeout;
+      }
+      var xdr;
+      return {
+        send: function( _, complete ) {
+          function callback( status, statusText, responses, responseHeaders ) {
+            xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
+            xdr = undefined;
+            complete( status, statusText, responses, responseHeaders );
+          }
+          xdr = new XDomainRequest();
+          // For backends supporting header_* in the URI instead of real header parameters,
+          // use the dataType for setting the Accept request header. e.g. Stanbol supports this.
+          if(s.dataType){
+              var headerThroughUriParameters = "header_Accept=" + encodeURIComponent(s.dataType);
+              s.url = s.url + (s.url.indexOf("?") === -1 ? "?" : "&" ) + headerThroughUriParameters;
+          }
+          xdr.open( s.type, s.url );
+          xdr.onload = function(e1, e2) {
+            callback( 200, "OK", { text: xdr.responseText }, "Content-Type: " + xdr.contentType );
+          };
+          // XDR cannot differentiate between errors, 
+          // we call every error 404. Could be changed to another one.
+          xdr.onerror = function(e) {
+              console.error(JSON.stringify(e));
+            callback( 404, "Not Found" );
+          };
+          if ( s.xdrTimeout ) {
+            xdr.ontimeout = function() {
+              callback( 0, "timeout" );
+            };
+            xdr.timeout = s.xdrTimeout;
+          }
+          xdr.send( ( s.hasContent && s.data ) || null );
+        },
+        abort: function() {
+          if ( xdr ) {
+            xdr.onerror = jQuery.noop();
+            xdr.abort();
+          }
+        }
+      };
+    }
+  });
 }
 })( jQuery );
 
