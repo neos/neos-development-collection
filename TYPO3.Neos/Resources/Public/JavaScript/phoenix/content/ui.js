@@ -783,7 +783,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 				// Make sure we have a minimum height to be able to hover
 			if ($contentElement.height() < 25) {
-				$contentElement.height(25);
+				$contentElement.css('min-height', '25px');
 			}
 
 			T3.Content.UI.ContentElementHandle.create({
