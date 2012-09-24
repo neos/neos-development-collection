@@ -1,0 +1,15 @@
+{
+    "name": "typo3/phoenix-contenttypes",
+    "type": "flow3-package",
+    "description": "Content Type Configuration for TYPO3 Phoenix.",
+    "version": "1.0.0 dev",
+    "require": {
+        "typo3/flow3": "*",
+        "typo3/typoscript": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Phoenix\\ContentTypes": "Classes"
+        }
+    }
+}
