@@ -20,6 +20,9 @@ define(
 			},
 
 			click: function(event) {
+				if (!event.target.rel) {
+					return;
+				}
 				this.get('_options').collection.add({
 					'@type': event.target.rel
 				}, {at: this.get('_index')});
