@@ -282,7 +282,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			var node = activeNode.addChild({
 				title: '[New Page]',
 				contentType: 'TYPO3.Phoenix.ContentTypes:Page',
-				addClass: 'typo3_typo3-page'
+				addClass: 'typo3_phoenix_contenttypes-page'
 			});
 			editNodeTitleMode = true;
 			var prevTitle = node.data.title,
