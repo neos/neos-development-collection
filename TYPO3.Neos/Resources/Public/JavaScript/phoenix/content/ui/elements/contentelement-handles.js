@@ -106,9 +106,13 @@ define(
 
 					// Make the data object an array for usage in #each helper
 				var data = []
-				for (var group in groups) {
-					data.push(groups[group]);
-				}
+
+				T3.Configuration.contentTypeGroups.forEach(function(groupName) {
+					if (groups[groupName]) {
+						data.push(groups[groupName]);
+					}
+				});
+
 
 				ContentElementPopoverContent.create({
 					_options: this.get('_collection').options,

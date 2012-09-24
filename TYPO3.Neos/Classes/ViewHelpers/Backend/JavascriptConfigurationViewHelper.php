@@ -53,7 +53,8 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 			'window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.phoenixShouldCacheSchema = ' . json_encode($this->bootstrap->getContext()->isProduction()) . ';',
-			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';'
+			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
+			'window.T3Configuration.contentTypeGroups = ' . json_encode($this->settings['contentTypeGroups']) . ';'
 		)));
 	}
 }
