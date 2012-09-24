@@ -5,34 +5,34 @@
 namespace: default = TYPO3.TypoScript
 
 # Definition of custom TypoScript types
-prototype(TYPO3.TypoScript:ThreeColumn) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.TypoScript:ThreeColumn) {
+prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn) {
 	templatePath = 'FIXTURE_DIRECTORY/ThreeColumnTemplate.html'
 	left = TYPO3.TypoScript:Collection
-	left.collection = ${context.children("left").children()}
+	left.collection = ${q(node).children("left").children()}
 	center = TYPO3.TypoScript:Collection
-	center.collection = ${context.children("center").children()}
+	center.collection = ${q(node).children("center").children()}
 	right = TYPO3.TypoScript:Collection
-	right.collection = ${context.children("right").children()}
+	right.collection = ${q(node).children("right").children()}
 }
 
 prototype(TYPO3.TypoScript:Case).matchers.4242 {
-	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:ThreeColumn]')}
-	type = 'TYPO3.TypoScript:ThreeColumn'
+	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:ThreeColumn]')}
+	type = 'TYPO3.Phoenix.ContentTypes:ThreeColumn'
 }
 
 
 # MAIN PAGE TEMPLATE
 
-page1 = Page
+page1 = TYPO3.Phoenix.ContentTypes:Page
 page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
 page1.body.sections {
 	teaser = TYPO3.TypoScript:Collection
-	teaser.collection = ${context.children('teaser').children()}
+	teaser.collection = ${q(node).children('teaser').children()}
 
 	main = TYPO3.TypoScript:Collection
-	main.collection = ${context.children('main').children()}
+	main.collection = ${q(node).children('main').children()}
 
 	sidebar = TYPO3.TypoScript:Collection
-	sidebar.collection = ${context.children('sidebar').children()}
+	sidebar.collection = ${q(node).children('sidebar').children()}
 }

@@ -3,8 +3,10 @@
 #
 
 prototype(TYPO3.TypoScript:Case).matchers.20 {
-	condition = ${context.is('[title ^= Docume]')}
+	condition = ${q(node).is('[title *= Docume]')}
 	type = 'TYPO3.TypoScript:DocumentationText'
 }
-prototype(TYPO3.TypoScript:DocumentationText) < prototype(TYPO3.TypoScript:TextWithHeadline)
-prototype(TYPO3.TypoScript:DocumentationText).title << 1.wrap(prefix: 'DOCS: ')
+
+prototype(TYPO3.TypoScript:DocumentationText) < prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline)
+prototype(TYPO3.TypoScript:DocumentationText).title = 'Documentation'
+prototype(TYPO3.TypoScript:DocumentationText).title << 1.wrap(prefix: '<header>DOCS: ', suffix: '</header>')
