@@ -33,7 +33,7 @@ class NodeIdentityConverterAspect {
 	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint the joinpoint
 	 * @return string|array the context path to be used for routing
 	 */
-	public function convertNodeToContextPathForRouting(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function convertNodeToContextPathForRouting(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$objectArgument = $joinPoint->getMethodArgument('object');
 		if ($objectArgument instanceof NodeInterface) {
 			return $objectArgument->getContextPath();
