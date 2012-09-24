@@ -1,0 +1,14 @@
+{
+    "name": "typo3/typo3cr",
+    "type": "flow3-package",
+    "description": "",
+    "version": "1.0.0-dev",
+    "require": {
+        "typo3/flow3": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\TYPO3CR": "Classes"
+        }
+    }
+}
