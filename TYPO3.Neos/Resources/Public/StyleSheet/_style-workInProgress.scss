@@ -426,7 +426,7 @@ button.t3-button.t3-connection-status-down {
 	}
 
 	// Content element overlay
-	.t3-contentelement-overlay {
+	> .t3-contentelement-overlay {
 		position: absolute;
 		display: none;
 		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
@@ -446,7 +446,8 @@ button.t3-button.t3-connection-status-down {
 		}
 	}
 
-	&:hover .t3-contentelement-overlay {
+	&.t3-contentelement-hover > .t3-contentelement-overlay,
+	&.t3-contentelement-active > .t3-contentelement-overlay {
 		display: block;
 	}
 

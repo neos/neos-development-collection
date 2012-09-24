@@ -794,15 +794,22 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		}
 	};
 
-	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element) {
-			// Add overlay to content elements without inline editable properties
-		if ($element.find('> .t3-inline-editable').length === 0) {
-			var overlay = $('<div />', {
-				'class': 't3-contentelement-overlay',
-				'css': {
+	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element, entity) {
+		var setOverlaySizeFn = function() {
+				// we use a timeout here to make sure the browser has re-drawn; thus $element
+				// has a possibly updated size
+			window.setTimeout(function() {
+				$element.find('> .t3-contentelement-overlay').css({
 					'width': $element.width(),
 					'height': $element.height()
-				},
+				});
+			}, 10);
+		};
+
+			// Add overlay to content elements without inline editable properties and no sub-elements
+		if ($element.find('> .t3-inline-editable').length === 0 && $element.find('.t3-contentsection, .t3-contentelement').length === 0) {
+			var overlay = $('<div />', {
+				'class': 't3-contentelement-overlay',
 				'click': function(event) {
 					if ($('.t3-primary-editor-action').length > 0) {
 							// We need to use setTimeout here because otherwise the popover is aligned to the bottom of the body
@@ -818,7 +825,13 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			}).insertBefore($element.find('> .t3-contentelement-handle-container'));
 
 			$('<span />', {'class': 't3-contentelement-overlay-icon'}).appendTo(overlay);
+
+			setOverlaySizeFn();
+
+			entity.on('change', function() {
+					// If the entity changed, it might happen that the size changed as well; thus we need to reload the overlay size
+				setOverlaySizeFn();
+			});
 		};
 	}
-
 });

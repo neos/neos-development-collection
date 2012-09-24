@@ -30,7 +30,7 @@ define(
 					_.each(this.options.collection.models, function(entity, iterator) {
 						var id = entity.id.substring(1, entity.id.length - 1);
 						T3.Content.UI.Util.AddContentElementHandleBars($('[about="' + id + '"]').first(), iterator + 1, this, false);
-						T3.Content.UI.Util.AddNotInlineEditableOverlay($('[about="' + id + '"]').first());
+						T3.Content.UI.Util.AddNotInlineEditableOverlay($('[about="' + id + '"]').first(), entity);
 					}, this);
 				}
 			});
