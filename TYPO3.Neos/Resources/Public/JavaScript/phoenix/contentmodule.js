@@ -178,6 +178,11 @@ function($, vie, Ember, CreateJS) {
 								// does not work.
 							vie.load({element: template}).from('rdfa').execute();
 							callBack(template);
+
+								// When adding nested content elements (like the two-column-element),
+								// we need to refresh CreateJS to render the content element handles
+								// for the nested sections.
+							CreateJS.enableEdit();
 						}
 
 						_.each(collectionView.collection.models, function(matchEntity) {
