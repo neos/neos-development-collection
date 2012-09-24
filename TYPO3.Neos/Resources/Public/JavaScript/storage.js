@@ -18,7 +18,9 @@ define(['vie/entity', 'backbone'], function(Entity) {
 						// is now copied into the user's workspace.
 						// That's why we need to update the (possibly changed) workspace
 						// name in the block.
-					model.set('typo3:__workspacename', result.data.workspaceNameOfNode);
+						// Furthermore, we do not want event listeners to be fired, as otherwise, the
+						// contentelement would be redrawn leading to a loss of the current editing cursor position.
+					model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
 					if (options && options.success) {
 						options.success(model, result);
 					}
