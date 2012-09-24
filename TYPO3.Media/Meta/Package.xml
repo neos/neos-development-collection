@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<package xmlns="http://typo3.org/ns/2008/flow3/package">
-    <key>Media</key>
-    <title>Media Package</title>
-    <description>The Media package</description>
-    <version>0.1.0</version>
-    <state>Development</state>
-</package>
