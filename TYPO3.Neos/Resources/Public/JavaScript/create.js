@@ -78,7 +78,10 @@ define(
 								toolbarCssClass: 't3-ui',
 								buttonCssClass: 'btn btn-mini t3-button',
 								plugins: {
-									halloblock: {}
+									halloblock: {},
+									halloblacklist: {
+										tags: ['br']
+									}
 								}
 							}
 						},
