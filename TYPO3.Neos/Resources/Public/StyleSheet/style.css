@@ -7427,6 +7427,37 @@ body.t3-ui-previewmode .aloha-block.aloha-block-highlighted {
   margin-left: 0px;
 }
 
+#t3-phoenix-error-container {
+  width: 600px;
+  padding: 10px;
+  background: #ffffff;
+  border: 5px solid #ff8700;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 3px #888888;
+  -moz-box-shadow: 0 1px 3px #888888;
+  box-shadow: 0 1px 3px #888888;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  margin-left: -305px;
+  z-index: 10016;
+}
+#t3-phoenix-error-container h2 {
+  font-size: 25px;
+  color: #ff8700;
+  font-weight: bold;
+}
+#t3-phoenix-error-container .t3-phoenix-error-info {
+  font-weight: bold;
+}
+#t3-phoenix-error-container p {
+  margin: 15px 0;
+}
+
 .t3-launcher-open #t3-ui-top {
   height: 260px;
 }

@@ -755,6 +755,34 @@ body {
 }
 // New Content Flyout - end
 
+// Error output
+#t3-phoenix-error-container {
+	width: 600px;
+	padding: 10px;
+	background: #ffffff;
+	border: 5px solid $light-orange;
+	@include border-radius(3px);
+	@include single-box-shadow($light-grey3, 0, 1px, 3px);
+	position: absolute;
+	top: 10px;
+	left: 50%;
+	margin-left: -305px;
+	z-index: 10016;
+
+	h2 {
+		font-size: 25px;
+		color: $light-orange;
+		font-weight: bold;
+	}
+
+	.t3-phoenix-error-info {
+		font-weight: bold;
+	}
+
+	p {
+		margin: 15px 0;
+	}
+}
 
 @import "style-launchbar";
 @import "content-properties";
