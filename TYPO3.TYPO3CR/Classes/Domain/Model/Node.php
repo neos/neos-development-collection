@@ -495,7 +495,7 @@ class Node implements NodeInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
 	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->getParent()->createNode($nodeName);
+		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
 		$copiedNode->similarize($this);
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->copyInto($copiedNode, $childNode->getName());
@@ -514,7 +514,7 @@ class Node implements NodeInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
 	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->getParent()->createNode($nodeName);
+		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
 		$copiedNode->similarize($this);
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->copyInto($copiedNode, $childNode->getName());
@@ -531,7 +531,7 @@ class Node implements NodeInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
 	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->createNode($nodeName);
+		$copiedNode = $referenceNode->createSingleNode($nodeName);
 		$copiedNode->similarize($this);
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->copyInto($copiedNode, $childNode->getName());
@@ -709,7 +709,8 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Creates, adds and returns a child node of this node.
+	 * Creates, adds and returns a child node of this node. Also sets default
+	 * properties and creates default subnodes.
 	 *
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
@@ -719,6 +720,31 @@ class Node implements NodeInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 */
 	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
+		$newNode = $this->createSingleNode($name, $contentType, $identifier);
+		if ($contentType !== NULL) {
+			foreach ($contentType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
+				$newNode->setProperty($propertyName, $propertyValue);
+			}
+
+			foreach ($contentType->getSubstructure() as $subnodeName => $subnodeType) {
+				$newNode->createNode($subnodeName, $subnodeType);
+			}
+		}
+		return $newNode;
+	}
+
+	/**
+	 * Creates, adds and returns a child node of this node, without setting default
+	 * properties or creating subnodes. Only used internally.
+	 *
+	 * @param string $name Name of the new node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
+	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @throws \InvalidArgumentException if the node name is not accepted.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+	 */
+	public function createSingleNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
 			throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1292428697);
 		}
@@ -734,9 +760,6 @@ class Node implements NodeInterface {
 
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
-			foreach ($contentType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-				$newNode->setProperty($propertyName, $propertyValue);
-			}
 		}
 
 		return $this->createProxyForContextIfNeeded($newNode, TRUE);

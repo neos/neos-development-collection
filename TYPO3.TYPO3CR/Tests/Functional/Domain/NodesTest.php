@@ -119,6 +119,23 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function createdNodesHaveSubNodesCreatedIfDefinedInContentType() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$contentTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
+		$testContentType = $contentTypeManager->getContentType('TYPO3.TYPO3CR:TestingContentTypeWithSubnodes');
+		$fooNode = $rootNode->createNode('foo', $testContentType);
+		$firstSubnode = $fooNode->getNode('subnode1');
+		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $firstSubnode);
+		$this->assertSame('default value 1', $firstSubnode->getProperty('test1'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function removedNodesCannotBeRetrievedAnymore() {
 		$context = new ContentContext('live');
 		$this->nodeRepository->setContext($context);

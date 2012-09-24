@@ -48,6 +48,12 @@ class ContentType {
 	protected $objectManager;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
 	 * Constructs this content type
 	 *
 	 * @param string $name Name of the content type
@@ -171,6 +177,26 @@ class ContentType {
 		}
 
 		return $defaultValues;
+	}
+
+	/**
+	 * Return an array with sub-structure nodes to be created.
+	 *
+	 * @return array the key of this array is the name of the subnode, and the value its ContentType.
+	 */
+	public function getSubstructure() {
+		if (!isset($this->configuration['structure'])) {
+			return array();
+		}
+
+		$substructure = array();
+		foreach ($this->configuration['structure'] as $substructureName => $substructureConfiguration) {
+			if (isset($substructureConfiguration['type'])) {
+				$substructure[$substructureName] = $this->contentTypeManager->getContentType($substructureConfiguration['type']);
+			}
+		}
+
+		return $substructure;
 	}
 
 	/**

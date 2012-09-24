@@ -8,4 +8,9 @@ TYPO3:
         properties:
           test1:
             default: 'default value 1'
+      'TYPO3.TYPO3CR:TestingContentTypeWithSubnodes':
+        label: 'Testing Content Type With Subnodes'
+        structure:
+          subnode1:
+            type: 'TYPO3.TYPO3CR:TestingContentType'
 

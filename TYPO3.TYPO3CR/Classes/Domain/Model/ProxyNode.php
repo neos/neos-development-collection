@@ -461,7 +461,8 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
-	 * Creates, adds and returns a child node of this node.
+	 * Creates, adds and returns a child node of this node. Also sets default
+	 * properties and creates default subnodes.
 	 *
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
@@ -470,6 +471,21 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType, $identifier) : $this->originalNode->createNode($name, $contentType, $identifier));
+	}
+
+	/**
+	 * Creates, adds and returns a child node of this node, without setting default
+	 * properties or creating subnodes. Only used internally.
+	 *
+	 * @param string $name Name of the new node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
+	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @throws \InvalidArgumentException if the node name is not accepted.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+	 */
+	public function createSingleNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
+		return (isset($this->newNode) ? $this->newNode->createSingleNode($name, $contentType, $identifier) : $this->originalNode->createSingleNode($name, $contentType, $identifier));
 	}
 
 	/**
