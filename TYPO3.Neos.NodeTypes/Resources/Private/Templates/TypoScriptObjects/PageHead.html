@@ -25,9 +25,14 @@
 
 		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
 
-		<script data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js', package: 'TYPO3.TYPO3')}" src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.TYPO3')}"></script>
-		<!-- Below is the built file -->
-		<!--<script src="{f:uri.resource(path:'JavaScript/contentmodule-main-built.js')}"></script>-->
+		<f:if condition="{typo3:backend.shouldLoadMinifiedJavascript()}">
+			<f:then>
+				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.TYPO3')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main-built.js', package: 'TYPO3.TYPO3')}"></script>
+			</f:then>
+			<f:else>
+				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.TYPO3')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js', package: 'TYPO3.TYPO3')}"></script>
+			</f:else>
+		</f:if>
 
 		<!-- TODO Combine all CSS files with @import in one CSS file for requirejs optimizer -->
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css', package: 'TYPO3.TYPO3')}" />
