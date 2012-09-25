@@ -24,11 +24,13 @@
 		}, options || {});
 
 		// HTML popover
-		settings.popover$ = $('<div class="popover" id="' + settings.id + '">'
+		// TYPO3 SPECIFIC FIX START, original line didn't check for empty settings.id
+		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? id = "' + settings.id + '" : '') + '>'
 			+ '<div class="triangle"></div>'
 			+ '<div class="header"></div>'
 			+ '<div class="content"></div>'
 			+ '</div>').appendTo('body');
+		// TYPO3 SPECIFIC FIX STOP
 		$('.header', settings.popover$).append($(settings.header).detach());
 
 		// TYPO3 SPECIFIC FIX START
