@@ -63,6 +63,10 @@ TYPO3:
     # this setting will be replaced by a better API.
     enableAloha: FALSE
 
+    # should minified JavaScript be loaded? For developing the TYPO3 Phoenix
+    # Content Module, this should be set to FALSE.
+    loadMinifiedJavascript: TRUE
+
     userInterface:
       string:
         class: T3.Content.UI.Editor.TextField
