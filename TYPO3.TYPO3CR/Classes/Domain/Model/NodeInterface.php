@@ -377,6 +377,14 @@ interface NodeInterface {
 	public function remove();
 
 	/**
+	 * Enables using the remove method when only setters are available.
+	 *
+	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
+	 * @return void
+	 */
+	public function setRemoved($removed);
+
+	/**
 	 * If this node is a removed node.
 	 *
 	 * @return boolean

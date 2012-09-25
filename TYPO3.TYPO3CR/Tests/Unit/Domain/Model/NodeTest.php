@@ -518,6 +518,15 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array(), '', FALSE);
+		$node->expects($this->once())->method('remove');
+		$node->setRemoved(TRUE);
+	}
+
+	/**
+	 * @test
 	 * @dataProvider abnormalPaths
 	 */
 	public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath) {

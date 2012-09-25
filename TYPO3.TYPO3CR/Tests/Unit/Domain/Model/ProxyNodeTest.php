@@ -13,7 +13,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /**
  * Testcase for the "ProxyNode" domain model
- *
  */
 class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -287,8 +286,10 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getLabelCallsGetLabelOnTheNewNodeOrTheOriginalNode() {
-		$this->assertThatOriginalOrNewNodeIsCalled('getLabel');
+	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('remove'), array(), '', FALSE);
+		$node->expects($this->once())->method('remove');
+		$node->setRemoved(TRUE);
 	}
 
 	/**
