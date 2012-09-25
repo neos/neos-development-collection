@@ -3,10 +3,15 @@ window._requirejsLoadingTrace = [];
 window.renderLoadingTrace = function() {
 	return JSON.stringify(window._requirejsLoadingTrace);
 };
+/**
+ * WARNING: if changing any of the require() statements below, make sure to also
+ * update them inside build.js!
+ */
 require(
 	{
 		baseUrl: window.phoenixJavascriptBasePath,
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
+
 		paths: {
 			'Library': '../Library/',
 			'canvas.indicator': '../Library/canvas-indicator/canvas.indicator',

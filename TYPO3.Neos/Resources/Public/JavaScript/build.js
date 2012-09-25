@@ -1,4 +1,9 @@
-// Build with "r.js -o build.js"
+/**
+ * WARNING: if changing any of the statements below, make sure to also
+ * update them inside contentmodule-main.js!
+ *
+ * To start a build, run "r.js -o build.js" from within the current directory.
+ */
 ({
 	baseUrl: ".",
 	paths: {
@@ -18,8 +23,8 @@
 		'codemirror.htmlmixed': '../Library/codemirror2/mode/htmlmixed/htmlmixed',
 		'jquery.cookie': '../Library/jquery-cookie/jquery.cookie',
 		'jquery.dynatree': '../Library/jquery-dynatree/js/jquery.dynatree',
-		'hallo': '../Library/hallo/hallo-min',
-		'createjs': '../Library/createjs/create-min',
+		'hallo': '../Library/hallo/hallo',
+		'createjs': '../Library/createjs/create',
 		'backbone': '../Library/vie/lib/backboneJS/backbone.min',
 		'underscorejs': '../Library/vie/lib/underscoreJS/underscore.min'
 	},
@@ -34,15 +39,13 @@
 		'jquery.cookie': ['jquery'],
 		'jquery.dynatree': ['jquery-ui'],
 		'jquery.plupload.html5': ['jquery.plupload'],
-		'create/collectionsWidgets/jquery.typo3.collectionWidget': ['createjs'],
 		'underscorejs': {
 			'exports': '_'
 		},
-		'createjs': ['jquery-ui'],
 		'hallo': ['jquery-ui'],
 		'backbone': ['underscorejs'],
-		'vie': ['underscorejs', 'backbone'],
 		'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery'],
+		'halloplugins/linkplugin': ['hallo']
 	},
 	locale: 'en',
 
