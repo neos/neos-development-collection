@@ -23,10 +23,19 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $image;
 
 	/**
+	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
+	 */
+	protected $mockImageRepository;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
 		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer
+			->expects($this->any())
+			->method('getHash')
+			->will($this->returnValue('dummyResourcePointerHash'));
 
 		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource');
 		$mockResource
@@ -35,6 +44,8 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->will($this->returnValue($mockResourcePointer));
 
 		$this->image = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Image', array('initialize'), array('resource' => $mockResource));
+		$this->mockImageRepository = $this->getMock('TYPO3\Media\Domain\Repository\ImageRepository');
+		$this->image->_set('imageRepository', $this->mockImageRepository);
 	}
 
 	/**
@@ -112,5 +123,111 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(1, $this->image->getAspectRatio(FALSE));
 		$this->assertEquals(1, $this->image->getAspectRatio(TRUE));
 	}
+
+	/**
+	 * @test
+	 */
+	public function imageVariantsGetOriginalImageActuallyReturnsOriginalImage() {
+		$variant = $this->image->createImageVariant(array('dummy'));
+		$this->assertSame($variant->getOriginalImage(), $this->image);
+	}
+
+	/**
+	 * @test
+	 */
+	public function creatingImageVariantWorks() {
+		$this->image->createImageVariant(array('dummy'));
+		$this->image->createImageVariant(array('foo'));
+		$this->assertCount(2, $this->image->getImageVariants());
+	}
+
+	/**
+	 * @test
+	 */
+	public function creatingImageVariantWithSameProcessingInstructionsReplaceEachOther() {
+		$this->image->createImageVariant(array('dummy'));
+		$this->image->createImageVariant(array('foo'));
+		$this->image->createImageVariant(array('dummy'));
+		$this->image->createImageVariant(array('foo'));
+		$this->assertCount(2, $this->image->getImageVariants());
+	}
+
+	/**
+	 * @test
+	 */
+	public function createImageVariantPersistsTheUpdatedImage() {
+		$this->mockImageRepository->expects($this->once())->method('update')->with($this->image);
+		$this->image->createImageVariant(array('dummy'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function removingImageVariantsWorks() {
+		$firstVariant = $this->image->createImageVariant(array('dummy'));
+		$secondVariant = $this->image->createImageVariant(array('foo'));
+		$thirdVariant = $this->image->createImageVariant(array('bar'));
+		$this->assertCount(3, $this->image->getImageVariants());
+
+		$this->image->removeImageVariant($thirdVariant);
+		$this->image->removeImageVariant($secondVariant);
+		$remainingVariants = $this->image->getImageVariants();
+		$this->assertCount(1, $remainingVariants);
+
+		$remainingVariant = reset($remainingVariants);
+		$this->assertSame($remainingVariant, $firstVariant);
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeImageVariantPersistsTheUpdatedImage() {
+		$variant = $this->image->createImageVariant(array('dummy'));
+		$this->mockImageRepository->expects($this->once())->method('update')->with($this->image);
+		$this->image->removeImageVariant($variant);
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function createImageVariantsByAliasWorks() {
+		$variant = $this->image->createImageVariant(array('dummy'), 'someAliasName');
+		$this->assertSame('someAliasName', $variant->getAlias());
+		$this->assertCount(1, $this->image->getImageVariants());
+	}
+
+	/**
+	 * @test
+	 */
+	public function gettingImageVariantsByAliasWorks() {
+		$firstVariant = $this->image->createImageVariant(array('dummy'), 'firstAliasName');
+		$secondVariant = $this->image->createImageVariant(array('foobar'), 'secondAliasName');
+		$this->assertCount(2, $this->image->getImageVariants());
+		$this->assertSame($firstVariant, $this->image->getImageVariantByAlias('firstAliasName'));
+		$this->assertSame($secondVariant, $this->image->getImageVariantByAlias('secondAliasName'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function gettingNotExistingAliasReturnsNull() {
+		$this->assertNull($this->image->getImageVariantByAlias('anAliasThatIsNotPresent'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function removingImageVariantByAliasWorks() {
+		$this->image->createImageVariant(array('dummy'), 'firstAliasName');
+		$secondVariant = $this->image->createImageVariant(array('foobar'), 'secondAliasName');
+		$this->assertCount(2, $this->image->getImageVariants());
+
+		$this->image->removeImageVariantByAlias('firstAliasName');
+		$remainingVariants = $this->image->getImageVariants();
+		$this->assertCount(1, $remainingVariants);
+		$this->assertSame($secondVariant, reset($remainingVariants));
+	}
+
 }
 ?>

@@ -60,12 +60,21 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	protected $type;
 
 	/**
+	 * alias for this variant which makes its identification easier for reuse.
+	 *
+	 * @var string
+	 */
+	protected $alias;
+
+	/**
 	 * @param \TYPO3\Media\Domain\Model\Image $originalImage
 	 * @param array $processingInstructions
+	 * @param string $alias An alias for this variant which makes its identification easier for reuse.
 	 */
-	public function __construct(\TYPO3\Media\Domain\Model\Image $originalImage, array $processingInstructions) {
+	public function __construct(\TYPO3\Media\Domain\Model\Image $originalImage, array $processingInstructions, $alias = NULL) {
 		$this->originalImage = $originalImage;
 		$this->processingInstructions = $processingInstructions;
+		$this->alias = $alias;
 	}
 
 	/**
@@ -226,11 +235,19 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getAlias() {
+		return $this->alias;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function __sleep() {
-		return array('originalImage', 'processingInstructions');
+		return array('originalImage', 'processingInstructions', 'alias');
 	}
+
 }
 
 ?>

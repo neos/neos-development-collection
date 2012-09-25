@@ -255,7 +255,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 */
-	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_INSET) {
+	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
 		$processingInstructions = array(
 			array(
 				'command' => 'thumbnail',
@@ -274,7 +274,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Set all variants of this image.
 	 *
-	 * @param array $imageVariants
+	 * @param array<\TYPO3\Media\Domain\Model\ImageVariant> $imageVariants
 	 * @return void
 	 */
 	public function setImageVariants(array $imageVariants) {
@@ -284,7 +284,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Return all variants of this image.
 	 *
-	 * @return array
+	 * @return array<\TYPO3\Media\Domain\Model\ImageVariant>
 	 */
 	public function getImageVariants() {
 		return $this->imageVariants;
@@ -293,15 +293,18 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Create a variant of this image using the given processing instructions.
 	 *
-	 * The variant is attached to the image for later (re-)use.
+	 * The variant is attached to the image for later (re-)use. If the optional alias parameter is specified, the image
+	 * variant can later be retrieved via getImageVariantByAlias()
+	 * An alias could, for example, be "thumbnail", "small", "micro", "face-emphasized" etc.
 	 *
 	 * @param array $processingInstructions
+	 * @param string $alias An optional alias name to allow easier retrieving of a previously created image variant
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 */
-	public function createImageVariant(array $processingInstructions) {
-		$imageVariant = new ImageVariant($this, $processingInstructions);
+	public function createImageVariant(array $processingInstructions, $alias = NULL) {
+		$imageVariant = new ImageVariant($this, $processingInstructions, $alias);
 		// FIXME we currently need a unique hash because $this->imageVariants has to be an array in order to be serialized by Doctrine
-		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . serialize($processingInstructions));
+		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($alias ?: serialize($processingInstructions)));
 		$this->imageVariants[$uniqueHash] = $imageVariant;
 		$this->imageRepository->update($this);
 		return $imageVariant;
@@ -313,11 +316,40 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * @param \TYPO3\Media\Domain\Model\ImageVariant $imageVariant
 	 * @return void
 	 */
-	public function removeImageVariant(\TYPO3\Media\Domain\Model\ImageVariant $imageVariant) {
+	public function removeImageVariant(ImageVariant $imageVariant) {
 		// FIXME we currently need a unique hash because $this->imageVariants has to be an array in order to be serialized by Doctrine
-		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . serialize($imageVariant->getProcessingInstructions()));
+		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($imageVariant->getAlias() ?: serialize($imageVariant->getProcessingInstructions())));
 		if (isset($this->imageVariants[$uniqueHash])) {
 			unset($this->imageVariants[$uniqueHash]);
+			$this->imageRepository->update($this);
+		}
+	}
+
+	/**
+	 * Gets an ImageVariant by its alias
+	 *
+	 * @param string $alias
+	 * @return \TYPO3\Media\Domain\Model\ImageVariant The ImageVariant if such found for the given alias, or NULL if not
+	 */
+	public function getImageVariantByAlias($alias) {
+		foreach ($this->imageVariants as $imageVariant) {
+			if ($imageVariant->getAlias() === $alias) {
+				return $imageVariant;
+			}
+		}
+		return NULL;
+	}
+
+	/**
+	 * Removes an ImageVariant by its alias
+	 *
+	 * @param string $alias
+	 * @return void
+	 */
+	public function removeImageVariantByAlias($alias) {
+		$imageVariant = $this->getImageVariantByAlias($alias);
+		if ($imageVariant instanceof ImageVariant) {
+			$this->removeImageVariant($imageVariant);
 		}
 	}
 

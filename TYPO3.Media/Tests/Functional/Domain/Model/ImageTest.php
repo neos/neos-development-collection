@@ -20,22 +20,6 @@ use TYPO3\Media\Domain\Model\Image;
 class ImageTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 
 	/**
-	 * @var string
-	 */
-	protected $temporaryDirectory;
-
-	/**
-	 * @var string
-	 * @see prepareResourceManager()
-	 */
-	protected $oldPersistentResourcesStorageBaseUri;
-
-	/**
-	 * @var \TYPO3\Flow\Resource\ResourceManager
-	 */
-	protected $resourceManager;
-
-	/**
 	 * @var \TYPO3\Media\Domain\Model\Image
 	 */
 	protected $landscapeImage;
@@ -117,30 +101,6 @@ class ImageTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 		file_put_contents('resource://' . $hash, $dummyImageContent);
 		$mockResource = $this->createMockResourceAndPointerFromHash($hash);
 		new \TYPO3\Media\Domain\Model\Image($mockResource);
-	}
-
-	/**
-	 * Builds a temporary directory to work on.
-	 * @return void
-	 */
-	protected function prepareTemporaryDirectory() {
-		$this->temporaryDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), str_replace('\\', '_', __CLASS__)));
-		if (!file_exists($this->temporaryDirectory)) {
-			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectory);
-		}
-	}
-
-	/**
-	 * Initializes the resource manager and modifies the persistent resource storage location.
-	 * @return void
-	 */
-	protected function prepareResourceManager() {
-		$this->resourceManager = $this->objectManager->get('TYPO3\Flow\Resource\ResourceManager');
-
-		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
-		$reflectedProperty->setAccessible(TRUE);
-		$this->oldPersistentResourcesStorageBaseUri = $reflectedProperty->getValue($this->resourceManager);
-		$reflectedProperty->setValue($this->resourceManager, $this->temporaryDirectory . '/');
 	}
 
 }

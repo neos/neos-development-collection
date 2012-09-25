@@ -15,28 +15,17 @@ namespace TYPO3\Media\Tests\Functional\Domain\Repository;
  * Testcase for an image repository
  *
  */
-class ImageRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class ImageRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 
-		/**
-		 * @var string
-		 */
-		protected $temporaryDirectory;
+	/**
+	 * @var boolean
+	 */
+	static protected $testablePersistenceEnabled = TRUE;
 
-		/**
-		 * @var string
-		 * @see prepareResourceManager()
-		 */
-		protected $oldPersistentResourcesStorageBaseUri;
-
-		/**
-		 * @var \TYPO3\Flow\Resource\ResourceManager
-		 */
-		protected $resourceManager;
-
-		/**
-		 * @var boolean
-		 */
-		static protected $testablePersistenceEnabled = TRUE;
+	/**
+	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
+	 */
+	protected $imageRepository;
 
 	/**
 	 * @return void
@@ -48,6 +37,8 @@ class ImageRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		}
 		$this->prepareTemporaryDirectory();
 		$this->prepareResourceManager();
+
+		$this->imageRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\ImageRepository');
 	}
 
 	/**
@@ -66,43 +57,45 @@ class ImageRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function imagesCanBePersisted() {
-		$imagePathAndFilename = \TYPO3\Flow\Utility\Files::getUnixStylePath(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg');
-		$hash = sha1_file($imagePathAndFilename);
-		copy($imagePathAndFilename, 'resource://' . $hash);
-		$resource = new \TYPO3\Flow\Resource\Resource();
-		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($hash));
+		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg');
 		$image = new \TYPO3\Media\Domain\Model\Image($resource);
-		$image->setTitle('');
 
-		$imageRepository = new \TYPO3\Media\Domain\Repository\ImageRepository();
-		$imageRepository->add($image);
+		$this->imageRepository->add($image);
 		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
 
-		$this->assertTrue($imageRepository->findAll()->count() === 1);
+		$this->assertCount(1, $this->imageRepository->findAll());
+		$this->assertInstanceOf('TYPO3\Media\Domain\Model\Image', $this->imageRepository->findAll()->getFirst());
 	}
 
 	/**
-	 * Builds a temporary directory to work on.
-	 * @return void
+	 * @test
 	 */
-	protected function prepareTemporaryDirectory() {
-		$this->temporaryDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), str_replace('\\', '_', __CLASS__)));
-		if (!file_exists($this->temporaryDirectory)) {
-			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectory);
-		}
-	}
+	public function imagesAndTheirVariantsArePersistedCorrectly() {
+		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg');
+		$image = new \TYPO3\Media\Domain\Model\Image($resource);
+		$this->imageRepository->add($image);
 
-	/**
-	 * Initializes the resource manager and modifies the persistent resource storage location.
-	 * @return void
-	 */
-	protected function prepareResourceManager() {
-		$this->resourceManager = $this->objectManager->get('TYPO3\Flow\Resource\ResourceManager');
+		$alias = 'testAlias';
+		$image->createImageVariant($processingInstructions = array(
+			array(
+				'command' => 'thumbnail',
+				'options' => array(
+					'size' => array(
+						'width' => 50,
+						'height' => 50
+					)
+				),
+			),
+		), $alias);
 
-		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
-		$reflectedProperty->setAccessible(TRUE);
-		$this->oldPersistentResourcesStorageBaseUri = $reflectedProperty->getValue($this->resourceManager);
-		$reflectedProperty->setValue($this->resourceManager, $this->temporaryDirectory . '/');
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+
+		$image = $this->imageRepository->findAll()->getFirst();
+		$this->assertInstanceOf('TYPO3\Media\Domain\Model\Image', $image);
+		$this->assertCount(1, $image->getImageVariants());
+		$this->assertInstanceOf('TYPO3\Media\Domain\Model\ImageVariant', $image->getImageVariantByAlias($alias));
 	}
 
 }
