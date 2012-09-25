@@ -3,7 +3,7 @@
  */
 
 define(
-['jquery', 'create', 'vie/entity', 'phoenix/common'],
+['jquery', 'create', 'vie/entity', 'phoenix/common', 'phoenix/content/model'],
 function($, CreateJS, Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/controller');
 

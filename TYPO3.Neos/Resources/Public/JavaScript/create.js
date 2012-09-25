@@ -13,7 +13,8 @@ define(
 		'Library/createjs/deps/rangy-core-1.2.3',
 		'createjs',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
-		'create/typo3MidgardEditable'
+		'create/typo3MidgardEditable',
+		'phoenix/content/model'
 	],
 	function($, vieInstance, Ember) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');
