@@ -297,7 +297,7 @@ function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate)
 			that._handle = $handle;
 
 			var handlerEvents = $handle.data('events');
-			if (!handlerEvents['showPopover']) {
+			if (!handlerEvents || !handlerEvents['showPopover']) {
 					// Set popover content
 				that._options.header = (options.title) ? '<div>' + options.title + '</div>' : null;
 				that._options.content = $('<div />');
@@ -311,10 +311,10 @@ function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate)
 					cancelLabel: options.cancelLabel ? options.cancelLabel : 'Cancel',
 					cancelClass: options.cancelClass ? options.cancelClass : '',
 					confirm: function() {
+						$handle.trigger('hidePopover');
 						if (options.onOk) {
 							options.onOk.call(that);
 						}
-						$handle.trigger('hidePopover');
 					},
 					cancel: function() {
 						if (options.onCancel) {

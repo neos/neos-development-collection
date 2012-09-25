@@ -398,24 +398,18 @@ function($, CreateJS, Entity) {
 			);
 		},
 
-
-		deleteBlock: function(nodePath, $handle) {
+		remove: function(model, $element, $handle) {
 			T3.Common.Dialog.openConfirmPopover({
-				title: 'Are you sure you want to remove this content element?',
-				content: 'If you remove this element you can restore it using undo',
+				title: 'Delete this element?',
 				confirmLabel: 'Delete',
 				confirmClass: 'btn-danger',
 				positioning: 'absolute',
 				onOk: function() {
-					var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-					block.set('_removed', true);
-					$handle.addClass('t3-handle-loading');
-					T3.Content.Model.Changes.save(function() {
-						var contentElement = block.getContentElement();
-						contentElement.fadeOut(function() {
-							contentElement.html('').addClass('t3-contentelement-removed');
-						});
+					$element.fadeOut(function() {
+						$element.addClass('t3-contentelement-removed');
 					});
+					model.set('typo3:_removed', true);
+					model.save(null);
 				}
 			}, $handle);
 		},

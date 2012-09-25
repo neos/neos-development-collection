@@ -65,7 +65,7 @@ define(
 			},
 
 			remove: function() {
-
+				T3.Content.Controller.NodeActions.remove(vieInstance.entities.get(this.get('_nodePath')), this.get('_element'), this.$('.action-remove').first());
 			},
 
 			cut: function() {
