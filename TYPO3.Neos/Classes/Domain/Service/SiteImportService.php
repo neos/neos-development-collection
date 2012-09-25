@@ -134,12 +134,12 @@ class SiteImportService {
 			$rootNode = $contentContext->getWorkspace()->getRootNode();
 
 			if ($rootNode->getNode('/sites') === NULL) {
-				$rootNode->createNode('sites');
+				$rootNode->createSingleNode('sites');
 			}
 
 			$siteNode = $rootNode->getNode('/sites/' . $site->getNodeName());
 			if ($siteNode === NULL) {
-				$siteNode = $rootNode->getNode('/sites')->createNode($site->getNodeName());
+				$siteNode = $rootNode->getNode('/sites')->createSingleNode($site->getNodeName());
 			}
 			$siteNode->setContentObject($site);
 
@@ -165,7 +165,7 @@ class SiteImportService {
 			}
 			if ($childNode === NULL) {
 				$identifier = (string)$childNodeXml['identifier'] === '' ? NULL : (string)$childNodeXml['identifier'];
-				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName'], $contentType, $identifier);
+				$childNode = $parentNode->createSingleNode((string)$childNodeXml['nodeName'], $contentType, $identifier);
 			} else {
 				$childNode->setContentType($contentType);
 			}
