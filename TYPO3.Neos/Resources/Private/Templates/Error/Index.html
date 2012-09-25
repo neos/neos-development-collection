@@ -11,21 +11,20 @@
 		<script src="{f:uri.resource(path: 'JavaScript/jquery-1.7.1.min.js', package: 'TYPO3.Setup')}"></script>
 	</head>
 	<body>
-		<div class="container">
+		<div class="container t3-ui">
 			<div class="modal typo3-phoenix-login-box">
 				<div class="modal-header">
-					<div class="row-fluid">
-						<div class="span4">
-							<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png', package: 'TYPO3.TYPO3')}" width="115" height="50" alt="TYPO3 Phoenix" />
-						</div>
-						<div class="span7 pull-right">
-							<h3>{errorTitle}</h3>
-						</div>
-					</div>
+					<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png', package: 'TYPO3.TYPO3')}" width="115" height="50" alt="TYPO3 Phoenix" />
 				</div>
 				<div class="modal-body">
-					<div class="alert alert-error">
-						{errorDescription -> f:format.raw()}
+					<div class="row-fluid">
+						<div class="span3 typo3-message-icon">
+							<i class="icon-exclamation-sign"></i>
+						</div>
+						<div class="span9">
+							<h1>{errorTitle}</h1>
+							<p>{errorDescription -> f:format.raw()}</p>
+						</div>
 					</div>
 				</div>
 			</div>

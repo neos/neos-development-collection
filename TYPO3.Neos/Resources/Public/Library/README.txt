@@ -111,8 +111,6 @@ VIE - https://github.com/bergie/VIE
 
 Hallo editor - https://github.com/bergie/hallo
 * Update using Scripts/update-hallo-to-master.sh
-* Hallo depends on fontawesome which we don't include because of clashes with twitter bootstrap
-  icons so we have to include some icon-classes ourselves
 
 To execute the update scripts method you'll need:
 * NodeJS v0.6.9 or lower
