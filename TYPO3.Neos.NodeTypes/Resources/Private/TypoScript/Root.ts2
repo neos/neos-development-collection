@@ -36,9 +36,9 @@ prototype(TYPO3.Phoenix.ContentTypes:Headline) {
 }
 
 # TextWithHeadline TS Object
-prototype(TYPO3.Phoenix.ContentTypes:Text) < prototype(TYPO3.Phoenix.ContentTypes:Headline)
+prototype(TYPO3.Phoenix.ContentTypes:Text) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.Phoenix.ContentTypes:Text) {
-	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
+	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Text.html'
 	text = ${q(node).property('text')}
 }
 
@@ -51,7 +51,7 @@ prototype(TYPO3.Phoenix.ContentTypes:TextWithImage) {
 }
 
 # Image TS Object
-prototype(TYPO3.Phoenix.ContentTypes:Image) < prototype(TYPO3.Phoenix.ContentTypes:Headline)
+prototype(TYPO3.Phoenix.ContentTypes:Image) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.Phoenix.ContentTypes:Image) {
 	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Image.html'
 	image = ${q(node).property('image')}

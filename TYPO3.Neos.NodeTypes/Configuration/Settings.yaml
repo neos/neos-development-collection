@@ -93,7 +93,7 @@ TYPO3:
         inlineEditableProperties: ['title']
 
       'TYPO3.Phoenix.ContentTypes:Text':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Headline']
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
         group: 'General'
         icon: 'Images/Icons/White/doc_lines_stright_icon-16.png'
         darkIcon: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
@@ -106,7 +106,7 @@ TYPO3:
 
       'TYPO3.Phoenix.ContentTypes:Image':
         label: 'Image'
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Headline']
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
         group: 'General'
         icon: 'Images/Icons/White/picture_icon-16.png'
         darkIcon: 'Images/Icons/Black/picture_icon-16.png'
