@@ -2,5 +2,5 @@
 # This example modifies the rendering pf all texts inside the left column of a three column element, setting the title to a static value
 #
 
-prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn).left.prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline).title = 'Static Headline'
-prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn).left.prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline).title << 1.wrap(prefix: '<header>', suffix: '</header>')
+prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn).left.prototype(TYPO3.Phoenix.ContentTypes:Headline).title = 'Static Headline'
+prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn).left.prototype(TYPO3.Phoenix.ContentTypes:Headline).title << 1.wrap(prefix: '<header>', suffix: '</header>')

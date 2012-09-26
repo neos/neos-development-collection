@@ -1,5 +1,5 @@
 #
 # This example modifies the rendering inside the sidebar section, wrapping the title of the text
 #
-page1.body.sections.sidebar.prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline).title = 'Static Headline'
-page1.body.sections.sidebar.prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline).title << 1.wrap(prefix: '<div class="processor-wrap">BEFORE', suffix: 'AFTER</div>')
+page1.body.sections.sidebar.prototype(TYPO3.Phoenix.ContentTypes:Headline).title = 'Static Headline'
+page1.body.sections.sidebar.prototype(TYPO3.Phoenix.ContentTypes:Headline).title << 1.wrap(prefix: '<div class="processor-wrap">BEFORE', suffix: 'AFTER</div>')

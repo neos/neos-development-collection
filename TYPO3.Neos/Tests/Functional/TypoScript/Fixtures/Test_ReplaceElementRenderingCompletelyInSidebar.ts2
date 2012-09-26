@@ -2,9 +2,10 @@
 # completely replace the rendering for TextWithHeadline inside the right column
 #
 
-page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).matchers.20 {
-	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:TextWithHeadline]')}
-	type = 'TYPO3.Phoenix.ContentTypes:TextWithSmallHeadline'
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).smallHeadline {
+	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:Headline]')}
+	type = 'TYPO3.Phoenix.ContentTypes:SmallHeadline'
+	@position = 'start'
 }
-prototype(TYPO3.Phoenix.ContentTypes:TextWithSmallHeadline) < prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline)
-prototype(TYPO3.Phoenix.ContentTypes:TextWithSmallHeadline).templatePath = 'FIXTURE_DIRECTORY/TextWithSmallHeadlineTemplate.html'
+prototype(TYPO3.Phoenix.ContentTypes:SmallHeadline) < prototype(TYPO3.Phoenix.ContentTypes:Headline)
+prototype(TYPO3.Phoenix.ContentTypes:SmallHeadline).templatePath = 'FIXTURE_DIRECTORY/SmallHeadlineTemplate.html'

@@ -16,9 +16,10 @@ prototype(TYPO3.Phoenix.ContentTypes:ThreeColumn) {
 	right.collection = ${q(node).children("right").children()}
 }
 
-prototype(TYPO3.TypoScript:Case).matchers.4242 {
+prototype(TYPO3.TypoScript:Case).threeColumn {
 	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:ThreeColumn]')}
 	type = 'TYPO3.Phoenix.ContentTypes:ThreeColumn'
+	@position = 4242
 }
 
 
