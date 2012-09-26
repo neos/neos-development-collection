@@ -1,4 +1,5 @@
-.t3-launcher-open {
+body.t3-launcher-open {
+	margin-top: $launcher-height-open + $menu-height + $topbar-offset + $toolbar-height;
 	#t3-ui-top {
 		height: $launcher-height-open + $menu-height + $topbar-offset;
 	}

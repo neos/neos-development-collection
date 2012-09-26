@@ -7458,16 +7458,19 @@ body.t3-ui-previewmode .aloha-block.aloha-block-highlighted {
   margin: 15px 0;
 }
 
-.t3-launcher-open #t3-ui-top {
+body.t3-launcher-open {
+  margin-top: 296px;
+}
+body.t3-launcher-open #t3-ui-top {
   height: 260px;
 }
-.t3-launcher-open #t3-toolbar {
+body.t3-launcher-open #t3-toolbar {
   margin-top: 260px;
 }
-.t3-launcher-open #t3-inspector {
+body.t3-launcher-open #t3-inspector {
   margin-top: 260px;
 }
-.t3-launcher-open #t3-launcher {
+body.t3-launcher-open #t3-launcher {
   height: 230px;
 }
 
