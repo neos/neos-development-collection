@@ -165,22 +165,25 @@ ul.t3-topbar {
 	list-style-type: none;
 	height: $menu-height - 1px;
 	line-height: $menu-height - 2px;
-	padding-left: 20px;
-	padding-right: 20px;
 	color: darken($light-grey2, 20%);
-
-	a {
-		color: darken($light-grey2, 20%) !important;
-		text-decoration:none !important;
-	}
-
 	margin-top: $topbar-offset + 1px;
 	margin-left: 1px;
 	border-top: 1px solid $dark-grey;
 	@include box-sizing(border-box);
+
+	a {
+		display: block;
+		height: 100%;
+		color: darken($light-grey2, 20%) !important;
+		text-decoration:none !important;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
 	&:first-child {
 		margin-left: 4px;
 	}
+
 	&:hover,
 	&:focus,
 	&:active {

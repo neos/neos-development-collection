@@ -5,7 +5,9 @@
 		<div id="t3-ui-top" class="aloha-block-do-not-deactivate t3-ui">
 			<div id="t3-launcher"></div>
 			<ul class="t3-topbar">
-				<li class="t3-active">Content</li>
+				<li class="t3-active">
+					<f:link.action package="TYPO3.TYPO3" controller="Backend\Backend" action="index">Content</f:link.action>
+				</li>
 				<f:security.ifAccess resource="TYPO3_TYPO3_Backend_ModuleController">
 					<f:for each="{modules}" as="module" key="path">
 						<li>

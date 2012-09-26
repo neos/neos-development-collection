@@ -6765,8 +6765,6 @@ ul.t3-topbar {
   list-style-type: none;
   height: 25px;
   line-height: 24px;
-  padding-left: 20px;
-  padding-right: 20px;
   color: #999999;
   margin-top: 5px;
   margin-left: 1px;
@@ -6776,8 +6774,12 @@ ul.t3-topbar {
   box-sizing: border-box;
 }
 .t3-topbar li a {
+  display: block;
+  height: 100%;
   color: #999999 !important;
   text-decoration: none !important;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .t3-topbar li:first-child {
   margin-left: 4px;
@@ -8931,13 +8933,9 @@ a.btn:hover {
 .t3-ui.t3-module .nav-pills > li:first-child a {
   padding-left: 15px;
 }
-.t3-ui.t3-module .nav-pills li.active a,
-.t3-ui.t3-module .nav-pills li.active a:hover,
-.t3-ui.t3-module .nav-pills li.active a:focus,
-.t3-ui.t3-module .nav-pills li.active a:active {
+.t3-ui.t3-module .nav-pills li.active a {
   background: transparent;
   color: white;
-  cursor: default;
 }
 .t3-ui.t3-module .t3-content.well {
   background-color: #777;

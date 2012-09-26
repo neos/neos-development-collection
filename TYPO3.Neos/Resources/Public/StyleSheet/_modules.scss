@@ -171,15 +171,9 @@
 	}
 	.nav-pills {
 		li {
-			&.active {
-				a,
-				a:hover,
-				a:focus,
-				a:active {
-					background: transparent;
-					color: $lightest;
-					cursor: default;
-				}
+			&.active a {
+				background: transparent;
+				color: $lightest;
 			}
 		}
 	}
