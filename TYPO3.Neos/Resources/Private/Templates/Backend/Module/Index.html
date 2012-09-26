@@ -1,16 +1,14 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>{title}</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
-		<f:base />
-		<script>window.jQuery || document.write("<script src='{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}'>\x3C/script>")</script>
-		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
-	</head>
-	<body class="t3 t3-ui t3-module t3-module-{moduleClass}">
+<f:layout name="Default" />
 
+<f:section name="head">
+	<title>{title}</title>
+	<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
+    <script src="{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}"></script>
+</f:section>
+
+<f:section name="body">
+	<body class="t3 t3-ui t3-module t3-module-{moduleClass}">
 		<f:if condition="{moduleContents}">
 			{moduleContents -> f:format.raw()}
 		</f:if>
@@ -43,5 +41,6 @@
 				</f:for>
 			</ul>
 		</div>
+		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
 	</body>
-</html>
+</f:section>

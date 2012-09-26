@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-{namespace typo3=TYPO3\TYPO3\ViewHelpers}
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<f:base />
-		<title>TYPO3 Phoenix Error</title>
-		<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'Twitter.Bootstrap')}" />
-		<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}" />
-		<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Login.css', package: 'TYPO3.TYPO3')}" />
-		<script src="{f:uri.resource(path: 'JavaScript/jquery-1.7.1.min.js', package: 'TYPO3.Setup')}"></script>
-	</head>
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:layout name="Default" />
+
+<f:section name="head">
+	<title>TYPO3 Phoenix Error</title>
+	<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'Twitter.Bootstrap')}" />
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}" />
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Login.css', package: 'TYPO3.TYPO3')}" />
+	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}"></script>
+</f:section>
+
+<f:section name="body">
 	<body>
 		<div class="container t3-ui">
 			<div class="modal typo3-phoenix-login-box">
@@ -28,8 +28,7 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
 	</body>
-</html>
+</f:section>

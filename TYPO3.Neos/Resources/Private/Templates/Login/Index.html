@@ -1,81 +1,80 @@
-<!DOCTYPE html>
-{namespace typo3=TYPO3\TYPO3\ViewHelpers}
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<f:base/>
-	<title>TYPO3 Phoenix Login</title>
-	<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'Twitter.Bootstrap')}"/>
-	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}"/>
-	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Login.css')}"/>
-	<script src="{f:uri.resource(path: 'JavaScript/jquery-1.7.1.min.js', package: 'TYPO3.Setup')}"></script>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7/jquery-ui.min.js"></script>
-</head>
-<body>
-<div class="container">
-	<div class="modal typo3-phoenix-login-box" id="typo3-phoenix-login-box">
-		<div class="modal-header">
-			<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png')}" width="115" height="50" alt="TYPO3 Phoenix"/>
-		</div>
-		<div class="modal-body t3-ui">
-			<f:form name="login" action="authenticate">
-				<div class="row-fluid">
-					<div class="span5">
-						<f:alias map="{flashMessages: '{f:render(partial: \'Login\\FlashMessages\')}'}">
-							<f:if condition="{flashMessages}">
-								<f:then>
-									<f:format.raw>{flashMessages}</f:format.raw>
-									<script><![CDATA[
-									$(document).ready(function() {
-										$('#typo3-phoenix-login-box').effect('shake', { times: 1 }, 60);
-									});
-									]]></script>
-								</f:then>
-								<f:else>
-									<p>{welcomeMessage}</p>
-								</f:else>
-							</f:if>
-						</f:alias>
-					</div>
-					<div class="span6 pull-right row-fluid">
-						<fieldset>
-							<div class="controls">
-								<f:form.textfield id="username" type="text" placeholder="Username" class="span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
-							</div>
-							<div class="controls">
-								<f:form.textfield id="password" type="password" placeholder="Password" class="span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]"/>
-							</div>
-							<div class="controls">
-								<!-- Forgot password link will be here -->
-								<f:form.button type="submit" class="span5 pull-right btn btn-primary btn-warning">
-									Login
-								</f:form.button>
-							</div>
-						</fieldset>
-					</div>
-				</div>
-			</f:form>
-		</div>
-	</div>
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:layout name="Default" />
 
-</div>
-<div id="typo3-phoenix-login-footer">
-	<p>TYPO3 Phoenix – © 2006-
-		<f:format.date format="Y">{date}</f:format.date>
-		by Robert Lemke, Karsten Dambekalns, Sebastian Kurfürst, Rens Admiraal, Aske
-		Ertmann, Andreas Förthner, Markus Goldbeck, Berit Hlubek, Christopher Hlubek,
-		Jens Hoffmann, Christian Müller, Marc Neuhaus, Mattias Nilsson, Bastian
-		Waidelich and more great guys from the TYPO3 community. This is free software,
-		licensed under GPL3 or higher. TYPO3 Phoenix comes with MANY GREAT FEATURES
-		but WITHOUT ANY WARRANTY. See <a href="http://phoenix.typo3.org">phoenix.typo3.org</a>
-		for more details. Removing or obstructing the appearance of this notice is not
-		nice and for the rest prohibited by law. Reading fineprint can damage your
-		eyes.
-	</p>
-</div>
-<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
-<script>
-	$('#{f:if(condition: username, then: 'password', else: 'username')}').focus();
-</script>
-</body>
-</html>
+<f:section name="head">
+	<title>TYPO3 Phoenix Login</title>
+	<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'Twitter.Bootstrap')}" />
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}" />
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Login.css')}" />
+	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}"></script>
+	<script src="{f:uri.resource(path: 'Library/jquery-ui/js/jquery-ui-1.9b1.js')}"></script>
+</f:section>
+
+<f:section name="body">
+	<body>
+		<div class="container">
+			<div class="modal typo3-phoenix-login-box" id="typo3-phoenix-login-box">
+				<div class="modal-header">
+					<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png')}" width="115" height="50" alt="TYPO3 Phoenix" />
+				</div>
+				<div class="modal-body t3-ui">
+					<f:form name="login" action="authenticate">
+						<div class="row-fluid">
+							<div class="span5">
+								<f:alias map="{flashMessages: '{f:render(partial: \'Login\\FlashMessages\')}'}">
+									<f:if condition="{flashMessages}">
+										<f:then>
+											<f:format.raw>{flashMessages}</f:format.raw>
+											<script><![CDATA[
+												$(document).ready(function() {
+													$('#typo3-phoenix-login-box').effect('shake', { times: 1 }, 60);
+												});
+											]]></script>
+										</f:then>
+										<f:else>
+											<p>{welcomeMessage}</p>
+										</f:else>
+									</f:if>
+								</f:alias>
+							</div>
+							<div class="span6 pull-right row-fluid">
+								<fieldset>
+									<div class="controls">
+										<f:form.textfield id="username" type="text" placeholder="Username" class="span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
+									</div>
+									<div class="controls">
+										<f:form.textfield id="password" type="password" placeholder="Password" class="span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
+									</div>
+									<div class="controls">
+										<!-- Forgot password link will be here -->
+										<f:form.button type="submit" class="span5 pull-right btn btn-primary btn-warning">
+											Login
+										</f:form.button>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</f:form>
+				</div>
+			</div>
+		</div>
+		<div id="typo3-phoenix-login-footer">
+			<p>TYPO3 Phoenix – © 2006-
+				<f:format.date format="Y">{date}</f:format.date>
+				by Robert Lemke, Karsten Dambekalns, Sebastian Kurfürst, Rens Admiraal, Aske
+				Ertmann, Andreas Förthner, Markus Goldbeck, Berit Hlubek, Christopher Hlubek,
+				Jens Hoffmann, Christian Müller, Marc Neuhaus, Mattias Nilsson, Bastian
+				Waidelich and more great guys from the TYPO3 community. This is free software,
+				licensed under GPL3 or higher. TYPO3 Phoenix comes with MANY GREAT FEATURES
+				but WITHOUT ANY WARRANTY. See <a href="http://phoenix.typo3.org">phoenix.typo3.org</a>
+				for more details. Removing or obstructing the appearance of this notice is not
+				nice and for the rest prohibited by law. Reading fineprint can damage your
+				eyes.
+			</p>
+		</div>
+		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
+		<script>
+			$('#{f:if(condition: username, then: 'password', else: 'username')}').focus();
+		</script>
+	</body>
+</f:section>
