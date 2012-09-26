@@ -45,6 +45,10 @@ require(
 			'jquery.cookie': ['jquery'],
 			'jquery.dynatree': ['jquery-ui'],
 			'jquery.plupload.html5': ['jquery.plupload'],
+			'jquery.plupload': ['jquery'],
+			'jquery.popover': ['jquery'],
+			'jquery.jcrop': ['jquery'],
+			'jquery.hotkeys': ['jquery'],
 			'underscorejs': {
 				'exports': '_'
 			},
