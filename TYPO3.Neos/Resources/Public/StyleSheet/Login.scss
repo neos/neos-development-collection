@@ -2,8 +2,8 @@
 @import "constants";
 @import "../Library/fontawesome/sass/font-awesome.scss";
 
-$font-family: Arial,sans-serif;
-$font-share: Share-Regular, Arial,sans-serif;
+$font-family: $default-font;
+$font-share: Share-Regular, Arial, sans-serif;
 
 @mixin label-font {
 	font-size: 11px;

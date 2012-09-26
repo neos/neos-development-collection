@@ -36,10 +36,11 @@ body.t3-ui-controls {
 #t3-page-metainformation {
 	display: none;
 }
+.t3-ui,
 #t3-footer,
 #t3-toolbar,
 #t3-inspector {
-	font-family: Arial, sans-serif;
+	font-family: $default-font;
 }
 .t3-clear {
 	clear:both;

@@ -1,5 +1,4 @@
 .t3-ui {
-  font-family: Arial;
   font-size: 12px;
   line-height: 1em;
 }
@@ -6609,10 +6608,11 @@ body.t3-ui-controls {
   display: none;
 }
 
+.t3-ui,
 #t3-footer,
 #t3-toolbar,
 #t3-inspector {
-  font-family: Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .t3-clear {
@@ -8593,7 +8593,7 @@ body.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
 
 .t3-module {
   margin: 120px 0px 0px 0px;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .t3-module h1, .t3-module h2, .t3-module h3, .t3-module h4, .t3-module h5, .t3-module h6 {
   margin-bottom: 0.5em;
