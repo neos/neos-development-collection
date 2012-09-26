@@ -47,6 +47,7 @@ function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate)
 		_searching: null,
 		_delay: 300,
 		_minLength: 1,
+		isLoading: false,
 		searchItems: [],
 
 		keyHandler: function(event) {
@@ -104,6 +105,7 @@ function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate)
 			}
 
 			var requestIndex = ++this._requestIndex;
+			this.set('isLoading', true);
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_LauncherController.search(
 				value,
 				requestIndex,
@@ -113,8 +115,9 @@ function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate)
 						if (result.success) {
 							that._response(data);
 						} else {
-							this._clear();
+							that._clear();
 						}
+						that.set('isLoading', false);
 					}
 				}
 			);
@@ -151,6 +154,15 @@ function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate)
 				parent.removeClass(notEmptyClass);
 			}
 		}.observes('value'),
+
+		_loadingDidChange: function(object, observing, value) {
+			var loadingIndicator = this.$().parent().find('.t3-launcher-loading');
+			if (value === true) {
+				loadingIndicator.show();
+			} else {
+				loadingIndicator.hide();
+			}
+		}.observes('T3.Common.Launcher.SearchController.isLoading'),
 
 		init: function() {
 			T3.Common.Launcher.SearchController.set('_launcherTextField', this);

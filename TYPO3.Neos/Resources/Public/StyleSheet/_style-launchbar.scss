@@ -12,6 +12,9 @@ body.t3-launcher-open {
 	#t3-launcher {
 		height: $launcher-height-open;
 	}
+	.t3-launcher div.t3-launcher-container.not-empty .t3-launcher-loading {
+		background: url('../Images/ajax-preloader.gif') no-repeat;
+	}
 }
 // TODO Move to common CSS
 .three-columns {

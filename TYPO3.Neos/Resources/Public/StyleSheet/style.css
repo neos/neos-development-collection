@@ -6728,12 +6728,20 @@ body.t3-ui-controls {
 .t3-launcher div.t3-launcher-container input::-webkit-input-placeholder, .t3-launcher div.t3-launcher-container input::-moz-placeholder {
   font-size: 12px;
 }
+.t3-launcher div.t3-launcher-container.not-empty .t3-launcher-loading,
 .t3-launcher div.t3-launcher-container.not-empty .t3-launcher-clear {
   position: absolute;
   top: 8px;
-  right: 0;
   width: 25px;
   height: 25px;
+}
+.t3-launcher div.t3-launcher-container.not-empty .t3-launcher-loading {
+  display: none;
+  right: 25px;
+  background: url("../Images/ajax-preloader-dddddd.gif") no-repeat;
+}
+.t3-launcher div.t3-launcher-container.not-empty .t3-launcher-clear {
+  right: 0;
   cursor: pointer;
   background: url("../Images/ContentModule/delete.png") no-repeat;
 }
@@ -7473,6 +7481,9 @@ body.t3-launcher-open #t3-inspector {
 }
 body.t3-launcher-open #t3-launcher {
   height: 230px;
+}
+body.t3-launcher-open .t3-launcher div.t3-launcher-container.not-empty .t3-launcher-loading {
+  background: url("../Images/ajax-preloader.gif") no-repeat;
 }
 
 .three-columns {
