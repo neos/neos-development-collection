@@ -157,8 +157,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			ember_assert('Editor class "' + typeDefinition['class'] + '" not found', !!editorClass);
 
 			var classOptions = $.extend({
-				valueBinding: 'T3.Content.Controller.Inspector.nodeProperties.' + this.propertyDefinition.key
-
+				valueBinding: 'T3.Content.Controller.Inspector.nodeProperties.' + this.propertyDefinition.key,
+				elementId: this.propertyDefinition.elementId
 			}, this.propertyDefinition.options || {});
 			classOptions = $.extend(classOptions, typeDefinition.options || {});
 

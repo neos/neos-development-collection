@@ -6862,6 +6862,7 @@ ul.t3-topbar {
 .t3-inspector-form label {
   color: white;
   font-weight: normal;
+  cursor: pointer;
 }
 .t3-inspector-form input[type=text] {
   width: 175px;

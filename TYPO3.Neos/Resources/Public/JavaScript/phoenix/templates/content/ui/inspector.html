@@ -4,7 +4,7 @@
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
 		<h2>{{content.label}}</h2>
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
-			<label for="">{{content.label}}</label>
+			<label {{bindAttr for="content.elementId"}}>{{content.label}}</label>
 			{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
 		{{/collection}}
 	{{/collection}}

@@ -157,7 +157,7 @@ function($, CreateJS, Entity) {
 				var properties = [];
 				jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
 					if (propertyConfiguration.group === groupIdentifier) {
-						properties.push(jQuery.extend({key: propertyName}, propertyConfiguration));
+						properties.push(jQuery.extend({key: propertyName, elementId: Ember.generateGuid()}, propertyConfiguration));
 					}
 				});
 
