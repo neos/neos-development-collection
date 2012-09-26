@@ -86,7 +86,7 @@ class SiteImportService {
 			try {
 				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
 			} catch (\Exception $exception) {
-				throw new \TYPO3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
+				throw new \TYPO3\TYPO3\Exception('Error: During import an exception occurred. ' . $exception->getMessage(), 1300360480, $exception);
 			}
 		}
 	}
@@ -210,6 +210,7 @@ class SiteImportService {
 	 *
 	 * @param \SimpleXMLElement $xml
 	 * @return object
+	 * @throws \TYPO3\TYPO3\Domain\Exception
 	 */
 	protected function xmlToObject(\SimpleXMLElement $xml) {
 		$object = NULL;

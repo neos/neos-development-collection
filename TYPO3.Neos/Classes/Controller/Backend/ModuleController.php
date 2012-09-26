@@ -45,12 +45,13 @@ class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			$moduleRequest->setArgument('--' . $argumentNamespace, $argument);
 		}
 
-		$moduleConfiguration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', explode('/', $module['module'])));
+		$modules = explode('/', $module['module']);
+
+		$moduleConfiguration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modules));
 		$moduleConfiguration['path'] = $module['module'];
 
 		$moduleBreadcrumb = array();
 		$path = array();
-		$modules = explode('/', $module['module']);
 		foreach ($modules as $moduleIdentifier) {
 			array_push($path, $moduleIdentifier);
 			$config = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
