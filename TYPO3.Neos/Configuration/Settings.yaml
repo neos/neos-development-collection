@@ -105,6 +105,7 @@ TYPO3:
             icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Orange/layers_1_icon-24.png'
       administration:
         label: 'Administration'
+        role: 'Administrator'
         submodules:
           users:
             label: 'User Management'

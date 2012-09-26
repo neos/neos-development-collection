@@ -8,13 +8,22 @@
 				<li class="t3-active">
 					<f:link.action package="TYPO3.TYPO3" controller="Backend\Backend" action="index">Content</f:link.action>
 				</li>
-				<f:security.ifAccess resource="TYPO3_TYPO3_Backend_ModuleController">
-					<f:for each="{modules}" as="module" key="path">
-						<li>
-							<t:link.module path="{path}">{module.label}</t:link.module>
-						</li>
-					</f:for>
-				</f:security.ifAccess>
+				<f:for each="{modules}" as="module" key="path">
+					<f:if condition="{module.role}">
+						<f:then>
+							<f:security.ifHasRole role="{module.role}">
+								<li>
+									<t:link.module path="{path}">{module.label}</t:link.module>
+								</li>
+							</f:security.ifHasRole>
+						</f:then>
+						<f:else>
+							<li>
+								<t:link.module path="{path}">{module.label}</t:link.module>
+							</li>
+						</f:else>
+					</f:if>
+				</f:for>
 			</ul>
 			<a class="t3-button t3-button-logout t3-icon-logout" href="/neos/logout"><span>Logout</span></a>
 
