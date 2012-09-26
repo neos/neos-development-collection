@@ -415,7 +415,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						select: false,
 						active: false,
 						unselectable: true,
-						addClass: 'typo3_typo3-root'
+						addClass: 'typo3_phoenix_contenttypes-root'
 					}
 				],
 				/**
