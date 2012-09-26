@@ -95,6 +95,7 @@ body.t3-ui-controls {
 		height: $launcher-height;
 		display: block;
 		@include box-sizing(border-box);
+		background-color: $light-grey3;
 		input {
 			border: 1px solid $light-grey3;
 			-webkit-box-shadow: $light-grey4 0px 1px 6px inset;
