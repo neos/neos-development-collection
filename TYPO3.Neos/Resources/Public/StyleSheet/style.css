@@ -6695,6 +6695,7 @@ body.t3-ui-controls {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  background-color: #888888;
 }
 .t3-launcher div.t3-launcher-container input {
   border: 1px solid #888888;
@@ -7551,6 +7552,9 @@ ul.t3-launcher-horizontal li .text {
 .tc-1-1-1 h2 {
   font-weight: bold;
   line-height: 20px;
+  margin: 0;
+  text-shadow: none;
+  color: black;
 }
 
 .c-1 .scroll-content {
@@ -7566,6 +7570,7 @@ ul.t3-launcher-horizontal li .text {
 .tc-1-1-1 ul.vertical {
   overflow: hidden;
   width: 100%;
+  margin: 0;
 }
 
 .tc-1-1-1 ul.vertical li {
