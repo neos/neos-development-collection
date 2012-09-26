@@ -203,13 +203,14 @@ ul.t3-topbar {
 	background: $dark-grey;
 	height: 100%;
 	margin-top: $menu-height + $launcher-height + $topbar-offset;
+	padding-bottom: $menu-height + $launcher-height + $topbar-offset;
 	position: fixed;
 	right: 0;
 	top: 0;
 	width: $property-panel-width;
 	z-index: 10014;
-	overflow: auto;
-	padding-bottom: 20px;
+	overflow-x: hidden;
+	overflow-y: auto;
 	border-top: 1px solid $green;
 	@include transition-property('width, margin-top');
 	@include transition-duration(0.2s);

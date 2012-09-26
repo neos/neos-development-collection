@@ -6802,13 +6802,14 @@ ul.t3-topbar {
   background: #2d2d2d;
   height: 100%;
   margin-top: 60px;
+  padding-bottom: 60px;
   position: fixed;
   right: 0;
   top: 0;
   width: 200px;
   z-index: 10014;
-  overflow: auto;
-  padding-bottom: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
   border-top: 1px solid #69a550;
   -webkit-transition-property: width, margin-top;
   -moz-transition-property: width, margin-top;
