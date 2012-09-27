@@ -35,7 +35,7 @@ prototype(TYPO3.Phoenix.ContentTypes:Headline) {
 	title = ${q(node).property('title')}
 }
 
-# TextWithHeadline TS Object
+# Text TS Object
 prototype(TYPO3.Phoenix.ContentTypes:Text) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.Phoenix.ContentTypes:Text) {
 	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Text.html'
