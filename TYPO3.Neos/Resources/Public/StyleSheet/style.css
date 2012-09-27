@@ -21,7 +21,7 @@
   text-align: left;
 }
 .t3-ui h1, .t3-ui h2, .t3-ui h3, .t3-ui h4, .t3-ui h5, .t3-ui h6 {
-  font-size: 100%;
+  font-size: 12px;
 }
 .t3-ui q:before,
 .t3-ui q:after {
@@ -6043,7 +6043,7 @@
 }
 
 .t3-ui h1 {
-  font-size: 213%;
+  font-size: 26px;
   font-weight: normal;
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
@@ -6053,7 +6053,7 @@
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
   margin-bottom: 0px;
-  font-size: 174%;
+  font-size: 21px;
 }
 .t3-ui p {
   line-height: 1.6em;
@@ -6078,11 +6078,11 @@
 .t3-ui input[type="color"],
 .t3-ui .uneditable-input {
   padding: 2px 4px 2px 4px;
-  font-size: 100%;
+  font-size: 12px;
   border: 1px solid rgba(0, 0, 0, 0.5);
 }
 .t3-ui .btn.t3-button {
-  font-size: 100%;
+  font-size: 12px;
 }
 .t3-ui .btn.t3-button i {
   margin-top: 0;
@@ -6096,7 +6096,7 @@
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
   margin-bottom: 0px;
-  font-size: 174%;
+  font-size: 21px;
 }
 .t3-ui legend + .alert {
   margin-top: 20px;
@@ -6107,7 +6107,7 @@
   box-sizing: border-box;
 }
 .t3-ui label {
-  font-size: 100%;
+  font-size: 12px;
   color: white;
 }
 
@@ -6559,7 +6559,7 @@
 }
 .t3-ui table.table th {
   font-weight: normal;
-  font-size: 116%;
+  font-size: 14px;
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
@@ -8183,7 +8183,7 @@ button.t3-button.t3-connection-status-down {
 }
 .t3-ui .widget .widget-header h3 {
   margin: 0;
-  font-size: 167%;
+  font-size: 20px;
   font-weight: normal;
   color: #444444;
   border-bottom: 1px solid #444444;
@@ -8286,7 +8286,7 @@ button.t3-button.t3-connection-status-down {
   border: 1px solid #373737;
 }
 .t3-ui .modal h3 {
-  font-size: 146.5%;
+  font-size: 18px;
   font-weight: normal;
 }
 
@@ -8607,7 +8607,7 @@ body.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
   text-decoration: underline;
 }
 .t3-module .t3-content {
-  font-size: 100%;
+  font-size: 12px;
 }
 .t3-module #t3-ui-top {
   -webkit-box-shadow: 0 0 0 transparent;
@@ -8643,7 +8643,7 @@ a.btn:hover {
   color: #fff;
 }
 .t3-ui.t3-module label {
-  font-size: 116%;
+  font-size: 14px;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 .t3-ui.t3-module .alert {

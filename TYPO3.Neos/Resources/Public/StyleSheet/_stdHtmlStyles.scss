@@ -7,7 +7,7 @@
 
 .t3-ui {
 	h1 {
-		font-size: 213%;
+		font-size: 26px;
 		font-weight: normal;
 		color: $lightest;
 		@include text-shadow(1px 1px 1px rgba($darkest, 0.7));
@@ -18,7 +18,7 @@
 		color: $lightest;
 		@include text-shadow(1px 1px 1px rgba($darkest, 0.5));
 		margin-bottom: 0px;
-		font-size: 174%;
+		font-size: 21px;
 	}
 
 	p {
@@ -50,12 +50,12 @@
 	input[type="color"],
 	.uneditable-input {
 		padding: 2px 4px 2px 4px;
-		font-size: 100%;
+		font-size: 12px;
 		border: 1px solid rgba(0, 0, 0, .5);
 	}
 
 	.btn.t3-button {
-		font-size: 100%;
+		font-size: 12px;
 		i {
 			margin-top: 0;
 		}
@@ -71,7 +71,7 @@
 		color: $lightest;
 		@include text-shadow(1px 1px 1px rgba($darkest, 0.5));
 		margin-bottom: 0px;
-		font-size: 174%;
+		font-size: 21px;
 
 		& + .alert {
 			margin-top: 20px;
@@ -82,7 +82,7 @@
 	}
 
 	label {
-		font-size: 100%;
+		font-size: 12px;
 		color: $lightest;
 	}
 }
@@ -279,7 +279,7 @@
 
 		th {
 			font-weight: normal;
-			font-size: 116%;
+			font-size: 14px;
 			color: $lightest;
 			@include text-shadow(1px 1px 1px rgba($darkest, 0.5));
 		}

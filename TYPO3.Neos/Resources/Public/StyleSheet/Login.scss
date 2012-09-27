@@ -6,13 +6,13 @@ $font-family: Arial,sans-serif;
 $font-share: Share-Regular, Arial,sans-serif;
 
 @mixin label-font {
-	font-size: 93%;
+	font-size: 11px;
 	font-weight: normal;
 	font-family: $font-family;
 }
 
 @mixin input-txt-font {
-	font-size: 93%;
+	font-size: 11px;
 	font-weight: bold;
 	font-family: $font-family;
 }
@@ -103,7 +103,7 @@ body {
 		h1 {
 			margin: 0;
 			font-weight: normal;
-			font-size: 150%;
+			font-size: 14px;
 		}
 
 		.typo3-message-icon {
@@ -123,7 +123,7 @@ body {
 	margin-left: -35%;
 	text-align: center;
 	p {
-		font-size: 77%;
+		font-size: 11px;
 		color: #535353;
 		line-height: 1.3em;
 		margin: 0;

@@ -786,7 +786,7 @@ body {
 .typo3-phoenix-login-box .modal-body h1 {
   margin: 0;
   font-weight: normal;
-  font-size: 150%;
+  font-size: 14px;
 }
 .typo3-phoenix-login-box .modal-body .typo3-message-icon {
   font-size: 70px;
@@ -804,7 +804,7 @@ body {
   text-align: center;
 }
 #typo3-phoenix-login-footer p {
-  font-size: 77%;
+  font-size: 11px;
   color: #535353;
   line-height: 1.3em;
   margin: 0;
