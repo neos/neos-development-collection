@@ -20,5 +20,10 @@
         "psr-0": {
             "TYPO3\\Neos": "Classes"
         }
+    },
+    "extra": {
+        "typo3/flow": {
+            "manage-resources" : true
+        }
     }
 }

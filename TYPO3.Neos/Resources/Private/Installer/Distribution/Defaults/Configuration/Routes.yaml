@@ -1,0 +1,18 @@
+#                                                                        #
+# Routes configuration                                                   #
+#                                                                        #
+# This file contains the configuration for the MVC router.               #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the Flow manual for possible configuration options.    #
+#                                                                        #
+
+##
+# TYPO3 Neos subroutes
+
+-
+  name: 'TYPO3Neos'
+  uriPattern: '<TYPO3NeosSubroutes>'
+  subRoutes:
+    TYPO3NeosSubroutes:
+      package: TYPO3.Neos
