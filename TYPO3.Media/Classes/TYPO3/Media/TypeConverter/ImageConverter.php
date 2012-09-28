@@ -37,6 +37,22 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	protected $priority = 1;
 
 	/**
+	 * If $source has an identity, we have a persisted Image, and therefore
+	 * this type converter should withdraw and let the PersistedObjectConverter kick in.
+	 *
+	 * @param mixed $source The source for the to-build Image
+	 * @param string $targetType Should always be 'TYPO3\Media\Domain\Model\Image'
+	 *
+	 * @return boolean
+	 */
+	public function canConvertFrom($source, $targetType) {
+		if (isset($source['__identity'])) {
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
 	 * Convert all properties in the source array
 	 *
 	 * @param mixed $source
@@ -55,8 +71,11 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	 * @return string
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
-		if ($propertyName === 'resource') {
-			return 'TYPO3\Flow\Resource\Resource';
+		switch ($propertyName) {
+			case 'resource':
+				return 'TYPO3\Flow\Resource\Resource';
+			case 'title':
+				return 'string';
 		}
 	}
 
@@ -74,7 +93,11 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 			return NULL;
 		}
 		try {
-			return new \TYPO3\Media\Domain\Model\Image($convertedChildProperties['resource']);
+			$image = new \TYPO3\Media\Domain\Model\Image($convertedChildProperties['resource']);
+			if (isset($convertedChildProperties['title'])) {
+				$image->setTitle($convertedChildProperties['title']);
+			}
+			return $image;
 		} catch(\TYPO3\Media\Exception\ImageFileException $exception) {
 			return new \TYPO3\Flow\Validation\Error($exception->getMessage(), $exception->getCode());
 		}

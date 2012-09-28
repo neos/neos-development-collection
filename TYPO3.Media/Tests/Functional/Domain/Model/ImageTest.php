@@ -11,11 +11,13 @@ namespace TYPO3\Media\Tests\Functional\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Media\Domain\Model\Image;
+
 /**
  * Testcase for an image
  *
  */
-class ImageTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class ImageTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 
 	/**
 	 * @var string
@@ -51,9 +53,8 @@ class ImageTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->prepareTemporaryDirectory();
 		$this->prepareResourceManager();
 
-		$this->landscapeImage = $this->getImageFromFileUsingMockResource(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg');
-		$this->portraitImage = $this->getImageFromFileUsingMockResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
-
+		$this->landscapeImage = new Image($this->getMockResourceByImagePath(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg'));
+		$this->portraitImage = new Image($this->getMockResourceByImagePath(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg'));
 	}
 
 	/**
@@ -116,39 +117,6 @@ class ImageTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		file_put_contents('resource://' . $hash, $dummyImageContent);
 		$mockResource = $this->createMockResourceAndPointerFromHash($hash);
 		new \TYPO3\Media\Domain\Model\Image($mockResource);
-	}
-
-
-	/**
-	 * Creates an Image object from a file using a mock resource (in order to avoid a database resource pointer entry)
-	 * @param string $imagePathAndFilename
-	 * @return \TYPO3\Media\Domain\Model\Image
-	 */
-	protected function getImageFromFileUsingMockResource($imagePathAndFilename) {
-		$imagePathAndFilename = \TYPO3\Flow\Utility\Files::getUnixStylePath($imagePathAndFilename);
-		$hash = sha1_file($imagePathAndFilename);
-		copy($imagePathAndFilename, 'resource://' . $hash);
-		$mockResource = $this->createMockResourceAndPointerFromHash($hash);
-
-		return new \TYPO3\Media\Domain\Model\Image($mockResource);
-	}
-
-	/**
-	 * Creates a mock ResourcePointer and Resource from a given hash.
-	 * Make sure that a file representation already exists, e.g. with
-	 * file_put_content('resource://' . $hash) before
-	 *
-	 * @param string $hash
-	 * @return \TYPO3\Flow\Resource\Resource
-	 */
-	protected function createMockResourceAndPointerFromHash($hash) {
-		$resourcePointer = new \TYPO3\Flow\Resource\ResourcePointer($hash);
-
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array('getResourcePointer'));
-		$mockResource->expects($this->any())
-				->method('getResourcePointer')
-				->will($this->returnValue($resourcePointer));
-		return $mockResource;
 	}
 
 	/**
