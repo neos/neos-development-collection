@@ -1,5 +1,5 @@
 {
-    "name": "typo3/typo3",
+    "name": "typo3/phoenix",
     "type": "flow3-package",
     "description": "The next generation of the popular open-source CMS.",
     "version": "1.0.0 dev",
