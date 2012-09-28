@@ -11,9 +11,7 @@
         "typo3/setup": "*",
         "twitter/bootstrap": "*",
         "typo3/typo3cr": "*",
-        "typo3/typoscript": "*"
-    },
-    "suggest": {
+        "typo3/typoscript": "*",
         "typo3/sitekickstarter": "*"
     },
     "autoload": {
