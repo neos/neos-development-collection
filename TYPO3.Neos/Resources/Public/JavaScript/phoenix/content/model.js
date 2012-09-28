@@ -145,7 +145,6 @@ define(
 		});
 
 		var PublishableNodes = Ember.Object.create({
-
 			publishableEntitySubjects: [],
 
 			noChanges: function() {
@@ -181,12 +180,19 @@ define(
 			 * Publish all blocks which are unsaved *and* on current page.
 			 */
 			publishAll: function() {
-				this.get('publishableEntitySubjects').forEach(function(subject) {
-					var entity = vie.entities.get(subject);
-					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode(entity.fromReference(subject), 'live', function() {
+				T3.Content.Controller.ServerConnection.sendAllToServer(
+					this.get('publishableEntitySubjects'),
+				    function(subject) {
+						var entity = vie.entities.get(subject);
+						return [entity.fromReference(subject), 'live'];
+					},
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
+					null,
+					function(subject) {
+						var entity = vie.entities.get(subject);
 						entity.set('typo3:__workspacename', 'live');
-					});
-				});
+					}
+				);
 			}
 		});
 
