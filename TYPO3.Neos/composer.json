@@ -5,6 +5,7 @@
     "version": "1.0.0 dev",
     "require": {
         "typo3/flow3": "*",
+        "typo3/extjs": "*",
         "typo3/aloha": "*",
         "typo3/media": "*",
         "typo3/phoenix-contenttypes": "*",
