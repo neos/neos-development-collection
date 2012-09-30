@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,47 +11,47 @@ namespace TYPO3\TYPO3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Site Command Controller Service
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\SiteImportService
 	 */
 	protected $siteImportService;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\SiteExportService
 	 */
 	protected $siteExportService;
@@ -123,7 +123,7 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->outputLine('Please confirm that you really want to remove all sites and content from the database.');
 			$this->outputLine('');
 			$this->outputLine('Syntax:');
-			$this->outputLine('  ./flow3 site:prune --confirmation TRUE');
+			$this->outputLine('  ./flow site:prune --confirmation TRUE');
 			$this->quit(1);
 		}
 

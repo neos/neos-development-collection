@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Repository;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,18 +11,18 @@ namespace TYPO3\TYPO3\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Site Repository
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
-class DomainRepository extends \TYPO3\FLOW3\Persistence\Repository {
+class DomainRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy
 	 */
 	protected $domainMatchingStrategy;

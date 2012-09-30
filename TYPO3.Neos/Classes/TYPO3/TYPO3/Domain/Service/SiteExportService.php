@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,17 +11,17 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Site Export Service
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class SiteExportService {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -166,7 +166,7 @@ class SiteExportService {
 
 				$xmlWriter->startElement('resource');
 				$xmlWriter->writeAttribute('__type', 'object');
-				$xmlWriter->writeAttribute('__classname', '\TYPO3\FLOW3\Resource\Resource');
+				$xmlWriter->writeAttribute('__classname', '\TYPO3\Flow\Resource\Resource');
 				$resource = $object->getOriginalImage()->getResource();
 				$xmlWriter->writeElement('filename', $resource->getFilename());
 				$xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));

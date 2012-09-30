@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Controller\Module\Management;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,48 +11,48 @@ namespace TYPO3\TYPO3\Controller\Module\Management;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The TYPO3 Workspaces module controller
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardController {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Service\WorkspacesService
 	 */
 	protected $workspacesService;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Property\PropertyMapper
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
 	 */
 	protected $propertyMappingConfigurationBuilder;
 
@@ -141,7 +141,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->workspacesService->publishNode($node);
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message('Node has been published'));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been published'));
 		$this->redirect('index');
 	}
 
@@ -151,7 +151,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->nodeRepository->remove($node);
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message('Node has been discarded'));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been discarded'));
 		$this->redirect('index');
 	}
 
@@ -183,7 +183,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 				throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
 		}
 
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message($message));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message($message));
 		$this->redirect('index');
 	}
 
@@ -193,7 +193,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 	 */
 	public function publishWorkspaceAction($workspaceName) {
 		$this->workspacesService->getWorkspace($workspaceName)->publish('live');
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message('Changes in workspace "%s" have been published', NULL, array($workspaceName)));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been published', NULL, array($workspaceName)));
 		$this->redirect('index');
 	}
 
@@ -207,7 +207,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 				$this->nodeRepository->remove($node);
 			}
 		}
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message('Changes in workspace "%s" have been discarded', NULL, array($workspaceName)));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been discarded', NULL, array($workspaceName)));
 		$this->redirect('index');
 	}
 

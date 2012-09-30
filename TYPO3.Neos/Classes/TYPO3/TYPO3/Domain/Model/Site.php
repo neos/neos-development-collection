@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,13 +11,13 @@ namespace TYPO3\TYPO3\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Domain model of a site
  *
- * @FLOW3\Scope("prototype")
- * @FLOW3\Entity
+ * @Flow\Scope("prototype")
+ * @Flow\Entity
  * @api
  */
 class Site {
@@ -32,8 +32,8 @@ class Site {
 	 * Name of the site
 	 *
 	 * @var string
-	 * @FLOW3\Validate(type="Label")
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
+	 * @Flow\Validate(type="Label")
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
 	 */
 	protected $name = 'Untitled Site';
 
@@ -44,14 +44,14 @@ class Site {
 	 * "/Sites/MySite/" where "MySite" is the nodeName.
 	 *
 	 * @var string
-	 * @FLOW3\Identity
+	 * @Flow\Identity
 	 */
 	protected $nodeName;
 
 	/**
 	 * The site's state
 	 * @var integer
-	 * @FLOW3\Validate(type="NumberRange", options={ "minimum"=1, "maximum"=2 })
+	 * @Flow\Validate(type="NumberRange", options={ "minimum"=1, "maximum"=2 })
 	 */
 	protected $state = self::STATE_ONLINE;
 

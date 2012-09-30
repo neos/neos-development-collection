@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,36 +11,36 @@ namespace TYPO3\TYPO3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The User Command Controller Service
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\AccountRepository
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
 	 */
 	protected $partyRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\AccountFactory
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\AccountFactory
 	 */
 	protected $accountFactory;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 */
 	protected $hashService;
 
@@ -55,12 +55,12 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @param string $firstName First name of the user to be created
 	 * @param string $lastName Last name of the user to be created
 	 * @param string $roles A comma separated list of roles to assign
-	 * @FLOW3\Validate(argumentName="username", type="EmailAddress")
+	 * @Flow\Validate(argumentName="username", type="EmailAddress")
 	 * @return void
 	 */
 	public function createCommand($username, $password, $firstName, $lastName, $roles = NULL) {
 		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
-		if ($account instanceof \TYPO3\FLOW3\Security\Account) {
+		if ($account instanceof \TYPO3\Flow\Security\Account) {
 			$this->outputLine('User "%s" already exists.', array($username));
 			$this->quit(1);
 		}
@@ -92,7 +92,7 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function setPasswordCommand($username, $password) {
 		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
-		if (!$account instanceof \TYPO3\FLOW3\Security\Account) {
+		if (!$account instanceof \TYPO3\Flow\Security\Account) {
 			$this->outputLine('User "%s" does not exists.', array($username));
 			$this->quit(1);
 		}
@@ -114,12 +114,12 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function addRoleCommand($username, $role) {
 		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
-		if (!$account instanceof \TYPO3\FLOW3\Security\Account) {
+		if (!$account instanceof \TYPO3\Flow\Security\Account) {
 			$this->outputLine('User "%s" does not exists.', array($username));
 			$this->quit(1);
 		}
 
-		$role = new \TYPO3\FLOW3\Security\Policy\Role($role);
+		$role = new \TYPO3\Flow\Security\Policy\Role($role);
 
 		if ($account->hasRole($role)) {
 			$this->outputLine('User "%s" already has the role "%s" assigned.', array($username, $role));
@@ -140,12 +140,12 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 */
 	public function removeRoleCommand($username, $role) {
 		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
-		if (!$account instanceof \TYPO3\FLOW3\Security\Account) {
+		if (!$account instanceof \TYPO3\Flow\Security\Account) {
 			$this->outputLine('User "%s" does not exists.', array($username));
 			$this->quit(1);
 		}
 
-		$role = new \TYPO3\FLOW3\Security\Policy\Role($role);
+		$role = new \TYPO3\Flow\Security\Policy\Role($role);
 
 		if (!$account->hasRole($role)) {
 			$this->outputLine('User "%s" does not have the role "%s" assigned.', array($username, $role));

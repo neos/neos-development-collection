@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,15 +11,15 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\ExtJS\Annotations\ExtDirect;
 
 /**
  * ExtDirect Controller for user preferences
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class UserController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+class UserController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @var string
@@ -27,19 +27,19 @@ class UserController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $viewObjectNamePattern = 'TYPO3\ExtJS\ExtDirect\View';
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
 	 */
 	protected $partyRepository;

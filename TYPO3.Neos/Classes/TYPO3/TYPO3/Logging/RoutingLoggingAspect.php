@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Logging;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -13,36 +13,36 @@ namespace TYPO3\TYPO3\Logging;
 
 use \TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An aspect which centralizes the logging of TYPO3's routing functions.
  *
- * @FLOW3\Aspect
- * @FLOW3\Scope("singleton")
+ * @Flow\Aspect
+ * @Flow\Scope("singleton")
  */
 class RoutingLoggingAspect {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * Logs successful results of the NodeService's getNodeByContextNodePath() method which is called by FrontendNodeRoutePartHandler::matchValue()
 	 *
-	 * @FLOW3\AfterReturning("method(TYPO3\TYPO3\Service\NodeService->getNodeByContextNodePath())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
+	 * @Flow\AfterReturning("method(TYPO3\TYPO3\Service\NodeService->getNodeByContextNodePath())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 */
-	public function logSuccessfulMatch(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function logSuccessfulMatch(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$relativeContextNodePath = $joinPoint->getMethodArgument('relativeContextNodePath');
 		$returnedNode = $joinPoint->getResult();
 		$this->systemLogger->log(sprintf('%s matched node "%s" for path "%s"', $joinPoint->getClassName(), $returnedNode->getContextPath(), $relativeContextNodePath), LOG_INFO);
@@ -51,11 +51,11 @@ class RoutingLoggingAspect {
 	/**
 	 * Logs exceptional results of the NodeService's getNodeByContextNodePath() method which is called by FrontendNodeRoutePartHandler::matchValue()
 	 *
-	 * @FLOW3\AfterThrowing("method(TYPO3\TYPO3\Service\NodeService->getNodeByContextNodePath())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
+	 * @Flow\AfterThrowing("method(TYPO3\TYPO3\Service\NodeService->getNodeByContextNodePath())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 */
-	public function logFailedMatch(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function logFailedMatch(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$relativeContextNodePath = $joinPoint->getMethodArgument('relativeContextNodePath');
 		$exception = $joinPoint->getException();
 		if ($exception !== NULL) {

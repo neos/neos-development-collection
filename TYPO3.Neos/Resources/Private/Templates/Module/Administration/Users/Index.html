@@ -11,7 +11,7 @@
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
-			<f:for each="{accounts}" key="flow3identifier" as="account">
+			<f:for each="{accounts}" key="flowidentifier" as="account">
 				<tr>
 					<td>
 						<i class="icon-user icon-white"></i>
@@ -44,10 +44,10 @@
 									<button class="btn btn-danger disabled t3-button" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
-									<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{flow3identifier}">
+									<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
 										<i class="icon-trash icon-white"></i>
 									</button>
-									<div class="modal hide" id="{flow3identifier}">
+									<div class="modal hide" id="{flowidentifier}">
 										<div class="modal-header">
 											<button type="button" class="close t3-button" data-dismiss="modal">×</button>
 											<h3>Are you sure you want to delete user "{account.accountIdentifier}"?</h3>

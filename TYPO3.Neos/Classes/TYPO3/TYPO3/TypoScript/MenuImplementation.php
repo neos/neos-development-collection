@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,12 +11,12 @@ namespace TYPO3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A TypoScript Menu object
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation {
 
@@ -30,7 +30,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	const STATE_ACTIVE = 'active';
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;

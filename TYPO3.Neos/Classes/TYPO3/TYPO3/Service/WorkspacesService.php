@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,30 +11,30 @@ namespace TYPO3\TYPO3\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The workspaces service adds some basic helper methods for getting workspaces,
  * unpublished nodes and methods for publishing nodes or whole workspaces.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class WorkspacesService {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
 	 */
 	public function getCurrentWorkspace() {
 		return $this->nodeRepository->getContext()->getWorkspace(FALSE);
@@ -49,7 +49,7 @@ class WorkspacesService {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
 	 */
 	public function getWorkspaces() {
 		return $this->workspaceRepository->findAll();
@@ -57,7 +57,7 @@ class WorkspacesService {
 
 	/**
 	 * @param string $workspaceName
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
 	 */
 	public function getUnpublishedNodes($workspaceName) {
 		return $this->nodeRepository->findByWorkspace($this->workspaceRepository->findOneByName($workspaceName));

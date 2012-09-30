@@ -1,10 +1,10 @@
 {
     "name": "typo3/phoenix",
-    "type": "flow3-package",
+    "type": "typo3-flow-package",
     "description": "The next generation of the popular open-source CMS.",
     "version": "1.0.0 dev",
     "require": {
-        "typo3/flow3": "*",
+        "typo3/flow": "*",
         "typo3/extjs": "*",
         "typo3/aloha": "*",
         "typo3/media": "*",

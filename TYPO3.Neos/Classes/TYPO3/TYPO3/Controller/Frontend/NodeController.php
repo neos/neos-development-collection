@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Controller\Frontend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,18 +11,18 @@ namespace TYPO3\TYPO3\Controller\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Controller for displaying nodes in the frontend
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
+class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
@@ -37,20 +37,20 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $defaultViewObjectName = 'TYPO3\TYPO3\View\TypoScriptView';
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
@@ -68,7 +68,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 				$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
 				$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
 				$this->nodeRepository->getContext()->setRemovedContentShown(TRUE);
-			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
+			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
 				$this->throwStatus(403);
 			}
 		}

@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,25 +11,25 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * The TypoScript Service
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  * @api
  */
 class TypoScriptService {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TypoScript\Core\Parser
 	 */
 	protected $typoScriptParser;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;

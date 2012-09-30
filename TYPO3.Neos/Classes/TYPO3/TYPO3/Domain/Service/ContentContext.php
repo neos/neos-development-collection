@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,32 +11,32 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\I18n\Locale;
+use \TYPO3\Flow\I18n\Locale;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Content Context
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  * @api
  */
 class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
@@ -47,7 +47,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	protected $currentDateTime;
 
 	/**
-	 * @var \TYPO3\FLOW3\I18n\Locale
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
 	protected $locale;
 
@@ -70,7 +70,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 		$this->locale = new Locale('mul_ZZ');
 
 		$activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
-		if ($activeRequestHandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
+		if ($activeRequestHandler instanceof \TYPO3\Flow\Http\HttpRequestHandlerInterface) {
 			$matchingDomains = $this->domainRepository->findByHost($activeRequestHandler->getHttpRequest()->getUri()->getHost());
 			if (count ($matchingDomains) > 0) {
 				$this->currentDomain = $matchingDomains[0];
@@ -86,7 +86,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the locale of this context.
 	 *
-	 * @return \TYPO3\FLOW3\I18n\Locale
+	 * @return \TYPO3\Flow\I18n\Locale
 	 */
 	public function getLocale() {
 		return $this->locale;

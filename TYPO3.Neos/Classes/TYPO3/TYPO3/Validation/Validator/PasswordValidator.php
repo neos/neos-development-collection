@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Validation\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3\Validation\Validator;
 /**
  * Validator for passwords
  */
-class PasswordValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class PasswordValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($value) is a valid array consistent of two equal passwords and their length
@@ -25,19 +25,19 @@ class PasswordValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidSubjectException
 	 */
 	protected function isValid($value) {
 		if (!is_array($value)) {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException('The given value was not an array.', 1324641197);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidSubjectException('The given value was not an array.', 1324641197);
 		}
 
 		$password = trim(strval(array_shift($value)));
 		$repeatPassword = trim(strval(array_shift($value)));
 
-		$passwordNotEmptyValidator = new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator;
+		$passwordNotEmptyValidator = new \TYPO3\Flow\Validation\Validator\NotEmptyValidator;
 		$passwordNotEmptyValidatorResult = $passwordNotEmptyValidator->validate($password);
-		$repeatPasswordNotEmptyValidator = new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator;
+		$repeatPasswordNotEmptyValidator = new \TYPO3\Flow\Validation\Validator\NotEmptyValidator;
 		$repeatPasswordNotEmptyValidatorResult = $repeatPasswordNotEmptyValidator->validate($repeatPassword);
 
 		if (($passwordNotEmptyValidatorResult->hasErrors() === TRUE) && ($repeatPasswordNotEmptyValidatorResult->hasErrors() === TRUE)) {
@@ -52,7 +52,7 @@ class PasswordValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 			return;
 		}
 
-		$stringLengthValidator = new \TYPO3\FLOW3\Validation\Validator\StringLengthValidator($this->options);
+		$stringLengthValidator = new \TYPO3\Flow\Validation\Validator\StringLengthValidator($this->options);
 		$stringLengthValidatorResult = $stringLengthValidator->validate($password);
 
 		if ($stringLengthValidatorResult->hasErrors() === TRUE) {

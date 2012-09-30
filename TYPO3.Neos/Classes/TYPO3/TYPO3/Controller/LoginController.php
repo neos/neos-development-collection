@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Controller;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,19 +11,19 @@ namespace TYPO3\TYPO3\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\ExtJS\Annotations\ExtDirect;
 
 /**
  * A controller which allows for logging into the backend
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\AbstractAuthenticationController {
+class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
@@ -39,7 +39,7 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Ab
 				$this->errorMethodName = 'extErrorAction';
 				break;
 			case 'json' :
-				$this->defaultViewObjectName = 'TYPO3\FLOW3\Mvc\View\JsonView';
+				$this->defaultViewObjectName = 'TYPO3\Flow\Mvc\View\JsonView';
 				break;
 		}
 	}
@@ -56,28 +56,28 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Ab
 		$this->view->assign('date', new \DateTime());
 		$this->view->assign('welcomeMessage', 'Please enter your username and password in order to proceed.');
 
-		$version = $this->objectManager->get('TYPO3\FLOW3\Package\PackageManagerInterface')->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
+		$version = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);
 	}
 
 	/**
 	 * Is called if authentication failed.
 	 *
-	 * @param \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception The exception thrown while the authentication process
+	 * @param \TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception The exception thrown while the authentication process
 	 * @return void
 	 */
-	protected function onAuthenticationFailure(\TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception = NULL) {
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Error('The entered username or password was wrong.', ($exception === NULL ? 1347016771 : $exception->getCode())));
+	protected function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = NULL) {
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error('The entered username or password was wrong.', ($exception === NULL ? 1347016771 : $exception->getCode())));
 		$this->redirect('index');
 	}
 
 	/**
 	 * Is called if authentication was successful.
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
 	 * @return string
 	 */
-	public function onAuthenticationSuccess(\TYPO3\FLOW3\Mvc\ActionRequest $originalRequest = NULL) {
+	public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = NULL) {
 		if ($originalRequest !== NULL) {
 			$this->redirectToRequest($originalRequest);
 		}
@@ -136,7 +136,7 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Ab
 				);
 				break;
 			default :
-				$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Notice('Successfully logged out.', 1318421560));
+				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out.', 1318421560));
 				$this->redirect('index');
 		}
 	}

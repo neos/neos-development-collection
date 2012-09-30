@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Generate a schema in JSON format for the VIE dataTypes validation, necessary
@@ -99,7 +99,7 @@ class ContentTypeSchemaBuilder {
 				'subtypes' => array(),
 				'metadata' => (object) $metadata,
 				'supertypes' => $this->superTypeConfiguration['typo3:' . $contentType],
-				'url' => 'http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/',
+				'url' => 'http://www.typo3.org/ns/2011/Flow/Packages/TYPO3/Content/',
 				'ancestors' => array(),
 				'comment' => '',
 				'comment_plain' => ''

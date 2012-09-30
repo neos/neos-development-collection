@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -21,19 +21,19 @@ use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * On the long term, type converters should be able to convert the reverse direction
  * as well, and then this aspect could be removed.
  *
- * @FLOW3\Scope("singleton")
- * @FLOW3\Aspect
+ * @Flow\Scope("singleton")
+ * @Flow\Aspect
  */
 class NodeIdentityConverterAspect {
 
 	/**
 	 * Convert the object to its context path, if we deal with TYPO3CR nodes.
 	 *
-	 * @FLOW3\Around("method(TYPO3\FLOW3\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint the joinpoint
+	 * @Flow\Around("method(TYPO3\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
+	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint the joinpoint
 	 * @return string|array the context path to be used for routing
 	 */
-	public function convertNodeToContextPathForRouting(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+	public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$objectArgument = $joinPoint->getMethodArgument('object');
 		if ($objectArgument instanceof NodeInterface) {
 			return $objectArgument->getContextPath();

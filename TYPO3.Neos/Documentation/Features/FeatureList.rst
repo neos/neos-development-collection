@@ -50,7 +50,7 @@ The available content types is still being worked on. The currently supported li
 * Plugin (not functional)
 	Currently a plugin can be displayed on a page, but not added to the page using the user interface.
 	A plugin is defined by TypoScript configuration and is basically just a normal MVC Controller
-	from a FLOW3 package.
+	from a TYPO3 Flow package.
 * Structural elements
 	The structural elements can be used to add a two or three column structure to your page, in which
 	new content elements can be inserted.
@@ -63,24 +63,24 @@ content stored in XML files. This can now for example be used to manage the full
 site content, or just those parts which are not edittable in the TYPO3 Phoenix
 interface yet.
 For using this feature you should use a so called `Site Package`. This is a normal
-FLOW3 Package containing a ``Resources/Private/Content/Sites.xml`` file which contains
+TYPO3 Flow Package containing a ``Resources/Private/Content/Sites.xml`` file which contains
 a node structure in XML. For an example of such a file you can check the
-`Sites.xml <http://git.typo3.org/FLOW3/Packages/PhoenixDemoTypo3Org.git?a=blob_plain;f=Resources/Private/Content/Sites.xml;hb=master>`_
+`Sites.xml <http://git.typo3.org/Flow/Packages/PhoenixDemoTypo3Org.git?a=blob_plain;f=Resources/Private/Content/Sites.xml;hb=master>`_
 of the TYPO3 Phoenix demo site.
 
 The import can be used like:
 
 ::
 
-	./flow3 site:import --package-key My.Site
+	./flow site:import --package-key My.Site
 
 The export works like:
 
-	./flow3 site:export > pathToYourSites.xml
+	./flow site:export > pathToYourSites.xml
 
 Related to these functions there's a convenience method for removing all site related content:
 
-	./flow3 site:prune --confirmation TRUE
+	./flow site:prune --confirmation TRUE
 
 Launcher
 ========
@@ -107,7 +107,7 @@ website using a 'multi-tree concept'.
 Security
 ========
 
-Using the FLOW3 Security Framework we have a good support for security in TYPO3 Phoenix,
+Using the TYPO3 Flow Security Framework we have a good support for security in TYPO3 Phoenix,
 even though we're missing some parts of the interface. For example for configuring
 access to content elements or pages, this is still being worked on. By using the
 Security Framework there's support for roles and access to methods or content.

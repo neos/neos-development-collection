@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,19 +11,19 @@ namespace TYPO3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\Error\Error;
+use \TYPO3\Flow\Error\Error;
 use \TYPO3\TYPO3\Domain\Service\ContentContext;
 use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class NodeObjectConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var boolean
@@ -46,31 +46,31 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	protected $priority = 1;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Property\PropertyMapper
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -98,11 +98,11 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	 * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
 	 * @param string $targetType not used
 	 * @param array $subProperties not used
-	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration not used
-	 * @return mixed An object or \TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration not used
+	 * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @throws \Exception
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
 			$source = array('__contextNodePath' => $source);
 		}
@@ -163,7 +163,7 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 						$nodePropertyValue = NULL;
 					}
 				}
-				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($node, $propertyName, $nodePropertyValue);
+				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($node, $propertyName, $nodePropertyValue);
 			} else {
 				if (!isset($contentTypeProperties[$nodePropertyKey])) {
 					throw new \Exception('TODO: content type XY does not have a property YY according to the schema');

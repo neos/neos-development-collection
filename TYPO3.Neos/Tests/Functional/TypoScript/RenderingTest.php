@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Tests\Functional\TypoScript;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -17,7 +17,7 @@ namespace TYPO3\TYPO3\Tests\Functional\TypoScript;
  *
  * @group large
  */
-class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -42,12 +42,12 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function setUp() {
 		parent::setUp();
 		$nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($nodeRepository, 'context', new \TYPO3\TYPO3\Domain\Service\ContentContext('live'), TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeRepository, 'context', new \TYPO3\TYPO3\Domain\Service\ContentContext('live'), TRUE);
 		$siteImportService = $this->objectManager->get('TYPO3\TYPO3\Domain\Service\SiteImportService');
 		$siteImportService->importSitesFromFile(__DIR__ . '/Fixtures/NodeStructure.xml');
 		$this->persistenceManager->persistAll();
 
-		$propertyMapper = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMapper');
+		$propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 		$this->node = $propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
 		$this->assertFalse($propertyMapper->getMessages()->hasErrors());
 	}
@@ -168,7 +168,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @param string $output
 	 */
 	protected function assertTeaserConformsToBasicRendering($output) {
-		$this->assertContains('TYPO3 Phoenix is based on FLOW3, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
+		$this->assertContains('TYPO3 Phoenix is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
 		$this->assertSelectEquals('h1', 'Home', TRUE, $output);
 
 		$this->assertSelectEquals('.teaser > .typo3-phoenix-contenttypes-headline > div > h1', 'Welcome to this example', TRUE, $output);
@@ -180,7 +180,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @param string $output
 	 */
 	protected function assertMainContentConformsToBasicRendering($output) {
-		$this->assertSelectEquals('.main > .typo3-phoenix-contenttypes-headline > div > h1', 'Do you love FLOW3?', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-phoenix-contenttypes-headline > div > h1', 'Do you love Flow?', TRUE, $output);
 		$this->assertSelectEquals('.main > .typo3-phoenix-contenttypes-text > div', 'If you do, make sure to post your opinion about it on Twitter!', TRUE, $output);
 
 		$this->assertSelectEquals('.main', '[TWITTER WIDGET]', TRUE, $output);
@@ -246,26 +246,26 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$typoScript = file_get_contents(__DIR__ . '/Fixtures/PredefinedTypoScript.ts2');
 		$typoScript .= chr(10) . chr(10) . file_get_contents(__DIR__ . '/Fixtures/BaseTypoScript.ts2');
 
-		$fixtureDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(__DIR__, 'Fixtures'));
+		$fixtureDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(__DIR__, 'Fixtures'));
 
 		if ($additionalTypoScriptFile !== NULL) {
-			$typoScript .= chr(10) . chr(10) . file_get_contents(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($fixtureDirectory, $additionalTypoScriptFile)));
+			$typoScript .= chr(10) . chr(10) . file_get_contents(\TYPO3\Flow\Utility\Files::concatenatePaths(array($fixtureDirectory, $additionalTypoScriptFile)));
 		}
 		$typoScript = str_replace('FIXTURE_DIRECTORY', $fixtureDirectory, $typoScript);
 
 		$parser = new \TYPO3\TypoScript\Core\Parser();
 		$typoScriptConfiguration = $parser->parse($typoScript);
 
-		$httpRequest = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://foo.bar/bazfoo'));
+		$httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
 		$request = $httpRequest->createActionRequest();
-		$response = new \TYPO3\FLOW3\Http\Response();
+		$response = new \TYPO3\Flow\Http\Response();
 
-		$controllerContext = new \TYPO3\FLOW3\Mvc\Controller\ControllerContext(
+		$controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
 			$request,
 			$response,
-			$this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE),
-			$this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder'),
-			$this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer')
+			$this->getMock('TYPO3\Flow\Mvc\Controller\Arguments', array(), array(), '', FALSE),
+			$this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder'),
+			$this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
 		);
 		return new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $controllerContext);
 	}

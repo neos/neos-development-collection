@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Controller\Module\Administration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3".                      *
+ * This script belongs to the Flow package "TYPO3".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,24 +11,24 @@ namespace TYPO3\TYPO3\Controller\Module\Administration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The TYPO3 Package Management module controller
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\Doctrine\Service
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\Doctrine\Service
 	 */
 	protected $doctrineService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -90,11 +90,11 @@ class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardControll
 	public function importAction($packageKey) {
 		try {
 			$this->packageManager->importPackage($packageKey);
-			$message = new \TYPO3\FLOW3\Error\Message($packageKey . ' has been imported', 1343231682);
-		} catch (\TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231683);
-		} catch (\TYPO3\FLOW3\Package\Exception\PackageRepositoryException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231684);
+			$message = new \TYPO3\Flow\Error\Message($packageKey . ' has been imported', 1343231682);
+		} catch (\TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException $exception) {
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231683);
+		} catch (\TYPO3\Flow\Package\Exception\PackageRepositoryException $exception) {
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231684);
 		}
 		$this->flashMessageContainer->addMessage($message);
 		$this->redirect('index');
@@ -130,7 +130,7 @@ class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardControll
 	 */
 	public function unfreezeAction($packageKey) {
 		$this->packageManager->unfreezePackage($packageKey);
-		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message($packageKey . ' has been unfrozen', 1347464246));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message($packageKey . ' has been unfrozen', 1347464246));
 		$this->redirect('index');
 	}
 
@@ -146,70 +146,70 @@ class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardControll
 				$frozenPackages = array();
 				foreach ($packageKeys as $packageKey) {
 					$message = $this->freezePackage($packageKey);
-					if ($message instanceof \TYPO3\FLOW3\Error\Error || $message instanceof \TYPO3\FLOW3\Error\Warning) {
+					if ($message instanceof \TYPO3\Flow\Error\Error || $message instanceof \TYPO3\Flow\Error\Warning) {
 						$this->flashMessageContainer->addMessage($message);
 					} else {
 						array_push($frozenPackages, $packageKey);
 					}
 				}
 				if (count($frozenPackages) > 0) {
-					$message = new \TYPO3\FLOW3\Error\Message('Following packages have been frozen: ' . implode(', ', $frozenPackages));
+					$message = new \TYPO3\Flow\Error\Message('Following packages have been frozen: ' . implode(', ', $frozenPackages));
 				} else {
-					$message = new \TYPO3\FLOW3\Error\Warning('Unable to freeze the selected packages');
+					$message = new \TYPO3\Flow\Error\Warning('Unable to freeze the selected packages');
 				}
 			break;
 			case 'unfreeze':
 				foreach ($packageKeys as $packageKey) {
 					$this->packageManager->unfreezePackage($packageKey);
 				}
-				$message = new \TYPO3\FLOW3\Error\Message('Following packages have been unfrozen: ' . implode(', ', $packageKeys));
+				$message = new \TYPO3\Flow\Error\Message('Following packages have been unfrozen: ' . implode(', ', $packageKeys));
 			break;
 			case 'activate':
 				$activatedPackages = array();
 				foreach ($packageKeys as $packageKey) {
 					$message = $this->activatePackage($packageKey);
-					if ($message instanceof \TYPO3\FLOW3\Error\Error || $message instanceof \TYPO3\FLOW3\Error\Warning) {
+					if ($message instanceof \TYPO3\Flow\Error\Error || $message instanceof \TYPO3\Flow\Error\Warning) {
 						$this->flashMessageContainer->addMessage($message);
 					} else {
 						array_push($activatedPackages, $packageKey);
 					}
 				}
 				if (count($activatedPackages) > 0) {
-					$message = new \TYPO3\FLOW3\Error\Message('Following packages have been activated: ' . implode(', ', $activatedPackages));
+					$message = new \TYPO3\Flow\Error\Message('Following packages have been activated: ' . implode(', ', $activatedPackages));
 				} else {
-					$message = new \TYPO3\FLOW3\Error\Warning('Unable to activate the selected packages');
+					$message = new \TYPO3\Flow\Error\Warning('Unable to activate the selected packages');
 				}
 			break;
 			case 'deactivate':
 				$deactivatedPackages = array();
 				foreach ($packageKeys as $packageKey) {
 					$message = $this->deactivatePackage($packageKey);
-					if ($message instanceof \TYPO3\FLOW3\Error\Error || $message instanceof \TYPO3\FLOW3\Error\Warning) {
+					if ($message instanceof \TYPO3\Flow\Error\Error || $message instanceof \TYPO3\Flow\Error\Warning) {
 						$this->flashMessageContainer->addMessage($message);
 					} else {
 						array_push($deactivatedPackages, $packageKey);
 					}
 				}
 				if (count($deactivatedPackages) > 0) {
-					$message = new \TYPO3\FLOW3\Error\Message('Following packages have been deactivated: ' . implode(', ', $deactivatedPackages));
+					$message = new \TYPO3\Flow\Error\Message('Following packages have been deactivated: ' . implode(', ', $deactivatedPackages));
 				} else {
-					$message = new \TYPO3\FLOW3\Error\Warning('Unable to deactivate the selected packages');
+					$message = new \TYPO3\Flow\Error\Warning('Unable to deactivate the selected packages');
 				}
 			break;
 			case 'delete':
 				$deletedPackages = array();
 				foreach ($packageKeys as $packageKey) {
 					$message = $this->deletePackage($packageKey);
-					if ($message instanceof \TYPO3\FLOW3\Error\Error || $message instanceof \TYPO3\FLOW3\Error\Warning) {
+					if ($message instanceof \TYPO3\Flow\Error\Error || $message instanceof \TYPO3\Flow\Error\Warning) {
 						$this->flashMessageContainer->addMessage($message);
 					} else {
 						array_push($deletedPackages, $packageKey);
 					}
 				}
 				if (count($deletedPackages) > 0) {
-					$message = new \TYPO3\FLOW3\Error\Message('Following packages have been deleted: ' . implode(', ', $deletedPackages));
+					$message = new \TYPO3\Flow\Error\Message('Following packages have been deleted: ' . implode(', ', $deletedPackages));
 				} else {
-					$message = new \TYPO3\FLOW3\Error\Warning('Unable to delete the selected packages');
+					$message = new \TYPO3\Flow\Error\Warning('Unable to delete the selected packages');
 				}
 			break;
 			default:
@@ -222,64 +222,64 @@ class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardControll
 
 	/**
 	 * @param string $packageKey
-	 * @return \TYPO3\FLOW3\Error\Error|\TYPO3\FLOW3\Error\Message
+	 * @return \TYPO3\Flow\Error\Error|\TYPO3\Flow\Error\Message
 	 */
 	protected function activatePackage($packageKey) {
 		try {
 			$this->packageManager->activatePackage($packageKey);
 			$this->doctrineService->updateSchema();
-			$message = new \TYPO3\FLOW3\Error\Message('The package ' . $packageKey . ' is activated', 1343231680);
-		} catch (\TYPO3\FLOW3\Package\Exception\UnknownPackageException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error('The package ' . $packageKey . ' is not present and can not be activated', 1343231681);
+			$message = new \TYPO3\Flow\Error\Message('The package ' . $packageKey . ' is activated', 1343231680);
+		} catch (\TYPO3\Flow\Package\Exception\UnknownPackageException $exception) {
+			$message = new \TYPO3\Flow\Error\Error('The package ' . $packageKey . ' is not present and can not be activated', 1343231681);
 		}
 		return $message;
 	}
 
 	/**
 	 * @param string $packageKey
-	 * @return \TYPO3\FLOW3\Error\Error|\TYPO3\FLOW3\Error\Message
+	 * @return \TYPO3\Flow\Error\Error|\TYPO3\Flow\Error\Message
 	 */
 	protected function deactivatePackage($packageKey) {
 		try {
 			$this->packageManager->deactivatePackage($packageKey);
 			$this->doctrineService->updateSchema();
-			$message = new \TYPO3\FLOW3\Error\Message($packageKey . ' was deactivated', 1343231678);
-		} catch (\TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error('The package ' . $packageKey . ' is protected and can not be deactivated', 1343231679);
+			$message = new \TYPO3\Flow\Error\Message($packageKey . ' was deactivated', 1343231678);
+		} catch (\TYPO3\Flow\Package\Exception\ProtectedPackageKeyException $exception) {
+			$message = new \TYPO3\Flow\Error\Error('The package ' . $packageKey . ' is protected and can not be deactivated', 1343231679);
 		}
 		return $message;
 	}
 
 	/**
 	 * @param string $packageKey
-	 * @return \TYPO3\FLOW3\Error\Error|\TYPO3\FLOW3\Error\Message
+	 * @return \TYPO3\Flow\Error\Error|\TYPO3\Flow\Error\Message
 	 */
 	protected function deletePackage($packageKey) {
 		try {
 			$this->packageManager->deletePackage($packageKey);
-			$message = new \TYPO3\FLOW3\Error\Message($packageKey . ' has been deleted', 1343231685);
-		} catch (\TYPO3\FLOW3\Package\Exception\UnknownPackageException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231686);
-		} catch (\TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231687);
-		} catch (\TYPO3\FLOW3\Package\Exception $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231688);
+			$message = new \TYPO3\Flow\Error\Message($packageKey . ' has been deleted', 1343231685);
+		} catch (\TYPO3\Flow\Package\Exception\UnknownPackageException $exception) {
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231686);
+		} catch (\TYPO3\Flow\Package\Exception\ProtectedPackageKeyException $exception) {
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231687);
+		} catch (\TYPO3\Flow\Package\Exception $exception) {
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231688);
 		}
 		return $message;
 	}
 
 	/**
 	 * @param string $packageKey
-	 * @return \TYPO3\FLOW3\Error\Error|\TYPO3\FLOW3\Error\Message
+	 * @return \TYPO3\Flow\Error\Error|\TYPO3\Flow\Error\Message
 	 */
 	protected function freezePackage($packageKey) {
 		try {
 			$this->packageManager->freezePackage($packageKey);
-			$message = new \TYPO3\FLOW3\Error\Message($packageKey . ' has been frozen', 1343231689);
+			$message = new \TYPO3\Flow\Error\Message($packageKey . ' has been frozen', 1343231689);
 		} catch (\LogicException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231690);
-		} catch (\TYPO3\FLOW3\Package\Exception\UnknownPackageException $exception) {
-			$message = new \TYPO3\FLOW3\Error\Error($exception->getMessage(), 1343231691);
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231690);
+		} catch (\TYPO3\Flow\Package\Exception\UnknownPackageException $exception) {
+			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231691);
 		}
 		return $message;
 	}

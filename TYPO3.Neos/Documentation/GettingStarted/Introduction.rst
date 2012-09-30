@@ -7,7 +7,7 @@ TYPO3 Phoenix
 
 Back in 2005 it was decided to start with a new TYPO3 version that should eventually
 replace the current major version 4. In the long and twisted process that followed we
-had to write a new framework first (FLOW3), struggle with the release schedule of PHP6,
+had to write a new framework first (TYPO3 Flow), struggle with the release schedule of PHP6,
 fight tools not supporting PHP namespaces, and come up with good ideas for that
 next-generation CMS we were about to build.
 
@@ -22,8 +22,8 @@ set, then...
 System Overview
 ===============
 
-TYPO3 Phoenix is made up of packages and based on the FLOW3 framework. Most of the packages
-are part of the FLOW3 base system, TYPO3 Phoenix consists of a few additional packages, like
+TYPO3 Phoenix is made up of packages and based on the TYPO3 Flow framework. Most of the packages
+are part of the TYPO3 Flow base system, TYPO3 Phoenix consists of a few additional packages, like
 TYPO3 and TypoScript, in which the actual CMS functionality is contained. The templates,
 graphics and content of the demo site are in another package. Generally, all static website
 resources (including templates, TypoScript and Images) can be found in separate packages for

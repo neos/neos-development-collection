@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\ViewHelpers\Aloha;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,13 +11,13 @@ namespace TYPO3\TYPO3\ViewHelpers\Aloha;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
  * The wrapper contains the property name which should be made editable, and is either a "span" or a "div" tag (depending on the context)
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  * @deprecated since sprint 10, use ContentElement/EditableViewHelper instead
  */
 class EditableViewHelper extends \TYPO3\TYPO3\ViewHelpers\ContentElement\EditableViewHelper {

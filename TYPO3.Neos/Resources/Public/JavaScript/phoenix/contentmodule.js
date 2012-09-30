@@ -21,7 +21,7 @@ function($, vie, Ember, CreateJS) {
 
 	return Ember.Application.create({
 
-		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/',
+		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/TYPO3/Content/',
 
 		/**
 		 * The following setting is set to "true" when unfinished features should be shown.

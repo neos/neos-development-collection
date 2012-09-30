@@ -9,7 +9,7 @@
 #                                                                        #
 
 TYPO3:
-  FLOW3:
+  Flow:
     security:
       authentication:
         providers:
@@ -33,7 +33,7 @@ TYPO3:
                 errorTitle: 'Page Not Found'
                 errorDescription: 'Sorry, the page you requested was not found.'
           databaseConnectionExceptions:
-            matchingExceptionClassNames: ['TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException']
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
             options:
               fluidTemplate: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
               variables:
@@ -50,9 +50,9 @@ TYPO3:
   DocTools:
     bundles:
       Phoenix:
-        documentationRootPath: %FLOW3_PATH_PACKAGES%Application/TYPO3.TYPO3/Documentation/
-        configurationRootPath: %FLOW3_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
-        renderedDocumentationRootPath: %FLOW3_PATH_DATA%Temporary/Documentation/TYPO3.TYPO3/
+        documentationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.TYPO3/Documentation/
+        configurationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
+        renderedDocumentationRootPath: %FLOW_PATH_DATA%Temporary/Documentation/TYPO3.TYPO3/
         renderingOutputFormat: 'html'
         renderByDefault: FALSE
 

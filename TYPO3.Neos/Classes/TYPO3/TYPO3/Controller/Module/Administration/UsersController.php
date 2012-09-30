@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Controller\Module\Administration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,42 +11,42 @@ namespace TYPO3\TYPO3\Controller\Module\Administration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The TYPO3 User Admin module controller
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\AccountRepository
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
 	 */
 	protected $partyRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\AccountFactory
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\AccountFactory
 	 */
 	protected $accountFactory;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 */
 	protected $hashService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
@@ -59,10 +59,10 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 			$propertyMappingConfigurationForAccount = $this->arguments->getArgument('account')->getPropertyMappingConfiguration();
 			$propertyMappingConfigurationForAccountParty = $propertyMappingConfigurationForAccount->forProperty('party');
 			$propertyMappingConfigurationForAccountPartyName = $propertyMappingConfigurationForAccount->forProperty('party.name');
-			$propertyMappingConfigurationForAccountParty->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, '\TYPO3\TYPO3\Domain\Model\User');
+			$propertyMappingConfigurationForAccountParty->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, '\TYPO3\TYPO3\Domain\Model\User');
 			foreach (array($propertyMappingConfigurationForAccountParty, $propertyMappingConfigurationForAccountPartyName) as $propertyMappingConfiguration) {
-				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
-				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
+				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 			}
 		}
 	}
@@ -80,27 +80,27 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
 	 */
-	public function newAction(\TYPO3\FLOW3\Security\Account $account = NULL) {
+	public function newAction(\TYPO3\Flow\Security\Account $account = NULL) {
 		$this->view->assign('account', $account);
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
 
 	/**
 	 * @param string $identifier
-	 * @FLOW3\Validate(argumentName="identifier", type="NotEmpty")
-	 * @FLOW3\Validate(argumentName="identifier", type="StringLength", options={ "minimum"=1, "maximum"=255 })
-	 * @FLOW3\Validate(argumentName="identifier", type="\TYPO3\TYPO3\Validation\Validator\AccountExistsValidator", options={ "authenticationProviderName"="Typo3BackendProvider" })
+	 * @Flow\Validate(argumentName="identifier", type="NotEmpty")
+	 * @Flow\Validate(argumentName="identifier", type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(argumentName="identifier", type="\TYPO3\TYPO3\Validation\Validator\AccountExistsValidator", options={ "authenticationProviderName"="Typo3BackendProvider" })
 	 * @param array $password
-	 * @FLOW3\Validate(argumentName="password", type="\TYPO3\TYPO3\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(argumentName="password", type="\TYPO3\TYPO3\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
 	 * @param string $firstName
-	 * @FLOW3\Validate(argumentName="firstName", type="NotEmpty")
-	 * @FLOW3\Validate(argumentName="firstName", type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(argumentName="firstName", type="NotEmpty")
+	 * @Flow\Validate(argumentName="firstName", type="StringLength", options={ "minimum"=1, "maximum"=255 })
 	 * @param string $lastName
-	 * @FLOW3\Validate(argumentName="lastName", type="NotEmpty")
-	 * @FLOW3\Validate(argumentName="lastName", type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(argumentName="lastName", type="NotEmpty")
+	 * @Flow\Validate(argumentName="lastName", type="StringLength", options={ "minimum"=1, "maximum"=255 })
 	 * @return void
 	 * @todo Security
 	 */
@@ -119,33 +119,33 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
 	 * @todo Creation/editing of electronic addresses on party property
 	 */
-	public function editAction(\TYPO3\FLOW3\Security\Account $account) {
+	public function editAction(\TYPO3\Flow\Security\Account $account) {
 		$this->view->assign('account', $account);
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
 	 */
-	public function showAction(\TYPO3\FLOW3\Security\Account $account) {
+	public function showAction(\TYPO3\Flow\Security\Account $account) {
 		$this->view->assign('account', $account);
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @param array $password
-	 * @FLOW3\Validate(argumentName="password", type="\TYPO3\TYPO3\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(argumentName="password", type="\TYPO3\TYPO3\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
 	 * @return void
 	 * @todo Handle validation errors for account (accountIdentifier) & check if there's another account with the same accountIdentifier when changing it
 	 * @todo Security
 	 */
-	public function updateAction(\TYPO3\FLOW3\Security\Account $account, array $password = array()) {
+	public function updateAction(\TYPO3\Flow\Security\Account $account, array $password = array()) {
 		$password = array_shift($password);
 		if (strlen(trim(strval($password))) > 0) {
 			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
@@ -159,11 +159,11 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
 	 * @todo Security
 	 */
-	public function deleteAction(\TYPO3\FLOW3\Security\Account $account) {
+	public function deleteAction(\TYPO3\Flow\Security\Account $account) {
 		if ($this->securityContext->getAccount() === $account) {
 			$this->addFlashMessage('You can not remove current logged in user');
 			$this->redirect('index');

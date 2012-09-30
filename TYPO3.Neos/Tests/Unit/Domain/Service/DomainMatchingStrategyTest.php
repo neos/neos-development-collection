@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Tests\Unit\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\TYPO3\Tests\Unit\Domain\Service;
  * Testcase for the Content Service
  *
  */
-class DomainMatchingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -42,7 +42,7 @@ class DomainMatchingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$mockDomains[0]->setHostPattern('*.typo3.org');
-		$mockDomains[1]->setHostPattern('flow3.typo3.org');
+		$mockDomains[1]->setHostPattern('flow.typo3.org');
 		$mockDomains[2]->setHostPattern('*');
 		$mockDomains[3]->setHostPattern('yacumboolu.typo3.org');
 
@@ -53,7 +53,7 @@ class DomainMatchingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$strategy = new \TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy();
-		$actualDomains = $strategy->getSortedMatches('flow3.typo3.org', $mockDomains);
+		$actualDomains = $strategy->getSortedMatches('flow.typo3.org', $mockDomains);
 		$this->assertSame($expectedDomains, $actualDomains);
 	}
 }

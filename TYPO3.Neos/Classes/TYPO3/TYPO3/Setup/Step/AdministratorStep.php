@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Setup\Step;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Setup".                *
+ * This script belongs to the Flow package "TYPO3.Setup".                *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,11 +11,11 @@ namespace TYPO3\TYPO3\Setup\Step;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3,
+use TYPO3\Flow\Annotations as Flow,
 	TYPO3\Form\Core\Model\FormDefinition;
 
 /**
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 
@@ -25,20 +25,20 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 	protected $optional = TRUE;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\AccountRepository
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
 	 */
 	protected $partyRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\AccountFactory
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\AccountFactory
 	 */
 	protected $accountFactory;
 
@@ -59,26 +59,26 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$firstName = $personalSection->createElement('firstName', 'TYPO3.Form:SingleLineText');
 		$firstName->setLabel('First name');
-		$firstName->addValidator(new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator());
-		$firstName->addValidator(new \TYPO3\FLOW3\Validation\Validator\StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
+		$firstName->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
+		$firstName->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
 
 		$lastName = $personalSection->createElement('lastName', 'TYPO3.Form:SingleLineText');
 		$lastName->setLabel('Last name');
-		$lastName->addValidator(new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator());
-		$lastName->addValidator(new \TYPO3\FLOW3\Validation\Validator\StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
+		$lastName->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
+		$lastName->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
 
 		$credentialsSection = $page1->createElement('credentialsSection', 'TYPO3.Form:Section');
 		$credentialsSection->setLabel('Credentials');
 
 		$username = $credentialsSection->createElement('username', 'TYPO3.Form:SingleLineText');
 		$username->setLabel('Username');
-		$username->addValidator(new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator());
-		$username->addValidator(new \TYPO3\FLOW3\Validation\Validator\AlphanumericValidator());
+		$username->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
+		$username->addValidator(new \TYPO3\Flow\Validation\Validator\AlphanumericValidator());
 		$username->addValidator(new \TYPO3\TYPO3\Validation\Validator\AccountExistsValidator(array('authenticationProviderName' => 'Typo3BackendProvider')));
 
 		$password = $credentialsSection->createElement('password', 'TYPO3.Form:PasswordWithConfirmation');
-		$password->addValidator(new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator());
-		$password->addValidator(new \TYPO3\FLOW3\Validation\Validator\StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
+		$password->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
+		$password->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
 		$password->setLabel('Password');
 	}
 

@@ -13,7 +13,7 @@ Node Structure:
       - text: 'This is our exemplary rendering test. Check it out and play around!'
   - main (section)
     - ___ (TextWithHeadline)
-      - title: 'Do you love FLOW3?'
+      - title: 'Do you love TYPO3 Flow?'
       - text: 'If you do, make sure to post your opinion about it on Twitter!'
     - ___ (HTML)
       - source: '[TWITTER WIDGET]'
@@ -50,7 +50,7 @@ That is, we want to simulate the following layout with it:
       | +--------------------------------------+  |
       +---------------------------------+---------+
       | +----------------------------+  |+-------+|
-      | |  DO YOU LOVE FLOW3?        |  ||LAST   ||
+      | |  DO YOU LOVE TYPO3 Flow?   |  ||LAST   ||
       | |                            |  ||COMMITS||
       | |  If you do, make sure ...  |  ||       ||
       | +----------------------------+  ||lorem i||

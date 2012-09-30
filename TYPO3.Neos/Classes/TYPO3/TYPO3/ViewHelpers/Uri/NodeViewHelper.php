@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\ViewHelpers\Uri;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3\ViewHelpers\Uri;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A view helper for creating URIs to nodes.
@@ -26,12 +26,12 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * homepage/about.html
  * (depending on current workspace, current node, format etc.)
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -47,7 +47,7 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 	public function render($node = NULL, $format = NULL, $absolute = FALSE) {
 		$request = $this->controllerContext->getRequest()->getMainRequest();
 
-		$uriBuilder = new \TYPO3\FLOW3\Mvc\Routing\UriBuilder();
+		$uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
 		$uriBuilder->setRequest($request);
 
 		if ($node === NULL) {

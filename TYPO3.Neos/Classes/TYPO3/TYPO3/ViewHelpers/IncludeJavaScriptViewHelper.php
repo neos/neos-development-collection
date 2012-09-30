@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\ViewHelpers;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,18 +11,18 @@ namespace TYPO3\TYPO3\ViewHelpers;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
 
@@ -52,7 +52,7 @@ class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 		$uris = array();
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
-			$relativePath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($relativePath);
+			$relativePath = \TYPO3\Flow\Utility\Files::getUnixStylePath($relativePath);
 
 			if (!$this->patternMatchesPath($exclude, $relativePath) &&
 				$this->patternMatchesPath($include, $relativePath)) {

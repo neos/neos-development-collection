@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,37 +11,37 @@ namespace TYPO3\TYPO3\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The content element wrapping service adds the necessary markup around
  * a content element such that it can be edited using the Content Module
  * of the TYPO3 Backend.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class ContentElementWrappingService {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -82,7 +82,7 @@ class ContentElementWrappingService {
 
 		try {
 			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
-		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
+		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
 			return $tagBuilder->render();
 		}
 
@@ -96,7 +96,7 @@ class ContentElementWrappingService {
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			if ($propertyName[0] === '_') {
-				$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
+				$propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
 			} else {
 				$propertyValue = $node->getProperty($propertyName);
 			}
@@ -112,7 +112,7 @@ class ContentElementWrappingService {
 
 				// Serialize objects to JSON strings
 			if (is_object($propertyValue) && $propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
-				$gettableProperties = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($propertyValue);
+				$gettableProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($propertyValue);
 				$convertedProperties = array();
 				foreach ($gettableProperties as $key => $value) {
 					if (is_object($value)) {

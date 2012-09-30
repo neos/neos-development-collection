@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,61 +11,61 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The Site Import Service
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  * @api
  */
 class SiteImportService {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Resource\ResourceManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
 	protected $resourceManager;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -94,8 +94,8 @@ class SiteImportService {
 	/**
 	 * @param string $pathAndFilename
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException
-	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException
+	 * @throws \TYPO3\Flow\Package\Exception\UnknownPackageException
+	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageStateException
 	 */
 	public function importSitesFromFile($pathAndFilename) {
 		$contentContext = $this->nodeRepository->getContext();
@@ -124,10 +124,10 @@ class SiteImportService {
 
 			$siteResourcesPackageKey = (string)$siteXml->properties->siteResourcesPackageKey;
 			if ($this->packageManager->isPackageAvailable($siteResourcesPackageKey) === FALSE) {
-				throw new \TYPO3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package does not exist.', 1303891443);
+				throw new \TYPO3\Flow\Package\Exception\UnknownPackageException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package does not exist.', 1303891443);
 			}
 			if ($this->packageManager->isPackageActive($siteResourcesPackageKey) === FALSE) {
-				throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package is not active.', 1303898135);
+				throw new \TYPO3\Flow\Package\Exception\InvalidPackageStateException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package is not active.', 1303898135);
 			}
 			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 

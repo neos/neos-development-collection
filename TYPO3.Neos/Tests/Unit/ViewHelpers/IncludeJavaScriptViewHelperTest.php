@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers;
  * Testcase for the IncludeJavaScript view helper
  *
  */
-class IncludeJavaScriptViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper
@@ -26,11 +26,11 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Set up common mocks and object under test
 	 */
 	public function setUp() {
-		$this->request = $this->getMockBuilder('TYPO3\FLOW3\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$this->request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
 		$this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
-		$this->controllerContext = $this->getMock('TYPO3\FLOW3\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
+		$this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
-		$this->resourcePublisher = $this->getMock('TYPO3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
+		$this->resourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
 		$this->viewHelper = $this->getAccessibleMock('TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
 		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();

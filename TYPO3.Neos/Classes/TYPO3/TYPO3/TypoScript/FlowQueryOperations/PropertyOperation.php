@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\TypoScript\FlowQueryOperations;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3".                      *
+ * This script belongs to the Flow package "TYPO3".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3\TypoScript\FlowQueryOperations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Access properties of a TYPO3CR Node. If prefixed with _, internal properties
@@ -72,7 +72,7 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 
 			$element = $context[0];
 			if ($propertyPath[0] === '_') {
-				return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
+				return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
 			} else {
 				return $element->getProperty($propertyPath);
 			}

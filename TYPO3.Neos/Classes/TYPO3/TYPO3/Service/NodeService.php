@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3\Routing\Exception as Exception;
@@ -20,12 +20,12 @@ use TYPO3\TYPO3\Routing\Exception as Exception;
  * The node service adds some basic helper methods for retrieving nodes from the TYPO3CR
  * This is used by the FrontendNodeRoutePartHandler in order to fetch the currently requested page node
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class NodeService {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;

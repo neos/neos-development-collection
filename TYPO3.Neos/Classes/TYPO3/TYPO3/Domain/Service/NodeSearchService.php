@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3".                      *
+ * This script belongs to the Flow package "TYPO3".                      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,17 +11,17 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Find nodes based on a fulltext search
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class NodeSearchService {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -30,10 +30,10 @@ class NodeSearchService {
 	 * Search all properties for given $term
 	 * @param string $term
 	 * @param array $searchContentTypes
-	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
 	 */
 	public function findByProperties($term, array $searchContentTypes) {
-			// TODO: Implement a better search when FLOW3 offer the possibility
+			// TODO: Implement a better search when Flow offer the possibility
 		$query = $this->nodeRepository->createQuery();
 		$constraints = array(
 			$query->like('properties', '%' . $term . '%'),

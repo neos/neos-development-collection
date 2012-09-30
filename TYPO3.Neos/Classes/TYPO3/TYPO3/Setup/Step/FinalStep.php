@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Setup\Step;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Setup".                *
+ * This script belongs to the Flow package "TYPO3.Setup".                *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,11 +11,11 @@ namespace TYPO3\TYPO3\Setup\Step;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3,
+use TYPO3\Flow\Annotations as Flow,
 	TYPO3\Form\Core\Model\FormDefinition;
 
 /**
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 

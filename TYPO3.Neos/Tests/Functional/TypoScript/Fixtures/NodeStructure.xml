@@ -25,7 +25,7 @@
 			<node nodeName="main" type="TYPO3.Phoenix.ContentTypes:Section">
 				<node nodeName="dummy42a" type="TYPO3.Phoenix.ContentTypes:Headline">
 					<properties>
-						<title><![CDATA[<h1>Do you love FLOW3?</h1>]]></title>
+						<title><![CDATA[<h1>Do you love TYPO3 FLow?</h1>]]></title>
 					</properties>
 				</node>
 				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:Text">

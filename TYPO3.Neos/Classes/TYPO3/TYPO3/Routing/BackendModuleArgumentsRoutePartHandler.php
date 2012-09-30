@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Routing;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,18 +11,18 @@ namespace TYPO3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class BackendModuleArgumentsRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
+class BackendModuleArgumentsRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -43,7 +43,7 @@ class BackendModuleArgumentsRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\Dy
 				}
 			}
 			if ($exceedingArguments !== array()) {
-				$exceedingArguments = \TYPO3\FLOW3\Utility\Arrays::removeEmptyElementsRecursively($exceedingArguments);
+				$exceedingArguments = \TYPO3\Flow\Utility\Arrays::removeEmptyElementsRecursively($exceedingArguments);
 				$exceedingArguments = $this->persistenceManager->convertObjectsToIdentityArrays($exceedingArguments);
 				$queryString = http_build_query(array($this->name => $exceedingArguments), NULL, '&');
 				if ($queryString !== '') {

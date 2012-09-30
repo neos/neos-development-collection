@@ -4,38 +4,25 @@ Creating your first TYPO3 Phoenix website
 
 .. note::
 
-	Currently work is also being done on a site kickstart package
-	helping you to kickstart a new website. This guide will help
+	There is also a site kickstart package available to
+	help you to kickstart a new website. This guide will help
 	you by manually setting up a site.
 
 Create Site Package
 ===================
 
-In TYPO3 Phoenix your website is basically a FLOW3 package. To create
+In TYPO3 Phoenix your website is basically a TYPO3 Flow package. To create
 your website package you use the following command:
 
 ::
 
-	./flow3 package:create My.Site
+	./flow package:create My.Site
 
 .. tip::
 
 	It's highly recommended to move your package to the Packages/Sites/ folder.
 
-Now add a `Site` category to your `Meta/Package.xml` file.
-
-.. code-block:: xml
-
-	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-	<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0">
-		<key>My.Site</key>
-		<title/>
-		<description/>
-		<categories>
-			<category>Site</category>
-		</categories>
-		<version/>
-	</package>
+Now make sure you have the `type` set to `typo3-flow-site` in your `composer.json` file.
 
 Create basic site structure
 ===========================
@@ -73,7 +60,7 @@ Now import this basic structure using the following command:
 
 ::
 
-	./flow3 site:import --packageKey My.Site
+	./flow site:import --packageKey My.Site
 
 Adding a template
 =================

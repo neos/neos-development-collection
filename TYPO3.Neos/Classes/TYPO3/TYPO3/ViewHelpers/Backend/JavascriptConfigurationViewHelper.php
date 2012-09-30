@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\ViewHelpers\Backend;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3\ViewHelpers\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * ViewHelper for the backend 'container'. Renders the required HTML to integrate
@@ -20,13 +20,13 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;

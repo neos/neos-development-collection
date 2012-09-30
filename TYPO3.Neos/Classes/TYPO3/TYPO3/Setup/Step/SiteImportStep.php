@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Setup\Step;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Setup".                *
+ * This script belongs to the Flow package "TYPO3.Setup".                *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\TYPO3\Setup\Step;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3,
+use TYPO3\Flow\Annotations as Flow,
 	TYPO3\Form\Core\Model\FormDefinition,
-	\TYPO3\FLOW3\Utility\Files as Files;
+	\TYPO3\Flow\Utility\Files as Files;
 
 /**
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
@@ -26,50 +26,50 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	protected $optional = TRUE;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\SiteImportService
 	 */
 	protected $siteImportService;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\FlashMessageContainer
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
 
@@ -80,7 +80,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
 	/**
 	 * @var \TYPO3\SiteKickstarter\Service\GeneratorService
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 */
 	protected $generatorService;
 
@@ -108,7 +108,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$site = $title->createElement('site', 'TYPO3.Form:SingleSelectDropdown');
 			$site->setLabel('Select a site');
 			$site->setProperty('options', $sitePackages);
-			$site->addValidator(new \TYPO3\FLOW3\Validation\Validator\NotEmptyValidator());
+			$site->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
 
 			$sites = $this->siteRepository->findAll();
 			if ($sites->count() > 0) {
@@ -126,8 +126,8 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		$newPackageSection->setLabel('Create a new site');
 		$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
 		$packageName->setLabel('Package Name (in form "Vendor.MyPackageName")');
-		$packageName->addValidator(new \TYPO3\FLOW3\Validation\Validator\RegularExpressionValidator(array(
-			'regularExpression' =>  \TYPO3\FLOW3\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY
+		$packageName->addValidator(new \TYPO3\Flow\Validation\Validator\RegularExpressionValidator(array(
+			'regularExpression' =>  \TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY
 		)));
 
 		$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
@@ -165,7 +165,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$packageKey = $formValues['packageKey'];
 			$siteName = $formValues['packageKey'];
 
-			$this->packageManager->createPackage($packageKey, NULL, Files::getUnixStylePath(Files::concatenatePaths(array(FLOW3_PATH_PACKAGES, 'Sites'))));
+			$this->packageManager->createPackage($packageKey, NULL, Files::getUnixStylePath(Files::concatenatePaths(array(FLOW_PATH_PACKAGES, 'Sites'))));
 			$this->generatorService->generateSitesXml($packageKey, $siteName);
 			$this->generatorService->generateSitesTypoScript($packageKey, $siteName);
 			$this->generatorService->generateSitesTemplate($packageKey, $siteName);
@@ -182,7 +182,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 				$this->siteImportService->importFromPackage($packageKey);
 			} catch (\Exception $exception) {
 				$finisherContext->cancel();
-				$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Error(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage())));
+				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage())));
 			}
 		}
 	}
