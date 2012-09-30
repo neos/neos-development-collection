@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript".                 *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,12 +11,12 @@ namespace TYPO3\TypoScript\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The TypoScript Parser
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  * @api
  */
 class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
@@ -154,8 +154,8 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	const SPLIT_PATTERN_PROCESSORARGUMENTS = '/(?P<ArgumentName>[a-zA-Z0-9]+):\s*(?P<ArgumentValue>"(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|-?[0-9]+(\.\d+)?)/';
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -719,13 +719,13 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 				if (!isset($objectTree[$currentKey])) {
 					$objectTree[$currentKey] = array();
 				}
-				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
+				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
 			}
 		} else {
 			if ($value === NULL && (is_array($objectTree) || $objectTree instanceof \ArrayAccess)) {
 				unset($objectTree[$currentKey]);
 			} else {
-				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $currentKey, $value);
+				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($objectTree, $currentKey, $value);
 			}
 		}
 		return $objectTree;

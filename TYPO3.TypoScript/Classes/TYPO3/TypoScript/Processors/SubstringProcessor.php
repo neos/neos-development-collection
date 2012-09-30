@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -70,7 +70,7 @@ class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 		if (!is_integer($this->start)) throw new \TYPO3\TypoScript\Exception('Expected an integer as start position, ' . gettype($this->start) . ' given.', 1224003810);
 		if ($this->length !== NULL && !is_integer($this->length)) throw new \TYPO3\TypoScript\Exception('Expected an integer as length, ' . gettype($this->length) . ' given.', 1224003811);
 
-		return \TYPO3\FLOW3\Utility\Unicode\Functions::substr((string)$subject, $this->start, $this->length);
+		return \TYPO3\Flow\Utility\Unicode\Functions::substr((string)$subject, $this->start, $this->length);
 	}
 }
 ?>

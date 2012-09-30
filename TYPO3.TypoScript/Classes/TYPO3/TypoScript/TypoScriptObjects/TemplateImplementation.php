@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\TypoScriptObjects;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript".                 *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * TypoScript object rendering a fluid template
@@ -120,7 +120,7 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 	 */
 	public function evaluate() {
 			// while we use the existing ActionRequest if possible, we need to *clone* it as we might need to modify the controllerPackageKey later.
-		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\FLOW3\Mvc\ActionRequest) ? clone $this->tsRuntime->getControllerContext()->getRequest() : NULL);
+		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\Flow\Mvc\ActionRequest) ? clone $this->tsRuntime->getControllerContext()->getRequest() : NULL);
 
 		$templatePath = $this->tsValue('templatePath');
 		if ($templatePath === NULL) {

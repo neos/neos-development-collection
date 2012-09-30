@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -17,7 +17,7 @@ require_once (__DIR__ . '/../Fixtures/MockTypoScriptObject.php');
  * Testcase for the TypoScript ToIntegerProcessor
  *
  */
-class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ToIntegerProcessorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TypoScript\Processors\ToIntegerProcessor

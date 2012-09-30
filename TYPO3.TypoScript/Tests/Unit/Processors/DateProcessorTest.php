@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\TypoScript\Processors;
  * Testcase for the TypoScript DateProcessor
  *
  */
-class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class DateProcessorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TypoScript\Processors\DateProcessor

@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -45,7 +45,7 @@ class IfBlankProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 * @return string The processed string
 	 */
 	public function process($subject) {
-		return (!\TYPO3\FLOW3\Utility\Unicode\Functions::strlen((string)$subject)) ? $this->replacement : $subject;
+		return (!\TYPO3\Flow\Utility\Unicode\Functions::strlen((string)$subject)) ? $this->replacement : $subject;
 	}
 }
 ?>

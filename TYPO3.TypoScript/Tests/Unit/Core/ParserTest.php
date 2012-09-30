@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Tests\Unit\Core;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript".                 *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -14,7 +14,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
 /**
  * Testcase for the TypoScript Parser
  */
-class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TypoScript\Core\Parser
@@ -22,7 +22,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $parser;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
@@ -32,7 +32,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
 		$parserClassName = $this->buildAccessibleProxy('TYPO3\TypoScript\Core\Parser');

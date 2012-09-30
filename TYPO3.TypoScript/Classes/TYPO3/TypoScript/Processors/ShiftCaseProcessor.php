@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -52,13 +52,13 @@ class ShiftCaseProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	public function process($subject) {
 		switch ($this->direction) {
 			case self::SHIFT_CASE_TO_LOWER :
-				$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::strtolower($subject);
+				$processedSubject = \TYPO3\Flow\Utility\Unicode\Functions::strtolower($subject);
 				break;
 			case self::SHIFT_CASE_TO_UPPER :
-				$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper($subject);
+				$processedSubject = \TYPO3\Flow\Utility\Unicode\Functions::strtoupper($subject);
 				break;
 			case self::SHIFT_CASE_TO_TITLE :
-				$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::strtotitle($subject);
+				$processedSubject = \TYPO3\Flow\Utility\Unicode\Functions::strtotitle($subject);
 				break;
 			default:
 				throw new \TYPO3\TypoScript\Exception('Invalid direction specified for case shift. Please use one of the SHIFT_CASE_* constants.', 1179399480);

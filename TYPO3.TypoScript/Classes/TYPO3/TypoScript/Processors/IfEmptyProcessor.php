@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,12 +11,12 @@ namespace TYPO3\TypoScript\Processors;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Processor that overrides the current subject with the given value, if the subject (trimmed) is empty.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class IfEmptyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 

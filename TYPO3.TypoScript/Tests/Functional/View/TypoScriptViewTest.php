@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Tests\Functional\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,15 +15,15 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
  * Testcase for the TypoScript View
  *
  */
-class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class TypoScriptViewTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var TYPO3\FLOW3\Mvc\View\ViewInterface
+	 * @var TYPO3\Flow\Mvc\View\ViewInterface
 	 */
 	protected $mockFallbackView;
 
 	/**
-	 * @var \TYPO3\FLOW3\Mvc\Controller\ControllerContext
+	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
 	 */
 	protected $mockControllerContext;
 
@@ -31,7 +31,7 @@ class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * Initializer
 	 */
 	public function setUp() {
-		$this->mockFallbackView = $this->getMock('TYPO3\FLOW3\Mvc\View\ViewInterface');
+		$this->mockFallbackView = $this->getMock('TYPO3\Flow\Mvc\View\ViewInterface');
 	}
 
 	/**
@@ -72,17 +72,17 @@ class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	protected function buildView($controllerObjectName, $controllerActionName) {
-		$request = $this->getMockBuilder('TYPO3\FLOW3\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+		$request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
 		$request->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$request->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
-		$this->mockControllerContext = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+		$this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
 		$this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($request));
 
 		$view = new \TYPO3\TypoScript\View\TypoScriptView();
 		$view->setControllerContext($this->mockControllerContext);
 		$this->inject($view, 'fallbackView', $this->mockFallbackView);
 
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($view, 'typoScriptPathPattern', __DIR__ . '/Fixtures/TypoScript', TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($view, 'typoScriptPathPattern', __DIR__ . '/Fixtures/TypoScript', TRUE);
 
 		return $view;
 	}

@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * Testcase for the TypoScript View
  *
  */
-abstract class AbstractTypoScriptObjectTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * Helper to build a TypoScript view object
@@ -25,13 +25,13 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\FLOW3\Tests\Functiona
 	protected function buildView() {
 		$view = new \TYPO3\TypoScript\View\TypoScriptView();
 
-		$mockControllerContext = $this->getMockBuilder('TYPO3\FLOW3\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+		$mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
 		$view->setControllerContext($mockControllerContext);
 		$view->disableFallbackView();
 		$view->setPackageKey('TYPO3.TypoScript');
 		$view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
 
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($view, 'typoScriptPathPattern', __DIR__ . '/Fixtures', TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($view, 'typoScriptPathPattern', __DIR__ . '/Fixtures', TRUE);
 
 		return $view;
 	}

@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\View;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * View for using TypoScript for standard MVC controllers.
@@ -25,17 +25,17 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * If this path is found, then it is used for rendering. Otherwise, the $fallbackView
  * is used.
  */
-class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
+class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TypoScript\Core\Parser
 	 */
 	protected $typoScriptParser;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\View\ViewInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\View\ViewInterface
 	 */
 	protected $fallbackView;
 
@@ -144,7 +144,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	protected function loadTypoScript() {
 		$typoScriptPathPattern = str_replace('@package', $this->getPackageKey(), $this->typoScriptPathPattern);
 		$mergedTypoScriptCode = '';
-		foreach (\TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2') as $filePath) {
+		foreach (\TYPO3\Flow\Utility\Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2') as $filePath) {
 			$mergedTypoScriptCode .= PHP_EOL . file_get_contents($filePath) . PHP_EOL;
 		}
 		$this->parsedTypoScript = $this->typoScriptParser->parse($mergedTypoScriptCode);
@@ -189,7 +189,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	 * @return boolean TRUE if TypoScript exists at $this->typoScriptPath; FALSE otherwise
 	 */
 	protected function isTypoScriptFoundForCurrentRequest() {
-		return (\TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->parsedTypoScript, str_replace('/', '.', $this->typoScriptPath)) !== NULL);
+		return (\TYPO3\Flow\Utility\Arrays::getValueByPath($this->parsedTypoScript, str_replace('/', '.', $this->typoScriptPath)) !== NULL);
 	}
 
 	/**

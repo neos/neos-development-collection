@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\TypoScriptObjects;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript".                 *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Reflection\ObjectAccess;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 
 
 /**
@@ -97,7 +97,7 @@ abstract class AbstractTypoScriptObject {
 		try {
 			// TODO: this code does not work yet if the TS object implements ArrayAccess
 			$value = ObjectAccess::getProperty($this, $firstPathPart, TRUE);
-		} catch (\TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException $e) {
+		} catch (\TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException $e) {
 			$value = NULL;
 			$pathParts = array();
 		}

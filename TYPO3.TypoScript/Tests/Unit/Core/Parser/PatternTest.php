@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Tests\Unit\Core\Parser;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript".                 *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Parser;
  * Testcase for the TypoScript Parser - tests the regex patterns
  *
  */
-class PatternTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * Checks the regular expression SCAN_PATTERN_COMMENT
@@ -185,7 +185,7 @@ class PatternTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function testSCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE() {
 		$pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE;
 		$this->assertEquals(preg_match($pattern, 'prototype(asf.Ds:1)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (1).');
-		$this->assertEquals(preg_match($pattern, 'prototype(TYPO3.FLOW3:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
+		$this->assertEquals(preg_match($pattern, 'prototype(TYPO3.Flow:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
 		$this->assertEquals(preg_match($pattern, 'message'), 0, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern matched(3).');
 	}
 

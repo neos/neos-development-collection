@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Processors;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TypoScript".           *
+ * This script belongs to the TYPO3 Flow package "TypoScript".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -112,7 +112,7 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 			if ((is_numeric($condition) && $condition <= 0) || $condition === '') {
 				$condition = FALSE;
 			}
-			if ($condition === 1 || (is_string($condition) && \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($condition) > 0)) {
+			if ($condition === 1 || (is_string($condition) && \TYPO3\Flow\Utility\Unicode\Functions::strlen($condition) > 0)) {
 				$condition = TRUE;
 			}
 		}
