@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 /**
  * Testcase for the "Node" domain model
  */
-class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	protected $mockWorkspace;
 
@@ -26,7 +26,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$this->mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$this->node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo/bar', $this->mockWorkspace));
-		$this->node->_set('nodeRepository', $this->getMock('TYPO3\FLOW3\Persistence\RepositoryInterface'));
+		$this->node->_set('nodeRepository', $this->getMock('TYPO3\Flow\Persistence\RepositoryInterface'));
 	}
 
 	/**
@@ -56,7 +56,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function getAbstractIgnoresPropertiesWhichAreObjects() {
 		$this->node->setProperty('title', 'The title of this node');
 		$this->node->setProperty('subtitle', 'The sub title');
-		$this->node->setProperty('uri', new \TYPO3\FLOW3\Http\Uri('http://localhost'));
+		$this->node->setProperty('uri', new \TYPO3\Flow\Http\Uri('http://localhost'));
 		$this->node->setProperty('myObject', new \stdClass());
 
 		$this->assertEquals('The title of this node – The sub title – http://localhost', $this->node->getAbstract());
@@ -247,7 +247,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function removePropertyDoesNotTouchAContentObject() {
-		$this->node->_set('persistenceManager', $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'));
+		$this->node->_set('persistenceManager', $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface'));
 
 		$className = uniqid('Test');
 		eval('class ' .$className . ' {
@@ -266,7 +266,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function propertyFunctionsUseAContentObjectIfOneHasBeenDefined() {
-		$this->node->_set('persistenceManager', $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'));
+		$this->node->_set('persistenceManager', $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface'));
 
 		$className = uniqid('Test');
 		eval('
@@ -494,7 +494,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function removeOnlyFlagsTheNodeAsRemovedIfItsWorkspaceHasAnotherBaseWorkspace() {
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
 		$baseWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
@@ -612,7 +612,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isAccessibleReturnsFalseIfAccessRolesIsSetAndSecurityContextHasNoRoles() {
-		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
 		$mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnValue(FALSE));
 		$this->node->_set('securityContext', $mockSecurityContext);
@@ -625,7 +625,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isAccessibleReturnsTrueIfAccessRolesIsSetAndSecurityContextHasOneOfTheRequiredRoles() {
-		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
 		$mockSecurityContext->expects($this->at(0))->method('hasRole')->with('SomeRole')->will($this->returnValue(FALSE));
 		$mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(TRUE));
@@ -639,7 +639,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function isAccessibleReturnsTrueIfRoleIsEveryone() {
-		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
 		$mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
 		$mockSecurityContext->expects($this->at(0))->method('hasRole')->with('SomeRole')->will($this->returnValue(FALSE));
 		$mockSecurityContext->expects($this->at(1))->method('hasRole')->with('Everyone')->will($this->returnValue(TRUE));

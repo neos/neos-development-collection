@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Node inside the Content Repository. This is the main API for storing and
@@ -23,8 +23,8 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Note: If this API is extended, make sure to also implement the additional
  * methods inside ProxyNode and keep NodeInterface in sync!
  *
- * @FLOW3\Entity
- * @FLOW3\Scope("prototype")
+ * @Flow\Entity
+ * @Flow\Scope("prototype")
  */
 class Node implements NodeInterface {
 
@@ -38,7 +38,7 @@ class Node implements NodeInterface {
 	 * Absolute path of this node
 	 *
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
 	 */
 	protected $path;
 
@@ -46,7 +46,7 @@ class Node implements NodeInterface {
 	 * Absolute path of the parent path
 	 *
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=255 })
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $parentPath;
 
@@ -76,13 +76,13 @@ class Node implements NodeInterface {
 
 	/**
 	 * @var integer
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $depth;
 
 	/**
 	 * @var string
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $name;
 
@@ -155,32 +155,32 @@ class Node implements NodeInterface {
 	protected $accessRoles = array();
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Security\Context
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory
 	 */
 	protected $proxyNodeFactory;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -194,7 +194,7 @@ class Node implements NodeInterface {
 	public function  __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
 		$this->setPath($path, FALSE);
 		$this->workspace = $workspace;
-		$this->identifier = ($identifier === NULL) ? \TYPO3\FLOW3\Utility\Algorithms::generateUUID() : $identifier;
+		$this->identifier = ($identifier === NULL) ? \TYPO3\Flow\Utility\Algorithms::generateUUID() : $identifier;
 	}
 
 	/**
@@ -330,7 +330,7 @@ class Node implements NodeInterface {
 			}
 		}
 		$abstract = strip_tags(implode(' – ', $abstractParts));
-		$croppedAbstract = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($abstract, 0, 253);
+		$croppedAbstract = \TYPO3\Flow\Utility\Unicode\Functions::substr($abstract, 0, 253);
 		return $croppedAbstract . (strlen($croppedAbstract) < strlen($abstract) ? ' …' : '');
 	}
 
@@ -556,9 +556,9 @@ class Node implements NodeInterface {
 				$this->properties[$propertyName] = $value;
 				$this->nodeRepository->update($this);
 			}
-		} elseif (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
+		} elseif (\TYPO3\Flow\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			$contentObject = $this->contentObjectProxy->getObject();
-			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
+			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
 			$this->persistenceManager->update($contentObject);
 		}
 	}
@@ -574,7 +574,7 @@ class Node implements NodeInterface {
 	 */
 	public function hasProperty($propertyName) {
 		if (is_object($this->contentObjectProxy)) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
+			return \TYPO3\Flow\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
 		} else {
 			return isset($this->properties[$propertyName]);
 		}
@@ -593,8 +593,8 @@ class Node implements NodeInterface {
 	public function getProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
 			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
-		} elseif (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
+		} elseif (\TYPO3\Flow\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
+			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
 		}
 		throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObjectProxy->getObject())), 1291286995);
 	}
@@ -629,7 +629,7 @@ class Node implements NodeInterface {
 	 */
 	public function getProperties() {
 		if (is_object($this->contentObjectProxy)) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
+			return \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		} else {
 			return $this->properties;
 		}
@@ -642,7 +642,7 @@ class Node implements NodeInterface {
 	 */
 	public function getPropertyNames() {
 		if (is_object($this->contentObjectProxy)) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
+			return \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
 		} else {
 			return array_keys($this->properties);
 		}
@@ -1067,7 +1067,7 @@ class Node implements NodeInterface {
 			'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
 		);
 		foreach ($propertyNames as $propertyName) {
-			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this, $propertyName, \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($sourceNode, $propertyName));
+			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this, $propertyName, \TYPO3\Flow\Reflection\ObjectAccess::getProperty($sourceNode, $propertyName));
 		}
 
 		$contentObject = $sourceNode->getContentObject();
@@ -1183,7 +1183,7 @@ class Node implements NodeInterface {
 	/**
 	 * Signals that a node has changed it's path.
 	 *
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 * @return void
 	 */
 	protected function emitNodePathChanged() {

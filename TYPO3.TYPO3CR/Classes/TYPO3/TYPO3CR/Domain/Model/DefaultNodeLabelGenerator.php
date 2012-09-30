@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,12 +11,12 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * default node label generator; used if no-other is configured
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 
@@ -28,7 +28,7 @@ class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 	 */
 	public function getLabel(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$label = $node->hasProperty('title') ? strip_tags($node->getProperty('title')) : '(' . $node->getContentType()->getName() . ') ' . $node->getName();
-		$croppedLabel = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($label, 0, NodeInterface::LABEL_MAXIMUM_CHARACTERS);
+		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, NodeInterface::LABEL_MAXIMUM_CHARACTERS);
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}
 }

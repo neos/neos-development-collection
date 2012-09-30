@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -18,7 +18,7 @@ use \TYPO3\TYPO3\Domain\Service\ContentContext;
  * content repository as long as they reside in the live workspace.
  *
  */
-class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -697,7 +697,7 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * - After that, try to *again* move a node to this spot. In this case, we need to *renumber*
 	 *   the node indices, and the system needs to take the before-moved node into account as well.
 	 *
-	 * The bug tested by this testcase led to wrong orderings on the flow3org website in
+	 * The bug tested by this testcase led to wrong orderings on the floworg website in
 	 * the documentation part under some circumstances.
 	 *
 	 * @test

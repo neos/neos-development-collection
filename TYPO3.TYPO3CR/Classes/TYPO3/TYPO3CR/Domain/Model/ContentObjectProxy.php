@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,19 +11,19 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Content Object Proxy object to connect domain models to nodes
  *
- * @FLOW3\Entity
- * @FLOW3\Scope("prototype")
+ * @Flow\Entity
+ * @Flow\Scope("prototype")
  */
 class ContentObjectProxy {
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $persistenceManager;
 
@@ -43,7 +43,7 @@ class ContentObjectProxy {
 
 	/**
 	 * @var object
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $contentObject = NULL;
 
@@ -58,7 +58,7 @@ class ContentObjectProxy {
 
 	/**
 	 * Fetches the identifier from the set content object. If that
-	 * is not using automatically introduced UUIDs by FLOW3 it tries
+	 * is not using automatically introduced UUIDs by Flow it tries
 	 * to call persistAll() and fetch the identifier again. If it still
 	 * fails, an exception is thrown.
 	 *
@@ -72,7 +72,7 @@ class ContentObjectProxy {
 				$this->persistenceManager->persistAll();
 				$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
 				if ($this->targetId === NULL) {
-					throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
+					throw new \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
 				}
 			}
 		}

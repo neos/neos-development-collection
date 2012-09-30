@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Proxy Node which behaves like a real Node but acts as a placeholder for nodes
@@ -23,7 +23,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * This ProxyNode is only used if there is no materialized node in the current
  * workspace (at the given path).
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class ProxyNode implements NodeInterface {
 
@@ -46,7 +46,7 @@ class ProxyNode implements NodeInterface {
 	protected $newNode;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -63,7 +63,7 @@ class ProxyNode implements NodeInterface {
 	 * Constructs this proxy node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode
-	 * @FLOW3\Autowiring(false)
+	 * @Flow\Autowiring(false)
 	 * @throws \InvalidArgumentException if you give a ProxyNode as originalNode.
 	 */
 	public function  __construct(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode) {

@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 /**
  * Testcase for the "ProxyNode" domain model
  */
-class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\ProxyNode
@@ -314,7 +314,7 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array(), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('add')->with($newNode);
 
-		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3CR\Domain\Model\Node', '/foo', $workspace)->will($this->returnValue($newNode));
 
 		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);

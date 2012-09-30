@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Migration\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Migration\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus as MigrationStatus;
 
 /**
@@ -20,25 +20,25 @@ use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus as MigrationStatus;
 class NodeMigration {
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Migration\Service\NodeFilter
 	 */
 	protected $nodeFilterService;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Migration\Service\NodeTransformation
 	 */
 	protected $nodeTransformationService;
@@ -55,8 +55,8 @@ class NodeMigration {
 	protected $workspace;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManager
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManager
 	 */
 	protected $packageManager;
 

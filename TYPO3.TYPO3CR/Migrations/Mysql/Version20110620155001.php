@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Persistence\Doctrine\Migrations;
+namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration,
 	Doctrine\DBAL\Schema\Schema;

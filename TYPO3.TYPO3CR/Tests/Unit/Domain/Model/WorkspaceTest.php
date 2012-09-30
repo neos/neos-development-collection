@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * Testcase for the "Workspace" domain model
  *
  */
-class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -39,7 +39,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$workspace->_set('nodeRepository', $mockNodeRepository);
 
-		$workspace->initializeObject(\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+		$workspace->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
 		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\Node', $workspace->getRootNode());
 	}
@@ -83,7 +83,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('setWorkspace')->with($targetWorkspace);
 
-		$mockQueryResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
+		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
 		$mockNodeRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
@@ -111,7 +111,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
 
-		$mockQueryResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
+		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
 		$mockNodeRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));

@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -12,20 +12,20 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * A Workspace
  *
- * @FLOW3\Entity
- * @FLOW3\Scope("prototype")
+ * @Flow\Entity
+ * @Flow\Scope("prototype")
  */
 class Workspace {
 
 	/**
 	 * @var string
-	 * @FLOW3\Identity
-	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
+	 * @Flow\Identity
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
 	 */
 	protected $name;
 
@@ -51,19 +51,19 @@ class Workspace {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @FLOW3\Transient
+	 * @Flow\Transient
 	 */
 	protected $context;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -87,7 +87,7 @@ class Workspace {
 	 * @return void
 	 */
 	public function initializeObject($initializationCause) {
-		if ($initializationCause === \TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+		if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
 			$this->rootNode = new Node('/', $this);
 			$this->nodeRepository->add($this->rootNode);
 		}

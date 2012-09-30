@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Repository;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,14 +13,14 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
 
 use \Doctrine\ORM\Query;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * The repository for nodes
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
+class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
 	 * Constants for setNewIndex()
@@ -48,20 +48,20 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
 	 * interface ...
 	 *
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -74,7 +74,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
-		'index' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING
+		'index' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING
 	);
 
 	/**
@@ -629,7 +629,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\FLOW3\Persistence\QueryInterface The query
+	 * @return \TYPO3\Flow\Persistence\QueryInterface The query
 	 * @throws \InvalidArgumentException
 	 */
 	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -740,7 +740,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	/**
 	 * Signals that persistEntities() in this repository finished correctly.
 	 *
-	 * @FLOW3\Signal
+	 * @Flow\Signal
 	 * @return void
 	 */
 	protected function emitRepositoryObjectsPersisted() {

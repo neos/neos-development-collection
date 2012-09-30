@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Migration\Command;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -13,35 +13,35 @@ namespace TYPO3\TYPO3CR\Migration\Command;
 
 use TYPO3\TYPO3CR\Migration\Service\NodeMigration as NodeMigration;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus as MigrationStatus;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Command controller for tasks related to node handling.
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
-class NodeCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Configuration\Source\YamlSource
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Configuration\Source\YamlSource
 	 */
 	protected $yamlSourceImporter;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository
 	 */
 	protected $migrationStatusRepository;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Migration\Domain\Factory\MigrationFactory
 	 */
 	protected $migrationFactory;

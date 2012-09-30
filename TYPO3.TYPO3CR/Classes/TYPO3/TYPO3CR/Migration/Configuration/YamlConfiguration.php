@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Migration\Configuration;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Migration\Configuration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Utility\Files as Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files as Files;
 
 /**
  * Migration Configuration using YAML files.
@@ -20,14 +20,14 @@ use TYPO3\FLOW3\Utility\Files as Files;
 class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configuration {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Configuration\Source\YamlSource
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Configuration\Source\YamlSource
 	 */
 	protected $yamlSourceImporter;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -39,7 +39,7 @@ class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configura
 	protected function registerAvailableVersions() {
 		$this->availableVersions = array();
 		foreach ($this->packageManager->getActivePackages() as $package) {
-			$possibleMigrationsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(
+			$possibleMigrationsPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
 				$package->getPackagePath(),
 				'Migrations/TYPO3CR'
 			));

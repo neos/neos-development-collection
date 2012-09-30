@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -16,7 +16,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * content repository.
  *
  */
-class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -40,7 +40,7 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		parent::setUp();
 		$personalContext = new \TYPO3\TYPO3CR\Domain\Service\Context('user-robert');
 		$this->nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $personalContext, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $personalContext, TRUE);
 		$this->rootNode = $personalContext->getWorkspace()->getRootNode();
 		$this->persistenceManager->persistAll();
 	}
@@ -65,7 +65,7 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 
 		$liveContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/about'));
@@ -78,7 +78,7 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->rootNode->createNode('homepage')->createNode('imprint');
 
 		$liveContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
-		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));
