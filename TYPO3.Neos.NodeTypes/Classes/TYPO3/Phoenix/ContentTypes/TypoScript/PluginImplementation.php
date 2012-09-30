@@ -2,7 +2,7 @@
 namespace TYPO3\Phoenix\ContentTypes\TypoScript;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the TYPO3 Flow package "Phoenix.ContentTypes".  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,31 +11,31 @@ namespace TYPO3\Phoenix\ContentTypes\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
-use TYPO3\FLOW3\Mvc\ActionRequest;
-use TYPO3\FLOW3\Http\Response;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Http\Response;
 
 /**
  * A TypoScript Plugin object. TODO REFACTOR!!
  *
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3\Service\ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;
@@ -67,8 +67,8 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -150,7 +150,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	/**
 	 * Build the pluginRequest object
 	 *
-	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
+	 * @return \TYPO3\Flow\Mvc\ActionRequest
 	 */
 	protected function buildPluginRequest() {
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
@@ -197,7 +197,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * Returns the rendered content of this plugin
 	 *
 	 * @return string The rendered content as a string
-	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	public function evaluate() {
 		$currentContext = $this->tsRuntime->getCurrentContext();
@@ -213,7 +213,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 			} else {
 				return $pluginResponse->getContent();
 			}
-		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $stopActionException) {
+		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
@@ -247,7 +247,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	/**
 	 * Pass the arguments which were addressed to the plugin to its own request
 	 *
-	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $pluginRequest The plugin request
+	 * @param \TYPO3\Flow\Mvc\ActionRequest $pluginRequest The plugin request
 	 * @return void
 	 */
 	protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest) {
