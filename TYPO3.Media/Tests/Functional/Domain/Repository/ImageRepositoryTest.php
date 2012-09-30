@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Tests\Functional\Domain\Repository;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\Media\Tests\Functional\Domain\Repository;
  * Testcase for an image repository
  *
  */
-class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class ImageRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		/**
 		 * @var string
@@ -29,7 +29,7 @@ class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		protected $oldPersistentResourcesStorageBaseUri;
 
 		/**
-		 * @var \TYPO3\FLOW3\Resource\ResourceManager
+		 * @var \TYPO3\Flow\Resource\ResourceManager
 		 */
 		protected $resourceManager;
 
@@ -43,7 +43,7 @@ class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+		if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
 			$this->markTestSkipped('Doctrine persistence is not enabled');
 		}
 		$this->prepareTemporaryDirectory();
@@ -55,22 +55,22 @@ class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function tearDown() {
 		parent::tearDown();
-		$reflectedProperty = new \ReflectionProperty('TYPO3\FLOW3\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
+		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
 		$reflectedProperty->setAccessible(TRUE);
 		$reflectedProperty->setValue($this->resourceManager, $this->oldPersistentResourcesStorageBaseUri);
 
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
+		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
 	}
 
 	/**
 	 * @test
 	 */
 	public function imagesCanBePersisted() {
-		$imagePathAndFilename = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg');
+		$imagePathAndFilename = \TYPO3\Flow\Utility\Files::getUnixStylePath(__DIR__ . '/../../Fixtures/Resources/640px-Goodworkteam.jpg');
 		$hash = sha1_file($imagePathAndFilename);
 		copy($imagePathAndFilename, 'resource://' . $hash);
-		$resource = new \TYPO3\FLOW3\Resource\Resource();
-		$resource->setResourcePointer(new \TYPO3\FLOW3\Resource\ResourcePointer($hash));
+		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($hash));
 		$image = new \TYPO3\Media\Domain\Model\Image($resource);
 		$image->setTitle('');
 
@@ -86,9 +86,9 @@ class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @return void
 	 */
 	protected function prepareTemporaryDirectory() {
-		$this->temporaryDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), str_replace('\\', '_', __CLASS__)));
+		$this->temporaryDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), str_replace('\\', '_', __CLASS__)));
 		if (!file_exists($this->temporaryDirectory)) {
-			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->temporaryDirectory);
+			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectory);
 		}
 	}
 
@@ -97,9 +97,9 @@ class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @return void
 	 */
 	protected function prepareResourceManager() {
-		$this->resourceManager = $this->objectManager->get('TYPO3\FLOW3\Resource\ResourceManager');
+		$this->resourceManager = $this->objectManager->get('TYPO3\Flow\Resource\ResourceManager');
 
-		$reflectedProperty = new \ReflectionProperty('TYPO3\FLOW3\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
+		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
 		$reflectedProperty->setAccessible(TRUE);
 		$this->oldPersistentResourcesStorageBaseUri = $reflectedProperty->getValue($this->resourceManager);
 		$reflectedProperty->setValue($this->resourceManager, $this->temporaryDirectory . '/');

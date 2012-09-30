@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Tests\Unit\ViewHelpers\Uri;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -14,7 +14,7 @@ namespace TYPO3\Media\Tests\Unit\ViewHelpers\Uri;
 /**
  * Testcase for the uri.image ViewHelper
  */
-class ImageViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Media\ViewHelpers\Uri\ImageViewHelper
@@ -22,7 +22,7 @@ class ImageViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $viewHelper;
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
+	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
 	 */
 	protected $mockResourcePublisher;
 
@@ -41,7 +41,7 @@ class ImageViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setUp() {
 		$this->viewHelper = $this->getAccessibleMock('TYPO3\Media\ViewHelpers\Uri\ImageViewHelper', array('dummy'));
-		$this->mockResourcePublisher = $this->getMock('TYPO3\FLOW3\Resource\Publishing\ResourcePublisher');
+		$this->mockResourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher');
 		$this->viewHelper->_set('resourcePublisher', $this->mockResourcePublisher);
 		$this->mockImage = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
 		$this->mockThumbnail = $this->getMockBuilder('TYPO3\Media\Domain\Model\ImageVariant')->disableOriginalConstructor()->getMock();

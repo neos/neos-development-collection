@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Service;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,24 +11,24 @@ namespace TYPO3\Media\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An image service that acts as abstraction for the Imagine library
  *
- * @FLOW3\Scope("singleton")
+ * @Flow\Scope("singleton")
  */
 class ImageService {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @Flow\Inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\ResourceManager
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\Resource\ResourceManager
+	 * @Flow\Inject
 	 */
 	protected $resourceManager;
 
@@ -45,9 +45,9 @@ class ImageService {
 			$imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
 			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension()));
 		}
-		$resource = new \TYPO3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\Flow\Resource\Resource();
 		$resource->setFilename(sprintf('%s.%s', $uniqueHash, $image->getFileExtension()));
-		$resource->setResourcePointer(new \TYPO3\FLOW3\Resource\ResourcePointer($uniqueHash));
+		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($uniqueHash));
 
 		return $resource;
 	}

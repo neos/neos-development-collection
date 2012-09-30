@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An image variant that has a relation to the original image
@@ -23,7 +23,7 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * @var \TYPO3\Media\Domain\Service\ImageService
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 */
 	protected $imageService;
 
@@ -38,7 +38,7 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	protected $processingInstructions = array();
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Resource
+	 * @var \TYPO3\Flow\Resource\Resource
 	 */
 	protected $resource;
 
@@ -89,7 +89,7 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Resource of the original file of this variant
 	 *
-	 * @return \TYPO3\FLOW3\Resource\Resource
+	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	public function getResource() {
 		return $this->resource;

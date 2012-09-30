@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Tests\Unit\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  * Testcase for the ImageSizeValidator
  *
  */
-class ImageSizeValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ImageSizeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -43,7 +43,7 @@ class ImageSizeValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidOptionsTestsDataProvider
-	 * @expectedException \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException
+	 * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
 	 * @param array $options
 	 */
 	public function invalidOptionsTests(array $options) {

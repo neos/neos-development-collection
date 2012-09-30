@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -12,13 +12,13 @@ namespace TYPO3\Media\Domain\Model;
  *                                                                        */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An image
  *
  * TODO: Remove duplicate code in Image and ImageVariant, by introducing a common base class or through Mixins/Traits (once they are available)
- * @FLOW3\Entity
+ * @Flow\Entity
  */
 class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 
@@ -26,32 +26,32 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * The image repository is injected so that the image can persist itself when new ImageVariant is added
 	 *
 	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
-	 * @FLOW3\Inject
+	 * @Flow\Inject
 	 */
 	protected $imageRepository;
 
 	/**
 	 * @var string
-	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=255 })
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $title = '';
 
 	/**
-	 * @var \TYPO3\FLOW3\Resource\Resource
+	 * @var \TYPO3\Flow\Resource\Resource
 	 * @ORM\ManyToOne
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $resource;
 
 	/**
 	 * @var integer
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $width;
 
 	/**
 	 * @var integer
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $height;
 
@@ -59,7 +59,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * one of PHPs IMAGETYPE_* constants
 	 *
 	 * @var integer
-	 * @FLOW3\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $type;
 
@@ -70,9 +70,9 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	protected $imageVariants = array();
 
 	/**
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource
+	 * @param \TYPO3\Flow\Resource\Resource $resource
 	 */
-	public function __construct(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function __construct(\TYPO3\Flow\Resource\Resource $resource) {
 		$this->resource = $resource;
 		$this->initialize();
 	}
@@ -80,7 +80,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Calculates image width, height and type from the image resource
 	 * The getimagesize() method may either return FALSE; or throw a Warning
-	 * which is translated to a \TYPO3\FLOW3\Error\Exception by FLOW3. In both
+	 * which is translated to a \TYPO3\Flow\Error\Exception by Flow. In both
 	 * cases \TYPO3\Media\Exception\ImageFileException should be thrown.
 	 *
 	 * @throws \TYPO3\Media\Exception\ImageFileException
@@ -97,7 +97,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 			$this->type = (integer)$imageSize[2];
 		} catch(\TYPO3\Media\Exception\ImageFileException $exception) {
 			throw $exception;
-		} catch(\TYPO3\FLOW3\Error\Exception $exception) {
+		} catch(\TYPO3\Flow\Error\Exception $exception) {
 			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
 			throw new \TYPO3\Media\Exception\ImageFileException($exceptionMessage, 1336663970);
 		}
@@ -106,10 +106,10 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Sets the image resource and (re-)initializes the image
 	 *
-	 * @param \TYPO3\FLOW3\Resource\Resource $resource
+	 * @param \TYPO3\Flow\Resource\Resource $resource
 	 * @return void
 	 */
-	public function setResource(\TYPO3\FLOW3\Resource\Resource $resource) {
+	public function setResource(\TYPO3\Flow\Resource\Resource $resource) {
 		$this->resource = $resource;
 		$this->initialize();
 	}
@@ -136,7 +136,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	/**
 	 * Resource of the original image file
 	 *
-	 * @return \TYPO3\FLOW3\Resource\Resource
+	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	public function getResource() {
 		return $this->resource;

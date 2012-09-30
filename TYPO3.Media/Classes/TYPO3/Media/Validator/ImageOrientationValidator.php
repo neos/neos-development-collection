@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Validator;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -11,16 +11,16 @@ namespace TYPO3\Media\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Validator that checks the orientation (square, portrait, landscape) of a given image
  * Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landcape' or 'portrait'.
  * Example:
- * [at]FLOW3\Validate("$image", type="\TYPO3\Media\Validator\ImageOrientationValidator", options={ "allowedOrientations"={"square", "landscape"} })
+ * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageOrientationValidator", options={ "allowedOrientations"={"square", "landscape"} })
  * this would refuse an image that is in portrait orientation, but allow landscape and square ones.
  */
-class ImageOrientationValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
+class ImageOrientationValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
 	/**
 	 * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the
@@ -50,23 +50,23 @@ class ImageOrientationValidator extends \TYPO3\FLOW3\Validation\Validator\Abstra
 
 	/**
 	 * @return void
-	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException if the configured validation options are incorrect
+	 * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException if the configured validation options are incorrect
 	 */
 	protected function validateOptions() {
 		if (!isset($this->options['allowedOrientations'])) {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The option "allowedOrientations" was not specified.', 1328028795);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The option "allowedOrientations" was not specified.', 1328028795);
 		} elseif (!is_array($this->options['allowedOrientations']) || $this->options['allowedOrientations'] === array()) {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The option "allowedOrientations" must be an array with at least one element of "square", "portrait" or "landscape".', 1328028798);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The option "allowedOrientations" must be an array with at least one element of "square", "portrait" or "landscape".', 1328028798);
 		}
 		foreach ($this->options['allowedOrientations'] as $orientation) {
 			if ($orientation !== \TYPO3\Media\Domain\Model\ImageInterface::ORIENTATION_LANDSCAPE
 				&& $orientation !== \TYPO3\Media\Domain\Model\ImageInterface::ORIENTATION_PORTRAIT
 				&& $orientation !== \TYPO3\Media\Domain\Model\ImageInterface::ORIENTATION_SQUARE) {
-				throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException(sprintf('The option "allowedOrientations" contains an invalid orientation "%s".', $orientation), 1328029114);
+				throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException(sprintf('The option "allowedOrientations" contains an invalid orientation "%s".', $orientation), 1328029114);
 			}
 		}
 		if (count($this->options['allowedOrientations']) === 3) {
-			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The option "allowedOrientations" must contain at most two elements of "square", "portrait" or "landscape".', 1328029781);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The option "allowedOrientations" must contain at most two elements of "square", "portrait" or "landscape".', 1328029781);
 		}
 	}
 }

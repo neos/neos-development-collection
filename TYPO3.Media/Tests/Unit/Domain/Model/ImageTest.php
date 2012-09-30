@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Tests\Unit\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the Flow framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
@@ -15,7 +15,7 @@ namespace TYPO3\Media\Tests\Unit\Domain\Model;
  * Testcase for an image
  *
  */
-class ImageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Media\Domain\Model\Image
@@ -26,9 +26,9 @@ class ImageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$mockResourcePointer = $this->getMock('TYPO3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer = $this->getMock('TYPO3\Flow\Resource\ResourcePointer', array(), array(), '', FALSE);
 
-		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource');
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource');
 		$mockResource
 			->expects($this->any())
 			->method('getResourcePointer')

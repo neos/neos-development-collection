@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.Media".                *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -42,7 +42,7 @@ interface ImageInterface {
 	/**
 	 * Resource of the original image file
 	 *
-	 * @return \TYPO3\FLOW3\Resource\Resource
+	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	public function getResource();
 
