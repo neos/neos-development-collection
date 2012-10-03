@@ -33,6 +33,12 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $packageManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Default action of the backend controller.
 	 *
 	 * @return void
@@ -44,6 +50,7 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			// Hack: Create the workspace if it does not exist yet.
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($workspaceName);
 		$contentContext->getWorkspace();
+		$this->nodeRepository->setContext($contentContext);
 
 		if (isset($_COOKIE['TYPO3_lastVisitedUri'])) {
 			$redirectUri = $_COOKIE['TYPO3_lastVisitedUri'];
@@ -53,11 +60,13 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			} else {
 				$redirectUri = substr($redirectUri, 0, strpos($redirectUri, '@'));
 			}
-			$redirectUri .= '@' . $workspaceName . ($appendHtml === TRUE ? '.html' : '');
-			$this->redirectToUri($redirectUri);
-		} else {
-			$this->redirectToUri('/@' . $workspaceName . '.html');
+			$urlParts = parse_url($redirectUri);
+			if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode(substr($urlParts['path'], 1)))) {
+				$redirectUri .= '@' . $workspaceName . ($appendHtml === TRUE ? '.html' : '');
+				$this->redirectToUri($redirectUri);
+			}
 		}
+		$this->redirectToUri('/@' . $workspaceName . '.html');
 	}
 }
 ?>
