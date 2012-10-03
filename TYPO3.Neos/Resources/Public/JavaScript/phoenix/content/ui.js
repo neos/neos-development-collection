@@ -25,7 +25,9 @@ define(
 	'jquery.dynatree'
 ],
 function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui');
+	if (window._requirejsLoadingTrace) {
+		window._requirejsLoadingTrace.push('phoenix/content/ui');
+	}
 
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
@@ -62,7 +64,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	T3.Content.UI.BreadcrumbItem = Ember.View.extend({
 		tagName: 'a',
 		href: '#',
-
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
 		template: Ember.Handlebars.compile('{{item.contentTypeSchema.label}} {{#if item.status}}<span class="t3-breadcrumbitem-status">({{item.status}})</span>{{/if}}'),
@@ -168,8 +169,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		}
 	});
 
-
-		//Is necessary otherwise a Button has always the class 'btn-mini'
+		// Is necessary otherwise a button has always the class 'btn-mini'
 	T3.Content.UI.ButtonDialog = Ember.Button.extend({
 		classNames: ['btn, btn-danger, t3-button'],
 		attributeBindings: ['disabled'],
@@ -192,7 +192,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	 * - PageTreeLoader
 	 * - PageTreeButton
 	 */
-
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
 		$popoverContent: pageTreeTemplate,
@@ -204,37 +203,33 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		 * When clicking the delete Page, we show a dialog
 		 */
 		showDeletePageDialog: function(activeNode) {
-			var pagetitle = activeNode.data.title;
-			if(activeNode.hasChildren() === true) {
-				var children = 'and all its children';
-			}
-			var that = this;
-			var view = Ember.View.create({
-				template: Ember.Handlebars.compile(deletePageDialogTemplate),
-				pagetitle: pagetitle,
-				children: children,
-
-				didInsertElement: function() {
-				},
-				cancel: function() {
-					view.destroy();
-				},
-				delete: function() {
-					that.deleteNode(activeNode);
-					view.destroy();
-				}
-
-			});
+			var that = this,
+				view = Ember.View.create({
+					template: Ember.Handlebars.compile(deletePageDialogTemplate),
+					pageTitle: activeNode.data.title,
+					didInsertElement: function() {
+					},
+					cancel: function() {
+						view.destroy();
+					},
+					'delete': function() {
+						that.deleteNode(activeNode);
+						view.destroy();
+					}
+				});
 			view.appendTo('#t3-pagetree-container');
 		},
+
 		editNode: function(node) {
 			var prevTitle = node.data.title,
-				tree = node.tree
+				tree = node.tree,
 				that = this;
-			that.editNodeTitleMode = true
+
+			that.editNodeTitleMode = true;
 			tree.$widget.unbind();
 
 			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editNode', value: prevTitle}));
+
 				// Focus <input> and bind keyboard handler
 			$('input#editNode').focus().keydown(function(event) {
 				switch (event.which) {
@@ -250,15 +245,13 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				}
 			}).blur(function(event) {
 					// Accept new value, when user leaves <input>
-				var newTitle = $('input#editNode').val();
+				var newTitle = $('input#editNode').val(),
+					title;
 					// Re-enable mouse and keyboard handling
 				tree.$widget.bind();
 				node.focus();
 
-				if (prevTitle === newTitle) {
-					title = prevTitle;
-					that.editNodeTitleMode = false;
-				} else if(newTitle === '') {
+				if (prevTitle === newTitle || newTitle === '') {
 					title = prevTitle;
 					that.editNodeTitleMode = false;
 				} else {
@@ -267,43 +260,44 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 				if (that.editNodeTitleMode === true) {
 					that.editNodeTitleMode = false;
-
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(
 						{
 							__contextNodePath: node.data.key,
 							title: title
 						},
 						function(result) {
-							if (result.success === true) {
+							if (result !== null && result.success === true) {
 								that.editNodeTitleMode = false;
 								node.focus();
 								tree.$widget.bind();
 								T3.ContentModule.loadPage(node.data.href);
+							} else {
+								T3.Common.notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
 							}
 						}
 					);
 				}
-				node.setTitle(title);
 				that.editNodeTitleMode = false;
+				node.setTitle(title);
 				node.focus();
 			});
 		},
 		createAndEditNode: function(activeNode) {
-			var position = 'into',
-				that = this;
-			var node = activeNode.addChild({
-				title: '[New Page]',
-				contentType: 'TYPO3.Phoenix.ContentTypes:Page',
-				addClass: 'typo3_phoenix_contenttypes-page'
-			});
+			var that = this,
+				position = 'into',
+				node = activeNode.addChild({
+					title: '[New Page]',
+					contentType: 'TYPO3.Phoenix.ContentTypes:Page',
+					addClass: 'typo3_phoenix_contenttypes-page'
+				}),
+				prevTitle = node.data.title,
+				tree = node.tree;
 			that.editNodeTitleMode = true;
-			var prevTitle = node.data.title,
-			tree = node.tree;
 			tree.$widget.unbind();
 
-			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editcreatedNode', value: prevTitle}));
+			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editCreatedNode', value: prevTitle}));
 				// Focus <input> and bind keyboard handler
-			$('input#editcreatedNode').focus().keydown(function(event) {
+			$('input#editCreatedNode').focus().keydown(function(event) {
 				switch (event.which) {
 					case 27: // [esc]
 							// discard changes on [esc]
@@ -316,22 +310,20 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						break;
 				}
 			}).blur(function(event) {
-				var newTitle = $('input#editcreatedNode').val();
+				var newTitle = $('input#editCreatedNode').val(),
+					title;
 					// Re-enable mouse and keyboard handling
 				tree.$widget.bind();
 				activeNode.focus();
 
 					// Accept new value, when user leaves <input>
-				if (prevTitle === newTitle) {
-					title = prevTitle;
-				} else if(newTitle === '') {
+				if (prevTitle === newTitle || newTitle === '') {
 					title = prevTitle;
 				} else {
 					title = newTitle;
 				}
-					//hack for chrome and safari, otherwise two pages will be created, because .blur fires one request with two datasets
+					// Hack for Chrome and Safari, otherwise two pages will be created, because .blur fires one request with two datasets
 				if (that.editNodeTitleMode) {
-
 					that.editNodeTitleMode = false;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 						activeNode.data.key,
@@ -344,8 +336,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						},
 						position,
 						function(result) {
-							if (result.success === true) {
-									//actualizing the created js dynatree node
+							if (result !== null && result.success === true) {
+									// Actualizing the created dynatree node
 								node.data.key = result.data.key;
 								node.data.title = result.data.title;
 								node.data.href = result.data.href;
@@ -360,6 +352,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 								T3.ContentModule.loadPage(activeNode.data.href);
 									// Re-enable mouse and keyboard handling
 								tree.$widget.bind();
+							} else {
+								T3.Common.notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
 							}
 						}
 					);
@@ -369,16 +363,19 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				activeNode.focus();
 			});
 		},
+
 		deleteNode: function(node) {
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'](
 				node.data.key,
 				function(result) {
-					if (result.success === true) {
+					if (result !== null && result.success === true) {
 						var parentNode = node.getParent();
 						parentNode.focus();
 						parentNode.activate();
 						node.remove();
 						T3.ContentModule.loadPage(parentNode.data.href);
+					} else {
+						T3.Common.notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
 					}
 				}
 			);
@@ -400,7 +397,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					title: 'dynatree-title'
 				},
 				clickFolderMode: 1,
-				debugLevel: 0, // 0:quiet, 1:normal, 2:debug
+				debugLevel: 0, // 0: quiet, 1: normal, 2: debug
 				strings: {
 					loading: 'Loading…',
 					loadError: 'Load error!'
@@ -418,6 +415,68 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						addClass: 'typo3_phoenix_contenttypes-root'
 					}
 				],
+				dnd: {
+					autoExpandMS: 1000,
+					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+
+					/**
+					 * Executed on beginning of drag.
+					 * Returns false to cancel dragging of node.
+					 */
+					onDragStart: function(node) {
+						if (node.data.key !== siteRootNodePath) {
+							$('#t3-drop-deletionzone').show();
+							return true;
+						} else {
+								// the root node should not be draggable
+							return false;
+						}
+					},
+
+					/**
+					 * sourceNode may be null for non-dynatree droppables.
+					 * Return false to disallow dropping on node. In this case
+					 * onDragOver and onDragLeave are not called.
+					 * Return 'over', 'before, or 'after' to force a hitMode.
+					 * Return ['before', 'after'] to restrict available hitModes.
+					 * Any other return value will calc the hitMode from the cursor position.
+					 */
+					onDragEnter: function(node, sourceNode) {
+						return true;
+					},
+
+					onDragOver: function(node, sourceNode, hitMode) {
+						if (node.isDescendantOf(sourceNode)) {
+							return false;
+						}
+					},
+
+					/**
+					 * This function MUST be defined to enable dropping of items on
+					 * the tree.
+					 *
+					 * hitmode over, after and before
+					 * !sourcenode = new Node
+					 */
+					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+						var position = hitMode === 'over' ? 'into' : hitMode;
+						sourceNode.move(node, hitMode);
+
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+							sourceNode.data.key,
+							node.data.key,
+							position,
+							function(result) {
+								if (result !== null && result.success === true) {
+									T3.ContentModule.loadPage(node.data.href);
+								} else {
+									T3.Common.notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+								}
+							}
+						);
+					}
+				},
+
 				/**
 				 * The following callback is executed if an lazy-loading node
 				 * has not yet been loaded.
@@ -438,73 +497,21 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						0,
 						function(result) {
 							node._currentlySendingExtDirectAjaxRequest = false;
-							if (result.success === true) {
+							if (result !== null && result.success === true) {
 								node.setLazyNodeStatus(DTNodeStatus_Ok);
+								node.addChild(result.data);
 							} else {
+								node.setLazyNodeStatus(DTNodeStatus_Error);
 								T3.Common.Notification.error('Page Tree loading error.');
 							}
-							node.addChild(result.data);
 							if (node.getLevel() === 1) {
 								that.tree.dynatree('getTree').activateKey(pageNodePath);
 							}
-					});
-				},
-				dnd: {
-					/**
-					 * Executed on beginning of drag.
-					 * Returns false to cancel dragging of node.
-					 */
-					onDragStart: function(node) {
-						if (node.data.key !== siteRootNodePath) {
-							$('#t3-drop-deletionzone').show();
-							return true;
-						} else {
-								// the root node should not be draggable
-							return false;
 						}
-					},
-					autoExpandMS: 1000,
-					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
-
-					/** sourceNode may be null for non-dynatree droppables.
-					 *  Return false to disallow dropping on node. In this case
-					 *  onDragOver and onDragLeave are not called.
-					 *  Return 'over', 'before, or 'after' to force a hitMode.
-					 *  Return ['before', 'after'] to restrict available hitModes.
-					 *  Any other return value will calc the hitMode from the cursor position.
-					 */
-					onDragEnter: function(node, sourceNode) {
-						return true;
-					},
-					onDragOver: function(node, sourceNode, hitMode) {
-						if (node.isDescendantOf(sourceNode)) {
-							return false;
-						}
-					},
-					/** This function MUST be defined to enable dropping of items on
-					 * the tree.
-					 *
-					 * hitmode over, after and before
-					 * !sourcenode = new Node
-					 */
-					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						var position = hitMode === 'over' ? 'into' : hitMode;
-						sourceNode.move(node, hitMode);
-
-						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
-							sourceNode.data.key,
-							node.data.key,
-							position,
-							function(result) {
-								if (result.success === true) {
-									T3.ContentModule.loadPage(node.data.href);
-								}
-							}
-						);
-					}
+					);
 				},
+
 				onClick: function(node, event) {
-
 					if (that.editNodeTitleMode === true) {
 						return false;
 					}
@@ -519,6 +526,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						}, 300);
 					}
 				},
+
 				onDblClick: function(node, event) {
 					if (node.getEventTargetType(event) === 'title' && node.getLevel() !== 1) {
 						that.isDblClick = true;
@@ -528,6 +536,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						}, 300);
 					}
 				},
+
 				onKeydown: function(node, event) {
 					switch( event.which ) {
 						case 113: // [F2]
@@ -543,14 +552,14 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				// Automatically expand the first node when opened
 			that.tree.dynatree('getRoot').getChildren()[0].expand(true);
 
-				//handles click events when a pagetitle is in editmode so clicks on other pages leads not to reloads
+				// Handles click events when a page title is in editmode so clicks on other pages leads not to reloads
 			$('#t3-dd-pagetree').click(function() {
 				if (that.editNodeTitleMode === true) {
 					return false;
 				}
 			});
 
-				//adding a new page by clicking on the newPage container, if a page is active
+				// Adding a new page by clicking on the newPage container, if a page is active
 			$('#t3-action-newpage').click(function() {
 				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode');
 				if (activeNode !== null) {
@@ -560,14 +569,14 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				}
 				return false;
 			});
-				//deleting a page by clicking on the deletePage container, if a page is active
+
+				// Deleting a page by clicking on the deletePage container, if a page is active
 			$('#t3-action-deletepage').click(function() {
-				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode'),
-					$handle = $(this);
+				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode');
 				if (activeNode !== null) {
 					if (activeNode.data.key !== siteRootNodePath) {
 						that.showDeletePageDialog(activeNode);
-					}else {
+					} else {
 						T3.Common.Notification.notice('The Root page cannot be deleted.');
 					}
 				} else {
@@ -583,14 +592,13 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	 * =====================
 	 * - Inspect TreeButton
 	 */
-
 	T3.Content.UI.InspectButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Content Structure',
 		$popoverContent: inspectTreeTemplate,
 		popoverPosition: 'top',
 		_ignoreCloseOnPageLoad: false,
-
 		inspectTree: null,
+
 		isLoadingLayerActive: function() {
 			if (T3.ContentModule.get('_isLoadingPage')) {
 				if (this.get('_ignoreCloseOnPageLoad')) {
@@ -606,12 +614,11 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		}.observes('T3.ContentModule.currentUri'),
 
 		onPopoverOpen: function() {
-			var page = vie.entities.get(vie.service('rdfa').getElementSubject($('#t3-page-metainformation')));
-
-			var pageTitle = page.get(T3.ContentModule.TYPO3_NAMESPACE + 'title'),
+			var page = vie.entities.get(vie.service('rdfa').getElementSubject($('#t3-page-metainformation'))),
+				pageTitle = page.get(T3.ContentModule.TYPO3_NAMESPACE + 'title'),
 				pageNodePath = $('#t3-page-metainformation').attr('about');
 
-				// if there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
+				// If there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
 			if (this.inspectTree) {
 				if (pageNodePath !== $('#t3-dd-inspecttree').dynatree('getTree').getRoot().getChildren()[0].data.key) {
 					$('#t3-dd-inspecttree').dynatree('destroy');
@@ -619,7 +626,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			}
 
 			this.inspectTree = $('#t3-dd-inspecttree').dynatree({
-				debugLevel: 0, // 0:quiet, 1:normal, 2:debug,
+				debugLevel: 0, // 0: quiet, 1: normal, 2: debug
 				cookieId: null,
 				persist: false,
 				children: [
@@ -635,6 +642,74 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						unselectable: true
 					}
 				],
+				dnd: {
+					autoExpandMS: 1000,
+					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+
+					/**
+					 * Executed on beginning of drag.
+					 * Returns false to cancel dragging of node.
+					 */
+					onDragStart: function(node) {
+					},
+
+					/**
+					 * sourceNode may be null for non-dynatree droppables.
+					 * Return false to disallow dropping on node. In this case
+					 * onDragOver and onDragLeave are not called.
+					 * Return 'over', 'before, or 'after' to force a hitMode.
+					 * Return ['before', 'after'] to restrict available hitModes.
+					 * Any other return value will calc the hitMode from the cursor position.
+					 */
+					onDragEnter: function(node, sourceNode) {
+							// It is only posssible to move nodes into nodes of the contentType:Section
+						if (node.data.contentType === 'TYPO3.Phoenix.ContentTypes:Section') {
+							return ['before', 'after', 'over'];
+						}
+						else{
+							return ['before', 'after'];
+						}
+					},
+
+					onDragOver: function(node, sourceNode, hitMode) {
+						if (node.isDescendantOf(sourceNode)) {
+							return false;
+						}
+					},
+
+					/**
+					 * This function MUST be defined to enable dropping of items on
+					 * the tree.
+					 *
+					 * hitmode over, after and before
+					 */
+					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+							// It is an existing node which was moved on the tree
+						var position = hitMode === 'over' ? 'into' : hitMode;
+
+						sourceNode.move(node, hitMode);
+						T3.ContentModule.showPageLoader();
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+							sourceNode.data.key,
+							node.data.key,
+							position,
+							function(result) {
+								if (result !== null && result.success === true) {
+										// We need to update the node path of the moved node,
+										// else we cannot move it forth and back across levels.
+									sourceNode.data.key = result.data.newNodePath;
+									T3.ContentModule.reloadPage();
+								} else {
+									T3.Common.notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+								}
+							}
+						);
+					},
+
+					onDragStop: function() {
+					}
+				},
+
 				/**
 				 * The following callback is executed if an lazy-loading node
 				 * has not yet been loaded.
@@ -654,83 +729,25 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						'!TYPO3.TYPO3CR:Folder',
 						0,
 						function(result) {
-						node._currentlySendingExtDirectAjaxRequest = false;
-						if (result.success === true) {
-							node.setLazyNodeStatus(DTNodeStatus_Ok);
-						} else {
-							T3.Common.Notification.error('Page Tree loading error.');
-						}
-						node.addChild(result.data);
-					});
-				},
-				dnd: {
-					/**
-					 * Executed on beginning of drag.
-					 * Returns false to cancel dragging of node.
-					 */
-					onDragStart: function(node) {
-					},
-					autoExpandMS: 1000,
-					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
-
-					/** sourceNode may be null for non-dynatree droppables.
-					 *  Return false to disallow dropping on node. In this case
-					 *  onDragOver and onDragLeave are not called.
-					 *  Return 'over', 'before, or 'after' to force a hitMode.
-					 *  Return ['before', 'after'] to restrict available hitModes.
-					 *  Any other return value will calc the hitMode from the cursor position.
-					 */
-					onDragEnter: function(node, sourceNode) {
-							//it is only posssible to move nodes into nodes of the contentType:Section
-						if (node.data.contentType === 'TYPO3.Phoenix.ContentTypes:Section') {
-							return ['before', 'after', 'over'];
-						}
-						else{
-							return ['before', 'after'];
-						}
-					},
-					onDragOver: function(node, sourceNode, hitMode) {
-						if (node.isDescendantOf(sourceNode)) {
-							return false;
-						}
-					},
-					/** This function MUST be defined to enable dropping of items on
-					 * the tree.
-					 *
-					 * hitmode over, after and before
-					 */
-					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-							// it is an existing node which was moved on the tree
-						var position = hitMode === 'over' ? 'into' : hitMode;
-
-						sourceNode.move(node, hitMode);
-						T3.ContentModule.showPageLoader();
-						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
-							sourceNode.data.key,
-							node.data.key,
-							position,
-							function(result) {
-								if (result.success === true) {
-										// We need to update the node path of the moved node,
-										// else we cannot move it forth and back across levels.
-									sourceNode.data.key = result.data.newNodePath;
-									T3.ContentModule.reloadPage();
-								} else {
-									T3.Common.notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
-								}
+							node._currentlySendingExtDirectAjaxRequest = false;
+							if (result !== null && result.success === true) {
+								node.setLazyNodeStatus(DTNodeStatus_Ok);
+								node.addChild(result.data);
+							} else {
+								node.setLazyNodeStatus(DTNodeStatus_Error);
+								T3.Common.Notification.error('Page Tree loading error.');
 							}
-						);
-					},
-					onDragStop: function() {
-					}
+						}
+					);
 				},
+
 				onClick: function(node, event) {
 					var nodePath = node.data.key,
 						offsetFromTop = 150,
 						$element = $('[about="' + nodePath + '"]');
 
 					T3.Content.Model.NodeSelection.updateSelection($element);
-					$('html,body').animate({
+					$('html, body').animate({
 						scrollTop: $element.offset().top - offsetFromTop
 					}, 500);
 				}
@@ -747,7 +764,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	 * ================
 	 * - Content Element Handle Utilities
 	 */
-
 	T3.Content.UI.Util = T3.Content.UI.Util || {};
 
 	/**
@@ -797,7 +813,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element, entity) {
 		var setOverlaySizeFn = function() {
-				// we use a timeout here to make sure the browser has re-drawn; thus $element
+				// We use a timeout here to make sure the browser has re-drawn; thus $element
 				// has a possibly updated size
 			window.setTimeout(function() {
 				$element.find('> .t3-contentelement-overlay').css({
@@ -833,6 +849,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					// If the entity changed, it might happen that the size changed as well; thus we need to reload the overlay size
 				setOverlaySizeFn();
 			});
-		};
-	}
+		}
+	};
 });
