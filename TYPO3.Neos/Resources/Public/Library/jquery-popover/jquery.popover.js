@@ -125,18 +125,24 @@
 				possibleDir.right = false;
 			}
 
+			// TYPO3 SPECIFIC FIX START
 			// determine default direction if nothing works out
 			// make sure it is not one of the prevented directions
-			var dir = 'right';
+			var possibleDirections = {right: true, bottom: true, top: true, left: true};
 			if (settings.preventRight) {
-				dir = 'bottom';
+				delete possibleDirections['right'];
 			}
 			if (settings.preventBottom) {
-				dir = 'top';
+				delete possibleDirections['bottom'];
 			}
 			if (settings.preventTop) {
-				dir = 'left';
+				delete possibleDirections['top'];
 			}
+			if (settings.preventTop) {
+				delete possibleDirections['left'];
+			}
+			dir = Object.keys(possibleDirections)[0];
+			// TYPO3 SPECIFIC FIX STOP
 
 			if (possibleDir.right) {
 				dir = 'right';
