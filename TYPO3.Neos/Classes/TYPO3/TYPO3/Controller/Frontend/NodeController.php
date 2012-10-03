@@ -69,7 +69,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
 				$this->nodeRepository->getContext()->setRemovedContentShown(TRUE);
 			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
-				$this->throwStatus(403);
+				$this->redirect('index', 'Login');
 			}
 		}
 		if ($this->isWireframeModeEnabled($node)) {
