@@ -31,6 +31,11 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $workspaceName;
 
 	/**
+	 * @var \DateTime
+	 */
+	protected $currentDateTime;
+
+	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $currentNode;
