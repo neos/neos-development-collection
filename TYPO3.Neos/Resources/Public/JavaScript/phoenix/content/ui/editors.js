@@ -319,7 +319,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		_uploadPreviewNotShown: function() {
 			return !this.get('_uploadPreviewShown');
 		}.property('_uploadPreviewShown').cacheable(),
-		_uploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.TYPO3/Images/dummy-image.jpg', // TODO: we need a way to fetch the static resources base URI
+		_uploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.TYPO3/Images/dummy-image.png', // TODO: we need a way to fetch the static resources base URI
 
 		// Image Badge
 		_imageBadgeVisible: false,
