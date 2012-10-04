@@ -38,11 +38,13 @@ class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardControll
 	public function indexAction() {
 		$packageGroups = array();
 		foreach ($this->packageManager->getAvailablePackages() as $package) {
-			$packageGroup = current(array_slice(explode('/', $package->getPackagePath()), -3, 1));
+			$packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
+			$packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
 			$packageGroups[$packageGroup][$package->getPackageKey()] = array(
 				'sanitizedPackageKey' => str_replace('.', '', $package->getPackageKey()),
 				'version' => $package->getPackageMetaData()->getVersion(),
-				'title' => $package->getPackageMetaData()->getTitle(),
+				'name' => $package->getComposerManifest('name'),
+				'type' => $package->getComposerManifest('type'),
 				'description' => $package->getPackageMetaData()->getDescription(),
 				'metaData' => $package->getPackageMetaData(),
 				'isActive' => $this->packageManager->isPackageActive($package->getPackageKey()),

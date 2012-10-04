@@ -28,6 +28,7 @@
 					<th>Package name</th>
 					<th>Version</th>
 					<th>Package key</th>
+					<th>Package type</th>
 					<th>&nbsp;</th>
 				</thead>
 				<tbody>
@@ -47,14 +48,7 @@
 								</td>
 								<td>
 									<label for="{packageKey}">
-										<f:if condition="{package.title}">
-											<f:then>
-												{package.title}
-											</f:then>
-											<f:else>
-												<em>[No title]</em>
-											</f:else>
-										</f:if>
+										{package.name}
 									</label>
 								</td>
 								<td>
@@ -65,6 +59,11 @@
 								<td>
 									<label for="{packageKey}">
 										{packageKey}
+									</label>
+								</td>
+								<td>
+									<label for="{packageKey}">
+										{package.type}
 									</label>
 								</td>
 								<td>
