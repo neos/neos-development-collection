@@ -7,7 +7,7 @@
 
 -
   name: 'Authentication'
-  uriPattern: 'typo3/login(/{@action}.{@format})'
+  uriPattern: 'neos/login(/{@action}.{@format})'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Login'
@@ -17,7 +17,7 @@
 
 -
   name:  'Logout'
-  uriPattern: 'typo3/logout'
+  uriPattern: 'neos/logout'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Login'
@@ -26,7 +26,7 @@
 
 -
   name:          'Backend Overview'
-  uriPattern:    'typo3'
+  uriPattern:    'neos'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Backend'
@@ -35,7 +35,7 @@
 
 -
   name:          'Backend - Content Module - Images'
-  uriPattern:    'typo3/content/imageWithMetadata/{image}'
+  uriPattern:    'neos/content/imageWithMetadata/{image}'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Content'
@@ -43,7 +43,7 @@
 
 -
   name:          'Backend - Content Module'
-  uriPattern:    'typo3/content/{@action}'
+  uriPattern:    'neos/content/{@action}'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Content'
@@ -53,7 +53,7 @@
 
 -
   name: 'Backend - Modules'
-  uriPattern: 'typo3/{module}'
+  uriPattern: 'neos/{module}'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Module'
@@ -65,7 +65,7 @@
 
 -
   name: 'Backend - Modules & arguments'
-  uriPattern: 'typo3/{module}/{moduleArguments}'
+  uriPattern: 'neos/{module}/{moduleArguments}'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Module'
@@ -81,7 +81,7 @@
 
 -
   name:          'Backend - Schema'
-  uriPattern:    'typo3/schema/{@action}'
+  uriPattern:    'neos/schema/{@action}'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Schema'
