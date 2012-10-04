@@ -16,6 +16,10 @@ namespace TYPO3\TYPO3\Routing\Exception;
  */
 class NoWorkspaceException extends \TYPO3\TYPO3\Routing\Exception {
 
-}
+	/**
+	 * @var integer
+	 */
+	protected $statusCode = 404;
 
+}
 ?>

@@ -15,9 +15,5 @@ namespace TYPO3\TYPO3\Routing\Exception;
  * A "no homepage" exception
  */
 class NoHomepageException extends \TYPO3\TYPO3\Routing\Exception {
-
-	protected $statusCode = 500;
-
 }
-
 ?>
