@@ -99,7 +99,7 @@ class ContentTypeSchemaBuilder {
 				'subtypes' => array(),
 				'metadata' => (object) $metadata,
 				'supertypes' => $this->superTypeConfiguration['typo3:' . $contentType],
-				'url' => 'http://www.typo3.org/ns/2011/Flow/Packages/TYPO3/Content/',
+				'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/TYPO3/Content/',
 				'ancestors' => array(),
 				'comment' => '',
 				'comment_plain' => ''
