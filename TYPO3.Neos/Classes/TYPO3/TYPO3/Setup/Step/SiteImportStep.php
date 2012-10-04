@@ -98,9 +98,8 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$sitePackages = array();
 		foreach ($this->packageManager->getActivePackages() as $package) {
-			$packageMetaData = $package->getPackageMetaData();
-			if (in_array('Site', $packageMetaData->getCategories())) {
-				$sitePackages[$package->getPackageKey()] = $packageMetaData->getTitle();
+			if ($package->getComposerManifest('type') === 'typo3-flow-site') {
+				$sitePackages[$package->getPackageKey()] = $package->getPackageKey();
 			}
 		}
 
