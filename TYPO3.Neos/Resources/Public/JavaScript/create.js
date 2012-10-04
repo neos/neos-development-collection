@@ -121,13 +121,13 @@ define(
 			initializeEntitySelection: function() {
 				var that = this;
 				$(document)
-					.on('mouseover', '.t3-contentelement', function(e) {
+					.on('mouseover', 'body:not(.t3-ui-previewmode) .t3-contentelement', function(e) {
 						if (e.result !== 'hovered') {
 							$(this).addClass('t3-contentelement-hover');
 						}
 						return 'hovered';
 					})
-					.on('mouseout', '.t3-contentelement', function() {
+					.on('mouseout', 'body:not(.t3-ui-previewmode) .t3-contentelement', function() {
 						$(this).removeClass('t3-contentelement-hover');
 					})
 					.on('click', '.t3-ui, .ui-widget-overlay', function(e) {
@@ -135,7 +135,7 @@ define(
 						e.stopPropagation();
 						// TODO Test if we can use e.result for stopping unselect, too
 					})
-					.on('click', '.t3-contentelement', function(e) {
+					.on('click', 'body:not(.t3-ui-previewmode) .t3-contentelement', function(e) {
 							// Don't unselect if a previous handler activated an element
 						if (e.result !== 'activated') {
 							that.selectContentElement($(this));
