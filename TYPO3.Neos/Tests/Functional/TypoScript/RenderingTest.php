@@ -180,7 +180,7 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @param string $output
 	 */
 	protected function assertMainContentConformsToBasicRendering($output) {
-		$this->assertSelectEquals('.main > .typo3-phoenix-contenttypes-headline > div > h1', 'Do you love Flow?', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-phoenix-contenttypes-headline > div > h1', 'Do you love TYPO3 FLow?', TRUE, $output);
 		$this->assertSelectEquals('.main > .typo3-phoenix-contenttypes-text > div', 'If you do, make sure to post your opinion about it on Twitter!', TRUE, $output);
 
 		$this->assertSelectEquals('.main', '[TWITTER WIDGET]', TRUE, $output);
