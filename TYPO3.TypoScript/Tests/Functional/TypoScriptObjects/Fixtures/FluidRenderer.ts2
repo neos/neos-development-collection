@@ -1,0 +1,16 @@
+prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
+
+template.basicTemplate = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	myVariable = 'foo'
+}
+
+template.partial = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'PartialTemplate.html'}
+	partialPath = ${fixtureDirectory + 'Partials/'}
+}
+
+template.layout = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'LayoutTemplate.html'}
+	layoutPath = ${fixtureDirectory + 'Layouts'}
+}

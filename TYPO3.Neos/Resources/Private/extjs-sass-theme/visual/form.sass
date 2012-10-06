@@ -1,0 +1,86 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-form-field
+  font: normal 12px tahoma, arial, helvetica, sans-serif
+
+.x-form-text, textarea.x-form-field
+  background-color: adjust_hue(#fff, $hue)
+  background-image: url (#{$img_path+"/form/text-bg.gif"})
+  border-color: adjust_hue(#b5b8c8, $hue)
+
+.x-form-select-one
+  background-color: adjust_hue(#fff, $hue)
+  border-color: adjust_hue(#b5b8c8, $hue)
+
+.x-form-check-group-label
+  border-bottom: 1px solid #99bbe8
+  color: adjust_hue(#15428b, $hue)
+
+.x-editor .x-form-check-wrap
+  background-color: adjust_hue(#fff, $hue)
+
+.x-form-field-wrap
+  .x-form-trigger
+    background-image: url (#{$img_path+"/form/trigger.gif"})
+    border-bottom-color: adjust_hue(#b5b8c8, $hue)
+  .x-form-date-trigger
+    background-image: url (#{$img_path+"/form/date-trigger.gif"})
+  .x-form-clear-trigger
+    background-image: url (#{$img_path+"/form/clear-trigger.gif"})
+  .x-form-search-trigger
+    background-image: url (#{$img_path+"/form/search-trigger.gif"})
+
+.x-trigger-wrap-focus .x-form-trigger
+  border-bottom-color: adjust_hue(#7eadd9, $hue)
+
+.x-item-disabled
+  .x-form-trigger-over, .x-form-trigger-click
+    border-bottom-color: adjust_hue(#b5b8c8, $hue)
+
+.x-form-focus, textarea.x-form-focus
+  border-color: adjust_hue(#7eadd9, $hue)
+
+.x-form-invalid, textarea.x-form-invalid
+  background-color: adjust_hue(#fff, $hue)
+  background-image: url (#{$img_path+"/grid/invalid_line.gif"})
+  border-color: adjust_hue(#c30, $hue)
+
+.x-form-invalid.x-form-composite
+  border: none
+  background-image: none
+  .x-form-invalid
+    background-color: adjust_hue(#fff, $hue)
+    background-image: url (#{$img_path+"/grid/invalid_line.gif"})
+    border-color: adjust_hue(#c30, $hue)
+
+.x-form-inner-invalid, textarea.x-form-inner-invalid
+  background-color: adjust_hue(#fff, $hue)
+  background-image: url (#{$img_path+"/grid/invalid_line.gif"})
+
+.x-form-grow-sizer, .x-form-item
+  font: normal 12px tahoma, arial, helvetica, sans-serif
+
+.x-form-invalid-msg
+  color: adjust_hue(#c0272b, $hue)
+  font: normal 11px tahoma, arial, helvetica, sans-serif
+  background-image: url (#{$img_path+"/shared/warning.gif"})
+
+.x-form-empty-field
+  color: gray
+
+.x-small-editor .x-form-field, .ext-webkit .x-small-editor .x-form-field
+  font: normal 11px arial, tahoma, helvetica, sans-serif
+
+.x-form-invalid-icon
+  background-image: url (#{$img_path+"/form/exclamation.gif"})
+
+.x-fieldset
+  border-color: adjust_hue(#b5b8c8, $hue)
+  legend
+    font: bold 11px tahoma, arial, helvetica, sans-serif
+    color: adjust_hue(#15428b, $hue)

@@ -1,0 +1,107 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-date-picker
+  border-color: adjust_hue(#1b376c, $hue)
+  background-color: adjust_hue(#fff, $hue)
+
+.x-date-middle, .x-date-left, .x-date-right
+  background-image: url (#{$img_path+"/shared/hd-sprite.gif"})
+  color: adjust_hue(#fff, $hue)
+  font: bold 11px "sans serif", tahoma, verdana, helvetica
+
+.x-date-middle
+  .x-btn .x-btn-text
+    color: adjust_hue(#fff, $hue)
+  .x-btn-mc em.x-btn-arrow
+    background-image: url (#{$img_path+"/toolbar/btn-arrow-light.gif"})
+
+.x-date-right a
+  background-image: url (#{$img_path+"/shared/right-btn.gif"})
+
+.x-date-left a
+  background-image: url (#{$img_path+"/shared/left-btn.gif"})
+
+.x-date-inner
+  th
+    background-color: adjust_hue(#dfecfb, $hue)
+    background-image: url (#{$img_path+"/shared/glass-bg.gif"})
+    border-bottom-color: adjust_hue(#a3bad9, $hue)
+    font: normal 10px arial, helvetica,tahoma,sans-serif
+    color: adjust_hue(#233d6d, $hue)
+  td
+    border-color: adjust_hue(#fff, $hue)
+  a
+    font: normal 11px arial, helvetica,tahoma,sans-serif
+    color: adjust_hue(#000, $hue)
+  .x-date-active
+    color: adjust_hue(#000, $hue)
+  .x-date-selected a
+    background-color: adjust_hue(#dfecfb, $hue)
+    background-image: url (#{$img_path+"/shared/glass-bg.gif"})
+    border-color: adjust_hue(#8db2e3, $hue)
+  .x-date-today a
+    border-color: darkred
+  .x-date-selected span
+    font-weight: bold
+  .x-date-prevday a, .x-date-nextday a
+    color: adjust_hue(#aaa, $hue)
+
+.x-date-bottom
+  border-top-color: adjust_hue(#a3bad9, $hue)
+  background-color: adjust_hue(#dfecfb, $hue)
+  background-image: url (#{$img_path+"/shared/glass-bg.gif"})
+
+.x-date-inner
+  a:hover
+    color: adjust_hue(#000, $hue)
+    background-color: adjust_hue(#ddecfe, $hue)
+  .x-date-disabled a
+    &:hover
+      color: adjust_hue(#000, $hue)
+      background-color: adjust_hue(#ddecfe, $hue)
+    background-color: adjust_hue(#eee, $hue)
+    color: adjust_hue(#bbb, $hue)
+
+.x-date-mmenu
+  background-color: adjust_hue(#eee, $hue) !important
+  .x-menu-item
+    font-size: 10px
+    color: adjust_hue(#000, $hue)
+
+.x-date-mp
+  background-color: adjust_hue(#fff, $hue)
+  td
+    font: normal 11px arial, helvetica,tahoma,sans-serif
+
+.x-date-mp-btns
+  button
+    background-color: adjust_hue(#083772, $hue)
+    color: adjust_hue(#fff, $hue)
+    border-color: adjust_hue(#3366cc, $hue) #000055 #000055 #3366cc
+    font: normal 11px arial, helvetica,tahoma,sans-serif
+  background-color: adjust_hue(#dfecfb, $hue)
+  background-image: url (#{$img_path+"/shared/glass-bg.gif"})
+  td
+    border-top-color: adjust_hue(#c5d2df, $hue)
+
+td
+  &.x-date-mp-month a, &.x-date-mp-year a
+    color: adjust_hue(#15428b, $hue)
+  &.x-date-mp-month a:hover, &.x-date-mp-year a:hover
+    color: adjust_hue(#15428b, $hue)
+    background-color: adjust_hue(#ddecfe, $hue)
+  &.x-date-mp-sel a
+    background-color: adjust_hue(#dfecfb, $hue)
+    background-image: url (#{$img_path+"/shared/glass-bg.gif"})
+    border-color: adjust_hue(#8db2e3, $hue)
+
+.x-date-mp-ybtn a
+  background-image: url (#{$img_path+"/panel/tool-sprites.gif"})
+
+td.x-date-mp-sep
+  border-right-color: adjust_hue(#c5d2df, $hue)

@@ -1,0 +1,99 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-tab-panel-header, .x-tab-panel-footer
+  background-color: adjust_hue(#deecfd, $hue)
+  border-color: adjust_hue(#8db2e3, $hue)
+  overflow: hidden
+  zoom: 1
+
+.x-tab-panel-header, .x-tab-panel-footer
+  border-color: adjust_hue(#8db2e3, $hue)
+
+ul
+  &.x-tab-strip-top
+    background-color: adjust_hue(#cedff5, $hue)
+    background-image: url (#{$img_path+"/tabs/tab-strip-bg.gif"})
+    border-bottom-color: adjust_hue(#8db2e3, $hue)
+  &.x-tab-strip-bottom
+    background-color: adjust_hue(#cedff5, $hue)
+    background-image: url (#{$img_path+"/tabs/tab-strip-btm-bg.gif"})
+    border-top-color: adjust_hue(#8db2e3, $hue)
+
+.x-tab-panel-header-plain .x-tab-strip-spacer, .x-tab-panel-footer-plain .x-tab-strip-spacer
+  border-color: adjust_hue(#8db2e3, $hue)
+  background-color: adjust_hue(#deecfd, $hue)
+
+.x-tab-strip span.x-tab-strip-text
+  font: normal 11px tahoma,arial,helvetica
+  color: adjust_hue(#416aa3, $hue)
+
+.x-tab-strip-over span.x-tab-strip-text
+  color: adjust_hue(#15428b, $hue)
+
+.x-tab-strip-active span.x-tab-strip-text
+  color: adjust_hue(#15428b, $hue)
+  font-weight: bold
+
+.x-tab-strip-disabled .x-tabs-text
+  color: adjust_hue(#aaaaaa, $hue)
+
+.x-tab-strip-top
+  .x-tab-right, .x-tab-left, .x-tab-strip-inner
+    background-image: url (#{$img_path+"/tabs/tabs-sprite.gif"})
+
+.x-tab-strip-bottom
+  .x-tab-right
+    background-image: url (#{$img_path+"/tabs/tab-btm-inactive-right-bg.gif"})
+  .x-tab-left
+    background-image: url (#{$img_path+"/tabs/tab-btm-inactive-left-bg.gif"})
+  .x-tab-strip-over
+    .x-tab-right
+      background-image: url (#{$img_path+"/tabs/tab-btm-over-right-bg.gif"})
+    .x-tab-left
+      background-image: url (#{$img_path+"/tabs/tab-btm-over-left-bg.gif"})
+  .x-tab-strip-active
+    .x-tab-right
+      background-image: url (#{$img_path+"/tabs/tab-btm-right-bg.gif"})
+    .x-tab-left
+      background-image: url (#{$img_path+"/tabs/tab-btm-left-bg.gif"})
+
+.x-tab-strip .x-tab-strip-closable a.x-tab-strip-close
+  background-image: url (#{$img_path+"/tabs/tab-close.gif"})
+  &:hover
+    background-image: url (#{$img_path+"/tabs/tab-close.gif"})
+
+.x-tab-panel-body
+  border-color: adjust_hue(#8db2e3, $hue)
+  background-color: adjust_hue(#fff, $hue)
+
+.x-tab-panel-body-top
+  border-top: 0 none
+
+.x-tab-panel-body-bottom
+  border-bottom: 0 none
+
+.x-tab-scroller-left
+  background-image: url (#{$img_path+"/tabs/scroll-left.gif"})
+  border-bottom-color: adjust_hue(#8db2e3, $hue)
+
+.x-tab-scroller-left-over
+  background-position: 0 0
+
+.x-tab-scroller-left-disabled
+  background-position: -18px 0
+  opacity: .5
+  -moz-opacity: .5
+  filter: alpha(opacity = 50)
+  cursor: default
+
+.x-tab-scroller-right
+  background-image: url (#{$img_path+"/tabs/scroll-right.gif"})
+  border-bottom-color: adjust_hue(#8db2e3, $hue)
+
+.x-tab-panel-bbar .x-toolbar, .x-tab-panel-tbar .x-toolbar
+  border-color: adjust_hue(#99bbe8, $hue)

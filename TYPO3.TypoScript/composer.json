@@ -1,0 +1,15 @@
+{
+    "name": "typo3/typoscript",
+    "type": "typo3-flow-package",
+    "description": "",
+    "version": "2.0.0 alpha 7",
+    "require": {
+        "typo3/flow": "*",
+        "typo3/eel": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\TypoScript": "Classes"
+        }
+    }
+}

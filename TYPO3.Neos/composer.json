@@ -1,0 +1,23 @@
+{
+    "name": "typo3/phoenix",
+    "type": "typo3-flow-package",
+    "description": "The next generation of the popular open-source CMS.",
+    "version": "1.0.0 dev",
+    "require": {
+        "typo3/flow": "*",
+        "typo3/extjs": "*",
+        "typo3/aloha": "*",
+        "typo3/media": "*",
+        "typo3/phoenix-contenttypes": "*",
+        "typo3/setup": "*",
+        "twitter/bootstrap": "*",
+        "typo3/typo3cr": "*",
+        "typo3/typoscript": "*",
+        "typo3/sitekickstarter": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\TYPO3": "Classes"
+        }
+    }
+}

@@ -1,0 +1,6 @@
+//
+// TypoScript Fixture 17
+//
+// - Inclusion
+
+include: ParserTestTypoScriptFixture16.ts2

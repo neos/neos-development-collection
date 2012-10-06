@@ -1,0 +1,29 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<t:aloha.notEditable>
+	<f:render section="itemList" arguments="{items: items}" />
+</t:aloha.notEditable>
+<f:section name="itemList">
+	<ul class="nav nav-list">
+		<f:for each="{items}" as="item">
+			<li class="{item.state}">
+				<t:link.node node="{item.node}">{item.label}</t:link.node>
+				<f:if condition="{item.subItems}">
+					<f:render section="subList" arguments="{items: item.subItems}" />
+				</f:if>
+			</li>
+		</f:for>
+	</ul>
+</f:section>
+
+<f:section name="subList">
+	<ul>
+		<f:for each="{items}" as="item">
+			<li class="{item.state}">
+				<t:link.node node="{item.node}">{item.label}</t:link.node>
+				<f:if condition="{item.subItems}">
+					<f:render section="subList" arguments="{items: item.subItems}"/>
+				</f:if>
+			</li>
+		</f:for>
+	</ul>
+</f:section>
