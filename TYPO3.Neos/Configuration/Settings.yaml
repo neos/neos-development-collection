@@ -19,7 +19,7 @@ TYPO3:
               controllerObjectName: "TYPO3\TYPO3\Controller\.*|TYPO3\TYPO3\Service\.*"
             entryPoint: 'WebRedirect'
             entryPointOptions:
-              uri: typo3/login
+              uri: neos/login
         authenticationStrategy: oneToken
 
     error:

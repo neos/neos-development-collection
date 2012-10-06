@@ -232,7 +232,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				browse_button : this._browseButtonId,
 				container : this._containerId,
 				max_file_size : '10mb',
-				url : '/typo3/content/uploadImage',
+				url : '/neos/content/uploadImage',
 				multipart_params: {}
 			});
 			if (this.allowedFileTypes) {
@@ -721,7 +721,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 				this.set('_uploadPreviewShown', false);
-				$.get('/typo3/content/imageWithMetadata/' + imageVariant.originalImage, function(result) {
+				$.get('/neos/content/imageWithMetadata/' + imageVariant.originalImage, function(result) {
 					that._hideImageLoader();
 					var metadata = JSON.parse(result);
 					that.beginPropertyChanges();

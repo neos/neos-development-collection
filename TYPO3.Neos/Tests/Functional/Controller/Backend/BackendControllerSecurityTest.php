@@ -48,14 +48,14 @@ class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
 		$account = $this->authenticateRoles(array('Administrator'));
 		$account->setParty($user);
-		$this->browser->request('http://localhost/typo3/login');
+		$this->browser->request('http://localhost/neos/login');
 	}
 
 	/**
 	 * @test
 	 */
 	public function indexActionIsDeniedForEverybody() {
-		$this->browser->request('http://localhost/typo3/');
+		$this->browser->request('http://localhost/neos/');
 		$this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
 	}
 }

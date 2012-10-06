@@ -23,7 +23,7 @@ use TYPO3\Flow\Annotations as Flow;
  * </code>
  *
  * Output:
- * <a href="typo3/system/useradmin">some link</a>
+ * <a href="neos/system/useradmin">some link</a>
  * (depending on current node, format etc.)
  *
  * @Flow\Scope("prototype")

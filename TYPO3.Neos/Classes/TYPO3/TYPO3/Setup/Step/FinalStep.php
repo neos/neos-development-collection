@@ -42,7 +42,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$backendLink = $title->createElement('backendLink', 'TYPO3.Setup:LinkElement');
 		$backendLink->setLabel('Go to the backend');
-		$backendLink->setProperty('href', '/typo3');
+		$backendLink->setProperty('href', '/neos');
 		$backendLink->setProperty('class', 'btn btn-large');
 	}
 

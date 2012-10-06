@@ -96,14 +96,14 @@ WARNING: TODO - write this
 REST Server Side API
 --------------------
 
-URL ``/typo3/content/new``
+URL ``/neos/content/new``
 
 * +referenceNode+ - Context node path
 * +position+ - if @above@, new node will be inserted above @referenceNode@, if @below@, otherwise.
 
-URL ``/typo3/content/create``
+URL ``/neos/content/create``
 
-* all options from @/typo3/content/new@
+* all options from @/neos/content/new@
 * +type+ - TYPO3CR Node Type to be created
 
 Return Commands
