@@ -5,9 +5,9 @@ Documentation
 .. note::
 
 	Help is always greatly appreciated, read :ref:`ch-contributing` to find out how
-	you can improve TYPO3 Phoenix.
+	you can improve TYPO3 Neos.
 
-TYPO3 Phoenix is a free enterprise web content management system licensed under the GPL.
+TYPO3 Neos is a free enterprise web content management system licensed under the GPL.
 
 Index
 -----

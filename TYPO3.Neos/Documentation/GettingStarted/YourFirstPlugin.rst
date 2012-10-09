@@ -1,10 +1,10 @@
-========================================
-Creating your first TYPO3 Phoenix plugin
-========================================
+=====================================
+Creating your first TYPO3 Neos plugin
+=====================================
 
 Any TYPO3 Flow package can be used as a plugin with a little effort. This section
 will guide you through a simple example. First, we will create a really basic
-TYPO3 Flow package. Second, we'll expose this TYPO3 Flow package as Phoenix plugin.
+TYPO3 Flow package. Second, we'll expose this TYPO3 Flow package as Neos plugin.
 
 Create a TYPO3 Flow package
 ===========================
@@ -30,7 +30,7 @@ Then generate a migration to create the needed DB schema:
 You should now have a package with a default controller and templates created.
 In order to view them you can call the frontend like
 ``http://phoenix.local/sarkosh.cdcollection``, but you need to include the
-TYPO3 Flow default routes first (add them before the Phoenix routes):
+TYPO3 Flow default routes first (add them before the Neos routes):
 
 .. code-block:: yaml
 
@@ -60,10 +60,10 @@ Now you can add some entries for your CD collection in the database::
 (or using your database tool of choice) and adjust the templates so a list of
 CDs is shown. When you are done with that, you can make a plugin out of that.
 
-Converting a TYPO3 Flow Package Into a Phoenix Plugin
-=====================================================
+Converting a TYPO3 Flow Package Into a Neos Plugin
+==================================================
 
-To activate a TYPO3 Flow package as Phoenix plugin, you only need to provide two
+To activate a TYPO3 Flow package as Neos plugin, you only need to provide two
 configuration blocks. First, you need to add a new *content type* for the plugin,
 such that the user can choose the plugin from the list of content elements:
 
@@ -93,5 +93,5 @@ Finally tweak your site package's *Root.ts2* and include the newly created TypoS
 
   include: resource://Sarkosh.CdCollection/Private/TypoScripts/Library/Plugin.ts2
 
-Now log in to your Phoenix backend (remove the TYPO3 Flow routes again now), and you
+Now log in to your Neos backend (remove the TYPO3 Flow routes again now), and you
 should be able to add your plugin just like any other content element.
