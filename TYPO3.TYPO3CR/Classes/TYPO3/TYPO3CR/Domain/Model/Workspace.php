@@ -37,6 +37,7 @@ class Workspace {
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 * @ORM\ManyToOne
+	 * @ORM\JoinColumn(onDelete="SET NULL")
 	 */
 	protected $baseWorkspace;
 
