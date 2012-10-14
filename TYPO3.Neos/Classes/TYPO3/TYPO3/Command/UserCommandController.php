@@ -45,6 +45,12 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected $hashService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3\Domain\Factory\UserFactory
+	 */
+	protected $userFactory;
+
+	/**
 	 * Create a new user
 	 *
 	 * This command creates a new user which has access to the backend user interface.
@@ -61,23 +67,18 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	public function createCommand($username, $password, $firstName, $lastName, $roles = NULL) {
 		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
 		if ($account instanceof \TYPO3\Flow\Security\Account) {
-			$this->outputLine('User "%s" already exists.', array($username));
+			$this->outputLine('The username "%s" is already in use', array($username));
 			$this->quit(1);
 		}
 
-		$user = new \TYPO3\TYPO3\Domain\Model\User();
-		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $username);
-		$user->setName($name);
-
-		$workspaceName = 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
-		$user->getPreferences()->set('context.workspace', $workspaceName);
+		$roleIdentifiers = empty($roles) ? array('Editor') : \TYPO3\Flow\Utility\Arrays::trimExplode(',', $roles);
+		$user = $this->userFactory->create($username, $password, $firstName, $lastName, $roleIdentifiers);
 		$this->partyRepository->add($user);
+		$accounts = $user->getAccounts();
+		foreach ($accounts as $account) {
+			$this->accountRepository->add($account);
+		}
 
-		$roles = empty($roles) ? array('Editor') : explode(',', $roles);
-
-		$account = $this->accountFactory->createAccountWithPassword($username, $password, $roles, 'Typo3BackendProvider');
-		$account->setParty($user);
-		$this->accountRepository->add($account);
 		$this->outputLine('Created account "%s".', array($username));
 	}
 

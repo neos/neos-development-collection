@@ -38,9 +38,9 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\AccountFactory
+	 * @var \TYPO3\TYPO3\Domain\Factory\UserFactory
 	 */
-	protected $accountFactory;
+	protected $userFactory;
 
 	/**
 	 * Returns the form definitions for the step
@@ -73,7 +73,6 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 		$username = $credentialsSection->createElement('username', 'TYPO3.Form:SingleLineText');
 		$username->setLabel('Username');
 		$username->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
-		$username->addValidator(new \TYPO3\Flow\Validation\Validator\AlphanumericValidator());
 		$username->addValidator(new \TYPO3\TYPO3\Validation\Validator\AccountExistsValidator(array('authenticationProviderName' => 'Typo3BackendProvider')));
 
 		$password = $credentialsSection->createElement('password', 'TYPO3.Form:PasswordWithConfirmation');
@@ -89,15 +88,12 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @return void
 	 */
 	public function postProcessFormValues(array $formValues) {
-		$user = new \TYPO3\TYPO3\Domain\Model\User();
-		$name = new \TYPO3\Party\Domain\Model\PersonName('', $formValues['firstName'], '', $formValues['lastName'], '', $formValues['username']);
-		$user->setName($name);
-		$user->getPreferences()->set('context.workspace', 'user-' . $formValues['username']);
+		$user = $this->userFactory->create($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('Administrator'));
 		$this->partyRepository->add($user);
-
-		$account = $this->accountFactory->createAccountWithPassword($formValues['username'], $formValues['password'], array('Administrator'), 'Typo3BackendProvider');
-		$account->setParty($user);
-		$this->accountRepository->add($account);
+		$accounts = $user->getAccounts();
+		foreach ($accounts as $account) {
+			$this->accountRepository->add($account);
+		}
 	}
 
 }
