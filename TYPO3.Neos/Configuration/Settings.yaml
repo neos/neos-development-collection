@@ -135,3 +135,5 @@ TYPO3:
           - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
       final:
         className: 'TYPO3\TYPO3\Setup\Step\FinalStep'
+    view:
+      title: 'TYPO3 Neos Setup'
