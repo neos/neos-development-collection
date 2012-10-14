@@ -12,6 +12,7 @@ define(['vie/entity', 'backbone'], function(Entity) {
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model);
 
+				T3.Content.Controller.ServerConnection.set('_saveRunning', true);
 				window.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(nodeJson, function(result) {
 						// when we save a node, it could be the case that it was in
 						// live workspace beforehand, but because of some modifications,
@@ -21,6 +22,8 @@ define(['vie/entity', 'backbone'], function(Entity) {
 						// Furthermore, we do not want event listeners to be fired, as otherwise, the
 						// contentelement would be redrawn leading to a loss of the current editing cursor position.
 					model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
+					T3.Content.Controller.ServerConnection.set('_saveRunning', false);
+					T3.Content.Controller.ServerConnection.set('_lastSuccessfulTransfer', new Date());
 					if (options && options.success) {
 						options.success(model, result);
 					}

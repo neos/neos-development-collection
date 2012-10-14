@@ -308,6 +308,10 @@ function($, vie, Ember, CreateJS) {
 						template: Ember.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
 						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
+					T3.Content.UI.SaveIndicator.extend({
+						saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+						lastSuccessfulTransferBinding: 'T3.Content.Controller.ServerConnection._lastSuccessfulTransfer'
+					}),
 					T3.Content.UI.Button.extend({
 						label: 'Publish Page',
 						disabledBinding: Ember.Binding.or('_noChanges', '_saveRunning'),

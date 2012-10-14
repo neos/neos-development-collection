@@ -15,6 +15,7 @@ define(
 	'text!phoenix/templates/content/ui/pageTree.html',
 	'text!phoenix/templates/content/ui/deletePageDialog.html',
 	'text!phoenix/templates/content/ui/inspectTree.html',
+	'text!phoenix/templates/content/ui/saveIndicator.html',
 	'phoenix/content/ui/elements',
 	'phoenix/content/ui/editors',
 	'jquery.popover',
@@ -24,7 +25,7 @@ define(
 	'jquery.cookie',
 	'jquery.dynatree'
 ],
-function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate) {
+function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate, saveIndicatorTemplate) {
 	if (window._requirejsLoadingTrace) {
 		window._requirejsLoadingTrace.push('phoenix/content/ui');
 	}
@@ -756,6 +757,24 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				// Automatically expand the first node when opened
 			this.inspectTree.dynatree('getRoot').getChildren()[0].expand(true);
 		}
+	});
+
+	T3.Content.UI.SaveIndicator = Ember.View.extend({
+		saveRunning: false,
+		lastSuccessfulTransfer: null,
+
+		template: Ember.Handlebars.compile(saveIndicatorTemplate),
+
+		lastSuccessfulTransferLabel: function() {
+			var date = this.get('lastSuccessfulTransfer');
+			if (date !== null) {
+				function pad(n) {
+					return n < 10 ? '0' + n : n;
+				}
+				return 'Saved at ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds())
+			}
+			return '';
+		}.property('lastSuccessfulTransfer')
 	});
 
 	/**

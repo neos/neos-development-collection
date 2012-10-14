@@ -724,3 +724,17 @@ button.t3-button.t3-connection-status-down {
 		}
 	}
 }
+
+// Save indicator
+#t3-toolbar {
+	.t3-indicator {
+		margin: 0px;
+		padding: 0px;
+		color: $lightest;
+		cursor: default;
+
+		.icon-ok {
+			color: #69A550;
+		}
+	}
+}

@@ -8432,6 +8432,16 @@ button.t3-button.t3-connection-status-down {
   padding: 0;
 }
 
+#t3-toolbar .t3-indicator {
+  margin: 0px;
+  padding: 0px;
+  color: white;
+  cursor: default;
+}
+#t3-toolbar .t3-indicator .icon-ok {
+  color: #69A550;
+}
+
 .popover {
   position: absolute;
   display: none;
