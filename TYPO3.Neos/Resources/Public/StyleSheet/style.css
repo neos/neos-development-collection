@@ -6041,6 +6041,10 @@
   content: "\f200";
 }
 
+.t3-ui {
+  text-align: left;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 .t3-ui h1 {
   font-size: 26px;
   font-weight: normal;
@@ -6609,10 +6613,39 @@ body.t3-ui-controls {
 }
 
 .t3-ui,
-#t3-footer,
+#t3-ui-top,
+#t3-inspector,
 #t3-toolbar,
-#t3-inspector {
+#t3-footer {
+  text-align: left;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.t3-ui div,
+#t3-ui-top div,
+#t3-inspector div,
+#t3-toolbar div,
+#t3-footer div {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: left;
+  margin: 0px;
+  padding: 0px;
+}
+.t3-ui form,
+#t3-ui-top form,
+#t3-inspector form,
+#t3-toolbar form,
+#t3-footer form {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: left;
+  margin: 0px;
+  padding: 0px;
+}
+.t3-ui ul li,
+#t3-ui-top ul li,
+#t3-inspector ul li,
+#t3-toolbar ul li,
+#t3-footer ul li {
+  background: transparent;
 }
 
 .t3-clear {
@@ -6631,6 +6664,8 @@ body.t3-ui-controls {
   overflow: hidden;
   z-index: 10015;
   height: 60px;
+  margin: 0px;
+  padding: 0px;
 }
 #t3-ui-top .t3-button-logout {
   float: right;
@@ -6679,6 +6714,8 @@ body.t3-ui-controls {
 .t3-launcher {
   position: relative;
   width: 100%;
+  margin: 0px;
+  padding: 0px;
   background-color: #e8e8e8;
   -webkit-transition-property: height;
   -moz-transition-property: height;
@@ -6812,7 +6849,9 @@ ul.t3-topbar {
   box-sizing: border-box;
   background: #2d2d2d;
   height: 100%;
+  margin: 0px;
   margin-top: 60px;
+  padding: 0px;
   padding-bottom: 60px;
   position: fixed;
   right: 0;
@@ -6832,21 +6871,21 @@ ul.t3-topbar {
   transition-duration: 0.2s;
 }
 
-.t3-inspector-form fieldset {
+#t3-inspector .t3-inspector-form fieldset {
   border: 0;
   margin-bottom: 10px;
 }
-.t3-inspector-form fieldset .t3-inspector-field {
+#t3-inspector .t3-inspector-form fieldset .t3-inspector-field {
   padding: 10px 10px 0 10px;
 }
-.t3-inspector-form fieldset .t3-inspector-field div {
+#t3-inspector .t3-inspector-form fieldset .t3-inspector-field div {
   padding-bottom: 10px;
 }
-.t3-inspector-form fieldset .t3-inspector-field input {
+#t3-inspector .t3-inspector-form fieldset .t3-inspector-field input {
   padding: 1px 4px 1px 4px;
 }
-.t3-inspector-form .header,
-.t3-inspector-form h2 {
+#t3-inspector .t3-inspector-form .header,
+#t3-inspector .t3-inspector-form h2 {
   width: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -6859,28 +6898,28 @@ ul.t3-topbar {
   font-weight: normal;
   font-size: 100%;
 }
-.t3-inspector-form .header {
+#t3-inspector .t3-inspector-form .header {
   text-align: right;
 }
-.t3-inspector-form label {
+#t3-inspector .t3-inspector-form label {
   color: white;
   font-weight: normal;
   cursor: pointer;
 }
-.t3-inspector-form input[type=text] {
+#t3-inspector .t3-inspector-form input[type=text] {
   width: 175px;
   display: block;
 }
-.t3-inspector-form input[type=text].modified {
+#t3-inspector .t3-inspector-form input[type=text].modified {
   border: 1px solid #54974a;
 }
-.t3-inspector-form input[placeholder],
-.t3-inspector-form input::-webkit-input-placeholder,
-.t3-inspector-form input:-moz-placeholder {
+#t3-inspector .t3-inspector-form input[placeholder],
+#t3-inspector .t3-inspector-form input::-webkit-input-placeholder,
+#t3-inspector .t3-inspector-form input:-moz-placeholder {
   height: 20px;
   line-height: 20px;
 }
-.t3-inspector-form select {
+#t3-inspector .t3-inspector-form select {
   width: 175px;
 }
 
@@ -6892,7 +6931,9 @@ ul.t3-topbar {
   top: 0;
   left: 0;
   right: 0;
+  margin: 0px;
   margin-top: 60px;
+  padding: 0px;
   padding-right: 200px;
   z-index: 10012;
   -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
@@ -6907,12 +6948,16 @@ ul.t3-topbar {
   float: left;
   height: 100%;
   line-height: 36px;
+  margin: 0px;
+  padding: 0px;
 }
 
 .t3-toolbar-right {
   float: right;
   height: 100%;
   line-height: 36px;
+  margin: 0px;
+  padding: 0px;
 }
 .t3-toolbar-right > li:last-child {
   margin-right: 10px;
@@ -6968,6 +7013,8 @@ ul.t3-topbar {
   bottom: 0;
   left: 0;
   position: fixed;
+  margin: 0px;
+  padding: 0px;
   height: 26px;
   line-height: 26px;
   right: 0;
@@ -7472,6 +7519,7 @@ body.t3-ui-previewmode .aloha-block.aloha-block-highlighted {
 }
 
 body.t3-launcher-open {
+  margin: 0px;
   margin-top: 296px;
 }
 body.t3-launcher-open #t3-ui-top {
