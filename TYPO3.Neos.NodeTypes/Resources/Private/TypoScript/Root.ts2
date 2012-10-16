@@ -65,6 +65,7 @@ prototype(TYPO3.Neos.ContentTypes:Menu) {
 	entryLevel << 1.toInteger()
 	maximumLevels = ${q(node).property('maximumLevels')}
 	maximumLevels << 1.toInteger()
+	node = ${node}
 }
 
 # Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements
