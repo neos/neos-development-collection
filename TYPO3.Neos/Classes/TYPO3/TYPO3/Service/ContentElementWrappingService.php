@@ -55,9 +55,10 @@ class ContentElementWrappingService {
 	 * @param string $typoscriptPath
 	 * @param string $content
 	 * @param boolean $isPage
+	 * @param boolean $reloadable
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
 		$contentType = $node->getContentType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
@@ -74,6 +75,9 @@ class ContentElementWrappingService {
 			}
 			if ($node->isRemoved()) {
 				$cssClasses[] = 't3-contentelement-removed';
+			}
+			if ($reloadable) {
+				$cssClasses[] = 't3-reloadable-content';
 			}
 
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
