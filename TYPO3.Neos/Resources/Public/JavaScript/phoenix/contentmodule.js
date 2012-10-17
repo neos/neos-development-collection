@@ -238,7 +238,11 @@ function($, vie, Ember, CreateJS) {
 			$(document).bind('keydown', 'alt+p', function() {
 				T3.Content.Controller.Preview.togglePreview();
 				return false;
-			}).bind('keydown', 'alt+l', function() {
+			}).bind('keydown', 'alt+l', function(event) {
+					// Skip launcher when editing content, could be an @ on Mac OS
+				if ($(event.target).closest('.t3-inline-editable').length > 0) {
+					return;
+				}
 				that._launcher.activate();
 				return false;
 			});
