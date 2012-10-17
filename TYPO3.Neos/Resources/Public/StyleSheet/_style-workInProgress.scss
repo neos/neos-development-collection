@@ -491,6 +491,16 @@ button.t3-button.t3-connection-status-down {
 		visibility: visible;
 	}
 }
+.t3-ui-previewmode {
+	.t3-contentelement-active {
+		outline: none !important;
+		outline-offset: 0px;
+
+		> .t3-contentelement-handle-container {
+			visibility: hidden;
+		}
+	}
+}
 
 .t3-section-handle-container .btn-toolbar {
 	text-align:right !important;
