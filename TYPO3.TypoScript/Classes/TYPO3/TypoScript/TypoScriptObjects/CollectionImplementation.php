@@ -90,9 +90,10 @@ class CollectionImplementation extends AbstractTypoScriptObject {
 			throw new \TYPO3\TypoScript\Exception('The Collection needs an itemName to be set.', 1344325771);
 		}
 		$iterationName = $this->tsValue('iterationName');
-		$collectionTotalCount = $collection->count();
+		$collectionTotalCount = count($collection);
 		foreach ($collection as $collectionElement) {
-			$context = array($itemName => $collectionElement);
+			$context = $this->tsRuntime->getCurrentContext();
+			$context[$itemName] = $collectionElement;
 			if ($iterationName !== NULL) {
 				$context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
 			}
