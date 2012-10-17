@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3\Domain\Model;
+namespace TYPO3\TYPO3\Tests\Unit\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
@@ -11,42 +11,20 @@ namespace TYPO3\TYPO3\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Party\Domain\Model\Person;
-
-use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * Domain Model of a User
+ * Testcase for the "User" domain model
  *
- * @Flow\Entity
- * @Flow\Scope("prototype")
  */
-class User extends Person {
+class UserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * Preferences of this user
-	 *
-	 * @var \TYPO3\TYPO3\Domain\Model\UserPreferences
-	 * @ORM\OneToOne
+	 * @test
 	 */
-	protected $preferences;
-
-	/**
-	 * Constructs this User object
-	 *
-	 */
-	public function __construct() {
-		parent::__construct();
-		$this->preferences = new UserPreferences();
-	}
-
-	/**
-	 * @return \TYPO3\TYPO3\Domain\Model\UserPreferences
-	 */
-	public function getPreferences() {
-		return $this->preferences;
+	public function constructorInitializesPreferences() {
+		$user = new \TYPO3\TYPO3\Domain\Model\User();
+		$this->assertInstanceOf('TYPO3\TYPO3\Domain\Model\UserPreferences', $user->getPreferences());
 	}
 
 }
+
 ?>

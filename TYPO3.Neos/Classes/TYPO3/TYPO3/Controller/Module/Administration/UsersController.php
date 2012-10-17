@@ -34,9 +34,9 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\AccountFactory
+	 * @var \TYPO3\TYPO3\Domain\Factory\UserFactory
 	 */
-	protected $accountFactory;
+	protected $userFactory;
 
 	/**
 	 * @Flow\Inject
@@ -105,15 +105,14 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	 * @todo Security
 	 */
 	public function createAction($identifier, array $password, $firstName, $lastName) {
-		$user = new \TYPO3\TYPO3\Domain\Model\User();
-		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $identifier);
-		$user->setName($name);
-		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
-		$this->partyRepository->add($user);
+		$password = array_shift($password);
+		$user = $this->userFactory->create($identifier, $password, $firstName, $lastName, array('Administrator'));
 
-		$account = $this->accountFactory->createAccountWithPassword($identifier, array_shift($password), array('Administrator'), 'Typo3BackendProvider');
-		$account->setParty($user);
-		$this->accountRepository->add($account);
+		$this->partyRepository->add($user);
+		$accounts = $user->getAccounts();
+		foreach ($accounts as $account) {
+			$this->accountRepository->add($account);
+		}
 
 		$this->redirect('index');
 	}
