@@ -790,6 +790,15 @@ body {
 		.aloha-block.aloha-block-highlighted {
 			cursor: auto;
 		}
+		// Content elements
+		.t3-contentelement-active {
+			outline: none !important;
+			outline-offset: 0px;
+
+			> .t3-contentelement-handle-container {
+				visibility: hidden;
+			}
+		}
 	}
 }
 

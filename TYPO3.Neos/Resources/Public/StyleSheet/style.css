@@ -5348,8 +5348,8 @@
     */
 @font-face {
   font-family: "FontAwesome";
-  src: url('../Library/fontawesome/font/fontawesome-webfont.eot');
-  src: url('../Library/fontawesome/font/fontawesome-webfont.eot?#iefix') format('eot'), url('../Library/fontawesome/font/fontawesome-webfont.woff') format('woff'), url('../Library/fontawesome/font/fontawesome-webfont.ttf') format('truetype'), url('../Library/fontawesome/font/fontawesome-webfont.svg#FontAwesomeRegular') format('svg');
+  src: url('/fontawesome-webfont.eot');
+  src: url('/fontawesome-webfont.eot?#iefix') format('eot'), url('../Library/fontawesome/font/fontawesome-webfont.woff') format('woff'), url('../Library/fontawesome/font/fontawesome-webfont.ttf') format('truetype'), url('../Library/fontawesome/font/fontawesome-webfont.svg#FontAwesomeRegular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -7471,6 +7471,13 @@ body.t3-ui-previewmode .aloha-block:hover,
 body.t3-ui-previewmode .aloha-block.aloha-block-highlighted {
   cursor: auto;
 }
+body.t3-ui-previewmode .t3-contentelement-active {
+  outline: none !important;
+  outline-offset: 0px;
+}
+body.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-container {
+  visibility: hidden;
+}
 
 .ui-widget-content table.t3-content-new td {
   vertical-align: top;
@@ -8201,14 +8208,6 @@ button.t3-button.t3-connection-status-down {
 }
 .t3-contentelement-active > .t3-contentelement-handle-container {
   visibility: visible;
-}
-
-.t3-ui-previewmode .t3-contentelement-active {
-  outline: none !important;
-  outline-offset: 0px;
-}
-.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-container {
-  visibility: hidden;
 }
 
 .t3-section-handle-container .btn-toolbar {
