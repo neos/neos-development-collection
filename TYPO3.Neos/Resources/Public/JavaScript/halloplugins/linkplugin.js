@@ -59,7 +59,13 @@ define(
 								select: function(event, ui) {
 									that.set('url', ui.item.value);
 								}
-							});
+							},
+							this.$('.t3-link-inputfield').keyup(function(e) {
+								if (e.keyCode === 13) {
+									that.insert();
+								}
+							})
+							);
 
 							if (this.get('url') !== widget.options.defaultUrl) {
 								this.set('label', 'Update');
