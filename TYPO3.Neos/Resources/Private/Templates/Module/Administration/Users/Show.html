@@ -96,9 +96,18 @@
 			<f:link.action action="index" class="btn t3-button">Back</f:link.action>
 		</div>
 		<div class="pull-right">
-			<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#delete">
-				<i class="icon-trash icon-white"></i> Delete
-			</button>
+			<f:if condition="{currentAccount} == {account}">
+				<f:then>
+					<button class="btn btn-danger disabled t3-button" title="This user is logged in in current session so it cannot be deleted">
+						<i class="icon-trash icon-white"></i> Delete
+					</button>
+				</f:then>
+				<f:else>
+					<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#delete">
+						<i class="icon-trash icon-white"></i> Delete
+					</button>
+				</f:else>
+			</f:if>
 			<f:link.action action="edit" arguments="{account: account}" class="btn btn-info t3-button">
 				<i class="icon-pencil icon-white"></i> Edit
 			</f:link.action>

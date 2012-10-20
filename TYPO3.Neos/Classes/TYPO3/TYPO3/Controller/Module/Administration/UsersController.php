@@ -133,6 +133,7 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	 */
 	public function showAction(\TYPO3\Flow\Security\Account $account) {
 		$this->view->assign('account', $account);
+		$this->view->assign('currentAccount', $this->securityContext->getAccount());
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
 
