@@ -790,5 +790,27 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
 	}
 
+
+	/**
+	 * Checks if simple values (string, boolean, integer) are parsed correctly
+	 *
+	 * @test
+	 */
+	public function parserCorrectlyParsesFixture19() {
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture19.ts2', FILE_TEXT);
+
+		$expectedParseTree = array(
+			'somepath' => array(
+				'stringValue' => 'A string value',
+				'booleanValueFalse' => FALSE,
+				'booleanValueTrue' => TRUE,
+				'integerValue' => 42
+			),
+		);
+
+		$actualParseTree = $this->parser->parse($sourceCode);
+		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 19.');
+	}
+
 }
 ?>

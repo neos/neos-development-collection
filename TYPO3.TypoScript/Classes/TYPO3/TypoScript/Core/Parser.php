@@ -134,6 +134,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
 	const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
 	const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/^(?P<DoubleQuoteChar>")(?P<DoubleQuoteValue>(?:\\\\.|[^\\\\"])*)$|(?P<SingleQuoteChar>\')(?P<SingleQuoteValue>(?:\\\\.|[^\\\\\'])*)$/';
+	const SPLIT_PATTERN_VALUEBOOLEAN = '/^\s*(TRUE|FALSE|true|false)\s*$/';
 
 	const SCAN_PATTERN_VALUEOBJECTTYPE = '/
 		^\s*                      # beginning of line; with numerous whitespace
@@ -672,6 +673,8 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 					break;
 				}
 			}
+		} elseif (preg_match(self::SPLIT_PATTERN_VALUEBOOLEAN, $unparsedValue, $matches) === 1) {
+			$processedValue = (strtolower($matches[1]) === 'true');
 		} elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
 			if (empty($matches['namespace'])) {
 				$objectTypeNamespace = $this->objectTypeNamespaces['default'];
