@@ -16,8 +16,10 @@ namespace TYPO3\TYPO3\Routing;
  */
 class Exception extends \TYPO3\TYPO3\Exception {
 
-	protected $statusCode = 404;
+	/**
+	 * @var integer
+	 */
+	protected $statusCode = 500;
 
 }
-
 ?>
