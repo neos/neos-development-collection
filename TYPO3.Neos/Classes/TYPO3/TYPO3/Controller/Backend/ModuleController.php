@@ -29,6 +29,12 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $dispatcher;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @param array $module
 	 * @return void
 	 * @Flow\SkipCsrfProtection
@@ -65,13 +71,15 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
+		$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
 		$this->view->assignMultiple(array(
 			'moduleClass' => implode('-', $modules),
 			'moduleContents' => $moduleResponse->getContent(),
 			'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
 			'rootModule' => array_shift($modules),
 			'submodule' => array_shift($modules),
-			'moduleConfiguration' => $moduleConfiguration
+			'moduleConfiguration' => $moduleConfiguration,
+			'user' => $user
 		));
 	}
 

@@ -22,6 +22,7 @@ require(
 			'jquery.jcrop': '../Library/jcrop/js/jquery.Jcrop.min',
 			'jquery.plupload': '../Library/plupload/js/plupload',
 			'jquery.plupload.html5': '../Library/plupload/js/plupload.html5',
+			'bootstrap.dropdown': '../Library/twitter-bootstrap/js/bootstrap-dropdown',
 			'codemirror': '../Library/codemirror2/lib/codemirror',
 			'codemirror.xml': '../Library/codemirror2/mode/xml/xml',
 			'codemirror.css': '../Library/codemirror2/mode/css/css',
@@ -49,6 +50,7 @@ require(
 			'jquery.popover': ['jquery'],
 			'jquery.jcrop': ['jquery'],
 			'jquery.hotkeys': ['jquery'],
+			'bootstrap.dropdown': ['jquery'],
 			'underscorejs': {
 				'exports': '_'
 			},

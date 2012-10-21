@@ -23,7 +23,8 @@ define(
 	'jquery.plupload',
 	'jquery.plupload.html5',
 	'jquery.cookie',
-	'jquery.dynatree'
+	'jquery.dynatree',
+	'bootstrap.dropdown'
 ],
 function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate, saveIndicatorTemplate) {
 	if (window._requirejsLoadingTrace) {
