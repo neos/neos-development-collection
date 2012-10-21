@@ -100,7 +100,7 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 			return $output;
 		}
 
-		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), 'TYPO3.Phoenix.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
+		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), 'TYPO3.Phoenix.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
 	}
 }
 ?>
