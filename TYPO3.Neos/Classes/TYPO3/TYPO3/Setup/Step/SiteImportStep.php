@@ -162,7 +162,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 				throw new \TYPO3\Setup\Exception(sprintf('The package key "%s" already exists.', $formValues['packageKey']), 1346759486);
 			}
 			$packageKey = $formValues['packageKey'];
-			$siteName = $formValues['packageKey'];
+			$siteName = $formValues['siteName'];
 
 			$this->packageManager->createPackage($packageKey, NULL, Files::getUnixStylePath(Files::concatenatePaths(array(FLOW_PATH_PACKAGES, 'Sites'))));
 			$this->generatorService->generateSitesXml($packageKey, $siteName);
