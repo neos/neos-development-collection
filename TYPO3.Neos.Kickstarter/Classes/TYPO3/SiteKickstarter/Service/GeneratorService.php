@@ -32,7 +32,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['siteName'] = $siteName;
-		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1);
+		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
 		$contextVariables['siteNodeName'] = strtolower($packageKeyDomainPart);
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -56,7 +56,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['siteName'] = $siteName;
-		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1);
+		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
 		$contextVariables['siteNodeName'] = $packageKeyDomainPart;
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -81,7 +81,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$contextVariables['siteName'] = $siteName;
 		$contextVariables['typo3ViewHelper'] = '{namespace typo3=TYPO3\TYPO3\ViewHelpers}';
 		$contextVariables['typoScriptViewHelper'] = '{namespace ts=TYPO3\TypoScript\ViewHelpers}';
-		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1);
+		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
 		$contextVariables['siteNodeName'] = lcfirst($packageKeyDomainPart);
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
