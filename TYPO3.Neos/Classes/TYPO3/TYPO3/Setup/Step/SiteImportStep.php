@@ -85,6 +85,12 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	protected $generatorService;
 
 	/**
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @Flow\Inject
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Returns the form definitions for the step
 	 *
 	 * @param \TYPO3\Form\Core\Model\FormDefinition $formDefinition
@@ -118,7 +124,6 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$error = $title->createElement('error', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'No site packages were available, make sure you have an active site package');
 			$error->setProperty('class', 'alert alert-warning');
-
 		}
 
 		$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
@@ -172,8 +177,6 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		} else {
 			$packageKey = $formValues['site'];
 		}
-
-
 		if ($packageKey !== '') {
 			try {
 				$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
@@ -181,6 +184,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 				$this->siteImportService->importFromPackage($packageKey);
 			} catch (\Exception $exception) {
 				$finisherContext->cancel();
+				$this->systemLogger->logException($exception);
 				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error(sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage())));
 			}
 		}
