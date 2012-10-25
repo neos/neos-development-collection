@@ -735,3 +735,7 @@ button.t3-button.t3-connection-status-down {
 		outline: 1px rgba(0, 0, 0, 0.2) dashed;
 	}
 }
+
+.ui-tabs .ui-tabs-nav li a:focus {
+	outline: none;
+}
