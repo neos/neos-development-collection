@@ -728,3 +728,10 @@ button.t3-button.t3-connection-status-down {
 		}
 	}
 }
+
+// Remove blue border from editing
+.t3-inline-editable {
+	&:focus {
+		outline: 1px rgba(0, 0, 0, 0.2) dashed;
+	}
+}
