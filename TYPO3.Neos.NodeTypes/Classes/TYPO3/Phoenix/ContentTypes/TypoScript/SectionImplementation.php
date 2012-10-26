@@ -100,7 +100,33 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 			return $output;
 		}
 
-		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), 'TYPO3.Phoenix.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
+		$idAttribute = $this->generateIdAttributeForSection($sectionNode);
+		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), $idAttribute, 'TYPO3.Phoenix.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode
+	 * @return string
+	 */
+	protected function generateIdAttributeForSection(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode) {
+		$parentNode = $this->deriveParentFolderNode($sectionNode);
+		$parentFolderNodePath = $parentNode->getPath();
+		$relativePath = substr($sectionNode->getPath(), strlen($parentFolderNodePath));
+		return 't3-section' . str_replace('/', '-', $relativePath);
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode) {
+		$parentNode = $sectionNode->getParent();
+
+		while ($parentNode->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Folder') !== TRUE) {
+			$parentNode = $parentNode->getParent();
+		}
+
+		return $parentNode;
 	}
 }
 ?>
