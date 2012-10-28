@@ -50,21 +50,21 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 		}.property('_vieEntity'),
 
 		init: function() {
-			var that = this;
+			var that = this,
+				vieEntity = this.get('_vieEntity');
 
-			this.set('modified', !$.isEmptyObject(that.get('_vieEntity').changed));
-			that.set('publishable', that.get('_vieEntity').get(T3.ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
+			this.set('modified', !$.isEmptyObject(vieEntity.changed));
+			this.set('publishable', vieEntity.get(T3.ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
 
-			var $entityElement = vieInstance.service("rdfa").getElementBySubject(this.get('_vieEntity').getSubject(), jQuery(document));
-			$entityElement.bind("midgardeditablechanged", function(event, data) {
-					// this event fires if inline content changes
-				that.set('modified', !$.isEmptyObject(that.get('_vieEntity').changed));
+			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
+				// this event fires if inline content changes
+			$entityElement.bind('midgardeditablechanged', function(event, data) {
+				that.set('modified', !$.isEmptyObject(vieEntity.changed));
 			});
-			this.get('_vieEntity').on('change', function() {
-					// this event fires if content changes through the property inspector
-				that.set('modified', !$.isEmptyObject(that.get('_vieEntity').changed));
-
-				that.set('publishable', that.get('_vieEntity').get(T3.ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
+				// this event fires if content changes through the property inspector
+			vieEntity.on('change', function() {
+				that.set('modified', !$.isEmptyObject(vieEntity.changed));
+				that.set('publishable', vieEntity.get(T3.ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
 			});
 
 			this.set('$element', $entityElement);

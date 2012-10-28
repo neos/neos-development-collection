@@ -182,7 +182,7 @@ define(
 			publishAll: function() {
 				T3.Content.Controller.ServerConnection.sendAllToServer(
 					this.get('publishableEntitySubjects'),
-				    function(subject) {
+					function(subject) {
 						var entity = vie.entities.get(subject);
 						return [entity.fromReference(subject), 'live'];
 					},
