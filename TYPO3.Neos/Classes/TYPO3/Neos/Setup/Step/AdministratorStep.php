@@ -80,6 +80,8 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 		$password->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
 		$password->setLabel('Password');
 		$password->setProperty('passwordDescription', 'At least 6 characters');
+
+		$formDefinition->setRenderingOption('skipStepNotice', 'If you skip this step make sure that you have an existing user or create one with the <code>user:create</code> command');
 	}
 
 	/**

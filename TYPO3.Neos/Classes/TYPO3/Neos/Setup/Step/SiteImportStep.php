@@ -144,6 +144,8 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		$this->closureFinisher = new \TYPO3\Form\Finishers\ClosureFinisher();
 		$this->closureFinisher->setOption('closure', $callback);
 		$formDefinition->addFinisher($this->closureFinisher);
+
+		$formDefinition->setRenderingOption('skipStepNotice', 'You can always import a site using the site:import command');
 	}
 
 	/**
