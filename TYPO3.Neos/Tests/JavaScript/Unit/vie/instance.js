@@ -5,10 +5,10 @@ require(
 	],
 	function(vie) {
 
-		buster.testCase('Test vie initialization', {
+		buster.testCase('Test VIE initialization', {
 			'TYPO3 Namespaces are set': function() {
 				'use strict';
-				buster.assert.equals('http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/', vie.namespaces.get('typo3'));
+				buster.assert.equals('http://www.typo3.org/ns/2012/Flow/Packages/TYPO3/Content/', vie.namespaces.get('typo3'));
 			}
 		});
 
