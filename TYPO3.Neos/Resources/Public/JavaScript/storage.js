@@ -1,4 +1,4 @@
-define(['vie/entity', 'backbone'], function(Entity) {
+define(['vie/entity', 'phoenix/content/controller', 'phoenix/content/model', 'backbone'], function(Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('storage');
 
 	Backbone.sync = function(method, model, options) {
@@ -18,12 +18,17 @@ define(['vie/entity', 'backbone'], function(Entity) {
 						// live workspace beforehand, but because of some modifications,
 						// is now copied into the user's workspace.
 						// That's why we need to update the (possibly changed) workspace
-						// name in the block.
-						// Furthermore, we do not want event listeners to be fired, as otherwise, the
-						// contentelement would be redrawn leading to a loss of the current editing cursor position.
+						// name in the VIE entity.
+						//
+						// Furthermore, we do not want event listeners to be fired, as otherwise the contentelement
+						// would be redrawn leading to a loss of the current editing cursor position.
+						//
+						// The PublishableNodes are explicitly uppdated, as changes from the backbone models
+						// workspacename attribute are suppressed and our entity wrapper would not notice.
 					model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
 					T3.Content.Controller.ServerConnection.set('_saveRunning', false);
 					T3.Content.Controller.ServerConnection.set('_lastSuccessfulTransfer', new Date());
+					T3.Content.Model.PublishableNodes._updatePublishableEntities();
 					if (options && options.success) {
 						options.success(model, result);
 					}
