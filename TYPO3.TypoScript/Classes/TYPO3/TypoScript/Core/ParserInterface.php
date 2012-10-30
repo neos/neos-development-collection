@@ -45,8 +45,8 @@ interface ParserInterface {
 	 * The special alias "default" is used as a fallback for resolution of unqualified
 	 * TypoScript object types.
 	 *
-	 * @param string $alias An alias for the given namespace, for example "phoenix"
-	 * @param string $namespace The namespace, for example "TYPO3.Phoenix"
+	 * @param string $alias An alias for the given namespace, for example "neos"
+	 * @param string $namespace The namespace, for example "TYPO3.Neos"
 	 * @return void
 	 * @api
 	 */

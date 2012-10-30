@@ -751,10 +751,10 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$expectedParseTree = array(
 			'object1' => array(
-				'__objectType' => 'TYPO3.Phoenix:Text'
+				'__objectType' => 'TYPO3.Neos:Text'
 			),
 			'object2' => array(
-				'__objectType' => 'TYPO3.Phoenix:Text'
+				'__objectType' => 'TYPO3.Neos:Text'
 			),
 			'object3' => array(
 				'__objectType' => 'TYPO3.Schirmchen:Text'
@@ -763,12 +763,12 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'__objectType' => 'TYPO3.Future:Text'
 			),
 			'__prototypes' => array (
-				'TYPO3.Phoenix:Foo' => array(
+				'TYPO3.Neos:Foo' => array(
 					'__meta' => array(
 						'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
 					)
 				),
-				'TYPO3.Phoenix:Bar' => array(
+				'TYPO3.Neos:Bar' => array(
 					'__meta' => array(
 						'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
 					)

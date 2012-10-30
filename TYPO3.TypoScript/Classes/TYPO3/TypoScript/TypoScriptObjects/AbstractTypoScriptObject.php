@@ -33,7 +33,7 @@ abstract class AbstractTypoScriptObject {
 	protected $path;
 
 	/**
-	 * Name of this TypoScript object, like TYPO3.TYPO3:Text
+	 * Name of this TypoScript object, like TYPO3.Neos:Text
 	 *
 	 * @var string
 	 */
