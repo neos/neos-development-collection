@@ -25,15 +25,15 @@ Installation of TYPO3 Neos
   `git clone git://git.typo3.org/TYPO3v5/Distributions/Base.git`, followed by a
   `composer install`.
 
-* Set up your virtual host to point to the Web/ directory of your Phoenix installation.
+* Set up your virtual host to point to the Web/ directory of your Neos installation.
 
-* Go to `http://your.phoenix.uri/setup`. This page checks the basic requirements. If they
+* Go to `http://your.neos.uri/setup`. This page checks the basic requirements. If they
   are met, you will be redirected to the setup tool.
 
 * Then, follow the on-screen instructions of the setup tool.
 
 * If all went well you'll get a confirmation the setup is completed, and you can enter the
-  frontend or backend of your Phoenix website.
+  frontend or backend of your Neos website.
 
 .. figure:: /Images/GettingStarted/StartPage.png
 	:align: right

@@ -6,94 +6,94 @@
 			<state>1</state>
 			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
 		</properties>
-		<node type="TYPO3.Phoenix.ContentTypes:Page" nodeName="home" locale="">
+		<node type="TYPO3.Neos.ContentTypes:Page" nodeName="home" locale="">
 			<properties>
 				<title><![CDATA[<h1>Home</h1>]]></title>
 			</properties>
-			<node nodeName="teaser" type="TYPO3.Phoenix.ContentTypes:Section">
-				<node nodeName="dummy42a" type="TYPO3.Phoenix.ContentTypes:Headline">
+			<node nodeName="teaser" type="TYPO3.Neos.ContentTypes:Section">
+				<node nodeName="dummy42a" type="TYPO3.Neos.ContentTypes:Headline">
 					<properties>
 						<title><![CDATA[<h1>Welcome to this example</h1>]]></title>
 					</properties>
 				</node>
-				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:Text">
+				<node nodeName="dummy42" type="TYPO3.Neos.ContentTypes:Text">
 					<properties>
 						<text>This is our exemplary rendering test. Check it out and play around!</text>
 					</properties>
 				</node>
 			</node>
-			<node nodeName="main" type="TYPO3.Phoenix.ContentTypes:Section">
-				<node nodeName="dummy42a" type="TYPO3.Phoenix.ContentTypes:Headline">
+			<node nodeName="main" type="TYPO3.Neos.ContentTypes:Section">
+				<node nodeName="dummy42a" type="TYPO3.Neos.ContentTypes:Headline">
 					<properties>
 						<title><![CDATA[<h1>Do you love TYPO3 FLow?</h1>]]></title>
 					</properties>
 				</node>
-				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:Text">
+				<node nodeName="dummy42" type="TYPO3.Neos.ContentTypes:Text">
 					<properties>
 						<text>If you do, make sure to post your opinion about it on Twitter!</text>
 					</properties>
 				</node>
-				<node nodeName="dummy43" type="TYPO3.Phoenix.ContentTypes:Html">
+				<node nodeName="dummy43" type="TYPO3.Neos.ContentTypes:Html">
 					<properties>
 						<source>[TWITTER WIDGET]</source>
 					</properties>
 				</node>
-				<node nodeName="dummy44" type="TYPO3.Phoenix.ContentTypes:ThreeColumn">
-					<node nodeName="left" type="TYPO3.Phoenix.ContentTypes:Section">
-						<node nodeName="dummy42a" type="TYPO3.Phoenix.ContentTypes:Headline">
+				<node nodeName="dummy44" type="TYPO3.Neos.ContentTypes:ThreeColumn">
+					<node nodeName="left" type="TYPO3.Neos.ContentTypes:Section">
+						<node nodeName="dummy42a" type="TYPO3.Neos.ContentTypes:Headline">
 							<properties>
 								<title><![CDATA[<h1>Documentation</h1>]]></title>
 							</properties>
 						</node>
-						<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:Text">
+						<node nodeName="dummy42" type="TYPO3.Neos.ContentTypes:Text">
 							<properties>
 								<text>We're still improving our docs, but check them out nevertheless! Our presentations are also worth a visit</text>
 							</properties>
 						</node>
-						<node nodeName="dummy43" type="TYPO3.Phoenix.ContentTypes:Html">
+						<node nodeName="dummy43" type="TYPO3.Neos.ContentTypes:Html">
 							<properties>
 								<source>[SLIDESHARE]</source>
 							</properties>
 						</node>
 					</node>
-					<node nodeName="center" type="TYPO3.Phoenix.ContentTypes:Section">
-						<node nodeName="dummy42a" type="TYPO3.Phoenix.ContentTypes:Headline">
+					<node nodeName="center" type="TYPO3.Neos.ContentTypes:Section">
+						<node nodeName="dummy42a" type="TYPO3.Neos.ContentTypes:Headline">
 							<properties>
 								<title><![CDATA[<h1>Development Process</h1>]]></title>
 							</properties>
 						</node>
-						<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:Text">
+						<node nodeName="dummy42" type="TYPO3.Neos.ContentTypes:Text">
 							<properties>
 								<text>We're spending lots of thought into our infrastructure, you can profit from that, too!</text>
 							</properties>
 						</node>
 					</node>
-					<node nodeName="right" type="TYPO3.Phoenix.ContentTypes:Section">
+					<node nodeName="right" type="TYPO3.Neos.ContentTypes:Section">
 					</node>
 				</node>
 			</node>
-			<node nodeName="sidebar" type="TYPO3.Phoenix.ContentTypes:Section">
-				<node nodeName="dummy42a" type="TYPO3.Phoenix.ContentTypes:Headline">
+			<node nodeName="sidebar" type="TYPO3.Neos.ContentTypes:Section">
+				<node nodeName="dummy42a" type="TYPO3.Neos.ContentTypes:Headline">
 					<properties>
 						<title><![CDATA[<h1>Last Commits</h1>]]></title>
 					</properties>
 				</node>
-				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:Text">
+				<node nodeName="dummy42" type="TYPO3.Neos.ContentTypes:Text">
 					<properties>
 						<text>Below, you'll see the most recent activity</text>
 					</properties>
 				</node>
-				<node nodeName="dummy43" type="TYPO3.Phoenix.ContentTypes:Html">
+				<node nodeName="dummy43" type="TYPO3.Neos.ContentTypes:Html">
 					<properties>
 						<source>[COMMIT WIDGET]</source>
 					</properties>
 				</node>
 			</node>
-			<node type="TYPO3.Phoenix.ContentTypes:Page" nodeName="about-us" locale="">
+			<node type="TYPO3.Neos.ContentTypes:Page" nodeName="about-us" locale="">
 				<properties>
 					<title><![CDATA[<h1>About Us</h1>]]></title>
 				</properties>
-				<node type="TYPO3.Phoenix.ContentTypes:Page" nodeName="history" locale="">
+				<node type="TYPO3.Neos.ContentTypes:Page" nodeName="history" locale="">
 					<properties>
 						<title><![CDATA[<h1>History</h1>]]></title>
 					</properties>

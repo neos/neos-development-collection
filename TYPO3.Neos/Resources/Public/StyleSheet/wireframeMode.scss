@@ -55,7 +55,7 @@ $orange: #FF8700;
 			float: left;
 		}
 	}
-	.typo3-typo3-twocolumn {
+	.typo3-neos-twocolumn {
 		.columns-50-50 {
 			.column {
 				width: 48%;
@@ -106,7 +106,7 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.typo3-typo3-threecolumn {
+	.typo3-neos-threecolumn {
 		.columns-33-33-33 {
 			.column {
 				width: 30.66666666666%;
@@ -152,7 +152,7 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.typo3-typo3-fourcolumn {
+	.typo3-neos-fourcolumn {
 		.columns-25-25-25-25 {
 			.column {
 				width: 22%;
@@ -163,9 +163,9 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.typo3-typo3-twocolumn,
-	.typo3-typo3-threecolumn,
-	.typo3-typo3-fourcolumn {
+	.typo3-neos-twocolumn,
+	.typo3-neos-threecolumn,
+	.typo3-neos-fourcolumn {
 		.container {
 			width: auto;
 		}

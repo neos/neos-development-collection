@@ -34,7 +34,7 @@
 			deps: ['jquery'],
 			exports: 'Ember'
 		},
-		'phoenix/contentmodule': ['emberjs'],
+		'neos/contentmodule': ['emberjs'],
 		'jquery.lionbars': ['jquery'],
 		'jquery-ui': ['jquery'],
 		'jquery.cookie': ['jquery'],

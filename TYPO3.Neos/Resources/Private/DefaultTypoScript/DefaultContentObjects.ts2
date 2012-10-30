@@ -5,7 +5,7 @@ prototype(TYPO3.TypoScript:Template) {
 	context = ${node}
 }
 
-prototype(TYPO3.TYPO3:Template) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template)
 
 # setting up additional Prototype configuration
 prototype(TYPO3.TypoScript:Collection) {
@@ -22,8 +22,8 @@ prototype(TYPO3.TypoScript:Case).default {
 }
 
 # Breadcrumb TS Object
-prototype(TYPO3.TYPO3:Breadcrumb) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.TYPO3:Breadcrumb) {
-	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos:Breadcrumb) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
 	items = ${q(node).add(q(node).parents())}
 }

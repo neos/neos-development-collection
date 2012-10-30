@@ -2,7 +2,7 @@
 Sprint Releases
 ===============
 
-TYPO3 Phoenix Sprint Release 1
+TYPO3 Neos Sprint Release 1
 ------------------------------
 
 * Website Rendering
@@ -16,7 +16,7 @@ TYPO3 Phoenix Sprint Release 1
 	* The login page can be called as in earlier TYPO3 versions
 	* On sucessful login the backend is loaded
 
-TYPO3 Phoenix Sprint Release 2
+TYPO3 Neos Sprint Release 2
 ------------------------------
 
 * Dynamic Navigation and Menus
@@ -28,12 +28,12 @@ TYPO3 Phoenix Sprint Release 2
 
 	* The page title of the current page can be changed.
 
-TYPO3 Phoenix Sprint Release 3
+TYPO3 Neos Sprint Release 3
 ------------------------------
 
 * Editing content using the Aloha editor is possible.
 
-TYPO3 Phoenix Sprint Release 4
+TYPO3 Neos Sprint Release 4
 ------------------------------
 
 * Adding and deleting pages is possible
@@ -42,17 +42,17 @@ TYPO3 Phoenix Sprint Release 4
 	* Content storage now based on a rewritten TYPO3 Content Repository.
 	* Overhauled JavaScript architecture for the backend UI.
 
-TYPO3 Phoenix Sprint Release 5
+TYPO3 Neos Sprint Release 5
 ------------------------------
 
 TODO: add
 
-TYPO3 Phoenix Sprint Release 6
+TYPO3 Neos Sprint Release 6
 ------------------------------
 
 TODO: add
 
-TYPO3 Phoenix Sprint Release 7
+TYPO3 Neos Sprint Release 7
 ------------------------------
 
 TODO: add

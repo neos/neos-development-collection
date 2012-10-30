@@ -1,5 +1,5 @@
 {
-    "name": "typo3/phoenix",
+    "name": "typo3/neos",
     "type": "typo3-flow-package",
     "description": "The next generation of the popular open-source CMS.",
     "version": "1.0.0 dev",
@@ -8,7 +8,7 @@
         "typo3/extjs": "*",
         "typo3/aloha": "*",
         "typo3/media": "*",
-        "typo3/phoenix-contenttypes": "*",
+        "typo3/neos-contenttypes": "*",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
         "typo3/typo3cr": "*",
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-0": {
-            "TYPO3\\TYPO3": "Classes"
+            "TYPO3\\Neos": "Classes"
         }
     }
 }

@@ -1,5 +1,5 @@
 require(
-	requireConfiguration['TYPO3.TYPO3'],
+	requireConfiguration['TYPO3.Neos'],
 	[
 		'vie/instance'
 	],
@@ -8,7 +8,7 @@ require(
 		buster.testCase('Test VIE initialization', {
 			'TYPO3 Namespaces are set': function() {
 				'use strict';
-				buster.assert.equals('http://www.typo3.org/ns/2012/Flow/Packages/TYPO3/Content/', vie.namespaces.get('typo3'));
+				buster.assert.equals('http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/', vie.namespaces.get('typo3'));
 			}
 		});
 

@@ -3,7 +3,7 @@ Content Module Principles
 =========================
 
 In the Content Module, we directly render the *frontend* of the website, and then
-augment it with the TYPO3 Phoenix Content Editing User Interface.
+augment it with the TYPO3 Neos Content Editing User Interface.
 
 Because of this, we do not control all CSS or javaScript which is included on
 the page; so we need some special guidelines to deal with that. These are listed
@@ -39,7 +39,7 @@ The following diagram shows how the UI is changing when the block selection chan
 
 .. image:: contentmodule/internal_structure_ui_updates.png
 
-#. The phoenixintegration Aloha Plugin (located in ``alohaplugins/phoenixintegration/lib/phoenixintegration-plugin.js``) hooks
+#. The neosintegration Aloha Plugin (located in ``alohaplugins/neosintegration/lib/neosintegration-plugin.js``) hooks
    into the Aloha event which is triggered whenever the block selection changes. Whenever this event is triggered,
    it calls ``T3.Content.Model.BlockSelection.updateSelection()``.
 #. We need to wrap each Aloha Block with a *Ember.js Block* (later only called Block),
@@ -113,8 +113,8 @@ Command ``created-new-content``::
 
 	<html>
 		<a rel="typo3-created-new-content"
-			data-page="/sites/phoenixdemotypo3org/homepage@user-admin"
-			href="/sites/phoenixdemotypo3org/homepage/main/4e1ef025442f5@user-admin">
+			data-page="/sites/neosdemotypo3org/homepage@user-admin"
+			href="/sites/neosdemotypo3org/homepage/main/4e1ef025442f5@user-admin">
 			Goto New Content
 		</a>
 	</html>

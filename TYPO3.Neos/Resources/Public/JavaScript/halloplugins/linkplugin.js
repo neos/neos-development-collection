@@ -1,5 +1,5 @@
 define(
-	['jquery', 'emberjs', 'text!phoenix/templates/halloplugins/linkplugin.html', 'jquery-ui'],
+	['jquery', 'emberjs', 'text!neos/templates/halloplugins/linkplugin.html', 'jquery-ui'],
 	function($, Ember, linkPluginTemplate) {
 		(function($) {
 			return $.widget('typo3.hallo-linkplugin', {
@@ -42,7 +42,7 @@ define(
 							this.$('.t3-link-inputfield').focus();
 							this.$('.t3-link-inputfield').autocomplete({
 								source: function(request, response) {
-									TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.searchPage(request.term, function(result) {
+									TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.searchPage(request.term, function(result) {
 										if (result.searchResult) {
 											response($.map(result.searchResult, function(node) {
 												return {

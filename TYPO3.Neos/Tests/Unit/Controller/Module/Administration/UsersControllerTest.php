@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3\Tests\Unit\Controller\Module\Administration;
+namespace TYPO3\Neos\Tests\Unit\Controller\Module\Administration;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -21,15 +21,15 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createActionCreatesAndAddsUserAsAdministrator() {
-		$mockUserFactory = $this->getMock('TYPO3\TYPO3\Domain\Factory\UserFactory');
+		$mockUserFactory = $this->getMock('TYPO3\Neos\Domain\Factory\UserFactory');
 		$mockPartyRepository = $this->getMock('TYPO3\Party\Domain\Repository\PartyRepository');
 		$mockAccountRepository = $this->getMock('TYPO3\Flow\Security\AccountRepository');
 		$mockResponse = $this->getMock('TYPO3\Flow\Http\Response');
-		$mockUser = $this->getMock('TYPO3\TYPO3\Domain\Model\User');
+		$mockUser = $this->getMock('TYPO3\Neos\Domain\Model\User');
 		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
 		$mockUser->expects($this->any())->method('getAccounts')->will($this->returnValue(array($mockAccount)));
 
-		$controller = $this->getAccessibleMock('TYPO3\TYPO3\Controller\Module\Administration\UsersController', array('redirect'));
+		$controller = $this->getAccessibleMock('TYPO3\Neos\Controller\Module\Administration\UsersController', array('redirect'));
 		$this->inject($controller, 'response', $mockResponse);
 		$this->inject($controller, 'userFactory', $mockUserFactory);
 		$this->inject($controller, 'partyRepository', $mockPartyRepository);

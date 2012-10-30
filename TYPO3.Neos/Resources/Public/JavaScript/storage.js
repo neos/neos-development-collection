@@ -1,4 +1,4 @@
-define(['vie/entity', 'phoenix/content/controller', 'phoenix/content/model', 'backbone'], function(Entity) {
+define(['vie/entity', 'neos/content/controller', 'neos/content/model', 'backbone'], function(Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('storage');
 
 	Backbone.sync = function(method, model, options) {
@@ -13,7 +13,7 @@ define(['vie/entity', 'phoenix/content/controller', 'phoenix/content/model', 'ba
 				var nodeJson = this._convertModelToJson(model);
 
 				T3.Content.Controller.ServerConnection.set('_saveRunning', true);
-				window.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(nodeJson, function(result) {
+				window.TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.update(nodeJson, function(result) {
 						// when we save a node, it could be the case that it was in
 						// live workspace beforehand, but because of some modifications,
 						// is now copied into the user's workspace.

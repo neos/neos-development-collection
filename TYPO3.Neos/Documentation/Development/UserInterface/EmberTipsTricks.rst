@@ -45,7 +45,7 @@ of the superclass can be done without specifying the superclass and method name.
 		}
 	});
 
-	Bar.create().greet('Phoenix'); // outputs "Aloha and Hello, Phoenix"
+	Bar.create().greet('Neos'); // outputs "Aloha and Hello, Neos"
 
 
 Data Binding tips and tricks

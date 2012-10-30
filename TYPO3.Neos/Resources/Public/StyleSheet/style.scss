@@ -16,11 +16,11 @@
 
 @import "compass";
 
-// Phoenix variable Include
+// Neos variable Include
 // also overriding bootstrap variables
 @import "constants";
 
-// Phoenix standard HTML element styles Include
+// Neos standard HTML element styles Include
 @import "stdHtmlStyles";
 
 // **** CSS start ****/
@@ -846,7 +846,7 @@ body {
 // New Content Flyout - end
 
 // Error output
-#t3-phoenix-error-container {
+#t3-neos-error-container {
 	width: 600px;
 	padding: 10px;
 	background: #ffffff;
@@ -865,7 +865,7 @@ body {
 		font-weight: bold;
 	}
 
-	.t3-phoenix-error-info {
+	.t3-neos-error-info {
 		font-weight: bold;
 	}
 

@@ -14,7 +14,7 @@ define(
 		'createjs',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
 		'create/typo3MidgardEditable',
-		'phoenix/content/model'
+		'neos/content/model'
 	],
 	function($, vieInstance, Ember) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');

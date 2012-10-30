@@ -65,7 +65,7 @@ interface yet.
 For using this feature you should use a so called `Site Package`. This is a normal
 TYPO3 Flow Package containing a ``Resources/Private/Content/Sites.xml`` file which contains
 a node structure in XML. For an example of such a file you can check the
-`Sites.xml <http://git.typo3.org/Flow/Packages/PhoenixDemoTypo3Org.git?a=blob_plain;f=Resources/Private/Content/Sites.xml;hb=master>`_
+`Sites.xml <http://git.typo3.org/Flow/Packages/NeosDemoTypo3Org.git?a=blob_plain;f=Resources/Private/Content/Sites.xml;hb=master>`_
 of the TYPO3 Neos demo site.
 
 The import can be used like:

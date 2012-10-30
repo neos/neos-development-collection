@@ -16,7 +16,7 @@ TYPO3:
           Typo3BackendProvider:
             provider: 'PersistedUsernamePasswordProvider'
             requestPatterns:
-              controllerObjectName: "TYPO3\TYPO3\Controller\.*|TYPO3\TYPO3\Service\.*"
+              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
               uri: neos/login
@@ -28,8 +28,8 @@ TYPO3:
           notFoundExceptions:
             matchingStatusCodes: [ 404 ]
             options:
-              templatePathAndFilename: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
-              layoutRootPath: 'resource://TYPO3.TYPO3/Private/Layouts/'
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
               variables:
                 errorTitle: 'Page Not Found'
@@ -37,17 +37,17 @@ TYPO3:
           databaseConnectionExceptions:
             matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
             options:
-              templatePathAndFilename: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
-              layoutRootPath: 'resource://TYPO3.TYPO3/Private/Layouts/'
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
               variables:
                 errorTitle: 'No Database Connection'
-                errorDescription: "Sorry, the database connection couldn't be established."
+                errorDescription: 'Sorry, the database connection could not be established.'
           noHomepageException:
-            matchingExceptionClassNames: ['TYPO3\TYPO3\Routing\Exception\NoHomepageException']
+            matchingExceptionClassNames: ['TYPO3\Neos\Routing\Exception\NoHomepageException']
             options:
-              templatePathAndFilename: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
-              layoutRootPath: 'resource://TYPO3.TYPO3/Private/Layouts/'
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
               variables:
                 errorTitle: 'Missing Homepage'
@@ -55,23 +55,23 @@ TYPO3:
 
   DocTools:
     bundles:
-      Phoenix:
-        documentationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.TYPO3/Documentation/
+      Neos:
+        documentationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/
         configurationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
-        renderedDocumentationRootPath: %FLOW_PATH_DATA%Temporary/Documentation/TYPO3.TYPO3/
+        renderedDocumentationRootPath: %FLOW_PATH_DATA%Temporary/Documentation/TYPO3.Neos/
         renderingOutputFormat: 'html'
         renderByDefault: FALSE
 
-  TYPO3:
+  Neos:
     contentTypeGroups: ['General', 'Structure', 'Plugins']
 
-    # as Aloha is quite big to load, we do not include it by default. Lateron,
+    # as Aloha is quite big to load, we do not include it by default. Later on,
     # this setting will be replaced by a better API.
     enableAloha: FALSE
 
-    # should minified JavaScript be loaded? For developing the TYPO3 Phoenix
+    # should minified JavaScript be loaded? For developing the TYPO3 Neos
     # Content Module, this should be set to FALSE.
-    loadMinifiedJavascript: TRUE
+    loadMinifiedJavascript: FALSE
 
     userInterface:
       string:
@@ -88,56 +88,56 @@ TYPO3:
         class: T3.Content.UI.Editor.Selectbox
 
     moduleConfiguration:
-      widgetTemplatePathAndFileName: 'resource://TYPO3.TYPO3/Private/Templates/Module/Widget.html'
+      widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
     modules:
       management:
         label: 'Management'
         submodules:
           workspaces:
             label: 'Workspaces'
-            controller: '\TYPO3\TYPO3\Controller\Module\Management\WorkspacesController'
-            description: "This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them."
-            icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Orange/layers_1_icon-24.png'
+            controller: '\TYPO3\Neos\Controller\Module\Management\WorkspacesController'
+            description: 'This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.'
+            icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/layers_1_icon-24.png'
       administration:
         label: 'Administration'
         role: 'Administrator'
         submodules:
           users:
             label: 'User Management'
-            controller: '\TYPO3\TYPO3\Controller\Module\Administration\UsersController'
-            description: "The User Management module provides you with an overview of all backend users. You can group them by their properties so you're able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured."
-            icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Orange/users_icon-24.png'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\UsersController'
+            description: 'The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.'
+            icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/users_icon-24.png'
             actions:
               new:
                 label: 'Create user'
                 title: 'Create a new user'
           packages:
             label: 'Package Management'
-            controller: '\TYPO3\TYPO3\Controller\Module\Administration\PackagesController'
-            description: "The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context."
-            icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Orange/box_icon-24.png'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
+            description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
+            icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/box_icon-24.png'
       user:
         label: 'User'
         hideInMenu: TRUE
         submodules:
           usersettings:
             label: 'User Settings'
-            controller: '\TYPO3\TYPO3\Controller\Module\User\UserSettingsController'
-            description: "This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system."
-            icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Orange/user_icon-24.png'
+            controller: '\TYPO3\Neos\Controller\Module\User\UserSettingsController'
+            description: 'This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.'
+            icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/user_icon-24.png'
 
   Setup:
     stepOrder: ['database', 'administrator', 'siteimport', 'final']
     steps:
       administrator:
-        className: 'TYPO3\TYPO3\Setup\Step\AdministratorStep'
+        className: 'TYPO3\Neos\Setup\Step\AdministratorStep'
         requiredConditions:
           - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
       siteimport:
-        className: 'TYPO3\TYPO3\Setup\Step\SiteImportStep'
+        className: 'TYPO3\Neos\Setup\Step\SiteImportStep'
         requiredConditions:
           - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
       final:
-        className: 'TYPO3\TYPO3\Setup\Step\FinalStep'
+        className: 'TYPO3\Neos\Setup\Step\FinalStep'
     view:
       title: 'TYPO3 Neos Setup'

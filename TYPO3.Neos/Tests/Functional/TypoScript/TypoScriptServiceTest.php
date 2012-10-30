@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3\Tests\Functional\TypoScript;
+namespace TYPO3\Neos\Tests\Functional\TypoScript;
 
 /*                                                                        *
  * This script belongs to the Flow package "TYPO3".                      *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3\Tests\Functional\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\TYPO3\Domain\Service\ContentContext;
-use TYPO3\TYPO3\Domain\Model\Site;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * Functional test case which tests the TypoScript Service
@@ -42,7 +42,7 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		parent::setUp();
 
 		$site = new Site('example');
-		$site->setSiteResourcesPackageKey('TYPO3.TYPO3');
+		$site->setSiteResourcesPackageKey('TYPO3.Neos');
 
 		$context = new ContentContext('live');
 		$context->setCurrentSite($site);
@@ -50,7 +50,7 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
 		ObjectAccess::setProperty($nodeRepository, 'context', $context, TRUE);
 
-		$siteImportService = $this->objectManager->get('TYPO3\TYPO3\Domain\Service\SiteImportService');
+		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
 		$siteImportService->importSitesFromFile(__DIR__ . '/Fixtures/NodeStructure.xml');
 		$this->persistenceManager->persistAll();
 
@@ -63,7 +63,7 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function overridingFromTypoScriptInFilesystemFollowingNodePathsWorks() {
-		$typoScriptService = $this->objectManager->get('TYPO3\TYPO3\Domain\Service\TypoScriptService');
+		$typoScriptService = $this->objectManager->get('TYPO3\Neos\Domain\Service\TypoScriptService');
 		ObjectAccess::setProperty($typoScriptService, 'typoScriptsPathPattern', __DIR__ . '/Fixtures/ResourcesFixture/TypoScripts', TRUE);
 
 		$objectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->homeNode, $this->homeNode->getNode('about-us/history'));

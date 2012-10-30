@@ -1,7 +1,7 @@
 define(['jquery', 'jquery-ui', 'createjs'], function($) {
 	/**
 	 * This jQuery UI widget contains behavior adjustments to midgard editable
-	 * such that they work well in a Phoenix environment.
+	 * such that they work well in a Neos environment.
 	 *
 	 * We effectively *override* midgardEditable here. Else, we would not catch all cases
 	 * where it is called, like when a new content element is added to a collection.

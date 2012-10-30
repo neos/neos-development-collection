@@ -49,91 +49,91 @@
 .t3-wireframeMode .container .column {
   float: left;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-50-50 .column {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-50-50 .column {
   width: 48%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-50-50 .column:last-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-50-50 .column:last-child {
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-75-25 .column:first-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-75-25 .column:first-child {
   width: 73%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-75-25 .column:last-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-75-25 .column:last-child {
   width: 23%;
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-25-75 .column:first-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-25-75 .column:first-child {
   width: 23%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-25-75 .column:last-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-25-75 .column:last-child {
   width: 73%;
   margin-right: 0%;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-66-33 .column:first-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-66-33 .column:first-child {
   width: 64.5%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-66-33 .column:last-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-66-33 .column:last-child {
   width: 31.5%;
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-33-66 .column:first-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-33-66 .column:first-child {
   width: 31.5%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .columns-33-66 .column:last-child {
+.t3-wireframeMode .typo3-neos-twocolumn .columns-33-66 .column:last-child {
   width: 64.5%;
   margin-right: 0%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-33-33-33 .column {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-33-33-33 .column {
   width: 30.66666666666%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-33-33-33 .column:last-child {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-33-33-33 .column:last-child {
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-50-25-25 .column {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-50-25-25 .column {
   width: 22%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-50-25-25 .column:first-child {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-50-25-25 .column:first-child {
   width: 48%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-50-25-25 .column:last-child {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-50-25-25 .column:last-child {
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-50-25 .column {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-25-50-25 .column {
   width: 22%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-50-25 .column:nth-child(2) {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-25-50-25 .column:nth-child(2) {
   width: 48%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-50-25 .column:last-child {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-25-50-25 .column:last-child {
   margin-right: 0%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-25-50 .column {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-25-25-50 .column {
   width: 22%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-25-50 .column:last-child {
+.t3-wireframeMode .typo3-neos-threecolumn .columns-25-25-50 .column:last-child {
   width: 48%;
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-fourcolumn .columns-25-25-25-25 .column {
+.t3-wireframeMode .typo3-neos-fourcolumn .columns-25-25-25-25 .column {
   width: 22%;
   margin-right: 4%;
 }
-.t3-wireframeMode .typo3-typo3-fourcolumn .columns-25-25-25-25 .column:last-child {
+.t3-wireframeMode .typo3-neos-fourcolumn .columns-25-25-25-25 .column:last-child {
   margin-right: 0;
 }
-.t3-wireframeMode .typo3-typo3-twocolumn .container,
-.t3-wireframeMode .typo3-typo3-threecolumn .container,
-.t3-wireframeMode .typo3-typo3-fourcolumn .container {
+.t3-wireframeMode .typo3-neos-twocolumn .container,
+.t3-wireframeMode .typo3-neos-threecolumn .container,
+.t3-wireframeMode .typo3-neos-fourcolumn .container {
   width: auto;
 }
 

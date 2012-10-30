@@ -757,7 +757,7 @@ body {
   color: #888888;
 }
 
-.typo3-phoenix-login-box {
+.typo3-neos-login-box {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -767,15 +767,15 @@ body {
   margin-left: -225px;
   z-index: 10;
 }
-.typo3-phoenix-login-box p {
+.typo3-neos-login-box p {
   color: #CCCCCC;
 }
-.typo3-phoenix-login-box .modal-header {
+.typo3-neos-login-box .modal-header {
   padding-left: 30px;
   background-color: #252525;
   border-bottom: 1px solid #444444;
 }
-.typo3-phoenix-login-box .modal-body {
+.typo3-neos-login-box .modal-body {
   padding: 30px;
   background: #2c2c2c;
   -webkit-box-shadow: 0 2px 2px 1px #2c2c2c;
@@ -783,19 +783,19 @@ body {
   box-shadow: 0 2px 2px 1px #2c2c2c;
   overflow: hidden;
 }
-.typo3-phoenix-login-box .modal-body h1 {
+.typo3-neos-login-box .modal-body h1 {
   margin: 0;
   font-weight: normal;
   font-size: 14px;
 }
-.typo3-phoenix-login-box .modal-body .typo3-message-icon {
+.typo3-neos-login-box .modal-body .typo3-message-icon {
   font-size: 70px;
   font-weight: bold;
   color: #ff8700;
   margin-top: 15px;
 }
 
-#typo3-phoenix-login-footer {
+#typo3-neos-login-footer {
   width: 65%;
   position: absolute;
   bottom: 5%;
@@ -803,12 +803,12 @@ body {
   margin-left: -35%;
   text-align: center;
 }
-#typo3-phoenix-login-footer p {
+#typo3-neos-login-footer p {
   font-size: 11px;
   color: #535353;
   line-height: 1.3em;
   margin: 0;
 }
-#typo3-phoenix-login-footer a {
+#typo3-neos-login-footer a {
   color: #535353;
 }

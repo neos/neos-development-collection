@@ -9,7 +9,7 @@
   name: 'Authentication'
   uriPattern: 'neos/login(/{@action}.{@format})'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
@@ -19,7 +19,7 @@
   name:  'Logout'
   uriPattern: 'neos/logout'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Login'
     '@action':     'logout'
     '@format':     'html'
@@ -28,7 +28,7 @@
   name:          'Backend Overview'
   uriPattern:    'neos'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Backend\Backend'
     '@action':     'index'
     '@format':     'html'
@@ -37,7 +37,7 @@
   name:          'Backend - Content Module - Images'
   uriPattern:    'neos/content/imageWithMetadata/{image}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Backend\Content'
     '@action':     'imageWithMetadata'
 
@@ -45,7 +45,7 @@
   name:          'Backend - Content Module'
   uriPattern:    'neos/content/{@action}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Backend\Content'
     '@action':     'index'
     '@format':     'html'
@@ -55,27 +55,27 @@
   name: 'Backend - Modules'
   uriPattern: 'neos/{module}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Backend\Module'
     '@action':     'index'
     '@format':     'html'
   routeParts:
     module:
-      handler: TYPO3\TYPO3\Routing\BackendModuleRoutePartHandler
+      handler: TYPO3\Neos\Routing\BackendModuleRoutePartHandler
 
 -
   name: 'Backend - Modules & arguments'
   uriPattern: 'neos/{module}/{moduleArguments}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Backend\Module'
     '@action':     'index'
     '@format':     'html'
   routeParts:
     module:
-      handler: TYPO3\TYPO3\Routing\BackendModuleRoutePartHandler
+      handler: TYPO3\Neos\Routing\BackendModuleRoutePartHandler
     moduleArguments:
-      handler: TYPO3\TYPO3\Routing\BackendModuleArgumentsRoutePartHandler
+      handler: TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler
   toLowerCase: false
   appendExceedingArguments: true
 
@@ -83,7 +83,7 @@
   name:          'Backend - Schema'
   uriPattern:    'neos/schema/{@action}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Backend\Schema'
     '@action':     'index'
     '@format':     'html'
@@ -96,35 +96,35 @@
   name:          'Frontend content with format and type'
   uriPattern:    '{node}.html/{type}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
-      handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
+      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
 
 -
   name:          'Frontend content with (HTML) format'
   uriPattern:    '{node}.html'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
-      handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
+      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
 
 -
   name:          'Frontend content without a specified format'
   uriPattern:    '{node}'
   defaults:
-    '@package':    'TYPO3.TYPO3'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
-      handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
+      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
   appendExceedingArguments: true

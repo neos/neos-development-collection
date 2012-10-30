@@ -29,7 +29,7 @@ Then generate a migration to create the needed DB schema:
 
 You should now have a package with a default controller and templates created.
 In order to view them you can call the frontend like
-``http://phoenix.local/sarkosh.cdcollection``, but you need to include the
+``http://neos.local/sarkosh.cdcollection``, but you need to include the
 TYPO3 Flow default routes first (add them before the Neos routes):
 
 .. code-block:: yaml
@@ -75,14 +75,14 @@ Add the following to *Configuration/Settings.yaml* of your package:
     TYPO3CR:
       contentTypes:
         'Sarkosh.CdCollection:Plugin':
-          superTypes: ['TYPO3.Phoenix.ContentTypes:Plugin']
+          superTypes: ['TYPO3.Neos.ContentTypes:Plugin']
           label: 'CD Collection'
           group: 'Plugins'
 
 Second, the rendering of the plugin needs to be specified using TypoScript,
 so the following TypoScript needs to be inserted into your package's *Resources/Private/TypoScripts/Library/Plugin.ts2*::
 
-  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Phoenix.ContentTypes:Plugin)
+  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos.ContentTypes:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
        package = 'Sarkosh.CdCollection'
        controller = 'Standard'

@@ -2,7 +2,7 @@
 User Interface Development
 ==========================
 
-These are the user interface development guidelines of TYPO3 Phoenix.
+These are the user interface development guidelines of TYPO3 Neos.
 
 .. toctree::
 	:maxdepth: 2

@@ -1,9 +1,9 @@
-wireframeMode = TYPO3.Phoenix.ContentTypes:Page
+wireframeMode = TYPO3.Neos.ContentTypes:Page
 wireframeMode {
 	headerData {
 		stylesheets = TYPO3.TypoScript:Template
 		stylesheets {
-			templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/Page/Default.html'
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/Page/Default.html'
 			sectionName = 'headerIncludes'
 		}
 	}
@@ -11,28 +11,28 @@ wireframeMode {
 	bodyAttributes.class = 't3-wireframeMode'
 
 	body {
-		templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/Page/Default.html'
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/Page/Default.html'
 		sectionName = 'body'
 
 		parts {
-			menu = TYPO3.TYPO3:Menu
+			menu = TYPO3.Neos:Menu
 			menu {
-				templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/Menu.html'
+				templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/Menu.html'
 				entryLevel = 1
 				maximumLevels = 4
 			}
-			breadcrumb = TYPO3.TYPO3:Breadcrumb
-			breadcrumb.templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
+			breadcrumb = TYPO3.Neos:Breadcrumb
+			breadcrumb.templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
 		}
 
-		sections.all = TYPO3.Phoenix.ContentTypes:MultiColumn
+		sections.all = TYPO3.Neos.ContentTypes:MultiColumn
 		sections.all {
-			templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/GeneralSectionRendering.html'
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/GeneralSectionRendering.html'
 			layout = ''
 			columns {
-				collection = ${context.children('[instanceof TYPO3.Phoenix.ContentTypes:Section]')}
+				collection = ${context.children('[instanceof TYPO3.Neos.ContentTypes:Section]')}
 				itemRenderer {
-					templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/SectionTemplate.html'
+					templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/SectionTemplate.html'
 				}
 			}
 		}

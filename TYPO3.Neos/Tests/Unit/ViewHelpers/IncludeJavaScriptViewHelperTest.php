@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers;
+namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -18,7 +18,7 @@ namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers;
 class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper
+	 * @var \TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper
 	 */
 	protected $viewHelper;
 
@@ -32,7 +32,7 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
 		$this->resourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
+		$this->viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
 		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
 		$renderingContext->setControllerContext($this->controllerContext);
 		$this->viewHelper->setRenderingContext($renderingContext);

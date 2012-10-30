@@ -9,7 +9,7 @@ window.renderLoadingTrace = function() {
  */
 require(
 	{
-		baseUrl: window.phoenixJavascriptBasePath,
+		baseUrl: window.neosJavascriptBasePath,
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 
 		paths: {
@@ -40,7 +40,7 @@ require(
 				deps: ['jquery'],
 				exports: 'Ember'
 			},
-			'phoenix/contentmodule': ['emberjs'],
+			'neos/contentmodule': ['emberjs'],
 			'jquery.lionbars': ['jquery'],
 			'jquery-ui': ['jquery'],
 			'jquery.cookie': ['jquery'],
@@ -63,7 +63,7 @@ require(
 	},
 	[
 		'jquery',
-		'phoenix/contentmodule',
+		'neos/contentmodule',
 		'emberjs',
 		'storage',
 		'jquery-ui',

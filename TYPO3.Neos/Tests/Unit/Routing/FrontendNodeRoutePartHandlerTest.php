@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3\Tests\Unit\Routing;
+namespace TYPO3\Neos\Tests\Unit\Routing;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3".           *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -25,15 +25,15 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$mockContentContext = $this->getMock('TYPO3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 
-		$routePartHandler = $this->getAccessibleMock('TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('TYPO3\Neos\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('contentContext', $mockContentContext);
 
 		$result = $routePartHandler->_call('matchValue', '');
 
-		$this->assertEquals(\TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler::MATCHRESULT_NOSITE, $result);
+		$this->assertEquals(\TYPO3\Neos\Routing\FrontendNodeRoutePartHandler::MATCHRESULT_NOSITE, $result);
 	}
 
 	/**
@@ -53,7 +53,7 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider requestPaths
 	 */
 	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
-		$routePartHandler = $this->getAccessibleMock('TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('TYPO3\Neos\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$this->assertSame($valueToMatch, $routePartHandler->_call('findValueToMatch', $requestPath));
 	}
 
@@ -61,7 +61,7 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function findValueToMatchRespectsSplitString() {
-		$routePartHandler = $this->getAccessibleMock('TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('TYPO3\Neos\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->setSplitString('baz');
 
 		$expectedResult = 'foo/bar/';

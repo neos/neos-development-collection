@@ -16,8 +16,8 @@ define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
 				'common/block',
 				'common/table',
 				'common/link'//,
-//				'phoenixAloha/phoenixintegration',
-//				'phoenixAloha/phoenix-links'
+//				'neosAloha/neosintegration',
+//				'neosAloha/neos-links'
 			].join(','),
 			block: {
 				sidebarAttributeEditor: false
@@ -34,7 +34,7 @@ define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
 		},
 		bundles: {
 				// Path for custom bundle relative from require.js path
-			phoenixAloha: '/_Resources/Static/Packages/TYPO3.TYPO3/JavaScript/alohaplugins/'
+			neosAloha: '/_Resources/Static/Packages/TYPO3.Neos/JavaScript/alohaplugins/'
 		},
 
 		baseUrl: alohaBaseUrl,

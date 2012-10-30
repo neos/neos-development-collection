@@ -21,19 +21,19 @@ prototype(TYPO3.TypoScript:Collection) {
 }
 
 # HTML TS Object
-prototype(TYPO3.Phoenix.ContentTypes:Html) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Html.html'
+prototype(TYPO3.Neos.ContentTypes:Html) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://TYPO3.Neos.ContentTypes/Private/Templates/TypoScriptObjects/Html.html'
 	source = ${q(node).property('source')}
 }
 prototype(TYPO3.TypoScript:Case).html {
-	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:Html]')}
-	type = 'TYPO3.Phoenix.ContentTypes:Html'
+	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Html]')}
+	type = 'TYPO3.Neos.ContentTypes:Html'
 	@position = 100100
 }
 
 # Page TS Object
-prototype(TYPO3.Phoenix.ContentTypes:Page) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/PageTemplate.html'
+prototype(TYPO3.Neos.ContentTypes:Page) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://TYPO3.Neos.ContentTypes/Private/Templates/TypoScriptObjects/PageTemplate.html'
 	body = TYPO3.TypoScript:Template
 	body.title = ${q(node).property('title')}
 	body.nodePath = ${q(node).property('_path')}
@@ -42,23 +42,23 @@ prototype(TYPO3.Phoenix.ContentTypes:Page) < prototype(TYPO3.TypoScript:Template
 }
 
 # Text TS Object
-prototype(TYPO3.Phoenix.ContentTypes:Text) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Text.html'
+prototype(TYPO3.Neos.ContentTypes:Text) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://TYPO3.Neos.ContentTypes/Private/Templates/TypoScriptObjects/Text.html'
 	text = ${q(node).property('text')}
 }
 prototype(TYPO3.TypoScript:Case).text {
-	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:Text]')}
-	type = 'TYPO3.Phoenix.ContentTypes:Text'
+	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Text]')}
+	type = 'TYPO3.Neos.ContentTypes:Text'
 	@position = 100200
 }
 
 # Headline TS Object
-prototype(TYPO3.Phoenix.ContentTypes:Headline) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Headline.html'
+prototype(TYPO3.Neos.ContentTypes:Headline) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://TYPO3.Neos.ContentTypes/Private/Templates/TypoScriptObjects/Headline.html'
 	title = ${q(node).property('title')}
 }
 prototype(TYPO3.TypoScript:Case).headline {
-	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:Headline]')}
-	type = 'TYPO3.Phoenix.ContentTypes:Headline'
+	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Headline]')}
+	type = 'TYPO3.Neos.ContentTypes:Headline'
 	@position = 100201
 }

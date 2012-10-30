@@ -12,7 +12,7 @@ fight tools not supporting PHP namespaces, and come up with good ideas for that
 next-generation CMS we were about to build.
 
 Now we actually have first releases of TYPO3 Neos. While the sprint releases were
-published under the code name of TYPO3 Phoenix, the new name is in place since TYPO3 Neos
+published under the code name of TYPO3 Neos, the new name is in place since TYPO3 Neos
 1.0.0 Alpha 1.
 
 System Overview

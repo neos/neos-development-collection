@@ -2,7 +2,7 @@
 General User Interface Principles
 =================================
 
-The following principles serve as general guiding concepts throughout the whole TYPO3 Phoenix product.
+The following principles serve as general guiding concepts throughout the whole TYPO3 Neos product.
 
 Overall User Interface Goals
 ============================
@@ -34,7 +34,7 @@ CSS Guidelines
 Overall Goal:
 
 * Be pragmatic! We strive for solutions which work out-of-the-box in 95% of the cases; and tell the integrator
-  how to solve the other 5%. Thus, the integrator has to care to make his CSS work with Phoenix; we do not use a sandbox.
+  how to solve the other 5%. Thus, the integrator has to care to make his CSS work with Neos; we do not use a sandbox.
 
 Implementation notes:
 
@@ -48,6 +48,6 @@ Implementation notes:
 Z-Indexes
 ---------
 
-The TYPO3 Phoenix UI uses Z-Indexes starting at *10000*.
+The TYPO3 Neos UI uses Z-Indexes starting at *10000*.
 
 .. warning:: TODO: Formulate some more about the usage of z-indexes.
