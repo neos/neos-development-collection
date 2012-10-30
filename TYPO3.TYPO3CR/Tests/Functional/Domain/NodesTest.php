@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\TYPO3\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\ContentContext;
 
 /**
  * Functional test case which covers all Node-related behavior of the

@@ -21,8 +21,8 @@ class ContentTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function aContentTypeHasAName() {
-		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Text', array(), array());
-		$this->assertSame('TYPO3.TYPO3:Text', $contentType->getName());
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.Neos:Text', array(), array());
+		$this->assertSame('TYPO3.Neos:Text', $contentType->getName());
 	}
 
 	/**
@@ -41,13 +41,13 @@ class ContentTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Folder', array($baseType), array());
 
-		$hideableContentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:HideableContent', array(), array());
-		$pageType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Page', array($folderType, $hideableContentType), array());
+		$hideableContentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.Neos:HideableContent', array(), array());
+		$pageType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.Neos:Page', array($folderType, $hideableContentType), array());
 
 		$this->assertEquals(array($folderType, $hideableContentType), $pageType->getDeclaredSuperTypes());
 
-		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3:Page'));
-		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3:HideableContent'));
+		$this->assertTrue($pageType->isOfType('TYPO3.Neos:Page'));
+		$this->assertTrue($pageType->isOfType('TYPO3.Neos:HideableContent'));
 		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Folder'));
 		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Base'));
 		$this->assertFalse($pageType->isOfType('TYPO3.TYPO3CR:Exotic'));

@@ -19,7 +19,7 @@ class ContentTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	protected $settingsFixture = array(
 		'contentTypes' => array(
-			'TYPO3.TYPO3:ContentObject' => array(
+			'TYPO3.Neos:ContentObject' => array(
 				'label' => 'Abstract content object',
 				'properties' => array(
 					'_hidden' => array(
@@ -36,8 +36,8 @@ class ContentTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					)
 				)
 			),
-			'TYPO3.TYPO3:Text' => array(
-				'superTypes' => array('TYPO3.TYPO3:ContentObject'),
+			'TYPO3.Neos:Text' => array(
+				'superTypes' => array('TYPO3.Neos:ContentObject'),
 				'label' => 'Text',
 				'properties' => array(
 					'headline' => array(
@@ -51,12 +51,12 @@ class ContentTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				),
 				'inlineEditableProperties' => array('headline', 'text')
 			),
-			'TYPO3.TYPO3:TextWithImage' => array(
-				'superTypes' => array('TYPO3.TYPO3:Text'),
+			'TYPO3.Neos:TextWithImage' => array(
+				'superTypes' => array('TYPO3.Neos:Text'),
 				'label' => 'Text with image',
 				'properties' => array(
 					'image' => array(
-						'type' => 'TYPO3\TYPO3\Domain\Model\Media\Image',
+						'type' => 'TYPO3\Neos\Domain\Model\Media\Image',
 						'label' => 'Image'
 					)
 				)
@@ -71,7 +71,7 @@ class ContentTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$contentTypeManager = new \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager();
 		$contentTypeManager->injectSettings($this->settingsFixture);
 
-		$contentType = $contentTypeManager->getContentType('TYPO3.TYPO3:Text');
+		$contentType = $contentTypeManager->getContentType('TYPO3.Neos:Text');
 		$this->assertSame('Text', $contentType->getLabel());
 
 		$expectedProperties = array(
@@ -101,7 +101,7 @@ class ContentTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$contentTypeManager = new \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager();
 		$contentTypeManager->injectSettings($this->settingsFixture);
 
-		$contentTypeManager->getContentType('TYPO3.TYPO3:TextFooBarNotHere');
+		$contentTypeManager->getContentType('TYPO3.Neos:TextFooBarNotHere');
 	}
 }
 ?>

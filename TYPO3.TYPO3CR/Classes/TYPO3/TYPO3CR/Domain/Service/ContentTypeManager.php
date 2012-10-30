@@ -93,7 +93,7 @@ class ContentTypeManager {
 	/**
 	 * Creates a new content type
 	 *
-	 * @param string $contentTypeName Unique name of the new content type. Example: "TYPO3.TYPO3:Page"
+	 * @param string $contentTypeName Unique name of the new content type. Example: "TYPO3.Neos:Page"
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
 	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
