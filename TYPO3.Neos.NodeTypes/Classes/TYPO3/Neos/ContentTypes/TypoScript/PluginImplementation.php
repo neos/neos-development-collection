@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Phoenix\ContentTypes\TypoScript;
+namespace TYPO3\Neos\ContentTypes\TypoScript;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Phoenix.ContentTypes".  *
+ * This script belongs to the TYPO3 Flow package "Neos.ContentTypes".     *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -36,7 +36,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3\Service\ContentElementWrappingService
+	 * @var \TYPO3\Neos\Service\ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;
 

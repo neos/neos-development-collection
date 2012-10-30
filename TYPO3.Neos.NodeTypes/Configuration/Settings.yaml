@@ -1,7 +1,7 @@
 TYPO3:
   TYPO3CR:
     contentTypes:
-      'TYPO3.Phoenix.ContentTypes:AbstractNode':
+      'TYPO3.Neos.ContentTypes:AbstractNode':
         properties:
           _removed:
             type: boolean
@@ -28,14 +28,14 @@ TYPO3:
             label: 'Visibility'
             priority: 1
 
-      'TYPO3.Phoenix.ContentTypes:Section':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:AbstractNode']
+      'TYPO3.Neos.ContentTypes:Section':
+        superTypes: ['TYPO3.Neos.ContentTypes:AbstractNode']
         label: 'Section'
         icon: 'Images/Icons/White/page_layout_icon-16.png'
         darkIcon: 'Images/Icons/Black/page_layout_icon-16.png'
 
-      'TYPO3.Phoenix.ContentTypes:Folder':
-        superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Phoenix.ContentTypes:AbstractNode']
+      'TYPO3.Neos.ContentTypes:Folder':
+        superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Neos.ContentTypes:AbstractNode']
         label: 'Folder'
         search: 'Pages'
         properties:
@@ -54,8 +54,8 @@ TYPO3:
             label: 'Folder options'
             priority: 10
 
-      'TYPO3.Phoenix.ContentTypes:Shortcut':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Folder']
+      'TYPO3.Neos.ContentTypes:Shortcut':
+        superTypes: ['TYPO3.Neos.ContentTypes:Folder']
         label: 'Shortcut'
         icon: 'Images/Icons/White/shortcut_icon-16.png'
         darkIcon: 'Images/Icons/Black/shortcut_icon-16.png'
@@ -63,8 +63,8 @@ TYPO3:
           page:
             label: 'Shortcut options'
 
-      'TYPO3.Phoenix.ContentTypes:Page':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Folder']
+      'TYPO3.Neos.ContentTypes:Page':
+        superTypes: ['TYPO3.Neos.ContentTypes:Folder']
         label: 'Page'
         icon: 'Images/Icons/White/doc_empty_icon-16.png'
         darkIcon: 'Images/Icons/Black/doc_empty_icon-16.png'
@@ -72,8 +72,8 @@ TYPO3:
           page:
             label: 'Page options'
 
-      'TYPO3.Phoenix.ContentTypes:ContentObject':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:AbstractNode']
+      'TYPO3.Neos.ContentTypes:ContentObject':
+        superTypes: ['TYPO3.Neos.ContentTypes:AbstractNode']
         label: 'Abstract content object'
         search: 'Content'
         properties:
@@ -81,8 +81,8 @@ TYPO3:
             type: 'string'
             label: 'Content Title'
 
-      'TYPO3.Phoenix.ContentTypes:Headline':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+      'TYPO3.Neos.ContentTypes:Headline':
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         group: 'General'
         icon: 'Images/Icons/White/text_letter_t_icon-16.png'
         darkIcon: 'Images/Icons/Black/text_letter_t_icon-16.png'
@@ -92,8 +92,8 @@ TYPO3:
             default: '<h1>Enter headline here</h1>'
         inlineEditableProperties: ['title']
 
-      'TYPO3.Phoenix.ContentTypes:Text':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+      'TYPO3.Neos.ContentTypes:Text':
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         group: 'General'
         icon: 'Images/Icons/White/doc_lines_stright_icon-16.png'
         darkIcon: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
@@ -104,9 +104,9 @@ TYPO3:
             default: '<p>Enter text here</p>'
         inlineEditableProperties: ['title', 'text']
 
-      'TYPO3.Phoenix.ContentTypes:Image':
+      'TYPO3.Neos.ContentTypes:Image':
         label: 'Image'
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         group: 'General'
         icon: 'Images/Icons/White/picture_icon-16.png'
         darkIcon: 'Images/Icons/Black/picture_icon-16.png'
@@ -121,9 +121,9 @@ TYPO3:
             label: 'Image'
             priority: 5
 
-      'TYPO3.Phoenix.ContentTypes:TextWithImage':
+      'TYPO3.Neos.ContentTypes:TextWithImage':
         label: 'Text with Image'
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Image', 'TYPO3.Phoenix.ContentTypes:Text']
+        superTypes: ['TYPO3.Neos.ContentTypes:Image', 'TYPO3.Neos.ContentTypes:Text']
         group: 'General'
         icon: 'Images/Icons/White/image_text_icon-16.png'
         darkIcon: 'Images/Icons/Black/image_text_icon-16.png'
@@ -140,8 +140,8 @@ TYPO3:
                   label: 'Right'
             reloadOnChange: true
 
-      'TYPO3.Phoenix.ContentTypes:Html':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+      'TYPO3.Neos.ContentTypes:Html':
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         group: 'General'
         icon: 'Images/Icons/White/brackets_icon-16.png'
         darkIcon: 'Images/Icons/Black/brackets_icon-16.png'
@@ -159,8 +159,8 @@ TYPO3:
             label: 'HTML'
             priority: 10
 
-      'TYPO3.Phoenix.ContentTypes:Menu':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+      'TYPO3.Neos.ContentTypes:Menu':
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         group: 'Structure'
         icon: 'Images/Icons/White/list_bullets_icon-16.png'
         darkIcon: 'Images/Icons/Black/list_bullets_icon-16.png'
@@ -229,8 +229,8 @@ TYPO3:
            label: 'Options'
            priority: 30
 
-      'TYPO3.Phoenix.ContentTypes:Column':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+      'TYPO3.Neos.ContentTypes:Column':
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         icon: 'Images/Icons/White/columns_icon-16.png'
         darkIcon: 'Images/Icons/Black/columns_icon-16.png'
         properties:
@@ -243,15 +243,15 @@ TYPO3:
             label: 'Columns'
             priority: 10
 
-      'TYPO3.Phoenix.ContentTypes:TwoColumn':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Column']
+      'TYPO3.Neos.ContentTypes:TwoColumn':
+        superTypes: ['TYPO3.Neos.ContentTypes:Column']
         group: 'Structure'
         label: 'Two column content'
         structure:
           column0:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
           column1:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
         properties:
           layout:
             default: '50-50'
@@ -269,17 +269,17 @@ TYPO3:
                   label: '33% / 66%'
             reloadOnChange: true
 
-      'TYPO3.Phoenix.ContentTypes:ThreeColumn':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Column']
+      'TYPO3.Neos.ContentTypes:ThreeColumn':
+        superTypes: ['TYPO3.Neos.ContentTypes:Column']
         group: 'Structure'
         label: 'Three column content'
         structure:
           column0:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
           column1:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
           column2:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
         properties:
           layout:
             default: '33-33-33'
@@ -295,19 +295,19 @@ TYPO3:
                   label: '25% / 25% / 50%'
             reloadOnChange: true
 
-      'TYPO3.Phoenix.ContentTypes:FourColumn':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:Column']
+      'TYPO3.Neos.ContentTypes:FourColumn':
+        superTypes: ['TYPO3.Neos.ContentTypes:Column']
         group: 'Structure'
         label: 'Four column content'
         structure:
           column0:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
           column1:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
           column2:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
           column3:
-            type: 'TYPO3.Phoenix.ContentTypes:Section'
+            type: 'TYPO3.Neos.ContentTypes:Section'
         properties:
           layout:
             default: '25-25-25-25'
@@ -317,8 +317,8 @@ TYPO3:
                   label: '25% / 25% / 25% / 25%'
             reloadOnChange: true
 
-      'TYPO3.Phoenix.ContentTypes:Plugin':
-        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+      'TYPO3.Neos.ContentTypes:Plugin':
+        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
         icon: 'Images/Icons/White/app_window_shell_icon-16.png'
         darkIcon: 'Images/Icons/Black/app_window_shell_icon-16.png'
         label: 'Abstract plugin'

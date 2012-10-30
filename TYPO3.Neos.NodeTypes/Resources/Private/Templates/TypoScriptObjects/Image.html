@@ -1,4 +1,4 @@
-{namespace t=TYPO3\TYPO3\ViewHelpers}
+{namespace t=TYPO3\Neos\ViewHelpers}
 <t:contentElement node="{node}">
 	<div class="typo3-image">
 		<f:if condition="{image.resource}">
@@ -6,7 +6,7 @@
 				<img src="{f:uri.resource(resource: image.resource)}" />
 			</f:then>
 			<f:else>
-				<img src="{f:uri.resource(package:'TYPO3.TYPO3', path:'Images/dummy-image.png')}" title="Dummy Image" />
+				<img src="{f:uri.resource(package:'TYPO3.Neos', path:'Images/dummy-image.png')}" title="Dummy Image" />
 			</f:else>
 		</f:if>
 	</div>

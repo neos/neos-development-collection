@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Phoenix\ContentTypes\TypoScript;
+namespace TYPO3\Neos\ContentTypes\TypoScript;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Phoenix.ContentTypes".  *
+ * This script belongs to the TYPO3 Flow package "Neos.ContentTypes".     *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -62,7 +62,7 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 	 * Render the list of nodes, and if there are none and we are not inside the live
 	 * workspace, render a button to create new content.
 	 *
-	 * @throws \TYPO3\TYPO3\Exception
+	 * @throws \TYPO3\Neos\Exception
 	 * @return string
 	 */
 	public function evaluate() {
@@ -70,12 +70,12 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 		$node = $currentContext['node'];
 		$output = parent::evaluate();
 		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
 		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
 			return $output;
 		}
 
-		if ($node->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Section')) {
+		if ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
 			$sectionNode = $node;
 		} else {
 			$sectionNode = $node->getNode($this->getNodePath());
@@ -89,7 +89,7 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 					 * Thus, as a workaround, we create new section nodes as we need them during rendering, although we
 					 * know it is ugly.
 					 */
-				$sectionNode = $node->createNode($this->getNodePath(), $this->contentTypeManager->getContentType('TYPO3.Phoenix.ContentTypes:Section'));
+				$sectionNode = $node->createNode($this->getNodePath(), $this->contentTypeManager->getContentType('TYPO3.Neos.ContentTypes:Section'));
 			}
 		}
 
@@ -101,7 +101,7 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 		}
 
 		$idAttribute = $this->generateIdAttributeForSection($sectionNode);
-		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), $idAttribute, 'TYPO3.Phoenix.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
+		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), $idAttribute, 'TYPO3.Neos.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode) {
 		$parentNode = $sectionNode->getParent();
 
-		while ($parentNode->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Folder') !== TRUE) {
+		while ($parentNode->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Folder') !== TRUE) {
 			$parentNode = $parentNode->getParent();
 		}
 
