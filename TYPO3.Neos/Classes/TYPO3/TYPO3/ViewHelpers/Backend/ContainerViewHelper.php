@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * ViewHelper for the backend 'container'. Renders the required HTML to integrate
- * the Phoenix backend into a website.
+ * the Neos backend into a website.
  */
 class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
@@ -23,6 +23,12 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 * @var array
 	 */
 	protected $settings;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $securityContext;
 
 	/**
 	 * @param array $settings
@@ -39,10 +45,14 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$view = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
 		$view->setTemplatePathAndFilename('resource://TYPO3.TYPO3/Private/Templates/Backend/Content/Container.html');
+		$view->setPartialRootPath('resource://TYPO3.TYPO3/Private/Partials');
+
+		$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
 
 		$view->assignMultiple(array(
 			'node' => $node,
-			'modules' => $this->settings['modules']
+			'modules' => $this->settings['modules'],
+			'user' => $user
 		));
 
 		return $view->render();

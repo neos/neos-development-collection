@@ -6661,7 +6661,6 @@ body.t3-ui-controls {
   top: 0;
   position: fixed;
   width: 100%;
-  overflow: hidden;
   z-index: 10015;
   height: 60px;
   margin: 0px;
@@ -6669,33 +6668,93 @@ body.t3-ui-controls {
 }
 #t3-ui-top .t3-button-logout {
   float: right;
-  margin-right: 10px;
-  line-height: 30px;
-  height: 30px;
-  width: 16px;
-  color: #cccccc;
+}
+#t3-ui-top .t3-button-logout a.dropdown-toggle {
+  display: block;
   text-decoration: none;
-  font-size: 10px;
-  z-index: -9999px;
-  background: url(../Images/Icons/White/on-off_icon-16.png) left 50% no-repeat;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-  -webkit-transition-property: opacity;
-  -moz-transition-property: opacity;
-  -o-transition-property: opacity;
-  transition-property: opacity;
-  -webkit-transition-duration: 0.25s;
-  -moz-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  transition-duration: 0.25s;
+  color: #cccccc;
+  line-height: 26px;
 }
-#t3-ui-top .t3-button-logout:hover, #t3-ui-top .t3-button-logout:active, #t3-ui-top .t3-button-logout:focus {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
-  opacity: 0.8;
+#t3-ui-top .t3-button-logout a.dropdown-toggle .caret {
+  margin-top: 10px;
+  border-top-color: #cccccc;
+  margin-right: 10px;
 }
-#t3-ui-top .t3-button-logout span {
+#t3-ui-top .t3-button-logout ul.dropdown-menu {
+  right: 10px;
+  left: auto;
+  top: 90%;
+}
+#t3-ui-top .t3-button-logout ul.dropdown-menu .divider {
+  background-color: #e5e5e5;
+}
+#t3-ui-top .t3-button-logout .dropdown-menu:before {
+  position: absolute;
+  top: -7px;
+  right: 9px;
+  display: inline-block;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-left: 7px solid transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+  content: '';
+}
+#t3-ui-top .t3-button-logout .dropdown-menu:after {
+  position: absolute;
+  top: -6px;
+  right: 10px;
+  display: inline-block;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  border-left: 6px solid transparent;
+  content: '';
+}
+#t3-ui-top ul.t3-topbar {
+  height: 30px;
+  line-height: 26px;
   float: left;
-  text-indent: -9999px;
+  margin: 0;
+  padding: 0;
+}
+#t3-ui-top ul.t3-topbar li {
+  float: left;
+  list-style-type: none;
+  height: 25px;
+  line-height: 24px;
+  color: #999999;
+  margin-top: 5px;
+  margin-left: 1px;
+  border-top: 1px solid #2d2d2d;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#t3-ui-top ul.t3-topbar li a {
+  display: block;
+  height: 100%;
+  color: #999999 !important;
+  text-decoration: none !important;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#t3-ui-top ul.t3-topbar li:first-child {
+  margin-left: 4px;
+}
+#t3-ui-top ul.t3-topbar li:hover, #t3-ui-top ul.t3-topbar li:focus, #t3-ui-top ul.t3-topbar li:active {
+  background: #373737;
+  border-color: white;
+  cursor: pointer;
+}
+#t3-ui-top ul.t3-topbar li.t3-active {
+  background: #444444;
+  color: white;
+  border-top: 1px solid #ff8700;
+}
+#t3-ui-top ul.t3-topbar li.t3-active:hover, #t3-ui-top ul.t3-topbar li.t3-active:focus, #t3-ui-top ul.t3-topbar li.t3-active:active {
+  cursor: default;
+}
+#t3-ui-top ul.t3-topbar li.t3-active a {
+  color: white !important;
 }
 
 #t3-launcher {
@@ -6788,55 +6847,6 @@ body.t3-ui-controls {
 }
 .t3-launcher h2 {
   font-size: 100%;
-}
-
-ul.t3-topbar {
-  height: 30px;
-  line-height: 26px;
-  float: left;
-  margin: 0;
-  padding: 0;
-}
-
-.t3-topbar li {
-  float: left;
-  list-style-type: none;
-  height: 25px;
-  line-height: 24px;
-  color: #999999;
-  margin-top: 5px;
-  margin-left: 1px;
-  border-top: 1px solid #2d2d2d;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.t3-topbar li a {
-  display: block;
-  height: 100%;
-  color: #999999 !important;
-  text-decoration: none !important;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-.t3-topbar li:first-child {
-  margin-left: 4px;
-}
-.t3-topbar li:hover, .t3-topbar li:focus, .t3-topbar li:active {
-  background: #373737;
-  border-color: white;
-  cursor: pointer;
-}
-.t3-topbar li.t3-active {
-  background: #444444;
-  color: white;
-  border-top: 1px solid #ff8700;
-}
-.t3-topbar li.t3-active:hover, .t3-topbar li.t3-active:focus, .t3-topbar li.t3-active:active {
-  cursor: default;
-}
-.t3-topbar li.t3-active a {
-  color: white !important;
 }
 
 /*** Inspector Panel ***/
@@ -7049,16 +7059,16 @@ ul.t3-topbar {
   margin: 0px;
 }
 
-.t3-breadcrumb {
+#t3-footer .t3-breadcrumb {
   height: 26px;
   line-height: 26px;
   float: left;
 }
-.t3-breadcrumb ul {
+#t3-footer .t3-breadcrumb ul {
   float: left;
   height: 100%;
 }
-.t3-breadcrumb li {
+#t3-footer .t3-breadcrumb li {
   padding: 0;
   color: white;
   background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
@@ -7067,7 +7077,7 @@ ul.t3-topbar {
   height: 100%;
   float: left;
 }
-.t3-breadcrumb li a {
+#t3-footer .t3-breadcrumb li a {
   color: white !important;
   padding: 0 15px 0 30px;
   width: 100%;
@@ -7078,37 +7088,37 @@ ul.t3-topbar {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.t3-breadcrumb li:nth-child(10) {
+#t3-footer .t3-breadcrumb li:nth-child(10) {
   z-index: 10020;
 }
-.t3-breadcrumb li:nth-child(9) {
+#t3-footer .t3-breadcrumb li:nth-child(9) {
   z-index: 10021;
 }
-.t3-breadcrumb li:nth-child(8) {
+#t3-footer .t3-breadcrumb li:nth-child(8) {
   z-index: 10022;
 }
-.t3-breadcrumb li:nth-child(7) {
+#t3-footer .t3-breadcrumb li:nth-child(7) {
   z-index: 10023;
 }
-.t3-breadcrumb li:nth-child(6) {
+#t3-footer .t3-breadcrumb li:nth-child(6) {
   z-index: 10024;
 }
-.t3-breadcrumb li:nth-child(5) {
+#t3-footer .t3-breadcrumb li:nth-child(5) {
   z-index: 10025;
 }
-.t3-breadcrumb li:nth-child(4) {
+#t3-footer .t3-breadcrumb li:nth-child(4) {
   z-index: 10026;
 }
-.t3-breadcrumb li:nth-child(3) {
+#t3-footer .t3-breadcrumb li:nth-child(3) {
   z-index: 10027;
 }
-.t3-breadcrumb li:nth-child(2) {
+#t3-footer .t3-breadcrumb li:nth-child(2) {
   z-index: 10028;
 }
-.t3-breadcrumb li:first-child {
+#t3-footer .t3-breadcrumb li:first-child {
   z-index: 10029;
 }
-.t3-breadcrumb li:last-child {
+#t3-footer .t3-breadcrumb li:last-child {
   background: url(../Images/ContentModule/breadcrumb-arrow-orange.png) right 50% no-repeat;
 }
 

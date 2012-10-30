@@ -20,23 +20,28 @@
 					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
 				</li>
 				<f:for each="{settings.modules}" key="module" as="configuration">
-					<f:if condition="{configuration.role}">
-						<f:then>
-							<f:security.ifHasRole role="{configuration.role}">
-								<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
-									<t:link.module path="{module}">{configuration.label}</t:link.module>
-								</li>
-							</f:security.ifHasRole>
-						</f:then>
+					<f:if condition="{configuration.hideInMenu}">
+						<f:then></f:then>
 						<f:else>
-							<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
-								<t:link.module path="{module}">{configuration.label}</t:link.module>
-							</li>
+							<f:if condition="{configuration.role}">
+								<f:then>
+									<f:security.ifHasRole role="{configuration.role}">
+										<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+											<t:link.module path="{module}">{configuration.label}</t:link.module>
+										</li>
+									</f:security.ifHasRole>
+								</f:then>
+								<f:else>
+									<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+										<t:link.module path="{module}">{configuration.label}</t:link.module>
+									</li>
+								</f:else>
+							</f:if>
 						</f:else>
 					</f:if>
 				</f:for>
 			</ul>
-			<a class="t3-button t3-button-logout t3-icon-logout" href="/neos/logout"><span>Logout</span></a>
+			<f:render partial="Backend/UserMenu" arguments="{_all}" />
 			<div class="t3-clear"></div>
 		</div>
 		<div id="t3-toolbar" class="t3-toolbar">
