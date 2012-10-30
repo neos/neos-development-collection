@@ -61,10 +61,11 @@ class UserController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function updatePreferencesAction(array $preferences) {
+		$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
 		foreach ($preferences as $preferencePath => $value) {
-			$this->securityContext->getParty()->getPreferences()->set($preferencePath, $value);
+			$user->getPreferences()->set($preferencePath, $value);
 		}
-		$this->partyRepository->update($this->securityContext->getParty());
+		$this->partyRepository->update($user);
 		$this->view->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
 		$this->view->assign('value', array('data' => '', 'success' => TRUE));
 	}
@@ -77,7 +78,8 @@ class UserController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function getPreferenceAction($preferencePath) {
-		$value = $this->securityContext->getParty()->getPreferences()->get($preferencePath);
+		$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
+		$value = $user->getPreferences()->get($preferencePath);
 		$this->view->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
 		$this->view->assign('value', array('data' => $value, 'success' => TRUE));
 	}
