@@ -34,10 +34,6 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 */
 	protected function initializeAction() {
 		switch ($this->request->getFormat()) {
-			case 'extdirect' :
-				$this->defaultViewObjectName = 'TYPO3\ExtJS\ExtDirect\View';
-				$this->errorMethodName = 'extErrorAction';
-				break;
 			case 'json' :
 				$this->defaultViewObjectName = 'TYPO3\Flow\Mvc\View\JsonView';
 				break;
@@ -51,14 +47,12 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * @return void
 	 */
 	public function indexAction($username = NULL) {
-		$this->view->assign('username', $username);
-		$this->view->assign('hostname', $this->request->getHttpRequest()->getBaseUri()->getHost());
-		$this->view->assign('date', new \DateTime());
-		$this->view->assign('welcomeMessage', 'Please enter your username and password in order to proceed.');
-
-		$version = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface')->getPackage('TYPO3.Neos')->getPackageMetaData()->getVersion();
-		$this->view->assign('version', $version);
+		$this->view->assignMultiple(array(
+			'username' => $username,
+			'welcomeMessage' => 'Please enter your username and password in order to proceed.'
+		));
 	}
+
 
 	/**
 	 * Is called if authentication failed.
@@ -85,49 +79,14 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	}
 
 	/**
-	 * Shows some information about the currently logged in account
-	 *
-	 * @return string
-	 * @ExtDirect
-	 */
-	public function showAction() {
-		$person = $this->securityContext->getParty();
-
-		switch ($this->request->getFormat()) {
-			case 'extdirect' :
-			case 'json' :
-				$this->view->setConfiguration(
-					array(
-						'value' => array(
-							'data' => array(
-								'_descend' => array('name' => array())
-							)
-						)
-					)
-				);
-				$this->view->assign('value',
-					array(
-						'data' => $person,
-						'success' => TRUE
-					)
-				);
-				return $this->view->render();
-			default :
-				return 'Hello ' . $person->getName()->getFirstName() . '. You are currently logged in with the account ' . $this->securityContext->getAccount()->getAccountIdentifier() . '.';
-		}
-	}
-
-	/**
 	 * Logs out a - possibly - currently logged in account.
 	 *
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function logoutAction() {
 		parent::logoutAction();
 
 		switch ($this->request->getFormat()) {
-			case 'extdirect' :
 			case 'json' :
 				$this->view->assign('value',
 					array(
@@ -141,17 +100,5 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 		}
 	}
 
-	/**
-	 * A preliminary error action for handling validation errors
-	 * by assigning them to the ExtDirect View that takes care of
-	 * converting them.
-	 *
-	 * @return void
-	 */
-	public function extErrorAction() {
-		$this->view->assignErrors($this->arguments->getValidationResults()->getFlattenedErrors());
-	}
-
 }
-
 ?>
