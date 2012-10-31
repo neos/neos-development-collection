@@ -75,7 +75,9 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @todo Improve this WIP search implementation
 	 */
 	public function searchAction($term, $requestIndex) {
-		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($this->securityContext->getParty()->getPreferences()->get('context.workspace'));
+		$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
+		$worskpaceName = $user->getPreferences()->get('context.workspace');
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($worskpaceName);
 		$this->nodeRepository->setContext($contentContext);
 
 		$searchContentGroups = array();

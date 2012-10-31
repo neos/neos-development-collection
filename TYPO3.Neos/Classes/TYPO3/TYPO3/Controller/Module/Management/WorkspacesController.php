@@ -76,7 +76,8 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 	 */
 	public function indexAction($workspaceName = NULL) {
 		if (is_null($workspaceName)) {
-			$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
+			$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
+			$workspaceName = $user->getPreferences()->get('context.workspace');
 		}
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($workspaceName);
 		$contentContext->setInvisibleContentShown(TRUE);

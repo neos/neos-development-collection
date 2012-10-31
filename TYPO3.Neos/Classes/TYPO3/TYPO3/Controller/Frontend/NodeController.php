@@ -145,7 +145,8 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				if (!$this->view->canRenderWithNodeAndPath($node, $this->view->getTypoScriptPath())) {
 					return TRUE;
 				}
-				return $this->securityContext->getParty()->getPreferences()->get('contentEditing.wireframeMode') ? TRUE : FALSE;
+				$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
+				return $user->getPreferences()->get('contentEditing.wireframeMode') ? TRUE : FALSE;
 			} catch (\Exception $e) {}
 		}
 		return FALSE;

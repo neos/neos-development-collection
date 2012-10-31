@@ -45,7 +45,8 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @Flow\SkipCsrfProtection
 	 */
 	public function indexAction() {
-		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
+		$user = $this->securityContext->getPartyByType('TYPO3\TYPO3\Domain\Model\User');
+		$workspaceName = $user->getPreferences()->get('context.workspace');
 
 			// Hack: Create the workspace if it does not exist yet.
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($workspaceName);
