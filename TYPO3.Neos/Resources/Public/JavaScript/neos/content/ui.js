@@ -290,7 +290,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				node = activeNode.addChild({
 					title: '[New Page]',
 					contentType: 'TYPO3.Neos.ContentTypes:Page',
-					addClass: 'typo3_neos_contenttypes-page'
+					addClass: 'typo3_neos_contenttypes-page',
+					expand: true
 				}),
 				prevTitle = node.data.title,
 				tree = node.tree;
@@ -314,9 +315,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			}).blur(function(event) {
 				var newTitle = $('input#editCreatedNode').val(),
 					title;
-					// Re-enable mouse and keyboard handling
-				tree.$widget.bind();
-				activeNode.focus();
 
 					// Accept new value, when user leaves <input>
 				if (prevTitle === newTitle || newTitle === '') {
@@ -327,6 +325,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					// Hack for Chrome and Safari, otherwise two pages will be created, because .blur fires one request with two datasets
 				if (that.editNodeTitleMode) {
 					that.editNodeTitleMode = false;
+					node.activate();
+					node.setTitle(title);
 					TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 						activeNode.data.key,
 						{
@@ -341,28 +341,24 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 							if (result !== null && result.success === true) {
 									// Actualizing the created dynatree node
 								node.data.key = result.data.key;
+								node.data.name = result.data.name;
 								node.data.title = result.data.title;
 								node.data.href = result.data.href;
 								node.data.isFolder = result.data.isFolder;
 								node.data.isLazy = result.data.isLazy;
-								node.data.contentType = result.data.contenType;
+								node.data.contentType = result.data.contentType;
 								node.data.expand = result.data.expand;
 								node.data.addClass = result.data.addClass;
 
-								that.editNodeTitleMode = false;
-								activeNode.focus();
-								T3.ContentModule.loadPage(activeNode.data.href);
 									// Re-enable mouse and keyboard handling
 								tree.$widget.bind();
+								T3.ContentModule.loadPage(node.data.href);
 							} else {
 								T3.Common.notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
 							}
 						}
 					);
 				}
-				node.setTitle(title);
-				that.editNodeTitleMode = false;
-				activeNode.focus();
 			});
 		},
 
