@@ -427,7 +427,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					 */
 					onDragStart: function(node) {
 						if (node.data.key !== siteRootNodePath) {
-							$('#t3-drop-deletionzone').show();
 							return true;
 						} else {
 								// the root node should not be draggable
