@@ -19,23 +19,23 @@ up:
           settings:
             property: 'title'
             newValue: '<h1>{current}</h1>'
-  -
-    filters:
-      -
-        type: 'NodeType'
-        settings:
-          nodeType: 'TYPO3.TYPO3:TextWithImage'
-    transformations:
-      -
-        type: 'RenameProperty'
-        settings:
-          from: 'headline'
-          to: 'title'
-      -
-        type: 'ChangePropertyValue'
-        settings:
-          property: 'title'
-          newValue: '<h1>{current}</h1>'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.TYPO3:TextWithImage'
+      transformations:
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'headline'
+            to: 'title'
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'title'
+            newValue: '<h1>{current}</h1>'
 
 down:
   comments: 'This tries to bring the TYPO3CR into a state suitable for content type definitions before the July 2012 sprint release.'
