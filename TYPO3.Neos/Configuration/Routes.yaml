@@ -76,7 +76,7 @@
       handler: TYPO3\TYPO3\Routing\BackendModuleRoutePartHandler
     moduleArguments:
       handler: TYPO3\TYPO3\Routing\BackendModuleArgumentsRoutePartHandler
-  toLowerCase: 0
+  toLowerCase: false
   appendExceedingArguments: true
 
 -
