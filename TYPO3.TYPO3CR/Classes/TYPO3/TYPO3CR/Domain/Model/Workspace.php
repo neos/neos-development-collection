@@ -148,7 +148,7 @@ class Workspace {
 	 *
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
-	 * @param array<\TYPO3\TYPO3\Domain\Model\Node> $nodes
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
 	 */

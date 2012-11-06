@@ -339,9 +339,9 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * only occurs in very rare cases) is the *identifier*.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -533,9 +533,9 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * Finds a single node by its parent and (optionally) by its content type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node The node found or NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node found or NULL
 	 * @todo Check for workspace compliance
 	 */
 	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -560,7 +560,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param string $pathStartingPoint Absolute path specifying the starting point
 	 * @param string $pathEndPoint Absolute path specifying the end point
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found on the given path
 	 * @throws \InvalidArgumentException
 	 */
 	public function findOnPath($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -627,7 +627,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * the given workspace.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\Flow\Persistence\QueryInterface The query
 	 * @throws \InvalidArgumentException
