@@ -37,10 +37,13 @@ class ImageConverterTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(1, $this->converter->getPriority());
 	}
 
+	/**
+	 * @return array
+	 */
 	public function canConvertFromDataProvider() {
 		return array(
 			array(array(), 'TYPO3\Media\Domain\Model\Image', TRUE),
-			array('someString', 'TYPO3\Media\Domain\Model\Image', TRUE),
+			array(array('__identity' => 'foo'), 'TYPO3\Media\Domain\Model\Image', FALSE),
 			array(array(), 'TYPO3\Media\Domain\Model\ImageInterface', TRUE),
 		);
 	}

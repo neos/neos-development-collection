@@ -46,7 +46,7 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	 * @return boolean
 	 */
 	public function canConvertFrom($source, $targetType) {
-		if (isset($source['__identity'])) {
+		if (array_key_exists('__identity', $source)) {
 			return FALSE;
 		}
 		return TRUE;
