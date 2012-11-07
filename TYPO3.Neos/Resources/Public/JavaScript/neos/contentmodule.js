@@ -411,7 +411,7 @@ function($, vie, Ember, CreateJS) {
 
 			var selectorsToReplace = [];
 
-			$('.t3-reloadable-content').each(function() {
+			$('.t3-reloadable-content:first').each(function() {
 				var id = $(this).attr('id');
 				if (!id) {
 						// TODO: we need cleaner developer error handling
@@ -448,7 +448,10 @@ function($, vie, Ember, CreateJS) {
 							// level element has the t3-reloadable-content CSS class applied
 							$(selector).replaceWith($htmlDom.filter(selector));
 						} else {
-							throw 'Target HTML selector not found. Something has gone really wrong';
+							// todo find cleaner solution for pages with different structures
+							// but without the classic reload, loadPage breaks here
+							alert('Target HTML selector not found. Something has gone really wrong. The page will automatically reload.');
+							window.location.href = uri;
 						}
 
 						that._linkInterceptionHandler($(selector).find('a'));
