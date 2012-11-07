@@ -137,7 +137,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					if ($expand && $childNode->hasChildNodes($contentTypeFilter) === TRUE) {
 						$this->collectChildNodeData($children, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
 					}
-					array_push($nodes, $this->collectTreeNodeData($childNode, $expand, $children, $contentTypeFilter));
+					array_push($nodes, $this->collectTreeNodeData($childNode, $expand, $children));
 			}
 		}
 	}
@@ -146,7 +146,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param boolean $expand
 	 * @param array $children
-	 * @param string $contentTypeFilter
 	 * @return array
 	 */
 	public function collectTreeNodeData(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $expand = TRUE, array $children = array()) {
@@ -164,7 +163,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$contentType = $node->getContentType()->getName();
 		$treeNode = array(
 			'key' => $node->getContextPath(),
-			'title' => $node->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel(),
+			'title' => $node->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title') : $node->getLabel(),
 			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos', ''),
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),
