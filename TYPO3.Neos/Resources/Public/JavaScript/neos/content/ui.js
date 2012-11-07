@@ -299,7 +299,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editCreatedNode', value: prevTitle}));
 				// Focus <input> and bind keyboard handler
-			$('input#editCreatedNode').focus().keydown(function(event) {
+			$('input#editCreatedNode').focus().select().keydown(function(event) {
 				switch (event.which) {
 					case 27: // [esc]
 							// discard changes on [esc]
