@@ -44,6 +44,7 @@
 		'underscorejs': {
 			'exports': '_'
 		},
+		'createjs': ['jquery-ui'],
 		'hallo': ['jquery-ui'],
 		'backbone': ['underscorejs'],
 		'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery'],
