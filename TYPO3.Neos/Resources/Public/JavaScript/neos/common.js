@@ -7,11 +7,12 @@
 define(
 [
 	'jquery',
+	'emberjs',
 	'text!neos/templates/common/launcher.html',
 	'text!neos/templates/common/launcherpanel.html',
 	'text!neos/templates/common/confirmationDialog.html'
 ],
-function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
+function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/common');
 
 	var T3 = window.T3 || {};
