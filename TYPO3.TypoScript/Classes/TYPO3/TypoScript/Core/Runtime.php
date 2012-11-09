@@ -294,7 +294,7 @@ class Runtime {
 			if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches)) {
 				$currentPathSegment = $matches[1];
 
-				if (isset($configuration[$currentPathSegment])) {
+				if (isset($configuration[$currentPathSegment]) && is_array($configuration[$currentPathSegment])) {
 					$configuration = $configuration[$currentPathSegment];
 				} else {
 					$configuration = array();
