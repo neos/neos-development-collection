@@ -17,6 +17,15 @@ namespace TYPO3\Neos\Validation\Validator;
 class PasswordValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
 	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'allowEmpty' => array(FALSE, 'Whether an empty password is allowed or not', 'boolean'),
+		'minimum' => array(0, 'Minimum length for a valid string', 'integer'),
+		'maximum' => array(PHP_INT_MAX, 'Maximum length for a valid string', 'integer')
+	);
+
+	/**
 	 * Returns TRUE, if the given property ($value) is a valid array consistent of two equal passwords and their length
 	 * is between 'minimum' (defaults to 0 if not specified) and 'maximum' (defaults to infinite if not specified)
 	 * to be specified in the validation options.
@@ -52,7 +61,10 @@ class PasswordValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
 			return;
 		}
 
-		$stringLengthValidator = new \TYPO3\Flow\Validation\Validator\StringLengthValidator($this->options);
+		$stringLengthValidator = new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array(
+			'minimum' => $this->options['minimum'],
+			'maximum' => $this->options['maximum'],
+		));
 		$stringLengthValidatorResult = $stringLengthValidator->validate($password);
 
 		if ($stringLengthValidatorResult->hasErrors() === TRUE) {

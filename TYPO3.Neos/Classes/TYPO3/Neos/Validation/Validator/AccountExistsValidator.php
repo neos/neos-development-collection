@@ -19,15 +19,20 @@ use TYPO3\Flow\Annotations as Flow;
 class AccountExistsValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
 	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'authenticationProviderName' => array('Typo3BackendProvider', 'The authentication provider to use when checking for an account', 'string')
+	);
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
-	 * Returns TRUE, if the given property ($value) is a valid array consistent of two equal passwords and their length
-	 * is between 'minimum' (defaults to 0 if not specified) and 'maximum' (defaults to infinite if not specified)
-	 * to be specified in the validation options.
+	 * Returns TRUE, if the given property ($value) does not yet exist in the account repository.
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -37,15 +42,13 @@ class AccountExistsValidator extends \TYPO3\Flow\Validation\Validator\AbstractVa
 	 */
 	protected function isValid($value) {
 		if (!is_string($value)) {
-			throw new \TYPO3\Flow\Validation\Exception\InvalidSubjectException('The given value was not a string.', 1325155784);
+			throw new \TYPO3\Flow\Validation\Exception\InvalidSubjectException('The given account identifier was not a string.', 1325155784);
 		}
 
-		$authenticationProviderName = isset($this->options['authenticationProviderName']) ? $this->options['authenticationProviderName'] : 'Typo3BackendProvider';
-
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($value, $authenticationProviderName);
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($value, $this->options['authenticationProviderName']);
 
 		if ($account !== NULL) {
-			$this->addError('The username is already in use.', 1325156008);
+			$this->addError('The account identifier (username) is already in use.', 1325156008);
 		}
 	}
 
