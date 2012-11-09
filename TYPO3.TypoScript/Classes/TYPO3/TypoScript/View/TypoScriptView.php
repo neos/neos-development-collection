@@ -12,20 +12,33 @@ namespace TYPO3\TypoScript\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\View\AbstractView;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Files;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * View for using TypoScript for standard MVC controllers.
  *
- * Loads all TypoScript files from the current package Resources/Private/TypoScript
- * folder (recursively); and then checks whether a TypoScript object for current
- * controller and action can be found.
+ * Recursively loads all TypoScript files from the configured path (By default that's Resources/Private/TypoScripts
+ * of the current package) and then checks whether a TypoScript object for current controller and action can be found.
  *
  * If the controller class name is Foo\Bar\Baz\Controller\BlahController and the action is "index",
  * it checks for the TypoScript path Foo.Bar.Baz.BlahController.index.
- * If this path is found, then it is used for rendering. Otherwise, the $fallbackView
- * is used.
+ * If this path is found, then it is used for rendering. Otherwise, the $fallbackView is used.
  */
-class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
+class TypoScriptView extends AbstractView {
+
+	/**
+	 * This contains the supported options, their default values, descriptions and types.
+	 *
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'typoScriptPathPatterns' => array(array('resource://@package/Private/TypoScripts'), 'TypoScript files will be recursively loaded from this paths.', 'array'),
+		'typoScriptPath' => array(NULL, 'The TypoScript path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
+		'packageKey' => array(NULL, 'The package key where the TypoScript should be loaded from. If not given, is automatically derived from the current request.', 'string')
+	);
 
 	/**
 	 * @Flow\Inject
@@ -40,13 +53,6 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	protected $fallbackView;
 
 	/**
-	 * TypoScript files will be recursively loaded from this path
-	 *
-	 * @var string
-	 */
-	protected $typoScriptPathPattern = 'resource://@package/Private/TypoScripts/';
-
-	/**
 	 * The parsed TypoScript array in its internal representation
 	 *
 	 * @var array
@@ -54,20 +60,12 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	protected $parsedTypoScript;
 
 	/**
-	 * The TypoScript path which should be rendered; derived from the controller
+	 * Runtime cache of the TypoScript path which should be rendered; derived from the controller
 	 * and action names or set by the user.
 	 *
 	 * @var string
 	 */
 	protected $typoScriptPath = NULL;
-
-	/**
-	 * The package key where the TypoScript should be loaded from. If not given,
-	 * is automatically derived from the current request.
-	 *
-	 * @var string
-	 */
-	protected $packageKey = NULL;
 
 	/**
 	 * if FALSE, the fallback view will never be used.
@@ -77,6 +75,25 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	protected $fallbackViewEnabled = TRUE;
 
 	/**
+	 * The TypoScript Runtime
+	 *
+	 * @var Runtime
+	 */
+	protected $typoScriptRuntime = NULL;
+
+	/**
+	 * Reset runtime cache if an option is changed
+	 *
+	 * @param string $optionName
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function setOption($optionName, $value) {
+		$this->typoScriptPath = NULL;
+		parent::setOption($optionName, $value);
+	}
+
+	/**
 	 * Sets the TypoScript path to be rendered to an explicit value;
 	 * to be used mostly inside tests.
 	 *
@@ -84,7 +101,7 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @return void
 	 */
 	public function setTypoScriptPath($typoScriptPath) {
-		$this->typoScriptPath = $typoScriptPath;
+		$this->setOption('typoScriptPath', $typoScriptPath);
 	}
 
 	/**
@@ -95,7 +112,23 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @return void
 	 */
 	public function setPackageKey($packageKey) {
-		$this->packageKey = $packageKey;
+		$this->setOption('packageKey', $packageKey);
+	}
+
+	/**
+	 * @param string $pathPattern
+	 * @return void
+	 */
+	public function setTypoScriptPathPattern($pathPattern) {
+		$this->setOption('typoScriptPathPatterns', array($pathPattern));
+	}
+
+	/**
+	 * @param array $pathPatterns
+	 * @return void
+	 */
+	public function setTypoScriptPathPatterns(array $pathPatterns) {
+		$this->setOption('typoScriptPathPatterns', $pathPatterns);
 	}
 
 	/**
@@ -119,25 +152,14 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	}
 
 	/**
-	 * @param string $pathPattern
-	 * @return void
-	 */
-	public function setTypoScriptPathPattern($pathPattern) {
-		$this->typoScriptPathPattern = $pathPattern;
-	}
-
-	/**
 	 * Render the view
 	 *
 	 * @return string The rendered view
 	 * @api
 	 */
 	public function render() {
-		$this->loadTypoScript();
-
-		$this->initializeTypoScriptPathForCurrentRequest();
-
-		if ($this->isTypoScriptFoundForCurrentRequest() || $this->fallbackViewEnabled === FALSE) {
+		$this->initializeTypoScriptRuntime();
+		if ($this->typoScriptRuntime->canRender($this->getTypoScriptPathForCurrentRequest()) || $this->fallbackViewEnabled === FALSE) {
 			return $this->renderTypoScript();
 		} else {
 			return $this->renderFallbackView();
@@ -145,59 +167,89 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	}
 
 	/**
-	 * Load TypoScript from the directory specified by $this->typoScriptPathPattern
+	 * Load the TypoScript Files form the defined
+	 * paths and construct a Runtime from the
+	 * parsed results
+	 *
+	 * @return void
+	 */
+	public function initializeTypoScriptRuntime() {
+		if ($this->typoScriptRuntime === NULL) {
+			$this->loadTypoScript();
+			$this->typoScriptRuntime = new Runtime($this->parsedTypoScript, $this->controllerContext);
+		}
+	}
+
+	/**
+	 * Load TypoScript from the directories specified by $this->getOption('typoScriptPathPatterns')
 	 *
 	 * @return void
 	 */
 	protected function loadTypoScript() {
-		$typoScriptPathPattern = str_replace('@package', $this->getPackageKey(), $this->typoScriptPathPattern);
 		$mergedTypoScriptCode = '';
-		foreach (\TYPO3\Flow\Utility\Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2') as $filePath) {
-			$mergedTypoScriptCode .= PHP_EOL . file_get_contents($filePath) . PHP_EOL;
+		$typoScriptPathPatterns = $this->getOption('typoScriptPathPatterns');
+		ksort($typoScriptPathPatterns);
+		foreach ($typoScriptPathPatterns as $typoScriptPathPattern) {
+			$typoScriptPathPattern = str_replace('@package', $this->getPackageKey(), $typoScriptPathPattern);
+			$filePaths = Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2');
+			sort($filePaths);
+			foreach ($filePaths as $filePath) {
+				$mergedTypoScriptCode .= PHP_EOL . file_get_contents($filePath) . PHP_EOL;
+			}
 		}
 		$this->parsedTypoScript = $this->typoScriptParser->parse($mergedTypoScriptCode);
 	}
 
 	/**
-	 * Get the package key to load the TypoScript from. If set, $this->packageKey is used.
+	 * Get the package key to load the TypoScript from. If set, $this->getOption('packageKey') is used.
 	 * Otherwise, the current request is taken and the controller package key is extracted
 	 * from there.
 	 *
 	 * @return string the package key to load TypoScript from
 	 */
 	protected function getPackageKey() {
-		if ($this->packageKey !== NULL) {
-			return $this->packageKey;
+		$packageKey = $this->getOption('packageKey');
+		if ($packageKey !== NULL) {
+			return $packageKey;
 		} else {
-			return $this->controllerContext->getRequest()->getControllerPackageKey();
+			/** @var $request \TYPO3\Flow\Mvc\ActionRequest */
+			$request = $this->controllerContext->getRequest();
+			return $request->getControllerPackageKey();
 		}
 	}
 
 	/**
-	 * Initialize $this->typoScriptPath depending on the current controller and action
+	 * Determines the TypoScript path depending on the current controller and action
 	 *
-	 * @return void
+	 * @return string
 	 */
-	protected function initializeTypoScriptPathForCurrentRequest() {
+	protected function getTypoScriptPathForCurrentRequest() {
 		if ($this->typoScriptPath === NULL) {
-			$request = $this->controllerContext->getRequest();
-			$typoScriptPathForCurrentRequest = $request->getControllerObjectName();
-			$typoScriptPathForCurrentRequest = str_replace('\\Controller\\', '\\', $typoScriptPathForCurrentRequest);
-			$typoScriptPathForCurrentRequest = str_replace('\\', '/', $typoScriptPathForCurrentRequest);
-			$typoScriptPathForCurrentRequest = trim($typoScriptPathForCurrentRequest, '/');
-			$typoScriptPathForCurrentRequest .= '/' . $request->getControllerActionName();
+			$typoScriptPath = $this->getOption('typoScriptPath');
+			if ($typoScriptPath !== NULL) {
+				$this->typoScriptPath = $typoScriptPath;
+			} else {
+				/** @var $request \TYPO3\Flow\Mvc\ActionRequest */
+				$request = $this->controllerContext->getRequest();
+				$typoScriptPathForCurrentRequest = $request->getControllerObjectName();
+				$typoScriptPathForCurrentRequest = str_replace('\\Controller\\', '\\', $typoScriptPathForCurrentRequest);
+				$typoScriptPathForCurrentRequest = str_replace('\\', '/', $typoScriptPathForCurrentRequest);
+				$typoScriptPathForCurrentRequest = trim($typoScriptPathForCurrentRequest, '/');
+				$typoScriptPathForCurrentRequest .= '/' . $request->getControllerActionName();
 
-			$this->typoScriptPath = $typoScriptPathForCurrentRequest;
+				$this->typoScriptPath = $typoScriptPathForCurrentRequest;
+			}
 		}
+		return $this->typoScriptPath;
 	}
 
 	/**
 	 * Determine whether we are able to find TypoScript at the requested position
 	 *
-	 * @return boolean TRUE if TypoScript exists at $this->typoScriptPath; FALSE otherwise
+	 * @return boolean TRUE if TypoScript exists at the current TypoScript path; FALSE otherwise
 	 */
 	protected function isTypoScriptFoundForCurrentRequest() {
-		return (\TYPO3\Flow\Utility\Arrays::getValueByPath($this->parsedTypoScript, str_replace('/', '.', $this->typoScriptPath)) !== NULL);
+		return (Arrays::getValueByPath($this->parsedTypoScript, str_replace('/', '.', $this->getTypoScriptPathForCurrentRequest())) !== NULL);
 	}
 
 	/**
@@ -206,10 +258,9 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @return string
 	 */
 	protected function renderTypoScript() {
-		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($this->parsedTypoScript, $this->controllerContext);
-		$typoScriptRuntime->pushContextArray($this->variables);
-		$output = $typoScriptRuntime->render($this->typoScriptPath);
-		$typoScriptRuntime->popContext();
+		$this->typoScriptRuntime->pushContextArray($this->variables);
+		$output = $this->typoScriptRuntime->render($this->getTypoScriptPathForCurrentRequest());
+		$this->typoScriptRuntime->popContext();
 		return $output;
 	}
 

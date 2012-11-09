@@ -11,11 +11,15 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TypoScript\View\TypoScriptView;
+
 /**
  * Testcase for the TypoScript View
  *
  */
-class TypoScriptViewTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class TypoScriptViewTest extends FunctionalTestCase {
 
 	/**
 	 * @var TYPO3\Flow\Mvc\View\ViewInterface
@@ -32,6 +36,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		$this->mockFallbackView = $this->getMock('TYPO3\Flow\Mvc\View\ViewInterface');
+		$this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
 	}
 
 	/**
@@ -76,20 +81,18 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 *
 	 * @param string $controllerObjectName
 	 * @param string $controllerActionName
-	 * @return \TYPO3\TypoScript\View\TypoScriptView
+	 * @return TypoScriptView
 	 */
 	protected function buildView($controllerObjectName, $controllerActionName) {
 		$request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
 		$request->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$request->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
-		$this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
 		$this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($request));
 
-		$view = new \TYPO3\TypoScript\View\TypoScriptView();
+		$view = new TypoScriptView();
 		$view->setControllerContext($this->mockControllerContext);
 		$this->inject($view, 'fallbackView', $this->mockFallbackView);
-
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($view, 'typoScriptPathPattern', __DIR__ . '/Fixtures/TypoScript', TRUE);
+		$view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/TypoScript');
 
 		return $view;
 	}

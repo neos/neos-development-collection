@@ -29,9 +29,8 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
 		$view->setControllerContext($mockControllerContext);
 		$view->disableFallbackView();
 		$view->setPackageKey('TYPO3.TypoScript');
+		$view->setTypoScriptPathPattern(__DIR__ . '/Fixtures');
 		$view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
-
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($view, 'typoScriptPathPattern', __DIR__ . '/Fixtures', TRUE);
 
 		return $view;
 	}
