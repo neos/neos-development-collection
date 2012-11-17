@@ -49,6 +49,7 @@ define(
 				this.$newAfterPopoverContent = $('<div />', {id: this.get(Ember.GUID_KEY)});
 
 				this.$().find('.action-new').popover({
+					additionalClasses: 't3-new-contentelement-popover',
 					content: this.$newAfterPopoverContent,
 					preventLeft: (this.get('popoverPosition')==='left' ? false : true),
 					preventRight: (this.get('popoverPosition')==='right' ? false : true),

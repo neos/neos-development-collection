@@ -7774,6 +7774,14 @@ ul.t3-launcher-horizontal li .text {
   overflow-y: hidden;
 }
 
+.t3-ui .t3-content-new-selecttype-button {
+  margin: 5px 0px;
+}
+.t3-ui .t3-content-new-selecttype-button a:hover, .t3-ui .t3-content-new-selecttype-button a:focus, .t3-ui .t3-content-new-selecttype-button a:active {
+  color: white;
+  cursor: pointer;
+}
+
 /*Dynatree start*/
 .dynatree-container {
   position: relative;
@@ -8199,9 +8207,24 @@ button.t3-button.t3-connection-status-down {
 .t3-contentelement .t3-contentelement-handle-container .btn-toolbar {
   text-align: right !important;
   margin-top: 0;
+  position: relative;
 }
 .t3-contentelement .t3-contentelement-handle-container .btn-toolbar .btn {
   z-index: 10000;
+}
+.t3-contentelement .t3-contentelement-handle-container .btn-toolbar .btn-group {
+  position: absolute;
+  right: -7px;
+  top: -29px;
+  border: 3px solid #f18f0b;
+  border-bottom: 0px;
+  background: #f18f0b;
+  -moz-border-radius-topleft: 6px;
+  -webkit-border-top-left-radius: 6px;
+  border-top-left-radius: 6px;
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-right-radius: 6px;
+  border-top-right-radius: 6px;
 }
 .t3-contentelement .t3-contentelement-handle-container .btn-toolbar .btn-group button:nth-child(2) {
   -moz-border-radius-topleft: 4px;
@@ -8213,7 +8236,7 @@ button.t3-button.t3-connection-status-down {
 }
 
 .t3-contentelement-active {
-  outline: 3px solid rgba(247, 144, 37, 0.8) !important;
+  outline: 3px solid #f18f0b !important;
   outline-offset: 4px;
 }
 .t3-contentelement-active > .t3-contentelement-handle-container {
@@ -8355,6 +8378,9 @@ button.t3-button.t3-connection-status-down {
   font-weight: normal;
 }
 
+.t3-ui.hallotoolbar {
+  width: auto !important;
+}
 .t3-ui.hallotoolbar .t3-button {
   width: 28px;
   height: 23px;
@@ -8446,6 +8472,8 @@ button.t3-button.t3-connection-status-down {
   padding: 0px;
   color: white;
   cursor: default;
+  background: transparent;
+  border: 0px;
 }
 #t3-toolbar .t3-indicator .icon-ok {
   color: #69A550;
@@ -8538,7 +8566,7 @@ button.t3-button.t3-connection-status-down {
 .popover > .triangle.top:after {
   bottom: -1px;
   left: -11px;
-  border-top-color: rgba(0, 0, 0, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.25);
   border-width: 11px 11px 0;
 }
 .popover > .triangle.bottom {
@@ -8551,7 +8579,7 @@ button.t3-button.t3-connection-status-down {
 .popover > .triangle.bottom:after {
   top: -1px;
   left: -11px;
-  border-bottom-color: rgba(0, 0, 0, 0.25);
+  border-bottom-color: rgba(255, 255, 255, 0.25);
   border-width: 0 11px 11px;
 }
 .popover > .triangle.left {
@@ -8581,7 +8609,7 @@ button.t3-button.t3-connection-status-down {
   border-width: 11px 11px 11px 0;
 }
 .popover > .content {
-  background-color: #fff;
+  background-color: white;
   width: 100%;
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
@@ -8600,8 +8628,8 @@ button.t3-button.t3-connection-status-down {
   padding: 8px 10px;
   margin-bottom: 0;
   text-align: right;
-  background-color: #f5f5f5;
-  border-top: 1px solid #ddd;
+  background-color: #F5F5F5;
+  border-top: 1px solid #DDDDDD;
   -webkit-border-radius: 0 0 6px 6px;
   -moz-border-radius: 0 0 6px 6px;
   -ms-border-radius: 0 0 6px 6px;
@@ -8627,10 +8655,38 @@ button.t3-button.t3-connection-status-down {
 }
 
 .ui-tabs .ui-tabs-nav li.ui-state-hover {
-  border-top: 1px solid #ffffff;
+  border-color: #303030;
+  border-top: 1px solid white;
+  background: #303030;
+}
+.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+  color: #AAAAAA;
 }
 .ui-tabs .ui-tabs-nav li.ui-state-active {
   border-top: 1px solid #ff8700;
+  background: #373737;
+}
+.ui-tabs .ui-tabs-nav li.ui-state-active a {
+  color: white;
+}
+
+.t3-ui.popover.t3-new-contentelement-popover .content {
+  background: transparent;
+}
+.t3-ui.popover.t3-new-contentelement-popover .content .ui-tabs-nav {
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-right-radius: 6px;
+  border-top-right-radius: 6px;
+  -moz-border-radius-topleft: 6px;
+  -webkit-border-top-left-radius: 6px;
+  border-top-left-radius: 6px;
+}
+.t3-ui.popover.t3-new-contentelement-popover .content .ui-corner-all {
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  border-radius: 6px;
 }
 
 .t3-backend .notice-wrap {
@@ -8649,7 +8705,7 @@ body .t3-pageloader-wrapper {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff;
+  background-color: white;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   opacity: 0;
   z-index: 10001;
