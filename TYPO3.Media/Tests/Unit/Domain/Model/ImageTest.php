@@ -23,11 +23,6 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $image;
 
 	/**
-	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
-	 */
-	protected $mockImageRepository;
-
-	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -44,8 +39,6 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->will($this->returnValue($mockResourcePointer));
 
 		$this->image = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Image', array('initialize'), array('resource' => $mockResource));
-		$this->mockImageRepository = $this->getMock('TYPO3\Media\Domain\Repository\ImageRepository');
-		$this->image->_set('imageRepository', $this->mockImageRepository);
 	}
 
 	/**
@@ -155,14 +148,6 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function createImageVariantPersistsTheUpdatedImage() {
-		$this->mockImageRepository->expects($this->once())->method('update')->with($this->image);
-		$this->image->createImageVariant(array('dummy'));
-	}
-
-	/**
-	 * @test
-	 */
 	public function removingImageVariantsWorks() {
 		$firstVariant = $this->image->createImageVariant(array('dummy'));
 		$secondVariant = $this->image->createImageVariant(array('foo'));
@@ -176,15 +161,6 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$remainingVariant = reset($remainingVariants);
 		$this->assertSame($remainingVariant, $firstVariant);
-	}
-
-	/**
-	 * @test
-	 */
-	public function removeImageVariantPersistsTheUpdatedImage() {
-		$variant = $this->image->createImageVariant(array('dummy'));
-		$this->mockImageRepository->expects($this->once())->method('update')->with($this->image);
-		$this->image->removeImageVariant($variant);
 	}
 
 

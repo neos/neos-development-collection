@@ -23,14 +23,6 @@ use TYPO3\Flow\Annotations as Flow;
 class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
-	 * The image repository is injected so that the image can persist itself when new ImageVariant is added
-	 *
-	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
-	 * @Flow\Inject
-	 */
-	protected $imageRepository;
-
-	/**
 	 * @var string
 	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
@@ -247,7 +239,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * width/height of the original image is used
 	 *
 	 * Note: The image variant that will be created is intentionally not added to the imageVariants collection of this image
-	 * If you want to create a persisted image variant, use createImageVariant() instead.
+	 * If you want to create a persisted image variant, use createImageVariant() instead
 	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
@@ -297,6 +289,8 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * variant can later be retrieved via getImageVariantByAlias()
 	 * An alias could, for example, be "thumbnail", "small", "micro", "face-emphasized" etc.
 	 *
+	 * NOTE: If you want the new image variant to be persisted, make sure to update the image with ImageRepository::update()
+	 *
 	 * @param array $processingInstructions
 	 * @param string $alias An optional alias name to allow easier retrieving of a previously created image variant
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
@@ -306,12 +300,13 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 		// FIXME we currently need a unique hash because $this->imageVariants has to be an array in order to be serialized by Doctrine
 		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($alias ?: serialize($processingInstructions)));
 		$this->imageVariants[$uniqueHash] = $imageVariant;
-		$this->imageRepository->update($this);
 		return $imageVariant;
 	}
 
 	/**
 	 * Remove the given variant from this image.
+	 *
+	 * NOTE: If you want to remove the image variant from persistence, make sure to update the image with ImageRepository::update()
 	 *
 	 * @param \TYPO3\Media\Domain\Model\ImageVariant $imageVariant
 	 * @return void
@@ -321,7 +316,6 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($imageVariant->getAlias() ?: serialize($imageVariant->getProcessingInstructions())));
 		if (isset($this->imageVariants[$uniqueHash])) {
 			unset($this->imageVariants[$uniqueHash]);
-			$this->imageRepository->update($this);
 		}
 	}
 
