@@ -50,7 +50,9 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 		$this->mockResourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher');
 		$this->viewHelper->_set('resourcePublisher', $this->mockResourcePublisher);
-		$this->mockImage = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
+		$this->mockImage = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
+		$this->mockImage->expects($this->any())->method('getWidth')->will($this->returnValue(100));
+		$this->mockImage->expects($this->any())->method('getHeight')->will($this->returnValue(100));
 		$this->mockThumbnail = $this->getMockBuilder('TYPO3\Media\Domain\Model\ImageVariant')->disableOriginalConstructor()->getMock();
 	}
 
@@ -58,24 +60,23 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function ratioModeDefaultsToInset() {
-		$this->mockImage->expects($this->once())->method('getThumbnail')->with(NULL, NULL, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
-		$this->viewHelper->render($this->mockImage);
+		$this->mockImage->expects($this->once())->method('getThumbnail')->with(50, 100, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
+		$this->viewHelper->render($this->mockImage, 50);
 	}
 
 	/**
 	 * @test
 	 */
 	public function ratioModeIsOutboundIfAllowCroppingIsTrue() {
-		$this->mockImage->expects($this->once())->method('getThumbnail')->with(NULL, NULL, \TYPO3\Media\Domain\Model\Image::RATIOMODE_OUTBOUND)->will($this->returnValue($this->mockThumbnail));
-		$this->viewHelper->render($this->mockImage, NULL, NULL, TRUE);
+		$this->mockImage->expects($this->once())->method('getThumbnail')->with(50, 100, \TYPO3\Media\Domain\Model\Image::RATIOMODE_OUTBOUND)->will($this->returnValue($this->mockThumbnail));
+		$this->viewHelper->render($this->mockImage, 50, NULL, TRUE);
 	}
 
 	/**
 	 * @test
 	 */
 	public function thumbnailWidthDoesNotExceedImageWithByDefault() {
-		$this->mockImage->expects($this->atLeastOnce())->method('getWidth')->will($this->returnValue(123));
-		$this->mockImage->expects($this->once())->method('getThumbnail')->with(123, NULL, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
+		$this->mockImage->expects($this->never())->method('getThumbnail');
 		$this->viewHelper->render($this->mockImage, 456, NULL);
 	}
 
@@ -83,8 +84,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function thumbnailHeightDoesNotExceedImageHeightByDefault() {
-		$this->mockImage->expects($this->atLeastOnce())->method('getHeight')->will($this->returnValue(123));
-		$this->mockImage->expects($this->once())->method('getThumbnail')->with(NULL, 123, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
+		$this->mockImage->expects($this->never())->method('getThumbnail');
 		$this->viewHelper->render($this->mockImage, NULL, 123);
 	}
 
@@ -92,8 +92,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function thumbnailWidthMightExceedImageWithIfAllowUpScalingIsTrue() {
-		$this->mockImage->expects($this->any())->method('getWidth')->will($this->returnValue(123));
-		$this->mockImage->expects($this->once())->method('getThumbnail')->with(456, NULL, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
+		$this->mockImage->expects($this->once())->method('getThumbnail')->with(456, 100, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
 		$this->viewHelper->render($this->mockImage, 456, NULL, FALSE, TRUE);
 	}
 
@@ -101,8 +100,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function thumbnailHeightMightExceedImageHeightIfAllowUpScalingIsTrue() {
-		$this->mockImage->expects($this->any())->method('getHeight')->will($this->returnValue(123));
-		$this->mockImage->expects($this->once())->method('getThumbnail')->with(NULL, 456, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
+		$this->mockImage->expects($this->once())->method('getThumbnail')->with(100, 456, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
 		$this->viewHelper->render($this->mockImage, NULL, 456, FALSE, TRUE);
 	}
 }
