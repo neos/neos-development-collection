@@ -2,7 +2,7 @@
 <div class="widget {f:if(condition: '{submoduleConfiguration.actions}', then: 'has-footer')}">
 	<div class="widget-header">
 		<f:if condition="{submoduleConfiguration.icon}">
-			<img src="{f:uri.resource(uri: submoduleConfiguration.icon)}" class="pull-right" />
+			<img src="{f:uri.resource(path: submoduleConfiguration.icon)}" class="pull-right" />
 		</f:if>
 		<h3>
 			<t:link.module path="{moduleConfiguration.path}/{submoduleIdentifier}">
