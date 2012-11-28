@@ -1,0 +1,32 @@
+<div class="row t3-module-container">
+	<fieldset class="span12">
+		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
+		<div class="control-group">
+			<label class="control-label" for="host-pattern">Host pattern</label>
+			<div class="controls">
+				<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host-pattern" />
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="active">Activated</label>
+			<div class="controls">
+				<label class="radio inline">
+					<f:form.radio property="active" value="1" id="active" />
+					Yes
+				</label>
+				<label class="radio inline">
+					<f:form.radio property="active" value="0" checked="{f:if(condition: domain.active, else: 'checked')}" />
+					No
+				</label>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<div class="form-actions form-footer">
+	<div class="pull-left">
+		<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="btn t3-button">Cancel</f:link.action>
+	</div>
+	<div class="pull-right">
+		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save')}" class="btn btn-primary t3-button" />
+	</div>
+</div>

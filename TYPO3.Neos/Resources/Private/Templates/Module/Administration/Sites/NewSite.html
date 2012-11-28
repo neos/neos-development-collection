@@ -1,0 +1,56 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<f:form action="createSite">
+		<div class="t3-module-container indented">
+			<div class="row-fluid">
+				<div class="span6">
+					<legend>Import a site</legend>
+					<f:if condition="{sitePackages -> f:count()} > 0">
+						<f:then>
+							<div class="control-group">
+								<label class="control-label" for="site">Select a site</label>
+								<div class="controls">
+									<f:form.select name="site" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" />
+								</div>
+							</div>
+						</f:then>
+						<f:else>
+							<div class="alert alert-warning">No site packages were available, make sure you have an active site package</div>
+						</f:else>
+					</f:if>
+				</div>
+				<div class="span6">
+					<f:if condition="{generatorServiceIsAvailable}">
+						<f:then>
+							<legend>Create a blank site</legend>
+							<div class="control-group">
+								<label class="control-label" for="package-key">Package Name (in form "Vendor.MyPackageName")</label>
+								<div class="controls">
+									<f:form.textfield name="packageKey" value="{packageKey}" id="package-key" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="site-name">Site Name</label>
+								<div class="controls">
+									<f:form.textfield name="siteName" value="{siteName}" id="site-name" />
+								</div>
+							</div>
+						</f:then>
+						<f:else>
+							<div class="alert alert-warning">The Site Kickstarter package is not installed, install it for kickstarting new sites</div>
+						</f:else>
+					</f:if>
+				</div>
+			</div>
+		</div>
+		<div class="form-actions form-footer">
+			<div class="pull-left">
+				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
+			</div>
+			<div class="pull-right">
+				<f:form.submit value="Create" class="btn btn-primary t3-button" />
+			</div>
+		</div>
+	</f:form>
+</f:section>

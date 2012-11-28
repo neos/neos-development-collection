@@ -24,7 +24,10 @@ class Domain  {
 
 	/**
 	 * @var string
+	 * @Flow\Identity
+	 * @Flow\Validate(type="NotEmpty")
 	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @Flow\Validate(type="\TYPO3\Neos\Validation\Validator\HostnameValidator", options={"ignoredHostnames"="localhost"})
 	 */
 	protected $hostPattern = '*';
 
@@ -34,6 +37,13 @@ class Domain  {
 	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $site;
+
+	/**
+	 * If domain is active
+	 *
+	 * @var boolean
+	 */
+	protected $active = FALSE;
 
 	/**
 	 * Sets the pattern for the host of the domain
@@ -76,5 +86,27 @@ class Domain  {
 	public function getSite() {
 		return $this->site;
 	}
+
+	/**
+	 * Sets if the domain is active
+	 *
+	 * @param boolean $active If the domain is active
+	 * @return void
+	 * @api
+	 */
+	public function setActive($active) {
+		$this->active = $active;
+	}
+
+	/**
+	 * Returns if the domain is active
+	 *
+	 * @return boolean If active or not
+	 * @api
+	 */
+	public function getActive() {
+		return $this->active;
+	}
+
 }
 ?>

@@ -119,7 +119,9 @@ class SiteImportService {
 			} else {
 				$this->siteRepository->update($site);
 			}
-			$site->setName((string)$siteXml->properties->name);
+			if ((string)$siteXml->properties->name !== '') {
+				$site->setName((string)$siteXml->properties->name);
+			}
 			$site->setState((integer)$siteXml->properties->state);
 
 			$siteResourcesPackageKey = (string)$siteXml->properties->siteResourcesPackageKey;

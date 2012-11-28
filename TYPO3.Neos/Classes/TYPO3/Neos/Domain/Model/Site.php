@@ -23,7 +23,7 @@ use TYPO3\Flow\Annotations as Flow;
 class Site {
 
 	/**
-	 * Site statusses
+	 * Site states
 	 */
 	const STATE_ONLINE = 1;
 	const STATE_OFFLINE = 2;
@@ -33,6 +33,7 @@ class Site {
 	 *
 	 * @var string
 	 * @Flow\Validate(type="Label")
+	 * @Flow\Validate(type="NotEmpty")
 	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
 	 */
 	protected $name = 'Untitled Site';
@@ -45,18 +46,23 @@ class Site {
 	 *
 	 * @var string
 	 * @Flow\Identity
+	 * @Flow\Validate(type="NotEmpty")
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
+	 * @Flow\Validate(type="\TYPO3\Neos\Validation\Validator\NodeNameValidator")
 	 */
 	protected $nodeName;
 
 	/**
 	 * The site's state
+	 *
 	 * @var integer
 	 * @Flow\Validate(type="NumberRange", options={ "minimum"=1, "maximum"=2 })
 	 */
-	protected $state = self::STATE_ONLINE;
+	protected $state = self::STATE_OFFLINE;
 
 	/**
 	 * @var string
+	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $siteResourcesPackageKey;
 
@@ -103,6 +109,17 @@ class Site {
 	}
 
 	/**
+	 * Sets the node name for this site
+	 *
+	 * @param string $nodeName The site node name
+	 * @return void
+	 * @api
+	 */
+	public function setNodeName($nodeName) {
+		$this->nodeName = $nodeName;
+	}
+
+	/**
 	 * Sets the state for this site
 	 *
 	 * @param integer $state The site's state, must be one of the STATUS_* constants
@@ -142,6 +159,22 @@ class Site {
 	 */
 	public function getSiteResourcesPackageKey() {
 		return $this->siteResourcesPackageKey;
+	}
+
+	/**
+	 * @return boolean
+	 * @api
+	 */
+	public function isOnline() {
+		return $this->state === self::STATE_ONLINE;
+	}
+
+	/**
+	 * @return boolean
+	 * @api
+	 */
+	public function isOffline() {
+		return $this->state === self::STATE_OFFLINE;
 	}
 
 }
