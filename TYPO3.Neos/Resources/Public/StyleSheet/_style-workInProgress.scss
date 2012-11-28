@@ -468,14 +468,27 @@ button.t3-button.t3-connection-status-down {
 		.btn-toolbar {
 			text-align:right !important;
 			margin-top: 0;
+			position: relative;
+
 			.btn {
 					// We use a high z-index for the buttons to make them always visible
 				z-index: 10000;
 			}
 
-			.btn-group button:nth-child(2) {
-				@include border-top-left-radius(4px);
-				@include border-bottom-left-radius(4px);
+			.btn-group {
+				position: absolute;
+				right: -7px;
+				top: -29px;
+				border: 3px solid $orange;
+				border-bottom: 0px;
+				background: $orange;
+				@include border-top-left-radius(6px);
+				@include border-top-right-radius(6px);
+
+				button:nth-child(2) {
+					@include border-top-left-radius(4px);
+					@include border-bottom-left-radius(4px);
+				}
 			}
 		}
 	}
@@ -484,7 +497,7 @@ button.t3-button.t3-connection-status-down {
 // We need to render the active content element seperately; as this might match
 // Sections and content elements.
 .t3-contentelement-active {
-	outline: 3px solid rgba(247,144,37,0.8) !important;
+	outline: 3px solid $orange !important;
 	outline-offset: 4px;
 
 	> .t3-contentelement-handle-container {
@@ -641,6 +654,9 @@ button.t3-button.t3-connection-status-down {
 
 // Hallo toolbar
 .t3-ui.hallotoolbar {
+	// Hack until the hallo toolbar and handlebar JS are used correctly and won't lay over each other
+	width: auto !important;
+
 	.t3-button {
 		width: 28px;
 		height: 23px;
@@ -722,6 +738,8 @@ button.t3-button.t3-connection-status-down {
 		padding: 0px;
 		color: $lightest;
 		cursor: default;
+		background: transparent;
+		border: 0px;
 
 		.icon-ok {
 			color: #69A550;

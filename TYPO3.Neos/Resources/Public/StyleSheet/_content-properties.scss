@@ -84,3 +84,19 @@
 }
 
 // HTML editor - end
+
+// Add new content popover //
+.t3-ui {
+	.t3-content-new-selecttype-button {
+		margin: 5px 0px;
+
+		a {
+			&:hover,
+			&:focus,
+			&:active {
+				color: $lightest;
+				cursor: pointer;
+			}
+		}
+	}
+}

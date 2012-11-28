@@ -19,13 +19,14 @@
 			preventTop: false,		// pass true to prevent top popover
 			preventBottom: false,	// pass true to prevent bottom popover
 			// TYPO3 SPECIFIC FIX START
-			positioning: 'fixed'
+			positioning: 'fixed',
+			additionalClasses: ''
 			// TYPO3 SPECIFIC FIX STOP
 		}, options || {});
 
 		// HTML popover
 		// TYPO3 SPECIFIC FIX START, original line didn't check for empty settings.id
-		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? id = "' + settings.id + '" : '') + '>'
+		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? ' id="' + settings.id + '"' : '') + '>'
 			+ '<div class="triangle"></div>'
 			+ '<div class="header"></div>'
 			+ '<div class="content"></div>'
@@ -35,6 +36,7 @@
 
 		// TYPO3 SPECIFIC FIX START
 		settings.popover$.addClass('t3-ui');
+		settings.popover$.addClass(settings.additionalClasses);
 
 		if ($('.header', settings.popover$).html() === '') {
 			$('.header', settings.popover$).detach();
