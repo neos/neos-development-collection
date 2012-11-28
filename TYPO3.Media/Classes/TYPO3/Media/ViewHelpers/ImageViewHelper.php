@@ -12,6 +12,7 @@ namespace TYPO3\Media\ViewHelpers;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
  * Renders an <img> HTML tag from a given TYPO3.Media's Image instance
@@ -92,7 +93,7 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 	/**
 	 * Renders an HTML tag from a given image.
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Image $image If specified, this resource object is used instead of the path and package information
+	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image If specified, this resource object is used instead of the path and package information
 	 * @param integer $maximumWidth Desired maximum height of the image
 	 * @param integer $maximumHeight Desired maximum width of the image
 	 * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
@@ -100,23 +101,43 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 	 *
 	 * @return string an <img...> html tag
 	 */
-	public function render(\TYPO3\Media\Domain\Model\Image $image = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		$ratioMode = ($allowCropping ? \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_OUTBOUND : \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_INSET);
-		if ($allowUpScaling !== TRUE && $maximumWidth > $image->getWidth()) {
-			$maximumWidth = $image->getWidth();
-		}
-		if ($allowUpScaling !== TRUE && $maximumHeight > $image->getHeight()) {
-			$maximumHeight = $image->getHeight();
-		}
-		$thumbnailImageVariant = $image->getThumbnail($maximumWidth, $maximumHeight, $ratioMode);
+	public function render(ImageInterface $image = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
+		$thumbnailImage = $this->getThumbnailImage($image, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
 
 		$this->tag->addAttributes(array(
-			'width' => $thumbnailImageVariant->getWidth(),
-			'height' => $thumbnailImageVariant->getHeight(),
-			'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImageVariant->getResource()),
+			'width' => $thumbnailImage->getWidth(),
+			'height' => $thumbnailImage->getHeight(),
+			'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource()),
 		));
 
 		return $this->tag->render();
+	}
+
+	/**
+	 * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new dimensions
+	 * differ from the specified image dimensions, otherwise the original image is returned.
+	 *
+	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image
+	 * @param integer $maximumWidth
+	 * @param integer $maximumHeight
+	 * @param boolean $allowCropping
+	 * @param boolean $allowUpScaling
+	 * @return \TYPO3\Media\Domain\Model\ImageInterface
+	 *
+	 * TODO move code to trait in order to avoid duplication with uri.image ViewHelper
+	 */
+	protected function getThumbnailImage(ImageInterface $image, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling) {
+		$ratioMode = ($allowCropping ? ImageInterface::RATIOMODE_OUTBOUND : ImageInterface::RATIOMODE_INSET);
+		if ($maximumWidth === NULL || ($allowUpScaling !== TRUE && $maximumWidth > $image->getWidth())) {
+			$maximumWidth = $image->getWidth();
+		}
+		if ($maximumHeight === NULL || ($allowUpScaling !== TRUE && $maximumHeight > $image->getHeight())) {
+			$maximumHeight = $image->getHeight();
+		}
+		if ($maximumWidth === $image->getWidth() && $maximumHeight === $image->getHeight()) {
+			return $image;
+		}
+		return $image->getThumbnail($maximumWidth, $maximumHeight, $ratioMode);
 	}
 
 }
