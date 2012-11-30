@@ -97,24 +97,24 @@ var VIE = root.VIE = function(config) {
     this.Entity.prototype.entities = this.entities;
     this.Entity.prototype.entityCollection = this.Collection;
     this.Entity.prototype.vie = this;
-    
+
     this.Namespaces.prototype.vie = this;
 // ### Namespaces in VIE
 // VIE supports different ontologies and an easy use of them.
 // Namespace prefixes reduce the amount of code you have to
 // write. In VIE, it does not matter if you access an entitie's
-// property with 
-// `entity.get('<http://dbpedia.org/property/capitalOf>')` or 
-// `entity.get('dbprop:capitalOf')` or even 
+// property with
+// `entity.get('<http://dbpedia.org/property/capitalOf>')` or
+// `entity.get('dbprop:capitalOf')` or even
 // `entity.get('capitalOf')` once the corresponding namespace
 // is registered as *baseNamespace*.
 // By default `"http://viejs.org/ns/"`is set as base namespace.
 // For more information about how to set, get and list all
-// registered namespaces, refer to the 
+// registered namespaces, refer to the
 // <a href="Namespace.html">Namespaces documentation</a>.
     this.namespaces = new this.Namespaces(
         (this.config.baseNamespace) ? this.config.baseNamespace : "http://viejs.org/ns/",
-        
+
 // By default, VIE is shipped with common namespace prefixes:
 
 // +    owl    : "http://www.w3.org/2002/07/owl#"
@@ -157,7 +157,7 @@ var VIE = root.VIE = function(config) {
 // this information, to easily ask, whether an entity
 // is of type, e.g., *foaf:Person* or *schema:Place*.
 // For more information about how to generate such a type
-// hierarchy, refer to the 
+// hierarchy, refer to the
 // <a href="Type.html">Types documentation</a>.
     this.types = new this.Types();
 // By default, there is a parent type in VIE, called
@@ -184,16 +184,16 @@ var VIE = root.VIE = function(config) {
 };
 
 // ### use(service, name)
-// This method registers services within VIE.  
-// **Parameters**:  
-// *{string|object}* **service** The service to be registered.  
+// This method registers services within VIE.
+// **Parameters**:
+// *{string|object}* **service** The service to be registered.
 // *{string}* **name** An optional name to register the service with. If this
-// is not set, the default name that comes with the service is taken.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE}* : The current VIE instance.  
-// **Example usage**:  
+// is not set, the default name that comes with the service is taken.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE}* : The current VIE instance.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     var conf1 = {...};
@@ -212,20 +212,20 @@ VIE.prototype.use = function(service, name) {
       service.init();
   }
   this.services[service.name] = service;
-  
+
   return this;
 };
 
 // ### service(name)
 // This method returns the service object that is
-// registered under the given name.  
-// **Parameters**:  
-// *{string}* **name** ...  
-// **Throws**:  
-// *{Error}* if no service could be found.  
-// **Returns**:  
-// *{object}* : The service to be queried.  
-// **Example usage**:  
+// registered under the given name.
+// **Parameters**:
+// *{string}* **name** ...
+// **Throws**:
+// *{Error}* if no service could be found.
+// **Returns**:
+// *{object}* : The service to be queried.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -252,14 +252,14 @@ VIE.prototype.hasService = function(name) {
 };
 
 // ### getServicesArray()
-// This method returns an array of all registered services.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{array}* : An array of service instances.  
-// **Example usage**:  
+// This method returns an array of all registered services.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{array}* : An array of service instances.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -271,14 +271,14 @@ VIE.prototype.getServicesArray = function() {
 
 // ### load(options)
 // This method instantiates a new VIE.Loadable in order to
-// perform queries on the services.  
-// **Parameters**:  
-// *{object}* **options** Options to be set.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Loadable}* : A new instance of VIE.Loadable.  
-// **Example usage**:  
+// perform queries on the services.
+// **Parameters**:
+// *{object}* **options** Options to be set.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Loadable}* : A new instance of VIE.Loadable.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -291,14 +291,14 @@ VIE.prototype.load = function(options) {
 
 // ### save(options)
 // This method instantiates a new VIE.Savable in order to
-// perform queries on the services.  
-// **Parameters**:  
-// *{object}* **options** Options to be set.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Savable}* : A new instance of VIE.Savable.  
-// **Example usage**:  
+// perform queries on the services.
+// **Parameters**:
+// *{object}* **options** Options to be set.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Savable}* : A new instance of VIE.Savable.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -311,14 +311,14 @@ VIE.prototype.save = function(options) {
 
 // ### remove(options)
 // This method instantiates a new VIE.Removable in order to
-// perform queries on the services.  
-// **Parameters**:  
-// *{object}* **options** Options to be set.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Removable}* : A new instance of VIE.Removable.  
-// **Example usage**:  
+// perform queries on the services.
+// **Parameters**:
+// *{object}* **options** Options to be set.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Removable}* : A new instance of VIE.Removable.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -331,14 +331,14 @@ VIE.prototype.remove = function(options) {
 
 // ### analyze(options)
 // This method instantiates a new VIE.Analyzable in order to
-// perform queries on the services.  
-// **Parameters**:  
-// *{object}* **options** Options to be set.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Analyzable}* : A new instance of VIE.Analyzable.  
-// **Example usage**:  
+// perform queries on the services.
+// **Parameters**:
+// *{object}* **options** Options to be set.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Analyzable}* : A new instance of VIE.Analyzable.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -351,14 +351,14 @@ VIE.prototype.analyze = function(options) {
 
 // ### find(options)
 // This method instantiates a new VIE.Findable in order to
-// perform queries on the services.  
-// **Parameters**:  
-// *{object}* **options** Options to be set.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Findable}* : A new instance of VIE.Findable.  
-// **Example usage**:  
+// perform queries on the services.
+// **Parameters**:
+// *{object}* **options** Options to be set.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Findable}* : A new instance of VIE.Findable.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.use(new vie.StanbolService(), "stanbol");
@@ -376,19 +376,19 @@ VIE.prototype.find = function(options) {
 // (Currently, this supports only the JSON format!!)
 // As this method works asynchronously, you might want
 // to register `success` and `error` callbacks via the
-// options.  
-// **Parameters**:  
-// *{string}* **url** The url, pointing to the schema to import.  
+// options.
+// **Parameters**:
+// *{string}* **url** The url, pointing to the schema to import.
 // *{object}* **options** Options to be set.
-// (Set ```success``` and ```error``` as callbacks.).  
-// **Throws**:  
-// *{Error}* if the url is not set.  
-// **Returns**:  
-// *{VIE}* : The VIE instance itself.  
-// **Example usage**:  
+// (Set ```success``` and ```error``` as callbacks.).
+// **Throws**:
+// *{Error}* if the url is not set.
+// **Returns**:
+// *{VIE}* : The VIE instance itself.
+// **Example usage**:
 //
 //     var vie = new VIE();
-//     vie.loadSchema("http://schema.rdfs.org/all.json", 
+//     vie.loadSchema("http://schema.rdfs.org/all.json",
 //        {
 //          baseNS : "http://schema.org/",
 //          success : function () {console.log("success");},
@@ -396,7 +396,7 @@ VIE.prototype.find = function(options) {
 //        });
 VIE.prototype.loadSchema = function(url, options) {
     options = (!options)? {} : options;
-    
+
     if (!url) {
         throw new Error("Please provide a proper URL");
     }
@@ -414,26 +414,26 @@ VIE.prototype.loadSchema = function(url, options) {
                 return;
             }
          })
-        .error(function(data, textStatus, jqXHR) { 
+        .error(function(data, textStatus, jqXHR) {
             if (options.error) {
                 console.warn(data, textStatus, jqXHR);
                 options.error.call(vie, "Could not load schema from URL (" + url + ")");
             }
          });
     }
-    
+
     return this;
 };
 
 // ### getTypedEntityClass(type)
-// This method generates a special type of `Entity` based on the given type.  
-// **Parameters**:  
-// *{string}* **type** The type.  
-// **Throws**:  
-// *{Error}* if the type is unknown to VIE.  
-// **Returns**:  
-// *{VIE.Entity}* : A subclass of `VIE.Entity`.  
-// **Example usage**:  
+// This method generates a special type of `Entity` based on the given type.
+// **Parameters**:
+// *{string}* **type** The type.
+// **Throws**:
+// *{Error}* if the type is unknown to VIE.
+// **Returns**:
+// *{VIE.Entity}* : A subclass of `VIE.Entity`.
+// **Example usage**:
 //
 //     var vie = new VIE();
 //     vie.types.add("Person");
@@ -495,7 +495,7 @@ if (typeof exports === 'object') {
 // ## VIE.Able
 // VIE implements asynchronius service methods through
 // [jQuery.Deferred](http://api.jquery.com/category/deferred-object/) objects.
-// Loadable, Analysable, Savable, etc. are part of the VIE service API and 
+// Loadable, Analysable, Savable, etc. are part of the VIE service API and
 // are implemented with the generic VIE.Able class.
 // Example:
 //
@@ -504,7 +504,7 @@ if (typeof exports === 'object') {
 //      };
 //      VIE.prototype.Loadable.prototype = new VIE.prototype.Able();
 //
-// This defines 
+// This defines
 //
 //     someVIEService.load(options)
 //     .using(...)
@@ -516,13 +516,13 @@ if (typeof exports === 'object') {
 
 // ### VIE.Able()
 // This is the constructor of a VIE.Able. This should not be called
-// globally but using the inherited classes below.  
-// **Parameters**: 
-// *nothing*  
-// **Throws**: 
-// *nothing*  
-// **Returns**: 
-// *{VIE.Able}* : A **new** VIE.Able object. 
+// globally but using the inherited classes below.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Able}* : A **new** VIE.Able object.
 // Example:
 //
 //      VIE.prototype.Loadable = function (options) {
@@ -533,14 +533,14 @@ VIE.prototype.Able = function(){
 
 // ### init(options, methodName)
 // Internal method, called during initialization.
-// **Parameters**:  
+// **Parameters**:
 // *{object}* **options** the *able* options coming from the API call
 // *{string}* **methodName** the service method called on `.execute`.
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Able}* : The current instance.  
-// **Example usage**:  
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Able}* : The current instance.
+// **Example usage**:
 //
 //      VIE.prototype.Loadable = function (options) {
 //          this.init(options,"load");
@@ -557,7 +557,7 @@ VIE.prototype.Able = function(){
         this.deferred = jQuery.Deferred();
 
 // In order to get more information and documentation about the passed-through
-// deferred methods and their synonyms, please see the documentation of 
+// deferred methods and their synonyms, please see the documentation of
 // the [jQuery.Deferred object](http://api.jquery.com/category/deferred-object/)
         /* Public deferred-methods */
         this.resolve = this.deferred.resolve;
@@ -576,14 +576,14 @@ VIE.prototype.Able = function(){
 
 
 // ### using(services)
-// This method registers services with the current able instance.  
-// **Parameters**:  
-// *{string|array}* **services** An id of a service or an array of strings.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Able}* : The current instance.  
-// **Example usage**:  
+// This method registers services with the current able instance.
+// **Parameters**:
+// *{string|array}* **services** An id of a service or an array of strings.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Able}* : The current instance.
+// **Example usage**:
 //
 //     var loadable = vie.load({id: "http://example.com/entity/1234"});
 //     able.using("myService");
@@ -596,16 +596,16 @@ VIE.prototype.Able = function(){
         });
         return this;
     };
-    
+
 // ### execute()
-// This method runs the actual method on all registered services.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing* ...   
-// **Returns**:  
-// *{VIE.Able}* : The current instance.  
-// **Example usage**:  
+// This method runs the actual method on all registered services.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing* ...
+// **Returns**:
+// *{VIE.Able}* : The current instance.
+// **Example usage**:
 //
 //     var able = new vie.Able().init();
 //     able.using("stanbol")
@@ -673,27 +673,27 @@ VIE.prototype.Findable.prototype = new VIE.prototype.Able();
 
 // ## VIE Utils
 //
-// The here-listed methods are utility methods for the day-to-day 
+// The here-listed methods are utility methods for the day-to-day
 // VIE.js usage. All methods are within the static namespace ```VIE.Util```.
 VIE.Util = {
 
 // ### VIE.Util.toCurie(uri, safe, namespaces)
-// This method converts a given 
+// This method converts a given
 // URI into a CURIE (or SCURIE), based on the given ```VIE.Namespaces``` object.
 // If the given uri is already a URI, it is left untouched and directly returned.
-// If no prefix could be found, an ```Error``` is thrown.  
-// **Parameters**:  
-// *{string}* **uri** The URI to be transformed.  
-// *{boolean}* **safe** A flag whether to generate CURIEs or SCURIEs.  
-// *{VIE.Namespaces}* **namespaces** The namespaces to be used for the prefixes.  
-// **Throws**:  
-// *{Error}* If no prefix could be found in the passed namespaces.  
-// **Returns**:  
-// *{string}* The CURIE or SCURIE.  
-// **Example usage**: 
+// If no prefix could be found, an ```Error``` is thrown.
+// **Parameters**:
+// *{string}* **uri** The URI to be transformed.
+// *{boolean}* **safe** A flag whether to generate CURIEs or SCURIEs.
+// *{VIE.Namespaces}* **namespaces** The namespaces to be used for the prefixes.
+// **Throws**:
+// *{Error}* If no prefix could be found in the passed namespaces.
+// **Returns**:
+// *{string}* The CURIE or SCURIE.
+// **Example usage**:
 //
 //     var ns = new myVIE.Namespaces(
-//           "http://viejs.org/ns/", 
+//           "http://viejs.org/ns/",
 //           { "dbp": "http://dbpedia.org/ontology/" }
 //     );
 //     var uri = "<http://dbpedia.org/ontology/Person>";
@@ -710,7 +710,7 @@ VIE.Util = {
                 if (k === '') {
                     delim = '';
                 }
-                return ((safe)? "[" : "") + 
+                return ((safe)? "[" : "") +
                         uri.replace(pattern, k + delim).replace(/>$/, '') +
                         ((safe)? "]" : "");
             }
@@ -719,19 +719,19 @@ VIE.Util = {
     },
 
 // ### VIE.Util.isCurie(curie, namespaces)
-// This method checks, whether 
-// the given string is a CURIE and returns ```true``` if so and ```false```otherwise.  
-// **Parameters**:  
-// *{string}* **curie** The CURIE (or SCURIE) to be checked.  
-// *{VIE.Namespaces}* **namespaces** The namespaces to be used for the prefixes.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{boolean}* ```true``` if the given curie is a CURIE or SCURIE and ```false``` otherwise.  
-// **Example usage**: 
+// This method checks, whether
+// the given string is a CURIE and returns ```true``` if so and ```false```otherwise.
+// **Parameters**:
+// *{string}* **curie** The CURIE (or SCURIE) to be checked.
+// *{VIE.Namespaces}* **namespaces** The namespaces to be used for the prefixes.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{boolean}* ```true``` if the given curie is a CURIE or SCURIE and ```false``` otherwise.
+// **Example usage**:
 //
 //     var ns = new myVIE.Namespaces(
-//           "http://viejs.org/ns/", 
+//           "http://viejs.org/ns/",
 //           { "dbp": "http://dbpedia.org/ontology/" }
 //     );
 //     var uri = "<http://dbpedia.org/ontology/Person>";
@@ -756,24 +756,24 @@ VIE.Util = {
     },
 
 // ### VIE.Util.toUri(curie, namespaces)
-// This method converts a 
-// given CURIE (or save CURIE) into a URI, based on the given ```VIE.Namespaces``` object.  
-// **Parameters**:  
-// *{string}* **curie** The CURIE to be transformed.  
-// *{VIE.Namespaces}* **namespaces** The namespaces object  
-// **Throws**:  
-// *{Error}* If no URI could be assembled.  
-// **Returns**:  
-// *{string}* : A string, representing the URI.  
-// **Example usage**: 
+// This method converts a
+// given CURIE (or save CURIE) into a URI, based on the given ```VIE.Namespaces``` object.
+// **Parameters**:
+// *{string}* **curie** The CURIE to be transformed.
+// *{VIE.Namespaces}* **namespaces** The namespaces object
+// **Throws**:
+// *{Error}* If no URI could be assembled.
+// **Returns**:
+// *{string}* : A string, representing the URI.
+// **Example usage**:
 //
 //     var ns = new myVIE.Namespaces(
-//           "http://viejs.org/ns/", 
+//           "http://viejs.org/ns/",
 //           { "dbp": "http://dbpedia.org/ontology/" }
 //     );
 //     var curie = "dbp:Person";
 //     var scurie = "[dbp:Person]";
-//     VIE.Util.toUri(curie, ns); 
+//     VIE.Util.toUri(curie, ns);
 //          --> <http://dbpedia.org/ontology/Person>
 //     VIE.Util.toUri(scurie, ns);
 //          --> <http://dbpedia.org/ontology/Person>
@@ -794,16 +794,16 @@ VIE.Util = {
         }
         throw new Error("No prefix found for CURIE '" + curie + "'!");
     },
-    
+
 // ### VIE.Util.isUri(something)
-// This method checks, whether the given string is a URI.  
-// **Parameters**:  
-// *{string}* **something** : The string to be checked.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{boolean}* : ```true``` if the string is a URI, ```false``` otherwise.  
-// **Example usage**: 
+// This method checks, whether the given string is a URI.
+// **Parameters**:
+// *{string}* **something** : The string to be checked.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{boolean}* : ```true``` if the string is a URI, ```false``` otherwise.
+// **Example usage**:
 //
 //     var uri = "<http://dbpedia.org/ontology/Person>";
 //     var curie = "dbp:Person";
@@ -814,15 +814,15 @@ VIE.Util = {
     },
 
 // ### VIE.Util.mapAttributeNS(attr, ns)
-// This method maps an attribute of an entity into namespaces if they have CURIEs.  
-// **Parameters**:  
-// *{string}* **attr** : The attribute to be transformed.  
-// *{VIE.Namespaces}* **ns** : The namespaces.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{string}* : The transformed attribute's name.  
-// **Example usage**: 
+// This method maps an attribute of an entity into namespaces if they have CURIEs.
+// **Parameters**:
+// *{string}* **attr** : The attribute to be transformed.
+// *{VIE.Namespaces}* **ns** : The namespaces.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{string}* : The transformed attribute's name.
+// **Example usage**:
 //
 //      var attr = "name";
 //      var ns = myVIE.namespaces;
@@ -842,16 +842,16 @@ VIE.Util = {
         }
         return a;
     },
-    
+
 // ### VIE.Util.rdf2Entities(service, results)
 // This method converts *rdf/json* data from an external service
-// into VIE.Entities.  
-// **Parameters**:  
-// *{object}* **service** The service that retrieved the data.  
-// *{object}* **results** The data to be transformed.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
+// into VIE.Entities.
+// **Parameters**:
+// *{object}* **service** The service that retrieved the data.
+// *{object}* **results** The data to be transformed.
+// **Throws**:
+// *nothing*
+// **Returns**:
 // *{[VIE.Entity]}* : An array, containing VIE.Entity instances which have been transformed from the given data.
     rdf2Entities: function (service, results) {
         if (typeof jQuery.rdf !== 'function') {
@@ -859,10 +859,10 @@ VIE.Util = {
             return VIE.Util._rdf2EntitiesNoRdfQuery(service, results);
         }
         try {
-            var rdf = (results instanceof jQuery.rdf)? 
-                    results.base(service.vie.namespaces.base()) : 
+            var rdf = (results instanceof jQuery.rdf)?
+                    results.base(service.vie.namespaces.base()) :
                         jQuery.rdf().base(service.vie.namespaces.base()).load(results, {});
-    
+
             /* if the service contains rules to apply special transformation, they are executed here.*/
             if (service.rules) {
                 var rules = jQuery.rdf.ruleset();
@@ -889,7 +889,7 @@ VIE.Util = {
                 }
                 var propertyUri = this.property.toString();
                 var propertyCurie;
-    
+
                 try {
                     propertyCurie = service.vie.namespaces.curie(propertyUri);
                     //jQuery.createCurie(propertyUri, {namespaces: service.vie.namespaces.toObj(true)});
@@ -922,7 +922,7 @@ VIE.Util = {
                 }
                 entities[subject][propertyCurie].push(getValue(this.object));
             });
-    
+
             _(entities).each(function(ent){
                 ent["@type"] = ent["@type"].concat(ent["rdf:type"]);
                 delete ent["rdf:type"];
@@ -932,7 +932,7 @@ VIE.Util = {
                     }
                 });
             });
-    
+
             var vieEntities = [];
             jQuery.each(entities, function() {
                 var entityInstance = new service.vie.Entity(this);
@@ -965,8 +965,8 @@ VIE.Util = {
           if (typeof property === "string" && entity.get(property)) {
             labelArr = _.flatten([entity.get(property)]);
             _(labelArr).each(function(label) {
-              /* 
-              The score is a natural number with 0 for the 
+              /*
+              The score is a natural number with 0 for the
               best candidate with the first preferred language
               and first preferred property
               */
@@ -974,7 +974,7 @@ VIE.Util = {
               score = p;
               labelLang = label["@language"];
               /*
-                                      legacy code for compatibility with uotdated stanbol, 
+                                      legacy code for compatibility with uotdated stanbol,
                                       to be removed after may 2012
               */
               if (typeof label === "string" && (label.indexOf("@") === label.length - 3 || label.indexOf("@") === label.length - 5)) {
@@ -1002,10 +1002,10 @@ VIE.Util = {
                 value: value
               });
             });
-            /* 
-            property can be an object like 
+            /*
+            property can be an object like
             {
-              property: "skos:broader", 
+              property: "skos:broader",
               makeLabel: function(propertyValueArr) { return "..."; }
             }
             */
@@ -1038,17 +1038,17 @@ VIE.Util = {
       }
     },
 
-    
+
 // ### VIE.Util._rdf2EntitiesNoRdfQuery(service, results)
 // This is a **private** method which should
 // only be accessed through ```VIE.Util._rdf2Entities()``` and is a helper method in case there is no
-// rdfQuery loaded (*not recommended*).  
-// **Parameters**:  
-// *{object}* **service** The service that retrieved the data.  
-// *{object}* **results** The data to be transformed.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
+// rdfQuery loaded (*not recommended*).
+// **Parameters**:
+// *{object}* **service** The service that retrieved the data.
+// *{object}* **results** The data to be transformed.
+// **Throws**:
+// *nothing*
+// **Returns**:
 // *{[VIE.Entity]}* : An array, containing VIE.Entity instances which have been transformed from the given data.
     _rdf2EntitiesNoRdfQuery: function (service, results) {
         var jsonLD = [];
@@ -1083,25 +1083,25 @@ VIE.Util = {
 // the <a href="http://schema.org/">schema.org</a> ontology. It adds all the
 // given types and properties as ```VIE.Type``` instances to the given VIE instance.
 // If the paramenter **baseNS** is set, the method automatically sets the namespace
-// to the provided one. If it is not set, it will keep the base namespace of VIE untouched.  
-// **Parameters**:  
-// *{VIE}* **vie** The instance of ```VIE```.   
-// *{object}* **SchemaOrg** The data imported from schema.org.   
-// *{string|undefined}* **baseNS** If set, this will become the new baseNamespace within the given ```VIE``` instance.   
-// **Throws**:  
-// *{Error}* If the parameter was not given.  
-// **Returns**:  
+// to the provided one. If it is not set, it will keep the base namespace of VIE untouched.
+// **Parameters**:
+// *{VIE}* **vie** The instance of ```VIE```.
+// *{object}* **SchemaOrg** The data imported from schema.org.
+// *{string|undefined}* **baseNS** If set, this will become the new baseNamespace within the given ```VIE``` instance.
+// **Throws**:
+// *{Error}* If the parameter was not given.
+// **Returns**:
 // *nothing*
     loadSchemaOrg : function (vie, SchemaOrg, baseNS) {
-    
+
         if (!SchemaOrg) {
             throw new Error("Please load the schema.json file.");
         }
         vie.types.remove("<http://schema.org/Thing>");
-        
+
         var baseNSBefore = (baseNS)? baseNS : vie.namespaces.base();
         vie.namespaces.base(baseNS);
-        
+
         var datatypeMapping = {
             'DataType': 'xsd:anyType',
             'Boolean' : 'xsd:boolean',
@@ -1114,10 +1114,10 @@ VIE.Util = {
             'Text'    : 'xsd:string',
             'URL'     : 'xsd:anyURI'
         };
-        
+
         var dataTypeHelper = function (ancestors, id) {
             var type = vie.types.add(id, [{'id' : 'value', 'range' : datatypeMapping[id]}]);
-            
+
             for (var i = 0; i < ancestors.length; i++) {
                 var supertype = (vie.types.get(ancestors[i]))? vie.types.get(ancestors[i]) :
                     dataTypeHelper.call(vie, SchemaOrg.datatypes[ancestors[i]].supertypes, ancestors[i]);
@@ -1125,7 +1125,7 @@ VIE.Util = {
             }
             return type;
         };
-        
+
         for (var dt in SchemaOrg.datatypes) {
             if (!vie.types.get(dt)) {
                 var ancestors = SchemaOrg.datatypes[dt].supertypes;
@@ -1153,7 +1153,7 @@ VIE.Util = {
             }
             return metadata;
         };
-        
+
         var typeProps = function (id) {
             var props = [];
             _.each(SchemaOrg.types[id].specific_properties, function (pId) {
@@ -1168,13 +1168,13 @@ VIE.Util = {
             });
             return props;
         };
-        
+
         var typeHelper = function (ancestors, id, props, metadata) {
             var type = vie.types.add(id, props, metadata);
-           
+
             for (var i = 0; i < ancestors.length; i++) {
                 var supertype = (vie.types.get(ancestors[i]))? vie.types.get(ancestors[i]) :
-                    typeHelper.call(vie, SchemaOrg.types[ancestors[i]].supertypes, ancestors[i], typeProps.call(vie, ancestors[i]));
+                    typeHelper.call(vie, SchemaOrg.types[ancestors[i]].supertypes, ancestors[i], typeProps.call(vie, ancestors[i]), metadataHelper(SchemaOrg.types[ancestors[i]]));
                 type.inherit(supertype);
             }
             if (id === "Thing" && !type.isof("owl:Thing")) {
@@ -1182,7 +1182,7 @@ VIE.Util = {
             }
             return type;
         };
-       
+
         _.each(SchemaOrg.types, function (typeDef) {
             if (vie.types.get(typeDef.id)) {
                 return;
@@ -1333,12 +1333,12 @@ VIE.Util = {
     },
 
 // ### VIE.Util.xsdDateTime(date)
-// This transforms a ```Date``` instance into an xsd:DateTime format.  
-// **Parameters**:  
-// *{```Date```}* **date** An instance of a javascript ```Date```.  
-// **Throws**: 
-// *nothing*..  
-// **Returns**: 
+// This transforms a ```Date``` instance into an xsd:DateTime format.
+// **Parameters**:
+// *{```Date```}* **date** An instance of a javascript ```Date```.
+// **Throws**:
+// *nothing*..
+// **Returns**:
 // *{string}* A string representation of the dateTime in the xsd:dateTime format.
     xsdDateTime : function(date) {
         function pad(n) {
@@ -1357,16 +1357,16 @@ VIE.Util = {
     },
 
 // ### VIE.Util.extractLanguageString(entity, attrs, langs)
-// This method extracts a literal string from an entity, searching through the given attributes and languages.  
-// **Parameters**:  
-// *{```VIE.Entity```}* **entity** An instance of a VIE.Entity.  
-// *{```array|string```}* **attrs** Either a string or an array of possible attributes.  
-// *{```array|string```}* **langs** Either a string or an array of possible languages.  
-// **Throws**: 
-// *nothing*..  
-// **Returns**: 
+// This method extracts a literal string from an entity, searching through the given attributes and languages.
+// **Parameters**:
+// *{```VIE.Entity```}* **entity** An instance of a VIE.Entity.
+// *{```array|string```}* **attrs** Either a string or an array of possible attributes.
+// *{```array|string```}* **langs** Either a string or an array of possible languages.
+// **Throws**:
+// *nothing*..
+// **Returns**:
 // *{string|undefined}* The string that was found at the attribute with the wanted language, undefined if nothing could be found.
-// **Example usage**: 
+// **Example usage**:
 //
 //          var attrs = ["name", "rdfs:label"];
 //          var langs = ["en", "de"];
@@ -1420,15 +1420,15 @@ VIE.Util = {
         }
         return undefined;
     },
-    
+
 // ### VIE.Util.transformationRules(service)
 // This returns a default set of rdfQuery rules that transform semantic data into the
-// VIE entity types.  
-// **Parameters**:  
-// *{object}* **service** An instance of a vie.service.  
-// **Throws**: 
-// *nothing*..  
-// **Returns**: 
+// VIE entity types.
+// **Parameters**:
+// *{object}* **service** An instance of a vie.service.
+// **Throws**:
+// *nothing*..
+// **Returns**:
 // *{array}* An array of rules with 'left' and 'right' side.
     transformationRules : function (service) {
         var res = [
@@ -1539,7 +1539,7 @@ VIE.Util = {
         ];
         return res;
     },
-    
+
     getAdditionalRules : function (service) {
 
         var mapping = {
@@ -1550,12 +1550,12 @@ VIE.Util = {
             Website : "WebPage",
             Painting : "Painting",
             Sculpture : "Sculpture",
-    
+
             Event : "Event",
             SportsEvent : "SportsEvent",
             MusicFestival : "Festival",
             FilmFestival : "Festival",
-    
+
             Place : "Place",
             Continent : "Continent",
             Country : "Country",
@@ -1565,7 +1565,7 @@ VIE.Util = {
             Hospital : "GovernmentBuilding",
             Mountain : "Mountain",
             BodyOfWater : "BodyOfWater",
-    
+
             Company : "Organization",
             Person : "Person"
         };
@@ -1598,22 +1598,22 @@ VIE.Util = {
 //     http://viejs.org/
 
 // ## VIE Entities
-// 
+//
 // In VIE there are two low-level model types for storing data.
 // **Collections** and **Entities**. Considering `var v = new VIE();` a VIE instance,
-// `v.entities` is a Collection with `VIE Entity` objects in it. 
+// `v.entities` is a Collection with `VIE Entity` objects in it.
 // VIE internally uses JSON-LD to store entities.
 //
 // Each Entity has a few special attributes starting with an `@`. VIE has an API
-// for correctly using these attributes, so in order to stay compatible with later 
+// for correctly using these attributes, so in order to stay compatible with later
 // versions of the library, possibly using a later version of JSON-LD, use the API
 // to interact with your entities.
-// 
-// * `@subject` stands for the identifier of the entity. Use `e.getSubject()` 
+//
+// * `@subject` stands for the identifier of the entity. Use `e.getSubject()`
 // * `@type` stores the explicit entity types. VIE internally handles Type hierarchy,
-// which basically enables to define subtypes and supertypes. Every entity has 
+// which basically enables to define subtypes and supertypes. Every entity has
 // the type 'owl:Thing'. Read more about Types in <a href="Type.html">VIE.Type</a>.
-// * `@context` stores namespace definitions used in the entity. Read more about 
+// * `@context` stores namespace definitions used in the entity. Read more about
 // Namespaces in <a href="Namespace.html">VIE Namespaces</a>.
 VIE.prototype.Entity = function(attrs, opts) {
 
@@ -1696,7 +1696,7 @@ VIE.prototype.Entity = function(attrs, opts) {
         },
 
         // #### `.has(attr)`
-        // Sometimes you'd like to determine if a specific attribute is set 
+        // Sometimes you'd like to determine if a specific attribute is set
         // in an entity. For this reason you can call for example `person.has('friend')`
         // to determine if a person entity has friends.
         has: function(attr) {
@@ -1704,11 +1704,11 @@ VIE.prototype.Entity = function(attrs, opts) {
             return Backbone.Model.prototype.has.call(this, attr);
         },
 
-        // #### `.set(attrName, value, opts)`, 
+        // #### `.set(attrName, value, opts)`,
         // The `options` parameter always refers to a `Backbone.Model.set` `options` object.
         //
         // **`.set(attributes, options)`** is the most universal way of calling the
-        // `.set` method. In this case the `attributes` object is a map of all 
+        // `.set` method. In this case the `attributes` object is a map of all
         // attributes to be changed.
         set : function(attrs, options, opts) {
             if (!attrs) {
@@ -1719,14 +1719,14 @@ VIE.prototype.Entity = function(attrs, opts) {
                 attrs['@subject'] = this.toReference(attrs['@subject']);
             }
 
-            // Use **`.set(attrName, value, options)`** for setting or changing exactly one 
+            // Use **`.set(attrName, value, options)`** for setting or changing exactly one
             // entity attribute.
             if (typeof attrs === "string") {
                 var obj = {};
                 obj[attrs] = options;
                 return this.set(obj, opts);
             }
-            // **`.set(entity)`**: In case you'd pass a VIE entity, 
+            // **`.set(entity)`**: In case you'd pass a VIE entity,
             // the passed entities attributes are being set for the entity.
             if (attrs.attributes) {
                 attrs = attrs.attributes;
@@ -1741,7 +1741,7 @@ VIE.prototype.Entity = function(attrs, opts) {
                     attrs[newKey] = value;
                 }
             }, this);
-            // Finally iterate through the *attributes* to be set and prepare 
+            // Finally iterate through the *attributes* to be set and prepare
             // them for the Backbone.Model.set method.
             _.each (attrs, function (value, key) {
                if (!value) { return; }
@@ -1771,7 +1771,7 @@ VIE.prototype.Entity = function(attrs, opts) {
                        var child = new self.vie.Entity(value, options);
                        // which is being stored in `v.entities`
                        self.vie.entities.addOrUpdate(child);
-                       // and set as VIE Collection attribute on the original entity 
+                       // and set as VIE Collection attribute on the original entity
                        coll = new self.vie.Collection(value, {
                          vie: self.vie,
                          predicate: key
@@ -1782,7 +1782,12 @@ VIE.prototype.Entity = function(attrs, opts) {
                    }
                }
             }, this);
-            return Backbone.Model.prototype.set.call(this, attrs, options);
+            var ret = Backbone.Model.prototype.set.call(this, attrs, options);
+            if (options && options.ignoreChanges) {
+                this.changed = {};
+                this._previousAttributes = _.clone(this.attributes);
+            }
+            return ret;
         },
 
         // **`.unset(attr, opts)` ** removes an attribute from the entity.
@@ -1997,11 +2002,11 @@ VIE.prototype.Entity = function(attrs, opts) {
             return instanceLD;
         },
 
-        // **`.setOrAdd(arg1, arg2)`** similar to `.set(..)`, `.setOrAdd(..)` can 
+        // **`.setOrAdd(arg1, arg2)`** similar to `.set(..)`, `.setOrAdd(..)` can
         // be used for setting one or more attributes of an entity, but in
         // this case it's a collection of values, not just one. That means, if the
         // entity already has the attribute set, make the value to a VIE Collection
-        // and use the collection as value. The collection can contain entities 
+        // and use the collection as value. The collection can contain entities
         // or literals, but not both at the same time.
         setOrAdd: function (arg1, arg2, option) {
             var entity = this;
@@ -2023,30 +2028,30 @@ VIE.prototype.Entity = function(attrs, opts) {
         /* attr is always of type string */
         /* value can be of type: string,int,double,object,VIE.Entity,VIE.Collection */
        /*  val can be of type: undefined,string,int,double,array,VIE.Collection */
-       
+
         /* depending on the type of value and the type of val, different actions need to be made */
         _setOrAddOne: function (attr, value, options) {
             if (!attr || !value)
                 return;
             options = (options)? options : {};
             var v;
-                
+
             attr = VIE.Util.mapAttributeNS(attr, self.vie.namespaces);
-            
+
             if (_.isArray(value)) {
                 for (v = 0; v < value.length; v++) {
                     this._setOrAddOne(attr, value[v], options);
                 }
                 return;
             }
-            
+
             if (attr === "@type" && value instanceof self.vie.Type) {
                 value = value.id;
             }
-            
+
             var obj = {};
             var existing = Backbone.Model.prototype.get.call(this, attr);
-            
+
             if (!existing) {
                 obj[attr] = value;
                 this.set(obj, options);
@@ -2109,17 +2114,17 @@ VIE.prototype.Entity = function(attrs, opts) {
             }
         },
 
-        // **`.isof(type)`** determines if the entity is of `type` by explicit or implicit 
+        // **`.isof(type)`** determines if the entity is of `type` by explicit or implicit
         // declaration. E.g. if Employee is a subtype of Person and e Entity has
         // explicitly set type Employee, e.isof(Person) will evaluate to true.
         isof: function (type) {
             var types = this.get('@type');
-            
+
             if (types === undefined) {
                 return false;
             }
             types = (_.isArray(types))? types : [ types ];
-            
+
             type = (self.vie.types.get(type))? self.vie.types.get(type) : new self.vie.Type(type);
             for (var t = 0; t < types.length; t++) {
                 if (self.vie.types.get(types[t])) {
@@ -2177,13 +2182,13 @@ VIE.prototype.Collection = Backbone.Collection.extend({
     canAdd: function (type) {
       return true;
     },
-    
+
     get: function(id) {
         if (id === null) {
             return null;
         }
-        
-        id = (id.getSubject)? id.getSubject() : id;        
+
+        id = (id.getSubject)? id.getSubject() : id;
         if (typeof id === "string" && id.indexOf("_:") === 0) {
             if (id.indexOf("bnode") === 2) {
                 //bnode!
@@ -2261,7 +2266,7 @@ VIE.prototype.Collection = Backbone.Collection.extend({
                 if (options.overrideAttributes) {
                    newAttribs[attribute] = value;
                    return true;
-                } 
+                }
                 if (attribute === '@context') {
                     newAttribs[attribute] = jQuery.extend(true, {}, oldVals, newVals);
                 } else {
@@ -2288,21 +2293,21 @@ VIE.prototype.Collection = Backbone.Collection.extend({
         }
         return false;
     },
-        
+
     toReference: function(uri){
         if (this.isReference(uri)) {
             return uri;
         }
         return '<' + uri + '>';
     },
-        
+
     fromReference: function(uri){
         if (!this.isReference(uri)) {
             return uri;
         }
         return uri.substring(1, uri.length - 1);
     },
-    
+
     isCollection: true
 });
 //     VIE - Vienna IKS Editables
@@ -2316,7 +2321,7 @@ VIE.prototype.Collection = Backbone.Collection.extend({
 
 // ## VIE.Types
 // Within VIE, we provide special capabilities of handling types of entites. This helps
-// for example to query easily for certain entities (e.g., you only need to query for *Person*s 
+// for example to query easily for certain entities (e.g., you only need to query for *Person*s
 // and not for all subtypes).
 if (VIE.prototype.Type) {
     throw new Error("ERROR: VIE.Type is already defined. Please check your installation!");
@@ -2326,17 +2331,17 @@ if (VIE.prototype.Types) {
 }
 
 // ### VIE.Type(id, attrs, metadata)
-// This is the constructor of a VIE.Type.  
-// **Parameters**:  
-// *{string}* **id** The id of the type.  
-// *{string|array|VIE.Attribute}* **attrs** A string, proper ```VIE.Attribute``` or an array of these which 
+// This is the constructor of a VIE.Type.
+// **Parameters**:
+// *{string}* **id** The id of the type.
+// *{string|array|VIE.Attribute}* **attrs** A string, proper ```VIE.Attribute``` or an array of these which
 // *{object}* **metadata** Possible metadata about the type
-// are the possible attributes of the type  
-// **Throws**:  
-// *{Error}* if one of the given paramenters is missing.  
-// **Returns**:  
-// *{VIE.Type}* : A **new** VIE.Type object.  
-// **Example usage**:  
+// are the possible attributes of the type
+// **Throws**:
+// *{Error}* if one of the given paramenters is missing.
+// **Returns**:
+// *{VIE.Type}* : A **new** VIE.Type object.
+// **Example usage**:
 //
 //     var person = new vie.Type("Person", ["name", "knows"]);
 VIE.prototype.Type = function (id, attrs, metadata) {
@@ -2345,14 +2350,14 @@ VIE.prototype.Type = function (id, attrs, metadata) {
     }
 
 // ### id
-// This field stores the id of the type's instance.  
-// **Parameters**:  
+// This field stores the id of the type's instance.
+// **Parameters**:
 // nothing
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{string}* : The id of the type as a URI.  
-// **Example usage**:  
+// **Throws**:
+// nothing
+// **Returns**:
+// *{string}* : The id of the type as a URI.
+// **Example usage**:
 //
 //     console.log(person.id);
 //      // --> "<http://viejs.org/ns/Person>"
@@ -2361,46 +2366,46 @@ VIE.prototype.Type = function (id, attrs, metadata) {
     /* checks whether such a type is already defined. */
     if (this.vie.types.get(this.id)) {
         throw new Error("The type " + this.id + " is already defined!");
-    }    
-    
+    }
+
 // ### supertypes
 // This field stores all parent types of the type's instance. This
-// is set if the current type inherits from another type.   
-// **Parameters**:  
-// nothing  
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{VIE.Types}* : The supertypes (parents) of the type.  
-// **Example usage**:  
+// is set if the current type inherits from another type.
+// **Parameters**:
+// nothing
+// **Throws**:
+// nothing
+// **Returns**:
+// *{VIE.Types}* : The supertypes (parents) of the type.
+// **Example usage**:
 //
 //     console.log(person.supertypes);
     this.supertypes = new this.vie.Types();
 
 // ### subtypes
 // This field stores all children types of the type's instance. This
-// will be set if another type inherits from the current type.  
-// **Parameters**:  
-// nothing  
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{VIE.Types}* : The subtypes (parents) of the type.  
-// **Example usage**:  
+// will be set if another type inherits from the current type.
+// **Parameters**:
+// nothing
+// **Throws**:
+// nothing
+// **Returns**:
+// *{VIE.Types}* : The subtypes (parents) of the type.
+// **Example usage**:
 //
 //     console.log(person.subtypes);
     this.subtypes = new this.vie.Types();
-    
+
 // ### attributes
 // This field stores all attributes of the type's instance as
-// a proper ```VIE.Attributes``` class. (see also <a href="Attribute.html">VIE.Attributes</a>)  
-// **Parameters**:  
-// nothing  
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{VIE.Attributes}* : The attributes of the type.  
-// **Example usage**:  
+// a proper ```VIE.Attributes``` class. (see also <a href="Attribute.html">VIE.Attributes</a>)
+// **Parameters**:
+// nothing
+// **Throws**:
+// nothing
+// **Returns**:
+// *{VIE.Attributes}* : The attributes of the type.
+// **Example usage**:
 //
 //     console.log(person.attributes);
     this.attributes = new this.vie.Attributes(this, (attrs)? attrs : []);
@@ -2411,17 +2416,17 @@ VIE.prototype.Type = function (id, attrs, metadata) {
     this.metadata = metadata ? metadata : {};
 
 // ### isof(type)
-// This method checks whether the current type is a child of the given type.  
-// **Parameters**:  
-// *{string|VIE.Type}* **type** The type (or the id of that type) to be checked.  
-// **Throws**:  
-// *{Error}* If the type is not valid.   
-// **Returns**:  
-// *{boolean}* : ```true``` if the current type inherits from the type, ```false``` otherwise.  
-// **Example usage**:  
+// This method checks whether the current type is a child of the given type.
+// **Parameters**:
+// *{string|VIE.Type}* **type** The type (or the id of that type) to be checked.
+// **Throws**:
+// *{Error}* If the type is not valid.
+// **Returns**:
+// *{boolean}* : ```true``` if the current type inherits from the type, ```false``` otherwise.
+// **Example usage**:
 //
 //     console.log(person.isof("owl:Thing"));
-//     // <-- true    
+//     // <-- true
     this.isof = function (type) {
         type = this.vie.types.get(type);
         if (type) {
@@ -2432,14 +2437,14 @@ VIE.prototype.Type = function (id, attrs, metadata) {
     };
 
 // ### subsumes(type)
-// This method checks whether the current type is a parent of the given type.  
-// **Parameters**:  
-// *{string|VIE.Type}* **type** The type (or the id of that type) to be checked.  
-// **Throws**:  
-// *{Error}* If the type is not valid.   
-// **Returns**:  
-// *{boolean}* : ```true``` if the current type is a parent of the type, ```false``` otherwise.  
-// **Example usage**:  
+// This method checks whether the current type is a parent of the given type.
+// **Parameters**:
+// *{string|VIE.Type}* **type** The type (or the id of that type) to be checked.
+// **Throws**:
+// *{Error}* If the type is not valid.
+// **Returns**:
+// *{boolean}* : ```true``` if the current type is a parent of the type, ```false``` otherwise.
+// **Example usage**:
 //
 //     var x = new vie.Type(...);
 //     var y = new vie.Type(...).inherit(x);
@@ -2464,18 +2469,18 @@ VIE.prototype.Type = function (id, attrs, metadata) {
             throw new Error("No valid type given");
         }
     };
-    
+
 // ### inherit(supertype)
 // This method invokes inheritance throught the types. This adds the current type to the
-// subtypes of the supertype and vice versa.   
-// **Parameters**:  
+// subtypes of the supertype and vice versa.
+// **Parameters**:
 // *{string|VIE.Type|array}* **supertype** The type to be inherited from. If this is an array
-// the inherit method is called sequentially on all types.  
-// **Throws**:  
-// *{Error}* If the type is not valid.   
-// **Returns**:  
-// *{VIE.Type}* : The instance itself.  
-// **Example usage**:  
+// the inherit method is called sequentially on all types.
+// **Throws**:
+// *{Error}* If the type is not valid.
+// **Returns**:
+// *{VIE.Type}* : The instance itself.
+// **Example usage**:
 //
 //     var x = new vie.Type(...);
 //     var y = new vie.Type(...).inherit(x);
@@ -2506,16 +2511,16 @@ VIE.prototype.Type = function (id, attrs, metadata) {
         }
         return this;
     };
-        
+
 // ### hierarchy()
-// This method serializes the hierarchy of child types into an object.   
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*   
-// **Returns**:  
-// *{object}* : The hierachy of child types as an object.  
-// **Example usage**:  
+// This method serializes the hierarchy of child types into an object.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{object}* : The hierachy of child types as an object.
+// **Example usage**:
 //
 //     var x = new vie.Type(...);
 //     var y = new vie.Type(...).inherit(x);
@@ -2529,27 +2534,27 @@ VIE.prototype.Type = function (id, attrs, metadata) {
         }
         return obj;
     };
-    
+
 // ### instance()
 // This method creates a ```VIE.Entity``` instance from this type.
-// **Parameters**:  
-// *{object}* **attrs**  see <a href="Entity.html">constructor of VIE.Entity</a>  
-// *{object}* **opts**  see <a href="Entity.html">constructor of VIE.Entity</a>  
-// **Throws**:  
-// *{Error}* if the instance could not be built   
-// **Returns**:  
-// *{VIE.Entity}* : A **new** instance of a ```VIE.Entity``` with the current type.  
-// **Example usage**:  
+// **Parameters**:
+// *{object}* **attrs**  see <a href="Entity.html">constructor of VIE.Entity</a>
+// *{object}* **opts**  see <a href="Entity.html">constructor of VIE.Entity</a>
+// **Throws**:
+// *{Error}* if the instance could not be built
+// **Returns**:
+// *{VIE.Entity}* : A **new** instance of a ```VIE.Entity``` with the current type.
+// **Example usage**:
 //
 //     var person = new vie.Type("person");
 //     var sebastian = person.instance(
-//         {"@subject" : "#me", 
+//         {"@subject" : "#me",
 //          "name" : "Sebastian"});
 //     console.log(sebastian.get("name")); // <-- "Sebastian"
     this.instance = function (attrs, opts) {
         attrs = (attrs)? attrs : {};
         opts = (opts)? opts : {};
-        
+
         /* turn type/attribute checking on by default! */
         if (opts.typeChecking !== false) {
             for (var a in attrs) {
@@ -2558,25 +2563,25 @@ VIE.prototype.Type = function (id, attrs, metadata) {
                 }
             }
         }
-        
+
         if (attrs['@type']) {
             attrs['@type'].push(this.id);
         } else {
             attrs['@type'] = this.id;
         }
-        
+
         return new this.vie.Entity(attrs, opts);
     };
 
 // ### toString()
-// This method returns the id of the type.   
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*   
-// **Returns**:  
-// *{string}* : The id of the type.  
-// **Example usage**:  
+// This method returns the id of the type.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{string}* : The id of the type.
+// **Example usage**:
 //
 //     var x = new vie.Type(...);
 //     x.toString() === x.id;
@@ -2587,31 +2592,31 @@ VIE.prototype.Type = function (id, attrs, metadata) {
 
 // ### VIE.Types()
 // This is the constructor of a VIE.Types. This is a convenience class
-// to store ```VIE.Type``` instances properly.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Types}* : A **new** VIE.Types object.  
-// **Example usage**:  
+// to store ```VIE.Type``` instances properly.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Types}* : A **new** VIE.Types object.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 VIE.prototype.Types = function () {
-        
+
     this._types = {};
-    
+
 // ### add(id, attrs, metadata)
-// This method adds a `VIE.Type` to the types.  
-// **Parameters**:  
-// *{string|VIE.Type}* **id** If this is a string, the type is created and directly added.  
+// This method adds a `VIE.Type` to the types.
+// **Parameters**:
+// *{string|VIE.Type}* **id** If this is a string, the type is created and directly added.
 // *{string|object}* **attrs** Only used if ```id``` is a string.
 // *{object}* **metadata** potential additional metadata about the type.
-// **Throws**:  
-// *{Error}* if a type with the given id already exists a ```VIE.Entity``` instance from this type.  
-// **Returns**:  
-// *{VIE.Types}* : The instance itself.  
-// **Example usage**:  
+// **Throws**:
+// *{Error}* if a type with the given id already exists a ```VIE.Entity``` instance from this type.
+// **Returns**:
+// *{VIE.Types}* : The instance itself.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 //     types.add("Person", ["name", "knows"]);
@@ -2639,18 +2644,18 @@ VIE.prototype.Types = function () {
         }
         return this;
     };
-    
+
 // ### addOrOverwrite(id, attrs)
-// This method adds or overwrites a `VIE.Type` to the types. This is the same as 
-// ``this.remove(id); this.add(id, attrs);``  
-// **Parameters**:  
-// *{string|VIE.Type}* **id** If this is a string, the type is created and directly added.  
-// *{string|object}* **attrs** Only used if ```id``` is a string.   
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Types}* : The instance itself.  
-// **Example usage**:  
+// This method adds or overwrites a `VIE.Type` to the types. This is the same as
+// ``this.remove(id); this.add(id, attrs);``
+// **Parameters**:
+// *{string|VIE.Type}* **id** If this is a string, the type is created and directly added.
+// *{string|object}* **attrs** Only used if ```id``` is a string.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Types}* : The instance itself.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 //     types.addOrOverwrite("Person", ["name", "knows"]);
@@ -2660,16 +2665,16 @@ VIE.prototype.Types = function () {
         }
         return this.add(id, attrs);
     };
-    
+
 // ### get(id)
-// This method retrieves a `VIE.Type` from the types by it's id.  
-// **Parameters**:  
-// *{string|VIE.Type}* **id** The id or the type itself.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Type}* : The instance of the type or ```undefined```.  
-// **Example usage**:  
+// This method retrieves a `VIE.Type` from the types by it's id.
+// **Parameters**:
+// *{string|VIE.Type}* **id** The id or the type itself.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Type}* : The instance of the type or ```undefined```.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 //     types.addOrOverwrite("Person", ["name", "knows"]);
@@ -2686,19 +2691,19 @@ VIE.prototype.Types = function () {
         }
         return undefined;
     };
-    
+
 // ### remove(id)
 // This method removes a type of given id from the type. This also
 // removes all children if their only parent were this
 // type. Furthermore, this removes the link from the
-// super- and subtypes.   
-// **Parameters**:  
-// *{string|VIE.Type}* **id** The id or the type itself.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Type}* : The removed type.  
-// **Example usage**:  
+// super- and subtypes.
+// **Parameters**:
+// *{string|VIE.Type}* **id** The id or the type itself.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Type}* : The removed type.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 //     types.addOrOverwrite("Person", ["name", "knows"]);
@@ -2716,12 +2721,12 @@ VIE.prototype.Types = function () {
             return this;
         }
         delete this._types[t.id];
-        
+
         var subtypes = t.subtypes.list();
         for (var c = 0; c < subtypes.length; c++) {
             var childObj = subtypes[c];
             if (childObj.supertypes.list().length === 1) {
-                /* recursively remove all children 
+                /* recursively remove all children
                    that inherit only from this type */
                 this.remove(childObj);
             } else {
@@ -2730,16 +2735,16 @@ VIE.prototype.Types = function () {
         }
         return t;
     };
-    
+
 // ### toArray() === list()
-// This method returns an array of all types.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{array}* : An array of ```VIE.Type``` instances.  
-// **Example usage**:  
+// This method returns an array of all types.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{array}* : An array of ```VIE.Type``` instances.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 //     types.addOrOverwrite("Person", ["name", "knows"]);
@@ -2754,17 +2759,17 @@ VIE.prototype.Types = function () {
 
 // ### sort(types, desc)
 // This method sorts an array of types in their order, given by the
-// inheritance. This returns a copy and leaves the original array untouched.  
-// **Parameters**:  
-// *{array|VIE.Type}* **types** The array of ```VIE.Type``` instances or ids of types to be sorted.  
-// *{boolean}* **desc** If 'desc' is given and 'true', the array will be sorted 
-// in descendant order.  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{array}* : A sorted copy of the array.  
-// **Example usage**:  
+// inheritance. This returns a copy and leaves the original array untouched.
+// **Parameters**:
+// *{array|VIE.Type}* **types** The array of ```VIE.Type``` instances or ids of types to be sorted.
+// *{boolean}* **desc** If 'desc' is given and 'true', the array will be sorted
+// in descendant order.
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{array}* : A sorted copy of the array.
+// **Example usage**:
 //
 //     var types = new vie.Types();
 //     types.addOrOverwrite("Person", ["name", "knows"]);
@@ -2773,10 +2778,10 @@ VIE.prototype.Types = function () {
         var self = this;
         types = (jQuery.isArray(types))? types : [ types ];
         desc = (desc)? true : false;
-        
+
         if (types.length === 0) return [];
         var copy = [ types[0] ];
-        var x, tlen; 
+        var x, tlen;
         for (x = 1, tlen = types.length; x < tlen; x++) {
             var insert = types[x];
             var insType = self.get(insert);
@@ -2791,7 +2796,7 @@ VIE.prototype.Types = function () {
                 }
             }
         }
-        
+
         //unduplicate
         for (x = 0; x < copy.length; x++) {
             if (copy.lastIndexOf(copy[x]) !== x) {
@@ -2799,7 +2804,7 @@ VIE.prototype.Types = function () {
                 x--;
             }
         }
-        
+
         if (!desc) {
             copy.reverse();
         }
@@ -2827,24 +2832,24 @@ if (VIE.prototype.Attributes) {
 }
 
 // ### VIE.Attribute(id, range, domain, minCount, maxCount, metadata)
-// This is the constructor of a VIE.Attribute.  
-// **Parameters**:  
-// *{string}* **id** The id of the attribute.  
-// *{string|array}* **range** A string or an array of strings of the target range of 
-// the attribute.  
-// *{string}* **domain** The domain of the attribute.  
-// *{number}* **minCount** The minimal number this attribute can occur. (needs to be >= 0)  
+// This is the constructor of a VIE.Attribute.
+// **Parameters**:
+// *{string}* **id** The id of the attribute.
+// *{string|array}* **range** A string or an array of strings of the target range of
+// the attribute.
+// *{string}* **domain** The domain of the attribute.
+// *{number}* **minCount** The minimal number this attribute can occur. (needs to be >= 0)
 // *{number}* **maxCount** The maximal number this attribute can occur. (needs to be >= minCount, use `-1` for unlimited)
 // *{object}* **metadata** Possible metadata about the attribute
-// **Throws**:  
-// *{Error}* if one of the given paramenters is missing.  
-// **Returns**:  
-// *{VIE.Attribute}* : A **new** VIE.Attribute object.  
-// **Example usage**:  
+// **Throws**:
+// *{Error}* if one of the given paramenters is missing.
+// **Returns**:
+// *{VIE.Attribute}* : A **new** VIE.Attribute object.
+// **Example usage**:
 //
 //     var knowsAttr = new vie.Attribute("knows", ["Person"], "Person", 0, 10);
 //      // Creates an attribute to describe a *knows*-relationship
-//      // between persons. Each person can only have 
+//      // between persons. Each person can only have
 VIE.prototype.Attribute = function (id, range, domain, minCount, maxCount, metadata) {
     if (id === undefined || typeof id !== 'string') {
         throw new Error("The attribute constructor needs an 'id' of type string! E.g., 'Person'");
@@ -2855,33 +2860,33 @@ VIE.prototype.Attribute = function (id, range, domain, minCount, maxCount, metad
     if (domain === undefined) {
         throw new Error("The attribute constructor of " + id + " needs a 'domain'.");
     }
-    
+
     this._domain = domain;
-    
+
 // ### id
-// This field stores the id of the attribute's instance.  
-// **Parameters**:  
+// This field stores the id of the attribute's instance.
+// **Parameters**:
 // nothing
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{string}* : A URI, representing the id of the attribute.  
-// **Example usage**:  
+// **Throws**:
+// nothing
+// **Returns**:
+// *{string}* : A URI, representing the id of the attribute.
+// **Example usage**:
 //
 //     var knowsAttr = new vie.Attribute("knows", ["Person"], "Person");
 //     console.log(knowsAttr.id);
 //     // --> <http://viejs.org/ns/knows>
     this.id = this.vie.namespaces.isUri(id) ? id : this.vie.namespaces.uri(id);
-    
+
 // ### range
-// This field stores the ranges of the attribute's instance.  
-// **Parameters**:  
+// This field stores the ranges of the attribute's instance.
+// **Parameters**:
 // nothing
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{array}* : An array of strings which represent the types.  
-// **Example usage**:  
+// **Throws**:
+// nothing
+// **Returns**:
+// *{array}* : An array of strings which represent the types.
+// **Example usage**:
 //
 //     var knowsAttr = new vie.Attribute("knows", ["Person"], "Person");
 //     console.log(knowsAttr.range);
@@ -2890,30 +2895,30 @@ VIE.prototype.Attribute = function (id, range, domain, minCount, maxCount, metad
 
 // ### min
 // This field stores the minimal amount this attribute can occur in the type's instance. The number
-// needs to be greater or equal to zero.  
-// **Parameters**:  
+// needs to be greater or equal to zero.
+// **Parameters**:
 // nothing
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{int}* : The minimal amount this attribute can occur.  
-// **Example usage**:  
+// **Throws**:
+// nothing
+// **Returns**:
+// *{int}* : The minimal amount this attribute can occur.
+// **Example usage**:
 //
 //     console.log(person.min);
 //      // --> 0
     minCount = minCount ? minCount : 0;
     this.min = (minCount > 0) ? minCount : 0;
-    
+
 // ### max
 // This field stores the maximal amount this attribute can occur in the type's instance.
-// This number cannot be smaller than min  
-// **Parameters**:  
+// This number cannot be smaller than min
+// **Parameters**:
 // nothing
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{int}* : The maximal amount this attribute can occur.  
-// **Example usage**:  
+// **Throws**:
+// nothing
+// **Returns**:
+// *{int}* : The maximal amount this attribute can occur.
+// **Example usage**:
 //
 //     console.log(person.max);
 //      // --> 1.7976931348623157e+308
@@ -2929,16 +2934,16 @@ VIE.prototype.Attribute = function (id, range, domain, minCount, maxCount, metad
 
 // ### applies(range)
 // This method checks, whether the current attribute applies in the given range.
-// If ```range``` is a string and cannot be transformed into a ```VIE.Type```, 
-// this performs only string comparison, if it is a VIE.Type 
+// If ```range``` is a string and cannot be transformed into a ```VIE.Type```,
+// this performs only string comparison, if it is a VIE.Type
 // or an ID of a VIE.Type, then inheritance is checked as well.
-// **Parameters**:  
-// *{string|VIE.Type}* **range** The ```VIE.Type``` (or it's string representation) to be checked. 
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{boolean}* : ```true``` if the given type applies to this attribute and ```false``` otherwise.  
-// **Example usage**:  
+// **Parameters**:
+// *{string|VIE.Type}* **range** The ```VIE.Type``` (or it's string representation) to be checked.
+// **Throws**:
+// nothing
+// **Returns**:
+// *{boolean}* : ```true``` if the given type applies to this attribute and ```false``` otherwise.
+// **Example usage**:
 //
 //     var knowsAttr = new vie.Attribute("knows", ["Person"], "Person");
 //     console.log(knowsAttr.applies("Person")); // --> true
@@ -2962,61 +2967,61 @@ VIE.prototype.Attribute = function (id, range, domain, minCount, maxCount, metad
         }
         return false;
     };
-            
+
 };
 
 // ## VIE.Attributes(domain, attrs)
 // This is the constructor of a VIE.Attributes. Basically a convenience class
-// that represents a list of ```VIE.Attribute```. As attributes are part of a 
-// certain ```VIE.Type```, it needs to be passed for inheritance checks.  
-// **Parameters**:  
-// *{string}* **domain** The domain of the attributes (the type they will be part of).  
+// that represents a list of ```VIE.Attribute```. As attributes are part of a
+// certain ```VIE.Type```, it needs to be passed for inheritance checks.
+// **Parameters**:
+// *{string}* **domain** The domain of the attributes (the type they will be part of).
 // *{string|VIE.Attribute|array}* **attrs** Either a string representation of an attribute,
-// a proper instance of ```VIE.Attribute``` or an array of both.  
-// *{string}* **domain** The domain of the attribute.  
-// **Throws**:  
-// *{Error}* if one of the given paramenters is missing.  
-// **Returns**:  
-// *{VIE.Attribute}* : A **new** VIE.Attribute instance.  
-// **Example usage**:  
+// a proper instance of ```VIE.Attribute``` or an array of both.
+// *{string}* **domain** The domain of the attribute.
+// **Throws**:
+// *{Error}* if one of the given paramenters is missing.
+// **Returns**:
+// *{VIE.Attribute}* : A **new** VIE.Attribute instance.
+// **Example usage**:
 //
 //     var knowsAttr = new vie.Attribute("knows", ["Person"], "Person");
 //     var personAttrs = new vie.Attributes("Person", knowsAttr);
 VIE.prototype.Attributes = function (domain, attrs) {
-    
+
     this._local = {};
     this._attributes = {};
-    
+
 // ### domain
-// This field stores the domain of the attributes' instance.  
-// **Parameters**:  
+// This field stores the domain of the attributes' instance.
+// **Parameters**:
 // nothing
-// **Throws**:  
-// nothing  
-// **Returns**:  
-// *{string}* : The string representation of the domain.  
-// **Example usage**:  
+// **Throws**:
+// nothing
+// **Returns**:
+// *{string}* : The string representation of the domain.
+// **Example usage**:
 //
 //     console.log(personAttrs.domain);
 //     // --> ["Person"]
     this.domain = domain;
-    
+
 // ### add(id, range, min, max, metadata)
 // This method adds a ```VIE.Attribute``` to the attributes instance.
-// **Parameters**:  
+// **Parameters**:
 // *{string|VIE.Attribute}* **id** The string representation of an attribute, or a proper
-// instance of a ```VIE.Attribute```.  
-// *{string|array}* **range** An array representing the target range of the attribute.  
-// *{number}* **min** The minimal amount this attribute can appear.  
-// instance of a ```VIE.Attribute```.  
-// *{number}* **max** The maximal amount this attribute can appear.  
+// instance of a ```VIE.Attribute```.
+// *{string|array}* **range** An array representing the target range of the attribute.
+// *{number}* **min** The minimal amount this attribute can appear.
+// instance of a ```VIE.Attribute```.
+// *{number}* **max** The maximal amount this attribute can appear.
 // *{object}* **metadata** Additional metadata for the attribute.
-// **Throws**:  
-// *{Error}* If an atribute with the given id is already registered.  
-// *{Error}* If the ```id``` parameter is not a string, nor a ```VIE.Type``` instance.  
-// **Returns**:  
-// *{VIE.Attribute}* : The generated or passed attribute.  
-// **Example usage**:  
+// **Throws**:
+// *{Error}* If an atribute with the given id is already registered.
+// *{Error}* If the ```id``` parameter is not a string, nor a ```VIE.Type``` instance.
+// **Returns**:
+// *{VIE.Attribute}* : The generated or passed attribute.
+// **Example usage**:
 //
 //     personAttrs.add("name", "Text", 0, 1);
     this.add = function (id, range, min, max, metadata) {
@@ -3026,7 +3031,7 @@ VIE.prototype.Attributes = function (domain, attrs) {
           }, this);
           return this;
         }
-        
+
         if (this.get(id)) {
             throw new Error("Attribute '" + id + "' already registered for domain " + this.domain.id + "!");
         } else {
@@ -3044,17 +3049,17 @@ VIE.prototype.Attributes = function (domain, attrs) {
             }
         }
     };
-    
+
 // ### remove(id)
 // This method removes a ```VIE.Attribute``` from the attributes instance.
-// **Parameters**:  
+// **Parameters**:
 // *{string|VIE.Attribute}* **id** The string representation of an attribute, or a proper
-// instance of a ```VIE.Attribute```.  
-// **Throws**:  
+// instance of a ```VIE.Attribute```.
+// **Throws**:
 // *{Error}* When the attribute is inherited from a parent ```VIE.Type``` and thus cannot be removed.
-// **Returns**:  
-// *{VIE.Attribute}* : The removed attribute.  
-// **Example usage**:  
+// **Returns**:
+// *{VIE.Attribute}* : The removed attribute.
+// **Example usage**:
 //
 //     personAttrs.remove("knows");
     this.remove = function (id) {
@@ -3065,17 +3070,17 @@ VIE.prototype.Attributes = function (domain, attrs) {
         }
         throw new Error("The attribute " + id + " is inherited and cannot be removed from the domain " + this.domain.id + "!");
     };
-    
+
 // ### get(id)
-// This method returns a ```VIE.Attribute``` from the attributes instance by it's id.  
-// **Parameters**:  
+// This method returns a ```VIE.Attribute``` from the attributes instance by it's id.
+// **Parameters**:
 // *{string|VIE.Attribute}* **id** The string representation of an attribute, or a proper
-// instance of a ```VIE.Attribute```.  
-// **Throws**:  
-// *{Error}* When the method is called with an unknown datatype.  
-// **Returns**:  
-// *{VIE.Attribute}* : The attribute.  
-// **Example usage**:  
+// instance of a ```VIE.Attribute```.
+// **Throws**:
+// *{Error}* When the method is called with an unknown datatype.
+// **Returns**:
+// *{VIE.Attribute}* : The attribute.
+// **Example usage**:
 //
 //     personAttrs.get("knows");
     this.get = function (id) {
@@ -3088,35 +3093,35 @@ VIE.prototype.Attributes = function (domain, attrs) {
             throw new Error("Wrong argument in VIE.Attributes.get()");
         }
     };
-    
+
 // ### _inherit()
 // The private method ```_inherit``` creates a full list of all attributes. This includes
 // local attributes as well as inherited attributes from the parents. The ranges of attributes
 // with the same id will be merged. This method is called everytime an attribute is requested or
-// the list of all attributes. Usually this method should not be invoked outside of the class.  
-// **Parameters**:  
-// *nothing*  
-// instance of a ```VIE.Attribute```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *nothing*  
-// **Example usage**:  
+// the list of all attributes. Usually this method should not be invoked outside of the class.
+// **Parameters**:
+// *nothing*
+// instance of a ```VIE.Attribute```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *nothing*
+// **Example usage**:
 //
 //     personAttrs._inherit();
     this._inherit = function () {
         var a, x, id;
         var attributes = jQuery.extend(true, {}, this._local);
-        
+
         var inherited = _.map(this.domain.supertypes.list(),
             function (x) {
-               return x.attributes; 
+               return x.attributes;
             }
         );
 
         var add = {};
         var merge = {};
-        var ilen, alen; 
+        var ilen, alen;
         for (a = 0, ilen = inherited.length; a < ilen; a++) {
             var attrs = inherited[a].list();
             for (x = 0, alen = attrs.length; x < alen; x++) {
@@ -3148,10 +3153,10 @@ VIE.prototype.Attributes = function (domain, attrs) {
                 }
             }
         }
-        
+
         /* adds inherited attributes that do not need to be merged */
         jQuery.extend(attributes, add);
-        
+
         /* merges inherited attributes */
         for (id in merge) {
             var mranges = merge[id].range;
@@ -3179,7 +3184,7 @@ VIE.prototype.Attributes = function (domain, attrs) {
                     ranges.push(mranges[r]);
                 }
             }
-            
+
             var maxMin = _.max(mins);
             var minMax = _.min(maxs);
             if (maxMin <= minMax && minMax >= 0 && maxMin >= 0) {
@@ -3194,14 +3199,14 @@ VIE.prototype.Attributes = function (domain, attrs) {
     };
 
 // ### toArray() === list()
-// This method return an array of ```VIE.Attribute```s from the attributes instance.  
-// **Parameters**:  
-// *nothing.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{array}* : An array of ```VIE.Attribute```.  
-// **Example usage**:  
+// This method return an array of ```VIE.Attribute```s from the attributes instance.
+// **Parameters**:
+// *nothing.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{array}* : An array of ```VIE.Attribute```.
+// **Example usage**:
 //
 //     personAttrs.list();
     this.toArray = this.list = function (range) {
@@ -3214,9 +3219,9 @@ VIE.prototype.Attributes = function (domain, attrs) {
         }
         return ret;
     };
-        
+
     attrs = _.isArray(attrs) ? attrs : [ attrs ];
-    _.each(attrs, function (attr) {    
+    _.each(attrs, function (attr) {
         this.add(attr.id, attr.range, attr.min, attr.max, attr.metadata);
     }, this);
 };
@@ -3228,7 +3233,7 @@ VIE.prototype.Attributes = function (domain, attrs) {
 //     For all details and documentation:
 //     http://viejs.org/
 if (VIE.prototype.Namespaces) {
-    throw new Error("ERROR: VIE.Namespaces is already defined. " + 
+    throw new Error("ERROR: VIE.Namespaces is already defined. " +
         "Please check your VIE installation!");
 }
 
@@ -3240,7 +3245,7 @@ if (VIE.prototype.Namespaces) {
 // tend to make their usage pretty circuitous. The ``VIE.Namespaces(...)`` class provides VIE
 // with methods to maintain abbreviations (akak **prefixes**) for namespaces in order to
 // alleviate their usage. By default, every VIE instance is equipped with a main instance
-// of the namespaces in ``myVIE.namespaces``. Furthermore, VIE uses a **base namespace**, 
+// of the namespaces in ``myVIE.namespaces``. Furthermore, VIE uses a **base namespace**,
 // which is used if no prefix is given (has an empty prefix).
 // In the upcoming sections, we will explain the
 // methods to add, access and remove prefixes.
@@ -3248,34 +3253,34 @@ if (VIE.prototype.Namespaces) {
 
 
 // ## VIE.Namespaces(base, namespaces)
-// This is the constructor of a VIE.Namespaces. The constructor initially 
-// needs a *base namespace* and can optionally be initialised with an 
+// This is the constructor of a VIE.Namespaces. The constructor initially
+// needs a *base namespace* and can optionally be initialised with an
 // associative array of prefixes and namespaces. The base namespace is used in a way
-// that every non-prefixed, non-expanded attribute or type is assumed to be of that 
-// namespace. This helps, e.g., in an environment where only one namespace is given.  
-// **Parameters**:  
-// *{string}* **base** The base namespace.  
-// *{object}* **namespaces** Initial namespaces to bootstrap the namespaces. (optional)  
-// **Throws**:  
-// *{Error}* if the base namespace is missing.  
-// **Returns**:  
-// *{VIE.Attribute}* : A **new** VIE.Attribute object.  
-// **Example usage**:  
+// that every non-prefixed, non-expanded attribute or type is assumed to be of that
+// namespace. This helps, e.g., in an environment where only one namespace is given.
+// **Parameters**:
+// *{string}* **base** The base namespace.
+// *{object}* **namespaces** Initial namespaces to bootstrap the namespaces. (optional)
+// **Throws**:
+// *{Error}* if the base namespace is missing.
+// **Returns**:
+// *{VIE.Attribute}* : A **new** VIE.Attribute object.
+// **Example usage**:
 //
-//     var ns = new myVIE.Namespaces("http://viejs.org/ns/", 
+//     var ns = new myVIE.Namespaces("http://viejs.org/ns/",
 //           {
 //            "foaf": "http://xmlns.com/foaf/0.1/"
 //           });
 VIE.prototype.Namespaces = function (base, namespaces) {
-    
+
     if (!base) {
         throw new Error("Please provide a base namespace!");
     }
     this._base = base;
-    
+
     this._namespaces = (namespaces)? namespaces : {};
     if (typeof this._namespaces !== "object" || _.isArray(this._namespaces)) {
-        throw new Error("If you want to initialise VIE namespace prefixes, " + 
+        throw new Error("If you want to initialise VIE namespace prefixes, " +
             "please provide a proper object!");
     }
 };
@@ -3288,21 +3293,21 @@ VIE.prototype.Namespaces = function (base, namespaces) {
 // with a string, e.g., ``base("http://viejs.org/ns/");``
 // it sets the current base namespace and retuns the namespace object
 // for the purpose of chaining. If provided with anything except a string,
-// it throws an Error.  
-// **Parameters**:  
-// *{string}* **ns** The namespace to be set. (optional)  
-// **Throws**:  
-// *{Error}* if the namespace is not of type string.  
-// **Returns**:  
-// *{string}* : The current base namespace.  
-// **Example usage**:  
+// it throws an Error.
+// **Parameters**:
+// *{string}* **ns** The namespace to be set. (optional)
+// **Throws**:
+// *{Error}* if the namespace is not of type string.
+// **Returns**:
+// *{string}* : The current base namespace.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     console.log(namespaces.base()); // <-- "http://base.ns/"
 //     namespaces.base("http://viejs.org/ns/");
 //     console.log(namespaces.base()); // <-- "http://viejs.org/ns/"
 VIE.prototype.Namespaces.prototype.base = function (ns) {
-    if (!ns) { 
+    if (!ns) {
         return this._base;
     }
     else if (typeof ns === "string") {
@@ -3318,19 +3323,19 @@ VIE.prototype.Namespaces.prototype.base = function (ns) {
 // ### add(prefix, namespace)
 // This method adds new prefix mappings to the
 // current instance. If a prefix or a namespace is already
-// present (in order to avoid ambiguities), an Error is thrown. 
-// ``prefix`` can also be an object in which case, the method 
-// is called sequentially on all elements.  
-// **Parameters**:  
+// present (in order to avoid ambiguities), an Error is thrown.
+// ``prefix`` can also be an object in which case, the method
+// is called sequentially on all elements.
+// **Parameters**:
 // *{string|object}* **prefix** The prefix to be set. If it is an object, the
-// method will be applied to all key,value pairs sequentially.  
-// *{string}* **namespace** The namespace to be set.  
-// **Throws**:  
+// method will be applied to all key,value pairs sequentially.
+// *{string}* **namespace** The namespace to be set.
+// **Throws**:
 // *{Error}* If a prefix or a namespace is already
-// present (in order to avoid ambiguities).  
-// **Returns**:  
-// *{VIE.Namespaces}* : The current namespaces instance.  
-// **Example usage**:  
+// present (in order to avoid ambiguities).
+// **Returns**:
+// *{VIE.Namespaces}* : The current namespaces instance.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.add("", "http://...");
@@ -3363,19 +3368,19 @@ VIE.prototype.Namespaces.prototype.add = function (prefix, namespace) {
     this._namespaces[prefix] = namespace;
     return this;
 };
-    
+
 // ### addOrReplace(prefix, namespace)
 // This method adds new prefix mappings to the
-// current instance. This will overwrite existing mappings.  
-// **Parameters**:  
+// current instance. This will overwrite existing mappings.
+// **Parameters**:
 // *{string|object}* **prefix** The prefix to be set. If it is an object, the
-// method will be applied to all key,value pairs sequentially.  
-// *{string}* **namespace** The namespace to be set.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Namespaces}* : The current namespaces instance.  
-// **Example usage**:  
+// method will be applied to all key,value pairs sequentially.
+// *{string}* **namespace** The namespace to be set.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Namespaces}* : The current namespaces instance.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.addOrReplace("", "http://...");
@@ -3395,14 +3400,14 @@ VIE.prototype.Namespaces.prototype.addOrReplace = function (prefix, namespace) {
 
 // ### get(prefix)
 // This method retrieves a namespaces, given a prefix. If the
-// prefix is the empty string, the base namespace is returned.  
-// **Parameters**:  
-// *{string}* **prefix** The prefix to be retrieved.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{string|undefined}* : The namespace or ```undefined``` if no namespace could be found.  
-// **Example usage**:  
+// prefix is the empty string, the base namespace is returned.
+// **Parameters**:
+// *{string}* **prefix** The prefix to be retrieved.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{string|undefined}* : The namespace or ```undefined``` if no namespace could be found.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.addOrReplace("test", "http://test.ns");
@@ -3415,14 +3420,14 @@ VIE.prototype.Namespaces.prototype.get = function (prefix) {
 };
 
 // ### getPrefix(namespace)
-// This method retrieves a prefix, given a namespace.  
-// **Parameters**:  
-// *{string}* **namespace** The namespace to be retrieved.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{string|undefined}* : The prefix or ```undefined``` if no prefix could be found.  
-// **Example usage**:  
+// This method retrieves a prefix, given a namespace.
+// **Parameters**:
+// *{string}* **namespace** The namespace to be retrieved.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{string|undefined}* : The prefix or ```undefined``` if no prefix could be found.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.addOrReplace("test", "http://test.ns");
@@ -3445,14 +3450,14 @@ VIE.prototype.Namespaces.prototype.getPrefix = function (namespace) {
 };
 
 // ### contains(prefix)
-// This method checks, whether a prefix is stored in the instance.  
-// **Parameters**:  
-// *{string}* **prefix** The prefix to be checked.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{boolean}* : ```true``` if the prefix could be found, ```false``` otherwise.  
-// **Example usage**:  
+// This method checks, whether a prefix is stored in the instance.
+// **Parameters**:
+// *{string}* **prefix** The prefix to be checked.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{boolean}* : ```true``` if the prefix could be found, ```false``` otherwise.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.addOrReplace("test", "http://test.ns");
@@ -3462,14 +3467,14 @@ VIE.prototype.Namespaces.prototype.contains = function (prefix) {
 };
 
 // ### containsNamespace(namespace)
-// This method checks, whether a namespace is stored in the instance.  
-// **Parameters**:  
-// *{string}* **namespace** The namespace to be checked.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{boolean}* : ```true``` if the namespace could be found, ```false``` otherwise.  
-// **Example usage**:  
+// This method checks, whether a namespace is stored in the instance.
+// **Parameters**:
+// *{string}* **namespace** The namespace to be checked.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{boolean}* : ```true``` if the namespace could be found, ```false``` otherwise.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.addOrReplace("test", "http://test.ns");
@@ -3479,17 +3484,17 @@ VIE.prototype.Namespaces.prototype.containsNamespace = function (namespace) {
 };
 
 // ### update(prefix, namespace)
-// This method overwrites the namespace that is stored under the 
-// prefix ``prefix`` with the new namespace ``namespace``. 
+// This method overwrites the namespace that is stored under the
+// prefix ``prefix`` with the new namespace ``namespace``.
 // If a namespace is already bound to another prefix, an Error is thrown.
-// **Parameters**:  
-// *{string}* **prefix** The prefix.  
-// *{string}* **namespace** The namespace.  
-// **Throws**:  
-// *{Error}* If a namespace is already bound to another prefix.  
-// **Returns**:  
-// *{VIE.Namespaces}* : The namespace instance.  
-// **Example usage**:  
+// **Parameters**:
+// *{string}* **prefix** The prefix.
+// *{string}* **namespace** The namespace.
+// **Throws**:
+// *{Error}* If a namespace is already bound to another prefix.
+// **Returns**:
+// *{VIE.Namespaces}* : The namespace instance.
+// **Example usage**:
 //
 //     ...
 VIE.prototype.Namespaces.prototype.update = function (prefix, namespace) {
@@ -3498,17 +3503,17 @@ VIE.prototype.Namespaces.prototype.update = function (prefix, namespace) {
 };
 
 // ### updateNamespace(prefix, namespace)
-// This method overwrites the prefix that is bound to the 
+// This method overwrites the prefix that is bound to the
 // namespace ``namespace`` with the new prefix ``prefix``. If another namespace is
-// already registered with the given ``prefix``, an Error is thrown.  
-// **Parameters**:  
-// *{string}* **prefix** The prefix.  
-// *{string}* **namespace** The namespace.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Namespaces}* : The namespace instance.  
-// **Example usage**:  
+// already registered with the given ``prefix``, an Error is thrown.
+// **Parameters**:
+// *{string}* **prefix** The prefix.
+// *{string}* **namespace** The namespace.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Namespaces}* : The namespace instance.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.add("test", "http://test.ns");
@@ -3520,14 +3525,14 @@ VIE.prototype.Namespaces.prototype.updateNamespace = function (prefix, namespace
 };
 
 // ### remove(prefix)
-// This method removes the namespace that is stored under the prefix ``prefix``.  
-// **Parameters**:  
-// *{string}* **prefix** The prefix to be removed.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Namespaces}* : The namespace instance.   
-// **Example usage**:  
+// This method removes the namespace that is stored under the prefix ``prefix``.
+// **Parameters**:
+// *{string}* **prefix** The prefix to be removed.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Namespaces}* : The namespace instance.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.add("test", "http://test.ns");
@@ -3542,14 +3547,14 @@ VIE.prototype.Namespaces.prototype.remove = function (prefix) {
 };
 
 // ### removeNamespace(namespace)
-// This method removes removes the namespace ``namespace`` from the instance.  
-// **Parameters**:  
-// *{string}* **namespace** The namespace to be removed.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.Namespaces}* : The namespace instance.   
-// **Example usage**:  
+// This method removes removes the namespace ``namespace`` from the instance.
+// **Parameters**:
+// *{string}* **namespace** The namespace to be removed.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.Namespaces}* : The namespace instance.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.add("test", "http://test.ns");
@@ -3567,21 +3572,21 @@ VIE.prototype.Namespaces.prototype.removeNamespace = function (namespace) {
 // ### toObj()
 // This method serializes the namespace instance into an associative
 // array representation. The base namespace is given an empty
-// string as key.  
-// **Parameters**:  
-// *{boolean}* **omitBase** If set to ```true``` this omits the baseNamespace.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{object}* : A serialization of the namespaces as an object.  
-// **Example usage**:  
+// string as key.
+// **Parameters**:
+// *{boolean}* **omitBase** If set to ```true``` this omits the baseNamespace.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{object}* : A serialization of the namespaces as an object.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.add("test", "http://test.ns");
-//     console.log(namespaces.toObj()); 
-//     // <-- {""    : "http://base.ns/", 
+//     console.log(namespaces.toObj());
+//     // <-- {""    : "http://base.ns/",
 //             "test": "http://test.ns"}
-//     console.log(namespaces.toObj(true)); 
+//     console.log(namespaces.toObj(true));
 //     // <-- {"test": "http://test.ns"}
 VIE.prototype.Namespaces.prototype.toObj = function (omitBase) {
     if (omitBase) {
@@ -3591,21 +3596,21 @@ VIE.prototype.Namespaces.prototype.toObj = function (omitBase) {
 };
 
 // ### curie(uri, safe)
-// This method converts a given 
+// This method converts a given
 // URI into a CURIE (or SCURIE), based on the given ```VIE.Namespaces``` object.
 // If the given uri is already a URI, it is left untouched and directly returned.
-// If no prefix could be found, an ```Error``` is thrown.  
-// **Parameters**:  
-// *{string}* **uri** The URI to be transformed.  
-// *{boolean}* **safe** A flag whether to generate CURIEs or SCURIEs.  
-// **Throws**:  
-// *{Error}* If no prefix could be found in the passed namespaces.  
-// **Returns**:  
-// *{string}* The CURIE or SCURIE.  
-// **Example usage**: 
+// If no prefix could be found, an ```Error``` is thrown.
+// **Parameters**:
+// *{string}* **uri** The URI to be transformed.
+// *{boolean}* **safe** A flag whether to generate CURIEs or SCURIEs.
+// **Throws**:
+// *{Error}* If no prefix could be found in the passed namespaces.
+// **Returns**:
+// *{string}* The CURIE or SCURIE.
+// **Example usage**:
 //
 //     var ns = new myVIE.Namespaces(
-//           "http://viejs.org/ns/", 
+//           "http://viejs.org/ns/",
 //           { "dbp": "http://dbpedia.org/ontology/" }
 //     );
 //     var uri = "<http://dbpedia.org/ontology/Person>";
@@ -3616,18 +3621,18 @@ VIE.prototype.Namespaces.prototype.curie = function(uri, safe){
 };
 
 // ### isCurie(curie)
-// This method checks, whether 
-// the given string is a CURIE and returns ```true``` if so and ```false```otherwise.  
-// **Parameters**:  
-// *{string}* **curie** The CURIE (or SCURIE) to be checked.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{boolean}* ```true``` if the given curie is a CURIE or SCURIE and ```false``` otherwise.  
-// **Example usage**: 
+// This method checks, whether
+// the given string is a CURIE and returns ```true``` if so and ```false```otherwise.
+// **Parameters**:
+// *{string}* **curie** The CURIE (or SCURIE) to be checked.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{boolean}* ```true``` if the given curie is a CURIE or SCURIE and ```false``` otherwise.
+// **Example usage**:
 //
 //     var ns = new myVIE.Namespaces(
-//           "http://viejs.org/ns/", 
+//           "http://viejs.org/ns/",
 //           { "dbp": "http://dbpedia.org/ontology/" }
 //     );
 //     var uri = "<http://dbpedia.org/ontology/Person>";
@@ -3641,25 +3646,25 @@ VIE.prototype.Namespaces.prototype.curie = function(uri, safe){
 VIE.prototype.Namespaces.prototype.isCurie = function (something) {
     return VIE.Util.isCurie(something, this);
 };
-    
+
 // ### uri(curie)
-// This method converts a 
-// given CURIE (or save CURIE) into a URI, based on the given ```VIE.Namespaces``` object.  
-// **Parameters**:  
-// *{string}* **curie** The CURIE to be transformed.  
-// **Throws**:  
-// *{Error}* If no URI could be assembled.  
-// **Returns**:  
-// *{string}* : A string, representing the URI.  
-// **Example usage**: 
+// This method converts a
+// given CURIE (or save CURIE) into a URI, based on the given ```VIE.Namespaces``` object.
+// **Parameters**:
+// *{string}* **curie** The CURIE to be transformed.
+// **Throws**:
+// *{Error}* If no URI could be assembled.
+// **Returns**:
+// *{string}* : A string, representing the URI.
+// **Example usage**:
 //
 //     var ns = new myVIE.Namespaces(
-//           "http://viejs.org/ns/", 
+//           "http://viejs.org/ns/",
 //           { "dbp": "http://dbpedia.org/ontology/" }
 //     );
 //     var curie = "dbp:Person";
 //     var scurie = "[dbp:Person]";
-//     ns.uri(curie); 
+//     ns.uri(curie);
 //          --> <http://dbpedia.org/ontology/Person>
 //     ns.uri(scurie);
 //          --> <http://dbpedia.org/ontology/Person>
@@ -3668,14 +3673,14 @@ VIE.prototype.Namespaces.prototype.uri = function (curie) {
 };
 
 // ### isUri(something)
-// This method checks, whether the given string is a URI.  
-// **Parameters**:  
-// *{string}* **something** : The string to be checked.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{boolean}* : ```true``` if the string is a URI, ```false``` otherwise.  
-// **Example usage**: 
+// This method checks, whether the given string is a URI.
+// **Parameters**:
+// *{string}* **something** : The string to be checked.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{boolean}* : ```true``` if the string is a URI, ```false``` otherwise.
+// **Example usage**:
 //
 //     var namespaces = new vie.Namespaces("http://base.ns/");
 //     namespaces.addOrReplace("test", "http://test.ns");
@@ -3792,14 +3797,14 @@ VIE.prototype.ClassicEntityManager.prototype = {
 
 // ## VIE.DBPediaService(options)
 // This is the constructor to instantiate a new service to collect
-// properties of an entity from <a href="http://dbpedia.org">DBPedia</a>.  
-// **Parameters**:  
-// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, or ```name```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.DBPediaService}* : A **new** VIE.DBPediaService instance.  
-// **Example usage**:  
+// properties of an entity from <a href="http://dbpedia.org">DBPedia</a>.
+// **Parameters**:
+// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, or ```name```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.DBPediaService}* : A **new** VIE.DBPediaService instance.
+// **Example usage**:
 //
 //     var dbpService = new vie.DBPediaService({<some-configuration>});
 VIE.prototype.DBPediaService = function (options) {
@@ -3828,7 +3833,7 @@ VIE.prototype.DBPediaService = function (options) {
     this.vie = null; /* this.vie will be set via VIE.use(); */
     /* overwrite options.name if you want to set another name */
     this.name = this.options.name;
-    
+
     /* basic setup for the ajax connection */
     jQuery.ajaxSetup({
         converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
@@ -3837,17 +3842,17 @@ VIE.prototype.DBPediaService = function (options) {
 };
 
 VIE.prototype.DBPediaService.prototype = {
-    
+
 // ### init()
 // This method initializes certain properties of the service and is called
-// via ```VIE.use()```.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.DBPediaService}* : The VIE.DBPediaService instance itself.  
-// **Example usage**:  
+// via ```VIE.use()```.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.DBPediaService}* : The VIE.DBPediaService instance itself.
+// **Example usage**:
 //
 //     var dbpService = new vie.DBPediaService({<some-configuration>});
 //     dbpService.init();
@@ -3857,26 +3862,26 @@ VIE.prototype.DBPediaService.prototype = {
             var val = this.options.namespaces[key];
             this.vie.namespaces.add(key, val);
         }
-        
+
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
         this.rules = jQuery.merge(this.rules, (this.options.rules) ? this.options.rules : []);
-        
+
         this.connector = new this.vie.DBPediaConnector(this.options);
-        
+
         return this;
     },
 
 // ### load(loadable)
 // This method loads the entity that is stored within the loadable into VIE.
 // You can also query for multiple queries by setting ```entities``` with
-// an array of entities.  
-// **Parameters**:  
-// *{VIE.Loadable}* **lodable** The loadable.  
-// **Throws**:  
-// *{Error}* if an invalid VIE.Loadable is passed.  
-// **Returns**:  
-// *{VIE.DBPediaService}* : The VIE.DBPediaService instance itself.  
-// **Example usage**:  
+// an array of entities.
+// **Parameters**:
+// *{VIE.Loadable}* **lodable** The loadable.
+// **Throws**:
+// *{Error}* if an invalid VIE.Loadable is passed.
+// **Returns**:
+// *{VIE.DBPediaService}* : The VIE.DBPediaService instance itself.
+// **Example usage**:
 //
 //  var dbpService = new vie.DBPediaService({<some-configuration>});
 //  dbpService.load(new vie.Loadable({entity : "<http://...>"}));
@@ -3885,12 +3890,12 @@ VIE.prototype.DBPediaService.prototype = {
 //  dbpService.load(new vie.Loadable({entities : ["<http://...>", "<http://...>"]}));
     load: function(loadable){
         var service = this;
-        
+
         var correct = loadable instanceof this.vie.Loadable;
         if (!correct) {
             throw new Error("Invalid Loadable passed");
         }
-        
+
         var success = function (results) {
             results = (typeof results === "string")? JSON.parse(results) : results;
             _.defer(function() {
@@ -3907,13 +3912,13 @@ VIE.prototype.DBPediaService.prototype = {
                 }
             });
         };
-        
+
         var error = function (e) {
             loadable.reject(e);
         };
-        
+
         var entities = (loadable.options.entity)? loadable.options.entity : loadable.options.entities;
-        
+
         if (!entities) {
             loadable.reject([]);
         } else {
@@ -3923,7 +3928,7 @@ VIE.prototype.DBPediaService.prototype = {
                 var tmpEnt = (typeof entities[e] === "string")? entities[e] : entities[e].id;
                 tmpEntities.push(tmpEnt);
             }
-                        
+
             this.connector.load(tmpEntities, success, error);
         }
         return this;
@@ -3932,14 +3937,14 @@ VIE.prototype.DBPediaService.prototype = {
 
 // ## VIE.DBPediaConnector(options)
 // The DBPediaConnector is the connection between the DBPedia service
-// and the backend service.  
-// **Parameters**:  
-// *{object}* **options** The options.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.DBPediaConnector}* : The **new** VIE.DBPediaConnector instance.  
-// **Example usage**:  
+// and the backend service.
+// **Parameters**:
+// *{object}* **options** The options.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.DBPediaConnector}* : The **new** VIE.DBPediaConnector instance.
+// **Example usage**:
 //
 //     var dbpConn = new vie.DBPediaConnector({<some-configuration>});
 VIE.prototype.DBPediaConnector = function (options) {
@@ -3950,17 +3955,17 @@ VIE.prototype.DBPediaConnector = function (options) {
 VIE.prototype.DBPediaConnector.prototype = {
 
 // ### load(uri, success, error, options)
-// This method loads all properties from an entity and returns the result by the success callback.  
-// **Parameters**:  
-// *{string}* **uri** The URI of the entity to be loaded.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, like the ```format```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.DBPediaConnector}* : The VIE.DBPediaConnector instance itself.  
-// **Example usage**:  
+// This method loads all properties from an entity and returns the result by the success callback.
+// **Parameters**:
+// *{string}* **uri** The URI of the entity to be loaded.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, like the ```format```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.DBPediaConnector}* : The VIE.DBPediaConnector instance itself.
+// **Example usage**:
 //
 //     var dbpConn = new vie.DBPediaConnector(opts);
 //     dbpConn.load("<http://dbpedia.org/resource/Barack_Obama>",
@@ -3968,11 +3973,11 @@ VIE.prototype.DBPediaConnector.prototype = {
 //                 function (err) { ... });
     load: function (uri, success, error, options) {
         if (!options) { options = {}; }
-        
-        var url = this.baseUrl + 
-        "&format=" + encodeURIComponent("application/rdf+json") + 
+
+        var url = this.baseUrl +
+        "&format=" + encodeURIComponent("application/rdf+json") +
         "&query=";
-        
+
         if (_.isArray(uri)) {
             var construct = "";
             var where = "";
@@ -4006,7 +4011,7 @@ VIE.prototype.DBPediaConnector.prototype = {
             url: url,
             accepts: {"application/rdf+json": "application/rdf+json"}
         });
-        
+
         return this;
     },
 
@@ -4025,7 +4030,7 @@ VIE.prototype.DBPediaConnector.prototype = {
             success(JSON.parse(body));
         });
         r.end();
-        
+
         return this;
     }
 };
@@ -4045,14 +4050,14 @@ VIE.prototype.DBPediaConnector.prototype = {
 
 // ## VIE.OpenCalaisService(options)
 // This is the constructor to instantiate a new service to collect
-// properties of an entity from OpenCalais.  
-// **Parameters**:  
-// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.OpenCalaisService}* : A **new** VIE.OpenCalaisService instance.  
-// **Example usage**:  
+// properties of an entity from OpenCalais.
+// **Parameters**:
+// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.OpenCalaisService}* : A **new** VIE.OpenCalaisService instance.
+// **Example usage**:
 //
 //     var service = new vie.OpenCalaisService({<some-configuration>});
 VIE.prototype.OpenCalaisService = function(options) {
@@ -4076,7 +4081,7 @@ VIE.prototype.OpenCalaisService = function(options) {
     this.vie = null; /* will be set via VIE.use(); */
     /* overwrite options.name if you want to set another name */
     this.name = this.options.name;
-    
+
     /* basic setup for the ajax connection */
     jQuery.ajaxSetup({
         converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
@@ -4085,17 +4090,17 @@ VIE.prototype.OpenCalaisService = function(options) {
 };
 
 VIE.prototype.OpenCalaisService.prototype = {
-    
+
 // ### init()
 // This method initializes certain properties of the service and is called
-// via ```VIE.use()```.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.  
-// **Example usage**:  
+// via ```VIE.use()```.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
+// **Example usage**:
 //
 //     var service = new vie.OpenCalaisService({<some-configuration>});
 //     service.init();
@@ -4105,7 +4110,7 @@ VIE.prototype.OpenCalaisService.prototype = {
             var val = this.options.namespaces[key];
             this.vie.namespaces.add(key, val);
         }
-        
+
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
        /* this.rules = jQuery.extend(this.rules, [{
             'left' : [
@@ -4135,14 +4140,14 @@ VIE.prototype.OpenCalaisService.prototype = {
     },
 
 // ### analyze(analyzable)
-// This method extracts text from the jQuery element and sends it to OpenCalais for analysis.  
-// **Parameters**:  
-// *{VIE.Analyzable}* **analyzable** The analyzable.  
-// **Throws**:  
-// *{Error}* if an invalid VIE.Findable is passed.  
-// **Returns**:  
-// *{VIE.OpenCalaisService}* : The VIE.OpenCalaisService instance itself.  
-// **Example usage**:  
+// This method extracts text from the jQuery element and sends it to OpenCalais for analysis.
+// **Parameters**:
+// *{VIE.Analyzable}* **analyzable** The analyzable.
+// **Throws**:
+// *{Error}* if an invalid VIE.Findable is passed.
+// **Returns**:
+// *{VIE.OpenCalaisService}* : The VIE.OpenCalaisService instance itself.
+// **Example usage**:
 //
 //     var service = new vie.OpenCalaisService({<some-configuration>});
 //     service.analyzable(
@@ -4199,14 +4204,14 @@ VIE.prototype.OpenCalaisService.prototype = {
 
 // ## VIE.OpenCalaisConnector(options)
 // The OpenCalaisConnector is the connection between the VIE OpenCalais service
-// and the actual ajax calls.  
-// **Parameters**:  
-// *{object}* **options** The options.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.OpenCalaisService}* : The **new** VIE.OpenCalaisService instance.  
-// **Example usage**:  
+// and the actual ajax calls.
+// **Parameters**:
+// *{object}* **options** The options.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.OpenCalaisService}* : The **new** VIE.OpenCalaisService instance.
+// **Example usage**:
 //
 //     var conn = new vie.OpenCalaisConnector({<some-configuration>});
 VIE.prototype.OpenCalaisConnector = function (options) {
@@ -4218,17 +4223,17 @@ VIE.prototype.OpenCalaisConnector = function (options) {
 VIE.prototype.OpenCalaisConnector.prototype = {
 
 // ### analyze(text, success, error, options)
-// This method sends the given text to OpenCalais returns the result by the success callback.  
-// **Parameters**:  
-// *{string}* **text** The text to be analyzed.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, like the ```format```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.OpenCalaisConnector}* : The VIE.OpenCalaisConnector instance itself.  
-// **Example usage**:  
+// This method sends the given text to OpenCalais returns the result by the success callback.
+// **Parameters**:
+// *{string}* **text** The text to be analyzed.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, like the ```format```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.OpenCalaisConnector}* : The VIE.OpenCalaisConnector instance itself.
+// **Example usage**:
 //
 //     var conn = new vie.OpenCalaisConnector(opts);
 //     conn.analyze("This is some text.",
@@ -4240,12 +4245,12 @@ VIE.prototype.OpenCalaisConnector.prototype = {
             error("Could not connect to the given OpenCalais endpoints! Please check for their setup!");
             return;
         }
-        
+
         var enhancerUrl = this.baseUrl[options.urlIndex].replace(/\/$/, '');
         enhancerUrl += this.enhancerUrlPrefix;
-        
+
         var format = options.format || "application/rdf+json";
-        
+
         var retryErrorCb = function (c, t, s, e, o) {
             /* in case a OpenCalais backend is not responding and
              * multiple URLs have been registered
@@ -4255,7 +4260,7 @@ VIE.prototype.OpenCalaisConnector.prototype = {
                 c.analyze(t, s, e, _.extend(o, {urlIndex : o.urlIndex+1}));
             };
         }(this, text, success, error, options);
-        
+
         var data = this._prepareData(text);
 
         if (typeof exports !== "undefined" && typeof process !== "undefined") {
@@ -4294,7 +4299,7 @@ VIE.prototype.OpenCalaisConnector.prototype = {
         });
         r.end();
     },
-    
+
     _prepareData : function (text) {
         return {
             licenseID: this.options.api_key,
@@ -4310,7 +4315,7 @@ VIE.prototype.OpenCalaisConnector.prototype = {
 
 
 (function(){
-    
+
     VIE.prototype.RdfaRdfQueryService = function(options) {
         var defaults = {
             name : 'rdfardfquery',
@@ -4335,33 +4340,33 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
             var val = this.options.namespaces[key];
             this.vie.namespaces.add(key, val);
         }
-        
+
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
         this.rules = jQuery.merge(this.rules, (this.options.rules) ? this.options.rules : []);
     },
-        
+
     analyze: function(analyzable) {
         // in a certain way, analyze is the same as load
         return this.load(analyzable);
     },
-        
+
     load : function(loadable) {
         var service = this;
         var correct = loadable instanceof this.vie.Loadable || loadable instanceof this.vie.Analyzable;
         if (!correct) {
             throw new Error("Invalid Loadable/Analyzable passed");
         }
-        
+
         var element = loadable.options.element ? loadable.options.element : jQuery(document);
         try {
             var rdf = jQuery(element).find("[about],[typeof]").rdfa();
-            
+
             jQuery.each(jQuery(element).xmlns(), function(prefix, ns){
                 service.vie.namespaces.addOrReplace(prefix, ns.toString());
             });
-            
+
             var entities = VIE.Util.rdf2Entities(this, rdf);
-            
+
             loadable.resolve(entities);
         } catch (e) {
             loadable.reject(e);
@@ -4373,20 +4378,20 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
         if (!correct) {
             savable.reject("Invalid Savable passed");
         }
-    
+
         if (!savable.options.element) {
             savable.reject("Unable to write entity to RDFa, no element given");
         }
-    
+
         if (!savable.options.entity) {
             savable.reject("Unable to write to RDFa, no entity given");
         }
-        
+
         if (!jQuery.rdf) {
             savable.reject("No rdfQuery found.");
         }
         var entity = savable.options.entity;
-        
+
         var triples = [];
         var type = entity.get('@type');
         type = (jQuery.isArray(type))? type[0] : type;
@@ -4394,10 +4399,10 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
         triples.push(entity.getSubject() + " a " + type);
         //TODO: add all attributes!
         jQuery(savable.options.element).rdfa(triples);
-    
+
         savable.resolve();
     }
-    
+
 };
 
 })();
@@ -4416,14 +4421,14 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
 (function(){
 
 // ## VIE.RdfaService(options)
-// This is the constructor to instantiate a new service.  
-// **Parameters**:  
-// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.RdfaService}* : A **new** VIE.RdfaService instance.  
-// **Example usage**:  
+// This is the constructor to instantiate a new service.
+// **Parameters**:
+// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.RdfaService}* : A **new** VIE.RdfaService instance.
+// **Example usage**:
 //
 //     var rdfaService = new vie.RdfaService({<some-configuration>});
 VIE.prototype.RdfaService = function(options) {
@@ -4471,17 +4476,17 @@ VIE.prototype.RdfaService = function(options) {
 };
 
 VIE.prototype.RdfaService.prototype = {
-    
+
 // ### init()
 // This method initializes certain properties of the service and is called
-// via ```VIE.use()```.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.RdfaService}* : The VIE.RdfaService instance itself.  
-// **Example usage**:  
+// via ```VIE.use()```.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.RdfaService}* : The VIE.RdfaService instance itself.
+// **Example usage**:
 //
 //     var rdfaService = new vie.RdfaService({<some-configuration>});
 //     rdfaService.init();
@@ -4491,16 +4496,16 @@ VIE.prototype.RdfaService.prototype = {
             var val = this.options.namespaces[key];
             this.vie.namespaces.add(key, val);
         }
-        
+
         this.rules = jQuery.merge([], VIE.Util.transformationRules(this));
         this.rules = jQuery.merge(this.rules, (this.options.rules) ? this.options.rules : []);
     },
-    
+
     analyze: function(analyzable) {
         // in a certain way, analyze is the same as load
         return this.load(analyzable);
     },
-        
+
     load : function(loadable) {
         var service = this;
         var correct = loadable instanceof this.vie.Loadable || loadable instanceof this.vie.Analyzable;
@@ -4510,7 +4515,7 @@ VIE.prototype.RdfaService.prototype = {
 
         var element;
         if (!loadable.options.element) {
-            if (typeof document === 'undefined') { 
+            if (typeof document === 'undefined') {
                 return loadable.resolve([]);
             }
             element = jQuery(document);
@@ -4527,16 +4532,16 @@ VIE.prototype.RdfaService.prototype = {
         if (!correct) {
             throw "Invalid Savable passed";
         }
-    
+
         if (!savable.options.element) {
             // FIXME: we could find element based on subject
             throw "Unable to write entity to RDFa, no element given";
         }
-    
+
         if (!savable.options.entity) {
             throw "Unable to write to RDFa, no entity given";
         }
-    
+
         this._writeEntity(savable.options.entity, savable.options.element);
         savable.resolve();
     },
@@ -4556,7 +4561,7 @@ VIE.prototype.RdfaService.prototype = {
         });
         return entities;
     },
-    
+
     _readEntity : function(element) {
         var subject = this.getElementSubject(element);
         var type = this._getElementType(element);
@@ -4586,13 +4591,14 @@ VIE.prototype.RdfaService.prototype = {
         var entityInstance = new this.vie.Entity(entity);
         entityInstance = this.vie.entities.addOrUpdate(entityInstance, {
           updateOptions: {
-            silent: true
+            silent: true,
+            ignoreChanges: true
           }
         });
         this._registerEntityView(entityInstance, element);
         return entityInstance;
     },
-    
+
     _writeEntity : function(entity, element) {
         var service = this;
         this.findPredicateElements(this.getElementSubject(element), element, true).each(function() {
@@ -4601,7 +4607,7 @@ VIE.prototype.RdfaService.prototype = {
             if (!entity.has(predicate)) {
                 return true;
             }
-    
+
             var value = entity.get(predicate);
             if (value && value.isCollection) {
                 // Handled by CollectionViews separately
@@ -4614,7 +4620,7 @@ VIE.prototype.RdfaService.prototype = {
         });
         return true;
     },
-    
+
     _getViewForElement : function(element, collectionView) {
         var viewInstance;
         jQuery.each(this.views, function() {
@@ -4628,7 +4634,7 @@ VIE.prototype.RdfaService.prototype = {
         });
         return viewInstance;
     },
-    
+
     _registerEntityView : function(entity, element, isNew) {
         if (!element.length) {
             return;
@@ -4639,7 +4645,7 @@ VIE.prototype.RdfaService.prototype = {
         if (viewInstance) {
             return viewInstance;
         }
-    
+
         viewInstance = new this.vie.view.Entity({
             model: entity,
             el: element,
@@ -4662,7 +4668,7 @@ VIE.prototype.RdfaService.prototype = {
             }));
           });
         }
-    
+
         // Find collection elements and create collection views for them
         _.each(entity.attributes, function(value, predicate) {
             var attributeValue = entity.fromReference(entity.get(predicate));
@@ -4788,13 +4794,13 @@ VIE.prototype.RdfaService.prototype = {
             callback(newElement);
         };
     },
-    
+
     _registerCollectionView : function(collection, element, entity) {
         var viewInstance = this._getViewForElement(element, true);
         if (viewInstance) {
             return viewInstance;
         }
-    
+
         viewInstance = new this.vie.view.Collection({
             owner: entity,
             collection: collection,
@@ -4806,7 +4812,7 @@ VIE.prototype.RdfaService.prototype = {
         this.views.push(viewInstance);
         return viewInstance;
     },
-    
+
     _getElementType : function (element) {
         var type;
         if (jQuery(element).attr('typeof') !== this.options.attributeExistenceComparator) {
@@ -4819,10 +4825,10 @@ VIE.prototype.RdfaService.prototype = {
         }
         return null;
     },
-    
+
     getElementSubject : function(element) {
         var service = this;
-        if (typeof document !== 'undefined') { 
+        if (typeof document !== 'undefined') {
             if (element === document) {
                 return document.baseURI;
             }
@@ -4858,7 +4864,7 @@ VIE.prototype.RdfaService.prototype = {
             }
             return undefined;
         }
-                
+
         if (typeof subject === 'object') {
             return subject;
         }
@@ -4870,14 +4876,14 @@ VIE.prototype.RdfaService.prototype = {
         }
         return "<" + subject + ">";
     },
-    
+
     setElementSubject : function(subject, element) {
         if (jQuery(element).attr('src')) {
             return jQuery(element).attr('src', subject);
         }
         return jQuery(element).attr('about', subject);
     },
-    
+
     getElementPredicate : function(element) {
         var predicate;
         element = jQuery(element);
@@ -4887,18 +4893,18 @@ VIE.prototype.RdfaService.prototype = {
         }
         return predicate;
     },
-    
+
     getElementBySubject : function(subject, element) {
         var service = this;
         return jQuery(element).find(this.options.subjectSelector).add(jQuery(element).filter(this.options.subjectSelector)).filter(function() {
             if (service.getElementSubject(jQuery(this)) !== subject) {
                 return false;
             }
-     
+
             return true;
         });
     },
-    
+
     getElementByPredicate : function(predicate, element) {
         var service = this;
         var subject = this.getElementSubject(element);
@@ -4907,19 +4913,19 @@ VIE.prototype.RdfaService.prototype = {
             if (service.vie.namespaces.curie(foundPredicate) !== service.vie.namespaces.curie(predicate)) {
                 return false;
             }
-    
+
             if (service.getElementSubject(this) !== subject) {
                 return false;
             }
-     
+
             return true;
         });
     },
-    
+
     _readEntityPredicates : function(subject, element, emptyValues) {
         var service = this;
         var entityPredicates = {};
-    
+
         this.findPredicateElements(subject, element, true).each(function() {
             var predicateElement = jQuery(this);
             var predicate = service.getElementPredicate(predicateElement);
@@ -4930,22 +4936,26 @@ VIE.prototype.RdfaService.prototype = {
             if (value === null && !emptyValues) {
                 return;
             }
-   
+
             entityPredicates[predicate] = value;
         });
-    
+
         if (jQuery(element).get(0).tagName !== 'HTML') {
             jQuery(element).parent('[rev]').each(function() {
                 var relation = jQuery(this).attr('rev');
                 if (!relation) {
                     return;
                 }
-                entityPredicates[jQuery(this).attr('rev')] = service.getElementSubject(this); 
+                entityPredicates[jQuery(this).attr('rev')] = service.getElementSubject(this);
             });
         }
         return entityPredicates;
     },
-    
+
+    findSubjectElements: function (element) {
+      return jQuery('[about]', element);
+    },
+
     findPredicateElements : function(subject, element, allowNestedPredicates) {
         var service = this;
         return jQuery(element).find(this.options.predicateSelector).add(jQuery(element).filter(this.options.predicateSelector)).filter(function() {
@@ -4958,7 +4968,7 @@ VIE.prototype.RdfaService.prototype = {
                 }
                 return false;
             }
-    
+
             return true;
         });
     },
@@ -4993,20 +5003,20 @@ VIE.prototype.RdfaService.prototype = {
         if (content) {
             return this.parseElementValue(content, element);
         }
-                
+
         // The `resource` attribute can be used to link a predicate to another
         // RDF resource.
         var resource = element.attr('resource');
         if (resource) {
             return ["<" + resource + ">"];
         }
-                
+
         // `href` attribute also links to another RDF resource.
         var href = element.attr('href');
         if (href && element.attr('rel') === predicate) {
             return ["<" + href + ">"];
         }
-    
+
         // If the predicate is a relation, we look for identified child objects
         // and provide their identifiers as the values. To protect from scope
         // creep, we only support direct descentants of the element where the
@@ -5019,12 +5029,12 @@ VIE.prototype.RdfaService.prototype = {
             });
             return value;
         }
-    
+
         // If none of the checks above matched we return the HTML contents of
         // the element as the literal value.
         return this.parseElementValue(element.html(), element);
     },
-    
+
     writeElementValue : function(predicate, element, value) {
         value = this.generateElementValue(value, element);
 
@@ -5032,7 +5042,7 @@ VIE.prototype.RdfaService.prototype = {
         if (_.isArray(value) && value.length > 0) {
             value = value[0];
         }
-        
+
         // The `content` attribute can be used for providing machine-readable
         // values for elements where the HTML presentation differs from the
         // actual value.
@@ -5041,24 +5051,24 @@ VIE.prototype.RdfaService.prototype = {
             element.attr('content', value);
             return;
         }
-                
+
         // The `resource` attribute can be used to link a predicate to another
         // RDF resource.
         var resource = element.attr('resource');
         if (resource) {
             element.attr('resource', value);
         }
-    
+
         // Property has inline value. Change the HTML contents of the property
         // element to match the new value.
         element.html(value);
     },
-    
+
     // mostyl copied from http://code.google.com/p/rdfquery/source/browse/trunk/jquery.xmlns.js
     xmlns : function (elem) {
         var $elem;
         if (!elem) {
-            if (typeof document === 'undefined') { 
+            if (typeof document === 'undefined') {
                 return {};
             }
             $elem = jQuery(document);
@@ -5083,7 +5093,7 @@ VIE.prototype.RdfaService.prototype = {
                 }
             }
         });
-        
+
         return obj;
     }
 
@@ -5101,21 +5111,21 @@ VIE.prototype.RdfaService.prototype = {
 
 // ## VIE - StanbolService service
 // The StanbolService service allows a VIE developer to directly query
-// the <a href="http://incubator.apache.org/stanbol/">Apache Stanbol</a> entityhub for entities and their properties. 
+// the <a href="http://incubator.apache.org/stanbol/">Apache Stanbol</a> entityhub for entities and their properties.
 // Furthermore, it gives access to the enhance facilities of
 // Stanbol to analyze content and semantically enrich it.
 (function(){
 
 // ## VIE.StanbolService(options)
 // This is the constructor to instantiate a new service to collect
-// properties of an entity from <a href="http://incubator.apache.org/stanbol/">Apache Stanbol</a>.  
-// **Parameters**:  
-// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolService}* : A **new** VIE.StanbolService instance.  
-// **Example usage**:  
+// properties of an entity from <a href="http://incubator.apache.org/stanbol/">Apache Stanbol</a>.
+// **Parameters**:
+// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolService}* : A **new** VIE.StanbolService instance.
+// **Example usage**:
 //
 //     var stnblService = new vie.StanbolService({<some-configuration>});
 VIE.prototype.StanbolService = function(options) {
@@ -5184,30 +5194,30 @@ VIE.prototype.StanbolService = function(options) {
     this.vie = null; /* will be set via VIE.use(); */
     /* overwrite options.name if you want to set another name */
     this.name = this.options.name;
-    
+
 };
 
 VIE.prototype.StanbolService.prototype = {
-    
+
 // ### init()
 // This internal method initializes certain properties of the service and is called
-// via ```VIE.use()```.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.  
+// via ```VIE.use()```.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
     init: function(){
 
         for (var key in this.options.namespaces) {
             var val = this.options.namespaces[key];
             this.vie.namespaces.add(key, val);
         }
-        
+
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
         this.rules = jQuery.merge(this.rules, (this.options.rules) ? this.options.rules : []);
-        
+
         this.connector = new this.vie.StanbolConnector(this.options);
 
         /* adding these entity types to VIE helps later the querying */
@@ -5223,14 +5233,14 @@ VIE.prototype.StanbolService.prototype = {
     },
 
 // ### analyze(analyzable)
-// This method extracts text from the jQuery element and sends it to Apache Stanbol for analysis.  
-// **Parameters**:  
-// *{VIE.Analyzable}* **analyzable** The analyzable.  
-// **Throws**:  
-// *{Error}* if an invalid VIE.Findable is passed.  
-// **Returns**:  
-// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.  
-// **Example usage**:  
+// This method extracts text from the jQuery element and sends it to Apache Stanbol for analysis.
+// **Parameters**:
+// *{VIE.Analyzable}* **analyzable** The analyzable.
+// **Throws**:
+// *{Error}* if an invalid VIE.Findable is passed.
+// **Returns**:
+// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
+// **Example usage**:
 //
 //     vie.analyze({element : jQuery("#foo")})
 //     .using(new vie.StanbolService({<some-configuration>}))
@@ -5256,7 +5266,7 @@ VIE.prototype.StanbolService.prototype = {
             var error = function (e) {
                 analyzable.reject(e);
             };
-            
+
             var options = {
                 chain : (analyzable.options.chain)? analyzable.options.chain : service.options.enhancer.chain
             };
@@ -5271,14 +5281,14 @@ VIE.prototype.StanbolService.prototype = {
     },
 
 // ### find(findable)
-// This method finds entities given the term from the entity hub.  
-// **Parameters**:  
-// *{VIE.Findable}* **findable** The findable.  
-// **Throws**:  
-// *{Error}* if an invalid VIE.Findable is passed.  
-// **Returns**:  
-// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.  
-// **Example usage**:  
+// This method finds entities given the term from the entity hub.
+// **Parameters**:
+// *{VIE.Findable}* **findable** The findable.
+// **Throws**:
+// *{Error}* if an invalid VIE.Findable is passed.
+// **Returns**:
+// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
+// **Example usage**:
 //
 //     vie.find({
 //         term : "Bischofsh",
@@ -5311,9 +5321,9 @@ VIE.prototype.StanbolService.prototype = {
         var error = function (e) {
             findable.reject(e);
         };
-        
+
         findable.options.site = (findable.options.site)? findable.options.site : service.options.entityhub.site;
-        
+
         var vie = this.vie;
         if(findable.options.properties){
             var properties = findable.options.properties;
@@ -5335,14 +5345,14 @@ VIE.prototype.StanbolService.prototype = {
     },
 
 // ### load(loadable)
-// This method loads the entity that is stored within the loadable into VIE.  
-// **Parameters**:  
-// *{VIE.Loadable}* **lodable** The loadable.  
-// **Throws**:  
-// *{Error}* if an invalid VIE.Loadable is passed.  
-// **Returns**:  
-// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.  
-// **Example usage**:  
+// This method loads the entity that is stored within the loadable into VIE.
+// **Parameters**:
+// *{VIE.Loadable}* **lodable** The loadable.
+// **Throws**:
+// *{Error}* if an invalid VIE.Loadable is passed.
+// **Returns**:
+// *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
+// **Example usage**:
 //     vie.load({
 //         entity: "<http://...>"
 //     })
@@ -5368,24 +5378,24 @@ VIE.prototype.StanbolService.prototype = {
         var error = function (e) {
             loadable.reject(e);
         };
-        
+
         var options = {
             site : (loadable.options.site)? loadable.options.site : service.options.entityhub.site,
             local : loadable.options.local
         };
-        
+
         this.connector.load(entity, success, error, options);
     },
 
  // ### save(savable)
- // This method saves the given entity to the Apache Stanbol installation.  
- // **Parameters**:  
- // *{VIE.Savable}* **savable** The savable.  
- // **Throws**:  
- // *{Error}* if an invalid VIE.Savable is passed.  
- // **Returns**:  
- // *{VIE.StanbolService}* : The VIE.StanbolService instance itself.  
- // **Example usage**:  
+ // This method saves the given entity to the Apache Stanbol installation.
+ // **Parameters**:
+ // *{VIE.Savable}* **savable** The savable.
+ // **Throws**:
+ // *{Error}* if an invalid VIE.Savable is passed.
+ // **Returns**:
+ // *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
+ // **Example usage**:
  //
  //      var entity = new vie.Entity({'name' : 'Test Entity'});
  //      var stnblService = new vie.StanbolService({<some-configuration>});
@@ -5406,16 +5416,16 @@ VIE.prototype.StanbolService.prototype = {
                  savable.resolve(entities);
              });
          };
-         
+
          var error = function (e) {
              savable.reject(e);
          };
-         
+
          var options = {
             site : (savable.options.site)? savable.options.site : service.options.entityhub.site,
             local : savable.options.local
          };
-         
+
          this.connector.save(entity, success, error, options);
      },
 
@@ -5439,18 +5449,18 @@ VIE.prototype.StanbolService.prototype = {
 
 // ## VIE.StanbolConnector(options)
 // The StanbolConnector is the connection between the VIE Stanbol service
-// and the actual ajax calls.  
-// **Parameters**:  
-// *{object}* **options** The options.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The **new** VIE.StanbolConnector instance.  
-// **Example usage**:  
+// and the actual ajax calls.
+// **Parameters**:
+// *{object}* **options** The options.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The **new** VIE.StanbolConnector instance.
+// **Example usage**:
 //
 //     var stnblConn = new vie.StanbolConnector({<some-configuration>});
 VIE.prototype.StanbolConnector = function (options) {
-    
+
     var defaults =  {
         /* you can pass an array of URLs which are then tried sequentially */
         url: ["http://dev.iks-project.eu/stanbolfull"],
@@ -5490,42 +5500,42 @@ VIE.prototype.StanbolConnector = function (options) {
     /* the options are merged with the default options */
     this.options = jQuery.extend(true, defaults, options ? options : {});
     this.options.url = (_.isArray(this.options.url))? this.options.url : [ this.options.url ];
-    
+
     this._init();
 
     this.baseUrl = (_.isArray(options.url))? options.url : [ options.url ];
 };
 
 VIE.prototype.StanbolConnector.prototype = {
-        
+
 // ### _init()
 // Basic setup of the stanbol connector.  This is called internally by the constructor!
-// **Parameters**:  
+// **Parameters**:
 // *nothing*
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself. 
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
     _init : function () {
         var connector = this;
-        
+
         /* basic setup for the ajax connection */
         jQuery.ajaxSetup({
             converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
             timeout: connector.options.timeout
         });
-        
+
         return this;
     },
-    
+
     _iterate : function (params) {
         if (!params) { return; }
-        
+
         if (params.urlIndex >= this.options.url.length) {
             params.error.call(this, "Could not connect to the given Stanbol endpoints! Please check for their setup!");
             return;
         }
-        
+
         var retryErrorCb = function (c, p) {
             /* in case a Stanbol backend is not responding and
              * multiple URLs have been registered
@@ -5540,15 +5550,15 @@ VIE.prototype.StanbolConnector.prototype = {
         if (typeof exports !== "undefined" && typeof process !== "undefined") {
             /* We're on Node.js, don't use jQuery.ajax */
             return params.methodNode.call(
-                    this, 
+                    this,
                     params.url.call(this, params.urlIndex, params.args.options),
                     params.args,
                     params.success,
                     retryErrorCb);
         }
-        
+
         return params.method.call(
-                this, 
+                this,
                 params.url.call(this, params.urlIndex, params.args.options),
                 params.args,
                 params.success,
@@ -5556,17 +5566,17 @@ VIE.prototype.StanbolConnector.prototype = {
     },
 
 // ### analyze(text, success, error, options)
-// This method sends the given text to Apache Stanbol returns the result by the success callback.  
-// **Parameters**:  
-// *{string}* **text** The text to be analyzed.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, like the ```format```, or the ```chain``` to be used.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
-// **Example usage**:  
+// This method sends the given text to Apache Stanbol returns the result by the success callback.
+// **Parameters**:
+// *{string}* **text** The text to be analyzed.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, like the ```format```, or the ```chain``` to be used.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
+// **Example usage**:
 //
 //     var stnblConn = new vie.StanbolConnector(opts);
 //     stnblConn.analyze("This is some text.",
@@ -5575,13 +5585,13 @@ VIE.prototype.StanbolConnector.prototype = {
     analyze: function(text, success, error, options) {
         options = (options)? options :  {};
         var connector = this;
-        
+
         connector._iterate({
             method : connector._analyze,
             methodNode : connector._analyzeNode,
             url : function (idx, opts) {
                 var chain = (opts.chain)? opts.chain : this.options.enhancer.chain;
-                
+
                 var u = this.options.url[idx].replace(/\/$/, '');
                 u += this.options.enhancer.urlPostfix + "/chain/" + chain.replace(/\/$/, '');
                 return u;
@@ -5596,7 +5606,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
         });
     },
-    
+
     _analyze : function (url, args, success, error) {
         jQuery.ajax({
             success: success,
@@ -5631,17 +5641,17 @@ VIE.prototype.StanbolConnector.prototype = {
     },
 
 // ### load(uri, success, error, options)
-// This method loads all properties from an entity and returns the result by the success callback.  
-// **Parameters**:  
-// *{string}* **uri** The URI of the entity to be loaded.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, like the ```format```, the ```site```. If ```local``` is set, only the local entities are accessed.   
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
-// **Example usage**:  
+// This method loads all properties from an entity and returns the result by the success callback.
+// **Parameters**:
+// *{string}* **uri** The URI of the entity to be loaded.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, like the ```format```, the ```site```. If ```local``` is set, only the local entities are accessed.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
+// **Example usage**:
 //
 //     var stnblConn = new vie.StanbolConnector(opts);
 //     stnblConn.load("<http://dbpedia.org/resource/Barack_Obama>",
@@ -5651,9 +5661,9 @@ VIE.prototype.StanbolConnector.prototype = {
     load: function (uri, success, error, options) {
         var connector = this;
         options = (options)? options :  {};
-        
+
         options.uri = uri.replace(/^</, '').replace(/>$/, '');
-        
+
         connector._iterate({
             method : connector._load,
             methodNode : connector._loadNode,
@@ -5662,9 +5672,9 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
                 var site = (opts.site)? opts.site : this.options.entityhub.site;
                 site = (site)? "/" + site : "s";
-                
+
                 var isLocal = opts.local;
-                
+
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (isLocal) {
                     u += "/entity?id=" + escape(opts.uri);
@@ -5680,7 +5690,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
         });
     },
-    
+
     _load : function (url, args, success, error) {
         jQuery.ajax({
             success: success,
@@ -5713,19 +5723,19 @@ VIE.prototype.StanbolConnector.prototype = {
     },
 
 // ### find(term, limit, offset, success, error, options)
-// This method finds entities given the term from the entity hub and returns the result by the success callback.  
-// **Parameters**:  
-// *{string}* **term** The term to be searched for. 
-// *{int}* **limit** The limit of results to be returned. 
-// *{int}* **offset** The offset to be search for.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, like the ```format```. If ```local``` is set, only the local entities are accessed.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
-// **Example usage**:  
+// This method finds entities given the term from the entity hub and returns the result by the success callback.
+// **Parameters**:
+// *{string}* **term** The term to be searched for.
+// *{int}* **limit** The limit of results to be returned.
+// *{int}* **offset** The offset to be search for.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, like the ```format```. If ```local``` is set, only the local entities are accessed.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
+// **Example usage**:
 //
 //     var stnblConn = new vie.StanbolConnector(opts);
 //     stnblConn.find("Bishofsh", 10, 0,
@@ -5736,15 +5746,15 @@ VIE.prototype.StanbolConnector.prototype = {
         /* curl -X POST -d "name=Bishofsh&limit=10&offset=0" http://localhost:8080/entityhub/sites/find */
 
         var connector = this;
-        
+
         if (!term || term === "") {
             error ("No term given!");
             return;
         }
-        
+
         offset = (offset)? offset : 0;
         limit  = (limit)? limit : 10;
-        
+
         connector._iterate({
             method : connector._find,
             methodNode : connector._findNode,
@@ -5753,16 +5763,16 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
                 var site = (opts.site)? opts.site : this.options.entityhub.site;
                 site = (site)? "/" + site : "s";
-                
+
                 var isLocal = opts.local;
-                
+
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (isLocal) {
                     u += "/sites/find";
                 } else {
                     u += "/site" + site + "/find";
                 }
-                
+
                 return u;
             },
             args : {
@@ -5775,7 +5785,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
         });
     },
-    
+
     _find : function (url, args, success, error) {
         jQuery.ajax({
             success: success,
@@ -5807,41 +5817,41 @@ VIE.prototype.StanbolConnector.prototype = {
         });
         r.end();
     },
-    
+
 // ### lookup(uri, success, error, options)
-// TODO.  
-// **Parameters**:  
-// *{string}* **uri** The URI of the entity to be loaded.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
+// TODO.
+// **Parameters**:
+// *{string}* **uri** The URI of the entity to be loaded.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
 // *{object}* **options** Options, ```create```.
 //    If the parsed ID is a URI of a Symbol, than the stored information of the Symbol are returned in the requested media type ('accept' header field).
 //    If the parsed ID is a URI of an already mapped entity, then the existing mapping is used to get the according Symbol.
 //    If "create" is enabled, and the parsed URI is not already mapped to a Symbol, than all the currently active referenced sites are searched for an Entity with the parsed URI.
 //    If the configuration of the referenced site allows to create new symbols, than a the entity is imported in the Entityhub, a new Symbol and EntityMapping is created and the newly created Symbol is returned.
 //    In case the entity is not found (this also includes if the entity would be available via a referenced site, but create=false) a 404 "Not Found" is returned.
-//    In case the entity is found on a referenced site, but the creation of a new Symbol is not allowed a 403 "Forbidden" is returned.   
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
+//    In case the entity is found on a referenced site, but the creation of a new Symbol is not allowed a 403 "Forbidden" is returned.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
     lookup: function(uri, success, error, options) {
         options = (options)? options :  {};
         /*/lookup/?id=http://dbpedia.org/resource/Paris&create=false"*/
         var connector = this;
-        
+
         uri = uri.replace(/^</, '').replace(/>$/, '');
 
         options.uri = uri;
         options.create = (options.create)? options.create : false;
-         
+
         connector._iterate({
             method : connector._lookup,
             methodNode : connector._lookupNode,
             success : success,
             error : error,
             url : function (idx, opts) {
-                 
+
                  var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                  u += "/lookup?id=" + escape(opts.uri) + "&create=" + opts.create;
                  return u;
@@ -5853,7 +5863,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
          });
      },
-     
+
      _lookup : function (url, args, success, error) {
         jQuery.ajax({
              success: success,
@@ -5884,27 +5894,27 @@ VIE.prototype.StanbolConnector.prototype = {
          });
          r.end();
      },
-    
+
  // ### referenced(success, error, options)
- // This method returns a list of all referenced sites that the entityhub comprises.  
- // **Parameters**:  
- // *{function}* **success** The success callback.  
- // *{function}* **error** The error callback.  
- // *{object}* **options** Options, unused here.   
- // **Throws**:  
- // *nothing*  
- // **Returns**:  
- // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
- // **Example usage**:  
+ // This method returns a list of all referenced sites that the entityhub comprises.
+ // **Parameters**:
+ // *{function}* **success** The success callback.
+ // *{function}* **error** The error callback.
+ // *{object}* **options** Options, unused here.
+ // **Throws**:
+ // *nothing*
+ // **Returns**:
+ // *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
+ // **Example usage**:
  //
 //      var stnblConn = new vie.StanbolConnector(opts);
 //      stnblConn.referenced(
 //                  function (res) { ... },
-//                  function (err) { ... });  
+//                  function (err) { ... });
      referenced: function(success, error, options) {
         options = (options)? options :  {};
         var connector = this;
-        
+
         var successCB = function (sites) {
           if (!_.isArray(sites)) {
             sites = JSON.parse(sites);
@@ -5915,7 +5925,7 @@ VIE.prototype.StanbolConnector.prototype = {
           }
           return success(sitesStripped);
         };
-        
+
         connector._iterate({
             method : connector._referenced,
             methodNode : connector._referencedNode,
@@ -5924,7 +5934,7 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
                  var u = this.options.url[idx].replace(/\/$/, '');
                  u += this.options.entityhub.urlPostfix + "/sites/referenced";
-                 
+
                 return u;
             },
             args : {
@@ -5933,7 +5943,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
          });
      },
-     
+
      _referenced : function (url, args, success, error) {
         jQuery.ajax({
              success: success,
@@ -5963,20 +5973,20 @@ VIE.prototype.StanbolConnector.prototype = {
      },
 
 // ### sparql(query, success, error, options)
-// TODO.  
-// **Parameters**:  
+// TODO.
+// **Parameters**:
 // TODO
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, unused here.   
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, unused here.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
      sparql: function(query, success, error, options) {
         options = (options)? options :  {};
          var connector = this;
-        
+
         connector._iterate({
             method : connector._sparql,
             methodNode : connector._sparqlNode,
@@ -5985,7 +5995,7 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
                 var u = this.options.url[idx].replace(/\/$/, '');
                 u += this.options.sparql.urlPostfix.replace(/\/$/, '');
-              
+
                 return u;
             },
             args : {
@@ -5995,7 +6005,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
           });
       },
-      
+
       _sparql : function (url, args, success, error) {
         jQuery.ajax({
               success: success,
@@ -6025,29 +6035,29 @@ VIE.prototype.StanbolConnector.prototype = {
           });
           r.end();
       },
-      
+
 // ### ldpath(query, success, error, options)
-// TODO.  
-// **Parameters**:  
+// TODO.
+// **Parameters**:
 // TODO
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, unused here.   
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, unused here.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
     ldpath: function(ldpath, context, success, error, options) {
         options = (options)? options :  {};
         var connector = this;
-        
+
         context = (_.isArray(context))? context : [ context ];
-        
+
         var contextStr = "";
         for (var c = 0; c < context.length; c++) {
             contextStr += "&context=" + context[c];
         }
-        
+
         connector._iterate({
             method : connector._ldpath,
             methodNode : connector._ldpathNode,
@@ -6056,14 +6066,14 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
                 var site = (opts.site)? opts.site : this.options.entityhub.site;
                 site = (site)? "/" + site : "s";
-                
+
                 var isLocal = opts.local;
-                
+
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (!isLocal)
                     u += "/site" + site;
                 u += "/ldpath";
-             
+
                 return u;
             },
             args : {
@@ -6075,7 +6085,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
          });
      },
-     
+
      _ldpath : function (url, args, success, error) {
         jQuery.ajax({
              success: success,
@@ -6107,22 +6117,22 @@ VIE.prototype.StanbolConnector.prototype = {
          });
          r.end();
      },
-         
+
 // ### uploadContent(content, success, error, options)
-// TODO.  
-// **Parameters**:  
+// TODO.
+// **Parameters**:
 // TODO
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, unused here.   
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, unused here.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
       uploadContent: function(content, success, error, options) {
         options = (options)? options :  {};
         var connector = this;
-        
+
         connector._iterate({
             method : connector._uploadContent,
             methodNode : connector._uploadContentNode,
@@ -6131,12 +6141,12 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
                  var u = this.options.url[idx].replace(/\/$/, '');
                  u += this.options.contenthub.urlPostfix.replace(/\/$/, '');
-                 
+
                  var index = (opts.index)? opts.index : this.options.contenthub.index;
-                 
+
                  u += "/" + index.replace(/\/$/, '');
                  u += "/store";
-               
+
                  return u;
             },
             args : {
@@ -6146,7 +6156,7 @@ VIE.prototype.StanbolConnector.prototype = {
             urlIndex : 0
            });
        },
-       
+
        _uploadContent : function (url, args, success, error) {
            jQuery.ajax({
                success: success,
@@ -6179,22 +6189,22 @@ VIE.prototype.StanbolConnector.prototype = {
        },
 
 //### createFactSchema(url, schema, success, error, options)
-//TODO.  
-//**Parameters**:  
+//TODO.
+//**Parameters**:
 //TODO
-//*{function}* **success** The success callback.  
-//*{function}* **error** The error callback.  
-//*{object}* **options** Options, unused here.   
-//**Throws**:  
-//*nothing*  
-//**Returns**:  
-//*{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.  
+//*{function}* **success** The success callback.
+//*{function}* **error** The error callback.
+//*{object}* **options** Options, unused here.
+//**Throws**:
+//*nothing*
+//**Returns**:
+//*{VIE.StanbolConnector}* : The VIE.StanbolConnector instance itself.
       createFactSchema: function(url, schema, success, error, options) {
              options = (options)? options :  {};
              var connector = this;
-             
+
              options.url = url;
-            
+
              connector._iterate({
                 method : connector._createFactSchema,
                 methodNode : connector._createFactSchemaNode,
@@ -6203,9 +6213,9 @@ VIE.prototype.StanbolConnector.prototype = {
                 url : function (idx, opts) {
                   var u = this.options.url[idx].replace(/\/$/, '');
                   u += this.options.factstore.urlPostfix.replace(/\/$/, '');
-                  
+
                   u += "/facts/" + escape(opts.url);
-                
+
                   return u;
                 },
                 args : {
@@ -6216,7 +6226,7 @@ VIE.prototype.StanbolConnector.prototype = {
                 urlIndex : 0
             });
         },
-        
+
         _createFactSchema : function (url, args, success, error) {
                jQuery.ajax({
                 success: success,
@@ -6228,7 +6238,7 @@ VIE.prototype.StanbolConnector.prototype = {
                 dataType: "application/json"
             });
         },
-    
+
         _createFactSchemaNode: function(url, args, success, error) {
             var request = require('request');
             var r = request({
@@ -6248,11 +6258,11 @@ VIE.prototype.StanbolConnector.prototype = {
             });
             r.end();
         },
-        
+
         createFact: function(fact, success, error, options) {
              options = (options)? options :  {};
              var connector = this;
-             
+
              connector._iterate({
                 method : connector._createFact,
                 methodNode : connector._createFactNode,
@@ -6261,9 +6271,9 @@ VIE.prototype.StanbolConnector.prototype = {
                 url : function (idx, opts) {
                      var u = this.options.url[idx].replace(/\/$/, '');
                      u += this.options.factstore.urlPostfix.replace(/\/$/, '');
-                     
+
                      u += "/facts";
-                   
+
                   return u;
                 },
                 args : {
@@ -6273,7 +6283,7 @@ VIE.prototype.StanbolConnector.prototype = {
                 urlIndex : 0
                });
        },
-       
+
        _createFact : function (url, args, success, error) {
            jQuery.ajax({
                success: success,
@@ -6285,7 +6295,7 @@ VIE.prototype.StanbolConnector.prototype = {
                dataType: "application/json"
            });
        },
-    
+
        _createFactNode: function(url, args, success, error) {
            var request = require('request');
            var r = request({
@@ -6305,11 +6315,11 @@ VIE.prototype.StanbolConnector.prototype = {
            });
            r.end();
        },
-       
+
         queryFact: function(query, success, error, options) {
              options = (options)? options :  {};
              var connector = this;
-             
+
              connector._iterate({
                 method : connector._queryFact,
                 methodNode : connector._queryFactNode,
@@ -6318,9 +6328,9 @@ VIE.prototype.StanbolConnector.prototype = {
                 url : function (idx, opts) {
                      var u = this.options.url[idx].replace(/\/$/, '');
                      u += this.options.factstore.urlPostfix.replace(/\/$/, '');
-                     
+
                      u += "/query";
-                   
+
                   return u;
                 },
                 args : {
@@ -6330,7 +6340,7 @@ VIE.prototype.StanbolConnector.prototype = {
                 urlIndex : 0
                });
        },
-       
+
        _queryFact : function (url, args, success, error) {
            jQuery.ajax({
                success: success,
@@ -6342,7 +6352,7 @@ VIE.prototype.StanbolConnector.prototype = {
                dataType: "application/json"
            });
        },
-    
+
        _queryFactNode: function(url, args, success, error) {
            var request = require('request');
            var r = request({
@@ -6379,14 +6389,14 @@ VIE.prototype.StanbolConnector.prototype = {
 
 // ## VIE.ZemantaService(options)
 // This is the constructor to instantiate a new service to collect
-// properties of an entity from Zemanta.  
-// **Parameters**:  
-// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.ZemantaService}* : A **new** VIE.ZemantaService instance.  
-// **Example usage**:  
+// properties of an entity from Zemanta.
+// **Parameters**:
+// *{object}* **options** Optional set of fields, ```namespaces```, ```rules```, ```url```, or ```name```.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.ZemantaService}* : A **new** VIE.ZemantaService instance.
+// **Example usage**:
 //
 //     var service = new vie.ZemantaService({<some-configuration>});
 VIE.prototype.ZemantaService = function(options) {
@@ -6420,7 +6430,7 @@ VIE.prototype.ZemantaService = function(options) {
     this.vie = null; /* will be set via VIE.use(); */
     /* overwrite options.name if you want to set another name */
     this.name = this.options.name;
-    
+
     /* basic setup for the ajax connection */
     jQuery.ajaxSetup({
         converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
@@ -6429,17 +6439,17 @@ VIE.prototype.ZemantaService = function(options) {
 };
 
 VIE.prototype.ZemantaService.prototype = {
-    
+
 // ### init()
 // This method initializes certain properties of the service and is called
-// via ```VIE.use()```.  
-// **Parameters**:  
-// *nothing*  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.ZemantaService}* : The VIE.ZemantaService instance itself.  
-// **Example usage**:  
+// via ```VIE.use()```.
+// **Parameters**:
+// *nothing*
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.ZemantaService}* : The VIE.ZemantaService instance itself.
+// **Example usage**:
 //
 //     var service = new vie.ZemantaService({<some-configuration>});
 //     service.init();
@@ -6449,10 +6459,10 @@ VIE.prototype.ZemantaService.prototype = {
             var val = this.options.namespaces[key];
             this.vie.namespaces.add(key, val);
         }
-        
+
         this.rules = jQuery.extend([], VIE.Util.transformationRules(this));
         this.rules = jQuery.merge(this.rules, (this.options.rules) ? this.options.rules : []);
-        
+
         this.connector = new this.vie.ZemantaConnector(this.options);
 
         /* adding these entity types to VIE helps later the querying */
@@ -6462,14 +6472,14 @@ VIE.prototype.ZemantaService.prototype = {
     },
 
 // ### analyze(analyzable)
-// This method extracts text from the jQuery element and sends it to Zemanta for analysis.  
-// **Parameters**:  
-// *{VIE.Analyzable}* **analyzable** The analyzable.  
-// **Throws**:  
-// *{Error}* if an invalid VIE.Findable is passed.  
-// **Returns**:  
-// *{VIE.StanbolService}* : The VIE.ZemantaService instance itself.  
-// **Example usage**:  
+// This method extracts text from the jQuery element and sends it to Zemanta for analysis.
+// **Parameters**:
+// *{VIE.Analyzable}* **analyzable** The analyzable.
+// **Throws**:
+// *{Error}* if an invalid VIE.Findable is passed.
+// **Returns**:
+// *{VIE.StanbolService}* : The VIE.ZemantaService instance itself.
+// **Example usage**:
 //
 //     var service = new vie.ZemantaService({<some-configuration>});
 //     service.analyzable(
@@ -6495,7 +6505,7 @@ VIE.prototype.ZemantaService.prototype = {
             var error = function (e) {
                 analyzable.reject(e);
             };
-            
+
             var options = {};
 
             this.connector.analyze(text, success, error, options);
@@ -6515,18 +6525,18 @@ VIE.prototype.ZemantaService.prototype = {
 
 // ## VIE.ZemantaConnector(options)
 // The ZemantaConnector is the connection between the VIE Zemanta service
-// and the actual ajax calls.  
-// **Parameters**:  
-// *{object}* **options** The options.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.ZemantaConnector}* : The **new** VIE.ZemantaConnector instance.  
-// **Example usage**:  
+// and the actual ajax calls.
+// **Parameters**:
+// *{object}* **options** The options.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.ZemantaConnector}* : The **new** VIE.ZemantaConnector instance.
+// **Example usage**:
 //
 //     var conn = new vie.ZemantaConnector({<some-configuration>});
 VIE.prototype.ZemantaConnector = function (options) {
-    
+
     var defaults =  {
         /* you can pass an array of URLs which are then tried sequentially */
         url: ["http://api.zemanta.com/services/rest/0.0/"],
@@ -6537,42 +6547,42 @@ VIE.prototype.ZemantaConnector = function (options) {
     /* the options are merged with the default options */
     this.options = jQuery.extend(true, defaults, options ? options : {});
     this.options.url = (_.isArray(this.options.url))? this.options.url : [ this.options.url ];
-    
+
     this._init();
 
     this.baseUrl = (_.isArray(options.url))? options.url : [ options.url ];
 };
 
 VIE.prototype.ZemantaConnector.prototype = {
-        
+
 // ### _init()
 // Basic setup of the Zemanta connector.  This is called internally by the constructor!
-// **Parameters**:  
+// **Parameters**:
 // *nothing*
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.ZemantaConnector}* : The VIE.ZemantaConnector instance itself. 
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.ZemantaConnector}* : The VIE.ZemantaConnector instance itself.
     _init : function () {
         var connector = this;
-        
+
         /* basic setup for the ajax connection */
         jQuery.ajaxSetup({
             converters: {"text application/rdf+json": function(s){return JSON.parse(s);}},
             timeout: connector.options.timeout
         });
-        
+
         return this;
     },
-    
+
     _iterate : function (params) {
         if (!params) { return; }
-        
+
         if (params.urlIndex >= this.options.url.length) {
             params.error.call(this, "Could not connect to the given Zemanta endpoints! Please check for their setup!");
             return;
         }
-        
+
         var retryErrorCb = function (c, p) {
             /* in case a Zemanta backend is not responding and
              * multiple URLs have been registered
@@ -6587,15 +6597,15 @@ VIE.prototype.ZemantaConnector.prototype = {
         if (typeof exports !== "undefined" && typeof process !== "undefined") {
             /* We're on Node.js, don't use jQuery.ajax */
             return params.methodNode.call(
-                    this, 
+                    this,
                     params.url.call(this, params.urlIndex, params.args.options),
                     params.args,
                     params.success,
                     retryErrorCb);
         }
-        
+
         return params.method.call(
-                this, 
+                this,
                 params.url.call(this, params.urlIndex, params.args.options),
                 params.args,
                 params.success,
@@ -6603,17 +6613,17 @@ VIE.prototype.ZemantaConnector.prototype = {
     },
 
 // ### analyze(text, success, error, options)
-// This method sends the given text to Zemanta returns the result by the success callback.  
-// **Parameters**:  
-// *{string}* **text** The text to be analyzed.  
-// *{function}* **success** The success callback.  
-// *{function}* **error** The error callback.  
-// *{object}* **options** Options, like the ```format```, or the ```chain``` to be used.  
-// **Throws**:  
-// *nothing*  
-// **Returns**:  
-// *{VIE.ZemantaConnector}* : The VIE.ZemantaConnector instance itself.  
-// **Example usage**:  
+// This method sends the given text to Zemanta returns the result by the success callback.
+// **Parameters**:
+// *{string}* **text** The text to be analyzed.
+// *{function}* **success** The success callback.
+// *{function}* **error** The error callback.
+// *{object}* **options** Options, like the ```format```, or the ```chain``` to be used.
+// **Throws**:
+// *nothing*
+// **Returns**:
+// *{VIE.ZemantaConnector}* : The VIE.ZemantaConnector instance itself.
+// **Example usage**:
 //
 //     var conn = new vie.ZemantaConnector(opts);
 //     conn.analyze("<p>This is some HTML text.</p>",
@@ -6622,7 +6632,7 @@ VIE.prototype.ZemantaConnector.prototype = {
     analyze: function(text, success, error, options) {
         options = (options)? options :  {};
         var connector = this;
-        
+
         connector._iterate({
             method : connector._analyze,
             methodNode : connector._analyzeNode,
@@ -6640,7 +6650,7 @@ VIE.prototype.ZemantaConnector.prototype = {
             urlIndex : 0
         });
     },
-    
+
     _analyze : function (url, args, success, error) {
         jQuery.ajax({
             success: function(a, b, c){
@@ -6704,9 +6714,9 @@ VIE.prototype.view.Collection = Backbone.View.extend({
 
         _.bindAll(this, 'addItem', 'removeItem', 'refreshItems');
 
-        this.collection.bind('add', this.addItem);
-        this.collection.bind('remove', this.removeItem);
-        this.collection.bind('reset', this.refreshItems);
+        this.collection.on('add', this.addItem);
+        this.collection.on('remove', this.removeItem);
+        this.collection.on('reset', this.refreshItems);
 
         // Make the view aware of existing entities in collection
         var view = this;
@@ -6756,7 +6766,7 @@ VIE.prototype.view.Collection = Backbone.View.extend({
             childTypeName = childType.id;
           }
         }
-          
+
         if (!childTypeName) {
             return;
         }
@@ -6787,7 +6797,7 @@ VIE.prototype.view.Collection = Backbone.View.extend({
 
             // Update reverse relations, if any
             self.findReverseRelations(entity, entityElement);
-       
+
             // Handle eventing
             self.trigger('add', entityView);
             self.entityViews[entity.cid] = entityView;
@@ -6855,15 +6865,15 @@ VIE.prototype.view.Entity = Backbone.View.extend({
 
         // Ensure view gets updated when properties of the Entity change.
         _.bindAll(this, 'render', 'renderAbout');
-        this.model.bind('change', this.render);
-        this.model.bind('change:@subject', this.renderAbout);
+        this.model.on('change', this.render);
+        this.model.on('change:@subject', this.renderAbout);
     },
 
     // Rendering a view means writing the properties of the Entity back to
     // the element containing our RDFa annotations.
     render: function() {
         this.vie.save({
-                element: this.el, 
+                element: this.el,
                 entity: this.model
             }).
             to(this.service).
@@ -6874,10 +6884,10 @@ VIE.prototype.view.Entity = Backbone.View.extend({
     renderAbout: function () {
         this.vie.service(this.service).setElementSubject(this.model.getSubjectUri(), this.el);
     }
-}); 
-// Based on [Julian Aubourg's xdr.js](https://github.com/jaubourg/ajaxHooks/blob/master/src/ajax/xdr.js)  
-// Internet Explorer 8 & 9 don't support the cross-domain request protocol known as CORS. 
-// Their solution we use is called XDomainRequest. This module is a wrapper for 
+});
+// Based on [Julian Aubourg's xdr.js](https://github.com/jaubourg/ajaxHooks/blob/master/src/ajax/xdr.js)
+// Internet Explorer 8 & 9 don't support the cross-domain request protocol known as CORS.
+// Their solution we use is called XDomainRequest. This module is a wrapper for
 // XDR using jQuery ajaxTransport, jQuery's way to support such cases.
 // Author: Szaby Grünwald @ Salzburg Research, 2011
 /*global XDomainRequest:false console:false jQuery:false */
@@ -6910,7 +6920,7 @@ if ( root.XDomainRequest ) {
           xdr.onload = function(e1, e2) {
             callback( 200, "OK", { text: xdr.responseText }, "Content-Type: " + xdr.contentType );
           };
-          // XDR cannot differentiate between errors, 
+          // XDR cannot differentiate between errors,
           // we call every error 404. Could be changed to another one.
           xdr.onerror = function(e) {
               console.error(JSON.stringify(e));
