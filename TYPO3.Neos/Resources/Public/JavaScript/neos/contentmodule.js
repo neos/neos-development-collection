@@ -450,7 +450,9 @@ function($, vie, Ember, CreateJS) {
 						} else {
 							// todo find cleaner solution for pages with different structures
 							// but without the classic reload, loadPage breaks here
-							alert('Target HTML selector not found. Something has gone really wrong. The page will automatically reload.');
+							if (typeof console != "undefined"){
+								console.log('Target HTML selector was not found because of a different page structure');
+							}
 							window.location.href = uri;
 						}
 
