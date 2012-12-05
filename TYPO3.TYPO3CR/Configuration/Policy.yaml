@@ -4,8 +4,8 @@
 
 resources:
   entities:
-    TYPO3_TYPO3CR_Domain_Model_Node:
-      TYPO3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: this.workspace.name != 'live'
+    TYPO3\TYPO3CR\Domain\Model\Node:
+      TYPO3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: 'this.workspace.name != ''live'''
 
 roles:
   TYPO3CR_Administrator: []
