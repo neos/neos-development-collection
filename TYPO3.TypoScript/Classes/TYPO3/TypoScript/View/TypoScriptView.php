@@ -119,6 +119,14 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	}
 
 	/**
+	 * @param string $pathPattern
+	 * @return void
+	 */
+	public function setTypoScriptPathPattern($pathPattern) {
+		$this->typoScriptPathPattern = $pathPattern;
+	}
+
+	/**
 	 * Render the view
 	 *
 	 * @return string The rendered view
