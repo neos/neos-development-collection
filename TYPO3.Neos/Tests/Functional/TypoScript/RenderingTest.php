@@ -27,11 +27,6 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @var boolean
 	 */
-	protected $testableHttpEnabled = TRUE;
-
-	/**
-	 * @var boolean
-	 */
 	protected $testableSecurityEnabled = TRUE;
 
 	/**

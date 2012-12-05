@@ -35,11 +35,6 @@ class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var boolean
-	 */
-	protected $testableHttpEnabled = TRUE;
-
-	/**
 	 * @test
 	 */
 	public function indexActionIsGrantedForAdministrator() {
