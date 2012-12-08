@@ -2,22 +2,6 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<f:form action="import" class="form-horizontal">
-		<div class="row t3-module-container indented">
-			<fieldset>
-				<legend>Import package</legend>
-				<div class="alert alert-info">
-					<p>Currently only packages located at <a href="http://git.typo3.org" target="blank">git.typo3.org</a> are supported.</p>
-					<p><strong>Hint:</strong> To import the git repository <strong>Flow/Packages/TYPO3.Comments.git</strong> you only need to enter <strong>TYPO3.Comments</strong></p>
-				</div>
-				<div class="input-append">
-					<f:form.textfield name="packageKey" placeholder="Package name from git.typo3.org" /><button class="btn btn-primary t3-button" type="submit"><i class="icon-download icon-white"></i> Import package</button>
-				</div>
-				<br /><br />
-			</fieldset>
-		</div>
-	</f:form>
-
 	<f:form action="batch">
 		<div class="row t3-module-container indented">
 			<legend>Available packages</legend>

@@ -83,24 +83,6 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\StandardControlle
 		$this->flashMessageContainer->addMessage($this->deactivatePackage($packageKey));
 		$this->redirect('index');
 	}
-	/**
-	 * Import package
-	 *
-	 * @param string $packageKey Package to import
-	 * @return void
-	 */
-	public function importAction($packageKey) {
-		try {
-			$this->packageManager->importPackage($packageKey);
-			$message = new \TYPO3\Flow\Error\Message($packageKey . ' has been imported', 1343231682);
-		} catch (\TYPO3\Flow\Package\Exception\PackageKeyAlreadyExistsException $exception) {
-			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231683);
-		} catch (\TYPO3\Flow\Package\Exception\PackageRepositoryException $exception) {
-			$message = new \TYPO3\Flow\Error\Error($exception->getMessage(), 1343231684);
-		}
-		$this->flashMessageContainer->addMessage($message);
-		$this->redirect('index');
-	}
 
 	/**
 	 * Delete package
