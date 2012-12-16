@@ -205,10 +205,12 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		 * When clicking the delete Page, we show a dialog
 		 */
 		showDeletePageDialog: function(activeNode) {
+
 			var that = this,
 				view = Ember.View.create({
 					template: Ember.Handlebars.compile(deletePageDialogTemplate),
 					pageTitle: activeNode.data.title,
+					numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
 					didInsertElement: function() {
 					},
 					cancel: function() {

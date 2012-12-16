@@ -2,12 +2,14 @@
 	<div class="modal-header">
 		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close t3-button" title="x"}}
 		<h3>Are you sure you want to delete the page "{{pageTitle}}"?</h3>
-		<p>This will delete the page {{page}} {{children}}.
-			This operation can be undone in the workspace management.</p>
+		<p>
+			This will delete the page{{#if numberOfChildren}} and it's subpages{{/if}}.<br />
+			This operation can be undone in the workspace management.
+		</p>
 	</div>
 	<div class="modal-footer">
-			{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel"   class="btn t3-button" title="Cancel"}}
-			{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete"   class="btn btn-danger t3-button icon-trash icon-white" title="Delete"}}
-		</div>
+		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="btn t3-button" title="Cancel"}}
+		{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete" class="btn btn-danger t3-button icon-trash icon-white" title="Delete"}}
+	</div>
 </div>
 <div class="modal-backdrop in"></div>
