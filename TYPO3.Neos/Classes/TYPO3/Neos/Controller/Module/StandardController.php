@@ -65,5 +65,14 @@ class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function indexAction() {
 	}
 
+	/**
+	 * Display no flash message at all on errors.
+	 *
+	 * @return \TYPO3\Flow\Error\Message returns FALSE
+	 */
+	protected function getErrorFlashMessage() {
+		return FALSE;
+	}
+
 }
 ?>
