@@ -3,8 +3,20 @@
 
 <f:section name="head">
 	<title>{title}</title>
-	<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
-    <script src="{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}"></script>
+
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
+	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
+		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
+			<link rel="stylesheet" href="{f:uri.resource(path: additionalResource)}" />
+		</f:for>
+	</f:if>
+
+	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}"></script>
+	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
+		<f:for each="{moduleConfiguration.additionalResources.javaScripts}" as="additionalResource">
+			<script src="{f:uri.resource(path: additionalResource)}"></script>
+		</f:for>
+	</f:if>
 </f:section>
 
 <f:section name="body">
