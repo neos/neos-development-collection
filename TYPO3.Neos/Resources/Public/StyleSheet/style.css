@@ -6593,6 +6593,22 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
+.t3-ui .dropdown-menu li > a:hover,
+.t3-ui .dropdown-menu li > a:focus,
+.t3-ui .dropdown-submenu:hover > a,
+.t3-ui .dropdown-menu .active > a,
+.t3-ui .dropdown-menu .active > a:hover {
+  background-color: #ff8700;
+  background-color: #f58200;
+  background-image: -moz-linear-gradient(top, #ff8700, #e67a00);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff8700), to(#e67a00));
+  background-image: -webkit-linear-gradient(top, #ff8700, #e67a00);
+  background-image: -o-linear-gradient(top, #ff8700, #e67a00);
+  background-image: linear-gradient(to bottom, #ff8700, #e67a00);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF8700', endColorstr='#FFE67A00', GradientType=0);
+}
+
 body.t3-ui-controls {
   margin-right: 200px;
   margin-bottom: 26px;
