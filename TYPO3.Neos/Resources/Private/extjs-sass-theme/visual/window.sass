@@ -1,0 +1,65 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-window-proxy
+  background-color: adjust_hue(#c7dffc, $hue)
+  border-color: adjust_hue(#99bbe8, $hue)
+
+.x-window-tl .x-window-header
+  color: adjust_hue(#15428b, $hue)
+  font: bold 11px tahoma,arial,verdana,sans-serif
+
+.x-window-tc
+  background-image: url (#{$img_path+"/window/top-bottom.png"})
+
+.x-window-tl
+  background-image: url (#{$img_path+"/window/left-corners.png"})
+
+.x-window-tr
+  background-image: url (#{$img_path+"/window/right-corners.png"})
+
+.x-window-bc
+  background-image: url (#{$img_path+"/window/top-bottom.png"})
+
+.x-window-bl
+  background-image: url (#{$img_path+"/window/left-corners.png"})
+
+.x-window-br
+  background-image: url (#{$img_path+"/window/right-corners.png"})
+
+.x-window-mc
+  border-color: adjust_hue(#99bbe8, $hue)
+  font: normal 11px tahoma,arial,helvetica,sans-serif
+  background-color: adjust_hue(#dfe8f6, $hue)
+
+.x-window-ml, .x-window-mr
+  background-image: url (#{$img_path+"/window/left-right.png"})
+
+.x-window-maximized .x-window-tc
+  background-color: adjust_hue(#fff, $hue)
+
+.x-window-bbar .x-toolbar
+  border-top-color: adjust_hue(#99bbe8, $hue)
+
+.x-panel-ghost .x-window-tl
+  border-bottom-color: adjust_hue(#99bbe8, $hue)
+
+.x-panel-collapsed .x-window-tl
+  border-bottom-color: adjust_hue(#84a0c4, $hue)
+
+.x-dlg-mask
+  background-color: adjust_hue(#ccc, $hue)
+
+.x-window-plain
+  .x-window-mc
+    background-color: adjust_hue(#ccd9e8, $hue)
+    border-color: adjust_hue(#a3bae9, $hue) #dfe8f6 #dfe8f6 #a3bae9
+  .x-window-body
+    border-color: adjust_hue(#dfe8f6, $hue) #a3bae9 #a3bae9 #dfe8f6
+
+body.x-body-masked .x-window-plain .x-window-mc
+  background-color: adjust_hue(#ccd9e8, $hue)

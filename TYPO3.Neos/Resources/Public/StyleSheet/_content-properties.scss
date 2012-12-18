@@ -1,0 +1,102 @@
+// Image thumbnail stuff in inspector
+.t3-inspector-form .typo3-imagethumbnailcontainer {
+	position: relative;
+	overflow: hidden;
+
+	.t3-image-loadingindicator {
+		z-index: 1;
+		position: absolute;
+		left: 57px;
+		top: 64px;
+	}
+
+	.typo3-imagethumbnail-inner {
+		overflow: hidden;
+		padding: 0;
+		margin: auto;
+		img {
+				// We need to reset max-width and height, as this is set in t3-ui globally.
+			max-width: none;
+			max-height: none;
+		}
+	}
+	.typo3-imagebadge {
+		position: absolute;
+		top: 80px;
+		width: 100%;
+		height: 20px;
+		color: white;
+		background: rgba(0,0,0, 0.7);
+		text-align: center;
+		display:none;
+
+		&.typo3-imagebadge-visible {
+			display:block;
+		}
+	}
+
+	.typo3-uploadthumbnail {
+		display: block;
+		position:absolute;
+		left: 0;
+		top: 0;
+	}
+	.typo3-fileupload-thumbnail-landscape {
+		width: $max-image-width;
+	}
+
+	.typo3-fileupload-thumbnail-portrait {
+		height: $max-image-height;
+	}
+}
+.t3-inspector {
+	.typo3-image-preview-thumbnail {
+		max-width: $max-image-width;
+		max-height: $max-image-height;
+	}
+}
+
+// Image position - start
+.typo3-image {
+	&.typo3-image-position-left {
+		float: left;
+	}
+	&.typo3-image-position-right {
+		float: right;
+	}
+}
+
+// Image position - end
+
+// HTML editor - start
+
+.t3-htmleditor-window {
+	width: 800px;
+	height: 400px;
+	font-size: 13px;
+
+	.CodeMirror-scroll {
+		height: 400px;
+	}
+	.CodeMirror pre {
+		overflow-y: hidden;
+	}
+}
+
+// HTML editor - end
+
+// Add new content popover //
+.t3-ui {
+	.t3-content-new-selecttype-button {
+		margin: 5px 0px;
+
+		a {
+			&:hover,
+			&:focus,
+			&:active {
+				color: $lightest;
+				cursor: pointer;
+			}
+		}
+	}
+}

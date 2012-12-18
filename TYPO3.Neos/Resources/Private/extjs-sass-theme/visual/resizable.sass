@@ -1,0 +1,33 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-resizable-handle
+  background-color: adjust_hue(#fff, $hue)
+
+.x-resizable-over .x-resizable-handle-east, .x-resizable-pinned .x-resizable-handle-east, .x-resizable-over .x-resizable-handle-west, .x-resizable-pinned .x-resizable-handle-west
+  background-image: url (#{$img_path+"/sizer/e-handle.gif"})
+
+.x-resizable-over .x-resizable-handle-south, .x-resizable-pinned .x-resizable-handle-south, .x-resizable-over .x-resizable-handle-north, .x-resizable-pinned .x-resizable-handle-north, .x-resizable-over .x-resizable-handle-north, .x-resizable-pinned .x-resizable-handle-north
+  background-image: url (#{$img_path+"/sizer/s-handle.gif"})
+
+.x-resizable-over .x-resizable-handle-southeast, .x-resizable-pinned .x-resizable-handle-southeast
+  background-image: url (#{$img_path+"/sizer/se-handle.gif"})
+
+.x-resizable-over .x-resizable-handle-northwest, .x-resizable-pinned .x-resizable-handle-northwest
+  background-image: url (#{$img_path+"/sizer/nw-handle.gif"})
+
+.x-resizable-over .x-resizable-handle-northeast, .x-resizable-pinned .x-resizable-handle-northeast
+  background-image: url (#{$img_path+"/sizer/ne-handle.gif"})
+
+.x-resizable-over .x-resizable-handle-southwest, .x-resizable-pinned .x-resizable-handle-southwest
+  background-image: url (#{$img_path+"/sizer/sw-handle.gif"})
+
+.x-resizable-proxy
+  border-color: adjust_hue(#3b5a82, $hue)
+
+.x-resizable-overlay
+  background-color: adjust_hue(#fff, $hue)

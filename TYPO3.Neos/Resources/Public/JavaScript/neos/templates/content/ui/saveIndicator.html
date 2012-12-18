@@ -1,0 +1,7 @@
+{{#if saveRunning}}
+    <button class="t3-btn btn-mini t3-indicator"><span class="icon-white icon-refresh"></span> Saving...</button>
+{{else}}
+    {{#if lastSuccessfulTransfer}}
+        <button class="t3-btn btn-mini t3-indicator" {{bindAttr title="lastSuccessfulTransferLabel"}}><span class="icon-white icon-ok"></span> Saved</button>
+    {{/if}}
+{{/if}}

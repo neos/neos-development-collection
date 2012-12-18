@@ -1,0 +1,54 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-box-tl
+  background-image: url (#{$img_path+"/box/corners.gif"})
+
+.x-box-tc
+  background-image: url (#{$img_path+"/box/tb.gif"})
+
+.x-box-tr
+  background-image: url (#{$img_path+"/box/corners.gif"})
+
+.x-box-ml
+  background-image: url (#{$img_path+"/box/l.gif"})
+
+.x-box-mc
+  background-color: adjust_hue(#eee, $hue)
+  background-image: url (#{$img_path+"/box/tb.gif"})
+  font-family: "Myriad Pro","Myriad Web","Tahoma","Helvetica","Arial",sans-serif
+  color: adjust_hue(#393939, $hue)
+  font-size: 12px
+  h3
+    font-size: 14px
+    font-weight: bold
+
+.x-box-mr
+  background-image: url (#{$img_path+"/box/r.gif"})
+
+.x-box-bl
+  background-image: url (#{$img_path+"/box/corners.gif"})
+
+.x-box-bc
+  background-image: url (#{$img_path+"/box/tb.gif"})
+
+.x-box-br
+  background-image: url (#{$img_path+"/box/corners.gif"})
+
+.x-box-blue
+  .x-box-bl, .x-box-br, .x-box-tl, .x-box-tr
+    background-image: url (#{$img_path+"/box/corners-blue.gif"})
+  .x-box-bc, .x-box-mc, .x-box-tc
+    background-image: url (#{$img_path+"/box/tb-blue.gif"})
+  .x-box-mc
+    background-color: adjust_hue(#c3daf9, $hue)
+    h3
+      color: adjust_hue(#17385b, $hue)
+  .x-box-ml
+    background-image: url (#{$img_path+"/box/l-blue.gif"})
+  .x-box-mr
+    background-image: url (#{$img_path+"/box/r-blue.gif"})

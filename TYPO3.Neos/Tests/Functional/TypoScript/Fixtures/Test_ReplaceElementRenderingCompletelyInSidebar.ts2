@@ -1,0 +1,11 @@
+#
+# completely replace the rendering for TextWithHeadline inside the right column
+#
+
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).smallHeadline {
+	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Headline]')}
+	type = 'TYPO3.Neos.ContentTypes:SmallHeadline'
+	@position = 'start'
+}
+prototype(TYPO3.Neos.ContentTypes:SmallHeadline) < prototype(TYPO3.Neos.ContentTypes:Headline)
+prototype(TYPO3.Neos.ContentTypes:SmallHeadline).templatePath = 'FIXTURE_DIRECTORY/SmallHeadlineTemplate.html'

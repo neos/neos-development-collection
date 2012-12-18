@@ -1,0 +1,18 @@
+// Examples of a simple Value object
+prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+
+simpleTypes.string = Value {
+	value = 'A simple string value is not a TypoScript object'
+}
+simpleTypes.booleanTrue = Value {
+	value = TRUE
+}
+simpleTypes.booleanFalse = Value {
+	value = FALSE
+}
+simpleTypes.wrappedString = Value {
+	value = 'Hello, '
+	value << 1.TYPO3\TypoScript\Processors:wrap(suffix: 'Foo')
+}
+
+simpleTypes.invalidValue = 'You have to use the Value object'

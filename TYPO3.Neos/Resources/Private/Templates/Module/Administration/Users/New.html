@@ -1,0 +1,63 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<div class="row t3-module-container indented">
+		<h2>New user</h2>
+	</div>
+</f:section>
+
+<f:section name="content">
+	<f:form action="create" name="account">
+
+		<div class="row t3-module-container">
+			<fieldset class="span5">
+				<legend>User</legend>
+
+				<div class="control-group">
+					<label class="control-label" for="identifier">Username</label>
+					<div class="controls">
+						<f:form.textfield name="identifier" id="identifier" />
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="password[0]">Password</label>
+					<div class="controls">
+						<f:form.password name="password[0]" id="password[0]" />
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" for="password[1]">Repeat password</label>
+					<div class="controls">
+						<f:form.password name="password[1]" id="password[1]" />
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset class="span5">
+				<legend>Personal Data</legend>
+
+				<div class="control-group">
+					<label class="control-label" for="firstName">First Name</label>
+					<div class="controls">
+							<f:form.textfield name="firstName" id="firstName" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="lastName">Last Name</label>
+					<div class="controls">
+							<f:form.textfield name="lastName" id="lastName"/>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+
+		<div class="form-actions form-footer">
+			<div class="pull-right">
+				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
+				<f:form.submit value="Save" class="btn btn-primary t3-button" />
+			</div>
+		</div>
+	</f:form>
+</f:section>

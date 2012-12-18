@@ -1,0 +1,29 @@
+prototype(TYPO3.TypoScript:Template) {
+	node = ${node}
+	# DEPRECATED since Sprint 10; should be removed lateron. Is just added for
+	# backwards compatibility.
+	context = ${node}
+}
+
+prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template)
+
+# setting up additional Prototype configuration
+prototype(TYPO3.TypoScript:Collection) {
+	collection = ${q(node).children()}
+	itemName = 'node'
+	itemRenderer = TYPO3.TypoScript:Case
+}
+
+# Catch-all condition for the default case
+prototype(TYPO3.TypoScript:Case).default {
+	@position = 'end'
+	condition = ${true}
+	type = ${q(node).property('_contentType.name')}
+}
+
+# Breadcrumb TS Object
+prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos:Breadcrumb) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+	items = ${q(node).add(q(node).parents())}
+}

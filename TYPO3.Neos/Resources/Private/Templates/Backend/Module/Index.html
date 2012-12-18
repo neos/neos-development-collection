@@ -1,0 +1,74 @@
+{namespace t=TYPO3\Neos\ViewHelpers}
+<f:layout name="Default" />
+
+<f:section name="head">
+	<title>{title}</title>
+
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
+	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
+		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
+			<link rel="stylesheet" href="{f:uri.resource(path: additionalResource)}" />
+		</f:for>
+	</f:if>
+
+	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.7.2.js')}"></script>
+	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
+		<f:for each="{moduleConfiguration.additionalResources.javaScripts}" as="additionalResource">
+			<script src="{f:uri.resource(path: additionalResource)}"></script>
+		</f:for>
+	</f:if>
+</f:section>
+
+<f:section name="body">
+	<body class="t3 t3-ui t3-module t3-module-{moduleClass}">
+		<f:if condition="{moduleContents}">
+			{moduleContents -> f:format.raw()}
+		</f:if>
+
+		<div id="t3-ui-top" class="aloha-block-do-not-deactivate">
+			<div id="t3-launcher"></div>
+			<ul class="t3-topbar">
+				<li>
+					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
+				</li>
+				<f:for each="{settings.modules}" key="module" as="configuration">
+					<f:if condition="{configuration.hideInMenu}">
+						<f:then></f:then>
+						<f:else>
+							<f:if condition="{configuration.role}">
+								<f:then>
+									<f:security.ifHasRole role="{configuration.role}">
+										<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+											<t:link.module path="{module}">{configuration.label}</t:link.module>
+										</li>
+									</f:security.ifHasRole>
+								</f:then>
+								<f:else>
+									<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+										<t:link.module path="{module}">{configuration.label}</t:link.module>
+									</li>
+								</f:else>
+							</f:if>
+						</f:else>
+					</f:if>
+				</f:for>
+			</ul>
+			<f:render partial="Backend/UserMenu" arguments="{_all}" />
+			<div class="t3-clear"></div>
+		</div>
+		<div id="t3-toolbar" class="t3-toolbar">
+			<ul class="nav nav-pills">
+				<f:for each="{settings.modules}" key="module" as="configuration">
+					<f:if condition="{rootModule} == {module}">
+						<f:for each="{configuration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
+							<li{f:if(condition: '{submoduleIdentifier} == {submodule}', then: ' class="active"')}>
+								<t:link.module path="{rootModule}/{submoduleIdentifier}">{submoduleConfiguration.label}</t:link.module>
+							</li>
+						</f:for>
+					</f:if>
+				</f:for>
+			</ul>
+		</div>
+		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
+	</body>
+</f:section>
