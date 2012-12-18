@@ -25,3 +25,5 @@ Index
 	Development/UserInterface/Index
 	ReleaseNotes
 	_DocumentationInProgress
+
+	ChangeLogs/*
