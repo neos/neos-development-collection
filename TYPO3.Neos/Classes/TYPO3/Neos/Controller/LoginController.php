@@ -28,15 +28,21 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	protected $accessDecisionManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Select special views according to format
 	 *
 	 * @return void
 	 */
 	protected function initializeAction() {
 		switch ($this->request->getFormat()) {
-			case 'json' :
+			case 'json':
 				$this->defaultViewObjectName = 'TYPO3\Flow\Mvc\View\JsonView';
-				break;
+			break;
 		}
 	}
 
@@ -69,7 +75,7 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * Is called if authentication was successful.
 	 *
 	 * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
-	 * @return string
+	 * @return void
 	 */
 	public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = NULL) {
 		if ($originalRequest !== NULL) {
@@ -87,14 +93,31 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 		parent::logoutAction();
 
 		switch ($this->request->getFormat()) {
-			case 'json' :
+			case 'json':
 				$this->view->assign('value',
 					array(
 						'success' => TRUE
 					)
 				);
 				break;
-			default :
+			default:
+				if (isset($_COOKIE['Neos_lastVisitedUri'])) {
+					$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
+					$this->nodeRepository->setContext($contentContext);
+
+					$redirectUri = $_COOKIE['Neos_lastVisitedUri'];
+					$appendHtml = !strpos($redirectUri, '.html') ? FALSE : TRUE;
+					if (!strpos($redirectUri, '@')) {
+						$redirectUri = str_replace('.html', '', $redirectUri);
+					} else {
+						$redirectUri = substr($redirectUri, 0, strpos($redirectUri, '@'));
+					}
+					$urlParts = parse_url($redirectUri);
+					if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode(substr($urlParts['path'], 1)))) {
+						$redirectUri .= $appendHtml === TRUE ? '.html' : '';
+						$this->redirectToUri($redirectUri);
+					}
+				}
 				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out.', 1318421560));
 				$this->redirect('index');
 		}
