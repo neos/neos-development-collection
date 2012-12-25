@@ -97,6 +97,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$groups = array();
 		foreach ($this->nodeSearchService->findByProperties($term, $searchContentTypes) as $result) {
 			$contentType = $result->getContentType();
+
 			if (array_key_exists($contentType->getName(), $searchContentGroups)) {
 				$type = $contentType->getName();
 			} else {
@@ -130,7 +131,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$searchResult = array(
 				'type' => $contentType->getName(),
 				'label' => substr(trim(strip_tags($result->getProperty($labelProperty))), 0, 50),
-				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos'),
+				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos', ''),
 				'path' => $result->getPath()
 			);
 			$contentTypeConfiguration = $contentType->getConfiguration();
