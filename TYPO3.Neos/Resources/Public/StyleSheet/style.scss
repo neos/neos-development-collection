@@ -758,7 +758,13 @@ body {
 	&.t3-ui-previewmode {
 		margin-right: 0;
 		.t3-ui {
-			display: none;
+			display: none !important;
+		}
+		#t3-footer,
+		#t3-ui-top,
+		#t3-toolbar,
+		#t3-inspector {
+			display: block !important;
 		}
 		#t3-footer,
 		#t3-ui-top {
