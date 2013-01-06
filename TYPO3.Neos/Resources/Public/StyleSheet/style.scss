@@ -25,13 +25,17 @@
 
 // **** CSS start ****/
 // *******************/
-body.t3-ui-controls {
-	margin-right: $property-panel-width;
-	margin-bottom: $footer-height;
-	margin-top: $launcher-height + $menu-height + $topbar-offset + $toolbar-height;
-	margin-left: 0;
-	@include transition-property(margin);
-	@include transition-duration(0.2s);
+body {
+	&.t3-backend {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+	&.t3-ui-controls {
+		margin-right: $property-panel-width;
+		margin-bottom: $footer-height;
+		margin-top: $launcher-height + $menu-height + $topbar-offset + $toolbar-height;
+		margin-left: 0;
+	}
 }
 #t3-page-metainformation {
 	display: none;
@@ -741,6 +745,7 @@ body {
 	#t3-ui-top {
 		@include transition-property(height);
 		@include transition-duration(0.2s);
+		overflow: hidden;
 	}
 	#t3-toolbar {
 		@include transition-property(margin-top);
@@ -750,13 +755,15 @@ body {
 			@include transition-duration(0.125s);
 		}
 	}
-	&.t3-backend,
 	.aloha-block-TYPO3Block {
 		@include transition-property(margin);
 		@include transition-duration(0.2s);
 	}
+	#t3-inspector {
+		@include transition-property(width);
+		@include transition-duration(0.2s);
+	}
 	&.t3-ui-previewmode {
-		margin-right: 0;
 		.t3-ui {
 			display: none;
 		}
