@@ -20,11 +20,12 @@ define(
 			},
 
 			click: function(event) {
-				if (!event.target.rel) {
+				var rel = $(event.target).closest('a').attr('rel');
+				if (!rel) {
 					return;
 				}
 				this.get('_options').collection.add({
-					'@type': event.target.rel
+					'@type': rel
 				}, {at: this.get('_index')});
 
 				this.$().parents('.popover').trigger('hidePopover')

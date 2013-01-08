@@ -6,14 +6,14 @@
 		<div id="{{unbound Ember.GUID_KEY}}{{unbound name}}" class="t3-content-new">
 			{{#each children}}
 				<div class="t3-content-new-selecttype-button">
-					<a clickBinding="click" rel="typo3:{{unbound contentType}}" class="t3-content-new t3-ajax-link t3-content-new-icon" href="#">
+					<a rel="typo3:{{unbound contentType}}" class="t3-content-new">
 						{{#if icon}}
 							<img src="/_Resources/Static/Packages/TYPO3.Neos/{{unbound icon}}" />
 						{{else}}
-							<img src="/_Resources/Static/Packages/TYPO3.Neos/Images/Icons/White/text_letter_t_icon-16.png" />
+							<img src="/_Resources/Static/Packages/TYPO3.Neos/Images/Icons/White/square_shape_icon-16.png" />
 						{{/if}}
+						{{unbound label}}
 					</a>
-					<a clickBinding="click" rel="typo3:{{unbound contentType}}" class="t3-content-new">{{unbound label}}</a><br/>
 				</div>
 			{{/each}}
 		</div>

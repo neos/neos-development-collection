@@ -7520,21 +7520,6 @@ body.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-con
   visibility: hidden;
 }
 
-.ui-widget-content table.t3-content-new td {
-  vertical-align: top;
-}
-.ui-widget-content table.t3-content-new td:first-child {
-  padding-right: 10px;
-}
-.ui-widget-content table.t3-content-new a {
-  margin-left: 20px;
-  display: block;
-}
-.ui-widget-content table.t3-content-new .t3-content-new-icon {
-  float: left;
-  margin-left: 0px;
-}
-
 #t3-neos-error-container {
   width: 600px;
   padding: 10px;
@@ -7807,9 +7792,21 @@ ul.t3-launcher-horizontal li .text {
 .t3-ui .t3-content-new-selecttype-button {
   margin: 5px 0px;
 }
+.t3-ui .t3-content-new-selecttype-button:nth-of-type(1) {
+  margin-top: 0;
+}
+.t3-ui .t3-content-new-selecttype-button:nth-last-of-type(1) {
+  margin-bottom: 0;
+}
+.t3-ui .t3-content-new-selecttype-button a {
+  display: block;
+  line-height: 16px;
+  vertical-align: bottom;
+}
 .t3-ui .t3-content-new-selecttype-button a:hover, .t3-ui .t3-content-new-selecttype-button a:focus, .t3-ui .t3-content-new-selecttype-button a:active {
   color: white;
   cursor: pointer;
+  text-decoration: none;
 }
 
 /*Dynatree start*/
