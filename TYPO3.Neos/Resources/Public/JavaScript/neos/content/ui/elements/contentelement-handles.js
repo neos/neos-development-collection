@@ -51,10 +51,11 @@ define(
 				this.$().find('.action-new').popover({
 					additionalClasses: 't3-new-contentelement-popover',
 					content: this.$newAfterPopoverContent,
-					preventLeft: (this.get('popoverPosition')==='left' ? false : true),
-					preventRight: (this.get('popoverPosition')==='right' ? false : true),
-					preventTop: (this.get('popoverPosition')==='top' ? false : true),
-					preventBottom: (this.get('popoverPosition')==='bottom' ? false : true),
+					preventLeft: this.get('popoverPosition') === 'left' ? false : true,
+					preventRight: this.get('popoverPosition') === 'right' ? false : true,
+					preventTop: this.get('popoverPosition') === 'top' ? false : true,
+					preventBottom: this.get('popoverPosition') === 'bottom' ? false : true,
+					positioning: 'absolute',
 					zindex: 10090,
 					closeEvent: function() {
 						that.set('pressed', false);
