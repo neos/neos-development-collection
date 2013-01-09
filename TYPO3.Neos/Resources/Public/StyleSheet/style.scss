@@ -745,7 +745,6 @@ body {
 	#t3-ui-top {
 		@include transition-property(height);
 		@include transition-duration(0.2s);
-		overflow: hidden;
 	}
 	#t3-toolbar {
 		@include transition-property(margin-top);
@@ -776,6 +775,7 @@ body {
 		#t3-footer,
 		#t3-ui-top {
 			height: 0;
+			overflow: hidden;
 		}
 		#t3-toolbar {
 			margin-top: -$toolbar-height;

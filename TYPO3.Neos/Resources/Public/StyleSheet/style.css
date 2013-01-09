@@ -7409,7 +7409,6 @@ body #t3-ui-top {
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
-  overflow: hidden;
 }
 body #t3-toolbar {
   -webkit-transition-property: margin-top;
@@ -7463,6 +7462,7 @@ body.t3-ui-previewmode #t3-inspector {
 body.t3-ui-previewmode #t3-footer,
 body.t3-ui-previewmode #t3-ui-top {
   height: 0;
+  overflow: hidden;
 }
 body.t3-ui-previewmode #t3-toolbar {
   margin-top: -36px;
