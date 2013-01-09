@@ -22,12 +22,6 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\StandardControlle
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\Doctrine\Service
-	 */
-	protected $doctrineService;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -211,7 +205,6 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\StandardControlle
 	protected function activatePackage($packageKey) {
 		try {
 			$this->packageManager->activatePackage($packageKey);
-			$this->doctrineService->updateSchema();
 			$message = new \TYPO3\Flow\Error\Message('The package ' . $packageKey . ' is activated', 1343231680);
 		} catch (\TYPO3\Flow\Package\Exception\UnknownPackageException $exception) {
 			$message = new \TYPO3\Flow\Error\Error('The package ' . $packageKey . ' is not present and can not be activated', 1343231681);
@@ -226,7 +219,6 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\StandardControlle
 	protected function deactivatePackage($packageKey) {
 		try {
 			$this->packageManager->deactivatePackage($packageKey);
-			$this->doctrineService->updateSchema();
 			$message = new \TYPO3\Flow\Error\Message($packageKey . ' was deactivated', 1343231678);
 		} catch (\TYPO3\Flow\Package\Exception\ProtectedPackageKeyException $exception) {
 			$message = new \TYPO3\Flow\Error\Error('The package ' . $packageKey . ' is protected and can not be deactivated', 1343231679);
