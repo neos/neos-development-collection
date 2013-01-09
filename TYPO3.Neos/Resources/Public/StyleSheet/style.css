@@ -6609,11 +6609,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF8700', endColorstr='#FFE67A00', GradientType=0);
 }
 
-body.t3-ui-controls {
-  margin-right: 200px;
-  margin-bottom: 26px;
-  margin-top: 96px;
-  margin-left: 0;
+body.t3-backend {
   -webkit-transition-property: margin;
   -moz-transition-property: margin;
   -o-transition-property: margin;
@@ -6622,6 +6618,12 @@ body.t3-ui-controls {
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
+}
+body.t3-ui-controls {
+  margin-right: 200px;
+  margin-bottom: 26px;
+  margin-top: 96px;
+  margin-left: 0;
 }
 
 #t3-page-metainformation {
@@ -7407,6 +7409,7 @@ body #t3-ui-top {
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
+  overflow: hidden;
 }
 body #t3-toolbar {
   -webkit-transition-property: margin-top;
@@ -7428,7 +7431,6 @@ body #t3-toolbar .t3-icon-preview {
   -o-transition-duration: 0.125s;
   transition-duration: 0.125s;
 }
-body.t3-backend,
 body .aloha-block-TYPO3Block {
   -webkit-transition-property: margin;
   -moz-transition-property: margin;
@@ -7439,8 +7441,15 @@ body .aloha-block-TYPO3Block {
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
 }
-body.t3-ui-previewmode {
-  margin-right: 0;
+body #t3-inspector {
+  -webkit-transition-property: width;
+  -moz-transition-property: width;
+  -o-transition-property: width;
+  transition-property: width;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
 }
 body.t3-ui-previewmode .t3-ui {
   display: none !important;
