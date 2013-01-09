@@ -71,8 +71,13 @@ class TypoScriptService {
 		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
 		$typoScriptsPath = sprintf($this->typoScriptsPathPattern, $siteResourcesPackageKey);
 
-		$mergedTypoScriptCode = $this->readExternalTypoScriptFile('resource://TYPO3.Neos/Private/DefaultTypoScript/All.ts2');
-		$mergedTypoScriptCode .= $this->readExternalTypoScriptFile($typoScriptsPath . '/Library/Root.ts2');
+		$rootTypoScriptPath = $typoScriptsPath . '/Library/Root.ts2';
+		$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($rootTypoScriptPath);
+		if (trim($siteRootTypoScriptCode) === '') {
+			throw new \TYPO3\Neos\Domain\Exception(sprintf('The site package %s did not contain a root TypoScript configuration. Please make sure that there is one at %s.', $siteResourcesPackageKey, $rootTypoScriptPath), 1357215211);
+		}
+
+		$mergedTypoScriptCode = $this->readExternalTypoScriptFile('resource://TYPO3.Neos/Private/DefaultTypoScript/All.ts2') . $siteRootTypoScriptCode;
 
 		$currentTypoScriptPath = $typoScriptsPath . '/Nodes';
 		foreach ($parentNodes as $node) {
