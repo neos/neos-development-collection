@@ -126,11 +126,6 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 		}
 
 		if ($node instanceof NodeInterface) {
-			while ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
-				$childNodes = $node->getChildNodes('TYPO3.Neos.ContentTypes:Page,TYPO3.Neos.ContentTypes:Shortcut');
-				$node = current($childNodes);
-			}
-
 			$nodeContextPath = $node->getContextPath();
 			$siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
 		} else {

@@ -87,9 +87,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$this->throwStatus(404);
 		}
 		if ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
-			while ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
-				$childNodes = $node->getChildNodes('TYPO3.Neos.ContentTypes:Page,TYPO3.Neos.ContentTypes:Shortcut');
-				$node = current($childNodes);
+			if ($node->getProperty('targetNode') !== NULL) {
+				$node = $node->getNode($node->getProperty('targetNode'));
+			} else {
+				while ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
+					$childNodes = $node->getChildNodes('TYPO3.Neos.ContentTypes:Folder');
+					$node = current($childNodes);
+				}
 			}
 			$this->redirect('show', NULL, NULL, array('node' => $node));
 		}
