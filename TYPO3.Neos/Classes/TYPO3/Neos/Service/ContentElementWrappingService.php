@@ -110,7 +110,7 @@ class ContentElementWrappingService {
 			}
 
 				// Serialize date values to String
-			if ($propertyValue !== NULL && isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'date') {
+			if ($propertyValue instanceof \DateTime && isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'date') {
 				$propertyValue = $propertyValue->format('Y-m-d');
 			}
 
