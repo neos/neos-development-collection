@@ -18,7 +18,7 @@
 			&.content-type {
 				white-space: nowrap;
 				img {
-					vertical-align: middle;
+					vertical-align: text-bottom;
 				}
 			}
 			label {
@@ -40,7 +40,7 @@
 		}
 
 		i.legend {
-			vertical-align: middle;
+			vertical-align: text-top;
 		}
 
 		.fold-toggle {
@@ -52,7 +52,9 @@
 		td.check,
 		th.check {
 			width: 12px;
-			line-height: 26px;
+			input {
+				margin: 0;
+						}
 		}
 
 		td.legend,
@@ -103,7 +105,9 @@
 			td.check,
 			th.check {
 				width: 12px;
-				line-height: 26px;
+				input {
+					margin: 0;
+				}
 			}
 
 			label {
