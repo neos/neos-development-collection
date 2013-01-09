@@ -12,15 +12,16 @@ namespace TYPO3\Neos\ContentTypes\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\TypoScriptObjects\CollectionImplementation;
 
 /**
  * TypoScript object for specific sections, which also renders a "create-new-content" button
  * when not being in live workspace.
  */
-class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\CollectionImplementation {
+class SectionCollectionImplementation extends CollectionImplementation {
 
 	/**
-	 * The identifier of the section Node which shall be rendered.
+	 * The name of the section Node which shall be rendered.
 	 *
 	 * @var string
 	 */
@@ -45,25 +46,30 @@ class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\Collecti
 	protected $accessDecisionManager;
 
 	/**
-	 * @return string the identifier of the section node which shall be rendered
-	 */
-	public function getNodePath() {
-		return $this->tsValue('nodePath');
-	}
-
-	/**
-	 * @param string $nodePath the identifier of the section node which shall be rendered
+	 * Sets the identifier of the section node which shall be rendered
+	 *
+	 * @param string $nodePath
+	 * @return void
 	 */
 	public function setNodePath($nodePath) {
 		$this->nodePath = $nodePath;
 	}
 
 	/**
+	 * Returns the identifier of the section node which shall be rendered
+	 *
+	 * @return string
+	 */
+	public function getNodePath() {
+		return $this->tsValue('nodePath');
+	}
+
+	/**
 	 * Render the list of nodes, and if there are none and we are not inside the live
 	 * workspace, render a button to create new content.
 	 *
-	 * @throws \TYPO3\Neos\Exception
 	 * @return string
+	 * @throws \TYPO3\Neos\Exception
 	 */
 	public function evaluate() {
 		$currentContext = $this->tsRuntime->getCurrentContext();

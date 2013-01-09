@@ -14,11 +14,35 @@ prototype(TYPO3.Neos.ContentTypes:Page) {
 	htmlAttributes = ''
 }
 
-prototype(TYPO3.Neos.ContentTypes:Section) < prototype(TYPO3.TypoScript:Collection)
+# Case TS Object for Section
+#
+# Using a Case object allows for defining custom rendering of sections for specific
+# node types.
+#
+# The default case is to render all children of the current section node. This is
+# the case for regular pages: A page contains a section which contains content
+# element.
+#
+prototype(TYPO3.Neos.ContentTypes:Section) < prototype(TYPO3.Neos.ContentTypes:Case)
 prototype(TYPO3.Neos.ContentTypes:Section) {
-	@class = 'TYPO3\\Neos\\ContentTypes\\TypoScript\\SectionImplementation'
-		# To enable direct rendering of a Section we check if we have
-	collection = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Section]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
+	@class = 'TYPO3\\Neos\\ContentTypes\\TypoScript\\SectionCaseImplementation'
+}
+
+prototype(TYPO3.Neos.ContentTypes:Section).default {
+	condition = ${true}
+	type = 'TYPO3.Neos.ContentTypes:Section.Default'
+	@position = 'end'
+}
+
+# Default case for Section TS Object
+prototype(TYPO3.Neos.ContentTypes:Section.Default) < prototype(TYPO3.TypoScript:Collection)
+prototype(TYPO3.Neos.ContentTypes:Section.Default) {
+	@class = 'TYPO3\\Neos\\ContentTypes\\TypoScript\\SectionCollectionImplementation'
+
+		# To enable direct rendering of a Section we check if the current node is a section
+		# already or if the child nodes of a section specified by nodePath should be
+		# rendered
+	collection = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Section]') ? q(node).children() : q(node).children(nodePath).children()}
 }
 
 # HTML TS Object
