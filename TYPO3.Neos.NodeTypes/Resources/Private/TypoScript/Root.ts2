@@ -23,7 +23,6 @@ prototype(TYPO3.Neos.ContentTypes:Page) {
 # the case for regular pages: A page contains a section which contains content
 # element.
 #
-prototype(TYPO3.Neos.ContentTypes:Section) < prototype(TYPO3.Neos.ContentTypes:Case)
 prototype(TYPO3.Neos.ContentTypes:Section) {
 	@class = 'TYPO3\\Neos\\ContentTypes\\TypoScript\\SectionCaseImplementation'
 }
@@ -38,6 +37,10 @@ prototype(TYPO3.Neos.ContentTypes:Section).default {
 prototype(TYPO3.Neos.ContentTypes:Section.Default) < prototype(TYPO3.TypoScript:Collection)
 prototype(TYPO3.Neos.ContentTypes:Section.Default) {
 	@class = 'TYPO3\\Neos\\ContentTypes\\TypoScript\\SectionCollectionImplementation'
+
+		# The node path is set by the user on TYPO3.Neos.ContentTypes:Section. This
+		# path needs to be copied from the context to the local variable of Section.Default
+	nodePath = ${nodePath}
 
 		# To enable direct rendering of a Section we check if the current node is a section
 		# already or if the child nodes of a section specified by nodePath should be
