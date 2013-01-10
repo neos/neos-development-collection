@@ -6928,6 +6928,8 @@ body.t3-ui-controls {
 }
 #t3-inspector .t3-inspector-form .header {
   text-align: right;
+  height: 35px;
+  line-height: 35px;
 }
 #t3-inspector .t3-inspector-form label {
   color: white;
