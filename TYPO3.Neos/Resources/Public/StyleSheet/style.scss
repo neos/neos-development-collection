@@ -314,6 +314,8 @@ body {
 	}
 	.header {
 		text-align: right;
+		height: $toolbar-height - 1;
+		line-height: $toolbar-height - 1;
 	}
 	label {
 		color: $lightest;
