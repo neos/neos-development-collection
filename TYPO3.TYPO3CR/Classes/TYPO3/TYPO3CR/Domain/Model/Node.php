@@ -1088,6 +1088,10 @@ class Node implements NodeInterface {
 			return $this->path;
 		}
 
+		if (!is_string($path)) {
+			throw new \InvalidArgumentException(sprintf('An invalid node path was specified: is of type %s but a string is expected.', gettype($path)), 1357832901);
+		}
+
 		if (strpos($path, '//') !== FALSE) {
 			throw new \InvalidArgumentException('Paths must not contain two consecutive slashes.', 1291371910);
 		}
