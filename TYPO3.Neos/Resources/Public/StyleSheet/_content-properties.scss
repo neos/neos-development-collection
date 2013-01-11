@@ -90,12 +90,24 @@
 	.t3-content-new-selecttype-button {
 		margin: 5px 0px;
 
+		&:nth-of-type(1) {
+			margin-top: 0;
+		}
+
+		&:nth-last-of-type(1) {
+			margin-bottom: 0;
+		}
+
 		a {
+			display: block;
+			line-height: 16px;
+			vertical-align: bottom;
 			&:hover,
 			&:focus,
 			&:active {
 				color: $lightest;
 				cursor: pointer;
+				text-decoration: none;
 			}
 		}
 	}
