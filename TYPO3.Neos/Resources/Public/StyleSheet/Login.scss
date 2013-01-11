@@ -1,5 +1,11 @@
 @import "compass";
 @import "constants";
+
+// Fontawesome include
+[class^="icon-"], [class*=" icon-"] {
+	-webkit-font-smoothing: antialiased;
+	font-size: 14px;
+}
 @import "../Library/fontawesome/sass/font-awesome.scss";
 
 $font-family: $default-font;
