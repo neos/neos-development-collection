@@ -482,12 +482,8 @@ button.t3-button.t3-connection-status-down {
 				border: 3px solid $orange;
 				border-bottom: 0px;
 				background: $orange;
-				@include border-top-left-radius(6px);
-				@include border-top-right-radius(6px);
-
-				button:nth-child(2) {
-					@include border-top-left-radius(4px);
-					@include border-bottom-left-radius(4px);
+				.btn:last-child {
+					@include border-radius(0);
 				}
 			}
 		}

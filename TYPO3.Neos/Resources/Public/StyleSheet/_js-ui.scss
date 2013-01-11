@@ -162,19 +162,16 @@
 }
 .t3-ui {
 	&.popover {
-		&.t3-new-contentelement-popover {
-			.content {
-				background: transparent;
-
-				.ui-tabs-nav {
-					@include border-top-right-radius(6px);
-					@include border-top-left-radius(6px);
-				}
-
-				.ui-corner-all {
-					@include border-radius(6px);
-				}
+		&.t3-new-contentelement-popover,
+		&.t3-pagetree,
+		&.t3-inspecttree {
+			@include border-radius(0);
+			&.content {
+				@include border-radius(0);
 			}
+		}
+		&.t3-new-contentelement-popover .content {
+			background: transparent;
 		}
 	}
 }

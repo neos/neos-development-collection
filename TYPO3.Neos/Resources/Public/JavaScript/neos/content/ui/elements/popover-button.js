@@ -28,6 +28,11 @@ define(
 			popoverPosition: 'bottom',
 
 			/**
+			 * @var {String} Add additional classes to the root element of the popover.
+			 */
+			popoverAdditionalClasses: '',
+
+			/**
 			 * Lifecycle method by SproutCore, executed as soon as the element has been
 			 * inserted in the DOM and the $() method is executable. We initialize the
 			 * popover at this point.
@@ -35,6 +40,7 @@ define(
 			didInsertElement: function() {
 				var that = this;
 				this.$().popover({
+					additionalClasses: this.get('popoverAdditionalClasses'),
 					header: $('<div>' + that.get('popoverTitle') + '</div>'),
 					content: this.$popoverContent,
 					preventLeft: (this.get('popoverPosition')==='left' ? false : true),

@@ -197,6 +197,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
 		$popoverContent: pageTreeTemplate,
+		popoverAdditionalClasses: 't3-pagetree',
 		tree: null,
 		editNodeTitleMode: false,
 		isDblClick: false,
@@ -205,7 +206,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		 * When clicking the delete Page, we show a dialog
 		 */
 		showDeletePageDialog: function(activeNode) {
-
 			var that = this,
 				view = Ember.View.create({
 					template: Ember.Handlebars.compile(deletePageDialogTemplate),
@@ -595,6 +595,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		popoverTitle: 'Content Structure',
 		$popoverContent: inspectTreeTemplate,
 		popoverPosition: 'top',
+		popoverAdditionalClasses: 't3-inspecttree',
 		_ignoreCloseOnPageLoad: false,
 		inspectTree: null,
 
