@@ -47,7 +47,7 @@
 
 		settings.triangle$ = $('.triangle', settings.popover$);
 
-		$.fn.popover.openedPopup = null;
+		$.fn.popover.openedPopup = typeof $.fn.popover.openedPopup === 'undefined' ? null : $.fn.popover.openedPopup;
 
 		// TYPO3 SPECIFIC FIX START
 		$(document).unbind('click.popover').bind('click.popover', function(event) {
