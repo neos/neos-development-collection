@@ -45,7 +45,7 @@ prototype(TYPO3.Neos.ContentTypes:Section.Default) {
 		# To enable direct rendering of a Section we check if the current node is a section
 		# already or if the child nodes of a section specified by nodePath should be
 		# rendered
-	collection = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Section]') ? q(node).children() : q(node).children(nodePath).children()}
+	collection = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Section]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
 }
 
 # HTML TS Object
