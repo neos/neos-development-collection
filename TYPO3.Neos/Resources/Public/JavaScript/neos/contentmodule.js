@@ -19,8 +19,7 @@ define(
 function($, vie, Ember, CreateJS) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
 
-
-	return Ember.Application.create({
+	return Ember.Application.create(Ember.Evented, {
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 
@@ -143,6 +142,8 @@ function($, vie, Ember, CreateJS) {
 		_initializeVieAfterSchemaIsLoaded: function() {
 			T3.Content.Model.NodeSelection.initialize();
 			T3.Content.Model.PublishableNodes.initialize();
+			this.fire('pageLoaded');
+
 			this._registerVieContentTypeTemplateCallbacks();
 			this._initializeCreateJs();
 		},
@@ -293,9 +294,11 @@ function($, vie, Ember, CreateJS) {
 						title: 'Preview',
 						elementAttributes: ['title']
 					}),
+
 					T3.Content.UI.ToggleButton.extend({
 						pressedBinding: 'T3.Content.Controller.PageTree.pageTreeMode',
-						label: 'Pages'
+						label: 'Pages',
+						classNames: 't3-pagetree-button'
 					}),
 					T3.Content.UI.ToggleButton.extend({
 						pressedBinding: 'T3.Content.Controller.Wireframe.wireframeMode',
@@ -489,6 +492,7 @@ function($, vie, Ember, CreateJS) {
 						// Update node selection (will update VIE)
 					T3.Content.Model.NodeSelection.initialize();
 					T3.Content.Model.PublishableNodes.initialize();
+					that.fire('pageLoaded');
 
 						// Refresh CreateJS, renders the button bars f.e.
 					CreateJS.enableEdit();

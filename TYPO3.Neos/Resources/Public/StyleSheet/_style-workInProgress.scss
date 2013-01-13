@@ -151,6 +151,13 @@
 				background-image: url('../Images/Icons/Black/doc_delete_icon-16.png');
 			}
 		}
+		.timedVisibility {
+			display: inherit;
+			visibility: visible;
+			.dynatree-icon {
+				background-image: url('../Images/Icons/Black/clock_icon-16.png');
+			}
+		}
 		.hiddenInIndex .dynatree-icon {
 			@include opacity(.5);
 		}

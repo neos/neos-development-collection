@@ -9,6 +9,7 @@ define(
 	'jquery',
 	'emberjs',
 	'vie/instance',
+	'vie/entity',
 	'text!neos/templates/content/ui/breadcrumb.html',
 	'text!neos/templates/content/ui/inspector.html',
 	'text!neos/templates/content/ui/inspectorDialog.html',
@@ -27,7 +28,9 @@ define(
 	'jquery.dynatree',
 	'bootstrap.dropdown'
 ],
-function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate, saveIndicatorTemplate, treePanelTemplate) {
+
+function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate, saveIndicatorTemplate, treePanelTemplate) {
+
 	if (window._requirejsLoadingTrace) {
 		window._requirejsLoadingTrace.push('neos/content/ui');
 	}
@@ -151,7 +154,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	 * =====================
 	 */
 	T3.Content.UI.TreePanel = Ember.View.extend({
-		template: Ember.Handlebars.compile(treePanelTemplate),
+		template: Ember.Handlebars.compile(treePanelTemplate)
 	});
 
 	T3.Content.UI.Inspector.PropertyEditor = Ember.ContainerView.extend({
@@ -197,6 +200,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		}.property('icon').cacheable()
 	});
 
+
 	/**
 	 * =====================
 	 * SECTION: INSPECT TREE
@@ -211,19 +215,51 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		_ignoreCloseOnPageLoad: false,
 		inspectTree: null,
 
+		init: function() {
+			this._super();
+			var that = this;
+			T3.ContentModule.on('pageLoaded', function() {
+				entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#t3-page-metainformation'));
+				entityWrapper.addObserver('typo3:title', function() {
+					var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
+					that.synchronizeInspectTreeTitle(attributes);
+				});
+			});
+		},
+		synchronizeInspectTreeTitle: function(attributes) {
+			var rootNode = this.getInspectTreeRootNode();
+			if (rootNode) {
+				rootNode.setTitle(attributes.title);
+			}
+		},
+		getInspectTreeRootNode: function() {
+			var pageNodePath = $('#t3-page-metainformation').attr('about');
+			if ($('#t3-dd-inspecttree').children().length > 0) {
+				var tree = $('#t3-dd-inspecttree').dynatree('getTree');
+				var rootNode = tree.getNodeByKey(pageNodePath);
+				return rootNode;
+			} else {
+				return null;
+			}
+		},
+
 		isLoadingLayerActive: function() {
 			if (T3.ContentModule.get('_isLoadingPage')) {
 				if (this.get('_ignoreCloseOnPageLoad')) {
 					this.set('_ignoreCloseOnPageLoad', false);
 					return;
 				}
-				$('.t3-inspect > button.pressed').click();
-				if (this.inspectTree !== null) {
-					$('#t3-dd-inspecttree').dynatree('destroy');
-					this.inspectTree = null;
-				}
+				this.resetInspectTree();
 			}
 		}.observes('T3.ContentModule.currentUri'),
+
+		resetInspectTree: function() {
+			$('.t3-inspect > button.pressed').click();
+			if (this.inspectTree !== null) {
+				$('#t3-dd-inspecttree').dynatree('destroy');
+				this.inspectTree = null;
+			}
+		},
 
 		onPopoverOpen: function() {
 			var page = vie.entities.get(vie.service('rdfa').getElementSubject($('#t3-page-metainformation'))),

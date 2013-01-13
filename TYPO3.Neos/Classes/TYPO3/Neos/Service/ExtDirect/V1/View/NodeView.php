@@ -151,6 +151,22 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	public function collectTreeNodeData(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $expand = TRUE, array $children = array()) {
 		$contentType = $node->getContentType()->getName();
 		$classes = array(strtolower(str_replace(array('.', ':'), array('_', '-'), $contentType)));
+		$isTimedPage = FALSE;
+		$now = new \DateTime();
+		$now = $now->getTimestamp();
+		$hiddenBeforeDateTime = $node->getHiddenBeforeDateTime();
+		$hiddenAfterDateTime = $node->getHiddenAfterDateTime();
+
+		if ($hiddenBeforeDateTime !== NULL && $hiddenBeforeDateTime->getTimestamp() > $now) {
+			$isTimedPage = TRUE;
+		}
+		if ($hiddenAfterDateTime !== NULL) {
+			$isTimedPage = TRUE;
+		}
+
+		if ($isTimedPage === TRUE && $node->isHidden() === FALSE) {
+			array_push($classes, 'timedVisibility');
+		}
 		if ($node->isHidden() === TRUE) {
 			array_push($classes, 'hidden');
 		}
@@ -177,6 +193,5 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		}
 		return $treeNode;
 	}
-
 }
 ?>
