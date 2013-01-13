@@ -21,6 +21,7 @@ Features
 	:maxdepth: 2
 
 	Features/Index
+	IntegratorGuide/Index
 
 Development
 -----------
