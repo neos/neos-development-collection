@@ -115,12 +115,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 					'items' => array()
 				);
 			}
-			foreach ($contentType->getProperties() as $property => $configuration) {
-				if ($property[0] !== '_') {
-					$labelProperty = $property;
-					break;
-				}
-			}
+
 			$this->uriBuilder->reset();
 			if ($result->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Page')) {
 				$pageNode = $result;
@@ -130,7 +125,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			}
 			$searchResult = array(
 				'type' => $contentType->getName(),
-				'label' => substr(trim(strip_tags($result->getProperty($labelProperty))), 0, 50),
+				'label' => $result->getLabel(),
 				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos', ''),
 				'path' => $result->getPath()
 			);
