@@ -76,10 +76,6 @@ TYPO3:
         superTypes: ['TYPO3.Neos.ContentTypes:AbstractNode']
         label: 'Abstract content object'
         search: 'Content'
-        properties:
-          title:
-            type: 'string'
-            label: 'Content Title'
 
       'TYPO3.Neos.ContentTypes:Headline':
         superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
@@ -89,6 +85,7 @@ TYPO3:
         label: 'Headline'
         properties:
           title:
+            type: string
             default: '<h1>Enter headline here</h1>'
         inlineEditableProperties: ['title']
 
@@ -100,9 +97,9 @@ TYPO3:
         label: 'Text'
         properties:
           text:
-            label: string
+            type: string
             default: '<p>Enter text here</p>'
-        inlineEditableProperties: ['title', 'text']
+        inlineEditableProperties: ['text']
 
       'TYPO3.Neos.ContentTypes:Image':
         label: 'Image'
