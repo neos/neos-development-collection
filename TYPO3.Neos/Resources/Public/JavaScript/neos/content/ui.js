@@ -126,9 +126,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		 */
 		_showUnappliedDialog: function() {
 			var view = Ember.View.create({
+				classNames: ['t3-ui', 'inspector-dialog'],
 				template: Ember.Handlebars.compile(inspectorDialogTemplate),
-				didInsertElement: function() {
-				},
 				cancel: function() {
 					view.destroy();
 				},
@@ -141,7 +140,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					view.destroy();
 				}
 			});
-			view.appendTo('#t3-inspector');
+			view.appendTo('body');
 		}
 	});
 
@@ -183,7 +182,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 		// Is necessary otherwise a button has always the class 'btn-mini'
 	T3.Content.UI.ButtonDialog = Ember.Button.extend({
-		classNames: ['btn, btn-danger, t3-button'],
 		attributeBindings: ['disabled'],
 		classNameBindings: ['iconClass'],
 		label: '',
