@@ -135,6 +135,19 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function prototypeInheritance() {
+		$output = $this->simulateRendering('Test_PrototypeInheritance.ts2');
+		$this->assertSelectEquals('.teaser > .typo3-neos-nodetypes-headline > div > h1', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-headline > div > h1', 'Static Headline', TRUE, $output);
+
+			// header is now wrapped in h3 (as set in the concrete template), AND is set to a static headline (as set in the abstract template)
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-headline > div > h1', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
+	}
+
+	/**
+	 * @test
+	 */
 	public function replaceElementRenderingCompletelyBasedOnAdvancedCondition() {
 		$output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyBasedOnAdvancedCondition.ts2');
 		$this->assertTeaserConformsToBasicRendering($output);
