@@ -56,5 +56,22 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$actualDomains = $strategy->getSortedMatches('flow.typo3.org', $mockDomains);
 		$this->assertSame($expectedDomains, $actualDomains);
 	}
+
+	/**
+	 * @test
+	 */
+	public function getSortedMatchesReturnsNoMatchIfDomainIsLongerThanHostname() {
+		$mockDomains = array(
+			$this->getMock('TYPO3\Neos\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+		);
+
+		$mockDomains[0]->setHostPattern('flow.typo3.org');
+
+		$expectedDomains = array();
+
+		$strategy = new \TYPO3\Neos\Domain\Service\DomainMatchingStrategy();
+		$actualDomains = $strategy->getSortedMatches('typo3.org', $mockDomains);
+		$this->assertSame($expectedDomains, $actualDomains);
+	}
 }
 ?>

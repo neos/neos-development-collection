@@ -46,7 +46,7 @@ class DomainMatchingStrategy {
 				$matchQuality = 0;
 				$hostPatternPartsReverse = array_reverse(explode('.', $hostPattern));
 				foreach ($hostPatternPartsReverse as $index => $hostPatternPart) {
-					if ($hostPatternPart === '*' || $hostPatternPart === $hostPartsReverse[$index]) {
+					if ($hostPatternPart === '*' || (isset($hostPartsReverse[$index]) && $hostPatternPart === $hostPartsReverse[$index])) {
 						$matchQuality ++;
 					} else {
 						$matchQuality = self::NOMATCH;
