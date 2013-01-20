@@ -8965,6 +8965,9 @@ button.t3-button.t3-connection-status-down {
   -o-border-radius: 0;
   border-radius: 0;
 }
+.t3-ui.popover.t3-new-contentelement-popover {
+  z-index: 10090 !important;
+}
 .t3-ui.popover.t3-new-contentelement-popover .content {
   background: transparent;
 }

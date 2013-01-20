@@ -170,8 +170,11 @@
 				@include border-radius(0);
 			}
 		}
-		&.t3-new-contentelement-popover .content {
-			background: transparent;
+		&.t3-new-contentelement-popover {
+			z-index: 10090 !important;
+			.content {
+				background: transparent;
+			}
 		}
 	}
 }
