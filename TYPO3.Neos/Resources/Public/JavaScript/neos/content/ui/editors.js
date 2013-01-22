@@ -250,6 +250,14 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				}
 			});
 
+			this._uploader.bind('Error', function(uploader, error) {
+				T3.Common.Notification.error(error.message);
+				// FilesAdded gets the unfiltered list, so we have to disable the upload on errors
+				if (error.code === plupload.FILE_EXTENSION_ERROR) {
+					that.set('_uploadButtonShown', false);
+				}
+			});
+
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['image[type]'] = 'plupload';
 				uploader.settings.multipart_params['image[fileName]'] = file.name;
@@ -307,7 +315,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 * Comma-separated list of allowed file types.
 		 * Public configuration.
 		 */
-		allowedFileTypes: 'jpg,png',
+		allowedFileTypes: 'jpg,jpeg,png,gif',
 
 		template: Ember.Handlebars.compile(imageUploadTemplate),
 
