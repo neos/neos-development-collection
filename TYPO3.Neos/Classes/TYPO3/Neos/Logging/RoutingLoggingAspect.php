@@ -11,8 +11,6 @@ namespace TYPO3\Neos\Logging;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
-
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -28,12 +26,6 @@ class RoutingLoggingAspect {
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
-	 */
-	protected $securityContext;
 
 	/**
 	 * Logs successful results of the NodeService's getNodeByContextNodePath() method which is called by FrontendNodeRoutePartHandler::matchValue()
