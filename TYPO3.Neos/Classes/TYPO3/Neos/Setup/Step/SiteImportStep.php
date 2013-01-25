@@ -69,6 +69,12 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Mvc\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
@@ -80,7 +86,6 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
 	/**
 	 * @var \TYPO3\SiteKickstarter\Service\GeneratorService
-	 * @Flow\Inject
 	 */
 	protected $generatorService;
 
@@ -121,21 +126,27 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 				$prune->setLabel('Delete existing sites');
 			}
 		} else {
-			$error = $title->createElement('error', 'TYPO3.Form:StaticText');
+			$error = $title->createElement('noSitePackagesError', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'No site packages were available, make sure you have an active site package');
 			$error->setProperty('class', 'alert alert-warning');
 		}
 
-		$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
-		$newPackageSection->setLabel('Create a new site');
-		$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
-		$packageName->setLabel('Package Name (in form "Vendor.MyPackageName")');
-		$packageName->addValidator(new \TYPO3\Flow\Validation\Validator\RegularExpressionValidator(array(
-			'regularExpression' =>  \TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY
-		)));
+		if ($this->packageManager->isPackageActive('TYPO3.SiteKickstarter')) {
+			$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
+			$newPackageSection->setLabel('Create a new site');
+			$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
+			$packageName->setLabel('Package Name (in form "Vendor.MyPackageName")');
+			$packageName->addValidator(new \TYPO3\Flow\Validation\Validator\RegularExpressionValidator(array(
+				'regularExpression' =>  \TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY
+			)));
 
-		$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
-		$siteName->setLabel('Site Name');
+			$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
+			$siteName->setLabel('Site Name');
+		} else {
+			$error = $title->createElement('siteKickstarterUnavailableError', 'TYPO3.Form:StaticText');
+			$error->setProperty('text', 'The Site Kickstarter package is not installed, install it for kickstarting new sites');
+			$error->setProperty('class', 'alert alert-warning');
+		}
 
 		$step = $this;
 		$callback = function(\TYPO3\Form\Core\Model\FinisherContext $finisherContext) use ($step) {
@@ -176,10 +187,10 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$this->generatorService->generateSitesTypoScript($packageKey, $siteName);
 			$this->generatorService->generateSitesTemplate($packageKey, $siteName);
 			$this->packageManager->activatePackage($packageKey);
-		} else {
+		} elseif (!empty($formValues['site'])) {
 			$packageKey = $formValues['site'];
 		}
-		if ($packageKey !== '') {
+		if (!empty($packageKey)) {
 			try {
 				$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
 				$this->nodeRepository->setContext($contentContext);
