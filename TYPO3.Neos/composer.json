@@ -12,9 +12,7 @@
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
         "typo3/typo3cr": "*",
-        "typo3/typoscript": "*"
-    },
-    "require-dev": {
+        "typo3/typoscript": "*",
         "typo3/sitekickstarter": "*"
     },
     "autoload": {
