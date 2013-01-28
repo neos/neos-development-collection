@@ -2,9 +2,6 @@
 Getting Started
 ===============
 
-Index
------
-
 .. toctree::
 	:maxdepth: 2
 

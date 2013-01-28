@@ -15,7 +15,7 @@ Naming of main UI parts
 
 The following image shows the main UI parts of the content module and the names we use for them.
 
-.. image:: contentmodule/ui_parts.png
+.. figure:: Images/contentmodule/ui_parts.png
 
 
 Content Module Architecture
@@ -37,7 +37,7 @@ User Interface Updates on Selection Change
 
 The following diagram shows how the UI is changing when the block selection changes:
 
-.. image:: contentmodule/internal_structure_ui_updates.png
+.. figure:: Images/contentmodule/internal_structure_ui_updates.png
 
 #. The neosintegration Aloha Plugin (located in ``alohaplugins/neosintegration/lib/neosintegration-plugin.js``) hooks
    into the Aloha event which is triggered whenever the block selection changes. Whenever this event is triggered,
@@ -54,7 +54,7 @@ User Interface Updates updates on property change
 
 When an attribute is modified through the property panel, the following happens:
 
-.. image:: contentmodule/internal_structure_attribute_updates.png
+.. figure:: Images/contentmodule/internal_structure_attribute_updates.png
 
 WARNING: TODO: Document what happens when an *editable* is modified
 

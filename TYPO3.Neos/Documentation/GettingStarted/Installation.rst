@@ -35,9 +35,7 @@ Installation of TYPO3 Neos
 * If all went well you'll get a confirmation the setup is completed, and you can enter the
   frontend or backend of your Neos website.
 
-.. figure:: /Images/GettingStarted/StartPage.png
-	:align: right
-	:width: 200pt
+.. figure:: Images/StartPage.png
 	:alt: The TYPO3 Neos start page
 
 	The TYPO3 Neos start page

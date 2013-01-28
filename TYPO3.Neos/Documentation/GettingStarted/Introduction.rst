@@ -25,17 +25,13 @@ graphics and content of the demo site are in another package. Generally, all sta
 resources (including templates, TypoScript and Images) can be found in separate packages for
 each website.
 
-.. figure:: /Images/GettingStarted/SystemStructureBackend.png
-	:align: right
-	:width: 200pt
+.. figure:: Images/SystemStructureBackend.png
 	:alt: The TYPO3 Neos system structure
 
 	The TYPO3 Neos system structure on the Server Side
 
 
-.. figure:: /Images/GettingStarted/SystemStructureFrontend.png
-	:align: right
-	:width: 200pt
+.. figure:: Images/SystemStructureFrontend.png
 	:alt: The TYPO3 Neos system structure
 
 	The TYPO3 Neos system structure on the Client Side
