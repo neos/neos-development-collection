@@ -39,7 +39,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 	/**
 	 * =====================
-	 * SECTION: UI CONTAINRS
+	 * SECTION: UI CONTAINERS
 	 * =====================
 	 * - Breadcrumb
 	 * - BreadcrumbItem
