@@ -253,8 +253,8 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 				'command' => 'thumbnail',
 				'options' => array(
 					'size' => array(
-						'width' => $maximumWidth ?: $this->width,
-						'height' => $maximumHeight ?: $this->height
+						'width' => intval($maximumWidth ?: $this->width),
+						'height' => intval($maximumHeight ?: $this->height)
 					),
 					'mode' => $ratioMode
 				),

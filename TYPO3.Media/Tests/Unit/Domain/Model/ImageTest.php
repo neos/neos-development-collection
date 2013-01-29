@@ -128,6 +128,16 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function widthAndHeightIsCastToIntegerWhenCreatingThumbnail() {
+		$variant = $this->image->getThumbnail('4', '3');
+		$processingInstructions = $variant->getProcessingInstructions();
+		$this->assertInternalType('integer', $processingInstructions[0]['options']['size']['width']);
+		$this->assertInternalType('integer', $processingInstructions[0]['options']['size']['height']);
+	}
+
+	/**
+	 * @test
+	 */
 	public function creatingImageVariantWorks() {
 		$this->image->createImageVariant(array('dummy'));
 		$this->image->createImageVariant(array('foo'));
