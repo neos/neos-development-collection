@@ -85,11 +85,6 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	protected $closureFinisher;
 
 	/**
-	 * @var \TYPO3\SiteKickstarter\Service\GeneratorService
-	 */
-	protected $generatorService;
-
-	/**
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 * @Flow\Inject
 	 */
@@ -183,9 +178,11 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$siteName = $formValues['siteName'];
 
 			$this->packageManager->createPackage($packageKey, NULL, Files::getUnixStylePath(Files::concatenatePaths(array(FLOW_PATH_PACKAGES, 'Sites'))));
-			$this->generatorService->generateSitesXml($packageKey, $siteName);
-			$this->generatorService->generateSitesTypoScript($packageKey, $siteName);
-			$this->generatorService->generateSitesTemplate($packageKey, $siteName);
+
+			$generatorService = $this->objectManager->get('TYPO3\SiteKickstarter\Service\GeneratorService');
+			$generatorService->generateSitesXml($packageKey, $siteName);
+			$generatorService->generateSitesTypoScript($packageKey, $siteName);
+			$generatorService->generateSitesTemplate($packageKey, $siteName);
 			$this->packageManager->activatePackage($packageKey);
 		} elseif (!empty($formValues['site'])) {
 			$packageKey = $formValues['site'];
