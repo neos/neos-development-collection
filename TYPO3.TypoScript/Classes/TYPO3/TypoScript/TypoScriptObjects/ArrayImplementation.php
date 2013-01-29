@@ -158,6 +158,10 @@ class ArrayImplementation extends AbstractTypoScriptObject implements \ArrayAcce
 		$arrayKeysWithPosition = array();
 
 		foreach ($this->subElements as $key => $subElement) {
+			// if the subElement was set to NULL it was unset and should not be used
+			if ($subElement === NULL) {
+				continue;
+			}
 			if (isset($subElement['__meta']['position'])) {
 				$arrayKeysWithPosition[$key] = $subElement['__meta']['position'];
 			} else {
