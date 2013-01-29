@@ -265,12 +265,12 @@ function($, CreateJS, Entity) {
 				}
 			});
 
-			if (reloadPage) {
+			if (reloadPage === true) {
 				T3.ContentModule.showPageLoader();
 			}
 			Backbone.sync('update', this.getPath('selectedNode._vieEntity'), {
 				success: function(model, result) {
-					if (reloadPage) {
+					if (reloadPage === true) {
 						if (result && result.data && result.data.nextUri) {
 								// It might happen that the page has been renamed, so we need to take the server-side URI
 							T3.ContentModule.loadPage(result.data.nextUri);
