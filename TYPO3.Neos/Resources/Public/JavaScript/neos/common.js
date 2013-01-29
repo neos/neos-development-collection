@@ -10,7 +10,9 @@ define(
 	'emberjs',
 	'text!neos/templates/common/launcher.html',
 	'text!neos/templates/common/launcherpanel.html',
-	'text!neos/templates/common/confirmationDialog.html'
+	'text!neos/templates/common/confirmationDialog.html',
+	'bootstrap.alert',
+	'bootstrap.notify'
 ],
 function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/common');
@@ -435,74 +437,63 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		/**
 		 * Shows a new notification
 		 *
-		 * @param {String} msg
-		 * @param {Boolean} stay
-		 * @param {String} className
+		 * @param {String} message
+		 * @param {Boolean} fadeout
+		 * @param {String} type
 		 * @private
 		 * @return {Void}
 		 */
-		_show: function(msg, stay, className) {
-			$('body').midgardNotifications('create', {
-				body: $('<p />', {'class': className, text: msg}),
-				class_prefix: 'typo3-notification',
-				timeout: stay ? 0 : this.get('_timeout'),
-				gravity: 'RT'
-			});
+		_show: function(message, fadeout, type) {
+			$('.t3-notification-container').notify({
+				message: {
+					html: message
+				},
+				type: type,
+				fadeOut: {
+					enabled: fadeout,
+					delay: this.get('_timeout')
+				}
+			}).show();
 		},
 
 		/**
 		 * Show ok message
 		 *
-		 * @param {String} msg
-		 * @param {Boolean} stay
+		 * @param {String} message
 		 * @return {Void}
 		 */
-		ok: function(msg, stay) {
-			this._show(msg, stay, 'typo3-notification-ok');
-		},
-
-		/**
-		 * Show info message
-		 *
-		 * @param {String} msg
-		 * @param {Boolean} stay
-		 * @return {Void}
-		 */
-		info: function(msg, stay) {
-			this._show(msg, stay, 'typo3-notification-info');
+		ok: function(message) {
+			this._show('<i class="icon-ok-sign"></i>' + message, true, 'success');
 		},
 
 		/**
 		 * Show notice message
 		 *
-		 * @param {String} msg
-		 * @param {Boolean} stay
+		 * @param {String} message
 		 * @return {Void}
 		 */
-		notice: function(msg, stay) {
-			this._show(msg, stay, 'typo3-notification-notice');
+		notice: function(message) {
+			this._show('<i class="icon-info-sign"></i>' + message, true, 'info');
 		},
 
 		/**
 		 * Show warning message
 		 *
-		 * @param {String} msg
-		 * @param {Boolean} stay
+		 * @param {String} message
 		 * @return {Void}
 		 */
-		warning: function(msg, stay) {
-			this._show(msg, stay, 'typo3-notification-warning');
+		warning: function(message) {
+			this._show('<i class="icon-warning-sign"></i>' + message, false, 'warning');
 		},
 
 		/**
 		 * Show error message
 		 *
-		 * @param {String} msg
-		 * @param {Boolean} stay
+		 * @param {String} message
 		 * @return {Void}
 		 */
-		error: function(msg, stay) {
-			this._show(msg, stay, 'typo3-notification-error');
+		error: function(message) {
+			this._show('<i class="icon-exclamation-sign"></i>' + message, false, 'error');
 		}
 	});
 

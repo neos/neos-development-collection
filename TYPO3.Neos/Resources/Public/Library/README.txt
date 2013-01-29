@@ -134,3 +134,6 @@ http://fortawesome.github.com/Font-Awesome/
 * Changed $fontAwesomePath in sass/font-awesome.scss
 * Wrapped everything in t3-ui sass/font-awesome.scss
 * Removed the background of twitter-bootstrap icons before include (style.scss)
+
+Bootstrap Notify
+http://nijikokun.github.com/bootstrap-notify/
