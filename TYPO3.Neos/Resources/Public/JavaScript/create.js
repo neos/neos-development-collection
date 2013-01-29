@@ -62,7 +62,7 @@ define(
 								toolbar: 'halloToolbarFixed',
 								parentElement: 'body',
 								toolbarCssClass: 't3-ui',
-								buttonCssClass: 'btn btn-mini t3-button',
+								buttonCssClass: 'btn btn-mini',
 								plugins: {
 									halloformat: {},
 									halloblock: {},
@@ -77,7 +77,7 @@ define(
 								toolbar: 'halloToolbarFixed',
 								parentElement: 'body',
 								toolbarCssClass: 't3-ui',
-								buttonCssClass: 'btn btn-mini t3-button',
+								buttonCssClass: 'btn btn-mini',
 								plugins: {
 									halloblock: {
 										elements: ['h1', 'h2', 'h3']

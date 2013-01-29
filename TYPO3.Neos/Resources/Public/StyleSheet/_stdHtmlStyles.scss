@@ -1,4 +1,4 @@
-//
+ //
 // Default styles for basic html elements
 //
 
@@ -68,14 +68,6 @@
 		}
 	}
 
-	.btn.t3-button {
-		font-size: 12px;
-		@include border-radius(0);
-		i {
-			margin-top: 0;
-		}
-	}
-
 	.input-append,
 	.input-prepend {
 		font-size: inherit;
@@ -140,51 +132,57 @@
 // Buttons
 // -------
 .t3-ui {
-	// Orange button for active buttons
-	.t3-button.pressed {
-		@include buttonBackground(lighten($orange, 5%), $orange);
-		border: 1px solid darken($orange, 5%);
-		border-bottom-color: darken($orange, 10%);
-		$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
-		@include box-shadow($shadow);
+	.btn {
+		padding-top: 2px;
+		padding-bottom: 2px;
+		font-size: 12px;
+		@include border-radius(0);
 
-		&:hover,
-		&:focus,
-		&:active {
-			@include buttonBackground($orange, darken($orange, 2%));
-			border: 1px solid darken($orange, 10%);
-			border-bottom-color: darken($orange, 20%);
+		i {
+			margin-top: 0;
 		}
 
-		&.disabled,
-		&.disabled:hover,
-		&.disabled:active,
-		&.disabled:focus {
-			@include buttonBackground(lighten($orange, 5%), $orange);
-		}
-	}
-	&.t3-module {
-		.t3-button {
-			padding-top: 2px;
-			padding-bottom: 2px;
+		// Middle grey button for light background
+		&.t3-button {
+			outline: none;
+			@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
+			border: 1px solid darken($light-grey3, 5%);
+			border-bottom-color: darken($light-grey3, 10%);
+			$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
+			@include box-shadow($shadow);
 
-			// Middle grey button for light background
-			&.btn {
-				outline: none;
+			&.disabled,
+			&[disabled] {
 				@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
 				border: 1px solid darken($light-grey3, 5%);
 				border-bottom-color: darken($light-grey3, 10%);
+				&:hover {
+					background-position: 0 0;
+				}
+			}
+
+			// Orange button for active buttons
+			&.pressed {
+				@include buttonBackground(lighten($orange, 5%), $orange);
+				border: 1px solid darken($orange, 5%);
+				border-bottom-color: darken($orange, 10%);
 				$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
 				@include box-shadow($shadow);
 
 				&:hover,
 				&:focus,
 				&:active {
-					@include buttonBackground($light-grey3, darken($light-grey3, 2%));
-					border: 1px solid darken($light-grey3, 10%);
-					border-bottom-color: darken($light-grey3, 20%);
+					@include buttonBackground($orange, darken($orange, 2%));
+					border: 1px solid darken($orange, 10%);
+					border-bottom-color: darken($orange, 20%);
+				}
+
+				&.disabled,
+				&[disabled] {
+					@include buttonBackground(lighten($orange, 5%), $orange);
 				}
 			}
+
 			// Orange button for active buttons
 			&.btn-warning {
 				@include buttonBackground(lighten($orange, 5%), $orange);
@@ -202,9 +200,7 @@
 				}
 
 				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&[disabled] {
 					@include buttonBackground(lighten($orange, 5%), $orange);
 				}
 			}
@@ -227,9 +223,7 @@
 				}
 
 				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&[disabled] {
 					@include buttonBackground(lighten($green, 5%), $green);
 				}
 			}
@@ -250,24 +244,8 @@
 				}
 
 				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&[disabled] {
 					@include buttonBackground(lighten($red, 5%), $red);
-				}
-			}
-
-			// A disabled button
-			&[disabled] {
-				@include opacity(0.6);
-				cursor: auto;
-				color: $light-grey2;
-
-				&:hover,
-				&:focus,
-				&:active {
-					background: lighten($light-grey, 10%);
-					color: $light-grey2;
 				}
 			}
 		}
