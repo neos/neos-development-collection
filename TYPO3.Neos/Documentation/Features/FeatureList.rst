@@ -68,17 +68,15 @@ a node structure in XML. For an example of such a file you can check the
 `Sites.xml <http://git.typo3.org/Flow/Packages/NeosDemoTypo3Org.git?a=blob_plain;f=Resources/Private/Content/Sites.xml;hb=master>`_
 of the TYPO3 Neos demo site.
 
-The import can be used like:
-
-::
+The import can be used like::
 
 	./flow site:import --package-key My.Site
 
-The export works like:
+The export works like::
 
 	./flow site:export > pathToYourSites.xml
 
-Related to these functions there's a convenience method for removing all site related content:
+Related to these functions there's a convenience method for removing all site related content::
 
 	./flow site:prune --confirmation TRUE
 

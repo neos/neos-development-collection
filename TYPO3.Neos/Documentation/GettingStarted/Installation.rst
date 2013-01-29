@@ -37,6 +37,7 @@ Installation of TYPO3 Neos
 
 .. figure:: Images/StartPage.png
 	:alt: The TYPO3 Neos start page
+	:class: screenshot-fullsize
 
 	The TYPO3 Neos start page
 
