@@ -94,7 +94,6 @@ class ContentElementWrappingService {
 		$tagBuilder->addAttribute('about', $node->getContextPath());
 
 		$this->addScriptTag($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
-		$this->addScriptTag($tagBuilder, '_removed', ($node->isRemoved() ? 'true' : 'false'), 'boolean');
 		$this->addScriptTag($tagBuilder, '_typoscriptPath', $typoscriptPath);
 
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
