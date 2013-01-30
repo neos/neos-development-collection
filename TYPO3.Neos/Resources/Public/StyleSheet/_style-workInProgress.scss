@@ -638,8 +638,9 @@ button.t3-button.t3-connection-status-down {
 		color: $light-grey;
 		background: #555;
 		color: #E8E8E8;
-		@include box-shadow(0px 0px 5px rgba(0, 0, 0, 0.5) inset);
 		border: 1px solid $dark-grey3;
+		@include border-radius(0);
+		@include box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
 
 		h3 {
 			font-size: 18px;
