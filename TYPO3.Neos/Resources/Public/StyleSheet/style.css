@@ -9150,6 +9150,9 @@ a.btn:hover {
   background: url(../Images/module-bg.jpg) left top repeat;
   color: #fff;
 }
+.t3-ui.t3-module p {
+  line-height: 1.6em;
+}
 .t3-ui.t3-module label {
   font-size: 14px;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
