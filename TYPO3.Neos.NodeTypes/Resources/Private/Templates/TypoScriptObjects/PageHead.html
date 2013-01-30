@@ -28,20 +28,14 @@
 		<f:if condition="{typo3:backend.shouldLoadMinifiedJavascript()}">
 			<f:then>
 				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main-built.js', package: 'TYPO3.Neos')}"></script>
+				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/includes-built.css', package: 'TYPO3.Neos')}" />
 			</f:then>
 			<f:else>
 				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js', package: 'TYPO3.Neos')}"></script>
+				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/includes.css', package: 'TYPO3.Neos')}" />
 			</f:else>
 		</f:if>
 
-		<!-- TODO Combine all CSS files with @import in one CSS file for requirejs optimizer -->
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css', package: 'TYPO3.Neos')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css', package: 'TYPO3.Neos')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jcrop/css/jquery.Jcrop.css', package: 'TYPO3.Neos')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-dynatree/css/ui.dynatree.css', package: 'TYPO3.Neos')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/chosen/chosen/chosen.css', package: 'TYPO3.Neos')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/codemirror2/lib/codemirror.css', package: 'TYPO3.Neos')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/codemirror2/theme/default.css', package: 'TYPO3.Neos')}" />
 		<link rel="stylesheet" href="{aloha:baseUri()}/src/css/aloha.css" type="text/css" />
 	</f:if>
 </f:security.ifAccess>
