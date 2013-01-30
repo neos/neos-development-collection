@@ -7171,6 +7171,24 @@ body.t3-ui-controls {
 #t3-inspector .t3-inspector-form fieldset .t3-inspector-field input {
   padding: 1px 4px 1px 4px;
 }
+#t3-inspector .t3-inspector-form .t3-inspector-cancel,
+#t3-inspector .t3-inspector-form .t3-inspector-apply {
+  margin-top: 7px;
+}
+#t3-inspector .t3-inspector-form .t3-inspector-cancel {
+  float: left;
+  border: 1px solid rgba(219, 79, 74, 0.8);
+}
+#t3-inspector .t3-inspector-form .t3-inspector-cancel:disabled {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+#t3-inspector .t3-inspector-form .t3-inspector-apply {
+  float: right;
+  border: 1px solid rgba(84, 151, 74, 0.8);
+}
+#t3-inspector .t3-inspector-form .t3-inspector-apply[disabled] {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
 #t3-inspector .t3-inspector-form .header,
 #t3-inspector .t3-inspector-form h2 {
   width: 100%;
