@@ -138,7 +138,7 @@ define(
 					.on('click', 'body:not(.t3-ui-previewmode) .t3-contentelement', function(e) {
 							// Don't unselect if a previous handler activated an element
 						if (e.result !== 'activated') {
-							that.selectContentElement($(this));
+							T3.Content.Model.NodeSelection.updateSelection($(this));
 						}
 						return 'activated';
 					})
@@ -159,27 +159,10 @@ define(
 
 							// Unselect any other active element
 						if (T3.Content.Model.NodeSelection.get('selectedNode') !== null) {
-							var node = T3.Content.Model.NodeSelection.get('selectedNode');
-							that.unselectContentElement(node.get('$element'));
+							T3.Content.Model.NodeSelection.updateSelection();
 						}
 					});
-			},
-
-			selectContentElement: function(element) {
-				var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode');
-
-				if (selectedNode !== null && selectedNode.get('$element').attr('about') !== element.attr('about')) {
-					this.unselectContentElement(selectedNode.get('$element'));
-				}
-
-				T3.Content.Model.NodeSelection.updateSelection(element);
-			},
-
-			unselectContentElement: function(element) {
-				T3.Content.Model.NodeSelection.updateSelection();
 			}
-
 		});
-
 	}
 );
