@@ -58,7 +58,10 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 		$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
 
 		$typoScriptRuntime = new Runtime($typoScriptObjectTree, $this->controllerContext);
-		$typoScriptRuntime->pushContextArray(array('node' => $currentNode));
+		$typoScriptRuntime->pushContextArray(array(
+			'node' => $currentNode,
+			'request' => $this->controllerContext->getRequest()
+		));
 		$output = $typoScriptRuntime->render($this->typoScriptPath);
 		$typoScriptRuntime->popContext();
 
