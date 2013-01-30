@@ -132,7 +132,6 @@ define(
 				return nodes.length > 0 ? _.last(nodes) : null;
 			}.property('nodes').cacheable(),
 
-
 			selectedNodeSchema: function() {
 				var selectedNode = this.get('selectedNode');
 				if (!selectedNode) return;
