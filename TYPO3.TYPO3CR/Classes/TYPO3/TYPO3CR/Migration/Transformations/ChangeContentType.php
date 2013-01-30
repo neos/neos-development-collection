@@ -42,20 +42,20 @@ class ChangeContentType extends AbstractTransformation {
 	 * If the given node has the property this transformation should work on, this
 	 * returns TRUE if the given ContentType is registered with the ContentTypeManager
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		return $this->contentTypeManager->hasContentType($this->newType);
 	}
 
 	/**
 	 * Change the ContentType on the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$contentType = $this->contentTypeManager->getContentType($this->newType);
 		$node->setContentType($contentType);
 	}

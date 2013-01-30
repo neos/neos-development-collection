@@ -25,12 +25,12 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("prototype")
  */
-class ProxyNode implements NodeInterface {
+class ProxyNode implements PersistentNodeInterface {
 
 	/**
 	 * The original node this proxy refers to (lying in another workspace)
 	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @ORM\ManyToOne
 	 */
 	protected $originalNode;
@@ -62,11 +62,11 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Constructs this proxy node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $originalNode
 	 * @Flow\Autowiring(false)
 	 * @throws \InvalidArgumentException if you give a ProxyNode as originalNode.
 	 */
-	public function  __construct(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode) {
+	public function  __construct(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $originalNode) {
 		if ($originalNode instanceof \TYPO3\TYPO3CR\Domain\Model\ProxyNode) {
 			throw new \InvalidArgumentException('The original node must not be a ProxyNode', 1289475179);
 		}
@@ -220,7 +220,7 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
+	 * @return PersistentNodeInterface The parent node or NULL if this is the root node
 	 */
 	public function getParent() {
 		return (isset($this->newNode) ? $this->newNode->getParent() : $this->originalNode->getParent());
@@ -238,10 +238,10 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
 			$this->materializeOriginalNode();
 		}
@@ -251,10 +251,10 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
 			$this->materializeOriginalNode();
 		}
@@ -264,10 +264,10 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Moves this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	public function moveInto(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
 			$this->materializeOriginalNode();
 		}
@@ -277,12 +277,12 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Copies this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName) {
 		if (isset($this->newNode)) {
 			return $this->newNode->copyBefore($referenceNode, $nodeName);
 		} else {
@@ -293,12 +293,12 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Copies this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName) {
 		if (isset($this->newNode)) {
 			return $this->newNode->copyAfter($referenceNode, $nodeName);
 		} else {
@@ -309,12 +309,12 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Copies this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName) {
 		if (isset($this->newNode)) {
 			return $this->newNode->copyInto($referenceNode, $nodeName);
 		} else {
@@ -467,7 +467,7 @@ class ProxyNode implements NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType, $identifier) : $this->originalNode->createNode($name, $contentType, $identifier));
@@ -489,10 +489,21 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Creates and persists a node from the given $nodeTemplate as child node
+	 *
+	 * @param NodeTemplate $nodeTemplate
+	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
+	 * @return PersistentNodeInterface the freshly generated node
+	 */
+	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
+		return (isset($this->newNode) ? $this->newNode->createNodeFromTemplate($nodeTemplate, $nodeName) : $this->originalNode->createNodeFromTemplate($nodeTemplate, $nodeName));
+	}
+
+	/**
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
 	 */
 	public function getNode($path) {
 		return (isset($this->newNode) ? $this->newNode->getNode($path) : $this->originalNode->getNode($path));
@@ -504,7 +515,7 @@ class ProxyNode implements NodeInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * content type. For now it is just the first child node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The primary child node or NULL if no such node exists
 	 */
 	public function getPrimaryChildNode() {
 		return (isset($this->newNode) ? $this->newNode->getPrimaryChildNode() : $this->originalNode->getPrimaryChildNode());
@@ -515,7 +526,7 @@ class ProxyNode implements NodeInterface {
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $contentType If specified, only nodes with that content type are considered
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
 	public function getChildNodes($contentType = NULL) {
 		return (isset($this->newNode) ? $this->newNode->getChildNodes($contentType) : $this->originalNode->getChildNodes($contentType));

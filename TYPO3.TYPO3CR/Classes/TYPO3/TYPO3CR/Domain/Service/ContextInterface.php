@@ -27,15 +27,15 @@ interface ContextInterface {
 	/**
 	 * Sets the current node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return void
 	 */
-	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
+	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node);
 
 	/**
 	 * Returns the current node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	public function getCurrentNode();
 
@@ -43,7 +43,7 @@ interface ContextInterface {
 	 * Returns a node specified by the given absolute path.
 	 *
 	 * @param string $path Absolute path specifying the node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
 	 */
 	public function getNode($path);
 
@@ -53,7 +53,7 @@ interface ContextInterface {
 	 *
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found between and including the given paths or an empty array of none were found
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint);
 

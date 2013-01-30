@@ -65,10 +65,10 @@ class NodeType implements FilterInterface {
 	/**
 	 * Returns TRUE if the given node is of the node type this filter expects.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return boolean
 	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function matches(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($this->withSubTypes === TRUE) {
 			return $this->contentTypeManager->getContentType($node->getContentType())->isOfType($this->nodeTypeName);
 		} else {

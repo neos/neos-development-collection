@@ -53,7 +53,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath', 'getContext'), array(), '', FALSE);
 		$nodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
-		$mockRootNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockRootNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', array(), array(), '', FALSE);
 
 		$workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
 		$workspace->_set('nodeRepository', $nodeRepository);
@@ -70,7 +70,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', array(), array(), '', FALSE);
 
 		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
 		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
@@ -99,7 +99,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', array(), array(), '', FALSE);
 
 		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
 		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
@@ -184,7 +184,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider validContextNodePaths
 	 */
 	public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath) {
-		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
 		$this->assertArrayHasKey('WorkspaceName', $matches);
 	}
 
@@ -203,7 +203,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider invalidContextNodePaths
 	 */
 	public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath) {
-		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
 		$this->assertArrayNotHasKey('WorkspaceName', $matches);
 	}
 

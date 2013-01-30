@@ -44,10 +44,10 @@ class ProxyNodeFactory {
 	 * If this factory has previously created a ProxyNode for the given Node, it will
 	 * return the same ProxyNode again.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ProxyNode
 	 */
-	public function createFromNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function createFromNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($this->proxyNodes->contains($node) === FALSE) {
 			$this->proxyNodes[$node] = new \TYPO3\TYPO3CR\Domain\Model\ProxyNode($node);
 		}

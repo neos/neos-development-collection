@@ -30,7 +30,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function aProxyNodeIsRelatedToAnOriginalNode() {
-		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		new \TYPO3\TYPO3CR\Domain\Model\ProxyNode($originalNode);
 	}
 
@@ -52,7 +52,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 */
 	protected function assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode($methodName, $argument1 = NULL, $argument2 = NULL) {
-		$this->newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$this->newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 
 		if ($argument1 === NULL) {
 			$this->newNode->expects($this->at(0))->method($methodName);
@@ -76,14 +76,14 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 */
 	protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = NULL) {
-		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		if ($argument1 === NULL) {
 			$originalNode->expects($this->once())->method($methodName)->will($this->returnValue('originalNodeResult'));
 		} else {
 			$originalNode->expects($this->once())->method($methodName)->with($argument1)->will($this->returnValue('originalNodeResult'));
 		}
 
-		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		if ($argument1 === NULL) {
 			$newNode->expects($this->once())->method($methodName)->will($this->returnValue('newNodeResult'));
 		} else {
@@ -130,7 +130,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getIdentifierReturnsTheIdentifier() {
-		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		$originalNode->expects($this->once())->method('getIdentifier')->will($this->returnValue('theidentifier'));
 
 		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
@@ -164,7 +164,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function moveBeforeCallsMoveBeforeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('moveBefore', $referenceNode);
 	}
 
@@ -172,7 +172,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function moveAfterCallsMoveAfterOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('moveAfter', $referenceNode);
 	}
 

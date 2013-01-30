@@ -21,12 +21,11 @@ use TYPO3\Flow\Annotations as Flow;
  * retrieving content in the system.
  *
  * Note: If this API is extended, make sure to also implement the additional
- * methods inside ProxyNode and keep NodeInterface in sync!
+ * methods inside ProxyNode and keep NodeInterface / PersistentNodeInterface in sync!
  *
  * @Flow\Entity
- * @Flow\Scope("prototype")
  */
-class Node implements NodeInterface {
+class Node extends AbstractNode implements PersistentNodeInterface {
 
 	/**
 	 * @ORM\Version
@@ -87,26 +86,10 @@ class Node implements NodeInterface {
 	protected $name;
 
 	/**
-	 * Properties of this Node
-	 *
-	 * @var array<mixed>
-	 */
-	protected $properties = array();
-
-	/**
-	 * An optional object which contains the content of this node
-	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
 	 * @ORM\ManyToOne
 	 */
 	protected $contentObjectProxy;
-
-	/**
-	 * The name of the content type of this node
-	 *
-	 * @var string
-	 */
-	protected $contentType = 'unstructured';
 
 	/**
 	 * If this is a removed node. This flag can and is only used in workspaces
@@ -118,47 +101,22 @@ class Node implements NodeInterface {
 	protected $removed = FALSE;
 
 	/**
-	 * If this node is hidden, it is not shown in a public place.
-	 *
-	 * @var boolean
-	 */
-	protected $hidden = FALSE;
-
-	/**
-	 * Date before which this node is automatically hidden
-	 *
 	 * @var \DateTime
 	 * @ORM\Column(nullable=true)
 	 */
 	protected $hiddenBeforeDateTime;
 
 	/**
-	 * Date after which this node is automatically hidden
-	 *
 	 * @var \DateTime
 	 * @ORM\Column(nullable=true)
 	 */
 	protected $hiddenAfterDateTime;
 
 	/**
-	 * If this node should be hidden in indexes, such as a website navigation
-	 *
-	 * @var boolean
-	 */
-	protected $hiddenInIndex = FALSE;
-
-	/**
-	 * List of role names which are required to access this node at all
-	 *
-	 * @var array<string>
-	 */
-	protected $accessRoles = array();
-
-	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
-	protected $securityContext;
+	protected $persistenceManager;
 
 	/**
 	 * @Flow\Inject
@@ -168,21 +126,9 @@ class Node implements NodeInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory
 	 */
 	protected $proxyNodeFactory;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
 
 	/**
 	 * Constructs this node
@@ -191,7 +137,7 @@ class Node implements NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
 	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
 	 */
-	public function  __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
+	public function __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
 		$this->setPath($path, FALSE);
 		$this->workspace = $workspace;
 		$this->identifier = ($identifier === NULL) ? \TYPO3\Flow\Utility\Algorithms::generateUUID() : $identifier;
@@ -218,6 +164,7 @@ class Node implements NodeInterface {
 		}
 
 		if ($recursive === TRUE) {
+			/** @var $childNode PersistentNodeInterface */
 			foreach ($this->getChildNodes() as $childNode) {
 				$childNode->setPath($path . '/' . $childNode->getName());
 			}
@@ -232,6 +179,7 @@ class Node implements NodeInterface {
 		} else {
 			$this->parentPath = substr($path, 0, strrpos($path, '/'));
 		}
+		$this->emitNodePathChanged();
 	}
 
 	/**
@@ -289,7 +237,7 @@ class Node implements NodeInterface {
 		}
 
 		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
-		$this->nodeRepository->update($this);
+		$this->update();
 		$this->nodeRepository->persistEntities();
 		$this->emitNodePathChanged();
 	}
@@ -304,34 +252,6 @@ class Node implements NodeInterface {
 			$this->name = $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
 		}
 		return $this->name;
-	}
-
-	/**
-	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description
-	 * of this node.
-	 *
-	 * @return string
-	 */
-	public function getLabel() {
-		return $this->getContentType()->getNodeLabelGenerator()->getLabel($this);
-	}
-
-	/**
-	 * Returns a short abstract describing / containing summarized content of this node
-	 *
-	 * @return string
-	 * @todo Implement real abstract rendering and use a property specified in the content type
-	 */
-	public function getAbstract() {
-		$abstractParts = array();
-		foreach ($this->getProperties() as $propertyValue) {
-			if (!is_object($propertyValue) || method_exists($propertyValue, '__toString')) {
-				$abstractParts[] = $propertyValue;
-			}
-		}
-		$abstract = strip_tags(implode(' – ', $abstractParts));
-		$croppedAbstract = \TYPO3\Flow\Utility\Unicode\Functions::substr($abstract, 0, 253);
-		return $croppedAbstract . (strlen($croppedAbstract) < strlen($abstract) ? ' …' : '');
 	}
 
 	/**
@@ -396,7 +316,7 @@ class Node implements NodeInterface {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The parent node or NULL if this is the root node
 	 */
 	public function getParent() {
 		if ($this->path === '/') {
@@ -419,11 +339,11 @@ class Node implements NodeInterface {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 */
-	public function moveBefore(NodeInterface $referenceNode) {
+	public function moveBefore(PersistentNodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
 			return;
 		}
@@ -443,11 +363,11 @@ class Node implements NodeInterface {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 */
-	public function moveAfter(NodeInterface $referenceNode) {
+	public function moveAfter(PersistentNodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
 			return;
 		}
@@ -467,11 +387,11 @@ class Node implements NodeInterface {
 	/**
 	 * Moves this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 */
-	public function moveInto(NodeInterface $referenceNode) {
+	public function moveInto(PersistentNodeInterface $referenceNode) {
 		if ($referenceNode === $this || $referenceNode === $this->getParent()) {
 			return;
 		}
@@ -489,14 +409,15 @@ class Node implements NodeInterface {
 	/**
 	 * Copies this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
 		$copiedNode->similarize($this);
+		/** @var $childNode PersistentNodeInterface */
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->copyInto($copiedNode, $childNode->getName());
 		}
@@ -508,14 +429,15 @@ class Node implements NodeInterface {
 	/**
 	 * Copies this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
 		$copiedNode->similarize($this);
+		/** @var $childNode PersistentNodeInterface */
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->copyInto($copiedNode, $childNode->getName());
 		}
@@ -525,14 +447,15 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->createSingleNode($nodeName);
 		$copiedNode->similarize($this);
+		/** @var $childNode PersistentNodeInterface */
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->copyInto($copiedNode, $childNode->getName());
 		}
@@ -540,173 +463,6 @@ class Node implements NodeInterface {
 		return $copiedNode;
 	}
 
-	/**
-	 * Sets the specified property.
-	 *
-	 * If the node has a content object attached, the property will be set there
-	 * if it is settable.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param mixed $value Value of the property
-	 * @return void
-	 */
-	public function setProperty($propertyName, $value) {
-		if (!is_object($this->contentObjectProxy)) {
-			if (!array_key_exists($propertyName, $this->properties) || $this->properties[$propertyName] !== $value) {
-				$this->properties[$propertyName] = $value;
-				$this->nodeRepository->update($this);
-			}
-		} elseif (\TYPO3\Flow\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
-			$contentObject = $this->contentObjectProxy->getObject();
-			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
-			$this->persistenceManager->update($contentObject);
-		}
-	}
-
-	/**
-	 * If this node has a property with the given name.
-	 *
-	 * If the node has a content object attached, the property will be checked
-	 * there.
-	 *
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function hasProperty($propertyName) {
-		if (is_object($this->contentObjectProxy)) {
-			return \TYPO3\Flow\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
-		} else {
-			return isset($this->properties[$propertyName]);
-		}
-	}
-
-	/**
-	 * Returns the specified property.
-	 *
-	 * If the node has a content object attached, the property will be fetched
-	 * there if it is gettable.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return mixed value of the property
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
-	 */
-	public function getProperty($propertyName) {
-		if (!is_object($this->contentObjectProxy)) {
-			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
-		} elseif (\TYPO3\Flow\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
-			return \TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
-		}
-		throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObjectProxy->getObject())), 1291286995);
-	}
-
-	/**
-	 * Removes the specified property.
-	 *
-	 * If the node has a content object attached, the property will not be removed on
-	 * that object if it exists.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
-	 */
-	public function removeProperty($propertyName) {
-		if (!is_object($this->contentObjectProxy)) {
-			if (isset($this->properties[$propertyName])) {
-				unset($this->properties[$propertyName]);
-			} else {
-				throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in node.', $propertyName), 1344952312);
-			}
-		}
-	}
-
-	/**
-	 * Returns all properties of this node.
-	 *
-	 * If the node has a content object attached, the properties will be fetched
-	 * there.
-	 *
-	 * @return array Property values, indexed by their name
-	 */
-	public function getProperties() {
-		if (is_object($this->contentObjectProxy)) {
-			return \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
-		} else {
-			return $this->properties;
-		}
-	}
-
-	/**
-	 * Returns the names of all properties of this node.
-	 *
-	 * @return array Property names
-	 */
-	public function getPropertyNames() {
-		if (is_object($this->contentObjectProxy)) {
-			return \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
-		} else {
-			return array_keys($this->properties);
-		}
-	}
-
-	/**
-	 * Sets a content object for this node.
-	 *
-	 * @param object $contentObject The content object
-	 * @return void
-	 * @throws \InvalidArgumentException if the given contentObject is no object.
-	 */
-	public function setContentObject($contentObject) {
-		if (!is_object($contentObject)) {
-			throw new \InvalidArgumentException('Argument must be an object, ' . \gettype($contentObject) . ' given.', 1283522467);
-		}
-		if ($this->contentObjectProxy === NULL || $this->contentObjectProxy->getObject() !== $contentObject) {
-			$this->contentObjectProxy = new ContentObjectProxy($contentObject);
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Returns the content object of this node (if any).
-	 *
-	 * @return object
-	 */
-	public function getContentObject() {
-		return ($this->contentObjectProxy !== NULL ? $this->contentObjectProxy->getObject(): NULL);
-	}
-
-	/**
-	 * Unsets the content object of this node.
-	 *
-	 * @return void
-	 */
-	public function unsetContentObject() {
-		if ($this->contentObjectProxy !== NULL) {
-			$this->contentObjectProxy = NULL;
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Sets the content type of this node.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
-	 * @return void
-	 */
-	public function setContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType) {
-		if ($this->contentType !== $contentType->getName()) {
-			$this->contentType = $contentType->getName();
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Returns the content type of this node.
-	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
-	 */
-	public function getContentType() {
-		return $this->contentTypeManager->getContentType($this->contentType);
-	}
 
 	/**
 	 * Creates, adds and returns a child node of this node. Also sets default
@@ -766,10 +522,24 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Creates and persists a node from the given $nodeTemplate as child node
+	 *
+	 * @param NodeTemplate $nodeTemplate
+	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
+	 * @return PersistentNodeInterface the freshly generated node
+	 */
+	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
+		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
+		$newNode = $this->createNode($newNodeName, $nodeTemplate->getContentType());
+		$newNode->similarize($nodeTemplate);
+		return $newNode;
+	}
+
+	/**
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
 	 */
 	public function getNode($path) {
 		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->getContext()->getWorkspace());
@@ -787,7 +557,7 @@ class Node implements NodeInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * content type. For now it is just the first child node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The primary child node or NULL if no such node exists
 	 */
 	public function getPrimaryChildNode() {
 		$node = $this->nodeRepository->findFirstByParentAndContentType($this->path, NULL, $this->getContext()->getWorkspace());
@@ -804,7 +574,7 @@ class Node implements NodeInterface {
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
 	public function getChildNodes($contentTypeFilter = NULL) {
 		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentTypeFilter, $this->getContext()->getWorkspace());
@@ -828,6 +598,7 @@ class Node implements NodeInterface {
 	 * @return void
 	 */
 	public function remove() {
+		/** @var $childNode PersistentNodeInterface */
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->remove();
 		}
@@ -861,121 +632,6 @@ class Node implements NodeInterface {
 		return $this->removed;
 	}
 
-	/**
-	 * Sets the "hidden" flag for this node.
-	 *
-	 * @param boolean $hidden If TRUE, this Node will be hidden
-	 * @return void
-	 */
-	public function setHidden($hidden) {
-		if ($this->hidden !== (boolean) $hidden) {
-			$this->hidden = (boolean)$hidden;
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Returns the current state of the hidden flag
-	 *
-	 * @return boolean
-	 */
-	public function isHidden() {
-		return $this->hidden;
-	}
-
-	/**
-	 * Sets the date and time when this node becomes potentially visible.
-	 *
-	 * @param \DateTime $dateTime Date before this node should be hidden
-	 * @return void
-	 */
-	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
-		if ($this->hiddenBeforeDateTime != $dateTime) {
-			$this->hiddenBeforeDateTime = $dateTime;
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Returns the date and time before which this node will be automatically hidden.
-	 *
-	 * @return \DateTime Date before this node will be hidden
-	 */
-	public function getHiddenBeforeDateTime() {
-		return $this->hiddenBeforeDateTime;
-	}
-
-	/**
-	 * Sets the date and time when this node should be automatically hidden
-	 *
-	 * @param \DateTime $dateTime Date after which this node should be hidden
-	 * @return void
-	 */
-	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
-		if ($this->hiddenAfterDateTime != $dateTime) {
-			$this->hiddenAfterDateTime = $dateTime;
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Returns the date and time after which this node will be automatically hidden.
-	 *
-	 * @return \DateTime Date after which this node will be hidden
-	 */
-	public function getHiddenAfterDateTime() {
-		return $this->hiddenAfterDateTime;
-	}
-
-	/**
-	 * Sets if this node should be hidden in indexes, such as a site navigation.
-	 *
-	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
-	 * @return void
-	 */
-	public function setHiddenInIndex($hidden) {
-		if ($this->hiddenInIndex !== (boolean) $hidden) {
-			$this->hiddenInIndex = (boolean) $hidden;
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * If this node should be hidden in indexes
-	 *
-	 * @return boolean
-	 */
-	public function isHiddenInIndex() {
-		return $this->hiddenInIndex;
-	}
-
-	/**
-	 * Sets the roles which are required to access this node
-	 *
-	 * @param array $accessRoles
-	 * @return void
-	 * @throws \InvalidArgumentException if the array of roles contains something else than strings.
-	 */
-	public function setAccessRoles(array $accessRoles) {
-		foreach ($accessRoles as $role) {
-			if (!is_string($role)) {
-				throw new \InvalidArgumentException('The role names passed to setAccessRoles() must all be of type string.', 1302172892);
-			}
-		}
-		if ($this->accessRoles !== $accessRoles) {
-			$this->accessRoles = $accessRoles;
-			$this->nodeRepository->update($this);
-		}
-	}
-
-	/**
-	 * Returns the names of defined access roles
-	 *
-	 * @return array
-	 */
-	public function getAccessRoles() {
-		return $this->accessRoles;
-	}
 
 	/**
 	 * Tells if this node is "visible".
@@ -1063,9 +719,12 @@ class Node implements NodeInterface {
 		}
 
 		$propertyNames = array(
-			'contentType', 'index', 'hidden', 'hiddenAfterDateTime',
+			'contentType', 'hidden', 'hiddenAfterDateTime',
 			'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
 		);
+		if ($sourceNode instanceof PersistentNodeInterface) {
+			$propertyNames[] = 'index';
+		}
 		foreach ($propertyNames as $propertyName) {
 			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this, $propertyName, \TYPO3\Flow\Reflection\ObjectAccess::getProperty($sourceNode, $propertyName));
 		}
@@ -1099,7 +758,7 @@ class Node implements NodeInterface {
 		if ($path[0] === '/') {
 			$absolutePath = $path;
 		} else {
-			$absolutePath = ($this->path === '/' ? '' : $this->path). '/' . $path;
+			$absolutePath = ($this->path === '/' ? '' : $this->path) . '/' . $path;
 		}
 		$pathSegments = explode('/', $absolutePath);
 
@@ -1142,9 +801,9 @@ class Node implements NodeInterface {
 	 * Will either return the same node or a proxy for current context.
 	 *
 	 * @param mixed $node The node to proxy
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The same node or a proxy in current context.
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The same node or a proxy in current context.
 	 */
-	protected function createProxyForContextIfNeeded(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function createProxyForContextIfNeeded(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
 			if ($node->getWorkspace() !== $this->nodeRepository->getContext()->getWorkspace()) {
 				$node = $this->proxyNodeFactory->createFromNode($node);
@@ -1157,10 +816,10 @@ class Node implements NodeInterface {
 	 * Filter a node by the current context.
 	 * Will either return the node or NULL if it is not permitted in current context.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function filterNodeByContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function filterNodeByContext(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if (!$this->nodeRepository->getContext()->isRemovedContentShown() && $node->isRemoved()) {
 			return NULL;
 		}
@@ -1176,12 +835,20 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * For debugging purposes, the node can be converted to a string.
+	 * Updates this node
 	 *
-	 * @return string
+	 * @return void
 	 */
-	public function __toString() {
-		return 'Node ' . $this->getContextPath() . '[' . $this->getContentType()->getName() . ']';
+	protected function update() {
+		$this->nodeRepository->update($this);
+	}
+
+	/**
+	 * @param object $contentObject
+	 * @return void
+	 */
+	protected function updateContentObject($contentObject) {
+		$this->persistenceManager->update($contentObject);
 	}
 
 	/**
@@ -1191,6 +858,15 @@ class Node implements NodeInterface {
 	 * @return void
 	 */
 	protected function emitNodePathChanged() {
+	}
+
+	/**
+	 * For debugging purposes, the node can be converted to a string.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return 'Node ' . $this->getContextPath() . '[' . $this->getContentType()->getName() . ']';
 	}
 
 }

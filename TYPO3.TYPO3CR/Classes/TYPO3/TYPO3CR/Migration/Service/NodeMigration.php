@@ -101,11 +101,11 @@ class NodeMigration {
 	 * Walks over the nodes starting at the given node and executes the configured
 	 * transformations on nodes matching the defined filters.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @param string $migrationType One of the MIGRATION_TYPE_* constants.
 	 * @return void
 	 */
-	protected function walkNodes(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $migrationType) {
+	protected function walkNodes(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $migrationType) {
 		foreach ($this->configuration as $migrationDescription) {
 			if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
 				$this->nodeTransformationService->execute($node, $migrationDescription['transformations']);

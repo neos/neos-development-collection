@@ -137,7 +137,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $path Absolute path of the node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
 	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
@@ -202,7 +202,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $identifier Identifier of the node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The matching node if found, otherwise NULL
 	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
 	public function findOneByIdentifier($identifier, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -260,13 +260,13 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * If no free index is available between two nodes (for "before" and "after"),
 	 * the whole index of the current node level will be renumbered.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to set the new index for
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node The node to set the new index for
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public function setNewIndex(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $position, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode = NULL) {
+	public function setNewIndex(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $position, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
 
 		switch ($position) {
@@ -341,7 +341,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found on the given path
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -535,7 +535,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node found or NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The node found or NULL
 	 * @todo Check for workspace compliance
 	 */
 	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -560,7 +560,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param string $pathStartingPoint Absolute path specifying the starting point
 	 * @param string $pathEndPoint Absolute path specifying the end point
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found on the given path
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
 	 * @throws \InvalidArgumentException
 	 */
 	public function findOnPath($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {

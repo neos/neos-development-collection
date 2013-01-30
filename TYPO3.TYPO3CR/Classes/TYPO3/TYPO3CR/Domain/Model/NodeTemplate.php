@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Filters;
+namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
@@ -11,38 +11,32 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
+use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Filter nodes by node name.
+ * A container of properties which can be used as a template for generating new nodes.
  */
-class NodeName implements FilterInterface {
+class NodeTemplate extends AbstractNode {
 
 	/**
-	 * The node name to match on.
+	 * Returns the name of this node
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $nodeName;
-
-	/**
-	 * Sets the node type name to match on.
-	 *
-	 * @param string $nodeName
-	 * @return void
-	 */
-	public function setNodeName($nodeName) {
-		$this->nodeName = $nodeName;
+	public function getName() {
+		return $this->name;
 	}
 
 	/**
-	 * Returns TRUE if the given node is of the node type this filter expects.
+	 * Set the name of the node to $name
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @return boolean
+	 * @param string $name
+	 * @return void
 	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
-		return $node->getName() === $this->nodeName;
+	public function setName($name) {
+		$this->name = $name;
 	}
 
 }

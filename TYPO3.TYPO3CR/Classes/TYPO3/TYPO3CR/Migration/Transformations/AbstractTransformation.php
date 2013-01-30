@@ -21,10 +21,10 @@ abstract class AbstractTransformation implements TransformationInterface {
 	/**
 	 * Returns TRUE, indicating that the given node can be transformed by this transformation.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return boolean
 	 */
-	function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		return TRUE;
 	}
 
@@ -33,10 +33,10 @@ abstract class AbstractTransformation implements TransformationInterface {
 	 *
 	 * This implementation returns the given node unchanged.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		return $node;
 	}
 }

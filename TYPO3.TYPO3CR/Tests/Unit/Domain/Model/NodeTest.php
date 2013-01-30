@@ -19,7 +19,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockWorkspace;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	protected $node;
 

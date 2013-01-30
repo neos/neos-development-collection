@@ -110,7 +110,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$testContentType = $contentTypeManager->getContentType('TYPO3.TYPO3CR:TestingContentTypeWithSubnodes');
 		$fooNode = $rootNode->createNode('foo', $testContentType);
 		$firstSubnode = $fooNode->getNode('subnode1');
-		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $firstSubnode);
+		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', $firstSubnode);
 		$this->assertSame('default value 1', $firstSubnode->getProperty('test1'));
 	}
 
