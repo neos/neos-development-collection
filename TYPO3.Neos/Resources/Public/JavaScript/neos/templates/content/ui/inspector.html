@@ -1,9 +1,8 @@
+<div class="header">
+	{{view T3.Content.UI.Button label="Cancel" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}
+	{{view T3.Content.UI.Button label="Apply" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}
+</div>
 <form class="t3-inspector-form" action="#">
-	<div class="header">
-		{{view T3.Content.UI.Button label="Cancel" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}
-		{{view T3.Content.UI.Button label="Apply" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}
-	</div>
-
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
 		<h2>{{content.label}}</h2>
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
