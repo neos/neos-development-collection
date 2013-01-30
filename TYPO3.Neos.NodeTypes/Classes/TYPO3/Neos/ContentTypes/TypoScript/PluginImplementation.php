@@ -158,7 +158,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 		$this->passArgumentsToPluginRequest($pluginRequest);
 
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
 			if ($pluginRequest->getControllerPackageKey() === NULL) {
 				$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->package);
 			}
@@ -208,7 +208,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		try {
 			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-			if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+			if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
 				return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $pluginResponse->getContent());
 			} else {
 				return $pluginResponse->getContent();
@@ -230,7 +230,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
 			$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
 			if ($nodeArgumentNamespace !== NULL) {
 				return $nodeArgumentNamespace;
