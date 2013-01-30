@@ -171,7 +171,8 @@ class NodeObjectConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTyp
 				if (isset($contentTypeProperties[$nodePropertyKey]['type'])) {
 					$targetType = $contentTypeProperties[$nodePropertyKey]['type'];
 					if ($this->objectManager->isRegistered($targetType)) {
-						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $targetType);
+						$decodedValue = json_decode($nodePropertyValue, TRUE);
+						$nodePropertyValue = $decodedValue !== NULL ? $this->propertyMapper->convert($decodedValue, $targetType) : NULL;
 					}
 				}
 
