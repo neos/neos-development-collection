@@ -51,6 +51,9 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	protected function initializeAction() {
 		$this->errorMethodName = 'extErrorAction';
+		if ($this->arguments->hasArgument('referenceNode')) {
+			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\Neos\Routing\NodeObjectConverter', \TYPO3\Neos\Routing\NodeObjectConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		}
 	}
 
 	/**
