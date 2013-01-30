@@ -16,7 +16,7 @@ class Version20121031190214 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain ADD state TINYINT(1) NOT NULL");
+		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain ADD active TINYINT(1) NOT NULL");
 	}
 
 	/**
@@ -26,7 +26,7 @@ class Version20121031190214 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP state");
+		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP active");
 	}
 }
 
