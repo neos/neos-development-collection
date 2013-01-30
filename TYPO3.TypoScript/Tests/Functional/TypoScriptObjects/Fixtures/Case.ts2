@@ -36,3 +36,20 @@ prototype(TYPO3.TypoScript:Case.Test1) < prototype(TYPO3.TypoScript:TestRenderer
 prototype(TYPO3.TypoScript:Case.Test2) < prototype(TYPO3.TypoScript:TestRenderer) {
 	test = 'testconditiontrue'
 }
+
+case.renderPath = TYPO3.TypoScript:Case {
+	foo.condition = ${cond}
+	foo.renderPath = 'renderPathRenderer/true'
+
+	default.condition = ${true}
+	default.renderPath = 'renderPathRenderer/false'
+	default.@position = 'end'
+}
+
+case.renderPathWillWin < case.renderPath
+case.renderPathWillWin {
+	foo.type = 'TYPO3.TypoScript:Case.Test1'
+}
+
+renderPathRenderer.false = TYPO3.TypoScript:Case.Test1
+renderPathRenderer.true = TYPO3.TypoScript:Case.Test2

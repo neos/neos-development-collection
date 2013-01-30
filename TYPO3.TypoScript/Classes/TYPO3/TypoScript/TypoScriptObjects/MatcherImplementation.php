@@ -31,6 +31,13 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 	protected $type;
 
 	/**
+	 * A path to a TypoScript configuration
+	 *
+	 * @var string
+	 */
+	protected $renderPath;
+
+	/**
 	 * @param boolean $condition
 	 */
 	public function setCondition($condition) {
@@ -45,17 +52,30 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 	}
 
 	/**
+	 * @param string $renderPath
+	 */
+	public function setRenderPath($renderPath) {
+		$this->renderPath = $renderPath;
+	}
+
+	/**
 	 * If $condition matches, render $type and return it. Else, return MATCH_NORESULT.
 	 *
 	 * @return mixed
 	 */
 	public function evaluate() {
 		if ($this->tsValue('condition')) {
-			$type = $this->tsValue('type');
-			$renderedElement = $this->tsRuntime->render(
-				sprintf('%s/element<%s>', $this->path, $type)
-			);
-			return $this->tsRuntime->evaluateProcessor('element', $this, $renderedElement);
+			$renderPath = $this->tsValue('renderPath');
+			if ($renderPath !== NULL) {
+				$renderedElement = $this->tsRuntime->render($renderPath);
+			} else {
+				$type = $this->tsValue('type');
+				$renderedElement = $this->tsRuntime->render(
+					sprintf('%s/element<%s>', $this->path, $type)
+				);
+				$renderedElement = $this->tsRuntime->evaluateProcessor('element', $this, $renderedElement);
+			}
+			return $renderedElement;
 		} else {
 			return CaseImplementation::MATCH_NORESULT;
 		}
