@@ -27,18 +27,37 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $configurationManager;
 
 	/**
-	 * Generate and renders the JSON schema for the content types.
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * Generate and renders the JSON schema for the content types for VIE.
 	 * Schema format example: http://schema.rdfs.org/all.json
 	 *
 	 * @return string
+	 * @Flow\SkipCsrfProtection
 	 */
-	public function indexAction() {
+	public function vieSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
 
 		$configuration = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.TYPO3CR');
 		$schemaBuilder = new \TYPO3\Neos\Service\ContentTypeSchemaBuilder($configuration);
 		$schemaBuilder->convertToVieSchema();
 		return $schemaBuilder->generateAsJson();
+	}
+
+	/**
+	 * Get the node type configuration schema for the Neos UI
+	 *
+	 * @return string
+	 * @Flow\SkipCsrfProtection
+	 */
+	public function nodeTypeSchemaAction() {
+		$this->response->setHeader('Content-Type', 'application/json');
+
+		return json_encode($this->contentTypeManager->getFullConfiguration());
 	}
 
 }

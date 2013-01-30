@@ -125,20 +125,17 @@ function($, vie, Ember, CreateJS) {
 				}));
 			}
 
-				// Cache schema in session storage
-			var schema = (window.sessionStorage ? window.sessionStorage.getItem('vie-schema') : null);
-			if (T3.Configuration.neosShouldCacheSchema && schema) {
-				VIE.Util.loadSchemaOrg(vie, JSON.parse(schema), null);
-				that._initializeVieAfterSchemaIsLoaded(vie);
-			} else {
-				$.getJSON(neosContentTypeSchema).success(function(data, textStatus, jqXHR) {
-					VIE.Util.loadSchemaOrg(vie, data, null);
-					if (window.sessionStorage) window.sessionStorage.setItem('vie-schema', JSON.stringify(data));
+			$.when(T3.ResourceCache.get(T3.Configuration.VieSchemaUri), T3.ResourceCache.get(T3.Configuration.NodeTypeSchemaUri)).done(function(vieSchemaString, nodeTypeSchemaString) {
+					var schema = JSON.parse(vieSchemaString);
+					VIE.Util.loadSchemaOrg(vie, schema, null);
+
+					T3.Configuration.Schema = JSON.parse(nodeTypeSchemaString);
+
 					that._initializeVieAfterSchemaIsLoaded(vie);
-				}).error(function(data, textStatus, jqXHR) {
-					console.warn('Error loading the VIE schema', data, textStatus, jqXHR);
+				}).fail(function(xhr, status, error) {
+					console.warn('Error loading schemas.', xhr, status, error);
 				});
-			}
+
 		},
 
 		_initializeVieAfterSchemaIsLoaded: function() {

@@ -65,6 +65,7 @@ require(
 	[
 		'jquery',
 		'neos/contentmodule',
+		'neos/resourcecache',
 		'emberjs',
 		'storage',
 		'jquery-ui',
@@ -76,6 +77,9 @@ require(
 		T3.Configuration = window.T3Configuration;
 		T3.ContentModule = ContentModule;
 		delete window.T3Configuration;
+
+		T3.ResourceCache.preload(T3.Configuration.VieSchemaUri);
+		T3.ResourceCache.preload(T3.Configuration.NodeTypeSchemaUri);
 
 		Ember.$(document).ready(function() {
 			T3.ContentModule.bootstrap();

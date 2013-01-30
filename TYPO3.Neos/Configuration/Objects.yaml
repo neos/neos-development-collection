@@ -1,0 +1,10 @@
+TYPO3\Neos\Cache\CacheManager:
+  properties:
+    configurationCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_Neos_Configuration_Version
+

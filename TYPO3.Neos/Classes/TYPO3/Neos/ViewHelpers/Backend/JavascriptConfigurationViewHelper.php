@@ -20,42 +20,48 @@ use TYPO3\Flow\Annotations as Flow;
 class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Core\Bootstrap
-	 */
-	protected $bootstrap;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
-
-	/**
 	 * @var array
 	 */
 	protected $settings;
 
 	/**
-	 *
+	 * @var \TYPO3\Neos\Cache\CacheManager
+	 * @Flow\Inject
+	 */
+	protected $cacheManager;
+
+	/**
+	 * @return string
+	 */
+	public function render() {
+		$schemaCacheIdentifier = $this->cacheManager->getConfigurationCacheVersion();
+
+		$vieSchemaUri = $this->controllerContext->getUriBuilder()
+			->reset()
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('vieSchema', array('version' => $schemaCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
+
+		$nodeTypeSchemaUri = $this->controllerContext->getUriBuilder()
+			->reset()
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('nodeTypeSchema', array('version' => $schemaCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
+
+		return (implode("\n", array(
+			'window.T3Configuration = {};',
+			'window.T3Configuration.NodeTypeSchemaUri = ' . json_encode($nodeTypeSchemaUri) . ';',
+			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
+			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
+			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
+			'window.T3Configuration.contentTypeGroups = ' . json_encode($this->settings['contentTypeGroups']) . ';'
+		)));
+	}
+
+	/**
 	 * @param array $settings
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function render() {
-		return (implode("\n", array(
-			'window.T3Configuration = {};',
-			'window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . ';',
-			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
-			'window.T3Configuration.neosShouldCacheSchema = ' . json_encode($this->bootstrap->getContext()->isProduction()) . ';',
-			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
-			'window.T3Configuration.contentTypeGroups = ' . json_encode($this->settings['contentTypeGroups']) . ';'
-		)));
-	}
 }
 ?>
