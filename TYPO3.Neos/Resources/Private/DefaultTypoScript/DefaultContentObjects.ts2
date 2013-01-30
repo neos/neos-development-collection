@@ -27,3 +27,12 @@ prototype(TYPO3.Neos:Breadcrumb) {
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
 	items = ${q(node).add(q(node).parents())}
 }
+
+root = TYPO3.TypoScript:Case
+root {
+	default {
+		@position = 'end'
+		condition = ${true}
+		renderPath = 'page'
+	}
+}

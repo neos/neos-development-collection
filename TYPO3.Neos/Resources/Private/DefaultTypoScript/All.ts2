@@ -1,4 +1,7 @@
 include: resource://TYPO3.Neos/Private/DefaultTypoScript/ImplementationClasses.ts2
 include: resource://TYPO3.Neos/Private/DefaultTypoScript/DefaultContentObjects.ts2
+
 include: resource://TYPO3.Neos.ContentTypes/Private/TypoScript/Root.ts2
+
 include: resource://TYPO3.Neos/Private/DefaultTypoScript/WireframeMode.ts2
+
