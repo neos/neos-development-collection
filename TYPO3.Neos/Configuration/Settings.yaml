@@ -116,6 +116,15 @@ TYPO3:
             controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
             description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
             icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/box_icon-24.png'
+          sites:
+            label: 'Sites Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\SitesController'
+            description: 'The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.'
+            icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/globe_3_icon-24.png'
+            actions:
+              newSite:
+                label: 'Create site'
+                title: 'Create a new site'
       user:
         label: 'User'
         hideInMenu: TRUE

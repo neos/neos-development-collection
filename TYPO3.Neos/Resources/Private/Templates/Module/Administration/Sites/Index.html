@@ -1,0 +1,77 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<div class="t3-module-container indented">
+		<table class="table">
+			<thead>
+				<th>Name</th>
+				<th>Node name</th>
+				<th>Resource package key</th>
+				<th>State</th>
+				<th></th>
+			</thead>
+			<tbody>
+				<f:for each="{sites}" as="site">
+					<tr>
+						<td>{site.name}</td>
+						<td>{site.nodeName}</td>
+						<td>{site.siteResourcesPackageKey}</td>
+						<td>
+							<f:if condition="{site.online}">
+								<f:then>
+									<span class="badge badge-success">Active</span>
+								</f:then>
+								<f:else>
+									<span class="badge badge-important">Inactive</span>
+								</f:else>
+							</f:if>
+						</td>
+						<td>
+							<div class="pull-right">
+								<f:link.action action="edit" arguments="{site: site}" class="btn t3-button" title="Click to edit">
+									<i class="icon-pencil icon-white"></i>
+								</f:link.action>
+								<f:if condition="{site.state} == 1">
+									<f:then>
+										<f:link.action action="deactivateSite" arguments="{site: site}" class="btn btn-warning t3-button" title="Click to deactivate">
+											<i class="icon-minus-sign icon-white"></i>
+										</f:link.action>
+									</f:then>
+									<f:else>
+										<f:link.action action="activateSite" class="btn btn-success t3-button" arguments="{site: site}" title="Click to activate">
+											<i class="icon-plus-sign icon-white"></i>
+										</f:link.action>
+									</f:else>
+								</f:if>
+								<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
+									<i class="icon-trash icon-white"></i>
+								</button>
+								<div class="modal hide" id="{site.nodeName}">
+									<div class="modal-header">
+										<button type="button" class="close t3-button" data-dismiss="modal">&times;</button>
+										<h3>Are you sure you want to delete "{site.name}"?</h3>
+									</div>
+									<div class="modal-footer">
+										<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+										<f:link.action action="deleteSite" class="btn btn-danger t3-button" arguments="{site: site}" title="Delete">
+											<i class="icon-trash icon-white"></i>
+											Delete
+										</f:link.action>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</f:for>
+			</tbody>
+		</table>
+	</div>
+	<div class="form-actions form-footer">
+		<div class="pull-right">
+			<f:link.action action="newSite" class="btn btn-success t3-button" title="Click to add a new site">
+				<i class="icon-plus-sign icon-white"></i>
+				Add site
+			</f:link.action>
+		</div>
+	</div>
+</f:section>

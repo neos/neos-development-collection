@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Setup\Step;
 
 use TYPO3\Flow\Annotations as Flow,
 	TYPO3\Form\Core\Model\FormDefinition,
-	\TYPO3\Flow\Utility\Files as Files;
+	TYPO3\Flow\Utility\Files as Files;
 
 /**
  * @Flow\Scope("singleton")
@@ -136,9 +136,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$newPackageSection->setLabel('Create a new site');
 			$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
 			$packageName->setLabel('Package Name (in form "Vendor.MyPackageName")');
-			$packageName->addValidator(new \TYPO3\Flow\Validation\Validator\RegularExpressionValidator(array(
-				'regularExpression' =>  \TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY
-			)));
+			$packageName->addValidator(new \TYPO3\Neos\Validation\Validator\PackageKeyValidator());
 
 			$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
 			$siteName->setLabel('Site Name');
