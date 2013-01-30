@@ -62,7 +62,11 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$redirectUri = substr($redirectUri, 0, strpos($redirectUri, '@'));
 			}
 			$urlParts = parse_url($redirectUri);
-			if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode(substr($urlParts['path'], 1)))) {
+
+			if ($urlParts['path']
+					&& is_object($contentContext->getCurrentSiteNode()->getNode(
+						$urlParts['path'] === '/' ? '/' : substr($urlParts['path'], 1)
+					))) {
 				$redirectUri .= '@' . $workspaceName . ($appendHtml === TRUE ? '.html' : '');
 				$this->redirectToUri($redirectUri);
 			}
