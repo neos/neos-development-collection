@@ -8,23 +8,26 @@
 .t3-ui {
 	text-align: left;
 	font-family: $default-font;
-	h1 {
-		font-size: 26px;
-		font-weight: normal;
-		color: $lightest;
-		@include text-shadow(1px 1px 1px rgba($darkest, 0.7));
-	}
 
-	h2 {
-		font-weight: normal;
-		color: $lightest;
-		@include text-shadow(1px 1px 1px rgba($darkest, 0.5));
-		margin-bottom: 0px;
-		font-size: 21px;
-	}
+	.t3-inspector {
+		h1 {
+			font-size: 26px;
+			font-weight: normal;
+			color: $lightest;
+			@include text-shadow(1px 1px 1px rgba($darkest, 0.7));
+		}
 
-	p {
-		line-height: 1.6em;
+		h2 {
+			font-weight: normal;
+			color: $lightest;
+			@include text-shadow(1px 1px 1px rgba($darkest, 0.5));
+			margin-bottom: 0px;
+			font-size: 21px;
+		}
+
+		p {
+			line-height: 1.6em;
+		}
 	}
 }
 
