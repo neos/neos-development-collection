@@ -158,6 +158,8 @@ function($, CreateJS, Entity) {
 			return !this.get('_modified');
 		}.property('_modified').cacheable(),
 
+		inspectorMode: true,
+
 		nodeProperties: null,
 		configuration: null,
 
@@ -172,7 +174,38 @@ function($, CreateJS, Entity) {
 					T3.Common.LocalStorage.setItem('inspectorConfiguration', this.get('configuration'));
 				}
 			});
+			if (T3.Common.LocalStorage.getItem('inspectorMode') === false) {
+				this.toggleInspectorMode();
+			} else {
+				$('body').addClass('t3-inspector-panel-open');
+			}
 		},
+
+		/**
+		 * Toggle inspector mode
+		 */
+		toggleInspectorMode: function() {
+			this.set('inspectorMode', !this.get('inspectorMode'));
+		},
+
+		/**
+		 * When inspector mode is changing
+		 */
+		onInspectorModeChange: function() {
+			var inspectorMode = this.get('inspectorMode');
+			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
+				if (inspectorMode === true) {
+					$('body').addClass('t3-inspector-panel-open');
+				} else {
+					$('body').removeClass('t3-inspector-panel-open');
+				}
+				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({
+					'contentEditing.inspectorMode': inspectorMode
+				}, function() {
+					T3.Common.LocalStorage.setItem('inspectorMode', inspectorMode);
+				});
+			}
+		}.observes('inspectorMode'),
 
 		/**
 		 * This is a computed property which builds up a nested array powering the

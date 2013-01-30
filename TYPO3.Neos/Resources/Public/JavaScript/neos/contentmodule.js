@@ -364,11 +364,18 @@ function($, vie, Ember, CreateJS) {
 			var breadcrumb = T3.Content.UI.Breadcrumb.extend({
 				contentBinding: 'T3.Content.Model.NodeSelection.nodes'
 			});
+			var toogleInspector = T3.Content.UI.ToggleButton.extend({
+				pressedBinding: 'T3.Content.Controller.Inspector.inspectorMode',
+				label: 'Inspector'
+			});
 			var footer = T3.Content.UI.Toolbar.create({
 				elementId: 't3-footer',
 				classNames: ['t3-ui'],
 				left: [
 					breadcrumb
+				],
+				right: [
+					toogleInspector
 				]
 			});
 			footer.appendTo($('body'));
