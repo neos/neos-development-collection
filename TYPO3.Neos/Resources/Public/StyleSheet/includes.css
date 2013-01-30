@@ -1,0 +1,11 @@
+/**
+ * This file should be built using "r.js -o cssIn=includes.css out=includes-built.css" in this directory.
+ */
+@import "style.css";
+
+@import "../Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css";
+@import "../Library/jcrop/css/jquery.Jcrop.css";
+@import "../Library/jquery-dynatree/css/ui.dynatree.css";
+@import "../Library/chosen/chosen/chosen.css";
+@import "../Library/codemirror2/lib/codemirror.css";
+@import "../Library/codemirror2/theme/default.css";
