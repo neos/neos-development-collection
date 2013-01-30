@@ -13,8 +13,7 @@
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<script type="text/javascript">
 					// TODO Get rid of those global variables
-				var neosJavascriptBasePath = '{f:uri.resource(path:"JavaScript/", package: "TYPO3.Neos")}',
-					neosContentTypeSchema = '{f:uri.action(action:"index", controller: "Backend\Schema", package: "TYPO3.Neos", absolute: TRUE)}';
+				var neosJavascriptBasePath = '{f:uri.resource(path:"JavaScript/", package: "TYPO3.Neos")}';
 
 				var ExtDirectInitialization = function() {
 					<ext:extDirect.provider />;
