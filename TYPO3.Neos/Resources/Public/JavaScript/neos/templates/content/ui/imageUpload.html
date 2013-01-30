@@ -1,37 +1,39 @@
-<div class="typo3-imagethumbnailcontainer">
-	<div class="typo3-imagethumbnail">
-		<div class="typo3-imagethumbnail-inner">
+<div class="t3-inspector-image-thumbnail-container">
+	<div class="t3-inspector-image-thumbnail">
+		<div class="t3-inspector-image-thumbnail-inner">
 			{{view T3.Content.UI.Image srcBinding="_previewImageUri" isVisibleBinding="_uploadPreviewNotShown"}}
 		</div>
-
-		<div {{bindAttr class="_imageBadgeClass"}}>
-			Click to Crop
-		</div>
-
 	</div>
-
-	<div class="typo3-uploadthumbnail">
-		{{view T3.Content.UI.Image isVisibleBinding="_uploadPreviewShown" srcBinding="_uploadPreviewImageSource"}}
+	<div class="t3-inspector-image-uploadthumbnail">
+		{{view T3.Content.UI.Image srcBinding="_uploadPreviewImageSource" isVisibleBinding="_uploadPreviewShown"}}
 	</div>
 </div>
 
-<div class="typo3-fileupload" id="{{unbound _containerId}}">
-	<button id="{{unbound _browseButtonId}}" class="t3-button btn btn-mini typo3-fileupload-pickfiles" type="button">
+<div class="t3-inspector-image-upload" id="{{unbound _containerId}}">
+	<button id="{{unbound _browseButtonId}}" class="t3-button btn btn-mini t3-inspector-image-upload-files" {{bindAttr disabled="_uploadInProgress:disabled"}}>
 		{{fileChooserLabel}}
 	</button>
-
-	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonShown" target="parentView" action="upload" labelBinding="uploaderLabel" allowedFileTypesBinding="allowedFileTypes"}}
+	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonShown" target="parentView" class="t3-inspector-image-upload-button" action="upload" labelBinding="uploaderLabel" allowedFileTypesBinding="allowedFileTypes" disabledBinding="_uploadInProgress"}}
+	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonNotShown" target="parentView" class="t3-inspector-image-crop-button" labelBinding="cropLabel"}}
 </div>
 
-<div class="typo3-fileupload-image-size">
-	<div>
-		<label>Width:</label>
-		{{view Ember.TextField class="typo3-fileupload-image-size-width" valueBinding="_finalImageScale.w" }}
-		<span>px</span>
+<div class="t3-inspector-image-width">
+	<label for="image-width">Width:</label>
+	<div class="input-prepend input-append">
+		<span class="add-on">{{view T3.Content.UI.Editor.Checkbox checkedBinding="_imageWidthToggle"}}</span>
+		<span>
+			{{view T3.Content.UI.Editor.TextField elementId="image-width" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="_finalImageScale.w"}}
+		</span>
+		<span class="add-on">px</span>
 	</div>
-	<div>
-		<label>Height:</label>
-		{{view Ember.TextField class="typo3-fileupload-image-size-height" valueBinding="_finalImageScale.computedHeight" }}
-		<span>px</span>
+</div>
+<div class="t3-inspector-image-height">
+	<label for="image-height">Height:</label>
+	<div class="input-prepend input-append">
+		<span class="add-on">{{view T3.Content.UI.Editor.Checkbox checkedBinding="_imageHeightToggle"}}</span>
+		<span>
+			{{view T3.Content.UI.Editor.TextField elementId="image-height" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="_finalImageScale.computedHeight"}}
+		</span>
+		<span class="add-on">px</span>
 	</div>
 </div>

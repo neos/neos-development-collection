@@ -322,7 +322,7 @@
 				settings.openEvent();
 			}
 			$.fn.popover.openedPopup = button;
-			button.addClass('popover-on');
+			button.addClass('popover-on active');
 
 			$(document).trigger('popoverOpened');
 
@@ -345,7 +345,7 @@
 				return false;
 			});
 			button.bind('hidePopover', function() {
-				button.removeClass('popover-on');
+				button.removeClass('popover-on active');
 				settings.popover$.removeClass('active');
 				settings.popover$.attr('style', '');
 				$.fn.popover.openedPopup = null;

@@ -384,32 +384,6 @@ button.t3-create-new-content {
 	margin-bottom: 20px;
 }
 
-// Load indicator
-
-// Image size //
-.t3-inspector {
-	.typo3-fileupload-image-size {
-		color: white;
-		overflow: hidden;
-		div {
-			overflow: hidden;
-		}
-		label,
-		span {
-			float: left;
-		}
-		label {
-			width: 60px;
-		}
-		input {
-			float: left;
-			width: 50px;
-			margin: 0px 5px;
-		}
-	}
-}
-// Image size //
-
 // connection status indication
 
 button.t3-button.t3-connection-status-up {
