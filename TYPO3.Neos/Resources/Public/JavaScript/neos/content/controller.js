@@ -253,7 +253,7 @@ function($, CreateJS, Entity) {
 		apply: function() {
 			var that = this,
 				cleanProperties,
-				contentTypeSchema = T3.Configuration.Schema[Entity.extractContentTypeFromVieEntity(this.getPath('selectedNode._vieEntity'))],
+				contentTypeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema'),
 				reloadPage = false;
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
