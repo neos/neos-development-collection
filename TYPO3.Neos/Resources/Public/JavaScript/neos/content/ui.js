@@ -807,7 +807,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				_collection: collection,
 				_entityCollectionIndex: contentElementIndex
 			}).appendTo(handleContainer);
-
 		} else {
 				// Add container INTO the content elements DOM element
 			handleContainerClassName = 't3-contentelement-handle-container';
@@ -817,8 +816,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).prependTo($contentElement);
 
 				// Make sure we have a minimum height to be able to hover
-			if ($contentElement.height() < 25) {
-				$contentElement.css('min-height', '25px');
+			if ($contentElement.height() < 16) {
+				$contentElement.css('min-height', '16px');
 			}
 
 			T3.Content.UI.ContentElementHandle.create({
