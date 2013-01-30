@@ -65,6 +65,12 @@ class SiteImportService {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
+	 */
+	protected $imageRepository;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -222,8 +228,10 @@ class SiteImportService {
 					base64_decode(trim((string)$xml->originalImage->resource->content)),
 					(string)$xml->originalImage->resource->filename
 				);
+				$image = new \TYPO3\Media\Domain\Model\Image($originalResource);
+				$this->imageRepository->add($image);
 				$object = new \TYPO3\Media\Domain\Model\ImageVariant(
-					new \TYPO3\Media\Domain\Model\Image($originalResource),
+					$image,
 					$processingInstructions
 				);
 			break;
