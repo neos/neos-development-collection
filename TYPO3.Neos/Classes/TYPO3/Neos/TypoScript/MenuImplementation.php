@@ -182,14 +182,14 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	/**
 	 * Recursively called method which builds the actual items array.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode The parent node whose children should be listed as items
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode The parent node whose children should be listed as items
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
 	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext $contentContext The current content context
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
 	 * @see buildItems()
 	 */
-	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode, $lastParentNode, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
+	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode, $lastParentNode, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
 		$items = array();
 		foreach ($entryParentNode->getChildNodes('TYPO3.Neos.ContentTypes:Page,TYPO3.Neos.ContentTypes:Shortcut') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
@@ -230,7 +230,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 *
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
 	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node of the node at the specified level or NULL if none was found
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The parent node of the node at the specified level or NULL if none was found
 	 */
 	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \TYPO3\Neos\Domain\Service\ContentContext $contentContext) {
 		$parentNode = NULL;

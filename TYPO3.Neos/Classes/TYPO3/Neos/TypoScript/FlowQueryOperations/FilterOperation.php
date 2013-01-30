@@ -38,7 +38,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
+		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 		if ($operator === 'instanceof') {
 			if ($this->operandIsSimpleType($operand)) {
 				return $this->handleSimpleTypeOperand($operand, $value);
-			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface') {
+			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface') {
 				return TRUE;
 			} else {
 				return $value->getContentType()->isOfType($operand);

@@ -46,19 +46,19 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				->arguments
 				->getArgument('node')
 				->getPropertyMappingConfiguration()
-				->setTypeConverterOption('TYPO3\Neos\Routing\NodeObjectConverter', \TYPO3\Neos\Routing\NodeObjectConverter::REMOVED_CONTENT_SHOWN, TRUE);
+				->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
 	}
 
 	/**
 	 * Publishes the given node to the specified targetWorkspace
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
+	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $targetWorkspaceName) {
 			/**
 			 * TODO: The publishing pushes the same node twice, which causes the node to be published
 			 * already when it's processed the second time. This obviously leads to a problem for the

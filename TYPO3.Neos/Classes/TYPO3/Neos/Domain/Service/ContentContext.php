@@ -127,7 +127,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the node of the current site.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	public function getCurrentSiteNode() {
 		return ($this->currentSite === NULL) ? NULL : $this->getNode('/sites/' . $this->currentSite->getNodeName());

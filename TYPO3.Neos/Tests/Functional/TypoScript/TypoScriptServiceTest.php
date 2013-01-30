@@ -26,7 +26,7 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	protected $homeNode;
 

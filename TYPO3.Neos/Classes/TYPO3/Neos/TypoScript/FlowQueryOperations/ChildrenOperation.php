@@ -39,7 +39,7 @@ class ChildrenOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
+		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface));
 	}
 
 	/**

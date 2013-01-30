@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI
@@ -35,7 +35,7 @@ class NodeIdentityConverterAspect {
 	 */
 	public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
 		$objectArgument = $joinPoint->getMethodArgument('object');
-		if ($objectArgument instanceof NodeInterface) {
+		if ($objectArgument instanceof PersistentNodeInterface) {
 			return $objectArgument->getContextPath();
 		} else {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);

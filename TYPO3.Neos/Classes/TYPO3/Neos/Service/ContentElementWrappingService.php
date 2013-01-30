@@ -51,14 +51,14 @@ class ContentElementWrappingService {
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @param string $typoscriptPath
 	 * @param string $content
 	 * @param boolean $isPage
 	 * @param boolean $reloadable
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
 		$contentType = $node->getContentType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');

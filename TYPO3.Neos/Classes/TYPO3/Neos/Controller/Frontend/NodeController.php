@@ -58,10 +58,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return string View output for the specified node
 	 */
-	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function showAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
 				// TODO: Introduce check if workspace is visible or accessible to the user
 			try {
@@ -108,10 +108,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return string View output for the specified node
 	 */
-	public function showWireframeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function showWireframeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if (!$node->isAccessible()) {
 			try {
 				$this->authenticationManager->authenticate();
@@ -139,10 +139,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Decide if wireframe mode should be enabled.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return boolean
 	 */
-	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($this->securityContext->getParty() !== NULL) {
 			try {
 				$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');

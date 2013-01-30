@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
 use TYPO3\Neos\Routing\Exception as Exception;
 
 /**
@@ -34,7 +34,7 @@ class NodeService {
 	 * Returns the initialized node that is referenced by $relativeContextNodePath
 	 *
 	 * @param string $relativeContextNodePath
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\Neos\Routing\Exception\NoWorkspaceException
 	 * @throws \TYPO3\Neos\Routing\Exception\NoSiteException
 	 * @throws \TYPO3\Neos\Routing\Exception\NoSuchNodeException
@@ -43,7 +43,7 @@ class NodeService {
 	 */
 	public function getNodeByContextNodePath($relativeContextNodePath) {
 		if ($relativeContextNodePath !== '') {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $relativeContextNodePath, $matches);
+			preg_match(PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $relativeContextNodePath, $matches);
 			if (!isset($matches['NodePath'])) {
 				throw new Exception\InvalidRequestPathException('The request path "' . $relativeContextNodePath . '" is not valid', 1346949309);
 			}
@@ -81,7 +81,7 @@ class NodeService {
 		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
 		$contentContext->setInaccessibleContentShown($currentAccessModeFromContext);
 
-		if (!$node instanceof NodeInterface) {
+		if (!$node instanceof PersistentNodeInterface) {
 			throw new Exception\NoSuchNodeException('No node found on request path "' . $relativeContextNodePath . '"', 1346949857);
 		}
 		return $node;

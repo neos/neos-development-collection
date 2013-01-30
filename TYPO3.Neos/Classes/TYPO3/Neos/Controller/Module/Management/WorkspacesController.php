@@ -61,7 +61,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	 */
 	protected function initializeAction() {
 		if ($this->arguments->hasArgument('node')) {
-			$this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\Neos\Routing\NodeObjectConverter', \TYPO3\Neos\Routing\NodeObjectConverter::REMOVED_CONTENT_SHOWN, TRUE);
+			$this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
 		parent::initializeAction();
 	}
@@ -137,35 +137,35 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return void
 	 */
-	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$this->workspacesService->publishNode($node);
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been published'));
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return void
 	 */
-	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$this->nodeRepository->remove($node);
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been discarded'));
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> $nodes
 	 * @param string $action
 	 * @return void
 	 */
 	public function publishOrDiscardNodesAction(array $nodes, $action) {
 		$propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
-		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Neos\Routing\NodeObjectConverter', \TYPO3\Neos\Routing\NodeObjectConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		foreach ($nodes as $key => $node) {
-			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
+			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', $propertyMappingConfiguration);
 		}
 		switch ($action) {
 			case 'publish':
@@ -216,10 +216,10 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	 * Finds the nearest parent folder node of the provided node by looping recursively trough
 	 * the node and it's parent nodes and checking if they are a sub content type of TYPO3.TYPO3CR:Folder
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface|NULL
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function findFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function findFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node) {
 			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 				return $node;

@@ -164,10 +164,10 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node = $node->getParent()) {
 			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 				return $node;

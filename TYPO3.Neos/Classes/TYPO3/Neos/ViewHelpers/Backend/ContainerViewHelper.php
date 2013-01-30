@@ -39,10 +39,10 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return string
 	 */
-	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function render(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$view = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
 		$view->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Backend/Content/Container.html');
 		$view->setPartialRootPath('resource://TYPO3.Neos/Private/Partials');

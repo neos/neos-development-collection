@@ -29,12 +29,12 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 * Include all JavaScript files matching the include regular expression
 	 * and not matching the exclude regular expression.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @param boolean $page
 	 * @param boolean $reloadable Should the wrapped content be reloaded on changes that refresh
 	 * @return string
 	 */
-	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE, $reloadable = FALSE) {
+	public function render(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $page = FALSE, $reloadable = FALSE) {
 		return $this->contentElementWrappingService->wrapContentObject($node, $this->templateVariableContainer->get('fluidTemplateTsObject')->getPath(), $this->renderChildren(), $page, $reloadable);
 	}
 }

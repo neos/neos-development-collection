@@ -81,11 +81,11 @@ class WorkspacesService {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @param $targetWorkspaceName
 	 * @return void
 	 */
-	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName = 'live') {
+	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $targetWorkspaceName = 'live') {
 		$nodes = array($node);
 		$contentType = $node->getContentType();
 		if ($contentType->isOfType('TYPO3.Neos.ContentTypes:Page') || $contentType->hasStructure()) {
@@ -98,7 +98,7 @@ class WorkspacesService {
 	}
 
 	/**
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> $nodes
 	 * @param $targetWorkspaceName
 	 * @return void
 	 */

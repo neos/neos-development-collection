@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -104,12 +104,12 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof NodeInterface && !is_string($value)) {
+		if (!$value instanceof PersistentNodeInterface && !is_string($value)) {
 			return FALSE;
 		}
 
 		if (is_string($value)) {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
+			preg_match(PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
 			if (!isset($matches['NodePath'])) {
 				return FALSE;
 			}
@@ -125,7 +125,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 			$contentContext = $this->nodeRepository->getContext();
 		}
 
-		if ($node instanceof NodeInterface) {
+		if ($node instanceof PersistentNodeInterface) {
 			$nodeContextPath = $node->getContextPath();
 			$siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
 		} else {

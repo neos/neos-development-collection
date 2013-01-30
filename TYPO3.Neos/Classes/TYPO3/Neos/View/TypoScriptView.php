@@ -48,8 +48,8 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 */
 	public function render() {
 		$currentNode = isset($this->variables['value']) ? $this->variables['value'] : NULL;
-		if (!$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
-			throw new \TYPO3\Neos\Exception('TypoScriptView needs a node as argument.', 1329736456);
+		if (!$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
+			throw new \TYPO3\Neos\Exception('TypoScriptView needs a persisted node as argument.', 1329736456);
 		}
 
 			// TODO: find closest folder node from this node...
@@ -71,11 +71,11 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	/**
 	 * Is it possile to render $node with $typoScriptPath?
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @param string $typoScriptPath
 	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
 	 */
-	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoScriptPath) {
+	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoScriptPath) {
 		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
 
 		// TODO: find closest folder node from this node...

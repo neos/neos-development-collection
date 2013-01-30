@@ -30,7 +30,7 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	protected $node;
 
