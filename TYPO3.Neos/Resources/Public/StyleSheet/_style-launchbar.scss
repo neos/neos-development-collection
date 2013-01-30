@@ -7,7 +7,7 @@ body.t3-launcher-open {
 	#t3-toolbar {
 		margin-top: $launcher-height-open + $menu-height + $topbar-offset;
 	}
-	#t3-inspector {
+	#t3-inspector, #t3-tree-panel {
 		margin-top: $launcher-height-open + $menu-height + $topbar-offset;
 	}
 	#t3-launcher {

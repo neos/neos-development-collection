@@ -19,6 +19,7 @@ define(
 function($, vie, Ember, CreateJS) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
 
+
 	return Ember.Application.create({
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
@@ -63,6 +64,7 @@ function($, vie, Ember, CreateJS) {
 			this.set('vie', vie);
 			this._initializeInspector();
 			this._initializeToolbar();
+			this._initializeTreePanel();
 			this._initializeFooter();
 			this._initializeLauncher();
 			this._initializeAjaxPageReload();
@@ -294,7 +296,8 @@ function($, vie, Ember, CreateJS) {
 						title: 'Preview',
 						elementAttributes: ['title']
 					}),
-					T3.Content.UI.PageTreeButton.extend({
+					T3.Content.UI.ToggleButton.extend({
+						pressedBinding: 'T3.Content.Controller.PageTree.pageTreeMode',
 						label: 'Pages'
 					}),
 					T3.Content.UI.ToggleButton.extend({
@@ -339,6 +342,18 @@ function($, vie, Ember, CreateJS) {
 				searchItemsBinding: 'T3.Common.Launcher.SearchController.searchItems'
 			});
 			this._launcher.appendTo($('#t3-launcher'));
+		},
+
+		_initializeTreePanel: function() {
+			var treePanel = T3.Content.UI.TreePanel.create({
+				elementId: 't3-tree-panel',
+				classNames: ['t3-ui', 't3-inspector'],
+				pageTree: [
+					T3.Content.UI.PageTree
+				]
+			});
+
+			treePanel.appendTo($('body'));
 		},
 
 		_initializeFooter: function() {
