@@ -15,6 +15,8 @@ define(
 
 			_element: null,
 
+			_entity: null,
+
 			$newAfterPopoverContent: null,
 
 			_entityCollectionIndex: null,
@@ -27,24 +29,53 @@ define(
 
 			_pasteInProgress: false,
 
+			_hidden: true,
+
+			_showHide: false,
+
+			_showRemove: true,
+
+			_showCut: true,
+
+			_showCopy: true,
+
+			_hideToggleTitle: function() {
+				return this.get('_hidden') === true ? 'Unhide' : 'Hide';
+			}.property('_hidden').cacheable(),
+
 			_thisElementStartedCut: function() {
 				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
-				if (!clipboard) return false;
+				if (!clipboard) {
+					return false;
+				}
 
 				return (clipboard.type === 'cut' && clipboard.nodePath === this.get('_nodePath'));
 			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
 
 			_thisElementStartedCopy: function() {
 				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
-				if (!clipboard) return false;
+				if (!clipboard) {
+					return false;
+				}
 
 				return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_nodePath'));
 			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
 
+			_entityChanged: function() {
+				this.set('_hidden', this.get('_entity').get('typo3:_hidden'));
+			},
+
 			didInsertElement: function() {
-				var that = this;
-				var subject = vieInstance.service('rdfa').getElementSubject(this.get('_element'));
-				this.set('_nodePath', vieInstance.entities.get(subject).getSubjectUri());
+				var that = this,
+					entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(this.get('_element')));
+				this.set('_entity', entity);
+				this.set('_nodePath', entity.getSubjectUri());
+				if (entity.has('typo3:_hidden') === true) {
+					this.set('_showHide', true);
+					this.set('_hidden', entity.get('typo3:_hidden'));
+				}
+
+				entity.on('change', this._entityChanged, this);
 
 				this.$newAfterPopoverContent = $('<div />', {id: this.get(Ember.GUID_KEY)});
 
@@ -66,8 +97,17 @@ define(
 				});
 			},
 
+			toggleHidden: function() {
+				var entity = this.get('_entity'),
+					value = !entity.get('typo3:_hidden');
+				this.set('_hidden', value);
+				entity.set('typo3:_hidden', value);
+				T3.Content.Controller.Inspector.nodeProperties.set('_hidden', value);
+				T3.Content.Controller.Inspector.apply();
+			},
+
 			remove: function() {
-				T3.Content.Controller.NodeActions.remove(vieInstance.entities.get(this.get('_nodePath')), this.get('_element'), this.$('.action-remove').first());
+				T3.Content.Controller.NodeActions.remove(this.get('_entity'), this.get('_element'), this.$('.action-remove').first());
 			},
 
 			cut: function() {
@@ -115,7 +155,6 @@ define(
 					}
 				});
 
-
 				ContentElementPopoverContent.create({
 					_options: this.get('_collection').options,
 					_index: this.get('_entityCollectionIndex'),
@@ -125,12 +164,7 @@ define(
 
 			willDestroyElement: function() {
 				this.$().find('.action-new').trigger('hidePopover');
-			},
-
-			_showRemove: true,
-			_showCut: true,
-			_showCopy: true
-
+			}
 		});
 	}
 );

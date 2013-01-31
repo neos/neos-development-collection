@@ -1,9 +1,36 @@
 <div class="btn-toolbar">
 	<div class="btn-group">
-		{{#if _showRemove}}<button class="btn btn-mini action-remove" title="Remove" {{action "remove" }}><i class="icon-trash"></i></button>{{/if}}
-		{{#if _showCut}}<button class="btn btn-mini action-cut" {{bindAttr class="_thisElementStartedCut:active"}} title="Cut" {{action "cut" }}><i class="icon-cut"></i></button>{{/if}}
-		{{#if _showCopy}}<button class="btn btn-mini action-copy" {{bindAttr class="_thisElementStartedCopy:active"}} title="Copy" {{action "copy" }}><i class="icon-copy"></i></button>{{/if}}
-		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}<button class="btn btn-mini action-paste" {{bindAttr class="_pasteInProgress:t3-handle-loading"}} title="Paste after" {{action "pasteAfter"}}><i class="icon-paste"></i></button>{{/if}}
-		<button class="btn btn-mini action-new" title="Create after" {{action "newAfter" }}><i class="icon-plus"></i></button>
+		{{#if _showHide}}
+			<button {{bindAttr title="_hideToggleTitle" class=":btn :btn-mini :action-toggle-hidden _hidden:active"}} {{action "toggleHidden"}}>
+				<i class="icon-eye-close"></i>
+			</button>
+		{{/if}}
+		{{#if _showRemove}}
+			<button class="btn btn-mini action-remove" title="Remove" {{action "remove"}}>
+				<i class="icon-trash"></i>
+			</button>
+		{{/if}}
+		{{#if _showCut}}
+			<button class="btn btn-mini action-cut" {{bindAttr class="_thisElementStartedCut:active"}} title="Cut" {{action "cut"}}>
+				<i class="icon-cut"></i>
+			</button>
+		{{/if}}
+		{{#if _showCopy}}
+			<button class="btn btn-mini action-copy" {{bindAttr class="_thisElementStartedCopy:active"}} title="Copy" {{action "copy"}}>
+				<i class="icon-copy"></i>
+			</button>
+		{{/if}}
+		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}
+			<button class="btn btn-mini action-paste" title="Paste after" {{action "pasteAfter"}}>
+				{{#if _pasteInProgress}}
+					<i class="t3-handle-loading"></i>
+				{{else}}
+					<i class="icon-paste"></i>
+				{{/if}}
+			</button>
+		{{/if}}
+		<button class="btn btn-mini action-new" title="Create after" {{action "newAfter"}}>
+			<i class="icon-plus"></i>
+		</button>
 	</div>
 </div>
