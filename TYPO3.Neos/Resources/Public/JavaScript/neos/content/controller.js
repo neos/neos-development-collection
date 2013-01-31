@@ -447,6 +447,7 @@ function($, CreateJS, Entity) {
 					});
 					model.set('typo3:_removed', true);
 					model.save(null);
+					T3.Content.Model.NodeSelection.updateSelection();
 				}
 			}, $handle);
 		},
