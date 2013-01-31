@@ -392,10 +392,10 @@ function($, CreateJS, Entity) {
 		/**
 		 * Paste the current node on the clipboard after another node
 		 * @param {String} nodePath the nodePath of the target node
-		 * @return {void}
+		 * @return {boolean}
 		 */
 		pasteAfter: function(nodePath) {
-			this._paste(nodePath, 'after');
+			return this._paste(nodePath, 'after');
 		},
 
 		/**
@@ -403,7 +403,7 @@ function($, CreateJS, Entity) {
 		 * @param {String} nodePath the nodePath of the target node
 		 * @param {jQuery} handle the clicked handle
 		 * @param {String} position
-		 * @return {void}
+		 * @return {boolean}
 		 */
 		_paste: function(nodePath, position) {
 			var that = this,
@@ -411,11 +411,11 @@ function($, CreateJS, Entity) {
 
 			if (!clipboard.nodePath) {
 				T3.Common.Notification.notice('No node found on the clipboard');
-				return;
+				return false;
 			}
 			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
 				T3.Common.Notification.notice('It is not possible to paste a node ' + position + ' itself.');
-				return;
+				return false;
 			}
 
 			var action = clipboard.type === 'cut' ? 'move' : 'copy';
@@ -432,6 +432,7 @@ function($, CreateJS, Entity) {
 					}
 				}
 			);
+			return true;
 		},
 
 		remove: function(model, $element, $handle) {
@@ -493,10 +494,10 @@ function($, CreateJS, Entity) {
 		 * Paste the current node on the clipboard before another node
 		 * @param {String} nodePath the nodePath of the target node
 		 * @param {jQuery} handle the clicked handle
- 		 * @return {void}
+		 * @return {boolean}
 		 */
 		pasteBefore: function(nodePath, $handle) {
-			this._paste(nodePath, $handle, 'before');
+			return this._paste(nodePath, $handle, 'before');
 		},
 
 		/**

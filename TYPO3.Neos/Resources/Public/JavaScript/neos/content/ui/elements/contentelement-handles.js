@@ -119,8 +119,9 @@ define(
 			},
 
 			pasteAfter: function() {
-				T3.Content.Controller.NodeActions.pasteAfter(this.get('_nodePath'));
-				this.set('_pasteInProgress', true);
+				if (T3.Content.Controller.NodeActions.pasteAfter(this.get('_nodePath')) === true) {
+					this.set('_pasteInProgress', true);
+				}
 			},
 
 			newAfter: function() {
