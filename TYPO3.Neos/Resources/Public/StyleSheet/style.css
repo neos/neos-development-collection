@@ -8860,9 +8860,6 @@ button.t3-button.t3-connection-status-down {
   background: transparent;
   border: 0px;
 }
-#t3-toolbar .t3-indicator .icon-ok {
-  color: #69A550;
-}
 
 .t3-inline-editable:focus {
   outline: 1px rgba(0, 0, 0, 0.2) dashed;
