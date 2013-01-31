@@ -37,7 +37,7 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 *
 	 * @var string
 	 */
-	protected $typoScriptPath = 'page';
+	protected $typoScriptPath = 'root';
 
 	/**
 	 * Renders the view
