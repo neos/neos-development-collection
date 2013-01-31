@@ -18,7 +18,7 @@
 		'jquery.plupload.html5': '../Library/plupload/js/plupload.html5',
 		'bootstrap.dropdown': '../Library/twitter-bootstrap/js/bootstrap-dropdown',
 		'bootstrap.alert': '../Library/twitter-bootstrap/js/bootstrap-alert',
-		'bootstrap.notify': '../Library/bootstrap-notify/bootstrap-notify/js',
+		'bootstrap.notify': '../Library/bootstrap-notify/js/bootstrap-notify',
 		'codemirror': '../Library/codemirror2/lib/codemirror',
 		'codemirror.xml': '../Library/codemirror2/mode/xml/xml',
 		'codemirror.css': '../Library/codemirror2/mode/css/css',
