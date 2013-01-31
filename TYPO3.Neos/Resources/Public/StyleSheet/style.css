@@ -7195,18 +7195,15 @@ body.t3-ui-controls {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  background: #2d2d2d;
-  height: 100%;
-  margin: 0px;
-  margin-top: 60px;
-  padding: 0px;
-  padding-bottom: 60px;
   position: fixed;
+  top: 60px;
+  bottom: 0;
   right: 0;
-  top: 0;
   width: 200px;
+  background: #2d2d2d;
   z-index: 10014;
   border-top: 1px solid #69a550;
+  padding-top: 45px;
   -webkit-transition-property: width, margin-top;
   -moz-transition-property: width, margin-top;
   -o-transition-property: width, margin-top;
@@ -7233,6 +7230,8 @@ body.t3-ui-controls {
   font-size: 100%;
 }
 #t3-inspector .header {
+  position: absolute;
+  top: 0;
   text-align: right;
   height: 35px;
   line-height: 35px;
@@ -7264,7 +7263,6 @@ body.t3-ui-controls {
 }
 #t3-inspector .t3-inspector-form fieldset {
   border: 0;
-  margin-bottom: 35px;
 }
 #t3-inspector .t3-inspector-form fieldset .t3-inspector-field {
   padding: 10px 10px 0 10px;
