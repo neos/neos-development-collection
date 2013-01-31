@@ -43,5 +43,19 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 	public function positionalMatchingWorks() {
 		$this->classicMatchingWorks('case/positionalMatching');
 	}
+
+	/**
+	 * @test
+	 */
+	public function renderPathWillRenderAbsolutePath() {
+		$this->classicMatchingWorks('case/renderPath');
+	}
+
+	/**
+	 * @test
+	 */
+	public function renderPathWillWinOverType() {
+		$this->classicMatchingWorks('case/renderPathWillWin');
+	}
 }
 ?>
