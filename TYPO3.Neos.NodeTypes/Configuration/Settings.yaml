@@ -146,6 +146,7 @@ TYPO3:
         icon: 'Images/Icons/White/brackets_icon-16.png'
         darkIcon: 'Images/Icons/Black/brackets_icon-16.png'
         label: 'HTML'
+        showUneditableOverlay: true
         properties:
           source:
             type: string
@@ -165,6 +166,7 @@ TYPO3:
         icon: 'Images/Icons/White/list_bullets_icon-16.png'
         darkIcon: 'Images/Icons/Black/list_bullets_icon-16.png'
         label: 'Menu'
+        showUneditableOverlay: true
         properties:
           startLevel:
             type: enum
@@ -322,6 +324,7 @@ TYPO3:
         icon: 'Images/Icons/White/app_window_shell_icon-16.png'
         darkIcon: 'Images/Icons/Black/app_window_shell_icon-16.png'
         label: 'Abstract plugin'
+        showUneditableOverlay: true
         properties:
           package:
             type: string
