@@ -25,12 +25,15 @@ define(['vie/entity', 'neos/content/controller', 'neos/content/model', 'backbone
 						//
 						// The PublishableNodes are explicitly uppdated, as changes from the backbone models
 						// workspacename attribute are suppressed and our entity wrapper would not notice.
-					model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
 					T3.Content.Controller.ServerConnection.set('_saveRunning', false);
-					T3.Content.Controller.ServerConnection.set('_lastSuccessfulTransfer', new Date());
-					T3.Content.Model.PublishableNodes._updatePublishableEntities();
-					if (options && options.success) {
-						options.success(model, result);
+
+					if (result !== undefined) {
+						model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
+						T3.Content.Controller.ServerConnection.set('_lastSuccessfulTransfer', new Date());
+						T3.Content.Model.PublishableNodes._updatePublishableEntities();
+						if (options && options.success) {
+							options.success(model, result);
+						}
 					}
 				});
 			},
