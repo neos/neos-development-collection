@@ -23,7 +23,7 @@
 	#t3-dd-pagetree {
 		height: 270px;
 		padding-bottom: 8px;
-		width: 260px;
+		width: 100%;
 		span.dynatree-drop-target {
 			margin: 3px 0;
 			display: block;
@@ -179,14 +179,14 @@
 		border: 1px dotted #444444;
 		height: 25px;
 		padding-right: 10px;
-		width: 248px;
+		width: 100%;
 	}
 	.page-action-toolbar {
 		cursor: pointer;
 		float: right;
 		height: 15px;
-		margin: 0 5px;
-		padding: 6px 0 5px 25px;
+		margin: 0 5px !important;
+		padding: 6px 0 5px 25px !important;
 	}
 
 	.t3-action-newpage {

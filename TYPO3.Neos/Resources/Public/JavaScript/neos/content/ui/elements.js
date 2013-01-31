@@ -13,9 +13,10 @@ define(
 	'neos/content/ui/elements/popover-button',
 	'neos/content/ui/elements/contentelement-handles',
 	'neos/content/ui/elements/section-handles',
+	'neos/content/ui/elements/page-tree',
 	'jquery.popover'
 ],
-function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle) {
+function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements');
 
 	var T3 = window.T3 || {};
@@ -68,4 +69,6 @@ function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, 
 	T3.Content.UI.ContentElementHandle = ContentElementHandle;
 
 	T3.Content.UI.SectionHandle = SectionHandle;
+
+	T3.Content.UI.PageTree = PageTree;
 });

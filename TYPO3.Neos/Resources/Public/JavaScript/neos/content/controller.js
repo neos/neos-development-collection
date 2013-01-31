@@ -99,6 +99,40 @@ function($, CreateJS, Entity) {
 	});
 
 	/**
+	 * This controller toggles the pagetree visiblity on and off.
+	 */
+	var PageTree = Ember.Object.create({
+		pageTreeMode: false,
+
+		init: function() {
+			if (T3.Common.LocalStorage.getItem('pageTreeMode') === true) {
+				$('body').addClass('t3-tree-panel-open');
+				this.togglePageTreeMode();
+			}
+		},
+
+		togglePageTreeMode: function() {
+			this.set('pageTreeMode', !this.get('pageTreeMode'));
+		},
+
+		onPageTreeModeChange: function () {
+			var pageTreeMode;
+			pageTreeMode = this.get('pageTreeMode');
+			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
+				if (pageTreeMode === true) {
+					$('body').addClass('t3-tree-panel-open');
+				} else {
+					$('body').removeClass('t3-tree-panel-open');
+				}
+				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.pageTreeMode': pageTreeMode}, function() {
+					T3.Common.LocalStorage.setItem('pageTreeMode', pageTreeMode);
+				});
+			}
+		}.observes('pageTreeMode')
+
+	});
+
+	/**
 	 * This controller toggles the inspection mode on and off.
 	 *
 	 * @TODO: rename differently, because it is too similar with "Inspector"
@@ -548,6 +582,7 @@ function($, CreateJS, Entity) {
 
 	T3.Content.Controller = {
 		Preview: Preview,
+		PageTree: PageTree,
 		Wireframe: Wireframe,
 		Inspect: Inspect,
 		NodeActions: NodeActions,
