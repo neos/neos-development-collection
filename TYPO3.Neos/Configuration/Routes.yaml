@@ -128,3 +128,18 @@
     node:
       handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
   appendExceedingArguments: true
+
+
+# This route is just a dummy, it should always be last as it should never be used to actually match a incoming request.
+-
+  name:          'Dummy wireframe route to enable uri resolution while in wireframe mode.'
+  uriPattern:    '{node}.html'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Frontend\Node'
+    '@format':     'html'
+    '@action':     'showWireframe'
+  routeParts:
+    node:
+      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+  appendExceedingArguments: true
