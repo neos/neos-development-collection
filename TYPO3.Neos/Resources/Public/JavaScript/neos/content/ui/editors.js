@@ -374,6 +374,9 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		// After cropping, we still scale the cropped image
 		_finalImageScale: null,
 
+		// Contains the handler for the AJAX request loading the preview image
+		_loadPreviewImageHandler: null,
+
 		init: function() {
 			var that = this;
 			this._super();
@@ -465,6 +468,9 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		willDestroyElement: function() {
 				// Hide popover when the focus changes
 			this.$().find('.typo3-imagethumbnail').trigger('hidePopover');
+			if (this.get('_loadPreviewImageHandler')) {
+				this.get('_loadPreviewImageHandler').abort();
+			}
 		},
 
 		/****************************************
@@ -729,7 +735,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 				this.set('_uploadPreviewShown', false);
-				$.get('/neos/content/imageWithMetadata/' + imageVariant.originalImage, function(result) {
+				that.set('_loadPreviewImageHandler', $.get('/neos/content/imageWithMetadata/' + imageVariant.originalImage, function(result) {
 					that._hideImageLoader();
 					var metadata = JSON.parse(result);
 					that.beginPropertyChanges();
@@ -759,7 +765,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 					that.endPropertyChanges();
 					that.set('_imageFullyLoaded', true);
-				});
+				}));
 			}
 		},
 		_displayImageLoader: function() {

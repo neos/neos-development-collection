@@ -401,7 +401,6 @@ function($, CreateJS, Entity) {
 		/**
 		 * Paste a node on a certain location, relative to another node
 		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} handle the clicked handle
 		 * @param {String} position
 		 * @return {void}
 		 */
