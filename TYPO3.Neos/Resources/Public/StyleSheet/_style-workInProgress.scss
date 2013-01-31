@@ -17,13 +17,12 @@
 
 	/* Pagetree start */
 	#t3-dd-pagetree-con {
-		position: relative;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
 	}
 
 	#t3-dd-pagetree {
-		height: 270px;
-		padding-bottom: 8px;
-		width: 100%;
 		span.dynatree-drop-target {
 			margin: 3px 0;
 			display: block;
@@ -182,11 +181,14 @@
 	}
 
 	.t3-pagetree-action-toolbar-con {
-		background-color: #EEEEEE;
-		border: 1px dotted #444444;
-		height: 25px;
+		background-color: $light-grey;
+		border: 1px dotted $dark-grey2;
+		height: 27px;
 		padding-right: 10px;
 		width: 100%;
+		position: absolute;
+		top: -27px;
+		@include box-sizing(border-box);
 	}
 	.page-action-toolbar {
 		cursor: pointer;

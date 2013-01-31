@@ -349,12 +349,11 @@ function($, vie, Ember, CreateJS) {
 		_initializeTreePanel: function() {
 			var treePanel = T3.Content.UI.TreePanel.create({
 				elementId: 't3-tree-panel',
-				classNames: ['t3-ui', 't3-inspector'],
+				classNames: ['t3-ui'],
 				pageTree: [
 					T3.Content.UI.PageTree
 				]
 			});
-
 			treePanel.appendTo($('body'));
 		},
 

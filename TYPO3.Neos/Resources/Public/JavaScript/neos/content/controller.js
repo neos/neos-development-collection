@@ -99,7 +99,7 @@ function($, CreateJS, Entity) {
 	});
 
 	/**
-	 * This controller toggles the pagetree visiblity on and off.
+	 * This controller toggles the page tree visibility on and off.
 	 */
 	var PageTree = Ember.Object.create({
 		pageTreeMode: false,
@@ -116,8 +116,7 @@ function($, CreateJS, Entity) {
 		},
 
 		onPageTreeModeChange: function () {
-			var pageTreeMode;
-			pageTreeMode = this.get('pageTreeMode');
+			var pageTreeMode = this.get('pageTreeMode');
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
 				if (pageTreeMode === true) {
 					$('body').addClass('t3-tree-panel-open');
@@ -129,7 +128,6 @@ function($, CreateJS, Entity) {
 				});
 			}
 		}.observes('pageTreeMode')
-
 	});
 
 	/**
