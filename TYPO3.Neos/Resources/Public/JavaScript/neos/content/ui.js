@@ -842,7 +842,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		};
 
 			// Add overlay to content elements without inline editable properties and no sub-elements
-		if ($element.find('> .t3-inline-editable').length === 0 && $element.find('.t3-contentsection, .t3-contentelement').length === 0) {
+		if ($element.hasClass('t3-not-inline-editable')) {
 			var overlay = $('<div />', {
 				'class': 't3-contentelement-overlay',
 				'click': function(event) {

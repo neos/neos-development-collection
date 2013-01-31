@@ -79,6 +79,9 @@ class ContentElementWrappingService {
 			if ($reloadable) {
 				$cssClasses[] = 't3-reloadable-content';
 			}
+			if ($node->getContentType()->hasShowUneditableOverlay() && $node->getContentType()->getShowUneditableOverlay() === TRUE) {
+				$cssClasses[] = 't3-not-inline-editable';
+			}
 
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
 			$tagBuilder->addAttribute('id', 'c' . $node->getIdentifier());
