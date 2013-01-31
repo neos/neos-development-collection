@@ -13,6 +13,7 @@ else
 fi
 
 echo "Remove files we don't use"
+rm -rf create/src/jquery.Midgard.midgardNotifications.js
 rm -rf create/src/jquery.Midgard.midgardToolbar.js
 rm -rf create/src/jquery.Midgard.midgardTags.js
 rm -rf create/src/editingWidgets/jquery.Midgard.midgardEditableEditorRedactor.js

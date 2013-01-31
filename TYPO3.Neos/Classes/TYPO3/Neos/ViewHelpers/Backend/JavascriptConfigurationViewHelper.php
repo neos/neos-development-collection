@@ -31,6 +31,12 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 	protected $cacheManager;
 
 	/**
+	 * @var \TYPO3\Flow\Core\Bootstrap
+	 * @Flow\Inject
+	 */
+	protected $bootstrap;
+
+	/**
 	 * @return string
 	 */
 	public function render() {
@@ -46,14 +52,20 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 			->setCreateAbsoluteUri(TRUE)
 			->uriFor('nodeTypeSchema', array('version' => $schemaCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
 
-		return (implode("\n", array(
+		$configuration = array(
 			'window.T3Configuration = {};',
 			'window.T3Configuration.NodeTypeSchemaUri = ' . json_encode($nodeTypeSchemaUri) . ';',
 			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
 			'window.T3Configuration.contentTypeGroups = ' . json_encode($this->settings['contentTypeGroups']) . ';'
-		)));
+		);
+
+		if ($this->bootstrap->getContext()->isDevelopment()) {
+			$configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
+		}
+
+		return (implode("\n", $configuration));
 	}
 
 	/**

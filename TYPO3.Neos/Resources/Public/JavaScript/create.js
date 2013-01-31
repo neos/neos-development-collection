@@ -13,6 +13,7 @@ define(
 		'Library/createjs/deps/rangy-core-1.2.3',
 		'createjs',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
+		'create/typo3Notifications',
 		'create/typo3MidgardEditable',
 		'neos/content/model'
 	],
