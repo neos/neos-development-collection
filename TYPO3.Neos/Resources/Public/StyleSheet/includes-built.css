@@ -8197,7 +8197,11 @@ ul.t3-launcher-horizontal li .text {
 .midgardNotifications-container .typo3-notification-item-outer .typo3-notification-error {
   background-image: url(../Images/Icons/White/attention_icon-16.png);
 }
-.t3-handle-loading i, .t3-handle-loading span {
+.t3-handle-loading {
+  display: block;
+  width: 14px;
+  height: 14px;
+  padding: 1px 0;
   background-image: url(../Images/ajax-preloader.gif) !important;
   background-repeat: no-repeat !important;
   background-position: 50% 50% !important;
