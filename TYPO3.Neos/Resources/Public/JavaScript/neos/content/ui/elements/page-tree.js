@@ -27,14 +27,6 @@ define(
 			didInsertElement: function() {
 				var that = this;
 				this._initializeTree();
-
-				T3.ContentModule.on('pageLoaded', function() {
-					// if a new page has been loaded and the element has NOT been
-					// initialized before (because it has been destroyed in the meantime
-					// due to a change of a node identity), we try to re-initialize
-					// the tree.
-					that._initializeTree();
-				});
 			},
 
 			/**
@@ -257,44 +249,32 @@ define(
 			},
 
 			_initializePagePropertyObservers: function() {
-				var that = this;
-
-				entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#t3-page-metainformation'));
+				var that = this,
+					entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#t3-page-metainformation'));
 				if (!entityWrapper) {
 					// page might not have been loaded; so we directly return
 					return;
 				}
 				entityWrapper.addObserver('typo3:title', function() {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
-					that.synchronizePageTreeTitle(attributes);
+					that.synchronizePageTreeTitle(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
 				entityWrapper.addObserver('typo3:_name', function() {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
-					that.synchronizePageTreeNodeName(attributes);
+					that.synchronizePageTreeNodeName(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
 				entityWrapper.addObserver('typo3:_hidden', function() {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
-					that.synchronizePageTreeVisibility(attributes);
+					that.synchronizePageTreeVisibility(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
 				entityWrapper.addObserver('typo3:_hiddenBeforeDateTime', function() {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
-					that.synchronizePageTreeVisibility(attributes);
+					that.synchronizePageTreeVisibility(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
 				entityWrapper.addObserver('typo3:_hiddenAfterDateTime', function() {
-					var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
-					that.synchronizePageTreeVisibility(attributes);
+					that.synchronizePageTreeVisibility(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
 			},
 			synchronizePageTreeTitle: function(attributes) {
 				var node = this.getPageTreeNode();
 				if (node) {
 					node.setTitle(attributes.title);
-				}
-			},
-			synchronizePageTreeNodeName: function() {
-				var node = this.getPageTreeNode();
-				if (node) {
-					this.resetPageTree();
 				}
 			},
 			synchronizePageTreeVisibility: function(attributes) {
@@ -318,26 +298,37 @@ define(
 					node.render();
 				}
 			},
-			resetPageTree: function() {
+			synchronizePageTreeNodeName: function(attributes) {
 				var node = this.getPageTreeNode();
 				if (node) {
-					this.$tree.dynatree('destroy');
-
-					// besides destroying the dynaTree instance, we also need to destroy the DOM elements
-					this.$tree.children().remove();
-					this.$tree = null;
-					T3.Content.Controller.PageTree.set('pageTreeMode', false);
+					node.data.key = node.data.key.replace(node.data.name + '@', attributes._name + '@');
+					node.data.href = node.data.href.replace(node.data.name + '@', attributes._name + '@');
+					node.data.name = attributes._name;
+					node.render();
+					if (node.hasChildren() === true) {
+						node.data.isLazy = true;
+						// Remove children so they can't be clicked until they are reloaded
+						node.removeChildren();
+						node.setLazyNodeStatus(DTNodeStatus_Loading);
+						// Listen to the first page reload (can be done with T3.ContentModule.one in Ember.js 1.0)
+						T3.ContentModule.on('pageLoaded', this, 'reloadPageNodeChildren');
+					}
 				}
 			},
-			getPageTreeNode: function() {
-				var pageNodePath = $('#t3-page-metainformation').attr('about');
-				if (this.$tree && this.$tree.children().length > 0) {
-					var tree = this.$tree.dynatree('getTree');
-					var node = tree.getNodeByKey(pageNodePath);
-					return node;
-				} else {
-					return null;
+			reloadPageNodeChildren: function() {
+				var node = this.getPageTreeNode();
+				if (node) {
+					node.reloadChildren();
 				}
+				T3.ContentModule.off('pageLoaded', this, 'reloadPageNodeChildren');
+			},
+			getPageTreeNode: function() {
+				if (this.$tree && this.$tree.children().length > 0) {
+					var tree = this.$tree.dynatree('getTree'),
+						pageNodePath = $('#t3-page-metainformation').attr('about');
+					return tree.getNodeByKey(pageNodePath);
+				}
+				return null;
 			},
 
 			/**
