@@ -7861,6 +7861,7 @@ body.t3-ui-previewmode #t3-toolbar .t3-icon-preview {
 }
 body.t3-ui-previewmode #t3-inspector {
   width: 0;
+  overflow: hidden;
 }
 body.t3-ui-previewmode .btn-publish {
   display: none;
