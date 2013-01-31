@@ -57,10 +57,20 @@
 		padding: 2px 4px 2px 4px;
 		font-size: 12px;
 		border: 1px solid rgba(0, 0, 0, .5);
+		@include border-radius(0);
+		&:focus {
+			border-color: rgba($light-orange, 0.8);
+			@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($light-orange, 0.6));
+		}
+		&.error {
+			border-color: rgba($red, 0.8);
+			@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($red, 0.6));
+		}
 	}
 
 	.btn.t3-button {
 		font-size: 12px;
+		@include border-radius(0);
 		i {
 			margin-top: 0;
 		}
@@ -324,6 +334,9 @@
 
 // Dropdown menus
 .t3-ui {
+	.dropdown-menu {
+		@include border-radius(0);
+	}
 	.dropdown-menu li > a:hover,
 	.dropdown-menu li > a:focus,
 	.dropdown-submenu:hover > a,
