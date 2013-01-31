@@ -90,7 +90,7 @@ function($, vie, Ember, CreateJS) {
 
 		_initializeNotifications: function() {
 				// Initialize notifications
-			$('body').midgardNotifications();
+			$('body').append('<div class="t3-notification-container t3-ui"></div>');
 		},
 
 		_initializeDevelopmentFeatures: function() {

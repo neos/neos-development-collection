@@ -232,65 +232,49 @@ button.t3-create-new-content {
 }
 
 // Notifications
-.midgardNotifications-container {
-	width: 280px;
-	z-index: 99999999;
+.t3-ui.t3-notification-container {
+	top: 103px;
+	right: 207px;
+	position: fixed;
 	color: white;
-
-	.typo3-notification-item-normal .typo3-notification-item-inner,
-	.typo3-notification-item-binded .typo3-notification-item-inner {
-		height: auto;
-		background: rgba(51, 51, 51, 0.9);
-		-moz-border-radius: 6px;
-		-webkit-border-radius: 6px;
-		color: #eee;
-		padding: 6px 6px 0px 6px;
-		border: 2px solid rgba(153, 153, 153, 1);
-		display: block;
+	z-index: 10010;
+	.alert {
+		background-color: $dark-grey2;
+		color: white;
+		@include text-shadow(none);
+		border-top: 1px solid;
+		border-left: none;
+		border-right: none;
+		border-bottom: none;
 		position: relative;
-		margin: 0 0 12px 0;
-		z-index: 99999998;
-	}
-
-	.typo3-notification-item-binded .typo3-notification-item-inner {
-		left: 0;
-		top: 0;
-	}
-
-	.typo3-notification-title {
-		position: relative;
-		top: -3px;
-		text-align: left;
-	}
-
-	.typo3-notification-item-outer {
-		margin-right: 200px;
-		margin-top: 116px;
-		width: 250px;
-
-		p {
-			padding-left: 17px;
-			padding-right: 10px;
-			word-break: break-all;
-			overflow: hidden;
-			background-position: 0px 0px !important;
-			background-repeat: no-repeat !important;
-			min-height: 50px;
+		width: 280px;
+		outline: 3px solid $dark-grey;
+		line-height: 1.4em;
+		padding: 10px 35px 10px 10px;
+		margin-bottom: 10px;
+		@include border-radius(0);
+		&.alert-error {
+			border-top-color: $red;
 		}
-
-		.typo3-notification-ok {
-			background-image: url('../Images/Icons/White/checkmark_icon-16.png');
+		&.alert-success {
+			border-top-color: $green;
 		}
-		.typo3-notification-info {
-			background-image: url('../Images/Icons/White/info_icon-16.png');
+		&.alert-warning {
+			border-top-color: $light-orange;
 		}
-		.typo3-notification-notice {
+		&.alert-info {
+			border-top-color: $blue;
 		}
-		.typo3-notification-warning {
-			background-image: url('../Images/Icons/White/message_attention_icon-16.png');
+		i {
+			padding-right: 5px;
+			vertical-align: text-bottom;
 		}
-		.typo3-notification-error {
-			background-image: url('../Images/Icons/White/attention_icon-16.png');
+		.close {
+			top: -6px !important;
+			font-size: 16px;
+			color: black;
+			@include text-shadow(0 1px 0 white);
+			@include opacity(.2);
 		}
 	}
 }
