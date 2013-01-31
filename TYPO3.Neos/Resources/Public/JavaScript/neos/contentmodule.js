@@ -411,13 +411,15 @@ function($, vie, Ember, CreateJS) {
 
 			var selectorsToReplace = [];
 
-			$('.t3-reloadable-content:first').each(function() {
-				var id = $(this).attr('id');
-				if (!id) {
+			$('.t3-reloadable-content').each(function() {
+				if (!$(this).parents('.t3-reloadable-content').length) {
+					var id = $(this).attr('id');
+					if (!id) {
 						// TODO: we need cleaner developer error handling
-					throw 'You have marked a DOM element with the CSS class t3-reloadable-content; but this element has no ID.';
+						throw 'You have marked a DOM element with the CSS class t3-reloadable-content; but this element has no ID.';
+					}
+					selectorsToReplace.push('#' + id);
 				}
-				selectorsToReplace.push('#' + id);
 			});
 
 			if (selectorsToReplace.length === 0) {
