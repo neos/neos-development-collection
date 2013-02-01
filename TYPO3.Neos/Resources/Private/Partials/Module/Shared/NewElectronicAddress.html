@@ -1,0 +1,48 @@
+<f:form action="createElectronicAddress" name="electronicAddress" object="{electronicAddress}" arguments="{account: account}">
+	<div class="row t3-module-container">
+		<fieldset class="span5">
+			<legend>Add new electronic address</legend>
+
+			<div class="control-group">
+				<label class="control-label" for="electronicAddress">Type</label>
+				<div class="controls">
+					<f:form.select name="type" property="type" id="electronicAddress" options="{electronicAddressTypes}" />
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label">Usage</label>
+				<div class="controls">
+					<f:for each="{electronicAddressUsageTypes}" as="electronicAddressUsageType">
+						<f:if condition="{electronicAddressUsageType}">
+							<label class="radio inline">
+								<f:form.radio property="usage" value="{electronicAddressUsageType}" />
+								{electronicAddressUsageType}
+							</label>
+						</f:if>
+					</f:for>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="addressIdentifier">Identifier (example: test@typo3.org)</label>
+				<div class="controls">
+					<f:form.textfield name="identifier" property="identifier" id="addressIdentifier" placeholder="Identifier" />
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="form-actions form-footer">
+		<f:if condition="{account}">
+			<f:then>
+				<f:link.action action="edit" arguments="{account: account}" class="btn t3-button">Cancel</f:link.action>
+			</f:then>
+			<f:else>
+				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
+			</f:else>
+		</f:if>
+		<div class="pull-right">
+			<f:form.submit value="Save" class="btn btn-primary t3-button" />
+		</div>
+	</div>
+</f:form>

@@ -6,14 +6,14 @@
 	</div>
 </f:section>
 <f:section name="content">
-	<f:form action="update" name="account" object="{account}">
+	<f:form action="update" name="person" object="{person}" arguments="{account: account}">
 		<div class="row t3-module-container">
 			<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
 		</div>
 
 		<div class="form-actions form-footer">
+			<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
 			<div class="pull-right">
-				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
 				<f:form.submit value="Save" class="btn btn-primary t3-button" />
 			</div>
 		</div>

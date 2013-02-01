@@ -76,11 +76,25 @@
 		}
 	}
 
-        &.t3-module-administration-users {
-                i.icon-user {
-                        margin-right: 11px;
-                }
-        }
+	&.t3-module-user-usersettings,
+	&.t3-module-administration-users {
+		.t3-content {
+			#electronicAddresses {
+				select {
+					width: auto;
+				}
+				input[type="text"] {
+					width: 140px;
+				}
+				input[type="radio"] {
+					margin: 0;
+				}
+			}
+			i.icon-user {
+					margin-right: 11px;
+			}
+		}
+	}
 
 	&.t3-module-administration-packages {
 		.t3-button.btn-freeze {

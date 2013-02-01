@@ -9521,7 +9521,16 @@ a.btn:hover {
 .t3-ui.t3-module.t3-module-management-workspaces tfoot .legend {
   margin-left: 15px;
 }
-.t3-ui.t3-module.t3-module-administration-users i.icon-user {
+.t3-ui.t3-module.t3-module-user-usersettings .t3-content #electronicAddresses select, .t3-ui.t3-module.t3-module-administration-users .t3-content #electronicAddresses select {
+  width: auto;
+}
+.t3-ui.t3-module.t3-module-user-usersettings .t3-content #electronicAddresses input[type="text"], .t3-ui.t3-module.t3-module-administration-users .t3-content #electronicAddresses input[type="text"] {
+  width: 140px;
+}
+.t3-ui.t3-module.t3-module-user-usersettings .t3-content #electronicAddresses input[type="radio"], .t3-ui.t3-module.t3-module-administration-users .t3-content #electronicAddresses input[type="radio"] {
+  margin: 0;
+}
+.t3-ui.t3-module.t3-module-user-usersettings .t3-content i.icon-user, .t3-ui.t3-module.t3-module-administration-users .t3-content i.icon-user {
   margin-right: 11px;
 }
 .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze {

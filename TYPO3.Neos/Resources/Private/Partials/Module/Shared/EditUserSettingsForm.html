@@ -29,40 +29,84 @@
 	<div class="control-group">
 		<label class="control-label" for="title">Title</label>
 		<div class="controls controls-row">
-			<f:form.textfield property="party.name.title" id="title" class="span3" />
+			<f:form.textfield property="name.title" id="title" class="span3" />
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label" for="firstName">First Name</label>
 		<div class="controls controls-row">
-			<f:form.textfield property="party.name.firstName" id="firstName" placeholder="First Name" class="span3" />
-			<f:form.textfield property="party.name.middleName" id="middleName" placeholder="Middle Name" class="span2" />
+			<f:form.textfield property="name.firstName" id="firstName" placeholder="First Name" class="span3" />
+			<f:form.textfield property="name.middleName" id="middleName" placeholder="Middle Name" class="span2" />
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="lastName">Last Name</label>
 		<div class="controls controls-row">
-			<f:form.textfield property="party.name.lastName" id="lastName" placeholder="Last Name" class="span3" />
-			<f:form.textfield property="party.name.otherName" id="otherName" placeholder="Other Name" class="span2" />
+			<f:form.textfield property="name.lastName" id="lastName" placeholder="Last Name" class="span3" />
+			<f:form.textfield property="name.otherName" id="otherName" placeholder="Other Name" class="span2" />
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label" for="alias">Alias</label>
 		<div class="controls">
-			<f:form.textfield property="party.name.alias" id="alias" class="span3" />
+			<f:form.textfield property="name.alias" id="alias" class="span3" />
 		</div>
 	</div>
 
-	<f:if condition="{account.party.electronicAddresses}">
-		<div class="control-group">
-			<label class="control-label">Electronic addresses:</label>
-			<ul class="inputs-list">
-				<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
-					<li>{electronicAddress.identifier} ({electronicAddress.type})</li>
-				</f:for>
-			</ul>
+	<div class="control-group">
+		<label class="control-label" for="electronicAddresses">Electronic addresses</label>
+		<table class="table" id="electronicAddresses">
+			<thead>
+				<tr>
+					<th>Type</th>
+					<th>Usage</th>
+					<th>Identifier</th>
+					<th>Primary</th>
+				</tr>
+			</thead>
+			<tbody>
+			<f:for each="{person.electronicAddresses}" as="electronicAddress">
+				<tr>
+					<td>
+						<f:form.hidden name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][__identity]" value="{electronicAddress -> f:format.identifier()}" />
+						<f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][type]" options="{electronicAddressTypes}" value="{electronicAddress.type}" />
+					</td>
+					<td><f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][usage]" options="{electronicAddressUsageTypes}" value="{electronicAddress.usage}" /></td>
+					<td><f:form.textfield name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][identifier]" value="{electronicAddress.identifier}" class="input-medium" /></td>
+					<td>
+						<f:form.radio property="primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{person.primaryElectronicAddress} == {electronicAddress}', then: 'checked')}" />
+					</td>
+					<td>
+						<div class="pull-right">
+							<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{electronicAddress.type}">
+								<i class="icon-trash icon-white"></i>
+							</button>
+							<div class="modal hide" id="{electronicAddress.type}">
+								<div class="modal-header">
+									<button type="button" class="close t3-button" data-dismiss="modal">&times;</button>
+									<h3>Are you sure you want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</h3>
+								</div>
+								<div class="modal-footer">
+									<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+									<f:link.action action="deleteElectronicAddress" class="btn btn-danger t3-button" arguments="{account: account, electronicAddress: electronicAddress}" title="Delete">
+										<i class="icon-trash icon-white"></i>
+										Delete
+									</f:link.action>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</f:for>
+			</tbody>
+		</table>
+		<div class="pull-right">
+			<f:link.action action="newElectronicAddress" arguments="{account: account}" class="btn t3-button btn-primary" title="Click to add a new Electronic address">
+				<i class="icon-plus-sign icon-white"></i>
+				Add electronic address
+			</f:link.action>
 		</div>
-	</f:if>
+	</div>
 </fieldset>

@@ -80,7 +80,14 @@
 				<f:then>
 					<ul class="inputs-list">
 						<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
-							<li>{electronicAddress.identifier} ({electronicAddress.type})</li>
+							<f:if condition="{account.party.primaryElectronicAddress} == {electronicAddress}">
+								<f:then>
+									<li><strong>{electronicAddress.identifier}</strong> ({electronicAddress.type})</li>
+								</f:then>
+								<f:else>
+									<li>{electronicAddress.identifier} ({electronicAddress.type})</li>
+								</f:else>
+							</f:if>
 						</f:for>
 					</ul>
 				</f:then>

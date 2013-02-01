@@ -120,10 +120,13 @@ class UsersController extends \TYPO3\Neos\Controller\Module\StandardController {
 	/**
 	 * @param \TYPO3\Flow\Security\Account $account
 	 * @return void
-	 * @todo Creation/editing of electronic addresses on party property
 	 */
 	public function editAction(\TYPO3\Flow\Security\Account $account) {
-		$this->view->assign('account', $account);
+		$this->assignElectronicAddressOptions();
+		$this->view->assignMultiple(array(
+			'account' => $account,
+			'person' => $account->getParty()
+		));
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
 
@@ -139,20 +142,21 @@ class UsersController extends \TYPO3\Neos\Controller\Module\StandardController {
 
 	/**
 	 * @param \TYPO3\Flow\Security\Account $account
+	 * @param \TYPO3\Party\Domain\Model\Person $person
 	 * @param array $password
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
 	 * @return void
 	 * @todo Handle validation errors for account (accountIdentifier) & check if there's another account with the same accountIdentifier when changing it
 	 * @todo Security
 	 */
-	public function updateAction(\TYPO3\Flow\Security\Account $account, array $password = array()) {
+	public function updateAction(\TYPO3\Flow\Security\Account $account, \TYPO3\Party\Domain\Model\Person $person, array $password = array()) {
 		$password = array_shift($password);
 		if (strlen(trim(strval($password))) > 0) {
 			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
+			$this->accountRepository->update($account);
 		}
 
-		$this->accountRepository->update($account);
-		$this->partyRepository->update($account->getParty());
+		$this->partyRepository->update($person);
 
 		$this->addFlashMessage('The user profile has been updated.');
 		$this->redirect('index');
@@ -171,6 +175,77 @@ class UsersController extends \TYPO3\Neos\Controller\Module\StandardController {
 		$this->accountRepository->remove($account);
 		$this->addFlashMessage('The user has been deleted.');
 		$this->redirect('index');
+	}
+
+	/**
+	 * The add new electronic address action
+	 *
+	 * @param \TYPO3\Flow\Security\Account $account
+	 * @Flow\IgnoreValidation("$account")
+	 * @return void
+	 */
+	public function newElectronicAddressAction(\TYPO3\Flow\Security\Account $account) {
+		$this->assignElectronicAddressOptions();
+		$this->view->assign('account', $account);
+	}
+
+	/**
+	 * Create an new electronic address
+	 *
+	 * @param \TYPO3\Flow\Security\Account $account
+	 * @param \TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress
+	 * @return void
+	 * @todo Security
+	 */
+	public function createElectronicAddressAction(\TYPO3\Flow\Security\Account $account, \TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress) {
+		$party = $account->getParty();
+		$party->addElectronicAddress($electronicAddress);
+		$this->partyRepository->update($party);
+		$this->addFlashMessage(sprintf(
+			'An electronic "%s" address has been added.',
+			$electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')'
+		));
+		$this->redirect('edit', NULL, NULL, array('account' => $account));
+	}
+
+	/**
+	 * Delete an electronic address action
+	 *
+	 * @param \TYPO3\Flow\Security\Account $account
+	 * @param \TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress
+	 * @return void
+	 * @todo Security
+	 */
+	public function deleteElectronicAddressAction(\TYPO3\Flow\Security\Account $account, \TYPO3\Party\Domain\Model\ElectronicAddress $electronicAddress) {
+		$party = $account->getParty();
+		$party->removeElectronicAddress($electronicAddress);
+		$this->partyRepository->update($party);
+		$this->addFlashMessage(sprintf(
+			'The electronic address "%s" has been deleted for the person "%s".',
+			$electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')',
+			$party->getName()
+		));
+		$this->redirect('edit', NULL, NULL, array('account' => $account));
+	}
+
+	/**
+	 *  @return void
+	 */
+	protected function assignElectronicAddressOptions() {
+		$electronicAddress = new \TYPO3\Party\Domain\Model\ElectronicAddress();
+		$electronicAddressTypes = array();
+		foreach ($electronicAddress->getAvailableElectronicAddressTypes() as $type) {
+			$electronicAddressTypes[$type] = $type;
+		}
+		$electronicAddressUsageTypes = array();
+		foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
+			$electronicAddressUsageTypes[$type] = $type;
+		}
+		array_unshift($electronicAddressUsageTypes, '');
+		$this->view->assignMultiple(array(
+			'electronicAddressTypes' => $electronicAddressTypes,
+			'electronicAddressUsageTypes' => $electronicAddressUsageTypes
+		));
 	}
 
 }

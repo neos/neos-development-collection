@@ -2,14 +2,16 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<f:form action="update" name="account" object="{account}">
+	<f:form action="update" name="person" object="{person}">
 		<div class="row t3-module-container">
 			<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
 		</div>
 
 		<div class="form-actions form-footer">
-			<t:link.module path="management" class="btn t3-button">Back</t:link.module>
-			<f:form.submit value="Save" class="btn btn-primary t3-button" />
+			<t:link.module path="management" class="btn t3-button">Cancel</t:link.module>
+			<div class="pull-right">
+				<f:form.submit value="Save" class="btn btn-primary t3-button" />
+			</div>
 		</div>
 	</f:form>
 </f:section>
