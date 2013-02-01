@@ -59,7 +59,7 @@ class ContentElementWrappingService {
 	 * @return string
 	 */
 	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
-		$contentType = $node->getContentType();
+		$nodeType = $node->getNodeType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->forceClosingTag(TRUE);
@@ -68,21 +68,10 @@ class ContentElementWrappingService {
 		}
 
 		if (!$isPage) {
-			$cssClasses = array('t3-contentelement');
-			$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
-			if ($node->isHidden()) {
-				$cssClasses[] = 't3-contentelement-hidden';
-			}
-			if ($node->isRemoved()) {
-				$cssClasses[] = 't3-contentelement-removed';
-			}
-			if ($reloadable) {
-				$cssClasses[] = 't3-reloadable-content';
-			}
-			if ($node->getContentType()->hasShowUneditableOverlay() && $node->getContentType()->getShowUneditableOverlay() === TRUE) {
-				$cssClasses[] = 't3-not-inline-editable';
-			}
-
+			$cssClasses = array(
+				't3-contentelement',
+				str_replace(array(':', '.'), '-', strtolower($nodeType->getName()))
+			);
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
 			$tagBuilder->addAttribute('id', 'c' . $node->getIdentifier());
 		}
@@ -93,13 +82,13 @@ class ContentElementWrappingService {
 			return $tagBuilder->render();
 		}
 
-		$tagBuilder->addAttribute('typeof', 'typo3:' . $contentType->getName());
+		$tagBuilder->addAttribute('typeof', 'typo3:' . $nodeType->getName());
 		$tagBuilder->addAttribute('about', $node->getContextPath());
 
 		$this->addScriptTag($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
 		$this->addScriptTag($tagBuilder, '_typoscriptPath', $typoscriptPath);
-
-		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
+		$hasInlineEditableProperties = FALSE;
+		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			if ($propertyName[0] === '_') {
 				$propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
@@ -134,11 +123,29 @@ class ContentElementWrappingService {
 			}
 
 			$this->addScriptTag($tagBuilder, $propertyName, $propertyValue, $dataType);
+
+			if (isset($propertyConfiguration['ui']) && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === TRUE) {
+				$hasInlineEditableProperties = TRUE;
+			}
 		}
 
 		if (!$isPage) {
-				// add CSS classes
-			$this->addScriptTag($tagBuilder, '__contenttype', $contentType->getName());
+			if ($node->isHidden()) {
+				$cssClasses[] = 't3-contentelement-hidden';
+			}
+			if ($node->isRemoved()) {
+				$cssClasses[] = 't3-contentelement-removed';
+			}
+			if ($reloadable === TRUE) {
+				$cssClasses[] = 't3-reloadable-content';
+			}
+			$uiConfiguration = $nodeType->hasUi() ? $nodeType->getUi() : array();
+			if ((!isset($uiConfiguration['inlineEditable']) && !$hasInlineEditableProperties) || (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE)) {
+				$cssClasses[] = 't3-not-inline-editable';
+			}
+			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
+
+			$this->addScriptTag($tagBuilder, '__nodetype', $nodeType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 't3-page-metainformation');
 			$tagBuilder->addAttribute('data-__sitename', $this->nodeRepository->getContext()->getCurrentSite()->getName());
@@ -173,7 +180,7 @@ class ContentElementWrappingService {
 	}
 
 	/**
-	 * Map a data type from the content type definition to a correct
+	 * Map a data type from the node type definition to a correct
 	 * CURIE.
 	 *
 	 * @param string $dataType

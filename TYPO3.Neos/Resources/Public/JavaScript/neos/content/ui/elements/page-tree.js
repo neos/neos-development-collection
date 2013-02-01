@@ -417,7 +417,7 @@ define(
 					position = 'into',
 					node = activeNode.addChild({
 						title: '[New Page]',
-						contentType: 'TYPO3.Neos.ContentTypes:Page',
+						nodeType: 'TYPO3.Neos.ContentTypes:Page',
 						addClass: 'typo3_neos_contenttypes-page',
 						expand: true
 					}),
@@ -459,7 +459,7 @@ define(
 							TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 								activeNode.data.key,
 								{
-									contentType: 'TYPO3.Neos.ContentTypes:Page',
+									nodeType: 'TYPO3.Neos.ContentTypes:Page',
 									//@todo give a unique nodename from the title
 									properties: {
 										title: title
@@ -475,7 +475,7 @@ define(
 										node.data.href = result.data.href;
 										node.data.isFolder = result.data.isFolder;
 										node.data.isLazy = result.data.isLazy;
-										node.data.contentType = result.data.contentType;
+										node.data.nodeType = result.data.nodeType;
 										node.data.expand = result.data.expand;
 										node.data.addClass = result.data.addClass;
 

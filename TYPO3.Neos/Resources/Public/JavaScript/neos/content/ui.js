@@ -72,7 +72,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		href: '#',
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: Ember.Handlebars.compile('{{item.contentTypeSchema.label}} {{#if item.status}}<span class="t3-breadcrumbitem-status">({{item.status}})</span>{{/if}}'),
+		template: Ember.Handlebars.compile('{{item.nodeTypeSchema.ui.label}} {{#if item.status}}<span class="t3-breadcrumbitem-status">({{item.status}})</span>{{/if}}'),
 		click: function(event) {
 			event.preventDefault();
 
@@ -204,21 +204,22 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
 			ember_assert('Type defaults for "' + this.propertyDefinition.type + '" not found!', !!typeDefinition);
 
-			var editorConfigurationDefinition = typeDefinition;
-			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface) {
-				editorConfigurationDefinition = $.extend({}, editorConfigurationDefinition, this.propertyDefinition.userInterface);
-			}
+			var editorClassName = Ember.getPath(this.propertyDefinition, 'ui.inspector.editor') || typeDefinition.editor;
+			ember_assert('Editor class name for property "' + this.propertyDefinition.key + '" not found.', editorClassName);
 
-			var editorClass = Ember.getPath(editorConfigurationDefinition['class']);
-			ember_assert('Editor class "' + typeDefinition['class'] + '" not found', !!editorClass);
+			var editorOptions = $.extend(
+				{
+					valueBinding: 'T3.Content.Controller.Inspector.nodeProperties.' + this.propertyDefinition.key,
+					elementId: this.propertyDefinition.elementId
+				},
+				typeDefinition.editorOptions || {},
+				Ember.getPath(this.propertyDefinition, 'ui.inspector.editorOptions') || {}
+			);
 
-			var classOptions = $.extend({
-				valueBinding: 'T3.Content.Controller.Inspector.nodeProperties.' + this.propertyDefinition.key,
-				elementId: this.propertyDefinition.elementId
-			}, this.propertyDefinition.options || {});
-			classOptions = $.extend(classOptions, typeDefinition.options || {});
+			var editorClass = Ember.getPath(editorClassName);
+			ember_assert('Editor class "' + editorClassName + '" not found', !!editorClass);
 
-			var editor = editorClass.create(classOptions);
+			var editor = editorClass.create(editorOptions);
 			this.appendChild(editor);
 			this._super();
 		}
@@ -348,8 +349,8 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 					 * Any other return value will calc the hitMode from the cursor position.
 					 */
 					onDragEnter: function(node, sourceNode) {
-							// It is only posssible to move nodes into nodes of the contentType:Section
-						if (node.data.contentType === 'TYPO3.Neos.ContentTypes:Section') {
+							// It is only posssible to move nodes into nodes of the nodeType Section
+						if (node.data.nodeType === 'TYPO3.Neos.ContentTypes:Section') {
 							return ['before', 'after', 'over'];
 						}
 						else{

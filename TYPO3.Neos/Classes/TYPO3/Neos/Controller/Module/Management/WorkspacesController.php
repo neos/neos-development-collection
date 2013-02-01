@@ -87,7 +87,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 
 		$sites = array();
 		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
-			if (!$node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
+			if (!$node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
 					$siteNodeName = $pathParts[2];
@@ -99,8 +99,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
 					$change = array('node' => $node);
-					if ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:AbstractNode')) {
-						$change['configuration'] = $node->getContentType()->getConfiguration();
+					if ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:AbstractNode')) {
+						$change['configuration'] = $node->getNodeType()->getConfiguration();
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;
 				}
@@ -214,14 +214,14 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 
 	/**
 	 * Finds the nearest parent folder node of the provided node by looping recursively trough
-	 * the node and it's parent nodes and checking if they are a sub content type of TYPO3.TYPO3CR:Folder
+	 * the node and it's parent nodes and checking if they are a sub node type of TYPO3.TYPO3CR:Folder
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
 	protected function findFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node) {
-			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+			if ($node->getNodeType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 				return $node;
 			}
 			$node = $node->getParent();

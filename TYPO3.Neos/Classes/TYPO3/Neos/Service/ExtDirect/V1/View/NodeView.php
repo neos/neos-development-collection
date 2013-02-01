@@ -38,12 +38,12 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param array $propertyNames Optional list of property names to include in the JSON output
 	 * @return void
 	 */
-	public function assignNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'contentType')) {
+	public function assignNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'nodeType')) {
 		$this->setConfiguration(
 			array(
 				'value' => array(
 					'data' => array(
-						'_only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
+						'_only' => array('name', 'path', 'identifier', 'properties', 'nodeType'),
 						'_descend' => array('properties' => $propertyNames)
 					)
 				)
@@ -56,15 +56,15 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * Prepares this view to render a list or tree of child nodes of the given node.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node The node to fetch child nodes of
-	 * @param string $contentTypeFilter Criteria for filtering the child nodes
+	 * @param string $nodeTypeFilter Criteria for filtering the child nodes
 	 * @param integer $outputStyle Either STYLE_TREE or STYLE_list
 	 * @param integer $depth How many levels of childNodes (0 = unlimited)
 	 * @return void
 	 */
-	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $contentTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0) {
+	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0) {
 		$this->outputStyle = $outputStyle;
 		$nodes = array();
-		$this->collectChildNodeData($nodes, $node, ($contentTypeFilter === '' ? NULL : $contentTypeFilter), $depth);
+		$this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? NULL : $nodeTypeFilter), $depth);
 		$this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
 
 		$this->assign('value', array('data' => $nodes, 'success' => TRUE));
@@ -80,8 +80,8 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 
 		$contextNodePath = $node->getContextPath();
-		$contentType = $node->getContentType()->getName();
-		$title = $node->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel();
+		$nodeType = $node->getNodeType()->getName();
+		$title = $nodeType === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel();
 		$expand = 0;
 		$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 
@@ -91,9 +91,9 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			'href' => $uriForNode,
 			'isFolder' => 0,
 			'isLazy' => 0,
-			'contentType' => $contentType,
+			'nodeType' => $nodeType,
 			'expand' => $expand,
-			'addClass' => strtolower(str_replace(array('.', ':'), array('_', '-'), $contentType))
+			'addClass' => strtolower(str_replace(array('.', ':'), array('_', '-'), $nodeType))
 		);
 
 		$this->assign('value', array('data' => $treeNode, 'success' => TRUE));
@@ -104,18 +104,19 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 *
 	 * @param array &$nodes
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @param string $contentTypeFilter
+	 * @param string $nodeTypeFilter
 	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
 	 * @param integer $recursionPointer current recursion level
 	 * @return void
 	 */
-	protected function collectChildNodeData(array &$nodes, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
-		foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
+	protected function collectChildNodeData(array &$nodes, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $depth = 0, $recursionPointer = 1) {
+		foreach ($node->getChildNodes($nodeTypeFilter) as $childNode) {
+			/** @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $childNode */
 			$contextNodePath = $childNode->getContextPath();
 			$workspaceName = $childNode->getWorkspace()->getName();
 			$nodeName = $childNode->getName();
-			$contentType = $childNode->getContentType()->getName();
-			$title = $childNode->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
+			$nodeType = $childNode->getNodeType()->getName();
+			$title = $nodeType === 'TYPO3.Neos.ContentTypes:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
 			$abstract = $childNode->getAbstract();
 			$expand = ($depth === 0 || $recursionPointer < $depth);
 			switch ($this->outputStyle) {
@@ -124,18 +125,18 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					$properties['__contextNodePath'] = $contextNodePath;
 					$properties['__workspaceName'] = $workspaceName;
 					$properties['__nodeName'] = $nodeName;
-					$properties['__contentType'] = $contentType;
+					$properties['__nodeType'] = $nodeType;
 					$properties['__title'] = $title;
 					$properties['__abstract'] = $abstract;
 					array_push($nodes, $properties);
 					if ($expand) {
-						$this->collectChildNodeData($nodes, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
+						$this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, ($recursionPointer + 1));
 					}
 				break;
 				case self::STYLE_TREE:
 					$children = array();
-					if ($expand && $childNode->hasChildNodes($contentTypeFilter) === TRUE) {
-						$this->collectChildNodeData($children, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
+					if ($expand && $childNode->hasChildNodes($nodeTypeFilter) === TRUE) {
+						$this->collectChildNodeData($children, $childNode, $nodeTypeFilter, $depth, ($recursionPointer + 1));
 					}
 					array_push($nodes, $this->collectTreeNodeData($childNode, $expand, $children));
 			}
@@ -149,8 +150,8 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @return array
 	 */
 	public function collectTreeNodeData(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $expand = TRUE, array $children = array()) {
-		$contentType = $node->getContentType()->getName();
-		$classes = array(strtolower(str_replace(array('.', ':'), array('_', '-'), $contentType)));
+		$nodeType = $node->getNodeType()->getName();
+		$classes = array(strtolower(str_replace(array('.', ':'), array('_', '-'), $nodeType)));
 		$isTimedPage = FALSE;
 		$now = new \DateTime();
 		$now = $now->getTimestamp();
@@ -176,14 +177,14 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 		$hasChildNodes = $children !== array() ? TRUE : FALSE;
-		$contentType = $node->getContentType()->getName();
+		$nodeType = $node->getNodeType()->getName();
 		$treeNode = array(
 			'key' => $node->getContextPath(),
-			'title' => $node->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title') : $node->getLabel(),
+			'title' => $nodeType === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title') : $node->getLabel(),
 			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),
-			'contentType' => $contentType,
+			'nodeType' => $nodeType,
 			'expand' => $expand,
 			'addClass' => implode(' ', $classes),
 			'name' => $node->getName()

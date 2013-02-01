@@ -34,9 +34,9 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
@@ -83,13 +83,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Return child nodes of specified node for usage in a TreeLoader
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node The node to find child nodes for
-	 * @param string $contentTypeFilter A content type filter
+	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $contentTypeFilter, $depth) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth);
+	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $depth) {
+		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth);
 	}
 
 	/**
@@ -97,13 +97,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * metadata.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @param string $contentTypeFilter
+	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $contentTypeFilter, $depth) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_LIST, $depth);
+	public function getChildNodesAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $depth) {
+		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_LIST, $depth);
 	}
 
 	/**
@@ -111,13 +111,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * metadata.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @param string $contentTypeFilter
+	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesFromParentAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $contentTypeFilter, $depth) {
-		$this->getChildNodesAction($node->getParent(), $contentTypeFilter, $depth);
+	public function getChildNodesFromParentAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $depth) {
+		$this->getChildNodesAction($node->getParent(), $nodeTypeFilter, $depth);
 	}
 
 	/**
@@ -202,13 +202,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if (empty($nodeData['nodeName'])) {
 			$nodeData['nodeName'] = uniqid('node');
 		}
-		$contentType = $this->contentTypeManager->getContentType($nodeData['contentType']);
+		$nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
 
 		if ($position === 'into') {
-			$newNode = $referenceNode->createNode($nodeData['nodeName'], $contentType);
+			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeType);
 		} else {
 			$parentNode = $referenceNode->getParent();
-			$newNode = $parentNode->createNode($nodeData['nodeName'], $contentType);
+			$newNode = $parentNode->createNode($nodeData['nodeName'], $nodeType);
 
 			if ($position === 'before') {
 				$newNode->moveBefore($referenceNode);
@@ -387,7 +387,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$closestFolderNode = $node;
-		while (!$closestFolderNode->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+		while (!$closestFolderNode->getNodeType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 			$closestFolderNode = $closestFolderNode->getParent();
 		}
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestFolderNode), 'Frontend\Node', 'TYPO3.Neos');

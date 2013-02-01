@@ -86,7 +86,7 @@ function($, CreateJS, Entity) {
 			var pageNodePath = $('#t3-page-metainformation').attr('about');
 			T3.ContentModule.showPageLoader();
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
-				contentType: 'TYPO3.Neos.ContentTypes:Section',
+				nodeType: 'TYPO3.Neos.ContentTypes:Section',
 				nodeName: sectionName
 			}, 'into',
 			function (result) {
@@ -222,22 +222,26 @@ function($, CreateJS, Entity) {
 		 */
 		sectionsAndViews: function() {
 			var selectedNodeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema');
-			if (!selectedNodeSchema || !selectedNodeSchema.groups || !selectedNodeSchema.properties) return [];
+			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
+				return [];
+			}
+
+			var inspectorGroups = Ember.getPath(selectedNodeSchema, 'ui.inspector.groups');
+			if (!inspectorGroups) {
+				return [];
+			}
 
 			var sectionsAndViews = [];
-			jQuery.each(selectedNodeSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
+			jQuery.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
-				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-					if (propertyConfiguration.group === groupIdentifier) {
-						properties.push($.extend(
-							{key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'},
-							propertyConfiguration
-						));
+				jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
+					if (Ember.getPath(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
+						properties.push(jQuery.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
 					}
 				});
 
 				properties.sort(function(a, b) {
-					return (b.priority || 0) - (a.priority || 0);
+					return (Ember.getPath(a, 'ui.inspector.position') || 9999) - (Ember.getPath(b, 'ui.inspector.position') || 9999);
 				});
 
 				sectionsAndViews.push(jQuery.extend({}, propertyGroupConfiguration, {
@@ -246,7 +250,7 @@ function($, CreateJS, Entity) {
 				}));
 			});
 			sectionsAndViews.sort(function(a, b) {
-				return (b.priority || 0) - (a.priority || 0);
+				return (a.position || 9999) - (b.position || 9999);
 			});
 
 			return sectionsAndViews;
@@ -268,8 +272,8 @@ function($, CreateJS, Entity) {
 		}.observes('T3.Content.Model.NodeSelection.selectedNode'),
 
 		/**
-		 * We'd like to monitor *every* property change, that's why we have
-		 * to look through the list of properties...
+		 * We'd like to monitor *every* property change except inline editable ones,
+		 * that's why we have to look through the list of properties...
 		 */
 		onNodePropertiesChange: function() {
 			var that = this,
@@ -278,15 +282,11 @@ function($, CreateJS, Entity) {
 				editableProperties = [],
 				nodeProperties;
 			if (selectedNode) {
-				selectedNodeSchema = selectedNode.get('contentTypeSchema');
+				selectedNodeSchema = selectedNode.get('nodeTypeSchema');
 				nodeProperties = this.get('nodeProperties');
 				if (selectedNodeSchema.properties) {
 					jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-						if (selectedNodeSchema.inlineEditableProperties) {
-							if (jQuery.inArray(propertyName, selectedNodeSchema.inlineEditableProperties) === -1) {
-								editableProperties.push(propertyName);
-							}
-						} else {
+						if (!propertyConfiguration.ui || propertyConfiguration.ui.inlineEditable !== true) {
 							editableProperties.push(propertyName);
 						}
 					});
@@ -329,13 +329,13 @@ function($, CreateJS, Entity) {
 		apply: function() {
 			var that = this,
 				cleanProperties,
-				contentTypeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema'),
+				nodeTypeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema'),
 				reloadPage = false;
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
 				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
 					that.get('selectedNode').setAttribute(key, that.get('nodeProperties').get(key));
-					if (contentTypeSchema && contentTypeSchema.properties && contentTypeSchema.properties[key] && contentTypeSchema.properties[key]['reloadOnChange']) {
+					if (Ember.getPath(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
 						reloadPage = true;
 					}
 				}
@@ -493,16 +493,16 @@ function($, CreateJS, Entity) {
 			}, $handle);
 		},
 
-		addAbove: function(contentType, referenceEntity, callBack) {
-			this._add(contentType, referenceEntity, 'before', callBack);
+		addAbove: function(nodeType, referenceEntity, callBack) {
+			this._add(nodeType, referenceEntity, 'before', callBack);
 		},
 
-		addBelow: function(contentType, referenceEntity, callBack) {
-			this._add(contentType, referenceEntity, 'after', callBack);
+		addBelow: function(nodeType, referenceEntity, callBack) {
+			this._add(nodeType, referenceEntity, 'after', callBack);
 		},
 
-		addInside: function(contentType, referenceEntity, callBack) {
-			this._add(contentType, referenceEntity, 'into', callBack);
+		addInside: function(nodeType, referenceEntity, callBack) {
+			this._add(nodeType, referenceEntity, 'into', callBack);
 		},
 
 		/**
@@ -510,18 +510,18 @@ function($, CreateJS, Entity) {
 		 * The first argument passed to the callback is the nodepath of the new node, second argument
 		 * is the jQuery object containing the rendered HTML of the new node.
 		 *
-		 * @param {String} contentType
+		 * @param {String} nodeType
 		 * @param {Object} referenceEntity
 		 * @param {String} position
 		 * @param {Function} callBack This function is called after element creation and receives the jQuery DOM element as arguments
 		 * @private
 		 */
-		_add: function(contentType, referenceEntity, position, callBack) {
+		_add: function(nodeType, referenceEntity, position, callBack) {
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
 				referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
 				referenceEntity.get('typo3:_typoscriptPath'),
 				{
-					contentType: contentType,
+					nodeType: nodeType,
 					properties: {}
 				},
 				position,

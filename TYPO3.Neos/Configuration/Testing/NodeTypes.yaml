@@ -1,0 +1,30 @@
+'TYPO3.Neos.ContentTypes:ThreeColumn':
+  superTypes: ['TYPO3.Neos.ContentTypes:Column']
+  ui:
+    label: 'Three column content'
+    group: 'Structure'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column1:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column2:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+
+'TYPO3.Neos.ContentTypes:Text':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'Text'
+    group: 'General'
+    icon:
+      light: 'Images/Icons/White/doc_lines_stright_icon-16.png'
+      dark: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
+  properties:
+    text:
+      type: string
+      defaultValue: '<p>Enter text here</p>'
+      ui:
+        inlineEditable: TRUE
+    title:
+      ui:
+        inlineEditable: TRUE

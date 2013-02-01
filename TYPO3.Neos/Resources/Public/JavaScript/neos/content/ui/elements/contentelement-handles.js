@@ -132,23 +132,23 @@ define(
 			onPopoverOpen: function() {
 				var groups = {};
 
-				_.each(this.get('_collection').options.definition.range, function(contentType) {
-					var type = this.get('_collection').options.vie.types.get(contentType);
-					type.metadata.contentType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
+				_.each(this.get('_collection').options.definition.range, function(nodeType) {
+					var type = this.get('_collection').options.vie.types.get(nodeType);
+					type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
 
-					if (type.metadata.group) {
-						if (!groups[type.metadata.group]) {
-							groups[type.metadata.group] = {
-								name: type.metadata.group,
+					if (type.metadata.ui && type.metadata.ui.group) {
+						if (!groups[type.metadata.ui.group]) {
+							groups[type.metadata.ui.group] = {
+								name: type.metadata.ui.group,
 								children: []
 							};
 						}
-						groups[type.metadata.group].children.push(type.metadata);
+						groups[type.metadata.ui.group].children.push(type.metadata);
 					}
 				}, this);
 
 					// Make the data object an array for usage in #each helper
-				var data = []
+				var data = [];
 
 				T3.Configuration.contentTypeGroups.forEach(function(groupName) {
 					if (groups[groupName]) {

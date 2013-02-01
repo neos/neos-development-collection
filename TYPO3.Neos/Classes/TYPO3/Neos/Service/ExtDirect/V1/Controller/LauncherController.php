@@ -34,9 +34,9 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
@@ -81,14 +81,14 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->nodeRepository->setContext($contentContext);
 
 		$searchContentGroups = array();
-		$searchContentTypes = array();
-		foreach (array('TYPO3.Neos.ContentTypes:Page', 'TYPO3.Neos.ContentTypes:ContentObject') as $contentType) {
-			$searchContentGroups[$contentType] = $this->contentTypeManager->getContentType($contentType)->getConfiguration();
-			array_push($searchContentTypes, $contentType);
-			$subContentTypes = $this->contentTypeManager->getSubContentTypes($contentType);
-			if (count($subContentTypes) > 0) {
-				$searchContentGroups[$contentType]['subContentTypes'] = $subContentTypes;
-				$searchContentTypes = array_merge($searchContentTypes, array_keys($subContentTypes));
+		$searchNodeTypes = array();
+		foreach (array('TYPO3.Neos.ContentTypes:Page', 'TYPO3.Neos.ContentTypes:ContentObject') as $nodeType) {
+			$searchContentGroups[$nodeType] = $this->nodeTypeManager->getNodeType($nodeType)->getConfiguration();
+			array_push($searchNodeTypes, $nodeType);
+			$subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType);
+			if (count($subNodeTypes) > 0) {
+				$searchContentGroups[$nodeType]['subNodeTypes'] = $subNodeTypes;
+				$searchNodeTypes = array_merge($searchNodeTypes, array_keys($subNodeTypes));
 			}
 		}
 
@@ -97,14 +97,14 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->uriBuilder->setRequest($this->request->getMainRequest());
 
 		$groups = array();
-		foreach ($this->nodeSearchService->findByProperties($term, $searchContentTypes) as $result) {
-			$contentType = $result->getContentType();
+		foreach ($this->nodeSearchService->findByProperties($term, $searchNodeTypes) as $result) {
+			$nodeType = $result->getNodeType();
 
-			if (array_key_exists($contentType->getName(), $searchContentGroups)) {
-				$type = $contentType->getName();
+			if (array_key_exists($nodeType->getName(), $searchContentGroups)) {
+				$type = $nodeType->getName();
 			} else {
 				foreach ($searchContentGroups as $searchContentGroup => $searchContentGroupConfiguration) {
-					if (isset($searchContentGroupConfiguration['subContentTypes']) && array_key_exists($contentType->getName(), $searchContentGroupConfiguration['subContentTypes'])) {
+					if (isset($searchContentGroupConfiguration['subNodeTypes']) && array_key_exists($nodeType->getName(), $searchContentGroupConfiguration['subNodeTypes'])) {
 						$type = $searchContentGroup;
 						break;
 					}
@@ -112,28 +112,28 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			}
 			if (!array_key_exists($type, $groups)) {
 				$groups[$type] = array(
-					'type' => $contentType->getName(),
+					'type' => $nodeType->getName(),
 					'label' => $searchContentGroups[$type]['search'],
 					'items' => array()
 				);
 			}
 
 			$this->uriBuilder->reset();
-			if ($result->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Page')) {
+			if ($result->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Page')) {
 				$pageNode = $result;
 			} else {
 				$pageNode = $this->findNextParentFolderNode($result);
 				$this->uriBuilder->setSection('c' . $result->getIdentifier());
 			}
 			$searchResult = array(
-				'type' => $contentType->getName(),
+				'type' => $nodeType->getName(),
 				'label' => $result->getLabel(),
 				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos'),
 				'path' => $result->getPath()
 			);
-			$contentTypeConfiguration = $contentType->getConfiguration();
-			if (isset($contentTypeConfiguration['darkIcon'])) {
-				$searchResult['icon'] = $staticWebBaseUri . $contentTypeConfiguration['darkIcon'];
+			$nodeTypeConfiguration = $nodeType->getConfiguration();
+			if (isset($nodeTypeConfiguration['ui']['icon']['dark'])) {
+				$searchResult['icon'] = $staticWebBaseUri . $nodeTypeConfiguration['ui']['icon']['dark'];
 			}
 			array_push($groups[$type]['items'], $searchResult);
 		}
@@ -171,7 +171,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node = $node->getParent()) {
-			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+			if ($node->getNodeType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 				return $node;
 			}
 		}

@@ -29,15 +29,15 @@ class NodeSearchService {
 	/**
 	 * Search all properties for given $term
 	 * @param string $term
-	 * @param array $searchContentTypes
+	 * @param array $searchNodeTypes
 	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
 	 */
-	public function findByProperties($term, array $searchContentTypes) {
+	public function findByProperties($term, array $searchNodeTypes) {
 			// TODO: Implement a better search when Flow offer the possibility
 		$query = $this->nodeRepository->createQuery();
 		$constraints = array(
 			$query->like('properties', '%' . $term . '%'),
-			$query->in('contentType', $searchContentTypes)
+			$query->in('nodeType', $searchNodeTypes)
 		);
 		return $query->matching($query->logicalAnd($constraints))->execute();
 	}

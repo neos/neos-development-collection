@@ -59,9 +59,9 @@ class SiteImportService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
@@ -165,17 +165,17 @@ class SiteImportService {
 	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
-			$contentTypeName = (string)$childNodeXml['type'];
-			if (!$this->contentTypeManager->hasContentType($contentTypeName)) {
-				$contentType = $this->contentTypeManager->createContentType($contentTypeName);
+			$nodeTypeName = (string)$childNodeXml['type'];
+			if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+				$nodeType = $this->nodeTypeManager->createNodeType($nodeTypeName);
 			} else {
-				$contentType = $this->contentTypeManager->getContentType($contentTypeName);
+				$nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 			}
 			if ($childNode === NULL) {
 				$identifier = (string)$childNodeXml['identifier'] === '' ? NULL : (string)$childNodeXml['identifier'];
-				$childNode = $parentNode->createSingleNode((string)$childNodeXml['nodeName'], $contentType, $identifier);
+				$childNode = $parentNode->createSingleNode((string)$childNodeXml['nodeName'], $nodeType, $identifier);
 			} else {
-				$childNode->setContentType($contentType);
+				$childNode->setNodeType($nodeType);
 			}
 
 			$childNode->setHidden((boolean)$childNodeXml['hidden']);

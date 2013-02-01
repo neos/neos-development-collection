@@ -1,4 +1,4 @@
-<div class="contentTypeSelectorTabs notInitialized">
+<div class="nodeTypeSelectorTabs notInitialized">
 	<ul>
 		{{#each data}}<li><a href="#{{unbound Ember.GUID_KEY}}{{unbound name}}">{{unbound name}}</a></li>{{/each}}
 	</ul>
@@ -6,9 +6,9 @@
 		<div id="{{unbound Ember.GUID_KEY}}{{unbound name}}" class="t3-content-new">
 			{{#each children}}
 				<div class="t3-content-new-selecttype-button">
-					<a rel="typo3:{{unbound contentType}}" class="t3-content-new">
-						{{#if icon}}
-							<img src="/_Resources/Static/Packages/TYPO3.Neos/{{unbound icon}}" />
+					<a rel="typo3:{{unbound nodeType}}" class="t3-content-new">
+						{{#if ui.icon.light}}
+							<img src="/_Resources/Static/Packages/TYPO3.Neos/{{unbound ui.icon.light}}" />
 						{{else}}
 							<img src="/_Resources/Static/Packages/TYPO3.Neos/Images/Icons/White/square_shape_icon-16.png" />
 						{{/if}}

@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * Example schema: http://schema.rdfs.org/all.json
  */
-class ContentTypeSchemaBuilder {
+class NodeTypeSchemaBuilder {
 
 	/**
 	 * The config array for TYPO3CR from yaml file
@@ -64,41 +64,41 @@ class ContentTypeSchemaBuilder {
 	 * @return void
 	 */
 	public function convertToVieSchema() {
-		foreach ($this->configArray['contentTypes'] as $contentType => $contentTypeConfiguration) {
-			$this->superTypeConfiguration['typo3:' . $contentType] = array();
-			if (isset($contentTypeConfiguration['superTypes']) && is_array($contentTypeConfiguration['superTypes'])) {
-				foreach ($contentTypeConfiguration['superTypes'] as $superType) {
-					$this->superTypeConfiguration['typo3:' . $contentType][] = 'typo3:' . $superType;
+		foreach ($this->configArray as $nodeType => $nodeTypeConfiguration) {
+			$this->superTypeConfiguration['typo3:' . $nodeType] = array();
+			if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
+				foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
+					$this->superTypeConfiguration['typo3:' . $nodeType][] = 'typo3:' . $superType;
 				}
 			}
 
-			$contentTypeProperties = array();
+			$nodeTypeProperties = array();
 
-			if (isset($contentTypeConfiguration['properties'])) {
-				foreach ($contentTypeConfiguration['properties'] as $property => $propertyConfiguration) {
+			if (isset($nodeTypeConfiguration['properties'])) {
+				foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
 
 						// TODO Make sure we can configure the range for all multi column elements to define what types a column may contain
-					$this->addProperty('typo3:' . $contentType, 'typo3:' . $property, $propertyConfiguration);
-					$contentTypeProperties[] = 'typo3:' . $property;
+					$this->addProperty('typo3:' . $nodeType, 'typo3:' . $property, $propertyConfiguration);
+					$nodeTypeProperties[] = 'typo3:' . $property;
 				}
 			}
 
 			$metadata = array();
-			$metaDataPropertyIndexes = array('group', 'icon', 'inlineEditableProperties', 'darkIcon');
+			$metaDataPropertyIndexes = array('ui');
 			foreach ($metaDataPropertyIndexes as $propertyName) {
-				if (isset($contentTypeConfiguration[$propertyName])) {
-					$metadata[$propertyName] = $contentTypeConfiguration[$propertyName];
+				if (isset($nodeTypeConfiguration[$propertyName])) {
+					$metadata[$propertyName] = $nodeTypeConfiguration[$propertyName];
 				}
 			}
 
-			$this->types['typo3:' . $contentType] = (object) array(
-				'label' => isset($contentTypeConfiguration['label']) ? $contentTypeConfiguration['label'] : $contentType,
-				'id' => 'typo3:' . $contentType,
+			$this->types['typo3:' . $nodeType] = (object) array(
+				'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeType,
+				'id' => 'typo3:' . $nodeType,
 				'properties' => array(),
-				'specific_properties' => $contentTypeProperties,
+				'specific_properties' => $nodeTypeProperties,
 				'subtypes' => array(),
 				'metadata' => (object) $metadata,
-				'supertypes' => $this->superTypeConfiguration['typo3:' . $contentType],
+				'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeType],
 				'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 				'ancestors' => array(),
 				'comment' => '',
@@ -108,12 +108,12 @@ class ContentTypeSchemaBuilder {
 
 		unset($this->types['typo3:unstructured']);
 
-		foreach ($this->types as $contentType => $contentTypeDefinition) {
-			$this->types[$contentType]->subtypes = $this->getAllSubtypes($contentType);
-			$this->types[$contentType]->ancestors = $this->getAllAncestors($contentType);
+		foreach ($this->types as $nodeType => $nodeTypeDefinition) {
+			$this->types[$nodeType]->subtypes = $this->getAllSubtypes($nodeType);
+			$this->types[$nodeType]->ancestors = $this->getAllAncestors($nodeType);
 
-			$this->removeUndeclaredTypes($this->types[$contentType]->supertypes);
-			$this->removeUndeclaredTypes($this->types[$contentType]->ancestors);
+			$this->removeUndeclaredTypes($this->types[$nodeType]->supertypes);
+			$this->removeUndeclaredTypes($this->types[$nodeType]->ancestors);
 		}
 
 		foreach ($this->properties as $property => $propertyConfiguration) {
@@ -127,7 +127,7 @@ class ContentTypeSchemaBuilder {
 		}
 
 			// Convert the TYPO3.Neos.ContentTypes:Section element to support content-collection
-			// TODO Move to content type definition
+			// TODO Move to node type definition
 		if (isset($this->types['typo3:TYPO3.Neos.ContentTypes:Section'])) {
 			$this->addProperty('typo3:TYPO3.Neos.ContentTypes:Section', 'typo3:content-collection', array());
 			$this->types['typo3:TYPO3.Neos.ContentTypes:Section']->specific_properties[] = 'typo3:content-collection';
@@ -152,19 +152,20 @@ class ContentTypeSchemaBuilder {
 	/**
 	 * Adds a property to the list of known properties
 	 *
-	 * @param string $contentType
+	 * @param string $nodeType
 	 * @param string $propertyName
 	 * @param array $propertyConfiguration
 	 * @return void
 	 */
-	protected function addProperty($contentType, $propertyName, array $propertyConfiguration) {
+	protected function addProperty($nodeType, $propertyName, array $propertyConfiguration) {
 		if (isset($this->properties[$propertyName])) {
-			$this->properties[$propertyName]->domains[] = $contentType;
+			$this->properties[$propertyName]->domains[] = $nodeType;
 		} else {
+			$propertyLabel = isset($propertyConfiguration['ui']['label']) ? $propertyConfiguration['ui']['label'] : $propertyName;
 			$this->properties[$propertyName] = (object) array(
-				'comment' => isset($propertyConfiguration['label']) ? $propertyConfiguration['label'] : $propertyName,
-				'comment_plain' => isset($propertyConfiguration['label']) ? $propertyConfiguration['label'] : $propertyName,
-				'domains' => array($contentType),
+				'comment' => $propertyLabel,
+				'comment_plain' => $propertyLabel,
+				'domains' => array($nodeType),
 				'id' => $propertyName,
 				'label' => $propertyName,
 				'ranges' => array(),
@@ -189,7 +190,7 @@ class ContentTypeSchemaBuilder {
 	}
 
 	/**
-	 * Return all sub content types of a content type (recursively)
+	 * Return all sub node types of a node type (recursively)
 	 *
 	 * @param string $type
 	 * @return array
@@ -197,16 +198,15 @@ class ContentTypeSchemaBuilder {
 	protected function getAllSubtypes($type) {
 		$subTypes = array();
 
-		foreach ($this->superTypeConfiguration as $contentType => $superTypes) {
+		foreach ($this->superTypeConfiguration as $nodeType => $superTypes) {
 			if (in_array($type, $superTypes)) {
-				if (isset($this->types[$contentType])) {
-					$subTypes[] = $contentType;
+				if (isset($this->types[$nodeType])) {
+					$subTypes[] = $nodeType;
 
-					$contentTypeSubTypes = $this->getAllSubtypes($contentType);
-					foreach ($contentTypeSubTypes as $contentTypeSubType) {
-
-						if (!in_array($contentTypeSubType, $subTypes)) {
-							$subTypes[] = $contentTypeSubType;
+					$nodeTypeSubTypes = $this->getAllSubtypes($nodeType);
+					foreach ($nodeTypeSubTypes as $nodeTypeSubType) {
+						if (!in_array($nodeTypeSubType, $subTypes)) {
+							$subTypes[] = $nodeTypeSubType;
 						}
 					}
 				}
@@ -217,7 +217,7 @@ class ContentTypeSchemaBuilder {
 	}
 
 	/**
-	 * Return all ancestors of a content type
+	 * Return all ancestors of a node type
 	 *
 	 * @param string $type
 	 * @return array

@@ -149,7 +149,7 @@ function($, vie, Ember, CreateJS) {
 			T3.Content.Model.PublishableNodes.initialize();
 			this.fire('pageLoaded');
 
-			this._registerVieContentTypeTemplateCallbacks();
+			this._registerVieNodeTypeTemplateCallbacks();
 			this._initializeCreateJs();
 		},
 
@@ -158,20 +158,20 @@ function($, vie, Ember, CreateJS) {
 		 *
 		 * For adding new content elements VIE needs an HTML template. This method registers callback methods
 		 * for generating those templates. The template itself is rendered on the server, and contains the
-		 * rendered output of the requested content type, rendered within the current typoscript path.
+		 * rendered output of the requested node type, rendered within the current typoscript path.
 		 *
 		 * @return {Void}
 		 */
-		_registerVieContentTypeTemplateCallbacks: function() {
+		_registerVieNodeTypeTemplateCallbacks: function() {
 			_.each(vie.types.toArray(), function(type) {
-				var contentType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
+				var nodeType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
 				var prefix = vie.namespaces.getPrefix(type.id);
 
 				if (prefix === 'typo3') {
-					vie.service('rdfa').setTemplate('typo3:' + contentType, 'typo3:content-collection', function(entity, callBack, collectionView) {
+					vie.service('rdfa').setTemplate('typo3:' + nodeType, 'typo3:content-collection', function(entity, callBack, collectionView) {
 							// This callback function is called whenever we create a content element
 						var type = entity.get('@type'),
-							contentType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, ''),
+							nodeType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, ''),
 							referenceEntity = null,
 							lastMatchedEntity = null;
 
@@ -194,7 +194,7 @@ function($, vie, Ember, CreateJS) {
 							if (entity === matchEntity && lastMatchedEntity) {
 								referenceEntity = lastMatchedEntity;
 								T3.Content.Controller.NodeActions.addBelow(
-									contentType,
+									nodeType,
 									referenceEntity,
 									afterCreationCallback
 								);
@@ -208,14 +208,14 @@ function($, vie, Ember, CreateJS) {
 							if (collectionView.collection.models.length === 1) {
 									// The section only contains the new entity and was empty before, so we create the node into the section
 								T3.Content.Controller.NodeActions.addInside(
-									contentType,
+									nodeType,
 									vie.entities.get($(collectionView.el).attr('about')),
 									afterCreationCallback
 								);
 							} else {
 									// The section contains other entities, so we create the node before the first entity (index 1 as index 0 is the newly created entity)
 								T3.Content.Controller.NodeActions.addAbove(
-									contentType,
+									nodeType,
 									collectionView.collection.models[1],
 									afterCreationCallback
 								);

@@ -28,12 +28,12 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
-	 * Generate and renders the JSON schema for the content types for VIE.
+	 * Generate and renders the JSON schema for the node types for VIE.
 	 * Schema format example: http://schema.rdfs.org/all.json
 	 *
 	 * @return string
@@ -42,8 +42,8 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function vieSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		$configuration = $this->configurationManager->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.TYPO3CR');
-		$schemaBuilder = new \TYPO3\Neos\Service\ContentTypeSchemaBuilder($configuration);
+		$configuration = $this->configurationManager->getConfiguration('NodeTypes');
+		$schemaBuilder = new \TYPO3\Neos\Service\NodeTypeSchemaBuilder($configuration);
 		$schemaBuilder->convertToVieSchema();
 		return $schemaBuilder->generateAsJson();
 	}
@@ -57,7 +57,7 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function nodeTypeSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		return json_encode($this->contentTypeManager->getFullConfiguration());
+		return json_encode($this->nodeTypeManager->getFullConfiguration());
 	}
 
 }

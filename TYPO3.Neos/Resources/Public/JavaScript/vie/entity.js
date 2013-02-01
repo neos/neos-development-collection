@@ -45,8 +45,8 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 			}
 		}.observes('typo3:_hidden'),
 
-		contentType: function() {
-			return Entity.extractContentTypeFromVieEntity(this.get('_vieEntity'));
+		nodeType: function() {
+			return Entity.extractNodeTypeFromVieEntity(this.get('_vieEntity'));
 		}.property('_vieEntity'),
 
 		init: function() {
@@ -95,10 +95,10 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 		}.property('_vieEntity').cacheable(),
 
 		/**
-		 * Receive the content type schema; and also build up the _caseSensitivePropertyNameCache
+		 * Receive the content type schema
 		 */
-		contentTypeSchema: function() {
-			return T3.Configuration.Schema[this.get('contentType')];
+		nodeTypeSchema: function() {
+			return T3.Configuration.Schema[this.get('nodeType')];
 		}.property().cacheable()
 
 	});
@@ -117,7 +117,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 			});
 			return cleanAttributes;
 		},
-		extractContentTypeFromVieEntity: function(vieEntity) {
+		extractNodeTypeFromVieEntity: function(vieEntity) {
 			var types = vieEntity.get('@type'),
 				type;
 			if (!_.isArray(types)) {

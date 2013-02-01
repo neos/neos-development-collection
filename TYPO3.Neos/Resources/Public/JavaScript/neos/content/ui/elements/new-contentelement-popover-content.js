@@ -15,7 +15,7 @@ define(
 			_index: null,
 
 			didInsertElement: function() {
-				var tabs = this.$('.contentTypeSelectorTabs').tabs();
+				var tabs = this.$('.nodeTypeSelectorTabs').tabs();
 				setTimeout(function() { tabs.tabs('select', 0);}, 100);
 			},
 

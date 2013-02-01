@@ -18,12 +18,12 @@
 		{{/view}}
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
 			{{#if content.isBoolean}}
-				<label for="{{unbound content.elementId}}" class="checkbox">
-					{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
-					{{content.label}}
+				<label for="{{unbound content.elementId}} class="checkbox"">
+				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
+					{{content.ui.label}}
 				</label>
 			{{else}}
-				<label for="{{unbound content.elementId}}">{{content.label}}</label>
+				<label for="{{unbound content.elementId}}">{{content.ui.label}}</label>
 				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
 			{{/if}}
 		{{/collection}}

@@ -13,7 +13,7 @@
 								<th class="check"><input type="checkbox" id="check-all" /></th>
 								<th class="legend"></th>
 								<th>Label</th>
-								<th>Content type</th>
+								<th>Node type</th>
 								<th>Relative path</th>
 								<th class="actions"></th>
 							</tr>
@@ -67,12 +67,12 @@
 												</label>
 											</td>
 											<td><label for="{change.node.identifier}" title="{change.node.abstract}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>[No title]</em>')}</label></td>
-											<td class="content-type" title="{change.node.contentType.name}">
+											<td class="node-type" title="{change.node.nodeType.name}">
 												<label for="{change.node.identifier}">
-													<f:if condition="{change.configuration.icon}">
-														<img src="{f:uri.resource(path: change.configuration.icon)}" alt="{change.node.contentType.name}" />
+													<f:if condition="{change.configuration.ui.icon.light}">
+														<img src="{f:uri.resource(path: change.configuration.ui.icon.light)}" alt="{change.node.nodeType.name}" />
 													</f:if>
-													{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.contentType.name)}
+													{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.nodeType.name)}
 												</label>
 											</td>
 											<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>

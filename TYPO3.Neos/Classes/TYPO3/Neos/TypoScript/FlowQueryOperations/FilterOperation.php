@@ -26,12 +26,6 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	static protected $priority = 100;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 * @Flow\Inject
-	 */
-	protected $contentTypeManager;
-
-	/**
 	 * {@inheritdoc}
 	 *
 	 * @param array (or array-like object) $context onto which this operation should be applied
@@ -82,7 +76,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface') {
 				return TRUE;
 			} else {
-				return $value->getContentType()->isOfType($operand);
+				return $value->getNodeType()->isOfType($operand);
 			}
 		} else {
 			return parent::evaluateOperator($value, $operator, $operand);

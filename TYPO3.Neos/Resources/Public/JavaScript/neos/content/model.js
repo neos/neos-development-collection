@@ -135,7 +135,7 @@ define(
 			selectedNodeSchema: function() {
 				var selectedNode = this.get('selectedNode');
 				if (!selectedNode) return;
-				return selectedNode.get('contentTypeSchema');
+				return selectedNode.get('nodeTypeSchema');
 			}.property('selectedNode').cacheable(),
 
 			selectNode: function(node) {
