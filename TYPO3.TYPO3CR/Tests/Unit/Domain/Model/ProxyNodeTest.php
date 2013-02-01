@@ -236,16 +236,16 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setContentTypeSetsTheContentTypeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$contentType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\ContentType', array(), array(), '', FALSE);
-		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setContentType', $contentType);
+	public function setNodeTypeSetsTheNodeTypeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
+		$nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', FALSE);
+		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setNodeType', $nodeType);
 	}
 
 	/**
 	 * @test
 	 */
-	public function getContentTypeCallsGetContentTypeOnTheParentNodeFromTheOriginalOrNewNode() {
-		$this->assertThatOriginalOrNewNodeIsCalled('getContentType');
+	public function getNodeTypeCallsGetNodeTypeOnTheParentNodeFromTheOriginalOrNewNode() {
+		$this->assertThatOriginalOrNewNodeIsCalled('getNodeType');
 	}
 
 	/**
@@ -273,7 +273,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getChildNodesCallsGetChildNodesOnTheNewNodeOrTheOriginalNode() {
-		$this->assertThatOriginalOrNewNodeIsCalled('getChildNodes', 'MyContentType');
+		$this->assertThatOriginalOrNewNodeIsCalled('getChildNodes', 'MyNodeType');
 	}
 
 	/**
@@ -302,14 +302,14 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
-		$contentTypeManager->expects($this->any())->method('hasContentType')->will($this->returnValue(TRUE));
+		$nodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array(), array(), '', FALSE);
+		$nodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
 
 		$originalNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
-		$originalNode->_set('contentTypeManager', $contentTypeManager);
+		$originalNode->_set('nodeTypeManager', $nodeTypeManager);
 
 		$newNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
-		$newNode->_set('contentTypeManager', $contentTypeManager);
+		$newNode->_set('nodeTypeManager', $nodeTypeManager);
 
 		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array(), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('add')->with($newNode);
@@ -340,7 +340,7 @@ class ProxyNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertEquals($newNode->getProperties(), $originalNode->getProperties());
 		$this->assertEquals($newNode->getIndex(), $originalNode->getIndex());
-		$this->assertEquals($newNode->getContentType(), $originalNode->getContentType());
+		$this->assertEquals($newNode->getNodeType(), $originalNode->getNodeType());
 		$this->assertSame($newNode->getContentObject(), $originalNode->getContentObject());
 		$this->assertSame($context, $newNode->getContext());
 	}

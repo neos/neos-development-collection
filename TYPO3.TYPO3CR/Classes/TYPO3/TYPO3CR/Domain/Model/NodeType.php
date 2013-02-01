@@ -14,30 +14,30 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A Content Type
+ * A Node Type
  *
  * @Flow\Scope("prototype")
  */
-class ContentType {
+class NodeType {
 
 	/**
-	 * Name of this content type. Example: "TYPO3CR:Folder"
+	 * Name of this node type. Example: "TYPO3CR:Folder"
 	 *
 	 * @var string
 	 */
 	protected $name;
 
 	/**
-	 * Configuration for this content type, can be an arbitrarily nested array.
+	 * Configuration for this node type, can be an arbitrarily nested array.
 	 *
 	 * @var array
 	 */
 	protected $configuration;
 
 	/**
-	 * Content types this content type directly inherits from
+	 * node types this node type directly inherits from
 	 *
-	 * @var array<\TYPO3\TYPO3CR\Domain\Model\ContentType>
+	 * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
 	 */
 	protected $declaredSuperTypes;
 
@@ -49,23 +49,23 @@ class ContentType {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
-	 * Constructs this content type
+	 * Constructs this node type
 	 *
-	 * @param string $name Name of the content type
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\ContentType> $declaredSuperTypes a list of declared super types
-	 * @param array $configuration the configuration for this content type which is defined in the schema
+	 * @param string $name Name of the node type
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeType> $declaredSuperTypes a list of declared super types
+	 * @param array $configuration the configuration for this node type which is defined in the schema
 	 */
 	public function __construct($name, array $declaredSuperTypes, array $configuration) {
 		$this->name = $name;
 
 		foreach ($declaredSuperTypes as $type) {
-			if (!$type instanceof \TYPO3\TYPO3CR\Domain\Model\ContentType) {
-				throw new \InvalidArgumentException('$types must be an array of ContentType objects', 1291300950);
+			if (!$type instanceof NodeType) {
+				throw new \InvalidArgumentException('$types must be an array of NodeType objects', 1291300950);
 			}
 		}
 		$this->declaredSuperTypes = $declaredSuperTypes;
@@ -74,7 +74,7 @@ class ContentType {
 	}
 
 	/**
-	 * Returns the name of this content type
+	 * Returns the name of this node type
 	 *
 	 * @return string
 	 */
@@ -84,27 +84,27 @@ class ContentType {
 
 	/**
 	 * Returns the direct, explicitly declared super types
-	 * of this content type.
+	 * of this node type.
 	 *
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentType>
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
 	 */
 	public function getDeclaredSuperTypes() {
 		return $this->declaredSuperTypes;
 	}
 
 	/**
-	 * If this content type or any of the direct or indirect super types
+	 * If this node type or any of the direct or indirect super types
 	 * has the given name.
 	 *
-	 * @param string $contentTypeName
-	 * @return boolean TRUE if this content type is of the given kind, otherwise FALSE
+	 * @param string $nodeType
+	 * @return boolean TRUE if this node type is of the given kind, otherwise FALSE
 	 */
-	public function isOfType($contentTypeName) {
-		if ($contentTypeName === $this->name) {
+	public function isOfType($nodeType) {
+		if ($nodeType === $this->name) {
 			return TRUE;
 		}
 		foreach ($this->declaredSuperTypes as $superType) {
-			if ($superType->isOfType($contentTypeName) === TRUE) {
+			if ($superType->isOfType($nodeType) === TRUE) {
 				return TRUE;
 			}
 		}
@@ -112,7 +112,7 @@ class ContentType {
 	}
 
 	/**
-	 * Get the full configuration of the content type. Should only be used internally.
+	 * Get the full configuration of the node type. Should only be used internally.
 	 * Instead, use the get* / has* methods which exist for every configuration property.
 	 *
 	 * @return array
@@ -122,7 +122,7 @@ class ContentType {
 	}
 
 	/**
-	 * Get the human-readable label of this content type
+	 * Get the human-readable label of this node type
 	 *
 	 * @return string
 	 * @api
@@ -171,8 +171,8 @@ class ContentType {
 
 		$defaultValues = array();
 		foreach ($this->configuration['properties'] as $propertyName => $propertyConfiguration) {
-			if (isset($propertyConfiguration['default'])) {
-				$defaultValues[$propertyName] = $propertyConfiguration['default'];
+			if (isset($propertyConfiguration['defaultValue'])) {
+				$defaultValues[$propertyName] = $propertyConfiguration['defaultValue'];
 			}
 		}
 
@@ -180,23 +180,23 @@ class ContentType {
 	}
 
 	/**
-	 * Return an array with sub-structure nodes to be created.
+	 * Return an array with child nodes which should be automatically created
 	 *
-	 * @return array the key of this array is the name of the subnode, and the value its ContentType.
+	 * @return array the key of this array is the name of the child, and the value its NodeType.
 	 */
-	public function getSubstructure() {
-		if (!isset($this->configuration['structure'])) {
+	public function getAutoCreatedChildNodes() {
+		if (!isset($this->configuration['childNodes'])) {
 			return array();
 		}
 
-		$substructure = array();
-		foreach ($this->configuration['structure'] as $substructureName => $substructureConfiguration) {
-			if (isset($substructureConfiguration['type'])) {
-				$substructure[$substructureName] = $this->contentTypeManager->getContentType($substructureConfiguration['type']);
+		$autoCreatedChildNodes = array();
+		foreach ($this->configuration['childNodes'] as $childNodeName => $childNodeConfiguration) {
+			if (isset($childNodeConfiguration['type'])) {
+				$autoCreatedChildNodes[$childNodeName] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
 			}
 		}
 
-		return $substructure;
+		return $autoCreatedChildNodes;
 	}
 
 	/**

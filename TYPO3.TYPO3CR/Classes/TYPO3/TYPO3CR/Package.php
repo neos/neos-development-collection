@@ -29,6 +29,10 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Flow\Persistence\Doctrine\PersistenceManager', 'allObjectsPersisted', 'TYPO3\TYPO3CR\Domain\Repository\NodeRepository', 'flushNodeRegistry');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', 'repositoryObjectsPersisted', 'TYPO3\TYPO3CR\Domain\Repository\NodeRepository', 'flushNodeRegistry');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', 'TYPO3\Flow\Mvc\Routing\Aspect\RouterCachingAspect', 'flushCaches');
+
+		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function($configurationManager) {
+			$configurationManager->registerConfigurationType('NodeTypes', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT);
+		});
 	}
 
 }

@@ -74,7 +74,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
 	 */
-	public function setWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace);
+	public function setWorkspace(Workspace $workspace);
 
 	/**
 	 * Returns the workspace this node is contained in
@@ -127,7 +127,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode);
+	public function moveBefore(PersistentNodeInterface $referenceNode);
 
 	/**
 	 * Moves this node after the given node
@@ -135,7 +135,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode);
+	public function moveAfter(PersistentNodeInterface $referenceNode);
 
 	/**
 	 * Moves this node into the given node
@@ -143,7 +143,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveInto(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode);
+	public function moveInto(PersistentNodeInterface $referenceNode);
 
 	/**
 	 * Copies this node before the given node
@@ -153,7 +153,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName);
+	public function copyBefore(PersistentNodeInterface $referenceNode, $nodeName);
 
 	/**
 	 * Copies this node after the given node
@@ -163,7 +163,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName);
+	public function copyAfter(PersistentNodeInterface $referenceNode, $nodeName);
 
 	/**
 	 * Copies this node into the given node
@@ -173,7 +173,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 */
-	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, $nodeName);
+	public function copyInto(PersistentNodeInterface $referenceNode, $nodeName);
 
 	/**
 	 * Returns the current context this node operates in.
@@ -212,22 +212,22 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * properties and creates default subnodes.
 	 *
 	 * @param string $name Name of the new node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL);
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
 	 * properties or creating subnodes. Only used internally.
 	 *
 	 * @param string $name Name of the new node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	public function createSingleNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL);
+	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL);
 
 	/**
 	 * Creates and persists a node from the given $nodeTemplate as child node
@@ -242,7 +242,7 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * Returns the primary child node of this node.
 	 *
 	 * Which node acts as a primary child node will in the future depend on the
-	 * content type. For now it is just the first child node.
+	 * node type. For now it is just the first child node.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The primary child node or NULL if no such node exists
 	 */
@@ -250,20 +250,20 @@ interface PersistentNodeInterface extends NodeInterface {
 
 	/**
 	 * Returns all direct child nodes of this node.
-	 * If a content type is specified, only nodes of that type are returned.
+	 * If a node type is specified, only nodes of that type are returned.
 	 *
-	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
+	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
-	public function getChildNodes($contentTypeFilter = NULL);
+	public function getChildNodes($nodeTypeFilter = NULL);
 
 	/**
 	 * Checks if this node has any child nodes.
 	 *
-	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
+	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
 	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
 	 */
-	public function hasChildNodes($contentTypeFilter = NULL);
+	public function hasChildNodes($nodeTypeFilter = NULL);
 
 	/**
 	 * Removes this node and all its child nodes.
@@ -288,5 +288,4 @@ interface PersistentNodeInterface extends NodeInterface {
 	public function isRemoved();
 
 }
-
 ?>

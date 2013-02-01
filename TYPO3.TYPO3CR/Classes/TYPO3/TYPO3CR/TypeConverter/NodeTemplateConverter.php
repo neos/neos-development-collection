@@ -26,7 +26,7 @@ class NodeTemplateConverter extends NodeConverter {
 	/**
 	 * A pattern that separates the node content object type from the node type
 	 */
-	const EXTRACT_CONTENT_TYPE_PATTERN = '/^\\\\?(?P<type>TYPO3\\\TYPO3CR\\\Domain\\\Model\\\NodeTemplate)(?:<\\\\?(?P<contentType>[a-zA-Z0-9\\\\\:\.]+)>)?/';
+	const EXTRACT_CONTENT_TYPE_PATTERN = '/^\\\\?(?P<type>TYPO3\\\TYPO3CR\\\Domain\\\Model\\\NodeTemplate)(?:<\\\\?(?P<nodeType>[a-zA-Z0-9\\\\\:\.]+)>)?/';
 
 	/**
 	 * @var array
@@ -45,9 +45,9 @@ class NodeTemplateConverter extends NodeConverter {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * Converts the specified node path into a Node.
@@ -78,32 +78,32 @@ class NodeTemplateConverter extends NodeConverter {
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
-		$contentType = $this->extractContentType($targetType, $source);
-		$nodeTemplate->setContentType($contentType);
+		$nodeType = $this->extractNodeType($targetType, $source);
+		$nodeTemplate->setNodeType($nodeType);
 		$this->setNodeProperties($nodeTemplate, $source);
 		return $nodeTemplate;
 	}
 
 	/**
-	 * Detects the requested content type and returns a corresponding ContentType instance.
+	 * Detects the requested node type and returns a corresponding NodeType instance.
 	 *
 	 * @param string $targetType
 	 * @param array $source
-	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
 	 */
-	protected function extractContentType($targetType, array $source) {
-		if (isset($source['__contentType'])) {
-			$contentTypeName = $source['__contentType'];
+	protected function extractNodeType($targetType, array $source) {
+		if (isset($source['__nodeType'])) {
+			$nodeTypeName = $source['__nodeType'];
 		} else {
 			$matches = array();
 			preg_match(self::EXTRACT_CONTENT_TYPE_PATTERN, $targetType, $matches);
-			if (isset($matches['contentType'])) {
-				$contentTypeName = $matches['contentType'];
+			if (isset($matches['nodeType'])) {
+				$nodeTypeName = $matches['nodeType'];
 			} else {
-				$contentTypeName = 'unstructured';
+				$nodeTypeName = 'unstructured';
 			}
 		}
-		return $this->contentTypeManager->getContentType($contentTypeName);
+		return $this->nodeTypeManager->getNodeType($nodeTypeName);
 	}
 }
 ?>

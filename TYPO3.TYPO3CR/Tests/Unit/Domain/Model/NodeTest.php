@@ -318,17 +318,17 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function theContentTypeCanBeSetAndRetrieved() {
-		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
-		$contentTypeManager->expects($this->any())->method('getContentType')->will($this->returnCallback(function ($name) { return new \TYPO3\TYPO3CR\Domain\Model\ContentType($name, array(), array()) ;}));
+	public function theNodeTypeCanBeSetAndRetrieved() {
+		$nodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnCallback(function ($name) { return new \TYPO3\TYPO3CR\Domain\Model\NodeType($name, array(), array()) ;}));
 
-		$this->node->_set('contentTypeManager', $contentTypeManager);
+		$this->node->_set('nodeTypeManager', $nodeTypeManager);
 
-		$this->assertEquals('unstructured', $this->node->getContentType()->getName());
+		$this->assertEquals('unstructured', $this->node->getNodeType()->getName());
 
-		$myContentType = $contentTypeManager->getContentType('typo3:mycontent');
-		$this->node->setContentType($myContentType);
-		$this->assertEquals($myContentType, $this->node->getContentType());
+		$myNodeType = $nodeTypeManager->getNodeType('typo3:mycontent');
+		$this->node->setNodeType($myNodeType);
+		$this->assertEquals($myNodeType, $this->node->getNodeType());
 	}
 
 	/**
@@ -340,8 +340,8 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType', 'add'), array(), '', FALSE);
-		$nodeRepository->expects($this->once())->method('countByParentAndContentType')->with('/', NULL, $this->mockWorkspace)->will($this->returnValue(0));
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndNodeType', 'add'), array(), '', FALSE);
+		$nodeRepository->expects($this->once())->method('countByParentAndNodeType')->with('/', NULL, $this->mockWorkspace)->will($this->returnValue(0));
 		$nodeRepository->expects($this->once())->method('add');
 		$nodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($context));
 
@@ -351,10 +351,10 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$currentNode->expects($this->once())->method('createProxyForContextIfNeeded')->will($this->returnArgument(0));
 		$currentNode->expects($this->once())->method('filterNodeByContext')->will($this->returnArgument(0));
 
-		$newNode = $currentNode->createNode('foo', 'mycontenttype');
+		$newNode = $currentNode->createNode('foo', 'mynodetype');
 		$this->assertSame($currentNode, $newNode->getParent());
 		$this->assertEquals(1, $newNode->getIndex());
-		$this->assertEquals('mycontenttype', $newNode->getContentType()->getName());
+		$this->assertEquals('mynodetype', $newNode->getNodeType()->getName());
 	}
 
 	/**
@@ -426,9 +426,9 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$expectedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $this->mockWorkspace));
 
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findFirstByParentAndContentType', 'getContext'), array(), '', FALSE);
-		$nodeRepository->expects($this->at(1))->method('findFirstByParentAndContentType')->with('/foo', NULL, $this->mockWorkspace)->will($this->returnValue($expectedNode));
-		$nodeRepository->expects($this->at(2))->method('findFirstByParentAndContentType')->with('/foo', NULL, $this->mockWorkspace)->will($this->returnValue(NULL));
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findFirstByParentAndNodeType', 'getContext'), array(), '', FALSE);
+		$nodeRepository->expects($this->at(1))->method('findFirstByParentAndNodeType')->with('/foo', NULL, $this->mockWorkspace)->will($this->returnValue($expectedNode));
+		$nodeRepository->expects($this->at(2))->method('findFirstByParentAndNodeType')->with('/foo', NULL, $this->mockWorkspace)->will($this->returnValue(NULL));
 		$nodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($context));
 
 
@@ -447,7 +447,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getChildNodesReturnsChildNodesInCurrentContextOptionallyFilteredyByContentType() {
+	public function getChildNodesReturnsChildNodesInCurrentContextOptionallyFilteredyByNodeType() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
@@ -455,8 +455,8 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $this->mockWorkspace))
 		);
 
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByParentAndContentType', 'getContext'), array(), '', FALSE);
-		$nodeRepository->expects($this->once())->method('findByParentAndContentType')->with('/foo', 'mycontenttype', $this->mockWorkspace)->will($this->returnValue($childNodes));
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByParentAndNodeType', 'getContext'), array(), '', FALSE);
+		$nodeRepository->expects($this->once())->method('findByParentAndNodeType')->with('/foo', 'mynodetype', $this->mockWorkspace)->will($this->returnValue($childNodes));
 		$nodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($context));
 
 		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('proxyAndFilterNodesForContext'), array('/foo', $this->mockWorkspace));
@@ -464,7 +464,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$currentNode->expects($this->any())->method('getContext')->will($this->returnValue($nodeRepository->getContext()));
 		$currentNode->expects($this->once())->method('proxyAndFilterNodesForContext')->with($childNodes)->will($this->returnValue($childNodes));
 
-		$this->assertSame($childNodes, $currentNode->getChildNodes('mycontenttype'));
+		$this->assertSame($childNodes, $currentNode->getChildNodes('mynodetype'));
 	}
 
 	/**

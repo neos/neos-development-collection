@@ -139,19 +139,19 @@ interface NodeInterface {
 	public function unsetContentObject();
 
 	/**
-	 * Sets the content type of this node.
+	 * Sets the node type of this node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
 	 * @return void
 	 */
-	public function setContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType);
+	public function setNodeType(NodeType $nodeType);
 
 	/**
-	 * Returns the content type of this node.
+	 * Returns the node type of this node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
 	 */
-	public function getContentType();
+	public function getNodeType();
 
 	/**
 	 * Sets the "hidden" flag for this node.

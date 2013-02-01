@@ -19,10 +19,10 @@ use TYPO3\Flow\Annotations as Flow;
 class NodeType implements FilterInterface {
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 * @Flow\Inject
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * The node type to match on.
@@ -70,10 +70,10 @@ class NodeType implements FilterInterface {
 	 */
 	public function matches(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($this->withSubTypes === TRUE) {
-			return $this->contentTypeManager->getContentType($node->getContentType())->isOfType($this->nodeTypeName);
+			return $this->nodeTypeManager->getNodeType($node->getNodeType())->isOfType($this->nodeTypeName);
 		} else {
-			$nodeContentType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'contentType', TRUE);
-			return $nodeContentType === $this->nodeTypeName;
+			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', TRUE);
+			return $nodeType === $this->nodeTypeName;
 		}
 	}
 

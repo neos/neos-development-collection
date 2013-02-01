@@ -22,6 +22,6 @@ interface NodeLabelGeneratorInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string
 	 */
-	public function getLabel(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
+	public function getLabel(NodeInterface $node);
 }
 ?>

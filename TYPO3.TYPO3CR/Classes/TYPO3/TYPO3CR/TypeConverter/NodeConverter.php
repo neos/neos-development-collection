@@ -159,8 +159,8 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
 	protected function setNodeProperties(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $properties) {
-		$nodeContentType = $node->getContentType();
-		$contentTypeProperties = $nodeContentType->getProperties();
+		$nodeType = $node->getNodeType();
+		$nodeTypeProperties = $nodeType->getProperties();
 		foreach ($properties as $nodePropertyName => $nodePropertyValue) {
 			if (substr($nodePropertyName, 0, 2) === '__') {
 				continue;
@@ -179,11 +179,11 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($node, $nodePropertyName, $nodePropertyValue);
 				continue;
 			}
-			if (!isset($contentTypeProperties[$nodePropertyName])) {
-				throw new \TYPO3\Flow\Property\Exception\TypeConverterException(sprintf('content type "%s" does not have a property "%s" according to the schema', $nodeContentType->getName(), $nodePropertyName), 1359552744);
+			if (!isset($nodeTypeProperties[$nodePropertyName])) {
+				throw new \TYPO3\Flow\Property\Exception\TypeConverterException(sprintf('node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
 			}
-			if (isset($contentTypeProperties[$nodePropertyName]['type'])) {
-				$targetType = $contentTypeProperties[$nodePropertyName]['type'];
+			if (isset($nodeTypeProperties[$nodePropertyName]['type'])) {
+				$targetType = $nodeTypeProperties[$nodePropertyName]['type'];
 				if ($this->objectManager->isRegistered($targetType)) {
 					$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $targetType);
 				}

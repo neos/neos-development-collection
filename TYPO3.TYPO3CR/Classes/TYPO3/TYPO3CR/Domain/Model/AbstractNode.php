@@ -41,11 +41,11 @@ abstract class AbstractNode implements NodeInterface {
 	protected $contentObjectProxy;
 
 	/**
-	 * The name of the content type of this node
+	 * The name of the node type of this node
 	 *
 	 * @var string
 	 */
-	protected $contentType = 'unstructured';
+	protected $nodeType = 'unstructured';
 
 	/**
 	 * If this node is hidden, it is not shown in a public place.
@@ -84,9 +84,9 @@ abstract class AbstractNode implements NodeInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
@@ -101,14 +101,14 @@ abstract class AbstractNode implements NodeInterface {
 	 * @return string
 	 */
 	public function getLabel() {
-		return $this->getContentType()->getNodeLabelGenerator()->getLabel($this);
+		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
 	}
 
 	/**
 	 * Returns a short abstract describing / containing summarized content of this node
 	 *
 	 * @return string
-	 * @todo Implement real abstract rendering and use a property specified in the content type
+	 * @todo Implement real abstract rendering and use a property specified in the node type
 	 */
 	public function getAbstract() {
 		$abstractParts = array();
@@ -156,9 +156,8 @@ abstract class AbstractNode implements NodeInterface {
 	public function hasProperty($propertyName) {
 		if (is_object($this->contentObjectProxy)) {
 			return \TYPO3\Flow\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
-		} else {
-			return isset($this->properties[$propertyName]);
 		}
+		return isset($this->properties[$propertyName]);
 	}
 
 	/**
@@ -209,9 +208,8 @@ abstract class AbstractNode implements NodeInterface {
 	public function getProperties() {
 		if (is_object($this->contentObjectProxy)) {
 			return \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
-		} else {
-			return $this->properties;
 		}
+		return $this->properties;
 	}
 
 	/**
@@ -222,9 +220,8 @@ abstract class AbstractNode implements NodeInterface {
 	public function getPropertyNames() {
 		if (is_object($this->contentObjectProxy)) {
 			return \TYPO3\Flow\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
-		} else {
-			return array_keys($this->properties);
 		}
+		return array_keys($this->properties);
 	}
 
 	/**
@@ -266,25 +263,25 @@ abstract class AbstractNode implements NodeInterface {
 	}
 
 	/**
-	 * Sets the content type of this node.
+	 * Sets the node type of this node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
 	 * @return void
 	 */
-	public function setContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType) {
-		if ($this->contentType !== $contentType->getName()) {
-			$this->contentType = $contentType->getName();
+	public function setNodeType(NodeType $nodeType) {
+		if ($this->nodeType !== $nodeType->getName()) {
+			$this->nodeType = $nodeType->getName();
 			$this->update();
 		}
 	}
 
 	/**
-	 * Returns the content type of this node.
+	 * Returns the node type of this node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
 	 */
-	public function getContentType() {
-		return $this->contentTypeManager->getContentType($this->contentType);
+	public function getNodeType() {
+		return $this->nodeTypeManager->getNodeType($this->nodeType);
 	}
 
 	/**
@@ -423,5 +420,4 @@ abstract class AbstractNode implements NodeInterface {
 	}
 
 }
-
 ?>

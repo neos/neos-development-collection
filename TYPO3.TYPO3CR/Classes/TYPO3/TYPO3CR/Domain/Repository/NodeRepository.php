@@ -55,9 +55,9 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
@@ -331,7 +331,7 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 	/**
-	 * Finds nodes by its parent and (optionally) by its content type.
+	 * Finds nodes by its parent and (optionally) by its node type.
 	 *
 	 * Note: Filters out removed nodes.
 	 *
@@ -339,16 +339,16 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * only occurs in very rare cases) is the *identifier*.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
-	public function findByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$foundNodes = array();
 
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace);
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIdentifier()])) {
@@ -530,17 +530,17 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 	/**
-	 * Finds a single node by its parent and (optionally) by its content type
+	 * Finds a single node by its parent and (optionally) by its node type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The node found or NULL
 	 * @todo Check for workspace compliance
 	 */
-	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace);
 			$firstNodeFoundInThisWorkspace = $query->execute()->getFirst();
 			if ($firstNodeFoundInThisWorkspace !== NULL) {
 				return $firstNodeFoundInThisWorkspace;
@@ -616,10 +616,10 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 	/**
-	 * Creates a query for finding nodes by their parent and (optionally) content type.
+	 * Creates a query for finding nodes by their parent and (optionally) node type.
 	 *
-	 * The content type filter syntax is simple: allowed content type names are listed,
-	 * separated by comma. An exclamation mark as first character of a content type name
+	 * The node type filter syntax is simple: allowed node type names are listed,
+	 * separated by comma. An exclamation mark as first character of a node type name
 	 * excludes it. Inheritance is taken into account, all sub-types of a given type are
 	 * allowed as well.
 	 *
@@ -627,12 +627,12 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * the given workspace.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\Flow\Persistence\QueryInterface The query
 	 * @throws \InvalidArgumentException
 	 */
-	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	protected function createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $parentPath . '" is not a valid path: must start but not end with a slash.', 1284985610);
 		}
@@ -647,33 +647,33 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 			$constraints[] = $query->like('path', $parentPath . '/%');
 		}
 
-		if ($contentTypeFilter !== NULL) {
-			$includeContentTypeConstraints = array();
-			$excludeContentTypeConstraints = array();
-			$contentTypeFilterParts = explode(',', $contentTypeFilter);
-			foreach ($contentTypeFilterParts as $contentTypeFilterPart) {
-				$contentTypeFilterPart = trim($contentTypeFilterPart);
-				if (strpos($contentTypeFilterPart, '!') === 0) {
+		if ($nodeTypeFilter !== NULL) {
+			$includeNodeTypeConstraints = array();
+			$excludeNodeTypeConstraints = array();
+			$nodeTypeFilterParts = explode(',', $nodeTypeFilter);
+			foreach ($nodeTypeFilterParts as $nodeTypeFilterPart) {
+				$nodeTypeFilterPart = trim($nodeTypeFilterPart);
+				if (strpos($nodeTypeFilterPart, '!') === 0) {
 					$negate = TRUE;
-					$contentTypeFilterPart = substr($contentTypeFilterPart, 1);
+					$nodeTypeFilterPart = substr($nodeTypeFilterPart, 1);
 				} else {
 					$negate = FALSE;
 				}
-				$contentTypeFilterPartSubTypes = array_merge(array($contentTypeFilterPart), $this->contentTypeManager->getSubContentTypes($contentTypeFilterPart));
+				$nodeTypeFilterPartSubTypes = array_merge(array($nodeTypeFilterPart), $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
 
-				foreach ($contentTypeFilterPartSubTypes as $contentTypeFilterPartSubType) {
+				foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
 					if ($negate === TRUE) {
-						$excludeContentTypeConstraints[] = $query->logicalNot($query->equals('contentType', $contentTypeFilterPartSubType));
+						$excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType));
 					} else {
-						$includeContentTypeConstraints[] = $query->equals('contentType', $contentTypeFilterPartSubType);
+						$includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType);
 					}
 				}
 			}
-			if (count($excludeContentTypeConstraints) > 0) {
-				$constraints = array_merge($excludeContentTypeConstraints, $constraints);
+			if (count($excludeNodeTypeConstraints) > 0) {
+				$constraints = array_merge($excludeNodeTypeConstraints, $constraints);
 			}
-			if (count($includeContentTypeConstraints) > 0) {
-				$constraints[] = $query->logicalOr($includeContentTypeConstraints);
+			if (count($includeNodeTypeConstraints) > 0) {
+				$constraints[] = $query->logicalOr($includeNodeTypeConstraints);
 			}
 		}
 

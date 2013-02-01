@@ -12,10 +12,10 @@ namespace TYPO3\TYPO3CR\Exception;
  *                                                                        */
 
 /**
- * A "content type not found" exception
+ * A "node type not found" exception
  *
  */
-class ContentTypeNotFoundException extends \TYPO3\TYPO3CR\Exception {
+class NodeTypeNotFoundException extends \TYPO3\TYPO3CR\Exception {
 
 }
 

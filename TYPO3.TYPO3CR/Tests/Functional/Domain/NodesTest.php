@@ -93,9 +93,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function createdNodesHaveDefaultValuesSet() {
 		$rootNode = $this->context->getWorkspace()->getRootNode();
 
-		$contentTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
-		$testContentType = $contentTypeManager->getContentType('TYPO3.TYPO3CR:TestingContentType');
-		$fooNode = $rootNode->createNode('foo', $testContentType);
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingContentType');
+		$fooNode = $rootNode->createNode('foo', $testNodeType);
 
 		$this->assertSame('default value 1', $fooNode->getProperty('test1'));
 	}
@@ -103,12 +103,12 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function createdNodesHaveSubNodesCreatedIfDefinedInContentType() {
+	public function createdNodesHaveSubNodesCreatedIfDefinedInNodeType() {
 		$rootNode = $this->context->getWorkspace()->getRootNode();
 
-		$contentTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
-		$testContentType = $contentTypeManager->getContentType('TYPO3.TYPO3CR:TestingContentTypeWithSubnodes');
-		$fooNode = $rootNode->createNode('foo', $testContentType);
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingContentTypeWithSubnodes');
+		$fooNode = $rootNode->createNode('foo', $testNodeType);
 		$firstSubnode = $fooNode->getNode('subnode1');
 		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', $firstSubnode);
 		$this->assertSame('default value 1', $firstSubnode->getProperty('test1'));
