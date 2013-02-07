@@ -37,6 +37,9 @@ body {
 		margin-bottom: $footer-height;
 		margin-top: $launcher-height + $menu-height + $topbar-offset + $toolbar-height;
 		margin-left: 0;
+		&.t3-tree-panel-open {
+			margin-left: $tree-panel-width;
+		}
 	}
 }
 #t3-page-metainformation {

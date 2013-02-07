@@ -6941,6 +6941,9 @@ body.t3-ui-controls {
   margin-top: 96px;
   margin-left: 0;
 }
+body.t3-ui-controls.t3-tree-panel-open {
+  margin-left: 300px;
+}
 
 #t3-page-metainformation {
   display: none;
@@ -9228,6 +9231,9 @@ body .t3-pageloader-wrapper .t3-pageloader {
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
+}
+body.t3-tree-panel-open .t3-pageloader-wrapper .t3-pageloader {
+  margin-left: -273px;
 }
 body.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
   margin-left: -23px;

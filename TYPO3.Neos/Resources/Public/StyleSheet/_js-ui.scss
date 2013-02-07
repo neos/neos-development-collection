@@ -214,6 +214,9 @@ body {
 			@include transition-duration(0.2s);
 		}
 	}
+	&.t3-tree-panel-open .t3-pageloader-wrapper .t3-pageloader {
+		margin-left: -23 - $tree-panel-width / 2 - $property-panel-width / 2;
+	}
 	&.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
 		margin-left: -23px;
 		margin-top: -23 + ($toolbar-height / 2);
