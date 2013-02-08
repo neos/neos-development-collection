@@ -6949,17 +6949,6 @@ body.t3-ui-controls.t3-tree-panel-open {
   text-align: left;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-.t3-ui div,
-#t3-ui-top div,
-#t3-inspector div,
-#t3-toolbar div,
-#t3-footer div,
-#t3-tree-panel div {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  text-align: left;
-  margin: 0px;
-  padding: 0px;
-}
 .t3-ui form,
 #t3-ui-top form,
 #t3-inspector form,
@@ -8981,6 +8970,11 @@ button.t3-button.t3-connection-status-down {
 
 .ui-tabs .ui-tabs-nav li a:focus {
   outline: none;
+}
+
+.inspector-dialog {
+  position: fixed;
+  z-index: 11000;
 }
 
 .popover {

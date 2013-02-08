@@ -1,13 +1,12 @@
-<div class="modal" id="inspectorDialog">
+<div class="modal">
 	<div class="modal-header">
-		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close t3-button" title="x"}}
+		{{view T3.Content.UI.ButtonDialog label="&times;" class="close" target="parentView" data-dismiss="modal" action="cancel"}}
 		<h3>You are currently changing properties. Do you want to apply your changes?</h3>
-		<p></p>
 	</div>
-		<div class="modal-footer">
-			{{view T3.Content.UI.ButtonDialog label="Don't apply" class="btn t3-button" target="parentView" action="dontApply"}}
-			{{view T3.Content.UI.ButtonDialog label="Cancel" class="btn t3-button" target="parentView" action="cancel"}}
-			{{view T3.Content.UI.ButtonDialog label="Apply" class="btn t3-button" target="parentView" action="apply"}}
-		</div>
+	<div class="modal-footer">
+		{{view T3.Content.UI.ButtonDialog label="Don't apply" class="t3-button btn btn-danger" target="parentView" action="dontApply"}}
+		{{view T3.Content.UI.ButtonDialog label="Cancel" class="t3-button btn" target="parentView" action="cancel"}}
+		{{view T3.Content.UI.ButtonDialog label="Apply" class="t3-button btn btn-success" target="parentView" action="apply"}}
+	</div>
 </div>
 <div class="modal-backdrop in"></div>

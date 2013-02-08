@@ -825,3 +825,8 @@ button.t3-button.t3-connection-status-down {
 .ui-tabs .ui-tabs-nav li a:focus {
 	outline: none;
 }
+
+.inspector-dialog {
+	position: fixed;
+	z-index: 11000;
+}
