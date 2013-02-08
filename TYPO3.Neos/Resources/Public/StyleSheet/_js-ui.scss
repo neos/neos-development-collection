@@ -206,19 +206,19 @@ body {
 		z-index: 10001;
 		.t3-pageloader {
 			position: relative;
-			top: 50%;
-			left: 50%;
-			margin-top: -23 + ($launcher-height + $menu-height + $topbar-offset + $toolbar-height) / 2 - $footer-height / 2;
-			margin-left: -23 - $property-panel-width / 2;
+			top: 50% !important;
+			left: 50% !important;
+			margin-top: ($launcher-height + $menu-height + $topbar-offset + $toolbar-height) / 2 - $footer-height / 2;
+			margin-left: -30 - $property-panel-width / 2;
 			@include transition-property(margin);
 			@include transition-duration(0.2s);
 		}
 	}
 	&.t3-tree-panel-open .t3-pageloader-wrapper .t3-pageloader {
-		margin-left: -23 - $tree-panel-width / 2 - $property-panel-width / 2;
+		margin-left: -30 - $tree-panel-width / 2 - $property-panel-width / 2;
 	}
 	&.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
-		margin-left: -23px;
-		margin-top: -23 + ($toolbar-height / 2);
+		margin-left: -30px;
+		margin-top: $toolbar-height / 2;
 	}
 }

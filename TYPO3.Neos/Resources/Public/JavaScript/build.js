@@ -8,7 +8,7 @@
 	baseUrl: ".",
 	paths: {
 		'Library': '../Library/',
-		'canvas.indicator': '../Library/canvas-indicator/canvas.indicator',
+		'spinjs': '../Library/spinjs/spin.min',
 		'chosen': '../Library/chosen/chosen/chosen.jquery.min',
 		'jquery.lionbars': '../Library/jquery-lionbars/jQuery.lionbars.0.2.1',
 		'jquery.hotkeys': '../Library/jquery-hotkeys/jquery.hotkeys',

@@ -9,8 +9,7 @@ define(
 	'jquery',
 	'text!neos/templates/content/ui/fileUpload.html',
 	'text!neos/templates/content/ui/imageUpload.html',
-	'neos/content/ui/elements',
-	'canvas.indicator'
+	'neos/content/ui/elements'
 ],
 function($, fileUploadTemplate, imageUploadTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/editors');
@@ -380,6 +379,8 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 		// Contains the handler for the AJAX request loading the preview image
 		_loadPreviewImageHandler: null,
+
+		loadingindicator: null,
 
 		init: function() {
 			var that = this;
@@ -813,19 +814,38 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				}));
 			}
 		},
+
 		_displayImageLoader: function() {
-			var $canvas = $('<canvas class="t3-inspector-image-loadingindicator" />');
-			this.$().find('.t3-inspector-image-thumbnail-container').append($canvas);
-			new CanvasIndicator($canvas.get(0), {
-				bars: 12,
-				innerRadius: 8,
-				size: [3, 15],
-				rgb: [255, 255, 255],
-				fps: 15
+			if (this.loadingindicator !== null) {
+				this.loadingindicator.spin(that.$().find('.t3-inspector-image-thumbnail-container').get(0));
+				return;
+			}
+			var that = this;
+			require([
+				'spinjs'
+			], function(Spinner) {
+				that.loadingindicator = new Spinner({
+					lines: 13, // The number of lines to draw
+					length: 15, // The length of each line
+					width: 4, // The line thickness
+					radius: 10, // The radius of the inner circle
+					corners: 1, // Corner roundness (0..1)
+					rotate: 0, // The rotation offset
+					color: '#fff', // #rgb or #rrggbb
+					speed: 1, // Rounds per second
+					trail: 64, // Afterglow percentage
+					shadow: false, // Whether to render a shadow
+					hwaccel: false, // Whether to use hardware acceleration
+					className: 'spinner', // The CSS class to assign to the spinner
+					zIndex: 2e9, // The z-index (defaults to 2000000000)
+					top: 'auto', // Top position relative to parent in px
+					left: 'auto' // Left position relative to parent in px
+				}).spin(that.$().find('.t3-inspector-image-thumbnail-container').get(0));
 			});
 		},
+
 		_hideImageLoader: function() {
-			this.$().find('.t3-inspector-image-loadingindicator').remove();
+			this.loadingindicator.stop();
 		},
 
 		/**

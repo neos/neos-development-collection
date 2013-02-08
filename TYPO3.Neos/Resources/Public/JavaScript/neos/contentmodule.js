@@ -59,6 +59,9 @@ function($, vie, Ember, CreateJS) {
 			dbPediaUrl: null
 		},
 
+		$loader: null,
+		spinner: null,
+
 		bootstrap: function() {
 			this.set('vie', vie);
 			this._initializeInspector();
@@ -512,9 +515,7 @@ function($, vie, Ember, CreateJS) {
 					window.location.href = uri;
 				}
 				that.set('_isLoadingPage', false);
-				$('.t3-pageloader-wrapper').fadeOut('fast', function() {
-					$(this).remove();
-				});
+				that.hidePageLoader();
 			});
 		},
 
@@ -527,26 +528,45 @@ function($, vie, Ember, CreateJS) {
 		 * already know that this will be followed by a reload of the current page.
 		 */
 		showPageLoader: function() {
-			if ($('.t3-pageloader-wrapper').length > 0) {
-					// page loader already shown, so we do not show it again
+			if (this.$loader !== null) {
+				this.$loader.fadeTo('fast', .8);
+				this.spinner.spin(this.$loader.get(0));
 				return;
 			}
+			var that = this;
 			require([
-				'canvas.indicator'
-			], function() {
-				var body = $('body'),
-					loader = $('<canvas class="t3-pageloader" />'),
-					indicator;
-				body.append($('<div />').addClass('t3-pageloader-wrapper').append(loader).fadeTo('fast', .8));
-
-				indicator = new CanvasIndicator(loader.get(0), {
-					bars: 12,
-					innerRadius: 8,
-					size: [3, 15],
-					rgb: [0, 0, 0],
-					fps: 15
-				});
+				'spinjs'
+			], function(Spinner) {
+				that.$loader = $('<div />').addClass('t3-pageloader-wrapper').fadeTo(0, .8).appendTo($('body'));
+				that.spinner = new Spinner({
+					lines: 13, // The number of lines to draw
+					length: 15, // The length of each line
+					width: 4, // The line thickness
+					radius: 10, // The radius of the inner circle
+					corners: 1, // Corner roundness (0..1)
+					rotate: 0, // The rotation offset
+					color: '#000', // #rgb or #rrggbb
+					speed: 1, // Rounds per second
+					trail: 64, // Afterglow percentage
+					shadow: false, // Whether to render a shadow
+					hwaccel: false, // Whether to use hardware acceleration
+					className: 't3-pageloader', // The CSS class to assign to the spinner
+					zIndex: 2e9, // The z-index (defaults to 2000000000)
+					top: 'auto', // Top position relative to parent in px
+					left: 'auto' // Left position relative to parent in px
+				}).spin(that.$loader.get(0));
 			});
+		},
+
+		hidePageLoader: function() {
+			var that = this;
+			this.$loader.fadeOut('fast', function() {
+				that.spinner.stop();
+			});
+		},
+
+		hidePageLoaderSpinner: function() {
+			this.spinner.stop();
 		}
 	});
 });
