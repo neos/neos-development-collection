@@ -66,15 +66,15 @@
 												</f:if>
 												<f:if condition="{package.isProtected}">
 													<f:then>
-														<button class="btn btn-warning disabled t3-button" title="This package is protected so it cannot be deactivated"><i class="icon-minus-sign icon-white"></i></button>
+														<button class="btn btn-warning disabled t3-button" title="This package is protected so it cannot be deactivated"><i class="icon-pause icon-white"></i></button>
 													</f:then>
 													<f:else>
-														<f:link.action action="deactivate" class="btn btn-warning t3-button" arguments="{packageKey: packageKey}" title="Click to deactivate"><i class="icon-minus-sign icon-white"></i></f:link.action>
+														<f:link.action action="deactivate" class="btn btn-warning t3-button" arguments="{packageKey: packageKey}" title="Click to deactivate"><i class="icon-pause icon-white"></i></f:link.action>
 													</f:else>
 												</f:if>
 											</f:then>
 											<f:else>
-												<f:link.action action="activate" class="btn btn-success t3-button" arguments="{packageKey: packageKey}" title="Click to activate"><i class="icon-plus-sign icon-white"></i></f:link.action>
+												<f:link.action action="activate" class="btn btn-success t3-button" arguments="{packageKey: packageKey}" title="Click to activate"><i class="icon-play icon-white"></i></f:link.action>
 											</f:else>
 										</f:if>
 										<f:if condition="{package.isProtected}">
@@ -121,11 +121,11 @@
 					</button>
 				</f:if>
 				<button type="submit" name="moduleArguments[action]" value="activate" class="btn btn-success t3-button batch-action disabled" disabled="disabled">
-					<i class="icon-plus-sign icon-white"></i>
+					<i class="icon-play icon-white"></i>
 					Activate <strong>selected</strong> packages
 				</button>
 				<button type="submit" name="moduleArguments[action]" value="deactivate" class="btn btn-warning t3-button batch-action disabled" disabled="disabled">
-					<i class="icon-minus-sign icon-white"></i>
+					<i class="icon-pause icon-white"></i>
 					Deactivate <strong>selected</strong> packages
 				</button>
 				<button class="btn btn-danger t3-button batch-action disabled" data-toggle="modal" href="#delete" disabled="disabled">
