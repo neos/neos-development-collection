@@ -1840,60 +1840,6 @@
     }
   };
 
-  jQuery.widget('Midgard.midgardNotifications', {
-    options: {
-      notification_defaults: {
-        class_prefix: 'midgardNotifications',
-        position: 'top right'
-      }
-    },
-
-    _create: function () {
-      this.classes = {
-        container: this.options.notification_defaults.class_prefix + '-container'
-      };
-
-      if (jQuery('.' + this.classes.container, this.element).length) {
-        this.container = jQuery('.' + this.classes.container, this.element);
-        this._parseFromDOM();
-      } else {
-        this.container = jQuery('<div class="' + this.classes.container + '" />');
-        this.element.append(this.container);
-      }
-    },
-
-    destroy: function () {
-      this.container.remove();
-      jQuery.Widget.prototype.destroy.call(this);
-    },
-
-    _init: function () {},
-
-    _parseFromDOM: function (path) {
-
-    },
-
-    showStory: function (options, items) {
-      var story = new MidgardNotificationStoryline(options, items);
-      story.start();
-
-      return story;
-    },
-
-    create: function (options) {
-      options = jQuery.extend({}, this.options.notification_defaults, options || {});
-
-      var item = new MidgardNotification(this.container, options);
-      item.show();
-
-      return item;
-    },
-
-    showTutorial: function () {
-      this.showStory({}, _createTutorialStoryline);
-    }
-  });
-
 })(jQuery);
 //     Create.js - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
