@@ -415,6 +415,9 @@ function($, vie, Ember, CreateJS) {
 		},
 
 		loadPage: function(uri, ignorePushToHistory) {
+				// TODO: when http://forge.typo3.org/issues/42014 is fixed this might be unnecessary
+			$('.t3-new-contentelement-popover').remove();
+
 			var that = this;
 			if (uri === '#') {
 					// Often, pages use an URI of "#" to go to the homepage. In this case,
