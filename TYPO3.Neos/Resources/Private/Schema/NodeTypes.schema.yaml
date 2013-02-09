@@ -1,0 +1,78 @@
+type: dictionary
+additionalProperties:
+  # every property here is a Node Type
+  type: dictionary
+  properties:
+    'properties':
+      type: dictionary
+      additionalProperties:
+        # for each property...
+        type: dictionary
+        properties:
+          'ui':
+            # here, we specify ONLY the "ui" part of the schema, as the remaining parts
+            # are already specified in the NodeTypes schema of the TYPO3CR package
+            type: dictionary
+            additionalProperties: FALSE
+            properties:
+
+              'label': { type: string, description: "Human-readable label for this property." }
+
+              'reloadIfChanged': { type: boolean, description: "If this property changes, should a page reload occur?" }
+
+              'inlineEditable': { type: boolean, description: "Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?" }
+
+              'inspector':
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+
+                  'group': { type: string, description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
+
+                  'position': { type: integer, description: 'Position inside the inspector group, small numbers are sorted on top' }
+
+                  'editor': { type: string, description: 'Name of the JavaScript Editor Class which is instanciated to edit this element in the inspector.' }
+
+                  'editorOptions': { type: dictionary, description: 'options for the given editor' }
+
+    'ui':
+      # here, we specify ONLY the "ui" part of the schema, as the remaining parts
+      # are already specified in the NodeTypes schema of the TYPO3CR package
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+
+        'label': { type: string, description: "Human-readable label for this Node Type." }
+
+        'icon':
+          'light': { type: string, description: "Light icon, to be used on dark backgrounds" }
+          'dark': { type: string, description: "Dark icon, to be used on light backgrounds" }
+
+        'inlineEditable': { type: boolean, description: "If TRUE, it is possible to interact with this Node directly in the content view. If FALSE, an overlay is shown preventing any interaction with the node." }
+
+        'group': { type: string, description: "Name of the group this content element is grouped into for the 'New Content Element' dialog." }
+
+        'inspector':
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+
+            'groups':
+              type: dictionary
+              additionalProperties:
+
+                # for each inspector group:
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+
+                  'label': { type: string, description: "Human-readable label for this Inspector Group." }
+
+                  'position': { type: integer, description: 'Position of the inspector groups, small numbers are sorted on top' }
+
+        'launcher':
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+
+            'searchCategory': { type: string, description: "If searching for this node type in the launcher, the results will be grouped by this category." }
