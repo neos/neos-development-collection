@@ -159,12 +159,19 @@ function($, CreateJS, Entity) {
 		}.property('_modified').cacheable(),
 
 		nodeProperties: null,
+		configuration: null,
 
 		selectedNode: null,
 		cleanProperties: null,
 
 		init: function() {
 			this.set('nodeProperties', Ember.Object.create());
+			this.set('configuration', T3.Common.LocalStorage.getItem('inspectorConfiguration') || {});
+			Ember.addObserver(this, 'configuration', function() {
+				if ($.isEmptyObject(this.get('configuration')) === false) {
+					T3.Common.LocalStorage.setItem('inspectorConfiguration', this.get('configuration'));
+				}
+			});
 		},
 
 		/**
@@ -198,7 +205,8 @@ function($, CreateJS, Entity) {
 				});
 
 				sectionsAndViews.push(jQuery.extend({}, propertyGroupConfiguration, {
-					properties: properties
+					properties: properties,
+					group: groupIdentifier
 				}));
 			});
 			sectionsAndViews.sort(function(a, b) {
