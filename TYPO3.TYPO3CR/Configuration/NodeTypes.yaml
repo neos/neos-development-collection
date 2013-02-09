@@ -2,8 +2,6 @@
 # TYPO3CR Node Types                                                     #
 #                                                                        #
 
-'unstructured':
-  label: 'Unstructured'
+'unstructured': []
 
-'TYPO3.TYPO3CR:Folder':
-  label: 'Folder'
+'TYPO3.TYPO3CR:Folder': []

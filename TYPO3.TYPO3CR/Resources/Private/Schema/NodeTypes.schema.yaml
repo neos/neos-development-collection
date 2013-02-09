@@ -1,0 +1,42 @@
+type: dictionary
+additionalProperties:
+  # every property here is a Node Type
+  type: dictionary
+  additionalProperties: FALSE
+  properties:
+
+    'superTypes':
+      type: array
+      # TODO: add validator which check that these are other Node Types.
+      items: { type: string, description: "List of TYPO3CR Node Types which are supertypes of this type" }
+
+    'childNodes':
+      type: dictionary
+      additionalProperties:
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+          'type': { type: string, description: "Node Type of this child node." }
+
+    'properties':
+      type: dictionary
+      additionalProperties:
+
+        # for each property...
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+
+          'type': { type: string, description: "PHP type of this property. Either simple type or fully qualified PHP class name." }
+
+          'defaultValue': { type: any, description: "Default value of this property. Used at node creation time. Type must match specified 'type'." }
+
+          'ui':
+            type: dictionary
+            # we intentionally do not specify which properties are allowed here;
+            # as other packages (such as TYPO3.Neos) might do that instead.
+
+    'ui':
+      type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages (such as TYPO3.Neos) might do that instead.
