@@ -91,7 +91,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\StandardController {
 	 *
 	 * @param \TYPO3\Neos\Domain\Model\Site $site A site to update
 	 * @param string $originalNodeName The site's original node name
-	 * @Flow\Validate(argumentName="site", type="\TYPO3\Neos\Validation\Validator\UniqueEntityValidator")
+	 * @Flow\Validate(argumentName="site", type="UniqueEntity")
 	 * @Flow\Validate(argumentName="originalNodeName", type="NotEmpty")
 	 * @return void
 	 */
@@ -246,7 +246,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\StandardController {
 	 * Update a domain
 	 *
 	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to update
-	 * @Flow\Validate(argumentName="domain", type="\TYPO3\Neos\Validation\Validator\UniqueEntityValidator")
+	 * @Flow\Validate(argumentName="domain", type="UniqueEntity")
 	 * @return void
 	 */
 	public function updateDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
@@ -274,7 +274,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\StandardController {
 	 * Create a domain
 	 *
 	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to create
-	 * @Flow\Validate(argumentName="domain", type="\TYPO3\Neos\Validation\Validator\UniqueEntityValidator")
+	 * @Flow\Validate(argumentName="domain", type="UniqueEntity")
 	 * @return void
 	 */
 	public function createDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
