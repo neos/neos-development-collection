@@ -266,18 +266,15 @@ body {
 #t3-inspector {
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
-	background: $dark-grey;
-	height: 100%;
-	margin: 0px;
-	margin-top: $menu-height + $launcher-height + $topbar-offset;
-	padding: 0px;
-	padding-bottom: $menu-height + $launcher-height + $topbar-offset;
 	position: fixed;
+	top: $menu-height + $launcher-height + $topbar-offset;
+	bottom: 0;
 	right: 0;
-	top: 0;
 	width: $property-panel-width;
+	background: $dark-grey;
 	z-index: 10014;
 	border-top: 1px solid $green;
+	padding-top: 45px;
 	@include transition-property('width, margin-top');
 	@include transition-duration(0.2s);
 
@@ -297,6 +294,8 @@ body {
 	}
 
 	.header {
+		position: absolute;
+		top: 0;
 		text-align: right;
 		height: $toolbar-height - 1;
 		line-height: $toolbar-height - 1;
@@ -328,7 +327,6 @@ body {
 		overflow-y: auto;
 		fieldset {
 			border: 0;
-			margin-bottom: 35px;
 
 			.t3-inspector-field {
 				padding: 10px 10px 0 10px;
