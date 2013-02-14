@@ -22,6 +22,10 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 	T3.Content.UI = T3.Content.UI || {};
 	T3.Content.UI.Editor = T3.Content.UI.Editor || {};
 
+	Ember.TextSupport.reopen({
+		attributeBindings: ['name', 'required', 'pattern', 'step', 'min', 'max']
+	});
+
 	T3.Content.UI.Editor.TextField = Ember.TextField.extend({
 		classNames: ['input-small']
 	});
