@@ -7191,33 +7191,36 @@ body.t3-ui-controls.t3-tree-panel-open {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  background: #FFFFFF;
-  height: 100%;
-  margin: 0px;
-  margin-top: 60px;
-  padding: 0px;
-  padding-bottom: 60px;
-  position: fixed;
-  left: 0;
-  top: 36px;
+  background: white;
   width: 0;
-  z-index: 10014;
-  overflow-x: hidden;
-  overflow-y: auto;
-  z-index: 10012;
-  -webkit-transition-property: width, margin-left;
-  -moz-transition-property: width, margin-left;
-  -o-transition-property: width, margin-left;
-  transition-property: width, margin-left;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  overflow: hidden;
+  left: 0;
+  top: 96px;
+  bottom: 26px;
+  z-index: 10010;
+  -webkit-transition-property: width;
+  -moz-transition-property: width;
+  -o-transition-property: width;
+  transition-property: width;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
+  padding-top: 27px;
 }
-#t3-tree-panel .content {
-  background-color: white;
-  border-radius: 0 0 3px 3px;
-  width: 100%;
+#t3-tree-panel > div.ember-view, #t3-tree-panel > div.ember-view > div.ember-view {
+  height: 100%;
+}
+#t3-tree-panel .t3-pagetree,
+#t3-tree-panel .dynatree-container,
+#t3-tree-panel #t3-dd-pagetree-con {
+  height: 100%;
+}
+#t3-tree-panel .dynatree-container {
+  overflow: visible;
 }
 .t3-tree-panel-open #t3-tree-panel {
   width: 300px;
@@ -8028,12 +8031,9 @@ ul.t3-launcher-horizontal li .text {
   width: 250px;
 }
 .dynatree-container #t3-dd-pagetree-con {
-  position: relative;
-}
-.dynatree-container #t3-dd-pagetree {
-  height: 270px;
-  padding-bottom: 8px;
   width: 100%;
+  height: 100%;
+  overflow: auto;
 }
 .dynatree-container #t3-dd-pagetree span.dynatree-drop-target {
   margin: 3px 0;
@@ -8190,11 +8190,16 @@ ul.t3-launcher-horizontal li .text {
   background-position: -433px -96px;
 }
 .dynatree-container .t3-pagetree-action-toolbar-con {
-  background-color: #EEEEEE;
+  background-color: #eee;
   border: 1px dotted #444444;
-  height: 25px;
+  height: 27px;
   padding-right: 10px;
   width: 100%;
+  position: absolute;
+  top: -27px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .dynatree-container .page-action-toolbar {
   cursor: pointer;
