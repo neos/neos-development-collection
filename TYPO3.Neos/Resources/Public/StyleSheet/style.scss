@@ -276,7 +276,7 @@ body {
 	border-top: 1px solid $green;
 	padding-top: 45px;
 	@include transition-property('width, margin-top');
-	@include transition-duration(0.2s);
+	@include transition-duration(.2s);
 
 	.header,
 	h2 {
@@ -424,8 +424,8 @@ body {
 	top: $menu-height + $launcher-height + $topbar-offset + $toolbar-height;
 	bottom: $footer-height;
 	z-index: 10010;
-	@include transition-property('width');
-	@include transition-duration(0.2s);
+	@include transition-property('width, margin-top');
+	@include transition-duration(.2s);
 	padding-top: 27px;
 	& > div.ember-view,
 	& > div.ember-view > div.ember-view {
@@ -864,10 +864,6 @@ body {
 	}
 	.aloha-block-TYPO3Block {
 		@include transition-property(margin);
-		@include transition-duration(0.2s);
-	}
-	#t3-inspector {
-		@include transition-property(width);
 		@include transition-duration(0.2s);
 	}
 	&.t3-ui-previewmode {
