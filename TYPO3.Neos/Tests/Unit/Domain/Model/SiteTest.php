@@ -29,9 +29,9 @@ class SiteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function theDefaultStateOfASiteIsOnline() {
+	public function theDefaultStateOfASiteIsOffline() {
 		$site = new \TYPO3\Neos\Domain\Model\Site('');
-		$this->assertSame(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE, $site->getState());
+		$this->assertSame(\TYPO3\Neos\Domain\Model\Site::STATE_OFFLINE, $site->getState());
 	}
 
 	/**
@@ -39,8 +39,8 @@ class SiteTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function theStateCanBeSetAndRetrieved() {
 		$site = new \TYPO3\Neos\Domain\Model\Site('');
-		$site->setState(\TYPO3\Neos\Domain\Model\Site::STATE_OFFLINE);
-		$this->assertSame(\TYPO3\Neos\Domain\Model\Site::STATE_OFFLINE, $site->getState());
+		$site->setState(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE);
+		$this->assertSame(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE, $site->getState());
 	}
 
 	/**
