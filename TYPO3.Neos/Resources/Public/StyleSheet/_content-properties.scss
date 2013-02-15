@@ -1,67 +1,97 @@
-// Image thumbnail stuff in inspector
-.t3-inspector-form .typo3-imagethumbnailcontainer {
-	position: relative;
-	overflow: hidden;
+.t3-ui {
+	// Image thumbnail stuff in inspector
+	&#t3-inspector .t3-inspector-form {
+		.chzn-container {
+			li.highlighted {
+				@include gradient-vertical($light-orange, darken($light-orange, 5%));
+			}
+		}
+		.t3-inspector-image-thumbnail-container {
+			position: relative;
+			overflow: hidden;
+			border: 1px dashed $dark-grey2;
+			margin-bottom: 10px;
 
-	.t3-image-loadingindicator {
-		z-index: 1;
-		position: absolute;
-		left: 57px;
-		top: 64px;
-	}
+			.t3-inspector-image-loadingindicator {
+				z-index: 1;
+				position: absolute;
+				left: 67px;
+				top: 67px;
+			}
 
-	.typo3-imagethumbnail-inner {
-		overflow: hidden;
-		padding: 0;
-		margin: auto;
-		img {
-				// We need to reset max-width and height, as this is set in t3-ui globally.
-			max-width: none;
-			max-height: none;
+			.t3-inspector-image-thumbnail-inner {
+				overflow: hidden;
+				padding: 0;
+				margin: auto;
+				img {
+						// We need to reset max-width and height, as this is set in t3-ui globally.
+					max-width: none;
+					max-height: none;
+				}
+			}
+
+			.t3-imagebadge {
+				position: absolute;
+				top: 80px;
+				width: 100%;
+				height: 20px;
+				color: white;
+				background: rgba(0,0,0, 0.7);
+				text-align: center;
+				display:none;
+
+				&.t3-imagebadge-visible {
+					display:block;
+				}
+			}
+
+			.t3-inspector-image-uploadthumbnail {
+				display: block;
+				position:absolute;
+				left: 0;
+				top: 0;
+			}
+
+			.t3-inspector-image-uploadthumbnail-landscape {
+				width: $max-image-width;
+			}
+
+			.t3-inspector-image-uploadthumbnail-portrait {
+				height: $max-image-height;
+			}
+		}
+
+		.t3-inspector-image-upload-button,
+		.t3-inspector-image-crop-button {
+			float: right;
+		}
+
+		.t3-inspector-image-upload,
+		.t3-inspector-image-width {
+			padding-bottom: 10px;
 		}
 	}
-	.typo3-imagebadge {
-		position: absolute;
-		top: 80px;
-		width: 100%;
-		height: 20px;
-		color: white;
-		background: rgba(0,0,0, 0.7);
-		text-align: center;
-		display:none;
-
-		&.typo3-imagebadge-visible {
-			display:block;
-		}
-	}
-
-	.typo3-uploadthumbnail {
-		display: block;
-		position:absolute;
-		left: 0;
-		top: 0;
-	}
-	.typo3-fileupload-thumbnail-landscape {
-		width: $max-image-width;
-	}
-
-	.typo3-fileupload-thumbnail-portrait {
-		height: $max-image-height;
+	.t3-inspector-image-crop {
+		background: $dark-grey;
+		@include border-radius(0 0 3px 3px);
+		padding-left: 10px;
+		padding-top: 10px;
 	}
 }
+
 .t3-inspector {
-	.typo3-image-preview-thumbnail {
+	.t3-image-preview-thumbnail {
 		max-width: $max-image-width;
 		max-height: $max-image-height;
 	}
 }
 
 // Image position - start
-.typo3-image {
-	&.typo3-image-position-left {
+.t3-image {
+	&.t3-image-position-left {
 		float: left;
 	}
-	&.typo3-image-position-right {
+	&.t3-image-position-right {
 		float: right;
 	}
 }

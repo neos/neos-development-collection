@@ -205,16 +205,20 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 * Label of the file chooser button
 		 */
 		fileChooserLabel: 'Choose file',
-
-		uploaderLabel: 'Upload!',
+		uploaderLabel: 'Upload',
+		cropLabel: 'Crop',
 
 		// File filters
 		allowedFileTypes: null,
 
 		_uploader: null,
+		_uploadInProgress: false,
 		_containerId: null,
 		_browseButtonId: null,
 		_uploadButtonShown: false,
+		_uploadButtonNotShown: function() {
+			return !this.get('_uploadButtonShown');
+		}.property('_uploadButtonShown').cacheable(),
 
 		template: Ember.Handlebars.compile(fileUploadTemplate),
 
@@ -255,6 +259,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			});
 
 			this._uploader.bind('Error', function(uploader, error) {
+				that.set('_uploadInProgress', false);
 				T3.Common.Notification.error(error.message);
 				// FilesAdded gets the unfiltered list, so we have to disable the upload on errors
 				if (error.code === plupload.FILE_EXTENSION_ERROR) {
@@ -286,9 +291,11 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			// Template method
 		},
 		fileUploaded: function(response) {
+			this.set('_uploadInProgress', false);
 			this.set('_uploadButtonShown', false);
 		},
 		upload: function() {
+			this.set('_uploadInProgress', true);
 			this._uploader.start();
 		}
 	});
@@ -310,10 +317,10 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 * Size of the image preview. Public configuration.
 		 *
 		 * If this setting is changed, also the CSS properties
-		 * .typo3-fileupload-thumbnail-portrait and .typo3-fileupload-thumbnail-landscape
+		 * .t3-inspector-image-uploadthumbnail-portrait and .t3-inspector-image-uploadthumbnail-landscape
 		 * need to be adjusted.
 		 */
-		imagePreviewMaximumDimensions: {w: 160, h: 160},
+		imagePreviewMaximumDimensions: {w: 178, h: 178},
 
 		/**
 		 * Comma-separated list of allowed file types.
@@ -331,16 +338,9 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		_uploadPreviewNotShown: function() {
 			return !this.get('_uploadPreviewShown');
 		}.property('_uploadPreviewShown').cacheable(),
-		_uploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.Neos/Images/dummy-image.png', // TODO: we need a way to fetch the static resources base URI
 
-		// Image Badge
-		_imageBadgeVisible: false,
-		_imageBadgeClass: function() {
-			if (this.get('_imageBadgeVisible')) {
-				return 'typo3-imagebadge typo3-imagebadge-visible';
-			}
-			return 'typo3-imagebadge';
-		}.property('_imageBadgeVisible').cacheable(),
+		_uploadPreviewImageSource: '',
+		_defaultUploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.Neos/Images/dummy-image.png', // TODO: we need a way to fetch the static resources base URI
 
 		/**
 		 * @var boolean
@@ -355,19 +355,19 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		/**
 		 * This is the UUID of the full-size image; which is being stored.
 		 */
-		_originalImageUuid:null,
+		_originalImageUuid: null,
 		// size of the original (base) image ("w" + "h")
-		_originalImageSize:null,
+		_originalImageSize: null,
 
 		/**
 		 * The "preview" image is shown in the sidebar, and is also used
 		 * for cropping.
 		 */
-		_previewImageUri:null,
+		_previewImageUri: null,
 
 		// This is the size of the image being used for cropping
 		// Object "w" + "h"
-		_previewImageSize:null,
+		_previewImageSize: null,
 
 		/**
 		 * Crop properties, as being used by jCrop editor.
@@ -384,6 +384,8 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		init: function() {
 			var that = this;
 			this._super();
+
+			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
 
 			this.set('_finalImageScale', Ember.Object.create({
 				w: null,
@@ -443,6 +445,42 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			}));
 		},
 
+		_imageWidthToggle: function(propertyName, value) {
+			if (typeof value === 'boolean') {
+				if (value === false) {
+					this.setPath('_finalImageScale.w', null);
+					this.setPath('_finalImageScale.h', null);
+				} else {
+					this.setPath('_finalImageScale.w', this.getPath('_originalImageSize.w'));
+					this.setPath('_finalImageScale.h', this.getPath('_originalImageSize.h'));
+				}
+			}
+			if (this.getPath('_finalImageScale.w') > 0) {
+				return true;
+			}
+			this.setPath('_finalImageScale.w', null);
+			this.setPath('_finalImageScale.h', null);
+			return false;
+		}.property('_finalImageScale.w').cacheable(),
+
+		_imageHeightToggle: function(propertyName, value) {
+			if (typeof value === 'boolean') {
+				if (value === false) {
+					this.setPath('_finalImageScale.w', null);
+					this.setPath('_finalImageScale.h', null);
+				} else {
+					this.setPath('_finalImageScale.w', this.getPath('_originalImageSize.w'));
+					this.setPath('_finalImageScale.h', this.getPath('_originalImageSize.h'));
+				}
+			}
+			if (this.getPath('_finalImageScale.w') > 0) {
+				return true;
+			}
+			this.setPath('_finalImageScale.w', null);
+			this.setPath('_finalImageScale.h', null);
+			return false;
+		}.property('_finalImageScale.h').cacheable(),
+
 		_aspectRatioChanged: function() {
 			this.setPath('_finalImageScale.h', parseInt(this.getPath('_finalImageScale.w') / this.getPath('_cropProperties.aspectRatio')));
 		}.observes('_finalImageScale.w', '_cropProperties.aspectRatio'),
@@ -457,11 +495,11 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		didInsertElement: function() {
 			this._super();
 
-			this.$().find('.typo3-imagethumbnail-inner').css({
+			this.$().find('.t3-inspector-image-thumbnail-inner').css({
 				width: this.imagePreviewMaximumDimensions.w + 'px',
 				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
-			this.$().find('.typo3-imagethumbnailcontainer').css({
+			this.$().find('.t3-inspector-image-thumbnail-container').css({
 				width: this.imagePreviewMaximumDimensions.w + 'px',
 				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
@@ -471,7 +509,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 		willDestroyElement: function() {
 				// Hide popover when the focus changes
-			this.$().find('.typo3-imagethumbnail').trigger('hidePopover');
+			this.$().find('.t3-inspector-image-crop-button').trigger('hidePopover');
 			if (this.get('_loadPreviewImageHandler')) {
 				this.get('_loadPreviewImageHandler').abort();
 			}
@@ -485,7 +523,6 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 */
 		filesScheduledForUpload: function(files) {
 			var that = this;
-
 			if (files.length > 0) {
 				var image = files[0];
 
@@ -497,34 +534,34 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 						var imageObjForFindingSize = new window.Image();
 						imageObjForFindingSize.onload = function() {
-							var scaleFactor, offset;
+							var scaleFactor,
+								offset,
+								image = that.$().find('.t3-inspector-image-uploadthumbnail img');
 							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
-								that.$().find('.typo3-uploadthumbnail img').addClass('typo3-fileupload-thumbnail-landscape');
-								that.$().find('.typo3-uploadthumbnail img').removeClass('typo3-fileupload-thumbnail-portrait');
+								image.addClass('t3-inspector-image-uploadthumbnail-landscape').removeClass('t3-inspector-image-uploadthumbnail-portrait');
 
 									// For landscape images, we set the margin-top correctly to align the image in the center
 								scaleFactor = that.getPath('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
 								offset = ((that.getPath('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
-								that.$().find('.typo3-uploadthumbnail img').css('margin-top', parseInt(offset) + 'px');
-								that.$().find('.typo3-uploadthumbnail img').css('margin-left', '0px');
+								image.css({'margin-top': parseInt(offset) + 'px', 'margin-left': 0});
 							} else {
-								that.$().find('.typo3-uploadthumbnail img').removeClass('typo3-fileupload-thumbnail-landscape');
-								that.$().find('.typo3-uploadthumbnail img').addClass('typo3-fileupload-thumbnail-portrait');
+								image.removeClass('t3-inspector-image-uploadthumbnail-landscape').addClass('t3-inspector-image-uploadthumbnail-portrait');
 
 									// For portrait images, we set the margin-left correctly to align the image in the center
 								scaleFactor = that.getPath('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
 								offset = ((that.getPath('imagePreviewMaximumDimensions.w') - imageObjForFindingSize.width * scaleFactor) / 2);
-								that.$().find('.typo3-uploadthumbnail img').css('margin-left', parseInt(offset) + 'px');
-								that.$().find('.typo3-uploadthumbnail img').css('margin-top', '0px');
+								image.css({'margin-left': parseInt(offset) + 'px', 'margin-top': 0});
 							}
 							that.set('_uploadPreviewShown', true);
-							that.set('_imageBadgeVisible', false);
 						};
 						imageObjForFindingSize.src = binaryData;
 					};
 
 					reader.readAsDataURL(image);
 				}
+			} else {
+				that.set('_uploadPreviewShown', false);
+				that.set('_uploadButtonShown', false);
 			}
 		},
 
@@ -558,7 +595,6 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			this.set('_previewImageSize', responseJson.previewSize);
 			this.set('_previewImageUri', responseJson.previewImageResourceUri);
 			this.set('_uploadPreviewShown', false);
-			this.set('_imageBadgeVisible', true);
 
 			Ember.endPropertyChanges();
 		},
@@ -578,25 +614,27 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 */
 		_initializePopover: function() {
 			var that = this,
-				$popoverContent = $('<div />'),
+				$popoverContent = $('<div class="t3-inspector-image-crop" />'),
 				$imageInThumbnail = $('<img />'),
 				previewImageSize = that.get('_previewImageSize');
 
 			$popoverContent.append($imageInThumbnail);
 			$popoverContent.css({
 				width: previewImageSize.w + 10 + 'px',
-				height: previewImageSize.h + 10 + 'px',
-				'padding-left': '5px',
-				'padding-top': '5px',
-				'background': 'black'
+				height: previewImageSize.h + 10 + 'px'
 			});
 
-			this.$().find('.typo3-imagethumbnail').popover({
+			this.$().find('.t3-inspector-image-thumbnail').click(function() {
+				that.$().find('.t3-inspector-image-crop-button').trigger('hidePopover');
+			});
+			this.$().find('.t3-inspector-image-crop-button').popover({
 				content: $popoverContent,
 				header: '<span>Crop Image</span>',
 				preventTop: true,
 				preventBottom: true,
 				preventRight: true,
+				offsetY: -111,
+				offsetX: -140,
 				openEvent: function() {
 					$imageInThumbnail.attr('src', that.get('_previewImageUri'));
 					this.popover$.addClass('t3-ui');
@@ -654,7 +692,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 				// Update size of preview bounding box
 				// and Center preview image thumbnail
-			this.$().find('.typo3-imagethumbnail-inner').css({
+			this.$().find('.t3-inspector-image-thumbnail-inner').css({
 				width: previewBoundingBoxSize.w + 'px',
 				height: previewBoundingBoxSize.h + 'px',
 				position: 'absolute',
@@ -663,7 +701,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			});
 
 				// Scale Preview image and update relative image position
-			this.$().find('.typo3-imagethumbnail-inner img').css({
+			this.$().find('.t3-inspector-image-thumbnail-inner img').css({
 				width: Math.floor(this.get('_previewImageSize').w * overallScalingFactor) + 'px',
 				height:  Math.floor(this.get('_previewImageSize').h * overallScalingFactor) + 'px',
 				marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
@@ -676,7 +714,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 * Saving / Loading
 		 ***************************************/
 		/**
-		 * This function must be triggered *explicitely* when either:
+		 * This function must be triggered *explicitly* when either:
 		 * _originalImageUuid, _cropProperties or _finalImageScale are modified, as it
 		 * writes these changes back into a JSON object.
 		 *
@@ -686,33 +724,36 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		_updateValue: function() {
 			if (!this.getPath('_cropProperties.initialized')) return;
 			if (!this.get('_imageFullyLoaded')) return;
+			// Prevent the user from setting width and height to empty
 
 			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.getPath('_cropProperties.full'));
 
 			this.set('value', JSON.stringify({
 				originalImage: this.get('_originalImageUuid'),
-
-				processingInstructions: [{
-					command: 'crop',
-					options: {
-						start: {
-							x: originalImageCropDimensions.x,
-							y: originalImageCropDimensions.y
-						},
-						size: {
-							width: originalImageCropDimensions.w,
-							height: originalImageCropDimensions.h
+				processingInstructions: [
+					{
+						command: 'crop',
+						options: {
+							start: {
+								x: originalImageCropDimensions.x,
+								y: originalImageCropDimensions.y
+							},
+							size: {
+								width: originalImageCropDimensions.w,
+								height: originalImageCropDimensions.h
+							}
+						}
+					},
+					{
+						command: 'resize',
+						options: {
+							size: {
+								width: this.getPath('_finalImageScale.w'),
+								height: this.getPath('_finalImageScale.h')
+							}
 						}
 					}
-				},{
-					command: 'resize',
-					options: {
-						size: {
-							width: this.getPath('_finalImageScale.w'),
-							height: this.getPath('_finalImageScale.h')
-						}
-					}
-				}]
+				]
 			}));
 		},
 
@@ -773,8 +814,8 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			}
 		},
 		_displayImageLoader: function() {
-			var $canvas = $('<canvas class="t3-image-loadingindicator" />');
-			this.$().find('.typo3-imagethumbnailcontainer').append($canvas);
+			var $canvas = $('<canvas class="t3-inspector-image-loadingindicator" />');
+			this.$().find('.t3-inspector-image-thumbnail-container').append($canvas);
 			new CanvasIndicator($canvas.get(0), {
 				bars: 12,
 				innerRadius: 8,
@@ -784,7 +825,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			});
 		},
 		_hideImageLoader: function() {
-			this.$().find('.t3-image-loadingindicator').remove();
+			this.$().find('.t3-inspector-image-loadingindicator').remove();
 		},
 
 		/**

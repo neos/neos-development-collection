@@ -7250,7 +7250,7 @@ body.t3-ui-controls.t3-tree-panel-open {
 #t3-inspector .t3-inspector-form fieldset .t3-inspector-field {
   padding: 10px 10px 0 10px;
 }
-#t3-inspector .t3-inspector-form fieldset .t3-inspector-field div {
+#t3-inspector .t3-inspector-form fieldset .t3-inspector-field > div {
   padding-bottom: 10px;
 }
 #t3-inspector .t3-inspector-form fieldset .t3-inspector-field input {
@@ -7261,11 +7261,49 @@ body.t3-ui-controls.t3-tree-panel-open {
   font-weight: normal;
   cursor: pointer;
 }
-#t3-inspector .t3-inspector-form input[type=text] {
-  width: 175px;
-  display: block;
+#t3-inspector .t3-inspector-form input[type="text"],
+#t3-inspector .t3-inspector-form input[type="password"],
+#t3-inspector .t3-inspector-form input[type="datetime"],
+#t3-inspector .t3-inspector-form input[type="datetime-local"],
+#t3-inspector .t3-inspector-form input[type="date"],
+#t3-inspector .t3-inspector-form input[type="month"],
+#t3-inspector .t3-inspector-form input[type="time"],
+#t3-inspector .t3-inspector-form input[type="week"],
+#t3-inspector .t3-inspector-form input[type="number"],
+#t3-inspector .t3-inspector-form input[type="range"],
+#t3-inspector .t3-inspector-form input[type="date"],
+#t3-inspector .t3-inspector-form input[type="email"],
+#t3-inspector .t3-inspector-form input[type="url"],
+#t3-inspector .t3-inspector-form input[type="search"],
+#t3-inspector .t3-inspector-form input[type="tel"],
+#t3-inspector .t3-inspector-form input[type="color"],
+#t3-inspector .t3-inspector-form input[type="number"],
+#t3-inspector .t3-inspector-form .uneditable-input {
+  width: 100%;
+  height: 24px;
+  border-color: #999;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
-#t3-inspector .t3-inspector-form input[type=text].modified {
+#t3-inspector .t3-inspector-form input[type="text"].modified,
+#t3-inspector .t3-inspector-form input[type="password"].modified,
+#t3-inspector .t3-inspector-form input[type="datetime"].modified,
+#t3-inspector .t3-inspector-form input[type="datetime-local"].modified,
+#t3-inspector .t3-inspector-form input[type="date"].modified,
+#t3-inspector .t3-inspector-form input[type="month"].modified,
+#t3-inspector .t3-inspector-form input[type="time"].modified,
+#t3-inspector .t3-inspector-form input[type="week"].modified,
+#t3-inspector .t3-inspector-form input[type="number"].modified,
+#t3-inspector .t3-inspector-form input[type="range"].modified,
+#t3-inspector .t3-inspector-form input[type="date"].modified,
+#t3-inspector .t3-inspector-form input[type="email"].modified,
+#t3-inspector .t3-inspector-form input[type="url"].modified,
+#t3-inspector .t3-inspector-form input[type="search"].modified,
+#t3-inspector .t3-inspector-form input[type="tel"].modified,
+#t3-inspector .t3-inspector-form input[type="color"].modified,
+#t3-inspector .t3-inspector-form input[type="number"].modified,
+#t3-inspector .t3-inspector-form .uneditable-input.modified {
   border: 1px solid #54974a;
 }
 #t3-inspector .t3-inspector-form input[placeholder],
@@ -7275,7 +7313,39 @@ body.t3-ui-controls.t3-tree-panel-open {
   line-height: 20px;
 }
 #t3-inspector .t3-inspector-form select {
-  width: 175px;
+  width: 100%;
+}
+#t3-inspector .t3-inspector-form .input-prepend,
+#t3-inspector .t3-inspector-form .input-append {
+  display: table;
+  width: 100%;
+  white-space: normal;
+}
+#t3-inspector .t3-inspector-form .add-on {
+  display: table-cell;
+  background-color: #eee;
+  color: #333;
+  border-color: #999;
+  text-shadow: white 0px 1px 0px;
+  padding: 1px 3px;
+  font-size: 12px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+#t3-inspector .t3-inspector-form .add-on + span {
+  display: table-cell;
+  padding-bottom: 0;
+}
+#t3-inspector .t3-inspector-form .add-on + span input {
+  border-left: none;
+  border-right: none;
+}
+#t3-inspector .t3-inspector-form .chzn-container-single .chzn-single {
+  border-radius: 3px;
+  color: #333;
 }
 
 #t3-tree-panel {
@@ -8091,26 +8161,38 @@ ul.t3-launcher-horizontal li .text {
   padding-right: 10px;
 }
 
-.t3-inspector-form .typo3-imagethumbnailcontainer {
+.t3-ui#t3-inspector .t3-inspector-form .chzn-container li.highlighted {
+  background-color: #f58200;
+  background-image: -moz-linear-gradient(top, #ff8700, #e67a00);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff8700), to(#e67a00));
+  background-image: -webkit-linear-gradient(top, #ff8700, #e67a00);
+  background-image: -o-linear-gradient(top, #ff8700, #e67a00);
+  background-image: linear-gradient(to bottom, #ff8700, #e67a00);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF8700', endColorstr='#FFE67A00', GradientType=0);
+}
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container {
   position: relative;
   overflow: hidden;
+  border: 1px dashed #444444;
+  margin-bottom: 10px;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .t3-image-loadingindicator {
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-loadingindicator {
   z-index: 1;
   position: absolute;
-  left: 57px;
-  top: 64px;
+  left: 67px;
+  top: 67px;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail-inner {
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-thumbnail-inner {
   overflow: hidden;
   padding: 0;
   margin: auto;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail-inner img {
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-thumbnail-inner img {
   max-width: none;
   max-height: none;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagebadge {
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-imagebadge {
   position: absolute;
   top: 80px;
   width: 100%;
@@ -8120,31 +8202,49 @@ ul.t3-launcher-horizontal li .text {
   text-align: center;
   display: none;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagebadge.typo3-imagebadge-visible {
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-imagebadge.t3-imagebadge-visible {
   display: block;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-uploadthumbnail {
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail {
   display: block;
   position: absolute;
   left: 0;
   top: 0;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-landscape {
-  width: 160px;
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail-landscape {
+  width: 180px;
 }
-.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-portrait {
-  height: 160px;
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail-portrait {
+  height: 180px;
+}
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-upload-button,
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-crop-button {
+  float: right;
+}
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-upload,
+.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-width {
+  padding-bottom: 10px;
+}
+.t3-ui .t3-inspector-image-crop {
+  background: #2d2d2d;
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  -ms-border-radius: 0 0 3px 3px;
+  -o-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+  padding-left: 10px;
+  padding-top: 10px;
 }
 
-.t3-inspector .typo3-image-preview-thumbnail {
-  max-width: 160px;
-  max-height: 160px;
+.t3-inspector .t3-image-preview-thumbnail {
+  max-width: 180px;
+  max-height: 180px;
 }
 
-.typo3-image.typo3-image-position-left {
+.t3-image.t3-image-position-left {
   float: left;
 }
-.typo3-image.typo3-image-position-right {
+.t3-image.t3-image-position-right {
   float: right;
 }
 
@@ -8353,7 +8453,7 @@ ul.t3-launcher-horizontal li .text {
   background-position: -433px -96px;
 }
 .dynatree-container .t3-pagetree-action-toolbar-con {
-  background-color: #eee;
+  background-color: #e8e8e8;
   border: 1px dotted #444444;
   height: 27px;
   padding-right: 10px;
@@ -8547,26 +8647,6 @@ ul.t3-launcher-horizontal li .text {
 .aloha-block-TYPO3Block {
   margin-top: 20px;
   margin-bottom: 20px;
-}
-
-.t3-inspector .typo3-fileupload-image-size {
-  color: white;
-  overflow: hidden;
-}
-.t3-inspector .typo3-fileupload-image-size div {
-  overflow: hidden;
-}
-.t3-inspector .typo3-fileupload-image-size label,
-.t3-inspector .typo3-fileupload-image-size span {
-  float: left;
-}
-.t3-inspector .typo3-fileupload-image-size label {
-  width: 60px;
-}
-.t3-inspector .typo3-fileupload-image-size input {
-  float: left;
-  width: 50px;
-  margin: 0px 5px;
 }
 
 button.t3-button.t3-connection-status-down {
