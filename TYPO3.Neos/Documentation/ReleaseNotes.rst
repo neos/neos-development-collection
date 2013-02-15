@@ -56,3 +56,10 @@ TYPO3 Neos Sprint Release 7
 ------------------------------
 
 TODO: add
+
+TYPO3  Neos 1.0.0-alpha3
+------------------------------
+
+* UI improvements for content editing
+* Stabilization of content editing
+* Low level features in TypoScript and Eel to prepare for new features
