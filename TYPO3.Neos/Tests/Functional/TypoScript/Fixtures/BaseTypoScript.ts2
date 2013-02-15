@@ -1,0 +1,39 @@
+####################################
+# BASIC TYPOSCRIPT FOR THE TEST CASE
+####################################
+
+namespace: default = TYPO3.TypoScript
+
+# Definition of custom TypoScript types
+prototype(TYPO3.Neos.ContentTypes:ThreeColumn) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.ContentTypes:ThreeColumn) {
+	templatePath = 'FIXTURE_DIRECTORY/ThreeColumnTemplate.html'
+	left = TYPO3.TypoScript:Collection
+	left.collection = ${q(node).children("left").children()}
+	center = TYPO3.TypoScript:Collection
+	center.collection = ${q(node).children("center").children()}
+	right = TYPO3.TypoScript:Collection
+	right.collection = ${q(node).children("right").children()}
+}
+
+prototype(TYPO3.TypoScript:Case).threeColumn {
+	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:ThreeColumn]')}
+	type = 'TYPO3.Neos.ContentTypes:ThreeColumn'
+	@position = 4242
+}
+
+
+# MAIN PAGE TEMPLATE
+
+page1 = TYPO3.Neos.ContentTypes:Page
+page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
+page1.body.sections {
+	teaser = TYPO3.TypoScript:Collection
+	teaser.collection = ${q(node).children('teaser').children()}
+
+	main = TYPO3.TypoScript:Collection
+	main.collection = ${q(node).children('main').children()}
+
+	sidebar = TYPO3.TypoScript:Collection
+	sidebar.collection = ${q(node).children('sidebar').children()}
+}

@@ -1,0 +1,4 @@
+TYPO3\TypoScript\View\TypoScriptView:
+  properties:
+    fallbackView:
+      object: TYPO3\Fluid\View\TemplateView

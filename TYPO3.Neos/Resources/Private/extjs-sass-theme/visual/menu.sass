@@ -1,0 +1,68 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-menu
+  background-color: adjust_hue(#f0f0f0, $hue)
+  background-image: url (#{$img_path+"/menu/menu.gif"})
+
+.x-menu-floating
+  border-color: adjust_hue(#718bb7, $hue)
+
+.x-menu-nosep
+  background-image: none
+
+.x-menu-list-item
+  font: normal 11px arial,tahoma,sans-serif
+
+.x-menu-item-arrow
+  background-image: url (#{$img_path+"/menu/menu-parent.gif"})
+
+.x-menu-sep
+  background-color: adjust_hue(#e0e0e0, $hue)
+  border-bottom-color: adjust_hue(#fff, $hue)
+
+a.x-menu-item
+  color: adjust_hue(#222, $hue)
+
+.x-menu-item-active
+  background-image: url (#{$img_path+"/menu/item-over.gif"})
+  background-color: adjust_hue(#dbecf4, $hue)
+  border-color: adjust_hue(#aaccf6, $hue)
+  a.x-menu-item
+    border-color: adjust_hue(#aaccf6, $hue)
+
+.x-menu-check-item .x-menu-item-icon
+  background-image: url (#{$img_path+"/menu/unchecked.gif"})
+
+.x-menu-item-checked
+  .x-menu-item-icon
+    background-image: url (#{$img_path+"/menu/checked.gif"})
+  .x-menu-group-item .x-menu-item-icon
+    background-image: url (#{$img_path+"/menu/group-checked.gif"})
+
+.x-menu-group-item .x-menu-item-icon
+  background-image: none
+
+.x-menu-plain
+  background-color: adjust_hue(#f0f0f0, $hue) !important
+  background-image: none
+
+.x-date-menu, .x-color-menu
+  background-color: adjust_hue(#fff, $hue) !important
+
+.x-menu .x-date-picker
+  border-color: adjust_hue(#a3bad9, $hue)
+
+.x-cycle-menu .x-menu-item-checked
+  border-color: adjust_hue(#a3bae9, $hue) !important
+  background-color: adjust_hue(#def8f6, $hue)
+
+.x-menu-scroller-top
+  background-image: url (#{$img_path+"/layout/mini-top.gif"})
+
+.x-menu-scroller-bottom
+  background-image: url (#{$img_path+"/layout/mini-bottom.gif"})

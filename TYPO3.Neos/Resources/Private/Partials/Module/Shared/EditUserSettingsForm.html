@@ -1,0 +1,68 @@
+<fieldset class="span5">
+	<legend>User</legend>
+
+	<div class="control-group">
+		<label class="control-label">Username</label>
+		<div class="controls">
+			<span class="span3 uneditable-input">{account.accountIdentifier}</span>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="password[0]">Password</label>
+		<div class="controls">
+			<f:form.password name="password[0]" id="password[0]" class="span3" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="password[1]">Repeat password</label>
+		<div class="controls">
+			<f:form.password name="password[1]" id="password[1]" class="span3" />
+		</div>
+	</div>
+</fieldset>
+
+<fieldset class="span5">
+	<legend>Personal Data</legend>
+
+	<div class="control-group">
+		<label class="control-label" for="title">Title</label>
+		<div class="controls controls-row">
+			<f:form.textfield property="party.name.title" id="title" class="span3" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="firstName">First Name</label>
+		<div class="controls controls-row">
+			<f:form.textfield property="party.name.firstName" id="firstName" placeholder="First Name" class="span3" />
+			<f:form.textfield property="party.name.middleName" id="middleName" placeholder="Middle Name" class="span2" />
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="lastName">Last Name</label>
+		<div class="controls controls-row">
+			<f:form.textfield property="party.name.lastName" id="lastName" placeholder="Last Name" class="span3" />
+			<f:form.textfield property="party.name.otherName" id="otherName" placeholder="Other Name" class="span2" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="alias">Alias</label>
+		<div class="controls">
+			<f:form.textfield property="party.name.alias" id="alias" class="span3" />
+		</div>
+	</div>
+
+	<f:if condition="{account.party.electronicAddresses}">
+		<div class="control-group">
+			<label class="control-label">Electronic addresses:</label>
+			<ul class="inputs-list">
+				<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
+					<li>{electronicAddress.identifier} ({electronicAddress.type})</li>
+				</f:for>
+			</ul>
+		</div>
+	</f:if>
+</fieldset>

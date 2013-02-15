@@ -1,0 +1,173 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<div class="t3-module-container indented">
+		<h2>{site.name}</h2>
+	</div>
+</f:section>
+
+<f:section name="content">
+	<f:form action="updateSite" name="site" object="{site}">
+		<div class="row t3-module-container indented">
+			<div class="row-fluid">
+				<div class="span6">
+					<legend>Site</legend>
+					<div class="control-group">
+						<label class="control-label" for="name">Name</label>
+						<div class="controls">
+							<f:form.textfield property="name" id="name" />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="node-name">Node name</label>
+						<div class="controls">
+							<f:form.textfield property="nodeName" id="node-name" value="{site.nodeName}" />
+							<f:form.hidden name="originalNodeName" value="{site.nodeName}" />
+						</div>
+					</div>
+					<p>
+						<label>State</label>
+						<f:if condition="{site.online}">
+							<f:then>
+								<span class="badge badge-success">Active</span>
+							</f:then>
+							<f:else>
+								<span class="badge badge-important">Deactivated</span>
+							</f:else>
+						</f:if>
+					</p>
+					<legend>Site package</legend>
+					<br />
+					<p>
+						<label>Package Key</label>
+						{site.siteResourcesPackageKey}
+					</p>
+					<f:if condition="{sitePackageMetaData.title}">
+						<p>
+							<label>Title</label>
+							{sitePackageMetaData.title}
+						</p>
+					</f:if>
+					<f:if condition="{sitePackageMetaData.version}">
+						<p>
+							<label>Version</label>
+							{sitePackageMetaData.version}
+						</p>
+					</f:if>
+					<f:if condition="{sitePackageMetaData.description}">
+						<p>
+							<label>Description</label>
+							{sitePackageMetaData.description}
+						</p>
+					</f:if>
+				</div>
+				<div class="span6">
+					<legend>Domains</legend>
+					<br />
+					<table class="table">
+						<thead>
+							<th>Domain</th>
+						</thead>
+						<tbody>
+						<f:for each="{domains}" as="domain" key="number">
+							<tr>
+								<td>{domain.hostPattern}</td>
+								<td>
+									<f:if condition="{domain.active} == 1">
+										<f:then>
+											<span class="badge badge-success">Active</span>
+										</f:then>
+										<f:else>
+											<span class="badge badge-important">Inactive</span>
+										</f:else>
+									</f:if>
+								</td>
+								<td>
+									<div class="pull-right">
+										<f:link.action action="editDomain" arguments="{domain: domain}" class="btn t3-button" title="Click to edit">
+											<i class="icon-pencil icon-white"></i>
+										</f:link.action>
+										<f:if condition="{domain.active} == 1">
+											<f:then>
+												<f:link.action action="deactivateDomain" arguments="{domain: domain}" class="btn btn-warning t3-button" title="Click to deactivate">
+													<i class="icon-minus-sign icon-white"></i>
+												</f:link.action>
+											</f:then>
+											<f:else>
+												<f:link.action action="activateDomain" class="btn btn-success t3-button" arguments="{domain: domain}" title="Click to activate">
+													<i class="icon-plus-sign icon-white"></i>
+												</f:link.action>
+											</f:else>
+										</f:if>
+										<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}-{number}">
+											<i class="icon-trash icon-white"></i>
+										</button>
+										<div class="modal hide" id="{site.nodeName}-{number}">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">&times;</button>
+												<h3>Are you sure you want to delete "{domain.hostPattern}"?</h3>
+											</div>
+											<div class="modal-footer">
+												<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+												<f:link.action action="deleteDomain" class="btn btn-danger t3-button" arguments="{site: site, domain: domain}" title="Delete">
+													<i class="icon-trash icon-white"></i>
+													Delete
+												</f:link.action>
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</f:for>
+						</tbody>
+					</table>
+					<div class="pull-right">
+						<f:link.action action="newDomain" arguments="{site: site}" class="btn t3-button btn-primary" title="Click to create a new domain">
+							<i class="icon-globe icon-white"></i>
+							Add domain
+						</f:link.action>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-actions form-footer">
+			<div class="pull-left">
+				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
+			</div>
+			<div class="pull-right">
+				<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
+					<i class="icon-trash icon-white"></i>
+					Delete
+				</button>
+				<div class="modal hide" id="{site.nodeName}">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h3>Are you sure you want to delete "{site.name}"?</h3>
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+						<f:link.action action="deleteSite" class="btn btn-danger t3-button" arguments="{site: site, domain: domain}" title="Delete">
+							<i class="icon-trash icon-white"></i>
+							Delete
+						</f:link.action>
+					</div>
+				</div>
+				<f:if condition="{site.online}">
+					<f:then>
+						<f:link.action action="deactivateSite" arguments="{site: site}" class="btn btn-warning t3-button" title="Click to deactivate">
+							<i class="icon-minus-sign icon-white"></i>
+							Deactivate
+						</f:link.action>
+					</f:then>
+					<f:else>
+						<f:link.action action="activateSite" class="btn btn-success t3-button" arguments="{site: site}" title="Click to activate">
+							<i class="icon-plus-sign icon-white"></i>
+							Activate
+						</f:link.action>
+					</f:else>
+				</f:if>
+				<f:form.submit value="Save" class="btn btn-primary t3-button" />
+			</div>
+		</div>
+	</f:form>
+</f:section>

@@ -1,0 +1,13 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<div class="t3-module-container indented">
+		<h2>Edit domain</h2>
+	</div>
+</f:section>
+
+<f:section name="content">
+	<f:form action="updateDomain" name="domain" object="{domain}">
+		<f:render partial="Module/Shared/DomainForm" arguments="{_all}" />
+	</f:form>
+</f:section>
