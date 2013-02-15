@@ -7271,10 +7271,10 @@ body.t3-ui-controls.t3-tree-panel-open {
   top: 96px;
   bottom: 26px;
   z-index: 10010;
-  -webkit-transition-property: width;
-  -moz-transition-property: width;
-  -o-transition-property: width;
-  transition-property: width;
+  -webkit-transition-property: width, margin-top;
+  -moz-transition-property: width, margin-top;
+  -o-transition-property: width, margin-top;
+  transition-property: width, margin-top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
@@ -7744,16 +7744,6 @@ body .aloha-block-TYPO3Block {
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
 }
-body #t3-inspector {
-  -webkit-transition-property: width;
-  -moz-transition-property: width;
-  -o-transition-property: width;
-  transition-property: width;
-  -webkit-transition-duration: 0.2s;
-  -moz-transition-duration: 0.2s;
-  -o-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-}
 body.t3-ui-previewmode .t3-ui {
   display: none !important;
 }
@@ -7863,8 +7853,9 @@ body.t3-launcher-open #t3-ui-top {
 body.t3-launcher-open #t3-toolbar {
   margin-top: 260px;
 }
-body.t3-launcher-open #t3-inspector, body.t3-launcher-open #t3-tree-panel {
-  margin-top: 260px;
+body.t3-launcher-open #t3-inspector,
+body.t3-launcher-open #t3-tree-panel {
+  margin-top: 200px;
 }
 body.t3-launcher-open #t3-launcher {
   height: 230px;
