@@ -83,7 +83,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$contentType = $node->getContentType()->getName();
 		$title = $node->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel();
 		$expand = 0;
-		$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos', '');
+		$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 
 		$treeNode = array(
 			'key' => $contextNodePath,
@@ -180,7 +180,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$treeNode = array(
 			'key' => $node->getContextPath(),
 			'title' => $node->getContentType() === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title') : $node->getLabel(),
-			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos', ''),
+			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),
 			'contentType' => $contentType,

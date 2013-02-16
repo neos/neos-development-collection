@@ -54,6 +54,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if ($this->arguments->hasArgument('referenceNode')) {
 			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
+		$this->uriBuilder->setRequest($this->request->getMainRequest());
 	}
 
 	/**
@@ -132,7 +133,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function createAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -250,7 +251,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$node->moveAfter($targetNode);
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri, 'newNodePath' => $node->getContextPath()), 'success' => TRUE));
 	}
 
@@ -322,7 +323,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$node->copyAfter($targetNode, $nodeName);
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -388,7 +389,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		while (!$closestFolderNode->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 			$closestFolderNode = $closestFolderNode->getParent();
 		}
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestFolderNode), 'Frontend\Node', 'TYPO3.Neos', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestFolderNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -401,7 +402,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function deleteAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$node->remove();
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3.Neos', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -452,7 +453,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		return array(
 			'id' => $node->getPath(),
 			'name' => $node->getLabel(),
-			'url' => $this->uriBuilder->setLinkProtectionEnabled(FALSE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos', ''),
+			'url' => $this->uriBuilder->setLinkProtectionEnabled(FALSE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'type' => 'neos/internal-link'
 		);
 	}
