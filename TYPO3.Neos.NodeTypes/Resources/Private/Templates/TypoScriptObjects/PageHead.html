@@ -17,10 +17,11 @@
 		<script type="text/javascript">
 					// TODO Get rid of those global variables
 				var ExtDirectInitialization = function() {
-					<ext:extDirect.provider />
+					<ext:extDirect.provider />;
 				};
-				var Aloha, alohaBaseUrl = '{aloha:baseUri()}/src/lib/';
 				{typo3:backend.javascriptConfiguration()}
+				var Aloha,
+					alohaBaseUrl = '{aloha:baseUri()}';
 		</script>
 
 		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
@@ -36,6 +37,6 @@
 			</f:else>
 		</f:if>
 
-		<link rel="stylesheet" href="{aloha:baseUri()}/src/css/aloha.css" type="text/css" />
+		<link rel="stylesheet" href="{aloha:baseUri()}/css/aloha.css" type="text/css" />
 	</f:if>
 </f:security.ifAccess>
