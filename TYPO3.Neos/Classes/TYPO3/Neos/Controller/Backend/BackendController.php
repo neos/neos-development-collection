@@ -22,21 +22,9 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var \TYPO3\Neos\Service\BackendRedirectionService
 	 */
-	protected $securityContext;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
+	protected $backendRedirectionService;
 
 	/**
 	 * Default action of the backend controller.
@@ -45,33 +33,8 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @Flow\SkipCsrfProtection
 	 */
 	public function indexAction() {
-		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-		$workspaceName = $user->getPreferences()->get('context.workspace');
-
-			// Hack: Create the workspace if it does not exist yet.
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext($workspaceName);
-		$contentContext->getWorkspace();
-		$this->nodeRepository->setContext($contentContext);
-
-		if (isset($_COOKIE['Neos_lastVisitedUri'])) {
-			$redirectUri = $_COOKIE['Neos_lastVisitedUri'];
-			$appendHtml = !strpos($redirectUri, '.html') ? FALSE : TRUE;
-			if (!strpos($redirectUri, '@')) {
-				$redirectUri = str_replace('.html', '', $redirectUri);
-			} else {
-				$redirectUri = substr($redirectUri, 0, strpos($redirectUri, '@'));
-			}
-			$urlParts = parse_url($redirectUri);
-
-			if ($urlParts['path']
-					&& is_object($contentContext->getCurrentSiteNode()->getNode(
-						$urlParts['path'] === '/' ? '/' : substr($urlParts['path'], 1)
-					))) {
-				$redirectUri .= '@' . $workspaceName . ($appendHtml === TRUE ? '.html' : '');
-				$this->redirectToUri($redirectUri);
-			}
-		}
-		$this->redirectToUri('/@' . $workspaceName . '.html');
+		$redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri();
+		$this->redirectToUri($redirectionUri);
 	}
 }
 ?>

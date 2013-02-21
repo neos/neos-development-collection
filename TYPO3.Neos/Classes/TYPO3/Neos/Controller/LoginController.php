@@ -12,7 +12,6 @@ namespace TYPO3\Neos\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\ExtJS\Annotations\ExtDirect;
 
 /**
  * A controller which allows for logging into the backend
@@ -23,28 +22,20 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\Flow\Session\SessionInterface
 	 */
-	protected $accessDecisionManager;
+	protected $session;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\Neos\Service\BackendRedirectionService
 	 */
-	protected $nodeRepository;
+	protected $backendRedirectionService;
 
 	/**
-	 * Select special views according to format
-	 *
-	 * @return void
+	 * @var array
 	 */
-	protected function initializeAction() {
-		switch ($this->request->getFormat()) {
-			case 'json':
-				$this->defaultViewObjectName = 'TYPO3\Flow\Mvc\View\JsonView';
-			break;
-		}
-	}
+	protected $viewFormatToObjectNameMap = array('json' => 'TYPO3\Flow\Mvc\View\JsonView');
 
 	/**
 	 * Default action, displays the login screen
@@ -58,7 +49,6 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 			'welcomeMessage' => 'Please enter your username and password in order to proceed.'
 		));
 	}
-
 
 	/**
 	 * Is called if authentication failed.
@@ -78,6 +68,9 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * @return void
 	 */
 	public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = NULL) {
+		if ($this->request->hasArgument('lastVisitedUri') && strlen($this->request->getArgument('lastVisitedUri')) > 0) {
+			$this->session->putData('lastVisitedUri', $this->request->getArgument('lastVisitedUri'));
+		}
 		if ($originalRequest !== NULL) {
 			$this->redirectToRequest($originalRequest);
 		}
@@ -86,42 +79,27 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 
 	/**
 	 * Logs out a - possibly - currently logged in account.
+	 * The possible redirection URI is queried from the redirection service
+	 * at first, before the actual logout takes place, and the session gets destroyed.
 	 *
 	 * @return void
 	 */
 	public function logoutAction() {
+		$possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri();
 		parent::logoutAction();
-
 		switch ($this->request->getFormat()) {
 			case 'json':
-				$this->view->assign('value',
-					array(
-						'success' => TRUE
-					)
-				);
+				$this->view->assign('value', array('success' => TRUE));
 				break;
 			default:
-				if (isset($_COOKIE['Neos_lastVisitedUri'])) {
-					$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
-					$this->nodeRepository->setContext($contentContext);
-
-					$redirectUri = $_COOKIE['Neos_lastVisitedUri'];
-					$appendHtml = !strpos($redirectUri, '.html') ? FALSE : TRUE;
-					if (!strpos($redirectUri, '@')) {
-						$redirectUri = str_replace('.html', '', $redirectUri);
-					} else {
-						$redirectUri = substr($redirectUri, 0, strpos($redirectUri, '@'));
-					}
-					$urlParts = parse_url($redirectUri);
-					if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode(substr($urlParts['path'], 1)))) {
-						$redirectUri .= $appendHtml === TRUE ? '.html' : '';
-						$this->redirectToUri($redirectUri);
-					}
+				if ($possibleRedirectionUri !== NULL) {
+					$this->redirectToUri($possibleRedirectionUri);
+				} else {
+					$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out.', 1318421560));
+					$this->redirect('index');
 				}
-				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out.', 1318421560));
-				$this->redirect('index');
 		}
 	}
-
 }
+
 ?>

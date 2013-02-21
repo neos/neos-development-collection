@@ -19,6 +19,7 @@
 				</div>
 				<div class="modal-body t3-ui">
 					<f:form name="login" action="authenticate">
+						<f:form.hidden name="lastVisitedUri" />
 						<div class="row-fluid">
 							<div class="span5">
 								<f:alias map="{flashMessages: '{f:render(partial: \'Login\\FlashMessages\')}'}">
@@ -75,6 +76,9 @@
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
 		<script>
 			$('#{f:if(condition: username, then: 'password', else: 'username')}').focus();
+			if (typeof sessionStorage !== undefined && sessionStorage.getItem('TYPO3.Neos.lastVisitedUri') !== null) {
+				$('form[name=login] input[name=lastVisitedUri]').val(sessionStorage.getItem('TYPO3.Neos.lastVisitedUri'));
+			}
 		</script>
 	</body>
 </f:section>
