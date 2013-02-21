@@ -386,6 +386,7 @@ function($, CreateJS, Entity) {
 
 			// TODO: Move this to a separate controller
 		_clipboard: null,
+		_elementIsAddingNewContent: null,
 
 		clipboardContainsContent: function() {
 			return this.get('_clipboard') !== null;
@@ -517,6 +518,7 @@ function($, CreateJS, Entity) {
 		 * @private
 		 */
 		_add: function(nodeType, referenceEntity, position, callBack) {
+			var that = this;
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
 				referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
 				referenceEntity.get('typo3:_typoscriptPath'),
@@ -528,6 +530,9 @@ function($, CreateJS, Entity) {
 				function(result) {
 					var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
 					callBack(result.nodePath, template);
+
+					// Remove the loading icon from the parent content element where current element was created from.
+					that.set('_elementIsAddingNewContent', null);
 				}
 			);
 		},

@@ -14,9 +14,13 @@ define(
 
 			_index: null,
 
+			_clickedButton: null,
+
+			data: null,
+
 			didInsertElement: function() {
 				var tabs = this.$('.nodeTypeSelectorTabs').tabs();
-				setTimeout(function() { tabs.tabs('select', 0);}, 100);
+				setTimeout(function() { tabs.tabs('select', 0); }, 100);
 			},
 
 			click: function(event) {
@@ -24,11 +28,14 @@ define(
 				if (!rel) {
 					return;
 				}
+
+				T3.Content.Controller.NodeActions.set('_elementIsAddingNewContent', this.getPath('_clickedButton._nodePath'));
+
 				this.get('_options').collection.add({
 					'@type': rel
 				}, {at: this.get('_index')});
 
-				this.$().parents('.popover').trigger('hidePopover')
+				this.$().parents('.popover').trigger('hidePopover');
 			}
 		});
 	}
