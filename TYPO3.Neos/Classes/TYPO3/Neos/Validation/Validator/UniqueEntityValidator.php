@@ -20,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow,
  *
  * @api
  * @Flow\Scope("singleton")
- * @TODO Replace this one with the one in Flow once it's merged
+ * @todo Replace this one with the one in Flow once it's merged
  */
 class UniqueEntityValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
