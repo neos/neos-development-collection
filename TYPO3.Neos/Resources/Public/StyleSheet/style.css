@@ -9158,6 +9158,11 @@ button.t3-button.t3-connection-status-down {
   background-position: 198px;
 }
 
+.t3-ui img {
+  display: inline-block;
+  margin: 0;
+}
+
 .popover {
   position: absolute;
   display: none;
