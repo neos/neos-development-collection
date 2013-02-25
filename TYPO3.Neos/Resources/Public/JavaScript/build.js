@@ -20,8 +20,8 @@
 		"Content/Inspector/Editors/ImageEditor",
 		"Content/Inspector/Editors/SelectBoxEditor"
 	],
-	out: "ContentModule-built.js",
+	out: "ContentModule-built.js"
 
 	// if you un-comment the line below, you get an un-optimized version.
 	//optimize: "none"
-})
+});

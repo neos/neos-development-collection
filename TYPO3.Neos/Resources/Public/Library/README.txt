@@ -139,3 +139,12 @@ http://fortawesome.github.com/Font-Awesome/
 
 Bootstrap Notify
 http://nijikokun.github.com/bootstrap-notify/
+
+XRegExp 2.0.0
+* Including Unicode Base 1.0.0 & Unicode Categories 1.2.0
+http://xregexp.com/
+MIT License
+
+iso8601-js-period 0.2
+https://github.com/nezasa/iso8601-js-period
+Apache 2.0 license

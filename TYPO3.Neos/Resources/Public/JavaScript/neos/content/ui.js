@@ -51,7 +51,6 @@ function($, Ember, saveIndicatorTemplate) {
 	 * - Inspect TreeButton
 	 */
 
-
 	T3.Content.UI.SaveIndicator = Ember.View.extend({
 		saveRunning: false,
 		lastSuccessfulTransfer: null,

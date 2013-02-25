@@ -9,7 +9,9 @@
 define(
 	['Library/jquery-with-dependencies', 'Library/underscore', 'emberjs', 'vie/instance', 'vie/entity'],
 	function($, _, Ember, vie, EntityWrapper) {
-		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/model');
+		if (window._requirejsLoadingTrace) {
+			window._requirejsLoadingTrace.push('neos/content/model');
+		}
 
 		var T3 = window.T3 || {};
 		if (typeof T3.Content === 'undefined') {
@@ -182,6 +184,59 @@ define(
 				if ($element !== undefined) {
 					var nodeProxy = this._createEntityWrapper($element);
 					if (nodeProxy) {
+						var entity = nodeProxy.get('_vieEntity'),
+							properties = nodeProxy.get('nodeTypeSchema.properties'),
+							propertyValidators = {};
+						_.each(properties, function(propertyDefinition, propertyName) {
+							if (typeof propertyDefinition.validation !== 'undefined') {
+								var validators = [];
+								_.each(propertyDefinition.validation, function(validatorOptions, validator) {
+									var validatorClassName = validator.indexOf('/') !== -1 ? validator : 'Content/Components/Validator/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
+									require([validatorClassName], function(validatorClass) {
+										Ember.run(function() {
+											validators.push(validatorClass.create({options: validatorOptions}));
+										});
+									});
+								});
+								propertyValidators[propertyName] = validators;
+							}
+						});
+						if (!_.isEmpty(propertyValidators)) {
+							nodeProxy.set('validators', propertyValidators);
+						}
+						_.extend(entity, {
+							validate: function(attrs, opts) {
+								if (opts && opts.validate === false || typeof nodeProxy.get('validators') === 'undefined') {
+									return;
+								}
+
+								var that = this,
+									results = [];
+								_.each(EntityWrapper.extractAttributesFromVieEntity(this, attrs), function(value, propertyName) {
+									_.each(that.validateAttribute(propertyName, value), function(error) {
+										results.push({
+											property: propertyName,
+											message: error
+										});
+									});
+								});
+								if (_.isEmpty(results)) {
+									return;
+								}
+								return results;
+							},
+							validateAttribute: function(propertyName, value) {
+								var results = [],
+									propertyValidators = nodeProxy.get('validators.' + propertyName);
+								_.each(propertyValidators, function(validator) {
+									var result = validator.validate(value);
+									if (result.length > 0) {
+										results.push(result[0]);
+									}
+								});
+								return results;
+							}
+						});
 						nodes.push(nodeProxy);
 					}
 				}
@@ -213,7 +268,9 @@ define(
 
 			selectedNodeSchema: function() {
 				var selectedNode = this.get('selectedNode');
-				if (!selectedNode) return;
+				if (!selectedNode) {
+					return;
+				}
 				return selectedNode.get('nodeTypeSchema');
 			}.property('selectedNode'),
 
@@ -226,7 +283,7 @@ define(
 			publishableEntitySubjects: [],
 
 			noChanges: function() {
-				return this.get('publishableEntitySubjects.length') == 0;
+				return this.get('publishableEntitySubjects').length === 0;
 			}.property('publishableEntitySubjects.length'),
 
 			initialize: function() {
@@ -251,7 +308,7 @@ define(
 			 */
 			_isEntityPublishable: function(entity) {
 				var attributes = EntityWrapper.extractAttributesFromVieEntity(entity);
-				return attributes['__workspacename'] !== 'live';
+				return attributes.__workspacename !== 'live';
 			},
 
 			/**
@@ -277,7 +334,7 @@ define(
 		T3.Content.Model = {
 			PublishableNodes: PublishableNodes,
 			NodeSelection: NodeSelection
-		}
+		};
 		window.T3 = T3;
 	}
 );

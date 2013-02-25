@@ -450,7 +450,6 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 			});
 		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_previewImageUri'),
 
-
 		/****************************************
 		 * Saving / Loading
 		 ***************************************/

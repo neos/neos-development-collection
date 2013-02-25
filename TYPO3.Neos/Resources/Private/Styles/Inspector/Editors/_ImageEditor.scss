@@ -1,7 +1,9 @@
-$max-image-width: 288px;
-$max-image-height: 216px;
+$max-image-width: $inspectorWidth - $defaultMargin * 2;
+$max-image-height: $max-image-width / 4 * 3;
 
 .neos-inspector-image {
+	min-width: $inspectorWidth - $defaultMargin * 2;
+
 	.neos-inspector-image-thumbnail-container {
 		position: relative;
 		overflow: hidden;

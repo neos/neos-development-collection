@@ -58,6 +58,7 @@
 		line-height: $unit;
 		padding-left: $defaultMargin;
 		@include box-sizing(border-box);
+		z-dinex: 10015;
 	}
 
 	.neos-inspector-form {
@@ -65,7 +66,6 @@
 		height: 100%;
 		overflow-x: hidden;
 		overflow-y: auto;
-		@include box-sizing(border-box);
 		padding-top: 11px;
 
 		.neos-breadcrumb {
@@ -162,6 +162,10 @@
 			}
 		}
 
+		.neos-inspector-section {
+			position: relative;
+		}
+
 		.neos-inspector-collapse {
 			float: right;
 			width: $unit;
@@ -200,12 +204,25 @@
 			font-weight: bold;
 			@include user-select(none);
 
+			&.validation-error {
+				span {
+					padding-right: $relatedMargin;
+					max-width: $inspectorWidth - $unit - $relatedMargin - $defaultMargin;
+				}
+
+				i {
+					float: left;
+					color: $warning;
+					line-height: $unit;
+				}
+			}
+
 			span {
 				display: block;
 				float: left;
 				padding-left: $defaultMargin;
 				padding-right: $defaultMargin;
-				max-width: $inspectorWidth - $unit;
+				max-width: $inspectorWidth - $unit - $relatedMargin;
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
@@ -259,24 +276,103 @@
 			width: 100%;
 			min-width: $inspectorWidth - $defaultMargin * 2;
 			height: $unit;
-			border: none;
+			border: 2px solid $grayMedium;
 			background-color: $grayMedium;
 			color: $textOnGray;
 			@include font;
 			font-size: 14px;
-			padding: 0 $defaultMargin;
+			padding: 0 ($defaultMargin - 2px);
 			margin: 0;
 			@include box-sizing(border-box);
+			@include box-shadow(none);
+			@include transition(none);
 
 			&:focus {
 				background-color: #fff;
+				border: 2px solid #fff;
 				color: $textOnWhite;
 				@include box-shadow(none);
 			}
 
 			// Highlight changed elements in the Property Panel
 			&.modified {
-				border: 1px solid $light-green;
+				border: 2px solid $light-green;
+			}
+		}
+
+		.modified {
+			& > input[type="text"],
+			& > input[type="password"],
+			& > input[type="datetime"],
+			& > input[type="datetime-local"],
+			& > input[type="date"],
+			& > input[type="month"],
+			& > input[type="time"],
+			& > input[type="week"],
+			& > input[type="number"],
+			& > input[type="range"],
+			& > input[type="date"],
+			& > input[type="email"],
+			& > input[type="url"],
+			& > input[type="search"],
+			& > input[type="tel"],
+			& > input[type="color"],
+			& > input[type="number"],
+			& > .uneditable-input {
+				border: 2px solid $green;
+			}
+
+			.chzn-container .chzn-single {
+				border: 2px solid $green;
+				@include box-sizing(border-box);
+				padding-left: $defaultMargin - 2px;
+
+				span {
+					line-height: $unit - 4px;
+				}
+
+				abbr {
+					top: 9px;
+				}
+
+				div {
+					width: $unit - 2px;
+
+					&:before,
+					&:after {
+						right: 13px;
+						line-height: $unit - 4px;
+					}
+				}
+			}
+		}
+
+		.error {
+			& > input[type="text"],
+			& > input[type="password"],
+			& > input[type="datetime"],
+			& > input[type="datetime-local"],
+			& > input[type="date"],
+			& > input[type="month"],
+			& > input[type="time"],
+			& > input[type="week"],
+			& > input[type="number"],
+			& > input[type="range"],
+			& > input[type="date"],
+			& > input[type="email"],
+			& > input[type="url"],
+			& > input[type="search"],
+			& > input[type="tel"],
+			& > input[type="color"],
+			& > input[type="number"],
+			& > .uneditable-input {
+				color: $warning;
+				border: 2px solid $warning;
+				@include box-shadow(none);
+
+				&:focus {
+
+				}
 			}
 		}
 
@@ -288,6 +384,7 @@
 
 		select {
 			width: 100%;
+			min-width: $inspectorWidth - $defaultMargin * 2;
 		}
 
 		@import "../Shared/Checkboxes";
@@ -320,11 +417,42 @@
 		.add-on + span {
 			display: table-cell;
 			padding-bottom: 0;
+
+			input {
+				min-width: 0;
+			}
 		}
 
 		span + .add-on {
 			border-left: 1px solid $grayDark;
 			border-right: none;
+		}
+
+		.tooltip {
+			&.bottom {
+				padding: $relatedMargin 0 0 0;
+				margin-left: $tightMargin;
+				margin-top: -1px;
+			}
+
+			&.in {
+				@include opacity(1);
+			}
+
+			.tooltip-arrow {
+				margin-left: -$relatedMargin;
+				border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
+				border-bottom-color: $warning;
+			}
+
+			.tooltip-inner {
+				max-width: $inspectorWidth - $defaultMargin * 2;
+				background-color: $warning;
+				font-size: 13px;
+				color: #fff;
+				@include border-radius(0);
+				@include box-sizing(border-box);
+			}
 		}
 	}
 
@@ -345,6 +473,7 @@
 			@include text-shadow(none);
 			@include box-shadow(none);
 
+			&.disabled,
 			&[disabled] {
 				@include opacity(.5);
 			}
@@ -359,6 +488,11 @@
 				float: right;
 				background-color: $green;
 				width: 62%;
+
+				i {
+					position: relative;
+					top: 3px;
+				}
 			}
 		}
 	}

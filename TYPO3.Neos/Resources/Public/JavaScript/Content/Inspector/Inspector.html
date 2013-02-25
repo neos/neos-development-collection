@@ -4,23 +4,26 @@
 		<label for="neos-content-breadcrumb">Selected element</label>
 		{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes" elementId="neos-content-breadcrumb"}}
 	</div>
-	{{#collection tagName="div" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
-		<div class="neos-inspector-headline">
-			<span>{{unbound view.content.label}}</span>
-			{{view view.parentView.parentView.ToggleInspectorPanelHeadline classNames="neos-inspector-collapse" contentBinding="view.content"}}
-		</div>
-		{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="view.content.properties"}}
-			{{#if isBoolean}}
-				<label for="{{unbound view.content.elementId}}" class="checkbox">
-					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
-					{{unbound view.content.ui.label}}
-				</label>
-			{{else}}
-				<label for="{{unbound view.content.elementId}}">{{unbound view.content.ui.label}}</label>
-				{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
-			{{/if}}
-		{{/collection}}
-	{{/collection}}
+	{{#each T3.Content.Controller.Inspector.groupedPropertyViews}}
+		{{#view view.InspectorSection classNames="neos-inspector-section" groupBinding="group" propertiesBinding="properties"}}
+			<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:validation-error"}}>
+				<span>{{unbound label}}</span>
+				{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
+				{{view view.InspectorSectionToggle classNames="neos-inspector-collapse" groupBinding="view.group"}}
+			</div>
+			{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="properties"}}
+				{{#if isBoolean}}
+					<label for="{{unbound elementId}}" class="checkbox">
+						{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
+						{{unbound ui.label}}
+					</label>
+				{{else}}
+					<label for="{{unbound elementId}}">{{unbound ui.label}}</label>
+					{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
+				{{/if}}
+			{{/collection}}
+		{{/view}}
+	{{/each}}
 </div>
 <div class="actions">
 	{{#view view.Button
@@ -31,11 +34,17 @@
 		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
 	}}Cancel{{/view}}
 
-	{{#view view.Button
-		disabledBinding="T3.Content.Controller.Inspector._unmodified"
-		target="T3.Content.Controller.Inspector"
-		action="onApplyButtonToggle"
-		class="neos-inspector-apply"
-		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
-	}}Apply{{/view}}
+	{{#if T3.Content.Controller.Inspector.hasValidationErrors}}
+		<button class="neos-button neos-inspector-apply disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
+			<i class="icon-warning-sign"></i> Apply
+		</button>
+	{{else}}
+		{{#view view.Button
+			disabledBinding="T3.Content.Controller.Inspector._unmodified"
+			target="T3.Content.Controller.Inspector"
+			action="onApplyButtonToggle"
+			class="neos-inspector-apply"
+			isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
+		}}Apply{{/view}}
+	{{/if}}
 </div>

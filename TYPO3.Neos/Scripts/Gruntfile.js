@@ -15,6 +15,7 @@ module.exports = function(grunt) {
 				baseUri + 'jcrop/js/jquery.Jcrop.js',
 				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',
 				baseUri + 'twitter-bootstrap/js/bootstrap-dropdown.js',
+				baseUri + 'twitter-bootstrap/js/bootstrap-tooltip.js',
 				baseUri + 'bootstrap-notify/js/bootstrap-notify.js'
 			],
 			dest: baseUri + 'jquery-with-dependencies.js',
@@ -29,6 +30,7 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+
 		handlebars: {
 			src: [
 				baseUri + 'handlebars/handlebars-1.0.0-rc.3.js'
@@ -36,7 +38,6 @@ module.exports = function(grunt) {
 			dest: baseUri + 'handlebars.js',
 			options: {
 				banner: 'define(function() {',
-
 				footer: '  return Handlebars;' +
 						'});'
 			}
@@ -70,12 +71,9 @@ module.exports = function(grunt) {
 				banner: 'define(function() {' +
 						'  var root = {};' +
 						'  (function() {',
-
 				footer: '  }).apply(root);' +
 						'  return root._;' +
 						'});'
-
-
 			}
 		},
 
@@ -88,12 +86,9 @@ module.exports = function(grunt) {
 				banner: 'define(["Library/underscore", "Library/jquery-with-dependencies"], function(_, jQuery) {' +
 						'  var root = {_:_, jQuery:jQuery};' +
 						'  (function() {',
-
 				footer: '  }).apply(root);' +
 						'  return root.Backbone;' +
 						'});'
-
-
 			}
 		},
 
@@ -148,6 +143,7 @@ module.exports = function(grunt) {
 						'});'
 			}
 		},
+
 		plupload: {
 			src: [
 				baseUri + 'plupload/js/plupload.js',
@@ -176,6 +172,34 @@ module.exports = function(grunt) {
 				footer: '  window.CodeMirror = CodeMirror;' +
 						'  return CodeMirror;' +
 						'});'
+			}
+		},
+
+		xregexp: {
+			src: [
+				baseUri + 'XRegExp/xregexp.min.js'
+			],
+			dest: baseUri + 'xregexp.js',
+			options: {
+				banner: 'define(function() {',
+				footer: '  return XRegExp;' +
+						'});'
+			}
+		},
+
+		iso8601JsPeriod: {
+			src: [
+				baseUri + 'iso8601-js-period/iso8601.min.js'
+			],
+			dest: baseUri + 'iso8601-js-period.js',
+			options: {
+				banner: 'define(function() {' +
+						'var iso8601JsPeriod = {};',
+				footer: '  return iso8601JsPeriod.iso8601;' +
+						'});',
+				process: function(src, filepath) {
+					return src.replace('window.nezasa=window.nezasa||{}', 'iso8601JsPeriod');
+				}
 			}
 		}
 	};
@@ -220,7 +244,7 @@ module.exports = function(grunt) {
 				debounceDelay: 100
 			}
 		}
-	}
+	};
 
 	gruntConfig.bgShell = {
 		compileDocumentation: {
@@ -230,7 +254,7 @@ module.exports = function(grunt) {
 		compileOmnigraffle: {
 			cmd: 'cd ../Documentation/IntegratorGuide; rm -Rf Diagrams/; osascript ../../Scripts/export_from_omnigraffle.scpt png `pwd`/IntegratorDiagrams.graffle `pwd`/Diagrams'
 		}
-	}
+	};
 	grunt.registerTask('_empty', function() {
 		// empty
 	});

@@ -153,6 +153,9 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			return !this.get('_modified');
 		}.property('_modified'),
 
+		validationErrors: Ember.Object.create(),
+		hasValidationErrors: false,
+
 		nodeProperties: null,
 		configuration: null,
 
@@ -286,14 +289,30 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function() {
 			var that = this,
-				hasChanges = false;
+				hasChanges = false,
+				hasValidationErrors = false;
 
-			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
-				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
+			_.each(this.get('cleanProperties'), function(cleanPropertyValue, propertyName) {
+				var value = that.get('nodeProperties').get(propertyName),
+					errors = that.get('selectedNode._vieEntity').validateAttribute(propertyName, value),
+					existingErrors = that.get('validationErrors.' + propertyName) || [];
+				if (existingErrors.length !== errors.length) {
+					that.set('validationErrors.' + propertyName, errors);
+				}
+				if (errors.length > 0) {
+					hasValidationErrors = true;
+				}
+				if (value !== cleanPropertyValue) {
 					hasChanges = true;
 				}
 			});
+
 			this.set('_modified', hasChanges);
+			this.set('hasValidationErrors', hasValidationErrors);
+		},
+
+		isPropertyModified: function(propertyName) {
+			return this.get('cleanProperties.' + propertyName) !== this.get('nodeProperties').get(propertyName);
 		},
 
 		/**
@@ -312,21 +331,32 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			var that = this,
 				cleanProperties,
 				nodeTypeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema'),
-				reloadPage = false;
+				reloadPage = false,
+				selectedNode = this.get('selectedNode'),
+				attributes = selectedNode.get('attributes');
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
-				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
-					that.get('selectedNode').setAttribute(key, that.get('nodeProperties').get(key));
-					if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
-						reloadPage = true;
+				var value = that.get('nodeProperties').get(key);
+				if (value !== cleanPropertyValue || value !== attributes[key]) {
+					selectedNode.setAttribute(key, value, {validate: false});
+					if (value !== cleanPropertyValue) {
+						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
+							reloadPage = true;
+						}
 					}
 				}
 			});
 
+			var entity = this.get('selectedNode._vieEntity');
+			if (entity.isValid() !== true) {
+				return;
+			}
+
 			if (reloadPage === true) {
 				ContentModule.showPageLoader();
 			}
-			Backbone.sync('update', this.get('selectedNode._vieEntity'), {
+
+			Backbone.sync('update', entity, {
 				success: function(model, result) {
 					if (reloadPage === true) {
 						if (result && result.data && result.data.nextUri) {
@@ -354,6 +384,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			this.set('nodeProperties', Ember.Object.create(this.get('cleanProperties')));
 			this.set('_modified', false);
 			SecondaryInspectorController.hide();
+			this._somePropertyChanged();
 		}
 	}).create();
 

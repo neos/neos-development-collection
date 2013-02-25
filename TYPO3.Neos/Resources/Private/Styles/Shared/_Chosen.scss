@@ -86,11 +86,13 @@
 		@include border-radius(0);
 		@include box-shadow(1px 2px 5px $grayDark);
 		color: inherit;
+		margin-top: 0;
 
 		.chzn-search {
 			padding: 0;
 			color: $black;
 			@include icon-FontAwesome();
+			font-size: 0;
 
 			input {
 				width: 100%;

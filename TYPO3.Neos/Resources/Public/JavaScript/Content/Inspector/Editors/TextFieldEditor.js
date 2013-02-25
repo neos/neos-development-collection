@@ -8,6 +8,7 @@ function(Ember) {
 	});
 
 	return Ember.TextField.extend({
-		classNames: ['input-small']
+		classNames: ['input-small'],
+		validators: {}
 	});
 });

@@ -42,12 +42,9 @@ define(['vie/entity', 'Library/backbone', 'neos/content/controller', 'neos/conte
 			},
 			_convertModelToJson: function(model) {
 				var contextPath = model.fromReference(model.id);
-				var attributes = Entity.extractAttributesFromVieEntity(model, function filter(k, v) {
+				var attributes = Entity.extractAttributesFromVieEntity(model, null, function(k) {
 						// skip internal properties starting with __
-					if (k[0] === '_' && k[1] === '_') {
-						return false;
-					}
-					return true;
+					return !(k[0] === '_' && k[1] === '_');
 				});
 				attributes['__contextNodePath'] = contextPath;
 				return attributes;

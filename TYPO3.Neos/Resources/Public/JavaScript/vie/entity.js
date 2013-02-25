@@ -16,7 +16,7 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 		status: '',
 
 		/**
-		 * The underyling VIE entity
+		 * The underlying VIE entity
 		 */
 		_vieEntity: null,
 
@@ -79,13 +79,14 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 		/**
 		 * Set an attribute on the underlying VIE entity
 		 *
-		 * @param key
-		 * @param value
+		 * @param {string} key
+		 * @param {mixed} value
+		 * @param {object} options
 		 */
-		setAttribute: function(key, value) {
+		setAttribute: function(key, value, options) {
 			var attributeName = 'typo3:' + key;
 			this.propertyWillChange(attributeName);
-			this.get('_vieEntity').set(attributeName, value);
+			this.get('_vieEntity').set(attributeName, value, options);
 			this.propertyDidChange(attributeName);
 		},
 
@@ -104,9 +105,10 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 	});
 
 	Entity.reopenClass({
-		extractAttributesFromVieEntity: function(vieEntity, filterFn) {
+		extractAttributesFromVieEntity: function(vieEntity, attributes, filterFn) {
 			var cleanAttributes = {};
-			_.each(vieEntity.attributes, function(value, subject) {
+			attributes = _.isEmpty(attributes) ? vieEntity.attributes : attributes;
+			_.each(attributes, function(value, subject) {
 				var property = vieEntity.fromReference(subject);
 				if (property.indexOf(ContentModule.TYPO3_NAMESPACE) === 0) {
 					property = property.replace(ContentModule.TYPO3_NAMESPACE, '');

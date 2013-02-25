@@ -6,7 +6,13 @@
 	<div class="modal-footer">
 		{{view T3.Content.UI.ButtonDialog label="Don't apply" class="neos-button btn btn-danger" target="parentView" action="dontApply"}}
 		{{view T3.Content.UI.ButtonDialog label="Cancel" class="neos-button btn" target="parentView" action="cancel"}}
-		{{view T3.Content.UI.ButtonDialog label="Apply" class="neos-button btn btn-success" target="parentView" action="apply"}}
+		{{#if T3.Content.Controller.Inspector.hasValidationErrors}}
+			<button class="neos-button btn btn-success disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
+				<i class="icon-warning-sign"></i> Apply
+			</button>
+		{{else}}
+			{{view T3.Content.UI.ButtonDialog label="Apply" class="neos-button btn btn-success" target="parentView" action="apply"}}
+		{{/if}}
 	</div>
 </div>
 <div class="modal-backdrop in"></div>
