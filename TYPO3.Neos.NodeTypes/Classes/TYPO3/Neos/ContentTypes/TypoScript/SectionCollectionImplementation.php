@@ -111,10 +111,10 @@ class SectionCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $sectionNode
 	 * @return string
 	 */
-	protected function generateIdAttributeForSection(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode) {
+	protected function generateIdAttributeForSection(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $sectionNode) {
 		$parentNode = $this->deriveParentFolderNode($sectionNode);
 		$parentFolderNodePath = $parentNode->getPath();
 		$relativePath = substr($sectionNode->getPath(), strlen($parentFolderNodePath));
@@ -122,10 +122,10 @@ class SectionCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $sectionNode
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $sectionNode) {
+	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $sectionNode) {
 		$parentNode = $sectionNode->getParent();
 
 		while ($parentNode->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Folder') !== TRUE) {
