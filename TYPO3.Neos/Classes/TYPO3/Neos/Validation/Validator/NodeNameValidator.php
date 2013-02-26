@@ -22,7 +22,7 @@ class NodeNameValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressi
 	 * @var array
 	 */
 	protected $supportedOptions = array(
-		'regularExpression' => array(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string')
+		'regularExpression' => array(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string')
 	);
 
 }
