@@ -9074,10 +9074,10 @@ body .t3-pageloader-wrapper {
 }
 body .t3-pageloader-wrapper .t3-pageloader {
   position: relative;
-  top: 50%;
-  left: 50%;
-  margin-top: 12px;
-  margin-left: -123px;
+  top: 50% !important;
+  left: 50% !important;
+  margin-top: 35px;
+  margin-left: -130px;
   -webkit-transition-property: margin;
   -moz-transition-property: margin;
   -o-transition-property: margin;
@@ -9088,11 +9088,11 @@ body .t3-pageloader-wrapper .t3-pageloader {
   transition-duration: 0.2s;
 }
 body.t3-tree-panel-open .t3-pageloader-wrapper .t3-pageloader {
-  margin-left: -273px;
+  margin-left: -280px;
 }
 body.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
-  margin-left: -23px;
-  margin-top: -5px;
+  margin-left: -30px;
+  margin-top: 18px;
 }
 .t3-module {
   margin: 120px 0px 0px 0px;
