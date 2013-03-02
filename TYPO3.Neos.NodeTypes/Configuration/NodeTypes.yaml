@@ -22,6 +22,8 @@
         inspector:
           group: 'visibility'
           position: 10
+      validation:
+        dateTime: []
     _hiddenAfterDateTime:
       type: date
       ui:
@@ -29,6 +31,8 @@
         inspector:
           group: 'visibility'
           position: 20
+      validation:
+        dateTime: []
 
 'TYPO3.Neos.ContentTypes:Section':
   superTypes: ['TYPO3.Neos.ContentTypes:AbstractNode']
@@ -56,6 +60,11 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'page'
+      validation:
+        notEmpty: []
+        stringLength:
+          minimum: 1
+          maximum: 255
     _name:
       type: string
       ui:
@@ -63,6 +72,13 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'page'
+      validation:
+        notEmpty: []
+        stringLength:
+          minimum: 1
+          maximum: 255
+        regularExpression:
+          regularExpression: '/^[a-z0-9\-]+$/i'
     _hiddenInIndex:
       type: boolean
       ui:
@@ -404,6 +420,9 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginSettings'
+      validation:
+        regularExpression:
+          regularExpression: '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i'
     subpackage:
       type: string
       ui:
@@ -411,6 +430,10 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginSettings'
+      validation:
+        stringLength:
+          minimum: 1
+          maximum: 255
     controller:
       type: string
       ui:
@@ -418,6 +441,10 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginSettings'
+      validation:
+        stringLength:
+          minimum: 1
+          maximum: 255
     action:
       type: string
       ui:
@@ -425,3 +452,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginSettings'
+      validation:
+        stringLength:
+          minimum: 1
+          maximum: 255
