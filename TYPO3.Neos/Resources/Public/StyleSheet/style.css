@@ -9052,6 +9052,65 @@ button.t3-button.t3-connection-status-down {
   z-index: 11000;
 }
 
+.hallolink-dialog .t3-link-inputfield {
+  margin-bottom: 0 !important;
+}
+
+.hallolink-dialog + .ui-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  background-color: white;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+}
+.hallolink-dialog + .ui-autocomplete a {
+  display: block;
+  cursor: pointer;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 20px;
+  color: #333333;
+  white-space: nowrap;
+  border: none;
+}
+.hallolink-dialog + .ui-autocomplete a:focus, .hallolink-dialog + .ui-autocomplete a:hover, .hallolink-dialog + .ui-autocomplete a.ui-state-focus, .hallolink-dialog + .ui-autocomplete a.active, .hallolink-dialog + .ui-autocomplete a.active:hover {
+  color: white;
+  text-decoration: none;
+  outline: 0;
+  background-color: #ff8700;
+  background-color: #f58200;
+  background-image: -moz-linear-gradient(top, #ff8700, #e67a00);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff8700), to(#e67a00));
+  background-image: -webkit-linear-gradient(top, #ff8700, #e67a00);
+  background-image: -o-linear-gradient(top, #ff8700, #e67a00);
+  background-image: linear-gradient(to bottom, #ff8700, #e67a00);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF8700', endColorstr='#FFE67A00', GradientType=0);
+}
+
 .popover {
   position: absolute;
   display: none;

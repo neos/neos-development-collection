@@ -806,3 +806,55 @@ button.t3-button.t3-connection-status-down {
 	position: fixed;
 	z-index: 11000;
 }
+
+.hallolink-dialog {
+	.t3-link-inputfield {
+		margin-bottom: 0 !important;
+	}
+}
+
+.hallolink-dialog + .ui-autocomplete {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: $zindexDropdown;
+	display: none; // none by default, but block on "open" of the menu
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0; // override default ul
+	list-style: none;
+	background-color: $dropdownBackground;
+	background-image: none;
+	border: 1px solid #ccc; // Fallback for IE7-8
+	border: 1px solid $dropdownBorder;
+	*border-right-width: 2px;
+	*border-bottom-width: 2px;
+	@include border-radius(4px);
+	@include box-shadow(0 5px 10px rgba(0,0,0,.2));
+	@include background-clip(padding-box);
+
+	// Links within the dropdown menu
+	a {
+		display: block;
+		cursor: pointer;
+		padding: 3px 20px;
+		clear: both;
+		font-weight: normal;
+		line-height: $baseLineHeight;
+		color: $dropdownLinkColor;
+		white-space: nowrap;
+		border: none;
+		&:focus,
+		&:hover,
+		&.ui-state-focus,
+		&.active,
+		&.active:hover {
+			color: $dropdownLinkColorHover;
+			text-decoration: none;
+			outline: 0;
+			background-color: $light-orange;
+			@include gradient-vertical($light-orange, darken($light-orange, 5%));
+		}
+	}
+}
