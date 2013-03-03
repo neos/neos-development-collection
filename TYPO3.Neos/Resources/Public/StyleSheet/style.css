@@ -8518,6 +8518,7 @@ ul.t3-launcher-horizontal li .text {
   line-height: 1.4em;
   padding: 10px 35px 10px 10px;
   margin-bottom: 10px;
+  word-wrap: break-word;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
