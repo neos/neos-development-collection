@@ -423,7 +423,9 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		foreach ($nodes as $uninitializedNode) {
 			$node = $contentContext->getNode($uninitializedNode->getPath());
-			$searchResult[] = $this->processNodeForEditorPlugins($node);
+			if ($node !== NULL) {
+				$searchResult[] = $this->processNodeForEditorPlugins($node);
+			}
 		}
 
 		$this->view->assign('value', array('searchResult' => $searchResult, 'success' => TRUE));
