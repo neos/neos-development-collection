@@ -147,6 +147,65 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		}
 	});
 
+	// Make the inspector panels collapsible
+	T3.Content.UI.ToggleInspectorPanelHeadline = Ember.View.extend({
+		tagName: 'div',
+		_collapsed: false,
+		_nodeType: '',
+		_automaticallyCollapsed: false,
+
+		didInsertElement: function() {
+			var nodeType = T3.Content.Model.NodeSelection.get('selectedNode').$element.attr('typeof').replace(/\./g,'_'),
+				collapsed = T3.Content.Controller.Inspector.getPath('configuration.' + nodeType + '.' + this.content.group);
+			this.set('_nodeType', nodeType);
+			if (collapsed) {
+				this.$().next().hide();
+				this.set('_collapsed', true);
+				this.set('_automaticallyCollapsed', true);
+			}
+		},
+
+		click: function() {
+			this.toggleCollapsed();
+		},
+
+		toggleCollapsed: function() {
+			this.set('_collapsed', !this.get('_collapsed'));
+			if (!T3.Content.Controller.Inspector.getPath('configuration.' + this.get('_nodeType'))) {
+				T3.Content.Controller.Inspector.setPath('configuration.' + this.get('_nodeType'), {});
+			}
+			T3.Content.Controller.Inspector.setPath('configuration.' + this.get('_nodeType') + '.' + this.content.group, this.get('_collapsed'));
+			Ember.notifyObservers(T3.Content.Controller.Inspector, 'configuration');
+		},
+
+		_onCollapsedChange: function() {
+			var that = this,
+				$content = this.$().next(),
+				className = 't3-inspector-content-hidden',
+				$panel = this.$().parent();
+
+			if (this.get('_collapsed') === true) {
+					// Set max height to support transition
+				$content.css('max-height', $content.height());
+					// Force reflow so the updated max-height is used for the transition
+				if ($content.is(':visible')) {
+					$content.hide().height();
+					$content.show();
+				}
+				$panel.addClass(className);
+			} else {
+				if (!$content.is(':visible')) {
+					$content.hide().height();
+				}
+					// Ensure the inspector panel can expand again if necessary
+				$content.show().one('TransitionEnd webkitTransitionEnd transitionend oTransitionEnd MSTransitionEnd', function() {
+					$(this).css('max-height', 10000);
+				});
+				$panel.removeClass(className);
+			}
+		}.observes('_collapsed')
+	});
+
 	/**
 	 * =====================
 	 * SECTION: TREE PANEL
@@ -197,7 +256,6 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 			return icon !== '' ? 't3-icon-' + icon : '';
 		}.property('icon').cacheable()
 	});
-
 
 	/**
 	 * =====================

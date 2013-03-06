@@ -4,7 +4,18 @@
 </div>
 <form class="t3-inspector-form" action="#">
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
-		<h2>{{content.label}}</h2>
+		{{#view T3.Content.UI.ToggleInspectorPanelHeadline contentBinding="content"}}
+			<h2>
+				{{content.label}}
+				<span class="pull-right">
+					{{#if _collapsed}}
+						<i class="icon-chevron-up"></i>
+					{{else}}
+						<i class="icon-chevron-down"></i>
+					{{/if}}
+				</span>
+			</h2>
+		{{/view}}
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
 			<label for="{{unbound content.elementId}}">{{content.label}}</label>
 			{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
