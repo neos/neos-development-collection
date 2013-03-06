@@ -157,6 +157,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		}
 
 		$view = new \TYPO3\Neos\View\TypoScriptView();
+		$this->controllerContext->getRequest()->setFormat('html');
 		$view->setControllerContext($this->controllerContext);
 
 		$view->setTypoScriptPath($typoScriptPath);
