@@ -39,33 +39,34 @@ define(
 
 						didInsertElement: function() {
 							var that = this;
-							this.$('.t3-link-inputfield').focus();
-							this.$('.t3-link-inputfield').autocomplete({
-								source: function(request, response) {
-									TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.searchPage(request.term, function(result) {
-										if (result.searchResult) {
-											response($.map(result.searchResult, function(node) {
-												return {
-													label: node.name,
-													value: node.url
-												}
-											}));
-										} else {
-											response([]);
-										}
-									});
+							this.$('.t3-link-inputfield').focus().autocomplete(
+								{
+									source: function(request, response) {
+										TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.searchPage(request.term, function(result) {
+											if (result && result.searchResult) {
+												response($.map(result.searchResult, function(node) {
+													return {
+														label: node.name,
+														value: node.url
+													}
+												}));
+											} else {
+												response([]);
+											}
+										});
+									},
+									minLength: 2,
+									select: function(event, ui) {
+										that.set('url', ui.item.value);
+									}
 								},
-								minLength: 2,
-								select: function(event, ui) {
-									that.set('url', ui.item.value);
-								}
-							},
-							this.$('.t3-link-inputfield').keyup(function(e) {
-								if (e.keyCode === 13) {
-									that.insert();
-								}
-							})
+								this.$('.t3-link-inputfield').keyup(function(e) {
+									if (e.keyCode === 13) {
+										that.insert();
+									}
+								})
 							);
+
 
 							if (this.get('url') !== widget.options.defaultUrl) {
 								this.set('label', 'Update');
