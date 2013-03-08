@@ -179,29 +179,11 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		},
 
 		_onCollapsedChange: function() {
-			var that = this,
-				$content = this.$().next(),
-				className = 't3-inspector-content-hidden',
-				$panel = this.$().parent();
-
+			var $content = this.$().next();
 			if (this.get('_collapsed') === true) {
-					// Set max height to support transition
-				$content.css('max-height', $content.height());
-					// Force reflow so the updated max-height is used for the transition
-				if ($content.is(':visible')) {
-					$content.hide().height();
-					$content.show();
-				}
-				$panel.addClass(className);
+				$content.slideUp(200);
 			} else {
-				if (!$content.is(':visible')) {
-					$content.hide().height();
-				}
-					// Ensure the inspector panel can expand again if necessary
-				$content.show().one('TransitionEnd webkitTransitionEnd transitionend oTransitionEnd MSTransitionEnd', function() {
-					$(this).css('max-height', 10000);
-				});
-				$panel.removeClass(className);
+				$content.slideDown(200);
 			}
 		}.observes('_collapsed')
 	});

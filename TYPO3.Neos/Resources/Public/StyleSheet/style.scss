@@ -413,16 +413,6 @@ body {
 			border-radius: 3px;
 			color: #333;
 		}
-		.t3-inspector-field {
-			overflow: hidden;
-			@include transition-property('max-height');
-			@include transition-duration(.2s);
-		}
-		.t3-inspector-content-hidden {
-			.t3-inspector-field {
-				max-height: 0 !important;
-			}
-		}
 	}
 }
 
