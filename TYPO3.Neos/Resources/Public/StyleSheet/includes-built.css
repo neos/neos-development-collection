@@ -7262,20 +7262,6 @@ body.t3-ui-controls.t3-tree-panel-open {
   border-radius: 3px;
   color: #333;
 }
-#t3-inspector .t3-inspector-form .t3-inspector-field {
-  overflow: hidden;
-  -webkit-transition-property: max-height;
-  -moz-transition-property: max-height;
-  -o-transition-property: max-height;
-  transition-property: max-height;
-  -webkit-transition-duration: 0.2s;
-  -moz-transition-duration: 0.2s;
-  -o-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-}
-#t3-inspector .t3-inspector-form .t3-inspector-content-hidden .t3-inspector-field {
-  max-height: 0 !important;
-}
 #t3-tree-panel {
   -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
