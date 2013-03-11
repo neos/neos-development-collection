@@ -625,6 +625,7 @@ button.t3-button.t3-connection-status-down {
 .t3-ui.hallotoolbar {
 	// Hack until the hallo toolbar and handlebar JS are used correctly and won't lay over each other
 	width: auto !important;
+	max-width: 210px;
 
 	.btn {
 		width: 28px;
@@ -641,12 +642,11 @@ button.t3-button.t3-connection-status-down {
 		}
 	}
 
-	.ui-buttonset + .ui-buttonset {
-		margin-left: 5px;
-	}
-
 	.ui-buttonset {
-		margin-right: 0;
+		display: block;
+		float: left;
+		margin-right: 5px;
+		margin-top: 5px;
 
 		.btn {
 			position: relative;
@@ -729,7 +729,7 @@ button.t3-button.t3-connection-status-down {
 			border: 0;
 			background-color: transparent;
 
-			h1, h2, h3, h4, h5 {
+			h1, h2, h3, h4, h5, h6 {
 				line-height: 1em;
 				font-weight: normal;
 				margin: 0;
@@ -748,6 +748,9 @@ button.t3-button.t3-connection-status-down {
 			}
 			h5 {
 				font-size: 1.1em;
+			}
+			h6 {
+				font-size: 1em;
 			}
 			pre,
 			blockquote {
@@ -775,7 +778,6 @@ button.t3-button.t3-connection-status-down {
 				background-color: $light-orange;
 				@include gradient-vertical($light-orange, darken($light-orange, 5%));
 			}
-
 		}
 	}
 }

@@ -65,10 +65,16 @@ define(
 								toolbarCssClass: 't3-ui',
 								buttonCssClass: 'btn btn-mini',
 								plugins: {
-									halloformat: {},
-									halloblock: {},
+									halloformat: {
+										formattings: {bold: true, italic: true, strikeThrough: true, underline: true}
+									},
+									hallojustify: {},
+									halloblock: {
+										elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'blockquote', 'address']
+									},
 									hallolists: {},
-									'hallo-linkplugin': {}
+									'hallo-linkplugin': {},
+									halloreundo: {}
 								}
 							}
 						},
@@ -81,8 +87,10 @@ define(
 								buttonCssClass: 'btn btn-mini',
 								plugins: {
 									halloblock: {
-										elements: ['h1', 'h2', 'h3']
+										elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 									},
+									'hallo-linkplugin': {},
+									halloreundo: {},
 									halloblacklist: {
 										tags: ['br']
 									}
