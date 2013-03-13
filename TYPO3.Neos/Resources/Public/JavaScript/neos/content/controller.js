@@ -194,9 +194,12 @@ function($, CreateJS, Entity) {
 			var sectionsAndViews = [];
 			jQuery.each(selectedNodeSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
-				jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
+				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
 					if (propertyConfiguration.group === groupIdentifier) {
-						properties.push(jQuery.extend({key: propertyName, elementId: Ember.generateGuid()}, propertyConfiguration));
+						properties.push($.extend(
+							{key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'},
+							propertyConfiguration
+						));
 					}
 				});
 

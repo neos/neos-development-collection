@@ -17,8 +17,15 @@
 			</h2>
 		{{/view}}
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
-			<label for="{{unbound content.elementId}}">{{content.label}}</label>
-			{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
+			{{#if content.isBoolean}}
+				<label for="{{unbound content.elementId}}" class="checkbox">
+					{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
+					{{content.label}}
+				</label>
+			{{else}}
+				<label for="{{unbound content.elementId}}">{{content.label}}</label>
+				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
+			{{/if}}
 		{{/collection}}
 	{{/collection}}
 </form>
