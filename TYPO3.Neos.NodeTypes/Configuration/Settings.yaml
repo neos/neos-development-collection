@@ -11,7 +11,7 @@ TYPO3:
             # The "group" groups the properties together in "(property)groups"
             group: 'visibility'
             # The higher the priority, the more important the property is.
-            priority: 1
+            priority: 5
           _hiddenBeforeDateTime:
             type: date
             label: 'Hide before date'
@@ -48,6 +48,12 @@ TYPO3:
             type: string
             label: 'Name (URL)'
             group: 'page'
+            reloadOnChange: true
+          _hiddenInIndex:
+            type: boolean
+            label: 'Hide in menus'
+            group: 'visibility'
+            priority: 4
             reloadOnChange: true
         groups:
           page:
