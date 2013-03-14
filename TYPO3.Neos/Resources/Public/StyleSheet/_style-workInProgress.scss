@@ -397,6 +397,7 @@ button.t3-button.t3-connection-status-down {
 
 // Content editable highlight
 .t3-contentelement {
+	z-index: 10001;
 	&.t3-contentelement-hover {
 		outline: 3px solid rgba(0,0,0,0.2);
 		outline-offset: 4px;
@@ -467,6 +468,7 @@ button.t3-button.t3-connection-status-down {
 .t3-contentelement-active {
 	outline: 3px solid $orange !important;
 	outline-offset: 4px;
+	z-index: 10001;
 
 	> .t3-contentelement-handle-container {
 		visibility: visible;
