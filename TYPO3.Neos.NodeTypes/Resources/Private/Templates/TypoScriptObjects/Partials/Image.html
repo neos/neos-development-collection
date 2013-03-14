@@ -1,0 +1,21 @@
+{namespace media=TYPO3\Media\ViewHelpers}
+<figure>
+	<f:if condition="{image}">
+		<f:then>
+			<f:if condition="{link}">
+				<f:then>
+					<a href="{link}"><media:image image="{image}" alt="{alternativeText}" title="{title}" /></a>
+				</f:then>
+				<f:else>
+					<media:image image="{image}" alt="{alternativeText}" title="{title}" />
+				</f:else>
+			</f:if>
+		</f:then>
+		<f:else>
+			<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.png')}" title="Dummy image" alt="Dummt image" />
+		</f:else>
+	</f:if>
+	<f:if condition="{caption}">
+		<figcaption{f:if(condition: captionAlignment, then: 'class="alignment-{captionAlignment}"')}>{caption}</figcaption>
+	</f:if>
+</figure>

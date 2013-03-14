@@ -1,14 +1,14 @@
 {namespace t=TYPO3\Neos\ViewHelpers}
 <t:contentElement node="{node}">
-	<div class="typo3-image{f:if(condition:position, then: ' typo3-image-position-{position}')}">
-		<f:if condition="{image}">
-			<f:then>
-				<img src="{f:uri.resource(resource: image.resource)}" />
-			</f:then>
-			<f:else>
-				<img src="{f:uri.resource(package:'TYPO3.Neos', path:'Images/dummy-image.png')}" title="Dummy Image" />
-			</f:else>
-		</f:if>
+	<div class="typo3-image{f:if(condition: alignment, then: ' typo3-image-alignment-{alignment}')}">
+		<f:render partial="Image" arguments="{
+			image: image,
+			alternativeText: alternativeText,
+			title: title,
+			link: link,
+			caption: caption,
+			captionAlignment: captionAlignment
+		}" />
 	</div>
 	<t:contentElement.editable property="text">{text -> f:format.raw()}</t:contentElement.editable>
 </t:contentElement>

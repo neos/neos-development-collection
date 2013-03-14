@@ -156,6 +156,74 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+    alignment:
+      type: string
+      defaultValue: ''
+      ui:
+        label: 'Alignment'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          editor: T3.Content.UI.Editor.Selectbox
+          editorOptions:
+            placeholder: 'Default'
+            values:
+              '':
+                label: ''
+              center:
+                label: 'Center'
+              left:
+                label: 'Left'
+              right:
+                label: 'Right'
+    alternativeText:
+      type: string
+      ui:
+        label: 'Alternative text'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    title:
+      type: string
+      ui:
+        label: 'Title'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    link:
+      type: string
+      ui:
+        label: 'Link'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    caption:
+      type: string
+      ui:
+        label: 'Caption'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    captionAlignment:
+      type: string
+      defaultValue: ''
+      ui:
+        label: 'Caption alignment'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          editor: T3.Content.UI.Editor.Selectbox
+          editorOptions:
+            placeholder: 'Default'
+            values:
+              '':
+                label: ''
+              left:
+                label: 'Left'
+              right:
+                label: 'Right'
+              center:
+                label: 'Center'
 
 'TYPO3.Neos.NodeTypes:TextWithImage':
   superTypes: ['TYPO3.Neos.NodeTypes:Image', 'TYPO3.Neos.NodeTypes:Text']
@@ -165,21 +233,6 @@
     icon:
       light: 'Images/Icons/White/image_text_icon-16.png'
       dark: 'Images/Icons/Black/image_text_icon-16.png'
-  properties:
-    position:
-      type: string
-      ui:
-        label: 'Image position'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-          editor: T3.Content.UI.Editor.Selectbox
-          editorOptions:
-            values:
-              left:
-                label: 'Left'
-              right:
-                label: 'Right'
 
 'TYPO3.Neos.NodeTypes:Html':
   superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']

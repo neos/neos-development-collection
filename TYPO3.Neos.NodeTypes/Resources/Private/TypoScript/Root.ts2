@@ -62,6 +62,19 @@ prototype(TYPO3.Neos.NodeTypes:Headline) {
 	title = ${q(node).property('title')}
 }
 
+# Image TS Object
+prototype(TYPO3.Neos.NodeTypes:Image) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:Image) {
+	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Image.html'
+	image = ${q(node).property('image')}
+	alignment = ${q(node).property('alignment')}
+	alternativeText = ${q(node).property('alternativeText')}
+	title = ${q(node).property('title')}
+	link = ${q(node).property('link')}
+	caption = ${q(node).property('caption')}
+	captionAlignment = ${q(node).property('captionAlignment')}
+}
+
 # Text TS Object
 prototype(TYPO3.Neos.NodeTypes:Text) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.Neos.NodeTypes:Text) {
@@ -70,18 +83,11 @@ prototype(TYPO3.Neos.NodeTypes:Text) {
 }
 
 # TextWithImage TS Object
-prototype(TYPO3.Neos.NodeTypes:TextWithImage) < prototype(TYPO3.Neos.NodeTypes:Text)
+prototype(TYPO3.Neos.NodeTypes:TextWithImage) < prototype(TYPO3.Neos.NodeTypes:Image)
 prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/TextWithImage.html'
-	image = ${q(node).property('image')}
+	text = ${q(node).property('text')}
 	position = ${q(node).property('position')}
-}
-
-# Image TS Object
-prototype(TYPO3.Neos.NodeTypes:Image) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.Neos.NodeTypes:Image) {
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Image.html'
-	image = ${q(node).property('image')}
 }
 
 # Menu TS Object
