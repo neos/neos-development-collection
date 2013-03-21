@@ -401,9 +401,9 @@ function($, vie, Ember, CreateJS) {
 			function clickHandler(e, link) {
 				e.preventDefault();
 				var $this = $(link);
-				if (!$this.attr('href').match(/[a-z]*:\/\//) && $this.parents('.t3-contentelement-active').length === 0) {
+				if (!$this.attr('href').match(/[a-z]*:\/\//) && $this.parents('.t3-contentelement-active').length === 0 && $this.parents('.t3-inline-editable').length === 0) {
 						// We only load the page if the link is a non-external link and the parent contentelement is not selected
-						// as links should not be followed if the element is currently being edited
+						// as links should not be followed if the element is currently being edited or being editable
 					that.loadPage($this.attr('href'));
 				}
 			}
