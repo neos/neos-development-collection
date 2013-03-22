@@ -6927,7 +6927,6 @@ body.t3-backend {
   transition-duration: 0.2s;
 }
 body.t3-ui-controls {
-  margin-right: 200px;
   margin-bottom: 26px;
   margin-top: 96px;
   margin-left: 0;
@@ -7170,27 +7169,45 @@ body.t3-ui-controls.t3-tree-panel-open {
   font-size: 100%;
 }
 
-/*** Inspector Panel ***/
-#t3-inspector {
+.t3-inspector-panel-open {
+  margin-right: 200px;
+  -webkit-transition-property: margin-right;
+  -moz-transition-property: margin-right;
+  -o-transition-property: margin-right;
+  transition-property: margin-right;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+}
+.t3-inspector-panel-open #t3-inspector {
+  right: 0;
   -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+.t3-inspector-panel-open #t3-toolbar {
+  padding-right: 200px;
+}
+
+/*** Inspector Panel ***/
+#t3-inspector {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   position: fixed;
   top: 60px;
   bottom: 0;
-  right: 0;
+  right: -200px;
   width: 200px;
   background: #2d2d2d;
   z-index: 10014;
   border-top: 1px solid #69a550;
   padding-top: 45px;
-  -webkit-transition-property: width, margin-top;
-  -moz-transition-property: width, margin-top;
-  -o-transition-property: width, margin-top;
-  transition-property: width, margin-top;
+  -webkit-transition-property: right;
+  -moz-transition-property: right;
+  -o-transition-property: right;
+  transition-property: right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
@@ -7410,7 +7427,7 @@ body.t3-ui-controls.t3-tree-panel-open {
   margin: 0px;
   margin-top: 60px;
   padding: 0px;
-  padding-right: 200px;
+  padding-right: 0;
   z-index: 10012;
   -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
@@ -7494,7 +7511,7 @@ body.t3-ui-controls.t3-tree-panel-open {
   height: 26px;
   line-height: 26px;
   right: 0;
-  z-index: 10012;
+  z-index: 10014;
   -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
@@ -7519,6 +7536,10 @@ body.t3-ui-controls.t3-tree-panel-open {
 }
 #t3-footer .t3-toolbar-left li {
   height: 26px;
+  line-height: 26px;
+}
+#t3-footer .t3-toolbar-right,
+#t3-footer .t3-toolbar-right li {
   line-height: 26px;
 }
 #t3-footer ul {
@@ -7859,10 +7880,10 @@ body #t3-ui-top {
   transition-duration: 0.2s;
 }
 body #t3-toolbar {
-  -webkit-transition-property: margin-top;
-  -moz-transition-property: margin-top;
-  -o-transition-property: margin-top;
-  transition-property: margin-top;
+  -webkit-transition-property: margin-top, padding-right;
+  -moz-transition-property: margin-top, padding-right;
+  -o-transition-property: margin-top, padding-right;
+  transition-property: margin-top, padding-right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
@@ -7887,6 +7908,9 @@ body .aloha-block-TYPO3Block {
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
+}
+body.t3-ui-previewmode {
+  margin-right: 0;
 }
 body.t3-ui-previewmode .t3-ui {
   display: none !important;

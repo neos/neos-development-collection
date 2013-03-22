@@ -33,7 +33,6 @@ body {
 		@include transition-duration(0.2s);
 	}
 	&.t3-ui-controls {
-		margin-right: $property-panel-width;
 		margin-bottom: $footer-height;
 		margin-top: $launcher-height + $menu-height + $topbar-offset + $toolbar-height;
 		margin-left: 0;
@@ -262,20 +261,32 @@ body {
 	}
 }
 
+.t3-inspector-panel-open {
+	margin-right: $property-panel-width;
+	@include transition-property('margin-right');
+	@include transition-duration(0.2s);
+	#t3-inspector {
+		right: 0;
+		@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
+	}
+	#t3-toolbar {
+		padding-right: $property-panel-width;
+	}
+}
+
 /*** Inspector Panel ***/
 #t3-inspector {
-	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
 	position: fixed;
 	top: $menu-height + $launcher-height + $topbar-offset;
 	bottom: 0;
-	right: 0;
+	right: -$property-panel-width;
 	width: $property-panel-width;
 	background: $dark-grey;
 	z-index: 10014;
 	border-top: 1px solid $green;
 	padding-top: 45px;
-	@include transition-property('width, margin-top');
+	@include transition-property('right');
 	@include transition-duration(.2s);
 
 	.header,
@@ -463,7 +474,7 @@ body {
 	margin: 0px;
 	margin-top: $menu-height + $launcher-height + $topbar-offset;
 	padding: 0px;
-	padding-right: $property-panel-width;
+	padding-right: 0;
 	z-index: 10012;
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 
@@ -535,7 +546,7 @@ body {
 	height: $footer-height;
 	line-height: $footer-height;
 	right: 0;
-	z-index: 10012;
+	z-index: 10014;
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	.t3-toolbar-left {
 		height: $footer-height;
@@ -560,6 +571,10 @@ body {
 			height: $footer-height;
 			line-height: $footer-height;
 		}
+	}
+	.t3-toolbar-right,
+	.t3-toolbar-right li {
+		line-height: 26px;
 	}
 	ul {
 		margin: 0px;
@@ -860,7 +875,7 @@ body {
 		@include transition-duration(0.2s);
 	}
 	#t3-toolbar {
-		@include transition-property(margin-top);
+		@include transition-property(margin-top, padding-right);
 		@include transition-duration(0.2s);
 		.t3-icon-preview {
 			@include transition-property(margin-top);
@@ -872,6 +887,7 @@ body {
 		@include transition-duration(0.2s);
 	}
 	&.t3-ui-previewmode {
+		margin-right: 0;
 		.t3-ui {
 			display: none !important;
 		}
