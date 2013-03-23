@@ -27,7 +27,14 @@ class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 	 * @return string
 	 */
 	public function getLabel(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$label = $node->hasProperty('title') ? strip_tags($node->getProperty('title')) : '(' . $node->getContentType()->getName() . ') ' . $node->getName();
+		if ($node->hasProperty('title') === TRUE && $node->getProperty('title') !== '') {
+			$label = strip_tags($node->getProperty('title'));
+		} elseif ($node->hasProperty('text') === TRUE && $node->getProperty('text') !== '') {
+			$label = strip_tags($node->getProperty('text'));
+		} else {
+			$label = '(' . $node->getContentType()->getName() . ') ' . $node->getName();
+		}
+
 		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, NodeInterface::LABEL_MAXIMUM_CHARACTERS);
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}
