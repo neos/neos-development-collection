@@ -573,7 +573,9 @@ function($, vie, Ember, CreateJS) {
 		},
 
 		hidePageLoaderSpinner: function() {
-			this.spinner.stop();
+			if (this.spinner !== null) {
+				this.spinner.stop();
+			}
 		}
 	});
 });
