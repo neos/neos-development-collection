@@ -861,3 +861,11 @@ button.t3-button.t3-connection-status-down {
 		}
 	}
 }
+
+.t3-link-inputfield {
+	&.ui-autocomplete-loading {
+		background-image: url('../Images/ajax-preloader.gif');
+		background-repeat: no-repeat;
+		background-position: 198px;
+	}
+}
