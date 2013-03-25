@@ -8699,6 +8699,7 @@ button.t3-button.t3-connection-status-down {
 }
 .t3-ui.hallotoolbar {
   width: auto !important;
+  max-width: 210px;
 }
 .t3-ui.hallotoolbar .btn {
   width: 28px;
@@ -8713,11 +8714,11 @@ button.t3-button.t3-connection-status-down {
   background-repeat: no-repeat;
   background-position: center center;
 }
-.t3-ui.hallotoolbar .ui-buttonset + .ui-buttonset {
-  margin-left: 5px;
-}
 .t3-ui.hallotoolbar .ui-buttonset {
-  margin-right: 0;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  margin-top: 5px;
 }
 .t3-ui.hallotoolbar .ui-buttonset .btn {
   position: relative;
@@ -8815,7 +8816,7 @@ button.t3-button.t3-connection-status-down {
   border: 0;
   background-color: transparent;
 }
-.t3-ui.hallotoolbar .dropdown-menu .blockselector h1, .t3-ui.hallotoolbar .dropdown-menu .blockselector h2, .t3-ui.hallotoolbar .dropdown-menu .blockselector h3, .t3-ui.hallotoolbar .dropdown-menu .blockselector h4, .t3-ui.hallotoolbar .dropdown-menu .blockselector h5 {
+.t3-ui.hallotoolbar .dropdown-menu .blockselector h1, .t3-ui.hallotoolbar .dropdown-menu .blockselector h2, .t3-ui.hallotoolbar .dropdown-menu .blockselector h3, .t3-ui.hallotoolbar .dropdown-menu .blockselector h4, .t3-ui.hallotoolbar .dropdown-menu .blockselector h5, .t3-ui.hallotoolbar .dropdown-menu .blockselector h6 {
   line-height: 1em;
   font-weight: normal;
   margin: 0;
@@ -8834,6 +8835,9 @@ button.t3-button.t3-connection-status-down {
 }
 .t3-ui.hallotoolbar .dropdown-menu .blockselector h5 {
   font-size: 1.1em;
+}
+.t3-ui.hallotoolbar .dropdown-menu .blockselector h6 {
+  font-size: 1em;
 }
 .t3-ui.hallotoolbar .dropdown-menu .blockselector pre,
 .t3-ui.hallotoolbar .dropdown-menu .blockselector blockquote {
