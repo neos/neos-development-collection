@@ -94,6 +94,8 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$staticWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/TYPO3.Neos/';
 
+		$this->uriBuilder->setRequest($this->request->getMainRequest());
+
 		$groups = array();
 		foreach ($this->nodeSearchService->findByProperties($term, $searchContentTypes) as $result) {
 			$contentType = $result->getContentType();
@@ -126,7 +128,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$searchResult = array(
 				'type' => $contentType->getName(),
 				'label' => $result->getLabel(),
-				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos', ''),
+				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos'),
 				'path' => $result->getPath()
 			);
 			$contentTypeConfiguration = $contentType->getConfiguration();
