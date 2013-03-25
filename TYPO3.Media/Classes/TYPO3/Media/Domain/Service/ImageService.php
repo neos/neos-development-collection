@@ -46,7 +46,7 @@ class ImageService {
 			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension()));
 		}
 		$resource = new \TYPO3\Flow\Resource\Resource();
-		$resource->setFilename(sprintf('%s.%s', $uniqueHash, $image->getFileExtension()));
+		$resource->setFilename($image->getResource()->getFilename());
 		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($uniqueHash));
 
 		return $resource;
