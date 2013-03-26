@@ -22,11 +22,6 @@ interface PersistentNodeInterface extends NodeInterface {
 	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
 
 	/**
-	 * Regex pattern which matches a Node Name (ie. segment of a node path)
-	 */
-	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
-
-	/**
 	 * Regex pattern which matches a "context path", ie. a node path possibly containing context information such as the
 	 * workspace name. This pattern is used at least in the route part handler.
 	 */

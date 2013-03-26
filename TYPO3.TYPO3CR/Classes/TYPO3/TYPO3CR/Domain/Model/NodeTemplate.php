@@ -36,6 +36,9 @@ class NodeTemplate extends AbstractNode {
 	 * @return void
 	 */
 	public function setName($name) {
+		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290839);
+		}
 		$this->name = $name;
 	}
 

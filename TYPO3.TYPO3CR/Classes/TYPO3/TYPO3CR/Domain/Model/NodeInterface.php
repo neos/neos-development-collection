@@ -24,6 +24,11 @@ interface NodeInterface {
 	const LABEL_MAXIMUM_CHARACTERS = 30;
 
 	/**
+	 * Regex pattern which matches a Node Name (ie. segment of a node path)
+	 */
+	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
+
+	/**
 	 * Set the name of the node to $newName, keeping it's position as it is.
 	 *
 	 * @param string $newName
