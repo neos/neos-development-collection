@@ -100,16 +100,25 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	/**
 	 * Export sites content
 	 *
-	 * Export all sites and their content into an XML format.
+	 * Export one or multiple sites and their content into an XML format.
 	 *
+	 * @param string $siteName the site name to be exported; if none given will export all sites.
 	 * @return void
 	 */
-	public function exportCommand() {
+	public function exportCommand($siteName = NULL) {
 		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
 		$this->nodeRepository->setContext($contentContext);
 
-		$sites = $this->siteRepository->findAll();
-		$this->response->setContent($this->siteExportService->export($sites->toArray()));
+		if ($siteName === NULL) {
+			$sites = $this->siteRepository->findAll()->toArray();
+		} else {
+			$sites = $this->siteRepository->findByNodeName($siteName)->toArray();
+		}
+		if (count($sites) === 0) {
+			$this->outputLine('Error: No site for exporting found');
+			$this->quit(1);
+		}
+		$this->response->setContent($this->siteExportService->export($sites));
 	}
 
 	/**
