@@ -147,11 +147,11 @@ class UserSettingsController extends \TYPO3\Neos\Controller\Module\StandardContr
 	protected function assignElectronicAddressOptions() {
 		$electronicAddress = new \TYPO3\Party\Domain\Model\ElectronicAddress();
 		$electronicAddressTypes = array();
-		foreach ($electronicAddress->getAllElectronicAddressTypes() as $type) {
+		foreach ($electronicAddress->getAvailableElectronicAddressTypes() as $type) {
 			$electronicAddressTypes[$type] = $type;
 		}
 		$electronicAddressUsageTypes = array();
-		foreach ($electronicAddress->getAllUsageTypes() as $type) {
+		foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
 			$electronicAddressUsageTypes[$type] = $type;
 		}
 		$this->view->assignMultiple(array(
