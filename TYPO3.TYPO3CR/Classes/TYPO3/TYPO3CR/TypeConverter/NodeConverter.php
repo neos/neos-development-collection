@@ -94,7 +94,6 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 *
 	 * All other elements, not being prefixed with underscore, are properties of the node.
 	 *
-	 *
 	 * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
 	 * @param string $targetType not used
 	 * @param array $subProperties not used
@@ -185,7 +184,10 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 			if (isset($nodeTypeProperties[$nodePropertyName]['type'])) {
 				$targetType = $nodeTypeProperties[$nodePropertyName]['type'];
 				if ($this->objectManager->isRegistered($targetType)) {
-					$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $targetType);
+					// If $nodePropertyValue is not empty then convert it
+					if ($nodePropertyValue !== '') {
+						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $targetType);
+					}
 				}
 			}
 			$node->setProperty($nodePropertyName, $nodePropertyValue);
