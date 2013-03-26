@@ -228,6 +228,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
 	 */
 	public function setName($newName) {
+		if (!is_string($newName) || preg_match(self::MATCH_PATTERN_NAME, $newName) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
+		}
+
 		if ($this->path === '/') {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
 		}
