@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ContentTypes\TypoScript;
+namespace TYPO3\Neos\NodeTypes\TypoScript;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Neos.ContentTypes".     *
+ * This script belongs to the TYPO3 Flow package "Neos.NodeTypes".        *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -177,7 +177,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 
 				// TODO: Check if we want to use all properties as arguments
 				//     This enables us to configure plugin controller arguments via
-				//     content type definitions for now.
+				//     node type definitions for now.
 			foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
 				$propertyName = '--' . $propertyName;
 				if (!in_array($propertyName, array('--package', '--subpackage', '--controller', '--action', '--format')) && !$pluginRequest->hasArgument($propertyName)) {

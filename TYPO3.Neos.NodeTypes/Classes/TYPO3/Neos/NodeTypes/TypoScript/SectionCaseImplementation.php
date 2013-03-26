@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ContentTypes\TypoScript;
+namespace TYPO3\Neos\NodeTypes\TypoScript;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Neos.ContentTypes".     *
+ * This script belongs to the TYPO3 Flow package "Neos.NodeTypes".        *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TypoScript\TypoScriptObjects\CaseImplementation;
 
 /**
- * TypoScript object which is used for the "Section" content type.
+ * TypoScript object which is used for the "Section" node type.
  */
 class SectionCaseImplementation extends CaseImplementation {
 

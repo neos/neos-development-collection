@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ContentTypes\TypoScript;
+namespace TYPO3\Neos\NodeTypes\TypoScript;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "Neos.ContentTypes".     *
+ * This script belongs to the TYPO3 Flow package "Neos.NodeTypes".        *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -81,7 +81,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 			return $output;
 		}
 
-		if ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
+		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Section')) {
 			$sectionNode = $node;
 		} else {
 			$sectionNode = $node->getNode($this->getNodePath());
@@ -95,7 +95,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 					 * Thus, as a workaround, we create new section nodes as we need them during rendering, although we
 					 * know it is ugly.
 					 */
-				$sectionNode = $node->createNode($this->getNodePath(), $this->nodeTypeManager->getNodeType('TYPO3.Neos.ContentTypes:Section'));
+				$sectionNode = $node->createNode($this->getNodePath(), $this->nodeTypeManager->getNodeType('TYPO3.Neos.NodeTypes:Section'));
 			}
 		}
 
@@ -107,7 +107,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 		}
 
 		$idAttribute = $this->generateIdAttributeForSection($sectionNode);
-		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), $idAttribute, 'TYPO3.Neos.ContentTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
+		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), $idAttribute, 'TYPO3.Neos.NodeTypes:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
 	}
 
 	/**
@@ -128,7 +128,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $sectionNode) {
 		$parentNode = $sectionNode->getParent();
 
-		while ($parentNode->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Folder') !== TRUE) {
+		while ($parentNode->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Folder') !== TRUE) {
 			$parentNode = $parentNode->getParent();
 		}
 

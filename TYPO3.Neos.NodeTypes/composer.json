@@ -1,7 +1,7 @@
 {
-    "name": "typo3/neos-contenttypes",
+    "name": "typo3/neos-nodetypes",
     "type": "typo3-flow-package",
-    "description": "Content Type Configuration for TYPO3 Neos.",
+    "description": "Node type configuration for TYPO3 Neos",
     "version": "1.0.0 dev",
     "require": {
         "typo3/flow": "*",
@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-0": {
-            "TYPO3\\Neos\\ContentTypes": "Classes"
+            "TYPO3\\Neos\\NodeTypes": "Classes"
         }
     }
 }

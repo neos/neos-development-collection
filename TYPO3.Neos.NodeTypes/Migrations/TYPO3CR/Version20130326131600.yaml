@@ -1,0 +1,315 @@
+up:
+  comments: 'This is the migration to adjust from "Content Types" to "Node Types"'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Page'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Page'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Section'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Section'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Shortcut'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Shortcut'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Headline'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Headline'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Text'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Text'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Image'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Image'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:TextWithImage'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:TextWithImage'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Html'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Html'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Menu'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Menu'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Column'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Column'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:TwoColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:TwoColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:ThreeColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:ThreeColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:FourColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:FourColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.ContentTypes:Plugin'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Plugin'
+
+down:
+  comments: 'This migrates nodes from Neos back to TYPO3 / Phoenix.'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Page'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Page'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Section'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Section'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Shortcut'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Shortcut'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Headline'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Headline'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Text'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Text'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Image'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Image'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:TextWithImage'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:TextWithImage'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Html'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Html'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Menu'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Menu'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Column'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Column'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:TwoColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:TwoColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:ThreeColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:ThreeColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:FourColumn'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:FourColumn'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Plugin'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.ContentTypes:Plugin'
