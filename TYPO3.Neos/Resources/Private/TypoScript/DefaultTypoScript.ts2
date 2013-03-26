@@ -95,6 +95,10 @@ prototype(TYPO3.Neos:Menu) {
 #
 prototype(TYPO3.Neos:Plugin).@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementation'
 
+# PluginView Implementation
+#
+prototype(TYPO3.Neos:PluginView).@class = 'TYPO3\\Neos\\TypoScript\\PluginViewImplementation'
+
 # The root matcher used to start rendering in Neos
 #
 # The default is to use a render path of "page", unless the requested format is not "html"

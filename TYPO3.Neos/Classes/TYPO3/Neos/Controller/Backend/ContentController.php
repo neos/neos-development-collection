@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Neos\Controller\Exception\NodeCreationException;
-
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * The TYPO3 ContentModule controller; providing backend functionality for the Content Module.
@@ -41,6 +41,14 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $resourcePublisher;
 
 	/**
+	 * The pluginService
+	 *
+	 * @var \TYPO3\Neos\Service\PluginService
+	 * @Flow\Inject
+	 */
+	protected $pluginService;
+
+	/**
 	 * Upload a new image, and return its metadata.
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Image $image
@@ -66,6 +74,70 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			'originalSize' => array('w' => $image->getWidth(), 'h' => $image->getHeight()),
 			'previewSize' => array('w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight())
 		));
+	}
+
+	/**
+	 * Fetch the configured views for the given master plugin
+	 *
+	 * @param NodeInterface $node
+	 * @return string
+	 */
+	public function pluginViewsAction(NodeInterface $node) {
+		$pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
+		$views = array();
+		/** @var $pluginViewDefinition \TYPO3\Neos\Domain\Model\PluginViewDefinition */
+		foreach ($pluginViewDefinitions as $pluginViewDefinition) {
+			$label = $pluginViewDefinition->getLabel();
+
+			$views[$pluginViewDefinition->getName()] = array(
+				'label' => $label
+			);
+
+			$pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin($node, $pluginViewDefinition->getName());
+			if ($pluginViewNode === NULL) {
+				continue;
+			}
+			$page = $pluginViewNode->getClosestAncestor('TYPO3.Neos:Document');
+			$uri = $this->uriBuilder
+						->reset()
+						->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
+			$pageTitle = $page->getProperty('title');
+			$views[$pluginViewDefinition->getName()] = array(
+				'label' => sprintf('"%s"', $label, $pageTitle),
+				'pageNode' => array(
+					'title' => $pageTitle,
+					'path' => $page->getPath(),
+					'uri' => $uri
+				)
+			);
+		}
+		return json_encode($views);
+	}
+
+	/**
+	 * Fetch all master plugins that are available in the current
+	 * workspace.
+	 *
+	 * @param NodeInterface $node
+	 * @return string JSON encoded array of node path => label
+	 */
+	public function masterPluginsAction(NodeInterface $node) {
+		$pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($node->getContext());
+		$masterPlugins = array();
+		if (is_array($pluginNodes)) {
+			/** @var $pluginNode NodeInterface */
+			foreach ($pluginNodes as $pluginNode) {
+				if ($pluginNode->isRemoved()) {
+					continue;
+				}
+				$page = $pluginNode->getClosestAncestor('TYPO3.Neos:Document');
+				if ($page === NULL) {
+					continue;
+				}
+				$masterPlugins[$pluginNode->getPath()] = sprintf('"%s" on page "%s"', $pluginNode->getNodeType()->getLabel(), $page->getProperty('title'));
+			}
+		}
+		return json_encode($masterPlugins);
 	}
 }
 ?>

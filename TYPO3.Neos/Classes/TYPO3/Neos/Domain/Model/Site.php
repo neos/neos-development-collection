@@ -85,6 +85,13 @@ class Site {
 	}
 
 	/**
+	 * @return string
+	 */
+	function __toString() {
+		return $this->getNodeName();
+	}
+
+	/**
 	 * Sets the name for this site
 	 *
 	 * @param string $name The site name

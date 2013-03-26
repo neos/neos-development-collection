@@ -164,6 +164,16 @@
 			}
 		}
 
+		.neos-inspector-list-stacked {
+			li {
+				font-size: 12px;
+				line-height: 16px;
+				margin-bottom: $relatedMargin;
+				background-color: #323232;
+				padding: $defaultMargin;
+			}
+		}
+
 		.neos-inspector-section {
 			position: relative;
 		}

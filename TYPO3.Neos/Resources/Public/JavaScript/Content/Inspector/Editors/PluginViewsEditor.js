@@ -1,0 +1,39 @@
+define(
+[
+	'Library/jquery-with-dependencies',
+	'text!./PluginViewsEditor.html',
+	'../InspectorController'
+],
+function(
+	$,
+	template,
+	InspectorController
+) {
+	return Ember.CollectionView.extend({
+        tagName: 'ul',
+        classNames: ['neos-inspector-list-stacked'],
+        content: null,
+		init: function() {
+			var nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath');
+			var that = this;
+			$.get('/neos/content/pluginViews?node=' + nodePath, function(result) {
+				Ember.run(function() {
+					var views = JSON.parse(result);
+					var viewsArray = [];
+					for (var viewName in views) {
+						viewsArray.push(views[viewName]);
+					}
+					that.set('content', viewsArray);
+					that.rerender();
+				});
+			});
+			return this._super();
+		},
+        emptyView: Ember.View.extend({
+            template: Ember.Handlebars.compile("Loading ...")
+        }),
+		itemViewClass: Ember.View.extend({
+			template: Ember.Handlebars.compile(template)
+		})
+	});
+});

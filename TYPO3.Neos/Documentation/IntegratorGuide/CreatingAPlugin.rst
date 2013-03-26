@@ -125,6 +125,40 @@ Finally tweak your site package's *Root.ts2* and include the newly created TypoS
 Now log in to your Neos backend (you must remove the TYPO3 Flow routes again), and you
 will be able to add your plugin just like any other content element.
 
+Configuring a plugin to show specific actions on different pages
+================================================================
+
+With the simple plugin you created above all of the actions of that plugin are
+executed on one specific page node. But sometimes you might want to break that
+up onto different pages. For this use case there is a node type called
+``Plugin View``. A plugin view is basically a view of a specific set of actions
+configured in your Settings.yaml.
+
+Addtionally to your plugin node type you configured in your NodeTypes.yaml you can add
+a configuration like this to your *Settings.yaml*. This example adds 2 Plugin Views
+for a plugin node type called ``Flowstarter.Contact:ContactPlugin``.
+
+.. code-block:: yaml
+
+TYPO3:
+  Neos:
+    Plugins:
+      'Flowstarter.Contact:ContactPlugin':
+        label: 'Contacts'
+        pluginViews:
+          'ContactShow':
+            label: 'Show Contact'
+            controllerActions:
+              'Flowstarter\Contact\Controller\ContactPersonController': ['show']
+          'ContactForm':
+            label: 'Edit Contact'
+            controllerActions:
+              'Flowstarter\Contact\Controller\ContactPersonController': ['edit']
+
+When you insert a plugin view for a node the links in both of this nodes get rewritten
+automatically to link to the view or plugin, depending on the action the link points
+to.
+
 Fixing Plugin Output
 --------------------
 

@@ -1,0 +1,48 @@
+define(
+[
+	'Library/jquery-with-dependencies',
+	'./SelectBoxEditor',
+	'../InspectorController'
+],
+function(
+	$,
+	SelectBoxEditor,
+	InspectorController
+) {
+	return SelectBoxEditor.extend({
+		init: function() {
+			var nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath');
+			var that = this;
+
+			this.set('placeholder', 'Loading ...');
+			this._loadValuesFromController('/neos/content/masterPlugins?node=' + nodePath, function(results) {
+				var values = {}, placeholder, i = 0;
+
+				values[''] = {};
+
+				for (var key in results) {
+					if (results[key] === undefined) {
+						continue;
+					}
+					values[key] = {
+						value: key,
+						label: results[key]
+					};
+					i++;
+				}
+				if (i > 1) {
+					placeholder = 'Select a Plugin';
+				} else {
+					placeholder = 'No plugin configured';
+					values = {};
+				}
+				that.setProperties({
+				   placeholder: placeholder,
+				   values: values
+			   });
+			});
+
+			this._super();
+		}
+	});
+});

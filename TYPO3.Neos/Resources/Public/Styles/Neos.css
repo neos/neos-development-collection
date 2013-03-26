@@ -7220,6 +7220,13 @@
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li a:hover {
   text-decoration: none;
 }
+.neos #neos-inspector .neos-inspector-form .neos-inspector-list-stacked li {
+  font-size: 12px;
+  line-height: 16px;
+  margin-bottom: 8px;
+  background-color: #323232;
+  padding: 16px;
+}
 .neos #neos-inspector .neos-inspector-form .neos-inspector-section {
   position: relative;
 }

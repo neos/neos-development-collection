@@ -51,6 +51,22 @@
     '@action':     'imageWithMetadata'
 
 -
+  name:          'Backend - Content Module - Plugin Views'
+  uriPattern:    'neos/content/pluginViews'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Backend\Content'
+    '@action':     'pluginViews'
+
+-
+  name:          'Backend - Content Module - Master Plugins'
+  uriPattern:    'neos/content/masterPlugins'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Backend\Content'
+    '@action':     'masterPlugins'
+
+-
   name:          'Backend - Content Module'
   uriPattern:    'neos/content/{@action}'
   defaults:

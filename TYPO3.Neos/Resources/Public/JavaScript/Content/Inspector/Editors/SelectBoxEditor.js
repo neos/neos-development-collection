@@ -6,9 +6,15 @@ define(
 function($, Ember) {
 	var SelectboxOption = Ember.View.extend({
 		tagName: 'option',
-		attributeBindings: ['value', 'selected'],
+		attributeBindings: ['value', 'selected', 'disabled'],
 		valueBinding: 'content.value',
 		selectedBinding: 'content.selected',
+		disabled: function() {
+			if (this.get('content.disabled')) {
+				return 'disabled';
+			}
+			return null;
+		}.property('content.disabled'),
 		template: Ember.Handlebars.compile('{{unbound view.content.label}}')
 	});
 
@@ -25,28 +31,49 @@ function($, Ember) {
 
 		attributeBindings: ['size', 'disabled'],
 
-		values: [],
+		values: [ ],
+
+		init: function() {
+			this._super();
+			this.get('options');
+		},
 
 		options: function() {
-			var options = [],
+            var options = [],
+				values = this.get('values'),
 				currentValue = this.get('value');
 
-			if (this.get('allowEmpty')) {
-				options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
-			}
+            if (this.get('allowEmpty')) {
+                options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
+            }
+
 			$.each(this.get('values'), function(value) {
 				options.push(Ember.Object.create($.extend({
 					selected: value === currentValue,
-					value: value
+					value: value,
+					disabled: values[value].disabled
 				}, this)));
 			});
-			return options;
-		}.property('values', 'value', 'placeholder', 'allowEmpty'),
+
+            return options;
+		}.property('values.@each', 'value', 'placeholder', 'allowEmpty'),
 
 		onItemsChange: function() {
-			// Special event for chosen
-			this.$().trigger('liszt:updated');
-		}.observes('values'),
+			var that = this;
+
+			this.$().attr('data-placeholder', that.get('placeholder'));
+			Ember.run.next(function() {
+				that.$().trigger('chosen:updated');
+			});
+		}.observes('values.@each'),
+
+		_loadValuesFromController: function(uri, callback) {
+			$.getJSON(uri, function(results) {
+				Ember.run(function() {
+					callback(results);
+				});
+			});
+		},
 
 		didInsertElement: function() {
 			var that = this;

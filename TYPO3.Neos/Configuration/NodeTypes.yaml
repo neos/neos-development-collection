@@ -187,6 +187,9 @@
       groups:
         pluginSettings:
           label: 'Plugin Settings'
+  postprocessors:
+    'PluginPostprocessor':
+      postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
   properties:
     package:
       type: string
@@ -231,6 +234,66 @@
         stringLength:
           minimum: 1
           maximum: 255
+
+'TYPO3.Neos:PluginView':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Plugin View'
+    group: 'Plugins'
+    inspector:
+      groups:
+        pluginViews:
+          label: 'Plugin Views'
+          position: 100
+  nonEditableOverlay: false
+  properties:
+    plugin:
+      type: string
+      ui:
+        label: 'Master View'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginViews'
+          position: 20
+          editor: Content/Inspector/Editors/MasterPluginEditor
+    view:
+      type: string
+      ui:
+        label: 'Plugin View'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginViews'
+          position: 20
+          editor: Content/Inspector/Editors/PluginViewEditor
+
+'TYPO3.Neos:PluginView':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Plugin View'
+    group: 'Plugins'
+    inspector:
+      groups:
+        pluginViews:
+          label: 'Plugin Views'
+          position: 100
+  nonEditableOverlay: false
+  properties:
+    plugin:
+      type: string
+      ui:
+        label: 'Plugin'
+        inspector:
+          group: 'pluginViews'
+          position: 20
+          editor: Content/Inspector/Editors/MasterPluginEditor
+    view:
+      type: string
+      ui:
+        label: 'View'
+        inspector:
+          group: 'pluginViews'
+          position: 20
+          editor: Content/Inspector/Editors/PluginViewEditor
 
 'TYPO3.Neos:Content':
   superTypes:

@@ -12,31 +12,35 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\Dispatcher;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Neos\Service\ContentElementWrappingService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
- * A TypoScript Plugin object. TODO REFACTOR!!
- *
- * @Flow\Scope("prototype")
+ * A TypoScript Plugin object.
  */
-class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
+class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAccess {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Mvc\Dispatcher
+	 * @var Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\ContentElementWrappingService
+	 * @var ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;
 
@@ -66,18 +70,18 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	protected $argumentNamespace = NULL;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var NodeInterface
 	 */
 	protected $node;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var NodeInterface
 	 */
 	protected $documentNode;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -93,7 +97,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @return string
 	 */
 	public function getPackage() {
-		return $this->package;
+		return $this->tsValue('package');
 	}
 
 	/**
@@ -108,7 +112,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @return string
 	 */
 	public function getSubpackage() {
-		return $this->subpackage;
+		return $this->tsValue('subpackage');
 	}
 
 	/**
@@ -123,7 +127,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @return string
 	 */
 	public function getController() {
-		return $this->controller;
+		return $this->tsValue('controller');
 	}
 
 	/**
@@ -138,7 +142,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @return string
 	 */
 	public function getAction() {
-		return $this->action;
+		return $this->tsValue('action');
 	}
 
 	/**
@@ -153,7 +157,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @return string
 	 */
 	public function getArgumentNamespace() {
-		return $this->argumentNamespace;
+		return $this->tsValue('argumentNamespace');
 	}
 
 	/**
@@ -167,21 +171,23 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 		$this->passArgumentsToPluginRequest($pluginRequest);
 
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+		if ($this->node instanceof NodeInterface) {
+			$pluginRequest->setArgument('__node', $this->node);
 			if ($pluginRequest->getControllerPackageKey() === NULL) {
-				$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->package);
+				$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->getPackage());
 			}
 			if ($pluginRequest->getControllerSubpackageKey() === NULL) {
-				$pluginRequest->setControllerSubpackageKey($this->node->getProperty('subpackage') ?: $this->subpackage);
+				$pluginRequest->setControllerSubpackageKey($this->node->getProperty('subpackage') ?: $this->getSubpackage());
 			}
 			if ($pluginRequest->getControllerName() === NULL) {
-				$pluginRequest->setControllerName($this->node->getProperty('controller') ?: $this->controller);
-			}
-			if ($this->action === NULL) {
-				$this->action = 'index';
+				$pluginRequest->setControllerName($this->node->getProperty('controller') ?: $this->getController());
 			}
 			if ($pluginRequest->getControllerActionName() === NULL) {
-				$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
+				$actionName = $this->node->getProperty('action');
+				if ($actionName === NULL) {
+					$actionName = $this->getAction() !== NULL ? $this->getAction() : 'index';
+				}
+				$pluginRequest->setControllerActionName($actionName);
 			}
 
 			foreach ($this->properties as $key => $value) {
@@ -219,7 +225,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		} catch (\Exception $exception) {
 			$content = $this->tsRuntime->handleRenderingException($this->path, $exception);
 		}
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+		if ($this->node instanceof NodeInterface) {
 			return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $content);
 		} else {
 			return $content;
@@ -231,21 +237,29 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * By default this is <plugin_class_name>
 	 *
 	 * @return string
-	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+		if ($this->node instanceof NodeInterface) {
 			$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
 			if ($nodeArgumentNamespace !== NULL) {
 				return $nodeArgumentNamespace;
 			}
+
+			$nodeArgumentNamespace = $this->node->getNodeType()->getName();
+			$nodeArgumentNamespace = str_replace(':', '-', $nodeArgumentNamespace);
+			$nodeArgumentNamespace = str_replace('.', '_', $nodeArgumentNamespace);
+			$nodeArgumentNamespace = strtolower($nodeArgumentNamespace);
+			return $nodeArgumentNamespace;
 		}
 
-		if ($this->argumentNamespace !== NULL) {
-			return $this->argumentNamespace;
+		if ($this->getArgumentNamespace() !== NULL) {
+			return $this->getArgumentNamespace();
 		}
 
-		return strtolower(str_replace('\\', '_', get_class($this)));
+		$argumentNamespace = str_replace(array(':', '.', '\\'), array('_', '_', '_'), ($this->getPackage() . '_' . $this->getSubpackage() . '-' . $this->getController()));
+		$argumentNamespace = strtolower($argumentNamespace);
+
+		return $argumentNamespace;
 	}
 
 	/**
@@ -257,7 +271,6 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest) {
 		$arguments = $pluginRequest->getMainRequest()->getPluginArguments();
 		$pluginNamespace = $this->getPluginNamespace();
-
 		if (isset($arguments[$pluginNamespace])) {
 			$pluginRequest->setArguments($arguments[$pluginNamespace]);
 		}

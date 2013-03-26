@@ -13,7 +13,8 @@ define(
 				var that = this,
 					$element = this.get('$element'),
 					entity = this.get('entity'),
-					nodeTypeConfiguration = entity.get('@type').pop().metadata;
+					entityType = entity.get('@type'),
+					nodeTypeConfiguration = typeof entityType.pop !== 'undefined' ? entityType.pop().metadata : entityType.metadata;
 
 				this.set('iconClass', nodeTypeConfiguration.ui.icon);
 
