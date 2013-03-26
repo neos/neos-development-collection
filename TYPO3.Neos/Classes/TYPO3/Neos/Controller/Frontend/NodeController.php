@@ -86,12 +86,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
-		if ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
+		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
 			if ($node->getProperty('targetNode') !== NULL) {
 				$node = $node->getNode($node->getProperty('targetNode'));
 			} else {
-				while ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
-					$childNodes = $node->getChildNodes('TYPO3.Neos.ContentTypes:Folder');
+				while ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
+					$childNodes = $node->getChildNodes('TYPO3.Neos.NodeTypes:Folder');
 					$node = current($childNodes);
 				}
 			}
@@ -124,7 +124,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
-		if ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Shortcut')) {
+		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
 			$this->view->assign('wireframeMode', $node);
 		}
 

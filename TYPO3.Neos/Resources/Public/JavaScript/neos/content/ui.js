@@ -350,7 +350,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 					 */
 					onDragEnter: function(node, sourceNode) {
 							// It is only posssible to move nodes into nodes of the nodeType Section
-						if (node.data.nodeType === 'TYPO3.Neos.ContentTypes:Section') {
+						if (node.data.nodeType === 'TYPO3.Neos.NodeTypes:Section') {
 							return ['before', 'after', 'over'];
 						}
 						else{

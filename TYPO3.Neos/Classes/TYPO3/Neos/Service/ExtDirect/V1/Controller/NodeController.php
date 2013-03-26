@@ -418,7 +418,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
 		$this->nodeRepository->setContext($contentContext);
 
-		$nodes = $this->nodeSearchService->findByProperties($query, array('TYPO3.Neos.ContentTypes:Page'));
+		$nodes = $this->nodeSearchService->findByProperties($query, array('TYPO3.Neos.NodeTypes:Page'));
 
 		$searchResult = array();
 

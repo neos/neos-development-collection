@@ -87,7 +87,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 
 		$sites = array();
 		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
-			if (!$node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
+			if (!$node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Section')) {
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
 					$siteNodeName = $pathParts[2];
@@ -99,7 +99,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
 					$change = array('node' => $node);
-					if ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:AbstractNode')) {
+					if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:AbstractNode')) {
 						$change['configuration'] = $node->getNodeType()->getConfiguration();
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;

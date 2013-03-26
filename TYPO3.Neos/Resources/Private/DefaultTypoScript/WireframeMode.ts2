@@ -1,4 +1,4 @@
-wireframeMode = TYPO3.Neos.ContentTypes:Page
+wireframeMode = TYPO3.Neos.NodeTypes:Page
 wireframeMode {
 	headerData {
 		stylesheets = TYPO3.TypoScript:Template
@@ -25,12 +25,12 @@ wireframeMode {
 			breadcrumb.templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
 		}
 
-		sections.all = TYPO3.Neos.ContentTypes:MultiColumn
+		sections.all = TYPO3.Neos.NodeTypes:MultiColumn
 		sections.all {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/GeneralSectionRendering.html'
 			layout = ''
 			columns {
-				collection = ${context.children('[instanceof TYPO3.Neos.ContentTypes:Section]')}
+				collection = ${context.children('[instanceof TYPO3.Neos.NodeTypes:Section]')}
 				itemRenderer {
 					templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/SectionTemplate.html'
 				}

@@ -119,18 +119,18 @@ class NodeTypeSchemaBuilder {
 		foreach ($this->properties as $property => $propertyConfiguration) {
 			if (isset($propertyConfiguration->domains) && is_array($propertyConfiguration->domains)) {
 				foreach ($propertyConfiguration->domains as $domain) {
-					if (preg_match('/TYPO3\.Neos\.ContentTypes:.*Column/', $domain)) {
+					if (preg_match('/TYPO3\.Neos\.NodeTypes:.*Column/', $domain)) {
 						$this->properties[$property]->ranges = array_keys($this->types);
 					}
 				}
 			}
 		}
 
-			// Convert the TYPO3.Neos.ContentTypes:Section element to support content-collection
+			// Convert the TYPO3.Neos.NodeTypes:Section element to support content-collection
 			// TODO Move to node type definition
-		if (isset($this->types['typo3:TYPO3.Neos.ContentTypes:Section'])) {
-			$this->addProperty('typo3:TYPO3.Neos.ContentTypes:Section', 'typo3:content-collection', array());
-			$this->types['typo3:TYPO3.Neos.ContentTypes:Section']->specific_properties[] = 'typo3:content-collection';
+		if (isset($this->types['typo3:TYPO3.Neos.NodeTypes:Section'])) {
+			$this->addProperty('typo3:TYPO3.Neos.NodeTypes:Section', 'typo3:content-collection', array());
+			$this->types['typo3:TYPO3.Neos.NodeTypes:Section']->specific_properties[] = 'typo3:content-collection';
 			$this->properties['typo3:content-collection']->ranges = array_keys($this->types);
 		}
 

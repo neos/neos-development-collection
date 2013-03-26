@@ -28,10 +28,10 @@ When a content element can't be edited inline (like a HTML element) the element 
 to show inline editing is not possible. The options in the inspect panel will allow you to manage
 those kind of elements.
 
-Content Types
-=============
+Node Types
+==========
 
-The available content types is still being worked on. The currently supported list is:
+The available node types is still being worked on. The currently supported list is:
 
 * Headline
 	A simple headline. The headline size can be chosen using the inline editor.

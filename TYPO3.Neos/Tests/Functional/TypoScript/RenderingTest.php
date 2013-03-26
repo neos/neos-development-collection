@@ -78,8 +78,8 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTeaserConformsToBasicRendering($output);
 		$this->assertMainContentConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-headline > div', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-headline > div', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
 		$this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', TRUE, $output);
 	}
 
@@ -92,7 +92,7 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTeaserConformsToBasicRendering($output);
 		$this->assertMainContentConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-headline > div > .processor-wrap', 'BEFOREStatic HeadlineAFTER', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-headline > div > .processor-wrap', 'BEFOREStatic HeadlineAFTER', TRUE, $output);
 	}
 
 	/**
@@ -101,11 +101,11 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function additionalProcessorInPrototype2() {
 		$output = $this->simulateRendering('Test_AdditionalProcessorInPrototype2.ts2');
 
-		$this->assertSelectEquals('.teaser > .typo3-neos-contenttypes-headline > div > header > h1', 'Welcome to this example', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left > .typo3-neos-contenttypes-headline > div > header > h1', 'Documentation', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .center > .typo3-neos-contenttypes-headline > div > header > h1', 'Development Process', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .typo3-neos-nodetypes-headline > div > header > h1', 'Welcome to this example', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left > .typo3-neos-nodetypes-headline > div > header > h1', 'Documentation', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .center > .typo3-neos-nodetypes-headline > div > header > h1', 'Development Process', TRUE, $output);
 
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-headline > div > header > .processor-wrap', 'BEFOREStatic HeadlineAFTER', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-headline > div > header > .processor-wrap', 'BEFOREStatic HeadlineAFTER', TRUE, $output);
 	}
 
 	/**
@@ -117,8 +117,8 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertMainContentConformsToBasicRendering($output);
 
 			// header is now wrapped in h3
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-headline > header > h3', 'Last Commits', TRUE, $output);
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-headline > header > h3', 'Last Commits', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTeaserConformsToBasicRendering($output);
 		$this->assertSidebarConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left > .typo3-neos-contenttypes-headline > div > header', 'DOCS: Documentation', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left > .typo3-neos-nodetypes-headline > div > header', 'DOCS: Documentation', TRUE, $output);
 	}
 
 	/**
@@ -139,8 +139,8 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype.ts2');
 		$this->assertTeaserConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left > .typo3-neos-contenttypes-headline > div > header', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .center > .typo3-neos-contenttypes-headline > div > header', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .center > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', TRUE, $output);
 
 		$this->assertSidebarConformsToBasicRendering($output);
 	}
@@ -152,8 +152,8 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.ts2');
 		$this->assertTeaserConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left > .typo3-neos-contenttypes-headline > div > header', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .center > .typo3-neos-contenttypes-headline > div > h1', 'Development Process', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .center > .typo3-neos-nodetypes-headline > div > h1', 'Development Process', TRUE, $output);
 
 		$this->assertSidebarConformsToBasicRendering($output);
 	}
@@ -166,8 +166,8 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertContains('TYPO3 Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
 		$this->assertSelectEquals('h1', 'Home', TRUE, $output);
 
-		$this->assertSelectEquals('.teaser > .typo3-neos-contenttypes-headline > div > h1', 'Welcome to this example', TRUE, $output);
-		$this->assertSelectEquals('.teaser > .typo3-neos-contenttypes-text > div', 'This is our exemplary rendering test.', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .typo3-neos-nodetypes-headline > div > h1', 'Welcome to this example', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .typo3-neos-nodetypes-text > div', 'This is our exemplary rendering test.', TRUE, $output);
 	}
 
 	/**
@@ -175,16 +175,16 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @param string $output
 	 */
 	protected function assertMainContentConformsToBasicRendering($output) {
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-headline > div > h1', 'Do you love TYPO3 FLow?', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-text > div', 'If you do, make sure to post your opinion about it on Twitter!', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-headline > div > h1', 'Do you love TYPO3 FLow?', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-text > div', 'If you do, make sure to post your opinion about it on Twitter!', TRUE, $output);
 
 		$this->assertSelectEquals('.main', '[TWITTER WIDGET]', TRUE, $output);
 
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left > .typo3-neos-contenttypes-headline > div > h1', 'Documentation', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left > .typo3-neos-contenttypes-text > div', 'We\'re still improving our docs, but check them out nevertheless!', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .left', '[SLIDESHARE]', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .center > .typo3-neos-contenttypes-headline > div > h1', 'Development Process', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-neos-contenttypes-threecolumn > .center > .typo3-neos-contenttypes-text > div', 'We\'re spending lots of thought into our infrastructure, you can profit from that, too!', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left > .typo3-neos-nodetypes-headline > div > h1', 'Documentation', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left > .typo3-neos-nodetypes-text > div', 'We\'re still improving our docs, but check them out nevertheless!', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .left', '[SLIDESHARE]', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .center > .typo3-neos-nodetypes-headline > div > h1', 'Development Process', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-neos-nodetypes-threecolumn > .center > .typo3-neos-nodetypes-text > div', 'We\'re spending lots of thought into our infrastructure, you can profit from that, too!', TRUE, $output);
 	}
 
 	/**
@@ -192,8 +192,8 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @param string $output
 	 */
 	protected function assertSidebarConformsToBasicRendering($output) {
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-headline > div > h1', 'Last Commits', TRUE, $output);
-		$this->assertSelectEquals('.sidebar > .typo3-neos-contenttypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-headline > div > h1', 'Last Commits', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
 		$this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', TRUE, $output);
 	}
 

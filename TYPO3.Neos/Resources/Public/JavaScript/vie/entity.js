@@ -95,7 +95,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 		}.property('_vieEntity').cacheable(),
 
 		/**
-		 * Receive the content type schema
+		 * Receive the node type schema
 		 */
 		nodeTypeSchema: function() {
 			return T3.Configuration.Schema[this.get('nodeType')];

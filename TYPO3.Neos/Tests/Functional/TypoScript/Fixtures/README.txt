@@ -1,7 +1,7 @@
 The fixture setup we are testing is as follows:
 
 - we have a fixed node structure
-- we have a fixed list of content types (see Configuration/Testing/Settings.yaml)
+- we have a fixed list of node types (see Configuration/Testing/Settings.yaml)
 - we have various TypoScript files
 
 Node Structure:
