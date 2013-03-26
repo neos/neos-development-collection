@@ -1,7 +1,7 @@
 {namespace t=TYPO3\Neos\ViewHelpers}
 <t:contentElement node="{node}">
 	<div class="typo3-image">
-		<f:if condition="{image.resource}">
+		<f:if condition="{image}">
 			<f:then>
 				<img src="{f:uri.resource(resource: image.resource)}" />
 			</f:then>
