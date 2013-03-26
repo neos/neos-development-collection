@@ -35,9 +35,9 @@ class SectionCollectionImplementation extends CollectionImplementation {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
-	protected $contentTypeManager;
+	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
@@ -81,7 +81,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 			return $output;
 		}
 
-		if ($node->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
+		if ($node->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Section')) {
 			$sectionNode = $node;
 		} else {
 			$sectionNode = $node->getNode($this->getNodePath());
@@ -95,7 +95,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 					 * Thus, as a workaround, we create new section nodes as we need them during rendering, although we
 					 * know it is ugly.
 					 */
-				$sectionNode = $node->createNode($this->getNodePath(), $this->contentTypeManager->getContentType('TYPO3.Neos.ContentTypes:Section'));
+				$sectionNode = $node->createNode($this->getNodePath(), $this->nodeTypeManager->getNodeType('TYPO3.Neos.ContentTypes:Section'));
 			}
 		}
 
@@ -128,7 +128,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $sectionNode) {
 		$parentNode = $sectionNode->getParent();
 
-		while ($parentNode->getContentType()->isOfType('TYPO3.Neos.ContentTypes:Folder') !== TRUE) {
+		while ($parentNode->getNodeType()->isOfType('TYPO3.Neos.ContentTypes:Folder') !== TRUE) {
 			$parentNode = $parentNode->getParent();
 		}
 

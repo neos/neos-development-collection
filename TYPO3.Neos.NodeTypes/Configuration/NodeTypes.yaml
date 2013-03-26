@@ -1,0 +1,427 @@
+'TYPO3.Neos.ContentTypes:AbstractNode':
+  ui:
+    inspector:
+      groups:
+        visibility:
+          label: 'Visibility'
+          position: 100
+  properties:
+    _removed:
+      type: boolean
+    _hidden:
+      type: boolean
+      ui:
+        label: 'Hide'
+        inspector:
+          group: 'visibility'
+          position: 30
+    _hiddenBeforeDateTime:
+      type: date
+      ui:
+        label: 'Hide before date'
+        inspector:
+          group: 'visibility'
+          position: 10
+    _hiddenAfterDateTime:
+      type: date
+      ui:
+        label: 'Hide after date'
+        inspector:
+          group: 'visibility'
+          position: 20
+
+'TYPO3.Neos.ContentTypes:Section':
+  superTypes: ['TYPO3.Neos.ContentTypes:AbstractNode']
+  ui:
+    label: 'Section'
+    icon:
+      light: 'Images/Icons/White/page_layout_icon-16.png'
+      dark: 'Images/Icons/Black/page_layout_icon-16.png'
+
+'TYPO3.Neos.ContentTypes:Folder':
+  superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Neos.ContentTypes:AbstractNode']
+  search: 'Pages'
+  ui:
+    label: 'Folder'
+    inspector:
+      groups:
+        page:
+          label: 'Folder options'
+          position: 10
+  properties:
+    title:
+      type: string
+      ui:
+        label: 'Title'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'page'
+    _name:
+      type: string
+      ui:
+        label: 'Name (URL)'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'page'
+    _hiddenInIndex:
+      type: boolean
+      ui:
+        label: 'Hide in menus'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'visibility'
+          position: 40
+
+'TYPO3.Neos.ContentTypes:Shortcut':
+  superTypes: ['TYPO3.Neos.ContentTypes:Folder']
+  ui:
+    label: 'Shortcut'
+    icon:
+      light: 'Images/Icons/White/shortcut_icon-16.png'
+      dark: 'Images/Icons/Black/shortcut_icon-16.png'
+    inspector:
+      groups:
+        page:
+          label: 'Shortcut options'
+
+'TYPO3.Neos.ContentTypes:Page':
+  superTypes: ['TYPO3.Neos.ContentTypes:Folder']
+  ui:
+    label: 'Page'
+    icon:
+      light: 'Images/Icons/White/doc_empty_icon-16.png'
+      dark: 'Images/Icons/Black/doc_empty_icon-16.png'
+    inspector:
+      groups:
+        page:
+          label: 'Page options'
+
+'TYPO3.Neos.ContentTypes:ContentObject':
+  superTypes: ['TYPO3.Neos.ContentTypes:AbstractNode']
+  search: 'Content'
+  ui:
+    label: 'Abstract content object'
+
+'TYPO3.Neos.ContentTypes:Headline':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'Headline'
+    group: 'General'
+    icon:
+      light: 'Images/Icons/White/text_letter_t_icon-16.png'
+      dark: 'Images/Icons/Black/text_letter_t_icon-16.png'
+  properties:
+    title:
+      type: string
+      defaultValue: '<h1>Enter headline here</h1>'
+      ui:
+        inlineEditable: TRUE
+
+'TYPO3.Neos.ContentTypes:Text':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'Text'
+    group: 'General'
+    icon:
+      light: 'Images/Icons/White/doc_lines_stright_icon-16.png'
+      dark: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
+  properties:
+    text:
+      type: string
+      defaultValue: '<p>Enter text here</p>'
+      ui:
+        inlineEditable: TRUE
+
+'TYPO3.Neos.ContentTypes:Image':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'Image'
+    group: 'General'
+    icon:
+      light: 'Images/Icons/White/picture_icon-16.png'
+      dark: 'Images/Icons/Black/picture_icon-16.png'
+    inspector:
+      groups:
+        image:
+          label: 'Image'
+          position: 5
+  properties:
+    image:
+      type: TYPO3\Media\Domain\Model\ImageVariant
+      ui:
+        label: 'Image'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+
+'TYPO3.Neos.ContentTypes:TextWithImage':
+  superTypes: ['TYPO3.Neos.ContentTypes:Image', 'TYPO3.Neos.ContentTypes:Text']
+  ui:
+    label: 'Text with Image'
+    group: 'General'
+    icon:
+      light: 'Images/Icons/White/image_text_icon-16.png'
+      dark: 'Images/Icons/Black/image_text_icon-16.png'
+  properties:
+    position:
+      type: string
+      ui:
+        label: 'Image position'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          editor: T3.Content.UI.Editor.Selectbox
+          editorOptions:
+            values:
+              left:
+                label: 'Left'
+              right:
+                label: 'Right'
+
+'TYPO3.Neos.ContentTypes:Html':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'HTML'
+    group: 'General'
+    icon:
+      light: 'Images/Icons/White/brackets_icon-16.png'
+      dark: 'Images/Icons/Black/brackets_icon-16.png'
+    inspector:
+      groups:
+        html:
+          label: 'HTML'
+          position: 10
+  properties:
+    source:
+      type: string
+      ui:
+        label: 'HTML Content'
+        inspector:
+          group: 'html'
+          editor: T3.Content.UI.Editor.HtmlEditor
+      defaultValue: '<p>Enter HTML here</p>'
+
+'TYPO3.Neos.ContentTypes:Menu':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'Menu'
+    group: 'Structure'
+    icon:
+      light: 'Images/Icons/White/list_bullets_icon-16.png'
+      dark: 'Images/Icons/Black/list_bullets_icon-16.png'
+    inspector:
+      groups:
+        options:
+          label: 'Options'
+          position: 30
+  properties:
+    startLevel:
+      type: string
+      defaultValue: '0'
+      ui:
+        reloadIfChanged: TRUE
+        label: 'Starting Level'
+        inspector:
+          group: 'options'
+          editor: T3.Content.UI.Editor.Selectbox
+          editorOptions:
+            values:
+              '-4':
+                label: 'Four Levels Above Current Page'
+              '-3':
+                label: 'Three Levels Above Current Page'
+              '-2':
+                label: 'Two Levels Above Current Page'
+              '-1':
+                label: 'One Level Above Current Page'
+              '0':
+                label: 'Same Level As Current Page'
+              '1':
+                label: 'First Level Of Website'
+              '2':
+                label: 'Second Level Of Website'
+              '3':
+                label: 'Third Level Of Website'
+              '4':
+                label: 'Forth Level Of Website'
+              '5':
+                label: 'Fifth Level Of Website'
+              '6':
+                label: 'Sixth Level Of Website'
+    maximumLevels:
+      type: string
+      defaultValue: '1'
+      ui:
+        reloadIfChanged: TRUE
+        label: 'Maximum Levels'
+        inspector:
+          group: 'options'
+          editor: T3.Content.UI.Editor.Selectbox
+          editorOptions:
+            values:
+              '1':
+                label: '1'
+              '2':
+                label: '2'
+              '3':
+                label: '3'
+              '4':
+                label: '4'
+              '5':
+                label: '5'
+              '6':
+                label: '6'
+              '7':
+                label: '7'
+              '8':
+                label: '8'
+              '9':
+                label: '9'
+              '10':
+                label: '10'
+
+
+'TYPO3.Neos.ContentTypes:Column':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    icon:
+      light: 'Images/Icons/White/columns_icon-16.png'
+      dark: 'Images/Icons/Black/columns_icon-16.png'
+    inlineEditable: TRUE
+    inspector:
+      groups:
+        column:
+          label: 'Columns'
+          position: 10
+  properties:
+    layout:
+      type: string
+      ui:
+        label: 'Layout'
+        inspector:
+          group: 'column'
+          editor: T3.Content.UI.Editor.Selectbox
+
+'TYPO3.Neos.ContentTypes:TwoColumn':
+  superTypes: ['TYPO3.Neos.ContentTypes:Column']
+  ui:
+    label: 'Two column content'
+    group: 'Structure'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column1:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+  properties:
+    layout:
+      defaultValue: '50-50'
+      ui:
+        reloadIfChanged: TRUE
+        inspector:
+          editorOptions:
+            values:
+              '50-50':
+                label: '50% / 50%'
+              '75-25':
+                label: '75% / 25%'
+              '25-75':
+                label: '25% / 75%'
+              '66-33':
+                label: '66% / 33%'
+              '33-66':
+                label: '33% / 66%'
+
+'TYPO3.Neos.ContentTypes:ThreeColumn':
+  superTypes: ['TYPO3.Neos.ContentTypes:Column']
+  ui:
+    label: 'Three column content'
+    group: 'Structure'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column1:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column2:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+  properties:
+    layout:
+      defaultValue: '33-33-33'
+      ui:
+        reloadIfChanged: TRUE
+        inspector:
+          editorOptions:
+            values:
+              '33-33-33':
+                label: '33% / 33% / 33%'
+              '50-25-25':
+                label: '50% / 25% / 25%'
+              '25-50-25':
+                label: '25% / 50% / 25%'
+              '25-25-50':
+                label: '25% / 25% / 50%'
+
+'TYPO3.Neos.ContentTypes:FourColumn':
+  superTypes: ['TYPO3.Neos.ContentTypes:Column']
+  ui:
+    label: 'Four column content'
+    group: 'Structure'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column1:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column2:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+    column3:
+      type: 'TYPO3.Neos.ContentTypes:Section'
+  properties:
+    layout:
+      defaultValue: '25-25-25-25'
+      ui:
+        reloadIfChanged: TRUE
+        inspector:
+          editorOptions:
+            values:
+              '25-25-25-25':
+                label: '25% / 25% / 25% / 25%'
+
+'TYPO3.Neos.ContentTypes:Plugin':
+  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+  ui:
+    label: 'Abstract plugin'
+    icon:
+      light: 'Images/Icons/White/app_window_shell_icon-16.png'
+      dark: 'Images/Icons/Black/app_window_shell_icon-16.png'
+    inspector:
+      groups:
+        pluginSettings:
+          label: 'Plugin Settings'
+  properties:
+    package:
+      type: string
+      ui:
+        label: 'Package'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+    subpackage:
+      type: string
+      ui:
+        label: 'Subpackage'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+    controller:
+      type: string
+      ui:
+        label: 'Controller Name'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+    action:
+      type: string
+      ui:
+        label: 'Action'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
