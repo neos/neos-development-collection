@@ -137,7 +137,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$siteName->setLabel('Site Name');
 		} else {
 			$error = $title->createElement('siteKickstarterUnavailableError', 'TYPO3.Form:StaticText');
-			$error->setProperty('text', 'The Site Kickstarter package is not installed, install it for kickstarting new sites');
+			$error->setProperty('text', 'The Site Kickstarter package is not installed, install it for kickstarting new sites (using "composer require typo3/sitekickstarter")');
 			$error->setProperty('class', 'alert alert-warning');
 		}
 
