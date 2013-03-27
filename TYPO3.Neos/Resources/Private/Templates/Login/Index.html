@@ -76,9 +76,9 @@
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
 		<script>
 			$('#{f:if(condition: username, then: 'password', else: 'username')}').focus();
-			if (typeof sessionStorage !== undefined && sessionStorage.getItem('TYPO3.Neos.lastVisitedUri') !== null) {
-				$('form[name=login] input[name=lastVisitedUri]').val(sessionStorage.getItem('TYPO3.Neos.lastVisitedUri'));
-			}
+			try {
+				$('form[name="login"] input[name="lastVisitedUri"]').val(sessionStorage.getItem('TYPO3.Neos.lastVisitedUri'));
+			} catch(e) {}
 		</script>
 	</body>
 </f:section>
