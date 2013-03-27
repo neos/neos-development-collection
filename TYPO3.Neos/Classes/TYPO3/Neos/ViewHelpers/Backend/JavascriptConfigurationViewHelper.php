@@ -58,7 +58,7 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
-			'window.T3Configuration.contentTypeGroups = ' . json_encode($this->settings['contentTypeGroups']) . ';'
+			'window.T3Configuration.nodeTypeGroups = ' . json_encode($this->settings['nodeTypeGroups']) . ';'
 		);
 
 		if ($this->bootstrap->getContext()->isDevelopment()) {

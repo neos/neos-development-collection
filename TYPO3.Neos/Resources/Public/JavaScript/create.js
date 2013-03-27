@@ -47,7 +47,7 @@ define(
 					vie: vieInstance,
 					widgets: {
 						'default': 'hallo',
-							// TODO Pull this from the content type definition
+							// TODO Pull this from the node type definition
 						'typo3:title': 'hallo-blockonly'
 					},
 					collectionWidgets: {

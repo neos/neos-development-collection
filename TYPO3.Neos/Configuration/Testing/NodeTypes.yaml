@@ -1,18 +1,18 @@
-'TYPO3.Neos.ContentTypes:ThreeColumn':
-  superTypes: ['TYPO3.Neos.ContentTypes:Column']
+'TYPO3.Neos.NodeTypes:ThreeColumn':
+  superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Three column content'
     group: 'Structure'
   childNodes:
     column0:
-      type: 'TYPO3.Neos.ContentTypes:Section'
+      type: 'TYPO3.Neos.NodeTypes:Section'
     column1:
-      type: 'TYPO3.Neos.ContentTypes:Section'
+      type: 'TYPO3.Neos.NodeTypes:Section'
     column2:
-      type: 'TYPO3.Neos.ContentTypes:Section'
+      type: 'TYPO3.Neos.NodeTypes:Section'
 
-'TYPO3.Neos.ContentTypes:Text':
-  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+'TYPO3.Neos.NodeTypes:Text':
+  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
   ui:
     label: 'Text'
     group: 'General'

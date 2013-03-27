@@ -81,7 +81,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 		$contextNodePath = $node->getContextPath();
 		$nodeType = $node->getNodeType()->getName();
-		$title = $nodeType === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel();
+		$title = $nodeType === 'TYPO3.Neos.NodeTypes:Page' ? $node->getProperty('title'): $node->getLabel();
 		$expand = 0;
 		$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 
@@ -116,7 +116,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			$workspaceName = $childNode->getWorkspace()->getName();
 			$nodeName = $childNode->getName();
 			$nodeType = $childNode->getNodeType()->getName();
-			$title = $nodeType === 'TYPO3.Neos.ContentTypes:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
+			$title = $nodeType === 'TYPO3.Neos.NodeTypes:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
 			$abstract = $childNode->getAbstract();
 			$expand = ($depth === 0 || $recursionPointer < $depth);
 			switch ($this->outputStyle) {
@@ -180,7 +180,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$nodeType = $node->getNodeType()->getName();
 		$treeNode = array(
 			'key' => $node->getContextPath(),
-			'title' => $nodeType === 'TYPO3.Neos.ContentTypes:Page' ? $node->getProperty('title') : $node->getLabel(),
+			'title' => $nodeType === 'TYPO3.Neos.NodeTypes:Page' ? $node->getProperty('title') : $node->getLabel(),
 			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),

@@ -150,7 +150,7 @@ define(
 					// Make the data object an array for usage in #each helper
 				var data = [];
 
-				T3.Configuration.contentTypeGroups.forEach(function(groupName) {
+				T3.Configuration.nodeTypeGroups.forEach(function(groupName) {
 					if (groups[groupName]) {
 						data.push(groups[groupName]);
 					}

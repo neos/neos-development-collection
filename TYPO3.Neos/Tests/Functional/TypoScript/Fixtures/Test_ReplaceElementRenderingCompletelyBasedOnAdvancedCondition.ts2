@@ -8,6 +8,6 @@ prototype(TYPO3.TypoScript:Case).override {
 	@position = 'start'
 }
 
-prototype(TYPO3.TypoScript:DocumentationText) < prototype(TYPO3.Neos.ContentTypes:Headline)
+prototype(TYPO3.TypoScript:DocumentationText) < prototype(TYPO3.Neos.NodeTypes:Headline)
 prototype(TYPO3.TypoScript:DocumentationText).title = 'Documentation'
 prototype(TYPO3.TypoScript:DocumentationText).title << 1.wrap(prefix: '<header>DOCS: ', suffix: '</header>')

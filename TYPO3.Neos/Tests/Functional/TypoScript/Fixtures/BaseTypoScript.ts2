@@ -5,8 +5,8 @@
 namespace: default = TYPO3.TypoScript
 
 # Definition of custom TypoScript types
-prototype(TYPO3.Neos.ContentTypes:ThreeColumn) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.Neos.ContentTypes:ThreeColumn) {
+prototype(TYPO3.Neos.NodeTypes:ThreeColumn) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:ThreeColumn) {
 	templatePath = 'FIXTURE_DIRECTORY/ThreeColumnTemplate.html'
 	left = TYPO3.TypoScript:Collection
 	left.collection = ${q(node).children("left").children()}
@@ -17,15 +17,15 @@ prototype(TYPO3.Neos.ContentTypes:ThreeColumn) {
 }
 
 prototype(TYPO3.TypoScript:Case).threeColumn {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:ThreeColumn]')}
-	type = 'TYPO3.Neos.ContentTypes:ThreeColumn'
+	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:ThreeColumn]')}
+	type = 'TYPO3.Neos.NodeTypes:ThreeColumn'
 	@position = 4242
 }
 
 
 # MAIN PAGE TEMPLATE
 
-page1 = TYPO3.Neos.ContentTypes:Page
+page1 = TYPO3.Neos.NodeTypes:Page
 page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
 page1.body.sections {
 	teaser = TYPO3.TypoScript:Collection

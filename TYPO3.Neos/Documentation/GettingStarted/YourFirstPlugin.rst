@@ -64,25 +64,23 @@ Converting a TYPO3 Flow Package Into a Neos Plugin
 ==================================================
 
 To activate a TYPO3 Flow package as Neos plugin, you only need to provide two
-configuration blocks. First, you need to add a new *content type* for the plugin,
+configuration blocks. First, you need to add a new *node type* for the plugin,
 such that the user can choose the plugin from the list of content elements:
 
-Add the following to *Configuration/Settings.yaml* of your package:
+Add the following to *Configuration/NodeTypes.yaml* of your package:
 
 .. code-block:: yaml
 
-  TYPO3:
-    TYPO3CR:
-      contentTypes:
-        'Sarkosh.CdCollection:Plugin':
-          superTypes: ['TYPO3.Neos.ContentTypes:Plugin']
-          label: 'CD Collection'
-          group: 'Plugins'
+'Sarkosh.CdCollection:Plugin':
+  superTypes: ['TYPO3.Neos.NodeTypes:Plugin']
+  ui:
+    label: 'CD Collection'
+    group: 'Plugins'
 
 Second, the rendering of the plugin needs to be specified using TypoScript,
 so the following TypoScript needs to be inserted into your package's *Resources/Private/TypoScripts/Library/Plugin.ts2*::
 
-  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos.ContentTypes:Plugin)
+  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos.NodeTypes:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
        package = 'Sarkosh.CdCollection'
        controller = 'Standard'

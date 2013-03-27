@@ -63,7 +63,7 @@ TYPO3:
         renderByDefault: FALSE
 
   Neos:
-    contentTypeGroups: ['General', 'Structure', 'Plugins']
+    nodeTypeGroups: ['General', 'Structure', 'Plugins']
 
     # as Aloha is quite big to load, we do not include it by default. Later on,
     # this setting will be replaced by a better API.

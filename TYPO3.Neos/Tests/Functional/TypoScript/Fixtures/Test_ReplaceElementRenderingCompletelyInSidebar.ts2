@@ -3,9 +3,9 @@
 #
 
 page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).smallHeadline {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.ContentTypes:Headline]')}
-	type = 'TYPO3.Neos.ContentTypes:SmallHeadline'
+	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Headline]')}
+	type = 'TYPO3.Neos.NodeTypes:SmallHeadline'
 	@position = 'start'
 }
-prototype(TYPO3.Neos.ContentTypes:SmallHeadline) < prototype(TYPO3.Neos.ContentTypes:Headline)
-prototype(TYPO3.Neos.ContentTypes:SmallHeadline).templatePath = 'FIXTURE_DIRECTORY/SmallHeadlineTemplate.html'
+prototype(TYPO3.Neos.NodeTypes:SmallHeadline) < prototype(TYPO3.Neos.NodeTypes:Headline)
+prototype(TYPO3.Neos.NodeTypes:SmallHeadline).templatePath = 'FIXTURE_DIRECTORY/SmallHeadlineTemplate.html'

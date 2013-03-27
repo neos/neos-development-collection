@@ -65,7 +65,7 @@ define(
 							select: false,
 							active: false,
 							unselectable: true,
-							addClass: 'typo3_neos_contenttypes-root'
+							addClass: 'typo3_neos_nodetypes-root'
 						}
 					],
 					dnd: {
@@ -417,8 +417,8 @@ define(
 					position = 'into',
 					node = activeNode.addChild({
 						title: '[New Page]',
-						nodeType: 'TYPO3.Neos.ContentTypes:Page',
-						addClass: 'typo3_neos_contenttypes-page',
+						nodeType: 'TYPO3.Neos.NodeTypes:Page',
+						addClass: 'typo3_neos_nodetypes-page',
 						expand: true
 					}),
 					prevTitle = node.data.title,
@@ -459,7 +459,7 @@ define(
 							TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 								activeNode.data.key,
 								{
-									nodeType: 'TYPO3.Neos.ContentTypes:Page',
+									nodeType: 'TYPO3.Neos.NodeTypes:Page',
 									//@todo give a unique nodename from the title
 									properties: {
 										title: title
