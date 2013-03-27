@@ -8234,46 +8234,46 @@ ul.t3-launcher-horizontal li .text {
   vertical-align: middle;
   background-position: 0 0;
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-root .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-root .dynatree-icon {
   background-image: url(../Images/Icons/Black/globe_2_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-page .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-page .dynatree-icon {
   background-image: url(../Images/Icons/Black/doc_empty_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-shortcut .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-shortcut .dynatree-icon {
   background-image: url(../Images/Icons/Black/shortcut_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-section .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-section .dynatree-icon {
   background-image: url(../Images/Icons/Black/page_layout_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-headline .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-headline .dynatree-icon {
   background-image: url(../Images/Icons/Black/text_letter_t_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-text .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-text .dynatree-icon {
   background-image: url(../Images/Icons/Black/doc_lines_stright_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-image .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-image .dynatree-icon {
   background-image: url(../Images/Icons/Black/picture_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-textwithimage .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-textwithimage .dynatree-icon {
   background-image: url(../Images/Icons/Black/image_text_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-html .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-html .dynatree-icon {
   background-image: url(../Images/Icons/Black/brackets_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-menu .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-menu .dynatree-icon {
   background-image: url(../Images/Icons/Black/list_bullets_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-twocolumn .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-twocolumn .dynatree-icon {
   background-image: url(../Images/Icons/Black/columns_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-threecolumn .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-threecolumn .dynatree-icon {
   background-image: url(../Images/Icons/Black/columns_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-fourcolumn .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-fourcolumn .dynatree-icon {
   background-image: url(../Images/Icons/Black/columns_icon-16.png);
 }
-.dynatree-container ul.dynatree-container .typo3_neos_contenttypes-plugin .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_neos_nodetypes-plugin .dynatree-icon {
   background-image: url(../Images/Icons/Black/page_layout_icon-16.png);
 }
 .dynatree-container ul.dynatree-container .hidden {
