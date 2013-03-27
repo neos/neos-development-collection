@@ -94,7 +94,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getWorkspace()->getRootNode();
 
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingContentType');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeType');
 		$fooNode = $rootNode->createNode('foo', $testNodeType);
 
 		$this->assertSame('default value 1', $fooNode->getProperty('test1'));
@@ -107,7 +107,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getWorkspace()->getRootNode();
 
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingContentTypeWithSubnodes');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes');
 		$fooNode = $rootNode->createNode('foo', $testNodeType);
 		$firstSubnode = $fooNode->getNode('subnode1');
 		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', $firstSubnode);

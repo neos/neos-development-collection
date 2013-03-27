@@ -1,11 +1,11 @@
 # Node Types for Functional Tests
 
-'TYPO3.TYPO3CR:TestingContentType':
+'TYPO3.TYPO3CR:TestingNodeType':
   properties:
     test1:
       defaultValue: 'default value 1'
-'TYPO3.TYPO3CR:TestingContentTypeWithSubnodes':
+'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes':
   childNodes:
     subnode1:
-      type: 'TYPO3.TYPO3CR:TestingContentType'
+      type: 'TYPO3.TYPO3CR:TestingNodeType'
 
