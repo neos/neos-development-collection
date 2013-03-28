@@ -11,8 +11,8 @@ namespace TYPO3\SiteKickstarter\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Flow\Annotations as Flow;
-use \TYPO3\Flow\Utility\Files as Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files as Files;
 
 /**
  * Command controller for the Kickstart generator
