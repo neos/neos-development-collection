@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
-use TYPO3\Flow\Annotations as Flow;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
