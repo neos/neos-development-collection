@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\Package\Package as BasePackage;
 
 /**
  * The TYPO3CR Package

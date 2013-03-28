@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \Doctrine\ORM\Query;
+use Doctrine\ORM\Query;
 
 use TYPO3\Flow\Annotations as Flow;
 
