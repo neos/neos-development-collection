@@ -525,11 +525,23 @@ class ProxyNode implements PersistentNodeInterface {
 	 * Returns all direct child nodes of this node.
 	 * If a node type is specified, only nodes of that type are returned.
 	 *
-	 * @param string $nodeType If specified, only nodes with that node type are considered
+	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
+	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+	 * @param integer $offset An optional offset for the query
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
-	public function getChildNodes($nodeType = NULL) {
-		return (isset($this->newNode) ? $this->newNode->getChildNodes($nodeType) : $this->originalNode->getChildNodes($nodeType));
+	public function getChildNodes($nodeTypeFilter = NULL, $limit = NULL, $offset = NULL) {
+		return (isset($this->newNode) ? $this->newNode->getChildNodes($nodeTypeFilter, $limit, $offset) : $this->originalNode->getChildNodes($nodeTypeFilter, $limit, $offset));
+	}
+
+	/**
+	 * Returns the number of child nodes a similar getChildNodes() call would return.
+	 *
+	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
+	 * @return integer The number of child nodes
+	 */
+	public function getNumberOfChildNodes($nodeTypeFilter = NULL) {
+		return (isset($this->newNode) ? $this->newNode->getNumberOfChildNodes($nodeTypeFilter) : $this->originalNode->getNumberOfChildNodes($nodeTypeFilter));
 	}
 
 	/**

@@ -341,14 +341,22 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+	 * @param integer $offset An optional offset for the query
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
-	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL) {
 		$foundNodes = array();
 
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace);
+			if ($limit !== NULL) {
+				$query->setLimit($limit);
+			}
+			if ($offset !== NULL) {
+				$query->setOffset($offset);
+			}
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIdentifier()])) {
@@ -386,6 +394,26 @@ class NodeRepository extends \TYPO3\Flow\Persistence\Repository {
 		}
 
 		return $this->sortNodesByIndex($foundNodes);
+	}
+
+	/**
+	 * Counts nodes by its parent and (optionally) by its node type.
+	 *
+	 * NOTE: Only considers persisted nodes!
+	 *
+	 * @param string $parentPath Absolute path of the parent node
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added or removed nodes
+	 */
+	public function countByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		$nodeCount = 0;
+		while ($workspace !== NULL) {
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace);
+			$nodeCount += $query->count();
+			$workspace = $workspace->getBaseWorkspace();
+		}
+		return $nodeCount;
 	}
 
 	/**

@@ -228,6 +228,28 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function getChildNodesSupportsSettingALimitAndOffset() {
+		$rootNode = $this->context->getWorkspace()->getRootNode();
+
+		$node1 = $rootNode->createNode('node1');
+		$node2 = $rootNode->createNode('node2');
+		$node3 = $rootNode->createNode('node3');
+		$node4 = $rootNode->createNode('node4');
+		$node5 = $rootNode->createNode('node5');
+		$node6 = $rootNode->createNode('node6');
+
+		$childNodes = $rootNode->getChildNodes();
+		$this->assertSameOrder(array($node1, $node2, $node3, $node4, $node5, $node6), $childNodes);
+
+		$this->persistenceManager->persistAll();
+
+		$childNodes = $rootNode->getChildNodes(NULL, 3, 2);
+		$this->assertSameOrder(array($node3, $node4, $node5), $childNodes);
+	}
+
+	/**
+	 * @test
+	 */
 	public function moveBeforeMovesNodesBeforeOthersWithoutPersistAll() {
 		$rootNode = $this->context->getWorkspace()->getRootNode();
 

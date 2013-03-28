@@ -248,9 +248,11 @@ interface PersistentNodeInterface extends NodeInterface {
 	 * If a node type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
+	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+	 * @param integer $offset An optional offset for the query
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
-	public function getChildNodes($nodeTypeFilter = NULL);
+	public function getChildNodes($nodeTypeFilter = NULL, $limit = NULL, $offset = NULL);
 
 	/**
 	 * Checks if this node has any child nodes.
