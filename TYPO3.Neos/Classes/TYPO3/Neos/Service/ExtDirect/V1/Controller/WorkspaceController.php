@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\ContentContext;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\ExtJS\Annotations\ExtDirect;

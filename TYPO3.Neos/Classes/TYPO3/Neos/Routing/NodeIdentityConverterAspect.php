@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI
