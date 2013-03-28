@@ -30,7 +30,11 @@
 			</button>
 		{{/if}}
 		<button class="btn btn-mini action-new" title="Create after" {{action "newAfter"}}>
-			<i class="icon-plus"></i>
+			{{#if _thisElementIsAddingNewContent}}
+				<i class="t3-handle-loading"></i>
+			{{else}}
+				<i class="icon-plus"></i>
+			{{/if}}
 		</button>
 	</div>
 </div>

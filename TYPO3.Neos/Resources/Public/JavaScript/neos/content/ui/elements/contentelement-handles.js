@@ -61,6 +61,15 @@ define(
 				return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_nodePath'));
 			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
 
+			_thisElementIsAddingNewContent: function() {
+				var elementIsAddingNewContent = T3.Content.Controller.NodeActions.get('_elementIsAddingNewContent');
+				if (!elementIsAddingNewContent) {
+					return false;
+				}
+
+				return (elementIsAddingNewContent === this.get('_nodePath'));
+			}.property('T3.Content.Controller.NodeActions._elementIsAddingNewContent', '_nodePath').cacheable(),
+
 			_entityChanged: function() {
 				this.set('_hidden', this.get('_entity').get('typo3:_hidden'));
 			},
@@ -159,6 +168,7 @@ define(
 				ContentElementPopoverContent.create({
 					_options: this.get('_collection').options,
 					_index: this.get('_entityCollectionIndex'),
+					_clickedButton: this,
 					data: data
 				}).replaceIn(this.$newAfterPopoverContent);
 			},

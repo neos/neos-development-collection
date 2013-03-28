@@ -188,7 +188,7 @@ function($, vie, Ember, CreateJS) {
 								// we need to refresh CreateJS to render the content element handles
 								// for the nested sections.
 							CreateJS.enableEdit();
-						}
+						};
 
 						_.each(collectionView.collection.models, function(matchEntity) {
 							if (entity === matchEntity && lastMatchedEntity) {
@@ -481,7 +481,7 @@ function($, vie, Ember, CreateJS) {
 						} else {
 							// todo find cleaner solution for pages with different structures
 							// but without the classic reload, loadPage breaks here
-							if (typeof console != "undefined"){
+							if (typeof console !== 'undefined') {
 								console.log('Target HTML selector was not found because of a different page structure');
 							}
 							window.location.href = uri;
@@ -496,7 +496,7 @@ function($, vie, Ember, CreateJS) {
 						// so we reload the whole backend.
 						window.location.href = uri;
 					} else {
-						T3.ContentModule.set('currentUri', uri)
+						T3.ContentModule.set('currentUri', uri);
 					}
 					$('#t3-page-metainformation').replaceWith($newMetaInformation);
 					$('title').html($htmlDom.filter('title').html());
