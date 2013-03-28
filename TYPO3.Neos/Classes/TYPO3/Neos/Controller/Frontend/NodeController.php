@@ -50,6 +50,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Session\SessionInterface
+	 */
+	protected $session;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
@@ -102,6 +108,11 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->view->assign('value', $node);
 
 		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
+
+		if ($this->securityContext->isInitialized() && $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User') !== NULL) {
+			$lastVisitedUri = $this->request->getHttpRequest()->getUri();
+			$this->session->putData('lastVisitedUri', (string)$lastVisitedUri);
+		}
 	}
 
 	/**
