@@ -7,5 +7,5 @@ Getting Started
 
 	Introduction
 	Installation
+	CommandLine
 	YourFirstSite
-	YourFirstPlugin
