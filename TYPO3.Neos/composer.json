@@ -14,8 +14,8 @@
         "typo3/typo3cr": "*",
         "typo3/typoscript": "*"
     },
-    "require-dev": {
-        "typo3/sitekickstarter": "*"
+    "suggest": {
+        "typo3/sitekickstarter": "Helps with creating new site packages for TYPO3 Neos."
     },
     "autoload": {
         "psr-0": {
