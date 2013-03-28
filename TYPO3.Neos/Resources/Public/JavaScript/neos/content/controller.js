@@ -467,7 +467,6 @@ function($, CreateJS, Entity) {
 				position,
 				function (result) {
 					if (result.success) {
-						T3.Common.LocalStorage.removeItem('clipboard');
 						that.set('_clipboard', null);
 						T3.ContentModule.reloadPage();
 					}
@@ -534,8 +533,9 @@ function($, CreateJS, Entity) {
 
 		/**
 		 * Paste the current node on the clipboard before another node
+		 *
 		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} handle the clicked handle
+		 * @param {jQuery} $handle the clicked handle
 		 * @return {boolean}
 		 */
 		pasteBefore: function(nodePath, $handle) {
@@ -544,8 +544,9 @@ function($, CreateJS, Entity) {
 
 		/**
 		 * Paste the current node on the clipboard after another node
+		 *
 		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} handle the clicked handle
+		 * @param {jQuery} $handle the clicked handle
 		 * @return {void}
 		 */
 		removeFromClipboard: function(nodePath, $handle) {
@@ -553,13 +554,13 @@ function($, CreateJS, Entity) {
 				clipboard = this.get('_clipboard');
 
 			if (clipboard.nodePath === nodePath) {
-				this.set('_clipboard', {});
+				this.set('_clipboard', null);
 			}
 
 			block.hideHandle('remove-from-cut');
 			block.hideHandle('remove-from-copy');
-			jQuery('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
-			jQuery('.t3-add-above-handle, .t3-add-below-handle').removeClass('t3-handle-hidden');
+			$('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
+			$('.t3-add-above-handle, .t3-add-below-handle').removeClass('t3-handle-hidden');
 			block.showHandle('cut');
 			block.showHandle('copy');
 		},

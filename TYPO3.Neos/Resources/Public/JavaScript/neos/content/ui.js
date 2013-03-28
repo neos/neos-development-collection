@@ -472,16 +472,16 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 	T3.Content.UI.Util = T3.Content.UI.Util || {};
 
 	/**
-	 * @param {Object} $contentElement jQuery object for the element to which the handles should be added
-	 * @param {Integer} contentElementIndex The position in the collection on which paste / new actions should place the new entity
-	 * @param {Object} collection The VIE entity collection to which the element belongs
-	 * @param {Object} options A set of options passed to the actual Ember View (will be overridden with the required properties _element, _collection and _entityCollectionIndex)
-	 * @return void
+	 * @param {object} $contentElement jQuery object for the element to which the handles should be added
+	 * @param {integer} contentElementIndex The position in the collection on which paste / new actions should place the new entity
+	 * @param {object} collection The VIE entity collection to which the element belongs
+	 * @param {boolean} isSection Whether the element is a collection or not
+	 * @return {object|void} The created Ember handle bar object
 	 */
 	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection, isSection) {
 		var handleContainerClassName, handleContainer;
 
-		if (isSection) {
+		if (isSection === true) {
 				// Add container BEFORE the section DOM element
 			handleContainerClassName = 't3-section-handle-container';
 			if ($contentElement.prev() && $contentElement.prev().hasClass(handleContainerClassName)) {
@@ -489,30 +489,30 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 			}
 			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).insertBefore($contentElement);
 
-			T3.Content.UI.SectionHandle.create({
-				_element: $contentElement,
-				_collection: collection,
-				_entityCollectionIndex: contentElementIndex
-			}).appendTo(handleContainer);
-		} else {
-				// Add container INTO the content elements DOM element
-			handleContainerClassName = 't3-contentelement-handle-container';
-			if (!$contentElement || $contentElement.find('> .' + handleContainerClassName).length > 0) {
-				return;
-			}
-			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).prependTo($contentElement);
-
-				// Make sure we have a minimum height to be able to hover
-			if ($contentElement.height() < 16) {
-				$contentElement.css('min-height', '16px');
-			}
-
-			T3.Content.UI.ContentElementHandle.create({
+			return T3.Content.UI.SectionHandle.create({
 				_element: $contentElement,
 				_collection: collection,
 				_entityCollectionIndex: contentElementIndex
 			}).appendTo(handleContainer);
 		}
+
+			// Add container INTO the content elements DOM element
+		handleContainerClassName = 't3-contentelement-handle-container';
+		if (!$contentElement || $contentElement.find('> .' + handleContainerClassName).length > 0) {
+			return;
+		}
+		handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).prependTo($contentElement);
+
+			// Make sure we have a minimum height to be able to hover
+		if ($contentElement.height() < 16) {
+			$contentElement.css('min-height', '16px');
+		}
+
+		return T3.Content.UI.ContentElementHandle.create({
+			_element: $contentElement,
+			_collection: collection,
+			_entityCollectionIndex: contentElementIndex
+		}).appendTo(handleContainer);
 	};
 
 	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element, entity) {
