@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Controller\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Model\User;
 
 /**
  * Testcase for method security of the backend controller

@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Domain\Factory;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\Party\Domain\Model\User;
+use TYPO3\Party\Domain\Model\User;
 
 use TYPO3\Flow\Annotations as Flow;
 
