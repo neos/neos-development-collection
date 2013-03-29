@@ -81,6 +81,9 @@
           maximum: 255
         regularExpression:
           regularExpression: '/^[a-z0-9\-]+$/i'
+    _hidden:
+      ui:
+        reloadIfChanged: TRUE
     _hiddenInIndex:
       type: boolean
       ui:
