@@ -205,20 +205,12 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
 		$pluginResponse = new Response($parentResponse);
 
-		try {
-			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
+		$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-			if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
-				return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $pluginResponse->getContent());
-			} else {
-				return $pluginResponse->getContent();
-			}
-		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
-			throw $stopActionException;
-		} catch (\Exception $exception) {
-			$this->systemLogger->logException($exception);
-			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
-			return ($this->objectManager->getContext()->isDevelopment()) ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
+			return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $pluginResponse->getContent());
+		} else {
+			return $pluginResponse->getContent();
 		}
 	}
 
