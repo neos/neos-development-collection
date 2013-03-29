@@ -8397,6 +8397,7 @@ ul.t3-launcher-horizontal li .text {
 .dynatree-container ul.dynatree-container .dynatree-icon {
   vertical-align: middle;
   background-position: 0 0;
+  background-image: url("../Images/Icons/Black/square_shape_icon-16.png");
 }
 .dynatree-container ul.dynatree-container .typo3_neos_nodetypes-root .dynatree-icon {
   background-image: url("../Images/Icons/Black/globe_2_icon-16.png");
