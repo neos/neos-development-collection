@@ -16,9 +16,6 @@
   ui:
     label: 'Text'
     group: 'General'
-    icon:
-      light: 'Images/Icons/White/doc_lines_stright_icon-16.png'
-      dark: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
   properties:
     text:
       type: string
