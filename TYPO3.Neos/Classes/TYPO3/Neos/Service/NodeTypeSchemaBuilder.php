@@ -18,15 +18,16 @@ use TYPO3\Flow\Annotations as Flow;
  * when using nodes as semantic types.
  *
  * Example schema: http://schema.rdfs.org/all.json
+ *
+ * @Flow\Scope("singleton")
  */
 class NodeTypeSchemaBuilder {
 
 	/**
-	 * The config array for TYPO3CR from yaml file
-	 *
-	 * @var array
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 * @Flow\Inject
 	 */
-	protected $configArray;
+	protected $nodeTypeManager;
 
 	/**
 	 * @var array
@@ -49,22 +50,17 @@ class NodeTypeSchemaBuilder {
 	protected $superTypeConfiguration = array();
 
 	/**
-	 * Takes the configArray from TYPO3CR
-	 *
-	 * @param array $configArray
-	 */
-	public function __construct(array $configArray) {
-		$this->configArray = $configArray;
-	}
-
-	/**
-	 * Converts the $configArray property to a fully structured array
+	 * Converts the nodes types to a fully structured array
 	 * in the same structure as the schema to be created.
 	 *
-	 * @return void
+	 * @return object
 	 */
-	public function convertToVieSchema() {
-		foreach ($this->configArray as $nodeType => $nodeTypeConfiguration) {
+	public function generateVieSchema() {
+		if ($this->configuration !== NULL) {
+			return $this->configuration;
+		}
+
+		foreach ($this->nodeTypeManager->getFullConfiguration() as $nodeType => $nodeTypeConfiguration) {
 			$this->superTypeConfiguration['typo3:' . $nodeType] = array();
 			if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
 				foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
@@ -138,15 +134,7 @@ class NodeTypeSchemaBuilder {
 			'types' => (object) $this->types,
 			'properties' => (object) $this->properties,
 		);
-	}
-
-	/**
-	 * Generate the configArray as a JSON data
-	 *
-	 * @return string $configJson
-	 */
-	public function generateAsJson() {
-		return json_encode($this->configuration);
+		return $this->configuration;
 	}
 
 	/**
