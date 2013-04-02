@@ -16,14 +16,16 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A Content Object Proxy object to connect domain models to nodes
  *
+ * This class is never used directly in userland but is instantiated automatically
+ * through setContentObject() in AbstractNode.
+ *
  * @Flow\Entity
- * @Flow\Scope("prototype")
  */
 class ContentObjectProxy {
 
 	/**
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -64,7 +66,7 @@ class ContentObjectProxy {
 	 *
 	 * @return void
 	 */
-	public function initializeObject() {
+	protected function initializeObject() {
 		if ($this->contentObject !== NULL) {
 			$this->targetType = get_class($this->contentObject);
 			$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
@@ -79,37 +81,9 @@ class ContentObjectProxy {
 	}
 
 	/**
-	 * @param integer $targetId
-	 * @return void
-	 */
-	public function setTargetId($targetId) {
-		$this->targetId = $targetId;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function getTargetId() {
-		return $this->targetId;
-	}
-
-	/**
-	 * @param string $targetType
-	 * @return void
-	 */
-	public function setTargetType($targetType) {
-		$this->targetType = $targetType;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTargetType() {
-		return $this->targetType;
-	}
-
-	/**
-	 * @return object
+	 * Returns the real object this proxy stands for
+	 *
+	 * @return object The "content object" as it was originally passed to the constructor
 	 */
 	public function getObject() {
 		if ($this->contentObject === NULL) {

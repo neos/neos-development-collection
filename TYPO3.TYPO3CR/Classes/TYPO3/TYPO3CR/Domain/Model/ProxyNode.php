@@ -698,6 +698,17 @@ class ProxyNode implements PersistentNodeInterface {
 	}
 
 	/**
+	 * Tells if a node, in general,  has access restrictions, independent of the
+	 * current security context.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function hasAccessRestrictions() {
+		return (isset($this->newNode) ? $this->newNode->hasAccessRestrictions() : $this->originalNode->hasAccessRestrictions());
+	}
+
+	/**
 	 * Tells if this node is "visible".
 	 *
 	 * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are

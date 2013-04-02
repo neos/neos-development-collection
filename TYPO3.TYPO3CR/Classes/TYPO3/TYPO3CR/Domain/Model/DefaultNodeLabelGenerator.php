@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * default node label generator; used if no-other is configured
+ * The default node label generator; used if no-other is configured
  *
  * @Flow\Scope("singleton")
  */

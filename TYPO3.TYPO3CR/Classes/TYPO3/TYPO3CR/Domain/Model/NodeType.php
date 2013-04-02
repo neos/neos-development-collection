@@ -16,7 +16,11 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A Node Type
  *
- * @Flow\Scope("prototype")
+ * Although methods contained in this class belong to the public API, you should
+ * not need to deal with creating or managing node types manually. New node types
+ * should be defined in a NodeTypes.yaml file.
+ *
+ * @api
  */
 class NodeType {
 
@@ -57,8 +61,9 @@ class NodeType {
 	 * Constructs this node type
 	 *
 	 * @param string $name Name of the node type
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeType> $declaredSuperTypes a list of declared super types
+	 * @param array $declaredSuperTypes Parent types of this node type
 	 * @param array $configuration the configuration for this node type which is defined in the schema
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($name, array $declaredSuperTypes, array $configuration) {
 		$this->name = $name;
@@ -77,6 +82,7 @@ class NodeType {
 	 * Returns the name of this node type
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
@@ -87,6 +93,7 @@ class NodeType {
 	 * of this node type.
 	 *
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
+	 * @api
 	 */
 	public function getDeclaredSuperTypes() {
 		return $this->declaredSuperTypes;
@@ -98,6 +105,7 @@ class NodeType {
 	 *
 	 * @param string $nodeType
 	 * @return boolean TRUE if this node type is of the given kind, otherwise FALSE
+	 * @api
 	 */
 	public function isOfType($nodeType) {
 		if ($nodeType === $this->name) {
@@ -113,6 +121,7 @@ class NodeType {
 
 	/**
 	 * Get the full configuration of the node type. Should only be used internally.
+	 *
 	 * Instead, use the get* / has* methods which exist for every configuration property.
 	 *
 	 * @return array
@@ -163,6 +172,7 @@ class NodeType {
 	 * The default value is configured for each property under the "default" key.
 	 *
 	 * @return array
+	 * @api
 	 */
 	public function getDefaultValuesForProperties() {
 		if (!isset($this->configuration['properties'])) {
@@ -183,6 +193,7 @@ class NodeType {
 	 * Return an array with child nodes which should be automatically created
 	 *
 	 * @return array the key of this array is the name of the child, and the value its NodeType.
+	 * @api
 	 */
 	public function getAutoCreatedChildNodes() {
 		if (!isset($this->configuration['childNodes'])) {
@@ -203,6 +214,7 @@ class NodeType {
 	 * Alias for getName().
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function __toString() {
 		return $this->getName();

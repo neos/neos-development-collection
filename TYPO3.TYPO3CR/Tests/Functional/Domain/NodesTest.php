@@ -20,6 +20,11 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
 class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 */
+	protected $context;
+
+	/**
 	 * @var boolean
 	 */
 	static protected $testablePersistenceEnabled = TRUE;
@@ -37,7 +42,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->nodeRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeRepository();
 		$this->context = new Context('live');
 		$this->nodeRepository->setContext($this->context);
-		$this->context->injectNodeRepository($this->nodeRepository);
+		$this->inject($this->context, 'nodeRepository', $this->nodeRepository);
 	}
 
 	/**

@@ -12,9 +12,12 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 /**
- * Interface for a Node.
- * This is the base interface for both, NodeTemplate and persistent Nodes
+ * Interface for a Node
  *
+ * This is the base interface for all kinds of nodes: AbstractNode, Node, NodeTemplate
+ * and ProxyNode
+ *
+ * @api
  */
 interface NodeInterface {
 
@@ -29,10 +32,11 @@ interface NodeInterface {
 	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
 
 	/**
-	 * Set the name of the node to $newName, keeping it's position as it is.
+	 * Set the name of the node to $newName, keeping it's position as it is
 	 *
 	 * @param string $newName
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setName($newName);
 
@@ -47,6 +51,7 @@ interface NodeInterface {
 	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description of this node
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getLabel();
 
@@ -54,6 +59,7 @@ interface NodeInterface {
 	 * Returns a short abstract describing / containing summarized content of this node
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getAbstract();
 
@@ -66,6 +72,7 @@ interface NodeInterface {
 	 * @param string $propertyName Name of the property
 	 * @param mixed $value Value of the property
 	 * @return void
+	 * @api
 	 */
 	public function setProperty($propertyName, $value);
 
@@ -75,8 +82,9 @@ interface NodeInterface {
 	 * If the node has a content object attached, the property will be checked
 	 * there.
 	 *
-	 * @param string $propertyName
+	 * @param string $propertyName Name of the property to test for
 	 * @return boolean
+	 * @api
 	 */
 	public function hasProperty($propertyName);
 
@@ -89,6 +97,7 @@ interface NodeInterface {
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+	 * @api
 	 */
 	public function getProperty($propertyName);
 
@@ -101,6 +110,7 @@ interface NodeInterface {
 	 * @param string $propertyName Name of the property
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+	 * @api
 	 */
 	public function removeProperty($propertyName);
 
@@ -111,6 +121,7 @@ interface NodeInterface {
 	 * there.
 	 *
 	 * @return array Property values, indexed by their name
+	 * @api
 	 */
 	public function getProperties();
 
@@ -118,6 +129,7 @@ interface NodeInterface {
 	 * Returns the names of all properties of this node.
 	 *
 	 * @return array Property names
+	 * @api
 	 */
 	public function getPropertyNames();
 
@@ -126,13 +138,16 @@ interface NodeInterface {
 	 *
 	 * @param object $contentObject The content object
 	 * @return void
+	 * @throws \InvalidArgumentException if the given contentObject is no object.
+	 * @api
 	 */
 	public function setContentObject($contentObject);
 
 	/**
 	 * Returns the content object of this node (if any).
 	 *
-	 * @return object
+	 * @return object The content object or NULL if none was set
+	 * @api
 	 */
 	public function getContentObject();
 
@@ -140,6 +155,7 @@ interface NodeInterface {
 	 * Unsets the content object of this node.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function unsetContentObject();
 
@@ -148,6 +164,7 @@ interface NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
 	 * @return void
+	 * @api
 	 */
 	public function setNodeType(NodeType $nodeType);
 
@@ -155,6 +172,7 @@ interface NodeInterface {
 	 * Returns the node type of this node.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
+	 * @api
 	 */
 	public function getNodeType();
 
@@ -163,6 +181,7 @@ interface NodeInterface {
 	 *
 	 * @param boolean $hidden If TRUE, this Node will be hidden
 	 * @return void
+	 * @api
 	 */
 	public function setHidden($hidden);
 
@@ -170,6 +189,7 @@ interface NodeInterface {
 	 * Returns the current state of the hidden flag
 	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function isHidden();
 
@@ -178,6 +198,7 @@ interface NodeInterface {
 	 *
 	 * @param \DateTime $dateTime Date before this node should be hidden
 	 * @return void
+	 * @api
 	 */
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL);
 
@@ -185,6 +206,7 @@ interface NodeInterface {
 	 * Returns the date and time before which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date before this node will be hidden
+	 * @api
 	 */
 	public function getHiddenBeforeDateTime();
 
@@ -193,6 +215,7 @@ interface NodeInterface {
 	 *
 	 * @param \DateTime $dateTime Date after which this node should be hidden
 	 * @return void
+	 * @api
 	 */
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL);
 
@@ -200,6 +223,7 @@ interface NodeInterface {
 	 * Returns the date and time after which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date after which this node will be hidden
+	 * @api
 	 */
 	public function getHiddenAfterDateTime();
 
@@ -208,6 +232,7 @@ interface NodeInterface {
 	 *
 	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
 	 * @return void
+	 * @api
 	 */
 	public function setHiddenInIndex($hidden);
 
@@ -215,6 +240,7 @@ interface NodeInterface {
 	 * If this node should be hidden in indexes
 	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function isHiddenInIndex();
 
@@ -223,6 +249,7 @@ interface NodeInterface {
 	 *
 	 * @param array $accessRoles
 	 * @return void
+	 * @api
 	 */
 	public function setAccessRoles(array $accessRoles);
 
@@ -230,6 +257,7 @@ interface NodeInterface {
 	 * Returns the names of defined access roles
 	 *
 	 * @return array
+	 * @api
 	 */
 	public function getAccessRoles();
 

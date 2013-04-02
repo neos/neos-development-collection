@@ -24,10 +24,13 @@ use TYPO3\Flow\Annotations as Flow;
  * methods inside ProxyNode and keep NodeInterface / PersistentNodeInterface in sync!
  *
  * @Flow\Entity
+ * @api
  */
 class Node extends AbstractNode implements PersistentNodeInterface {
 
 	/**
+	 * Auto-incrementing version of this node, used for optimistic locking
+	 *
 	 * @ORM\Version
 	 * @var integer
 	 */
@@ -74,18 +77,24 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	protected $index;
 
 	/**
+	 * Level number within the global node tree
+	 *
 	 * @var integer
 	 * @Flow\Transient
 	 */
 	protected $depth;
 
 	/**
+	 * Node name, derived from its node path
+	 *
 	 * @var string
 	 * @Flow\Transient
 	 */
 	protected $name;
 
 	/**
+	 * Optional proxy for a content object which acts as an alternative property container
+	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
 	 * @ORM\ManyToOne
 	 */
@@ -133,6 +142,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	/**
 	 * Constructs this node
 	 *
+	 * Creating new nodes by instantiating Node is not part of the public API!
+	 * The content repository needs to propertly integrate new nodes into the node
+	 * tree and therefore you must use createNode() or createNodeFromTemplate().
+	 *
 	 * @param string $path Absolute path of this node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
 	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
@@ -144,7 +157,48 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	}
 
 	/**
-	 * Sets the absolute path of this node.
+	 * Set the name of the node to $newName, keeping it's position as it is.
+	 *
+	 * @param string $newName
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
+	 * @throws \InvalidArgumentException if $newName is invalid
+	 * @api
+	 */
+	public function setName($newName) {
+		if (!is_string($newName) || preg_match(self::MATCH_PATTERN_NAME, $newName) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
+		}
+
+		if ($this->path === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
+		}
+
+		if ($this->getName() === $newName) {
+			return;
+		}
+
+		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
+		$this->update();
+		$this->nodeRepository->persistEntities();
+		$this->emitNodePathChanged();
+	}
+
+	/**
+	 * Returns the name of this node
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getName() {
+		if ($this->name === NULL) {
+			$this->name = $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
+		}
+		return $this->name;
+	}
+
+	/**
+	 * Sets the absolute path of this node
 	 *
 	 * This method is only for internal use by the content repository. Changing
 	 * the path of a node manually may lead to unexpected behavior and bad breath.
@@ -185,7 +239,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	/**
 	 * Returns the path of this node
 	 *
-	 * @return string
+	 * Example: /sites/mysitecom/homepage/about
+	 *
+	 * @return string The absolute node path
+	 * @api
 	 */
 	public function getPath() {
 		return $this->path;
@@ -197,6 +254,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Example: /sites/mysitecom/homepage/about@user-admin
 	 *
 	 * @return string Node path with context information
+	 * @api
 	 */
 	public function getContextPath() {
 		$contextPath = $this->path;
@@ -212,50 +270,13 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
 	 *
 	 * @return integer
+	 * @api
 	 */
 	public function getDepth() {
 		if ($this->depth === NULL) {
 			$this->depth = $this->path === '/' ? 0 : substr_count($this->path, '/');
 		}
 		return $this->depth;
-	}
-
-	/**
-	 * Set the name of the node to $newName, keeping it's position as it is.
-	 *
-	 * @param string $newName
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
-	 */
-	public function setName($newName) {
-		if (!is_string($newName) || preg_match(self::MATCH_PATTERN_NAME, $newName) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
-		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
-		}
-
-		if ($this->getName() === $newName) {
-			return;
-		}
-
-		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
-		$this->update();
-		$this->nodeRepository->persistEntities();
-		$this->emitNodePathChanged();
-	}
-
-	/**
-	 * Returns the name of this node
-	 *
-	 * @return string
-	 */
-	public function getName() {
-		if ($this->name === NULL) {
-			$this->name = $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
-		}
-		return $this->name;
 	}
 
 	/**
@@ -278,15 +299,25 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Returns the workspace this node is contained in
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @api
 	 */
 	public function getWorkspace() {
 		return $this->workspace;
 	}
 
 	/**
-	 * Returns the identifier of this node
+	 * Returns the identifier of this node.
 	 *
-	 * @return string the node's UUID (unique within the workspace)
+	 * This UUID is not the same as the technical persistence identifier used by
+	 * Flow's persistence framework. It is an additional identifier which is unique
+	 * within the same workspace and is used for tracking the same node in across
+	 * workspaces.
+	 *
+	 * It is okay and recommended to use this identifier for synchronisation purposes
+	 * as it does not change even if all of the nodes content or its path changes.
+	 *
+	 * @return string the node's UUID
+	 * @api
 	 */
 	public function getIdentifier() {
 		return $this->identifier;
@@ -295,7 +326,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	/**
 	 * Sets the index of this node
 	 *
-	 * NOTE: This method is meant for internal use and must only be used by other nodes.
+	 * This method is for internal use and must only be used by other nodes!
 	 *
 	 * @param integer $index The new index
 	 * @return void
@@ -321,6 +352,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Returns the parent node of this node
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The parent node or NULL if this is the root node
+	 * @api
 	 */
 	public function getParent() {
 		if ($this->path === '/') {
@@ -335,6 +367,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Returns the parent node path
 	 *
 	 * @return string Absolute node path of the parent node
+	 * @api
 	 */
 	public function getParentPath() {
 		return $this->parentPath;
@@ -345,7 +378,8 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node
+	 * @api
 	 */
 	public function moveBefore(PersistentNodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -370,6 +404,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
+	 * @api
 	 */
 	public function moveAfter(PersistentNodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -394,6 +429,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
+	 * @api
 	 */
 	public function moveInto(PersistentNodeInterface $referenceNode) {
 		if ($referenceNode === $this || $referenceNode === $this->getParent()) {
@@ -417,6 +453,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param string $nodeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @api
 	 */
 	public function copyBefore(PersistentNodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
@@ -437,6 +474,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param string $nodeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @api
 	 */
 	public function copyAfter(PersistentNodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
@@ -451,10 +489,14 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	}
 
 	/**
+	 * Copies this node to below the given node. The new node will be added behind
+	 * any existing sub nodes of the given node.
+	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
 	 * @param string $nodeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @api
 	 */
 	public function copyInto(PersistentNodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->createSingleNode($nodeName);
@@ -467,7 +509,6 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 		return $copiedNode;
 	}
 
-
 	/**
 	 * Creates, adds and returns a child node of this node. Also sets default
 	 * properties and creates default subnodes.
@@ -478,6 +519,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+	 * @api
 	 */
 	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
 		$newNode = $this->createSingleNode($name, $nodeType, $identifier);
@@ -495,7 +537,9 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
-	 * properties or creating subnodes. Only used internally.
+	 * properties or creating subnodes.
+	 *
+	 * For internal use only!
 	 *
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
@@ -528,9 +572,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	/**
 	 * Creates and persists a node from the given $nodeTemplate as child node
 	 *
-	 * @param NodeTemplate $nodeTemplate
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
-	 * @return PersistentNodeInterface the freshly generated node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface the freshly generated node
+	 * @api
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
 		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
@@ -544,6 +589,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *
 	 * @param string $path Path specifying the node, relative to this node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
+	 * @api
 	 */
 	public function getNode($path) {
 		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->getContext()->getWorkspace());
@@ -561,6 +607,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * node type. For now it is just the first child node.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The primary child node or NULL if no such node exists
+	 * @api
 	 */
 	public function getPrimaryChildNode() {
 		$node = $this->nodeRepository->findFirstByParentAndNodeType($this->path, NULL, $this->getContext()->getWorkspace());
@@ -579,6 +626,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
+	 * @api
 	 */
 	public function getChildNodes($nodeTypeFilter = NULL, $limit = NULL, $offset = NULL) {
 		$nodes = $this->nodeRepository->findByParentAndNodeType($this->path, $nodeTypeFilter, $this->getContext()->getWorkspace(), $limit, $offset);
@@ -590,6 +638,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *
 	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
 	 * @return integer The number of child nodes
+	 * @api
 	 */
 	public function getNumberOfChildNodes($nodeTypeFilter = NULL) {
 		return $this->nodeRepository->countByParentAndNodeType($this->path, $nodeTypeFilter, $this->getContext()->getWorkspace());
@@ -600,6 +649,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *
 	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
 	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
+	 * @api
 	 * @todo Needs proper implementation in NodeRepository which only counts nodes (considering workspaces, removed nodes etc.)
 	 */
 	public function hasChildNodes($nodeTypeFilter = NULL) {
@@ -610,6 +660,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Removes this node and all its child nodes.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function remove() {
 		/** @var $childNode PersistentNodeInterface */
@@ -630,6 +681,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *
 	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed. Cannot handle FALSE (yet).
 	 * @return void
+	 * @api
 	 */
 	public function setRemoved($removed) {
 		if ((boolean)$removed === TRUE) {
@@ -641,11 +693,11 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * If this node is a removed node.
 	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function isRemoved() {
 		return $this->removed;
 	}
-
 
 	/**
 	 * Tells if this node is "visible".
@@ -655,6 +707,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * such as isAccessible() need to be evaluated.
 	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function isVisible() {
 		if ($this->hidden === TRUE) {
@@ -674,6 +727,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Tells if this node may be accessed according to the current security context.
 	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function isAccessible() {
 		// TODO: if security context can not be initialized (because too early), we return TRUE.
@@ -690,19 +744,19 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	}
 
 	/**
-	 * Tells if a node has access restrictions
+	 * Tells if a node, in general,  has access restrictions, independent of the
+	 * current security context.
 	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function hasAccessRestrictions() {
 		if (!is_array($this->accessRoles) || empty($this->accessRoles)) {
 			return FALSE;
 		}
-
 		if (count($this->accessRoles) === 1 && in_array('Everybody', $this->accessRoles)) {
 			return FALSE;
 		}
-
 		return TRUE;
 	}
 
@@ -724,6 +778,8 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *  - node type
 	 *  - content object
 	 * will be set to the same values as in the source node.
+	 *
+	 * For internal use only.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sourceNode
 	 * @return void
@@ -794,11 +850,11 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 
 	/**
 	 * Proxy nodes for current context if needed and filter with current context.
-	 * @see createProxyForContextIfNeeded
-	 * @see filterNodeByContext
 	 *
 	 * @param array $originalNodes The nodes to proxy and filter
 	 * @return array nodes filtered and proxied as needed for current context
+	 * @see createProxyForContextIfNeeded()
+	 * @see filterNodeByContext()
 	 */
 	protected function proxyAndFilterNodesForContext(array $originalNodes) {
 		$proxyNodes = array();
@@ -838,11 +894,9 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 		if (!$this->nodeRepository->getContext()->isRemovedContentShown() && $node->isRemoved()) {
 			return NULL;
 		}
-
 		if (!$this->nodeRepository->getContext()->isInvisibleContentShown() && !$node->isVisible()) {
 			return NULL;
 		}
-
 		if (!$this->nodeRepository->getContext()->isInaccessibleContentShown() && !$node->isAccessible()) {
 			return NULL;
 		}
@@ -850,7 +904,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	}
 
 	/**
-	 * Updates this node
+	 * Updates this node in the Node Repository
 	 *
 	 * @return void
 	 */
@@ -859,6 +913,8 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	}
 
 	/**
+	 * Updates the attached content object
+	 *
 	 * @param object $contentObject
 	 * @return void
 	 */

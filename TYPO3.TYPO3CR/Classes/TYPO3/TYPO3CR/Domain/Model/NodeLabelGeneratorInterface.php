@@ -13,6 +13,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 /**
  * Interface for rendering a node label string based on some strategy
+ *
+ * @api
  */
 interface NodeLabelGeneratorInterface {
 
@@ -21,6 +23,7 @@ interface NodeLabelGeneratorInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string
+	 * @api
 	 */
 	public function getLabel(NodeInterface $node);
 }

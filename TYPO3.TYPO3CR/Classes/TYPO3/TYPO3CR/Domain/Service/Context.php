@@ -16,9 +16,9 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Context
  *
- * @Flow\Scope("prototype")
+ * @api
  */
-class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
+class Context implements ContextInterface {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
@@ -41,11 +41,13 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $currentNode;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -82,26 +84,11 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository
-	 * @return void
-	 */
-	public function injectNodeRepository(\TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository) {
-		$this->nodeRepository = $nodeRepository;
-	}
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository
-	 * @return void
-	 */
-	public function injectWorkspaceRepository(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository) {
-		$this->workspaceRepository = $workspaceRepository;
-	}
-
-	/**
 	 * Returns the current workspace.
 	 *
 	 * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
+	 * @api
 	 */
 	public function getWorkspace($createWorkspaceIfNecessary = TRUE) {
 		if ($this->workspace === NULL) {
@@ -130,6 +117,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns the name of the workspace.
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getWorkspaceName() {
 		return $this->workspaceName;
@@ -140,6 +128,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$this->currentNode = $node;
@@ -149,6 +138,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns the current node
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @api
 	 */
 	public function getCurrentNode() {
 		return $this->currentNode;
@@ -163,6 +153,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * time in unit tests or in the actual application (for realizing previews etc).
 	 *
 	 * @return \DateTime The current date and time - or a simulated version of it
+	 * @api
 	 */
 	public function getCurrentDateTime() {
 		return $this->currentDateTime;
@@ -174,6 +165,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param \DateTime $currentDateTime A date and time to simulate.
 	 * @return void
+	 * @api
 	 */
 	public function setCurrentDateTime(\DateTime $currentDateTime) {
 		$this->currentDateTime = $currentDateTime;
@@ -184,6 +176,8 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param string $path Absolute path specifying the node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
+	 * @throws \InvalidArgumentException
+	 * @api
 	 */
 	public function getNode($path) {
 		if (!is_string($path) || $path[0] !== '/') {
@@ -199,6 +193,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found between and including the given paths or an empty array of none were found
+	 * @api
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint) {
 		$startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) ? $startingPoint->getPath() : $startingPoint;
@@ -209,57 +204,83 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	}
 
 	/**
-	 * Returns this context as a "context path"
+	 * Sets if nodes which are usually invisible should be accessible through the Node API and queries
 	 *
-	 * @return string
-	 */
-	public function __toString() {
-		return $this->workspaceName . $this->currentNode->getPath();
-	}
-
-	/**
 	 * @param boolean $invisibleContentShown If TRUE, invisible nodes are shown.
 	 * @return void
+	 * @see Node->filterNodeByContext()
+	 * @api
 	 */
 	public function setInvisibleContentShown($invisibleContentShown) {
 		$this->invisibleContentShown = $invisibleContentShown;
 	}
 
 	/**
+	 * Tells if nodes which are usually invisible should be accessible through the Node API and queries
+	 *
 	 * @return boolean
+	 * @see Node->filterNodeByContext()
+	 * @api
 	 */
 	public function isInvisibleContentShown() {
 		return $this->invisibleContentShown;
 	}
 
 	/**
+	 * Sets if nodes which have their "removed" flag set should be accessible through
+	 * the Node API and queries
+	 *
 	 * @param boolean $removedContentShown If TRUE, removed nodes are shown
 	 * @return void
+	 * @api
 	 */
 	public function setRemovedContentShown($removedContentShown) {
 		$this->removedContentShown = (boolean)$removedContentShown;
 	}
 
 	/**
+	 * Tells if nodes which have their "removed" flag set should be accessible through
+	 * the Node API and queries
+	 *
 	 * @return boolean
+	 * @see Node->filterNodeByContext()
+	 * @api
 	 */
 	public function isRemovedContentShown() {
 		return $this->removedContentShown;
 	}
 
 	/**
+	 * Sets if nodes which have access restrictions should be accessible through
+	 * the Node API and queries even without the necessary roles / rights
+	 *
 	 * @param boolean $inaccessibleContentShown
 	 * @return void
+	 * @api
 	 */
 	public function setInaccessibleContentShown($inaccessibleContentShown) {
 		$this->inaccessibleContentShown = (boolean)$inaccessibleContentShown;
 	}
 
 	/**
+	 * Tells if nodes which have access restrictions should be accessible through
+	 * the Node API and queries even without the necessary roles / rights
+	 *
 	 * @return boolean
+	 * @api
 	 */
 	public function isInaccessibleContentShown() {
 		return $this->inaccessibleContentShown;
+	}
+
+	/**
+	 * Returns this context as a "context path"
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function __toString() {
+		return $this->workspaceName . $this->currentNode->getPath();
 	}
 
 }

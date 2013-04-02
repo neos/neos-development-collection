@@ -18,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  * A Workspace
  *
  * @Flow\Entity
- * @Flow\Scope("prototype")
+ * @api
  */
 class Workspace {
 
@@ -73,6 +73,7 @@ class Workspace {
 	 *
 	 * @param string $name Name of this workspace
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace A workspace this workspace is based on (if any)
+	 * @api
 	 */
 	public function __construct($name, \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace = NULL) {
 		$this->name = $name;
@@ -98,6 +99,7 @@ class Workspace {
 	 * Returns the name of this workspace
 	 *
 	 * @return string Name of this workspace
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
@@ -107,6 +109,7 @@ class Workspace {
 	 * Returns the base workspace, if any
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @api
 	 */
 	public function getBaseWorkspace() {
 		return $this->baseWorkspace;
@@ -116,6 +119,7 @@ class Workspace {
 	 * Returns the root node of this workspace
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @api
 	 */
 	public function getRootNode() {
 		return $this->rootNode;
@@ -125,6 +129,7 @@ class Workspace {
 	 * Returns the current context this workspace operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @api
 	 */
 	public function getContext() {
 		return $this->nodeRepository->getContext();
@@ -137,6 +142,7 @@ class Workspace {
 	 *
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
+	 * @api
 	 */
 	public function publish($targetWorkspaceName) {
 		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
@@ -151,6 +157,7 @@ class Workspace {
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> $nodes
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
+	 * @api
 	 */
 	public function publishNodes(array $nodes, $targetWorkspaceName) {
 		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
@@ -180,6 +187,7 @@ class Workspace {
 	 * because a workspace always contains at least its Root Node.
 	 *
 	 * @return integer
+	 * @api
 	 */
 	public function getNodeCount() {
 		return $this->nodeRepository->countByWorkspace($this);

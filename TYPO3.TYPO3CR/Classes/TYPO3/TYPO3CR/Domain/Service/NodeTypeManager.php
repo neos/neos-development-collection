@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
  * Manager for node types
  *
  * @Flow\Scope("singleton")
+ * @api
  */
 class NodeTypeManager {
 
@@ -60,6 +61,7 @@ class NodeTypeManager {
 	 * @param string $nodeTypeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType or NULL
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+	 * @api
 	 */
 	public function getNodeType($nodeTypeName) {
 		if ($this->cachedNodeTypes === array()) {
@@ -76,6 +78,7 @@ class NodeTypeManager {
 	 *
 	 * @param string $nodeTypeName Name of the node type
 	 * @return boolean TRUE if it exists, otherwise FALSE
+	 * @api
 	 */
 	public function hasNodeType($nodeTypeName) {
 		if ($this->cachedNodeTypes === array()) {
