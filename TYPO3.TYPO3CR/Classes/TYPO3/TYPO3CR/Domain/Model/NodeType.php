@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
+use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
 
 /**
  * A Node Type
@@ -72,6 +74,13 @@ class NodeType {
 	protected $nodeTypeManager;
 
 	/**
+	 * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
+	 *
+	 * @var boolean
+	 */
+	protected $initialized = FALSE;
+
+	/**
 	 * Constructs this node type
 	 *
 	 * @param string $name Name of the node type
@@ -84,7 +93,7 @@ class NodeType {
 
 		foreach ($declaredSuperTypes as $type) {
 			if (!$type instanceof NodeType) {
-				throw new \InvalidArgumentException('$types must be an array of NodeType objects', 1291300950);
+				throw new \InvalidArgumentException('$declaredSuperTypes must be an array of NodeType objects', 1291300950);
 			}
 		}
 		$this->declaredSuperTypes = $declaredSuperTypes;
@@ -100,6 +109,42 @@ class NodeType {
 		}
 
 		$this->configuration = $configuration;
+	}
+
+	/**
+	 * Initializes this node type
+	 *
+	 * @return void
+	 */
+	protected function initialize() {
+		if ($this->initialized === TRUE) {
+			return;
+		}
+		$this->initialized = TRUE;
+		$this->applyPostprocessing();
+	}
+
+	/**
+	 * Iterates through configured postprocessors and invokes them
+	 *
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException
+	 */
+	protected function applyPostprocessing() {
+		if (!isset($this->configuration['postprocessors'])) {
+			return;
+		}
+		foreach ($this->configuration['postprocessors'] as $postprocessorConfiguration) {
+			$postprocessor = new $postprocessorConfiguration['postprocessor']();
+			if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
+				throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
+			}
+			$postprocessorOptions = array();
+			if (isset($postprocessorConfiguration['postprocessorOptions'])) {
+				$postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
+			}
+			$postprocessor->process($this, $this->configuration, $postprocessorOptions);
+		}
 	}
 
 	/**
@@ -169,6 +214,7 @@ class NodeType {
 	 * @return array
 	 */
 	public function getConfiguration() {
+		$this->initialize();
 		return $this->configuration;
 	}
 
@@ -179,6 +225,7 @@ class NodeType {
 	 * @api
 	 */
 	public function getLabel() {
+		$this->initialize();
 		return (isset($this->configuration['label']) ? $this->configuration['label'] : '');
 	}
 
@@ -188,6 +235,7 @@ class NodeType {
 	 * @return NodeLabelGeneratorInterface
 	 */
 	public function getNodeLabelGenerator() {
+		$this->initialize();
 		if (isset($this->configuration['nodeLabelGenerator'])) {
 			$nodeLabelGeneratorClassName = $this->configuration['nodeLabelGenerator'];
 		} else {
@@ -205,6 +253,7 @@ class NodeType {
 	 * @api
 	 */
 	public function getProperties() {
+		$this->initialize();
 		return (isset($this->configuration['properties']) ? $this->configuration['properties'] : array());
 	}
 
@@ -217,6 +266,7 @@ class NodeType {
 	 * @api
 	 */
 	public function getDefaultValuesForProperties() {
+		$this->initialize();
 		if (!isset($this->configuration['properties'])) {
 			return array();
 		}
@@ -238,6 +288,7 @@ class NodeType {
 	 * @api
 	 */
 	public function getAutoCreatedChildNodes() {
+		$this->initialize();
 		if (!isset($this->configuration['childNodes'])) {
 			return array();
 		}
@@ -271,6 +322,7 @@ class NodeType {
 	 * @api
 	 */
 	public function __call($methodName, array $arguments) {
+		$this->initialize();
 		if (substr($methodName, 0, 3) === 'get') {
 			$propertyName = lcfirst(substr($methodName, 3));
 			if (isset($this->configuration[$propertyName])) {

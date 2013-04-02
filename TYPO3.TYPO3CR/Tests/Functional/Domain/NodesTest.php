@@ -118,6 +118,19 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function postprocessorUpdatesNodeTypesProperty() {
+		$rootNode = $this->context->getRootNode();
+
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithProcessor');
+		$fooNode = $rootNode->createNode('foo', $testNodeType);
+
+		$this->assertSame('The value of "someOption" is "someOverriddenValue", the value of "someOtherOption" is "someOtherValue"', $fooNode->getProperty('test1'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function createdNodesHaveSubNodesCreatedIfDefinedInNodeType() {
 		$rootNode = $this->context->getRootNode();
 

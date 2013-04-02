@@ -43,3 +43,13 @@ additionalProperties:
       type: dictionary
       # we intentionally do not specify which properties are allowed here;
       # as other packages (such as TYPO3.Neos) might do that instead.
+
+    'postprocessors':
+      type: dictionary
+      additionalProperties:
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+          'postprocessor': { type: string, format: class-name, required: TRUE }
+          'postprocessorOptions':
+            type: dictionary

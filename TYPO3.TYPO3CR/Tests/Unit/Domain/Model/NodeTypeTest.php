@@ -87,5 +87,42 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array());
 		$this->assertFalse($baseType->hasFooKey());
 	}
+
+	/**
+	 * data source for accessingConfigurationOptionsInitializesTheNodeType()
+	 */
+	public function gettersThatRequiresInitialization() {
+		return array(
+			array('getConfiguration'),
+			array('getLabel'),
+			array('getNodeLabelGenerator'),
+			array('getProperties'),
+			array('getDefaultValuesForProperties'),
+			array('getAutoCreatedChildNodes'),
+		);
+	}
+
+	/**
+	 * @param string  $getter
+	 * @test
+	 * @dataProvider gettersThatRequiresInitialization
+	 */
+	public function accessingConfigurationOptionsInitializesTheNodeType($getter) {
+		$nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$nodeType->_set('objectManager', $mockObjectManager);
+		$nodeType->expects($this->once())->method('initialize');
+		$nodeType->$getter();
+	}
+
+	/**
+	 * @test
+	 */
+	public function magicGettersInitializesTheNodeType() {
+		$nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', FALSE);
+		$nodeType->_set('configuration', array('someProperty' => 'someValue'));
+		$nodeType->expects($this->once())->method('initialize');
+		$nodeType->getSomeProperty();
+	}
 }
 ?>
