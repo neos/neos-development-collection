@@ -36,7 +36,8 @@ interface NodeInterface {
 	 *
 	 * @param string $newName
 	 * @return void
-	 * @throws \InvalidArgumentException
+	 * @throws \InvalidArgumentException if $newName is invalid
+	 * @api
 	 */
 	public function setName($newName);
 
@@ -44,6 +45,7 @@ interface NodeInterface {
 	 * Returns the name of this node
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getName();
 
