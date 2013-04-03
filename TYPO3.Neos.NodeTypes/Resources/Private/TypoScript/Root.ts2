@@ -73,6 +73,8 @@ prototype(TYPO3.Neos.NodeTypes:Image) {
 	link = ${q(node).property('link')}
 	caption = ${q(node).property('caption')}
 	captionAlignment = ${q(node).property('captionAlignment')}
+	maximumWidth = 2560
+	maximumHeight = 2560
 }
 
 # Text TS Object
