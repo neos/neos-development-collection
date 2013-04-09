@@ -7204,6 +7204,7 @@ body.t3-ui-controls.t3-tree-panel-open {
   z-index: 10014;
   border-top: 1px solid #69a550;
   padding-top: 45px;
+  padding-bottom: 26px;
   -webkit-transition-property: right;
   -moz-transition-property: right;
   -o-transition-property: right;
@@ -7936,7 +7937,7 @@ body.t3-ui-previewmode #t3-toolbar .t3-icon-preview {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
 }
 body.t3-ui-previewmode #t3-inspector {
-  width: 0;
+  right: -200px;
   overflow: hidden;
 }
 body.t3-ui-previewmode .btn-publish {

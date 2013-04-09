@@ -286,6 +286,7 @@ body {
 	z-index: 10014;
 	border-top: 1px solid $green;
 	padding-top: 45px;
+	padding-bottom: $footer-height;
 	@include transition-property('right');
 	@include transition-duration(.2s);
 
@@ -912,7 +913,7 @@ body {
 			}
 		}
 		#t3-inspector {
-			width: 0;
+			right: -$property-panel-width;
 			overflow: hidden;
 		}
 		// Publish button
