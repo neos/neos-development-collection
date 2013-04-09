@@ -41,7 +41,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			} else {
 				return this.get('checked');
 			}
-		}.property('checked').cacheable()
+		}.property('checked')
 	});
 
 	T3.Content.UI.Editor.DateField = Ember.TextField.extend({
@@ -94,7 +94,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				}, this)));
 			});
 			return options;
-		}.property('values', 'value', 'placeholder', 'allowEmpty').cacheable(),
+		}.property('values', 'value', 'placeholder', 'allowEmpty'),
 
 		onItemsChange: function() {
 			// Special event for chosen
@@ -217,7 +217,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		_uploadButtonShown: false,
 		_uploadButtonNotShown: function() {
 			return !this.get('_uploadButtonShown');
-		}.property('_uploadButtonShown').cacheable(),
+		}.property('_uploadButtonShown'),
 
 		template: Ember.Handlebars.compile(fileUploadTemplate),
 
@@ -336,7 +336,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		_uploadPreviewShown: true,
 		_uploadPreviewNotShown: function() {
 			return !this.get('_uploadPreviewShown');
-		}.property('_uploadPreviewShown').cacheable(),
+		}.property('_uploadPreviewShown'),
 
 		_uploadPreviewImageSource: '',
 		_defaultUploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.Neos/Images/dummy-image.png', // TODO: we need a way to fetch the static resources base URI
@@ -388,7 +388,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
 
-			this.set('_finalImageScale', Ember.Object.create({
+			this.set('_finalImageScale', Ember.Object.extend({
 				w: null,
 				h: null,
 
@@ -408,13 +408,13 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 					if (arguments.length === 1) {
 						return this.get('h');
 					} else {
-						this.set('w', Math.ceil(that.getPath('_cropProperties.aspectRatio') * value));
+						this.set('w', Math.ceil(that.get('_cropProperties.aspectRatio') * value));
 						return value;
 					}
-				}.property('h').cacheable()
-			}));
+				}.property('h')
+			}).create());
 
-			this.set('_cropProperties',  Ember.Object.create({
+			this.set('_cropProperties',  Ember.Object.extend({
 				x: null,
 				y: null,
 				w: null,
@@ -427,11 +427,11 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 						w: this.get('w'),
 						h: this.get('h')
 					}
-				}.property('w', 'h', 'x', 'y').cacheable(),
+				}.property('w', 'h', 'x', 'y'),
 
 				initialized: function() {
 					return this.get('w') !== null && this.get('h') !== null && this.get('x') !== null && this.get('y') !== null;
-				}.property('w', 'h', 'x', 'y').cacheable(),
+				}.property('w', 'h', 'x', 'y'),
 
 				aspectRatio: function() {
 					if (isNaN(this.get('w'))
@@ -442,48 +442,48 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 					}
 
 					return parseFloat(this.get('w')) / parseFloat(this.get('h'));
-				}.property('w', 'h').cacheable()
-			}));
+				}.property('w', 'h')
+			}).create());
 		},
 
 		_imageWidthToggle: function(propertyName, value) {
 			if (typeof value === 'boolean') {
 				if (value === false) {
-					this.setPath('_finalImageScale.w', null);
-					this.setPath('_finalImageScale.h', null);
+					this.set('_finalImageScale.w', null);
+					this.set('_finalImageScale.h', null);
 				} else {
-					this.setPath('_finalImageScale.w', this.getPath('_originalImageSize.w'));
-					this.setPath('_finalImageScale.h', this.getPath('_originalImageSize.h'));
+					this.set('_finalImageScale.w', this.get('_originalImageSize.w'));
+					this.set('_finalImageScale.h', this.get('_originalImageSize.h'));
 				}
 			}
-			if (this.getPath('_finalImageScale.w') > 0) {
+			if (this.get('_finalImageScale.w') > 0) {
 				return true;
 			}
-			this.setPath('_finalImageScale.w', null);
-			this.setPath('_finalImageScale.h', null);
+			this.set('_finalImageScale.w', null);
+			this.set('_finalImageScale.h', null);
 			return false;
-		}.property('_finalImageScale.w').cacheable(),
+		}.property('_finalImageScale.w'),
 
 		_imageHeightToggle: function(propertyName, value) {
 			if (typeof value === 'boolean') {
 				if (value === false) {
-					this.setPath('_finalImageScale.w', null);
-					this.setPath('_finalImageScale.h', null);
+					this.set('_finalImageScale.w', null);
+					this.set('_finalImageScale.h', null);
 				} else {
-					this.setPath('_finalImageScale.w', this.getPath('_originalImageSize.w'));
-					this.setPath('_finalImageScale.h', this.getPath('_originalImageSize.h'));
+					this.set('_finalImageScale.w', this.get('_originalImageSize.w'));
+					this.set('_finalImageScale.h', this.get('_originalImageSize.h'));
 				}
 			}
-			if (this.getPath('_finalImageScale.w') > 0) {
+			if (this.get('_finalImageScale.w') > 0) {
 				return true;
 			}
-			this.setPath('_finalImageScale.w', null);
-			this.setPath('_finalImageScale.h', null);
+			this.set('_finalImageScale.w', null);
+			this.set('_finalImageScale.h', null);
 			return false;
-		}.property('_finalImageScale.h').cacheable(),
+		}.property('_finalImageScale.h'),
 
 		_aspectRatioChanged: function() {
-			this.setPath('_finalImageScale.h', parseInt(this.getPath('_finalImageScale.w') / this.getPath('_cropProperties.aspectRatio')));
+			this.set('_finalImageScale.h', parseInt(this.get('_finalImageScale.w') / this.get('_cropProperties.aspectRatio')));
 		}.observes('_finalImageScale.w', '_cropProperties.aspectRatio'),
 
 		/****************************************
@@ -542,15 +542,15 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 								image.addClass('t3-inspector-image-uploadthumbnail-landscape').removeClass('t3-inspector-image-uploadthumbnail-portrait');
 
 									// For landscape images, we set the margin-top correctly to align the image in the center
-								scaleFactor = that.getPath('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
-								offset = ((that.getPath('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
+								scaleFactor = that.get('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
+								offset = ((that.get('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
 								image.css({'margin-top': parseInt(offset) + 'px', 'margin-left': 0});
 							} else {
 								image.removeClass('t3-inspector-image-uploadthumbnail-landscape').addClass('t3-inspector-image-uploadthumbnail-portrait');
 
 									// For portrait images, we set the margin-left correctly to align the image in the center
-								scaleFactor = that.getPath('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
-								offset = ((that.getPath('imagePreviewMaximumDimensions.w') - imageObjForFindingSize.width * scaleFactor) / 2);
+								scaleFactor = that.get('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
+								offset = ((that.get('imagePreviewMaximumDimensions.w') - imageObjForFindingSize.width * scaleFactor) / 2);
 								image.css({'margin-left': parseInt(offset) + 'px', 'margin-top': 0});
 							}
 							that.set('_uploadPreviewShown', true);
@@ -582,7 +582,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 				// We only need to set the width here; as the height is automatically
 				// calculated from the aspect ratio in the cropper
-			this.setPath('_finalImageScale.w', responseJson.originalSize.w);
+			this.set('_finalImageScale.w', responseJson.originalSize.w);
 
 			this._resetCropPropertiesToCurrentPreviewImageSize();
 			this.set('_imageFullyLoaded', true);
@@ -601,10 +601,10 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		},
 
 		_resetCropPropertiesToCurrentPreviewImageSize: function() {
-			this.setPath('_cropProperties.x', 0);
-			this.setPath('_cropProperties.y', 0);
-			this.setPath('_cropProperties.w', this.getPath('_previewImageSize.w'));
-			this.setPath('_cropProperties.h', this.getPath('_previewImageSize.h'));
+			this.set('_cropProperties.x', 0);
+			this.set('_cropProperties.y', 0);
+			this.set('_cropProperties.w', this.get('_previewImageSize.w'));
+			this.set('_cropProperties.h', this.get('_previewImageSize.h'));
 		},
 
 		/****************************************
@@ -644,18 +644,18 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 							// Triggered when the selection is finished
 						onSelect: function(previewImageCoordinates) {
 							Ember.beginPropertyChanges();
-							that.setPath('_cropProperties.x', previewImageCoordinates.x);
-							that.setPath('_cropProperties.y', previewImageCoordinates.y);
-							that.setPath('_cropProperties.w', previewImageCoordinates.w);
-							that.setPath('_cropProperties.h', previewImageCoordinates.h);
+							that.set('_cropProperties.x', previewImageCoordinates.x);
+							that.set('_cropProperties.y', previewImageCoordinates.y);
+							that.set('_cropProperties.w', previewImageCoordinates.w);
+							that.set('_cropProperties.h', previewImageCoordinates.h);
 							Ember.endPropertyChanges();
 							that._updateValue();
 						}
 					};
 
 						// If we have all crop options set, we preselect this in the cropping tool.
-					if (that.getPath('_cropProperties.initialized')) {
-						var cropOptions = that.getPath('_cropProperties.full');
+					if (that.get('_cropProperties.initialized')) {
+						var cropOptions = that.get('_cropProperties.full');
 
 						settings.setSelect = [
 							cropOptions.x,
@@ -680,7 +680,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		_updateCropPreviewImage: function() {
 			if (!this.get('_previewImageUri')) return;
 
-			var cropProperties = this.getPath('_cropProperties.full');
+			var cropProperties = this.get('_cropProperties.full');
 
 			var scalingFactorX = this.imagePreviewMaximumDimensions.w / cropProperties.w;
 			var scalingFactorY = this.imagePreviewMaximumDimensions.h / cropProperties.h;
@@ -723,13 +723,13 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 * dependency.
 		 */
 		_updateValue: function() {
-			if (!this.getPath('_cropProperties.initialized')) return;
+			if (!this.get('_cropProperties.initialized')) return;
 			if (!this.get('_imageFullyLoaded')) return;
 			// Prevent the user from setting width and height to empty
 
-			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.getPath('_cropProperties.full')),
-				width = this.getPath('_finalImageScale.w'),
-				height = this.getPath('_finalImageScale.h'),
+			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.get('_cropProperties.full')),
+				width = this.get('_finalImageScale.w'),
+				height = this.get('_finalImageScale.h'),
 				processingInstructions = [{
 					command: 'crop',
 					options: {
@@ -795,20 +795,20 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 					$.each(imageVariant.processingInstructions, function(index, instruction) {
 						if (instruction.command === 'crop') {
 							var finalSizeCropProperties = {
-								x: Ember.getPath(instruction, 'options.start.x'),
-								y: Ember.getPath(instruction, 'options.start.y'),
-								w: Ember.getPath(instruction, 'options.size.width'),
-								h: Ember.getPath(instruction, 'options.size.height')
+								x: Ember.get(instruction, 'options.start.x'),
+								y: Ember.get(instruction, 'options.start.y'),
+								w: Ember.get(instruction, 'options.size.width'),
+								h: Ember.get(instruction, 'options.size.height')
 							};
 
 							var previewImageCropProperties = that._convertCropOptionsToPreviewImageCoordinates(finalSizeCropProperties);
 
-							that.setPath('_cropProperties.x', previewImageCropProperties.x);
-							that.setPath('_cropProperties.y', previewImageCropProperties.y);
-							that.setPath('_cropProperties.w', previewImageCropProperties.w);
-							that.setPath('_cropProperties.h', previewImageCropProperties.h);
+							that.set('_cropProperties.x', previewImageCropProperties.x);
+							that.set('_cropProperties.y', previewImageCropProperties.y);
+							that.set('_cropProperties.w', previewImageCropProperties.w);
+							that.set('_cropProperties.h', previewImageCropProperties.h);
 						} else if (instruction.command === 'resize') {
-							that.setPath('_finalImageScale.w', Ember.getPath(instruction, 'options.size.width'));
+							that.set('_finalImageScale.w', Ember.get(instruction, 'options.size.width'));
 								// Height does not need to be set, as it is automatically calculated from crop properties + width
 						}
 					});

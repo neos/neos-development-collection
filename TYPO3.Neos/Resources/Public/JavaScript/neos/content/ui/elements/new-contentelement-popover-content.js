@@ -29,7 +29,7 @@ define(
 					return;
 				}
 
-				T3.Content.Controller.NodeActions.set('_elementIsAddingNewContent', this.getPath('_clickedButton._nodePath'));
+				T3.Content.Controller.NodeActions.set('_elementIsAddingNewContent', this.get('_clickedButton._nodePath'));
 
 				this.get('_options').collection.add({
 					'@type': rel

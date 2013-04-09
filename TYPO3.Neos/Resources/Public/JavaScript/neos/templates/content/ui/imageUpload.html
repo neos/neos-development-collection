@@ -1,28 +1,28 @@
 <div class="t3-inspector-image-thumbnail-container">
 	<div class="t3-inspector-image-thumbnail">
 		<div class="t3-inspector-image-thumbnail-inner">
-			{{view T3.Content.UI.Image srcBinding="_previewImageUri" isVisibleBinding="_uploadPreviewNotShown"}}
+			{{view T3.Content.UI.Image srcBinding="view._previewImageUri" isVisibleBinding="view._uploadPreviewNotShown"}}
 		</div>
 	</div>
 	<div class="t3-inspector-image-uploadthumbnail">
-		{{view T3.Content.UI.Image srcBinding="_uploadPreviewImageSource" isVisibleBinding="_uploadPreviewShown"}}
+		{{view T3.Content.UI.Image srcBinding="view._uploadPreviewImageSource" isVisibleBinding="view._uploadPreviewShown"}}
 	</div>
 </div>
 
-<div class="t3-inspector-image-upload" id="{{unbound _containerId}}">
-	<button id="{{unbound _browseButtonId}}" class="t3-button btn btn-mini t3-inspector-image-upload-files" {{bindAttr disabled="_uploadInProgress:disabled"}}>
-		{{fileChooserLabel}}
+<div class="t3-inspector-image-upload" id="{{unbound view._containerId}}">
+	<button id="{{unbound view._browseButtonId}}" class="t3-button btn btn-mini t3-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
+		{{view.fileChooserLabel}}
 	</button>
-	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonShown" target="parentView" class="t3-inspector-image-upload-button" action="upload" labelBinding="uploaderLabel" allowedFileTypesBinding="allowedFileTypes" disabledBinding="_uploadInProgress"}}
-	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonNotShown" target="parentView" class="t3-inspector-image-crop-button" labelBinding="cropLabel"}}
+	{{view T3.Content.UI.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="t3-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
+	{{view T3.Content.UI.Button isVisibleBinding="view._uploadPreviewNotShown" target="parentView" class="t3-inspector-image-crop-button" labelBinding="view.cropLabel"}}
 </div>
 
 <div class="t3-inspector-image-width">
 	<label for="image-width">Width:</label>
 	<div class="input-prepend input-append">
-		<span class="add-on">{{view T3.Content.UI.Editor.Checkbox checkedBinding="_imageWidthToggle"}}</span>
+		<span class="add-on">{{view T3.Content.UI.Editor.Checkbox checkedBinding="view._imageWidthToggle"}}</span>
 		<span>
-			{{view T3.Content.UI.Editor.TextField elementId="image-width" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="_finalImageScale.w"}}
+			{{view T3.Content.UI.Editor.TextField elementId="image-width" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageScale.w"}}
 		</span>
 		<span class="add-on">px</span>
 	</div>
@@ -30,9 +30,9 @@
 <div class="t3-inspector-image-height">
 	<label for="image-height">Height:</label>
 	<div class="input-prepend input-append">
-		<span class="add-on">{{view T3.Content.UI.Editor.Checkbox checkedBinding="_imageHeightToggle"}}</span>
+		<span class="add-on">{{view T3.Content.UI.Editor.Checkbox checkedBinding="view._imageHeightToggle"}}</span>
 		<span>
-			{{view T3.Content.UI.Editor.TextField elementId="image-height" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="_finalImageScale.computedHeight"}}
+			{{view T3.Content.UI.Editor.TextField elementId="image-height" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageScale.computedHeight"}}
 		</span>
 		<span class="add-on">px</span>
 	</div>

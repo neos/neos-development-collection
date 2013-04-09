@@ -10,11 +10,10 @@ define(
 	'emberjs',
 	'text!neos/templates/common/launcher.html',
 	'text!neos/templates/common/launcherpanel.html',
-	'text!neos/templates/common/confirmationDialog.html',
 	'bootstrap.alert',
 	'bootstrap.notify'
 ],
-function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
+function($, Ember, launcherTemplate, launcherPanelTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/common');
 
 	var T3 = window.T3 || {};
@@ -43,7 +42,7 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 	 *
 	 * Contains a list of available search items
 	 */
-	T3.Common.Launcher.SearchController = Ember.Object.create({
+	T3.Common.Launcher.SearchController = Ember.Object.extend({
 		_launcherTextField: null,
 		_requestIndex: 0,
 		_value: '',
@@ -142,7 +141,7 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		_clear: function() {
 			this.set('searchItems', []);
 		}
-	});
+	}).create();
 
 	/**
 	 * @internal
@@ -173,7 +172,7 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		},
 
 		cancel: function() {
-			this.set('value', '');
+			T3.ContentModule._launcher.set('value', '');
 			this.$().blur();
 		},
 
@@ -238,210 +237,21 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 	});
 
 	/**
-	 * Implements various types of dialogs which are shown in a lightbox-like manner and overlay
-	 * the whole UI.
-	 *
-	 * @singleton
-	 */
-	T3.Common.Dialog = Ember.Object.create({
-
-		_options: {
-			preventLeft: false,
-			preventRight: false,
-			preventTop: false,
-			preventBottom: false,
-			zIndex: 10090,
-			openEvent: function() {
-			}
-		},
-
-		_handle: null,
-
-		/**
-		 * Render HTML fetched from a certain URL into the dialog / lightbox.
-		 *
-		 * A <h1> tag in the response is used as dialog title, displayed
-		 * in the title bar.
-		 * All <a> links get rewritten, such that they do not open inside a new
-		 * window, but are loaded inside the lightbox as well.
-		 *
-		 * Furthermore, all <a> links with a rel starting with "typo3-" are
-		 * considered *COMMANDS*. For them, the callback specified in {commands}
-		 * gets executed immediately, and then the dialog is closed.
-		 *
-		 * EXAMPLE
-		 * =======
-		 *
-		 * If one calls:
-		 *
-		 * ...open('/my/url', {foo: 'bar'}, {
-		 *   'my-command': function($domElement) {
-		 *     alert('my command executed, href is ' + $domElement.attr('href'));
-		 *   }
-		 * });
-		 *
-		 * The following happens:
-		 * - The URL /my/url?foo=bar is loaded and displayed inside the dialog
-		 * - If you click onto a link, the appropriate URL is loaded and displayed in the dialog
-		 * - When a response contains <a href="/something" rel="typo3-my-command">My special command</a>,
-		 *   then our callback is executed which we defined above; and the dialog is closed.
-		 *
-		 * @param {String} url the URL to load data from
-		 * @param {Object} data the GET data to append
-		 * @param {Object} commands Command-Name --> Callback function list
-		 * @param {jQuery} the handle to which the dialog is appended to
-		 * @param {Object} options to be overridden for the popover
-		 */
-		openFromUrl: function(url, data, commands, $handle, overrideOptions) {
-			var that = this;
-			that._handle = $handle;
-			that._overrideOptions(overrideOptions);
-
-			this._fetchUrlForDialog(url, data, commands, function() {
-				that._showDialog();
-			});
-		},
-
-		/**
-		 *
-		 * @param {Object} options
-		 * @param {jQuery} $handle
-		 */
-		openConfirmPopover: function(options, $handle) {
-			var that = this;
-			that._handle = $handle;
-
-			var handlerEvents = $handle.data('events');
-			if (!handlerEvents || !handlerEvents['showPopover']) {
-					// Set popover content
-				that._options.header = (options.title) ? '<div>' + options.title + '</div>' : null;
-				that._options.content = $('<div />');
-
-				var view = Ember.View.create({
-					classNames: ['typo3-confirmationdialog', 'aloha-block-do-not-deactivate'],
-					template: Ember.Handlebars.compile(confirmationdialogTemplate),
-					content: options.content,
-					confirmLabel: options.confirmLabel ? options.confirmLabel : 'Confirm',
-					confirmClass: options.confirmClass ? options.confirmClass : '',
-					cancelLabel: options.cancelLabel ? options.cancelLabel : 'Cancel',
-					cancelClass: options.cancelClass ? options.cancelClass : '',
-					confirm: function() {
-						$handle.trigger('hidePopover');
-						if (options.onOk) {
-							options.onOk.call(that);
-						}
-					},
-					cancel: function() {
-						if (options.onCancel) {
-							options.onCancel.call(that);
-						}
-						$handle.trigger('hidePopover');
-					},
-					didInsertElement: function() {
-						that._showDialog();
-						if (options.onDialogOpen) {
-							options.onDialogOpen.call(that);
-						}
-					}
-				});
-				if (options.positioning) {
-					that._options.positioning = options.positioning;
-				}
-
-				view.appendTo(that._options.content);
-			}
-
-			if (options.onDialogOpen) {
-				options.onDialogOpen.call(this);
-			}
-		},
-
-		/**
-		 * Show the actual dialog based on configured settings
-		 * @return {void}
-		 */
-		_showDialog: function() {
-			this._handle.popover(this._options).trigger('showPopover').addClass('t3-ui').removeClass('t3-handle-loading');
-		},
-
-		/**
-		 * Internal helper which implements the re-writing logic explained in the doc comment
-		 * for the "open" method.
-		 *
-		 * @param {String} url the URL to load data from
-		 * @param {Object} data the GET data to append
-		 * @param {Object} commands Command-Name --> Callback function list
-		 * @param {Function} callback function to be called when data is fetched and processed
-		 * @return {void}
-		 */
-		_fetchUrlForDialog: function(url, data, commands, callback) {
-			var that = this;
-
-			$.get(url, data, function(data) {
-				var dialog = $('<div />');
-				dialog.html(data);
-
-				// Check if we find commands in the returned HTML. If yes,
-				// execute them and close the dialog.
-				var commandsExecuted = false;
-				dialog.find('a[rel|="typo3"]').each(function() {
-					var commandName = $(this).attr('rel').substr(6);
-					if (commands[commandName]) {
-						commands[commandName]($(this));
-						commandsExecuted = true;
-					}
-				});
-				if (commandsExecuted) {
-					that._handle.trigger('hidePopover')
-					return false;
-				}
-
-				// <a> links get rewritten to use ajax
-				dialog.find('a.t3-ajax-link').click(function() {
-					that._fetchUrlForDialog($(this).attr('href'), {}, commands, dialog);
-					return false;
-				});
-
-				// <h1> is used as dialog title
-				that._options.header = dialog.find('h1').first();
-				dialog.find('h1').first().remove();
-				that._options.content = dialog;
-
-				if (callback) {
-					callback.call(this);
-				}
-			});
-		},
-
-		/**
-		 * Internal helper to merge override options with defaults
-		 *
-		 * @param {Object} overrideOptions
-		 * @return void
-		 */
-		_overrideOptions: function(overrideOptions) {
-			this._options = $.extend(this._options, overrideOptions || {});
-		}
-	});
-
-
-	/**
 	 * Notification handler
 	 *
 	 * @singleton
 	 */
-	T3.Common.Notification = Ember.Object.create({
-
+	T3.Common.Notification = Ember.Object.extend({
 		_timeout: 5000,
 
 		/**
 		 * Shows a new notification
 		 *
-		 * @param {String} message
-		 * @param {Boolean} fadeout
-		 * @param {String} type
+		 * @param {string} message
+		 * @param {boolean} fadeout
+		 * @param {string} type
 		 * @private
-		 * @return {Void}
+		 * @return {void}
 		 */
 		_show: function(message, fadeout, type) {
 			$('.t3-notification-container').notify({
@@ -459,8 +269,8 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		/**
 		 * Show ok message
 		 *
-		 * @param {String} message
-		 * @return {Void}
+		 * @param {string} message
+		 * @return {void}
 		 */
 		ok: function(message) {
 			this._show('<i class="icon-ok-sign"></i>' + message, true, 'success');
@@ -469,8 +279,8 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		/**
 		 * Show notice message
 		 *
-		 * @param {String} message
-		 * @return {Void}
+		 * @param {string} message
+		 * @return {void}
 		 */
 		notice: function(message) {
 			this._show('<i class="icon-info-sign"></i>' + message, true, 'info');
@@ -479,8 +289,8 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		/**
 		 * Show warning message
 		 *
-		 * @param {String} message
-		 * @return {Void}
+		 * @param {string} message
+		 * @return {void}
 		 */
 		warning: function(message) {
 			this._show('<i class="icon-warning-sign"></i>' + message, false, 'warning');
@@ -489,27 +299,26 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 		/**
 		 * Show error message
 		 *
-		 * @param {String} message
-		 * @return {Void}
+		 * @param {string} message
+		 * @return {void}
 		 */
 		error: function(message) {
 			this._show('<i class="icon-exclamation-sign"></i>' + message, false, 'error');
 		}
-	});
+	}).create();
 
-	T3.Common.Util = Ember.Object.create({
+	T3.Common.Util = Ember.Object.extend({
 		isValidJsonString: function(jsonString) {
 				// The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
 			return !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''));
 		}
-	});
+	}).create();
 
 	/**
 	 * Wrapper class for the localStorage, supporting storage of objects and arrays.
 	 * Internally, all values are JSON encoded and decoded automatically.
 	 */
-	T3.Common.LocalStorage = Ember.Object.create({
-
+	T3.Common.LocalStorage = Ember.Object.extend({
 		/**
 		* Get an item from localStorage
 		*
@@ -555,7 +364,7 @@ function($, Ember, launcherTemplate, launcherPanelTemplate, confirmationdialogTe
 				return false;
 			}
 		}
-	});
+	}).create();
 
 	window.T3 = T3;
 });

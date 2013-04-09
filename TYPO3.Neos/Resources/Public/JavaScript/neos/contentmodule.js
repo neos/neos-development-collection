@@ -10,16 +10,18 @@ define(
 	'vie/instance',
 	'emberjs',
 	'create',
+	'text!./templates/content/ui/topToolbarTemplate.html',
+	'text!./templates/content/ui/footerTemplate.html',
 	'neos/common',
 	'neos/content/model',
 	'neos/content/ui',
 	'neos/content/controller',
 	'jquery.hotkeys'
 ],
-function($, vie, Ember, CreateJS) {
+function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
 
-	return Ember.Application.create(Ember.Evented, {
+	return Ember.Application.extend(Ember.Evented, {
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 
@@ -147,7 +149,7 @@ function($, vie, Ember, CreateJS) {
 		_initializeVieAfterSchemaIsLoaded: function() {
 			T3.Content.Model.NodeSelection.initialize();
 			T3.Content.Model.PublishableNodes.initialize();
-			this.fire('pageLoaded');
+			this.trigger('pageLoaded');
 
 			this._registerVieNodeTypeTemplateCallbacks();
 			this._initializeCreateJs();
@@ -287,58 +289,10 @@ function($, vie, Ember, CreateJS) {
 		},
 
 		_initializeToolbar: function() {
-			var toolbar = T3.Content.UI.Toolbar.create({
+			var toolbar = T3.Content.UI.Toolbar.extend({
 				elementId: 't3-toolbar',
-				classNames: ['t3-ui'],
-				left: [
-					T3.Content.UI.ToggleButton.extend({
-						pressedBinding: 'T3.Content.Controller.Preview.previewMode',
-						template: Ember.Handlebars.compile('<i class="icon-fullscreen"></i>'),
-						attributeBindings: ['disabled', 'title'],
-						icon: 'preview',
-						title: 'Preview',
-						elementAttributes: ['title']
-					}),
-
-					T3.Content.UI.ToggleButton.extend({
-						pressedBinding: 'T3.Content.Controller.PageTree.pageTreeMode',
-						label: 'Pages',
-						classNames: 't3-pagetree-button'
-					}),
-					T3.Content.UI.ToggleButton.extend({
-						pressedBinding: 'T3.Content.Controller.Wireframe.wireframeMode',
-						label: 'Wireframe',
-						icon: 'wireframe'
-					})
-				],
-				right: [
-					Ember.View.extend({
-						template: Ember.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
-						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
-					}),
-					T3.Content.UI.SaveIndicator.extend({
-						saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
-						lastSuccessfulTransferBinding: 'T3.Content.Controller.ServerConnection._lastSuccessfulTransfer'
-					}),
-					T3.Content.UI.Button.extend({
-						label: 'Publish Page',
-						disabledBinding: Ember.Binding.or('_noChanges', '_saveRunning'),
-						target: 'T3.Content.Model.PublishableNodes',
-						action: 'publishAll',
-						_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
-						_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
-						_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
-						classNameBindings: ['connectionStatusClass'],
-						classNames: ['btn-publish'],
-
-						connectionStatusClass: function() {
-							var className = 't3-connection-status-';
-							className += this.get('_connectionFailed') ? 'down' : 'up';
-							return className;
-						}.property('_connectionFailed')
-					})
-				]
-			});
+				template: Ember.Handlebars.compile(topToolbarTemplate)
+			}).create();
 			toolbar.appendTo($('body'));
 		},
 
@@ -352,31 +306,15 @@ function($, vie, Ember, CreateJS) {
 		_initializeTreePanel: function() {
 			var treePanel = T3.Content.UI.TreePanel.create({
 				elementId: 't3-tree-panel',
-				classNames: ['t3-ui'],
-				pageTree: [
-					T3.Content.UI.PageTree
-				]
+				classNames: ['t3-ui']
 			});
 			treePanel.appendTo($('body'));
 		},
 
 		_initializeFooter: function() {
-			var breadcrumb = T3.Content.UI.Breadcrumb.extend({
-				contentBinding: 'T3.Content.Model.NodeSelection.nodes'
-			});
-			var toogleInspector = T3.Content.UI.ToggleButton.extend({
-				pressedBinding: 'T3.Content.Controller.Inspector.inspectorMode',
-				label: 'Inspector'
-			});
 			var footer = T3.Content.UI.Toolbar.create({
 				elementId: 't3-footer',
-				classNames: ['t3-ui'],
-				left: [
-					breadcrumb
-				],
-				right: [
-					toogleInspector
-				]
+				template: Ember.Handlebars.compile(footerTemplate)
 			});
 			footer.appendTo($('body'));
 		},
@@ -506,7 +444,7 @@ function($, vie, Ember, CreateJS) {
 						// Update node selection (will update VIE)
 					T3.Content.Model.NodeSelection.initialize();
 					T3.Content.Model.PublishableNodes.initialize();
-					that.fire('pageLoaded');
+					that.trigger('pageLoaded');
 
 						// Refresh CreateJS, renders the button bars f.e.
 					CreateJS.enableEdit();
@@ -577,5 +515,5 @@ function($, vie, Ember, CreateJS) {
 				this.spinner.stop();
 			}
 		}
-	});
+	}).create();
 });

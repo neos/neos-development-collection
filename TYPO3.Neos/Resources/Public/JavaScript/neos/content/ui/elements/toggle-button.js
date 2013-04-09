@@ -19,7 +19,7 @@ define(
 			mouseUp: function(event) {
 				if (this.get('isActive')) {
 					var action = this.get('action'),
-						target = this.get('targetObject');
+						target = this.get('target');
 
 					this.toggle();
 					if (target && action) {

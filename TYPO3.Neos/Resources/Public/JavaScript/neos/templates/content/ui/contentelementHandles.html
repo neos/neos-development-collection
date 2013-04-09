@@ -1,36 +1,36 @@
 <div class="btn-toolbar">
 	<div class="btn-group">
-		{{#if _showHide}}
-			<button {{bindAttr title="_hideToggleTitle" class=":btn :btn-mini :action-toggle-hidden _hidden:active"}} {{action "toggleHidden"}}>
+		{{#if view._showHide}}
+			<button {{bindAttr title="_hideToggleTitle" class=":btn :btn-mini :action-toggle-hidden view._hidden:active"}} {{action "toggleHidden" target="view"}}>
 				<i class="icon-eye-close"></i>
 			</button>
 		{{/if}}
-		{{#if _showRemove}}
-			<button class="btn btn-mini action-remove" title="Remove" {{action "remove"}}>
+		{{#if view._showRemove}}
+			<button class="btn btn-mini action-remove" title="Remove" {{action "remove" target="view"}}>
 				<i class="icon-trash"></i>
 			</button>
 		{{/if}}
-		{{#if _showCut}}
-			<button class="btn btn-mini action-cut" {{bindAttr class="_thisElementStartedCut:active"}} title="Cut" {{action "cut"}}>
+		{{#if view._showCut}}
+			<button class="btn btn-mini action-cut" {{bindAttr class="view._thisElementStartedCut:active"}} title="Cut" {{action "cut" target="view"}}>
 				<i class="icon-cut"></i>
 			</button>
 		{{/if}}
-		{{#if _showCopy}}
-			<button class="btn btn-mini action-copy" {{bindAttr class="_thisElementStartedCopy:active"}} title="Copy" {{action "copy"}}>
+		{{#if view._showCopy}}
+			<button class="btn btn-mini action-copy" {{bindAttr class="view._thisElementStartedCopy:active"}} title="Copy" {{action "copy" target="view"}}>
 				<i class="icon-copy"></i>
 			</button>
 		{{/if}}
 		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}
-			<button class="btn btn-mini action-paste" title="Paste after" {{action "pasteAfter"}}>
-				{{#if _pasteInProgress}}
+			<button class="btn btn-mini action-paste" title="Paste after" {{action "pasteAfter" target="view"}}>
+				{{#if view._pasteInProgress}}
 					<i class="t3-handle-loading"></i>
 				{{else}}
 					<i class="icon-paste"></i>
 				{{/if}}
 			</button>
 		{{/if}}
-		<button class="btn btn-mini action-new" title="Create after" {{action "newAfter"}}>
-			{{#if _thisElementIsAddingNewContent}}
+		<button class="btn btn-mini action-new" title="Create after" {{action "newAfter" target="view"}}>
+			{{#if view._thisElementIsAddingNewContent}}
 				<i class="t3-handle-loading"></i>
 			{{else}}
 				<i class="icon-plus"></i>

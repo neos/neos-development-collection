@@ -13,7 +13,7 @@ function($, CreateJS, Entity) {
 	/**
 	 * This controller toggles the preview mode on and off.
 	 */
-	var Preview = Ember.Object.create({
+	var Preview = Ember.Object.extend({
 		previewMode: false,
 
 		init: function() {
@@ -39,12 +39,12 @@ function($, CreateJS, Entity) {
 		onPreviewModeChange: function() {
 			T3.Common.LocalStorage.setItem('previewMode', this.get('previewMode'));
 		}.observes('previewMode')
-	});
+	}).create();
 
 	/**
 	 * This controller toggles the wireframe mode on and off.
 	 */
-	var Wireframe = Ember.Object.create({
+	var Wireframe = Ember.Object.extend({
 		wireframeMode: false,
 
 		init: function() {
@@ -96,12 +96,12 @@ function($, CreateJS, Entity) {
 				}
 			});
 		}
-	});
+	}).create();
 
 	/**
 	 * This controller toggles the page tree visibility on and off.
 	 */
-	var PageTree = Ember.Object.create({
+	var PageTree = Ember.Object.extend({
 		pageTreeMode: false,
 
 		init: function() {
@@ -115,7 +115,7 @@ function($, CreateJS, Entity) {
 			this.set('pageTreeMode', !this.get('pageTreeMode'));
 		},
 
-		onPageTreeModeChange: function () {
+		onPageTreeModeChange: function() {
 			var pageTreeMode = this.get('pageTreeMode');
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
 				if (pageTreeMode === true) {
@@ -128,7 +128,7 @@ function($, CreateJS, Entity) {
 				});
 			}
 		}.observes('pageTreeMode')
-	});
+	}).create();
 
 	/**
 	 * This controller toggles the inspection mode on and off.
@@ -136,7 +136,7 @@ function($, CreateJS, Entity) {
 	 * @TODO: rename differently, because it is too similar with "Inspector"
 	 * @TODO: Toggling inspectMode does not show popover
 	 */
-	var Inspect = Ember.Object.create({
+	var Inspect = Ember.Object.extend({
 		inspectMode: false,
 
 		onInspectModeChange: function() {
@@ -147,16 +147,16 @@ function($, CreateJS, Entity) {
 				jQuery('body').removeClass('t3-inspect-active');
 			}
 		}.observes('inspectMode')
-	});
+	}).create();
 
 	/**
 	 * Controller for the inspector
 	 */
-	var Inspector = Ember.Object.create({
+	var Inspector = Ember.Object.extend({
 		_modified: false,
 		_unmodified: function() {
 			return !this.get('_modified');
-		}.property('_modified').cacheable(),
+		}.property('_modified'),
 
 		inspectorMode: true,
 
@@ -226,7 +226,7 @@ function($, CreateJS, Entity) {
 				return [];
 			}
 
-			var inspectorGroups = Ember.getPath(selectedNodeSchema, 'ui.inspector.groups');
+			var inspectorGroups = Ember.get(selectedNodeSchema, 'ui.inspector.groups');
 			if (!inspectorGroups) {
 				return [];
 			}
@@ -235,13 +235,13 @@ function($, CreateJS, Entity) {
 			jQuery.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
 				jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-					if (Ember.getPath(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
+					if (Ember.get(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
 						properties.push(jQuery.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
 					}
 				});
 
 				properties.sort(function(a, b) {
-					return (Ember.getPath(a, 'ui.inspector.position') || 9999) - (Ember.getPath(b, 'ui.inspector.position') || 9999);
+					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
 				});
 
 				sectionsAndViews.push(jQuery.extend({}, propertyGroupConfiguration, {
@@ -254,7 +254,7 @@ function($, CreateJS, Entity) {
 			});
 
 			return sectionsAndViews;
-		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema').cacheable(),
+		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema'),
 
 		/**
 		 * When the selected block changes in the content model,
@@ -335,7 +335,7 @@ function($, CreateJS, Entity) {
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
 				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
 					that.get('selectedNode').setAttribute(key, that.get('nodeProperties').get(key));
-					if (Ember.getPath(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
+					if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
 						reloadPage = true;
 					}
 				}
@@ -344,7 +344,7 @@ function($, CreateJS, Entity) {
 			if (reloadPage === true) {
 				T3.ContentModule.showPageLoader();
 			}
-			Backbone.sync('update', this.getPath('selectedNode._vieEntity'), {
+			Backbone.sync('update', this.get('selectedNode._vieEntity'), {
 				success: function(model, result) {
 					if (reloadPage === true) {
 						if (result && result.data && result.data.nextUri) {
@@ -359,7 +359,7 @@ function($, CreateJS, Entity) {
 
 			this.set('_modified', false);
 
-			cleanProperties = this.getPath('selectedNode.attributes');
+			cleanProperties = this.get('selectedNode.attributes');
 			this.set('cleanProperties', cleanProperties);
 			this.set('nodeProperties', Ember.Object.create(cleanProperties));
 		},
@@ -371,7 +371,7 @@ function($, CreateJS, Entity) {
 			this.set('nodeProperties', Ember.Object.create(this.get('cleanProperties')));
 			this.set('_modified', false);
 		}
-	});
+	}).create();
 
 	/**
 	 * The BlockActions is a container for numerous actions which can happen with blocks.
@@ -382,15 +382,14 @@ function($, CreateJS, Entity) {
 	 *
 	 * @singleton
 	 */
-	var NodeActions = Ember.Object.create({
-
+	var NodeActions = Ember.Object.extend({
 			// TODO: Move this to a separate controller
 		_clipboard: null,
 		_elementIsAddingNewContent: null,
 
 		clipboardContainsContent: function() {
 			return this.get('_clipboard') !== null;
-		}.property('_clipboard').cacheable(),
+		}.property('_clipboard'),
 
 		/**
 		 * Initialization lifecycle method. Here, we re-fill the clipboard as needed
@@ -407,7 +406,7 @@ function($, CreateJS, Entity) {
 		 * @return {void}
 		 */
 		cut: function(nodePath) {
-			if (this.getPath('_clipboard.type') === 'cut' && this.getPath('_clipboard.nodePath') === nodePath) {
+			if (this.get('_clipboard.type') === 'cut' && this.get('_clipboard.nodePath') === nodePath) {
 				this.set('_clipboard', null);
 			} else {
 				this.set('_clipboard', {
@@ -422,7 +421,7 @@ function($, CreateJS, Entity) {
 		 * @return {void}
 		 */
 		copy: function(nodePath) {
-			if (this.getPath('_clipboard.type') === 'copy' && this.getPath('_clipboard.nodePath') === nodePath) {
+			if (this.get('_clipboard.type') === 'copy' && this.get('_clipboard.nodePath') === nodePath) {
 				this.set('_clipboard', null);
 			} else {
 				this.set('_clipboard', {
@@ -476,21 +475,10 @@ function($, CreateJS, Entity) {
 			return true;
 		},
 
-		remove: function(model, $element, $handle) {
-			T3.Common.Dialog.openConfirmPopover({
-				title: 'Delete this element?',
-				confirmLabel: 'Delete',
-				confirmClass: 'btn-danger',
-				positioning: 'absolute',
-				onOk: function() {
-					$element.fadeOut(function() {
-						$element.addClass('t3-contentelement-removed');
-					});
-					model.set('typo3:_removed', true);
-					model.save(null);
-					T3.Content.Model.NodeSelection.updateSelection();
-				}
-			}, $handle);
+		remove: function(model) {
+			model.set('typo3:_removed', true);
+			model.save(null);
+			T3.Content.Model.NodeSelection.updateSelection();
 		},
 
 		addAbove: function(nodeType, referenceEntity, callBack) {
@@ -578,9 +566,9 @@ function($, CreateJS, Entity) {
 			var clipboard = this.get('_clipboard');
 			T3.Common.LocalStorage.setItem('clipboard', clipboard);
 		}.observes('_clipboard')
-	});
+	}).create();
 
-	var ServerConnection = Ember.Object.create({
+	var ServerConnection = Ember.Object.extend({
 		_lastSuccessfulTransfer: null,
 		_failedRequest: false,
 		_pendingSave: false,
@@ -591,7 +579,7 @@ function($, CreateJS, Entity) {
 				numberOfUnsavedRecords = collection.get('length'),
 				responseCallback = function(element) {
 					return function(provider, response) {
-						if (response.result === null || response.result.success !== true) {
+						if (!response.result || response.result.success !== true) {
 								// TODO: Find a way to avoid this notice
 							T3.Common.Notification.error('Server communication error, reload the page to return to a safe state if another publish does not work');
 							that.set('_failedRequest', true);
@@ -627,7 +615,7 @@ function($, CreateJS, Entity) {
 			return 't3-connection-status-' + this.get('_failedRequest') ? 'down' : 'up';
 		}.observes('_failedRequest')
 
-	});
+	}).create();
 
 	T3.Content.Controller = {
 		Preview: Preview,

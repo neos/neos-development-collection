@@ -1,8 +1,8 @@
 <div class="nodeTypeSelectorTabs notInitialized">
 	<ul>
-		{{#each data}}<li><a href="#{{unbound Ember.GUID_KEY}}{{unbound name}}">{{unbound name}}</a></li>{{/each}}
+		{{#each view.data}}<li><a href="#{{unbound Ember.GUID_KEY}}{{unbound name}}">{{unbound name}}</a></li>{{/each}}
 	</ul>
-	{{#each data}}
+	{{#each view.data}}
 		<div id="{{unbound Ember.GUID_KEY}}{{unbound name}}" class="t3-content-new">
 			{{#each children}}
 				<div class="t3-content-new-selecttype-button">

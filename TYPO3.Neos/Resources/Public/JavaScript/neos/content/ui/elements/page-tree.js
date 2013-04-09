@@ -122,9 +122,12 @@ define(
 								position,
 								function(result) {
 									if (result !== null && result.success === true) {
-										T3.ContentModule.loadPage(node.data.href);
+										// after we finished drag/drop, update the node path/url
+										sourceNode.data.href = result.data.nextUri;
+										sourceNode.data.key = result.data.newNodePath;
+										T3.ContentModule.loadPage(sourceNode.data.href);
 									} else {
-										T3.Common.notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+										T3.Common.Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
 									}
 								}
 							);
@@ -180,6 +183,7 @@ define(
 							}, 300);
 						}
 
+						event.preventDefault();
 						return true;
 					},
 
@@ -256,6 +260,13 @@ define(
 					// page might not have been loaded; so we directly return
 					return;
 				}
+
+				// Activate the current node in the tree if possible
+				var pageTreeNode = this.getPageTreeNode();
+				if (pageTreeNode) {
+					pageTreeNode.activate();
+				}
+
 				entityWrapper.addObserver('typo3:title', function() {
 					that.synchronizePageTreeTitle(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
@@ -346,20 +357,25 @@ define(
 			showDeletePageDialog: function(activeNode) {
 				var that = this,
 					view = Ember.View.create({
+						classNames: ['t3-ui'],
 						template: Ember.Handlebars.compile(deletePageDialogTemplate),
 						pageTitle: activeNode.data.title,
 						numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
 						didInsertElement: function() {
 						},
 						cancel: function() {
-							view.destroy();
+							var $jQueryHandle = this.$();
+							this.destroy();
+							$jQueryHandle.remove();
 						},
 						'delete': function() {
+							var $jQueryHandle = this.$();
 							that.deleteNode(activeNode);
-							view.destroy();
+							this.destroy();
+							$jQueryHandle.remove();
 						}
 					});
-				view.appendTo('#t3-pagetree-container');
+				view.appendTo('body');
 			},
 
 			editNode: function(node) {
@@ -413,7 +429,7 @@ define(
 									T3.Content.Controller.Inspector.nodeProperties.set('title', title);
 									T3.Content.Controller.Inspector.apply();
 								} else {
-									T3.Common.notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
+									T3.Common.Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
 								}
 							}
 						);
