@@ -11,8 +11,8 @@ resources:
     TYPO3_Neos_Service: 'method(TYPO3\Neos\Service\.*Controller->.*Action())'
 
 roles:
+  Editor: [ TYPO3.TYPO3CR:Administrator ]
   Administrator: [ Editor ]
-  Editor: [ TYPO3CR_Administrator ]
 
 acls:
   Administrator:

@@ -98,7 +98,7 @@ TYPO3:
             icon: 'resource://TYPO3.Neos/Public/Images/Icons/Orange/layers_1_icon-24.png'
       administration:
         label: 'Administration'
-        role: 'Administrator'
+        role: 'TYPO3.Neos:Administrator'
         submodules:
           users:
             label: 'User Management'

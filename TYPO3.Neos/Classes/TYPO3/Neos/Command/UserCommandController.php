@@ -51,6 +51,12 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected $userFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 */
+	protected $policyService;
+
+	/**
 	 * Create a new user
 	 *
 	 * This command creates a new user which has access to the backend user interface.
@@ -71,15 +77,31 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 
-		$roleIdentifiers = empty($roles) ? array('Editor') : \TYPO3\Flow\Utility\Arrays::trimExplode(',', $roles);
-		$user = $this->userFactory->create($username, $password, $firstName, $lastName, $roleIdentifiers);
-		$this->partyRepository->add($user);
-		$accounts = $user->getAccounts();
-		foreach ($accounts as $account) {
-			$this->accountRepository->add($account);
+		if (empty($roles)) {
+			$roleIdentifiers = array('TYPO3.Neos:Editor');
+		} else {
+			$roleIdentifiers = \TYPO3\Flow\Utility\Arrays::trimExplode(',', $roles);
+			foreach ($roleIdentifiers as &$role) {
+				if (strpos($role, '.') === FALSE) {
+					$role = 'TYPO3.Neos:' . $role;
+				}
+			}
 		}
 
-		$this->outputLine('Created account "%s".', array($username));
+		try {
+			$user = $this->userFactory->create($username, $password, $firstName, $lastName, $roleIdentifiers);
+			$this->partyRepository->add($user);
+			$accounts = $user->getAccounts();
+			foreach ($accounts as $account) {
+				$this->accountRepository->add($account);
+			}
+
+			$this->outputLine('Created user "%s".', array($username));
+		} catch (\TYPO3\Flow\Security\Exception\NoSuchRoleException $exception) {
+			$this->outputLine($exception->getMessage());
+			$this->quit(1);
+		}
+
 	}
 
 	/**
@@ -107,7 +129,7 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Add a role to a user
 	 *
 	 * This command allows for adding a specific role to an existing user.
-	 * Currently supported roles: "Editor", "Administrator"
+	 * Currently supported roles: "TYPO3.Neos:Editor", "TYPO3.Neos:Administrator"
 	 *
 	 * @param string $username The username
 	 * @param string $role Role ot be added to the user
@@ -120,14 +142,21 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 
-		$role = new \TYPO3\Flow\Security\Policy\Role($role);
+		if (strpos($role, '.') === FALSE) {
+			$role = 'TYPO3.Neos:' . $role;
+		}
+		$roleObject = $this->policyService->getRole($role);
+		if ($roleObject === NULL) {
+			$this->outputLine('Role "%s" does not exist.', array($role));
+			$this->quit(1);
+		}
 
-		if ($account->hasRole($role)) {
+		if ($account->hasRole($roleObject)) {
 			$this->outputLine('User "%s" already has the role "%s" assigned.', array($username, $role));
 			$this->quit(1);
 		}
 
-		$account->addRole($role);
+		$account->addRole($roleObject);
 		$this->accountRepository->update($account);
 		$this->outputLine('Added role "%s" to user "%s".', array($role, $username));
 	}
