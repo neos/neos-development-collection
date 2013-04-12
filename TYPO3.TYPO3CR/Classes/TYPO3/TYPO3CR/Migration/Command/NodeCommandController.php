@@ -11,8 +11,9 @@ namespace TYPO3\TYPO3CR\Migration\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Migration\Service\NodeMigration as NodeMigration;
-use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus as MigrationStatus;
+use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
+use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
+use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -82,58 +83,59 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			default:
 
 		}
-		$migrationStatus = new \TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus($version, $workspace, $direction, new \DateTime());
+		$migrationStatus = new MigrationStatus($version, $workspace, $direction, new \DateTime());
 		$this->migrationStatusRepository->add($migrationStatus);
 		$this->outputLine();
 		$this->outputLine('Successfully applied migration.');
 	}
 
 	/**
-	 * Prints a list of available migration versions and the packages they come from
-	 *
-	 * @return void
-	 * @see typo3.typo3cr.migration:node:migrationstatus
-	 */
-	public function listAvailableMigrationsCommand() {
-		$availableMigrations = $this->migrationFactory->getAvailableMigrationsForCurrentConfigurationType();
-		if (count($availableMigrations) > 0) {
-			$this->outputLine('<b>Available migrations</b>');
-			$this->outputLine();
-			foreach ($availableMigrations as $version => $migration) {
-				$this->outputLine($version . '   ' . $migration['formattedVersionNumber'] . '   ' . $migration['package']->getPackageKey());
-			}
-		} else {
-			$this->outputLine('No migrations available.');
-		}
-	}
-
-	/**
-	 * List applied migrations
+	 * List available and applied migrations
 	 *
 	 * @param string $workspace
 	 * @return void
 	 * @see typo3.typo3cr.migration:node:listavailablemigrations
 	 */
 	public function migrationStatusCommand($workspace = NULL) {
+		/** @var $appliedMigration MigrationStatus */
 		$this->outputLine();
 		if ($workspace !== NULL) {
 			$appliedMigrations = $this->migrationStatusRepository->findByWorkspaceName($workspace);
 		} else {
 			$appliedMigrations = $this->migrationStatusRepository->findAll();
 		}
-		if (count($appliedMigrations) > 0) {
-			$this->outputLine('<b>Applied migrations</b>');
+		$appliedMigrationsDictionary = array();
+		foreach ($appliedMigrations as $appliedMigration) {
+			$appliedMigrationsDictionary[$appliedMigration->getVersion()][] = $appliedMigration;
+		}
+
+		$availableMigrations = $this->migrationFactory->getAvailableMigrationsForCurrentConfigurationType();
+		if (count($availableMigrations) > 0) {
+			$this->outputLine('<b>Available migrations</b>');
 			$this->outputLine();
-			foreach ($appliedMigrations as $appliedMigration) {
-				$this->outputLine(
-					$appliedMigration->getVersion()
-						. ' ' . str_pad($appliedMigration->getDirection(), 4, ' ')
-						. ' applied on ' . $appliedMigration->getApplicationTimeStamp()->format('d-m-Y H:i:s')
-						. ' to workspace "' . $appliedMigration->getWorkspaceName() . '"'
-				);
+			foreach ($availableMigrations as $version => $migration) {
+				$this->outputLine($version . '   ' . $migration['formattedVersionNumber'] . '   ' . $migration['package']->getPackageKey());
+
+				if (isset($appliedMigrationsDictionary[$version])) {
+					$migrationsInVersion = $appliedMigrationsDictionary[$version];
+					usort($migrationsInVersion, function(MigrationStatus $migrationA, MigrationStatus $migrationB) {
+						return $migrationA->getApplicationTimeStamp() >$migrationB->getApplicationTimeStamp();
+					});
+					foreach ($migrationsInVersion as $appliedMigration) {
+						$this->outputFormatted('%s applied on %s to workspace "%s"',
+							array(
+								str_pad(strtoupper($appliedMigration->getDirection()), 4, ' ', STR_PAD_LEFT),
+								$appliedMigration->getApplicationTimeStamp()->format('d-m-Y H:i:s'),
+								$appliedMigration->getWorkspaceName()
+							),
+							2
+						);
+						$this->outputLine();
+					}
+				}
 			}
 		} else {
-			$this->outputLine('No migrations applied.');
+			$this->outputLine('No migrations available.');
 		}
 	}
 
@@ -143,7 +145,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @param \TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration $migrationConfiguration
 	 * @return void
 	 */
-	protected function outputCommentsAndWarnings(\TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration $migrationConfiguration) {
+	protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration) {
 		if ($migrationConfiguration->hasComments()) {
 			$this->outputLine();
 			$this->outputLine('<b>Comments</b>');
