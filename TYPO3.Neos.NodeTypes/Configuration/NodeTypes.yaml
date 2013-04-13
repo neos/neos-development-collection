@@ -40,9 +40,11 @@
 
 'TYPO3.Neos.NodeTypes:Folder':
   superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Neos.NodeTypes:AbstractNode']
-  search: 'Pages'
   ui:
     label: 'Folder'
+    launcher:
+      searchCategory: 'Pages'
+
     inspector:
       groups:
         page:
@@ -98,9 +100,10 @@
 
 'TYPO3.Neos.NodeTypes:ContentObject':
   superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
-  search: 'Content'
   ui:
     label: 'Abstract content object'
+    launcher:
+      searchCategory: 'Content'
 
 'TYPO3.Neos.NodeTypes:Headline':
   superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
