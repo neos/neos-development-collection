@@ -113,7 +113,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			if (!array_key_exists($type, $groups)) {
 				$groups[$type] = array(
 					'type' => $nodeType->getName(),
-					'label' => $searchContentGroups[$type]['search'],
+					'label' => $searchContentGroups[$type]['ui']['launcher']['searchCategory'],
 					'items' => array()
 				);
 			}
