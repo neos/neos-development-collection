@@ -456,7 +456,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		return array(
 			'id' => $node->getPath(),
 			'name' => $node->getLabel(),
-			'url' => $this->uriBuilder->setLinkProtectionEnabled(FALSE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
+			'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'type' => 'neos/internal-link'
 		);
 	}
