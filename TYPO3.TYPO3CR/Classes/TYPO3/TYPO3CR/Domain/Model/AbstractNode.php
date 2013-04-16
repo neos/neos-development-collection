@@ -106,24 +106,6 @@ abstract class AbstractNode implements NodeInterface {
 	protected $securityContext;
 
 	/**
-	 * Set the name of the node to $newName
-	 *
-	 * @param string $newName
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 * @api
-	 */
-	abstract public function setName($newName);
-
-	/**
-	 * Returns the name of this node
-	 *
-	 * @return string
-	 * @api
-	 */
-	abstract public function getName();
-
-	/**
 	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description
 	 * of this node.
 	 *
