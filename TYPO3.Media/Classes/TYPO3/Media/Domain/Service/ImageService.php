@@ -33,11 +33,11 @@ class ImageService {
 	protected $resourceManager;
 
 	/**
-	 * @param \TYPO3\Media\Domain\Model\Image $image
+	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image
 	 * @param array $processingInstructions
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 */
-	public function transformImage(\TYPO3\Media\Domain\Model\Image $image, array $processingInstructions) {
+	public function transformImage(\TYPO3\Media\Domain\Model\ImageInterface $image, array $processingInstructions) {
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . serialize($processingInstructions));
 		if (!file_exists('resource://' . $uniqueHash)) {
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
@@ -56,6 +56,7 @@ class ImageService {
 	 * @param \Imagine\Image\ImageInterface $image
 	 * @param array $processingInstructions
 	 * @return \Imagine\Image\ImageInterface
+	 * @throws \InvalidArgumentException
 	 */
 	protected function applyProcessingInstructions(\Imagine\Image\ImageInterface $image, array $processingInstructions) {
 		foreach ($processingInstructions as $processingInstruction) {

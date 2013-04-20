@@ -28,7 +28,7 @@ class ImageVariant implements ImageInterface {
 	protected $imageService;
 
 	/**
-	 * @var \TYPO3\Media\Domain\Model\Image
+	 * @var \TYPO3\Media\Domain\Model\ImageInterface
 	 */
 	protected $originalImage;
 
@@ -67,12 +67,16 @@ class ImageVariant implements ImageInterface {
 	protected $alias;
 
 	/**
-	 * @param \TYPO3\Media\Domain\Model\Image $originalImage
+	 * @param \TYPO3\Media\Domain\Model\ImageInterface $originalImage
 	 * @param array $processingInstructions
 	 * @param string $alias An alias for this variant which makes its identification easier for reuse.
 	 */
-	public function __construct(\TYPO3\Media\Domain\Model\Image $originalImage, array $processingInstructions, $alias = NULL) {
-		$this->originalImage = $originalImage;
+	public function __construct(ImageInterface $originalImage, array $processingInstructions, $alias = NULL) {
+		if ($originalImage instanceof ImageVariant) {
+			$this->originalImage = $originalImage->getOriginalImage();
+		} else {
+			$this->originalImage = $originalImage;
+		}
 		$this->processingInstructions = $processingInstructions;
 		$this->alias = $alias;
 	}
@@ -82,7 +86,7 @@ class ImageVariant implements ImageInterface {
 	 */
 	public function initializeObject() {
 		$this->resource = $this->imageService->transformImage($this->originalImage, $this->processingInstructions);
-		$imageSize = getimagesize('resource://' . $this->resource->getResourcePointer()->getHash());
+		$imageSize = getimagesize($this->resource->getUri());
 		$this->width = (integer)$imageSize[0];
 		$this->height = (integer)$imageSize[1];
 		$this->type = (integer)$imageSize[2];
