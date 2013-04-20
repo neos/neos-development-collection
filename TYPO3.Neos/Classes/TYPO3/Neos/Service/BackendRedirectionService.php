@@ -50,6 +50,7 @@ class BackendRedirectionService {
 		$contentContext = new ContentContext($workspaceName);
 		$contentContext->getWorkspace();
 		$this->nodeRepository->setContext($contentContext);
+		$this->nodeRepository->persistEntities();
 
 		if ($this->session->hasKey('lastVisitedUri')) {
 			return $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
