@@ -4,13 +4,28 @@ Creating your first TYPO3 Neos plugin
 
 Any TYPO3 Flow package can be used as a plugin with a little effort. This section
 will guide you through a simple example. First, we will create a really basic
-TYPO3 Flow package. Second, we'll expose this TYPO3 Flow package as Neos plugin.
+TYPO3 Flow package. Second, we'll expose this TYPO3 Flow package as a Neos plugin.
 
-Create a TYPO3 Flow package
-===========================
+Creating a TYPO3 Flow package
+=============================
 
-First create a package with a model, so we have something to show in the
-plugin:
+First we will create a very simple Flow package to use for integrating it as a plugin.
+
+.. note::
+  When developing sites the need for simple plugins will often arise. And those small
+  plugins will be very site-specific most of the time. In these cases it makes sense
+  to create the needed code inside the site package, instead of in a seperate package.
+
+  For the sake of simplicity we will create a seperate package now.
+
+If you do not have the Kickstart package installed, you must do this now:
+
+.. code-block:: bash
+
+  cd /your/htdocs/TYPO3-Neos
+  php /path/to/composer.phar require typo3/kickstart \*
+
+Now create a package with a model, so we have something to show in the plugin:
 
 .. code-block:: bash
 
@@ -25,18 +40,17 @@ Then generate a migration to create the needed DB schema:
   ./flow doctrine:migrationgenerate
   mkdir -p Packages/Application/Sarkosh.CdCollection/Migrations/Mysql
   mv Data/DoctrineMigrations/Version<timestamp>.php Packages/Application/Sarkosh.CdCollection/Migrations/Mysql/
+  # check the generated migration
   ./flow doctrine:migrate
 
 You should now have a package with a default controller and templates created.
-In order to view them you can call the frontend like
-``http://neos.local/sarkosh.cdcollection``, but you need to include the
-TYPO3 Flow default routes first (add them before the Neos routes):
+
+In order to view them you can call the frontend like ``http://neos.demo/sarkosh.cdcollection``,
+but you need to include the TYPO3 Flow default routes first (add them before the Neos routes):
+
+*Configuration/Routes.yaml*
 
 .. code-block:: yaml
-
-  ##
-  # TYPO3 Flow subroutes
-  #
 
   -
     name: 'Flow'
@@ -49,8 +63,8 @@ TYPO3 Flow default routes first (add them before the Neos routes):
 
 Now you can add some entries for your CD collection in the database::
 
-  INSERT INTO "sarkosh_cdcollection_domain_model_album" (
-    "persistence_object_identifier", "title", "year", "description", "rating"
+  INSERT INTO sarkosh_cdcollection_domain_model_album (
+    persistence_object_identifier, title, year, description, rating
   ) VALUES (
     uuid(), 'Jesus Christ Superstar', '1970',
     'Jesus Christ Superstar is a rock opera by Andrew Lloyd Webber, with lyrics by Tim Rice.',
@@ -60,10 +74,20 @@ Now you can add some entries for your CD collection in the database::
 (or using your database tool of choice) and adjust the templates so a list of
 CDs is shown. When you are done with that, you can make a plugin out of that.
 
+As an optional step you can move the generated package from it's default location
+*Packages/Application/* to *Packages/Plugins*. This is purely a convention and at
+times it might be hard to tell an "application package" from a "plugin", but it helps
+to keep things organized. Technically it has no relevance.
+
+.. code-block:: bash
+
+  mkdir Packages/Plugins
+  mv Packages/Application/Sarkosh.CdCollection Packages/Plugins/Sarkosh.CdCollection
+
 Converting a TYPO3 Flow Package Into a Neos Plugin
 ==================================================
 
-To activate a TYPO3 Flow package as Neos plugin, you only need to provide two
+To activate a TYPO3 Flow package as a Neos plugin, you only need to provide two
 configuration blocks. First, you need to add a new *node type* for the plugin,
 such that the user can choose the plugin from the list of content elements:
 
@@ -71,14 +95,19 @@ Add the following to *Configuration/NodeTypes.yaml* of your package:
 
 .. code-block:: yaml
 
-'Sarkosh.CdCollection:Plugin':
-  superTypes: ['TYPO3.Neos.NodeTypes:Plugin']
-  ui:
-    label: 'CD Collection'
-    group: 'Plugins'
+  'Sarkosh.CdCollection:Plugin':
+    superTypes: ['TYPO3.Neos.NodeTypes:Plugin']
+    ui:
+      label: 'CD Collection'
+      group: 'Plugins'
 
-Second, the rendering of the plugin needs to be specified using TypoScript,
-so the following TypoScript needs to be inserted into your package's *Resources/Private/TypoScripts/Library/Plugin.ts2*::
+This will add a new entry labeled "CD Collection" to the "Plugins" group in the content
+element selector (existing groups are *General*, *Structure* and *Plugins*).
+
+Second, the rendering of the plugin needs to be specified using TypoScript, so the following
+TypoScript needs to be added to your package.
+
+*Resources/Private/TypoScripts/Library/Plugin.ts2*::
 
   prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos.NodeTypes:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
@@ -91,5 +120,5 @@ Finally tweak your site package's *Root.ts2* and include the newly created TypoS
 
   include: resource://Sarkosh.CdCollection/Private/TypoScripts/Library/Plugin.ts2
 
-Now log in to your Neos backend (remove the TYPO3 Flow routes again now), and you
-should be able to add your plugin just like any other content element.
+Now log in to your Neos backend (you must remove the TYPO3 Flow routes again), and you
+will be able to add your plugin just like any other content element.
