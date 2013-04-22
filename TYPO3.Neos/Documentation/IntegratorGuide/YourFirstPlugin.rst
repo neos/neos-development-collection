@@ -122,3 +122,10 @@ Finally tweak your site package's *Root.ts2* and include the newly created TypoS
 
 Now log in to your Neos backend (you must remove the TYPO3 Flow routes again), and you
 will be able to add your plugin just like any other content element.
+
+Fixing Plugin Output
+--------------------
+
+If you check the HTML of a page that includes your plugin, you will clearly see that things
+are not as they should be. The plugin is included using it's complete HTML, including head
+and body tags. This of course reults in an invalid document.
