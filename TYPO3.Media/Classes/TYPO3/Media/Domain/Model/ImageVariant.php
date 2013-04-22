@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  * TODO: Remove duplicate code at Image and ImageVariant, either via underlying Abstract Class or once Mixins/Traits are available
  * Note: This is neither an entity nor a value object, ImageVariants won't be persisted on their own.
  */
-class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
+class ImageVariant implements ImageInterface {
 
 	/**
 	 * @var \TYPO3\Media\Domain\Service\ImageService
@@ -38,8 +38,8 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	protected $processingInstructions = array();
 
 	/**
-	 * @var \TYPO3\Flow\Resource\Resource
-	 */
+	* @var \TYPO3\Flow\Resource\Resource
+	*/
 	protected $resource;
 
 	/**
@@ -96,7 +96,7 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
-	 * Resource of the original file of this variant
+	 * Resource of the variant
 	 *
 	 * @return \TYPO3\Flow\Resource\Resource
 	 */
@@ -246,6 +246,30 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 */
 	public function __sleep() {
 		return array('originalImage', 'processingInstructions', 'alias');
+	}
+
+	/**
+	 * Setting the image resource on an ImageVariant is not allowed, this method will
+	 * throw a RuntimeException.
+	 *
+	 * @param \TYPO3\Flow\Resource\Resource $resource
+	 * @return void
+	 * @throws \RuntimeException
+	 */
+	public function setResource(\TYPO3\Flow\Resource\Resource $resource) {
+		throw new \RuntimeException('Setting the resource on an ImageVariant is not supported.', 1366627480);
+	}
+
+	/**
+	 * Setting the title on an ImageVariant is not allowed, this method will throw a
+	 * RuntimeException.
+	 *
+	 * @param string $title
+	 * @return void
+	 * @throws \RuntimeException
+	 */
+	public function setTitle($title) {
+		throw new \RuntimeException('Setting the title on an ImageVariant is not supported.', 1366627475);
 	}
 
 }

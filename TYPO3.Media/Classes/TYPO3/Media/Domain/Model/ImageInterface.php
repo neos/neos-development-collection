@@ -14,7 +14,7 @@ namespace TYPO3\Media\Domain\Model;
 /**
  * An image interface
  */
-interface ImageInterface {
+interface ImageInterface extends AssetInterface {
 
 	const ORIENTATION_SQUARE = 'square';
 	const ORIENTATION_LANDSCAPE = 'landscape';
@@ -31,20 +31,6 @@ interface ImageInterface {
 	 * Consider an image of 320/480 being scaled to 50/50: the image will be scaled to height 50, then centered and cropped so the width will also be 50.
 	 */
 	const RATIOMODE_OUTBOUND = 'outbound';
-
-	/**
-	 * The title of this image
-	 *
-	 * @return string title of the image
-	 */
-	public function getTitle();
-
-	/**
-	 * Resource of the original image file
-	 *
-	 * @return \TYPO3\Flow\Resource\Resource
-	 */
-	public function getResource();
 
 	/**
 	 * Width of the image in pixels

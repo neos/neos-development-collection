@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\Domain\Repository;
+namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,14 +11,16 @@ namespace TYPO3\Media\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for Images
+ * An Audio asset
  *
- * @Flow\Scope("singleton")
+ * @Flow\Entity
  */
-class ImageRepository extends AssetRepository {
+class Audio extends Asset {
 
 }
+
 ?>

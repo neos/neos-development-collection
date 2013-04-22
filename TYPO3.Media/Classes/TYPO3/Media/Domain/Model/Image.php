@@ -20,20 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  * TODO: Remove duplicate code in Image and ImageVariant, by introducing a common base class or through Mixins/Traits (once they are available)
  * @Flow\Entity
  */
-class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
-
-	/**
-	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
-	 */
-	protected $title = '';
-
-	/**
-	 * @var \TYPO3\Flow\Resource\Resource
-	 * @ORM\ManyToOne
-	 * @Flow\Validate(type="NotEmpty")
-	 */
-	protected $resource;
+class Image extends Asset implements ImageInterface {
 
 	/**
 	 * @var integer
@@ -62,14 +49,6 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	protected $imageVariants = array();
 
 	/**
-	 * @param \TYPO3\Flow\Resource\Resource $resource
-	 */
-	public function __construct(\TYPO3\Flow\Resource\Resource $resource) {
-		$this->resource = $resource;
-		$this->initialize();
-	}
-
-	/**
 	 * Calculates image width, height and type from the image resource
 	 * The getimagesize() method may either return FALSE; or throw a Warning
 	 * which is translated to a \TYPO3\Flow\Error\Exception by Flow. In both
@@ -93,45 +72,6 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
 			throw new \TYPO3\Media\Exception\ImageFileException($exceptionMessage, 1336663970);
 		}
-	}
-
-	/**
-	 * Sets the image resource and (re-)initializes the image
-	 *
-	 * @param \TYPO3\Flow\Resource\Resource $resource
-	 * @return void
-	 */
-	public function setResource(\TYPO3\Flow\Resource\Resource $resource) {
-		$this->resource = $resource;
-		$this->initialize();
-	}
-
-	/**
-	 * Sets the title of this image (optional)
-	 *
-	 * @param string $title
-	 * @return void
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
-	 * The title of this image
-	 *
-	 * @return string
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
-	/**
-	 * Resource of the original image file
-	 *
-	 * @return \TYPO3\Flow\Resource\Resource
-	 */
-	public function getResource() {
-		return $this->resource;
 	}
 
 	/**

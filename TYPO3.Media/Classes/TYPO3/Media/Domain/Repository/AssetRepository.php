@@ -14,11 +14,11 @@ namespace TYPO3\Media\Domain\Repository;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for Images
+ * A repository for Assets
  *
  * @Flow\Scope("singleton")
  */
-class ImageRepository extends AssetRepository {
+class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 
 }
 ?>

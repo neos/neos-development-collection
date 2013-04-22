@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\Domain\Repository;
+namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,14 +11,41 @@ namespace TYPO3\Media\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * A repository for Images
- *
- * @Flow\Scope("singleton")
+ * An asset interface
  */
-class ImageRepository extends AssetRepository {
+interface AssetInterface {
+
+	/**
+	 * The title of this asset
+	 *
+	 * @return string Title of the asset
+	 */
+	public function getTitle();
+
+	/**
+	 * Sets the title of this asset
+	 *
+	 * @param string $title
+	 * @return void
+	 */
+	public function setTitle($title);
+
+	/**
+	 * Resource of the original image file
+	 *
+	 * @return \TYPO3\Flow\Resource\Resource
+	 */
+	public function getResource();
+
+	/**
+	 * Sets the asset resource
+	 *
+	 * @param \TYPO3\Flow\Resource\Resource $resource
+	 * @return void
+	 */
+	public function setResource(\TYPO3\Flow\Resource\Resource $resource);
 
 }
+
 ?>
