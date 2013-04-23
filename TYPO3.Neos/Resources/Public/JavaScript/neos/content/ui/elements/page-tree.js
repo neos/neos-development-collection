@@ -11,7 +11,9 @@ define(
 		'text!neos/templates/content/ui/deletePageDialog.html',
 		'jquery.dynatree'
 	], function($, Ember, vie, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate) {
-		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
+		if (window._requirejsLoadingTrace) {
+			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
+		}
 
 		return Ember.View.extend({
 			classNames: ['t3-pagetree', 't3-ui'],
@@ -25,7 +27,6 @@ define(
 			isDblClick: false,
 
 			didInsertElement: function() {
-				var that = this;
 				this._initializeTree();
 			},
 
@@ -264,6 +265,9 @@ define(
 				entityWrapper.addObserver('typo3:_hidden', function() {
 					that.synchronizePageTreeVisibility(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
+				entityWrapper.addObserver('typo3:_hiddenInIndex', function() {
+					that.synchronizePageTreeVisibility(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
+				});
 				entityWrapper.addObserver('typo3:_hiddenBeforeDateTime', function() {
 					that.synchronizePageTreeVisibility(EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity));
 				});
@@ -285,14 +289,19 @@ define(
 					var classes = node.data.addClass;
 					if (attributes._hidden === true) {
 						classes = $.trim(classes.replace(/timedVisibility/g, ''));
-						classes = classes +' hidden';
+						classes = classes + ' hidden';
 					} else if (attributes._hiddenBeforeDateTime !== ''
 						&& new Date(attributes._hiddenBeforeDateTime).getTime() > now
-						|| attributes._hiddenAfterDateTime !== ''){
-						classes = classes +' timedVisibility';
+						|| attributes._hiddenAfterDateTime !== '') {
+						classes = classes + ' timedVisibility';
 					} else {
 						classes = $.trim(classes.replace(/timedVisibility/g, ''));
 						classes = $.trim(classes.replace(/hidden/g, ''));
+					}
+					if (attributes._hiddenInIndex === true) {
+						classes = classes + ' hiddenInIndex';
+					} else {
+						classes = $.trim(classes.replace(/hiddenInIndex/g, ''));
 					}
 					node.data.addClass = classes;
 					node.render();
