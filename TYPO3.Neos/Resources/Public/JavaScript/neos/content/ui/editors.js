@@ -112,7 +112,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 					'chosen'
 				], function() {
 					// TODO Check value binding
-					that.$().addClass('chzn-select').chosen().change(function() {
+					that.$().addClass('chzn-select').chosen({allow_single_deselect: true}).change(function() {
 						that.set('value', that.$().val());
 					});
 				}
