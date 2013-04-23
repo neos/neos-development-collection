@@ -21,14 +21,14 @@ use TYPO3\Flow\Annotations as Flow;
 class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
+	 * @var \TYPO3\Neos\Service\NodeTypeSchemaBuilder
 	 * @Flow\Inject
 	 */
-	protected $configurationManager;
+	protected $schemaBuilder;
 
 	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 * @Flow\Inject
 	 */
 	protected $nodeTypeManager;
 
@@ -42,10 +42,7 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function vieSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		$configuration = $this->configurationManager->getConfiguration('NodeTypes');
-		$schemaBuilder = new \TYPO3\Neos\Service\NodeTypeSchemaBuilder($configuration);
-		$schemaBuilder->convertToVieSchema();
-		return $schemaBuilder->generateAsJson();
+		return json_encode($this->schemaBuilder->generateVieSchema());
 	}
 
 	/**
