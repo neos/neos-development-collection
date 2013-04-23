@@ -1,0 +1,20 @@
+<f:layout name="Default"/>
+
+<f:section name="Title">Upload view of AssetController</f:section>
+
+<f:section name="Sidebar"></f:section>
+
+<f:section name="Content">
+	<f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
+		<fieldset>
+			<legend>Upload</legend>
+			<label for="title">Title</label>
+			<f:form.textfield property="title" placeholder="Title"/>
+			<label for="resource">Resource file</label>
+			<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}"/>
+			<br/>
+			<f:form.submit id="import" class="btn btn-primary" value="Upload"/>
+			<f:link.action action="index" class="btn">Back</f:link.action>
+		</fieldset>
+	</f:form>
+</f:section>

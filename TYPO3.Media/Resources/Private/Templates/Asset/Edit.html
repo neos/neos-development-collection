@@ -1,0 +1,18 @@
+<f:layout name="Default"/>
+
+<f:section name="Title">Edit view of AssetController</f:section>
+
+<f:section name="Sidebar"></f:section>
+
+<f:section name="Content">
+	<f:form method="post" action="update" object="{asset}" objectName="asset">
+		<fieldset>
+			<legend>Basics</legend>
+			<label for="title">Title</label>
+			<f:form.textfield property="title" placeholder="Title"/>
+			<br/>
+			<f:form.submit id="save" class="btn" value="Save"/>
+			<f:link.action action="index" title="Cancel editing" class="btn btn-danger">Cancel</f:link.action>
+		</fieldset>
+	</f:form>
+</f:section>

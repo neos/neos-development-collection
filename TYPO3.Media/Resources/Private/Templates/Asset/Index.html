@@ -1,0 +1,50 @@
+<f:layout name="Default"/>
+
+<f:section name="Title">Index view of AssetController</f:section>
+
+<f:section name="Sidebar">
+
+	<h1>Actions</h1>
+	<f:link.action action="new">Upload asset</f:link.action>
+</f:section>
+
+<f:section name="Content">
+	<f:if condition="{assets}">
+		<f:then>
+			<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 25, maximumNumberOfLinks: 5}">
+			<table class="table table-striped table-condensed">
+			<tr>
+					<th>Title</th>
+					<th>Type</th>
+					<th>Upload date</th>
+					<th></th>
+					<th></th>
+				</tr>
+				<f:for each="{paginatedAssets}" as="asset">
+					<tr>
+						<td>{asset.title}</td>
+						<td>{asset.resource.mediatype}</td>
+						<td>n/a</td>
+						<td>n/a</td>
+						<td>
+							<f:form action="delete" method="post" object="{asset}" objectName="asset">
+								<f:link.action action="edit" title="Edit asset" class="btn btn-mini" arguments="{asset: asset}"><i class="icon-pencil"></i></f:link.action>
+								<button type="submit" title="Delete asset" class="btn btn-mini btn-danger">
+									<i class="icon-trash icon-white"></i>
+								</button>
+							</f:form>
+						</td>
+					</tr>
+				</f:for>
+			</table>
+			</f:widget.paginate>
+			<script>
+				$('div.page-navigation').addClass('pagination pagination-small pagination-centered');
+				$('ul.typo3-widget-paginator>li:not(:has(>a))').wrapInner('<span />');
+			</script>
+		</f:then>
+		<f:else>
+			<p>No Assets found.</p>
+		</f:else>
+	</f:if>
+</f:section>

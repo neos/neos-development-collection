@@ -1,0 +1,25 @@
+{namespace b=TYPO3\Twitter\Bootstrap\ViewHelpers}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title><f:render section="Title"/></title>
+	<f:base />
+	<b:include includeJQuery="true"/>
+
+</head>
+<body>
+<div class="container">
+	<div class="row">
+		<div class="span2">
+			<f:render section="Sidebar"/>
+		</div>
+		<div class="span10">
+			<f:render partial="FlashMessages"/>
+
+			<f:render section="Content"/>
+		</div>
+	</div>
+</div>
+</body>
+</html>
