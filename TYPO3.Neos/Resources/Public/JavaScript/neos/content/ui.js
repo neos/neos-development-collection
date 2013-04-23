@@ -326,7 +326,8 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 						autoFocus: true,
 						select: false,
 						active: false,
-						unselectable: true
+						unselectable: true,
+						addClass: 'typo3_neos_nodetypes-page'
 					}
 				],
 				dnd: {
