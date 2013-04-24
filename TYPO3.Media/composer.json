@@ -2,7 +2,7 @@
     "name": "typo3/media",
     "type": "typo3-flow-package",
     "description": "The Media package",
-    "version": "0.1.0",
+    "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
         "typo3/imagine": "*"
