@@ -14,23 +14,12 @@ namespace TYPO3\Media\Domain\Repository;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for Assets
+ * A repository for Tags
  *
  * @Flow\Scope("singleton")
  */
-class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
+class TagRepository extends \TYPO3\Flow\Persistence\Repository {
 
-	/**
-	 * Find Assets with the given Tag assigned
-	 *
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
-	 */
-	public function findByTag(\TYPO3\Media\Domain\Model\Tag $tag) {
-		$query = $this->createQuery();
-
-		return $query->matching($query->contains('tags', $tag))->execute();
-	}
 }
 
 ?>

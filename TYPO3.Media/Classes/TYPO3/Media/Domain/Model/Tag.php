@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\Domain\Repository;
+namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,25 +11,49 @@ namespace TYPO3\Media\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for Assets
+ * A Tag, to organize Assets
  *
- * @Flow\Scope("singleton")
+ * @Flow\Entity
  */
-class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
+class Tag {
 
 	/**
-	 * Find Assets with the given Tag assigned
-	 *
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @var string
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
+	 * @Flow\Validate(type="NotEmpty")
 	 */
-	public function findByTag(\TYPO3\Media\Domain\Model\Tag $tag) {
-		$query = $this->createQuery();
+	protected $label;
 
-		return $query->matching($query->contains('tags', $tag))->execute();
+	/**
+	 * Constructs tag
+	 *
+	 * @param string
+	 */
+	public function __construct($label) {
+		$this->label = $label;
+	}
+
+	/**
+	 * Sets the label of this tag
+	 *
+	 * @param string $label
+	 * @return void
+	 */
+	public function setLabel($label) {
+		$this->label = $label;
+	}
+
+	/**
+	 * The label of this tag
+	 *
+	 * @return string
+	 */
+	public function getLabel() {
+		return $this->label;
 	}
 }
 

@@ -38,12 +38,19 @@ class Asset implements AssetInterface {
 	protected $resource;
 
 	/**
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Tag>
+	 * @ORM\ManyToMany
+	 */
+	protected $tags;
+
+	/**
 	 * Constructs an asset. The resource is set internally and then initialize()
 	 * is called.
 	 *
 	 * @param \TYPO3\Flow\Resource\Resource $resource
 	 */
 	public function __construct(\TYPO3\Flow\Resource\Resource $resource) {
+		$this->tags = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->setResource($resource);
 	}
 
@@ -92,6 +99,25 @@ class Asset implements AssetInterface {
 	 */
 	public function getTitle() {
 		return $this->title;
+	}
+
+	/**
+	 * Return the tags assigned to this asset
+	 *
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function getTags() {
+		return $this->tags;
+	}
+
+	/**
+	 * Set the tags assigned to this asset
+	 *
+	 * @param \Doctrine\Common\Collections\Collection $tags
+	 * @return void
+	 */
+	public function setTags(\Doctrine\Common\Collections\Collection $tags) {
+		$this->tags = $tags;
 	}
 
 }
