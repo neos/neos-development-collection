@@ -233,11 +233,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		disabled: false,
 		visible: true,
 		icon: '',
-		template: Ember.Handlebars.compile('{{label}}'),
-		iconClass: function() {
-			var icon = this.get('icon');
-			return icon !== '' ? 't3-icon-' + icon : '';
-		}.property('icon').cacheable()
+		template: Ember.Handlebars.compile('{{#if icon}}<i class="{{unbound icon}}"></i> {{/if}}{{label}}')
 	});
 
 	/**
