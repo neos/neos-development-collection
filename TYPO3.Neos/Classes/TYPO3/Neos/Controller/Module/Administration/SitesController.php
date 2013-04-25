@@ -97,7 +97,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\StandardController {
 	 */
 	public function updateSiteAction(\TYPO3\Neos\Domain\Model\Site $site, $originalNodeName) {
 		if ($site->getNodeName() !== $originalNodeName) {
-			$siteNode = $this->propertyMapper->convert('/sites/' . $originalNodeName, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+			$siteNode = $this->propertyMapper->convert('/sites/' . $originalNodeName, 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 			$siteNode->setName($site->getName());
 		}
 		$this->siteRepository->update($site);
@@ -199,7 +199,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\StandardController {
 			}
 		}
 		$this->siteRepository->remove($site);
-		$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		$siteNode->remove();
 		$this->addFlashMessage(sprintf('The site "%s" has been deleted.', $site->getName()));
 		$this->redirect('index');

@@ -33,14 +33,18 @@
 								</f:link.action>
 								<f:if condition="{site.state} == 1">
 									<f:then>
-										<f:link.action action="deactivateSite" arguments="{site: site}" class="btn btn-warning neos-button" title="Click to deactivate">
-											<i class="icon-minus-sign icon-white"></i>
-										</f:link.action>
+										<f:form action="deactivateSite" arguments="{site: site}" class="inline">
+											<button class="btn btn-warning neos-button" title="Click to deactivate">
+												<i class="icon-minus-sign icon-white"></i>
+											</button>
+										</f:form>
 									</f:then>
 									<f:else>
-										<f:link.action action="activateSite" class="btn btn-success neos-button" arguments="{site: site}" title="Click to activate">
-											<i class="icon-plus-sign icon-white"></i>
-										</f:link.action>
+										<f:form action="activateSite" arguments="{site: site}" class="inline">
+											<button class="btn btn-success neos-button" title="Click to activate">
+												<i class="icon-plus-sign icon-white"></i>
+											</button>
+										</f:form>
 									</f:else>
 								</f:if>
 								<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
@@ -53,10 +57,12 @@
 									</div>
 									<div class="modal-footer">
 										<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-										<f:link.action action="deleteSite" class="btn btn-danger neos-button" arguments="{site: site}" title="Delete">
-											<i class="icon-trash icon-white"></i>
-											Delete
-										</f:link.action>
+										<f:form action="deleteSite" arguments="{site: site}" class="inline">
+											<button class="btn btn-danger neos-button" title="Delete">
+												<i class="icon-trash icon-white"></i>
+												Delete
+											</button>
+										</f:form>
 									</div>
 								</div>
 							</div>

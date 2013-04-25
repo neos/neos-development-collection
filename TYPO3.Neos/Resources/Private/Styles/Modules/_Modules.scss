@@ -21,6 +21,10 @@
 		line-height: 18px;
 	}
 
+	form.inline {
+		display: inline-block;
+	}
+
 	&.neos-module-user-usersettings,
 	&.neos-module-administration-users {
 		.neos-content {

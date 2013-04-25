@@ -8332,6 +8332,9 @@
   font-size: 13px;
   line-height: 18px;
 }
+.neos.neos-module form.inline {
+  display: inline-block;
+}
 .neos.neos-module.neos-module-user-usersettings .neos-content #electronicAddresses select, .neos.neos-module.neos-module-administration-users .neos-content #electronicAddresses select {
   width: auto;
 }

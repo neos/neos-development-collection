@@ -37,7 +37,6 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * @param array $module
 	 * @return void
-	 * @Flow\SkipCsrfProtection
 	 */
 	public function indexAction(array $module) {
 		$moduleRequest = new ActionRequest($this->request);
