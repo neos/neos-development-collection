@@ -71,7 +71,7 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 		if ($this->request->hasArgument('lastVisitedUri') && strlen($this->request->getArgument('lastVisitedUri')) > 0) {
 			$this->session->putData('lastVisitedUri', $this->request->getArgument('lastVisitedUri'));
 		}
-		if ($originalRequest !== NULL) {
+		if ($originalRequest !== NULL && !$originalRequest instanceof \TYPO3\ExtJS\ExtDirect\Request) {
 			$this->redirectToRequest($originalRequest);
 		}
 		$this->redirect('index', 'Backend\Backend');
