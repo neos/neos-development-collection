@@ -727,34 +727,38 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			if (!this.get('_imageFullyLoaded')) return;
 			// Prevent the user from setting width and height to empty
 
-			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.getPath('_cropProperties.full'));
+			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.getPath('_cropProperties.full')),
+				width = this.getPath('_finalImageScale.w'),
+				height = this.getPath('_finalImageScale.h'),
+				processingInstructions = [{
+					command: 'crop',
+					options: {
+						start: {
+							x: originalImageCropDimensions.x,
+							y: originalImageCropDimensions.y
+						},
+						size: {
+							width: originalImageCropDimensions.w,
+							height: originalImageCropDimensions.h
+						}
+					}
+				}];
+
+			if (width > 0 && height > 0) {
+				processingInstructions.push({
+					command: 'resize',
+					options: {
+						size: {
+							width: width,
+							height: height
+						}
+					}
+				});
+			}
 
 			this.set('value', JSON.stringify({
 				originalImage: this.get('_originalImageUuid'),
-				processingInstructions: [
-					{
-						command: 'crop',
-						options: {
-							start: {
-								x: originalImageCropDimensions.x,
-								y: originalImageCropDimensions.y
-							},
-							size: {
-								width: originalImageCropDimensions.w,
-								height: originalImageCropDimensions.h
-							}
-						}
-					},
-					{
-						command: 'resize',
-						options: {
-							size: {
-								width: this.getPath('_finalImageScale.w'),
-								height: this.getPath('_finalImageScale.h')
-							}
-						}
-					}
-				]
+				processingInstructions: processingInstructions
 			}));
 		},
 
