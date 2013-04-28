@@ -46,7 +46,7 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		ObjectAccess::setProperty($nodeRepository, 'context', $context, TRUE);
 
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importSitesFromFile(__DIR__ . '/Fixtures/NodeStructure.xml');
+		$siteImportService->importSitesFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml');
 		$this->persistenceManager->persistAll();
 
 		$propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');

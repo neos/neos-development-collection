@@ -98,6 +98,11 @@
 						<title><![CDATA[<h1>History</h1>]]></title>
 					</properties>
 				</node>
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="mission" locale="">
+					<properties>
+						<title><![CDATA[<h1>Our mission</h1>]]></title>
+					</properties>
+				</node>
 			</node>
 		</node>
 	</site>
