@@ -70,7 +70,7 @@
 											<td class="node-type" title="{change.node.nodeType.name}">
 												<label for="{change.node.identifier}">
 													<f:if condition="{change.configuration.ui.icon.light}">
-														<img src="{change.configuration.ui.icon.light}" alt="{change.node.nodeType.name}" />
+														<img src="{f:uri.resource(path: change.configuration.ui.icon.light)}" alt="{change.node.nodeType.name}" />
 													</f:if>
 													{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.nodeType.name)}
 												</label>
