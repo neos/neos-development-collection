@@ -68,7 +68,7 @@ additionalProperties:
 
                   'label': { type: string, description: "Human-readable label for this Inspector Group." }
 
-                  'position': { type: integer, description: 'Position of the inspector groups, small numbers are sorted on top' }
+                  'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 
         'launcher':
           type: dictionary

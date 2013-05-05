@@ -2,7 +2,7 @@
 Inside TypoScript
 =================
 
-In this chapter, TypoScript will be explained in a step-by-step fashion, focussing on the different
+In this chapter, TypoScript will be explained in a step-by-step fashion, focusing on the different
 internal parts, the syntax of these and the semantics.
 
 TypoScript is fundamentally a *hierarchical, prototype based processing language*:
@@ -51,11 +51,11 @@ again put together, forming the final end result.
 Because it is a fundamental principle that TypoScript objects call nested TypoScript objects, the rendering
 process forms a *tree* of TypoScript objects, which can also be inspected using a TypoScript debugger.
 
-TypoScript objects are implemented by a PHP class, which is instanciated at runtime. A single PHP class
+TypoScript objects are implemented by a PHP class, which is instantiated at runtime. A single PHP class
 is the basis for many TypoScript objects. We will highlight the exact connection between TypoScript
 objects and their PHP implementations at a later chapter.
 
-A TypoScript object can be instanciated by assigning it to a TypoScript path, such as::
+A TypoScript object can be instantiated by assigning it to a TypoScript path, such as::
 
 	foo = Page
 	# or:
@@ -63,7 +63,7 @@ A TypoScript object can be instanciated by assigning it to a TypoScript path, su
 	# or:
 	my.image = TYPO3.Neos.ContentTypes:Image
 
-You see that the name of the to-be-instanciated TypoScript prototype is listed without quotes.
+You see that the name of the to-be-instantiated TypoScript prototype is listed without quotes.
 
 By convention, TypoScript paths (such as `my.object`) are written in `lowerCamelCase`, while
 TypoScript prototypes (such as `TYPO3.Neos.ContentTypes:Image`) are written in `UpperCamelCase`.
@@ -75,7 +75,7 @@ Now, we are able to set *properties* on the newly created TypoScript objects::
 	my.image.width = ${q(node).property('foo')}
 
 You see that properties have to be quoted (with either single or double quotes), or can be an
-*Eel expression* (which will be explained in a separate section lateron).
+*Eel expression* (which will be explained in a separate section later on).
 
 In order to reduce typing overhead, curly braces can be used to "abbreviate" long TypoScript paths,
 as the following example demonstrates::
@@ -89,7 +89,7 @@ as the following example demonstrates::
 	  }
 	}
 
-Furthermore, you can also instanciate a TypoScript object and set properties on it in a single
+Furthermore, you can also instantiate a TypoScript object and set properties on it in a single
 pass, as shown in the third example below::
 
 	# all three examples mean exactly the same.
@@ -97,13 +97,13 @@ pass, as shown in the third example below::
 	someImage = Image
 	someImage.foo = 'bar'
 
-	# Instanciate object, set property one after each other
+	# Instantiate object, set property one after each other
 	someImage = Image
 	someImage {
 	  foo = 'bar'
 	}
 
-	# Instanciate an object and setting properties directly
+	# Instantiate an object and set properties directly
 	someImage = Image {
 	  foo = 'bar'
 	}
@@ -141,7 +141,7 @@ In the next section, we will learn what is exactly done on object creation, i.e.
 TypoScript Prototypes
 =====================
 
-When a TypoScript object is instanciated, the *TypoScript Prototype* for this object is *copied*
+When a TypoScript object is instantiated, the *TypoScript Prototype* for this object is *copied*
 and is taken as a basis. The prototype is defined using the following syntax::
 
 	# we prefer this syntax:
@@ -154,7 +154,7 @@ and is taken as a basis. The prototype is defined using the following syntax::
 	prototype(MyImage).width = '500px'
 	prototype(MyImage).height = '500px'
 
-Now, when the above prototype is instanciated, the instanciated object will have all the properties
+Now, when the above prototype is instantiated, the instantiated object will have all the properties
 of the prototype copied. This is illustrated through the following example::
 
 	someImage = MyImage
@@ -190,7 +190,7 @@ Prototypes in TypoScript are *mutable*, which means that they can easily be modi
 	prototype(MyYouTube).width = '400px'
 	prototype(MyYouTube).showFullScreen = ${true}
 
-So far, we have seen how to define and instanciate prototypes from scratch. However, often
+So far, we have seen how to define and instantiate prototypes from scratch. However, often
 you will want to use an *existing TypoScript prototype* as basis for a new one. This can be
 currently done by *subclassing* a TypoScript prototype using the `<` operator::
 

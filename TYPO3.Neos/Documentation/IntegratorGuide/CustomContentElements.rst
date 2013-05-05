@@ -1,14 +1,14 @@
-=============================
-Creating Custom Content Types
-=============================
+================================
+Creating Custom Content Elements
+================================
 
-In TYPO3 Neos, it is very easy to create custom content types. In fact, while Neos
-ships with some commonly used, predefined content types, it is easily possible to
-completely replace them.
+In TYPO3 Neos, it is very easy to create custom content elements. Neos ships
+with commonly used, predefined content elements, but it is easily possible to
+amend and even completely replace them.
 
-Defining new content types is usually a three-step process:
+Defining new content elements is usually a three-step process:
 
-#. Define the *TYPO3CR Content Type*, listing the properties and types of the node.
+#. Define the *TYPO3CR Node Type*, listing the properties and types of the node.
 
 #. Define a *TypoScript object* which is responsible for rendering this content type.
    Usually, this is a wrapper for a Fluid Template which then defines the rendered
@@ -16,25 +16,24 @@ Defining new content types is usually a three-step process:
 
 #. Add a *Fluid Template* which contains the markup being rendered
 
-Let's say you want to create a new content type `My.Package:YouTube` which needs
+The following example creates a new content element `My.Package:YouTube` which needs
 the YouTube URL and then renders the video player.
 
-First, you need to create the *TYPO3CR Content Type* in `Settings.yaml`::
+First, the *TYPO3CR Node Type* needs to be defined in `NodeTypes.yaml`::
 
-	TYPO3:
-	  TYPO3CR:
-	    contentTypes:
-	      'My.Package:YouTube':
-	        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
-	        group: 'General'
-	        label: 'YouTube Video'
-	        properties:
-	          videoUrl:
-	            label: 'Video URL'
-	            type: string
+	'My.Package:YouTube':
+	  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+	  ui:
+	    group: 'General'
+	    label: 'YouTube Video'
+	  properties:
+	    videoUrl:
+	      type: string
+	      ui:
+	        label: 'Video URL'
 
-Then, we have to define the TypoScript rendering for this content type. By convention,
-a TypoScript object with the same name as the content type is used for rendering; thus
+Then, we have to define the TypoScript rendering for this content element. By convention,
+a TypoScript object with the same name as the content element is used for rendering; thus
 we need to define a TypoScript object `My.Package:YouTube` which takes care of rendering::
 
 	prototype(My.Package:YouTube) < prototype(Template) {
@@ -95,7 +94,7 @@ the template as we need it.
 	* First, the Fluid Template does not need to know anything about *Nodes*. It just needs to know
 	  that it outputs a certain property, but not where it came from.
 
-	* Because the rendering is decoupled from the data storage this way, we can easily instanciate the
+	* Because the rendering is decoupled from the data storage this way, we can easily instantiate the
 	  TypoScript object directly, manually setting a `videoUrl`::
 
 		page.body.parts.teaserVideo = My.Package:YouTube {

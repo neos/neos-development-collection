@@ -11,6 +11,6 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 
 	ContentStructure
 	PageRendering
-	ContentTypes
 	InsideTypoScript
+	CustomContentElements
 	YourFirstPlugin

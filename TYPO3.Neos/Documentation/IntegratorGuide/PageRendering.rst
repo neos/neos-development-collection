@@ -4,10 +4,8 @@ Rendering A Page
 
 This section shows how content is rendered on a page as a rough overview.
 
-.. note::
-   More correctly we should have said that we show how to render a `Folder`
-   node, as everything which happens here works for all `Folder` nodes, and not
-   just for `Page` nodes.
+More precisely we show how to render a `Folder` node, as everything which happens
+here works for all `Folder` nodes, and not just for `Page` nodes.
 
 First, the requested URL is resolved to a Node of type `TYPO3.TYPO3CR:Folder`.
 This happens by translating the URL path to a node path, and finding the node
@@ -17,9 +15,9 @@ When this node is found, the system searches for the *TypoScript* configuration
 which is active for this node by traversing all the parent nodes and looking for
 any attached TypoScript.
 
-Then, the node is passed straight away to TypoScript, which is our rendering machine.
-TypoScript then renders the node by traversing to sub-nodes and rendering them as
-well. The arguments which are passed to TypoScript are stored inside the so-called
+Then the node is passed straight away to TypoScript, which is the rendering mechanism.
+TypoScript renders the node by traversing to sub-nodes and rendering them as well.
+The arguments which are passed to TypoScript are stored inside the so-called
 *context*, which contains all variables which are accessible by the TypoScript rendering
 engine.
 
@@ -30,46 +28,82 @@ times, even recursively.
 The Page TypoScript Object and -Template
 ========================================
 
-.. TODO: make TS path "page" configurable: Introduce a "root" TS path of type "Case" which redirects to "page" path by default.
-.. this enables to create f.e. an "RSS View" which is controlled by the Blog package.
-
-The rendering of a page starts, by convention, at the TypoScript path `page`.
-The minimally needed TypoScript for rendering looks as follows::
+The rendering of a page by default starts at a `Case` matcher which will usually
+select the TypoScript path `page`.  The minimally needed TypoScript for rendering
+looks as follows::
 
 	page = Page
 	page.body.templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
 
-Here, we assign the `Page` TypoScript object to the path `page`, telling the
+Here, the `Page` TypoScript object is assigned to the path `page`, telling the
 system that the TypoScript object `Page` is responsible for further rendering.
-`Page` expects one parameter to be set: The Fluid template path of the template
-which is rendered inside the `<body>` of the resulting HTML page.
+`Page` expects one parameter to be set: The path of the Fluid template which
+is rendered inside the `<body>` of the resulting HTML page.
 
-The template could f.e. contain the following contents::
+If this is an empty file, the output shows how minimal Neos impacts the generated
+markup::
+
+	<!DOCTYPE html>
+	<html version="HTML+RDFa 1.1"
+		  xmlns="http://www.w3.org/1999/xhtml"
+		  xmlns:typo3="http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/"
+		  xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+		  >
+		<!--
+			This website is powered by TYPO3 Neos, the next generation CMS, a free Open
+			Source Enterprise Content Management System licensed under the GNU/GPL.
+
+			TYPO3 Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.
+
+			More information and contribution opportunities at http://neos.typo3.org and http://flow.typo3.org
+		-->
+		<head>
+			<base href="http://your.doma.in/" />
+			<meta charset="UTF-8" />
+			<script>
+		try {
+			with (window.location) {
+				sessionStorage.setItem(
+					'TYPO3.Neos.lastVisitedUri',
+					[protocol, '//', host, pathname, (pathname.charAt(pathname.length - 1) === '/' ? 'home.html' : '')].join('')
+				);
+			}
+		} catch(e) {}
+	</script>
+		</head>
+		<body>
+		</body>
+	</html>
+
+It becomes clear that Neos gives as much control over the markup as possible to the
+integrator: No body markup, no styles, only little Javascript to record the last visited
+URI (to redirect back to after logging in). Except for the base URI and the charset
+nothing related to the content output by default.
+
+If the template is filled with the following content::
 
 	<h1>{title}</h1>
 
-	Hello World!
+the body would contain a heading to output the title of the current page::
 
-This would output the title of the current page. You do not need to understand yet
-why `{title}` outputs the page title, we will cover that in detail later.
+	<body>
+		<h1>My first page</h1>
+	</body>
 
-Of course the current template is still quite boring; as we do not show any content
-or any menu. In order to change that, we need to adjust our Fluid template as
-follows::
+Again, no added CSS classes, no wraps. Why `{title}` outputs the page title will be
+covered in detail later.
 
-	{namespace ts=\TYPO3\TypoScript\ViewHelpers}
-	<div class="menu">
-	  <ts:renderTypoScript path="parts/menu" />
-	</div>
+Of course the current template is still quite boring; it does not show any content
+or any menu. In order to change that, the Fluid template is adjusted as follows::
+
+	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+	<ts:renderTypoScript path="parts/menu" />
 	<h1>{title}</h1>
 	<ts:renderTypoScript path="sections/main" />
 
-.. TODO: rename "renderTypoScript" VH to "render"
-.. TODO: should the "renderTypoScript" VH convert the path "." to "/"?
-
-You see that we have added placeholders for the menu and the content with the
-`<ts:renderTypoScript>` ViewHelper. These placeholders are rendered by TypoScript
-again, so we need to adjust our TypoScript as well::
+Placeholders for the menu and the content have been added with the use of the
+`renderTypoScript` ViewHelper. It defers rendering to TypoScript again, so the
+TypoScript needs to be adjusted as well::
 
 	page = Page
 	page.body {
@@ -79,71 +113,86 @@ again, so we need to adjust our TypoScript as well::
 	  sections.main.nodePath = 'main'
 	}
 
-In the above TypoScript, we have defined a TypoScript object at `page.body.parts.menu`
+In the above TypoScript, a TypoScript object at `page.body.parts.menu` is defined
 to be of type `Menu`. It is exactly this TypoScript object which is rendered, by
 specifying its relative path inside `<ts:renderTypoScript path="parts/menu" />`.
 
-Furthermore, we use the `Section` TypoScript object to render a TYPO3CR `Section`
-node. Through the `nodePath` property, we specify the name of the TYPO3CR `Section`
-node which we want to render.
+Furthermore, the `Section` TypoScript object is used to render a TYPO3CR `Section`
+node. Through the `nodePath` property, the name of the TYPO3CR `Section` node to
+render is specified.
 
-As a result, our web page now contains a menu and the contents of the main section.
+As a result, the web page now contains a menu and the contents of the main section.
 
-.. TODO: find different names for "Section". Currently we have:
-.. - Fluid Sections as parts of bigger templates
-.. - TYPO3CR Sections as collections of content
-.. - TypoScript section elements -- related to TYPO3CR sections
-
-.. TODO: explain the (somewhat arbitrary) distinction between parts and sections.
-.. is that even best practice?
+The use of `section` and `parts` here is simply a convention, the names can be
+chosen freely. In the example `sections` is used for anything that content is later
+placed in but `parts` is for anything that is not *content* in the sense that it
+will directly be edited in the content module of Neos.
 
 Adjusting Menu Rendering
 ========================
 
-Currently, the `Menu` is rendered using a simple unsorted list. Now, let's say
-we want to change the rendered markup of `Menu`. We'll not only explain the needed
-changes, but also show how the `Menu` object (along with all other TypoScript
-objects) works internally.
+Out of the box the `Menu` is rendered using a simple unsorted list. Using TypoScript
+it is possible to change the rendered markup of `Menu`. Knowing how the `Menu` object
+works internally helps with this and gives insight into all other TypoScripts objects
+as well.
 
-By specifying `page.body.parts.menu = Menu`, we *instanciate* the `Menu` TypoScript
-object at the TypoScript path `page.body.parts.menu`. Now, let's look at the
-definition of the `Menu`, which is defined inside the core of TYPO3 Neos
-(inside the file `TYPO3.Neos.ContentTypes/Resources/Private/TypoScript/Root.ts2`)::
+By specifying `page.body.parts.menu = Menu`, a `Menu` TypoScript object is
+*instantiated*  at the TypoScript path `page.body.parts.menu`. `Menu` is defined
+inside the core of TYPO3 Neos together with TYPO3 Neos.NodeTypes:
 
-	prototype(Menu) {
-		@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
-		templatePath = 'resource://TYPO3.Neos.ContentTypes/Private/Templates/TypoScriptObjects/Menu.html'
+*TYPO3.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.ts2*
+
+::
+
+	prototype(TYPO3.Neos:Menu).@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+
+*TYPO3.Neos.NodeTypes/Resources/Private/TypoScript/Root.ts2*
+
+::
+
+	prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu)
+	prototype(TYPO3.Neos.NodeTypes:Menu) {
+		templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
+		entryLevel = ${q(node).property('startLevel')}
+		entryLevel << 1.toInteger()
+		maximumLevels = ${q(node).property('maximumLevels')}
+		maximumLevels << 1.toInteger()
 		node = ${node}
-		// ... there are some more properties defined as well, but these are not
-		// ... so relevant for us.
 	}
 
 The above code defines the *prototype* of `Menu` with the `prototype(Menu)` syntax.
-This prototype is the "blueprint" of all `Menu` objects which are instanciated.
+This prototype is the "blueprint" of all `Menu` objects which are instantiated.
 All properties which are defined on the prototype (such as `@class` or `templatePath`)
-are automatically active on all `Menu` *instances*, if they are not explicitely overridden.
+are automatically active on all `Menu` *instances*, if they are not explicitly overridden.
 
-Now, what do we need to do in order to adjust the menu rendering? The easiest way
-of adjustment is to override the `templatePath` property, which points to a Fluid
-template. To archive that, we have several possibilities.
+One way to adjust the menu rendering is to override the `templatePath` property, which
+points to a Fluid template. To achieve that, we have two possibilities.
 
-First, we can set the `templatePath` for our menu at `page.body.parts.menu`::
+First, the `templatePath` for the menu at `page.body.parts.menu` can be set::
 
 	page.body.parts.menu.templatePath = 'resource://My.Package/Private/Templates/MyMenuTemplate.html'
 
 This overrides the `templatePath` which was defined in `prototype(Menu)` for
 this single menu.
 
-Second, we could also update the `templatePath` inside the prototype of `Menu`
-itself::
+Second, the `templatePath` inside the prototype of `Menu` itself can be changed::
 
 	prototype(Menu).templatePath = 'resource://My.Package/Private/Templates/MyMenuTemplate.html'
 
-In this case, we changed the template paths for *all menus* which do not override
-the `templatePath` explicitely. Everytime `prototype(...)` is used, this can be
-understood as: "For all objects of type ..., I want to define *something*"
+In this case, the changed template path is used for *all menus* which do not override
+the `templatePath` explicitly. Every time `prototype(...)` is used, this can be
+understood as: "For *all* objects of type ..., define *something*"
 
-.. TODO: remove <typo3:aloha.* VHs; and also *.notEditable VHs; as they are not needed anymore
+After setting the path, changing the menu is simply a job of copying the default
+`Menu` template into `MyMenuTemplate.html` and adjusting the markup as needed.
 
-Now, adjusting the menu is simply a job of copying the default `Menu` template into
-`MyMenuTemplate.html` and adjusting the markup as needed.
+Adjusting Content Element Rendering
+===================================
+
+The rendering of content elements follows the same principle as shown for the `Menu`.
+The default TypoScript is defined in the Neos.NodeTypes package and the content elements
+all have default Fluid templates.
+
+Combined with the possibility to define custom templates per instance or on the prototype
+level, this already provides a lot of flexibility. Another possibility is to inherit from
+the existing TypoScript and adjust as needed using TypoScript.

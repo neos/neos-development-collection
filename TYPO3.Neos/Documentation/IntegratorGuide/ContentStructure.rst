@@ -8,7 +8,7 @@ and organized. These basics are explained in this section.
 Nodes inside the TYPO3 Content Repository
 =========================================
 
-All content in Neos is stored not inside tables of a relational database, but
+The content in Neos is stored not inside tables of a relational database, but
 inside a *tree-based* structure: the so-called TYPO3 Content Repository.
 
 To a certain extent, it is comparable to files in a file-system: They are also
@@ -53,179 +53,215 @@ a `Section`, there could be another three-column element which again contains
 	and TemplaVoila and implements it in a consistent manner, where we do not
 	have to distinguish between pages and other content.
 
-Content Type Definition
-=======================
+Node Type Definition
+====================
 
 Each TYPO3CR Node (we'll just call it Node in the remaining text) has a specific
-*content type* (which is the same as the *node type*, and we'll use the two terms
-as synonyms).
+*node type*. Node Types can be defined in any package by declaring them in
+`Configuration/NodeTypes.yaml`.
 
-.. TODO: DECIDE ON either Content Type or Node Type (in terms of naming)
-
-Content Types are defined in `Configuration/Settings.yaml` underneath
-`TYPO3.TYPO3CR.contentTypes`.
-
-.. note:: TODO: it could be that the content types will be defined in an extra
-   `ContentTypes.yaml` lateron...
-
-Each content type can have *one or multiple parent types*. If these are specified,
+Each node type can have *one or multiple parent types*. If these are specified,
 all properties and settings of the parent types are inherited.
 
-A content type can look as follows::
+A node type definition can look as follows::
 
 	'My.Package:SpecialHeadline':
 	  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
-	  label: 'Special Headline'
-	  group: 'General'
+	  ui:
+	    label: 'Special Headline'
+	    group: 'General'
 	  properties:
 	    headline:
-	      default: 'My Headline Default'
-	  inlineEditableProperties: ['headline']
-
-.. TODO: think about structure of these options...
+	      type: 'string'
+	      defaultValue: 'My Headline Default'
+	      ui:
+	        inlineEditable: TRUE
+	      validation:
+	        stringLength:
+	          minimum: 1
+	          maximum: 255
 
 The following options are allowed:
 
-* `superTypes`: array of parent content types which are inherited from
+`superTypes`
+  An array of parent node types inherited from
 
-* `label`: The human-readable label of the content type
+`childNodes`
+  A list of child nodes that are automatically created if a node of this type is created.
+  For each child the `type` has to be given. Here is an example::
 
-* `icon`: (optional) The path to the icon of the content element on dark background
+    childNodes:
+      someChild:
+        type: 'TYPO3.Neos.ContentTypes:Section'
 
-* `darkIcon`: (optional) The path to the icon of the content element on light background
+`ui`
+  Configuration options related to the user interface representation of the node type
 
-* `group`: (optional) Name of the group in which the content type belongs. It can only
-  be created through the user interface if `group` is defined and it is valid.
+  `label`
+    The human-readable label of the node type
 
-  All valid groups are listed inside `TYPO3.Neos.contentTypeGroups`
+  `group`
+    Name of the group this content element is grouped into for the 'New Content Element' dialog.
+    It can only be created through the user interface if `group` is defined and it is valid.
 
-* `nonEditableOverlay`: (boolean, optional). If TRUE, a non-editable overlay is shown
-  in the backend of Neos.
+    All valid groups are given in the`TYPO3.Neos.nodeTypeGroups` setting
 
-* `properties`: list of properties for this content type. For each property,
-  the following settings can be done:
+  `icon`
+    These settings define the icons to use in the Neos UI for the node type
 
-	* `type`: type of the property. One of:
-		* `boolean`
-		* `string`
-		* `date`
-		* `enum`
-		* `TYPO3\Media\Domain\Model\ImageVariant`
-		* additional types can be used, as long as they are defined inside
-		  `TYPO3.Neos.userInterface` (TODO: bad name!) or specify a JavaScript
-		  class inside `userInterface.class`
+    `dark`
+      Dark icon, to be used on light backgrounds (optional)
 
-	* `label`: Label of the property
+    `light`
+      Light icon, to be used on dark backgrounds (optional)
 
-	* `default`: (optional) Default value. If a new node is created of this type, then it
-	  is initialized with this value.
+  `inlineEditable`
+    If TRUE, it is possible to interact with this Node directly in the content view.
+    If FALSE, an overlay is shown preventing any interaction with the node.
 
-	* `group`: (optional) Name of the *property group* this property is categorized
-	  into in the content editing user interface. If none is given, the property
-	  is not editable through the property inspector of the user interface.
+  `inspector`
+    These settings configure the inspector in the Neos UI for the node type
 
-	  The value here must reference a configured property group in the `groups`
-	  configuration element of this content element.
+    `groups`
+      Defines an inspector group that can be used to group properties of the node later.
 
-	* `priority`: (optional, integer) controls the sorting of the property inside the given
-	  `group`. The highest priority is rendered on top (TODO: inconsistent with
-	  @position in TypoScript...). Only makes sense if `group` is specified.
+      `label`
+        The human-readable label for this Inspector Group.
 
-	* `reloadOnChange`: (optional) If TRUE, the whole content element needs to
-	  be re-rendered on the server side if the value changes. This only works
-	  for properties which are displayed inside the property inspector, i.e. for
-	  properties which have a `group` set.
+      `position`
+        Position of the inspector group, small numbers are sorted on top
 
-	* `options`: (optional) Specify type-specific further options for the given
-	  content type. Currently only used if `type=enum`.
+  `launcher`
+    These settings configure the launcher behavior in the Neos UI for the node type
 
-	* `userInterface`: (optional) Contains user interface related properties of
-	  the property; used for the property inspector. Currently the only supported
-	  sub-property is `class`, where an `Ember.View` can be specified which is rendered
-	  inside the property inspector.
+    `searchCategory`
+      If searching for this node type in the launcher, the results will be grouped by this category.
 
-* `groups`: list of groups inside the *property inspector* for this content type.
-  Each group has the following settings:
 
-	* `label`: Displayed label of the group
-	* `priority`: (integer) Controls the sorting of the groups. The highest-priority
-	  group is rendered on top (TODO: inconsistent with @position in TypoScript)
 
-* `inlineEditableProperties`: Array of property names which are editable directly
-  on the page through Create.JS / Aloha. (TODO: check that all properties editable
-  through Aloha / Create.JS ARE indeed marked as inlineEditableProperties; and the
-  other way around as well)
+`properties`
+  A list of named properties for this node type. For each property the following settings are available.
 
-* `structure`: When the given content type is created, the subnodes listed underneath
-  here are automatically created. Example::
+  `type`
+    PHP type of this property. Either simple type or fully qualified PHP class name.
 
-	structure:
-	  column0:
-	    type: 'TYPO3.Neos.ContentTypes:Section'
+  `defaultValue`
+    Default value of this property. Used at node creation time. Type must match specified 'type'.
 
-Here is an example content type::
+  `ui`
+    Configuration options related to the user interface representation of the property
 
-	TYPO3:
-	  TYPO3CR:
-	    contentTypes:
-	      'My.Package:SpecialImageWithTitle':
+    `label`
+      The human-readable label of the property
+
+    `reloadIfChanged`
+      If TRUE, the whole content element needs to be re-rendered on the server side if the value
+      changes. This only works for properties which are displayed inside the property inspector,
+      i.e. for properties which have a `group` set.
+
+    `inlineEditable`
+      Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?
+
+    `inspector`
+      These settings configure the inspector in the Neos UI for the property
+
+      `group`
+        Identifier of the *inspector group* this property is categorized into in the content editing
+        user interface. If none is given, the property is not editable through the property inspector
+        of the user interface.
+
+        The value here must reference a groups configured in the `ui.inspector.groups` element of the
+        node type this property belongs to.
+
+      `position`
+        Position inside the inspector group, small numbers are sorted on top.
+
+      `editor`
+        Name of the JavaScript Editor Class which is instantiated to edit this element in the inspector.
+
+      `editorOptions`
+        A set of options for the given editor
+
+    `validation`
+      A list of validators to use on the property. Below each validator type any options for the validator
+      can be given.
+
+Here is one of the standard Neos node types (slightly shortened)::
+
+	'TYPO3.Neos.NodeTypes:Image':
+	  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+	  ui:
+	    label: 'Image'
+	    group: 'General'
+	    icon:
+	      light: 'Images/Icons/White/picture_icon-16.png'
+	      dark: 'Images/Icons/Black/picture_icon-16.png'
+	    inspector:
+	      groups:
+	        image:
+	          label: 'Image'
+	          position: 5
+	  properties:
+	    image:
+	      type: TYPO3\Media\Domain\Model\ImageVariant
+	      ui:
 	        label: 'Image'
-	        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
-	        group: 'General'
-	        icon: 'Images/Icons/White/picture_icon-16.png'
-	        darkIcon: 'Images/Icons/Black/picture_icon-16.png'
-	        properties:
-	          # the "title" property is not specified here, but is
-	          # inherited from TYPO3.Neos.ContentTypes:ContentObject
-	          image:
-	            type: TYPO3\Media\Domain\Model\ImageVariant
-	            label: 'Image'
-	            group: 'image'
-	            reloadOnChange: true
-	          imagePosition:
-	            type: enum
-	            label: 'Image Position'
-	            group: 'image'
-	            default: 'left'
-	            options:
-	              values:
-	                'left':
-	                  label: 'Left Align'
-	                'right':
-	                  label: 'Right Align'
-	        groups:
-	          image:
-	            label: 'Image'
-	            priority: 5
-	        inlineEditableProperties: ['title']
+	        reloadIfChanged: TRUE
+	        inspector:
+	          group: 'image'
+	    alignment:
+	      type: string
+	      defaultValue: ''
+	      ui:
+	        label: 'Alignment'
+	        reloadIfChanged: TRUE
+	        inspector:
+	          group: 'image'
+	          editor: T3.Content.UI.Editor.Selectbox
+	          editorOptions:
+	            placeholder: 'Default'
+	            values:
+	              '':
+	                label: ''
+	              center:
+	                label: 'Center'
+	              left:
+	                label: 'Left'
+	              right:
+	                label: 'Right'
+	    alternativeText:
+	      type: string
+	      ui:
+	        label: 'Alternative text'
+	        reloadIfChanged: TRUE
+	        inspector:
+	          group: 'image'
 
-.. note:: Currently it is not possible to validate these content types automatically,
-   but that is definitely a TODO.
 
+Predefined Node Types
+---------------------
 
-Predefined Content Types
-------------------------
-
-TYPO3 Neos is shipped with a bunch of content types. It is helpful to know some of
+TYPO3 Neos is shipped with a number of node types. It is helpful to know some of
 them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
-All default content types in a Neos installation are defined inside the
-`TYPO3.Neos.ContentTypes` package.
+All default node types in a Neos installation are defined inside the
+`TYPO3.Neos.NodeTypes` package.
 
-In this section, we will spell out content types by their abbreviated name if they
-are located inside the package `TYPO3.Neos.ContentTypes` to increase legibility:
-Instead of writing `TYPO3.Neos.ContentTypes:AbstractNode` we will write `AbstractNode`.
+In this section, we will spell out node types by their abbreviated name if they
+are located inside the package `TYPO3.Neos.NodeTypes` to increase readability:
+Instead of writing `TYPO3.Neos.NodeTypes:AbstractNode` we will write `AbstractNode`.
 However, we will spell out `TYPO3.TYPO3CR:Folder`.
 
 AbstractNode
 ~~~~~~~~~~~~
 
-`AbstractNode` is an (more or less internal) base type which
-should be extended by all content types which are used in the context of TYPO3 Neos.
-It defines the visibility settings (hidden, hidden before/after date) and makes sure
-the user interface is able to delete nodes. In almost all cases, you will never extend
-this type directly.
+`AbstractNode` is a (more or less internal) base type which should be extended by
+all content types which are used in the context of TYPO3 Neos.
+
+It defines a title property, the visibility settings (hidden, hidden before/after date)
+and makes sure the user interface is able to delete nodes. In most cases, you will not
+extend this type directly.
 
 Folder
 ~~~~~~
@@ -236,18 +272,16 @@ behave like pages are called *Folder Nodes* in Neos. This means they have a uniq
 externally visible URL by which they can be rendered.
 
 Folder nodes all inherit from `TYPO3.TYPO3CR:Folder`. However, instead of extending
-this type directly, you will often extend `Folder`, as this one inerhits additionally
+this type directly, you will often extend `Folder`, as this one inherits additionally
 from `AbstractNode`.
 
 The standard *page* in Neos is implemented by `Page` which directly extends from `Folder`.
 
-It is supported to create own types extending from `Folder`.
-
-Sections and ContentObjects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Section and ContentObject
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All content which does not behave like pages, but which lives inside them, is
-implemented by two different content types:
+implemented by two different node types:
 
 First, there is the `Section` type: A `Section` has a structural purpose. It usually
 does not contain any properties itself, but it contains an ordered list of child
@@ -255,17 +289,7 @@ nodes which are rendered inside.
 
 Currently, `Section` should not be extended by custom types.
 
-.. TODO: check why that does not work, can we fix that?
-
-Second, the content type for all standard elements (such as text, image,
-youtube, ...) is `ContentObject`. This is -- by far -- the most-extended
-content type. It only defines a (visible or invisible) `title` property
-by which the content can be identified.
-
-Extending `ContentObject` is supported and encouraged.
-
-.. TODO: check how we can transform one content type into another (f.e. 2col
-.. into 3col) What happens with superfluous structure etc then?
-
-.. TODO: should we rename "Section" to "Container"?
-.. TODO: Introduce "MainContainer" and "SecondaryContainer" to make hooking into the main content area of a page easier for plugins?
+Second, the node type for all standard elements (such as text, image, youtube,
+...) is `ContentObject`. This is–by far–the most often extended node
+type. It extends `AbstractNode`, thus title and visibility properties are
+inherited.
