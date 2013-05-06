@@ -14,7 +14,9 @@ namespace TYPO3\Neos\TypoScript\FlowQueryOperations;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Traverse all parent nodes
+ * "parents" operation working on TYPO3CR nodes. It iterates over all
+ * context elements and returns the parent nodes or only those matching
+ * the filter expression specified as optional argument.
  */
 class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
 
@@ -53,7 +55,7 @@ class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
 	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @return void
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		$output = array();

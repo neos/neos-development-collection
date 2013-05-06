@@ -14,7 +14,17 @@ namespace TYPO3\Neos\TypoScript\FlowQueryOperations;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Filter nodes
+ * This filter implementation contains specific behavior for use on TYPO3CR
+ * nodes. It will not evaluate any elements that are not instances of the
+ * `PersistentNodeInterface`.
+ *
+ * The implementation changes the behavior of the `instanceof` operator to
+ * work on node types instead of PHP object types, so that::
+ *
+ * 	[instanceof TYPO3.Neos:Page]
+ *
+ * will in fact use `isOfType()` on the `NodeType` of context elements to
+ * filter. Anything else remains unchanged.
  */
 class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation {
 

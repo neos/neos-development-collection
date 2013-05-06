@@ -14,8 +14,9 @@ namespace TYPO3\Neos\TypoScript\FlowQueryOperations;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Access properties of a TYPO3CR Node. If prefixed with _, internal properties
- * like start time, end time, hidden are accessed.
+ * Used to access properties of a TYPO3CR Node. If the property mame is
+ * prefixed with _, internal node properties like start time, end time,
+ * hidden are accessed.
  */
 class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
 
@@ -57,7 +58,7 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 *
 	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
 	 * @param array $arguments the arguments for this operation
-	 * @return mixed|null if the operation is final, the return value
+	 * @return mixed
 	 */
 	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
 		if (!isset($arguments[0]) || empty($arguments[0])) {
