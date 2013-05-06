@@ -2,3 +2,8 @@ TYPO3\TypoScript\View\TypoScriptView:
   properties:
     fallbackView:
       object: TYPO3\Fluid\View\TemplateView
+
+TYPO3\TypoScript\View\FluidView:
+  properties:
+    renderingContext:
+      object: TYPO3\Fluid\Core\Rendering\RenderingContext

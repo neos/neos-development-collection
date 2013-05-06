@@ -119,8 +119,7 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 	 * @return string
 	 */
 	public function evaluate() {
-			// while we use the existing ActionRequest if possible, we need to *clone* it as we might need to modify the controllerPackageKey later.
-		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\Flow\Mvc\ActionRequest) ? clone $this->tsRuntime->getControllerContext()->getRequest() : NULL);
+		$fluidTemplate = new \TYPO3\TypoScript\View\FluidView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\Flow\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
 
 		$templatePath = $this->tsValue('templatePath');
 		if ($templatePath === NULL) {
@@ -138,12 +137,10 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 			$fluidTemplate->setLayoutRootPath($layoutRootPath);
 		}
 
-			// Set controller package key from template path
+			// Template resources need to be evaluated from the templates package not the requests package.
 		if (strpos($templatePath, 'resource://') === 0) {
-			$tmp = substr($templatePath, 11);
-			$tmp2 = explode('/', $tmp);
-
-			$fluidTemplate->getRequest()->setControllerPackageKey(array_shift(($tmp2)));
+			$templateResourcePathParts = parse_url($templatePath);
+			$fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
 		}
 
 		foreach ($this->variables as $key => $value) {
