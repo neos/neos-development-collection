@@ -17,22 +17,31 @@ TypoScript is fundamentally a *hierarchical, prototype based processing language
 * It is a *processing language* because it processes the values in the *context* into a *single output
   value*.
 
-In the first part of this chapter, we will explain the syntactic and semantic features of the TypoScript,
-Eel and FlowQuery languages. Then, we will focus on the design decisions and goals of TypoScript, such that
-the reader can get a better understanding of the main objectives we had in mind designing the language.
+In the first part of this chapter, the syntactic and semantic features of the TypoScript, Eel and FlowQuery
+languages are explained. Then, the focus will be on the design decisions and goals of TypoScript, to provide
+a better understanding of the main objectives while designing the language.
 
 Goals of TypoScript
 ===================
 
-- both for planned and unplanned extensibility
-- also used for standalone, extensible applications (though that is not relevant
-  in this guide)
-- out-of-band rendering easily possible
-- multiple renderings of the same content
--
-- …
-- inspiration sources (see issue) http://forge.typo3.org/issues/31638
--- css, jQuery (flowQuery, eel, ...), xpath, JS
+TypoScript should **cater to both planned and unplanned extensibility**. This means it should provide
+ways to adjust and extend its behavior in places where this is to be expected. At the same time it
+should also be possible to adjust and extend in any other place without having to apply dirty hacks.
+
+TypoScript should be **usable in standalone, extensible applications** outside of Neos. The use of a
+flexible language for configuration of (rendering) behavior is beneficial for most complex applications.
+
+TypoScript should make **out-of-band rendering** easy to do. This should ease content generation for
+technologies like AJAX or edge-side includes (ESI).
+
+TypoScript should make **multiple renderings of the same content** possible. It should allow placement
+of the same content (but possibly in different representations) on the same page multiple times.
+
+TypoScript's **syntax should be familiar to the user**, so that existing knowledge can be leveraged.
+To achieve this, TypoScript takes inspiration from CSS selectors, jQuery and other technologies that
+are in widespread use in modern frontend development.
+
+.. TODO there is probably more to say here...
 
 TypoScript Objects
 ==================
@@ -45,15 +54,14 @@ context, and transform them to the desired *output*, using its properties for co
 Thus, TypoScript objects take some *input* which is given through the context and the properties, and
 produce a single *output value*. Internally, they can modify the context, and trigger rendering of
 nested TypoScript objects: This way, a big task (like rendering a whole web page) can be split into
-many smaller tasks (render a single image, render a text, ...): The results of the small tasks are then
-again put together, forming the final end result.
+many smaller tasks (render a single image, render some text, ...): The results of the small tasks are
+then put together again, forming the final end result.
 
-Because it is a fundamental principle that TypoScript objects call nested TypoScript objects, the rendering
-process forms a *tree* of TypoScript objects, which can also be inspected using a TypoScript debugger.
+TypoScript object nesting is a fundamental principle of TypoScript. As TypoScript objects call nested TypoScript objects, the rendering process forms a *tree* of TypoScript objects.
 
 TypoScript objects are implemented by a PHP class, which is instantiated at runtime. A single PHP class
 is the basis for many TypoScript objects. We will highlight the exact connection between TypoScript
-objects and their PHP implementations at a later chapter.
+objects and their PHP implementations later.
 
 A TypoScript object can be instantiated by assigning it to a TypoScript path, such as::
 
@@ -63,22 +71,21 @@ A TypoScript object can be instantiated by assigning it to a TypoScript path, su
 	# or:
 	my.image = TYPO3.Neos.ContentTypes:Image
 
-You see that the name of the to-be-instantiated TypoScript prototype is listed without quotes.
+The name of the to-be-instantiated TypoScript prototype is listed without quotes.
 
 By convention, TypoScript paths (such as `my.object`) are written in `lowerCamelCase`, while
 TypoScript prototypes (such as `TYPO3.Neos.ContentTypes:Image`) are written in `UpperCamelCase`.
 
-Now, we are able to set *properties* on the newly created TypoScript objects::
+It is possible to set *properties* on the newly created TypoScript objects::
 
 	foo.myProperty1 = 'Some Property which Page can access'
 	my.object.myProperty1 = "Some other property"
 	my.image.width = ${q(node).property('foo')}
 
-You see that properties have to be quoted (with either single or double quotes), or can be an
-*Eel expression* (which will be explained in a separate section later on).
+Property values that are strings have to be quoted (with either single or double quotes). A property
+can also be an *Eel expression* (which are explained in :ref:`eel-flowquery`.)
 
-In order to reduce typing overhead, curly braces can be used to "abbreviate" long TypoScript paths,
-as the following example demonstrates::
+To reduce typing overhead, curly braces can be used to "abbreviate" long TypoScript paths::
 
 	my {
 	  image = Image
@@ -89,10 +96,8 @@ as the following example demonstrates::
 	  }
 	}
 
-Furthermore, you can also instantiate a TypoScript object and set properties on it in a single
-pass, as shown in the third example below::
-
-	# all three examples mean exactly the same.
+Instantiating a TypoScript object and setting properties on it in a single pass is also possible.
+All three examples mean exactly the same::
 
 	someImage = Image
 	someImage.foo = 'bar'
@@ -108,54 +113,47 @@ pass, as shown in the third example below::
 	  foo = 'bar'
 	}
 
-In the next section, we will learn what is exactly done on object creation, i.e. when you type
-`someImage = Image`.
+TypoScript Objects are Side-Effect Free
+---------------------------------------
 
-.. admonition:: TypoScript Objects are Side-Effect Free
+When TypoScript objects are rendered, they are allowed to modify the TypoScript context
+(they can add or override variables); and can invoke other TypoScript objects.
+After rendering, however, the parent TypoScript object must make sure to clean up the context,
+so that it contains exactly the state it had before the rendering.
 
-	When TypoScript objects are rendered, they are allowed to modify the TypoScript context
-	(i.e. they can add, or override variables); and can invoke other TypoScript objects.
-	After that, however, the parent TypoScript object must make sure to clean up the context,
-	such that it contains exactly the state before its rendering.
+The API helps to enforce this, as the TypoScript context is a *stack*: The only thing the
+developer of a TypoScript object needs to make sure is that if he adds some variable to
+the stack, effectively creating a new stack frame, he needs to remove exactly this stack
+frame after rendering again.
 
-	The API helps to enforce that, as the TypoScript context is a *stack*: The only thing the
-	developer of a TypoScript object needs to make sure is that if he adds some variable to
-	the stack, effectively creating a new stack frame, he needs to remove exactly this stack
-	frame after rendering again.
+This means that a TypoScript object can only manipulate TypoScript objects *below it*,
+but not following or preceding it.
 
-	This means that a TypoScript object can only manipulate TypoScript objects *below it*,
-	but not following or preceeding it.
+In order to enforce this, TypoScript objects are furthermore only allowed to communicate
+through the TypoScript Context; and they are never allowed to be invoked directly: Instead,
+all invocations need to be done through the *TypoScript Runtime*.
 
-	In order to enforce this, TypoScript objects are furthermore only allowed to communicate
-	through the TypoScript Context; and they are never allowed to be invoked directly: Instead,
-	all invocations need to be done through the *TypoScript Runtime*.
-
-	All these constraints make sure that a TypoScript object is *side-effect free*, leading
-	to an important benefit: If somebody knows the exact path towards a TypoScript object together
-	with its context, it can be rendered in a stand-alone manner, exactly as if it was embedded
-	in a bigger element. This enables f.e. to render parts of pages with different cache life-
-	times, or the effective implementation of AJAX or ESI handlers reloading only parts of a
-	website.
-
+All these constraints make sure that a TypoScript object is *side-effect free*, leading
+to an important benefit: If somebody knows the exact path towards a TypoScript object together
+with its context, it can be rendered in a stand-alone manner, exactly as if it was embedded
+in a bigger element. This enables, for example, rendering parts of pages with different cache life-
+times, or the effective implementation of AJAX or ESI handlers reloading only parts of a
+website.
 
 TypoScript Prototypes
 =====================
 
-When a TypoScript object is instantiated, the *TypoScript Prototype* for this object is *copied*
-and is taken as a basis. The prototype is defined using the following syntax::
+When a TypoScript object is instantiated (i.e. when you type `someImage = Image`) the
+*TypoScript Prototype* for this object is *copied* and is used as a basis for the new object.
+The prototype is defined using the following syntax::
 
-	# we prefer this syntax:
 	prototype(MyImage) {
 		width = '500px'
 		height = '600px'
 	}
 
-	# could also be written as:
-	prototype(MyImage).width = '500px'
-	prototype(MyImage).height = '500px'
-
-Now, when the above prototype is instantiated, the instantiated object will have all the properties
-of the prototype copied. This is illustrated through the following example::
+When the above prototype is instantiated, the instantiated object will have all the properties
+of the copied prototype. This is illustrated through the following example::
 
 	someImage = MyImage
 	# now, someImage will have a width of 500px and a height of 600px
@@ -163,10 +161,10 @@ of the prototype copied. This is illustrated through the following example::
 	someImage.width = '100px'
 	# now, we have overridden the height of "someImage" to be 100px.
 
-.. admonition:: Prototype- vs class-based languages
+.. admonition:: Prototype- vs. class-based languages
 
 	There are generally two major "flavours" of object-oriented languages. Most languages
-	(such as PHP, Ruby, Perl, Java, C++) are *class-based*, meaning that they explicitely
+	(such as PHP, Ruby, Perl, Java, C++) are *class-based*, meaning that they explicitly
 	distinguish between the place where behavior for a given object is defined (the "class")
 	and the runtime representation which contains the data (the "instance").
 
@@ -178,7 +176,6 @@ of the prototype copied. This is illustrated through the following example::
 	TypoScript is a *prototype-based language* because it *copies* the TypoScript Prototype
 	to the instance when an object is evaluated.
 
-
 Prototypes in TypoScript are *mutable*, which means that they can easily be modified::
 
 	prototype(MyYouTube) {
@@ -186,23 +183,24 @@ Prototypes in TypoScript are *mutable*, which means that they can easily be modi
 		height = '500px'
 	}
 
-	# you can easily change the width/height, or define new properties:
+	# you can change the width/height
 	prototype(MyYouTube).width = '400px'
+	# or define new properties:
 	prototype(MyYouTube).showFullScreen = ${true}
 
-So far, we have seen how to define and instantiate prototypes from scratch. However, often
-you will want to use an *existing TypoScript prototype* as basis for a new one. This can be
-currently done by *subclassing* a TypoScript prototype using the `<` operator::
+Defining and instantiating a prototype from scratch is not the only way to define and
+instantiate them. You can also use an *existing TypoScript prototype* as basis
+for a new one when needed. This can be done by *inheriting* from a TypoScript prototype
+using the `<` operator::
 
 	prototype(MyImage) < prototype(Template)
 
 	# now, the MyImage prototype contains all properties of the Template
 	# prototype, and can be further customized.
 
-We implement *prototype inheritance*, meaning that the "subclass" (`MyImage` in the example
+This implements *prototype inheritance*, meaning that the "subclass" (`MyImage` in the example
 above) and the "parent class (`Template`) are still attached to each other: If a property
-is added to the parent class, this also applies to the subclass, as the following example
-demonstrates::
+is added to the parent class, this also applies to the subclass, as in the following example::
 
 	prototype(Template).fruit = 'apple'
 	prototype(Template).meal = 'dinner'
@@ -218,32 +216,22 @@ demonstrates::
 	# because MyImage now has an *overridden* property "meal", the change of
 	# the parent class' property is not reflected in the MyImage class
 
+Prototype inheritance can only be defined *globally*, i.e. with a statement of the
+following form::
 
-.. admonition:: Prototype Inheritance is only allowed at top level
+	prototype(Foo) < prototype(Bar)
 
-	Currently, prototype inerhitance can only be defined *globally*, i.e. with
-	a statement of the following form::
+It is not allowed to nest prototypes when defining prototype inheritance, so the
+following examples are **not valid TypoScript** and will result in an exception::
 
-		prototype(Foo) < prototype(Bar)
+	prototype(Foo) < some.prototype(Bar)
+	other.prototype(Foo) < prototype(Bar)
+	prototype(Foo).prototype(Bar) < prototype(Baz)
 
-	It is not allowed to nest prototypes when defining prototype inheritance,
-	so the following examples are **not valid TypoScript** and will result in
-	an exception::
-
-		prototype(Foo) < some.prototype(Bar)
-		other.prototype(Foo) < prototype(Bar)
-		prototype(Foo).prototype(Bar) < prototype(Baz)
-
-	While it would be theoretically possible to support this, we have chosen
-	not to do so in order to reduce complexity and to keep the rendering process
-	more understandable. We have not yet seen a TypoScript example where a construct
-	such as the above would be needed.
-
-Namespaces of TypoScript objects
---------------------------------
-
-.. TODO Robert: explain namespacing of TypoScript prototypes
-
+While it would be theoretically possible to support this, we have chosen not to do
+so in order to reduce complexity and to keep the rendering process more understandable.
+We have not yet seen a TypoScript example where a construct such as the above would be
+needed.
 
 Hierarchical TypoScript Prototypes
 ----------------------------------
@@ -253,111 +241,157 @@ modifying its *Prototype* in certain parts of the rendering tree. This is possib
 because TypoScript prototypes are *hierarchical*, meaning that `prototype(...)`
 can be part of any TypoScript path in an assignment; even multiple times::
 
-	# the following are all valid TypoScript assignments, all with different
-	# semantics
 	prototype(Foo).bar = 'baz'
 	prototype(Foo).some.thing = 'baz2'
+
 	some.path.prototype(Foo).some = 'baz2'
+
 	prototype(Foo).prototype(Bar).some = 'baz2'
 	prototype(Foo).left.prototype(Bar).some = 'baz2'
 
-Let's dissect these examples one by one:
-
 * `prototype(Foo).bar` is a simple, top-level prototype property assignment. It means:
-  *For all objects of type `Foo`, set property `bar`*. The second example is another variant
+  *For all objects of type Foo, set property bar*. The second example is another variant
   of this pattern, just with more nesting levels inside the property assignment.
 
-* `some.path.prototype(Foo).some` is a prototype property assignment *inside `some.path`*.
-  It means: *For all objects of type `Foo` which occur inside the TypoScript path `some.path`,
-  the property `some` is set.*
+* `some.path.prototype(Foo).some` is a prototype property assignment *inside some.path*.
+  It means: *For all objects of type Foo which occur inside the TypoScript path some.path,
+  the property some is set.*
 
 * `prototype(Foo).prototype(Bar).some` is a prototype property assignment *inside another
-  prototype*. It means: *For all objects of type `Bar` which occur somewhere inside an
-  object of type `Foo`, the property `some` is set.*
+  prototype*. It means: *For all objects of type Bar which occur somewhere inside an
+  object of type Foo, the property some is set.*
 
-* This can both be combined, as in the last example inside `prottoype(Foo).left.prototype(Bar).some`.
+* This can both be combined, as in the last example inside `prototype(Foo).left.prototype(Bar).some`.
 
 .. admonition:: Internals of hierarchical prototypes
 
-	We stated before that a TypoScript object is side-effect free, meaning that it can be
-	rendered deterministically just knowing its *TypoScript path* and the *context*. In order
-	to make this work with hierarchical prototypes, we need to encode the types of all TypoScript
-	objects above the current one into the current path. This is done using angular brackets::
+	A TypoScript object is side-effect free, which means that it can be rendered deterministically
+	knowing only its *TypoScript path* and the *context*. In order to make this work with hierarchical
+	prototypes, we need to encode the types of all TypoScript objects above the current one into the
+	current path. This is done using angular brackets::
 
 		a1/a2<Foo>/a3/a4<Bar>
 
-	when this path is rendered, we know that at `a1/a2`, a TypoScript object of type `Foo` has
-	been rendered -- which is needed to apply the prototype inheritance rules correctly.
+	When this path is rendered, `a1/a2` is rendered as a TypoScript object of type `Foo` -- which is needed
+	to apply the prototype inheritance rules correctly.
 
-Bottom line: You do not need to know exactly how the *TypoScript path* towards the currently
-rendered TypoScript object is constructed, you just need to pass it on without modification
-if you want to render a single element out-of-band.
+	Those paths are rarely visible on the "outside" of the rendering process, but might at times
+	appear in exception messages if rendering fails. For those cases it is helpful to know their
+	semantics.
+
+	Bottom line: It is not important to know exactly how the a rendering TypoScript object's *TypoScript path*
+	is constructed. Just pass it on, without modification to render a single element out of band.
+
+Namespaces of TypoScript objects
+================================
+
+The benefits of namespacing apply just as well to TypoScript objects as they apply to other languages. Namespacing helps to organize the code and avoid name clashes.
+
+In TypoScript the namespace of a prototype is given when the prototype is declared. The
+following declares a `YouTube` prototype in the `Acme.Demo` namespace::
+
+	prototype(Acme.Demo:YouTube) {
+		width = '100px'
+		height = '500px'
+	}
+
+The namespace is, by convention, the package key of the package in which the TypoScript
+resides.
+
+Fully qualified identifiers can be used everywhere an identifier is used::
+
+	prototype(TYPO3.Neos.NodeTypes:Section.Default) < prototype(TYPO3.TypoScript:Collection)
+
+In Neos a `default` namespace of `TYPO3.Neos` is set and some of the most often used
+TypoScript objects are made available in that namespace through inheritance::
+
+	prototype(TYPO3.Neos:Page) < prototype(TYPO3.Neos.NodeTypes:Page)
+	prototype(TYPO3.Neos:Section) < prototype(TYPO3.Neos.NodeTypes:Section)
+
+So whenever `Page` is used in TypoScript within Neos, it is a shortcut for `TYPO3.Neos:Page`
+which in turn is a shortcut for `TYPO3.Neos.NodeTypes:Page`.
+
+Custom namespace aliases can be defined with the following syntax::
+
+	namespace Foo = Acme.Demo
+
+	# the following two lines are equivalent now
+	video = Acme.Demo:YouTube
+	video = Foo:YouTube
 
 Setting Properties On a TypoScript Object
 =========================================
 
-Now, we have dissected the main building principles of TypoScript objects, and we're turning
-towards smaller -- but nevertheless important -- building blocks inside TypoScript. We will now
-focus on how exactly properties are set in a TypoScript object.
-
-Besides simple assignments such as `myObject.foo = 'bar'` (which are a bit boring), one can write
-*expressions* using the *Eel language* such as `myObject.foo = ${q(node).property('bar')}`.
-
-Although the TypoScript object can read its context directly, it is a better practice to
+Although the TypoScript object can read its context directly, it is good practice to
 instead use *properties* for configuration::
 
-	# imagine that there is a property "foo=bar" inside the TypoScript context at this point
+	# imagine there is a property "foo=bar" inside the TypoScript context at this point
 	myObject = MyObject
 
-	# we explicitely take the "foo" variable's value from the context and pass it into the "foo"
-	# property of myObject. This way, the flow of data is better visible.
+	# explicitly take the "foo" variable's value from the context and pass it into the "foo"
+	# property of myObject. This way, the flow of data is more visible.
 	myObject.foo = ${foo}
 
-While myObject could rely on the assumption that there is a "foo" variable inside the TypoScript
+While `myObject` could rely on the assumption that there is a "foo" variable inside the TypoScript
 context, it has no way (besides written documentation) to communicate this to the outside world.
 
-Thus, we encourage that a TypoScript object's implementation should *only use properties* of itself
-to determine its output, and be independent of what is stored in the context.
+Therefore, a TypoScript object's implementation should *only use properties* of itself to determine
+its output, and be independent of what is stored in the context.
 
-However, in the prototype of this TypoScript object it is perfectly legal to store the mapping
+However, in the prototype of a TypoScript object it is perfectly legal to store the mapping
 between the context variables and TypoScript properties, such as in the following example::
 
 	# this way, an explicit default mapping between a context variable and a property of the
 	# TypoScript object is created.
 	prototype(MyObject).foo = ${foo}
 
-
-To sum it up: If you implement a TypoScript object, it should not access its context variables
+To sum it up: When implementing a TypoScript object, it should not access its context variables
 directly, but instead use a property. In the TypoScript object's prototype, a default mapping
-between a context variable and the prototype can be made.
-
+between a context variable and the prototype can be set up.
 
 Manipulating the TypoScript Context
 -----------------------------------
 
-Now that we have seen how the properties of a TypoScript object are evaluated, we're now turning
-our focus to changing the TypoScript context.
-
-This is possible through the use of the `@override` meta-property::
+The TypoScript context can be manipulated directly through the use of the `@override`
+meta-property::
 
 	myObject = MyObject
-	myObject.@override.foo = ${bar * 2}
+	myObject.@override.bar = ${foo * 2}
 
-In the above example, there is now an additional context variable `foo` with twice the value
-of `bar`.
+In the above example, there is now an additional context variable `bar` with twice the value
+of `foo`.
 
 This functionality is especially helpful if there are strong conventions regarding the TypoScript
-context variables; which is often the case in standalone TypoScript applications.
-
-For Neos, this functionality is hardly ever used.
-
-.. TODO: is @override final in regard to the naming?
+context variables. This is often the case in standalone TypoScript applications, but for Neos, this
+functionality is hardly ever used.
 
 Processors
-----------
+==========
 
-.. TODO: Processors and eel should be able to work together
-.. TODO: processor ordering should adhere to @override notation
+Processors allow the manipulation of values in TypoScript properties. A processor is applied to
+a property using a simple syntax::
+
+	myObject = MyObject {
+		value = 'some value'
+		value << 1.wrap(prefix: 'before ', suffix: ' after')
+	}
+	# results in 'before some value after'
+
+Multiple processors can be used, their execution order is defined by the numeric position given
+in the TypoScript. In the example above a `2.wrap()` would run on the results of `1.wrap()`.
+
+Processors are PHP classes implementing the `TYPO3\TypoScript\ProcessorInterface`, which mandates
+only the `process($subject)` method. The value returned from this method is used as the result
+of the processor.
+
+The processor name can be given in short form or as a fully qualified object name. If given in short
+form, the processor will be looked up in the default PHP namespace of `TYPO3\TypoScript\Processors`
+by making it's first character uppercase and appending `Processor` to it. If the fully qualified
+object name is given, then it will be used as is. This allows the use of custom processors. The
+following declarations are equivalent::
+
+	value << 1.wrap(prefix: 'before ', suffix: ' after')
+	value << 1.TYPO3\TypoScript\Processors\WrapProcessor(prefix: 'before ', suffix: ' after')
 
 
 Important TypoScript objects and patterns
@@ -377,86 +411,3 @@ TypoScript Internals
 - @class, backed by PHP class
 - DOs and DONT's when implementing custom TypoScript objects
 - implementing custom FlowQuery operations
-
-Standalone Usage of TypoScript
--> eigene Dokumentation
-Standalone Usage of Eel & FlowQuery
--> eigene Dokumentation
-
-
-Eel -- Embedded Expression Language
-===================================
-
-The Embedded Expression Language *Eel* is a building block for creating Domain Specific Languages.
-It provides a rich *syntax* for arbitrary expressions, such that the author of the DSL can focus
-on its Semantics.
-
-In this section, we will focus on the use of Eel inside TypoScript.
-
-Syntax
-------
-
-Every Eel expression in TypoScript is surrounded by `${...}`, which is the delimiter for Eel
-expressions. Basically, the Eel syntax and semantics is like a condensed version of JavaScript::
-
-* Most things you can write as a single JavaScript expression (that is, without a `;`) can also
-  be written as Eel expression.
-
-* Eel does not throw an error if `null` values are dereferenced, i.e. inside `${foo.bar}`
-  with `foo` being `null`. Instead, `null` is returned. This also works for calling undefined
-  functions.
-
-* We do not support control structures or variable declarations.
-
-* We support the common JavaScript arithmetic and comparison operators, such as `+-*/%` for
-  arithmetic and `== != > >= < <=` for comparison operators. Operator precedence is as expected,
-  with multiplication binding higher than addition. This can be adjusted by using brackets. Boolean
-  operators `&&` and `||` are supported.
-
-* We support the ternary operator to allow for conditions `<condition> ? <ifTrue> : <ifFalse>`.
-
-* When object access is done (such as `foo.bar.baz`) on PHP objects, getters are called automatically.
-
-* Object access with the offset notation is supported: `foo['bar']`
-
-This means the following expressions are all valid Eel expressions::
-
-	${foo}
-	${foo.bar}
-	${f()}
-	${f().g()}
-	${f() ? g : h + i * 5}
-
-
-Semantics inside TypoScript
----------------------------
-
-Eel does not define any functions or variables by itself. Instead, it exposes the *Eel context
-array*, such that functions and objects which should be accessible can be defined there.
-
-Because of that, Eel is perfectly usable as a "domain-specific language construction kit", which
-provides the syntax, but not the semantics of a given language.
-
-*For Eel inside TypoScript, we have defined a semantics which is outlined below:*
-
-* All variables of the TypoScript context are made available inside the Eel context.
-
-* Additionally, the function `q()` is available, which wraps its argument into a FlowQuery
-  object. FlowQuery is explained below.
-
-* Last, the special variable `this` always points to the current TypoScript object implementation.
-
-Here follows an example usage in the context of TypoScript::
-
-	${node}
-	${myContextVariable}
-	${node.getProperty('foo')} # discouraged. You should use FlowQuery instead.
-	${q(node).property('foo')}
-
-.. TODO: Eel Standard Library
-
-FlowQuery and Fizzle
-====================
-
-- flowquery (syntax, examples on nodes)
-- fizzle (TODO: check if syntax is final)

@@ -12,5 +12,6 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	ContentStructure
 	PageRendering
 	InsideTypoScript
+	EelFlowQuery
 	CustomContentElements
 	YourFirstPlugin
