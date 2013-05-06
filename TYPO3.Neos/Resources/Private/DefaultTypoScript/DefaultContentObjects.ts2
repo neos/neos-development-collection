@@ -1,8 +1,5 @@
 prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
-	# DEPRECATED since Sprint 10; should be removed lateron. Is just added for
-	# backwards compatibility.
-	context = ${node}
 }
 
 prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template)
