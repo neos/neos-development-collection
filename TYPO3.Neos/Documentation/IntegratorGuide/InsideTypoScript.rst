@@ -393,6 +393,8 @@ following declarations are equivalent::
 	value << 1.wrap(prefix: 'before ', suffix: ' after')
 	value << 1.TYPO3\TypoScript\Processors\WrapProcessor(prefix: 'before ', suffix: ' after')
 
+A reference of all processors defined in TYPO3.TypoScript can be found in the
+:ref:`TypoScript Processor Reference`.
 
 Important TypoScript objects and patterns
 =========================================
