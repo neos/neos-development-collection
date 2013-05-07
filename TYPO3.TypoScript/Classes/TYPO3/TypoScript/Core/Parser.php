@@ -498,6 +498,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * @param string $indexAndMethodCall The raw string defining the index within the processor chain and the method call. Eg. 3.wrap("<em>", "</em">)
 	 * @param string $objectPropertyPath Specifies the object path of the property to process
 	 * @return void
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	protected function parseValueProcessing($indexAndMethodCall, $objectPropertyPath) {
 		if (preg_match(self::SPLIT_PATTERN_INDEXANDPROCESSORCALL, $indexAndMethodCall, $matches) > 0) {
@@ -540,6 +541,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 *
 	 * @param string $namespaceDeclaration The namespace declaration, for example "neos = TYPO3.Neos"
 	 * @return void
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	protected function parseNamespaceDeclaration($namespaceDeclaration) {
 		$result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
@@ -650,6 +652,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 *
 	 * @param string $unparsedValue The unparsed value
 	 * @return mixed The processed value
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	protected function getProcessedValue($unparsedValue) {
 		if (preg_match(self::SPLIT_PATTERN_VALUENUMBER, $unparsedValue, $matches) === 1) {
