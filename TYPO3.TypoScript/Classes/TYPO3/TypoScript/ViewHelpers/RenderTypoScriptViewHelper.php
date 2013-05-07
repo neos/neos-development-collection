@@ -34,7 +34,7 @@ class RenderTypoScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractVi
 			$fluidTemplateTsObject->getTsRuntime()->pushContextArray($currentContext);
 		}
 		if (strpos($path, '/') === 0) {
-			$absolutePath = $path;
+			$absolutePath = substr($path, 1);
 		} else {
 			$absolutePath = $fluidTemplateTsObject->getPath() . '/' . $path;
 		}
