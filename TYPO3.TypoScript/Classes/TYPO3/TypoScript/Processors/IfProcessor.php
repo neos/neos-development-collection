@@ -12,31 +12,44 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that Returns the trueValue when the condition evaluates to TRUE,
- * otherwise the falseValue is returned.
+ * Returns the trueValue when the condition evaluates to TRUE, otherwise
+ * the falseValue is returned.
+ *
+ * If the condition is an object, it is cast to a string for evaluation.
+ *
+ * The following conditions are considered TRUE:
+ *
+ * - boolean TRUE
+ * - number > 0
+ * - non-empty string
+ *
+ * While these conditions evaluate to FALSE:
+ *
+ * - boolean FALSE
+ * - number <= 0
+ * - empty string
  *
  */
 class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * The condition for the if clause, or simply TRUE/FALSE
 	 * @var boolean
 	 */
 	protected $condition;
 
 	/**
-	 * This is returned if $this->condition is TRUE
 	 * @var string
 	 */
 	protected $trueValue = '';
 
 	/**
-	 * This is returned if $this->condition is FALSE
 	 * @var string
 	 */
 	protected $falseValue = '';
 
 	/**
+	 * The condition for the if clause, or simply TRUE/FALSE.
+	 *
 	 * @param boolean $condition the condition for the if clause, or simply TRUE/FALSE
 	 * @return void
 	 */
@@ -52,6 +65,8 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
+	 * The value to return if the condition is TRUE.
+	 *
 	 * @param string $trueValue the string that is returned if $this->condition is TRUE
 	 * @return void
 	 */
@@ -67,6 +82,8 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
+	 * The value to return if the condition is FALSE.
+	 *
 	 * @param string $falseValue the string that is returned if $this->condition is FALSE
 	 * @return void
 	 */
@@ -85,20 +102,6 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 * Returns the trueValue when the condition evaluates to TRUE, otherwise
 	 * the falseValue is returned.
 	 *
-	 * If the condition is a TypoScript object, it is handled as a string.
-	 *
-	 * The following conditions are considered TRUE:
-	 *
-	 *   - boolean TRUE
-	 *   - number > 0
-	 *   - non-empty string
-	 *
-	 * While these conditions evaluate to FALSE:
-	 *
-	 *   - boolean FALSE
-	 *   - number <= 0
-	 *   - empty string
-	 *
 	 * @param string $subject Not used in this processor
 	 * @return string The calculated return value. Either $this->trueValue or $this->falseValue
 	 * @throws \TYPO3\TypoScript\Exception
@@ -112,7 +115,7 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 			if ((is_numeric($condition) && $condition <= 0) || $condition === '') {
 				$condition = FALSE;
 			}
-			if ($condition === 1 || (is_string($condition) && \TYPO3\Flow\Utility\Unicode\Functions::strlen($condition) > 0)) {
+			if ($condition === 1 || (is_string($condition) && strlen($condition) > 0)) {
 				$condition = TRUE;
 			}
 		}

@@ -12,19 +12,20 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that overrides the current subject with the given value, if the subject (not trimmed) is empty.
+ * Overrides the subject with the given value, if the subject (not trimmed) is empty.
  *
  */
 class IfBlankProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * The value that overrides the subject
 	 * @var string
 	 */
 	protected $replacement = '';
 
 	/**
-	 * @param string $replacement The value that overrides the subject
+	 * The value that overrides the subject.
+	 *
+	 * @param string $replacement
 	 * @return void
 	 */
 	public function setReplacement($replacement) {
@@ -32,20 +33,22 @@ class IfBlankProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * @return string The value that overrides the subject
+	 * The value that overrides the subject.
+	 *
+	 * @return string
 	 */
 	public function getReplacement() {
 		return $this->replacement;
 	}
 
 	/**
-	 * Overrides the current subject with the given value, if the subject (not trimmed) is empty.
+	 * Overrides the subject with the given value, if the subject (not trimmed) is empty.
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string
 	 */
 	public function process($subject) {
-		return (!\TYPO3\Flow\Utility\Unicode\Functions::strlen((string)$subject)) ? $this->replacement : $subject;
+		return (strlen((string)$subject)) ? $subject : $this->replacement;
 	}
 }
 ?>

@@ -12,24 +12,24 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that returns a substring of the given subject
+ * Returns a substring of the subject.
  *
  */
 class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * The left boundary of the substring
 	 * @var integer
 	 */
 	protected $start = 0;
 
 	/**
-	 * The length of the substring
 	 * @var integer
 	 */
 	protected $length = NULL;
 
 	/**
+	 * The left boundary of the substring.
+	 *
 	 * @param integer $start the left boundary of the substring
 	 * @return void
 	 */
@@ -45,6 +45,8 @@ class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
+	 * The length of the substring.
+	 *
 	 * @param integer $length the length of the substring
 	 * @return void
 	 */
@@ -60,15 +62,19 @@ class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * Returns a substring of the specified subject
+	 * Returns a substring of the subject.
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string
 	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function process($subject) {
-		if (!is_integer($this->start)) throw new \TYPO3\TypoScript\Exception('Expected an integer as start position, ' . gettype($this->start) . ' given.', 1224003810);
-		if ($this->length !== NULL && !is_integer($this->length)) throw new \TYPO3\TypoScript\Exception('Expected an integer as length, ' . gettype($this->length) . ' given.', 1224003811);
+		if (!is_integer($this->start)) {
+			throw new \TYPO3\TypoScript\Exception('Expected an integer as start position, ' . gettype($this->start) . ' given.', 1224003810);
+		}
+		if ($this->length !== NULL && !is_integer($this->length)) {
+			throw new \TYPO3\TypoScript\Exception('Expected an integer as length, ' . gettype($this->length) . ' given.', 1224003811);
+		}
 
 		return \TYPO3\Flow\Utility\Unicode\Functions::substr((string)$subject, $this->start, $this->length);
 	}

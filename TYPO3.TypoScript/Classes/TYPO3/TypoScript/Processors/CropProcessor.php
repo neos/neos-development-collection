@@ -12,8 +12,7 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that crops a part of a string and optionally replaces the cropped part by a string,
- * typically three dots ("...").
+ * Crops a part of a string and optionally replaces the cropped part by a string.
  *
  */
 class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
@@ -41,7 +40,9 @@ class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	protected $options = 0;
 
 	/**
-	 * @param integer $maximumCharacters the maximum number of characters to which the subject shall be shortened
+	 * The maximum number of characters to which the subject shall be shortened.
+	 *
+	 * @param integer $maximumCharacters
 	 * @return void
 	 */
 	public function setMaximumCharacters($maximumCharacters) {
@@ -56,7 +57,10 @@ class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * @param string $preOrSuffixString a string which is to be prepended or appended to the cropped subject if the subject has been cropped at all.
+	 * The string which is to be prepended or appended to the cropped
+	 * subject if the subject has been cropped at all.
+	 *
+	 * @param string $preOrSuffixString
 	 * @return void
 	 */
 	public function setPreOrSuffixString($preOrSuffixString) {
@@ -64,18 +68,20 @@ class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * @return string the string which is to be prepended or appended to the cropped subject if the subject has been cropped at all.
+	 * @return string to be prepended or appended to the cropped subject
 	 */
 	public function getPreOrSuffixString() {
 		return $this->preOrSuffixString;
 	}
 
 	/**
-	 * a bitmask combination of the CROP_* constants:
-	 * CROP_FROM_BEGINNING: If set, the beginning of the string will be cropped instead of the end.
-	 * CROP_AT_WORD: The string will be of the maximum length specified by $maximumCharacters, but it will be cropped after the last (or before the first) space instead of the probably the middle of a word.
+	 * A bitmask combination of the CROP_* constants:
 	 *
-	 * @param long $options any combination of the CROP_ constants as a bitmask
+	 * * CROP_FROM_BEGINNING: If set, the beginning of the string will be cropped instead of the end.
+	 * * CROP_AT_WORD: The string will be of the maximum length specified by $maximumCharacters, but it will be cropped after a word instead of probably the middle of a word.
+	 * * CROP_AT_SENTENCE: The string will be of the maximum length specified by $maximumCharacters, but it will be cropped after a sentence instead of probably the middle of a word.
+	 *
+	 * @param integer $options any combination of the CROP_ constants as a bitmask
 	 * @return void
 	 */
 	public function setOptions($options) {
@@ -83,15 +89,14 @@ class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * @return long combination of the CROP_ constants as a bitmask
+	 * @return integer Combination of the CROP_ constants as a bitmask
 	 */
 	public function getOptions() {
 		return $this->options;
 	}
 
 	/**
-	 * Crops a part of a string and optionally replaces the cropped part by a string, typically
-	 * three dots ("...").
+	 * Crops a part of a string and optionally replaces the cropped part by a string.
 	 *
 	 * @param string $subject The string to be cropped
 	 * @return string The processed string

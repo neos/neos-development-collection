@@ -14,19 +14,19 @@ namespace TYPO3\TypoScript\Processors;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Processor that overrides the current subject with the given value, if the subject (trimmed) is empty.
+ * Overrides the subject with the given value, if the subject (trimmed) is empty.
  *
- * @Flow\Scope("singleton")
  */
 class IfEmptyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * The value that overrides the subject
 	 * @var string
 	 */
 	protected $replacement = '';
 
 	/**
+	 * The replacement to override the subject.
+	 *
 	 * @param string $replacement The value that overrides the subject
 	 * @return void
 	 */
@@ -42,7 +42,7 @@ class IfEmptyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * Overrides the current subject with the given value, if the subject (trimmed) is empty.
+	 * Overrides the subject with the given value, if the subject (trimmed) is empty.
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string

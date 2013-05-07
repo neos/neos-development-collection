@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that wraps the specified string into a prefix- and a suffix string.
+ * Wraps the specified string into a prefix and a suffix string.
  *
  */
 class WrapProcessor implements \TYPO3\TypoScript\ProcessorInterface {
@@ -30,6 +30,8 @@ class WrapProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	protected $suffix = '';
 
 	/**
+	 * The string to prepend.
+	 *
 	 * @param string $prefix a string to be prepended
 	 * @return void
 	 */
@@ -45,6 +47,8 @@ class WrapProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
+	 * The string to append.
+	 *
 	 * @param string $suffix a string to be appended
 	 * @return void
 	 */

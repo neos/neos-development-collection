@@ -12,20 +12,20 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that rounds a given float value.
- * If integer given, nothing happens.
+ * Rounds the subject if it is a float value. If an integer is given, nothing happens.
  *
  */
 class RoundProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * Number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
 	 * @var integer
 	 */
 	protected $precision = NULL;
 
 	/**
-	 * @param integer $precision the number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
+	 * The number of digits after the decimal point. Negative values are also supported (-1 rounds to full 10ths).
+	 *
+	 * @param integer $precision
 	 * @return void
 	 */
 	public function setPrecision($precision) {
@@ -33,23 +33,29 @@ class RoundProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * @return integer the number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
+	 * The number of digits after the decimal point. Negative values are also supported (-1 rounds to full 10ths).
+	 *
+	 * @return integer
 	 */
 	public function getPrecision() {
 		return $this->precision;
 	}
 
 	/**
-	 * Rounds a given float value. If integer given, nothing happens.
+	 * Rounds a given float value. If an integer is given, nothing happens.
 	 *
 	 * @param float/string $subject The subject to round.
 	 * @return float Rounded value
 	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function process($subject) {
-		if (!is_numeric($subject)) throw new \TYPO3\TypoScript\Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);
+		if (!is_numeric($subject)) {
+			throw new \TYPO3\TypoScript\Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);
+		}
 		$subject = floatval($subject);
-		if ($this->precision != NULL && !is_int($this->precision)) throw new \TYPO3\TypoScript\Exception('Precision must be an integer.');
+		if ($this->precision != NULL && !is_int($this->precision)) {
+			throw new \TYPO3\TypoScript\Exception('Precision must be an integer.');
+		}
 		return round($subject, $this->precision);
 	}
 }

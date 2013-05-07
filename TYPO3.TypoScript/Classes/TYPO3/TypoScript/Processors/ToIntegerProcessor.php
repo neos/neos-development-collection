@@ -12,13 +12,13 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that onverts the subject into an integer.
+ * Converts the subject to an integer.
  *
  */
 class ToIntegerProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * Converts the subject into an integer.
+	 * Converts the subject to an integer.
 	 *
 	 * @param string $subject The string to be processed
 	 * @return integer The casted integer value

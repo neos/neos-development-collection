@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that replaces a part of the given subject with something else
+ * Replaces a part of the subject with something else.
  *
  */
 class ReplaceProcessor implements \TYPO3\TypoScript\ProcessorInterface {
@@ -32,6 +32,8 @@ class ReplaceProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	protected $replace = '';
 
 	/**
+	 * The string to search for.
+	 *
 	 * @param string $search
 	 * @return void
 	 */
@@ -47,6 +49,8 @@ class ReplaceProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
+	 * The string to replace matches with.
+	 *
 	 * @param string $replace
 	 * @return void
 	 */
@@ -62,7 +66,7 @@ class ReplaceProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * Replaces occurrences of $this->search with $this->replace in the given subject.
+	 * Replaces occurrences of <search> with <replace> in the subject.
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string

@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that shifts the case of a string into the specified direction.
+ * Shifts the case of a string into the specified direction.
  *
  */
 class ShiftCaseProcessor implements \TYPO3\TypoScript\ProcessorInterface {
@@ -28,7 +28,13 @@ class ShiftCaseProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	protected $direction;
 
 	/**
-	 * @param string $direction Direction to shift case in, one of SHIFT_CASE_TO_*
+	 * The direction to shift case in, one of
+	 *
+	 * * SHIFT_CASE_TO_UPPER (upper)
+	 * * SHIFT_CASE_TO_LOWER (lower)
+	 * * SHIFT_CASE_TO_TITLE (title)
+	 *
+	 * @param string $direction
 	 * @return void
 	 */
 	public function setDirection($direction) {

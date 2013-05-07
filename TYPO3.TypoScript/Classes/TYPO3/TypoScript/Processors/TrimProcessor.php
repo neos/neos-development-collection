@@ -12,13 +12,13 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that trims the current subject (Removes whitespaces around the value).
+ * Trims the subject (removes whitespace around the value).
  *
  */
 class TrimProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * Trims the current subject (Removes whitespaces around the value).
+	 * Trims the subject (removes whitespace around the value).
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string

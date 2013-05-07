@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that transforms a UNIX timestamp according to the given format.
+ * Transforms an UNIX timestamp according to the given format.
  * For the possible format values, look at the php date() function.
  *
  * Please note that the incoming UNIX timestamp is intrinsically considered UTC,
@@ -36,38 +36,6 @@ class DateProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 * @var string
 	 */
 	protected $timezone;
-
-	/**
-	 * Transforms an UNIX timestamp according to the given format.
-	 * For the possible format values, look at the PHP date() function.
-	 *
-	 * @param mixed $subject The UNIX timestamp to transform, objects are cast to string
-	 * @return string The processed timestamp
-	 * @throws \TYPO3\TypoScript\Exception
-	 */
-	public function process($subject) {
-		if ($subject === '') {
-			return '';
-		}
-
-		$timestamp = is_object($subject) ? (string)$subject : $subject;
-		$format = (string)$this->format;
-		if ($timestamp <= 0) {
-			throw new \TYPO3\TypoScript\Exception('The given timestamp value was zero or negative, this is not allowed.', 1185282371);
-		}
-
-		$dateTime = \DateTime::createFromFormat('U', $timestamp);
-		if ($this->timezone !== NULL) {
-			try {
-				$timezoneArgument = new \DateTimeZone($this->timezone);
-			} catch (\Exception $exception) {
-				throw new \TYPO3\TypoScript\Exception(sprintf('Attempting to set the given time zone "%s" threw exception "%s".', $this->timezone, $exception->getMessage()), 1343308079, $exception);
-			}
-			$dateTime->setTimezone($timezoneArgument);
-		}
-
-		return $dateTime->format($format);
-	}
 
 	/**
 	 * Set the format to use, according to the rules of the php date() function.
@@ -107,5 +75,36 @@ class DateProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 		return $this->timezone;
 	}
 
+	/**
+	 * Transforms an UNIX timestamp according to the given format.
+	 * For the possible format values, look at the PHP date() function.
+	 *
+	 * @param mixed $subject The UNIX timestamp to transform, objects are cast to string
+	 * @return string The processed timestamp
+	 * @throws \TYPO3\TypoScript\Exception
+	 */
+	public function process($subject) {
+		if ($subject === '') {
+			return '';
+		}
+
+		$timestamp = is_object($subject) ? (string)$subject : $subject;
+		$format = (string)$this->format;
+		if ($timestamp <= 0) {
+			throw new \TYPO3\TypoScript\Exception('The given timestamp value was zero or negative, this is not allowed.', 1185282371);
+		}
+
+		$dateTime = \DateTime::createFromFormat('U', $timestamp);
+		if ($this->timezone !== NULL) {
+			try {
+				$timezoneArgument = new \DateTimeZone($this->timezone);
+			} catch (\Exception $exception) {
+				throw new \TYPO3\TypoScript\Exception(sprintf('Attempting to set the given time zone "%s" threw exception "%s".', $this->timezone, $exception->getMessage()), 1343308079, $exception);
+			}
+			$dateTime->setTimezone($timezoneArgument);
+		}
+
+		return $dateTime->format($format);
+	}
 }
 ?>

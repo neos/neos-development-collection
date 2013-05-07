@@ -12,18 +12,19 @@ namespace TYPO3\TypoScript\Processors;
  *                                                                        */
 
 /**
- * Processor that overrides the current subject with the given value, if the value is not empty.
+ * Overrides the subject with the given value, if the value is not empty.
  *
  */
 class OverrideProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
-	 * The value that overrides the subject
 	 * @var string
 	 */
 	protected $replacement = '';
 
 	/**
+	 * The value that overrides the subject.
+	 *
 	 * @param string $replacement The value that overrides the subject
 	 * @return void
 	 */
@@ -39,7 +40,7 @@ class OverrideProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * Overrides the current subject with the given value, if the value is not empty.
+	 * Overrides the subject with the given replacement, if the replacement is not empty.
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string
