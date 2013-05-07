@@ -6,3 +6,5 @@ Appendixes
 	:glob:
 
 	*
+
+	ChangeLogs/Index
