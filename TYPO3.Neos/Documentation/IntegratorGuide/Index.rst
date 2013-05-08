@@ -1,3 +1,5 @@
+.. _integrator-guide:
+
 ================
 Integrator Guide
 ================

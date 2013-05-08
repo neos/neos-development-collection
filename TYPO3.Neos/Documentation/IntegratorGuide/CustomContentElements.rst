@@ -1,3 +1,5 @@
+.. _custom-content-elements:
+
 ================================
 Creating Custom Content Elements
 ================================

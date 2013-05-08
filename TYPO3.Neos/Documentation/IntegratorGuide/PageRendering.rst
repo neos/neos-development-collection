@@ -1,3 +1,5 @@
+.. _page-rendering:
+
 ================
 Rendering A Page
 ================

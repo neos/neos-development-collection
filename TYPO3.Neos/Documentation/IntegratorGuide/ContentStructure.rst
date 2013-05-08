@@ -1,3 +1,5 @@
+.. _content-structure:
+
 ===========================
 The TYPO3 Content Structure
 ===========================

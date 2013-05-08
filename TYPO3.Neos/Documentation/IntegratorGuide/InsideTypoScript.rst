@@ -1,3 +1,5 @@
+.. _inside-typoscript:
+
 =================
 Inside TypoScript
 =================
