@@ -79,8 +79,8 @@ markup::
 
 It becomes clear that Neos gives as much control over the markup as possible to the
 integrator: No body markup, no styles, only little Javascript to record the last visited
-URI (to redirect back to after logging in). Except for the base URI and the charset
-nothing related to the content output by default.
+URI (to redirect back to it after logging in). Except for the base URI and the charset
+nothing related to the content is output by default.
 
 If the template is filled with the following content::
 
@@ -109,10 +109,10 @@ TypoScript needs to be adjusted as well::
 
 	page = Page
 	page.body {
-	  templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
-	  parts.menu = Menu
-	  sections.main = Section
-	  sections.main.nodePath = 'main'
+		templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
+		parts.menu = Menu
+		sections.main = Section
+		sections.main.nodePath = 'main'
 	}
 
 In the above TypoScript, a TypoScript object at `page.body.parts.menu` is defined

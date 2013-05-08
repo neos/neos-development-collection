@@ -1,5 +1,6 @@
 .. _eel-flowquery:
 
+==================================
 Eel - Embedded Expression Language
 ==================================
 
@@ -13,7 +14,7 @@ on its Semantics.
 In this section, the focus lies on the use of Eel inside TypoScript.
 
 Syntax
-------
+======
 
 Every Eel expression in TypoScript is surrounded by `${...}`, which is the delimiter for Eel
 expressions. Basically, the Eel syntax and semantics is like a condensed version of JavaScript:
@@ -55,7 +56,7 @@ This means the following expressions are all valid Eel expressions::
 	${{foo: bar, baz: test}} // Object Literal
 
 Semantics inside TypoScript
----------------------------
+===========================
 
 Eel does not define any functions or variables by itself. Instead, it exposes the *Eel context
 array*, meaning that functions and objects which should be accessible can be defined there.
@@ -73,6 +74,7 @@ For Eel inside TypoScript, the semantics are as follows:
   object. `FlowQuery`_ is explained below.
 
 
+=========
 FlowQuery
 =========
 
@@ -108,7 +110,7 @@ A reference of all FlowQuery operations defined in TYPO3.Eel and TYPO3.Neos can 
 found in the :ref:`FlowQuery Operation Reference`.
 
 Operation Resolving
--------------------
+===================
 
 When multiple packages define an operation with the same short name, they are
 resolved using the priority each implementation defines, higher priorities have
@@ -119,7 +121,7 @@ them if they can evaluate the current context. The first operation that answers 
 check positively is used.
 
 FlowQuery by Example
---------------------
+====================
 
 Any context variable can be accessed directly::
 
@@ -172,11 +174,15 @@ are again filtered by a check for their property `spam` being false.
 	comments.collection = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Section]') ?
 		q(node).children("[spam = false]") : q(node).children(this.getNodePath()).children("[spam = false]")}
 
+======
 Fizzle
 ======
 
 Filter operations as already shown are written in *Fizzle*. It has been inspired by
 the selector syntax known from CSS.
+
+Property Name Filters
+=====================
 
 The first component of a filter query can be a `Property Name` filter. It is given
 as a simple string. Checks against property paths are possible as well::
@@ -190,6 +196,9 @@ TYPO3CR nodes and the `children` operation has a clear scope. If generic PHP obj
 used, the property name filter is essential to define which property actually contains
 the 'children'.
 
+Attribute Filters
+=================
+
 The next component are `Attribute` filters. They can check for the presence and against
 the values of attributes of context elements::
 
@@ -202,6 +211,10 @@ the values of attributes of context elements::
 	baz[foo *= "Bar"]
 
 As the above examples show, string values can be quoted using double or single quotes.
+
+Available Operators
+-------------------
+
 The operators for checking against attribute are as follows:
 
 =

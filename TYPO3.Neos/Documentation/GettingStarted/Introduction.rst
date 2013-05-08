@@ -18,8 +18,8 @@ published under the code name of TYPO3 Phoenix, the new name is in place since T
 System Overview
 ===============
 
-TYPO3 Neos is made up of packages and based on the TYPO3 Flow framework. Most of the packages
-are part of the TYPO3 Flow base system, TYPO3 Neos consists of a few additional packages, like
+TYPO3 Neos is made up of packages and based on the TYPO3 Flow framework. Some of the packages
+are part of the TYPO3 Flow base system, TYPO3 Neos consists of additional packages, like
 Neos and TypoScript, in which the actual CMS functionality is contained. The templates,
 graphics and content of the demo site are in another package. Generally, all static website
 resources (including templates, TypoScript and Images) can be found in separate packages for

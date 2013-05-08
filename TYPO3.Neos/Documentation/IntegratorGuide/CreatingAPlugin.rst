@@ -1,6 +1,8 @@
-=====================================
-Creating your first TYPO3 Neos plugin
-=====================================
+.. _creating-a-plugin:
+
+============================
+Creating a TYPO3 Neos plugin
+============================
 
 Any TYPO3 Flow package can be used as a plugin with a little effort. This section
 will guide you through a simple example. First, we will create a really basic
@@ -14,7 +16,7 @@ First we will create a very simple Flow package to use for integrating it as a p
 .. note::
   When developing sites the need for simple plugins will often arise. And those small
   plugins will be very site-specific most of the time. In these cases it makes sense
-  to create the needed code inside the site package, instead of in a seperate package.
+  to create the needed code inside the site package, instead of in a separate package.
 
   For the sake of simplicity we will create a seperate package now.
 
@@ -128,4 +130,14 @@ Fixing Plugin Output
 
 If you check the HTML of a page that includes your plugin, you will clearly see that things
 are not as they should be. The plugin is included using it's complete HTML, including head
-and body tags. This of course reults in an invalid document.
+and body tags. This of course results in an invalid document.
+
+Neos-Aware Plugin Development
+=============================
+
+TBD
+
+Using TYPO3 CR Nodes in a Plugin
+================================
+
+TBD
