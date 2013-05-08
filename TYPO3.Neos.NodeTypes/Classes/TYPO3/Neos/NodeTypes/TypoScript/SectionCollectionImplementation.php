@@ -96,6 +96,7 @@ class SectionCollectionImplementation extends CollectionImplementation {
 					 * know it is ugly.
 					 */
 				$sectionNode = $node->createNode($this->getNodePath(), $this->nodeTypeManager->getNodeType('TYPO3.Neos.NodeTypes:Section'));
+				$this->nodeRepository->persistEntities();
 			}
 		}
 
