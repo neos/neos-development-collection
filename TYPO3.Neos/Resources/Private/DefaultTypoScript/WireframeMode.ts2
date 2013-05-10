@@ -30,7 +30,7 @@ wireframeMode {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/GeneralSectionRendering.html'
 			layout = ''
 			columns {
-				collection = ${context.children('[instanceof TYPO3.Neos.NodeTypes:Section]')}
+				collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Section]')}
 				itemRenderer {
 					templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/SectionTemplate.html'
 				}
