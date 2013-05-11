@@ -117,6 +117,17 @@
       handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
 
 -
+  name:          'Frontend content with some format'
+  uriPattern:    '{node}.{@format}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Frontend\Node'
+    '@action':     'show'
+  routeParts:
+    node:
+      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+
+-
   name:          'Frontend content without a specified format'
   uriPattern:    '{node}'
   defaults:
