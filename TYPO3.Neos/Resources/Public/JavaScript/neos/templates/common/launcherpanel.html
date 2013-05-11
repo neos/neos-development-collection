@@ -134,12 +134,12 @@
 	{{/boundIf}}
 	<div class="c-3">
 		<h2>Search</h2>
-		{{#collection contentBinding="searchItems" tagName="ul" classNames="t3-launcher-panel-search"}}
-			<div class="t3-launcher-search-group-label"><span>{{content.label}}</span></div>
-			{{#collection contentBinding="content.items" tagName="ul" classNames="t3-launcher-search-group-results"}}
-				<a href="{{unbound content.action}}" title="{{unbound content.path}}" class="t3-link-ajax">
-					<img src="{{unbound content.icon}}" alt="" />
-					{{content.label}}
+		{{#collection contentBinding="view.searchItems" tagName="ul" classNames="t3-launcher-panel-search"}}
+			<div class="t3-launcher-search-group-label"><span>{{view.content.label}}</span></div>
+			{{#collection contentBinding="view.content.items" tagName="ul" classNames="t3-launcher-search-group-results"}}
+				<a href="{{unbound view.content.action}}" title="{{unbound view.content.path}}" class="t3-link-ajax">
+					<img src="{{unbound view.content.icon}}" alt="" />
+					{{view.content.label}}
 				</a>
 			{{/collection}}
 			<div class="t3-clear"></div>

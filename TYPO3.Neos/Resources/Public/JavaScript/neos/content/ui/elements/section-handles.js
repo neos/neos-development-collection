@@ -53,7 +53,7 @@ function ($, EntityWrapper, ContentElementHandle) {
 
 			this._areNestedContentElementsAvailable();
 
-			this.getPath('_collection.options.collection').on('change', this._areNestedContentElementsAvailable, this);
+			this.get('_collection.options.collection').on('change', this._areNestedContentElementsAvailable, this);
 		},
 
 		/**
@@ -61,7 +61,7 @@ function ($, EntityWrapper, ContentElementHandle) {
 		 */
 		_areNestedContentElementsAvailable: function() {
 			var availableContentElements = 0;
-			this.getPath('_collection.options.collection.models').forEach(function(entity) {
+			this.get('_collection.options.collection.models').forEach(function(entity) {
 				var attributes = EntityWrapper.extractAttributesFromVieEntity(entity);
 				if (attributes['_removed'] !== true) {
 					availableContentElements++;
@@ -77,13 +77,16 @@ function ($, EntityWrapper, ContentElementHandle) {
 			if (!this.get('_nestedContentElementsAvailable')) {
 				return true;
 			}
-			return (this.get('_nodePath') === T3.Content.Model.NodeSelection.getPath('selectedNode.nodePath'));
+			return (this.get('_nodePath') === T3.Content.Model.NodeSelection.get('selectedNode.nodePath'));
 		}.property('T3.Content.Model.NodeSelection.selectedNode', '_nodePath', '_nestedContentElementsAvailable'),
 
 		/**
 		 * @return {void}
 		 */
 		_toggleVisibilityOnShownChange: function() {
+			if (!this.$()) {
+				return;
+			}
 			if (this.get('_isShown')) {
 				this.$().show();
 			} else {

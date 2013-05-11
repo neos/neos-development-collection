@@ -35,11 +35,12 @@ require(
 			'hallo': '../Library/hallo/hallo',
 			'createjs': '../Library/createjs/create',
 			'backbone': '../Library/vie/lib/backboneJS/backbone.min',
-			'underscorejs': '../Library/vie/lib/underscoreJS/underscore.min'
+			'underscorejs': '../Library/vie/lib/underscoreJS/underscore.min',
+			'handlebars': '../Library/handlebars/handlebars-1.0.0-rc.3'
 		},
 		shim: {
 			'emberjs': {
-				deps: ['jquery'],
+				deps: ['jquery', 'handlebars'],
 				exports: 'Ember'
 			},
 			'neos/contentmodule': ['emberjs'],
@@ -60,6 +61,7 @@ require(
 			'hallo': ['jquery-ui'],
 			'backbone': ['underscorejs'],
 			'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery'],
+			'Library/vie/vie-latest.debug': ['jquery', 'backbone'],
 			'halloplugins/linkplugin': ['hallo']
 		},
 		locale: 'en'

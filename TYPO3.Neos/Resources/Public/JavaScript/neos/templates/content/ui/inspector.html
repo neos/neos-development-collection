@@ -1,14 +1,14 @@
 <div class="header">
-	{{view T3.Content.UI.Button label="Cancel" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}
-	{{view T3.Content.UI.Button label="Apply" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}
+	{{#view T3.Content.UI.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}Cancel{{/view}}
+	{{#view T3.Content.UI.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}Apply{{/view}}
 </div>
 <form class="t3-inspector-form" action="#">
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
-		{{#view T3.Content.UI.ToggleInspectorPanelHeadline contentBinding="content"}}
+		{{#view T3.Content.UI.ToggleInspectorPanelHeadline contentBinding="view.content"}}
 			<h2>
-				{{content.label}}
+				{{view.content.label}}
 				<span class="pull-right">
-					{{#if _collapsed}}
+					{{#if view._collapsed}}
 						<i class="icon-chevron-up"></i>
 					{{else}}
 						<i class="icon-chevron-down"></i>
@@ -16,15 +16,15 @@
 				</span>
 			</h2>
 		{{/view}}
-		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
-			{{#if content.isBoolean}}
-				<label for="{{unbound content.elementId}}" class="checkbox">
-					{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
-					{{content.ui.label}}
+		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="view.content.properties"}}
+			{{#if view.content.isBoolean}}
+				<label for="{{unbound view.content.elementId}}" class="checkbox">
+					{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="view.content"}}
+					{{view.content.ui.label}}
 				</label>
 			{{else}}
-				<label for="{{unbound content.elementId}}">{{content.ui.label}}</label>
-				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
+				<label for="{{unbound view.content.elementId}}">{{view.content.ui.label}}</label>
+				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="view.content"}}
 			{{/if}}
 		{{/collection}}
 	{{/collection}}

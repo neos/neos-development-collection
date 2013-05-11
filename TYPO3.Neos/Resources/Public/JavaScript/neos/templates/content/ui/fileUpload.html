@@ -1,7 +1,7 @@
-<div class="typo3-fileupload" id="{{unbound _containerId}}">
-	<button id="{{unbound _browseButtonId}}" class="t3-button typo3-fileupload-pickfiles" type="button">
-		{{fileChooserLabel}}
+<div class="typo3-fileupload" id="{{unbound view._containerId}}">
+	<button id="{{unbound view._browseButtonId}}" class="t3-button typo3-fileupload-pickfiles" type="button">
+		{{view.fileChooserLabel}}
 	</button>
 
-	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonShown" target="parentView" action="upload" labelBinding="uploaderLabel" allowedFileTypesBinding="allowedFileTypes"}}
+	{{view T3.Content.UI.Button isVisibleBinding="view._uploadButtonShown" target="parentView" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes"}}
 </div>

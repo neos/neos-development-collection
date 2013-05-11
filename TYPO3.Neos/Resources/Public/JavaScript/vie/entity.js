@@ -38,7 +38,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 		}.observes('publishable', 'modified'),
 
 		_applyHiddenClass: function() {
-			if (this.getPath('attributes._hidden')) {
+			if (this.get('attributes._hidden')) {
 				this.get('$element').addClass('t3-contentelement-hidden');
 			} else {
 				this.get('$element').removeClass('t3-contentelement-hidden');
@@ -47,7 +47,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 
 		nodeType: function() {
 			return Entity.extractNodeTypeFromVieEntity(this.get('_vieEntity'));
-		}.property('_vieEntity'),
+		}.property('_vieEntity').volatile(),
 
 		init: function() {
 			var that = this,
@@ -74,7 +74,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 			if (arguments.length == 1) {
 				return Entity.extractAttributesFromVieEntity(this.get('_vieEntity'));
 			}
-		}.property('_vieEntity'),
+		}.property('_vieEntity').volatile(),
 
 		/**
 		 * Set an attribute on the underlying VIE entity

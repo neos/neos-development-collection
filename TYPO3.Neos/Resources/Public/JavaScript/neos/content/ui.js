@@ -72,7 +72,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		href: '#',
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: Ember.Handlebars.compile('{{item.nodeTypeSchema.ui.label}} {{#if item.status}}<span class="t3-breadcrumbitem-status">({{item.status}})</span>{{/if}}'),
+		template: Ember.Handlebars.compile('{{view.item.nodeTypeSchema.ui.label}} {{#if view.item.status}}<span class="t3-breadcrumbitem-status">({{view.item.status}})</span>{{/if}}'),
 		click: function(event) {
 			event.preventDefault();
 
@@ -156,7 +156,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 
 		didInsertElement: function() {
 			var nodeType = T3.Content.Model.NodeSelection.get('selectedNode').$element.attr('typeof').replace(/\./g,'_'),
-				collapsed = T3.Content.Controller.Inspector.getPath('configuration.' + nodeType + '.' + this.content.group);
+				collapsed = T3.Content.Controller.Inspector.get('configuration.' + nodeType + '.' + this.get('content.group'));
 			this.set('_nodeType', nodeType);
 			if (collapsed) {
 				this.$().next().hide();
@@ -171,11 +171,11 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 
 		toggleCollapsed: function() {
 			this.set('_collapsed', !this.get('_collapsed'));
-			if (!T3.Content.Controller.Inspector.getPath('configuration.' + this.get('_nodeType'))) {
-				T3.Content.Controller.Inspector.setPath('configuration.' + this.get('_nodeType'), {});
+			if (!T3.Content.Controller.Inspector.get('configuration.' + this.get('_nodeType'))) {
+				T3.Content.Controller.Inspector.set('configuration.' + this.get('_nodeType'), {});
 			}
-			T3.Content.Controller.Inspector.setPath('configuration.' + this.get('_nodeType') + '.' + this.content.group, this.get('_collapsed'));
-			Ember.notifyObservers(T3.Content.Controller.Inspector, 'configuration');
+			T3.Content.Controller.Inspector.set('configuration.' + this.get('_nodeType') + '.' + this.content.group, this.get('_collapsed'));
+			Ember.propertyDidChange(T3.Content.Controller.Inspector, 'configuration');
 		},
 
 		_onCollapsedChange: function() {
@@ -202,10 +202,10 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 
 		render: function() {
 			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
-			ember_assert('Type defaults for "' + this.propertyDefinition.type + '" not found!', !!typeDefinition);
+			Ember.assert('Type defaults for "' + this.propertyDefinition.type + '" not found!', !!typeDefinition);
 
-			var editorClassName = Ember.getPath(this.propertyDefinition, 'ui.inspector.editor') || typeDefinition.editor;
-			ember_assert('Editor class name for property "' + this.propertyDefinition.key + '" not found.', editorClassName);
+			var editorClassName = Ember.get(this.propertyDefinition, 'ui.inspector.editor') || typeDefinition.editor;
+			Ember.assert('Editor class name for property "' + this.propertyDefinition.key + '" not found.', editorClassName);
 
 			var editorOptions = $.extend(
 				{
@@ -213,27 +213,35 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 					elementId: this.propertyDefinition.elementId
 				},
 				typeDefinition.editorOptions || {},
-				Ember.getPath(this.propertyDefinition, 'ui.inspector.editorOptions') || {}
+				Ember.get(this.propertyDefinition, 'ui.inspector.editorOptions') || {}
 			);
 
-			var editorClass = Ember.getPath(editorClassName);
-			ember_assert('Editor class "' + editorClassName + '" not found', !!editorClass);
+			var editorClass = Ember.get(editorClassName);
+			Ember.assert('Editor class "' + editorClassName + '" not found', !!editorClass);
 
 			var editor = editorClass.create(editorOptions);
 			this.appendChild(editor);
-			this._super();
 		}
 	});
 
 		// Is necessary otherwise a button has always the class 'btn-mini'
-	T3.Content.UI.ButtonDialog = Ember.Button.extend({
+	T3.Content.UI.ButtonDialog = Ember.View.extend(Ember.TargetActionSupport, {
+		tagName: 'button',
 		attributeBindings: ['disabled'],
 		classNameBindings: ['iconClass'],
 		label: '',
 		disabled: false,
 		visible: true,
 		icon: '',
-		template: Ember.Handlebars.compile('{{#if icon}}<i class="{{unbound icon}}"></i> {{/if}}{{label}}')
+		template: Ember.Handlebars.compile('{{#if icon}}<i class="{{unbound icon}}"></i> {{/if}}{{{view.label}}}'),
+		iconClass: function() {
+			var icon = this.get('icon');
+			return icon !== '' ? 't3-icon-' + icon : '';
+		}.property('icon'),
+
+		click: function() {
+			this.triggerAction();
+		}
 	});
 
 	/**
@@ -458,6 +466,26 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 			}
 			return '';
 		}.property('lastSuccessfulTransfer')
+	});
+
+	T3.Content.UI.PublishPageButton = T3.Content.UI.Button.extend({
+		label: 'Publish Page',
+		disabled: function() {
+			return this.get('_noChanges') || this.get('_saveRunning');
+		}.property('_noChanges', '_saveRunning'),
+		target: 'T3.Content.Model.PublishableNodes',
+		action: 'publishAll',
+		_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
+		_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+		_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
+		classNameBindings: ['connectionStatusClass'],
+		classNames: ['btn-publish'],
+
+		connectionStatusClass: function() {
+			var className = 't3-connection-status-';
+			className += this.get('_connectionFailed') ? 'down' : 'up';
+			return className;
+		}.property('_connectionFailed')
 	});
 
 	/**

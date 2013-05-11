@@ -41,7 +41,7 @@ define(
 
 			_hideToggleTitle: function() {
 				return this.get('_hidden') === true ? 'Unhide' : 'Hide';
-			}.property('_hidden').cacheable(),
+			}.property('_hidden'),
 
 			_thisElementStartedCut: function() {
 				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
@@ -50,7 +50,7 @@ define(
 				}
 
 				return (clipboard.type === 'cut' && clipboard.nodePath === this.get('_nodePath'));
-			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
+			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath'),
 
 			_thisElementStartedCopy: function() {
 				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
@@ -59,7 +59,7 @@ define(
 				}
 
 				return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_nodePath'));
-			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
+			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath'),
 
 			_thisElementIsAddingNewContent: function() {
 				var elementIsAddingNewContent = T3.Content.Controller.NodeActions.get('_elementIsAddingNewContent');
@@ -68,7 +68,7 @@ define(
 				}
 
 				return (elementIsAddingNewContent === this.get('_nodePath'));
-			}.property('T3.Content.Controller.NodeActions._elementIsAddingNewContent', '_nodePath').cacheable(),
+			}.property('T3.Content.Controller.NodeActions._elementIsAddingNewContent', '_nodePath'),
 
 			_entityChanged: function() {
 				this.set('_hidden', this.get('_entity').get('typo3:_hidden'));
@@ -104,6 +104,31 @@ define(
 						that.onPopoverOpen.call(that);
 					}
 				});
+
+				this.$().find('.action-remove').popover({
+					header: '<div>Delete this element?</div>',
+					content: $('<div class="typo3-confirmationdialog"><div class="actions"><button class="delete t3-button btn btn-mini btn-danger">Delete</button> <button class="cancel t3-button btn btn-mini">Cancel</button></div></div>'),
+					preventLeft: this.get('popoverPosition') === 'left' ? false : true,
+					preventRight: this.get('popoverPosition') === 'right' ? false : true,
+					preventTop: this.get('popoverPosition') === 'top' ? false : true,
+					preventBottom: this.get('popoverPosition') === 'bottom' ? false : true,
+					positioning: 'absolute',
+					zindex: 10090,
+					openEvent: function() {
+						this.popover$.find('button.delete').click(function() {
+							that.get('_element').fadeOut(function() {
+								that.get('_element').addClass('t3-contentelement-removed');
+							});
+
+							T3.Content.Controller.NodeActions.remove(that.get('_entity'));
+							that.$().find('.action-remove').trigger('hidePopover');
+						});
+
+						this.popover$.find('button.cancel').click(function() {
+							that.$().find('.action-remove').trigger('hidePopover');
+						});
+					}
+				});
 			},
 
 			toggleHidden: function() {
@@ -113,10 +138,6 @@ define(
 				entity.set('typo3:_hidden', value);
 				T3.Content.Controller.Inspector.nodeProperties.set('_hidden', value);
 				T3.Content.Controller.Inspector.apply();
-			},
-
-			remove: function() {
-				T3.Content.Controller.NodeActions.remove(this.get('_entity'), this.get('_element'), this.$('.action-remove').first());
 			},
 
 			cut: function() {

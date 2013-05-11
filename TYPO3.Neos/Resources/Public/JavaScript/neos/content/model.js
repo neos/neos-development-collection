@@ -25,7 +25,7 @@ define(
 		 * This model is the one most listened to, as when the node selection changes, the UI
 		 * is responding to that.
 		 */
-		var NodeSelection = Ember.Object.create({
+		var NodeSelection = Ember.Object.extend({
 			nodes: [],
 
 			/**
@@ -130,25 +130,25 @@ define(
 			selectedNode: function() {
 				var nodes = this.get('nodes');
 				return nodes.length > 0 ? _.last(nodes) : null;
-			}.property('nodes').cacheable(),
+			}.property('nodes'),
 
 			selectedNodeSchema: function() {
 				var selectedNode = this.get('selectedNode');
 				if (!selectedNode) return;
 				return selectedNode.get('nodeTypeSchema');
-			}.property('selectedNode').cacheable(),
+			}.property('selectedNode'),
 
 			selectNode: function(node) {
 				this.updateSelection(node.get('$element'));
 			}
-		});
+		}).create();
 
-		var PublishableNodes = Ember.Object.create({
+		var PublishableNodes = Ember.Object.extend({
 			publishableEntitySubjects: [],
 
 			noChanges: function() {
-				return this.getPath('publishableEntitySubjects.length') == 0;
-			}.property('publishableEntitySubjects').cacheable(),
+				return this.get('publishableEntitySubjects.length') == 0;
+			}.property('publishableEntitySubjects.length'),
 
 			initialize: function() {
 				vie.entities.on('change', this._updatePublishableEntities, this);
@@ -193,7 +193,7 @@ define(
 					}
 				);
 			}
-		});
+		}).create();
 
 		T3.Content.Model = {
 			PublishableNodes: PublishableNodes,
