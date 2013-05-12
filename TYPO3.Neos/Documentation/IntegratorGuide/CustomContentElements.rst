@@ -4,232 +4,250 @@
 Creating Custom Content Elements
 ================================
 
-In TYPO3 Neos, it is very easy to create custom content elements. Neos ships
-with commonly used, predefined content elements, but it is easily possible to
-amend and even completely replace them.
+Neos ships with commonly used, predefined content elements, but it is easily possible
+to amend and even completely replace them.
 
 Defining new content elements is usually a three-step process:
 
-#. Define the *TYPO3CR Node Type*, listing the properties and types of the node.
+#. Defining a *TYPO3CR Node Type*, listing the properties and types of the node.
 
-#. Define a *TypoScript object* which is responsible for rendering this content type.
+#. Defining a *TypoScript object* which is responsible for rendering this content type.
    Usually, this is a wrapper for a Fluid Template which then defines the rendered
    markup.
 
 #. Add a *Fluid Template* which contains the markup being rendered
 
-The following example creates a new content element `My.Package:YouTube` which needs
+Creating a Simple Content Element
+=================================
+
+The following example creates a new content element `Acme.Demo:YouTube` which needs
 the YouTube URL and then renders the video player.
 
-First, the *TYPO3CR Node Type* needs to be defined in `NodeTypes.yaml`::
+First, the *TYPO3CR Node Type* needs to be defined in `NodeTypes.yaml`. This can be done
+in your site package or in a package dedicated to content elements, if reuse is foreseeable.
 
-	'My.Package:YouTube':
-	  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+::
+
+	'Acme.Demo:YouTube':
+	  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
 	  ui:
 	    group: 'General'
 	    label: 'YouTube Video'
+		inspector:
+		  groups:
+			video:
+			  label: 'Video'
 	  properties:
 	    videoUrl:
 	      type: string
 	      ui:
 	        label: 'Video URL'
+			inspector:
+			  group: 'video'
+			reloadIfChanged: TRUE
 
-Then, we have to define the TypoScript rendering for this content element. By convention,
+The declaration of node types with all required and optional properties is documented in
+:ref:`node-type-definition`.
+
+Next the TypoScript rendering for the content element has to be defined. By convention,
 a TypoScript object with the same name as the content element is used for rendering; thus
-we need to define a TypoScript object `My.Package:YouTube` which takes care of rendering::
+in this case a TypoScript object `My.Package:YouTube`::
 
-	prototype(My.Package:YouTube) < prototype(Template) {
-	  templatePath = 'resource://My.Package/Private/Templates/YouTube.html'
-	  videoUrl = ${q(node).property('videoUrl')}
-	  width = '640'
-	  height = '360'
+	prototype(Acme.Demo:YouTube) < prototype(TYPO3.TypoScript:Template) {
+		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/YouTube.html'
+		videoUrl = ${q(node).property('videoUrl')}
+		width = '640'
+		height = '360'
 	}
 
-In the first line, we define a new TypoScript object prototype with name `My.Package:YouTube`,
-and inherit from the pre-defined `Template` TypoScript object which provides rendering through
-Fluid.
+A new TypoScript object prototype with the name `My.Package:YouTube` is declared, inheriting
+from the pre-defined `Template` TypoScript object which provides rendering through Fluid.
 
-We then set the `templatePath` property of the `YouTube` TypoScript object to point to the
-Fluid template we want to use for rendering. All (other) properties which are set on the
-`Template` TypoScript object are directly made available inside Fluid as variables -- and
-because the `YouTube` TypoScript object is extended from the `Template` TypoScript object, this
+The `templatePath` property of the `YouTube` TypoScript object is set to point to the
+Fluid template to use for rendering. All (other) properties which are set on the `Template`
+TypoScript object are directly made available inside Fluid as variables -- and
+because the `YouTube` TypoScript object extends the `Template` TypoScript object, this
 rule also applies there.
 
-Thus, the last line defines a `videoUrl` variable being available inside Fluid, which is
-set to the value `${q(node).property('videoUrl')}`. This is a so-called *Eel Expression*,
-because it has the form `${....}`. So let's dissect the expression `q(node).property('videoUrl')`
-now:
-
-* The syntax of Eel is a subset of JavaScript, so if you roughly know JavaScript, it should
-  feel very familiar to you. Essentially, everything you can write as a single expression in
-  JavaScript can be written inside Eel as well.
+Thus, the last line defines a `videoUrl` variable to be available inside Fluid, which is
+set to the result of the Eel expression `${q(node).property('videoUrl')}`. Eel is explained
+in depth in :ref:`eel-flowquery`, but this is a close look at the used expression
+`q(node).property('videoUrl')`:
 
 * The q() function wraps its argument, in this case the TYPO3CR Node which is currently rendered,
-  into *FlowQuery*. FlowQuery is comparable to jQuery: It is a selector language which allows to
-  traverse nodes and other objects with an effective domain-specific language.
+  into *FlowQuery*.
 
-* FlowQuery defines certain *operations*, for example we're using the `property(...)` operation
-  here to access the property of a node.
+* FlowQuery defines the `property(...)` operation used to access the property of a node.
 
 To sum it up: The expression `${q(node).property('videoUrl')}` is an Eel expression, in which
 FlowQuery is called to return the property `videoUrl` of the current node.
 
-Finally, creating the YouTube content element is as easy as filling the `YouTube.html` Fluid
+The final step in creating the YouTube content element is defining the `YouTube.html` Fluid
 template, f.e. with the following content::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
-	<neos:contentElement node="{node}">
-	  <iframe width="{width}" height="{height}" src="{videoUrl}" frameborder="0" allowfullscreen></iframe>
-	</neos:contentElement>
+	{namespace n=TYPO3\Neos\ViewHelpers}
+	<n:contentElement node="{node}">
+		<iframe width="{width}" height="{height}" src="{videoUrl}" frameborder="0" allowfullscreen></iframe>
+	</n:contentElement>
 
-You see that we use the `{videoUrl}` which has been defined in TypoScript, and output it inside
-the template as we need it.
+In the template the `{videoUrl}` variable which has been defined in TypoScript is used as we need it.
 
-.. admonition:: Why is the indirection through TypoScript needed?
+The only required Neos specific markup in the template is the wrapping of the whole content element
+with the `<n:contentElement>` ViewHelper, which is needed to make the content element selectable
+inside the Neos backend.
 
-	If you paid close attention to the above example, you saw that the `videoUrl` property of the
-	*Node* is not directly rendered inside the Fluid template. Instead we use *TypoScript* to pass
-	the `videoUrl` from the *Node* into the Fluid template.
+What are the benefits of indirection through TypoScript?
+--------------------------------------------------------
+
+	In the above example the `videoUrl` property of the *Node* is not directly rendered inside the
+	Fluid template. Instead *TypoScript* is used to pass the `videoUrl` from the *Node* into the Fluid
+	template.
 
 	While this indirection might look superfluous at first sight, it has important benefits:
 
-	* First, the Fluid Template does not need to know anything about *Nodes*. It just needs to know
+	* The Fluid Template does not need to know anything about *Nodes*. It just needs to know
 	  that it outputs a certain property, but not where it came from.
 
-	* Because the rendering is decoupled from the data storage this way, we can easily instantiate the
-	  TypoScript object directly, manually setting a `videoUrl`::
+	* Because the rendering is decoupled from the data storage this way, the TypoScript object can be
+	  instantiated directly, manually setting a `videoUrl`::
 
 		page.body.parts.teaserVideo = My.Package:YouTube {
 		  videoUrl = 'http://youtube.com/.....'
 		}
 
-	* If a property needs to be modified *just slightly*, we can use a *processor* for declaratively
-	  modifying this property in TypoScript; not even touching the Fluid template. This is helpful for
-	  smaller adjustments to foreign packages.
+	* If a property needs to be modified *just slightly*, a *processor* can be used for declarative
+	  modification of this property in TypoScript; not even touching the Fluid template. This is helpful
+	  for smaller adjustments to foreign packages.
 
-The only thing to be aware of inside the Fluid templates is the proper wrapping of the whole content
-element with the `<neos:contentElement>` ViewHelper, which is needed to make the content element
-selectable inside the Neos backend.
+Creating Editable Content Elements
+==================================
 
-.. TODO: we could use a processor instead of <neos:contentElement>. Is that better or not?
-.. TODO: processor ordering: maybe we can also use @position syntax here?? Is it consistent with ordering in TypoScript Collections?
+The simple content element created in `Creating a Simple Content Element`_ exposes the video URL
+only through the property inspector in the editing interface. Since the URL is not directly visible
+this is the only viable way.
 
-.. TODO: naming of the above neos:contentElement viewhelper. ContentElement vs ContentObject (in TYPO3CR Content Type definition) <-- naming
+In case of content that is directly visible in the output, inline editing can be enabled by slight
+adjustments to the process already explained.
 
-Creating Nested Content Types
-=============================
+The node type definition must define which properties are inline editable through setting the
+`inlineEditable` property::
 
-In case you want to create content types which do not only contain simple properties, but arbitrary
-sub-nodes, the process is roughly as above. To demonstrate this, we will create a `Video Grid` content
-element which can contain two texts and two videos, and layouts them next to each other.
+	'Acme.Demo:Quote':
+	  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+	  ui:
+	    group: 'General'
+	    label: 'Quote'
+	  properties:
+	    quote:
+	      type: string
+	      defaultValue: 'Use the force, Luke!'
+	      ui:
+	        label: 'Quote'
+	        inlineEditable: TRUE
 
-#. First, we create a TYPO3CR Content Type definition. Especially helpful is the `structure` option
-   in the schema, as it allows to create sub-nodes on object creation. In our example below, we will
-   directly create the two video and text elements on object creation::
+The TypoScript for the content element is the same as for a non-inline-editable content
+element::
 
-	TYPO3:
-	  TYPO3CR:
-	    contentTypes:
-	      'My.Package:VideoGrid':
-	        superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
-	        group: 'Structure'
-	        label: 'Video Grid'
-	        structure:
-	          video0:
-	            type: 'My.Package:Video'
-	          video1:
-	            type: 'My.Package:Video'
-	          text0:
-	            type: 'Text'
-	          text1:
-	            type: 'Text'
-
-#. Second, we create the TypoScript as needed::
-
-	prototype(My.Package:VideoGrid) < prototype(Template) {
-	  templatePath = 'resource://My.Package/Private/Templates/VideoGrid.html'
-
-	  videoRenderer = My.Package:YouTube
-
-	  textRenderer = Text
-
-	  video0 = ${q(node).children('video0')}
-	  video1 = ${q(node).children('video1')}
-	  text0 = ${q(node).children('text0')}
-	  text1 = ${q(node).children('text1')}
+	prototype(Acme.Demo:Quote) < prototype(TYPO3.TypoScript:Template) {
+		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/Quote.html'
+		quote = ${q(node).property('quote')}
 	}
 
-   Instead of using Eel and FlowQuery to assign variables to the Fluid template, we're now *instanciating
-   additional TypoScript objects* responsible for the YouTube and the Text rendering. Furthermore, we pass
-   the video and text-nodes to the Fluid template.
+The Fluid template again needs some small adjustment in form of the `contentElement.editable`
+ViewHelper to declare the property that is editable. This may seem like duplication, since the
+node type already declares the editable properties. But since in a template multiple editable
+properties might be used, this still is needed.
 
-#. Third, we create the Fluid template. However, instead of outputting the contents directly using
-   object accessors, we'll again use the `<ts:renderTypoScript>` ViewHelper to defer rendering to
-   TypoScript again, and passing the needed TYPO3CR Node as context to TypoScript::
+::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace n=TYPO3\Neos\ViewHelpers}
+	<n:contentElement node="{node}">
+		<blockquote>
+			<n:contentElement.editable property="quote">{quote -> f:format.raw()}</n:contentElement.editable>
+		</blockquote>
+	</n:contentElement>
+
+The ``blockquote`` is wrapped around the `contentElement.editable` and not the other way because that would
+mean the blockquote becomes a part of the editable content, which is not desired in this case.
+
+Using the `tag` attribute to make the ViewHelper use the ``blockquote`` tag needed for the element
+avoids the nesting in an additional container `div` and thus cleans up the generated markup::
+
+	{namespace n=TYPO3\Neos\ViewHelpers}
+	<n:contentElement node="{node}">
+		<n:contentElement.editable property="quote" tag="blockquote">{quote -> f:format.raw()}</n:contentElement.editable>
+	</n:contentElement>
+
+A property can be inline editable *and* appear in the property inspector if configured accordingly. In
+such a case `reloadIfChanged` should be enabled to make changes in the property editor visible in the
+content area.
+
+Creating Nested Content Elements
+================================
+
+In case content elements do not only contain simple properties, but arbitrary sub-elements, the process
+again is roughly the same. To demonstrate this, a `Video Grid` content element will be created, which
+can contain two texts and two videos.
+
+#. A TYPO3CR Node Type definition is created. It makes use of the `childNodes` property to define
+   (and automatically create) sub-nodes when a node of this type is created. In the example the two
+   video and text elements will be created directly upon element creation::
+
+	'Acme.Demo:VideoGrid':
+	  superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
+	  ui:
+	    group: 'Structure'
+	    label: 'Video Grid'
+	  childNodes:
+	    video0:
+	      type: 'Acme.Demo:YouTube'
+	    video1:
+	      type: 'Acme.Demo:YouTube'
+	    text0:
+	      type: 'TYPO3.Neos.NodeTypes:Text'
+	    text1:
+	      type: 'TYPO3.Neos.NodeTypes:Text'
+
+#. The needed TypoScript is created::
+
+	prototype(Acme.Demo:VideoGrid) < prototype(TYPO3.TypoScript:Template) {
+		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/VideoGrid.html'
+
+		videoRenderer = Acme.Demo:YouTube
+		textRenderer = TYPO3.Neos.NodeTypes:Text
+
+		video0 = ${q(node).children('video0').get(0)}
+		video1 = ${q(node).children('video1').get(0)}
+
+		text0 = ${q(node).children('text0').get(0)}
+		text1 = ${q(node).children('text1').get(0)}
+	}
+
+   Instead of assigning variables to the Fluid template, *additional TypoScript objects* responsible
+   for the video and the text rendering are instantiated. Furthermore, the video and text nodes
+   are fetched using Eel and then passed to the Fluid template.
+
+#. The Fluid template is created. Instead of outputting the content directly using object access
+   on the passed nodes, the `<ts:renderTypoScript>` ViewHelper is used to defer rendering to
+   TypoScript again. The needed TYPO3CR Node is passed as context to TypoScript::
+
+	{namespace n=TYPO3\Neos\ViewHelpers}
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
-	<neos:contentElement node="{node}">
-	  <ts:renderTypoScript path="videoRenderer" context="{node: video0}" />
-	  <ts:renderTypoScript path="textRenderer" context="{node: text0}" />
+	<n:contentElement node="{node}">
+		<ts:renderTypoScript path="videoRenderer" context="{node: video0}" />
+		<ts:renderTypoScript path="textRenderer" context="{node: text0}" />
 
-	  <br />
+		<br />
 
-	  <ts:renderTypoScript path="videoRenderer" context="{node: video1}" />
-	  <ts:renderTypoScript path="videoRenderer" context="{node: text1}" />
-	</neos:contentElement>
+		<ts:renderTypoScript path="videoRenderer" context="{node: video1}" />
+		<ts:renderTypoScript path="textRenderer" context="{node: text1}" />
+	</n:contentElement>
 
-Instead of referencing specific content types directly as in the above example, it is often helpful
-to reference a generic `Section` content element instead: This allows to insert *arbitrary content*
-inside!
+Instead of referencing specific content types directly the use of the generic `Section` content
+element allows to insert *arbitrary content* inside other elements. An exmaple can be found in the
+`TYPO3.Neos.NodeTypes:MultiColumn` and `TYPO3.Neos.NodeTypes:MultiColumnItem` content elements.
 
-.. TODO: how can we add constraints on what types of contents are allowed inside sections?
-
-.. TODO: shouldn't the "Image" TypoScript object have an additional property "maxWidth" and/or "maxHeight"
-.. such that we can adjust the max width/height inside a given context directly?
-
-Now, you might wonder about the benefits of the above rendering definition, as it might seem overly
-complex for simple applications. The key benefit of the above architecture is its *composability*,
-so one can re-use other TypoScript objects for rendering. Furthermore, the above architecture allows
-to declaratively *adjust rendering* depending on constraints, which we will explain in the next section.
-
-
-Processors
-==========
-
-TODO: PROCESSORS ERKLÄREN
-
-
-Advanced Rendering Adjustments
-==============================
-
-Let's say we want to adjust our `YouTube` content element depending on the context: By default,
-it renders in a standard YouTube video size; but when being used inside the sidebar of the page,
-it should shrink to a width of 200 pixels. This is possible through *nested prototypes*::
-
-	page.body.sections.sidebar.prototype(My.Package:YouTube) {
-	  width = '200'
-	  height = '150'
-	}
-
-Essentially the above code can be read as: "For all YouTube elements inside the sidebar of the page,
-set width and height".
-
-Let's say we also want to adjust the size of the YouTube video when being used in a `ThreeColumn`
-element. This time, we cannot make any assumptions about a fixed TypoScript path being rendered,
-because the `ThreeColumn` element can appear both in the main column, in the sidebar and nested
-inside itself. However, we are able to *nest prototypes into each other*::
-
-	prototype(ThreeColumn).prototype(My.Package:YouTube) {
-	  width = '200'
-	  height = '150'
-	}
-
-This essentially means: "For all YouTube elements which are inside ThreeColumn elements, set width
-and height".
-
-The two possibilities above can also be flexibly combined. Basically this composability allows to
-adjust the rendering of websites and web applications very easily, without overriding templates completely.
-
-After you have now had a head-first start into TypoScript based on practical examples, it is now
-time to step back a bit, and explain the internals of TypoScript and why it has been built this way.
+As explained earlier (in `What are the benefits of indirection through TypoScript?`_) the major benefit
+if using TypoScript to decouple the rendering of items this way is flexibility. In the video grid
+it shows how this enables *composability*, other TypoScript objects can be re-used for rendering
+smaller parts of the element.

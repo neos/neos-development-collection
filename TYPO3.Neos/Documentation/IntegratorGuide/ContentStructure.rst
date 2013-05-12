@@ -55,6 +55,8 @@ a `Section`, there could be another three-column element which again contains
 	and TemplaVoila and implements it in a consistent manner, where we do not
 	have to distinguish between pages and other content.
 
+.. _node-type-definition:
+
 Node Type Definition
 ====================
 
