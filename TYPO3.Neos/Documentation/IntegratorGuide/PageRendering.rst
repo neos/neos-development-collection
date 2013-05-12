@@ -130,71 +130,8 @@ chosen freely. In the example `sections` is used for anything that content is la
 placed in but `parts` is for anything that is not *content* in the sense that it
 will directly be edited in the content module of Neos.
 
-Adjusting Menu Rendering
-========================
+Further Reading
+===============
 
-Out of the box the `Menu` is rendered using a simple unsorted list. Using TypoScript
-it is possible to change the rendered markup of `Menu`. Knowing how the `Menu` object
-works internally helps with this and gives insight into all other TypoScripts objects
-as well.
-
-By specifying `page.body.parts.menu = Menu`, a `Menu` TypoScript object is
-*instantiated*  at the TypoScript path `page.body.parts.menu`. `Menu` is defined
-inside the core of TYPO3 Neos together with TYPO3 Neos.NodeTypes:
-
-*TYPO3.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.ts2*
-
-::
-
-	prototype(TYPO3.Neos:Menu).@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
-
-*TYPO3.Neos.NodeTypes/Resources/Private/TypoScript/Root.ts2*
-
-::
-
-	prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu)
-	prototype(TYPO3.Neos.NodeTypes:Menu) {
-		templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
-		entryLevel = ${q(node).property('startLevel')}
-		entryLevel << 1.toInteger()
-		maximumLevels = ${q(node).property('maximumLevels')}
-		maximumLevels << 1.toInteger()
-		node = ${node}
-	}
-
-The above code defines the *prototype* of `Menu` with the `prototype(Menu)` syntax.
-This prototype is the "blueprint" of all `Menu` objects which are instantiated.
-All properties which are defined on the prototype (such as `@class` or `templatePath`)
-are automatically active on all `Menu` *instances*, if they are not explicitly overridden.
-
-One way to adjust the menu rendering is to override the `templatePath` property, which
-points to a Fluid template. To achieve that, we have two possibilities.
-
-First, the `templatePath` for the menu at `page.body.parts.menu` can be set::
-
-	page.body.parts.menu.templatePath = 'resource://My.Package/Private/Templates/MyMenuTemplate.html'
-
-This overrides the `templatePath` which was defined in `prototype(Menu)` for
-this single menu.
-
-Second, the `templatePath` inside the prototype of `Menu` itself can be changed::
-
-	prototype(Menu).templatePath = 'resource://My.Package/Private/Templates/MyMenuTemplate.html'
-
-In this case, the changed template path is used for *all menus* which do not override
-the `templatePath` explicitly. Every time `prototype(...)` is used, this can be
-understood as: "For *all* objects of type ..., define *something*"
-
-After setting the path, changing the menu is simply a job of copying the default
-`Menu` template into `MyMenuTemplate.html` and adjusting the markup as needed.
-
-Adjusting Content Element Rendering
-===================================
-
-The rendering of content elements follows the same principle as shown for the `Menu`.
-The default TypoScript is defined in the Neos.NodeTypes package and the content elements
-all have default Fluid templates.
-
-Combined with the possibility to define custom templates per instance or on the prototype
-level, this already provides a lot of flexibility. Another possibility is to inherit from
-the existing TypoScript and adjust as needed using TypoScript.
+Details on how TypoScript works and can be used can be found in the section :ref:`inside-typoscript`.
+:ref:`adjusting-output` shows how page, menu and content markup can be adjusted freely.

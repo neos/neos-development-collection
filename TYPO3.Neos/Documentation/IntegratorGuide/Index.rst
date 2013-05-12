@@ -15,5 +15,6 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	PageRendering
 	InsideTypoScript
 	EelFlowQuery
+	AdjustingOutput
 	CustomContentElements
 	CreatingAPlugin
