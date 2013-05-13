@@ -63,7 +63,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		valueBinding: 'content.value',
 		selectedBinding: 'content.selected',
 
-		template: Ember.Handlebars.compile('{{content.label}}')
+		template: Ember.Handlebars.compile('{{view.content.label}}')
 	});
 
 	T3.Content.UI.Editor.Selectbox = Ember.CollectionView.extend({
@@ -82,7 +82,8 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		values: [],
 
 		options: function() {
-			var options = [], currentValue = this.get('value');
+			var options = [],
+				currentValue = this.get('value');
 
 			if (this.get('allowEmpty')) {
 				options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
@@ -98,7 +99,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 		onItemsChange: function() {
 			// Special event for chosen
-			this.$().trigger("liszt:updated");
+			this.$().trigger('liszt:updated');
 		}.observes('values'),
 
 		didInsertElement: function() {
