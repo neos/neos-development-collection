@@ -51,7 +51,7 @@ class UserFactory {
 		$user->getPreferences()->set('context.workspace', $workspaceName);
 
 		if ($roleIdentifiers === NULL || $roleIdentifiers === array()) {
-			$roleIdentifiers = array('Editor');
+			$roleIdentifiers = array('TYPO3.Neos:Editor');
 		}
 
 		$account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, 'Typo3BackendProvider');

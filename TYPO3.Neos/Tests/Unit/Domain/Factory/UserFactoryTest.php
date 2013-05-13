@@ -43,7 +43,7 @@ class UserFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$factory = new \TYPO3\Neos\Domain\Factory\UserFactory();
 		$this->inject($factory, 'accountFactory', $mockAccountFactory);
 
-		$mockAccountFactory->expects($this->atLeastOnce())->method('createAccountWithPassword')->with('username', 'password', array('Editor'), 'Typo3BackendProvider')->will($this->returnValue($mockAccount));
+		$mockAccountFactory->expects($this->atLeastOnce())->method('createAccountWithPassword')->with('username', 'password', array('TYPO3.Neos:Editor'), 'Typo3BackendProvider')->will($this->returnValue($mockAccount));
 
 		$user = $factory->create('username', 'password', 'John', 'Doe');
 	}
