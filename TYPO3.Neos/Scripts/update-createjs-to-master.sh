@@ -26,14 +26,13 @@ rm -rf create/deps/vie-min.js
 echo "Build create"
 cd create
 npm install
-cake build
-cake min
+grunt build
 cd ../
 
 echo "Move built files to Library folder"
 rm -rf ../Resources/Public/Library/createjs/
 mkdir ../Resources/Public/Library/createjs/
 mv create/examples/create.js ../Resources/Public/Library/createjs/
-mv create/examples/create-min.js ../Resources/Public/Library/createjs/
+mv create/examples/create.min.js ../Resources/Public/Library/createjs/
 mv create/deps ../Resources/Public/Library/createjs/
 echo "Done"
