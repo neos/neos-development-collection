@@ -85,6 +85,11 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	protected $items;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 */
+	protected $startingPoint;
+
+	/**
 	 * @param integer $entryLevel
 	 * @return void
 	 */
@@ -141,6 +146,21 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $startingPoint
+	 * @return void
+	 */
+	public function setStartingPoint($startingPoint) {
+		$this->startingPoint = $startingPoint;
+	}
+
+	/**
+	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 */
+	public function getStartingPoint() {
+		return $this->tsValue('startingPoint');
+	}
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @return string
@@ -157,7 +177,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 */
 	public function getItems() {
 		if ($this->items === NULL) {
-			$this->items = $this->buildItems($this->nodeRepository->getContext());
+			$this->items = $this->buildItems();
 		}
 		return $this->items;
 	}
@@ -166,17 +186,18 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * Builds the array of menu items containing those items which match the
 	 * configuration set for this Menu object.
 	 *
-	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
 	 * @return array An array of menu items and further information
 	 */
-	protected function buildItems(\TYPO3\Neos\Domain\Service\ContentContext $contentContext) {
-		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $contentContext);
+	protected function buildItems() {
+		$startingPoint = $this->getStartingPoint() ?: $this->nodeRepository->getContext()->getCurrentNode();
+
+		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $this->nodeRepository->getContext()->getCurrentSiteNode(), $startingPoint);
 		if ($entryParentNode === NULL) {
 			return array();
 		}
-		$lastParentNode = ($this->getLastLevel() !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->getLastLevel(), $contentContext) : NULL;
+		$lastParentNode = ($this->getLastLevel() !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->getLastLevel(), $this->nodeRepository->getContext()->getCurrentSiteNode(), $this->nodeRepository->getContext()->getCurrentNode()) : NULL;
 
-		return $this->buildRecursiveItemsArray($entryParentNode, $lastParentNode, $contentContext);
+		return $this->buildRecursiveItemsArray($entryParentNode, $lastParentNode);
 	}
 
 	/**
@@ -184,12 +205,11 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode The parent node whose children should be listed as items
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
-	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext $contentContext The current content context
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
 	 * @see buildItems()
 	 */
-	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode, $lastParentNode, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
+	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode, $lastParentNode, $currentLevel = 1) {
 		$items = array();
 		foreach ($entryParentNode->getChildNodes('TYPO3.Neos.NodeTypes:Page,TYPO3.Neos.NodeTypes:Shortcut') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
@@ -201,12 +221,12 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 				'node' => $currentNode,
 				'state' => self::STATE_NORMAL
 			);
-			if ($currentNode === $contentContext->getCurrentNode()) {
+			if ($currentNode === $this->nodeRepository->getContext()->getCurrentNode()) {
 				$item['state'] = self::STATE_CURRENT;
 			}
 
 			if ($currentLevel < $this->getMaximumLevels() && $entryParentNode !== $lastParentNode) {
-				$subItems = $this->buildRecursiveItemsArray($currentNode, $lastParentNode, $contentContext, $currentLevel + 1);
+				$subItems = $this->buildRecursiveItemsArray($currentNode, $lastParentNode, $currentLevel + 1);
 				if ($subItems !== array()) {
 					$item['subItems'] = $subItems;
 					if ($item['state'] !== self::STATE_CURRENT) {
@@ -229,12 +249,13 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * current node whose level matches the specified entry level.
 	 *
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
-	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The parent node of the node at the specified level or NULL if none was found
 	 */
-	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \TYPO3\Neos\Domain\Service\ContentContext $contentContext) {
+	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint) {
 		$parentNode = NULL;
-		$breadcrumbNodes = $contentContext->getNodesOnPath($contentContext->getCurrentSiteNode(), $contentContext->getCurrentNode());
+		$breadcrumbNodes = $this->nodeRepository->getContext()->getNodesOnPath($currentSiteNode, $startingPoint);
 
 		if ($givenSiteLevel > 0 && isset($breadcrumbNodes[$givenSiteLevel - 1])) {
 			$parentNode = $breadcrumbNodes[$givenSiteLevel - 1];
