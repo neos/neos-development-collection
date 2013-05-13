@@ -9,7 +9,7 @@ window.renderLoadingTrace = function() {
  */
 require(
 	{
-		baseUrl: window.neosJavascriptBasePath,
+		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 
 		paths: {
