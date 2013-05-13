@@ -17,7 +17,7 @@ cd ../
 
 echo "Build vie"
 cd vie
-ant
+grunt build
 cd ../
 
 echo "Remove files we don't use"
@@ -27,7 +27,7 @@ rm -rf vie/lib/json
 echo "Move built files to Library folder"
 rm -rf ../Resources/Public/Library/vie/
 mkdir ../Resources/Public/Library/vie/
-mv vie/dist/vie-latest.debug.js ../Resources/Public/Library/vie/
-mv vie/dist/vie-latest.js ../Resources/Public/Library/vie/
+mv vie/dist/vie.js ../Resources/Public/Library/vie/
+mv vie/dist/vie.min.js ../Resources/Public/Library/vie/
 mv vie/lib ../Resources/Public/Library/vie/
 echo "Done"

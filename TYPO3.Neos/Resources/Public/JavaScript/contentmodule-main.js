@@ -62,7 +62,7 @@ require(
 			'hallo': ['jquery-ui'],
 			'backbone': ['underscorejs'],
 			'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery'],
-			'Library/vie/vie-latest.debug': ['jquery', 'backbone'],
+			'Library/vie/vie': ['jquery', 'backbone'],
 			'halloplugins/linkplugin': ['hallo']
 		},
 		locale: 'en'
