@@ -81,7 +81,7 @@ Version 0.9.12 from 2/2/13
 CodeMirror 2.13 from http://codemirror.net/
 
 
-Chosen 0.9.8 from http://harvesthq.github.com/chosen/
+Chosen 0.9.14 from http://harvesthq.github.com/chosen/
 Only the jquery files / needed files are added (skipped coffeescript / prototype / examples)
 
 
