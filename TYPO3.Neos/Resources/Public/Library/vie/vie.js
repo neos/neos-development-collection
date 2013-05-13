@@ -1,32 +1,7 @@
-/*
-
-Copyright (c) 2011 Henri Bergius, IKS Consortium
-Copyright (c) 2011 Sebastian Germesin, IKS Consortium
-
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-*/
-
-(function(){
-//     VIE - Vienna IKS Editables
+/* VIE.js 2.1.0 - Semantic Interaction Toolkit
+by Henri Bergius and the IKS Project. Available under the MIT license.
+See http://viejs.org for more information
+*/(function () {//     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
 //     (c) 2011 Szaby Grünwald, IKS Consortium
@@ -416,8 +391,8 @@ VIE.prototype.loadSchema = function(url, options) {
          })
         .error(function(data, textStatus, jqXHR) {
             if (options.error) {
-                console.warn(data, textStatus, jqXHR);
-                options.error.call(vie, "Could not load schema from URL (" + url + ")");
+                // console.warn(data, textStatus, jqXHR);
+                options.error.call(vie, "Could not load schema from URL (" + url + "): " + textStatus);
             }
          });
     }
@@ -444,19 +419,16 @@ VIE.prototype.getTypedEntityClass = function (type) {
   if (!typeType) {
     throw new Error("Unknown type " + type);
   }
-  var TypedEntityClass = function (attrs, opts) {
-    if (!attrs) {
-      attrs = {};
-    }
-    attrs["@type"] = type;
-    this.set(attrs, opts);
-  };
-  TypedEntityClass.prototype = new this.Entity();
-  TypedEntityClass.prototype.schema = function () {
-    return VIE.Util.getFormSchemaForType(typeType);
-  };
-  return TypedEntityClass;
+  if (!this.typeEntityClasses[type.id]) {
+    this.typeEntityClasses[type.id] = this.Entity.extend({
+      defaults: {
+        '@type': type
+      }
+    });
+  }
+  return this.typeEntityClasses[type.id];
 };
+VIE.prototype.typeEntityClasses = {};
 
 // ## Running VIE on Node.js
 //
@@ -478,12 +450,13 @@ if (typeof exports === 'object') {
     }
     if (!Backbone) {
         Backbone = require('backbone');
-        Backbone.setDomLibrary(jQuery);
+        Backbone.$ = jQuery;
     }
     if (!_) {
         _ = require('underscore')._;
     }
 }
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -663,6 +636,7 @@ VIE.prototype.Findable = function (options) {
 };
 VIE.prototype.Findable.prototype = new VIE.prototype.Able();
 
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -676,6 +650,44 @@ VIE.prototype.Findable.prototype = new VIE.prototype.Able();
 // The here-listed methods are utility methods for the day-to-day
 // VIE.js usage. All methods are within the static namespace ```VIE.Util```.
 VIE.Util = {
+  isReference: function(uri){
+    var matcher = new RegExp("^\\<([^\\>]*)\\>$");
+    if (matcher.exec(uri)) {
+      return true;
+    }
+    return false;
+  },
+
+  toReference: function(uri, ns) {
+    if (_.isArray(uri)) {
+      return _.map(uri, function(part) {
+       return this.toReference(part);
+      }, this);
+    }
+    if (!_.isString(uri)) {
+      return uri;
+    }
+    var ret = uri;
+    if (uri.substring(0, 2) === "_:") {
+      ret = uri;
+    } else if (ns && ns.isCurie(uri)) {
+      ret = ns.uri(uri);
+      if (ret === "<" + ns.base() + uri + ">") {
+        // no base namespace extension with IDs
+        ret = '<' + uri + '>';
+      }
+    } else if (ns && !ns.isUri(uri)) {
+      ret = '<' + uri + '>';
+    }
+    return ret;
+  },
+
+  fromReference: function(uri, ns) {
+    if (ns && !ns.isUri(uri)) {
+      return uri;
+    }
+    return uri.substring(1, uri.length - 1);
+  },
 
 // ### VIE.Util.toCurie(uri, safe, namespaces)
 // This method converts a given
@@ -858,6 +870,7 @@ VIE.Util = {
             /* fallback if no rdfQuery has been loaded */
             return VIE.Util._rdf2EntitiesNoRdfQuery(service, results);
         }
+        var entities = {};
         try {
             var rdf = (results instanceof jQuery.rdf)?
                     results.base(service.vie.namespaces.base()) :
@@ -877,7 +890,6 @@ VIE.Util = {
                 }
                 rdf = rdf.reason(rules, 10); /* execute the rules only 10 times to avoid looping */
             }
-            var entities = {};
             rdf.where('?subject ?property ?object').each(function() {
                 var subject = this.subject.toString();
                 if (!entities[subject]) {
@@ -932,18 +944,20 @@ VIE.Util = {
                     }
                 });
             });
-
-            var vieEntities = [];
-            jQuery.each(entities, function() {
-                var entityInstance = new service.vie.Entity(this);
-                entityInstance = service.vie.entities.addOrUpdate(entityInstance);
-                vieEntities.push(entityInstance);
-            });
-            return vieEntities;
         } catch (e) {
-            console.warn("Something went wrong while parsing the returned results!", e);
+            // console.warn("Something went wrong while parsing the returned results!", e);
             return [];
         }
+        var vieEntities = [];
+        jQuery.each(entities, function() {
+            try {
+                var entityInstance = new service.vie.Entity(this);
+                vieEntities.push(entityInstance);
+            } catch (e) {
+                // console.warn("Something went wrong while creating VIE entities out of the returned results!", e, this, entityInstance);
+            }
+        });
+        return vieEntities;
     },
 
     /*
@@ -952,13 +966,13 @@ VIE.Util = {
     a score. It returns the value with the best score.
     */
     getPreferredLangForPreferredProperty: function(entity, preferredFields, preferredLanguages) {
-      var l, labelArr, lang, p, property, resArr, valueArr, _len, _len2,
+      var labelArr, lang, property, resArr, valueArr, _len, _len2,
         _this = this;
       resArr = [];
       /* Try to find a label in the preferred language
       */
-      _.each(preferredLanguages, function (lang) {
-        _.each(preferredFields, function (property) {
+      _.each(preferredLanguages, function (lang, l) {
+        _.each(preferredFields, function (property, p) {
           labelArr = null;
           /* property can be a string e.g. "skos:prefLabel"
           */
@@ -970,8 +984,8 @@ VIE.Util = {
               best candidate with the first preferred language
               and first preferred property
               */
-              var labelLang, score, value;
-              score = p;
+              var labelLang, value, p, score, l;
+              score = p = l = 0;
               labelLang = label["@language"];
               /*
                                       legacy code for compatibility with uotdated stanbol,
@@ -1589,6 +1603,7 @@ VIE.Util = {
         return additionalRules;
     }
 };
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -1615,552 +1630,517 @@ VIE.Util = {
 // the type 'owl:Thing'. Read more about Types in <a href="Type.html">VIE.Type</a>.
 // * `@context` stores namespace definitions used in the entity. Read more about
 // Namespaces in <a href="Namespace.html">VIE Namespaces</a>.
-VIE.prototype.Entity = function(attrs, opts) {
+VIE.prototype.Entity = Backbone.Model.extend({
+  idAttribute: '@subject',
+  isEntity: true,
 
-    attrs = (attrs)? attrs : {};
-    opts = (opts)? opts : {};
+  defaults: {
+    '@type': 'owl:Thing'
+  },
 
-    var self = this;
-
-    if (attrs['@type'] !== undefined) {
-        attrs['@type'] = (_.isArray(attrs['@type']))? attrs['@type'] : [ attrs['@type'] ];
-        attrs['@type'] = _.map(attrs['@type'], function(val){
-            if (!self.vie.types.get(val)) {
-                //if there is no such type -> add it and let it inherit from "owl:Thing"
-                self.vie.types.add(val).inherit("owl:Thing");
-            }
-            return self.vie.types.get(val).id;
-        });
-        attrs['@type'] = (attrs['@type'].length === 1)? attrs['@type'][0] : attrs['@type'];
+  initialize: function(attributes, options) {
+    if (!attributes) {
+      attributes = {};
+    }
+    if (!options) {
+      options = {};
+    }
+    if (attributes['@subject']) {
+      this.id = this['@subject'] = this.toReference(attributes['@subject']);
     } else {
-        // provide "owl:Thing" as the default type if none was given
-        attrs['@type'] = self.vie.types.get("owl:Thing").id;
+      this.id = this['@subject'] = attributes['@subject'] = this.cid.replace('c', '_:bnode');
+    }
+    return this;
+  },
+
+  schema: function() {
+    return VIE.Util.getFormSchema(this);
+  },
+
+  // ### Getter, Has, Setter
+  // #### `.get(attr)`
+  // To be able to communicate to a VIE Entity you can use a simple get(property)
+  // command as in `entity.get('rdfs:label')` which will give you one or more literals.
+  // If the property points to a collection, its entities can be browsed further.
+  get: function (attr) {
+    attr = VIE.Util.mapAttributeNS(attr, this.vie.namespaces);
+    var value = Backbone.Model.prototype.get.call(this, attr);
+
+    value = (_.isArray(value)) ? value : [ value ];
+    if (value.length === 0) {
+      return undefined;
     }
 
-    //the following provides full seamless namespace support
-    //for attributes. It should not matter, if you
-    //query for `model.get('name')` or `model.get('foaf:name')`
-    //or even `model.get('http://xmlns.com/foaf/0.1/name');`
-    //However, if we just overwrite `set()` and `get()`, this
-    //raises a lot of side effects, so we need to expand
-    //the attributes before we create the model.
-    _.each (attrs, function (value, key) {
-        var newKey = VIE.Util.mapAttributeNS(key, this.namespaces);
-        if (key !== newKey) {
-            delete attrs[key];
-            attrs[newKey] = value;
+    // Handle value conversions
+    value = _.map(value, function(v) {
+      if (v !== undefined && attr === '@type') {
+        // Reference to a type. Return actual type instance
+        if (!this.vie.types.get(v)) {
+          // if there is no such type -> add it and let it inherit from 
+          // "owl:Thing"
+          this.vie.types.add(v).inherit("owl:Thing");
         }
-    }, self.vie);
 
-    var Model = Backbone.Model.extend({
-        idAttribute: '@subject',
+        return this.vie.types.get(v);
+      } else if (v !== undefined && this.vie.entities.get(v)) {
+        // Reference to another entity
+        return this.vie.entities.get(v);
+      } else {
+        // Literal value, return as-is
+        return v;
+      }
+    }, this);
 
-        initialize: function(attributes, options) {
-            if (attributes['@subject']) {
-                this.id = this['@subject'] = this.toReference(attributes['@subject']);
-            } else {
-                this.id = this['@subject'] = attributes['@subject'] = this.cid.replace('c', '_:bnode');
-            }
-            return this;
-        },
+    // if there is only one element, just return that one
+    value = (value.length === 1)? value[0] : value;
+    return value;
+  },
 
-        schema: function() {
-          return VIE.Util.getFormSchema(this);
-        },
+  // #### `.has(attr)`
+  // Sometimes you'd like to determine if a specific attribute is set
+  // in an entity. For this reason you can call for example `person.has('friend')`
+  // to determine if a person entity has friends.
+  has: function(attr) {
+    attr = VIE.Util.mapAttributeNS(attr, this.vie.namespaces);
+    return Backbone.Model.prototype.has.call(this, attr);
+  },
 
-        // ### Getter, Has, Setter
-        // #### `.get(attr)`
-        // To be able to communicate to a VIE Entity you can use a simple get(property)
-        // command as in `entity.get('rdfs:label')` which will give you one or more literals.
-        // If the property points to a collection, its entities can be browsed further.
-        get: function (attr) {
-            attr = VIE.Util.mapAttributeNS(attr, self.vie.namespaces);
-            var value = Backbone.Model.prototype.get.call(this, attr);
-            value = (_.isArray(value))? value : [ value ];
+  hasRelations: function() {
+    var found = false;
+    _.each(this.attributes, function (value) {
+      if (value && value.isCollection) {
+        found = true;
+      }
+    });
+    return found;
+  },
 
-            value = _.map(value, function(v) {
-                if (v !== undefined && attr === '@type' && self.vie.types.get(v)) {
-                    return self.vie.types.get(v);
-                } else if (v !== undefined && self.vie.entities.get(v)) {
-                    return self.vie.entities.get(v);
-                } else {
-                    return v;
-                }
-            }, this);
-            if(value.length === 0) {
-                return undefined;
-            }
-            // if there is only one element, just return that one
-            value = (value.length === 1)? value[0] : value;
-            return value;
-        },
+  // #### `.set(attrName, value, opts)`,
+  // The `options` parameter always refers to a `Backbone.Model.set` `options` object.
+  //
+  // **`.set(attributes, options)`** is the most universal way of calling the
+  // `.set` method. In this case the `attributes` object is a map of all
+  // attributes to be changed.
+  set: function(attrs, options, opts) {
+    if (!attrs) {
+      return this;
+    }
 
-        // #### `.has(attr)`
-        // Sometimes you'd like to determine if a specific attribute is set
-        // in an entity. For this reason you can call for example `person.has('friend')`
-        // to determine if a person entity has friends.
-        has: function(attr) {
-            attr = VIE.Util.mapAttributeNS(attr, self.vie.namespaces);
-            return Backbone.Model.prototype.has.call(this, attr);
-        },
+    if (attrs['@subject']) {
+      attrs['@subject'] = this.toReference(attrs['@subject']);
+    }
 
-        // #### `.set(attrName, value, opts)`,
-        // The `options` parameter always refers to a `Backbone.Model.set` `options` object.
-        //
-        // **`.set(attributes, options)`** is the most universal way of calling the
-        // `.set` method. In this case the `attributes` object is a map of all
-        // attributes to be changed.
-        set : function(attrs, options, opts) {
-            if (!attrs) {
-                return this;
-            }
+    // Use **`.set(attrName, value, options)`** for setting or changing exactly one
+    // entity attribute.
+    if (_.isString(attrs)) {
+      var obj = {};
+      obj[attrs] = options;
+      return this.set(obj, opts);
+    }
 
-            if (attrs['@subject']) {
-                attrs['@subject'] = this.toReference(attrs['@subject']);
-            }
+    // VIE's type system is more strict than default Backbone. Unless validation is
+    // explicitly disabled, we should always validate on set
+    if (!options) {
+      options = {};
+    }
+    if (options.validate !== false && options.silent !== true) {
+      options.validate = true;
+    }
 
-            // Use **`.set(attrName, value, options)`** for setting or changing exactly one
-            // entity attribute.
-            if (typeof attrs === "string") {
-                var obj = {};
-                obj[attrs] = options;
-                return this.set(obj, opts);
-            }
-            // **`.set(entity)`**: In case you'd pass a VIE entity,
-            // the passed entities attributes are being set for the entity.
-            if (attrs.attributes) {
-                attrs = attrs.attributes;
-            }
-            var self = this;
-            var coll;
-            // resolve shortened URIs like rdfs:label..
-            _.each (attrs, function (value, key) {
-                var newKey = VIE.Util.mapAttributeNS(key, self.vie.namespaces);
-                if (key !== newKey) {
-                    delete attrs[key];
-                    attrs[newKey] = value;
-                }
-            }, this);
-            // Finally iterate through the *attributes* to be set and prepare
-            // them for the Backbone.Model.set method.
-            _.each (attrs, function (value, key) {
-               if (!value) { return; }
-               if (key.indexOf('@') === -1) {
-                   if (value.isCollection) {
-                       // ignore
-                       value.each(function (child) {
-                           self.vie.entities.addOrUpdate(child);
-                       });
-                   } else if (value.isEntity) {
-                       self.vie.entities.addOrUpdate(value);
-                       coll = new self.vie.Collection(value, {
-                         vie: self.vie,
-                         predicate: key
-                       });
-                       attrs[key] = coll;
-                   } else if (_.isArray(value)) {
-                       if (this.attributes[key] && this.attributes[key].isCollection) {
-                         var newEntities = this.attributes[key].addOrUpdate(value);
-                         attrs[key] = this.attributes[key];
-                         attrs[key].reset(newEntities);
-                       }
-                   } else if (value["@value"]) {
-                       // The value is a literal object, ignore
-                   } else if (_.isObject(value) && !_.isDate(value)) {
-                       // The value is another VIE Entity
-                       var child = new self.vie.Entity(value, options);
-                       // which is being stored in `v.entities`
-                       self.vie.entities.addOrUpdate(child);
-                       // and set as VIE Collection attribute on the original entity
-                       coll = new self.vie.Collection(value, {
-                         vie: self.vie,
-                         predicate: key
-                       });
-                       attrs[key] = coll;
-                   } else {
-                       // ignore
-                   }
-               }
-            }, this);
-            var ret = Backbone.Model.prototype.set.call(this, attrs, options);
-            if (options && options.ignoreChanges) {
-                this.changed = {};
-                this._previousAttributes = _.clone(this.attributes);
-            }
-            return ret;
-        },
+    // **`.set(entity)`**: In case you'd pass a VIE entity,
+    // the passed entities attributes are being set for the entity.
+    if (attrs.attributes) {
+      attrs = attrs.attributes;
+    }
+    var coll;
+    // resolve shortened URIs like rdfs:label..
+    _.each (attrs, function (value, key) {
+      var newKey = VIE.Util.mapAttributeNS(key, this.vie.namespaces);
+      if (key !== newKey) {
+        delete attrs[key];
+        attrs[newKey] = value;
+      }
+    }, this);
 
-        // **`.unset(attr, opts)` ** removes an attribute from the entity.
-        unset: function (attr, opts) {
-            attr = VIE.Util.mapAttributeNS(attr, self.vie.namespaces);
-            return Backbone.Model.prototype.unset.call(this, attr, opts);
-        },
+    // Finally iterate through the *attributes* to be set and prepare
+    // them for the Backbone.Model.set method.
+    _.each (attrs, function (value, key) {
+      if (!value) { return; }
+      if (key.indexOf('@') === -1) {
+        if (value.isCollection) {
+          // ignore
+          value.each(function (child) {
+            this.vie.entities.addOrUpdate(child);
+          }, this);
+        } else if (value.isEntity) {
+          this.vie.entities.addOrUpdate(value);
+          coll = new this.vie.Collection(value, {
+            vie: this.vie,
+            predicate: key
+          });
+          attrs[key] = coll;
+        } else if (_.isArray(value)) {
+          if (this.attributes[key] && this.attributes[key].isCollection) {
+            var newEntities = this.attributes[key].addOrUpdate(value);
+            attrs[key] = this.attributes[key];
+            attrs[key].reset(newEntities);
+          }
+        } else if (value["@value"]) {
+          // The value is a literal object, ignore
+        } else if (_.isObject(value) && !_.isDate(value)) {
+          // The value is another VIE Entity
+          var child = new this.vie.Entity(value, options);
+          // which is being stored in `v.entities`
+          this.vie.entities.addOrUpdate(child);
+          // and set as VIE Collection attribute on the original entity
+          coll = new this.vie.Collection(value, {
+            vie: this.vie,
+            predicate: key
+          });
+          attrs[key] = coll;
+        } else {
+          // ignore
+        }
+      }
+    }, this);
+    var ret = Backbone.Model.prototype.set.call(this, attrs, options);
+    if (options && options.ignoreChanges) {
+      // TODO: This will need to be changed to reflect now change
+      // tracking mechanisms in Backbone.js 1.0.0
+      this.changed = {};
+      this._previousAttributes = _.clone(this.attributes);
+    }
+    return ret;
+  },
 
-        // Validation based on type rules.
-        //
-        // There are two ways to skip validation for entity operations:
-        //
-        // * `options.silent = true`
-        // * `options.validate = false`
-        validate: function (attrs, opts) {
-            if (opts && opts.validate === false) {
-                return;
-            }
-            var types = this.get('@type');
-            if (_.isArray(types)) {
-                var results = [];
-                _.each(types, function (type) {
-                    var res = this.validateByType(type, attrs, opts);
-                    if (res) {
-                        results.push(res);
-                    }
-                }, this);
-                if (_.isEmpty(results)) {
-                  return;
-                }
-                return _.flatten(results);
-            }
+  // **`.unset(attr, opts)` ** removes an attribute from the entity.
+  unset: function (attr, opts) {
+    attr = VIE.Util.mapAttributeNS(attr, this.vie.namespaces);
+    return Backbone.Model.prototype.unset.call(this, attr, opts);
+  },
 
-            return this.validateByType(types, attrs, opts);
-        },
+  // Validation based on type rules.
+  //
+  // There are two ways to skip validation for entity operations:
+  //
+  // * `options.silent = true`
+  // * `options.validate = false`
+  validate: function (attrs, opts) {
+    if (opts && opts.validate === false) {
+      return;
+    }
+    var types = this.get('@type');
+    if (!types) {
+      return;
+    }
+    if (_.isArray(types)) {
+      var results = [];
+      _.each(types, function (type) {
+        var res = this.validateByType(type, attrs, opts);
+        if (res) {
+          results.push(res);
+        }
+      }, this);
+      if (_.isEmpty(results)) {
+        return;
+      }
+      return _.flatten(results);
+    }
 
-        validateByType: function (type, attrs, opts) {
-            var messages = {
-              max: '<%= property %> cannot contain more than <%= num %> items',
-              min: '<%= property %> must contain at least <%= num %> items',
-              required: '<%= property %> is required'
-            };
+    return this.validateByType(types, attrs, opts);
+  },
 
-            if (!type.attributes) {
-                return;
-            }
+  validateByType: function (type, attrs, opts) {
+    var messages = {
+      max: '<%= property %> cannot contain more than <%= num %> items',
+      min: '<%= property %> must contain at least <%= num %> items',
+      required: '<%= property %> is required'
+    };
 
-            var toError = function (definition, constraint, messageValues) {
-                return {
-                    property: definition.id,
-                    constraint: constraint,
-                    message: _.template(messages[constraint], _.extend({
-                        property: definition.id
-                    }, messageValues))
-                };
-            };
+    if (!type.attributes) {
+      return;
+    }
 
-            var checkMin = function (definition, attrs) {
-                if (!attrs[definition.id] || _.isEmpty(attrs[definition.id])) {
-                    return toError(definition, 'required', {});
-                }
-            };
+    var toError = function (definition, constraint, messageValues) {
+      return {
+        property: definition.id,
+        constraint: constraint,
+        message: _.template(messages[constraint], _.extend({
+          property: definition.id
+        }, messageValues))
+      };
+    };
 
-            // Check the number of items in attr against max
-            var checkMax = function (definition, attrs) {
-                if (!attrs[definition.id]) {
-                    return;
-                }
+    var checkMin = function (definition, attrs) {
+      if (!attrs[definition.id] || _.isEmpty(attrs[definition.id])) {
+        return toError(definition, 'required', {});
+      }
+    };
 
-                if (!attrs[definition.id].isCollection && !_.isArray(attrs[definition.id])) {
-                    return;
-                }
+    // Check the number of items in attr against max
+    var checkMax = function (definition, attrs) {
+      if (!attrs || !attrs[definition.id]) {
+        return;
+      }
 
-                if (attrs[definition.id].length > definition.max) {
-                    return toError(definition, 'max', {
-                        num: definition.max
-                    });
-                }
-            };
+      if (!attrs[definition.id].isCollection && !_.isArray(attrs[definition.id])) {
+        return;
+      }
 
-            var results = [];
-            _.each(type.attributes.list(), function (definition) {
-                var res;
-                if (definition.max && definition.max != -1) {
-                    res = checkMax(definition, attrs);
-                    if (res) {
-                        results.push(res);
-                    }
-                }
+      if (attrs[definition.id].length > definition.max) {
+        return toError(definition, 'max', {
+          num: definition.max
+        });
+      }
+    };
 
-                if (definition.min && definition.min > 0) {
-                    res = checkMin(definition, attrs);
-                    if (res) {
-                        results.push(res);
-                    }
-                }
-            });
+    var results = [];
+    _.each(type.attributes.list(), function (definition) {
+      var res;
+      if (definition.max && definition.max != -1) {
+        res = checkMax(definition, attrs);
+        if (res) {
+          results.push(res);
+        }
+      }
 
-            if (_.isEmpty(results)) {
-              return;
-            }
-            return results;
-        },
-
-        isNew: function() {
-            if (this.getSubjectUri().substr(0, 7) === '_:bnode') {
-                return true;
-            }
-            return false;
-        },
-
-        hasChanged: function(attr) {
-            if (this.markedChanged) {
-                return true;
-            }
-
-            return Backbone.Model.prototype.hasChanged.call(this, attr);
-        },
-
-        // Force hasChanged to return true
-        forceChanged: function(changed) {
-            this.markedChanged = changed ? true : false;
-        },
-
-        // **`getSubject()`** is the getter for the entity identifier.
-        getSubject: function(){
-            if (typeof this.id === "undefined") {
-                this.id = this.attributes[this.idAttribute];
-            }
-            if (typeof this.id === 'string') {
-                if (this.id.substr(0, 7) === 'http://' || this.id.substr(0, 4) === 'urn:') {
-                    return this.toReference(this.id);
-                }
-                return this.id;
-            }
-            return this.cid.replace('c', '_:bnode');
-        },
-
-        // TODO describe
-        getSubjectUri: function(){
-            return this.fromReference(this.getSubject());
-        },
-
-        isReference: function(uri){
-            var matcher = new RegExp("^\\<([^\\>]*)\\>$");
-            if (matcher.exec(uri)) {
-                return true;
-            }
-            return false;
-        },
-
-        toReference: function(uri){
-            if (_.isArray(uri)) {
-              var self = this;
-              return _.map(uri, function(part) {
-                 return self.toReference(part);
-              });
-            }
-            var ns = this.vie.namespaces;
-            var ret = uri;
-            if (uri.substring(0, 2) === "_:") {
-                ret = uri;
-            }
-            else if (ns.isCurie(uri)) {
-                ret = ns.uri(uri);
-                if (ret === "<" + ns.base() + uri + ">") {
-                    /* no base namespace extension with IDs */
-                    ret = '<' + uri + '>';
-                }
-            } else if (!ns.isUri(uri)) {
-                ret = '<' + uri + '>';
-            }
-            return ret;
-        },
-
-        fromReference: function(uri){
-            var ns = this.vie.namespaces;
-            if (!ns.isUri(uri)) {
-                return uri;
-            }
-            return uri.substring(1, uri.length - 1);
-        },
-
-        as: function(encoding){
-            if (encoding === "JSON") {
-                return this.toJSON();
-            }
-            if (encoding === "JSONLD") {
-                return this.toJSONLD();
-            }
-            throw new Error("Unknown encoding " + encoding);
-        },
-
-        toJSONLD: function(){
-            var instanceLD = {};
-            var instance = this;
-            _.each(instance.attributes, function(value, name){
-                var entityValue = value; //instance.get(name);
-
-                if (value instanceof instance.vie.Collection) {
-                    entityValue = value.map(function(instance) {
-                        return instance.getSubject();
-                    });
-                }
-
-                // TODO: Handle collections separately
-                instanceLD[name] = entityValue;
-            });
-
-            instanceLD['@subject'] = instance.getSubject();
-
-            return instanceLD;
-        },
-
-        // **`.setOrAdd(arg1, arg2)`** similar to `.set(..)`, `.setOrAdd(..)` can
-        // be used for setting one or more attributes of an entity, but in
-        // this case it's a collection of values, not just one. That means, if the
-        // entity already has the attribute set, make the value to a VIE Collection
-        // and use the collection as value. The collection can contain entities
-        // or literals, but not both at the same time.
-        setOrAdd: function (arg1, arg2, option) {
-            var entity = this;
-            if (typeof arg1 === "string" && arg2) {
-                // calling entity.setOrAdd("rdfs:type", "example:Musician")
-                entity._setOrAddOne(arg1, arg2, option);
-            }
-            else
-                if (typeof arg1 === "object") {
-                    // calling entity.setOrAdd({"rdfs:type": "example:Musician", ...})
-                    _(arg1).each(function(val, key){
-                        entity._setOrAddOne(key, val, arg2);
-                    });
-                }
-            return this;
-        },
-
-
-        /* attr is always of type string */
-        /* value can be of type: string,int,double,object,VIE.Entity,VIE.Collection */
-       /*  val can be of type: undefined,string,int,double,array,VIE.Collection */
-
-        /* depending on the type of value and the type of val, different actions need to be made */
-        _setOrAddOne: function (attr, value, options) {
-            if (!attr || !value)
-                return;
-            options = (options)? options : {};
-            var v;
-
-            attr = VIE.Util.mapAttributeNS(attr, self.vie.namespaces);
-
-            if (_.isArray(value)) {
-                for (v = 0; v < value.length; v++) {
-                    this._setOrAddOne(attr, value[v], options);
-                }
-                return;
-            }
-
-            if (attr === "@type" && value instanceof self.vie.Type) {
-                value = value.id;
-            }
-
-            var obj = {};
-            var existing = Backbone.Model.prototype.get.call(this, attr);
-
-            if (!existing) {
-                obj[attr] = value;
-                this.set(obj, options);
-            } else if (existing.isCollection) {
-                if (value.isCollection) {
-                    value.each(function (model) {
-                        existing.add(model);
-                    });
-                } else if (value.isEntity) {
-                    existing.add(value);
-                } else if (typeof value === "object") {
-                    value = new this.vie.Entity(value);
-                    existing.add(value);
-                } else {
-                    throw new Error("you cannot add a literal to a collection of entities!");
-                }
-                this.trigger('change:' + attr, this, value, {});
-                this.change({});
-            } else if (_.isArray(existing)) {
-                if (value.isCollection) {
-                    for (v = 0; v < value.size(); v++) {
-                        this._setOrAddOne(attr, value.at(v).getSubject(), options);
-                    }
-                } else if (value.isEntity) {
-                    this._setOrAddOne(attr, value.getSubject(), options);
-                } else if (typeof value === "object") {
-                    value = new this.vie.Entity(value);
-                    this._setOrAddOne(attr, value, options);
-                } else {
-                    /* yes, we (have to) allow multiple equal values */
-                    existing.push(value);
-                    obj[attr] = existing;
-                    this.set(obj);
-                }
-            } else {
-                var arr = [ existing ];
-                arr.push(value);
-                obj[attr] = arr;
-                return this.set(obj, options);
-            }
-        },
-
-        // **`.hasType(type)`** determines if the entity has the explicit `type` set.
-        hasType: function(type){
-            type = self.vie.types.get(type);
-            return this.hasPropertyValue("@type", type);
-        },
-
-        // TODO describe
-        hasPropertyValue: function(property, value) {
-            var t = this.get(property);
-            if (!(value instanceof Object)) {
-                value = self.vie.entities.get(value);
-            }
-            if (t instanceof Array) {
-                return t.indexOf(value) !== -1;
-            }
-            else {
-                return t === value;
-            }
-        },
-
-        // **`.isof(type)`** determines if the entity is of `type` by explicit or implicit
-        // declaration. E.g. if Employee is a subtype of Person and e Entity has
-        // explicitly set type Employee, e.isof(Person) will evaluate to true.
-        isof: function (type) {
-            var types = this.get('@type');
-
-            if (types === undefined) {
-                return false;
-            }
-            types = (_.isArray(types))? types : [ types ];
-
-            type = (self.vie.types.get(type))? self.vie.types.get(type) : new self.vie.Type(type);
-            for (var t = 0; t < types.length; t++) {
-                if (self.vie.types.get(types[t])) {
-                    if (self.vie.types.get(types[t]).isof(type)) {
-                        return true;
-                    }
-                } else {
-                    var typeTmp = new self.vie.Type(types[t]);
-                    if (typeTmp.id === type.id) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        },
-        // TODO describe
-        addTo : function (collection, update) {
-            var self = this;
-            if (collection instanceof self.vie.Collection) {
-                if (update) {
-                    collection.addOrUpdate(self);
-                } else {
-                    collection.add(self);
-                }
-                return this;
-            }
-            throw new Error("Please provide a proper collection of type VIE.Collection as argument!");
-        },
-
-        isEntity: true,
-
-        vie: self.vie
+      if (definition.min && definition.min > 0) {
+        res = checkMin(definition, attrs);
+        if (res) {
+          results.push(res);
+        }
+      }
     });
 
-    return new Model(attrs, opts);
-};
+    if (_.isEmpty(results)) {
+      return;
+    }
+    return results;
+  },
+
+  isNew: function() {
+    if (this.getSubjectUri().substr(0, 7) === '_:bnode') {
+      return true;
+    }
+    return false;
+  },
+
+  hasChanged: function(attr) {
+    if (this.markedChanged) {
+      return true;
+    }
+
+    return Backbone.Model.prototype.hasChanged.call(this, attr);
+  },
+
+  // Force hasChanged to return true
+  forceChanged: function(changed) {
+    this.markedChanged = changed ? true : false;
+  },
+
+  // **`getSubject()`** is the getter for the entity identifier.
+  getSubject: function(){
+    if (typeof this.id === "undefined") {
+      this.id = this.attributes[this.idAttribute];
+    }
+    if (typeof this.id === 'string') {
+      if (this.id.substr(0, 7) === 'http://' || this.id.substr(0, 4) === 'urn:') {
+        return this.toReference(this.id);
+      }
+      return this.id;
+    }
+    return this.cid.replace('c', '_:bnode');
+  },
+
+  // TODO describe
+  getSubjectUri: function(){
+    return this.fromReference(this.getSubject());
+  },
+
+  isReference: function (uri) {
+    return VIE.Util.isReference(uri);
+  },
+  toReference: function (uri) {
+    return VIE.Util.toReference(uri, this.vie.namespaces);
+  },
+  fromReference: function (uri) {
+    return VIE.Util.fromReference(uri, this.vie.namespaces);
+  },
+
+  as: function(encoding){
+    if (encoding === "JSON") {
+      return this.toJSON();
+    }
+    if (encoding === "JSONLD") {
+      return this.toJSONLD();
+    }
+    throw new Error("Unknown encoding " + encoding);
+  },
+
+  toJSONLD: function(){
+    var instanceLD = {};
+    _.each(this.attributes, function(value, name){
+      var entityValue = this.get(name);
+
+      if (value instanceof this.vie.Collection) {
+        entityValue = value.map(function(instance) {
+          return instance.getSubject();
+        });
+      }
+
+      instanceLD[name] = entityValue;
+    }, this);
+
+    instanceLD['@subject'] = this.getSubject();
+
+    return instanceLD;
+  },
+
+  // **`.setOrAdd(arg1, arg2)`** similar to `.set(..)`, `.setOrAdd(..)` can
+  // be used for setting one or more attributes of an entity, but in
+  // this case it's a collection of values, not just one. That means, if the
+  // entity already has the attribute set, make the value to a VIE Collection
+  // and use the collection as value. The collection can contain entities
+  // or literals, but not both at the same time.
+  setOrAdd: function (arg1, arg2, option) {
+    if (_.isString(arg1) && arg2) {
+      // calling entity.setOrAdd("rdfs:type", "example:Musician")
+      this._setOrAddOne(arg1, arg2, option);
+    } else if (_.isObject(arg1)) {
+      // calling entity.setOrAdd({"rdfs:type": "example:Musician", ...})
+      _.each(arg1, function(val, key){
+        this._setOrAddOne(key, val, arg2);
+      }, this);
+    }
+    return this;
+  },
+
+
+  /* attr is always of type string */
+  /* value can be of type: string,int,double,object,VIE.Entity,VIE.Collection */
+  /*  val can be of type: undefined,string,int,double,array,VIE.Collection */
+
+  /* depending on the type of value and the type of val, different actions need to be made */
+  _setOrAddOne: function (attr, value, options) {
+    if (!attr || !value) {
+      return;
+    }
+    options = (options)? options : {};
+
+    attr = VIE.Util.mapAttributeNS(attr, this.vie.namespaces);
+
+    if (_.isArray(value)) {
+      _.each(value, function (v) {
+        this._setOrAddOne(attr, value[v], options);
+      }, this);
+      return;
+    }
+
+    if (attr === "@type" && value instanceof this.vie.Type) {
+      value = value.id;
+    }
+
+    var obj = {};
+    var existing = Backbone.Model.prototype.get.call(this, attr);
+
+    if (!existing) {
+      obj[attr] = value;
+      this.set(obj, options);
+    } else if (existing.isCollection) {
+      if (value.isCollection) {
+        value.each(function (model) {
+          existing.add(model);
+        });
+      } else if (value.isEntity) {
+        existing.add(value);
+      } else if (_.isObject(value)) {
+        value = new this.vie.Entity(value);
+        existing.add(value);
+      } else {
+        throw new Error("you cannot add a literal to a collection of entities!");
+      }
+      this.trigger('change:' + attr, this, value, {});
+      //this.change({});
+    } else if (_.isArray(existing)) {
+      if (value.isCollection) {
+        value.each(function (v) {
+          this._setOrAddOne(attr, value.at(v).getSubject(), options);
+        }, this);
+      } else if (value.isEntity) {
+        this._setOrAddOne(attr, value.getSubject(), options);
+      } else if (_.isObject(value)) {
+        value = new this.vie.Entity(value);
+        this._setOrAddOne(attr, value, options);
+      } else {
+        /* yes, we (have to) allow multiple equal values */
+        var newArray = existing.slice(0);
+        newArray.push(value);
+        this.set(attr, newArray);
+      }
+    } else {
+      var arr = [ existing ];
+      arr.push(value);
+      obj[attr] = arr;
+      return this.set(obj, options);
+    }
+  },
+
+  // **`.hasType(type)`** determines if the entity has the explicit `type` set.
+  hasType: function(type){
+    type = this.vie.types.get(type);
+    return this.hasPropertyValue("@type", type);
+  },
+
+  // TODO describe
+  hasPropertyValue: function(property, value) {
+    var t = this.get(property);
+    if (!_.isObject(value)) {
+      value = this.vie.entities.get(value);
+    }
+    if (_.isArray(t)) {
+      return t.indexOf(value) !== -1;
+    } else {
+      return t === value;
+    }
+  },
+
+  // **`.isof(type)`** determines if the entity is of `type` by explicit or implicit
+  // declaration. E.g. if Employee is a subtype of Person and e Entity has
+  // explicitly set type Employee, e.isof(Person) will evaluate to true.
+  isof: function (type) {
+    var types = this.get('@type');
+
+    if (types === undefined) {
+      return false;
+    }
+    types = (_.isArray(types))? types : [ types ];
+
+    type = (this.vie.types.get(type)) ? this.vie.types.get(type) : new this.vie.Type(type);
+
+    var isof = false;
+    _.each(types, function (t) {
+      if (this.vie.types.get(t).isof(type)) {
+        isof = true;
+      }
+    }, this);
+    return isof;
+  },
+
+  // TODO describe
+  addTo : function (collection, update) {
+    if (collection instanceof this.vie.Collection) {
+      if (update) {
+        collection.addOrUpdate(this);
+      } else {
+        collection.add(this);
+      }
+      return this;
+    }
+    throw new Error("Please provide a proper collection of type VIE.Collection as argument!");
+  }
+
+});
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -2193,11 +2173,14 @@ VIE.prototype.Collection = Backbone.Collection.extend({
             if (id.indexOf("bnode") === 2) {
                 //bnode!
                 id = id.replace("_:bnode", 'c');
-                return this._byCid[id];
+                return this._byId[id];
             } else {
                 return this._byId["<" + id + ">"];
             }
         } else {
+            if (this._byId[id]) {
+              return this._byId[id];
+            }
             id = this.toReference(id);
             return this._byId[id];
         }
@@ -2234,8 +2217,8 @@ VIE.prototype.Collection = Backbone.Collection.extend({
         if (model.id && this.get(model.id)) {
             existing = this.get(model.id);
         }
-        if (this.getByCid(model.cid)) {
-            existing = this.getByCid(model.cid);
+        if (this.get(model.cid)) {
+            existing = this.get(model.cid);
         }
         if (existing) {
             var newAttribs = {};
@@ -2286,30 +2269,19 @@ VIE.prototype.Collection = Backbone.Collection.extend({
         return model;
     },
 
-    isReference: function(uri){
-        var matcher = new RegExp("^\\<([^\\>]*)\\>$");
-        if (matcher.exec(uri)) {
-            return true;
-        }
-        return false;
+    isReference: function (uri) {
+        return VIE.Util.isReference(uri);
     },
-
-    toReference: function(uri){
-        if (this.isReference(uri)) {
-            return uri;
-        }
-        return '<' + uri + '>';
+    toReference: function (uri) {
+        return VIE.Util.toReference(uri, this.vie.namespaces);
     },
-
-    fromReference: function(uri){
-        if (!this.isReference(uri)) {
-            return uri;
-        }
-        return uri.substring(1, uri.length - 1);
+    fromReference: function (uri) {
+        return VIE.Util.fromReference(uri, this.vie.namespaces);
     },
 
     isCollection: true
 });
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -2323,12 +2295,6 @@ VIE.prototype.Collection = Backbone.Collection.extend({
 // Within VIE, we provide special capabilities of handling types of entites. This helps
 // for example to query easily for certain entities (e.g., you only need to query for *Person*s
 // and not for all subtypes).
-if (VIE.prototype.Type) {
-    throw new Error("ERROR: VIE.Type is already defined. Please check your installation!");
-}
-if (VIE.prototype.Types) {
-    throw new Error("ERROR: VIE.Types is already defined. Please check your installation!");
-}
 
 // ### VIE.Type(id, attrs, metadata)
 // This is the constructor of a VIE.Type.
@@ -2552,25 +2518,8 @@ VIE.prototype.Type = function (id, attrs, metadata) {
 //          "name" : "Sebastian"});
 //     console.log(sebastian.get("name")); // <-- "Sebastian"
     this.instance = function (attrs, opts) {
-        attrs = (attrs)? attrs : {};
-        opts = (opts)? opts : {};
-
-        /* turn type/attribute checking on by default! */
-        if (opts.typeChecking !== false) {
-            for (var a in attrs) {
-                if (a.indexOf('@') !== 0 && !this.attributes.get(a)) {
-                    throw new Error("Cannot create an instance of " + this.id + " as the type does not allow an attribute '" + a + "'!");
-                }
-            }
-        }
-
-        if (attrs['@type']) {
-            attrs['@type'].push(this.id);
-        } else {
-            attrs['@type'] = this.id;
-        }
-
-        return new this.vie.Entity(attrs, opts);
+      var typedClass = this.vie.getTypedEntityClass(this);
+      return new typedClass(attrs, opts);
     };
 
 // ### toString()
@@ -2717,7 +2666,6 @@ VIE.prototype.Types = function () {
             return this;
         }
         if (!t || t.subsumes("owl:Thing")) {
-            console.warn("You are not allowed to remove 'owl:Thing'.");
             return this;
         }
         delete this._types[t.id];
@@ -2811,6 +2759,7 @@ VIE.prototype.Types = function () {
         return copy;
     };
 };
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -2824,12 +2773,6 @@ VIE.prototype.Types = function () {
 // Within VIE, we provide special capabilities of handling attributes of types of entites. This
 // helps first of all to list all attributes of an entity type, but furthermore fully supports
 // inheritance of attributes from the type-class to inherit from.
-if (VIE.prototype.Attribute) {
-	throw new Error("ERROR: VIE.Attribute is already defined. Please check your VIE installation!");
-}
-if (VIE.prototype.Attributes) {
-	throw new Error("ERROR: VIE.Attributes is already defined. Please check your VIE installation!");
-}
 
 // ### VIE.Attribute(id, range, domain, minCount, maxCount, metadata)
 // This is the constructor of a VIE.Attribute.
@@ -3225,6 +3168,7 @@ VIE.prototype.Attributes = function (domain, attrs) {
         this.add(attr.id, attr.range, attr.min, attr.max, attr.metadata);
     }, this);
 };
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -3689,6 +3633,7 @@ VIE.prototype.Namespaces.prototype.uri = function (curie) {
 //     namespaces.isUri(uri);   // --> true
 //     namespaces.isUri(curie); // --> false
 VIE.prototype.Namespaces.prototype.isUri = VIE.Util.isUri;
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -3781,6 +3726,7 @@ VIE.prototype.ClassicEntityManager.prototype = {
         return;
     }
 };
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -4035,6 +3981,7 @@ VIE.prototype.DBPediaConnector.prototype = {
     }
 };
 })();
+
 
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
@@ -4314,6 +4261,7 @@ VIE.prototype.OpenCalaisConnector.prototype = {
 })();
 
 
+
 (function(){
 
     VIE.prototype.RdfaRdfQueryService = function(options) {
@@ -4406,6 +4354,7 @@ VIE.prototype.RdfaRdfQueryService.prototype = {
 };
 
 })();
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -4438,10 +4387,14 @@ VIE.prototype.RdfaService = function(options) {
         subjectSelector : "[about],[typeof],[src],html",
         predicateSelector : "[property],[rel]",
         /* default rules that are shipped with this service */
-        rules : []
+        rules : [],
+        bnodePrefix: '_a'
     };
     /* the options are merged with the default options */
     this.options = jQuery.extend(true, defaults, options ? options : {});
+
+    // Counter for bnodes created by this service instance
+    this.bnodes = 0;
 
     this.views = [];
     this.templates = {};
@@ -4643,6 +4596,11 @@ VIE.prototype.RdfaService.prototype = {
         var service = this;
         var viewInstance = this._getViewForElement(element);
         if (viewInstance) {
+            if (entity.hasRelations() && !viewInstance.collectionsChecked) {
+                // Entity has collections but these haven't been registered
+                // as views yet. This usually happens with deep relations.
+                this._registerEntityCollectionViews(entity, element, viewInstance);
+            }
             return viewInstance;
         }
 
@@ -4669,6 +4627,14 @@ VIE.prototype.RdfaService.prototype = {
           });
         }
 
+        this._registerEntityCollectionViews(entity, element, viewInstance);
+
+        return viewInstance;
+    },
+
+
+    _registerEntityCollectionViews: function (entity, element, view) {
+        var service = this;
         // Find collection elements and create collection views for them
         _.each(entity.attributes, function(value, predicate) {
             var attributeValue = entity.fromReference(entity.get(predicate));
@@ -4676,9 +4642,11 @@ VIE.prototype.RdfaService.prototype = {
                 jQuery.each(service.getElementByPredicate(predicate, element), function() {
                     service._registerCollectionView(attributeValue, jQuery(this), entity);
                 });
+                // Collections of the entity have been checked and views
+                // registered for them. This doesn't need to be done again.
+                view.collectionsChecked = true;
             }
         });
-        return viewInstance;
     },
 
     setTemplate: function (type, predicate, template) {
@@ -4775,6 +4743,9 @@ VIE.prototype.RdfaService.prototype = {
 
     // Return a template-generating function for given element
     getElementTemplate: function (element) {
+        if (_.isString(element)) {
+          element = jQuery.trim(element);
+        }
         var service = this;
         return function (entity, callback) {
             var newElement = jQuery(element).clone(false);
@@ -4817,7 +4788,7 @@ VIE.prototype.RdfaService.prototype = {
         var type;
         if (jQuery(element).attr('typeof') !== this.options.attributeExistenceComparator) {
             type = jQuery(element).attr('typeof');
-            if (type.indexOf("://") !== -1) {
+            if (type && type.indexOf("://") !== -1) {
                 return "<" + type + ">";
             } else {
                 return type;
@@ -4826,7 +4797,13 @@ VIE.prototype.RdfaService.prototype = {
         return null;
     },
 
-    getElementSubject : function(element) {
+    _generatebnodeId: function () {
+      var newId = this.options.bnodePrefix + ':' + this.bnodes;
+      this.bnodes++;
+      return newId;
+    },
+
+    getElementSubject : function(element, allowTypeOf) {
         var service = this;
         if (typeof document !== 'undefined') {
             if (element === document) {
@@ -4846,6 +4823,13 @@ VIE.prototype.RdfaService.prototype = {
                 return true;
             }
             if (jQuery(this).attr('typeof') !== service.options.attributeExistenceComparator) {
+                var typeElement = jQuery(this);
+                if (typeElement.data('vie-bnode')) {
+                  subject = typeElement.data('vie-bnode');
+                  return true;
+                }
+                subject = service._generatebnodeId();
+                typeElement.data('vie-bnode', subject);
                 return true;
             }
             // We also handle baseURL outside browser context by manually
@@ -4858,10 +4842,6 @@ VIE.prototype.RdfaService.prototype = {
         });
 
         if (!subject) {
-            if (matched === element) {
-                // Workaround for https://github.com/assaf/zombie/issues/235
-                return service.getElementSubject(jQuery(element).parent());
-            }
             return undefined;
         }
 
@@ -5025,7 +5005,7 @@ VIE.prototype.RdfaService.prototype = {
             var value = [];
             var service = this;
             jQuery(element).children(this.options.subjectSelector).each(function() {
-                value.push(service.getElementSubject(this));
+                value.push(service.getElementSubject(this, true));
             });
             return value;
         }
@@ -5100,6 +5080,7 @@ VIE.prototype.RdfaService.prototype = {
 };
 
 })();
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -5115,6 +5096,7 @@ VIE.prototype.RdfaService.prototype = {
 // Furthermore, it gives access to the enhance facilities of
 // Stanbol to analyze content and semantically enrich it.
 (function(){
+var defaultStanbolUris = ["http://demo.iks-project.eu/stanbolfull", "http://dev.iks-project.eu/stanbolfull"];
 
 // ## VIE.StanbolService(options)
 // This is the constructor to instantiate a new service to collect
@@ -5133,7 +5115,7 @@ VIE.prototype.StanbolService = function(options) {
         /* the default name of this service */
         name : 'stanbol',
         /* you can pass an array of URLs which are then tried sequentially */
-        url: ["http://dev.iks-project.eu/stanbolfull"],
+        url: defaultStanbolUris,
         timeout : 20000, /* 20 seconds timeout */
         namespaces : {
             semdeski : "http://www.semanticdesktop.org/ontologies/2007/01/19/nie#",
@@ -5237,7 +5219,7 @@ VIE.prototype.StanbolService.prototype = {
 // **Parameters**:
 // *{VIE.Analyzable}* **analyzable** The analyzable.
 // **Throws**:
-// *{Error}* if an invalid VIE.Findable is passed.
+// *{Error}* if an invalid VIE.Analyzable is passed.
 // **Returns**:
 // *{VIE.StanbolService}* : The VIE.StanbolService instance itself.
 // **Example usage**:
@@ -5260,6 +5242,7 @@ VIE.prototype.StanbolService.prototype = {
             var success = function (results) {
                 _.defer(function(){
                     var entities = VIE.Util.rdf2Entities(service, results);
+                    service.vie.entities.addOrUpdate(entities);
                     analyzable.resolve(entities);
                 });
             };
@@ -5274,7 +5257,6 @@ VIE.prototype.StanbolService.prototype = {
             this.connector.analyze(text, success, error, options);
 
         } else {
-            console.warn("No text found in element.");
             analyzable.resolve([]);
         }
 
@@ -5306,10 +5288,9 @@ VIE.prototype.StanbolService.prototype = {
         var service = this;
         /* The term to find, * as wildcard allowed */
         if (!findable.options.term) {
-            console.info("StanbolConnector: No term to look for!");
             findable.reject([]);
         }
-        var term = escape(findable.options.term);
+        var term = findable.options.term;
         var limit = (typeof findable.options.limit === "undefined") ? 20 : findable.options.limit;
         var offset = (typeof findable.options.offset === "undefined") ? 0 : findable.options.offset;
         var success = function (results) {
@@ -5366,12 +5347,14 @@ VIE.prototype.StanbolService.prototype = {
 
         var entity = loadable.options.entity;
         if (!entity){
-            console.warn("StanbolConnector: No entity to look for!");
             loadable.resolve([]);
         }
         var success = function (results) {
             _.defer(function(){
                 var entities = VIE.Util.rdf2Entities(service, results);
+                _.each(entities, function(vieEntity) {
+                    service.vie.entities.addOrUpdate(vieEntity);
+                });
                 loadable.resolve(entities);
             });
         };
@@ -5407,7 +5390,6 @@ VIE.prototype.StanbolService.prototype = {
 
          var entity = savable.options.entity;
          if (!entity){
-             console.warn("StanbolConnector: No entity to save!");
              savable.reject("StanbolConnector: No entity to save!");
          }
          var success = function (results) {
@@ -5463,7 +5445,7 @@ VIE.prototype.StanbolConnector = function (options) {
 
     var defaults =  {
         /* you can pass an array of URLs which are then tried sequentially */
-        url: ["http://dev.iks-project.eu/stanbolfull"],
+        url: defaultStanbolUris,
         timeout : 20000, /* 20 seconds timeout */
         enhancer : {
             urlPostfix : "/enhancer",
@@ -5541,7 +5523,6 @@ VIE.prototype.StanbolConnector.prototype = {
              * multiple URLs have been registered
              */
             return function () {
-                console.log("Stanbol connection error", arguments);
                 p.urlIndex = p.urlIndex+1;
                 c._iterate(p);
             };
@@ -5677,9 +5658,9 @@ VIE.prototype.StanbolConnector.prototype = {
 
                 var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
                 if (isLocal) {
-                    u += "/entity?id=" + escape(opts.uri);
+                    u += "/entity?id=" + encodeURIComponent(opts.uri);
                 } else {
-                    u += "/site" + site + "/entity?id=" + escape(opts.uri);
+                    u += "/site" + site + "/entity?id=" + encodeURIComponent(opts.uri);
                 }
                 return u;
             },
@@ -5787,12 +5768,17 @@ VIE.prototype.StanbolConnector.prototype = {
     },
 
     _find : function (url, args, success, error) {
+        var fields={
+            "name": args.term,
+            "limit": args.limit,
+            "offset": args.offset
+        };
         jQuery.ajax({
             success: success,
             error: error,
             url: url,
             type: "POST",
-            data: "name=" + args.term + "&limit=" + args.limit + "&offset=" + args.offset,
+            data: jQuery.param(fields),
             dataType: args.format,
             contentType : "application/x-www-form-urlencoded",
             accepts: {"application/rdf+json": "application/rdf+json"}
@@ -5853,7 +5839,7 @@ VIE.prototype.StanbolConnector.prototype = {
             url : function (idx, opts) {
 
                  var u = this.options.url[idx].replace(/\/$/, '') + this.options.entityhub.urlPostfix;
-                 u += "/lookup?id=" + escape(opts.uri) + "&create=" + opts.create;
+                 u += "/lookup?id=" + encodeURIComponent(opts.uri) + "&create=" + opts.create;
                  return u;
             },
             args : {
@@ -6214,7 +6200,7 @@ VIE.prototype.StanbolConnector.prototype = {
                   var u = this.options.url[idx].replace(/\/$/, '');
                   u += this.options.factstore.urlPostfix.replace(/\/$/, '');
 
-                  u += "/facts/" + escape(opts.url);
+                  u += "/facts/" + encodeURIComponent(opts.url);
 
                   return u;
                 },
@@ -6375,6 +6361,7 @@ VIE.prototype.StanbolConnector.prototype = {
 };
 })();
 
+
 //     VIE - Vienna IKS Editables
 //     (c) 2011 Henri Bergius, IKS Consortium
 //     (c) 2011 Sebastian Germesin, IKS Consortium
@@ -6511,7 +6498,6 @@ VIE.prototype.ZemantaService.prototype = {
             this.connector.analyze(text, success, error, options);
 
         } else {
-            console.warn("No text found in element.");
             analyzable.resolve([]);
         }
 
@@ -6588,7 +6574,6 @@ VIE.prototype.ZemantaConnector.prototype = {
              * multiple URLs have been registered
              */
             return function () {
-                console.log("Zemanta connection error", arguments);
                 p.urlIndex = p.urlIndex+1;
                 c._iterate(p);
             };
@@ -6695,7 +6680,7 @@ VIE.prototype.ZemantaConnector.prototype = {
 };
 })();
 
-/*global VIE:false Backbone:false _:false jQuery:false */
+
 if (!VIE.prototype.view) {
     VIE.prototype.view = {};
 }
@@ -6712,17 +6697,14 @@ VIE.prototype.view.Collection = Backbone.View.extend({
         this.definition = this.options.definition;
         this.entityViews = {};
 
-        _.bindAll(this, 'addItem', 'removeItem', 'refreshItems');
-
-        this.collection.on('add', this.addItem);
-        this.collection.on('remove', this.removeItem);
-        this.collection.on('reset', this.refreshItems);
+        this.listenTo(this.collection, 'add', this.addItem);
+        this.listenTo(this.collection, 'remove', this.removeItem);
+        this.listenTo(this.collection, 'reset', this.refreshItems);
 
         // Make the view aware of existing entities in collection
-        var view = this;
-        this.collection.forEach(function(entity) {
-            view.registerItem(entity, view.collection);
-        });
+        this.collection.each(function(entity) {
+            this.registerItem(entity, this.collection);
+        }, this);
     },
 
     /*
@@ -6853,7 +6835,7 @@ VIE.prototype.view.Collection = Backbone.View.extend({
         }, this);
     }
 });
-/*global VIE:false Backbone:false _:false */
+
 if (!VIE.prototype.view) {
     VIE.prototype.view = {};
 }
@@ -6864,9 +6846,8 @@ VIE.prototype.view.Entity = Backbone.View.extend({
         this.vie = options.vie;
 
         // Ensure view gets updated when properties of the Entity change.
-        _.bindAll(this, 'render', 'renderAbout');
-        this.model.on('change', this.render);
-        this.model.on('change:@subject', this.renderAbout);
+        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'change:@subject', this.renderAbout);
     },
 
     // Rendering a view means writing the properties of the Entity back to
@@ -6885,6 +6866,7 @@ VIE.prototype.view.Entity = Backbone.View.extend({
         this.vie.service(this.service).setElementSubject(this.model.getSubjectUri(), this.el);
     }
 });
+
 // Based on [Julian Aubourg's xdr.js](https://github.com/jaubourg/ajaxHooks/blob/master/src/ajax/xdr.js)
 // Internet Explorer 8 & 9 don't support the cross-domain request protocol known as CORS.
 // Their solution we use is called XDomainRequest. This module is a wrapper for
@@ -6913,7 +6895,7 @@ if ( root.XDomainRequest ) {
           // For backends supporting header_* in the URI instead of real header parameters,
           // use the dataType for setting the Accept request header. e.g. Stanbol supports this.
           if(s.dataType){
-              var headerThroughUriParameters = "header_Accept=" + encodeURIComponent(s.dataType);
+              var headerThroughUriParameters = "header_Accept=" + encodeURIComponent(s.dataType) + "&header_Content-Type=text/plain";
               s.url = s.url + (s.url.indexOf("?") === -1 ? "?" : "&" ) + headerThroughUriParameters;
           }
           xdr.open( s.type, s.url );
@@ -6923,7 +6905,6 @@ if ( root.XDomainRequest ) {
           // XDR cannot differentiate between errors,
           // we call every error 404. Could be changed to another one.
           xdr.onerror = function(e) {
-              console.error(JSON.stringify(e));
             callback( 404, "Not Found" );
           };
           if ( s.xdrTimeout ) {
@@ -6945,5 +6926,4 @@ if ( root.XDomainRequest ) {
   });
 }
 })( jQuery );
-
 })();
