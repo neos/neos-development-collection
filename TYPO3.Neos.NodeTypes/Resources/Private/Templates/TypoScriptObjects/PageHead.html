@@ -16,13 +16,11 @@
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<script type="text/javascript">
 					// TODO Get rid of those global variables
-				var neosJavascriptBasePath = '{f:uri.resource(path:"JavaScript/", package: "TYPO3.Neos")}';
-
 				var ExtDirectInitialization = function() {
-					<ext:extDirect.provider />;
+					<ext:extDirect.provider />
 				};
-				<typo3:backend.javascriptConfiguration />
 				var Aloha, alohaBaseUrl = '{aloha:baseUri()}/src/lib/';
+				{typo3:backend.javascriptConfiguration()}
 		</script>
 
 		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
