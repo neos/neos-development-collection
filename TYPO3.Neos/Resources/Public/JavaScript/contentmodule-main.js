@@ -36,7 +36,8 @@ require(
 			'createjs': '../Library/createjs/create',
 			'backbone': '../Library/vie/lib/backboneJS/backbone.min',
 			'underscorejs': '../Library/vie/lib/underscoreJS/underscore.min',
-			'handlebars': '../Library/handlebars/handlebars-1.0.0-rc.3'
+			'handlebars': '../Library/handlebars/handlebars-1.0.0-rc.3',
+			'emberjs-lib': '../Library/emberjs/ember-1.0.0-rc.3'
 		},
 		shim: {
 			'emberjs': {
