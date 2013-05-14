@@ -421,11 +421,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$nodes = $this->nodeSearchService->findByProperties($query, array('TYPO3.Neos.NodeTypes:Page'));
 
 		$searchResult = array();
-
 		foreach ($nodes as $uninitializedNode) {
-			$node = $contentContext->getNode($uninitializedNode->getPath());
-			if ($node !== NULL) {
-				$searchResult[] = $this->processNodeForEditorPlugins($node);
+			if (array_key_exists($uninitializedNode->getPath(), $searchResult) === FALSE) {
+				$node = $contentContext->getNode($uninitializedNode->getPath());
+				if ($node !== NULL) {
+					$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
+				}
 			}
 		}
 
