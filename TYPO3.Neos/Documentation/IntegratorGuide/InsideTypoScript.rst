@@ -195,7 +195,7 @@ instantiate them. You can also use an *existing TypoScript prototype* as basis
 for a new one when needed. This can be done by *inheriting* from a TypoScript prototype
 using the `<` operator::
 
-	prototype(MyImage) < prototype(Template)
+	prototype(MyImage) < prototype(TYPO3.TypoScript:Template)
 
 	# now, the MyImage prototype contains all properties of the Template
 	# prototype, and can be further customized.
@@ -204,17 +204,17 @@ This implements *prototype inheritance*, meaning that the "subclass" (`MyImage` 
 above) and the "parent class (`Template`) are still attached to each other: If a property
 is added to the parent class, this also applies to the subclass, as in the following example::
 
-	prototype(Template).fruit = 'apple'
-	prototype(Template).meal = 'dinner'
+	prototype(TYPO3.TypoScript:Template).fruit = 'apple'
+	prototype(TYPO3.TypoScript:Template).meal = 'dinner'
 
-	prototype(MyImage) < prototype(Template)
+	prototype(MyImage) < prototype(TYPO3.TypoScript:Template)
 	# now, MyImage also has the properties "fruit = apple" and "meal = dinner"
 
-	prototype(Template).fruit = 'Banana'
+	prototype(TYPO3.TypoScript:Template).fruit = 'Banana'
 	# because MyImage *extends* Template, MyImage.fruit equals 'Banana' as well.
 
 	prototype(MyImage).meal = 'breakfast'
-	prototype(Template).meal = 'supper'
+	prototype(TYPO3.TypoScript:Template).meal = 'supper'
 	# because MyImage now has an *overridden* property "meal", the change of
 	# the parent class' property is not reflected in the MyImage class
 
@@ -287,7 +287,8 @@ can be part of any TypoScript path in an assignment; even multiple times::
 Namespaces of TypoScript objects
 ================================
 
-The benefits of namespacing apply just as well to TypoScript objects as they apply to other languages. Namespacing helps to organize the code and avoid name clashes.
+The benefits of namespacing apply just as well to TypoScript objects as they apply to other languages.
+Namespacing helps to organize the code and avoid name clashes.
 
 In TypoScript the namespace of a prototype is given when the prototype is declared. The
 following declares a `YouTube` prototype in the `Acme.Demo` namespace::
@@ -313,7 +314,8 @@ TypoScript objects are made available in that namespace through inheritance::
 So whenever `Page` is used in TypoScript within Neos, it is a shortcut for `TYPO3.Neos:Page`
 which in turn is a shortcut for `TYPO3.Neos.NodeTypes:Page`.
 
-Custom namespace aliases can be defined with the following syntax::
+Custom namespace aliases can be defined for the scope of the current TypoScript file using the
+following syntax::
 
 	namespace Foo = Acme.Demo
 

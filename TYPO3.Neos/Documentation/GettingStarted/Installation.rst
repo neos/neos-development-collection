@@ -86,6 +86,9 @@ The TYPO3 Neos Setup Tool
 
    To kickstart a new site, enter a package and site name in the form before going to the next step.
 
+   If you are new to Neos, we recommend to import the existing demo site so you can follow the next
+   section giving you a basic tour of the user interface.
+
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
 
