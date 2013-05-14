@@ -26,11 +26,12 @@
 
 		// HTML popover
 		// TYPO3 SPECIFIC FIX START, original line didn't check for empty settings.id
+		// TYPO3 SPECIFIC FIX 2: we append it to the t3-application container instead of appending to body
 		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? ' id="' + settings.id + '"' : '') + '>'
 			+ '<div class="triangle"></div>'
 			+ '<div class="header"></div>'
 			+ '<div class="content"></div>'
-			+ '</div>').appendTo('body');
+			+ '</div>').appendTo('#t3-application');
 		// TYPO3 SPECIFIC FIX STOP
 		$('.header', settings.popover$).append($(settings.header).detach());
 

@@ -14,9 +14,11 @@ define(
 	'neos/content/ui/elements/contentelement-handles',
 	'neos/content/ui/elements/section-handles',
 	'neos/content/ui/elements/page-tree',
+	'text!neos/templates/content/ui/topToolbarTemplate.html',
+	'text!neos/templates/content/ui/footerTemplate.html',
 	'jquery.popover'
 ],
-function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree) {
+function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree, topToolbarTemplate, footerTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements');
 
 	var T3 = window.T3 || {};
@@ -32,6 +34,16 @@ function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, 
 	 * Toolbar which can contain other views. Has two areas, left and right.
 	 */
 	T3.Content.UI.Toolbar = Toolbar;
+
+	T3.Content.UI.NavigationToolbar = T3.Content.UI.Toolbar.extend({
+		elementId: 't3-toolbar',
+		template: Ember.Handlebars.compile(topToolbarTemplate)
+	});
+
+	T3.Content.UI.FooterToolbar = T3.Content.UI.Toolbar.extend({
+		elementId: 't3-footer',
+		template: Ember.Handlebars.compile(footerTemplate)
+	});
 
 	/**
 	 * T3.Content.UI.Button

@@ -34,7 +34,7 @@ body {
 	}
 	&.t3-ui-controls {
 		margin-bottom: $footer-height;
-		margin-top: $launcher-height + $menu-height + $topbar-offset + $toolbar-height;
+		margin-top: $menu-height + $topbar-offset + $toolbar-height;
 		margin-left: 0;
 		&.t3-tree-panel-open {
 			margin-left: $tree-panel-width;
@@ -77,7 +77,7 @@ body {
 	position: fixed;
 	width: 100%;
 	z-index: 10015;
-	height: $launcher-height + $menu-height + $topbar-offset;
+	height: $menu-height + $topbar-offset;
 	margin: 0px;
 	padding: 0px;
 
@@ -182,84 +182,6 @@ body {
 		}
 	}
 }
-#t3-launcher {
-	height: $launcher-height;
-	overflow: hidden;
-	@include transition-property(height);
-	@include transition-duration(0.2s);
-}
-.t3-launcher {
-	position: relative;
-	width: 100%;
-	margin: 0px;
-	padding: 0px;
-	background-color: $light-grey;
-	@include transition-property(height);
-	@include transition-duration(0.2s);
-
-	div.t3-launcher-container {
-		height: $launcher-height;
-		display: block;
-		@include box-sizing(border-box);
-		background-color: $light-grey3;
-		input {
-			border: 1px solid $light-grey3;
-			-webkit-box-shadow: $light-grey4 0px 1px 6px inset;
-			-moz-box-shadow: darken($light-grey2, 20%) 0px 1px 6px inset;
-			box-shadow: darken($light-grey2, 20%) 0px 1px 6px inset;
-			background: lighten($light-grey2, 10%) url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
-			color: darken($light-grey2, 10%);
-			font-size: 16px;
-			width: 100%;
-			height: 100%;
-			line-height: $launcher-height;
-			padding: 3px 6px 0 32px;
-			@include box-sizing(border-box);
-			&:hover {
-				border: 1px solid lighten($dark-grey, 20%);
-				background: lighten($light-grey, 10%) url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
-			}
-			&:focus {
-				border: 1px solid $light-orange;
-				background: $lightest url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
-				outline: none;
-				color: $darkest;
-			}
-			&:hover:focus {
-				background: $lightest url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
-			}
-			&::-webkit-input-placeholder,
-			&::-moz-placeholder {
-				font-size: 12px;
-			}
-		}
-		&.not-empty {
-			.t3-launcher-loading,
-			.t3-launcher-clear {
-				position: absolute;
-				top: 8px;
-				width: 25px;
-				height: 25px;
-			}
-			.t3-launcher-loading {
-				display: none;
-				right: 25px;
-				background: url('../Images/ajax-preloader-dddddd.gif') no-repeat;
-			}
-			.t3-launcher-clear {
-				right: 0;
-				cursor: pointer;
-				background: url('../Images/ContentModule/delete.png') no-repeat;
-			}
-		}
-	}
-	.t3-launcher-panel {
-		height: $launcher-height-open - $launcher-height;
-	}
-	h2 {
-		font-size: 100%;
-	}
-}
 
 .t3-inspector-panel-open {
 	margin-right: $property-panel-width;
@@ -278,7 +200,7 @@ body {
 #t3-inspector {
 	@include box-sizing(border-box);
 	position: fixed;
-	top: $menu-height + $launcher-height + $topbar-offset;
+	top: $menu-height + $topbar-offset;
 	bottom: 0;
 	right: -$property-panel-width;
 	width: $property-panel-width;
@@ -438,7 +360,7 @@ body {
 	position: fixed;
 	overflow: hidden;
 	left: 0;
-	top: $menu-height + $launcher-height + $topbar-offset + $toolbar-height;
+	top: $menu-height + $topbar-offset + $toolbar-height;
 	bottom: $footer-height;
 	z-index: 10010;
 	@include transition-property('width, margin-top');
@@ -473,7 +395,7 @@ body {
 	left: 0;
 	right: 0;
 	margin: 0px;
-	margin-top: $menu-height + $launcher-height + $topbar-offset;
+	margin-top: $menu-height + $topbar-offset;
 	padding: 0px;
 	padding-right: 0;
 	z-index: 10012;
@@ -907,14 +829,17 @@ body {
 			margin-top: -$toolbar-height;
 			box-shadow: none;
 			display: block;
-			.t3-icon-preview {
-				margin-top: $toolbar-height + 10px;
-				box-shadow: 0 0 15px rgba(0, 0, 0, .15);
-			}
 		}
 		#t3-inspector {
 			right: -$property-panel-width;
 			overflow: hidden;
+		}
+		.t3-preview-close {
+			display: block !important;
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			box-shadow: 0 0 15px rgba(0, 0, 0, .15);
 		}
 		// Publish button
 		.btn-publish {
@@ -995,7 +920,6 @@ body {
 	}
 }
 
-@import "style-launchbar";
 @import "content-properties";
 @import "style-workInProgress";
 @import "js-ui";

@@ -16,7 +16,7 @@ define(
 		}
 
 		return Ember.View.extend({
-			classNames: ['t3-pagetree', 't3-ui'],
+			classNames: ['t3-pagetree'],
 			template: Ember.Handlebars.compile(pageTreeTemplate),
 
 			/**

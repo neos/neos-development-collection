@@ -9,7 +9,6 @@ TBD give a quick tour of the UI
 * main areas
 
   * menu
-  * launcher
   * logout / user preferences
   * module concept
 

@@ -135,13 +135,6 @@ The following options are allowed:
       `position`
         Position of the inspector group, small numbers are sorted on top
 
-  `launcher`
-    These settings configure the launcher behavior in the Neos UI for the node type
-
-    `searchCategory`
-      If searching for this node type in the launcher, the results will be grouped by this category.
-
-
 
 `properties`
   A list of named properties for this node type. For each property the following settings are available.

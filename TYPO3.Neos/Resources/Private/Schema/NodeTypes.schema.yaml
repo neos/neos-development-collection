@@ -70,9 +70,9 @@ additionalProperties:
 
                   'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 
-        'launcher':
+        'search':
           type: dictionary
           additionalProperties: FALSE
           properties:
 
-            'searchCategory': { type: string, description: "If searching for this node type in the launcher, the results will be grouped by this category." }
+            'searchCategory': { type: string, description: "If searching for this node type in the search, the results will be grouped by this category." }

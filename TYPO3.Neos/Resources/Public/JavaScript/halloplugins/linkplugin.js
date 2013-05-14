@@ -67,7 +67,6 @@ define(
 								})
 							);
 
-
 							if (this.get('url') !== widget.options.defaultUrl) {
 								this.set('label', 'Update');
 							}

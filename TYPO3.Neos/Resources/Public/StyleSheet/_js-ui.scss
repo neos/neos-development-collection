@@ -209,7 +209,7 @@ body {
 			position: relative;
 			top: 50% !important;
 			left: 50% !important;
-			margin-top: ($launcher-height + $menu-height + $topbar-offset + $toolbar-height) / 2 - $footer-height / 2;
+			margin-top: ($menu-height + $topbar-offset + $toolbar-height) / 2 - $footer-height / 2;
 			margin-left: -30 - $property-panel-width / 2;
 			@include transition-property(margin);
 			@include transition-duration(0.2s);

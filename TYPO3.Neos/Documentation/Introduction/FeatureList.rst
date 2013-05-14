@@ -82,14 +82,6 @@ Related to these functions there's a convenience method for removing all site re
 
 	./flow site:prune --confirmation TRUE
 
-Launcher
-========
-
-In the top of the backend is a bar called the `launcher`. This bar will become a quick entry point
-to your TYPO3 Neos installation. Currently only the search is implemented. By typing keywords
-in the launcher bar you can search for pages and content. Clicking the search results then
-opens up the target page.
-
 Workspaces
 ==========
 

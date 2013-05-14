@@ -90,6 +90,9 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 	 * Furthermore, it contains *Editors*
 	 */
 	T3.Content.UI.Inspector = Ember.View.extend({
+		elementId: 't3-inspector',
+		classNames: ['t3-inspector'],
+
 		template: Ember.Handlebars.compile(inspectorTemplate),
 
 		/**
@@ -128,22 +131,23 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		 * When clicking the click protection, we show a dialog
 		 */
 		_showUnappliedDialog: function() {
-			var view = Ember.View.create({
-				classNames: ['t3-ui', 'inspector-dialog'],
-				template: Ember.Handlebars.compile(inspectorDialogTemplate),
-				cancel: function() {
-					view.destroy();
-				},
-				apply: function() {
-					T3.Content.Controller.Inspector.apply();
-					view.destroy();
-				},
-				dontApply: function() {
-					T3.Content.Controller.Inspector.revert();
-					view.destroy();
-				}
-			});
-			view.appendTo('body');
+			T3.Content.UI.UnappliedChangesDialog.create().appendTo('body');
+		}
+	});
+
+	T3.Content.UI.UnappliedChangesDialog = Ember.View.extend({
+		classNames: ['t3-ui', 'inspector-dialog'],
+		template: Ember.Handlebars.compile(inspectorDialogTemplate),
+		cancel: function() {
+			view.destroy();
+		},
+		apply: function() {
+			T3.Content.Controller.Inspector.apply();
+			view.destroy();
+		},
+		dontApply: function() {
+			T3.Content.Controller.Inspector.revert();
+			view.destroy();
 		}
 	});
 
@@ -194,6 +198,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 	 * =====================
 	 */
 	T3.Content.UI.TreePanel = Ember.View.extend({
+		elementId: 't3-tree-panel',
 		template: Ember.Handlebars.compile(treePanelTemplate)
 	});
 

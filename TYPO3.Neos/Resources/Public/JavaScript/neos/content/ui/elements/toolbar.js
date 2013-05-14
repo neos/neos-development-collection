@@ -9,7 +9,7 @@ define(
 
 		return Ember.View.extend({
 			tagName: 'div',
-			classNames: ['t3-toolbar', 't3-ui'],
+			classNames: ['t3-toolbar'],
 			template: Ember.required()
 		});
 

@@ -27,10 +27,24 @@ function($, CreateJS, Entity) {
 		},
 
 		onTogglePreviewMode: function() {
-			var isPreviewEnabled = this.get('previewMode');
+			var that = this,
+				isPreviewEnabled = this.get('previewMode'),
+				previewCloseClass = 't3-preview-close';
 			if (isPreviewEnabled) {
+				$('body')
+					.append($('<div class="t3-ui" />').addClass(previewCloseClass).append($('<button class="t3-button btn btn-mini pressed"><i class="icon-fullscreen"></i></button>'))
+					.on('click', function() {
+						that.set('previewMode', false);
+					}));
+				$(document).on('keyup.wireframe', function(e) {
+					if (e.keyCode === 27) {
+						that.set('previewMode', false);
+					}
+				});
 				CreateJS.disableEdit();
 			} else {
+				$('body > .' + previewCloseClass).remove();
+				$(document).off('keyup.wireframe');
 				CreateJS.enableEdit();
 			}
 			$('body').toggleClass('t3-ui-previewmode t3-ui-controls');

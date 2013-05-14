@@ -85,10 +85,11 @@ Chosen 0.9.14 from http://harvesthq.github.com/chosen/
 Only the jquery files / needed files are added (skipped coffeescript / prototype / examples)
 
 
-jQuery Lionbars
-http://nikolaydyankov.com/lionbars/ - version 0.2.1
-- cleaned and linted by Aske :-)
+Antiscroll
+https://github.com/jrolfs/antiscroll - version 22738867613c255734b9bc420f42f2b40f916bb8
 
+jQuery Mousewheel
+https://github.com/brandonaaron/jquery-mousewheel - version 3.0.6
 
 Spin.js
 http://fgnass.github.com/spin.js/ - version 1.2.8

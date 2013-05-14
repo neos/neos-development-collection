@@ -10,18 +10,17 @@ define(
 	'vie/instance',
 	'emberjs',
 	'create',
-	'text!./templates/content/ui/topToolbarTemplate.html',
-	'text!./templates/content/ui/footerTemplate.html',
 	'neos/common',
 	'neos/content/model',
 	'neos/content/ui',
 	'neos/content/controller',
 	'jquery.hotkeys'
 ],
-function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
+function($, vie, Ember, CreateJS) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
 
 	return Ember.Application.extend(Ember.Evented, {
+		rootElement: '#t3-application',
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 
@@ -50,8 +49,6 @@ function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 
 		_isLoadingPage : null,
 
-		_launcher: null,
-
 		vie: null,
 
 		_activeEntity: null,
@@ -66,11 +63,6 @@ function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 
 		bootstrap: function() {
 			this.set('vie', vie);
-			this._initializeInspector();
-			this._initializeToolbar();
-			this._initializeTreePanel();
-			this._initializeFooter();
-			this._initializeLauncher();
 			this._initializeAjaxPageReload();
 			this._initializeVie();
 
@@ -94,9 +86,9 @@ function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 
 		_initializeNotifications: function() {
 				// Initialize notifications
-			$('body').append('<div class="t3-notification-container t3-ui"></div>');
+			$('#t3-application').append('<div class="t3-notification-container t3-ui"></div>');
 				// TODO: Remove with resolving #45049
-			$('body').midgardNotifications();
+			$('#t3-application').midgardNotifications();
 		},
 
 		_initializeDevelopmentFeatures: function() {
@@ -230,7 +222,7 @@ function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 
 		_initializeCreateJs: function() {
 				// Midgard Storage
-			$('body').midgardStorage({
+			$('#t3-application').midgardStorage({
 				vie: vie,
 				url: function () { /* empty function to prevent Midgard error */ },
 				localStorage: true,
@@ -244,13 +236,6 @@ function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 			var that = this;
 			$(document).bind('keydown', 'alt+p', function() {
 				T3.Content.Controller.Preview.togglePreview();
-				return false;
-			}).bind('keydown', 'alt+l', function(event) {
-					// Skip launcher when editing content, could be an @ on Mac OS
-				if ($(event.target).closest('.t3-inline-editable').length > 0) {
-					return;
-				}
-				that._launcher.activate();
 				return false;
 			});
 		},
@@ -277,46 +262,6 @@ function($, vie, Ember, CreateJS, topToolbarTemplate, footerTemplate) {
 			} else if(T3.Common.LocalStorage.getItem('showDevelopmentFeatures')) {
 				this.set('showDevelopmentFeatures', true);
 			}
-		},
-
-		_initializeInspector: function() {
-			var inspector = T3.Content.UI.Inspector.create({
-				elementId: 't3-inspector',
-				classNames: ['t3-ui', 't3-inspector']
-			});
-
-			inspector.appendTo($('body'));
-		},
-
-		_initializeToolbar: function() {
-			var toolbar = T3.Content.UI.Toolbar.extend({
-				elementId: 't3-toolbar',
-				template: Ember.Handlebars.compile(topToolbarTemplate)
-			}).create();
-			toolbar.appendTo($('body'));
-		},
-
-		_initializeLauncher: function() {
-			this._launcher = T3.Common.Launcher.create({
-				searchItemsBinding: 'T3.Common.Launcher.SearchController.searchItems'
-			});
-			this._launcher.appendTo($('#t3-launcher'));
-		},
-
-		_initializeTreePanel: function() {
-			var treePanel = T3.Content.UI.TreePanel.create({
-				elementId: 't3-tree-panel',
-				classNames: ['t3-ui']
-			});
-			treePanel.appendTo($('body'));
-		},
-
-		_initializeFooter: function() {
-			var footer = T3.Content.UI.Toolbar.create({
-				elementId: 't3-footer',
-				template: Ember.Handlebars.compile(footerTemplate)
-			});
-			footer.appendTo($('body'));
 		},
 
 		/**

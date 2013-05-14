@@ -82,7 +82,7 @@ define(
 							widget: 'halloWidget',
 							options: {
 								toolbar: 'halloToolbarFixed',
-								parentElement: 'body',
+								parentElement: '#t3-application',
 								toolbarCssClass: 't3-ui',
 								buttonCssClass: 'btn btn-mini',
 								plugins: {

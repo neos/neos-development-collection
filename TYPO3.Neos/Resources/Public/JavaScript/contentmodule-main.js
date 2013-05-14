@@ -13,57 +13,7 @@ require(
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 
 		paths: {
-			'Library': '../Library/',
-			'spinjs': '../Library/spinjs/spin.min',
-			'chosen': '../Library/chosen/chosen/chosen.jquery.min',
-			'jquery.lionbars': '../Library/jquery-lionbars/jQuery.lionbars.0.2.1',
-			'jquery.hotkeys': '../Library/jquery-hotkeys/jquery.hotkeys',
-			'jquery.popover': '../Library/jquery-popover/jquery.popover',
-			'jquery.jcrop': '../Library/jcrop/js/jquery.Jcrop.min',
-			'jquery.plupload': '../Library/plupload/js/plupload',
-			'jquery.plupload.html5': '../Library/plupload/js/plupload.html5',
-			'bootstrap.dropdown': '../Library/twitter-bootstrap/js/bootstrap-dropdown',
-			'bootstrap.alert': '../Library/twitter-bootstrap/js/bootstrap-alert',
-			'bootstrap.notify': '../Library/bootstrap-notify/js/bootstrap-notify',
-			'codemirror': '../Library/codemirror2/lib/codemirror',
-			'codemirror.xml': '../Library/codemirror2/mode/xml/xml',
-			'codemirror.css': '../Library/codemirror2/mode/css/css',
-			'codemirror.javascript': '../Library/codemirror2/mode/javascript/javascript',
-			'codemirror.htmlmixed': '../Library/codemirror2/mode/htmlmixed/htmlmixed',
-			'jquery.cookie': '../Library/jquery-cookie/jquery.cookie',
-			'jquery.dynatree': '../Library/jquery-dynatree/js/jquery.dynatree',
-			'hallo': '../Library/hallo/hallo',
-			'createjs': '../Library/createjs/create',
-			'backbone': '../Library/vie/lib/backboneJS/backbone.min',
-			'underscorejs': '../Library/vie/lib/underscoreJS/underscore.min',
-			'handlebars': '../Library/handlebars/handlebars-1.0.0-rc.3',
-			'emberjs-lib': '../Library/emberjs/ember-1.0.0-rc.3'
-		},
-		shim: {
-			'emberjs': {
-				deps: ['jquery', 'handlebars'],
-				exports: 'Ember'
-			},
-			'neos/contentmodule': ['emberjs'],
-			'jquery.lionbars': ['jquery'],
-			'jquery-ui': ['jquery'],
-			'jquery.cookie': ['jquery'],
-			'jquery.dynatree': ['jquery-ui'],
-			'jquery.plupload.html5': ['jquery.plupload'],
-			'jquery.plupload': ['jquery'],
-			'jquery.popover': ['jquery'],
-			'jquery.jcrop': ['jquery'],
-			'jquery.hotkeys': ['jquery'],
-			'bootstrap.dropdown': ['jquery'],
-			'underscorejs': {
-				'exports': '_'
-			},
-			'createjs': ['jquery-ui'],
-			'hallo': ['jquery-ui'],
-			'backbone': ['underscorejs'],
-			'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery'],
-			'Library/vie/vie': ['jquery', 'backbone'],
-			'halloplugins/linkplugin': ['hallo']
+			'Library': '../Library/'
 		},
 		locale: 'en'
 	},
@@ -73,8 +23,7 @@ require(
 		'neos/resourcecache',
 		'emberjs',
 		'storage',
-		'jquery-ui',
-		'jquery.lionbars'
+		'antiscroll'
 	],
 	function($, ContentModule) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('contentmodule-main');
