@@ -252,7 +252,15 @@ class Runtime {
 			}
 		}
 
-		$output = $tsObject->evaluate();
+		try {
+			$output = $tsObject->evaluate();
+		} catch (\TYPO3\Flow\Mvc\Exception\ForwardException $forwardException) {
+			throw $forwardException;
+		} catch (\TYPO3\TypoScript\Exception\RuntimeException $runtimeException) {
+			throw $runtimeException;
+		} catch (\Exception $exception) {
+			throw new \TYPO3\TypoScript\Exception\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception);
+		}
 
 		foreach ($processorsForTypoScriptObject as $processor) {
 			$output = $processor->process($output);
