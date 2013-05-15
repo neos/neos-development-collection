@@ -228,16 +228,11 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 	T3.Content.UI.ButtonDialog = Ember.View.extend(Ember.TargetActionSupport, {
 		tagName: 'button',
 		attributeBindings: ['disabled'],
-		classNameBindings: ['iconClass'],
 		label: '',
 		disabled: false,
 		visible: true,
 		icon: '',
-		template: Ember.Handlebars.compile('{{#if icon}}<i class="{{unbound icon}}"></i> {{/if}}{{{view.label}}}'),
-		iconClass: function() {
-			var icon = this.get('icon');
-			return icon !== '' ? 't3-icon-' + icon : '';
-		}.property('icon'),
+		template: Ember.Handlebars.compile('{{#if view.icon}}<i class="{{unbound view.icon}}"></i> {{/if}}{{view.label}}'),
 
 		click: function() {
 			this.triggerAction();
