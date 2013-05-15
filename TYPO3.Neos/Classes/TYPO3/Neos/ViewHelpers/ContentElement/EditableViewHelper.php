@@ -15,7 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
- * The wrapper contains the property name which should be made editable, and is either a "span" or a "div" tag (depending on the context)
+ * The wrapper contains the property name which should be made editable, and is by default
+ * a "div" tag. The tag to use can be given as `tag` argument to the ViewHelper.
  *
  * @Flow\Scope("prototype")
  */
