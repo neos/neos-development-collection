@@ -8,4 +8,4 @@ These are the development guidelines of TYPO3 Neos.
 	:maxdepth: 2
 
 	UserInterface/Index
-
+	Testing/Index
