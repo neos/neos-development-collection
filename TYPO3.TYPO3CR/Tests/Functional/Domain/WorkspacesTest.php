@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\ObjectAccess;
+
 /**
  * Functional test case which covers all workspace-related behavior of the
  * content repository.
@@ -39,23 +41,46 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $contextFactory;
 
 	/**
+	 * @var string
+	 */
+	protected $currentTestWorkspaceName;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-		$personalContext = $this->contextFactory->create(array('workspaceName' => 'user-robert'));
-		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-		$this->rootNode = $personalContext->getNode('/');
-		$this->persistenceManager->persistAll();
+		$this->currentTestWorkspaceName = uniqid('user-', TRUE);
+		$this->setUpRootNodeAndRepository();
 	}
 
 	/**
 	 * @return void
 	 */
 	public function tearDown() {
+		$this->saveNodesAndTearDownRootNodeAndRepository();
 		parent::tearDown();
+
+	}
+
+	protected function setUpRootNodeAndRepository() {
+		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
+		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+		$this->rootNode = $personalContext->getNode('/');
+
+		$this->persistenceManager->persistAll();
+	}
+
+	public function saveNodesAndTearDownRootNodeAndRepository() {
+		$this->nodeDataRepository->flushNodeRegistry();
+		$nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+		ObjectAccess::setProperty($nodeFactory, 'nodes', array(), TRUE);
 		$this->inject($this->contextFactory, 'contextInstances', array());
+		$this->persistenceManager->persistAll();
+		$this->persistenceManager->clearState();
+		$this->nodeDataRepository = NULL;
+		$this->rootNode = NULL;
 	}
 
 	/**
@@ -75,7 +100,9 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function nodesCreatedInAPersonalWorkspaceAreNotVisibleInTheLiveWorkspace() {
 		$this->rootNode->createNode('homepage')->createNode('about');
-		$this->persistenceManager->persistAll();
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
 
 		$liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$liveRootNode = $liveContext->getRootNode();
@@ -93,6 +120,90 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$liveRootNode = $liveContext->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));
+	}
+
+	/**
+	 * We set up the following node structure:
+	 *
+	 * rootNode
+	 *     |
+	 *   parentNode
+	 *  |          |
+	 * childNodeA  childNodeB
+	 *               |
+	 *             childNodeC
+	 *
+	 * We then move childNodeB UNDERNEATH childNodeA and check that it does not shine through
+	 * when directly asking parentNode for childNodeB.
+	 *
+	 * @test
+	 */
+	public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation() {
+		$parentNode = $this->rootNode->createNode('parentNode');
+		$parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB->createNode('childNodeC');
+		$parentNode->getWorkspace()->publish('live');
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$parentNode2 = $this->rootNode->getNode('parentNode');
+
+		$this->assertSame($parentNode->getIdentifier(), $parentNode2->getIdentifier());
+		$childNodeA2 = $parentNode2->getNode('childNodeA');
+		$this->assertNotNull($childNodeA2, 'Child node A must be there');
+		$childNodeB2 = $parentNode2->getNode('childNodeB');
+		$this->assertNotNull($childNodeB2, 'Child node B must be there');
+		$childNodeB2->moveInto($childNodeA2);
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$parentNode3 = $this->rootNode->getNode('parentNode');
+		//$this->assertNotSame($parentNode2, $parentNode3);
+		$childNodeB3 = $parentNode3->getNode('childNodeB');
+		$this->assertTrue($childNodeB3 === NULL, 'child node B should not shine through as it has been moved.');
+	}
+
+	/**
+	 * For test setup / node structure, see nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation
+	 *
+	 * @test
+	 */
+	public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocationWhileIteratingOverIt() {
+		$rootNode = $this->rootNode;
+		$rootNodeWorkspace = $this->rootNode->getWorkspace();
+		$parentNode = $this->rootNode->createNode('parentNode1');
+		$childNodeA = $parentNode->createNode('childNode1A');
+		$childNodeB = $parentNode->createNode('childNode1B');
+		$childNodeB->createNode('childNode1C');
+		$parentNode->getWorkspace()->publish('live');
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$this->assertNotSame($rootNode, $this->rootNode);
+		$this->assertNotSame($rootNodeWorkspace, $this->rootNode->getWorkspace(), 'Workspace is not correctly cleaned up.');
+		$parentNode2 = $this->rootNode->getNode('parentNode1');
+		$this->assertNotSame($parentNode, $parentNode2);
+		$this->assertSame('live', $parentNode2->getWorkspace()->getName());
+		$childNodeA2 = $parentNode2->getNode('childNode1A');
+		$this->assertNotNull($childNodeA2, 'Child node A must be there');
+		$this->assertNotSame($childNodeA, $childNodeA2);
+		$childNodeB2 = $parentNode2->getNode('childNode1B');
+		$this->assertNotNull($childNodeB2, 'Child node B must be there');
+		$this->assertNotSame($childNodeB, $childNodeB2);
+
+		$childNodeB2->moveInto($childNodeA2);
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$parentNode3 = $this->rootNode->getNode('parentNode1');
+		$childNodes = $parentNode3->getChildNodes();
+		$this->assertSame(1, count($childNodes), 'parentNode is only allowed to have a single child node (childNode1A).');
+
 	}
 }
 

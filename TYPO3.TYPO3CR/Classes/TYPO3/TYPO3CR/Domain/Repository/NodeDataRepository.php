@@ -370,6 +370,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE) {
+		$baseWorkspace = $workspace;
 		$foundNodes = array();
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, TRUE);
@@ -414,8 +415,50 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		if (!$includeRemovedNodes) {
 			$foundNodes = $this->filterRemovedNodes($foundNodes);
 		}
+		$foundNodes = $this->filterNodesOverlaidInBaseWorkspace($foundNodes, $baseWorkspace);
 		if ($limit !== NULL || $offset !== NULL) {
 			$foundNodes = $this->applyLimitAndOffset($foundNodes, $limit, ($offset === NULL ? 0 : $offset));
+		}
+
+		return $foundNodes;
+	}
+
+	/**
+	 * When moving nodes which are inside live workspace to a personal workspace *across levels* (i.e. with different
+	 * parent node before and after), the system returned *both* the "new" node from the personal workspace (correct!),
+	 * and the "shined-through" version of the node from the "live" workspace (WRONG!).
+	 *
+	 * For all nodes not being in our base workspace, we need to check whether it is overlaid by a node in our base workspace
+	 * with the same identifier. If that's the case, we do not show the node.
+	 *
+	 * This is a bugfix for #48214.
+	 *
+	 * @param array $foundNodes
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace
+	 * @return array
+	 */
+	protected function filterNodesOverlaidInBaseWorkspace(array $foundNodes, \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace) {
+		$identifiersOfNodesNotInBaseWorkspace = array();
+
+		foreach ($foundNodes as $i => $foundNode) {
+			if ($foundNode->getWorkspace() !== $baseWorkspace) {
+				$identifiersOfNodesNotInBaseWorkspace[$foundNode->getIdentifier()] = $i;
+			}
+		}
+		if (count($identifiersOfNodesNotInBaseWorkspace) === 0) {
+			return $foundNodes;
+		}
+
+		$query = $this->entityManager->createQuery('SELECT n.identifier FROM TYPO3\TYPO3CR\DOMAIN\MODEL\NodeData n WHERE n.identifier IN (:identifierList) AND n.workspace = :baseWorkspace');
+
+		$query->setParameter('identifierList', array_keys($identifiersOfNodesNotInBaseWorkspace));
+		$query->setParameter('baseWorkspace', $baseWorkspace);
+		$results = $query->getScalarResult();
+
+		foreach ($results as $result) {
+			$nodeIdentifierOfNodeInBaseWorkspace = $result['identifier'];
+			$indexOfNodeNotInBaseWorkspaceWhichShouldBeRemoved = $identifiersOfNodesNotInBaseWorkspace[$nodeIdentifierOfNodeInBaseWorkspace];
+			unset($foundNodes[$indexOfNodeNotInBaseWorkspaceWhichShouldBeRemoved]);
 		}
 
 		return $foundNodes;
@@ -616,12 +659,18 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @todo Check for workspace compliance
 	 */
 	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE) {
+		$baseWorkspace = $workspace;
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $includeRemovedNodes);
 			$firstNodeFoundInThisWorkspace = $query->execute()->getFirst();
 			if ($firstNodeFoundInThisWorkspace !== NULL) {
-				return $firstNodeFoundInThisWorkspace;
+				$resultingNodeArray = $this->filterNodesOverlaidInBaseWorkspace(array($firstNodeFoundInThisWorkspace), $baseWorkspace);
+
+				if (count($resultingNodeArray) > 0) {
+					return key($resultingNodeArray);
+				}
 			}
+
 			$workspace = $workspace->getBaseWorkspace();
 		}
 		return NULL;
