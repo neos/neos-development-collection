@@ -24,16 +24,7 @@
 			<f:if condition="{account.roles}">
 				<p>
 					<label>Roles</label>
-					<f:for each="{account.roles}" as="role" iteration="iterator">
-						<f:if condition="{iterator.isLast}">
-							<f:then>
-								{role}
-							</f:then>
-							<f:else>
-								{role},&nbsp;
-							</f:else>
-						</f:if>
-					</f:for>
+					<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 				</p>
 			</f:if>
 		</div>

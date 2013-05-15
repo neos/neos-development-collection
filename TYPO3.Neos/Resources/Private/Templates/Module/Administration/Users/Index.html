@@ -19,16 +19,7 @@
 					</td>
 					<td title="{account.party.alias}">{account.party.name}</td>
 					<td>
-						<f:for each="{account.roles}" as="role" iteration="iterator">
-							<f:if condition="{iterator.isLast}">
-								<f:then>
-									{role}
-								</f:then>
-								<f:else>
-									{role},&nbsp;
-								</f:else>
-							</f:if>
-						</f:for>
+						<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 					</td>
 					<td>
 						<div class="pull-right">
