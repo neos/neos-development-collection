@@ -216,13 +216,18 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
-    caption:
-      type: string
+    hasCaption:
+      type: boolean
       ui:
         label: 'Caption'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+    caption:
+      type: string
+      defaultValue: 'Enter caption here'
+      ui:
+        inlineEditable: TRUE
     captionAlignment:
       type: string
       defaultValue: ''
