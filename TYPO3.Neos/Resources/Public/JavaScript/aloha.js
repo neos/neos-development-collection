@@ -19,26 +19,26 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 				//'highlighteditables/highlighteditables-plugin',
 				'common/dom-to-xhtml',
 				'common/contenthandler',
-				'common/characterpicker',
+				//'common/characterpicker',
 				'common/commands',
 				'common/block',
 				'common/align',
-				'common/abbr',
-				'common/horizontalruler',
+				//'common/abbr',
+				//'common/horizontalruler',
 				'common/paste',
 				// some extra plugins
 				//'toc/toc-plugin',
-				'extra/cite',
+				//'extra/cite',
 				//'flag-icons/flag-icons-plugin',
 				//'numerated-headers/numerated-headers-plugin',
-				'extra/formatlesspaste',
+				'extra/formatlesspaste'
 				//'linkbrowser/linkbrowser-plugin',
 				//'imagebrowser/imagebrowser-plugin',
-				'extra/ribbon',
+				//'extra/ribbon',
 				//'extra/wai-lang',
-				'extra/headerids',
+				//'extra/headerids',
 				//'metaview/metaview-plugin',
-				'extra/listenforcer'
+				//'extra/listenforcer'
 
 				//  'neosAloha/neosintegration',
 				//                'neosAloha/neos-links'
@@ -47,8 +47,36 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 				sidebarAttributeEditor: false
 			},
 			format: {
-				config : [ 'b', 'i', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat' ]
+				config : [ 'b', 'i', 'u', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat' ]
 			}
+		},
+		toolbar: {
+			tabs: [
+				{
+					label: 'tab.format.label',
+						// The "format" tab is shown in the top-menu, the remaining tabs are shown
+						// in the inspector.
+					components: [
+						[ 'bold', 'italic', 'underline', 'subscript', 'superscript', 'strikethrough' ],
+						[
+							'formatLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop',
+							'toggleMetaView', 'wailang', 'toggleFormatlessPaste'
+						], [
+							'alignLeft', 'alignCenter', 'alignRight', 'alignJustify',
+							'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker'
+						], [
+							'formatBlock'
+						]
+					]
+				},
+					// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.
+				{
+					label: "tab.insert.label",
+					showOn: function() {
+						return false;
+					}
+				}
+			]
 		},
 
 			// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
@@ -58,7 +86,7 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 		},
 		bundles: {
 				// Path for custom bundle relative from require.js path
-			neosAloha: '/_Resources/Static/Packages/TYPO3.Neos/JavaScript/alohaplugins/'
+			//neosAloha: '/_Resources/Static/Packages/TYPO3.Neos/JavaScript/alohaplugins/'
 		},
 
 		baseUrl: alohaBaseUrl,
@@ -68,6 +96,15 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 
 		predefinedModules: {
 			'jqueryui': jQueryUi
+		},
+
+		requireConfig: {
+			map: {
+				'*': {
+					'ui/ui-plugin': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/ui-plugin',
+					'ui/multiSplit': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit'
+				}
+			}
 		}
 	};
 
@@ -80,7 +117,7 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 				baseUrl: alohaBaseUrl
 			},
 			['aloha'],
-			function(Aloha) {
+			function() {
 				if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha (inner require)');
 			}
 		);
