@@ -65,6 +65,10 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 */
 	protected $argumentNamespace = NULL;
 
+	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected $node;
 
 	/**
 	 * @Flow\Inject
@@ -218,7 +222,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * Returns the plugin namespace that will be prefixed to plugin parameters in URIs.
 	 * By default this is <plugin_class_name>
 	 *
-	 * @return void
+	 * @return string
 	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {
