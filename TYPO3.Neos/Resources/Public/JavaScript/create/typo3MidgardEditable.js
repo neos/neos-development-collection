@@ -1,4 +1,4 @@
-define(['jquery', 'jquery-ui', 'createjs'], function($) {
+define(['Library/jquery-with-dependencies', 'createjs'], function($) {
 	/**
 	 * This jQuery UI widget contains behavior adjustments to midgard editable
 	 * such that they work well in a Neos environment.

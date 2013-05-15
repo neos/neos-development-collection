@@ -6,10 +6,8 @@
 
 define(
 [
-	'jquery',
-	'emberjs',
-	'bootstrap.alert',
-	'bootstrap.notify'
+	'Library/jquery-with-dependencies',
+	'emberjs'
 ],
 function($, Ember) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/common');

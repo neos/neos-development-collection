@@ -1,5 +1,5 @@
 define(
-	['jquery', 'emberjs', 'text!neos/templates/halloplugins/linkplugin.html', 'jquery-ui'],
+	['Library/jquery-with-dependencies', 'emberjs', 'text!neos/templates/halloplugins/linkplugin.html'],
 	function($, Ember, linkPluginTemplate) {
 		(function($) {
 			return $.widget('typo3.hallo-linkplugin', {

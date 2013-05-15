@@ -2,12 +2,14 @@
  */
 define(
 	[
-		'jquery',
+		'Library/jquery-with-dependencies',
+		'Library/underscore',
+		'emberjs',
 		'vie/instance',
 		'text!neos/templates/content/ui/contentelementHandles.html',
 		'neos/content/ui/elements/new-contentelement-popover-content'
 	],
-	function ($, vieInstance, template, ContentElementPopoverContent) {
+	function ($, _, Ember, vieInstance, template, ContentElementPopoverContent) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/contentelement-handles');
 
 		return Ember.View.extend({

@@ -1,4 +1,4 @@
-define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
+define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha');
 	var Aloha = window.Aloha = window.Aloha || {};
 
@@ -11,13 +11,37 @@ define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
 		plugins: {
 			load: [
 				'common/ui',
-				'common/format',
-				'common/paste',
-				'common/block',
+				'common/link',
 				'common/table',
-				'common/link'//,
-//				'neosAloha/neosintegration',
-//				'neosAloha/neos-links'
+				'common/format',
+				'common/list',
+				//'image/image-plugin',
+				//'highlighteditables/highlighteditables-plugin',
+				'common/dom-to-xhtml',
+				'common/contenthandler',
+				'common/characterpicker',
+				'common/commands',
+				'common/block',
+				'common/align',
+				'common/abbr',
+				'common/horizontalruler',
+				'common/paste',
+				// some extra plugins
+				//'toc/toc-plugin',
+				'extra/cite',
+				//'flag-icons/flag-icons-plugin',
+				//'numerated-headers/numerated-headers-plugin',
+				'extra/formatlesspaste',
+				//'linkbrowser/linkbrowser-plugin',
+				//'imagebrowser/imagebrowser-plugin',
+				'extra/ribbon',
+				//'extra/wai-lang',
+				'extra/headerids',
+				//'metaview/metaview-plugin',
+				'extra/listenforcer'
+
+				//  'neosAloha/neosintegration',
+				//                'neosAloha/neos-links'
 			].join(','),
 			block: {
 				sidebarAttributeEditor: false

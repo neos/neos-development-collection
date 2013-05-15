@@ -4,7 +4,7 @@
  */
 define(
 	[
-		'jquery',
+		'Library/jquery-with-dependencies',
 		'neos/content/ui/elements/toggle-button'
 	],
 	function ($, ToggleButton) {

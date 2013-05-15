@@ -6,7 +6,8 @@
 
 define(
 [
-	'jquery',
+	'Library/jquery-with-dependencies',
+	'emberjs',
 	'neos/content/ui/elements/toolbar',
 	'neos/content/ui/elements/button',
 	'neos/content/ui/elements/toggle-button',
@@ -15,10 +16,9 @@ define(
 	'neos/content/ui/elements/section-handles',
 	'neos/content/ui/elements/page-tree',
 	'text!neos/templates/content/ui/topToolbarTemplate.html',
-	'text!neos/templates/content/ui/footerTemplate.html',
-	'jquery.popover'
+	'text!neos/templates/content/ui/footerTemplate.html'
 ],
-function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree, topToolbarTemplate, footerTemplate) {
+function($, Ember, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree, topToolbarTemplate, footerTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements');
 
 	var T3 = window.T3 || {};

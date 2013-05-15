@@ -1,0 +1,8 @@
+{
+  "name": "typo3-neos-helpers",
+  "version": "0.0.1",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0"
+  }
+}

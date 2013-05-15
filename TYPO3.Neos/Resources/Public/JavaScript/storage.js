@@ -1,4 +1,4 @@
-define(['vie/entity', 'neos/content/controller', 'neos/content/model', 'backbone'], function(Entity) {
+define(['vie/entity', 'Library/backbone', 'neos/content/controller', 'neos/content/model'], function(Entity, Backbone) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('storage');
 
 	Backbone.sync = function(method, model, options) {

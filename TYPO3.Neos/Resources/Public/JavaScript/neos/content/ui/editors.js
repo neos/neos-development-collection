@@ -6,12 +6,15 @@
 
 define(
 [
-	'jquery',
+	'Library/jquery-with-dependencies',
+	'emberjs',
 	'text!neos/templates/content/ui/fileUpload.html',
 	'text!neos/templates/content/ui/imageUpload.html',
+	'Library/spinjs/spin',
+	'Library/plupload',
 	'neos/content/ui/elements'
 ],
-function($, fileUploadTemplate, imageUploadTemplate) {
+function($, Ember, fileUploadTemplate, imageUploadTemplate, Spinner, plupload) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/editors');
 
 	var T3 = window.T3 || {};
@@ -109,15 +112,10 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				this.$().attr('data-placeholder', this.get('placeholder'));
 			}
 
-			require([
-					'chosen'
-				], function() {
-					// TODO Check value binding
-					that.$().addClass('chzn-select').chosen({allow_single_deselect: true}).change(function() {
-						that.set('value', that.$().val());
-					});
-				}
-			);
+			// TODO Check value binding
+			this.$().addClass('chzn-select').chosen({allow_single_deselect: true}).change(function() {
+				that.set('value', that.$().val());
+			});
 		}
 	});
 
@@ -152,12 +150,8 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				this.$popoverContent.append($editorContent);
 
 				require([
-					'codemirror',
-					'codemirror.xml',
-					'codemirror.css',
-					'codemirror.javascript',
-					'codemirror.htmlmixed'
-				], function() {
+					'Library/codemirror',
+				], function(CodeMirror) {
 					var editorFullyPopulated = false;
 
 					that._editor = CodeMirror.fromTextArea($editorContent.get(0), {
@@ -179,9 +173,8 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 					}
 
 					editorFullyPopulated = true;
+					that._editorInitialized = true;
 				});
-
-				this._editorInitialized = true;
 			}
 		},
 
@@ -825,28 +818,23 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				this.loadingindicator.spin(that.$().find('.t3-inspector-image-thumbnail-container').get(0));
 				return;
 			}
-			var that = this;
-			require([
-				'spinjs'
-			], function(Spinner) {
-				that.loadingindicator = new Spinner({
-					lines: 13, // The number of lines to draw
-					length: 15, // The length of each line
-					width: 4, // The line thickness
-					radius: 10, // The radius of the inner circle
-					corners: 1, // Corner roundness (0..1)
-					rotate: 0, // The rotation offset
-					color: '#fff', // #rgb or #rrggbb
-					speed: 1, // Rounds per second
-					trail: 64, // Afterglow percentage
-					shadow: false, // Whether to render a shadow
-					hwaccel: false, // Whether to use hardware acceleration
-					className: 'spinner', // The CSS class to assign to the spinner
-					zIndex: 2e9, // The z-index (defaults to 2000000000)
-					top: 'auto', // Top position relative to parent in px
-					left: 'auto' // Left position relative to parent in px
-				}).spin(that.$().find('.t3-inspector-image-thumbnail-container').get(0));
-			});
+			this.loadingindicator = new Spinner({
+				lines: 13, // The number of lines to draw
+				length: 15, // The length of each line
+				width: 4, // The line thickness
+				radius: 10, // The radius of the inner circle
+				corners: 1, // Corner roundness (0..1)
+				rotate: 0, // The rotation offset
+				color: '#fff', // #rgb or #rrggbb
+				speed: 1, // Rounds per second
+				trail: 64, // Afterglow percentage
+				shadow: false, // Whether to render a shadow
+				hwaccel: false, // Whether to use hardware acceleration
+				className: 'spinner', // The CSS class to assign to the spinner
+				zIndex: 2e9, // The z-index (defaults to 2000000000)
+				top: 'auto', // Top position relative to parent in px
+				left: 'auto' // Left position relative to parent in px
+			}).spin(this.$().find('.t3-inspector-image-thumbnail-container').get(0));
 		},
 
 		_hideImageLoader: function() {

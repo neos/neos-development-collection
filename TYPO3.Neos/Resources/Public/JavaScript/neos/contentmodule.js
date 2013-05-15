@@ -6,17 +6,22 @@
 
 define(
 [
-	'jquery',
+	'Library/jquery-with-dependencies',
+	'Library/underscore',
 	'vie/instance',
 	'emberjs',
 	'create',
+	'Library/vie',
+	'Library/spinjs/spin',
+	'text!./templates/content/ui/topToolbarTemplate.html',
+	'text!./templates/content/ui/footerTemplate.html',
 	'neos/common',
 	'neos/content/model',
 	'neos/content/ui',
 	'neos/content/controller',
-	'jquery.hotkeys'
+	'create/typo3Notifications'
 ],
-function($, vie, Ember, CreateJS) {
+function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate, footerTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
 
 	return Ember.Application.extend(Ember.Evented, {
@@ -423,29 +428,25 @@ function($, vie, Ember, CreateJS) {
 				this.spinner.spin(this.$loader.get(0));
 				return;
 			}
-			var that = this;
-			require([
-				'spinjs'
-			], function(Spinner) {
-				that.$loader = $('<div />').addClass('t3-pageloader-wrapper').fadeTo(0, .8).appendTo($('body'));
-				that.spinner = new Spinner({
-					lines: 13, // The number of lines to draw
-					length: 15, // The length of each line
-					width: 4, // The line thickness
-					radius: 10, // The radius of the inner circle
-					corners: 1, // Corner roundness (0..1)
-					rotate: 0, // The rotation offset
-					color: '#000', // #rgb or #rrggbb
-					speed: 1, // Rounds per second
-					trail: 64, // Afterglow percentage
-					shadow: false, // Whether to render a shadow
-					hwaccel: false, // Whether to use hardware acceleration
-					className: 't3-pageloader', // The CSS class to assign to the spinner
-					zIndex: 2e9, // The z-index (defaults to 2000000000)
-					top: 'auto', // Top position relative to parent in px
-					left: 'auto' // Left position relative to parent in px
-				}).spin(that.$loader.get(0));
-			});
+
+			this.$loader = $('<div />').addClass('t3-pageloader-wrapper').fadeTo(0, .8).appendTo($('body'));
+			this.spinner = new Spinner({
+				lines: 13, // The number of lines to draw
+				length: 15, // The length of each line
+				width: 4, // The line thickness
+				radius: 10, // The radius of the inner circle
+				corners: 1, // Corner roundness (0..1)
+				rotate: 0, // The rotation offset
+				color: '#000', // #rgb or #rrggbb
+				speed: 1, // Rounds per second
+				trail: 64, // Afterglow percentage
+				shadow: false, // Whether to render a shadow
+				hwaccel: false, // Whether to use hardware acceleration
+				className: 't3-pageloader', // The CSS class to assign to the spinner
+				zIndex: 2e9, // The z-index (defaults to 2000000000)
+				top: 'auto', // Top position relative to parent in px
+				left: 'auto' // Left position relative to parent in px
+			}).spin(this.$loader.get(0));
 		},
 
 		hidePageLoader: function() {

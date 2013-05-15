@@ -1,21 +1,14 @@
 define(
 	[
-		'jquery',
+		'Library/jquery-with-dependencies',
 		'vie/instance',
 		'emberjs',
-		'jquery-ui',
-		'aloha',
-		'backbone',
-		'underscorejs',
-		'hallo',
+		'Library/create',
+		'Library/hallo',
 		'halloplugins/linkplugin',
-		'Library/createjs/deps/jquery.tagsinput.min',
-		'Library/createjs/deps/rangy-core-1.2.3',
-		'createjs',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
-		'create/typo3Notifications',
-		'create/typo3MidgardEditable',
-		'neos/content/model'
+
+		'aloha'
 	],
 	function($, vieInstance, Ember) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');
@@ -46,7 +39,7 @@ define(
 					disabled: false,
 					vie: vieInstance,
 					widgets: {
-						'default': 'hallo',
+						'default': 'aloha',
 							// TODO Pull this from the node type definition
 						'typo3:title': 'hallo-blockonly'
 					},

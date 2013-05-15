@@ -3,17 +3,20 @@
  */
 define(
 	[
-		'jquery',
+		'Library/jquery-with-dependencies',
 		'emberjs',
 		'vie/instance',
 		'vie/entity',
 		'text!neos/templates/content/ui/pageTree.html',
-		'text!neos/templates/content/ui/deletePageDialog.html',
-		'jquery.dynatree'
+		'text!neos/templates/content/ui/deletePageDialog.html'
 	], function($, Ember, vie, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate) {
 		if (window._requirejsLoadingTrace) {
 			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
 		}
+
+		var DTNodeStatus_Error = -1,
+			DTNodeStatus_Loading = 1,
+			DTNodeStatus_Ok = 0;
 
 		return Ember.View.extend({
 			classNames: ['t3-pagetree'],
@@ -27,7 +30,10 @@ define(
 			isDblClick: false,
 
 			didInsertElement: function() {
-				this._initializeTree();
+				var that = this;
+				$(document).ready(function() {
+					that._initializeTree();
+				});
 			},
 
 			/**
@@ -147,6 +153,7 @@ define(
 						if (node._currentlySendingExtDirectAjaxRequest) {
 							return;
 						}
+
 						node._currentlySendingExtDirectAjaxRequest = true;
 						TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 							node.data.key,

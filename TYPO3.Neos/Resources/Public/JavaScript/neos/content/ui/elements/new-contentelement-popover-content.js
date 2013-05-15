@@ -1,6 +1,6 @@
 define(
 	[
-		'jquery',
+		'Library/jquery-with-dependencies',
 		'emberjs',
 		'text!neos/templates/content/ui/newContentelementPopoverContent.html'
 	],

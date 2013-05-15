@@ -6,7 +6,7 @@
 
 define(
 [
-	'jquery',
+	'Library/jquery-with-dependencies',
 	'emberjs',
 	'vie/instance',
 	'vie/entity',
@@ -19,14 +19,7 @@ define(
 	'text!neos/templates/content/ui/saveIndicator.html',
 	'text!neos/templates/content/ui/treePanel.html',
 	'neos/content/ui/elements',
-	'neos/content/ui/editors',
-	'jquery.popover',
-	'jquery.jcrop',
-	'jquery.plupload',
-	'jquery.plupload.html5',
-	'jquery.cookie',
-	'jquery.dynatree',
-	'bootstrap.dropdown'
+	'neos/content/ui/editors'
 ],
 
 function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate, saveIndicatorTemplate, treePanelTemplate) {
@@ -561,8 +554,8 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 							// We need to use setTimeout here because otherwise the popover is aligned to the bottom of the body
 						setTimeout(function() {
 							$('.t3-primary-editor-action').click();
-							if (Ember.View.views[jQuery('.t3-primary-editor-action').attr('id')] && Ember.View.views[jQuery('.t3-primary-editor-action').attr('id')].toggle) {
-								Ember.View.views[jQuery('.t3-primary-editor-action').attr('id')].toggle();
+							if (Ember.View.views[$('.t3-primary-editor-action').attr('id')] && Ember.View.views[$('.t3-primary-editor-action').attr('id')].toggle) {
+								Ember.View.views[$('.t3-primary-editor-action').attr('id')].toggle();
 							}
 						}, 1);
 					}

@@ -1,4 +1,4 @@
-define(['vie', 'hallo'], function() {
+define(['Library/vie'], function(VIE) {
 	var vieInstance = new VIE();
 
 	if (!vieInstance.namespaces.get('typo3')) {

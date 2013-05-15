@@ -3,7 +3,7 @@
  */
 define(
 [
-	'jquery'
+	'Library/jquery-with-dependencies'
 ],
 function($) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/resourcecache');

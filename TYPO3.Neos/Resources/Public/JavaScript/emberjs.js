@@ -1,4 +1,4 @@
-define(['emberjs-lib'], function() {
+define(['Library/ember'], function(Ember) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('emberjs');
 
 	if (window.localStorage.showDevelopmentFeatures) {

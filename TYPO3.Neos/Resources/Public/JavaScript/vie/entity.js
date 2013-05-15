@@ -1,4 +1,4 @@
-define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], function($, vieInstance, Ember, DictionaryObject) {
+define(['Library/jquery-with-dependencies', 'Library/underscore', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], function($, _, vieInstance, Ember, DictionaryObject) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('vie/entity');
 
 	var Entity = Ember.Object.extend({

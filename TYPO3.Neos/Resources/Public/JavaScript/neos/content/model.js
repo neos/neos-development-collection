@@ -7,8 +7,8 @@
  */
 
 define(
-	['jquery', 'vie/instance', 'vie/entity'],
-	function($, vie, EntityWrapper) {
+	['Library/jquery-with-dependencies', 'Library/underscore', 'emberjs', 'vie/instance', 'vie/entity'],
+	function($, _, Ember, vie, EntityWrapper) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/model');
 
 		var T3 = window.T3 || {};

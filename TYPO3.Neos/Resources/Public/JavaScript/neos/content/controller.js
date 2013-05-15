@@ -3,8 +3,8 @@
  */
 
 define(
-['jquery', 'create', 'vie/entity', 'neos/common', 'neos/content/model'],
-function($, CreateJS, Entity) {
+['Library/jquery-with-dependencies', 'Library/underscore', 'create', 'emberjs', 'vie/entity', 'neos/common', 'neos/content/model'],
+function($, _, CreateJS, Ember, Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
 
 	var T3 = window.T3 || {};
@@ -156,9 +156,9 @@ function($, CreateJS, Entity) {
 		onInspectModeChange: function() {
 			var isInspectEnabled = this.get('inspectMode');
 			if (isInspectEnabled) {
-				jQuery('body').addClass('t3-inspect-active');
+				$('body').addClass('t3-inspect-active');
 			} else {
-				jQuery('body').removeClass('t3-inspect-active');
+				$('body').removeClass('t3-inspect-active');
 			}
 		}.observes('inspectMode')
 	}).create();
@@ -246,11 +246,11 @@ function($, CreateJS, Entity) {
 			}
 
 			var sectionsAndViews = [];
-			jQuery.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
+			$.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
-				jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
+				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
 					if (Ember.get(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
-						properties.push(jQuery.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
+						properties.push($.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
 					}
 				});
 
@@ -258,7 +258,7 @@ function($, CreateJS, Entity) {
 					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
 				});
 
-				sectionsAndViews.push(jQuery.extend({}, propertyGroupConfiguration, {
+				sectionsAndViews.push($.extend({}, propertyGroupConfiguration, {
 					properties: properties,
 					group: groupIdentifier
 				}));
@@ -299,14 +299,14 @@ function($, CreateJS, Entity) {
 				selectedNodeSchema = selectedNode.get('nodeTypeSchema');
 				nodeProperties = this.get('nodeProperties');
 				if (selectedNodeSchema.properties) {
-					jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
+					$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
 						if (!propertyConfiguration.ui || propertyConfiguration.ui.inlineEditable !== true) {
 							editableProperties.push(propertyName);
 						}
 					});
 				}
 				if (editableProperties.length > 0) {
-					jQuery.each(editableProperties, function(key, propertyName) {
+					$.each(editableProperties, function(key, propertyName) {
 						nodeProperties.addObserver(propertyName, null, function() {
 							that._somePropertyChanged();
 						});
@@ -510,12 +510,12 @@ function($, CreateJS, Entity) {
 		/**
 		 * Creates a node on the server. When the result is received the callback function is called.
 		 * The first argument passed to the callback is the nodepath of the new node, second argument
-		 * is the jQuery object containing the rendered HTML of the new node.
+		 * is the $ object containing the rendered HTML of the new node.
 		 *
 		 * @param {String} nodeType
 		 * @param {Object} referenceEntity
 		 * @param {String} position
-		 * @param {Function} callBack This function is called after element creation and receives the jQuery DOM element as arguments
+		 * @param {Function} callBack This function is called after element creation and receives the $ DOM element as arguments
 		 * @private
 		 */
 		_add: function(nodeType, referenceEntity, position, callBack) {
@@ -542,7 +542,7 @@ function($, CreateJS, Entity) {
 		 * Paste the current node on the clipboard before another node
 		 *
 		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} $handle the clicked handle
+		 * @param {$} $handle the clicked handle
 		 * @return {boolean}
 		 */
 		pasteBefore: function(nodePath, $handle) {
@@ -553,7 +553,7 @@ function($, CreateJS, Entity) {
 		 * Paste the current node on the clipboard after another node
 		 *
 		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} $handle the clicked handle
+		 * @param {$} $handle the clicked handle
 		 * @return {void}
 		 */
 		removeFromClipboard: function(nodePath, $handle) {

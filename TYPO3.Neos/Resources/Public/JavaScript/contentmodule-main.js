@@ -13,19 +13,18 @@ require(
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 
 		paths: {
-			'Library': '../Library/'
+			'Library': '../Library'
 		},
 		locale: 'en'
 	},
 	[
-		'jquery',
+		'Library/jquery-with-dependencies',
+		'emberjs',
 		'neos/contentmodule',
 		'neos/resourcecache',
-		'emberjs',
-		'storage',
-		'antiscroll'
+		'storage'
 	],
-	function($, ContentModule) {
+	function($, Ember, ContentModule) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('contentmodule-main');
 		var T3 = window.T3;
 		T3.Configuration = window.T3Configuration;

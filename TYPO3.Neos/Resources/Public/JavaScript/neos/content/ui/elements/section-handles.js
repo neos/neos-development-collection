@@ -2,7 +2,7 @@
  */
 define(
 [
-	'jquery',
+	'Library/jquery-with-dependencies',
 	'vie/entity',
 	'neos/content/ui/elements/contentelement-handles'
 ],

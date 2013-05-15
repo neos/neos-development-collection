@@ -1,10 +1,10 @@
 define(
 	[
-		'jquery',
-		'jquery-ui',
-		'createjs'
+		'Library/jquery-with-dependencies',
+		'Library/underscore',
+		'Library/create'
 	],
-	function($) {
+	function($, _) {
 		(function ($, undefined) {
 			$.widget('typo3.typo3CollectionWidget', $.Midgard.midgardCollectionAddBetween, {
 				/**
