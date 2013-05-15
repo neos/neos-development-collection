@@ -42,7 +42,7 @@ class HostnameValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
 		}
 
 		if (!preg_match($pattern, $hostname)) {
-			$this->addError('The hostname "' . $hostname .'" was not valid.', 1324641097);
+			$this->addError('The hostname "%1$s" was not valid.', 1324641097, array($hostname));
 		}
 	}
 
