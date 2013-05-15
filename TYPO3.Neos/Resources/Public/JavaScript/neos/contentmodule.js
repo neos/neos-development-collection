@@ -14,14 +14,13 @@ define(
 	'Library/vie',
 	'Library/spinjs/spin',
 	'text!./templates/content/ui/topToolbarTemplate.html',
-	'text!./templates/content/ui/footerTemplate.html',
 	'neos/common',
 	'neos/content/model',
 	'neos/content/ui',
 	'neos/content/controller',
 	'create/typo3Notifications'
 ],
-function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate, footerTemplate) {
+function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
 
 	return Ember.Application.extend(Ember.Evented, {

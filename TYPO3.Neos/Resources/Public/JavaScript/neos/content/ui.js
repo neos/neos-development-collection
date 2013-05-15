@@ -47,9 +47,11 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 	 * The breadcrumb menu
 	 */
 	T3.Content.UI.Breadcrumb = Ember.View.extend({
-		tagName: 'div',
-		classNames: ['t3-breadcrumb'],
-		template: Ember.Handlebars.compile(breadcrumbTemplate)
+		classNames: ['neos-breadcrumb'],
+		template: Ember.Handlebars.compile(breadcrumbTemplate),
+		nodes: function() {
+			return this.get('content').toArray().reverse();
+		}.property('content.@each')
 	});
 
 	/**
@@ -61,15 +63,11 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 	T3.Content.UI.BreadcrumbItem = Ember.View.extend({
 		tagName: 'a',
 		href: '#',
-		// TODO Don't need to bind here actually
-		attributeBindings: ['href'],
 		template: Ember.Handlebars.compile('{{view.item.nodeTypeSchema.ui.label}} {{#if view.item.status}}<span class="t3-breadcrumbitem-status">({{view.item.status}})</span>{{/if}}'),
 		click: function(event) {
 			event.preventDefault();
-
 			var item = this.get('item');
 			T3.Content.Model.NodeSelection.selectNode(item);
-			return false;
 		}
 	});
 

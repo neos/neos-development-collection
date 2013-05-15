@@ -15,10 +15,9 @@ define(
 	'neos/content/ui/elements/contentelement-handles',
 	'neos/content/ui/elements/section-handles',
 	'neos/content/ui/elements/page-tree',
-	'text!neos/templates/content/ui/topToolbarTemplate.html',
-	'text!neos/templates/content/ui/footerTemplate.html'
+	'text!neos/templates/content/ui/topToolbarTemplate.html'
 ],
-function($, Ember, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree, topToolbarTemplate, footerTemplate) {
+function($, Ember, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle, PageTree, topToolbarTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements');
 
 	var T3 = window.T3 || {};
@@ -38,11 +37,6 @@ function($, Ember, Toolbar, Button, ToggleButton, PopoverButton, ContentElementH
 	T3.Content.UI.NavigationToolbar = T3.Content.UI.Toolbar.extend({
 		elementId: 't3-toolbar',
 		template: Ember.Handlebars.compile(topToolbarTemplate)
-	});
-
-	T3.Content.UI.FooterToolbar = T3.Content.UI.Toolbar.extend({
-		elementId: 't3-footer',
-		template: Ember.Handlebars.compile(footerTemplate)
 	});
 
 	/**

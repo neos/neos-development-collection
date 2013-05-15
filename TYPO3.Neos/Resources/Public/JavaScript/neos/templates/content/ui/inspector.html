@@ -3,6 +3,7 @@
 	{{#view T3.Content.UI.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}Apply{{/view}}
 </div>
 <form class="t3-inspector-form" action="#">
+	{{view T3.Content.UI.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
 		{{#view T3.Content.UI.ToggleInspectorPanelHeadline contentBinding="view.content"}}
 			<h2>
