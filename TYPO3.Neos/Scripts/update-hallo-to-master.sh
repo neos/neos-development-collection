@@ -15,8 +15,7 @@ fi
 echo "Build hallo"
 cd hallo
 npm install
-cake build
-cake min
+grunt build
 cd ../
 
 echo "Move built files to Library folder"
