@@ -37,6 +37,18 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 	protected $bootstrap;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+	 */
+	protected $resourcePublisher;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\I18n\Service
+	 */
+	protected $i18nService;
+
+	/**
 	 * @return string
 	 */
 	public function render() {
@@ -60,6 +72,17 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
 			'window.T3Configuration.nodeTypeGroups = ' . json_encode($this->settings['nodeTypeGroups']) . ';'
 		);
+
+		$resourcePath = 'resource://TYPO3.Neos/Public/JavaScript';
+		$localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
+		$matches = array();
+		if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+			$package = $matches[1];
+			$path = $matches[2];
+		}
+		$neosJavaScriptBasePath = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+
+		$configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
 
 		if ($this->bootstrap->getContext()->isDevelopment()) {
 			$configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
