@@ -52,7 +52,7 @@ class BackendRedirectionService {
 		$this->nodeRepository->setContext($contentContext);
 		$this->nodeRepository->persistEntities();
 
-		if ($this->session->hasKey('lastVisitedUri')) {
+		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
 			return $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
 		}
 
@@ -67,7 +67,7 @@ class BackendRedirectionService {
 	 * @return string A possible redirection URI, if any
 	 */
 	public function getAfterLogoutRedirectionUri() {
-		if ($this->session->hasKey('lastVisitedUri')) {
+		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
 			$contentContext = new ContentContext('live');
 			$this->nodeRepository->setContext($contentContext);
 
