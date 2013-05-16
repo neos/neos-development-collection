@@ -71,16 +71,20 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
-		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-		$this->view->assignMultiple(array(
-			'moduleClass' => implode('-', $modules),
-			'moduleContents' => $moduleResponse->getContent(),
-			'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
-			'rootModule' => array_shift($modules),
-			'submodule' => array_shift($modules),
-			'moduleConfiguration' => $moduleConfiguration,
-			'user' => $user
-		));
+		if ($moduleResponse->hasHeader('Location')) {
+			$this->redirectToUri($moduleResponse->getHeader('Location'));
+		} else {
+			$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
+			$this->view->assignMultiple(array(
+				'moduleClass' => implode('-', $modules),
+				'moduleContents' => $moduleResponse->getContent(),
+				'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
+				'rootModule' => array_shift($modules),
+				'submodule' => array_shift($modules),
+				'moduleConfiguration' => $moduleConfiguration,
+				'user' => $user
+			));
+		}
 	}
 
 }
