@@ -93,7 +93,7 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate, footerTem
 				// Initialize notifications
 			$('#t3-application').append('<div class="t3-notification-container t3-ui"></div>');
 				// TODO: Remove with resolving #45049
-			$('#t3-application').midgardNotifications();
+			$('body').midgardNotifications();
 		},
 
 		_initializeDevelopmentFeatures: function() {
@@ -227,7 +227,7 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate, footerTem
 
 		_initializeCreateJs: function() {
 				// Midgard Storage
-			$('#t3-application').midgardStorage({
+			$('body').midgardStorage({
 				vie: vie,
 				url: function () { /* empty function to prevent Midgard error */ },
 				localStorage: true,

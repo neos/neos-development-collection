@@ -118,7 +118,15 @@ module.exports = function(grunt) {
 				dest: baseUri + 'create.js',
 				options: {
 					banner: 'define(["Library/underscore", "Library/backbone", "Library/jquery-with-dependencies"], function(_, Backbone, jQuery) {',
-					footer: '});'
+					footer: '});',
+					process: function(src, filepath) {
+						return src.replace(
+							'window.localStorage.setItem(key, JSON.stringify(model.toJSONLD()));',
+							'var newType = [], tmp = model.toJSONLD();' +
+								'_.each(tmp["type"], function(v) { newType.push(v.id); });' +
+								'tmp["@type"] = newType;' +
+								'window.localStorage.setItem(key, JSON.stringify(tmp));');
+					}
 				}
 			},
 
