@@ -46,7 +46,7 @@
   superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Neos.NodeTypes:AbstractNode']
   ui:
     label: 'Folder'
-    launcher:
+    search:
       searchCategory: 'Pages'
 
     inspector:
@@ -121,7 +121,7 @@
   superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
   ui:
     label: 'Abstract content object'
-    launcher:
+    search:
       searchCategory: 'Content'
 
 'TYPO3.Neos.NodeTypes:Headline':
