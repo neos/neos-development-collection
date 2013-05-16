@@ -7,6 +7,7 @@
 	color: black;
 	padding: 1px;
 	min-width: 15em;
+	width: auto;
 	background-color: $dark-grey2;
 	@include single-box-shadow(rgba(0, 0, 0, 0.3), 0px, 0px, 5px);
 	@include transition-property(opacity);
