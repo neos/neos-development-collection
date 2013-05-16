@@ -1,3 +1,4 @@
+{namespace t=TYPO3\Neos\ViewHelpers}
 {namespace media=TYPO3\Media\ViewHelpers}
 <figure>
 	<f:if condition="{image}">
@@ -15,7 +16,7 @@
 			<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.png')}" title="Dummy image" alt="Dummy image" />
 		</f:else>
 	</f:if>
-	<f:if condition="{caption}">
-		<figcaption{f:if(condition: captionAlignment, then: 'class="alignment-{captionAlignment}"')}>{caption}</figcaption>
+	<f:if condition="{hasCaption}">
+		<figcaption{f:if(condition: captionAlignment, then: 'class="alignment-{captionAlignment}"')}><t:contentElement.editable property="caption">{caption -> f:format.raw()}</t:contentElement.editable></figcaption>
 	</f:if>
 </figure>
