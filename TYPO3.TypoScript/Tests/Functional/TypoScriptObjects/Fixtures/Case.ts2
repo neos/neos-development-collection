@@ -31,10 +31,10 @@ prototype(TYPO3.TypoScript:Case.Test2) < prototype(TYPO3.TypoScript:TestRenderer
 
 case.renderPath = TYPO3.TypoScript:Case {
 	foo.condition = ${cond}
-	foo.renderPath = 'renderPathRenderer/true'
+	foo.renderPath = '/renderPathRenderer/true'
 
 	default.condition = ${true}
-	default.renderPath = 'renderPathRenderer/false'
+	default.renderPath = '/renderPathRenderer/false'
 	default.@position = 'end'
 }
 

@@ -67,7 +67,11 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 		if ($this->tsValue('condition')) {
 			$renderPath = $this->tsValue('renderPath');
 			if ($renderPath !== NULL) {
-				$renderedElement = $this->tsRuntime->render($renderPath);
+				if (substr($renderPath, 0, 1) === '/') {
+					$renderedElement = $this->tsRuntime->render(substr($renderPath, 1));
+				} else {
+					$renderedElement = $this->tsRuntime->render($this->path . '/' . str_replace('.', '/', $renderPath));
+				}
 			} else {
 				$type = $this->tsValue('type');
 				$renderedElement = $this->tsRuntime->render(
