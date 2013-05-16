@@ -7926,7 +7926,7 @@ body.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-con
   margin: 15px 0;
 }
 
-.t3-ui#t3-inspector .t3-inspector-form .chzn-container li.highlighted {
+.t3-ui #t3-inspector .t3-inspector-form .chzn-container li.highlighted {
   background-color: #f58200;
   background-image: -moz-linear-gradient(top, #ff8700, #e67a00);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff8700), to(#e67a00));
@@ -7936,28 +7936,28 @@ body.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-con
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF8700', endColorstr='#FFE67A00', GradientType=0);
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container {
   position: relative;
   overflow: hidden;
   border: 1px dashed #444444;
   margin-bottom: 10px;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-loadingindicator {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-loadingindicator {
   z-index: 1;
   position: absolute;
   left: 67px;
   top: 67px;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-thumbnail-inner {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-thumbnail-inner {
   overflow: hidden;
   padding: 0;
   margin: auto;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-thumbnail-inner img {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-thumbnail-inner img {
   max-width: none;
   max-height: none;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-imagebadge {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-imagebadge {
   position: absolute;
   top: 80px;
   width: 100%;
@@ -7967,27 +7967,27 @@ body.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-con
   text-align: center;
   display: none;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-imagebadge.t3-imagebadge-visible {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-imagebadge.t3-imagebadge-visible {
   display: block;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail {
   display: block;
   position: absolute;
   left: 0;
   top: 0;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail-landscape {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail-landscape {
   width: 180px;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail-portrait {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-thumbnail-container .t3-inspector-image-uploadthumbnail-portrait {
   height: 180px;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-upload-button,
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-crop-button {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-upload-button,
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-crop-button {
   float: right;
 }
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-upload,
-.t3-ui#t3-inspector .t3-inspector-form .t3-inspector-image-width {
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-upload,
+.t3-ui #t3-inspector .t3-inspector-form .t3-inspector-image-width {
   padding-bottom: 10px;
 }
 .t3-ui .t3-inspector-image-crop {
@@ -8905,7 +8905,7 @@ button.t3-button.t3-connection-status-down {
   margin: 0;
 }
 
-.popover {
+.t3-ui .popover {
   position: absolute;
   display: none;
   opacity: 0;
@@ -8935,14 +8935,55 @@ button.t3-button.t3-connection-status-down {
   -ms-border-radius: 6px;
   -o-border-radius: 6px;
   border-radius: 6px;
-  -webkit-background-clip: padding-box;
+  -webkit-background-clip: padding;
   -moz-background-clip: padding;
   background-clip: padding-box;
 }
-.popover.active {
+.t3-ui .popover.t3-new-contentelement-popover, .t3-ui .popover.t3-pagetree, .t3-ui .popover.t3-inspecttree {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+.t3-ui .popover.t3-new-contentelement-popover.content, .t3-ui .popover.t3-pagetree.content, .t3-ui .popover.t3-inspecttree.content {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+.t3-ui .popover.t3-new-contentelement-popover {
+  z-index: 10090 !important;
+}
+.t3-ui .popover.t3-new-contentelement-popover .content {
+  background: transparent;
+}
+.t3-ui .popover .ui-tabs {
+  padding: 0;
+}
+.t3-ui .popover .ui-tabs .ui-tabs-nav {
+  padding: 0 0 0 3px;
+}
+.t3-ui .popover .ui-tabs .ui-tabs-nav li.ui-state-hover {
+  border-color: #303030;
+  border-top: 1px solid white;
+  background: #303030;
+}
+.t3-ui .popover .ui-tabs .ui-tabs-nav li.ui-state-hover a {
+  color: #AAAAAA;
+}
+.t3-ui .popover .ui-tabs .ui-tabs-nav li.ui-state-active {
+  border-top: 1px solid #ff8700;
+  background: #373737;
+}
+.t3-ui .popover .ui-tabs .ui-tabs-nav li.ui-state-active a {
+  color: white;
+}
+.t3-ui .popover.active {
   opacity: 1;
 }
-.popover .header {
+.t3-ui .popover .header {
   margin: 0;
   padding: 8px 10px;
   font-size: 100%;
@@ -8957,7 +8998,7 @@ button.t3-button.t3-connection-status-down {
   -o-border-radius: 5px 5px 0 0;
   border-radius: 5px 5px 0 0;
 }
-.popover > .triangle {
+.t3-ui .popover > .triangle {
   position: absolute;
   display: inline-block;
   width: 0;
@@ -8965,7 +9006,7 @@ button.t3-button.t3-connection-status-down {
   border-color: transparent;
   border-style: solid;
 }
-.popover > .triangle:after {
+.t3-ui .popover > .triangle:after {
   position: absolute;
   display: inline-block;
   width: 0;
@@ -8975,59 +9016,59 @@ button.t3-button.t3-connection-status-down {
   content: "";
   z-index: -1;
 }
-.popover > .triangle.top {
+.t3-ui .popover > .triangle.top {
   bottom: -10px;
   left: 50%;
   margin-left: 10px;
   border-top-color: #444444;
   border-width: 10px 10px 0;
 }
-.popover > .triangle.top:after {
+.t3-ui .popover > .triangle.top:after {
   bottom: -1px;
   left: -11px;
   border-top-color: rgba(255, 255, 255, 0.25);
   border-width: 11px 11px 0;
 }
-.popover > .triangle.bottom {
+.t3-ui .popover > .triangle.bottom {
   top: -10px;
   left: 50%;
   margin-left: 10px;
   border-bottom-color: #444444;
   border-width: 0 10px 10px;
 }
-.popover > .triangle.bottom:after {
+.t3-ui .popover > .triangle.bottom:after {
   top: -1px;
   left: -11px;
   border-bottom-color: rgba(255, 255, 255, 0.25);
   border-width: 0 11px 11px;
 }
-.popover > .triangle.left {
+.t3-ui .popover > .triangle.left {
   top: 50%;
   right: -10px;
   margin-top: 10px;
   border-left-color: #444444;
   border-width: 10px 0 10px 10px;
 }
-.popover > .triangle.left:after {
+.t3-ui .popover > .triangle.left:after {
   right: -1px;
   bottom: -11px;
   border-left-color: rgba(0, 0, 0, 0.25);
   border-width: 11px 0 11px 11px;
 }
-.popover > .triangle.right {
+.t3-ui .popover > .triangle.right {
   top: 50%;
   left: -10px;
   margin-top: 10px;
   border-right-color: #444444;
   border-width: 10px 10px 10px 0;
 }
-.popover > .triangle.right:after {
+.t3-ui .popover > .triangle.right:after {
   bottom: -11px;
   left: -1px;
   border-right-color: rgba(0, 0, 0, 0.25);
   border-width: 11px 11px 11px 0;
 }
-.popover > .content {
+.t3-ui .popover > .content {
   background-color: white;
   width: 100%;
   -webkit-border-radius: 0 0 3px 3px;
@@ -9036,14 +9077,14 @@ button.t3-button.t3-connection-status-down {
   -o-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
 }
-.popover > .content .text {
+.t3-ui .popover > .content .text {
   padding: 8px 10px;
   font-size: 100%;
 }
-.popover > .content .text p, .popover > .content .text ul, .popover > .content .text ol {
+.t3-ui .popover > .content .text p, .t3-ui .popover > .content .text ul, .t3-ui .popover > .content .text ol {
   margin-bottom: 0;
 }
-.popover > .content .actions {
+.t3-ui .popover > .content .actions {
   padding: 8px 10px;
   margin-bottom: 0;
   text-align: right;
@@ -9057,57 +9098,12 @@ button.t3-button.t3-connection-status-down {
   overflow: hidden;
   *zoom: 1;
 }
-.popover > .content .actions .btn + .btn {
+.t3-ui .popover > .content .actions .btn + .btn {
   margin-left: 5px;
   margin-bottom: 0;
 }
-.popover > .content .actions .btn-group .btn + .btn {
+.t3-ui .popover > .content .actions .btn-group .btn + .btn {
   margin-left: -1px;
-}
-
-.popover .ui-tabs {
-  padding: 0;
-}
-
-.popover .ui-tabs .ui-tabs-nav {
-  padding: 0 0 0 3px;
-}
-
-.ui-tabs .ui-tabs-nav li.ui-state-hover {
-  border-color: #303030;
-  border-top: 1px solid white;
-  background: #303030;
-}
-.ui-tabs .ui-tabs-nav li.ui-state-hover a {
-  color: #AAAAAA;
-}
-.ui-tabs .ui-tabs-nav li.ui-state-active {
-  border-top: 1px solid #ff8700;
-  background: #373737;
-}
-.ui-tabs .ui-tabs-nav li.ui-state-active a {
-  color: white;
-}
-
-.t3-ui.popover.t3-new-contentelement-popover, .t3-ui.popover.t3-pagetree, .t3-ui.popover.t3-inspecttree {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-}
-.t3-ui.popover.t3-new-contentelement-popover.content, .t3-ui.popover.t3-pagetree.content, .t3-ui.popover.t3-inspecttree.content {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  -ms-border-radius: 0;
-  -o-border-radius: 0;
-  border-radius: 0;
-}
-.t3-ui.popover.t3-new-contentelement-popover {
-  z-index: 10090 !important;
-}
-.t3-ui.popover.t3-new-contentelement-popover .content {
-  background: transparent;
 }
 
 .t3-backend .notice-wrap {
