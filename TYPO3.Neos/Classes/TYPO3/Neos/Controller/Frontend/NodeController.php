@@ -70,11 +70,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
 				// TODO: Introduce check if workspace is visible or accessible to the user
-			try {
-				$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
+			if ($this->hasAccessToBackend()) {
 				$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
 				$this->nodeRepository->getContext()->setRemovedContentShown(TRUE);
-			} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+			} else {
 				$this->redirect('index', 'Login');
 			}
 		}
@@ -92,16 +91,25 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
+
 		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
-			if ($node->getProperty('targetNode') !== NULL) {
-				$node = $node->getNode($node->getProperty('targetNode'));
-			} else {
+			if (!$this->hasAccessToBackend() || $node->getContext()->getWorkspace()->getName() === 'live') {
 				while ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
-					$childNodes = $node->getChildNodes('TYPO3.Neos.NodeTypes:Folder');
-					$node = current($childNodes);
+					switch ($node->getProperty('targetMode')) {
+						case 'selectedNode':
+							$node = $node->getNode($node->getProperty('targetNode'));
+						break;
+						case 'parentNode':
+							$node = $node->getParent();
+						break;
+						case 'firstChildNode':
+						default:
+							$childNodes = $node->getChildNodes('TYPO3.Neos.NodeTypes:Folder');
+							$node = current($childNodes);
+					}
 				}
+				$this->redirect('show', NULL, NULL, array('node' => $node));
 			}
-			$this->redirect('show', NULL, NULL, array('node' => $node));
 		}
 
 		$this->nodeRepository->getContext()->setCurrentNode($node);
@@ -166,5 +174,18 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		}
 		return FALSE;
 	}
+
+	/**
+	 * @return boolean
+	 */
+	protected function hasAccessToBackend() {
+		try {
+			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
+			return TRUE;
+		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $aexception) {
+			return FALSE;
+		}
+	}
+
 }
 ?>
