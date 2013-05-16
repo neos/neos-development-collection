@@ -1,4 +1,4 @@
-define(function() {/*!
+define(function() { /*!
  * jQuery JavaScript Library v1.9.1
  * http://jquery.com/
  *
@@ -11,7 +11,7 @@ define(function() {/*!
  *
  * Date: 2013-2-4
  */
-(function( window, undefined ) {
+;(function( window, undefined ) {
 
 // Can't do this because several apps including ASP.NET trace
 // the stack via arguments.caller.callee and Firefox dies if
@@ -9591,7 +9591,7 @@ window.jQuery = window.$ = jQuery;
 // Do this after creating the global so that if an AMD module wants to call
 // noConflict to hide this version of jQuery, it will work.
 if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
-	define( "jquery", [], function () { return jQuery; } );
+	
 }
 
 })( window );
@@ -31644,4 +31644,4 @@ Copyright (c) 2011 by Harvest
     onClose: function () {},
     onClosed: function () {}
   }
-})(window.jQuery);  jQuery.migrateMute = true;  return jQuery.noConflict(true);});
+})(window.jQuery);;  jQuery.migrateMute = true;return jQuery.noConflict(true);});

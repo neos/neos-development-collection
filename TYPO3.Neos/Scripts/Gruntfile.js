@@ -18,10 +18,14 @@ module.exports = function(grunt) {
 				],
 				dest: baseUri + 'jquery-with-dependencies.js',
 				options: {
-					banner: 'define(function() {',
-					footer: '  jQuery.migrateMute = true;' +
-							'  return jQuery.noConflict(true);' +
-							'});'
+					banner: 'define(function() { ',
+					footer: ';  jQuery.migrateMute = true;' +
+								'return jQuery.noConflict(true);' +
+							'});',
+					process: function(src, filepath) {
+						// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
+						return src.replace('define( "jquery", [], function () { return jQuery; } );', '');
+					}
 				}
 			},
 			handlebars: {
@@ -76,7 +80,7 @@ module.exports = function(grunt) {
 
 			backbone: {
 				src: [
-					baseUri + 'vie/lib/backboneJS/backbone.js',
+					baseUri + 'vie/lib/backboneJS/backbone.js'
 				],
 				dest: baseUri + 'backbone.js',
 				options: {
@@ -139,7 +143,7 @@ module.exports = function(grunt) {
 				dest: baseUri + 'plupload.js',
 				options: {
 					banner: 'define(["Library/jquery-with-dependencies"], function(jQuery) {',
-					// TODO: get rid of the global "window.plupload".
+					// TODO: get rid of the global 'window.plupload'.
 					footer: '  return window.plupload;' +
 							'});'
 				}
@@ -151,7 +155,7 @@ module.exports = function(grunt) {
 					baseUri + 'codemirror2/mode/xml/xml.js',
 					baseUri + 'codemirror2/mode/css/css.js',
 					baseUri + 'codemirror2/mode/javascript/javascript.js',
-					baseUri + 'codemirror2/mode/htmlmixed/htmlmixed.js',
+					baseUri + 'codemirror2/mode/htmlmixed/htmlmixed.js'
 				],
 				dest: baseUri + 'codemirror.js',
 				options: {
