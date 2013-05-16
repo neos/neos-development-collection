@@ -104,6 +104,30 @@
       groups:
         page:
           label: 'Shortcut options'
+  properties:
+    targetMode:
+      type: string
+      ui:
+        label: 'Target mode'
+        defaultValue: 'firstChildNode'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'page'
+          editor: Content/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            values:
+              selectedNode:
+                label: 'Selected node'
+              firstChildNode:
+                label: 'First child node'
+              parentNode:
+                label: 'Parent node'
+    targetNode:
+      type: string
+      ui:
+        label: 'Target node'
+        inspector:
+          group: 'page'
 
 'TYPO3.Neos.NodeTypes:Page':
   superTypes: ['TYPO3.Neos.NodeTypes:Folder']

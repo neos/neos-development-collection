@@ -14,6 +14,16 @@ prototype(TYPO3.Neos.NodeTypes:Page) {
 	htmlAttributes = ''
 }
 
+prototype(TYPO3.Neos.NodeTypes:Shortcut) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:Shortcut) {
+	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Shortcut.html'
+
+	targetMode = ${q(node).property('targetMode')}
+	targetNode = ${q(node).property('targetNode')}
+	firstChildNode = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Folder]').get(0)}
+	parentNode = ${q(node).parents().get(0)}
+}
+
 # Case TS Object for Section
 #
 # Using a Case object allows for defining custom rendering of sections for specific
@@ -46,6 +56,11 @@ prototype(TYPO3.Neos.NodeTypes:Section.Default) {
 		# already or if the child nodes of a section specified by nodePath should be
 		# rendered
 	collection = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Section]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
+}
+
+prototype(TYPO3.Neos.NodeTypes:Section).shortcut {
+	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Shortcut]')}
+	type = 'TYPO3.Neos.NodeTypes:Shortcut'
 }
 
 # HTML TS Object
