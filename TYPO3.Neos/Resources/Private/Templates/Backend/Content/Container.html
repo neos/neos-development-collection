@@ -2,9 +2,7 @@
 <f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
-		<div class="t3-ui" id="t3-application" role="application"></div>
-
-		<script type="text/x-handlebars" data-template-name="application">
+		<div class="t3-ui" id="t3-application" role="application">
 			<div id="t3-ui-top">
 				<ul class="t3-topbar">
 					<li class="t3-active">
@@ -35,6 +33,9 @@
 				<f:render partial="Backend/UserMenu" arguments="{_all}" />
 				<div class="t3-clear"></div>
 			</div>
+		</div>
+
+		<script type="text/x-handlebars" data-template-name="application">
 			{{view T3.Content.UI.NavigationToolbar}}
 			{{view T3.Content.UI.Inspector}}
 			{{view T3.Content.UI.TreePanel}}
