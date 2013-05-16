@@ -3,8 +3,8 @@
  */
 
 define(
-['Library/jquery-with-dependencies', 'Library/underscore', 'create', 'emberjs', 'vie/entity', 'neos/common', 'neos/content/model'],
-function($, _, CreateJS, Ember, Entity) {
+['Library/jquery-with-dependencies', 'Library/underscore', 'Library/backbone', 'create', 'emberjs', 'vie/entity', 'neos/common', 'neos/content/model'],
+function($, _, Backbone, CreateJS, Ember, Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
 
 	var T3 = window.T3 || {};
