@@ -36,20 +36,20 @@ since all the data will be removed after each scenario.
 
 	TYPO3:
 	  Flow:
-		persistence:
-		  backendOptions:
-			dbname: 'neos_testing_behat'
+	    persistence:
+	      backendOptions:
+	      dbname: 'neos_testing_behat'
 
 `FLOW_ROOT/Configuration/Testing/Behat/Settings.yaml`::
 
 	TYPO3:
 	  Flow:
-		persistence:
-		  backendOptions:
-	      dbname: 'neos_testing_behat'
-	      driver: pdo_mysql
-	      user: ''
-	      password: ''
+	    persistence:
+	      backendOptions:
+	        dbname: 'neos_testing_behat'
+	        driver: pdo_mysql
+	        user: ''
+	        password: ''
 
 Example virtual host configuration for Apache::
 
@@ -75,16 +75,16 @@ Customized `behat.yml`::
 
 	default:
 	  paths:
-		features: Features
-		bootstrap: %behat.paths.features%/Bootstrap
+	    features: Features
+	    bootstrap: %behat.paths.features%/Bootstrap
 	  extensions:
-		Behat\MinkExtension\Extension:
-		  files_path: features/Resources
-		  show_cmd: 'open %s'
-		  goutte: ~
-		  selenium2: ~
+	    Behat\MinkExtension\Extension:
+	      files_path: features/Resources
+	      show_cmd: 'open %s'
+	      goutte: ~
+	      selenium2: ~
 
-		  base_url: http://neos.behat.test/
+	      base_url: http://neos.behat.test/
 
 Selenium
 --------
