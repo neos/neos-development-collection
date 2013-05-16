@@ -25,9 +25,10 @@
 						<f:then>
 							<legend>Create a blank site</legend>
 							<div class="control-group">
-								<label class="control-label" for="package-key">Package Name (in form "Vendor.MyPackageName")</label>
+								<label class="control-label" for="package-key">Package Key</label>
 								<div class="controls">
 									<f:form.textfield name="packageKey" value="{packageKey}" id="package-key" />
+									<span class="help-block">A valid package key should be in the form <code>VendorName.MyPackageKey</code>.</span>
 								</div>
 							</div>
 							<div class="control-group">
