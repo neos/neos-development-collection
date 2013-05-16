@@ -362,27 +362,26 @@ define(
 			 * When clicking the delete Page, we show a dialog
 			 */
 			showDeletePageDialog: function(activeNode) {
-				var that = this,
-					view = Ember.View.create({
-						classNames: ['t3-ui'],
-						template: Ember.Handlebars.compile(deletePageDialogTemplate),
-						pageTitle: activeNode.data.title,
-						numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
-						didInsertElement: function() {
-						},
-						cancel: function() {
-							var $jQueryHandle = this.$();
-							this.destroy();
-							$jQueryHandle.remove();
-						},
-						'delete': function() {
-							var $jQueryHandle = this.$();
-							that.deleteNode(activeNode);
-							this.destroy();
-							$jQueryHandle.remove();
-						}
-					});
-				view.appendTo('body');
+				var that = this;
+				Ember.View.create({
+					classNames: ['t3-ui'],
+					template: Ember.Handlebars.compile(deletePageDialogTemplate),
+					pageTitle: activeNode.data.title,
+					numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
+					didInsertElement: function() {
+					},
+					cancel: function() {
+						var $jQueryHandle = this.$();
+						this.destroy();
+						$jQueryHandle.remove();
+					},
+					'delete': function() {
+						var $jQueryHandle = this.$();
+						that.deleteNode(activeNode);
+						this.destroy();
+						$jQueryHandle.remove();
+					}
+				}).appendTo('#t3-application');
 			},
 
 			editNode: function(node) {

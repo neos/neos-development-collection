@@ -14,7 +14,6 @@ define(
 	'text!neos/templates/content/ui/inspector.html',
 	'text!neos/templates/content/ui/inspectorDialog.html',
 	'text!neos/templates/content/ui/pageTree.html',
-	'text!neos/templates/content/ui/deletePageDialog.html',
 	'text!neos/templates/content/ui/inspectTree.html',
 	'text!neos/templates/content/ui/saveIndicator.html',
 	'text!neos/templates/content/ui/treePanel.html',
@@ -22,8 +21,7 @@ define(
 	'neos/content/ui/editors'
 ],
 
-function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate, saveIndicatorTemplate, treePanelTemplate) {
-
+function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate, saveIndicatorTemplate, treePanelTemplate) {
 	if (window._requirejsLoadingTrace) {
 		window._requirejsLoadingTrace.push('neos/content/ui');
 	}
@@ -124,7 +122,7 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		 * When clicking the click protection, we show a dialog
 		 */
 		_showUnappliedDialog: function() {
-			T3.Content.UI.UnappliedChangesDialog.create().appendTo('body');
+			T3.Content.UI.UnappliedChangesDialog.create().appendTo('#t3-application');
 		}
 	});
 
@@ -132,15 +130,15 @@ function($, Ember, vie, EntityWrapper, breadcrumbTemplate, inspectorTemplate, in
 		classNames: ['t3-ui', 'inspector-dialog'],
 		template: Ember.Handlebars.compile(inspectorDialogTemplate),
 		cancel: function() {
-			view.destroy();
+			this.destroy();
 		},
 		apply: function() {
 			T3.Content.Controller.Inspector.apply();
-			view.destroy();
+			this.destroy();
 		},
 		dontApply: function() {
 			T3.Content.Controller.Inspector.revert();
-			view.destroy();
+			this.destroy();
 		}
 	});
 
