@@ -34,40 +34,15 @@ class CaseImplementation extends ArrayImplementation {
 	const MATCH_NORESULT = '_____________NO_MATCH_RESULT_____________';
 
 	/**
-	 * A list of matchers
-	 *
-	 * @var array
-	 * @deprecated since Sprint 9
-	 */
-	protected $matchers;
-
-	/**
-	 * @param array $matchers
-	 * @deprecated since Sprint 9
-	 */
-	public function setMatchers($matchers) {
-		$this->matchers = $matchers;
-	}
-
-	/**
 	 * Execute each matcher until the first one matches
 	 *
 	 * @return mixed
 	 */
 	public function evaluate() {
-		if ($this->matchers !== NULL) {
-				// DEPRECATED since Sprint 9
-			$this->subElements = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($this->subElements, $this->matchers);
-		}
-
 		$matcherKeys = $this->sortNestedTypoScriptKeys();
 
 		foreach ($matcherKeys as $matcherName) {
 			$renderedMatcher = NULL;
-			if (isset($this->matchers[$matcherName])) {
-					// DEPRECATED since Sprint 9
-				$matcherName = 'matchers/' . $matcherName;
-			}
 
 			if (isset($this->subElements[$matcherName]['__objectType'])) {
 					// object type already set, so no need to set it
