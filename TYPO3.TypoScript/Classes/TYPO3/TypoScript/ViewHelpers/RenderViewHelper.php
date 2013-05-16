@@ -15,7 +15,7 @@ namespace TYPO3\TypoScript\ViewHelpers;
  * Render a TypoScript object with a relative TypoScript path, optionally pushing
  * new variables onto the TypoScript context
  */
-class RenderTypoScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class RenderViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Evaluate the TypoScript object at $path and return the rendered result.
