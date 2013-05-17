@@ -1,4 +1,4 @@
 TYPO3:
   TypoScript:
-    catchRuntimeExceptions: TRUE
+    handleRenderingExceptions: xmlComment
     debugMode: FALSE

@@ -15,7 +15,7 @@ namespace TYPO3\TypoScript;
  * An exception thrown by TypoScript processors or generally in the TypoScript context.
  *
  */
-class Exception extends \Exception {
+class Exception extends \TYPO3\Flow\Exception {
 
 }
 ?>

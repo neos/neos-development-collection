@@ -66,6 +66,12 @@ class Runtime {
 	protected $settings;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Constructor for the TypoScript Runtime
 	 * @param array $typoScriptConfiguration
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
@@ -144,6 +150,8 @@ class Runtime {
 	 * Compared to $this->evaluate, this adds some more comments helpful for debugging.
 	 *
 	 * @param string $typoScriptPath
+	 * @throws \Exception
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
 	 * @return string
 	 */
 	public function render($typoScriptPath) {
@@ -162,13 +170,63 @@ class Runtime {
 				$output = trim($output);
 			}
 			return $output;
-		} catch (\Exception $e) {
-			if ($this->settings['catchRuntimeExceptions'] === TRUE) {
-				return '<!-- Exception while rendering ' . htmlspecialchars($typoScriptPath) . ' : ' . $e->getMessage() . ' -->';
-			} else {
-				throw $e;
-			}
+		} catch (\Exception $exception) {
+			return $this->handleRenderingException($typoScriptPath, $exception);
 		}
+	}
+
+	/**
+	 * Handle an Exception thrown while rendering TypoScript according to
+	 * settings specified in TYPO3.TypoScript.handleRenderingExceptions
+	 *
+	 * @param array $typoScriptPath
+	 * @param \Exception $exception
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws InvalidConfigurationException
+	 * @throws \Exception|\TYPO3\Flow\Exception
+	 * @return string
+	 */
+	public function handleRenderingException($typoScriptPath, $exception) {
+		if ($exception instanceof \TYPO3\Flow\Mvc\Exception\StopActionException) {
+			throw $exception;
+		}
+		if ($exception instanceof \TYPO3\TypoScript\Exception\RuntimeException) {
+			$typoScriptPath = $exception->getTypoScriptPath();
+			$exception = $exception->getPrevious();
+		}
+		$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
+		switch ($this->settings['handleRenderingExceptions']) {
+			case 'throw':
+				throw $exception;
+			case 'htmlMessage':
+				if (isset($referenceCode)) {
+					$output = sprintf('<div class="neos-rendering-exception">Exception while rendering <div class="typoscript-path">%s:</div> <div class="exception-message">%s (%s)</div></div>', htmlspecialchars($typoScriptPath), $exception->getMessage(), $referenceCode);
+				} else {
+					$output = sprintf('<div class="neos-rendering-exception">Exception while rendering <div class="typoscript-path">%s:</div> <div class="exception-message">%s</div></div>', htmlspecialchars($typoScriptPath), $exception->getMessage());
+				}
+				break;
+			case 'xmlComment':
+				if (isset($referenceCode)) {
+					$output = sprintf('<!-- Exception while rendering %s: %s (%s) -->', htmlspecialchars($typoScriptPath), $exception->getMessage(), $referenceCode);
+				} else {
+					$output = sprintf('<!-- Exception while rendering %s -->', htmlspecialchars($typoScriptPath), $exception->getMessage());
+				}
+				break;
+			case 'plainText':
+				if (isset($referenceCode)) {
+					$output = sprintf('Exception while rendering %s: %s (%s)', $typoScriptPath, $exception->getMessage(), $referenceCode);
+				} else {
+					$output = sprintf('Exception while rendering %s: %s', $typoScriptPath, $exception->getMessage());
+				}
+				break;
+			case 'suppress':
+				$output = '';
+				break;
+			default:
+				throw new InvalidConfigurationException('The option "' . $this->settings['handleRenderingExceptions'] . '" is not valid for Setting TYPO3.TypoScript.handleRenderingExceptions. Please choose between throw, htmlMessage, plainText, xmlComment and suppress.', 1368788926);
+		}
+		$this->systemLogger->logException($exception);
+		return $output;
 	}
 
 	/**
@@ -254,12 +312,12 @@ class Runtime {
 
 		try {
 			$output = $tsObject->evaluate();
-		} catch (\TYPO3\Flow\Mvc\Exception\ForwardException $forwardException) {
-			throw $forwardException;
+		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
+			throw $stopActionException;
 		} catch (\TYPO3\TypoScript\Exception\RuntimeException $runtimeException) {
 			throw $runtimeException;
 		} catch (\Exception $exception) {
-			throw new \TYPO3\TypoScript\Exception\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception);
+			throw new \TYPO3\TypoScript\Exception\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
 		}
 
 		foreach ($processorsForTypoScriptObject as $processor) {
