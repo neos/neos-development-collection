@@ -1,6 +1,6 @@
 .t3-ui {
 	// Image thumbnail stuff in inspector
-	&#t3-inspector .t3-inspector-form {
+	#t3-inspector .t3-inspector-form {
 		.chzn-container {
 			li.highlighted {
 				@include gradient-vertical($light-orange, darken($light-orange, 5%));
