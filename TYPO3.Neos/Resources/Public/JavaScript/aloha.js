@@ -1,6 +1,6 @@
 define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha');
-	var Aloha = window.Aloha = window.Aloha || {};
+	var Aloha = window.Aloha = window.Aloha || {__shouldInit: true};
 
 	Aloha.settings = {
 		logLevels: {'error': true, 'warn': true, 'info': false, 'debug': false},

@@ -6,8 +6,6 @@ define(
 		'emberjs'
 	],
 	function (Ember) {
-		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements/button');
-
 		return Ember.View.extend(Ember.TargetActionSupport, {
 			tagName: 'button',
 			classNames: ['t3-button','btn','btn-mini'],

@@ -4,7 +4,7 @@
 define(
 	[
 		'emberjs',
-		'neos/content/ui/elements/button'
+		'./Button'
 	],
 	function (Ember, Button) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements/toggle-button');

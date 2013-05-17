@@ -3,8 +3,8 @@
  */
 
 define(
-['Library/jquery-with-dependencies', 'Library/underscore', 'Library/backbone', 'create', 'emberjs', 'vie/entity', 'neos/common', 'neos/content/model'],
-function($, _, Backbone, CreateJS, Ember, Entity) {
+['Content/Application', 'Library/jquery-with-dependencies', 'Library/underscore', 'Library/backbone', 'create', 'emberjs', 'vie/entity', 'neos/common', 'neos/content/model'],
+function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
 
 	var T3 = window.T3 || {};
@@ -88,7 +88,7 @@ function($, _, Backbone, CreateJS, Ember, Entity) {
 			var wireframeMode;
 			wireframeMode = this.get('wireframeMode');
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
-				T3.ContentModule.showPageLoader();
+				ContentModule.showPageLoader();
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.wireframeMode': wireframeMode}, function() {
 					T3.Common.LocalStorage.setItem('wireframeMode', wireframeMode);
 					window.location.reload(false);
@@ -98,7 +98,7 @@ function($, _, Backbone, CreateJS, Ember, Entity) {
 
 		createSection: function(sectionName) {
 			var pageNodePath = $('#t3-page-metainformation').attr('about');
-			T3.ContentModule.showPageLoader();
+			ContentModule.showPageLoader();
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
 				nodeType: 'TYPO3.Neos.NodeTypes:Section',
 				nodeName: sectionName
@@ -106,7 +106,7 @@ function($, _, Backbone, CreateJS, Ember, Entity) {
 			function (result) {
 				if (result.success == true) {
 					$('#t3-ui-createsection-input').val('');
-					T3.ContentModule.reloadPage();
+					ContentModule.reloadPage();
 				}
 			});
 		}
@@ -356,16 +356,16 @@ function($, _, Backbone, CreateJS, Ember, Entity) {
 			});
 
 			if (reloadPage === true) {
-				T3.ContentModule.showPageLoader();
+				ContentModule.showPageLoader();
 			}
 			Backbone.sync('update', this.get('selectedNode._vieEntity'), {
 				success: function(model, result) {
 					if (reloadPage === true) {
 						if (result && result.data && result.data.nextUri) {
 								// It might happen that the page has been renamed, so we need to take the server-side URI
-							T3.ContentModule.loadPage(result.data.nextUri);
+							ContentModule.loadPage(result.data.nextUri);
 						} else {
-							T3.ContentModule.reloadPage();
+							ContentModule.reloadPage();
 						}
 					}
 				}
@@ -482,7 +482,7 @@ function($, _, Backbone, CreateJS, Ember, Entity) {
 				function (result) {
 					if (result.success) {
 						that.set('_clipboard', null);
-						T3.ContentModule.reloadPage();
+						ContentModule.reloadPage();
 					}
 				}
 			);

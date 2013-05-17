@@ -1,6 +1,6 @@
 define(
-	['Library/jquery-with-dependencies', 'emberjs', 'text!neos/templates/halloplugins/linkplugin.html'],
-	function($, Ember, linkPluginTemplate) {
+	['Library/jquery-with-dependencies', 'emberjs', 'text!neos/templates/halloplugins/linkplugin.html', 'Content/Components/Button'],
+	function($, Ember, linkPluginTemplate, Button) {
 		(function($) {
 			return $.widget('typo3.hallo-linkplugin', {
 				view: null,
@@ -33,6 +33,7 @@ define(
 					widget.view = Ember.View.create({
 						classNames: ['t3-ui'],
 						template: Ember.Handlebars.compile(linkPluginTemplate),
+						Button: Button,
 
 						url: widget.options.defaultUrl,
 						label: 'Insert',

@@ -1,14 +1,11 @@
 /**
- * T3.ResourceCache
+ * ResourceCache
  */
 define(
 [
 	'Library/jquery-with-dependencies'
 ],
 function($) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/resourcecache');
-
-	var T3 = window.T3 || {};
 
 	var resourceRequests = {};
 
@@ -49,10 +46,8 @@ function($) {
 		return resourceRequests[resourceUri];
 	}
 
-	T3.ResourceCache = {
+	return {
 		preload: preload,
 		get: get
 	};
-
-	window.T3 = T3;
 });

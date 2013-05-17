@@ -5,7 +5,7 @@
 define(
 	[
 		'Library/jquery-with-dependencies',
-		'neos/content/ui/elements/toggle-button'
+		'./ToggleButton'
 	],
 	function ($, ToggleButton) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements/popover-button');

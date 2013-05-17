@@ -1,11 +1,11 @@
 <div class="header">
-	{{#view T3.Content.UI.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}Cancel{{/view}}
-	{{#view T3.Content.UI.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}Apply{{/view}}
+	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}Cancel{{/view}}
+	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}Apply{{/view}}
 </div>
 <form class="t3-inspector-form" action="#">
-	{{view T3.Content.UI.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
+	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
-		{{#view T3.Content.UI.ToggleInspectorPanelHeadline contentBinding="view.content"}}
+		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content"}}
 			<h2>
 				{{view.content.label}}
 				<span class="pull-right">
@@ -20,12 +20,12 @@
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="view.content.properties"}}
 			{{#if view.content.isBoolean}}
 				<label for="{{unbound view.content.elementId}}" class="checkbox">
-					{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="view.content"}}
+					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
 					{{view.content.ui.label}}
 				</label>
 			{{else}}
 				<label for="{{unbound view.content.elementId}}">{{view.content.ui.label}}</label>
-				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="view.content"}}
+				{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
 			{{/if}}
 		{{/collection}}
 	{{/collection}}

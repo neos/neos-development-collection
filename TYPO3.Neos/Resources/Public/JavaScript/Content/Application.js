@@ -1,5 +1,5 @@
 /**
- * T3.ContentModule
+ * Main Ember.Application for the Content Module.
  *
  * Entry point which initializes the Content Module UI
  */
@@ -8,22 +8,16 @@ define(
 [
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
+	'Shared/ResourceCache',
 	'vie/instance',
 	'emberjs',
 	'create',
 	'Library/vie',
-	'Library/spinjs/spin',
-	'text!./templates/content/ui/topToolbarTemplate.html',
-	'neos/common',
-	'neos/content/model',
-	'neos/content/ui',
-	'neos/content/controller',
-	'create/typo3Notifications'
+	'Library/spinjs/spin'
 ],
-function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/contentmodule');
+function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Spinner) {
 
-	return Ember.Application.extend(Ember.Evented, {
+	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#t3-application',
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
@@ -35,15 +29,15 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 		 *
 		 * Ember.View.extend({
 		 *    template: Ember.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
-		 *    isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
+		 *    isVisibleBinding: 'ContentModule.showDevelopmentFeatures'
 		 * })
 		 *
 		 * OR
 		 *
-		 * {{view T3.Content.UI.Button label="Inspect" isVisibleBinding="T3.ContentModule.showDevelopmentFeatures"}}
+		 * {{view T3.Content.UI.Button label="Inspect" isVisibleBinding="ContentModule.showDevelopmentFeatures"}}
 		 *
 		 * OR
-		 * {{#boundIf T3.ContentModule.showDevelopmentFeatures}}
+		 * {{#boundIf ContentModule.showDevelopmentFeatures}}
 		 *   Display only in development mode
 		 * {{/boundif}}
 		 */
@@ -129,7 +123,7 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 				}));
 			}
 
-			$.when(T3.ResourceCache.get(T3.Configuration.VieSchemaUri), T3.ResourceCache.get(T3.Configuration.NodeTypeSchemaUri)).done(function(vieSchemaString, nodeTypeSchemaString) {
+			$.when(ResourceCache.get(T3.Configuration.VieSchemaUri), ResourceCache.get(T3.Configuration.NodeTypeSchemaUri)).done(function(vieSchemaString, nodeTypeSchemaString) {
 					var schema = JSON.parse(vieSchemaString);
 					VIE.Util.loadSchemaOrg(vie, schema, null);
 
@@ -162,14 +156,14 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 		 */
 		_registerVieNodeTypeTemplateCallbacks: function() {
 			_.each(vie.types.toArray(), function(type) {
-				var nodeType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
+				var nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, '');
 				var prefix = vie.namespaces.getPrefix(type.id);
 
 				if (prefix === 'typo3') {
 					vie.service('rdfa').setTemplate('typo3:' + nodeType, 'typo3:content-collection', function(entity, callBack, collectionView) {
 							// This callback function is called whenever we create a content element
 						var type = entity.get('@type'),
-							nodeType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, ''),
+							nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, ''),
 							referenceEntity = null,
 							lastMatchedEntity = null;
 
@@ -287,7 +281,7 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 		},
 
 		reloadPage: function() {
-			this.loadPage(T3.ContentModule.currentUri);
+			this.loadPage(ContentModule.currentUri);
 		},
 
 		_linkInterceptionHandler: function(selector, constant) {
@@ -383,7 +377,7 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 						// so we reload the whole backend.
 						window.location.href = uri;
 					} else {
-						T3.ContentModule.set('currentUri', uri);
+						ContentModule.set('currentUri', uri);
 					}
 					$('#t3-page-metainformation').replaceWith($newMetaInformation);
 					$('title').html($htmlDom.filter('title').html());
@@ -461,4 +455,6 @@ function($, _, vie, Ember, CreateJS, VIE, Spinner, topToolbarTemplate) {
 			}
 		}
 	}).create();
+	ContentModule.deferReadiness();
+	return ContentModule;
 });

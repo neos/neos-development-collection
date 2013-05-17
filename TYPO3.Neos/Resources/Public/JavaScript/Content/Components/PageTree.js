@@ -5,11 +5,11 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'vie/instance',
+		'Content/Application',
 		'vie/entity',
-		'text!neos/templates/content/ui/pageTree.html',
+		'text!./PageTree.html',
 		'text!neos/templates/content/ui/deletePageDialog.html'
-	], function($, Ember, vie, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate) {
+	], function($, Ember, ContentModule, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate) {
 		if (window._requirejsLoadingTrace) {
 			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
 		}
@@ -131,7 +131,7 @@ define(
 										// after we finished drag/drop, update the node path/url
 										sourceNode.data.href = result.data.nextUri;
 										sourceNode.data.key = result.data.newNodePath;
-										T3.ContentModule.loadPage(sourceNode.data.href);
+										ContentModule.loadPage(sourceNode.data.href);
 									} else {
 										T3.Common.Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
 									}
@@ -185,7 +185,7 @@ define(
 						if (node.data.key !== siteRootNodePath && (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === 'icon')) {
 							setTimeout(function() {
 								if (!that.isDblClick) {
-									T3.ContentModule.loadPage(node.data.href);
+									ContentModule.loadPage(node.data.href);
 								}
 							}, 300);
 						}
@@ -218,7 +218,7 @@ define(
 
 				this._initializePagePropertyObservers();
 
-				T3.ContentModule.on('pageLoaded', function() {
+				ContentModule.on('pageLoaded', function() {
 					// for in-page reloads we need to re-monitor the current page
 					that._initializePagePropertyObservers();
 				});
@@ -337,8 +337,8 @@ define(
 						// Remove children so they can't be clicked until they are reloaded
 						node.removeChildren();
 						node.setLazyNodeStatus(DTNodeStatus_Loading);
-						// Listen to the first page reload (can be done with T3.ContentModule.one in Ember.js 1.0)
-						T3.ContentModule.on('pageLoaded', this, 'reloadPageNodeChildren');
+						// Listen to the first page reload (can be done with ContentModule.one in Ember.js 1.0)
+						ContentModule.on('pageLoaded', this, 'reloadPageNodeChildren');
 					}
 				}
 			},
@@ -347,7 +347,7 @@ define(
 				if (node) {
 					node.reloadChildren();
 				}
-				T3.ContentModule.off('pageLoaded', this, 'reloadPageNodeChildren');
+				ContentModule.off('pageLoaded', this, 'reloadPageNodeChildren');
 			},
 			getPageTreeNode: function() {
 				if (this.$tree && this.$tree.children().length > 0) {
@@ -512,7 +512,7 @@ define(
 
 										// Re-enable mouse and keyboard handling
 										tree.$widget.bind();
-										T3.ContentModule.loadPage(node.data.href);
+										ContentModule.loadPage(node.data.href);
 									} else {
 										T3.Common.notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
 									}
@@ -531,7 +531,7 @@ define(
 							parentNode.focus();
 							parentNode.activate();
 							node.remove();
-							T3.ContentModule.loadPage(parentNode.data.href);
+							ContentModule.loadPage(parentNode.data.href);
 						} else {
 							T3.Common.notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
 						}

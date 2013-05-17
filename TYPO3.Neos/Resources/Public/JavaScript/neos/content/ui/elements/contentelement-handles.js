@@ -5,13 +5,14 @@ define(
 		'Library/jquery-with-dependencies',
 		'Library/underscore',
 		'emberjs',
+		'Content/Application',
+
 		'vie/instance',
 		'text!neos/templates/content/ui/contentelementHandles.html',
 		'neos/content/ui/elements/new-contentelement-popover-content'
 	],
-	function ($, _, Ember, vieInstance, template, ContentElementPopoverContent) {
+	function ($, _, Ember, ContentModule, vieInstance, template, ContentElementPopoverContent) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/contentelement-handles');
-
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 
@@ -166,7 +167,7 @@ define(
 
 				_.each(this.get('_collection').options.definition.range, function(nodeType) {
 					var type = this.get('_collection').options.vie.types.get(nodeType);
-					type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
+					type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, '');
 
 					if (type.metadata.ui && type.metadata.ui.group) {
 						if (!groups[type.metadata.ui.group]) {

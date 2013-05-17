@@ -1,4 +1,4 @@
-define(['Library/jquery-with-dependencies', 'Library/underscore', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], function($, _, vieInstance, Ember, DictionaryObject) {
+define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Application', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], function($, _, ContentModule, vieInstance, Ember, DictionaryObject) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('vie/entity');
 
 	var Entity = Ember.Object.extend({
@@ -54,7 +54,7 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'vie/instance'
 				vieEntity = this.get('_vieEntity');
 
 			this.set('modified', !$.isEmptyObject(vieEntity.changed));
-			this.set('publishable', vieEntity.get(T3.ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
+			this.set('publishable', vieEntity.get(ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
 
 			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
 				// this event fires if inline content changes
@@ -64,7 +64,7 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'vie/instance'
 				// this event fires if content changes through the property inspector
 			vieEntity.on('change', function() {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
-				that.set('publishable', vieEntity.get(T3.ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
+				that.set('publishable', vieEntity.get(ContentModule.TYPO3_NAMESPACE + '__workspacename') !== 'live');
 			});
 
 			this.set('$element', $entityElement);
@@ -108,8 +108,8 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'vie/instance'
 			var cleanAttributes = {};
 			_.each(vieEntity.attributes, function(value, subject) {
 				var property = vieEntity.fromReference(subject);
-				if (property.indexOf(T3.ContentModule.TYPO3_NAMESPACE) === 0) {
-					property = property.replace(T3.ContentModule.TYPO3_NAMESPACE, '');
+				if (property.indexOf(ContentModule.TYPO3_NAMESPACE) === 0) {
+					property = property.replace(ContentModule.TYPO3_NAMESPACE, '');
 					if (!filterFn || filterFn(property, value)) {
 						cleanAttributes[property] = value;
 					}
@@ -128,11 +128,11 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'vie/instance'
 				_.map(types, function(type) {
 					return type.toString();
 				}), function(type) {
-					return type.indexOf('<' + T3.ContentModule.TYPO3_NAMESPACE) === 0;
+					return type.indexOf('<' + ContentModule.TYPO3_NAMESPACE) === 0;
 				});
 
 			if (type) {
-				type = type.substr(T3.ContentModule.TYPO3_NAMESPACE.length + 1);
+				type = type.substr(ContentModule.TYPO3_NAMESPACE.length + 1);
 				type = type.substr(0, type.length - 1);
 			}
 			return type;

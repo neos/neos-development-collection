@@ -22,10 +22,14 @@ define(
 
 				if (!T3.Content.Controller.Preview.get('previewMode')) {
 						// Wait until Aloha is loaded if we use Aloha
-					if (Aloha.ready) {
-						Aloha.ready(function() {
-							that.enableEdit();
-						});
+					if (Aloha.__shouldInit) {
+						// very bad workaround for initializing aloha.
+						window.setTimeout(function() {
+							Aloha.ready(function() {
+								that.enableEdit();
+							});
+						}, 300);
+
 					} else {
 						this.enableEdit();
 					}

@@ -3,6 +3,7 @@ window._requirejsLoadingTrace = [];
 window.renderLoadingTrace = function() {
 	return JSON.stringify(window._requirejsLoadingTrace);
 };
+window.T3 = {} || window.T3;
 /**
  * WARNING: if changing any of the require() statements below, make sure to also
  * update them inside build.js!
@@ -18,32 +19,31 @@ require(
 		locale: 'en'
 	},
 	[
-		'Library/jquery-with-dependencies',
 		'emberjs',
-		'neos/contentmodule',
-		'neos/resourcecache',
+		'Content/ContentModule',
+		'Shared/ResourceCache',
 		'storage'
 	],
-	function($, Ember, ContentModule) {
-		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('contentmodule-main');
+	function(Ember, ContentModule, ResourceCache) {
 		var T3 = window.T3;
 		T3.Configuration = window.T3Configuration;
-		T3.ContentModule = ContentModule;
 		delete window.T3Configuration;
 
-		T3.ResourceCache.preload(T3.Configuration.VieSchemaUri);
-		T3.ResourceCache.preload(T3.Configuration.NodeTypeSchemaUri);
+		ResourceCache.preload(T3.Configuration.VieSchemaUri);
+		ResourceCache.preload(T3.Configuration.NodeTypeSchemaUri);
 
 		Ember.$(document).ready(function() {
-			T3.ContentModule.bootstrap();
+			ContentModule.bootstrap();
 
 			Ext.Direct.on('exception', function(error) {
 				T3.Content.Controller.ServerConnection.set('_failedRequest', true);
 				T3.Common.Notification.error('ExtDirect error: ' + error.message);
-				T3.ContentModule.hidePageLoaderSpinner();
+				ContentModule.hidePageLoaderSpinner();
 			});
 
 			ExtDirectInitialization();
+
+			ContentModule.advanceReadiness();
 		});
 	}
 );

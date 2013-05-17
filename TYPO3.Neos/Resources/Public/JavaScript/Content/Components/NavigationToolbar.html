@@ -1,6 +1,6 @@
 <ul class="t3-toolbar-left">
 	<li>
-		{{#view T3.Content.UI.ToggleButton
+		{{#view view.ToggleButton
 			pressedBinding="T3.Content.Controller.Preview.previewMode"
 			icon="preview"
 			title="Preview"
@@ -9,7 +9,7 @@
 		{{/view}}
 	</li>
 	<li>
-		{{#view T3.Content.UI.ToggleButton
+		{{#view view.ToggleButton
 			pressedBinding="T3.Content.Controller.PageTree.pageTreeMode"
 			classNames="t3-pagetree-button"
 		}}
@@ -17,7 +17,7 @@
 		{{/view}}
 	</li>
 	<li>
-		{{#view T3.Content.UI.ToggleButton
+		{{#view view.ToggleButton
 			pressedBinding="T3.Content.Controller.Wireframe.wireframeMode"
 			icon="wireframe"
 		}}
@@ -27,10 +27,6 @@
 </ul>
 
 <ul class="t3-toolbar-right">
-	{{#view tagName="li" isVisibleBinding="T3.ContentModule.showDevelopmentFeatures"}}
-		<span style="color:white">!!! Development mode !!!</span>
-	{{/view}}
-
 	<li>
 		{{view T3.Content.UI.SaveIndicator
 			saveRunningBinding="T3.Content.Controller.ServerConnection._saveRunning"
@@ -39,6 +35,6 @@
 	</li>
 
 	<li>
-		{{view T3.Content.UI.PublishPageButton}}
+		{{view view.PublishPageButton}}
 	</li>
 </ul>

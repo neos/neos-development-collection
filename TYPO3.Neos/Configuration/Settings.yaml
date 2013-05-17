@@ -75,15 +75,15 @@ TYPO3:
 
     userInterface:
       string:
-        editor: T3.Content.UI.Editor.TextField
+        editor: Content/Inspector/Editors/TextFieldEditor
       integer:
-        editor: T3.Content.UI.Editor.TextField
+        editor: Content/Inspector/Editors/TextFieldEditor
       boolean:
-        editor: T3.Content.UI.Editor.Checkbox
+        editor: Content/Inspector/Editors/BooleanEditor
       'TYPO3\Media\Domain\Model\ImageVariant':
-        editor: T3.Content.UI.Editor.Image
+        editor: Content/Inspector/Editors/ImageEditor
       date:
-        editor: T3.Content.UI.Editor.DateField
+        editor: Content/Inspector/Editors/DateEditor
 
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'

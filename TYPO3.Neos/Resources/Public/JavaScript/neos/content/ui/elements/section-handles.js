@@ -2,12 +2,14 @@
  */
 define(
 [
-	'Library/jquery-with-dependencies',
-	'vie/entity',
-	'neos/content/ui/elements/contentelement-handles'
+	//'Library/jquery-with-dependencies',
+	//'vie/entity',
+	'./contentelement-handles'
 ],
 function ($, EntityWrapper, ContentElementHandle) {
+	return Ember.View.extend();
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/section-handles');
+	console.log("section handle", arguments, ContentElementHandle);
 
 	return ContentElementHandle.extend({
 		/**
