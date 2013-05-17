@@ -13,9 +13,10 @@ define(
 	'emberjs',
 	'create',
 	'Library/vie',
+	'Library/mousetrap',
 	'Library/spinjs/spin'
 ],
-function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Spinner) {
+function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#t3-application',
@@ -68,8 +69,6 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Spinner) {
 
 			this._initializeNotifications();
 
-			// this._initializeDoubleClickEdit();
-
 			$('body').toggleClass('t3-ui-controls t3-backend');
 
 			this._setPagePosition();
@@ -95,15 +94,6 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Spinner) {
 				that._enableDevelopmentFeaturesIfNeeded();
 			}, false);
 			this._enableDevelopmentFeaturesIfNeeded();
-		},
-
-		_initializeDoubleClickEdit: function() {
-			$('.t3-contentelement').live('dblclick', function(event) {
-				if ($('.t3-primary-editor-action').length > 0) {
-					$('.t3-primary-editor-action').click();
-				}
-				event.preventDefault();
-			});
 		},
 
 		_initializeVie: function() {
@@ -231,8 +221,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Spinner) {
 		},
 
 		_initializeShortcuts: function() {
-			var that = this;
-			$(document).bind('keydown', 'alt+p', function() {
+			Mousetrap.bind(['alt+p'], function () {
 				T3.Content.Controller.Preview.togglePreview();
 				return false;
 			});
