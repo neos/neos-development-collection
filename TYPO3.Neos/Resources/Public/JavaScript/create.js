@@ -7,7 +7,6 @@ define(
 		'Library/hallo',
 		'halloplugins/linkplugin',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
-
 		'aloha'
 	],
 	function($, vieInstance, Ember) {
@@ -29,7 +28,6 @@ define(
 								that.enableEdit();
 							});
 						}, 300);
-
 					} else {
 						this.enableEdit();
 					}

@@ -7,12 +7,9 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'emberjs',
-	'neos/content/ui/elements/contentelement-handles',
-	'neos/content/ui/elements/contentcollection-handles'
+	'emberjs'
 ],
-function($, Ember, ContentElementHandle, SectionHandle) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements');
+function($, Ember) {
 
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
@@ -30,8 +27,4 @@ function($, Ember, ContentElementHandle, SectionHandle) {
 		tagName: 'img',
 		attributeBindings: ['src']
 	});
-
-	T3.Content.UI.ContentElementHandle = ContentElementHandle;
-
-	T3.Content.UI.SectionHandle = SectionHandle;
 });

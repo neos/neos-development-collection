@@ -3,10 +3,6 @@
 
 	&.neos-contentelement-hidden > * {
 		@include opacity(0.2);
-
-		&.neos-contentelement-handle-container {
-			@include opacity(1);
-		}
 	}
 
 	&.neos-contentelement-removed {
@@ -31,44 +27,11 @@
 	&.neos-contentelement-active {
 		outline: 3px solid $orange !important;
 		outline-offset: 3px;
-
-		> .neos-contentelement-handle-container {
-			visibility: visible;
-		}
 	}
 
 	&.neos-contentelement-hover > .neos-contentelement-overlay,
 	&.neos-contentelement-active > .neos-contentelement-overlay {
 		display: block;
-	}
-
-	.neos-contentelement-handle-container {
-		visibility:hidden;
-		// We set the height of the handle container to "0", as we do not want to consume any space for the handle container itself.
-		height: 0;
-
-		.btn-toolbar {
-			text-align:right !important;
-			margin-top: 0;
-			position: relative;
-
-			.btn {
-				// We use a high z-index for the buttons to make them always visible
-				z-index: 10000;
-			}
-
-			.btn-group {
-				position: absolute;
-				right: -6px;
-				top: -32px;
-				border: 3px solid $orange;
-				border-bottom: 0px;
-				background: $orange;
-				.btn:last-child {
-					@include border-radius(0);
-				}
-			}
-		}
 	}
 
 	.neos-handle {
