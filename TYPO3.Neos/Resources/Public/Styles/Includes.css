@@ -1,8 +1,7 @@
 /**
- * This file should be built using "r.js -o cssIn=includes.css out=includes-built.css" in this directory.
+ * This file should be built using "r.js -o cssIn=Includes.css out=IncludesBuilt.css" in this directory.
  */
-@import "style.css";
-
+@import "Neos.css";
 @import "../Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css";
 @import "../Library/jcrop/css/jquery.Jcrop.css";
 @import "../Library/jquery-dynatree/css/ui.dynatree.css";
