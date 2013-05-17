@@ -5,8 +5,8 @@
 // * bootstrap.scss - add t3-ui-class-prefix
 // * _variables.scss - adjust the sprite-image-path
 // * _variables.scss - Have a look at the overriden variables at the end of the file
-@import "../Library/twitter-bootstrap/scss/bootstrap.scss";
-@import "../Library/twitter-bootstrap/scss/responsive.scss";
+@import "../../Public/Library/twitter-bootstrap/scss/bootstrap.scss";
+@import "../../Public/Library/twitter-bootstrap/scss/responsive.scss";
 
 // Fontawesome include
 [class^="icon-"], [class*=" icon-"] {
@@ -14,7 +14,7 @@
 	-webkit-font-smoothing: antialiased;
 	font-size: 14px;
 }
-@import "../Library/fontawesome/sass/font-awesome.scss";
+@import "../../Public/Library/fontawesome/sass/font-awesome.scss";
 
 @import "compass";
 

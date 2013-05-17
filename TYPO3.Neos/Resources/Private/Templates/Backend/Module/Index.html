@@ -4,7 +4,7 @@
 <f:section name="head">
 	<title>{title}</title>
 
-	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
+	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Neos.css')}" />
 	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
 		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
 			<link rel="stylesheet" href="{f:uri.resource(path: additionalResource)}" />
