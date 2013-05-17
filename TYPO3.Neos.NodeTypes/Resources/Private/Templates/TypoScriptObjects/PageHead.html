@@ -28,11 +28,11 @@
 
 		<f:if condition="{typo3:backend.shouldLoadMinifiedJavascript()}">
 			<f:then>
-				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main-built.js', package: 'TYPO3.Neos')}"></script>
+				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path:'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
 				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/includes-built.css', package: 'TYPO3.Neos')}" />
 			</f:then>
 			<f:else>
-				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js', package: 'TYPO3.Neos')}"></script>
+				<script src="{f:uri.resource(path:'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path:'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
 				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/includes.css', package: 'TYPO3.Neos')}" />
 			</f:else>
 		</f:if>
