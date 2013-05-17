@@ -129,6 +129,8 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 			if ($configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
 				$contentContext->setRemovedContentShown(TRUE);
 			}
+		} else {
+			$contentContext->setInvisibleContentShown(FALSE);
 		}
 
 		$workspace = $contentContext->getWorkspace(FALSE);
