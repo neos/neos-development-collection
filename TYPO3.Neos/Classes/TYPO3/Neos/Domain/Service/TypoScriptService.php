@@ -74,19 +74,6 @@ class TypoScriptService {
 
 		$mergedTypoScriptCode = $this->readExternalTypoScriptFile('resource://TYPO3.Neos/Private/TypoScript/Root.ts2') . $siteRootTypoScriptCode;
 
-		$currentTypoScriptPath = $typoScriptsPath . '/Nodes';
-		foreach ($parentNodes as $node) {
-			$nodeName = $node->getName();
-			if ($currentNodeTypoScript = $this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName . '.ts2')) {
-				$mergedTypoScriptCode .= Files::getFileContents($currentNodeTypoScript) . chr(10);
-			}
-			$currentTypoScriptPath .= '/' . basename($this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName));
-
-			$typoScriptNodes = $node->getChildNodes('TYPO3.Neos:TypoScript');
-			foreach ($typoScriptNodes as $typoScriptNode) {
-				$mergedTypoScriptCode .= $typoScriptNode->getProperty('sourceCode') . chr(10);
-			}
-		}
 		return $this->typoScriptParser->parse($mergedTypoScriptCode, $typoScriptsPath);
 	}
 
