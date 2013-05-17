@@ -1458,7 +1458,7 @@ See http://createjs.org for more information
         return this._saveLocalReferences(model.primaryCollection.subject, model.primaryCollection.predicate, model);
       }
       var key = this.options.storagePrefix + model.getSubjectUri();
-      var newType = [], tmp = model.toJSONLD();_.each(tmp["type"], function(v) { newType.push(v.id); });tmp["@type"] = newType;window.localStorage.setItem(key, JSON.stringify(tmp));
+      window.localStorage.setItem(key, JSON.stringify(model.toJSONLD()));
     },
 
     _getReferenceId: function (model, property) {
