@@ -21,10 +21,11 @@ require(
 	[
 		'emberjs',
 		'Content/ContentModule',
+		'Content/ApplicationView',
 		'Shared/ResourceCache',
 		'storage'
 	],
-	function(Ember, ContentModule, ResourceCache) {
+	function(Ember, ContentModule, ApplicationView, ResourceCache) {
 		var T3 = window.T3;
 		T3.Configuration = window.T3Configuration;
 		delete window.T3Configuration;
@@ -44,6 +45,7 @@ require(
 			ExtDirectInitialization();
 
 			ContentModule.advanceReadiness();
+			ApplicationView.create().appendTo('#t3-application');
 		});
 	}
 );
