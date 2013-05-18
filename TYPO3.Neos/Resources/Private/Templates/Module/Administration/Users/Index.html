@@ -1,7 +1,7 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<div class="row t3-module-container indented">
+	<div class="row neos-module-container indented">
 		<table class="table">
 			<thead>
 				<tr>
@@ -23,19 +23,19 @@
 					</td>
 					<td>
 						<div class="pull-right">
-							<f:link.action action="show" arguments="{account: account}" class="btn t3-button" title="Click to view">
+							<f:link.action action="show" arguments="{account: account}" class="btn neos-button" title="Click to view">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{account: account}" class="btn t3-button" title="Click to edit">
+							<f:link.action action="edit" arguments="{account: account}" class="btn neos-button" title="Click to edit">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
 							<f:if condition="{currentAccount} == {account}">
 								<f:then>
-									<button class="btn btn-danger disabled t3-button" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
+									<button class="btn btn-danger disabled neos-button" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
-									<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
+									<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
 										<i class="icon-trash icon-white"></i>
 									</button>
 									<div class="modal hide" id="{flowidentifier}">
@@ -46,8 +46,8 @@
 											This operation cannot be undone.</p>
 										</div>
 										<div class="modal-footer">
-											<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
-											<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button" title="Delete">
+											<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
+											<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger neos-button" title="Delete">
 												<i class="icon-trash icon-white"></i>
 												Delete
 											</f:link.action>
@@ -63,7 +63,7 @@
 	</div>
 	<div class="form-actions form-footer">
 		<div class="pull-right">
-			<f:link.action action="new" class="btn t3-button btn-primary" title="Create new user">
+			<f:link.action action="new" class="btn neos-button btn-primary" title="Create new user">
 				<i class="icon-user icon-white"></i>
 				New user
 			</f:link.action>

@@ -1,23 +1,23 @@
-<div class="t3-inspector-image-thumbnail-container">
-	<div class="t3-inspector-image-thumbnail">
-		<div class="t3-inspector-image-thumbnail-inner">
+<div class="neos-inspector-image-thumbnail-container">
+	<div class="neos-inspector-image-thumbnail">
+		<div class="neos-inspector-image-thumbnail-inner">
 			{{view T3.Content.UI.Image srcBinding="view._previewImageUri" isVisibleBinding="view._uploadPreviewNotShown"}}
 		</div>
 	</div>
-	<div class="t3-inspector-image-uploadthumbnail">
+	<div class="neos-inspector-image-uploadthumbnail">
 		{{view T3.Content.UI.Image srcBinding="view._uploadPreviewImageSource" isVisibleBinding="view._uploadPreviewShown"}}
 	</div>
 </div>
 
-<div class="t3-inspector-image-upload" id="{{unbound view._containerId}}">
-	<button id="{{unbound view._browseButtonId}}" class="t3-button btn btn-mini t3-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
+<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
+	<button id="{{unbound view._browseButtonId}}" class="neos-button btn btn-mini neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
 		{{view.fileChooserLabel}}
 	</button>
-	{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="t3-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
-	{{view view.Button isVisibleBinding="view._uploadPreviewNotShown" target="parentView" class="t3-inspector-image-crop-button" labelBinding="view.cropLabel"}}
+	{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="neos-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
+	{{view view.Button isVisibleBinding="view._uploadPreviewNotShown" target="parentView" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
 </div>
 
-<div class="t3-inspector-image-width">
+<div class="neos-inspector-image-width">
 	<label for="image-width">Width:</label>
 	<div class="input-prepend input-append">
 		<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle"}}</span>
@@ -27,7 +27,7 @@
 		<span class="add-on">px</span>
 	</div>
 </div>
-<div class="t3-inspector-image-height">
+<div class="neos-inspector-image-height">
 	<label for="image-height">Height:</label>
 	<div class="input-prepend input-append">
 		<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle"}}</span>

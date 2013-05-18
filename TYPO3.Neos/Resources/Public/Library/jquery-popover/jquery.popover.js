@@ -26,17 +26,16 @@
 
 		// HTML popover
 		// TYPO3 SPECIFIC FIX START, original line didn't check for empty settings.id
-		// TYPO3 SPECIFIC FIX 2: we append it to the t3-application container instead of appending to body
+		// TYPO3 SPECIFIC FIX 2: we append it to the neos-application container instead of appending to body
 		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? ' id="' + settings.id + '"' : '') + '>'
 			+ '<div class="triangle"></div>'
 			+ '<div class="header"></div>'
 			+ '<div class="content"></div>'
-			+ '</div>').appendTo('#t3-application');
+			+ '</div>').appendTo('#neos-application');
 		// TYPO3 SPECIFIC FIX STOP
 		$('.header', settings.popover$).append($(settings.header).detach());
 
 		// TYPO3 SPECIFIC FIX START
-		settings.popover$.addClass('t3-ui');
 		settings.popover$.addClass(settings.additionalClasses);
 
 		if ($('.header', settings.popover$).html() === '') {
@@ -286,7 +285,7 @@
 				settings.zindex = 10001;
 			}
 
-			settings.popover$.addClass('t3-popover-' + settings.positioning);
+			settings.popover$.addClass('neos-popover-' + settings.positioning);
 			// TYPO3 SPECIFIC FIX STOP
 
 			// set popover css and show it

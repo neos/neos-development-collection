@@ -69,7 +69,7 @@ class ContentElementWrappingService {
 
 		if (!$isPage) {
 			$cssClasses = array(
-				't3-contentelement',
+				'neos-contentelement',
 				str_replace(array(':', '.'), '-', strtolower($nodeType->getName()))
 			);
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
@@ -131,23 +131,23 @@ class ContentElementWrappingService {
 
 		if (!$isPage) {
 			if ($node->isHidden()) {
-				$cssClasses[] = 't3-contentelement-hidden';
+				$cssClasses[] = 'neos-contentelement-hidden';
 			}
 			if ($node->isRemoved()) {
-				$cssClasses[] = 't3-contentelement-removed';
+				$cssClasses[] = 'neos-contentelement-removed';
 			}
 			if ($reloadable === TRUE) {
-				$cssClasses[] = 't3-reloadable-content';
+				$cssClasses[] = 'neos-reloadable-content';
 			}
 			$uiConfiguration = $nodeType->hasUi() ? $nodeType->getUi() : array();
 			if ((!isset($uiConfiguration['inlineEditable']) && !$hasInlineEditableProperties) || (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE)) {
-				$cssClasses[] = 't3-not-inline-editable';
+				$cssClasses[] = 'neos-not-inline-editable';
 			}
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
 
 			$this->addScriptTag($tagBuilder, '__nodetype', $nodeType->getName());
 		} else {
-			$tagBuilder->addAttribute('id', 't3-page-metainformation');
+			$tagBuilder->addAttribute('id', 'neos-page-metainformation');
 			$tagBuilder->addAttribute('data-__sitename', $this->nodeRepository->getContext()->getCurrentSite()->getName());
 			$tagBuilder->addAttribute('data-__siteroot', sprintf(
 				'/sites/%s@%s',

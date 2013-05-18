@@ -1,10 +1,10 @@
 <div class="header">
-	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="t3-inspector-cancel"}}Cancel{{/view}}
-	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="t3-inspector-apply"}}Apply{{/view}}
+	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="neos-inspector-cancel"}}Cancel{{/view}}
+	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="neos-inspector-apply"}}Apply{{/view}}
 </div>
-<form class="t3-inspector-form" action="#">
+<form class="neos-inspector-form" action="#">
 	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
-	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
+	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
 		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content"}}
 			<h2>
 				{{view.content.label}}
@@ -17,7 +17,7 @@
 				</span>
 			</h2>
 		{{/view}}
-		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="view.content.properties"}}
+		{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="view.content.properties"}}
 			{{#if view.content.isBoolean}}
 				<label for="{{unbound view.content.elementId}}" class="checkbox">
 					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}

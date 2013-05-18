@@ -7,7 +7,7 @@ define(
 	], function(Ember) {
 		return Ember.View.extend({
 			tagName: 'div',
-			classNames: ['t3-toolbar'],
+			classNames: ['neos-toolbar'],
 			template: Ember.required()
 		});
 	}

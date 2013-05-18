@@ -45,7 +45,7 @@ require(
 			ExtDirectInitialization();
 
 			ContentModule.advanceReadiness();
-			ApplicationView.create().appendTo('#t3-application');
+			ApplicationView.create().appendTo('#neos-application');
 		});
 	}
 );

@@ -39,9 +39,9 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 
 		_applyHiddenClass: function() {
 			if (this.get('attributes._hidden')) {
-				this.get('$element').addClass('t3-contentelement-hidden');
+				this.get('$element').addClass('neos-contentelement-hidden');
 			} else {
-				this.get('$element').removeClass('t3-contentelement-hidden');
+				this.get('$element').removeClass('neos-contentelement-hidden');
 			}
 		}.observes('typo3:_hidden'),
 

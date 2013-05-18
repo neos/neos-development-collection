@@ -1,0 +1,186 @@
+body {
+	// States
+	&.neos-backend {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+
+	&.neos-controls {
+		margin-bottom: $footer-height;
+		margin-top: $menu-height + $topbar-offset + $toolbar-height;
+		margin-left: 0;
+		&.neos-tree-panel-open {
+			margin-left: $tree-panel-width;
+		}
+	}
+
+	&.neos-tree-panel-open {
+		.neos #neos-tree-panel {
+			width: $tree-panel-width;
+		}
+	}
+
+	&.neos-inspector-panel-open {
+		margin-right: $property-panel-width;
+		@include transition-property('margin-right');
+		@include transition-duration(0.2s);
+
+		.neos {
+			#neos-inspector {
+				right: 0;
+				@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
+			}
+
+			#neos-toolbar {
+				padding-right: $property-panel-width;
+			}
+		}
+	}
+
+	// Preview mode
+	#neos-top {
+		@include transition-property(height);
+		@include transition-duration(0.2s);
+	}
+
+	#neos-toolbar {
+		@include transition-property(margin-top, padding-right);
+		@include transition-duration(0.2s);
+		.neos-icon-preview {
+			@include transition-property(margin-top);
+			@include transition-duration(0.125s);
+		}
+	}
+
+	.aloha-block-TYPO3Block {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+
+	&.neos-previewmode {
+		margin-right: 0;
+
+		.neos {
+			#neos-top,
+			#neos-toolbar,
+			#neos-inspector {
+				display: block !important;
+			}
+
+			#neos-top {
+				height: 0;
+				overflow: hidden;
+			}
+
+			#neos-toolbar {
+				margin-top: -$toolbar-height;
+				box-shadow: none;
+				display: block;
+			}
+
+			#neos-inspector {
+				right: -$property-panel-width;
+				overflow: hidden;
+			}
+
+			#neos-tree-panel {
+				width: 0;
+			}
+		}
+
+		.neos-preview-close {
+			display: block !important;
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			box-shadow: 0 0 15px rgba(0, 0, 0, .15);
+		}
+
+		.aloha-block-TYPO3Block {
+			margin: 0;
+		}
+
+		// Aloha Block highlighting
+		div.aloha-block:hover > .aloha-block-inner {
+			cursor: default;
+		}
+
+		div.aloha-block-inner {
+			outline: none !important;
+			background: none !important;
+		}
+
+		.aloha-block-TYPO3Block.aloha-block:hover,
+		.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
+		.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
+			@include box-shadow(none);
+		}
+
+		// Handles around Aloha Blocks
+		.neos-handle,
+		.neos-status-indicator {
+			display: none !important;
+		}
+
+		// Aloha Floating Menu
+		#aloha-floatingmenu-shadow,
+		.aloha-floatingmenu,
+		.x-shadow,
+		.neos-contentelement-overlay,
+		button.neos-create-new-content,
+		.neos-contentelement-hidden {
+			display: none !important;
+		}
+
+		.aloha-block:hover,
+		.aloha-block.aloha-block-highlighted {
+			cursor: auto;
+		}
+
+		// Content elements
+		.neos-contentelement-active {
+			outline: none !important;
+			outline-offset: 0px;
+
+			> .neos-contentelement-handle-container {
+				visibility: hidden;
+			}
+		}
+	}
+}
+
+#neos-page-metainformation {
+	display: none;
+}
+
+#neos-inspector-clickprotection {
+	position: fixed;
+	display: block;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+}
+
+#neos-shortcut {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url('../Images/module-bg.jpg');
+	z-index: 9999;
+
+	p {
+		position: relative;
+		margin: 0 auto;
+		width: 500px;
+		height: 48px;
+		top: 50%;
+		margin-top: -24px;
+		color: #fff;
+		font-size: 24px;
+		line-height: 1;
+		text-align: center;
+	}
+}

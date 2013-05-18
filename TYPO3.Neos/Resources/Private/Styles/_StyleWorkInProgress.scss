@@ -1,0 +1,777 @@
+// All CSS changes should be done IN THIS FILE, and then our CSS team (aka Berit)
+// will take the changes from this file, review them and merge them with the other files.
+
+
+/*Dynatree start*/
+.dynatree-container {
+	position: relative;
+	font-size: 12px;
+
+	/*Inspect Button start*/
+	#neos-dd-inspecttree {
+		height: 270px;
+		padding-bottom: 7px;
+		width: 250px;
+	}
+	/*Inspect Button end*/
+
+	/* Pagetree start */
+	#neos-dd-pagetree-con {
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+	}
+
+	#neos-dd-pagetree {
+		span.dynatree-drop-target {
+			margin: 3px 0;
+			display: block;
+			&.dynatree-drop-accept a {
+				background-color: #F8F8F8 !important;
+				border: 1px solid #D7D7D7;
+				color: #333333 !important;
+				text-decoration: none;
+				outline: none;
+			}
+		}
+	}
+	ul.dynatree-container {
+		background-color: transparent;
+		border:none;
+		height: 100%;
+		margin: 0;
+		padding: 3px 3px 3px 10px;
+		overflow: auto;
+		white-space: nowrap;
+		font-family: inherit;
+		font-size: inherit;
+		a:hover {
+			background-color: #F8F8F8;
+			border: 1px solid #D7D7D7;
+			color: #333333;
+			text-decoration: none;
+			outline: none;
+		}
+		a:active, a:focus {
+			outline: inherit;
+			border-color: transparent;
+			background-color: inherit;
+		}
+		a input {
+			font-family: inherit;
+			font-size: inherit;
+		}
+		.dynatree-active {
+			a {
+				background-color: #F8F8F8;
+				border-color: #D7D7D7;
+				color: #333333;
+				text-decoration: none;
+			}
+		}
+		.dynatree-loading span.dynatree-expander {
+			vertical-align: middle;
+			margin-top: 0;
+			background-image: url('../Images/ajax-preloader.gif');
+			background-position: 0 0;
+			&:hover {
+				background-position: 0 0;
+			}
+		}
+		.dynatree-expander {
+			margin-top: 1px;
+			background-image: url('../Images/dynatree-icons.png');
+			background-position: 0 0;
+			&:hover {
+				background-position: -16px 0;
+			}
+		}
+		.dynatree-exp-e,
+		.dynatree-exp-ed,
+		.dynatree-exp-el,
+		.dynatree-exp-edl {
+			.dynatree-expander {
+				background-position: -32px 0;
+				&:hover {
+					background-position: -48px 0;
+				}
+			}
+		}
+		.dynatree-icon {
+			vertical-align: middle;
+			background-position: 0 0;
+			background-image: url('../Images/Icons/Black/square_shape_icon-16.png');
+		}
+		.typo3_neos_nodetypes-root .dynatree-icon {
+			background-image: url('../Images/Icons/Black/globe_2_icon-16.png');
+		}
+		.typo3_neos_nodetypes-page .dynatree-icon {
+			background-image: url('../Images/Icons/Black/doc_empty_icon-16.png');
+		}
+		.typo3_neos_nodetypes-shortcut .dynatree-icon {
+			background-image: url('../Images/Icons/Black/shortcut_icon-16.png');
+		}
+		.typo3_neos_nodetypes-section .dynatree-icon {
+			background-image: url('../Images/Icons/Black/page_layout_icon-16.png');
+		}
+		.typo3_neos_nodetypes-headline .dynatree-icon {
+			background-image: url('../Images/Icons/Black/text_letter_t_icon-16.png');
+		}
+		.typo3_neos_nodetypes-text .dynatree-icon {
+			background-image: url('../Images/Icons/Black/doc_lines_stright_icon-16.png');
+		}
+		.typo3_neos_nodetypes-image .dynatree-icon {
+			background-image: url('../Images/Icons/Black/picture_icon-16.png');
+		}
+		.typo3_neos_nodetypes-textwithimage .dynatree-icon {
+			background-image: url('../Images/Icons/Black/image_text_icon-16.png');
+		}
+		.typo3_neos_nodetypes-html .dynatree-icon {
+			background-image: url('../Images/Icons/Black/brackets_icon-16.png');
+		}
+		.typo3_neos_nodetypes-menu .dynatree-icon {
+			background-image: url('../Images/Icons/Black/list_bullets_icon-16.png');
+		}
+		.typo3_neos_nodetypes-twocolumn .dynatree-icon {
+			background-image: url('../Images/Icons/Black/columns_icon-16.png');
+		}
+		.typo3_neos_nodetypes-threecolumn .dynatree-icon {
+			background-image: url('../Images/Icons/Black/columns_icon-16.png');
+		}
+		.typo3_neos_nodetypes-fourcolumn .dynatree-icon {
+			background-image: url('../Images/Icons/Black/columns_icon-16.png');
+		}
+		.typo3_neos_nodetypes-plugin .dynatree-icon {
+			background-image: url('../Images/Icons/Black/page_layout_icon-16.png');
+		}
+		.hidden {
+			display: inherit;
+			visibility: visible;
+			.dynatree-icon {
+				background-image: url('../Images/Icons/Black/doc_delete_icon-16.png');
+			}
+		}
+		.timedVisibility {
+			display: inherit;
+			visibility: visible;
+			.dynatree-icon {
+				background-image: url('../Images/Icons/Black/clock_icon-16.png');
+			}
+		}
+		.hiddenInIndex .dynatree-icon {
+			@include opacity(.5);
+		}
+	}
+	#dynatree-drop-marker {
+		background-image: url('../Library/twitter-bootstrap/img/glyphicons-halflings.png');
+		background-position: -264px -96px;
+		width: 14px;
+		height: 14px;
+		&.dynatree-drop-after,
+		&.dynatree-drop-before {
+			width: 64px;
+			background-position: 0 -16px;
+			background-image: url('../Images/dynatree-icons.png');
+		}
+		&.dynatree-drop-copy {
+			background-position: -408px -96px;
+		}
+		&.dynatree-drop-move {
+			background-position: -433px -96px;
+		}
+	}
+
+	.neos-pagetree-action-toolbar-con {
+		background-color: $light-grey;
+		border: 1px dotted $dark-grey2;
+		height: 27px;
+		padding-right: 10px;
+		width: 100%;
+		position: absolute;
+		top: -27px;
+		@include box-sizing(border-box);
+	}
+	.page-action-toolbar {
+		cursor: pointer;
+		float: right;
+		height: 15px;
+		margin: 0 5px !important;
+		padding: 6px 0 5px 25px !important;
+	}
+
+	.neos-action-newpage {
+		background: url(../Images/Icons/Black/round_plus_icon-16.png) 3px 50% no-repeat;
+	}
+	.neos-action-deletepage {
+		background: url(../Images/Icons/Black/trash_icon-16.png) 3px 50% no-repeat;
+	}
+}
+
+/*Pagetree end*/
+
+/* Modal Dialog Content area*/
+button.icon-trash:before {
+	padding-right: 3px;
+}
+
+
+// Page Tree Styling
+.popover .x-tree .neos-gotoPage {
+	display: none;
+	position: absolute;
+	right: 5px;
+	width: 16px;
+	height: 16px;
+	background: url(../Images/Icons/Black/rnd_br_next_icon-16.png) no-repeat;
+}
+.popover .x-tree .x-tree-node-over .neos-gotoPage {
+	display: inline;
+}
+
+// Create content element button
+button.neos-create-new-content {
+}
+
+// Notifications
+.neos-notification-container {
+	top: 103px;
+	right: 207px;
+	position: fixed;
+	color: white;
+	z-index: 10010;
+	.alert {
+		background-color: $dark-grey2;
+		color: white;
+		@include text-shadow(none);
+		border-top: 1px solid;
+		border-left: none;
+		border-right: none;
+		border-bottom: none;
+		position: relative;
+		width: 280px;
+		outline: 3px solid $dark-grey;
+		line-height: 1.4em;
+		padding: 10px 35px 10px 10px;
+		margin-bottom: 10px;
+		word-wrap: break-word;
+		@include border-radius(0);
+		&.alert-error {
+			border-top-color: $red;
+		}
+		&.alert-success {
+			border-top-color: $green;
+		}
+		&.alert-warning {
+			border-top-color: $light-orange;
+		}
+		&.alert-info {
+			border-top-color: $blue;
+		}
+		i {
+			padding-right: 5px;
+			vertical-align: text-bottom;
+		}
+		.close {
+			top: -6px !important;
+			font-size: 16px;
+			color: black;
+			@include text-shadow(0 1px 0 white);
+			@include opacity(.2);
+		}
+	}
+}
+
+.neos-handle-loading {
+	display: block;
+	width: 14px;
+	height: 14px;
+	padding: 1px 0;
+	background-image: url('../Images/ajax-preloader.gif') !important;
+	background-repeat: no-repeat !important;
+	background-position: 50% 50% !important;
+}
+
+.popover {
+	display: none;
+
+	&.active {
+		display: block;
+	}
+}
+
+.scrollbar {
+	position: absolute;
+	content: '';
+	display: block;
+	border-radius: 100px;
+	opacity: 0;
+	z-index: 100;
+}
+
+.vertical {
+	width: 7px;
+	right: 2px;
+	top: 2px;
+}
+
+.horizontal {
+	height: 7px;
+	bottom: 2px;
+	left: 2px;
+}
+
+.scrollbar_bg {
+	position: absolute;
+	content: '';
+	display: block;
+	border-radius: 100px;
+	opacity: 0;
+	z-index: 99;
+}
+
+.scrollbar_bg.horizontal {
+	width: 100%;
+}
+
+.scrollbar_bg.vertical {
+	height: 100%;
+}
+
+.scrollbar.light {
+	background: rgba(255,255,255,0.5);
+}
+
+.scrollbar_bg.light {
+	background: rgba(255,255,255,0.10);
+}
+
+
+.scrollbar.dark {
+	background: rgba(0,0,0,0.3);
+}
+
+.scrollbar_bg.dark {
+	background: rgba(0,0,0,0.10);
+}
+
+.nWrap {
+	overflow: auto;
+	display: inline-block;
+}
+
+
+// Selection background in Aloha blocks
+.aloha-block.aloha-block-TYPO3Block ::selection { background: #2F7ECC; color: #ffffff; }
+.aloha-block.aloha-block-TYPO3Block ::-moz-selection { background: #2F7ECC; color: #ffffff; }
+
+
+// Block
+
+.aloha-block-TYPO3Block {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+// connection status indication
+
+button.neos-button.neos-connection-status-up {
+}
+
+button.neos-button.neos-connection-status-down {
+	border: 1px solid #c02f00;
+}
+
+.widget {
+	overflow: auto;
+	margin-bottom: 20px;
+	background-color: $light-grey;
+	border: 1px solid #777;
+	@include border-radius(6px);
+	@include box-shadow(0px 0px 5px rgba($darkest, 0.2));
+	height: 300px;
+	position: relative;
+
+	&.has-footer {
+		.widget-body {
+			padding-bottom: 60px;
+		}
+	}
+
+	.widget-header {
+		padding: 9px 15px;
+
+		h3 {
+			margin: 0;
+			font-size: 20px;
+			font-weight: normal;
+			color: $dark-grey2;
+			border-bottom: 1px solid $dark-grey2;
+
+			a {
+				color: $dark-grey;
+			}
+		}
+
+		img.pull-right {
+			margin-top: 5px;
+		}
+	}
+
+	.widget-body {
+		padding: 15px;
+		overflow-y: auto;
+
+		p {
+			color: lighten($dark-grey2, 10%);
+		}
+	}
+
+	.widget-footer {
+		padding: 14px 15px 15px;
+		margin-bottom: 0;
+		text-align: right;
+		background-color: transparent;
+		border-top: 1px solid #ddd;
+		@include border-bottom-radius(6px);
+		*zoom: 1;
+		@include box-shadow(0 1px 0 $lightest inset);
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		width: 100%;
+		@include box-sizing(border-box);
+	}
+
+	.widget-footer:before,
+	.widget-footer:after {
+		display: table;
+		content: "";
+	}
+
+	.widget-footer:after {
+		clear: both;
+	}
+
+	.widget-footer .btn + .btn {
+		margin-bottom: 0;
+		margin-left: 5px;
+	}
+
+	.widget-footer .btn-group .btn + .btn {
+		margin-left: -1px;
+	}
+}
+
+// Alert Windows
+.alert {
+	p {
+		margin: 0px;
+
+		& + p,
+		& + ul {
+			margin-top: 10px;
+		}
+	}
+
+	ul {
+		li {
+			list-style-type: disc;
+		}
+	}
+
+	a {
+		color: $light-grey4;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $light-grey3;
+		}
+	}
+
+	.close {
+		top: -4px;
+		color: $light-grey4;
+		@include opacity(1);
+		@include transition-property(color);
+		@include transition-duration(0.1s);
+
+		&:hover,
+		&:active,
+		&:focus {
+			color: $light-grey3;
+		}
+	}
+}
+
+// Modal dialogs
+.modal {
+	top: 120px;
+	margin: 0px 0px 0px -250px;
+	color: $light-grey;
+	background: #555;
+	color: #E8E8E8;
+	border: 1px solid $dark-grey3;
+	@include border-radius(0);
+	@include box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
+
+	h3 {
+		font-size: 18px;
+		font-weight: normal;
+	}
+}
+
+// Hallo toolbar
+.hallotoolbar {
+	// Hack until the hallo toolbar and handlebar JS are used correctly and won't lay over each other
+	width: auto !important;
+	max-width: 210px;
+
+	.btn {
+		width: 28px;
+		height: 23px;
+		margin-right: 0;
+
+		span {
+			margin-left: -1px;
+			padding: 0;
+			width: 16px;
+			height: 16px;
+			background-repeat: no-repeat;
+			background-position: center center;
+		}
+	}
+
+	.ui-buttonset {
+		display: block;
+		float: left;
+		margin-right: 5px;
+		margin-top: 5px;
+
+		.btn {
+			position: relative;
+			@include border-radius(0);
+		}
+
+		span + span {
+			.btn {
+				margin-left: -1px;
+			}
+		}
+
+		span:first-child .btn {
+			@include border-top-left-radius(4px);
+			@include border-bottom-left-radius(4px);
+		}
+
+		span:last-child .btn {
+			@include border-top-right-radius(4px);
+			@include border-bottom-right-radius(4px);
+		}
+
+		div.dropdown-menu + span .btn {
+			@include border-top-left-radius(4px);
+			@include border-bottom-left-radius(4px);
+		}
+	}
+
+	.dropdown-menu {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: $zindexDropdown;
+		display: none; // none by default, but block on "open" of the menu
+		float: left;
+		min-width: 160px;
+		padding: 5px 0;
+		margin: 2px 0 0; // override default ul
+		list-style: none;
+		background-color: $dropdownBackground;
+		border: 1px solid #ccc; // Fallback for IE7-8
+		border: 1px solid $dropdownBorder;
+		*border-right-width: 2px;
+		*border-bottom-width: 2px;
+		@include border-radius(6px);
+		@include box-shadow(0 5px 10px rgba(0, 0, 0, .2));
+		@include background-clip(padding-box);
+
+		&:before {
+			content: '';
+			display: inline-block;
+			border-left:   7px solid transparent;
+			border-right:  7px solid transparent;
+			border-bottom: 7px solid #ccc;
+			border-bottom-color: $dropdownBorder;
+			position: absolute;
+			top: -7px;
+			left: 9px;
+		}
+		&:after {
+			content: '';
+			display: inline-block;
+			border-left:   6px solid transparent;
+			border-right:  6px solid transparent;
+			border-bottom: 6px solid $dropdownBackground;
+			position: absolute;
+			top: -6px;
+			left: 10px;
+		}
+
+		.blockselector {
+			display: block;
+			width: 100%;
+			padding: 3px 20px;
+			clear: both;
+			font-weight: normal;
+			line-height: $baseLineHeight;
+			color: $dropdownLinkColor;
+			white-space: nowrap;
+			border: 0;
+			background-color: transparent;
+
+			h1, h2, h3, h4, h5, h6 {
+				line-height: 1em;
+				font-weight: normal;
+				margin: 0;
+			}
+			h1 {
+				font-size: 1.5em;
+			}
+			h2 {
+				font-size: 1.4em;
+			}
+			h3 {
+				font-size: 1.3em;
+			}
+			h4 {
+				font-size: 1.2em;
+			}
+			h5 {
+				font-size: 1.1em;
+			}
+			h6 {
+				font-size: 1em;
+			}
+			pre,
+			blockquote {
+				background: none;
+				padding: 0;
+				margin: 0;
+				font-size: 1em;
+				border: none;
+				color: black;
+			}
+
+			&:hover,
+			&:focus {
+				text-decoration: none;
+				color: $dropdownLinkColorHover;
+				background-color: $dropdownLinkBackgroundHover;
+				@include gradient-vertical($dropdownLinkBackgroundHover, darken($dropdownLinkBackgroundHover, 5%));
+			}
+
+			&.selected,
+			&.selected:hover {
+				color: $dropdownLinkColorHover;
+				text-decoration: none;
+				outline: 0;
+				background-color: $light-orange;
+				@include gradient-vertical($light-orange, darken($light-orange, 5%));
+			}
+		}
+	}
+}
+
+// Save indicator
+#neos-toolbar {
+	.neos-indicator {
+		margin: 0px;
+		padding: 0px;
+		color: $lightest;
+		cursor: default;
+		background: transparent;
+		border: 0px;
+	}
+}
+
+// Remove blue border from editing
+.neos-inline-editable {
+	&:focus {
+		outline: 1px rgba(0, 0, 0, 0.2) dashed;
+	}
+}
+
+.ui-tabs .ui-tabs-nav li a:focus {
+	outline: none;
+}
+
+.inspector-dialog {
+	position: fixed;
+	z-index: 11000;
+}
+
+.hallolink-dialog {
+	.neos-link-inputfield {
+		margin-bottom: 0 !important;
+	}
+}
+
+.hallolink-dialog + .ui-autocomplete {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: $zindexDropdown;
+	display: none; // none by default, but block on "open" of the menu
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0; // override default ul
+	list-style: none;
+	background-color: $dropdownBackground;
+	background-image: none;
+	border: 1px solid #ccc; // Fallback for IE7-8
+	border: 1px solid $dropdownBorder;
+	*border-right-width: 2px;
+	*border-bottom-width: 2px;
+	@include border-radius(4px);
+	@include box-shadow(0 5px 10px rgba(0,0,0,.2));
+	@include background-clip(padding-box);
+
+	// Links within the dropdown menu
+	a {
+		display: block;
+		cursor: pointer;
+		padding: 3px 20px;
+		clear: both;
+		font-weight: normal;
+		line-height: $baseLineHeight;
+		color: $dropdownLinkColor;
+		white-space: nowrap;
+		border: none;
+		&:focus,
+		&:hover,
+		&.ui-state-focus,
+		&.active,
+		&.active:hover {
+			color: $dropdownLinkColorHover;
+			text-decoration: none;
+			outline: 0;
+			background-color: $light-orange;
+			@include gradient-vertical($light-orange, darken($light-orange, 5%));
+		}
+	}
+}
+
+.neos-link-inputfield {
+	&.ui-autocomplete-loading {
+		background-image: url('../Images/ajax-preloader.gif');
+		background-repeat: no-repeat;
+		background-position: 198px;
+	}
+}
+
+// Img tag CSS reset
+img {
+	display: inline-block;
+	margin: 0;
+}

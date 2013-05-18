@@ -19,7 +19,7 @@ define(
 			DTNodeStatus_Ok = 0;
 
 		return Ember.View.extend({
-			classNames: ['t3-pagetree'],
+			classNames: ['neos-pagetree'],
 			template: Ember.Handlebars.compile(pageTreeTemplate),
 
 			/**
@@ -46,11 +46,11 @@ define(
 				}
 
 				var that = this,
-					pageMetaInformation = $('#t3-page-metainformation'),
+					pageMetaInformation = $('#neos-page-metainformation'),
 					siteRootNodePath = pageMetaInformation.data('__siteroot'),
-					pageNodePath = $('#t3-page-metainformation').attr('about');
+					pageNodePath = $('#neos-page-metainformation').attr('about');
 
-				this.$tree = this.$('#t3-dd-pagetree').dynatree({
+				this.$tree = this.$('#neos-dd-pagetree').dynatree({
 					keyboard: true,
 					minExpandLevel: 1,
 					classNames: {
@@ -235,7 +235,7 @@ define(
 				});
 
 				// Adding a new page by clicking on the newPage container, if a page is active
-				this.$('#t3-action-newpage').click(function() {
+				this.$('#neos-action-newpage').click(function() {
 					var activeNode = that.$tree.dynatree('getActiveNode');
 					if (activeNode !== null) {
 						that.createAndEditNode(activeNode);
@@ -246,7 +246,7 @@ define(
 				});
 
 				// Deleting a page by clicking on the deletePage container, if a page is active
-				this.$('#t3-action-deletepage').click(function() {
+				this.$('#neos-action-deletepage').click(function() {
 					var activeNode = that.$tree.dynatree('getActiveNode');
 					if (activeNode !== null) {
 						if (activeNode.data.key !== siteRootNodePath) {
@@ -262,7 +262,7 @@ define(
 
 			_initializePagePropertyObservers: function() {
 				var that = this,
-					entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#t3-page-metainformation'));
+					entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#neos-page-metainformation'));
 				if (!entityWrapper) {
 					// page might not have been loaded; so we directly return
 					return;
@@ -352,7 +352,7 @@ define(
 			getPageTreeNode: function() {
 				if (this.$tree && this.$tree.children().length > 0) {
 					var tree = this.$tree.dynatree('getTree'),
-						pageNodePath = $('#t3-page-metainformation').attr('about');
+						pageNodePath = $('#neos-page-metainformation').attr('about');
 					return tree.getNodeByKey(pageNodePath);
 				}
 				return null;
@@ -364,7 +364,6 @@ define(
 			showDeletePageDialog: function(activeNode) {
 				var that = this;
 				Ember.View.create({
-					classNames: ['t3-ui'],
 					template: Ember.Handlebars.compile(deletePageDialogTemplate),
 					pageTitle: activeNode.data.title,
 					numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
@@ -381,7 +380,8 @@ define(
 						this.destroy();
 						$jQueryHandle.remove();
 					}
-				}).appendTo('#t3-application');
+				}).appendTo('#neos-application');
+				console.log($('#neos-application'));
 			},
 
 			editNode: function(node) {

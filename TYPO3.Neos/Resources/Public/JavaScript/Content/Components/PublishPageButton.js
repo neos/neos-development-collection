@@ -17,7 +17,7 @@ define(
 			classNames: ['btn-publish'],
 
 			connectionStatusClass: function() {
-				var className = 't3-connection-status-';
+				var className = 'neos-connection-status-';
 				className += this.get('_connectionFailed') ? 'down' : 'up';
 				return className;
 			}.property('_connectionFailed')

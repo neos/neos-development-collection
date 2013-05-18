@@ -3,10 +3,10 @@
 		{{#each view.data}}<li><a href="#{{unbound Ember.GUID_KEY}}{{unbound name}}">{{unbound name}}</a></li>{{/each}}
 	</ul>
 	{{#each view.data}}
-		<div id="{{unbound Ember.GUID_KEY}}{{unbound name}}" class="t3-content-new">
+		<div id="{{unbound Ember.GUID_KEY}}{{unbound name}}" class="neos-content-new">
 			{{#each children}}
-				<div class="t3-content-new-selecttype-button">
-					<a rel="typo3:{{unbound nodeType}}" class="t3-content-new">
+				<div class="neos-content-new-selecttype-button">
+					<a rel="typo3:{{unbound nodeType}}" class="neos-content-new">
 						{{#if ui.icon.light}}
 							<img src="{{unbound ui.icon.light}}" />
 						{{else}}

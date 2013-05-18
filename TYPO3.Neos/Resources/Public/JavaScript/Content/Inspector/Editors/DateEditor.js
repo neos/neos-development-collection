@@ -12,7 +12,7 @@ function($, Ember) {
 			this.$().datepicker({
 				dateFormat: $.datepicker.W3C,
 				beforeShow: function(field, datePicker) {
-					$(datePicker.dpDiv).addClass('t3-ui');
+					$(datePicker.dpDiv).addClass('neos');
 				}
 			});
 		}

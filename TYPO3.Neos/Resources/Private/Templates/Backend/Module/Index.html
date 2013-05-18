@@ -20,13 +20,9 @@
 </f:section>
 
 <f:section name="body">
-	<body class="t3 t3-ui t3-module t3-module-{moduleClass}">
-		<f:if condition="{moduleContents}">
-			{moduleContents -> f:format.raw()}
-		</f:if>
-
-		<div id="t3-ui-top">
-			<ul class="t3-topbar">
+	<body class="neos neos-module neos-module-{moduleClass}">
+		<div id="neos-top">
+			<ul id="neos-top-bar">
 				<li>
 					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
 				</li>
@@ -37,13 +33,13 @@
 							<f:if condition="{configuration.role}">
 								<f:then>
 									<f:security.ifHasRole role="{configuration.role}">
-										<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+										<li{f:if(condition: '{rootModule} == {module}', then: ' class="neos-active"')}>
 											<t:link.module path="{module}">{configuration.label}</t:link.module>
 										</li>
 									</f:security.ifHasRole>
 								</f:then>
 								<f:else>
-									<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+									<li{f:if(condition: '{rootModule} == {module}', then: ' class="neos-active"')}>
 										<t:link.module path="{module}">{configuration.label}</t:link.module>
 									</li>
 								</f:else>
@@ -53,9 +49,9 @@
 				</f:for>
 			</ul>
 			<f:render partial="Backend/UserMenu" arguments="{_all}" />
-			<div class="t3-clear"></div>
+			<div class="neos-clear"></div>
 		</div>
-		<div id="t3-toolbar" class="t3-toolbar">
+		<div id="neos-toolbar" class="neos-toolbar">
 			<ul class="nav nav-pills">
 				<f:for each="{settings.modules}" key="module" as="configuration">
 					<f:if condition="{rootModule} == {module}">
@@ -68,6 +64,9 @@
 				</f:for>
 			</ul>
 		</div>
+		<f:if condition="{moduleContents}">
+			{moduleContents -> f:format.raw()}
+		</f:if>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
 	</body>
 </f:section>

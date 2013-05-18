@@ -6,7 +6,7 @@
 	<f:if condition="{sites}">
 		<f:then>
 			<f:form action="publishOrDiscardNodes">
-				<div class="row t3-module-container indented">
+				<div class="row neos-module-container indented">
 					<table class="table">
 						<thead>
 							<tr>
@@ -77,10 +77,10 @@
 											</td>
 											<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
 											<td class="actions">
-												<f:link.action action="publishNode" arguments="{node: change.node.contextPath}" class="btn btn-success t3-button" title="Publish">
+												<f:link.action action="publishNode" arguments="{node: change.node.contextPath}" class="btn btn-success neos-button" title="Publish">
 													<i class="icon-check icon-white"></i>
 												</f:link.action>
-												<f:link.action action="discardNode" arguments="{node: change.node.contextPath}" class="btn btn-danger t3-button" title="Discard">
+												<f:link.action action="discardNode" arguments="{node: change.node.contextPath}" class="btn btn-danger neos-button" title="Discard">
 													<i class="icon-trash icon-white"></i>
 												</f:link.action>
 											</td>
@@ -106,7 +106,7 @@
 			</f:form>
 		</f:then>
 		<f:else>
-			<div class="row t3-module-container indented"><p>No unpublished changes in this workspace</p></div>
+			<div class="row neos-module-container indented"><p>No unpublished changes in this workspace</p></div>
 		</f:else>
 	</f:if>
 
@@ -116,8 +116,8 @@
 			<h3>Are you sure you want to discard all changes in the "{workspaceName}" workspace?</h3>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
-			<f:link.action action="discardWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-danger t3-button">
+			<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
+			<f:link.action action="discardWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-danger neos-button">
 				<i class="icon-trash icon-white"></i>
 				Discard
 			</f:link.action>
@@ -154,21 +154,21 @@
 <f:section name="actions">
 	<div class="form-actions form-footer">
 		<div class="pull-left">
-			<button type="submit" name="moduleArguments[action]" value="publish" class="btn btn-success disabled batch-action t3-button" disabled="disabled">
+			<button type="submit" name="moduleArguments[action]" value="publish" class="btn btn-success disabled batch-action neos-button" disabled="disabled">
 				<i class="icon-ok-circle icon-white"></i>
 				Publish <strong>selected</strong> changes
 			</button>
-			<button type="submit" name="moduleArguments[action]" value="discard" class="btn btn-warning disabled batch-action t3-button" disabled="disabled">
+			<button type="submit" name="moduleArguments[action]" value="discard" class="btn btn-warning disabled batch-action neos-button" disabled="disabled">
 				<i class="icon-remove-circle icon-white"></i>
 				Discard <strong>selected</strong> changes
 			</button>
 		</div>
 		<div class="pull-right">
-			<f:link.action action="publishWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-primary t3-button">
+			<f:link.action action="publishWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-primary neos-button">
 				<i class="icon-refresh icon-white"></i>
 				Publish <strong>all</strong> changes
 			</f:link.action>
-			<button class="btn btn-danger t3-button" data-toggle="modal" href="#discard">
+			<button class="btn btn-danger neos-button" data-toggle="modal" href="#discard">
 				<i class="icon-trash icon-white"></i>
 				Discard <strong>all</strong> changes
 			</button>

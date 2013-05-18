@@ -90,11 +90,11 @@ function($, Ember, saveIndicatorTemplate) {
 
 		if (isSection === true) {
 				// Add container BEFORE the section DOM element
-			handleContainerClassName = 't3-section-handle-container';
+			handleContainerClassName = 'neos-section-handle-container';
 			if ($contentElement.prev() && $contentElement.prev().hasClass(handleContainerClassName)) {
 				return;
 			}
-			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).insertBefore($contentElement);
+			handleContainer = $('<div />', {'class': 'neos ' + handleContainerClassName}).insertBefore($contentElement);
 
 			return T3.Content.UI.SectionHandle.create({
 				_element: $contentElement,
@@ -104,11 +104,11 @@ function($, Ember, saveIndicatorTemplate) {
 		}
 
 			// Add container INTO the content elements DOM element
-		handleContainerClassName = 't3-contentelement-handle-container';
+		handleContainerClassName = 'neos-contentelement-handle-container';
 		if (!$contentElement || $contentElement.find('> .' + handleContainerClassName).length > 0) {
 			return;
 		}
-		handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).prependTo($contentElement);
+		handleContainer = $('<div />', {'class': 'neos ' + handleContainerClassName}).prependTo($contentElement);
 
 			// Make sure we have a minimum height to be able to hover
 		if ($contentElement.height() < 16) {
@@ -127,7 +127,7 @@ function($, Ember, saveIndicatorTemplate) {
 				// We use a timeout here to make sure the browser has re-drawn; thus $element
 				// has a possibly updated size
 			window.setTimeout(function() {
-				$element.find('> .t3-contentelement-overlay').css({
+				$element.find('> .neos-contentelement-overlay').css({
 					'width': $element.width(),
 					'height': $element.height()
 				});
@@ -135,24 +135,24 @@ function($, Ember, saveIndicatorTemplate) {
 		};
 
 			// Add overlay to content elements without inline editable properties and no sub-elements
-		if ($element.hasClass('t3-not-inline-editable')) {
+		if ($element.hasClass('neos-not-inline-editable')) {
 			var overlay = $('<div />', {
-				'class': 't3-contentelement-overlay',
+				'class': 'neos-contentelement-overlay',
 				'click': function(event) {
-					if ($('.t3-primary-editor-action').length > 0) {
+					if ($('.neos-primary-editor-action').length > 0) {
 							// We need to use setTimeout here because otherwise the popover is aligned to the bottom of the body
 						setTimeout(function() {
-							$('.t3-primary-editor-action').click();
-							if (Ember.View.views[$('.t3-primary-editor-action').attr('id')] && Ember.View.views[$('.t3-primary-editor-action').attr('id')].toggle) {
-								Ember.View.views[$('.t3-primary-editor-action').attr('id')].toggle();
+							$('.neos-primary-editor-action').click();
+							if (Ember.View.views[$('.neos-primary-editor-action').attr('id')] && Ember.View.views[$('.neos-primary-editor-action').attr('id')].toggle) {
+								Ember.View.views[$('.neos-primary-editor-action').attr('id')].toggle();
 							}
 						}, 1);
 					}
 					event.preventDefault();
 				}
-			}).insertBefore($element.find('> .t3-contentelement-handle-container'));
+			}).insertBefore($element.find('> .neos-contentelement-handle-container'));
 
-			$('<span />', {'class': 't3-contentelement-overlay-icon'}).appendTo(overlay);
+			$('<span />', {'class': 'neos-contentelement-overlay-icon'}).appendTo(overlay);
 
 			setOverlaySizeFn();
 

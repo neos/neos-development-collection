@@ -1,5 +1,5 @@
 <f:form action="createElectronicAddress" name="electronicAddress" object="{electronicAddress}" arguments="{account: account}">
-	<div class="row t3-module-container">
+	<div class="row neos-module-container">
 		<fieldset class="span5">
 			<legend>Add new electronic address</legend>
 
@@ -35,14 +35,14 @@
 	<div class="form-actions form-footer">
 		<f:if condition="{account}">
 			<f:then>
-				<f:link.action action="edit" arguments="{account: account}" class="btn t3-button">Cancel</f:link.action>
+				<f:link.action action="edit" arguments="{account: account}" class="btn neos-button">Cancel</f:link.action>
 			</f:then>
 			<f:else>
-				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
+				<f:link.action action="index" class="btn neos-button">Cancel</f:link.action>
 			</f:else>
 		</f:if>
 		<div class="pull-right">
-			<f:form.submit value="Save" class="btn btn-primary t3-button" />
+			<f:form.submit value="Save" class="btn btn-primary neos-button" />
 		</div>
 	</div>
 </f:form>

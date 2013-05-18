@@ -92,7 +92,7 @@ define(
 				this.$newAfterPopoverContent = $('<div />', {id: this.get(Ember.GUID_KEY)});
 
 				this.$().find('.action-new').popover({
-					additionalClasses: 't3-new-contentelement-popover',
+					additionalClasses: 'neos-new-contentelement-popover',
 					content: this.$newAfterPopoverContent,
 					preventLeft: this.get('popoverPosition') === 'left' ? false : true,
 					preventRight: this.get('popoverPosition') === 'right' ? false : true,
@@ -110,7 +110,7 @@ define(
 
 				this.$().find('.action-remove').popover({
 					header: '<div>Delete this element?</div>',
-					content: $('<div class="typo3-confirmationdialog"><div class="actions"><button class="delete t3-button btn btn-mini btn-danger">Delete</button> <button class="cancel t3-button btn btn-mini">Cancel</button></div></div>'),
+					content: $('<div class="typo3-confirmationdialog"><div class="actions"><button class="delete neos-button btn btn-mini btn-danger">Delete</button> <button class="cancel neos-button btn btn-mini">Cancel</button></div></div>'),
 					preventLeft: this.get('popoverPosition') === 'left' ? false : true,
 					preventRight: this.get('popoverPosition') === 'right' ? false : true,
 					preventTop: this.get('popoverPosition') === 'top' ? false : true,
@@ -120,7 +120,7 @@ define(
 					openEvent: function() {
 						this.popover$.find('button.delete').click(function() {
 							that.get('_element').fadeOut(function() {
-								that.get('_element').addClass('t3-contentelement-removed');
+								that.get('_element').addClass('neos-contentelement-removed');
 							});
 
 							T3.Content.Controller.NodeActions.remove(that.get('_entity'));

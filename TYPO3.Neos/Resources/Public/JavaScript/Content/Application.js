@@ -19,7 +19,7 @@ define(
 function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
-		rootElement: '#t3-application',
+		rootElement: '#neos-application',
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 
@@ -69,7 +69,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 			this._initializeNotifications();
 
-			$('body').toggleClass('t3-ui-controls t3-backend');
+			$('body').toggleClass('neos-controls neos-backend');
 
 			this._setPagePosition();
 
@@ -83,7 +83,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 		_initializeNotifications: function() {
 				// Initialize notifications
-			$('#t3-application').append('<div class="t3-notification-container t3-ui"></div>');
+			$('#neos-application').append('<div class="neos-notification-container"></div>');
 				// TODO: Remove with resolving #45049
 			$('body').midgardNotifications();
 		},
@@ -255,8 +255,8 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			this._linkInterceptionHandler($('a:not(.t3-ui a, .aloha-floatingmenu a)'));
-			this._linkInterceptionHandler('a.t3-link-ajax', true);
+			this._linkInterceptionHandler($('a:not(#neos-application a, .aloha-floatingmenu a)'));
+			this._linkInterceptionHandler('a.neos-link-ajax', true);
 		},
 
 		_setPagePosition: function() {
@@ -278,7 +278,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 			function clickHandler(e, link) {
 				e.preventDefault();
 				var $this = $(link);
-				if (!$this.attr('href').match(/[a-z]*:\/\//) && $this.parents('.t3-contentelement-active').length === 0 && $this.parents('.t3-inline-editable').length === 0) {
+				if (!$this.attr('href').match(/[a-z]*:\/\//) && $this.parents('.neos-contentelement-active').length === 0 && $this.parents('.neos-inline-editable').length === 0) {
 						// We only load the page if the link is a non-external link and the parent contentelement is not selected
 						// as links should not be followed if the element is currently being edited or being editable
 					that.loadPage($this.attr('href'));
@@ -297,25 +297,25 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 		loadPage: function(uri, ignorePushToHistory) {
 				// TODO: when http://forge.typo3.org/issues/42014 is fixed this might be unnecessary
-			$('.t3-new-contentelement-popover').remove();
+			$('.neos-new-contentelement-popover').remove();
 
 			var that = this;
 			if (uri === '#') {
 					// Often, pages use an URI of "#" to go to the homepage. In this case,
 					// we extract the current workspace name and redirect to this workspace instead.
-				var siteRoot = $('#t3-page-metainformation').attr('data-__siteroot');
+				var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot');
 				var workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
 				uri = '@' + workspaceName;
 			}
 
 			var selectorsToReplace = [];
 
-			$('.t3-reloadable-content').each(function() {
-				if (!$(this).parents('.t3-reloadable-content').length) {
+			$('.neos-reloadable-content').each(function() {
+				if (!$(this).parents('.neos-reloadable-content').length) {
 					var id = $(this).attr('id');
 					if (!id) {
 						// TODO: we need cleaner developer error handling
-						throw 'You have marked a DOM element with the CSS class t3-reloadable-content; but this element has no ID.';
+						throw 'You have marked a DOM element with the CSS class neos-reloadable-content; but this element has no ID.';
 					}
 					selectorsToReplace.push('#' + id);
 				}
@@ -335,7 +335,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 				window.history.pushState({uri: uri}, document.title, uri);
 			}
 
-			var currentlyActiveContentElementNodePath = $('.t3-contentelement-active').attr('about');
+			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
 			$.get(uri, function(htmlString, status) {
 				if (status === 'success') {
 					var $htmlDom = $(htmlString);
@@ -346,7 +346,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 						} else if ($htmlDom.filter(selector).length > 0) {
 							// find only looks inside the *descendants* of the result
 							// set; that's why we might need to use "filter" if a top-
-							// level element has the t3-reloadable-content CSS class applied
+							// level element has the neos-reloadable-content CSS class applied
 							$(selector).replaceWith($htmlDom.filter(selector));
 						} else {
 							// todo find cleaner solution for pages with different structures
@@ -360,7 +360,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 						that._linkInterceptionHandler($(selector).find('a'));
 					});
 
-					var $newMetaInformation = $htmlDom.filter('#t3-page-metainformation');
+					var $newMetaInformation = $htmlDom.filter('#neos-page-metainformation');
 					if ($newMetaInformation.length === 0) {
 						// FALLBACK: Something went really wrong with the fetching.
 						// so we reload the whole backend.
@@ -368,7 +368,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 					} else {
 						ContentModule.set('currentUri', uri);
 					}
-					$('#t3-page-metainformation').replaceWith($newMetaInformation);
+					$('#neos-page-metainformation').replaceWith($newMetaInformation);
 					$('title').html($htmlDom.filter('title').html());
 
 					that._setPagePosition();
@@ -411,7 +411,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 				return;
 			}
 
-			this.$loader = $('<div />').addClass('t3-pageloader-wrapper').fadeTo(0, .8).appendTo($('body'));
+			this.$loader = $('<div />').addClass('neos-pageloader-wrapper').fadeTo(0, .8).appendTo($('body'));
 			this.spinner = new Spinner({
 				lines: 13, // The number of lines to draw
 				length: 15, // The length of each line
@@ -424,7 +424,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 				trail: 64, // Afterglow percentage
 				shadow: false, // Whether to render a shadow
 				hwaccel: false, // Whether to use hardware acceleration
-				className: 't3-pageloader', // The CSS class to assign to the spinner
+				className: 'neos-pageloader', // The CSS class to assign to the spinner
 				zIndex: 2e9, // The z-index (defaults to 2000000000)
 				top: 'auto', // Top position relative to parent in px
 				left: 'auto' // Left position relative to parent in px

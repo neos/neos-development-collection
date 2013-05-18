@@ -23,7 +23,7 @@
 		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}
 			<button class="btn btn-mini action-paste" title="Paste after" {{action "pasteAfter" target="view"}}>
 				{{#if view._pasteInProgress}}
-					<i class="t3-handle-loading"></i>
+					<i class="neos-handle-loading"></i>
 				{{else}}
 					<i class="icon-paste"></i>
 				{{/if}}
@@ -31,7 +31,7 @@
 		{{/if}}
 		<button class="btn btn-mini action-new" title="Create after" {{action "newAfter" target="view"}}>
 			{{#if view._thisElementIsAddingNewContent}}
-				<i class="t3-handle-loading"></i>
+				<i class="neos-handle-loading"></i>
 			{{else}}
 				<i class="icon-plus"></i>
 			{{/if}}

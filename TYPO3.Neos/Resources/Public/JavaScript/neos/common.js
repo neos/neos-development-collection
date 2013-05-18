@@ -33,7 +33,7 @@ function($, Ember) {
 		 * @return {void}
 		 */
 		_show: function(message, fadeout, type) {
-			$('.t3-notification-container').notify({
+			$('.neos-notification-container').notify({
 				message: {
 					html: message
 				},
