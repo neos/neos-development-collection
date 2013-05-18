@@ -60,6 +60,17 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	 * {@inheritdoc}
 	 *
 	 * @param object $element
+	 * @param string $identifier
+	 * @return boolean
+	 */
+	protected function matchesIdentifierFilter($element, $identifier) {
+		return (strtolower($element->getIdentifier()) === strtolower($identifier));
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param object $element
 	 * @param string $propertyPath
 	 * @return mixed
 	 */
