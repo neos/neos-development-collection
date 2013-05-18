@@ -1,7 +1,6 @@
 define(
 [
 	'./Application',
-	'./ApplicationView',
 
 	'neos/common',
 	'neos/content/model',
@@ -10,7 +9,6 @@ define(
 	'create/typo3Notifications'
 
 ],
-function(Application, ApplicationView) {
-	ApplicationView.create().appendTo('#t3-application');
+function(Application) {
 	return Application;
 });
