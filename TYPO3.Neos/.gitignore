@@ -1,5 +1,5 @@
 /Scripts/node_modules/
-/Resources/Private/Styles/.sass-cache/
+.sass-cache
 .DS_Store
 /Scripts/create/
 /Scripts/vie/
