@@ -7676,6 +7676,27 @@ body.t3-ui-previewmode .t3-contentelement-active > .t3-contentelement-handle-con
 #t3-neos-error-container p {
   margin: 15px 0;
 }
+.t3-shortcut {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../Images/module-bg.jpg);
+  z-index: 9999;
+}
+.t3-shortcut p {
+  position: relative;
+  margin: 0 auto;
+  width: 500px;
+  height: 48px;
+  top: 50%;
+  margin-top: -24px;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  text-align: center;
+}
 .t3-ui #t3-inspector .t3-inspector-form .chzn-container li.highlighted {
   background-color: #f58200;
   background-image: -moz-linear-gradient(top, #ff8700, #e67a00);
