@@ -4,20 +4,6 @@ prototype(TYPO3.TypoScript:Template) {
 
 prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template)
 
-# setting up additional Prototype configuration
-prototype(TYPO3.TypoScript:Collection) {
-	collection = ${q(node).children()}
-	itemName = 'node'
-	itemRenderer = TYPO3.TypoScript:Case
-}
-
-# Catch-all condition for the default case
-prototype(TYPO3.TypoScript:Case).default {
-	@position = 'end'
-	condition = ${true}
-	type = ${q(node).property('_nodeType.name')}
-}
-
 # Breadcrumb TS Object
 prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.Neos:Breadcrumb) {
