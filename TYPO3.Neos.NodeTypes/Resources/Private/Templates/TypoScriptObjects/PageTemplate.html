@@ -17,9 +17,9 @@
 	<head>
 		<f:base />
 		<meta charset="UTF-8" />
-		<ts:renderTypoScript path="headerData" />
+		<ts:render path="headerData" />
 
-		<ts:renderTypoScript path="backendHeader" />
+		<ts:render path="backendHeader" />
 	</head>
 
 	<body<f:if condition="{bodyAttributes}"><f:for each="{bodyAttributes}" key="attribute" as="value"> {attribute}="{value -> f:format.raw()}"</f:for></f:if>>
@@ -28,7 +28,7 @@
 			<t:contentElement node="{node}" page="TRUE" />
 		</f:security.ifAccess>
 
-		<ts:renderTypoScript path="body" />
+		<ts:render path="body" />
 		<t:backend.container node="{node}"/>
 	</body>
 </html>
