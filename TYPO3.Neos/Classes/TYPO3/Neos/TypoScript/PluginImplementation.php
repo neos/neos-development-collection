@@ -259,7 +259,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @return string
 	 */
 	public function __toString() {
-		return $this->render();
+		return $this->evaluate();
 	}
 }
 ?>
