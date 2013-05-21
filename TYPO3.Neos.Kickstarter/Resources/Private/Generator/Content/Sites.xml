@@ -6,7 +6,7 @@
 			<state>1</state>
 			<siteResourcesPackageKey>{packageKey}</siteResourcesPackageKey>
 		</properties>
-		<node identifier="" type="TYPO3.Neos.NodeTypes:Page" nodeName="homepage" locale="en_EN">
+		<node identifier="" type="TYPO3.Neos:Page" nodeName="homepage" locale="en_EN">
 			<properties>
 				<title>Home</title>
 			</properties>

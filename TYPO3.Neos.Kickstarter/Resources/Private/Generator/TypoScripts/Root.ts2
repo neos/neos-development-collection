@@ -20,8 +20,8 @@ page.body {
 		breadcrumb =  Breadcrumb
 	}
 		// These are your content areas, you can define as many as you want, just name them and the nodePath.
-	sections {
-		main = Section
+	content {
+		main = ContentCollection
 		main.nodePath = 'main'
 	}
 }
