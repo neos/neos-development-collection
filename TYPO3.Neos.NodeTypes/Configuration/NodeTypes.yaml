@@ -1,158 +1,7 @@
-'TYPO3.Neos.NodeTypes:AbstractNode':
-  ui:
-    inspector:
-      groups:
-        visibility:
-          label: 'Visibility'
-          position: 100
-  properties:
-    _removed:
-      type: boolean
-    _hidden:
-      type: boolean
-      ui:
-        label: 'Hide'
-        inspector:
-          group: 'visibility'
-          position: 30
-    _hiddenBeforeDateTime:
-      type: date
-      ui:
-        label: 'Hide before date'
-        inspector:
-          group: 'visibility'
-          position: 10
-      validation:
-        dateTime: []
-    _hiddenAfterDateTime:
-      type: date
-      ui:
-        label: 'Hide after date'
-        inspector:
-          group: 'visibility'
-          position: 20
-      validation:
-        dateTime: []
-
-'TYPO3.Neos.NodeTypes:Section':
-  superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
-  ui:
-    label: 'Section'
-    icon:
-      light: 'Images/Icons/White/page_layout_icon-16.png'
-      dark: 'Images/Icons/Black/page_layout_icon-16.png'
-
-'TYPO3.Neos.NodeTypes:Folder':
-  superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Neos.NodeTypes:AbstractNode']
-  ui:
-    label: 'Folder'
-    search:
-      searchCategory: 'Pages'
-
-    inspector:
-      groups:
-        page:
-          label: 'Folder options'
-          position: 10
-  properties:
-    title:
-      type: string
-      ui:
-        label: 'Title'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'page'
-      validation:
-        notEmpty: []
-        stringLength:
-          minimum: 1
-          maximum: 255
-    _name:
-      type: string
-      ui:
-        label: 'Name (URL)'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'page'
-      validation:
-        notEmpty: []
-        stringLength:
-          minimum: 1
-          maximum: 255
-        regularExpression:
-          regularExpression: '/^[a-z0-9\-]+$/i'
-    _hidden:
-      ui:
-        reloadIfChanged: TRUE
-    _hiddenInIndex:
-      type: boolean
-      ui:
-        label: 'Hide in menus'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'visibility'
-          position: 40
-
-'TYPO3.Neos.NodeTypes:Shortcut':
-  superTypes: ['TYPO3.Neos.NodeTypes:Folder']
-  ui:
-    label: 'Shortcut'
-    icon:
-      light: 'Images/Icons/White/shortcut_icon-16.png'
-      dark: 'Images/Icons/Black/shortcut_icon-16.png'
-    inspector:
-      groups:
-        page:
-          label: 'Shortcut options'
-  properties:
-    targetMode:
-      type: string
-      ui:
-        label: 'Target mode'
-        defaultValue: 'firstChildNode'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'page'
-          editor: Content/Inspector/Editors/SelectBoxEditor
-          editorOptions:
-            values:
-              selectedNode:
-                label: 'Selected node'
-              firstChildNode:
-                label: 'First child node'
-              parentNode:
-                label: 'Parent node'
-    targetNode:
-      type: string
-      ui:
-        label: 'Target node'
-        inspector:
-          group: 'page'
-
-'TYPO3.Neos.NodeTypes:Page':
-  superTypes: ['TYPO3.Neos.NodeTypes:Folder']
-  ui:
-    label: 'Page'
-    icon:
-      light: 'Images/Icons/White/doc_empty_icon-16.png'
-      dark: 'Images/Icons/Black/doc_empty_icon-16.png'
-    inspector:
-      groups:
-        page:
-          label: 'Page options'
-
-'TYPO3.Neos.NodeTypes:ContentObject':
-  superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
-  ui:
-    label: 'Abstract content object'
-    search:
-      searchCategory: 'Content'
-
 'TYPO3.Neos.NodeTypes:Headline':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+  superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Headline'
-    group: 'General'
     icon:
       light: 'Images/Icons/White/text_letter_t_icon-16.png'
       dark: 'Images/Icons/Black/text_letter_t_icon-16.png'
@@ -164,10 +13,9 @@
         inlineEditable: TRUE
 
 'TYPO3.Neos.NodeTypes:Text':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+  superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Text'
-    group: 'General'
     icon:
       light: 'Images/Icons/White/doc_lines_stright_icon-16.png'
       dark: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
@@ -179,10 +27,9 @@
         inlineEditable: TRUE
 
 'TYPO3.Neos.NodeTypes:Image':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+  superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Image'
-    group: 'General'
     icon:
       light: 'Images/Icons/White/picture_icon-16.png'
       dark: 'Images/Icons/Black/picture_icon-16.png'
@@ -274,19 +121,19 @@
                 label: 'Center'
 
 'TYPO3.Neos.NodeTypes:TextWithImage':
-  superTypes: ['TYPO3.Neos.NodeTypes:Image', 'TYPO3.Neos.NodeTypes:Text']
+  superTypes:
+    - 'TYPO3.Neos.NodeTypes:Image'
+    - 'TYPO3.Neos.NodeTypes:Text'
   ui:
     label: 'Text with Image'
-    group: 'General'
     icon:
       light: 'Images/Icons/White/image_text_icon-16.png'
       dark: 'Images/Icons/Black/image_text_icon-16.png'
 
 'TYPO3.Neos.NodeTypes:Html':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+  superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'HTML'
-    group: 'General'
     icon:
       light: 'Images/Icons/White/brackets_icon-16.png'
       dark: 'Images/Icons/Black/brackets_icon-16.png'
@@ -306,7 +153,7 @@
       defaultValue: '<p>Enter HTML here</p>'
 
 'TYPO3.Neos.NodeTypes:Menu':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+  superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Menu'
     group: 'Structure'
@@ -386,8 +233,10 @@
 
 
 'TYPO3.Neos.NodeTypes:Column':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+  superTypes: ['TYPO3.Neos:Content']
+  abstract: TRUE
   ui:
+    group: 'Structure'
     icon:
       light: 'Images/Icons/White/columns_icon-16.png'
       dark: 'Images/Icons/Black/columns_icon-16.png'
@@ -410,12 +259,11 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Two column content'
-    group: 'Structure'
   childNodes:
     column0:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
   properties:
     layout:
       defaultValue: '50-50'
@@ -439,14 +287,13 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Three column content'
-    group: 'Structure'
   childNodes:
     column0:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column2:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
   properties:
     layout:
       defaultValue: '33-33-33'
@@ -468,16 +315,15 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Four column content'
-    group: 'Structure'
   childNodes:
     column0:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column2:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column3:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
   properties:
     layout:
       defaultValue: '25-25-25-25'
@@ -488,59 +334,3 @@
             values:
               '25-25-25-25':
                 label: '25% / 25% / 25% / 25%'
-
-'TYPO3.Neos.NodeTypes:Plugin':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
-  ui:
-    label: 'Abstract plugin'
-    icon:
-      light: 'Images/Icons/White/app_window_shell_icon-16.png'
-      dark: 'Images/Icons/Black/app_window_shell_icon-16.png'
-    inspector:
-      groups:
-        pluginSettings:
-          label: 'Plugin Settings'
-  properties:
-    package:
-      type: string
-      ui:
-        label: 'Package'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        regularExpression:
-          regularExpression: '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i'
-    subpackage:
-      type: string
-      ui:
-        label: 'Subpackage'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        stringLength:
-          minimum: 1
-          maximum: 255
-    controller:
-      type: string
-      ui:
-        label: 'Controller Name'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        stringLength:
-          minimum: 1
-          maximum: 255
-    action:
-      type: string
-      ui:
-        label: 'Action'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        stringLength:
-          minimum: 1
-          maximum: 255

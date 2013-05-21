@@ -1,84 +1,28 @@
-# Describes the TypoScript rendering for all default node node types in TYPO3 Neos
-
-# Page TS Object
-prototype(TYPO3.Neos.NodeTypes:Page) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.Neos.NodeTypes:Page) {
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/PageTemplate.html'
-	body = TYPO3.TypoScript:Template
-	body.title = ${q(node).property('title')}
-	body.nodePath = ${q(node).property('_path')}
-	headerData = TYPO3.TypoScript:Array
-
-	backendHeader = TYPO3.TypoScript:Template
-	backendHeader.templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/PageHead.html'
-	htmlAttributes = ''
-}
-
-prototype(TYPO3.Neos.NodeTypes:Shortcut) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.Neos.NodeTypes:Shortcut) {
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Shortcut.html'
-
-	targetMode = ${q(node).property('targetMode')}
-	targetNode = ${q(node).property('targetNode')}
-	firstChildNode = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Folder]').get(0)}
-	parentNode = ${q(node).parents().get(0)}
-}
-
-# Case TS Object for Section
-#
-# Using a Case object allows for defining custom rendering of sections for specific
-# node types.
-#
-# The default case is to render all children of the current section node. This is
-# the case for regular pages: A page contains a section which contains content
-# elements.
-#
-prototype(TYPO3.Neos.NodeTypes:Section) {
-	@class = 'TYPO3\\Neos\\NodeTypes\\TypoScript\\SectionCaseImplementation'
-}
-
-prototype(TYPO3.Neos.NodeTypes:Section).default {
-	condition = ${true}
-	type = 'TYPO3.Neos.NodeTypes:Section.Default'
-	@position = 'end'
-}
-
-# Default case for Section TS Object
-prototype(TYPO3.Neos.NodeTypes:Section.Default) < prototype(TYPO3.TypoScript:Collection)
-prototype(TYPO3.Neos.NodeTypes:Section.Default) {
-	@class = 'TYPO3\\Neos\\NodeTypes\\TypoScript\\SectionCollectionImplementation'
-
-		# The node path is set by the user on TYPO3.Neos.NodeTypes:Section. This
-		# path needs to be copied from the context to the local variable of Section.Default
-	nodePath = ${nodePath}
-
-		# To enable direct rendering of a Section we check if the current node is a section
-		# already or if the child nodes of a section specified by nodePath should be
-		# rendered
-	collection = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Section]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
-}
-
-prototype(TYPO3.Neos.NodeTypes:Section).shortcut {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Shortcut]')}
-	type = 'TYPO3.Neos.NodeTypes:Shortcut'
+# Menu TS Object - extends TYPO3.Neos:Menu and is rendering menus inserted as content elements
+prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu) {
+	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
+	entryLevel = ${q(node).property('startLevel')}
+	entryLevel << 1.toInteger()
+	maximumLevels = ${q(node).property('maximumLevels')}
+	maximumLevels << 1.toInteger()
 }
 
 # HTML TS Object
-prototype(TYPO3.Neos.NodeTypes:Html) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:Html) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:Html) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Html.html'
 	source = ${q(node).property('source')}
 }
 
 # Headline TS Object
-prototype(TYPO3.Neos.NodeTypes:Headline) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:Headline) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:Headline) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Headline.html'
 	title = ${q(node).property('title')}
 }
 
 # Image TS Object
-prototype(TYPO3.Neos.NodeTypes:Image) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:Image) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:Image) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Image.html'
 	image = ${q(node).property('image')}
@@ -94,7 +38,7 @@ prototype(TYPO3.Neos.NodeTypes:Image) {
 }
 
 # Text TS Object
-prototype(TYPO3.Neos.NodeTypes:Text) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:Text) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:Text) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Text.html'
 	text = ${q(node).property('text')}
@@ -108,34 +52,24 @@ prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
 	position = ${q(node).property('position')}
 }
 
-# Menu TS Object
-prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu)
-prototype(TYPO3.Neos.NodeTypes:Menu) {
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
-	entryLevel = ${q(node).property('startLevel')}
-	entryLevel << 1.toInteger()
-	maximumLevels = ${q(node).property('maximumLevels')}
-	maximumLevels << 1.toInteger()
-	node = ${node}
-}
-
 # Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements
-prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/MultiColumn.html'
 	layout = ${q(node).property('layout')}
 	columns = TYPO3.TypoScript:Collection
 	columns {
-		collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Section]')}
+		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
 		itemRenderer = TYPO3.Neos.NodeTypes:MultiColumnItem
+		itemName = 'node'
 	}
 }
 
 # Abstract render definition for a single content column in a multi column element
-prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/MultiColumnItem.html'
-	columnContent = TYPO3.Neos.NodeTypes:Section
+	columnContent = TYPO3.Neos:ContentCollection
 	columnContent {
 		nodePath = '.'
 		collection = ${q(node).children()}
@@ -150,6 +84,3 @@ prototype(TYPO3.Neos.NodeTypes:ThreeColumn) < prototype(TYPO3.Neos.NodeTypes:Mul
 
 # Four Column TS Object
 prototype(TYPO3.Neos.NodeTypes:FourColumn) < prototype(TYPO3.Neos.NodeTypes:MultiColumn)
-
-# Abstract Plugin Implementation
-prototype(TYPO3.Neos.NodeTypes:Plugin).@class = 'TYPO3\\Neos\\NodeTypes\\TypoScript\\PluginImplementation'
