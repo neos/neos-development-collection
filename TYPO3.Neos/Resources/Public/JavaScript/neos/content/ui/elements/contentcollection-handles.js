@@ -6,7 +6,7 @@ define(
 	'./contentelement-handles'
 ],
 function (EntityWrapper, ContentElementHandle) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/section-handles');
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/contentcollection-handles');
 
 	return ContentElementHandle.extend({
 		/**

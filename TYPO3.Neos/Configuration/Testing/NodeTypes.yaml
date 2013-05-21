@@ -1,27 +1,12 @@
-'TYPO3.Neos.NodeTypes:ThreeColumn':
+'Acme.Demo:ThreeColumn':
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Three column content'
     group: 'Structure'
   childNodes:
     column0:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos.NodeTypes:Section'
+      type: 'TYPO3.Neos:ContentCollection'
     column2:
-      type: 'TYPO3.Neos.NodeTypes:Section'
-
-'TYPO3.Neos.NodeTypes:Text':
-  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
-  ui:
-    label: 'Text'
-    group: 'General'
-  properties:
-    text:
-      type: string
-      defaultValue: '<p>Enter text here</p>'
-      ui:
-        inlineEditable: TRUE
-    title:
-      ui:
-        inlineEditable: TRUE
+      type: 'TYPO3.Neos:ContentCollection'

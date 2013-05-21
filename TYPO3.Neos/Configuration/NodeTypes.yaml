@@ -1,0 +1,230 @@
+'TYPO3.Neos:Node':
+  abstract: TRUE
+  properties:
+    _removed:
+      type: boolean
+
+'TYPO3.Neos:Hidable':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        visibility:
+          label: 'Visibility'
+          position: 100
+  properties:
+    _hidden:
+      type: boolean
+      ui:
+        label: 'Hide'
+        inspector:
+          group: 'visibility'
+          position: 30
+
+'TYPO3.Neos:Timable':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        visibility:
+          label: 'Visibility'
+          position: 100
+  properties:
+    _hiddenBeforeDateTime:
+      type: date
+      ui:
+        label: 'Hide before'
+        inspector:
+          group: 'visibility'
+          position: 10
+      validation:
+        dateTime: []
+    _hiddenAfterDateTime:
+      type: date
+      ui:
+        label: 'Hide after'
+        inspector:
+          group: 'visibility'
+          position: 20
+      validation:
+        dateTime: []
+
+'TYPO3.Neos:Document':
+  superTypes:
+    - 'TYPO3.Neos:Node'
+    - 'TYPO3.Neos:Hidable'
+    - 'TYPO3.Neos:Timable'
+  ui:
+    label: 'Document'
+    search:
+      searchCategory: 'Documents'
+
+    inspector:
+      groups:
+        document:
+          label: 'Document options'
+          position: 10
+  properties:
+    title:
+      type: string
+      ui:
+        label: 'Title'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'page'
+      validation:
+        notEmpty: []
+        stringLength:
+          minimum: 1
+          maximum: 255
+    _name:
+      type: string
+      ui:
+        label: 'Name (URL)'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'page'
+      validation:
+        notEmpty: []
+        stringLength:
+          minimum: 1
+          maximum: 255
+        regularExpression:
+          regularExpression: '/^[a-z0-9\-]+$/i'
+    _hidden:
+      ui:
+        reloadIfChanged: TRUE
+    _hiddenInIndex:
+      type: boolean
+      ui:
+        label: 'Hide in menus'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'visibility'
+          position: 40
+
+'TYPO3.Neos:Page':
+  superTypes: ['TYPO3.Neos:Document']
+  ui:
+    label: 'Page'
+    icon:
+      light: 'Images/Icons/White/doc_empty_icon-16.png'
+      dark: 'Images/Icons/Black/doc_empty_icon-16.png'
+    inspector:
+      groups:
+        document:
+          label: 'Page options'
+
+'TYPO3.Neos:Shortcut':
+  superTypes: ['TYPO3.Neos:Document']
+  ui:
+    label: 'Shortcut'
+    icon:
+      light: 'Images/Icons/White/shortcut_icon-16.png'
+      dark: 'Images/Icons/Black/shortcut_icon-16.png'
+    inspector:
+      groups:
+        document:
+          label: 'Shortcut options'
+  properties:
+    targetMode:
+      type: string
+      ui:
+        label: 'Target mode'
+        defaultValue: 'firstChildNode'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'document'
+          editor: Content/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            values:
+              selectedNode:
+                label: 'Selected node'
+              firstChildNode:
+                label: 'First child node'
+              parentNode:
+                label: 'Parent node'
+    targetNode:
+      type: string
+      ui:
+        label: 'Target node'
+        inspector:
+          group: 'document'
+
+'TYPO3.Neos:Plugin':
+  superTypes: ['TYPO3.Neos:Content']
+  abstract: TRUE
+  ui:
+    label: 'Plugin'
+    group: 'Plugins'
+    icon:
+      light: 'Images/Icons/White/app_window_shell_icon-16.png'
+      dark: 'Images/Icons/Black/app_window_shell_icon-16.png'
+    inspector:
+      groups:
+        pluginSettings:
+          label: 'Plugin Settings'
+  properties:
+    package:
+      type: string
+      ui:
+        label: 'Package'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+      validation:
+        regularExpression:
+          regularExpression: '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i'
+    subpackage:
+      type: string
+      ui:
+        label: 'Subpackage'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+      validation:
+        stringLength:
+          minimum: 1
+          maximum: 255
+    controller:
+      type: string
+      ui:
+        label: 'Controller Name'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+      validation:
+        stringLength:
+          minimum: 1
+          maximum: 255
+    action:
+      type: string
+      ui:
+        label: 'Action'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginSettings'
+      validation:
+        stringLength:
+          minimum: 1
+          maximum: 255
+
+'TYPO3.Neos:Content':
+  superTypes:
+    - 'TYPO3.Neos:Node'
+    - 'TYPO3.Neos:Hidable'
+    - 'TYPO3.Neos:Timable'
+  abstract: TRUE
+  ui:
+    label: 'Content'
+    group: 'General'
+    search:
+      searchCategory: 'Content'
+
+'TYPO3.Neos:ContentCollection':
+  superTypes: ['TYPO3.Neos:Node']
+  ui:
+    label: 'Content Collection'
+    icon:
+      light: 'Images/Icons/White/page_layout_icon-16.png'
+      dark: 'Images/Icons/Black/page_layout_icon-16.png'

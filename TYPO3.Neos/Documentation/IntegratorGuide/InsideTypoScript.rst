@@ -303,16 +303,10 @@ resides.
 
 Fully qualified identifiers can be used everywhere an identifier is used::
 
-	prototype(TYPO3.Neos.NodeTypes:Section.Default) < prototype(TYPO3.TypoScript:Collection)
+	prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.Neos:Collection)
 
-In Neos a `default` namespace of `TYPO3.Neos` is set and some of the most often used
-TypoScript objects are made available in that namespace through inheritance::
-
-	prototype(TYPO3.Neos:Page) < prototype(TYPO3.Neos.NodeTypes:Page)
-	prototype(TYPO3.Neos:Section) < prototype(TYPO3.Neos.NodeTypes:Section)
-
-So whenever `Page` is used in TypoScript within Neos, it is a shortcut for `TYPO3.Neos:Page`
-which in turn is a shortcut for `TYPO3.Neos.NodeTypes:Page`.
+In Neos a `default` namespace of `TYPO3.Neos` is set. So whenever `Page` is used in
+TypoScript within Neos, it is a shortcut for `TYPO3.Neos:Page`.
 
 Custom namespace aliases can be defined for the scope of the current TypoScript file using the
 following syntax::
@@ -322,6 +316,8 @@ following syntax::
 	# the following two lines are equivalent now
 	video = Acme.Demo:YouTube
 	video = Foo:YouTube
+
+.. warning:: These declarations are not scoped to the file they are in.
 
 Setting Properties On a TypoScript Object
 =========================================

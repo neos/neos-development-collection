@@ -2,63 +2,117 @@
 # PREDEFINED TYPOSCRIPT
 #######################
 
-# setting up implementation class names
+#
+# TYPO3.TypoScript
+#
+
 prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
 prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
 prototype(TYPO3.TypoScript:Collection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionImplementation'
 prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
 prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
+prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 
-prototype(TYPO3.TypoScript:Template) {
+
+#
+# TYPO3.Neos
+#
+
+prototype(TYPO3.Neos:Collection) < prototype(TYPO3.TypoScript:Collection) {
+	collection = ${q(node).children()}
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
+}
+
+prototype(TYPO3.Neos:ContentCase) < prototype(TYPO3.TypoScript:Case) {
+	default {
+		@position = 'end'
+		condition = ${true}
+		type = ${q(node).property('_nodeType.name')}
+	}
+}
+
+prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 }
 
-# setting up additional Prototype configuration
-prototype(TYPO3.TypoScript:Collection) {
-	collection = ${q(node).children()}
-	itemRenderer = TYPO3.TypoScript:Case
-	itemName = 'node'
+prototype(TYPO3.Neos:ContentCollection) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionCaseImplementation'
+
+	default {
+		condition = ${true}
+		type = 'TYPO3.Neos:ContentCollection.Default'
+		@position = 'end'
+	}
 }
 
-# HTML TS Object
-prototype(TYPO3.Neos.NodeTypes:Html) < prototype(TYPO3.TypoScript:Template) {
+prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.Neos:Collection)
+prototype(TYPO3.Neos:ContentCollection.Default) {
+	@class = 'TYPO3\\Neos\\TypoScript\\DefaultContentCollectionImplementation'
+
+		# The node path is set by the user on TYPO3.Neos:ContentCollection. This
+		# path needs to be copied from the context to the local variable of ContentCollection.Default
+	nodePath = ${nodePath}
+
+		# To enable direct rendering of a ContentCollection we check if the current node is a
+		# content collection already or if the child nodes of a content collection specified by
+		# nodePath should be rendered
+	collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
+}
+
+prototype(TYPO3.Neos:Page) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos:Page) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/PageTemplate.html'
+	htmlAttributes = ''
+
+	body = TYPO3.Neos:Template
+	body.title = ${q(node).property('title')}
+	body.nodePath = ${q(node).property('_path')}
+
+	headerData = TYPO3.TypoScript:Array
+
+	backendHeader = TYPO3.Neos:Template
+	backendHeader.templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/PageHead.html'
+}
+
+prototype(TYPO3.Neos:Plugin).@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementation'
+
+root = TYPO3.TypoScript:Case
+root {
+	format {
+		@position = 'end 9998'
+		condition = ${request.format != 'html'}
+		renderPath = ${request.format}
+		renderPath << 1.replace(search: '.', replace: '/')
+		renderPath << 2.wrap(prefix: '/')
+	}
+
+	default {
+		@position = 'end 9999'
+		condition = ${true}
+		renderPath = '/page'
+	}
+}
+
+
+#
+# TYPO3.Neos.NodeTypes
+#
+
+prototype(TYPO3.Neos.NodeTypes:Html) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos.NodeTypes:Html) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Html.html'
 	source = ${q(node).property('source')}
 }
-prototype(TYPO3.TypoScript:Case).html {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Html]')}
-	type = 'TYPO3.Neos.NodeTypes:Html'
-	@position = 100100
-}
 
-# Page TS Object
-prototype(TYPO3.Neos.NodeTypes:Page) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/PageTemplate.html'
-	body = TYPO3.TypoScript:Template
-	body.title = ${q(node).property('title')}
-	body.nodePath = ${q(node).property('_path')}
-	headerData = TYPO3.TypoScript:Array
-	backendHeader = TYPO3.TypoScript:Array
-}
-
-# Text TS Object
-prototype(TYPO3.Neos.NodeTypes:Text) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Text.html'
-	text = ${q(node).property('text')}
-}
-prototype(TYPO3.TypoScript:Case).text {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Text]')}
-	type = 'TYPO3.Neos.NodeTypes:Text'
-	@position = 100200
-}
-
-# Headline TS Object
-prototype(TYPO3.Neos.NodeTypes:Headline) < prototype(TYPO3.TypoScript:Template) {
+prototype(TYPO3.Neos.NodeTypes:Headline) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos.NodeTypes:Headline) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Headline.html'
 	title = ${q(node).property('title')}
 }
-prototype(TYPO3.TypoScript:Case).headline {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Headline]')}
-	type = 'TYPO3.Neos.NodeTypes:Headline'
-	@position = 100201
+
+prototype(TYPO3.Neos.NodeTypes:Text) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos.NodeTypes:Text) {
+	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Text.html'
+	text = ${q(node).property('text')}
 }

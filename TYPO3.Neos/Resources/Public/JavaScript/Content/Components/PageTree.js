@@ -72,7 +72,7 @@ define(
 							select: false,
 							active: false,
 							unselectable: true,
-							addClass: 'typo3_neos_nodetypes-root'
+							addClass: 'typo3_neos-root'
 						}
 					],
 					dnd: {
@@ -157,7 +157,7 @@ define(
 						node._currentlySendingExtDirectAjaxRequest = true;
 						TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 							node.data.key,
-							'TYPO3.TYPO3CR:Folder',
+							'TYPO3.Neos:Document',
 							0,
 							function(result) {
 								node._currentlySendingExtDirectAjaxRequest = false;
@@ -448,8 +448,8 @@ define(
 					position = 'into',
 					node = activeNode.addChild({
 						title: '[New Page]',
-						nodeType: 'TYPO3.Neos.NodeTypes:Page',
-						addClass: 'typo3_neos_nodetypes-page',
+						nodeType: 'TYPO3.Neos:Page',
+						addClass: 'typo3_neos-page',
 						expand: true
 					}),
 					prevTitle = node.data.title,
@@ -490,7 +490,7 @@ define(
 							TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 								activeNode.data.key,
 								{
-									nodeType: 'TYPO3.Neos.NodeTypes:Page',
+									nodeType: 'TYPO3.Neos:Page',
 									//@todo give a unique nodename from the title
 									properties: {
 										title: title

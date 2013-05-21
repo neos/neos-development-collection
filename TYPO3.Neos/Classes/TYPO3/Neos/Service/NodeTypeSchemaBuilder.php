@@ -122,11 +122,11 @@ class NodeTypeSchemaBuilder {
 			}
 		}
 
-			// Convert the TYPO3.Neos.NodeTypes:Section element to support content-collection
+			// Convert the TYPO3.Neos:ContentCollection element to support content-collection
 			// TODO Move to node type definition
-		if (isset($this->types['typo3:TYPO3.Neos.NodeTypes:Section'])) {
-			$this->addProperty('typo3:TYPO3.Neos.NodeTypes:Section', 'typo3:content-collection', array());
-			$this->types['typo3:TYPO3.Neos.NodeTypes:Section']->specific_properties[] = 'typo3:content-collection';
+		if (isset($this->types['typo3:TYPO3.Neos:ContentCollection'])) {
+			$this->addProperty('typo3:TYPO3.Neos:ContentCollection', 'typo3:content-collection', array());
+			$this->types['typo3:TYPO3.Neos:ContentCollection']->specific_properties[] = 'typo3:content-collection';
 			$this->properties['typo3:content-collection']->ranges = array_keys($this->types);
 		}
 

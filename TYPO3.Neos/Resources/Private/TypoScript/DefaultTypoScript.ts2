@@ -1,0 +1,131 @@
+# TYPO3.Neos:ContentCase inherits TYPO3.TypoScript:Case and overrides the default case
+# with a catch-all condition for the default case, setting the type variable to
+# the name of the current nodes' node type
+#
+prototype(TYPO3.Neos:ContentCase) < prototype(TYPO3.TypoScript:Case) {
+	default {
+		@position = 'end'
+		condition = ${true}
+		type = ${q(node).property('_nodeType.name')}
+	}
+}
+
+# TYPO3.Neos:Template makes the current node available in addition to the default
+# TYPO3.TypoScript:Template properties
+#
+prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template) {
+	node = ${node}
+}
+
+# Case TS Object for ContentCollection
+#
+# Using a Case object allows for defining custom rendering of content collections
+# for specific node types.
+#
+# The default case is to render all children of the current content collection node.
+# This is the case for regular pages: A page contains a content collection which contains
+# content elements.
+#
+prototype(TYPO3.Neos:ContentCollection) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionCaseImplementation'
+
+	default {
+		condition = ${true}
+		type = 'TYPO3.Neos:ContentCollection.Default'
+		@position = 'end'
+	}
+}
+
+prototype(TYPO3.Neos:PrimaryContentCollection) < prototype(TYPO3.Neos:ContentCollection)
+
+# Default case for ContentCollection TS Object
+#
+prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.TypoScript:Collection) {
+	@class = 'TYPO3\\Neos\\TypoScript\\DefaultContentCollectionImplementation'
+
+		# The node path is set by the user on TYPO3.Neos:ContentCollection. This
+		# path needs to be copied from the context to the local variable of ContentCollection.Default
+	nodePath = ${nodePath}
+
+		# To enable direct rendering of a ContentCollection we check if the current node is a
+		# content collection already or if the child nodes of a content collection specified by
+		# nodePath should be rendered
+	collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
+
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
+}
+
+# TYPO3.Neos:Page is the default object used for rendering in most sites
+#
+prototype(TYPO3.Neos:Page) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos:Page) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/PageTemplate.html'
+	htmlAttributes = ''
+
+	body = TYPO3.Neos:Template
+	body.title = ${q(node).property('title')}
+	body.nodePath = ${q(node).property('_path')}
+
+	headerData = TYPO3.TypoScript:Array
+
+	backendHeader = TYPO3.Neos:Template
+	backendHeader.templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/PageHead.html'
+}
+
+# TYPO.Neos.Shortcut is given a representation for editing purposes
+#
+prototype(TYPO3.Neos:Shortcut) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos:Shortcut) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Shortcut.html'
+
+	targetMode = ${q(node).property('targetMode')}
+	targetNode = ${q(node).property('targetNode')}
+	firstChildNode = ${q(node).children('[instanceof TYPO3.Neos:Document]').get(0)}
+	parentNode = ${q(node).parents().get(0)}
+}
+prototype(TYPO3.Neos.ContentCollection).shortcut {
+	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Shortcut]')}
+	type = 'TYPO3.Neos:Shortcut'
+}
+
+# TYPO3.Neos:Breadcrumb provides a basic breadcrumb navigation
+#
+prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos:Breadcrumb) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+	items = ${q(node).add(q(node).parents())}
+}
+
+# TYPO3.Neos:Menu provides basic menu rendering
+#
+prototype(TYPO3.Neos:Menu) {
+	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Menu.html'
+}
+
+# Abstract Plugin Implementation
+#
+prototype(TYPO3.Neos:Plugin).@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementation'
+
+# The root matcher used to start rendering in Neos
+#
+# The default is to use a render path of "page", unless the requested format is not "html"
+# in which case the format string will be used as the render path (with dots replaced by slashes)
+#
+root = TYPO3.TypoScript:Case
+root {
+	format {
+		@position = 'end 9998'
+		condition = ${request.format != 'html'}
+		renderPath = ${request.format}
+		renderPath << 1.replace(search: '.', replace: '/')
+		renderPath << 2.wrap(prefix: '/')
+	}
+
+	default {
+		@position = 'end 9999'
+		condition = ${true}
+		renderPath = '/page'
+	}
+}

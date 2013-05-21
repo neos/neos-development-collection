@@ -173,16 +173,16 @@ $orange: #FF8700;
 }
 
 .neos {
-	.neos-wireframe-section-container {
+	.neos-wireframe-contentcollection-container {
 		margin: 10px 0;
 		padding: 10px 15px 15px 15px;
 		background: rgba(240, 240, 240, 0.7);
 		font-family: "Courier New", serif;
 	}
-	.neos-wireframe-section-container:last-child {
+	.neos-wireframe-contentcollection-container:last-child {
 		margin-bottom: 0;
 	}
-	header.neos-wireframe-section {
+	header.neos-wireframe-contentcollection {
 		margin: -10px -15px 5px;
 		font-family: "Courier New", serif;
 		font-size: 16px;
@@ -195,7 +195,7 @@ $orange: #FF8700;
 	}
 }
 
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections {
 	font-size: 14px;
 
 	h1, h2, h3, h4, h5, h6 {

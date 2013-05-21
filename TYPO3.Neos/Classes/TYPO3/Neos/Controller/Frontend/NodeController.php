@@ -94,7 +94,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
 			if (!$this->hasAccessToBackend() || $node->getContext()->getWorkspace()->getName() === 'live') {
-				while ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
+				while ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
 					switch ($node->getProperty('targetMode')) {
 						case 'selectedNode':
 							$node = $node->getNode($node->getProperty('targetNode'));
@@ -104,7 +104,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 						break;
 						case 'firstChildNode':
 						default:
-							$childNodes = $node->getChildNodes('TYPO3.Neos.NodeTypes:Folder');
+							$childNodes = $node->getChildNodes('TYPO3.Neos:Document');
 							$node = current($childNodes);
 					}
 				}

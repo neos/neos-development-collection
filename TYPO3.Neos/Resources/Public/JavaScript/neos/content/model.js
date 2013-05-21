@@ -53,7 +53,7 @@ define(
 				var nodes = [],
 					that = this;
 
-					// Remove active class from all previously active nodes (content elements and sections)
+					// Remove active class from all previously active nodes (content elements and contentcollection)
 				$('.neos-contentelement-active').removeClass('neos-contentelement-active');
 
 					// TODO Check if we need that
@@ -64,16 +64,16 @@ define(
 
 				if ($element !== undefined) {
 						// Add active class to selected content element
-					if ($element.is('.neos-contentsection')) {
-							// If we are inside a section, we want to mark the outer element as active; as this also
-							// contains the section handles.
+					if ($element.is('.neos-contentcollection')) {
+							// If we are inside a contentcollection, we want to mark the outer element as active; as this also
+							// contains the contentcollection handles.
 						$element.parent().addClass('neos-contentelement-active');
 					} else {
 						$element.addClass('neos-contentelement-active');
 					}
 
 					this.addNodeByElement(nodes, $element);
-					$element.parents('.neos-contentelement[about], .neos-contentsection[about]').each(function() {
+					$element.parents('.neos-contentelement[about], .neos-contentcollection[about]').each(function() {
 						that.addNodeByElement(nodes, this);
 					});
 

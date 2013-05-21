@@ -137,16 +137,16 @@
   width: auto;
 }
 
-.neos .neos-wireframe-section-container {
+.neos .neos-wireframe-contentcollection-container {
   margin: 10px 0;
   padding: 10px 15px 15px 15px;
   background: rgba(240, 240, 240, 0.7);
   font-family: "Courier New", serif;
 }
-.neos .neos-wireframe-section-container:last-child {
+.neos .neos-wireframe-contentcollection-container:last-child {
   margin-bottom: 0;
 }
-.neos header.neos-wireframe-section {
+.neos header.neos-wireframe-contentcollection {
   margin: -10px -15px 5px;
   font-family: "Courier New", serif;
   font-size: 16px;
@@ -160,37 +160,37 @@
   border-radius: 0;
 }
 
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections {
   font-size: 14px;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h1, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h2, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h3, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h4, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h5, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h6 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h1, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h2, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h3, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h4, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h5, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h6 {
   color: #000000;
   text-shadow: none;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h1 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h1 {
   font-size: 23px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h2 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h2 {
   font-size: 21px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h3 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h3 {
   font-size: 19px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h4 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h4 {
   font-size: 17px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h5 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h5 {
   font-size: 16px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections h6 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h6 {
   font-size: 14px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections p {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections p {
   color: #000000;
 }

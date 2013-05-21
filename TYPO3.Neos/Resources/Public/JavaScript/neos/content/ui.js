@@ -89,8 +89,8 @@ function($, Ember, saveIndicatorTemplate) {
 		var handleContainerClassName, handleContainer;
 
 		if (isSection === true) {
-				// Add container BEFORE the section DOM element
-			handleContainerClassName = 'neos-section-handle-container';
+				// Add container BEFORE the contentcollection DOM element
+			handleContainerClassName = 'neos-contentcollection-handle-container';
 			if ($contentElement.prev() && $contentElement.prev().hasClass(handleContainerClassName)) {
 				return;
 			}

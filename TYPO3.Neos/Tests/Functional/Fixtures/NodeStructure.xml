@@ -6,11 +6,11 @@
 			<state>1</state>
 			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
 		</properties>
-		<node type="TYPO3.Neos.NodeTypes:Page" nodeName="home" locale="">
+		<node type="TYPO3.Neos:Page" nodeName="home" locale="">
 			<properties>
 				<title><![CDATA[<h1>Home</h1>]]></title>
 			</properties>
-			<node nodeName="teaser" type="TYPO3.Neos.NodeTypes:Section">
+			<node nodeName="teaser" type="TYPO3.Neos:ContentCollection">
 				<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">
 					<properties>
 						<title><![CDATA[<h1>Welcome to this example</h1>]]></title>
@@ -22,10 +22,10 @@
 					</properties>
 				</node>
 			</node>
-			<node nodeName="main" type="TYPO3.Neos.NodeTypes:Section">
+			<node nodeName="main" type="TYPO3.Neos:ContentCollection">
 				<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">
 					<properties>
-						<title><![CDATA[<h1>Do you love TYPO3 FLow?</h1>]]></title>
+						<title><![CDATA[<h1>Do you love TYPO3 Flow?</h1>]]></title>
 					</properties>
 				</node>
 				<node nodeName="dummy42" type="TYPO3.Neos.NodeTypes:Text">
@@ -38,8 +38,8 @@
 						<source>[TWITTER WIDGET]</source>
 					</properties>
 				</node>
-				<node nodeName="dummy44" type="TYPO3.Neos.NodeTypes:ThreeColumn">
-					<node nodeName="left" type="TYPO3.Neos.NodeTypes:Section">
+				<node nodeName="dummy44" type="Acme.Demo:ThreeColumn">
+					<node nodeName="column0" type="TYPO3.Neos:ContentCollection">
 						<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">
 							<properties>
 								<title><![CDATA[<h1>Documentation</h1>]]></title>
@@ -56,7 +56,7 @@
 							</properties>
 						</node>
 					</node>
-					<node nodeName="center" type="TYPO3.Neos.NodeTypes:Section">
+					<node nodeName="column1" type="TYPO3.Neos:ContentCollection">
 						<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">
 							<properties>
 								<title><![CDATA[<h1>Development Process</h1>]]></title>
@@ -68,11 +68,11 @@
 							</properties>
 						</node>
 					</node>
-					<node nodeName="right" type="TYPO3.Neos.NodeTypes:Section">
+					<node nodeName="column2" type="TYPO3.Neos:ContentCollection">
 					</node>
 				</node>
 			</node>
-			<node nodeName="sidebar" type="TYPO3.Neos.NodeTypes:Section">
+			<node nodeName="sidebar" type="TYPO3.Neos:ContentCollection">
 				<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">
 					<properties>
 						<title><![CDATA[<h1>Last Commits</h1>]]></title>
@@ -89,16 +89,16 @@
 					</properties>
 				</node>
 			</node>
-			<node type="TYPO3.Neos.NodeTypes:Page" nodeName="about-us" locale="">
+			<node type="TYPO3.Neos:Page" nodeName="about-us" locale="">
 				<properties>
 					<title><![CDATA[<h1>About Us</h1>]]></title>
 				</properties>
-				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="history" locale="">
+				<node type="TYPO3.Neos:Page" nodeName="history" locale="">
 					<properties>
 						<title><![CDATA[<h1>History</h1>]]></title>
 					</properties>
 				</node>
-				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="mission" locale="">
+				<node type="TYPO3.Neos:Page" nodeName="mission" locale="">
 					<properties>
 						<title><![CDATA[<h1>Our mission</h1>]]></title>
 					</properties>

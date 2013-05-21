@@ -211,7 +211,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 */
 	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode, $lastParentNode, $currentLevel = 1) {
 		$items = array();
-		foreach ($entryParentNode->getChildNodes('TYPO3.Neos.NodeTypes:Page,TYPO3.Neos.NodeTypes:Shortcut') as $currentNode) {
+		foreach ($entryParentNode->getChildNodes('TYPO3.Neos:Document') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
 				continue;
 			}

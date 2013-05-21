@@ -82,7 +82,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$searchContentGroups = array();
 		$searchNodeTypes = array();
-		foreach (array('TYPO3.Neos.NodeTypes:Page', 'TYPO3.Neos.NodeTypes:ContentObject') as $nodeType) {
+		foreach (array('TYPO3.Neos:Page', 'TYPO3.Neos:Content') as $nodeType) {
 			$searchContentGroups[$nodeType] = $this->nodeTypeManager->getNodeType($nodeType)->getConfiguration();
 			array_push($searchNodeTypes, $nodeType);
 			$subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType);
@@ -119,7 +119,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			}
 
 			$this->uriBuilder->reset();
-			if ($result->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Page')) {
+			if ($result->getNodeType()->isOfType('TYPO3.Neos:Page')) {
 				$pageNode = $result;
 			} else {
 				$pageNode = $this->findNextParentFolderNode($result);

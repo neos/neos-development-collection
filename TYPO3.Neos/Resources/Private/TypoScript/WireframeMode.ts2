@@ -1,7 +1,7 @@
-wireframeMode = TYPO3.Neos.NodeTypes:Page
+wireframeMode = TYPO3.Neos:Page
 wireframeMode {
 	headerData {
-		stylesheets = TYPO3.TypoScript:Template
+		stylesheets = TYPO3.Neos:Template
 		stylesheets {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/Page/Default.html'
 			sectionName = 'headerIncludes'
@@ -25,14 +25,14 @@ wireframeMode {
 			breadcrumb.templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
 		}
 
-		sections.all = TYPO3.Neos.NodeTypes:MultiColumn
-		sections.all {
-			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/GeneralSectionRendering.html'
+		contentCollections.all = TYPO3.Neos.NodeTypes:MultiColumn
+		contentCollections.all {
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
 			layout = ''
 			columns {
-				collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Section]')}
+				collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
 				itemRenderer {
-					templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/SectionTemplate.html'
+					templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/ContentCollectionTemplate.html'
 				}
 			}
 		}

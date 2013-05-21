@@ -1,2 +1,0 @@
-# setting up implementation class names
-prototype(TYPO3.Neos:Menu).@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'

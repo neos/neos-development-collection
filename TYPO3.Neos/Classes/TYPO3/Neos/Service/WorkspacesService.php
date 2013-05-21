@@ -88,9 +88,9 @@ class WorkspacesService {
 	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $targetWorkspaceName = 'live') {
 		$nodes = array($node);
 		$nodeType = $node->getNodeType();
-		if ($nodeType->isOfType('TYPO3.Neos.NodeTypes:Page') || $nodeType->hasChildNodes()) {
-			foreach ($node->getChildNodes('TYPO3.Neos.NodeTypes:Section') as $sectionNode) {
-				array_push($nodes, $sectionNode);
+		if ($nodeType->isOfType('TYPO3.Neos:Page') || $nodeType->hasChildNodes()) {
+			foreach ($node->getChildNodes('TYPO3.Neos:ContentCollection') as $contentCollectionNode) {
+				array_push($nodes, $contentCollectionNode);
 			}
 		}
 		$sourceWorkspace = $node->getWorkspace();

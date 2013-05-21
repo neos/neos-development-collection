@@ -1,0 +1,42 @@
+{namespace ext=TYPO3\ExtJS\ViewHelpers}
+{namespace typo3=TYPO3\Neos\ViewHelpers}
+{namespace aloha=TYPO3\Aloha\ViewHelpers}
+<script>
+	try {
+		with (window.location) {
+			sessionStorage.setItem(
+				'TYPO3.Neos.lastVisitedUri',
+				[protocol, '//', host, pathname, (pathname.charAt(pathname.length - 1) === '/' ? '{node.name}.html' : '')].join('')
+			);
+		}
+	} catch(e) {}
+</script>
+
+<f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
+	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+		<script type="text/javascript">
+					// TODO Get rid of those global variables
+				var ExtDirectInitialization = function() {
+					<ext:extDirect.provider />;
+				};
+				{typo3:backend.javascriptConfiguration()}
+				var Aloha,
+					alohaBaseUrl = '{aloha:baseUri()}';
+		</script>
+
+		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
+
+		<f:if condition="{typo3:backend.shouldLoadMinifiedJavascript()}">
+			<f:then>
+				<script src="{f:uri.resource(path: 'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
+				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
+			</f:then>
+			<f:else>
+				<script src="{f:uri.resource(path: 'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
+				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
+			</f:else>
+		</f:if>
+
+		<link rel="stylesheet" href="{aloha:baseUri()}/css/aloha.css" type="text/css" />
+	</f:if>
+</f:security.ifAccess>

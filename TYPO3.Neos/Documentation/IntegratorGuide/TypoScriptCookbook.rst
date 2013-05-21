@@ -11,7 +11,7 @@ Let's say we want to adjust our `YouTube` content element depending on the conte
 it renders in a standard YouTube video size; but when being used inside the sidebar of the page,
 it should shrink to a width of 200 pixels. This is possible through *nested prototypes*::
 
-	page.body.sections.sidebar.prototype(My.Package:YouTube) {
+	page.body.contentCollections.sidebar.prototype(My.Package:YouTube) {
 	  width = '200'
 	  height = '150'
 	}

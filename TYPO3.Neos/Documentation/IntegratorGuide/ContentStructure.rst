@@ -186,7 +186,7 @@ The following options are allowed:
 Here is one of the standard Neos node types (slightly shortened)::
 
 	'TYPO3.Neos.NodeTypes:Image':
-	  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    label: 'Image'
 	    group: 'General'
@@ -271,8 +271,8 @@ externally visible URL by which they can be rendered.
 The standard *page* in Neos is implemented by `Page` which directly extends from
 `TYPO3.Neos:Document`.
 
-Section and ContentObject
-~~~~~~~~~~~~~~~~~~~~~~~~~
+ContentCollection and Content
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All content which does not behave like pages, but which lives inside them, is
 implemented by two different node types:

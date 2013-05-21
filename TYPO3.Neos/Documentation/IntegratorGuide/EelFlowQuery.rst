@@ -173,7 +173,7 @@ are again filtered by a check for their property `spam` being false.
 
 ::
 
-	comments.collection = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Section]') ?
+	comments.collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ?
 		q(node).children("[spam = false]") : q(node).children(this.getNodePath()).children("[spam = false]")}
 
 Fizzle

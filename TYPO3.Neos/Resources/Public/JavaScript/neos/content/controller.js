@@ -64,17 +64,17 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		init: function() {
 			if (T3.Common.LocalStorage.getItem('wireframeMode') === true) {
 				this.toggleWireframeMode();
-				$('#neos-createsection-input').keypress(function(e) {
+				$('#neos-createcontentcollection-input').keypress(function(e) {
 					if ((e.keyCode || e.which) === 13) {
-						$('#neos-createsection-button').click();
+						$('#neos-createcontentcollection-button').click();
 					}
 				});
-				$('#neos-createsection-button').click(function() {
-					var newSectionName = $('#neos-createsection-input').val();
-					if (newSectionName === '') {
-						T3.Common.Notification.error('You need to give a name for the new content section.');
+				$('#neos-createcontentcollection-button').click(function() {
+					var newContentCollectionName = $('#neos-createcontentcollection-input').val();
+					if (newContentCollectionName === '') {
+						T3.Common.Notification.error('You need to give a name for the new content collection.');
 					} else {
-						T3.Content.Controller.Wireframe.createSection(newSectionName);
+						T3.Content.Controller.Wireframe.createContentCollection(newContentCollectionName);
 					}
 				});
 			}
@@ -96,16 +96,16 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 			}
 		}.observes('wireframeMode'),
 
-		createSection: function(sectionName) {
+		createContentCollection: function(contentCollectionName) {
 			var pageNodePath = $('#neos-page-metainformation').attr('about');
 			ContentModule.showPageLoader();
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
-				nodeType: 'TYPO3.Neos.NodeTypes:Section',
-				nodeName: sectionName
+				nodeType: 'TYPO3.Neos:ContentCollection',
+				nodeName: contentCollectionName
 			}, 'into',
 			function (result) {
 				if (result.success == true) {
-					$('#neos-createsection-input').val('');
+					$('#neos-createcontentcollection-input').val('');
 					ContentModule.reloadPage();
 				}
 			});
@@ -234,7 +234,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		 * - Image Settings
 		 *   - image (file upload)
 		 */
-		sectionsAndViews: function() {
+		contentCollectionsAndViews: function() {
 			var selectedNodeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema');
 			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
 				return [];
@@ -245,7 +245,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 				return [];
 			}
 
-			var sectionsAndViews = [];
+			var contentCollectionsAndViews = [];
 			$.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
 				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
@@ -258,16 +258,16 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
 				});
 
-				sectionsAndViews.push($.extend({}, propertyGroupConfiguration, {
+				contentCollectionsAndViews.push($.extend({}, propertyGroupConfiguration, {
 					properties: properties,
 					group: groupIdentifier
 				}));
 			});
-			sectionsAndViews.sort(function(a, b) {
+			contentCollectionsAndViews.sort(function(a, b) {
 				return (a.position || 9999) - (b.position || 9999);
 			});
 
-			return sectionsAndViews;
+			return contentCollectionsAndViews;
 		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema'),
 
 		/**

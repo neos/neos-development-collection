@@ -4,7 +4,7 @@
 </div>
 <form class="neos-inspector-form" action="#">
 	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
-	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
+	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.contentCollectionsAndViews"}}
 		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content"}}
 			<h2>
 				{{view.content.label}}

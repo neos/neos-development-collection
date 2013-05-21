@@ -9,7 +9,7 @@ define(
 	'Library/jquery-with-dependencies',
 	'emberjs',
 	'neos/content/ui/elements/contentelement-handles',
-	'neos/content/ui/elements/section-handles'
+	'neos/content/ui/elements/contentcollection-handles'
 ],
 function($, Ember, ContentElementHandle, SectionHandle) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements');

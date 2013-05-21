@@ -1,0 +1,19 @@
+{namespace t=TYPO3\Neos\ViewHelpers}
+<t:contentElement node="{node}">
+	<div class="t3-shortcut">
+		<p>
+			<f:if condition="{targetMode} == 'selectedNode'">
+				This is a shortcut to a specific page.<br />
+				Click <t:link.node node="{targetNode}">here</t:link.node> to continue to the page.
+			</f:if>
+			<f:if condition="{targetMode} == 'firstChildNode'">
+				This is a shortcut to the first child page.<br />
+				Click <t:link.node node="{firstChildNode}">here</t:link.node> to continue to the page.
+			</f:if>
+			<f:if condition="{targetMode} == 'parentNode'">
+				This is a shortcut to the parent page.<br />
+				Click <t:link.node node="{parentNode}">here</t:link.node> to continue to the page.
+			</f:if>
+		</p>
+	</div>
+</t:contentElement>

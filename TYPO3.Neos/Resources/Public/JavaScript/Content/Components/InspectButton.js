@@ -87,7 +87,7 @@ define(
 							select: false,
 							active: false,
 							unselectable: true,
-							addClass: 'typo3_neos_nodetypes-page'
+							addClass: 'typo3_neos-page'
 						}
 					],
 					dnd: {
@@ -110,8 +110,8 @@ define(
 						 * Any other return value will calc the hitMode from the cursor position.
 						 */
 						onDragEnter: function(node, sourceNode) {
-								// It is only posssible to move nodes into nodes of the nodeType Section
-							if (node.data.nodeType === 'TYPO3.Neos.NodeTypes:Section') {
+								// It is only posssible to move nodes into nodes of the nodeType ContentCollection
+							if (node.data.nodeType === 'TYPO3.Neos:ContentCollection') {
 								return ['before', 'after', 'over'];
 							}
 							else{
@@ -174,7 +174,7 @@ define(
 						node._currentlySendingExtDirectAjaxRequest = true;
 						TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 							node.data.key,
-							'!TYPO3.TYPO3CR:Folder',
+							'!TYPO3.Neos:Document',
 							0,
 							function(result) {
 								node._currentlySendingExtDirectAjaxRequest = false;

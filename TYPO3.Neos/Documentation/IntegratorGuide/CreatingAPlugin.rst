@@ -98,7 +98,7 @@ Add the following to *Configuration/NodeTypes.yaml* of your package:
 .. code-block:: yaml
 
   'Sarkosh.CdCollection:Plugin':
-    superTypes: ['TYPO3.Neos.NodeTypes:Plugin']
+    superTypes: ['TYPO3.Neos:Plugin']
     ui:
       label: 'CD Collection'
       group: 'Plugins'
@@ -111,7 +111,7 @@ TypoScript needs to be added to your package.
 
 *Resources/Private/TypoScripts/Library/Plugin.ts2*::
 
-  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos.NodeTypes:Plugin)
+  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
        package = 'Sarkosh.CdCollection'
        controller = 'Standard'

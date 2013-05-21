@@ -2,7 +2,7 @@
 # completely replace the rendering for TextWithHeadline inside the right column
 #
 
-page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).smallHeadline {
+page1.body.content.sidebar.prototype(TYPO3.Neos:ContentCase).smallHeadline {
 	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Headline]')}
 	type = 'TYPO3.Neos.NodeTypes:SmallHeadline'
 	@position = 'start'

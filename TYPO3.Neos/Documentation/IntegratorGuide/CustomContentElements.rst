@@ -29,7 +29,7 @@ in your site package or in a package dedicated to content elements, if reuse is 
 ::
 
 	'Acme.Demo:YouTube':
-	  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    group: 'General'
 	    label: 'YouTube Video'
@@ -133,7 +133,7 @@ The node type definition must define which properties are inline editable throug
 `inlineEditable` property::
 
 	'Acme.Demo:Quote':
-	  superTypes: ['TYPO3.Neos.NodeTypes:ContentObject']
+	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    group: 'General'
 	    label: 'Quote'
