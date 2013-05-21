@@ -153,7 +153,3 @@ prototype(TYPO3.Neos.NodeTypes:FourColumn) < prototype(TYPO3.Neos.NodeTypes:Mult
 
 # Abstract Plugin Implementation
 prototype(TYPO3.Neos.NodeTypes:Plugin).@class = 'TYPO3\\Neos\\NodeTypes\\TypoScript\\PluginImplementation'
-
-# Alias to Page and Section in TYPO3.Neos namespace for easier use in sites TypoScript
-prototype(TYPO3.Neos:Page) < prototype(TYPO3.Neos.NodeTypes:Page)
-prototype(TYPO3.Neos:Section) < prototype(TYPO3.Neos.NodeTypes:Section)
