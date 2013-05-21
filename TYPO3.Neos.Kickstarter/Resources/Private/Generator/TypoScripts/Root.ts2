@@ -10,6 +10,12 @@ page.headerData {
 		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 		sectionName = 'stylesheets'
 	}
+
+	scripts = TYPO3.TypoScript:Template
+	scripts {
+		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+		sectionName = 'scripts'
+	}
 }
 
 page.body {
