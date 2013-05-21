@@ -55,12 +55,13 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 			// TODO: find closest folder node from this node...
 		$closestFolderNode = $currentNode;
 		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
-		$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
 
-		$typoScriptRuntime = new Runtime($typoScriptObjectTree, $this->controllerContext);
+		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestFolderNode, $this->controllerContext);
+
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $currentNode,
-			'request' => $this->controllerContext->getRequest()
+			'request' => $this->controllerContext->getRequest(),
+			'site' => $currentSiteNode
 		));
 		$output = $typoScriptRuntime->render($this->typoScriptPath);
 		$typoScriptRuntime->popContext();
@@ -76,12 +77,11 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
 	 */
 	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoScriptPath) {
+			// TODO: find closest folder node from this node...
+		$closestFolderNode = $node;
 		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
 
-		// TODO: find closest folder node from this node...
-		$closestFolderNode = $node;
-		$typoScriptConfiguration = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
-		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $this->controllerContext);
+		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestFolderNode, $this->controllerContext);
 		return $typoScriptRuntime->canRender($typoScriptPath);
 	}
 

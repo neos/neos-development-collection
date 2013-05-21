@@ -35,6 +35,40 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$view->_set('variables', array('value' => 'foo'));
 		$view->render();
 	}
+
+	/**
+	 * @test
+	 */
+	public function renderPutsSiteNodeInTypoScriptContext() {
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
+		$mockSiteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
+		$mockContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
+
+		$mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
+
+		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
+		$mockNodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+
+		$mockRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', FALSE);
+
+		$mockControllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
+
+		$mockTypoScriptService = $this->getMock('TYPO3\Neos\Domain\Service\TypoScriptService');
+		$mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($mockRuntime));
+
+		$view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('dummy'));
+
+		$this->inject($view, 'nodeRepository', $mockNodeRepository);
+		$this->inject($view, 'controllerContext', $mockControllerContext);
+		$this->inject($view, 'typoScriptService', $mockTypoScriptService);
+
+		$view->_set('variables', array('value' => $mockNode));
+
+		$mockRuntime->expects($this->once())->method('pushContextArray')->with($this->arrayHasKey('site'));
+
+		$view->render();
+	}
+
 }
 
 ?>
