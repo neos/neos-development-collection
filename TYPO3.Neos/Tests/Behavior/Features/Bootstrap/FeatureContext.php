@@ -1,5 +1,6 @@
 <?php
 
+use Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode,
 	Behat\MinkExtension\Context\MinkContext;
 use TYPO3\Flow\Utility\Arrays;
@@ -87,7 +88,7 @@ class FeatureContext extends MinkContext {
 				$this->assertSession()->addressEquals('/neos/login');
 				break;
 			default:
-				throw new \Behat\Behat\Exception\PendingException();
+				throw new PendingException();
 		}
 	}
 
@@ -100,7 +101,7 @@ class FeatureContext extends MinkContext {
 				$this->assertSession()->elementTextContains('css', '.t3-topbar .t3-active a', 'Content');
 				break;
 			default:
-				throw new \Behat\Behat\Exception\PendingException();
+				throw new PendingException();
 		}
 	}
 
@@ -170,6 +171,65 @@ class FeatureContext extends MinkContext {
 	}
 
 	/**
+	 * @When /^I go to the "([^"]*)" module$/
+	 */
+	public function iGoToTheModule($module) {
+		switch ($module) {
+			case 'Administration / Site Management':
+				$this->visit('/neos/administration/sites');
+				break;
+			default:
+				throw new PendingException();
+		}
+	}
+
+	/**
+	 * @BeforeScenario @fixtures
+	 */
+	public function removeTestSitePackages() {
+		$directories = glob(FLOW_PATH_PACKAGES . 'Sites/Test.*');
+		if (is_array($directories)) {
+			foreach ($directories as $directory) {
+				\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($directory);
+			}
+		}
+	}
+
+	/**
+	 * @Then /^I should see the following sites in a table:$/
+	 */
+	public function iShouldSeeTheFollowingSitesInATable(TableNode $table) {
+		$sites = $table->getHash();
+
+		$tableLocator = '.t3-module-container table.table';
+		$sitesTable = $this->assertSession()->elementExists('css', $tableLocator);
+
+		$siteRows = $sitesTable->findAll('css', 'tbody tr');
+		$actualSites = array_map(function($row) {
+			return array(
+				'name' => $row->find('css', 'td:first-child')->getText()
+			);
+		}, $siteRows);
+
+		$sortByName = function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		};
+		usort($sites, $sortByName);
+		usort($actualSites, $sortByName);
+
+		Assert::assertEquals($sites, $actualSites);
+	}
+
+	/**
+     * @Given /^I follow "([^"]*)" for site "([^"]*)"$/
+     */
+    public function iFollowForSite($link, $siteName) {
+		$rowLocator = sprintf("//table[@class='table']//tr[td/text()='%s']", $siteName);
+		$siteRow = $this->assertSession()->elementExists('xpath', $rowLocator);
+		$siteRow->findLink($link)->click();
+    }
+
+	/**
 	 * @param string $path
 	 * @return string
 	 */
@@ -178,3 +238,4 @@ class FeatureContext extends MinkContext {
 	}
 
 }
+?>
