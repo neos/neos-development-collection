@@ -39,7 +39,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function nodeTypesCanHaveAnyNumberOfSuperTypes() {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array());
 
-		$folderType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Folder', array($baseType), array());
+		$folderType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:Document', array($baseType), array());
 
 		$hideableNodeType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:HideableContent', array(), array());
 		$pageType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:Page', array($folderType, $hideableNodeType), array());
@@ -48,7 +48,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$this->assertTrue($pageType->isOfType('TYPO3.Neos:Page'));
 		$this->assertTrue($pageType->isOfType('TYPO3.Neos:HideableContent'));
-		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Folder'));
+		$this->assertTrue($pageType->isOfType('TYPO3.Neos:Document'));
 		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Base'));
 		$this->assertFalse($pageType->isOfType('TYPO3.TYPO3CR:Exotic'));
 	}
