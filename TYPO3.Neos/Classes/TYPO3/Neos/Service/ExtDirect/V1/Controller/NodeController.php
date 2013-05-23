@@ -387,7 +387,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		$closestFolderNode = $node;
-		while (!$closestFolderNode->getNodeType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+		while (!$closestFolderNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 			$closestFolderNode = $closestFolderNode->getParent();
 		}
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestFolderNode), 'Frontend\Node', 'TYPO3.Neos');

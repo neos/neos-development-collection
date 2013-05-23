@@ -171,7 +171,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node = $node->getParent()) {
-			if ($node->getNodeType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 				return $node;
 			}
 		}

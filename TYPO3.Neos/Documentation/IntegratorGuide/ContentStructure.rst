@@ -247,8 +247,8 @@ All default node types in a Neos installation are defined inside the
 
 In this section, we will spell out node types by their abbreviated name if they
 are located inside the package `TYPO3.Neos.NodeTypes` to increase readability:
-Instead of writing `TYPO3.Neos.NodeTypes:AbstractNode` we will write `AbstractNode`.
-However, we will spell out `TYPO3.TYPO3CR:Folder`.
+Instead of writing `TYPO3.Neos.NodeTypes:Image` we will write `Image`. However,
+we will spell out `TYPO3.Neos:Document`.
 
 AbstractNode
 ~~~~~~~~~~~~
@@ -265,14 +265,11 @@ Folder
 
 An important distinction is between nodes which look and behave like pages
 and "normal content" such as text, which is rendered inside a page. Nodes which
-behave like pages are called *Folder Nodes* in Neos. This means they have a unique,
+behave like pages are called *Document Nodes* in Neos. This means they have a unique,
 externally visible URL by which they can be rendered.
 
-Folder nodes all inherit from `TYPO3.TYPO3CR:Folder`. However, instead of extending
-this type directly, you will often extend `Folder`, as this one inherits additionally
-from `AbstractNode`.
-
-The standard *page* in Neos is implemented by `Page` which directly extends from `Folder`.
+The standard *page* in Neos is implemented by `Page` which directly extends from
+`TYPO3.Neos:Document`.
 
 Section and ContentObject
 ~~~~~~~~~~~~~~~~~~~~~~~~~

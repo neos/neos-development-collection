@@ -91,7 +91,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
 					$siteNodeName = $pathParts[2];
-					$folder = $this->findFolderNode($node);
+					$folder = $this->findDocumentNode($node);
 					$folderPath = implode('/', array_slice(explode('/', $folder->getPath()), 3));
 					$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $folderPath), '', $node->getPath());
 					if (!isset($sites[$siteNodeName]['siteNode'])) {
@@ -213,15 +213,15 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	}
 
 	/**
-	 * Finds the nearest parent folder node of the provided node by looping recursively trough
-	 * the node and it's parent nodes and checking if they are a sub node type of TYPO3.TYPO3CR:Folder
+	 * Finds the nearest parent document node of the provided node by looping recursively trough
+	 * the node and it's parent nodes and checking if they are a sub node type of TYPO3.Neos:Document
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function findFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	protected function findDocumentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node) {
-			if ($node->getNodeType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 				return $node;
 			}
 			$node = $node->getParent();

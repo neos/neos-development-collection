@@ -9,15 +9,11 @@ This section shows how content is rendered on a page as a rough overview.
 More precisely we show how to render a `Folder` node, as everything which happens
 here works for all `Folder` nodes, and not just for `Page` nodes.
 
-First, the requested URL is resolved to a Node of type `TYPO3.TYPO3CR:Folder`.
+First, the requested URL is resolved to a Node of type `TYPO3.TYPO3CR:Document`.
 This happens by translating the URL path to a node path, and finding the node
 with this path then.
 
-When this node is found, the system searches for the *TypoScript* configuration
-which is active for this node by traversing all the parent nodes and looking for
-any attached TypoScript.
-
-Then the node is passed straight away to TypoScript, which is the rendering mechanism.
+The node is passed straight away to TypoScript, which is the rendering mechanism.
 TypoScript renders the node by traversing to sub-nodes and rendering them as well.
 The arguments which are passed to TypoScript are stored inside the so-called
 *context*, which contains all variables which are accessible by the TypoScript rendering
