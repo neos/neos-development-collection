@@ -36,5 +36,19 @@ class ProcessorTest extends AbstractTypoScriptObjectTest {
 		$view->setTypoScriptPath('processors/runtimeAwarePrototype');
 		$this->assertEquals('Xvar1', $view->render());
 	}
+
+	/**
+	 * @test
+	 */
+	public function processorCanBeAppliedToAllDataTypes() {
+		$this->assertMultipleTypoScriptPaths('before|MyValue|after', 'processors/objectAs');
+	}
+
+	/**
+	 * @test
+	 */
+	public function processorCanBeAppliedToAllDataTypesFromInsideATypoScriptObject() {
+		$this->assertMultipleTypoScriptPaths('before|MyValue|after', 'processors/valueWithNested');
+	}
 }
 ?>

@@ -71,6 +71,13 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertEquals('XHallo Welt', $view->render());
 	}
 
+	/**
+	 * Prepare a TypoScriptView for testing that Mocks a request with the given controller and action names.
+	 *
+	 * @param string $controllerObjectName
+	 * @param string $controllerActionName
+	 * @return \TYPO3\TypoScript\View\TypoScriptView
+	 */
 	protected function buildView($controllerObjectName, $controllerActionName) {
 		$request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
 		$request->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));

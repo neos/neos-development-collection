@@ -20,10 +20,15 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest {
 	/**
 	 * @test
 	 */
-	public function stringSimpleTypeWorks() {
-		$view = $this->buildView();
-		$view->setTypoScriptPath('simpleTypes/string');
-		$this->assertSame('A simple string value is not a TypoScript object', $view->render());
+	public function valuesCanBeExpressedAsSimpleValueAsEelAsTypoScropt() {
+		$this->assertMultipleTypoScriptPaths('A simple string value is not a TypoScript object', 'simpleTypes/stringAs');
+	}
+
+	/**
+	 * @test
+	 */
+	public function typoScriptPropertiesCanContainSimpleValueOrEelOrTypoScropt() {
+		$this->assertMultipleTypoScriptPaths('A simple value', 'simpleTypes/valueWithNested');
 	}
 
 	/**
@@ -50,9 +55,9 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest {
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
 	 */
-	public function renderingNonObjectDefinitionPathThrowsException() {
+	public function renderingNonExistingPathThrowsException() {
 		$view = $this->buildView();
-		$view->setTypoScriptPath('simpleTypes/invalidValue');
+		$view->setTypoScriptPath('simpleTypes/nonExistingValue');
 		$view->render();
 	}
 

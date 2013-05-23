@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TypoScript\View;
+namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TypoScript".            *

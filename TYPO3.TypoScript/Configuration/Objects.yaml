@@ -3,7 +3,7 @@ TYPO3\TypoScript\View\TypoScriptView:
     fallbackView:
       object: TYPO3\Fluid\View\TemplateView
 
-TYPO3\TypoScript\View\FluidView:
+TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView:
   properties:
     renderingContext:
       object: TYPO3\Fluid\Core\Rendering\RenderingContext

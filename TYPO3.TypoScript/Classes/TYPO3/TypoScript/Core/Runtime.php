@@ -14,6 +14,11 @@ namespace TYPO3\TypoScript\Core;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TypoScript\Exception as Exceptions;
+use TYPO3\TypoScript\Exception;
+use TYPO3\TypoScript\RuntimeAwareProcessorInterface;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use TYPO3\Eel\FlowQuery\FlowQuery;
 
 /**
  * TypoScript Runtime
@@ -76,6 +81,11 @@ class Runtime {
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
+
+	/**
+	 * @var array
+	 */
+	protected $configurationOnPathRuntimeCache = array();
 
 	/**
 	 * Constructor for the TypoScript Runtime
@@ -144,10 +154,11 @@ class Runtime {
 	 * Evaluate an absolute TypoScript path and return the result
 	 *
 	 * @param string $typoScriptPath
+	 * @param object $contextObject the object available as "this" in Eel expressions. ONLY FOR INTERNAL USE!
 	 * @return mixed the result of the evaluation, can be a string but also other data types
 	 */
-	public function evaluate($typoScriptPath) {
-		return $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_RETURNNULL);
+	public function evaluate($typoScriptPath, $contextObject = NULL) {
+		return $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_RETURNNULL, $contextObject);
 	}
 
 	/**
@@ -156,14 +167,13 @@ class Runtime {
 	 * Compared to $this->evaluate, this adds some more comments helpful for debugging.
 	 *
 	 * @param string $typoScriptPath
+	 * @return string
 	 * @throws \Exception
 	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
-	 * @return string
 	 */
 	public function render($typoScriptPath) {
 		try {
 			$output = $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_EXCEPTION);
-
 			if (isset($this->settings['debugMode']) && $this->settings['debugMode'] === TRUE) {
 				$output = sprintf('%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
 					chr(10),
@@ -175,10 +185,11 @@ class Runtime {
 			if (is_string($output)) {
 				$output = trim($output);
 			}
-			return $output;
 		} catch (\Exception $exception) {
-			return $this->handleRenderingException($typoScriptPath, $exception);
+			$output = $this->handleRenderingException($typoScriptPath, $exception);
 		}
+
+		return $output;
 	}
 
 	/**
@@ -187,16 +198,16 @@ class Runtime {
 	 *
 	 * @param array $typoScriptPath
 	 * @param \Exception $exception
-	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-	 * @throws InvalidConfigurationException
-	 * @throws \Exception|\TYPO3\Flow\Exception
 	 * @return string
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @throws \Exception|\TYPO3\Flow\Exception
 	 */
-	public function handleRenderingException($typoScriptPath, $exception) {
+	public function handleRenderingException($typoScriptPath, \Exception $exception) {
 		if ($exception instanceof \TYPO3\Flow\Mvc\Exception\StopActionException) {
 			throw $exception;
 		}
-		if ($exception instanceof \TYPO3\TypoScript\Exception\RuntimeException) {
+		if ($exception instanceof Exceptions\RuntimeException) {
 			$typoScriptPath = $exception->getTypoScriptPath();
 			$exception = $exception->getPrevious();
 		}
@@ -229,7 +240,7 @@ class Runtime {
 				$output = '';
 				break;
 			default:
-				throw new InvalidConfigurationException('The option "' . $this->settings['handleRenderingExceptions'] . '" is not valid for Setting TYPO3.TypoScript.handleRenderingExceptions. Please choose between throw, htmlMessage, plainText, xmlComment and suppress.', 1368788926);
+				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException('The option "' . $this->settings['handleRenderingExceptions'] . '" is not valid for Setting TYPO3.TypoScript.handleRenderingExceptions. Please choose between throw, htmlMessage, plainText, xmlComment and suppress.', 1368788926);
 		}
 		$this->systemLogger->logException($exception);
 		return $output;
@@ -255,8 +266,14 @@ class Runtime {
 	 * @return boolean
 	 */
 	protected function canRenderWithConfiguration(array $typoScriptConfiguration) {
-			// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
-		if (!(isset($typoScriptConfiguration['__meta']['class']) || isset($typoScriptConfiguration['implementationClassName'])) || !isset($typoScriptConfiguration['__objectType'])) {
+		if (isset($typoScriptConfiguration['__eelExpression'])) {
+			return TRUE;
+		}
+		if (isset($typoScriptConfiguration['__value'])) {
+			return TRUE;
+		}
+
+		if (!isset($typoScriptConfiguration['__meta']['class']) || !isset($typoScriptConfiguration['__objectType'])) {
 			return FALSE;
 		}
 
@@ -268,36 +285,34 @@ class Runtime {
 	 *
 	 * @param string $typoScriptPath
 	 * @param string $behaviorIfPathNotFound one of BEHAVIOR_EXCEPTION or BEHAVIOR_RETURNNULL
+	 * @param mixed $contextObject the object which will be "this" in Eel expressions, if any.
 	 * @return mixed
+	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
+	 * @throws \TYPO3\TypoScript\Exception
+	 * @throws \Exception|\TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
+	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
+	 * @throws \Exception|\TYPO3\TypoScript\Exception\RuntimeException
 	 */
-	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound) {
+	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = NULL) {
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
 
 		if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
 			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
 				if (!isset($typoScriptConfiguration['__objectType'])) {
-					throw new \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
+					throw new Exceptions\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
 				} else {
-					throw new \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
+					throw new Exceptions\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
 				}
 			} else {
 				return NULL;
 			}
 		}
-		$typoScriptObjectType = $typoScriptConfiguration['__objectType'];
-
-			// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
-		$tsObjectClassName = isset($typoScriptConfiguration['__meta']['class']) ? $typoScriptConfiguration['__meta']['class'] : $typoScriptConfiguration['implementationClassName'];
-
-		if (!preg_match('#<[^>]*>$#', $typoScriptPath)) {
-				// Only add typoscript object type to last path part if not already set
-			$typoScriptPath .= '<' . $typoScriptObjectType . '>';
+		if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
+			return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptConfiguration, $contextObject);
 		}
-		if (!class_exists($tsObjectClassName)) {
-			throw new \TYPO3\TypoScript\Exception(sprintf('The implementation class "%s" defined for TypoScript object of type "%s" does not exist (defined at %s).', $tsObjectClassName, $typoScriptObjectType, $typoScriptPath), 1347952109);
-		}
-		$tsObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
-		$this->setOptionsOnTsObject($tsObject, $typoScriptConfiguration);
+
+		$tsObject = $this->instanciateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
 
 			// modify context if @override is specified
 		if (isset($typoScriptConfiguration['__meta']['override'])) {
@@ -311,7 +326,7 @@ class Runtime {
 		$processorsForTypoScriptObject = $this->getProcessors($tsObject->getInternalProcessors(), '__all');
 
 		foreach ($processorsForTypoScriptObject as $processor) {
-			if ($processor instanceof \TYPO3\TypoScript\RuntimeAwareProcessorInterface) {
+			if ($processor instanceof RuntimeAwareProcessorInterface) {
 				$processor->beforeInvocation($this, $tsObject, $typoScriptPath);
 			}
 		}
@@ -320,10 +335,10 @@ class Runtime {
 			$output = $tsObject->evaluate();
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
-		} catch (\TYPO3\TypoScript\Exception\RuntimeException $runtimeException) {
+		} catch (Exceptions\RuntimeException $runtimeException) {
 			throw $runtimeException;
 		} catch (\Exception $exception) {
-			throw new \TYPO3\TypoScript\Exception\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
+			throw new Exceptions\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
 		}
 
 		foreach ($processorsForTypoScriptObject as $processor) {
@@ -331,7 +346,7 @@ class Runtime {
 		}
 
 		foreach ($processorsForTypoScriptObject as $processor) {
-			if ($processor instanceof \TYPO3\TypoScript\RuntimeAwareProcessorInterface) {
+			if ($processor instanceof RuntimeAwareProcessorInterface) {
 				$processor->afterInvocation($this, $tsObject, $typoScriptPath);
 			}
 		}
@@ -348,6 +363,7 @@ class Runtime {
 	 *
 	 * @param string $typoScriptPath
 	 * @return array
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	protected function getConfigurationForPath($typoScriptPath) {
 		$pathParts = explode('/', $typoScriptPath);
@@ -355,21 +371,39 @@ class Runtime {
 		$configuration = $this->typoScriptConfiguration;
 
 		$pathUntilNow = '';
+		$currentPrototypeDefinitions = array();
 		if (isset($configuration['__prototypes'])) {
 			$currentPrototypeDefinitions = $configuration['__prototypes'];
-		} else {
-			$currentPrototypeDefinitions = array();
 		}
+
+			// we also store the configuration on the *last* level such that we are
+			// able to add __processors to eel expressions and values.
 
 		foreach ($pathParts as $pathPart) {
 			$pathUntilNow .= '/' . $pathPart;
+			if (isset($this->configurationOnPathRuntimeCache[$pathUntilNow])) {
+				$configuration = $this->configurationOnPathRuntimeCache[$pathUntilNow]['c'];
+				$currentPrototypeDefinitions = $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'];
+				continue;
+			}
 			if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches)) {
 				$currentPathSegment = $matches[1];
 
-				if (isset($configuration[$currentPathSegment]) && is_array($configuration[$currentPathSegment])) {
-					$configuration = $configuration[$currentPathSegment];
+				$configurationOnLastLevel = $configuration;
+				if (isset($configuration[$currentPathSegment])) {
+					if (is_array($configuration[$currentPathSegment])) {
+						$configuration = $configuration[$currentPathSegment];
+					} else {
+							// Needed for simple values (which cannot be arrays)
+						$configuration = array(
+							'__value' => $configuration[$currentPathSegment]
+						);
+					}
 				} else {
 					$configuration = array();
+				}
+				if (isset($configurationOnLastLevel['__processors'][$currentPathSegment])) {
+					$configuration['__processorsForThisLevel'] = $configurationOnLastLevel['__processors'][$currentPathSegment];
 				}
 
 				if (isset($configuration['__prototypes'])) {
@@ -386,48 +420,25 @@ class Runtime {
 
 				if ($currentPathSegmentType !== NULL) {
 					if (isset($currentPrototypeDefinitions[$currentPathSegmentType])) {
-
-							// FIRST, we build up the prototype inheritance hierarchy by
-							// walking up the inheritance tree. The $prototypeInheritanceHierarchy
-							// is sorted from the most generic to the most specific type.
-						$prototypeInheritanceHierarchy = array($currentPathSegmentType);
-
-							// TODO PERFORMANCE: the inheritance hierarchy is *fixed* and could also be calculated *once* for a given
-							// TypoScript; maybe even at the end of the parsing step. This is because we only allow top-
-							// level prototype inheritance of the form "prototype(foo) < prototype(bar)", but NOT
-							// "some.thing.prototype(foo) < prototype(bar)".
-						$currentPrototypeName = $currentPathSegmentType;
-						while (isset($currentPrototypeDefinitions[$currentPrototypeName]['__prototypeObjectName'])) {
-							$currentPrototypeName = $currentPrototypeDefinitions[$currentPrototypeName]['__prototypeObjectName'];
-							array_unshift($prototypeInheritanceHierarchy, $currentPrototypeName);
-						}
-
-							// SECOND, we now FLATTEN the prototype inheritance hierarchy, effectively building an
-							// array with the indirections through the prototype inheritance resolved.
-						$flattenedPrototype = array();
-						foreach ($prototypeInheritanceHierarchy as $singlePrototypeName) {
-							if (isset($currentPrototypeDefinitions[$singlePrototypeName])) {
-								$flattenedPrototype = Arrays::arrayMergeRecursiveOverrule($flattenedPrototype, $currentPrototypeDefinitions[$singlePrototypeName]);
-							}
-						}
-
-							// THIRD, we merge the flattened prototype with the current configuration (in that order),
+							// We merge the already flattened prototype with the current configuration (in that order),
 							// to make sure that the current configuration (not being defined in the prototype) wins.
-						$configuration = Arrays::arrayMergeRecursiveOverrule($flattenedPrototype, $configuration);
+						$configuration = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions[$currentPathSegmentType], $configuration);
 
-							// FOURTH, if context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
+							// If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
 							// we update the current prototype definitions.
 							// This also takes care of inheritance, as we use the $flattenedPrototype as basis (TODO TESTCASE)
-						if (isset($flattenedPrototype['__prototypes'])) {
-							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $flattenedPrototype['__prototypes']);
+						if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypes'])) {
+							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $currentPrototypeDefinitions[$currentPathSegmentType]['__prototypes']);
 						}
 					}
 
 					$configuration['__objectType'] = $currentPathSegmentType;
 				}
 
+				$this->configurationOnPathRuntimeCache[$pathUntilNow]['c'] = $configuration;
+				$this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
 			} else {
-				throw new \TYPO3\TypoScript\Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
+				throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
 			}
 		}
 
@@ -435,24 +446,49 @@ class Runtime {
 	}
 
 	/**
+	 * @param string $typoScriptPath Path to the configuration for this object instance
+	 * @param array $typoScriptConfiguration Configuration at the given path
+	 * @return \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject
+	 * @throws \TYPO3\TypoScript\Exception
+	 */
+	protected function instanciateTypoScriptObject($typoScriptPath, $typoScriptConfiguration) {
+		$typoScriptObjectType = $typoScriptConfiguration['__objectType'];
+
+		$tsObjectClassName = isset($typoScriptConfiguration['__meta']['class']) ? $typoScriptConfiguration['__meta']['class'] : NULL;
+
+		if (!preg_match('#<[^>]*>$#', $typoScriptPath)) {
+				// Only add typoscript object type to last path part if not already set
+			$typoScriptPath .= '<' . $typoScriptObjectType . '>';
+		}
+		if (!class_exists($tsObjectClassName)) {
+			throw new Exception(sprintf('The implementation class "%s" defined for TypoScript object of type "%s" does not exist (defined at %s).', $tsObjectClassName, $typoScriptObjectType, $typoScriptPath), 1347952109);
+		}
+		/**
+		 * @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject
+		 */
+		$typoScriptObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
+		$this->setPropertiesOnTypoScriptObject($typoScriptObject, $typoScriptConfiguration);
+		if (isset($typoScriptConfiguration['__processors'])) {
+			$typoScriptObject->setInternalProcessors($typoScriptConfiguration['__processors']);
+		}
+
+		return $typoScriptObject;
+	}
+
+	/**
 	 * Set options on the given TypoScript obect
 	 *
 	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject
-	 * @param string $typoScriptConfiguration
+	 * @param array $typoScriptConfiguration
+	 * @return void
 	 */
-	protected function setOptionsOnTsObject(\TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject, array $typoScriptConfiguration) {
+	protected function setPropertiesOnTypoScriptObject(AbstractTypoScriptObject $tsObject, array $typoScriptConfiguration) {
 		foreach ($typoScriptConfiguration as $key => $value) {
-				// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
-			if ($key === '@class' || $key === 'implementationClassName') {
-					// The @class property is already handled by the TypoScript runtime
+				// skip keys which start with __, as they are purely internal.
+			if ($key[0] === '_' && $key[1] === '_') {
 				continue;
 			}
-			if ($key === '__processors') {
-				$tsObject->setInternalProcessors($value);
-			}
 
-				// skip keys which start with __, as they are purely internal.
-			if ($key[0] === '_' && $key[1] === '_') continue;
 			ObjectAccess::setProperty($tsObject, $key, $value);
 		}
 	}
@@ -460,40 +496,77 @@ class Runtime {
 	/**
 	 * Evaluate the processors for $variableName
 	 *
-	 * @param string $variableName
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject
+	 * @param string $variableName The variable name
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	public function evaluateProcessor($variableName, \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject, $value) {
+	public function evaluateProcessor($variableName, AbstractTypoScriptObject $contextObject, $value) {
 		if (is_array($value) && isset($value['__eelExpression'])) {
-			$contextVariables = array_merge($this->getDefaultContextVariables(), $this->getCurrentContext());
-
-			if (!isset($contextVariables['context']) && isset($contextVariables['node'])) {
-					// DEPRECATED since sprint release 10; should be removed lateron.
-				$contextVariables['context'] = new \TYPO3\Eel\FlowQuery\FlowQuery(array($contextVariables['node']));
-			}
-			if (isset($contextVariables['q'])) {
-				throw new \TYPO3\TypoScript\Exception('Context variable "q" not allowed, as it is already reserved for FlowQuery use.', 1344325040);
-			}
-			$contextVariables['q'] = function($element) {
-				return new \TYPO3\Eel\FlowQuery\FlowQuery(array($element));
-			};
-			if (isset($contextVariables['this'])) {
-				throw new \TYPO3\TypoScript\Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current TypoScript object.', 1344325044);
-			}
-			$contextVariables['this'] = $tsObject;
-
-			$context = new \TYPO3\Eel\ProtectedContext($contextVariables);
-			$context->whitelist('q');
-			$value = $this->eelEvaluator->evaluate($value['__eelExpression'], $context);
+			$value = $this->evaluateEelExpression($value['__eelExpression'], $contextObject);
 		}
 
-		$processors = $this->getProcessors($tsObject->getInternalProcessors(), $variableName);
+		$processors = $this->getProcessors($contextObject->getInternalProcessors(), $variableName);
 		foreach ($processors as $processor) {
 			$value = $processor->process($value);
 		}
 
+		return $value;
+	}
+
+	/**
+	 * Evaluate a simple value or eel expression with processors
+	 *
+	 * @param array $value TypoScript configuration for the value
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
+	 * @return mixed The result of the evaluation
+	 */
+	protected function evaluateEelExpressionOrSimpleValueWithProcessor(array $value, AbstractTypoScriptObject $contextObject = NULL) {
+		if (isset($value['__eelExpression'])) {
+			$evaluatedValue = $this->evaluateEelExpression($value['__eelExpression'], $contextObject);
+		} else {
+				// must be simple type, as this is the only place where this method is called.
+			$evaluatedValue = $value['__value'];
+		}
+
+		if (isset($value['__processorsForThisLevel'])) {
+			$processors = $this->getProcessorsForSingleProperty($value['__processorsForThisLevel']);
+			foreach ($processors as $processor) {
+				$evaluatedValue = $processor->process($evaluatedValue);
+			}
+		}
+
+		return $evaluatedValue;
+	}
+
+	/**
+	 * Evaluate an Eel expression
+	 *
+	 * @param string $expression The Eel expression to evaluate
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
+	 * @return mixed The result of the evaluated Eel expression
+	 * @throws \TYPO3\TypoScript\Exception
+	 */
+	protected function evaluateEelExpression($expression, AbstractTypoScriptObject $contextObject = NULL) {
+		$contextVariables = array_merge($this->getDefaultContextVariables(), $this->getCurrentContext());
+		if (!isset($contextVariables['context']) && isset($contextVariables['node'])) {
+			// DEPRECATED since sprint release 10; should be removed lateron.
+			$contextVariables['context'] = new FlowQuery(array($contextVariables['node']));
+		}
+		if (isset($contextVariables['q'])) {
+			throw new Exception('Context variable "q" not allowed, as it is already reserved for FlowQuery use.', 1344325040);
+		}
+		$contextVariables['q'] = function ($element) {
+			return new FlowQuery(array($element));
+		};
+		if (isset($contextVariables['this'])) {
+			throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current TypoScript object.', 1344325044);
+		}
+		$contextVariables['this'] = $contextObject;
+
+		$context = new \TYPO3\Eel\ProtectedContext($contextVariables);
+		$context->whitelist('q');
+		$value = $this->eelEvaluator->evaluate($expression, $context);
 		return $value;
 	}
 
@@ -506,22 +579,33 @@ class Runtime {
 	 * @return array<\TYPO3\TypoScript\ProcessorInterface> the fully initialized processors, ready for further use.
 	 */
 	protected function getProcessors(array $processorConfiguration, $propertyName) {
-		$processors = array();
 		if (!isset($processorConfiguration[$propertyName])) {
 			return array();
 		}
-		ksort($processorConfiguration[$propertyName]);
-		foreach ($processorConfiguration[$propertyName] as $singleProcessorConfiguration) {
+
+		return $this->getProcessorsForSingleProperty($processorConfiguration[$propertyName]);
+	}
+
+	/**
+	 * Build processors for a single property with the given processor configuration
+	 *
+	 * @param array $processorConfiguration
+	 * @return array Array of processors for the given properties
+	 * @throws \TYPO3\TypoScript\Exception
+	 */
+	protected function getProcessorsForSingleProperty(array $processorConfiguration) {
+		$processors = array();
+		ksort($processorConfiguration);
+		foreach ($processorConfiguration as $singleProcessorConfiguration) {
 			$processorClassName = $singleProcessorConfiguration['__processorClassName'];
 			$processor = new $processorClassName();
 			unset($singleProcessorConfiguration['__processorClassName']);
 
 			foreach ($singleProcessorConfiguration as $propertyName => $propertyValue) {
 				if (!ObjectAccess::setProperty($processor, $propertyName, $propertyValue)) {
-					throw new \TYPO3\TypoScript\Exception(sprintf('Property "%s" could not be set on processor "%s".', $propertyName, $processorClassName), 1332493740);
+					throw new Exception(sprintf('Property "%s" could not be set on processor "%s".', $propertyName, $processorClassName), 1332493740);
 				}
 			}
-
 			$processors[] = $processor;
 		}
 		return $processors;
@@ -535,28 +619,31 @@ class Runtime {
 	}
 
 	/**
-	 * @return array
+	 * Get variables from configuration that should be set in the context by default.
+	 * For example Eel helpers are made available by this.
+	 *
+	 * @return array Array with default context variable objects.
 	 */
 	protected function getDefaultContextVariables() {
 		if ($this->defaultContextVariables === NULL) {
 			$this->defaultContextVariables = array();
 			if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
 				foreach ($this->settings['defaultContext'] as $variableName => $objectType) {
-					$base = &$this->defaultContextVariables;
+					$currentPathBase = &$this->defaultContextVariables;
 					$variablePathNames = explode('.', $variableName);
 					foreach ($variablePathNames as $pathName) {
-						if (!isset($base[$pathName])) {
-							$base[$pathName] = array();
+						if (!isset($currentPathBase[$pathName])) {
+							$currentPathBase[$pathName] = array();
 						}
-						$base = &$base[$pathName];
+						$currentPathBase = &$currentPathBase[$pathName];
 					}
-					$base = new $objectType();
+					$currentPathBase = new $objectType();
 				}
 			}
-
 		}
 		return $this->defaultContextVariables;
 	}
 
 }
+
 ?>

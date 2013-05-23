@@ -35,5 +35,34 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
 
 		return $view;
 	}
+
+	/**
+	 * Used for TypoScript objects / Eel and plain value interoperability testing.
+	 * Renders TypoScripts in the following paths and expects given $expected as result each time:
+	 * $basePath . 'TypoScript'
+	 * $basePath . 'Eel'
+	 * $basePath . 'PlainValue'
+	 *
+	 * @param string $expected
+	 * @param string $basePath
+	 */
+	protected function assertMultipleTypoScriptPaths($expected, $basePath) {
+		$this->assertTyposcriptPath($expected, $basePath . 'TypoScript');
+		$this->assertTyposcriptPath($expected, $basePath . 'Eel');
+		$this->assertTyposcriptPath($expected, $basePath . 'PlainValue');
+	}
+
+	/**
+	 * Renders the given TypoScript path and asserts that the result is the same es the given expected.
+	 *
+	 * @param string $expected
+	 * @param string $path
+	 */
+	protected function assertTypoScriptPath($expected, $path) {
+		$view = $this->buildView();
+		$view->setTypoScriptPath($path);
+		$this->assertSame($expected, $view->render(), 'TypoScript at path "' . $path . '" produced wrong results.');
+	}
+
 }
 ?>

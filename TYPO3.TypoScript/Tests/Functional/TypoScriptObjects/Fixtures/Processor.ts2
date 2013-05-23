@@ -1,3 +1,4 @@
+prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 processors.runtimeAware = TYPO3.TypoScript:TestRenderer {
@@ -12,4 +13,42 @@ prototype(TYPO3.TypoScript:TestRenderer2) << 1.TYPO3\TypoScript\Tests\Functional
 
 processors.runtimeAwarePrototype = TYPO3.TypoScript:TestRenderer2 {
 	test = ${var1alias}
+}
+
+// Test that simple values, eel and TypoScript can all be wrapped by processors when
+// being run through TsRuntime::evaluate. (the corresponding test without processors
+// can be found in SimpleTypes.ts2)
+processors {
+	objectAsTypoScript = Value {
+		value = 'MyValue'
+	}
+	objectAsTypoScript << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+
+	objectAsEel = ${'MyValue'}
+	objectAsEel << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+
+	objectAsPlainValue = 'MyValue'
+	objectAsPlainValue << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+}
+
+// Test that simple values, eel and TypoScript can all be wrapped by processors when
+// being run through AbstractTsObject::tsValue(). (the corresponding test without processors
+// can be found in SimpleTypes.ts2)
+processors {
+	valueWithNestedPlainValue = Value {
+		value = 'MyValue'
+		value << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+	}
+
+	valueWithNestedEel = Value {
+		value = ${'MyValue'}
+		value << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+	}
+
+	valueWithNestedTypoScript = Value {
+		value = Value {
+			value = 'MyValue'
+		}
+		value << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+	}
 }

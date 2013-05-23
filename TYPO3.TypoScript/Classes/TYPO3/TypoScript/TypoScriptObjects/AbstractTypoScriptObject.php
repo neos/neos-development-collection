@@ -91,22 +91,7 @@ abstract class AbstractTypoScriptObject {
 	 * @return mixed
 	 */
 	protected function tsValue($path) {
-		$pathParts = explode('.', $path);
-		$firstPathPart = array_shift($pathParts);
-
-		try {
-			// TODO: this code does not work yet if the TS object implements ArrayAccess
-			$value = ObjectAccess::getProperty($this, $firstPathPart, TRUE);
-		} catch (\TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException $e) {
-			$value = NULL;
-			$pathParts = array();
-		}
-
-		if (count($pathParts) > 0) {
-			$remainingPath = implode('.', $pathParts);
-			$value = ObjectAccess::getPropertyPath($value, $remainingPath);
-		}
-		return $this->tsRuntime->evaluateProcessor($path, $this, $value);
+		return $this->tsRuntime->evaluate($this->path . '/' . $path, $this);
 	}
 }
 ?>
