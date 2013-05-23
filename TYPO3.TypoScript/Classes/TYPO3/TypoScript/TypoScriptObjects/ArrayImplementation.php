@@ -105,11 +105,11 @@ class ArrayImplementation extends AbstractTypoScriptObject implements \ArrayAcce
 			// Now, sort the three arrays by priority key
 		krsort($startKeys, SORT_NUMERIC);
 		foreach ($beforeKeys as $key => &$keysByPriority) {
-			krsort($keysByPriority, SORT_NUMERIC);
+			ksort($keysByPriority, SORT_NUMERIC);
 		}
 		ksort($middleKeys, SORT_NUMERIC);
 		foreach ($afterKeys as $key => &$keysByPriority) {
-			ksort($keysByPriority, SORT_NUMERIC);
+			krsort($keysByPriority, SORT_NUMERIC);
 		}
 		ksort($endKeys, SORT_NUMERIC);
 

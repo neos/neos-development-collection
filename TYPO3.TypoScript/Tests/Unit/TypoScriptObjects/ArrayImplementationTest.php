@@ -70,8 +70,8 @@ class ArrayImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				array('/first', '/second', '/third')
 			),
 			array(
-				'Position before uses priority when referencing the same element',
-				array('third' => array(), 'second' => array('__meta' => array('position' => 'before third')), 'first' => array('__meta' => array('position' => 'before third 12'))),
+				'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
+				array('third' => array(), 'second' => array('__meta' => array('position' => 'before third 12')), 'first' => array('__meta' => array('position' => 'before third'))),
 				array('/first', '/second', '/third')
 			),
 			array(
@@ -90,8 +90,8 @@ class ArrayImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				array('/first', '/second', '/third')
 			),
 			array(
-				'Position after uses priority when referencing the same element',
-				array('third' => array('__meta' => array('position' => 'after first 13')), 'second' => array('__meta' => array('position' => 'after first 12')), 'first' => array()),
+				'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
+				array('third' => array('__meta' => array('position' => 'after first')), 'second' => array('__meta' => array('position' => 'after first 12')), 'first' => array()),
 				array('/first', '/second', '/third')
 			),
 			array(
