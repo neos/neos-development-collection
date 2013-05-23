@@ -212,7 +212,7 @@ module.exports = function(grunt) {
 				nospawn: true
 			}
 		},
-		_generatedDocumentationChanged: {
+		generatedDocumentationChanged: {
 			files: '../Documentation/_make/build/html/**',
 			tasks: ['_empty'],
 			options: {
