@@ -17,10 +17,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  */
 class CaseTest extends AbstractTypoScriptObjectTest {
 
-	/**
-	 * @test
-	 */
-	public function classicMatchingWorks($path = 'case/classicMatching') {
+	public function assertMatchingWorks($path) {
 		$view = $this->buildView();
 		$view->assign('cond', TRUE);
 		$view->setTypoScriptPath($path);
@@ -34,28 +31,28 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 	 * @test
 	 */
 	public function numericMatchingWorks() {
-		$this->classicMatchingWorks('case/numericMatching');
+		$this->assertMatchingWorks('case/numericMatching');
 	}
 
 	/**
 	 * @test
 	 */
 	public function positionalMatchingWorks() {
-		$this->classicMatchingWorks('case/positionalMatching');
+		$this->assertMatchingWorks('case/positionalMatching');
 	}
 
 	/**
 	 * @test
 	 */
 	public function renderPathWillRenderAbsolutePath() {
-		$this->classicMatchingWorks('case/renderPath');
+		$this->assertMatchingWorks('case/renderPath');
 	}
 
 	/**
 	 * @test
 	 */
 	public function renderPathWillWinOverType() {
-		$this->classicMatchingWorks('case/renderPathWillWin');
+		$this->assertMatchingWorks('case/renderPathWillWin');
 	}
 }
 ?>
