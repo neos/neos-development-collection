@@ -27,7 +27,7 @@ use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
  * </code>
  *
  * <code title="full configuration">
- * <typo3cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" nodeTypeFilter="TYPO3.Neos.NodeTypes:Page" configuration="{itemsPerPage: 5, insertAbove: 1, insertBelow: 0, maximumNumberOfLinks: 10}">
+ * <typo3cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" nodeTypeFilter="TYPO3.Neos:Page" configuration="{itemsPerPage: 5, insertAbove: 1, insertBelow: 0, maximumNumberOfLinks: 10}">
  *   // use {paginatedNodes} inside a <f:for> loop.
  * </typo3cr:widget.paginate>
  * </code>
