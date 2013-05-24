@@ -17,6 +17,17 @@ up:
         -
           type: 'NodeType'
           settings:
+            nodeType: 'TYPO3.Neos.NodeTypes:Shortcut'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos:Shortcut'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
             nodeType: 'TYPO3.Neos.NodeTypes:ContentObject'
       transformations:
         -
