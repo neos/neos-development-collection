@@ -87,6 +87,17 @@ down:
         -
           type: 'NodeType'
           settings:
+            nodeType: 'TYPO3.Neos:Shortcut'
+      transformations:
+        -
+          type: 'ChangeNodeType'
+          settings:
+            newType: 'TYPO3.Neos.NodeTypes:Shortcut'
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
             nodeType: 'TYPO3.Neos:ContentCollection'
       transformations:
         -
