@@ -10,7 +10,7 @@ function(PopoverButton) {
 		_editor: null,
 
 		// TODO: fix the width / height so it relates to the rest of the UI
-		$popoverContent: $('<div />').attr('class', 't3-ui t3-htmleditor-window'),
+		$popoverContent: $('<div />').addClass('neos-htmleditor-window'),
 
 		label: 'HTML Editor',
 
@@ -18,7 +18,7 @@ function(PopoverButton) {
 
 		popoverPosition: 'left',
 
-		classNames: ['t3-primary-editor-action'],
+		classNames: ['neos-primary-editor-action'],
 
 		onPopoverOpen: function() {
 			var that = this,

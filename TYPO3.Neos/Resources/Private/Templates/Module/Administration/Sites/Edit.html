@@ -1,14 +1,14 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<div class="t3-module-container indented">
+	<div class="neos-module-container indented">
 		<h2>{site.name}</h2>
 	</div>
 </f:section>
 
 <f:section name="content">
 	<f:form action="updateSite" name="site" object="{site}">
-		<div class="row t3-module-container indented">
+		<div class="row neos-module-container indented">
 			<div class="row-fluid">
 				<div class="span6">
 					<legend>Site</legend>
@@ -84,22 +84,22 @@
 								</td>
 								<td>
 									<div class="pull-right">
-										<f:link.action action="editDomain" arguments="{domain: domain}" class="btn t3-button" title="Click to edit">
+										<f:link.action action="editDomain" arguments="{domain: domain}" class="btn neos-button" title="Click to edit">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
 										<f:if condition="{domain.active} == 1">
 											<f:then>
-												<f:link.action action="deactivateDomain" arguments="{domain: domain}" class="btn btn-warning t3-button" title="Click to deactivate">
+												<f:link.action action="deactivateDomain" arguments="{domain: domain}" class="btn btn-warning neos-button" title="Click to deactivate">
 													<i class="icon-minus-sign icon-white"></i>
 												</f:link.action>
 											</f:then>
 											<f:else>
-												<f:link.action action="activateDomain" class="btn btn-success t3-button" arguments="{domain: domain}" title="Click to activate">
+												<f:link.action action="activateDomain" class="btn btn-success neos-button" arguments="{domain: domain}" title="Click to activate">
 													<i class="icon-plus-sign icon-white"></i>
 												</f:link.action>
 											</f:else>
 										</f:if>
-										<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}-{number}">
+										<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}-{number}">
 											<i class="icon-trash icon-white"></i>
 										</button>
 										<div class="modal hide" id="{site.nodeName}-{number}">
@@ -108,8 +108,8 @@
 												<h3>Are you sure you want to delete "{domain.hostPattern}"?</h3>
 											</div>
 											<div class="modal-footer">
-												<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
-												<f:link.action action="deleteDomain" class="btn btn-danger t3-button" arguments="{site: site, domain: domain}" title="Delete">
+												<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
+												<f:link.action action="deleteDomain" class="btn btn-danger neos-button" arguments="{site: site, domain: domain}" title="Delete">
 													<i class="icon-trash icon-white"></i>
 													Delete
 												</f:link.action>
@@ -122,7 +122,7 @@
 						</tbody>
 					</table>
 					<div class="pull-right">
-						<f:link.action action="newDomain" arguments="{site: site}" class="btn t3-button btn-primary" title="Click to create a new domain">
+						<f:link.action action="newDomain" arguments="{site: site}" class="btn neos-button btn-primary" title="Click to create a new domain">
 							<i class="icon-globe icon-white"></i>
 							Add domain
 						</f:link.action>
@@ -132,10 +132,10 @@
 		</div>
 		<div class="form-actions form-footer">
 			<div class="pull-left">
-				<f:link.action action="index" class="btn t3-button">Cancel</f:link.action>
+				<f:link.action action="index" class="btn neos-button">Cancel</f:link.action>
 			</div>
 			<div class="pull-right">
-				<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
+				<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
 					<i class="icon-trash icon-white"></i>
 					Delete
 				</button>
@@ -145,8 +145,8 @@
 						<h3>Are you sure you want to delete "{site.name}"?</h3>
 					</div>
 					<div class="modal-footer">
-						<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
-						<f:link.action action="deleteSite" class="btn btn-danger t3-button" arguments="{site: site, domain: domain}" title="Delete">
+						<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
+						<f:link.action action="deleteSite" class="btn btn-danger neos-button" arguments="{site: site, domain: domain}" title="Delete">
 							<i class="icon-trash icon-white"></i>
 							Delete
 						</f:link.action>
@@ -154,19 +154,19 @@
 				</div>
 				<f:if condition="{site.online}">
 					<f:then>
-						<f:link.action action="deactivateSite" arguments="{site: site}" class="btn btn-warning t3-button" title="Click to deactivate">
+						<f:link.action action="deactivateSite" arguments="{site: site}" class="btn btn-warning neos-button" title="Click to deactivate">
 							<i class="icon-minus-sign icon-white"></i>
 							Deactivate
 						</f:link.action>
 					</f:then>
 					<f:else>
-						<f:link.action action="activateSite" class="btn btn-success t3-button" arguments="{site: site}" title="Click to activate">
+						<f:link.action action="activateSite" class="btn btn-success neos-button" arguments="{site: site}" title="Click to activate">
 							<i class="icon-plus-sign icon-white"></i>
 							Activate
 						</f:link.action>
 					</f:else>
 				</f:if>
-				<f:form.submit value="Save" class="btn btn-primary t3-button" />
+				<f:form.submit value="Save" class="btn btn-primary neos-button" />
 			</div>
 		</div>
 	</f:form>

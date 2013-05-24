@@ -41,12 +41,12 @@ define(
 
 			/**
 			 * Update the selection from a selected content element.
-			 * If we have a node activated, we add the CSS class "t3-contentelement-selected"
+			 * If we have a node activated, we add the CSS class "neos-contentelement-selected"
 			 * to the body so that we can modify the appearance of the content element editing handles.
 			 */
 			updateSelection: function($element) {
 					// Do not update the selection if the element is already selected
-				if ($element && $element.hasClass('t3-contentelement-active')) {
+				if ($element && $element.hasClass('neos-contentelement-active')) {
 					return;
 				}
 
@@ -54,7 +54,7 @@ define(
 					that = this;
 
 					// Remove active class from all previously active nodes (content elements and sections)
-				$('.t3-contentelement-active').removeClass('t3-contentelement-active');
+				$('.neos-contentelement-active').removeClass('neos-contentelement-active');
 
 					// TODO Check if we need that
 				if (this._updating) {
@@ -64,28 +64,28 @@ define(
 
 				if ($element !== undefined) {
 						// Add active class to selected content element
-					if ($element.is('.t3-contentsection')) {
+					if ($element.is('.neos-contentsection')) {
 							// If we are inside a section, we want to mark the outer element as active; as this also
 							// contains the section handles.
-						$element.parent().addClass('t3-contentelement-active');
+						$element.parent().addClass('neos-contentelement-active');
 					} else {
-						$element.addClass('t3-contentelement-active');
+						$element.addClass('neos-contentelement-active');
 					}
 
 					this.addNodeByElement(nodes, $element);
-					$element.parents('.t3-contentelement[about], .t3-contentsection[about]').each(function() {
+					$element.parents('.neos-contentelement[about], .neos-contentsection[about]').each(function() {
 						that.addNodeByElement(nodes, this);
 					});
 
 						// Add class to body that we have a content element selected
-					$('body').addClass('t3-contentelement-selected');
+					$('body').addClass('neos-contentelement-selected');
 				} else {
-					$('body').removeClass('t3-contentelement-selected');
+					$('body').removeClass('neos-contentelement-selected');
 				}
 
 					// add page node
-				if (!$element || !$element.is('#t3-page-metainformation')) {
-					this.addNodeByElement(nodes, $('#t3-page-metainformation'));
+				if (!$element || !$element.is('#neos-page-metainformation')) {
+					this.addNodeByElement(nodes, $('#neos-page-metainformation'));
 				}
 
 				nodes = nodes.reverse();
@@ -111,7 +111,7 @@ define(
 			_entitiesBySubject: {},
 
 			_createEntityWrapper: function($element) {
-				var subject = vie.service("rdfa").getElementSubject($element);
+				var subject = vie.service('rdfa').getElementSubject($element);
 
 				if (!this._entitiesBySubject[subject]) {
 					var entity = vie.entities.get(subject);

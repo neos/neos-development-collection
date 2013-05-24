@@ -9591,7 +9591,7 @@ window.jQuery = window.$ = jQuery;
 // Do this after creating the global so that if an AMD module wants to call
 // noConflict to hide this version of jQuery, it will work.
 if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
-	
+
 }
 
 })( window );
@@ -28158,17 +28158,16 @@ var _registerDnd = function() {
 
 		// HTML popover
 		// TYPO3 SPECIFIC FIX START, original line didn't check for empty settings.id
-		// TYPO3 SPECIFIC FIX 2: we append it to the t3-application container instead of appending to body
+		// TYPO3 SPECIFIC FIX 2: we append it to the neos application container instead of appending to body
 		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? ' id="' + settings.id + '"' : '') + '>'
 			+ '<div class="triangle"></div>'
 			+ '<div class="header"></div>'
 			+ '<div class="content"></div>'
-			+ '</div>').appendTo('#t3-application');
+			+ '</div>').appendTo('#neos-application');
 		// TYPO3 SPECIFIC FIX STOP
 		$('.header', settings.popover$).append($(settings.header).detach());
 
 		// TYPO3 SPECIFIC FIX START
-		settings.popover$.addClass('t3-ui');
 		settings.popover$.addClass(settings.additionalClasses);
 
 		if ($('.header', settings.popover$).html() === '') {
@@ -29597,7 +29596,7 @@ Copyright (c) 2011 by Harvest
 
 /**
  * jquery.Jcrop.js v0.9.12
- * jQuery Image Cropping Plugin - released under MIT License 
+ * jQuery Image Cropping Plugin - released under MIT License
  * Author: Kelly Hallman <khallman@gmail.com>
  * http://github.com/tapmodo/Jcrop
  * Copyright (c) 2008-2013 Tapmodo Interactive LLC {{{
@@ -29768,7 +29767,7 @@ Copyright (c) 2011 by Harvest
         if ((ord === 'move') && !options.allowMove) {
           return false;
         }
-        
+
         // Fix position of crop area when dragged the very first time.
         // Necessary when crop image is in a hidden element when page is loaded.
         docOffset = getPos($img);
@@ -29901,12 +29900,12 @@ Copyright (c) 2011 by Harvest
         $origimg.width($origimg[0].width);
         $origimg.height($origimg[0].height);
       } else {
-        // Obtain dimensions from temporary image in case the original is not loaded yet (e.g. IE 7.0). 
+        // Obtain dimensions from temporary image in case the original is not loaded yet (e.g. IE 7.0).
         var tempImage = new Image();
         tempImage.src = $origimg[0].src;
         $origimg.width(tempImage.width);
         $origimg.height(tempImage.height);
-      } 
+      }
 
       var $img = $origimg.clone().removeAttr('id').css(img_css).show();
 
@@ -29924,8 +29923,8 @@ Copyright (c) 2011 by Harvest
 
     var boundx = $img.width(),
         boundy = $img.height(),
-        
-        
+
+
         $div = $('<div />').width(boundx).height(boundy).addClass(cssClass('holder')).css({
         position: 'relative',
         backgroundColor: options.bgColor
@@ -29937,24 +29936,24 @@ Copyright (c) 2011 by Harvest
 
     var $img2 = $('<div />'),
 
-        $img_holder = $('<div />') 
+        $img_holder = $('<div />')
         .width('100%').height('100%').css({
           zIndex: 310,
           position: 'absolute',
           overflow: 'hidden'
         }),
 
-        $hdl_holder = $('<div />') 
-        .width('100%').height('100%').css('zIndex', 320), 
+        $hdl_holder = $('<div />')
+        .width('100%').height('100%').css('zIndex', 320),
 
-        $sel = $('<div />') 
+        $sel = $('<div />')
         .css({
           position: 'absolute',
           zIndex: 600
         }).dblclick(function(){
           var c = Coords.getFixed();
           options.onDblClick.call(api,c);
-        }).insertBefore($img).append($img_holder, $hdl_holder); 
+        }).insertBefore($img).append($img_holder, $hdl_holder);
 
     if (img_mode) {
 
@@ -29990,7 +29989,7 @@ Copyright (c) 2011 by Harvest
     // }}}
     // }}}
     // Internal Modules {{{
-    // Touch Module {{{ 
+    // Touch Module {{{
     var Touch = (function () {
       // Touch support detection function adapted (under MIT License)
       // from code by Jeffrey Sambells - http://github.com/iamamused/
@@ -30127,8 +30126,8 @@ Copyright (c) 2011 by Harvest
         // This function could use some optimization I think...
         var aspect = options.aspectRatio,
             min_x = options.minSize[0] / xscale,
-            
-            
+
+
             //min_y = options.minSize[1]/yscale,
             max_x = options.maxSize[0] / xscale,
             max_y = options.maxSize[1] / yscale,
@@ -30644,7 +30643,7 @@ Copyright (c) 2011 by Harvest
       {
         seehandles = false;
         $hdl_holder.hide();
-      } 
+      }
       //}}}
       function animMode(v) //{{{
       {
@@ -30655,13 +30654,13 @@ Copyright (c) 2011 by Harvest
           animating = false;
           enableHandles();
         }
-      } 
+      }
       //}}}
       function done() //{{{
       {
         animMode(false);
         refresh();
-      } 
+      }
       //}}}
       // Insert draggable elements {{{
       // Insert border divs for outline
@@ -30717,7 +30716,7 @@ Copyright (c) 2011 by Harvest
         done: done
       };
     }());
-    
+
     //}}}
     // Tracker Module {{{
     var Tracker = (function () {
@@ -30740,7 +30739,7 @@ Copyright (c) 2011 by Harvest
           $(document)
             .bind('mousemove.jcrop',trackMove)
             .bind('mouseup.jcrop',trackUp);
-      } 
+      }
       //}}}
       function toBack() //{{{
       {
@@ -30748,13 +30747,13 @@ Copyright (c) 2011 by Harvest
           zIndex: 290
         });
         $(document).unbind('.jcrop');
-      } 
+      }
       //}}}
       function trackMove(e) //{{{
       {
         onMove(mouseAbs(e));
         return false;
-      } 
+      }
       //}}}
       function trackUp(e) //{{{
       {

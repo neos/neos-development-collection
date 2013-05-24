@@ -38,9 +38,9 @@ Overall Goal:
 
 Implementation notes:
 
-* All CSS selectors should be fully lowercase, with ``-`` as separator. Example: ``t3-ui, t3-breadcrumb-item``
-* We use the ``t3-`` prefix
-* The integrator is never allowed to override ``t3-`` and ``aloha-``
+* All CSS selectors should be fully lowercase, with ``-`` as separator. Example: ``neos-menu, neos-inspector``
+* We use the ``neos-`` prefix
+* The integrator is never allowed to override ``neos-``, ``typo3-`` and ``aloha-``
 * The main UI elements have an ID, and a partial reset is used to give us predictable behavior inside them.
 * We use *sass*. To install, use +gem install sass compass+. Then, before modifying CSS, go to css/ and run
   +sass --compass --watch style.scss:style.css+. This will update style.css at every modification of style.scss.

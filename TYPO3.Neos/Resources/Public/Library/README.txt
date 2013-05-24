@@ -88,8 +88,10 @@ Only the jquery files / needed files are added (skipped coffeescript / prototype
 Antiscroll
 https://github.com/jrolfs/antiscroll - version 22738867613c255734b9bc420f42f2b40f916bb8
 
+
 jQuery Mousewheel
 https://github.com/brandonaaron/jquery-mousewheel - version 3.0.6
+
 
 Spin.js
 http://fgnass.github.com/spin.js/ - version 1.2.8
@@ -101,21 +103,20 @@ https://github.com/jeresig/jquery.hotkeys - version 0.8
 
 
 Twitter Bootstrap
-SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (https://github.com/twitter/bootstrap/) - version 2.0.4
-
-* Wrapped in .t3-ui class (bootstrap.scss)
-* Changed icon images paths variables $iconSpritePath + $iconWhiteSpritePath (_variables.scss)
-* Removed sprites.scss import (bootstrap.scss)
+SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (https://github.com/twitter/bootstrap/) - version 2.3.1
 
 
 Create.js - https://github.com/bergie/create
 * Update using Scripts/update-createjs-to-master.sh
 
+
 VIE - https://github.com/bergie/VIE
 * Update using Scripts/update-vie-to-master.sh
 
+
 Hallo editor - https://github.com/bergie/hallo
 * Update using Scripts/update-hallo-to-master.sh
+
 
 To execute the update scripts method you'll need:
 * NodeJS v0.6.9 or lower
@@ -132,8 +133,9 @@ Font Awesome v3.0
 http://fortawesome.github.com/Font-Awesome/
 
 * Changed $fontAwesomePath in sass/font-awesome.scss
-* Wrapped everything in t3-ui sass/font-awesome.scss
-* Removed the background of twitter-bootstrap icons before include (style.scss)
+* Wrapped everything in .neos sass/font-awesome.scss
+* Removed the background of twitter-bootstrap icons before include (General.scss)
+
 
 Bootstrap Notify
 http://nijikokun.github.com/bootstrap-notify/

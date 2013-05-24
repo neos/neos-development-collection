@@ -1,0 +1,58 @@
+&.neos-module-management-workspaces {
+	td {
+		&.node-type {
+			white-space: nowrap;
+			img {
+				vertical-align: text-bottom;
+			}
+		}
+		label {
+			padding: 5px 0;
+			margin-bottom: 0;
+			font-size: inherit;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+	}
+
+	th,
+	td.actions {
+		white-space: nowrap;
+	}
+
+	i.legend {
+		vertical-align: text-top;
+	}
+
+	.fold-toggle {
+		cursor: pointer;
+		margin-top: -1px;
+		margin-right: 11px;
+	}
+
+	td.check,
+	th.check {
+		width: 12px;
+		input {
+			margin: 0;
+		}
+	}
+
+	td.legend,
+	th.legend {
+		width: 14px;
+		padding: 8px 10px;
+	}
+
+	td.actions {
+		width: 76px;
+	}
+
+	tfoot .legend {
+		margin-left: 15px;
+	}
+}

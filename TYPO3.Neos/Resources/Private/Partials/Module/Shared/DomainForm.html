@@ -1,4 +1,4 @@
-<div class="row t3-module-container">
+<div class="row neos-module-container">
 	<fieldset class="span12">
 		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
 		<div class="control-group">
@@ -24,9 +24,9 @@
 </div>
 <div class="form-actions form-footer">
 	<div class="pull-left">
-		<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="btn t3-button">Cancel</f:link.action>
+		<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="btn neos-button">Cancel</f:link.action>
 	</div>
 	<div class="pull-right">
-		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save')}" class="btn btn-primary t3-button" />
+		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save')}" class="btn btn-primary neos-button" />
 	</div>
 </div>

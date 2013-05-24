@@ -1,5 +1,5 @@
 @import "compass";
-@import "constants";
+@import "Constants";
 
 // Fontawesome include
 [class^="icon-"], [class*=" icon-"] {
@@ -80,7 +80,7 @@ body {
 	color: #888888;
 }
 
-.typo3-neos-login-box {
+.neos-login-box {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -121,7 +121,7 @@ body {
 	}
 }
 
-#typo3-neos-login-footer {
+#neos-login-footer {
 	width: 65%;
 	position: absolute;
 	bottom: 5%;

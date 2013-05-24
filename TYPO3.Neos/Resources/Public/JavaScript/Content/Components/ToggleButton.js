@@ -10,7 +10,7 @@ define(
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements/toggle-button');
 
 		return Button.extend({
-			classNames: ['t3-button'],
+			classNames: ['neos-button'],
 			classNameBindings: ['pressed'],
 			pressed: false,
 			toggle: function() {

@@ -12,9 +12,9 @@ define(['Library/jquery-with-dependencies', 'createjs'], function($) {
 				// which also matches on <script> tags. Furthermore, we have also properties like
 				// the HTML source which is only editable through the side panel.
 
-				// Now, we only match every property which is marked as t3-inline-editable; a CSS class being added
+				// Now, we only match every property which is marked as neos-inline-editable; a CSS class being added
 				// by the <t3.contentElement.editable> ViewHelper.
-			this.vie.service('rdfa').findPredicateElements(this.options.model.id, $('.t3-inline-editable[property]:not(script)', this.element), false).each(callback);
+			this.vie.service('rdfa').findPredicateElements(this.options.model.id, $('.neos-inline-editable[property]:not(script)', this.element), false).each(callback);
 		}
 	})
 });

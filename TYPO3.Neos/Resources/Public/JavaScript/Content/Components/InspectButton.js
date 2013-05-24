@@ -10,7 +10,7 @@ define(
 			popoverTitle: 'Content Structure',
 			$popoverContent: inspectTreeTemplate,
 			popoverPosition: 'top',
-			popoverAdditionalClasses: 't3-inspecttree',
+			popoverAdditionalClasses: 'neos-inspecttree',
 			_ignoreCloseOnPageLoad: false,
 			inspectTree: null,
 
@@ -18,7 +18,7 @@ define(
 				this._super();
 				var that = this;
 				ContentModule.on('pageLoaded', function() {
-					entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#t3-page-metainformation'));
+					entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#neos-page-metainformation'));
 					entityWrapper.addObserver('typo3:title', function() {
 						var attributes = EntityWrapper.extractAttributesFromVieEntity(entityWrapper._vieEntity);
 						that.synchronizeInspectTreeTitle(attributes);
@@ -32,9 +32,9 @@ define(
 				}
 			},
 			getInspectTreeRootNode: function() {
-				var pageNodePath = $('#t3-page-metainformation').attr('about');
-				if ($('#t3-dd-inspecttree').children().length > 0) {
-					var tree = $('#t3-dd-inspecttree').dynatree('getTree');
+				var pageNodePath = $('#neos-page-metainformation').attr('about');
+				if ($('#neos-dd-inspecttree').children().length > 0) {
+					var tree = $('#neos-dd-inspecttree').dynatree('getTree');
 					var rootNode = tree.getNodeByKey(pageNodePath);
 					return rootNode;
 				} else {
@@ -53,26 +53,26 @@ define(
 			}.observes('ContentModule.currentUri'),
 
 			resetInspectTree: function() {
-				$('.t3-inspect > button.pressed').click();
+				$('.neos-inspect > button.pressed').click();
 				if (this.inspectTree !== null) {
-					$('#t3-dd-inspecttree').dynatree('destroy');
+					$('#neos-dd-inspecttree').dynatree('destroy');
 					this.inspectTree = null;
 				}
 			},
 
 			onPopoverOpen: function() {
-				var page = vie.entities.get(vie.service('rdfa').getElementSubject($('#t3-page-metainformation'))),
+				var page = vie.entities.get(vie.service('rdfa').getElementSubject($('#neos-page-metainformation'))),
 					pageTitle = page.get(ContentModule.TYPO3_NAMESPACE + 'title'),
-					pageNodePath = $('#t3-page-metainformation').attr('about');
+					pageNodePath = $('#neos-page-metainformation').attr('about');
 
 					// If there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
 				if (this.inspectTree) {
-					if (pageNodePath !== $('#t3-dd-inspecttree').dynatree('getTree').getRoot().getChildren()[0].data.key) {
-						$('#t3-dd-inspecttree').dynatree('destroy');
+					if (pageNodePath !== $('#neos-dd-inspecttree').dynatree('getTree').getRoot().getChildren()[0].data.key) {
+						$('#neos-dd-inspecttree').dynatree('destroy');
 					}
 				}
 
-				this.inspectTree = $('#t3-dd-inspecttree').dynatree({
+				this.inspectTree = $('#neos-dd-inspecttree').dynatree({
 					debugLevel: 0, // 0: quiet, 1: normal, 2: debug
 					cookieId: null,
 					persist: false,

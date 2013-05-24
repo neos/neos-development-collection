@@ -29,10 +29,10 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		onTogglePreviewMode: function() {
 			var that = this,
 				isPreviewEnabled = this.get('previewMode'),
-				previewCloseClass = 't3-preview-close';
+				previewCloseClass = 'neos-preview-close';
 			if (isPreviewEnabled) {
 				$('body')
-					.append($('<div class="t3-ui" />').addClass(previewCloseClass).append($('<button class="t3-button btn btn-mini pressed"><i class="icon-fullscreen"></i></button>'))
+					.append($('<div class="neos" />').addClass(previewCloseClass).append($('<button class="neos-button btn btn-mini pressed"><i class="icon-fullscreen"></i></button>'))
 					.on('click', function() {
 						that.set('previewMode', false);
 					}));
@@ -47,7 +47,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 				$(document).off('keyup.wireframe');
 				CreateJS.enableEdit();
 			}
-			$('body').toggleClass('t3-ui-previewmode t3-ui-controls');
+			$('body').toggleClass('neos-previewmode neos-controls');
 		}.observes('previewMode'),
 
 		onPreviewModeChange: function() {
@@ -64,13 +64,13 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		init: function() {
 			if (T3.Common.LocalStorage.getItem('wireframeMode') === true) {
 				this.toggleWireframeMode();
-				$('#t3-ui-createsection-input').keypress(function(e) {
+				$('#neos-createsection-input').keypress(function(e) {
 					if ((e.keyCode || e.which) === 13) {
-						$('#t3-ui-createsection-button').click();
+						$('#neos-createsection-button').click();
 					}
 				});
-				$('#t3-ui-createsection-button').click(function() {
-					var newSectionName = $('#t3-ui-createsection-input').val();
+				$('#neos-createsection-button').click(function() {
+					var newSectionName = $('#neos-createsection-input').val();
 					if (newSectionName === '') {
 						T3.Common.Notification.error('You need to give a name for the new content section.');
 					} else {
@@ -97,7 +97,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		}.observes('wireframeMode'),
 
 		createSection: function(sectionName) {
-			var pageNodePath = $('#t3-page-metainformation').attr('about');
+			var pageNodePath = $('#neos-page-metainformation').attr('about');
 			ContentModule.showPageLoader();
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
 				nodeType: 'TYPO3.Neos.NodeTypes:Section',
@@ -105,7 +105,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 			}, 'into',
 			function (result) {
 				if (result.success == true) {
-					$('#t3-ui-createsection-input').val('');
+					$('#neos-createsection-input').val('');
 					ContentModule.reloadPage();
 				}
 			});
@@ -120,7 +120,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 
 		init: function() {
 			if (T3.Common.LocalStorage.getItem('pageTreeMode') === true) {
-				$('body').addClass('t3-tree-panel-open');
+				$('body').addClass('neos-tree-panel-open');
 				this.togglePageTreeMode();
 			}
 		},
@@ -133,9 +133,9 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 			var pageTreeMode = this.get('pageTreeMode');
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
 				if (pageTreeMode === true) {
-					$('body').addClass('t3-tree-panel-open');
+					$('body').addClass('neos-tree-panel-open');
 				} else {
-					$('body').removeClass('t3-tree-panel-open');
+					$('body').removeClass('neos-tree-panel-open');
 				}
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.pageTreeMode': pageTreeMode}, function() {
 					T3.Common.LocalStorage.setItem('pageTreeMode', pageTreeMode);
@@ -156,9 +156,9 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		onInspectModeChange: function() {
 			var isInspectEnabled = this.get('inspectMode');
 			if (isInspectEnabled) {
-				$('body').addClass('t3-inspect-active');
+				$('body').addClass('neos-inspect-active');
 			} else {
-				$('body').removeClass('t3-inspect-active');
+				$('body').removeClass('neos-inspect-active');
 			}
 		}.observes('inspectMode')
 	}).create();
@@ -191,7 +191,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 			if (T3.Common.LocalStorage.getItem('inspectorMode') === false) {
 				this.toggleInspectorMode();
 			} else {
-				$('body').addClass('t3-inspector-panel-open');
+				$('body').addClass('neos-inspector-panel-open');
 			}
 		},
 
@@ -209,9 +209,9 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 			var inspectorMode = this.get('inspectorMode');
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
 				if (inspectorMode === true) {
-					$('body').addClass('t3-inspector-panel-open');
+					$('body').addClass('neos-inspector-panel-open');
 				} else {
-					$('body').removeClass('t3-inspector-panel-open');
+					$('body').removeClass('neos-inspector-panel-open');
 				}
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({
 					'contentEditing.inspectorMode': inspectorMode
@@ -566,8 +566,8 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 
 			block.hideHandle('remove-from-cut');
 			block.hideHandle('remove-from-copy');
-			$('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
-			$('.t3-add-above-handle, .t3-add-below-handle').removeClass('t3-handle-hidden');
+			$('.neos-paste-before-handle, .neos-paste-after-handle').addClass('neos-handle-hidden');
+			$('.neos-add-above-handle, .neos-add-below-handle').removeClass('neos-handle-hidden');
 			block.showHandle('cut');
 			block.showHandle('copy');
 		},
@@ -626,7 +626,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 
 		statusClass: function() {
 			this.set('_saveRunning', false);
-			return 't3-connection-status-' + this.get('_failedRequest') ? 'down' : 'up';
+			return 'neos-connection-status-' + this.get('_failedRequest') ? 'down' : 'up';
 		}.observes('_failedRequest')
 
 	}).create();

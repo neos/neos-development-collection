@@ -26,7 +26,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 		 * Size of the image preview. Public configuration.
 		 *
 		 * If this setting is changed, also the CSS properties
-		 * .t3-inspector-image-uploadthumbnail-portrait and .t3-inspector-image-uploadthumbnail-landscape
+		 * .neos-inspector-image-uploadthumbnail-portrait and .neos-inspector-image-uploadthumbnail-landscape
 		 * need to be adjusted.
 		 */
 		imagePreviewMaximumDimensions: {w: 178, h: 178},
@@ -209,11 +209,11 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 		didInsertElement: function() {
 			this._super();
 
-			this.$().find('.t3-inspector-image-thumbnail-inner').css({
+			this.$().find('.neos-inspector-image-thumbnail-inner').css({
 				width: this.imagePreviewMaximumDimensions.w + 'px',
 				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
-			this.$().find('.t3-inspector-image-thumbnail-container').css({
+			this.$().find('.neos-inspector-image-thumbnail-container').css({
 				width: this.imagePreviewMaximumDimensions.w + 'px',
 				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
@@ -223,7 +223,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 
 		willDestroyElement: function() {
 				// Hide popover when the focus changes
-			this.$().find('.t3-inspector-image-crop-button').trigger('hidePopover');
+			this.$().find('.neos-inspector-image-crop-button').trigger('hidePopover');
 			if (this.get('_loadPreviewImageHandler')) {
 				this.get('_loadPreviewImageHandler').abort();
 			}
@@ -250,16 +250,16 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 						imageObjForFindingSize.onload = function() {
 							var scaleFactor,
 								offset,
-								image = that.$().find('.t3-inspector-image-uploadthumbnail img');
+								image = that.$().find('.neos-inspector-image-uploadthumbnail img');
 							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
-								image.addClass('t3-inspector-image-uploadthumbnail-landscape').removeClass('t3-inspector-image-uploadthumbnail-portrait');
+								image.addClass('neos-inspector-image-uploadthumbnail-landscape').removeClass('neos-inspector-image-uploadthumbnail-portrait');
 
 									// For landscape images, we set the margin-top correctly to align the image in the center
 								scaleFactor = that.get('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
 								offset = ((that.get('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
 								image.css({'margin-top': parseInt(offset) + 'px', 'margin-left': 0});
 							} else {
-								image.removeClass('t3-inspector-image-uploadthumbnail-landscape').addClass('t3-inspector-image-uploadthumbnail-portrait');
+								image.removeClass('neos-inspector-image-uploadthumbnail-landscape').addClass('neos-inspector-image-uploadthumbnail-portrait');
 
 									// For portrait images, we set the margin-left correctly to align the image in the center
 								scaleFactor = that.get('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
@@ -328,7 +328,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 		 */
 		_initializePopover: function() {
 			var that = this,
-				$popoverContent = $('<div class="t3-inspector-image-crop" />'),
+				$popoverContent = $('<div class="neos-inspector-image-crop" />'),
 				$imageInThumbnail = $('<img />'),
 				previewImageSize = that.get('_previewImageSize');
 
@@ -338,10 +338,10 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 				height: previewImageSize.h + 10 + 'px'
 			});
 
-			this.$().find('.t3-inspector-image-thumbnail').click(function() {
-				that.$().find('.t3-inspector-image-crop-button').trigger('hidePopover');
+			this.$().find('.neos-inspector-image-thumbnail').click(function() {
+				that.$().find('.neos-inspector-image-crop-button').trigger('hidePopover');
 			});
-			this.$().find('.t3-inspector-image-crop-button').popover({
+			this.$().find('.neos-inspector-image-crop-button').popover({
 				content: $popoverContent,
 				header: '<span>Crop Image</span>',
 				preventTop: true,
@@ -351,7 +351,6 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 				offsetX: -140,
 				openEvent: function() {
 					$imageInThumbnail.attr('src', that.get('_previewImageUri'));
-					this.popover$.addClass('t3-ui');
 
 					var settings = {
 							// Triggered when the selection is finished
@@ -406,7 +405,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 
 				// Update size of preview bounding box
 				// and Center preview image thumbnail
-			this.$().find('.t3-inspector-image-thumbnail-inner').css({
+			this.$().find('.neos-inspector-image-thumbnail-inner').css({
 				width: previewBoundingBoxSize.w + 'px',
 				height: previewBoundingBoxSize.h + 'px',
 				position: 'absolute',
@@ -415,7 +414,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 			});
 
 				// Scale Preview image and update relative image position
-			this.$().find('.t3-inspector-image-thumbnail-inner img').css({
+			this.$().find('.neos-inspector-image-thumbnail-inner img').css({
 				width: Math.floor(this.get('_previewImageSize').w * overallScalingFactor) + 'px',
 				height:  Math.floor(this.get('_previewImageSize').h * overallScalingFactor) + 'px',
 				marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
@@ -534,7 +533,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 
 		_displayImageLoader: function() {
 			if (this.loadingindicator !== null) {
-				this.loadingindicator.spin(that.$().find('.t3-inspector-image-thumbnail-container').get(0));
+				this.loadingindicator.spin(that.$().find('.neos-inspector-image-thumbnail-container').get(0));
 				return;
 			}
 			this.loadingindicator = new Spinner({
@@ -553,7 +552,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 				zIndex: 2e9, // The z-index (defaults to 2000000000)
 				top: 'auto', // Top position relative to parent in px
 				left: 'auto' // Left position relative to parent in px
-			}).spin(this.$().find('.t3-inspector-image-thumbnail-container').get(0));
+			}).spin(this.$().find('.neos-inspector-image-thumbnail-container').get(0));
 		},
 
 		_hideImageLoader: function() {

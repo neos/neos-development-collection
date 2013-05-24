@@ -8,7 +8,7 @@ define(
 	function (Ember) {
 		return Ember.View.extend(Ember.TargetActionSupport, {
 			tagName: 'button',
-			classNames: ['t3-button','btn','btn-mini'],
+			classNames: ['neos-button','btn','btn-mini'],
 			attributeBindings: ['disabled', 'title'],
 			classNameBindings: ['iconClass', 'isActive'],
 			disabled: false,
@@ -20,7 +20,7 @@ define(
 			icon: '',
 			iconClass: function() {
 				var icon = this.get('icon');
-				return icon !== '' ? 't3-icon-' + icon : '';
+				return icon !== '' ? 'neos-icon-' + icon : '';
 			}.property('icon'),
 
 			mouseDown: function() {

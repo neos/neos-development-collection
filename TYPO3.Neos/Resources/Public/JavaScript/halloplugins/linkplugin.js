@@ -31,7 +31,7 @@ define(
 					dialog = $('<div />', {id: dialogId});
 
 					widget.view = Ember.View.create({
-						classNames: ['t3-ui'],
+						classNames: ['neos'],
 						template: Ember.Handlebars.compile(linkPluginTemplate),
 						Button: Button,
 
@@ -40,7 +40,7 @@ define(
 
 						didInsertElement: function() {
 							var that = this;
-							this.$('.t3-link-inputfield').focus().autocomplete(
+							this.$('.neos-link-inputfield').focus().autocomplete(
 								{
 									source: function(request, response) {
 										TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.searchPage(request.term, function(result) {
@@ -61,7 +61,7 @@ define(
 										that.set('url', ui.item.value);
 									}
 								},
-								this.$('.t3-link-inputfield').keyup(function(e) {
+								this.$('.neos-link-inputfield').keyup(function(e) {
 									if (e.keyCode === 13) {
 										that.insert();
 									}

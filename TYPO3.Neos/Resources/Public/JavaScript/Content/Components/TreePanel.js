@@ -5,7 +5,7 @@ define(
 		'./PageTree'
 	], function(Ember, template, PageTree) {
 		return Ember.View.extend({
-			elementId: 't3-tree-panel',
+			elementId: 'neos-tree-panel',
 
 			template: Ember.Handlebars.compile(template),
 			PageTree: PageTree

@@ -3,7 +3,7 @@
 $darkGray: #444;
 $orange: #FF8700;
 
-.t3-wireframeMode {
+.neos-wireframeMode {
 	background: url('../Images/WireframeMode/GraphGrid.png');
 	padding: 15px;
 	.breadcrumb {
@@ -13,7 +13,7 @@ $orange: #FF8700;
 			color: #fff;
 		}
 	}
-	#t3-ui-wireframe-menu {
+	#neos-wireframe-menu {
 		padding: 10px 5px;
 	}
 	.well {
@@ -42,7 +42,7 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.t3-create-new-content {
+	.neos-create-new-content {
 		margin-top: 15px;
 	}
 	.container {
@@ -55,7 +55,7 @@ $orange: #FF8700;
 			float: left;
 		}
 	}
-	.typo3-neos-twocolumn {
+	.typo3-neos-nodetypes-twocolumn {
 		.columns-50-50 {
 			.column {
 				width: 48%;
@@ -106,7 +106,7 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.typo3-neos-threecolumn {
+	.typo3-neos-nodetypes-threecolumn {
 		.columns-33-33-33 {
 			.column {
 				width: 30.66666666666%;
@@ -152,7 +152,7 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.typo3-neos-fourcolumn {
+	.typo3-neos-nodetypes-fourcolumn {
 		.columns-25-25-25-25 {
 			.column {
 				width: 22%;
@@ -163,26 +163,26 @@ $orange: #FF8700;
 			}
 		}
 	}
-	.typo3-neos-twocolumn,
-	.typo3-neos-threecolumn,
-	.typo3-neos-fourcolumn {
+	.typo3-neos-nodetypes-twocolumn,
+	.typo3-neos-nodetypes-threecolumn,
+	.typo3-neos-nodetypes-fourcolumn {
 		.container {
 			width: auto;
 		}
 	}
 }
 
-.t3-ui {
-	.t3-ui-wireframe-section-container {
+.neos {
+	.neos-wireframe-section-container {
 		margin: 10px 0;
 		padding: 10px 15px 15px 15px;
 		background: rgba(240, 240, 240, 0.7);
 		font-family: "Courier New", serif;
 	}
-	.t3-ui-wireframe-section-container:last-child {
+	.neos-wireframe-section-container:last-child {
 		margin-bottom: 0;
 	}
-	header.t3-ui-wireframe-section {
+	header.neos-wireframe-section {
 		margin: -10px -15px 5px;
 		font-family: "Courier New", serif;
 		font-size: 16px;
@@ -195,7 +195,7 @@ $orange: #FF8700;
 	}
 }
 
-.t3-wireframeMode #t3-wireframe-container .t3-ui-wireframe-sections {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-sections {
 	font-size: 14px;
 
 	h1, h2, h3, h4, h5, h6 {

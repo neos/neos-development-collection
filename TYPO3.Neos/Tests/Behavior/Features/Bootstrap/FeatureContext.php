@@ -98,7 +98,7 @@ class FeatureContext extends MinkContext {
 	public function iShouldBeInTheModule($moduleName) {
 		switch ($moduleName) {
 			case 'Content':
-				$this->assertSession()->elementTextContains('css', '.t3-topbar .t3-active a', 'Content');
+				$this->assertSession()->elementTextContains('css', '#neos-top-bar .neos-active a', 'Content');
 				break;
 			default:
 				throw new PendingException();
@@ -117,14 +117,14 @@ class FeatureContext extends MinkContext {
 	 * @Given /^I should be logged in as "([^"]*)"$/
 	 */
 	public function iShouldBeLoggedInAs($name) {
-		$this->assertSession()->elementTextContains('css', '.t3-ui .t3-button-logout a', $name);
+		$this->assertSession()->elementTextContains('css', '#neos-application .neos-button-logout a', $name);
 	}
 
 	/**
 	 * @Then /^I should not be logged in$/
 	 */
 	public function iShouldNotBeLoggedIn() {
-		$this->assertSession()->elementNotExists('css', '.t3-ui .t3-button-logout');
+		$this->assertSession()->elementNotExists('css', '#neos-application .neos-button-logout');
 	}
 
 	/**
@@ -138,8 +138,8 @@ class FeatureContext extends MinkContext {
 	 * @Then /^I should not see the top bar$/
 	 */
 	public function iShouldNotSeeTheInspectorPanel() {
-		$this->assertElementOnPage('.t3-topbar');
-		Assert::assertFalse($this->getSession()->getPage()->find('css', '.t3-topbar')->isVisible());
+		$this->assertElementOnPage('#neos-top-bar');
+		Assert::assertFalse($this->getSession()->getPage()->find('css', '#neos-top-bar')->isVisible());
 	}
 
 	/**
@@ -201,7 +201,7 @@ class FeatureContext extends MinkContext {
 	public function iShouldSeeTheFollowingSitesInATable(TableNode $table) {
 		$sites = $table->getHash();
 
-		$tableLocator = '.t3-module-container table.table';
+		$tableLocator = '.neos-module-container table.table';
 		$sitesTable = $this->assertSession()->elementExists('css', $tableLocator);
 
 		$siteRows = $sitesTable->findAll('css', 'tbody tr');

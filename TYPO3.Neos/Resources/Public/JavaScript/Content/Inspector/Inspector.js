@@ -22,7 +22,7 @@ define(
 	var BreadcrumbItem = Ember.View.extend({
 		tagName: 'a',
 		href: '#',
-		template: Ember.Handlebars.compile('{{view.item.nodeTypeSchema.ui.label}} {{#if view.item.status}}<span class="t3-breadcrumbitem-status">({{view.item.status}})</span>{{/if}}'),
+		template: Ember.Handlebars.compile('{{view.item.nodeTypeSchema.ui.label}} {{#if view.item.status}}<span class="neos-breadcrumbitem-status">({{view.item.status}})</span>{{/if}}'),
 		click: function(event) {
 			event.preventDefault();
 			var item = this.get('item');
@@ -110,7 +110,7 @@ define(
 	});
 
 	var UnappliedChangesDialog = Ember.View.extend({
-		classNames: ['t3-ui', 'inspector-dialog'],
+		classNames: ['inspector-dialog'],
 		template: Ember.Handlebars.compile(unappliedChangesDialogTemplate),
 		cancel: function() {
 			this.destroy();
@@ -131,8 +131,8 @@ define(
 	 * Furthermore, it contains *Editors*
 	 */
 	return Ember.View.extend({
-		elementId: 't3-inspector',
-		classNames: ['t3-inspector'],
+		elementId: 'neos-inspector',
+		classNames: ['neos-inspector'],
 
 		template: Ember.Handlebars.compile(template),
 		Button: Button,
@@ -164,7 +164,7 @@ define(
 			var zIndex;
 			if (T3.Content.Controller.Inspector.get('_modified')) {
 				zIndex = this.$().css('z-index') - 1;
-				this.$clickProtectionLayer = $('<div />').addClass('t3-inspector-clickprotection').addClass('t3-ui').css({'z-index': zIndex});
+				this.$clickProtectionLayer = $('<div id="neos-inspector-clickprotection" />').css({'z-index': zIndex});
 				this.$clickProtectionLayer.click(this._showUnappliedDialog);
 				$('body').append(this.$clickProtectionLayer);
 			} else {
@@ -176,11 +176,7 @@ define(
 		 * When clicking the click protection, we show a dialog
 		 */
 		_showUnappliedDialog: function() {
-			UnappliedChangesDialog.create().appendTo('#t3-application');
+			UnappliedChangesDialog.create().appendTo('#neos-application');
 		}
 	});
-
-
-
-
 });
