@@ -322,10 +322,40 @@ class Runtime {
 
 				if ($currentPathSegmentType !== NULL) {
 					if (isset($currentPrototypeDefinitions[$currentPathSegmentType])) {
-						$configuration = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions[$currentPathSegmentType], $configuration);
-						if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypes'])) {
-								// this here handles the case of prototype("foo").prototype("baz")
-							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $currentPrototypeDefinitions[$currentPathSegmentType]['__prototypes']);
+
+							// FIRST, we build up the prototype inheritance hierarchy by
+							// walking up the inheritance tree. The $prototypeInheritanceHierarchy
+							// is sorted from the most generic to the most specific type.
+						$prototypeInheritanceHierarchy = array($currentPathSegmentType);
+
+							// TODO PERFORMANCE: the inheritance hierarchy is *fixed* and could also be calculated *once* for a given
+							// TypoScript; maybe even at the end of the parsing step. This is because we only allow top-
+							// level prototype inheritance of the form "prototype(foo) < prototype(bar)", but NOT
+							// "some.thing.prototype(foo) < prototype(bar)".
+						$currentPrototypeName = $currentPathSegmentType;
+						while (isset($currentPrototypeDefinitions[$currentPrototypeName]['__prototypeObjectName'])) {
+							$currentPrototypeName = $currentPrototypeDefinitions[$currentPrototypeName]['__prototypeObjectName'];
+							array_unshift($prototypeInheritanceHierarchy, $currentPrototypeName);
+						}
+
+							// SECOND, we now FLATTEN the prototype inheritance hierarchy, effectively building an
+							// array with the indirections through the prototype inheritance resolved.
+						$flattenedPrototype = array();
+						foreach ($prototypeInheritanceHierarchy as $singlePrototypeName) {
+							if (isset($currentPrototypeDefinitions[$singlePrototypeName])) {
+								$flattenedPrototype = Arrays::arrayMergeRecursiveOverrule($flattenedPrototype, $currentPrototypeDefinitions[$singlePrototypeName]);
+							}
+						}
+
+							// THIRD, we merge the flattened prototype with the current configuration (in that order),
+							// to make sure that the current configuration (not being defined in the prototype) wins.
+						$configuration = Arrays::arrayMergeRecursiveOverrule($flattenedPrototype, $configuration);
+
+							// FOURTH, if context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
+							// we update the current prototype definitions.
+							// This also takes care of inheritance, as we use the $flattenedPrototype as basis (TODO TESTCASE)
+						if (isset($flattenedPrototype['__prototypes'])) {
+							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $flattenedPrototype['__prototypes']);
 						}
 					}
 

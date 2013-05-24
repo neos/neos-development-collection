@@ -118,7 +118,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 		)
 		\s*
 		(?P<Operator>             # the operators which are supported
-			=<|=|<<|<|>
+			=|<<|<|>
 		)
 		\s*
 		(?P<Value>                # the remaining line inside the value
@@ -419,9 +419,6 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 			case '<' :
 				$this->parseValueCopy($matches['Value'], $objectPath);
 				break;
-			case '=<' :
-				$this->parseValueReference($matches['Value'], $objectPath);
-				break;
 			case '<<' :
 				$this->parseValueProcessing($matches['Value'], $objectPath);
 				break;
@@ -467,27 +464,34 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 		$sourceObjectPathArray = $this->getParsedObjectPath($sourceObjectPath);
 		$targetObjectPathArray = $this->getParsedObjectPath($targetObjectPath);
 
-		$originalValue = $this->getValueFromObjectTree($sourceObjectPathArray);
-		$value = is_object($originalValue) ? clone $originalValue : $originalValue;
+		$sourceIsPrototypeDefinition = (count($sourceObjectPathArray) >= 2 && $sourceObjectPathArray[count($sourceObjectPathArray) - 2] === '__prototypes');
+		$targetIsPrototypeDefinition = (count($targetObjectPathArray) >= 2 && $targetObjectPathArray[count($targetObjectPathArray) - 2] === '__prototypes');
 
-		$this->setValueInObjectTree($targetObjectPathArray, $value);
-	}
+		if ($sourceIsPrototypeDefinition || $targetIsPrototypeDefinition) {
+				// either source or target are a prototype definition
+			if ($sourceIsPrototypeDefinition && $targetIsPrototypeDefinition && count($sourceObjectPathArray) === 2 && count($targetObjectPathArray) === 2) {
+					// both are a prototype definition and the path has length 2: this means
+					// it must be of the form "prototype(Foo) < prototype(Bar)"
+				$targetObjectPathArray[] = '__prototypeObjectName';
+				$this->setValueInObjectTree($targetObjectPathArray, end($sourceObjectPathArray));
+			} elseif ($sourceIsPrototypeDefinition && $targetIsPrototypeDefinition) {
+					// Both are prototype definitions, but at least one is nested (f.e. foo.prototype(Bar))
+					// Currently, it is not supported to override the prototypical inheritance in
+					// parts of the TS rendering tree.
+					// Although this might work conceptually, it makes reasoning about the prototypical
+					// inheritance tree a lot more complex; that's why we forbid it right away.
+				throw new \TYPO3\TypoScript\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)', 1358418019);
+			} else {
+					// Either "source" or "target" are no prototypes. We do not support copying a
+					// non-prototype value to a prototype value or vice-versa.
+				throw new \TYPO3\TypoScript\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.', 1358418015);
+			}
+		} else {
+			$originalValue = $this->getValueFromObjectTree($sourceObjectPathArray);
+			$value = is_object($originalValue) ? clone $originalValue : $originalValue;
 
-	/**
-	 * Assigns a reference of an object or value specified by sourcObjectPath to
-	 * the targetObjectPath.
-	 *
-	 * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
-	 * @param string $targetObjectPath Specifies the location in the object tree where the reference will be stored
-	 * @return void
-	 */
-	protected function parseValueReference($sourceObjectPath, $targetObjectPath) {
-		$sourceObjectPathArray = $this->getParsedObjectPath($sourceObjectPath);
-		$targetObjectPathArray = $this->getParsedObjectPath($targetObjectPath);
-
-		$value = $this->getValueFromObjectTree($sourceObjectPathArray);
-
-		$this->setValueInObjectTree($targetObjectPathArray, $value);
+			$this->setValueInObjectTree($targetObjectPathArray, $value);
+		}
 	}
 
 	/**
