@@ -58,7 +58,6 @@
     label: 'Document'
     search:
       searchCategory: 'Documents'
-
     inspector:
       groups:
         document:
