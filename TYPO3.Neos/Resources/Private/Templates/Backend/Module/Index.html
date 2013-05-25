@@ -1,4 +1,4 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="Default" />
 
 <f:section name="head">
@@ -34,13 +34,13 @@
 								<f:then>
 									<f:security.ifHasRole role="{configuration.role}">
 										<li{f:if(condition: '{rootModule} == {module}', then: ' class="neos-active"')}>
-											<t:link.module path="{module}">{configuration.label}</t:link.module>
+											<neos:link.module path="{module}">{configuration.label}</neos:link.module>
 										</li>
 									</f:security.ifHasRole>
 								</f:then>
 								<f:else>
 									<li{f:if(condition: '{rootModule} == {module}', then: ' class="neos-active"')}>
-										<t:link.module path="{module}">{configuration.label}</t:link.module>
+										<neos:link.module path="{module}">{configuration.label}</neos:link.module>
 									</li>
 								</f:else>
 							</f:if>
@@ -57,7 +57,7 @@
 					<f:if condition="{rootModule} == {module}">
 						<f:for each="{configuration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
 							<li{f:if(condition: '{submoduleIdentifier} == {submodule}', then: ' class="active"')}>
-								<t:link.module path="{rootModule}/{submoduleIdentifier}">{submoduleConfiguration.label}</t:link.module>
+								<neos:link.module path="{rootModule}/{submoduleIdentifier}">{submoduleConfiguration.label}</neos:link.module>
 							</li>
 						</f:for>
 					</f:if>

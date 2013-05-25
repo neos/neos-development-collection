@@ -1,4 +1,4 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="BackendModule" />
 
 <f:section name="content">
@@ -9,7 +9,7 @@
 					<div class="fluid-row">
 				</f:if>
 				<div class="span4">
-					<t:standaloneView templatePathAndFilename="{f:if(condition: submoduleConfiguration.widgetTemplatePathAndFileName, then: submoduleConfiguration.widgetTemplatePathAndFileName, else: settings.moduleConfiguration.widgetTemplatePathAndFileName)}" arguments="{moduleConfiguration: moduleConfiguration, submoduleIdentifier: submoduleIdentifier, submoduleConfiguration: submoduleConfiguration}" />
+					<neos:standaloneView templatePathAndFilename="{f:if(condition: submoduleConfiguration.widgetTemplatePathAndFileName, then: submoduleConfiguration.widgetTemplatePathAndFileName, else: settings.moduleConfiguration.widgetTemplatePathAndFileName)}" arguments="{moduleConfiguration: moduleConfiguration, submoduleIdentifier: submoduleIdentifier, submoduleConfiguration: submoduleConfiguration}" />
 				</div>
 				<f:if condition="{iterator.isLast}">
 					<f:then>

@@ -1,4 +1,4 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
@@ -16,13 +16,13 @@
 									<f:then>
 										<f:security.ifHasRole role="{module.role}">
 											<li>
-												<t:link.module path="{path}">{module.label}</t:link.module>
+												<neos:link.module path="{path}">{module.label}</neos:link.module>
 											</li>
 										</f:security.ifHasRole>
 									</f:then>
 									<f:else>
 										<li>
-											<t:link.module path="{path}">{module.label}</t:link.module>
+											<neos:link.module path="{path}">{module.label}</neos:link.module>
 										</li>
 									</f:else>
 								</f:if>

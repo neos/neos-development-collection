@@ -1,5 +1,5 @@
 {namespace ext=TYPO3\ExtJS\ViewHelpers}
-{namespace typo3=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 {namespace aloha=TYPO3\Aloha\ViewHelpers}
 <script>
 	try {
@@ -19,14 +19,14 @@
 				var ExtDirectInitialization = function() {
 					<ext:extDirect.provider />;
 				};
-				{typo3:backend.javascriptConfiguration()}
+				{neos:backend.javascriptConfiguration()}
 				var Aloha,
 					alohaBaseUrl = '{aloha:baseUri()}';
 		</script>
 
 		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
 
-		<f:if condition="{typo3:backend.shouldLoadMinifiedJavascript()}">
+		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 			<f:then>
 				<script src="{f:uri.resource(path: 'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
 				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />

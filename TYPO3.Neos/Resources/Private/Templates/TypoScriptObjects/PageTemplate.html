@@ -1,4 +1,4 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 {namespace ts=TYPO3\TypoScript\ViewHelpers}
 <!DOCTYPE html>
 <html version="HTML+RDFa 1.1"
@@ -25,10 +25,10 @@
 	<body<f:if condition="{bodyAttributes}"><f:for each="{bodyAttributes}" key="attribute" as="value"> {attribute}="{value -> f:format.raw()}"</f:for></f:if>>
 
 		<f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
-			<t:contentElement node="{node}" page="TRUE" />
+			<neos:contentElement node="{node}" page="TRUE" />
 		</f:security.ifAccess>
 
 		<ts:render path="body" />
-		<t:backend.container node="{node}"/>
+		<neos:backend.container node="{node}"/>
 	</body>
 </html>
