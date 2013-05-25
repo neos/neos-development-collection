@@ -1987,6 +1987,13 @@ VIE.prototype.Entity = Backbone.Model.extend({
           return instance.getSubject();
         });
       }
+      if (name === '@type') {
+        if (_.isArray(entityValue)) {
+          entityValue = _.map(entityValue, function(type) { return type.toString(); });
+        } else {
+          entityValue = entityValue.toString();
+        }
+      }
 
       instanceLD[name] = entityValue;
     }, this);
