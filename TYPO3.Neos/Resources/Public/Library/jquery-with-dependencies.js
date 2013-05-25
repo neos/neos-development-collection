@@ -28158,7 +28158,7 @@ var _registerDnd = function() {
 
 		// HTML popover
 		// TYPO3 SPECIFIC FIX START, original line didn't check for empty settings.id
-		// TYPO3 SPECIFIC FIX 2: we append it to the neos application container instead of appending to body
+		// TYPO3 SPECIFIC FIX 2: we append it to the neos-application container instead of appending to body
 		settings.popover$ = $('<div class="popover"' + (settings.id !== '' ? ' id="' + settings.id + '"' : '') + '>'
 			+ '<div class="triangle"></div>'
 			+ '<div class="header"></div>'
@@ -28417,7 +28417,7 @@ var _registerDnd = function() {
 				settings.zindex = 10001;
 			}
 
-			settings.popover$.addClass('t3-popover-' + settings.positioning);
+			settings.popover$.addClass('neos-popover-' + settings.positioning);
 			// TYPO3 SPECIFIC FIX STOP
 
 			// set popover css and show it
