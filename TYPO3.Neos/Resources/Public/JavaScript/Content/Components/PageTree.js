@@ -381,7 +381,6 @@ define(
 						$jQueryHandle.remove();
 					}
 				}).appendTo('#neos-application');
-				console.log($('#neos-application'));
 			},
 
 			editNode: function(node) {
