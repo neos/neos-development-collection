@@ -108,7 +108,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 		}
 
 		$idAttribute = $this->generateIdAttributeForContentCollection($contentCollectionNode);
-		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentcollection t3-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $contentCollectionNode->getContextPath(), $idAttribute, 'TYPO3.Neos:ContentCollection', $this->path, $contentCollectionNode->getWorkspace()->getName(), $output);
+		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="neos-contentcollection neos-reloadable-content"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $contentCollectionNode->getContextPath(), $idAttribute, 'TYPO3.Neos:ContentCollection', $this->path, $contentCollectionNode->getWorkspace()->getName(), $output);
 	}
 
 	/**
@@ -119,7 +119,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 		$parentNode = $this->deriveParentFolderNode($contentCollectionNode);
 		$parentFolderNodePath = $parentNode->getPath();
 		$relativePath = substr($contentCollectionNode->getPath(), strlen($parentFolderNodePath));
-		return 't3-section' . str_replace('/', '-', $relativePath);
+		return 'neos-content' . str_replace('/', '-', $relativePath);
 	}
 
 	/**
