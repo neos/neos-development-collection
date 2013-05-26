@@ -144,12 +144,12 @@ class TypoScriptService {
 
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $closestFolderNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $closestDocumentNode
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return \TYPO3\TypoScript\Core\Runtime
 	 */
-	public function createRuntime($currentSiteNode, $closestFolderNode, $controllerContext) {
-		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
+	public function createRuntime($currentSiteNode, $closestDocumentNode, $controllerContext) {
+		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode, $closestDocumentNode);
 		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptObjectTree, $controllerContext);
 		return $typoScriptRuntime;
 	}

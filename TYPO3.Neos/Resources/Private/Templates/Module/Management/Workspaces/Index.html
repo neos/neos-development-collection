@@ -20,12 +20,12 @@
 						</thead>
 						<tbody>
 							<f:for each="{sites}" as="site">
-								<f:for each="{site.folders}" key="folderPath" as="folder">
+								<f:for each="{site.documents}" key="documentPath" as="document">
 									<tr>
 										<td colspan="6" class="folder">
 											<div class="pull-left">
-												<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{folder.folderNode.identifier}"></i>
-												<strong>Path: <neos:link.node node="{folder.folderNode}" absolute="1">/{folderPath}</neos:link.node></strong>
+												<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
+												<strong>Path: <neos:link.node node="{document.documentNode}" absolute="1">/{documentPath}</neos:link.node></strong>
 											</div>
 											<f:if condition="{sites -> f:count()} > 1">
 												<div class="pull-right">
@@ -34,8 +34,8 @@
 											</f:if>
 										</td>
 									</tr>
-									<f:for each="{folder.changes}" key="relativePath" as="change">
-										<tr class="fold-{folder.folderNode.identifier}">
+									<f:for each="{document.changes}" key="relativePath" as="change">
+										<tr class="fold-{document.documentNode.identifier}">
 											<td class="check">
 												<f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" />
 											</td>

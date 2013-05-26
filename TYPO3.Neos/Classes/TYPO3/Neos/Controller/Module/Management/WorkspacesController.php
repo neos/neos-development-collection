@@ -91,18 +91,18 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
 					$siteNodeName = $pathParts[2];
-					$folder = $this->findDocumentNode($node);
-					$folderPath = implode('/', array_slice(explode('/', $folder->getPath()), 3));
-					$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $folderPath), '', $node->getPath());
+					$document = $this->findDocumentNode($node);
+					$documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
+					$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
 					if (!isset($sites[$siteNodeName]['siteNode'])) {
 						$sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
 					}
-					$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
+					$sites[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
 					$change = array('node' => $node);
 					if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Node')) {
 						$change['configuration'] = $node->getNodeType()->getConfiguration();
 					}
-					$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;
+					$sites[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
 				}
 			}
 		}
@@ -111,14 +111,14 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 
 		ksort($sites);
 		foreach ($sites as $siteKey => $site) {
-			foreach ($site['folders'] as $folderKey => $folder) {
-				foreach ($folder['changes'] as $changeKey => $change) {
+			foreach ($site['documents'] as $documentKey => $document) {
+				foreach ($document['changes'] as $changeKey => $change) {
 					$liveNode = $this->nodeRepository->findOneByIdentifier($change['node']->getIdentifier(), $liveWorkspace);
-					$sites[$siteKey]['folders'][$folderKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
-					$sites[$siteKey]['folders'][$folderKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
+					$sites[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
+					$sites[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
 				}
 			}
-			ksort($sites[$siteKey]['folders']);
+			ksort($sites[$siteKey]['documents']);
 		}
 
 		$workspaces = array();

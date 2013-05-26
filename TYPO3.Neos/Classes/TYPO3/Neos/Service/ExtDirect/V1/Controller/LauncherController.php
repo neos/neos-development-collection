@@ -122,7 +122,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			if ($result->getNodeType()->isOfType('TYPO3.Neos:Page')) {
 				$pageNode = $result;
 			} else {
-				$pageNode = $this->findNextParentFolderNode($result);
+				$pageNode = $this->findNextParentDocumentNode($result);
 				$this->uriBuilder->setSection('c' . $result->getIdentifier());
 			}
 			$searchResult = array(
@@ -169,7 +169,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	protected function findNextParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
 		while ($node = $node->getParent()) {
 			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 				return $node;
