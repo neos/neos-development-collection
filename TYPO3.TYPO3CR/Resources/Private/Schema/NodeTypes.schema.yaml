@@ -5,6 +5,8 @@ additionalProperties:
   additionalProperties: FALSE
   properties:
 
+    'abstract': { type: boolean, description: "Abstract node type for default/mixin usage" }
+
     'superTypes':
       type: array
       # TODO: add validator which check that these are other Node Types.

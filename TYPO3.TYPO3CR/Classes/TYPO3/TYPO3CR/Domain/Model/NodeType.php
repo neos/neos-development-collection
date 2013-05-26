@@ -39,6 +39,13 @@ class NodeType {
 	protected $configuration;
 
 	/**
+	 * Is this node type marked abstract
+	 *
+	 * @var boolean
+	 */
+	protected $abstract = FALSE;
+
+	/**
 	 * node types this node type directly inherits from
 	 *
 	 * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
@@ -75,6 +82,11 @@ class NodeType {
 		}
 		$this->declaredSuperTypes = $declaredSuperTypes;
 
+		if (isset($configuration['abstract']) && $configuration['abstract'] === TRUE) {
+			$this->abstract = TRUE;
+			unset($configuration['abstract']);
+		}
+
 		$this->configuration = $configuration;
 	}
 
@@ -86,6 +98,15 @@ class NodeType {
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * Return boolean TRUE if marked abstract
+	 *
+	 * @return boolean
+	 */
+	public function isAbstract() {
+		return $this->abstract;
 	}
 
 	/**

@@ -25,6 +25,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $nodeTypesFixture = array(
 		'TYPO3.Neos:ContentObject' => array(
 			'label' => 'Abstract content object',
+			'abstract' => TRUE,
 			'properties' => array(
 				'_hidden' => array(
 					'type' => 'boolean',
@@ -123,6 +124,17 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$nodeTypeManager->getNodeType('TYPO3.Neos:TextFooBarNotHere');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getSubNodeTypesDoesNotContainAbstractNodeTypes() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$fullConfiguration = $nodeTypeManager->getFullConfiguration();
+		$this->assertArrayNotHasKey('TYPO3.Neos:ContentObject', $fullConfiguration);
 	}
 }
 ?>
