@@ -70,7 +70,7 @@
         label: 'Title'
         reloadIfChanged: TRUE
         inspector:
-          group: 'page'
+          group: 'document'
       validation:
         notEmpty: []
         stringLength:
@@ -82,7 +82,7 @@
         label: 'Name (URL)'
         reloadIfChanged: TRUE
         inspector:
-          group: 'page'
+          group: 'document'
       validation:
         notEmpty: []
         stringLength:
