@@ -52,11 +52,11 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 			throw new \TYPO3\Neos\Exception('TypoScriptView needs a persisted node as argument.', 1329736456);
 		}
 
-			// TODO: find closest folder node from this node...
-		$closestFolderNode = $currentNode;
+			// TODO: find closest document node from this node...
+		$closestDocumentNode = $currentNode;
 		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
 
-		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestFolderNode, $this->controllerContext);
+		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
 
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $currentNode,
@@ -77,11 +77,11 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
 	 */
 	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoScriptPath) {
-			// TODO: find closest folder node from this node...
-		$closestFolderNode = $node;
+			// TODO: find closest document node from this node...
+		$closestDocumentNode = $node;
 		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
 
-		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestFolderNode, $this->controllerContext);
+		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
 		return $typoScriptRuntime->canRender($typoScriptPath);
 	}
 

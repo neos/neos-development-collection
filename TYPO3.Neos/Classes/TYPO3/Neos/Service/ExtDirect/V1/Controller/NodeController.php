@@ -376,7 +376,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Updates the specified node. Returns the following data:
 	 * - the (possibly changed) workspace name of the node
-	 * - the URI of the closest folder node. If $node is a folder node (f.e. a Page), the own URI is returned.
+	 * - the URI of the closest document node. If $node is a document node (f.e. a Page), the own URI is returned.
 	 *   This is important to handle renamings of nodes correctly.
 	 *
 	 * Note: We do not call $nodeRepository->update() here, as TYPO3CR has a stateful API for now.
@@ -386,11 +386,11 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
-		$closestFolderNode = $node;
-		while (!$closestFolderNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-			$closestFolderNode = $closestFolderNode->getParent();
+		$closestDocumentNode = $node;
+		while (!$closestDocumentNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			$closestDocumentNode = $closestDocumentNode->getParent();
 		}
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestFolderNode), 'Frontend\Node', 'TYPO3.Neos');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => TRUE));
 	}
 

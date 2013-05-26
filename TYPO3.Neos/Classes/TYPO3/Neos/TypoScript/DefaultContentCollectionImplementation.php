@@ -116,9 +116,9 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 	 * @return string
 	 */
 	protected function generateIdAttributeForContentCollection(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode) {
-		$parentNode = $this->deriveParentFolderNode($contentCollectionNode);
-		$parentFolderNodePath = $parentNode->getPath();
-		$relativePath = substr($contentCollectionNode->getPath(), strlen($parentFolderNodePath));
+		$parentNode = $this->deriveParentDocumentNode($contentCollectionNode);
+		$parentDocumentNodePath = $parentNode->getPath();
+		$relativePath = substr($contentCollectionNode->getPath(), strlen($parentDocumentNodePath));
 		return 'neos-content' . str_replace('/', '-', $relativePath);
 	}
 
@@ -126,7 +126,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode
 	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
 	 */
-	protected function deriveParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode) {
+	protected function deriveParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode) {
 		$parentNode = $contentCollectionNode->getParent();
 
 		while ($parentNode->getNodeType()->isOfType('TYPO3.Neos:Document') !== TRUE) {
