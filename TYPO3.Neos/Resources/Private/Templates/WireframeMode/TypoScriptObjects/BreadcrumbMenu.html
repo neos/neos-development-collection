@@ -1,4 +1,4 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:if condition="{items}">
 	<f:for each="{items}" as="item" reverse="1" iteration="iterator">
 		<f:if condition="{iterator.index} > 0">/</f:if>
@@ -7,7 +7,7 @@
 				{item.label}
 			</f:then>
 			<f:else>
-				<t:link.node node="{item}">{item.label}</t:link.node>
+				<neos:link.node node="{item}">{item.label}</neos:link.node>
 			</f:else>
 		</f:if>
 	</f:for>

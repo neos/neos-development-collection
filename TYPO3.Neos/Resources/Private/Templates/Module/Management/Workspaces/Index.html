@@ -1,4 +1,4 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
@@ -25,7 +25,7 @@
 										<td colspan="6" class="folder">
 											<div class="pull-left">
 												<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{folder.folderNode.identifier}"></i>
-												<strong>Path: <t:link.node node="{folder.folderNode}" absolute="1">/{folderPath}</t:link.node></strong>
+												<strong>Path: <neos:link.node node="{folder.folderNode}" absolute="1">/{folderPath}</neos:link.node></strong>
 											</div>
 											<f:if condition="{sites -> f:count()} > 1">
 												<div class="pull-right">

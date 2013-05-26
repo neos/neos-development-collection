@@ -1,9 +1,9 @@
-{namespace t=TYPO3\Neos\ViewHelpers}
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <div class="neos-content container well">
 	<ul class="breadcrumb">
 		<f:for each="{moduleBreadcrumb}" key="path" as="name" iteration="iterator">
 			<li>
-				<t:link.module path="{path}">{name}</t:link.module>
+				<neos:link.module path="{path}">{name}</neos:link.module>
 				<f:if condition="{iterator.isLast}"><f:else><span class="divider">&gt;</span></f:else></f:if>
 			</li>
 		</f:for>
