@@ -1,19 +1,19 @@
-{namespace typo3=TYPO3\Neos\ViewHelpers}
-<typo3:contentElement node="{node}" reloadable="TRUE">
-	<ul class="neos-content-navigation">
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<neos:contentElement node="{node}" reloadable="TRUE">
+	<ul>
 		<f:render section="itemsList" arguments="{items: items}" />
 	</ul>
-</typo3:contentElement>
+</neos:contentElement>
 
 <f:section name="itemsList">
-		<f:for each="{items}" as="item">
-			<li class="{item.state}">
-				<typo3:link.node node="{item.node}">{item.label}</typo3:link.node>
-				<f:if condition="{item.subItems}">
+	<f:for each="{items}" as="item">
+		<li class="{item.state}">
+			<neos:link.node node="{item.node}">{item.label}</neos:link.node>
+			<f:if condition="{item.subItems}">
 				<ul>
 					<f:render section="itemsList" arguments="{items: item.subItems}" />
 				</ul>
-				</f:if>
-			</li>
-		</f:for>
+			</f:if>
+		</li>
+	</f:for>
 </f:section>
