@@ -399,7 +399,7 @@ A reference of all processors defined in TYPO3.TypoScript can be found in the
 Important TypoScript objects and patterns
 =========================================
 
-- page, template, section, menu, value (TODO ChristianM)
+- page, template, content collection, menu, value (TODO ChristianM)
 
 
 Planned Extension Points using Case and Collection

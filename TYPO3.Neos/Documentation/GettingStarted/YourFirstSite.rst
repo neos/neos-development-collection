@@ -13,7 +13,7 @@ In Neos users can start adding content immediately after a site has been created
 if no design has been implemented yet. This is possible with the `wireframe mode` that
 can be switched on when in the Content View.
 
-It allows the creation of arbitrary content sections and content elements, rendering
+It allows the creation of arbitrary content collections and content elements, rendering
 everything in a stripped down representation.
 
 Adding a Design

@@ -57,18 +57,18 @@ To add actual content from Neos to the desired places in the markup, a special
 ViewHelper to turn control back to TypoScript is used. This has been mentioned
 in :ref:`page-rendering` already.
 
-This template uses the ``renderTypoScript`` ViewHelper twice, once to render the
-path `parts/menu` and once to render the path `sections/main`::
+This template uses the ``render`` ViewHelper twice, once to render the
+path `parts/menu` and once to render the path `content.main`::
 
 	<f:section name="body">
-		<ts:renderTypoScript path="parts/menu"/>
+		<ts:render path="parts.menu" />
 		<h1>{title}</h1>
-		<ts:renderTypoScript path="sections/main"/>
+		<ts:render path="content.main" />
 	</f:section>
 
 Those paths are relative to the current path. Since that part of the template is
 rendered by the TypoScript object at `page.body`, this is the starting point
-for the relative paths. This means the ``Menu`` and the ``Section`` in this
+for the relative paths. This means the ``Menu`` and the ``ContentCollection`` in this
 TypoScript are used for rendering the output::
 
 	page = Page
@@ -76,8 +76,8 @@ TypoScript are used for rendering the output::
 		templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
 		sectionName = 'body'
 		parts.menu = Menu
-		sections.main = Section
-		sections.main.nodePath = 'main'
+		content.main = ContentCollection
+		content.main.nodePath = 'main'
 	}
 
 The Head

@@ -166,10 +166,10 @@ variable 'numberOfComments'::
 
 The following expands a little more on that. It assigns a set of nodes to the `collection`
 property of the comments object. This set of nodes is either fetched from different places,
-depending on whether the current node is a `Section` node or not. If it is, the children of
-the current node are used directly. If not, the result of `this.getNodePath()` is used to
-fetch a node below the current node and those children are used. In both cases the nodes
-are again filtered by a check for their property `spam` being false.
+depending on whether the current node is a `ContentCollection` node or not. If it is, the
+children of the current node are used directly. If not, the result of `this.getNodePath()`
+is used to fetch a node below the current node and those children are used. In both cases
+the nodes are again filtered by a check for their property `spam` being false.
 
 ::
 

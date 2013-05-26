@@ -95,34 +95,35 @@ Of course the current template is still quite boring; it does not show any conte
 or any menu. In order to change that, the Fluid template is adjusted as follows::
 
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
-	<ts:renderTypoScript path="parts/menu" />
+	<ts:render path="parts.menu" />
 	<h1>{title}</h1>
-	<ts:renderTypoScript path="sections/main" />
+	<ts:render path="content.main" />
 
 Placeholders for the menu and the content have been added with the use of the
-`renderTypoScript` ViewHelper. It defers rendering to TypoScript again, so the
+`render` ViewHelper. It defers rendering to TypoScript again, so the
 TypoScript needs to be adjusted as well::
 
 	page = Page
 	page.body {
 		templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
 		parts.menu = Menu
-		sections.main = Section
-		sections.main.nodePath = 'main'
+		content.main = ContentCollection
+		content.main.nodePath = 'main'
 	}
 
 In the above TypoScript, a TypoScript object at `page.body.parts.menu` is defined
 to be of type `Menu`. It is exactly this TypoScript object which is rendered, by
-specifying its relative path inside `<ts:renderTypoScript path="parts/menu" />`.
+specifying its relative path inside `<ts:render path="parts.menu" />`.
 
-Furthermore, the `Section` TypoScript object is used to render a TYPO3CR `Section`
-node. Through the `nodePath` property, the name of the TYPO3CR `Section` node to
-render is specified.
+Furthermore, the `ContentCollection` TypoScript object is used to render a TYPO3CR
+`ContentCollection` node. Through the `nodePath` property, the name of the TYPO3CR
+`ContentCollection` node to render is specified.
 
-As a result, the web page now contains a menu and the contents of the main section.
+As a result, the web page now contains a menu and the contents of the main content
+collection.
 
-The use of `section` and `parts` here is simply a convention, the names can be
-chosen freely. In the example `sections` is used for anything that content is later
+The use of `content` and `parts` here is simply a convention, the names can be
+chosen freely. In the example `content` is used for anything that content is later
 placed in but `parts` is for anything that is not *content* in the sense that it
 will directly be edited in the content module of Neos.
 

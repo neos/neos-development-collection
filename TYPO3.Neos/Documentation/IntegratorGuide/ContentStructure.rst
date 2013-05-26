@@ -37,10 +37,10 @@ If we imagine a classical website with a hierarchical menu structure, then each
 of the pages is represented by a TYPO3CR Node of type `Folder`. However, not only
 the pages themselves are represented as tree: Imagine a page has two columns,
 with different content elements inside each of them. The columns are stored as
-Nodes of type `Section`, and they contain nodes of type `Text`, `Image`, or
+Nodes of type `ContentCollection`, and they contain nodes of type `Text`, `Image`, or
 whatever structure is needed. This nesting can be done indefinitely: Inside
-a `Section`, there could be another three-column element which again contains
-`section` elements with arbitrary content inside.
+a `ContentCollection`, there could be another three-column element which again contains
+`ContentCollection` elements with arbitrary content inside.
 
 .. admonition:: Comparison to TYPO3 CMS
 
@@ -70,7 +70,7 @@ all properties and settings of the parent types are inherited.
 A node type definition can look as follows::
 
 	'My.Package:SpecialHeadline':
-	  superTypes: ['TYPO3.Neos.ContentTypes:ContentObject']
+	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    label: 'Special Headline'
 	    group: 'General'
@@ -96,7 +96,7 @@ The following options are allowed:
 
     childNodes:
       someChild:
-        type: 'TYPO3.Neos.ContentTypes:Section'
+        type: 'TYPO3.Neos:ContentCollection'
 
 `ui`
   Configuration options related to the user interface representation of the node type
@@ -277,13 +277,13 @@ ContentCollection and Content
 All content which does not behave like pages, but which lives inside them, is
 implemented by two different node types:
 
-First, there is the `Section` type: A `Section` has a structural purpose. It usually
-does not contain any properties itself, but it contains an ordered list of child
+First, there is the `ContentCollection` type: A `ContentCollection` has a structural purpose.
+It usually does not contain any properties itself, but it contains an ordered list of child
 nodes which are rendered inside.
 
-Currently, `Section` should not be extended by custom types.
+Currently, `ContentCollection` should not be extended by custom types.
 
 Second, the node type for all standard elements (such as text, image, youtube,
-...) is `ContentObject`. This is–by far–the most often extended node
+...) is `Content`. This is–by far–the most often extended node
 type. It extends `AbstractNode`, thus title and visibility properties are
 inherited.
