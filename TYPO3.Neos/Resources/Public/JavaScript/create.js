@@ -69,7 +69,8 @@ define(
 										elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'blockquote', 'address']
 									},
 									hallolists: {},
-									'hallo-linkplugin': {},
+									// TODO: make plugin integration compatible with hallo on jquery UI 1.10.3
+									// 'hallo-linkplugin': {},
 									halloreundo: {}
 								}
 							}
@@ -84,7 +85,6 @@ define(
 									halloblock: {
 										elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 									},
-									'hallo-linkplugin': {},
 									halloreundo: {},
 									halloblacklist: {
 										tags: ['br']

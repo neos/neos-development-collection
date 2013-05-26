@@ -9,7 +9,7 @@ requireConfiguration['TYPO3.Neos'] = {
 		'jquery-ui': 'TYPO3.Neos/JavaScript/jquery-ui',
 		'emberjs': 'TYPO3.Neos/Library/emberjs/ember-0.9.7.min',
 		'Library/jquery/jquery-1.7.2': 'TYPO3.Neos/Library/jquery/jquery-1.7.2',
-		'Library/jquery-ui/js/jquery-ui-1.9b1': 'TYPO3.Neos/Library/jquery-ui/js/jquery-ui-1.9b1',
+		'Library/jquery-ui/js/jquery-ui-1.10.3.custom.js': 'TYPO3.Neos/Library/jquery-ui/js/jquery-ui-1.10.3.custom',
 		'backbone': 'TYPO3.Neos/Library/vie/lib/backboneJS/backbone.min',
 		'underscorejs': 'TYPO3.Neos/Library/vie/lib/underscoreJS/underscore.min'
 	},

@@ -20,7 +20,7 @@ define(
 
 			didInsertElement: function() {
 				var tabs = this.$('.nodeTypeSelectorTabs').tabs();
-				setTimeout(function() { tabs.tabs('select', 0); }, 100);
+				setTimeout(function() { tabs.tabs('option', 'active', 0); }, 100);
 			},
 
 			click: function(event) {

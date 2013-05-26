@@ -1,4 +1,4 @@
-jQuery UI: version 1.9 beta 1
+jQuery UI: version 1.10.3
 Theme: UI Darkness (from 1.8)
 
 The isLocal() function is patched because otherwise Aloha is broken.

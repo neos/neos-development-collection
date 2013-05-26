@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 				src: [
 					baseUri + 'jquery/jquery-1.9.1.js',
 					baseUri + 'jquery/jquery-migrate-1.2.1.js',
-					baseUri + 'jquery-ui/js/jquery-ui-1.9b1.js',
+					baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
 					baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
 					baseUri + 'jquery-popover/jquery.popover.js',
 					baseUri + 'chosen/chosen/chosen.jquery.js',
