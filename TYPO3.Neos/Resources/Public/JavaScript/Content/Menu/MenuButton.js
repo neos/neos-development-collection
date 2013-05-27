@@ -6,12 +6,12 @@ define(
 		'Shared/LocalStorage'
 	], function(Ember, $, ToggleButton, LocalStorage) {
 		return ToggleButton.extend({
-			elementId: ['neos-inspector-button'],
-			title: 'Toggle inspector',
+			elementId: ['neos-menu-button'],
+			title: 'Toggle menu',
 
 			init: function() {
 				this._super();
-				if (LocalStorage.getItem('inspectorMode') !== false) {
+				if (LocalStorage.getItem('menuMode') !== false) {
 					this.set('pressed', true);
 				}
 			},
@@ -19,14 +19,14 @@ define(
 			toggle: function() {
 				var state = !this.get('pressed');
 				this.set('pressed', state);
-				LocalStorage.setItem('inspectorMode', state);
+				LocalStorage.setItem('menuMode', state);
 			},
 
 			_onPressedChanged: function() {
 				if (this.get('pressed') === true) {
-					$('body').addClass('neos-inspector-panel-open');
+					$('body').addClass('neos-menu-panel-open');
 				} else {
-					$('body').removeClass('neos-inspector-panel-open');
+					$('body').removeClass('neos-menu-panel-open');
 				}
 			}.observes('pressed')
 		});

@@ -64,10 +64,16 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 			->setCreateAbsoluteUri(TRUE)
 			->uriFor('nodeTypeSchema', array('version' => $schemaCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
 
+		$menuDataUri = $this->controllerContext->getUriBuilder()
+			->reset()
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('index', array(), 'Backend\Menu', 'TYPO3.Neos');
+
 		$configuration = array(
 			'window.T3Configuration = {};',
 			'window.T3Configuration.NodeTypeSchemaUri = ' . json_encode($nodeTypeSchemaUri) . ';',
 			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
+			'window.T3Configuration.MenuDataUri = ' . json_encode($menuDataUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
 			'window.T3Configuration.nodeTypeGroups = ' . json_encode($this->settings['nodeTypeGroups']) . ';'

@@ -1,0 +1,171 @@
+$menuIconWidth: 54px;
+
+#neos-menu-button {
+	float: left;
+	left: 0;
+	top: 0;
+	position: fixed;
+	width: $menuIconWidth;
+	height: $unit;
+	z-index: 10030;
+	background-color: $grayDark;
+	border-right: 1px solid $grayLight;
+
+	&:hover,
+	&.pressed {
+		background-color: $blue;
+	}
+
+	&:before {
+		display: block;
+		position: absolute;
+		left: $defaultMargin;
+		top: 12px;
+		width: 22px;
+		height: 3px;
+		border-top: 3px solid #fff;
+		border-bottom: 3px solid #fff;
+		content: "";
+	}
+
+	&:after {
+		display: block;
+		position: absolute;
+		left: $defaultMargin;
+		top: 24px;
+		width: 22px;
+		height: 3px;
+		background-color: #fff;
+		content: "";
+	}
+}
+
+#neos-menu-panel {
+	position: fixed;
+	top: $unit;
+	bottom: 0;
+	left: -($menuWidth + 1px);
+	width: $menuWidth;
+	background-color: $grayDark;
+	z-index: 10020;
+	border-top: 1px solid $grayLight;
+	border-right: 1px solid $grayLight;
+	overflow-x: hidden;
+	overflow-y: auto;
+	@include transition-property('left');
+	@include transition-duration(.2s);
+	@include font;
+
+	&.neos-noscript {
+		top: 0;
+		left: 0;
+	}
+
+	a {
+		@include font;
+		color: #fff;
+		&:hover,
+		&:active {
+			color: $blue;
+			text-decoration: none;
+		}
+	}
+
+	.neos-menu-container {
+		height: 100%;
+	}
+
+	.neos-menu-section {
+		position: relative;
+
+		.neos-menu-headline {
+			@include box-sizing(border-box);
+			padding-left: $unit + $defaultMargin;
+			padding-right: $menuIconWidth;
+			height: $unit;
+			border-bottom: 1px solid $grayLight;
+			cursor: pointer;
+			line-height: $unit;
+			position: relative;
+		}
+
+		.neos-menu-collapse {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: $unit;
+			height: $unit;
+			border-left: 1px solid $grayLight;
+
+			&:hover {
+				background-color: $blue;
+				color: #fff;
+			}
+
+			&.collapsed,
+			&.open {
+				&::before {
+					content: "›";
+					font-size: 26px;
+					font-weight: normal;
+					display: inline-block;
+					position: relative;
+					top: 0;
+					line-height: $unit;
+				}
+			}
+
+			&.collapsed::before {
+				@include rotate(-90deg);
+				left: 13px;
+			}
+
+			&.open::before {
+				@include rotate(90deg);
+				left: 19px;
+			}
+		}
+
+		a {
+			display: block;
+			@include font;
+			font-size: 14px;
+			font-weight: bold;
+			line-height: $unit;
+			height: $unit;
+			@include user-select(none);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			padding-left: 38px;
+			padding-right: $defaultMargin;
+
+			&.active {
+				color: $blue;
+			}
+
+			i {
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: $menuIconWidth;
+				height: $unit;
+				font-size: 20px;
+				line-height: $unit;
+				vertical-align: middle;
+				text-align: center;
+			}
+		}
+
+		.neos-menu-list {
+			a {
+				background-color: $grayMedium;
+				border-bottom: 1px solid $grayLight;
+				padding-left: $menuIconWidth;
+				position: relative;
+				font-weight: normal;
+			}
+		}
+	}
+}

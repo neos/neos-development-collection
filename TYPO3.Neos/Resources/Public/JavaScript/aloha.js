@@ -1,5 +1,9 @@
 define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha');
+
+	if (!window.T3.isContentModule) {
+		return;
+	}
 	var Aloha = window.Aloha = window.Aloha || {__shouldInit: true};
 
 	Aloha.settings = {

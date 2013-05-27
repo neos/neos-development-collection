@@ -90,6 +90,8 @@ TYPO3:
     modules:
       management:
         label: 'Management'
+        description: 'Contains multiple modules related to management of content'
+        icon: 'icon-briefcase'
         submodules:
           workspaces:
             label: 'Workspaces'
@@ -98,6 +100,8 @@ TYPO3:
             icon: 'icon-th-large'
       administration:
         label: 'Administration'
+        description: 'Contains multiple modules related to administration'
+        icon: 'icon-gears'
         role: 'TYPO3.Neos:Administrator'
         submodules:
           users:
@@ -113,7 +117,7 @@ TYPO3:
             label: 'Package Management'
             controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
             description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
-            icon: 'icon-puzzle-piece'
+            icon: 'icon-archive'
           sites:
             label: 'Sites Management'
             controller: '\TYPO3\Neos\Controller\Module\Administration\SitesController'

@@ -1,4 +1,5 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace ext=TYPO3\ExtJS\ViewHelpers}
 <f:layout name="Default" />
 
 <f:section name="head">
@@ -17,57 +18,42 @@
 			<script src="{f:uri.resource(path: additionalResource)}"></script>
 		</f:for>
 	</f:if>
+
+	<script type="text/javascript">
+		// TODO Get rid of those global variables
+		var ExtDirectInitialization = function() {
+			<ext:extDirect.provider />;
+		};
+		{neos:backend.javascriptConfiguration()}
+	</script>
+
+	<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
+
+	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+		<f:then>
+			<script src="{f:uri.resource(path: 'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
+		</f:then>
+		<f:else>
+			<script src="{f:uri.resource(path: 'JavaScript/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
+		</f:else>
+	</f:if>
 </f:section>
 
 <f:section name="body">
 	<body class="neos neos-module neos-module-{moduleClass}">
-		<div id="neos-top-bar">
-			<ul id="neos-top-bar-modules">
-				<li>
-					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
-				</li>
-				<f:for each="{settings.modules}" key="module" as="configuration">
-					<f:if condition="{configuration.hideInMenu}">
-						<f:then></f:then>
-						<f:else>
-							<f:if condition="{configuration.role}">
-								<f:then>
-									<f:security.ifHasRole role="{configuration.role}">
-										<li{f:if(condition: '{rootModule} == {module}', then: ' class="neos-active"')}>
-											<neos:link.module path="{module}">{configuration.label}</neos:link.module>
-										</li>
-									</f:security.ifHasRole>
-								</f:then>
-								<f:else>
-									<li{f:if(condition: '{rootModule} == {module}', then: ' class="neos-active"')}>
-										<neos:link.module path="{module}">{configuration.label}</neos:link.module>
-									</li>
-								</f:else>
-							</f:if>
-						</f:else>
-					</f:if>
-				</f:for>
-			</ul>
-			<div id="neos-user-actions">
-				<f:render partial="Backend/UserMenu" arguments="{_all}" />
-			</div>
-		</div>
-		<div id="neos-context-bar">
-			<ul class="nav nav-pills">
-				<f:for each="{settings.modules}" key="module" as="configuration">
-					<f:if condition="{rootModule} == {module}">
-						<f:for each="{configuration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
-							<li{f:if(condition: '{submoduleIdentifier} == {submodule}', then: ' class="active"')}>
-								<neos:link.module path="{rootModule}/{submoduleIdentifier}">{submoduleConfiguration.label}</neos:link.module>
-							</li>
-						</f:for>
-					</f:if>
-				</f:for>
-			</ul>
-		</div>
 		<f:if condition="{moduleContents}">
 			{moduleContents -> f:format.raw()}
 		</f:if>
+		<div id="neos-application" class="neos">
+			<div id="neos-top-bar">
+				<div id="neos-user-actions">
+					<f:render partial="Backend/UserMenu" arguments="{_all}" />
+				</div>
+			</div>
+			<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />
+		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
 	</body>
 </f:section>

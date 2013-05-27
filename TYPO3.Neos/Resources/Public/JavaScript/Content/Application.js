@@ -63,23 +63,28 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 		bootstrap: function() {
 			this.set('vie', vie);
-			this._initializeAjaxPageReload();
-			this._initializeVie();
+			if (window.T3.isContentModule) {
+				this._initializeAjaxPageReload();
+				this._initializeVie();
+			}
 
 			this._initializeDevelopmentFeatures();
 
 			this._initializeNotifications();
 
-			$('body').toggleClass('neos-controls neos-backend');
-
-			this._setPagePosition();
+			if (window.T3.isContentModule) {
+				$('body').toggleClass('neos-controls neos-backend');
+				this._setPagePosition();
+			}
 
 			this._initializeShortcuts();
-			this._initializeHistoryManagement();
 
+			if (window.T3.isContentModule) {
+				this._initializeHistoryManagement();
 				// Remove the Aloha sidebar completely from DOM, as there is
 				// currently no other way to deactivate it.
-			$('.aloha-sidebar-bar').remove();
+				$('.aloha-sidebar-bar').remove();
+			}
 		},
 
 		_initializeNotifications: function() {

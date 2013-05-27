@@ -1,5 +1,5 @@
 /* Variables */
-$tree-panel-width: 300px;
+$tree-panel-width: 320px;
 
 $green: #69A550;
 $light-green: #54974A;
@@ -45,4 +45,8 @@ $wideMargin: 32px;
 
 /* Components */
 $inspectorWidth: $unit * 8;
+$menuWidth: $unit * 8;
 $generalFontSize: 14px;
+
+// Mixins //
+// Use Compass for CSS3 Mixins!

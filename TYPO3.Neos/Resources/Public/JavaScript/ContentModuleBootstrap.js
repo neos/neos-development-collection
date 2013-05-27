@@ -1,9 +1,11 @@
-
 window._requirejsLoadingTrace = [];
 window.renderLoadingTrace = function() {
 	return JSON.stringify(window._requirejsLoadingTrace);
 };
-window.T3 = {} || window.T3;
+
+window.T3 = {
+	isContentModule: location.pathname.substr(0, 6) !== '/neos/'
+} || window.T3;
 /**
  * WARNING: if changing any of the require() statements below, make sure to also
  * update them inside build.js!
@@ -47,7 +49,9 @@ require(
 
 			ContentModule.advanceReadiness();
 			ApplicationView.create().appendTo('#neos-application');
-			PublishMenu.create().appendTo('#neos-user-actions');
+			if (window.T3.isContentModule) {
+				PublishMenu.create().appendTo('#neos-user-actions');
+			}
 
 		});
 	}

@@ -6,6 +6,8 @@ define(
 	'emberjs',
 	'text!./ApplicationView.html',
 	'./Components/ContentContextBar',
+	'./Menu/MenuButton',
+	'./Menu/MenuPanel',
 	'./Components/TreePanel',
 	'./Inspector/InspectorButton',
 	'./Inspector/Inspector',
@@ -17,6 +19,8 @@ function(
 	Ember,
 	template,
 	ContentContextBar,
+	MenuButton,
+	MenuPanel,
 	TreePanel,
 	InspectorButton,
 	Inspector,
@@ -26,12 +30,16 @@ function(
 ) {
 	return Ember.View.extend({
 		ContentContextBar: ContentContextBar,
+		MenuButton: MenuButton,
+		MenuPanel: MenuPanel,
+		TreePanel: TreePanel,
 		InspectorButton: InspectorButton,
 		Inspector: Inspector,
 		SecondaryInspectorView: SecondaryInspectorView,
-		TreePanel: TreePanel,
 		InlineEditingHandles: InlineEditingHandles,
 		InsertNodePanel: InsertNodePanel,
-		template: Ember.Handlebars.compile(template)
+		template: Ember.Handlebars.compile(template),
+
+		_isContentModule: window.T3.isContentModule
 	});
 });

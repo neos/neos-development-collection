@@ -41,6 +41,7 @@
     '@controller': 'Asset'
     '@action': 'index'
   appendExceedingArguments: true
+
 -
   name:          'Backend - Content Module - Images'
   uriPattern:    'neos/content/imageWithMetadata/{image}'
@@ -58,6 +59,25 @@
     '@action':     'index'
     '@format':     'html'
   appendExceedingArguments: true
+
+-
+  name:          'Backend - Schema'
+  uriPattern:    'neos/schema/{@action}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Backend\Schema'
+    '@action':     'index'
+    '@format':     'html'
+  appendExceedingArguments: true
+
+-
+  name:          'Backend - Menu'
+  uriPattern:    'neos/menu'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Backend\Menu'
+    '@action':     'index'
+    '@format':     'html'
 
 -
   name: 'Backend - Modules'
@@ -85,16 +105,6 @@
     moduleArguments:
       handler: TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler
   toLowerCase: false
-  appendExceedingArguments: true
-
--
-  name:          'Backend - Schema'
-  uriPattern:    'neos/schema/{@action}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Schema'
-    '@action':     'index'
-    '@format':     'html'
   appendExceedingArguments: true
 
 ##

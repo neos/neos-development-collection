@@ -31,6 +31,18 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	protected $securityContext;
 
 	/**
+	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @Flow\Inject
+	 */
+	protected $siteRepository;
+
+	/**
+	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @Flow\Inject
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * @param array $settings
 	 * @return void
 	 */
@@ -49,10 +61,28 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 
+		$sites = array();
+		foreach ($this->siteRepository->findAll() as $site) {
+			$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+			$uri = $this->controllerContext->getUriBuilder()
+				->reset()
+				->setCreateAbsoluteUri(TRUE)
+				->uriFor('show', array('node' => $siteNode), 'Frontend\Node', 'TYPO3.Neos');
+			$sites[] = array(
+				'name' => $site->getName(),
+				'nodeName' => $site->getNodeName(),
+				'uri' => $uri,
+				'active' => stristr($uri, $_SERVER['HTTP_HOST']) !== FALSE ? TRUE : FALSE
+			);
+		}
+
 		$view->assignMultiple(array(
 			'node' => $node,
 			'modules' => $this->settings['modules'],
-			'user' => $user
+			'sites' => $sites,
+			'user' => $user,
+			'fluidTemplateTsObject' => $this->templateVariableContainer->get('fluidTemplateTsObject')
+
 		));
 
 		return $view->render();

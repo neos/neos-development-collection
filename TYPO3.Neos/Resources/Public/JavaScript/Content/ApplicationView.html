@@ -1,6 +1,11 @@
-{{view view.ContentContextBar}}
-{{view view.InspectorButton}}
-{{view view.SecondaryInspectorView}}
-{{view view.Inspector}}
-{{view view.TreePanel}}
-{{view view.InlineEditingHandles}}
+{{#unbound if view._isContentModule}}
+	{{view view.ContentContextBar}}
+	{{view view.InspectorButton}}
+	{{view view.SecondaryInspectorView}}
+	{{view view.Inspector}}
+	{{view view.TreePanel}}
+	{{view view.InlineEditingHandles}}
+{{/unbound}}
+
+{{view view.MenuButton}}
+{{view view.MenuPanel}}

@@ -14,7 +14,19 @@ body {
 		}
 	}
 
-	&.neos-tree-panel-open {
+	&.neos-menu-panel-open {
+		.neos {
+			#neos-menu-panel {
+				left: 0;
+			}
+
+			#neos-context-bar {
+				padding-left: $tree-panel-width;
+			}
+		}
+	}
+
+	&.neos-tree-panel-open, {
 		.neos {
 			#neos-tree-panel {
 				width: $tree-panel-width;
@@ -89,12 +101,15 @@ body {
 				overflow: hidden;
 			}
 
+			#neos-menu-panel,
 			#neos-tree-panel {
 				width: 0;
 			}
+
 			.neos-overlay-component,
 			.neos-handle-container,
-			.modal-backdrop {
+			.modal-backdrop,
+			.neos-menu-button {
 				display: none;
 			}
 		}

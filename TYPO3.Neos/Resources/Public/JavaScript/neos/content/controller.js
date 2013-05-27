@@ -163,8 +163,9 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			this.set('nodeProperties', Ember.Object.create());
 			this.set('configuration', T3.Common.LocalStorage.getItem('inspectorConfiguration') || {});
 			Ember.addObserver(this, 'configuration', function() {
-				if ($.isEmptyObject(this.get('configuration')) === false) {
-					T3.Common.LocalStorage.setItem('inspectorConfiguration', this.get('configuration'));
+				var configuration = this.get('configuration');
+				if ($.isEmptyObject(configuration) === false) {
+					T3.Common.LocalStorage.setItem('inspectorConfiguration', configuration);
 				}
 			});
 		},

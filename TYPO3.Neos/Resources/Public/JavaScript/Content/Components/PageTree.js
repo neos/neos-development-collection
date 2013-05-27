@@ -262,7 +262,12 @@ define(
 
 			_initializePagePropertyObservers: function() {
 				var that = this,
-					entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($('#neos-page-metainformation'));
+					$metainformation = $('#neos-page-metainformation');
+				if ($metainformation.length === 0) {
+					return;
+				}
+
+				var entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($metainformation);
 				if (!entityWrapper) {
 					// page might not have been loaded; so we directly return
 					return;
