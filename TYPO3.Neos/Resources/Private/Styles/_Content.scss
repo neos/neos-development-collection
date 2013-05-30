@@ -182,7 +182,14 @@
 	&.neos-contentelement-active .neos-inline-editable,
 	.aloha-editable-active,
 	.aloha-editable-active[contenteditable=true]:focus {
-		outline: 3px solid #80b5f2 !important;
+		outline: none !important;
+	}
+
+	.aloha-block.aloha-block-active, .aloha-block.aloha-block-active:hover {
+		box-shadow: none;
+	}
+	.aloha-editable-active .aloha-block, .aloha-block.aloha-block-highlighted {
+		box-shadow: none;
 	}
 
 	> .neos-contentelement-overlay {

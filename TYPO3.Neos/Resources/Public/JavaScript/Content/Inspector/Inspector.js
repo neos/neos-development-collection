@@ -48,8 +48,10 @@ define(
 		_automaticallyCollapsed: false,
 
 		didInsertElement: function() {
-			var nodeType = T3.Content.Model.NodeSelection.get('selectedNode').$element.attr('typeof').replace(/\./g,'_'),
+			var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode'),
+				nodeType = (selectedNode.$element ? selectedNode.$element.attr('typeof').replace(/\./g,'_') : 'ALOHA'),
 				collapsed = T3.Content.Controller.Inspector.get('configuration.' + nodeType + '.' + this.get('content.group'));
+
 			this.set('_nodeType', nodeType);
 			if (collapsed) {
 				this.$().next().hide();
@@ -102,8 +104,12 @@ define(
 
 			require([editorClassName], function(editorClass) {
 				Ember.run(function() {
-					var editor = editorClass.create(editorOptions);
-					that.set('currentView', editor);
+					if (!that.isDestroyed) {
+						// It might happen that the editor was deselected before the require() call completed; so we
+						// need to check again whether the view has been destroyed in the meantime.
+						var editor = editorClass.create(editorOptions);
+						that.set('currentView', editor);
+					}
 				});
 			});
 		}

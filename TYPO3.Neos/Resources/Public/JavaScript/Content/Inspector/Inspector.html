@@ -1,11 +1,23 @@
 <div class="header">
-	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="revert" class="neos-inspector-cancel"}}Cancel{{/view}}
-	{{#view view.Button disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle" class="neos-inspector-apply"}}Apply{{/view}}
+	{{#view view.Button
+		disabledBinding="T3.Content.Controller.Inspector._unmodified"
+		target="T3.Content.Controller.Inspector"
+		action="revert"
+		class="neos-inspector-cancel"
+		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
+	}}Cancel{{/view}}
+
+	{{#view view.Button
+		disabledBinding="T3.Content.Controller.Inspector._unmodified"
+		target="T3.Content.Controller.Inspector"
+		action="onApplyButtonToggle"
+		class="neos-inspector-apply"
+		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
+	}}Apply{{/view}}
 </div>
 <form class="neos-inspector-form" action="#">
 	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
-	<div id="neos-aloha-inspectormenu"></div>
-	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.contentCollectionsAndViews"}}
+	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
 		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content"}}
 			<h2>
 				{{view.content.label}}

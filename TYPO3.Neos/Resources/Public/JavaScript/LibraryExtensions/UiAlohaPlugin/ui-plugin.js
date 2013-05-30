@@ -7,7 +7,9 @@ define([
 	'ui/context',
 	'ui/container',
 	'ui/surface',
+	// BEGIN MODIFICATION FOR NEOS
 	'./toolbar',
+	// END MODIFICATION FOR NEOS
 	'ui/settings',
 	'PubSub',
 	// Most modules of the ui plugin depend on jquery-ui, but its easy

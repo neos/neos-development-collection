@@ -3,6 +3,7 @@ define([
 	'aloha/core',
 	'ui/surface',
 	'./tab',
+	'./tabInSecondaryContainer',
 	'ui/context',
 	'i18n!ui/nls/i18n',
 	'jqueryui'
@@ -11,6 +12,7 @@ define([
 	Aloha,
 	Surface,
 	Tab,
+	TabInSecondaryContainer,
 	Context,
 	i18n
 ) {
@@ -56,18 +58,23 @@ define([
 			this.$inspectorContainer = $('<div>', {'class': 'aloha-ui aloha-ui-toolbar', 'unselectable': 'on'});
 
 			this.$_container = Tab.createContainer().appendTo(this.$topmenuContainer);
-			this.$_secondaryContainer = Tab.createContainer().appendTo(this.$inspectorContainer);
+
+			// we create an INVISIBLE secondary container for all but the primary tabs; as we
+			// render the UI with custom controls instead of the Aloha-based ones. However, because
+			// this is not cleanly encapsulated in Aloha, we basically let them render to a detached DOM
+			// element and keep them manually in sync with the corresponding Neos controls.
+			this.$_secondaryContainer = Tab.createContainer();
 			this._tabBySlot = {};
 
-			this._initTab(context, tabs[0], this.$_container);
+			this._initTab(Tab, context, tabs[0], this.$_container);
 			for (var i=1, l=tabs.length; i < l; i++) {
-				this._initTab(context, tabs[i], this.$_secondaryContainer);
+				this._initTab(TabInSecondaryContainer, context, tabs[i], this.$_secondaryContainer);
 			}
 
 		},
 
-		_initTab: function(context, tabSettings, container) {
-			var tabInstance = new Tab(context, {
+		_initTab: function(clazz, context, tabSettings, container) {
+			var tabInstance = new clazz(context, {
 				label: i18n.t(tabSettings.label, tabSettings.label),
 				showOn: tabSettings.showOn,
 				container: container
@@ -145,6 +152,7 @@ define([
 					Toolbar.$inspectorSurfaceContainer.appendTo('#neos-aloha-inspectormenu');
 					Surface.trackRange(Toolbar.$topmenuSurfaceContainer);
 					Surface.trackRange(Toolbar.$inspectorSurfaceContainer);
+					Surface.trackRange($('#neos-application'));
 				}, 50);
 			});
 		}
