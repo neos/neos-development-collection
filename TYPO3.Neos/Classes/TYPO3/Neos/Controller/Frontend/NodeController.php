@@ -92,7 +92,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$this->throwStatus(404);
 		}
 
-		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
+		if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
 			if (!$this->hasAccessToBackend() || $node->getContext()->getWorkspace()->getName() === 'live') {
 				while ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
 					switch ($node->getProperty('targetMode')) {
