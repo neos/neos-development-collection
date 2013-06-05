@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Context Interface
@@ -28,23 +28,6 @@ interface ContextInterface {
 	public function getWorkspace();
 
 	/**
-	 * Sets the current node.
-	 *
-	 * @param PersistentNodeInterface $node
-	 * @return void
-	 * @api
-	 */
-	public function setCurrentNode(PersistentNodeInterface $node);
-
-	/**
-	 * Returns the current node
-	 *
-	 * @return PersistentNodeInterface
-	 * @api
-	 */
-	public function getCurrentNode();
-
-	/**
 	 * Returns the current date and time in form of a \DateTime
 	 * object.
 	 *
@@ -58,20 +41,19 @@ interface ContextInterface {
 	public function getCurrentDateTime();
 
 	/**
-	 * Sets the simulated date and time. This time will then always be returned
-	 * by getCurrentDateTime().
+	 * Convenience method returns the root node for
+	 * this context workspace.
 	 *
-	 * @param \DateTime $currentDateTime A date and time to simulate.
-	 * @return void
+	 * @return mixed
 	 * @api
 	 */
-	public function setCurrentDateTime(\DateTime $currentDateTime);
+	public function getRootNode();
 
 	/**
 	 * Returns a node specified by the given absolute path.
 	 *
 	 * @param string $path Absolute path specifying the node
-	 * @return PersistentNodeInterface The specified node or NULL if no such node exists
+	 * @return NodeInterface The specified node or NULL if no such node exists
 	 * @api
 	 */
 	public function getNode($path);
@@ -82,20 +64,10 @@ interface ContextInterface {
 	 *
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found between and including the given paths or an empty array of none were found
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
 	 * @api
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint);
-
-	/**
-	 * Sets if nodes which are usually invisible should be accessible through the Node API and queries
-	 *
-	 * @param boolean $invisibleContentShown If TRUE, invisible nodes are shown.
-	 * @return void
-	 * @see Node->filterNodeByContext()
-	 * @api
-	 */
-	public function setInvisibleContentShown($invisibleContentShown);
 
 	/**
 	 * Tells if nodes which are usually invisible should be accessible through the Node API and queries
@@ -107,17 +79,6 @@ interface ContextInterface {
 	public function isInvisibleContentShown();
 
 	/**
-	 * Sets if nodes which have their "removed" flag set should be accessible through
-	 * the Node API and queries
-	 *
-	 * @param boolean $removedContentShown If TRUE, removed nodes are shown
-	 * @return void
-	 * @see Node->filterNodeByContext()
-	 * @api
-	 */
-	public function setRemovedContentShown($removedContentShown);
-
-	/**
 	 * Tells if nodes which have their "removed" flag set should be accessible through
 	 * the Node API and queries
 	 *
@@ -126,16 +87,6 @@ interface ContextInterface {
 	 * @api
 	 */
 	public function isRemovedContentShown();
-
-	/**
-	 * Sets if nodes which have access restrictions should be accessible through
-	 * the Node API and queries even without the necessary roles / rights
-	 *
-	 * @param boolean $inaccessibleContentShown
-	 * @return void
-	 * @api
-	 */
-	public function setInaccessibleContentShown($inaccessibleContentShown);
 
 	/**
 	 * Tells if nodes which have access restrictions should be accessible through

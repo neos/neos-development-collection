@@ -17,7 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
  * A Content Object Proxy object to connect domain models to nodes
  *
  * This class is never used directly in userland but is instantiated automatically
- * through setContentObject() in AbstractNode.
+ * through setContentObject() in AbstractNodeData.
  *
  * @Flow\Entity
  */

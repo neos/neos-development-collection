@@ -21,9 +21,9 @@ class NodeMigration {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -61,19 +61,17 @@ class NodeMigration {
 	protected $packageManager;
 
 	/**
-	 * @var string
+	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
-	protected $workspaceName;
+	protected $context;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param string $workspaceName
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @param array $configuration
 	 * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
 	 */
-	public function __construct($workspaceName, array $configuration) {
-		$this->workspaceName = $workspaceName;
+	public function __construct(\TYPO3\TYPO3CR\Domain\Service\Context $context, array $configuration) {
+		$this->context = $context;
 		$this->configuration = $configuration;
 	}
 
@@ -83,7 +81,7 @@ class NodeMigration {
 	 * @return void
 	 */
 	public function migrateUp() {
-		$rootNode = $this->nodeRepository->findOneByPath('/', $this->getWorkspace());
+		$rootNode = $this->nodeDataRepository->findOneByPath('/', $this->context->getWorkspace(FALSE));
 		$this->walkNodes($rootNode, MigrationStatus::DIRECTION_UP);
 	}
 
@@ -93,7 +91,7 @@ class NodeMigration {
 	 * @return void
 	 */
 	public function migrateDown() {
-		$rootNode = $this->nodeRepository->findOneByPath('/', $this->getWorkspace());
+		$rootNode = $this->nodeDataRepository->findOneByPath('/', $this->context->getWorkspace(FALSE));
 		$this->walkNodes($rootNode, MigrationStatus::DIRECTION_DOWN);
 	}
 
@@ -101,11 +99,11 @@ class NodeMigration {
 	 * Walks over the nodes starting at the given node and executes the configured
 	 * transformations on nodes matching the defined filters.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $migrationType One of the MIGRATION_TYPE_* constants.
 	 * @return void
 	 */
-	protected function walkNodes(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $migrationType) {
+	protected function walkNodes(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $migrationType) {
 		foreach ($this->configuration as $migrationDescription) {
 			if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
 				$this->nodeTransformationService->execute($node, $migrationDescription['transformations']);
@@ -117,20 +115,5 @@ class NodeMigration {
 		}
 	}
 
-	/**
-	 * Returns the current workspace.
-	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The workspace
-	 * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
-	 */
-	public function getWorkspace() {
-		if ($this->workspace === NULL) {
-			$this->workspace = $this->workspaceRepository->findOneByName($this->workspaceName);
-			if (!$this->workspace) {
-				throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('The workspace you want to migrate does not exist.', 1343302352);
-			}
-		}
-		return $this->workspace;
-	}
 }
 ?>

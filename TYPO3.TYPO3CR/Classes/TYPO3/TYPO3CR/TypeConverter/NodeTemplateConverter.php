@@ -12,7 +12,6 @@ namespace TYPO3\TYPO3CR\TypeConverter;
  *                                                                        */
 
 use TYPO3\Flow\Error\Error;
-use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -79,7 +78,7 @@ class NodeTemplateConverter extends NodeConverter {
 		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
 		$nodeType = $this->extractNodeType($targetType, $source);
 		$nodeTemplate->setNodeType($nodeType);
-		$this->setNodeProperties($nodeTemplate, $source);
+		$this->setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source);
 		return $nodeTemplate;
 	}
 

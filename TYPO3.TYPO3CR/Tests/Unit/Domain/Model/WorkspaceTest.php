@@ -34,60 +34,41 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode() {
 		$workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
 
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('add'), array(), '', FALSE);
-		$mockNodeRepository->expects($this->once())->method('add');
+		$mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('add'), array(), '', FALSE);
+		$mockNodeDataRepository->expects($this->once())->method('add');
 
-		$workspace->_set('nodeRepository', $mockNodeRepository);
+		$workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
 		$workspace->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\Node', $workspace->getRootNode());
-	}
-
-	/**
-	 * @test
-	 */
-	public function theCurrentContextCanBeAssignedAndRetrievedOfAWorkspace() {
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
-
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath', 'getContext'), array(), '', FALSE);
-		$nodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-
-		$mockRootNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', array(), array(), '', FALSE);
-
-		$workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$workspace->_set('nodeRepository', $nodeRepository);
-		$workspace->_set('rootNode', $mockRootNode);
-		$workspace->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-
-		$this->assertSame($mockContext, $workspace->getContext());
+		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeData', $workspace->getRootNode());
 	}
 
 	/**
 	 * @test
 	 */
 	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePubslished() {
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
+		$mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', array(), array(), '', FALSE);
+		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
-		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
+		$currentWorkspace->_set('nodeDataRepository', $mockNodeDataRepository);
 		$currentWorkspace->expects($this->once())->method('getPublishingTargetWorkspace')->with('live')->will($this->returnValue($targetWorkspace));
 
 		$nodesInCurrentWorkspace = array(
-			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $currentWorkspace)),
-			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('isRemoved', 'setWorkspace'), array('/sites/foo/homepage', $currentWorkspace, 'fakeUuid')),
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/', $currentWorkspace)),
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('isRemoved', 'setWorkspace'), array('/sites/foo/homepage', $currentWorkspace, 'fakeUuid')),
 		);
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('setWorkspace')->with($targetWorkspace);
 
 		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
-		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
-		$mockNodeRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
-		$mockNodeRepository->expects($this->once())->method('remove')->with($existingNode);
+		$mockNodeDataRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
+		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
+		$mockNodeDataRepository->expects($this->once())->method('remove')->with($existingNode);
 
 		$currentWorkspace->publish('live');
 	}
@@ -96,27 +77,27 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishWillRemoveNodesInTargetWorkspaceIfTheyHaveBeenMarkedAsRemovedInSourceWorkspace() {
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
+		$mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', array(), array(), '', FALSE);
+		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
-		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
+		$currentWorkspace->_set('nodeDataRepository', $mockNodeDataRepository);
 		$currentWorkspace->expects($this->once())->method('getPublishingTargetWorkspace')->with('live')->will($this->returnValue($targetWorkspace));
 
 		$nodesInCurrentWorkspace = array(
-			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $currentWorkspace)),
-			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('isRemoved'), array('/sites/foo/homepage', $currentWorkspace, 'fakeUuid')),
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/', $currentWorkspace)),
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('isRemoved'), array('/sites/foo/homepage', $currentWorkspace, 'fakeUuid')),
 		);
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
 
 		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
-		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
-		$mockNodeRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
-		$mockNodeRepository->expects($this->at(2))->method('remove')->with($existingNode);
-		$mockNodeRepository->expects($this->at(3))->method('remove')->with($nodesInCurrentWorkspace[1]);
+		$mockNodeDataRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
+		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
+		$mockNodeDataRepository->expects($this->at(2))->method('remove')->with($existingNode);
+		$mockNodeDataRepository->expects($this->at(3))->method('remove')->with($nodesInCurrentWorkspace[1]);
 
 		$currentWorkspace->publish('live');
 	}
@@ -125,12 +106,12 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getNodeCountCallsRepositoryFunction() {
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByWorkspace'), array(), '', FALSE);
+		$mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('countByWorkspace'), array(), '', FALSE);
 
 		$workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$workspace->_set('nodeRepository', $mockNodeRepository);
+		$workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
-		$mockNodeRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
+		$mockNodeDataRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
 
 		$this->assertSame(42, $workspace->getNodeCount());
 	}
@@ -184,7 +165,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider validContextNodePaths
 	 */
 	public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath) {
-		preg_match(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
 		$this->assertArrayHasKey('WorkspaceName', $matches);
 	}
 
@@ -203,7 +184,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @dataProvider invalidContextNodePaths
 	 */
 	public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath) {
-		preg_match(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
 		$this->assertArrayNotHasKey('WorkspaceName', $matches);
 	}
 

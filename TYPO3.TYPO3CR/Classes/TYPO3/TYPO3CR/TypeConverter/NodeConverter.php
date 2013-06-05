@@ -13,8 +13,8 @@ namespace TYPO3\TYPO3CR\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
+use TYPO3\TYPO3CR\Exception\NodeException;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -33,22 +33,6 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * @var array
 	 */
 	protected $sourceTypes = array('string', 'array');
-
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface';
-
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
-	 */
-	protected $siteRepository;
 
 	/**
 	 * @Flow\Inject
@@ -70,9 +54,32 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
+	 * @var string
+	 */
+	protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\NodeInterface';
+
+	/**
+	 * @var integer
+	 */
+	protected $priority = 1;
+
 
 	/**
 	 * Converts the specified node path into a Node.
@@ -101,7 +108,7 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @throws \Exception
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
 			$source = array('__contextNodePath' => $source);
 		}
@@ -110,57 +117,33 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 			return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
 		}
 
-		preg_match(PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $source['__contextNodePath'], $matches);
+		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $source['__contextNodePath'], $matches);
 		if (!isset($matches['NodePath'])) {
 			return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
 		}
 		$nodePath = $matches['NodePath'];
 
-		if ($this->nodeRepository->getContext() === NULL) {
-			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-			$contentContext = new ContentContext($workspaceName);
-			$this->nodeRepository->setContext($contentContext);
-		} else {
-			$contentContext = $this->nodeRepository->getContext();
-			$workspaceName = $contentContext->getWorkspace()->getName();
-		}
-		if ($workspaceName !== 'live') {
-			$contentContext->setInvisibleContentShown(TRUE);
-			if ($configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
-				$contentContext->setRemovedContentShown(TRUE);
-			}
-		} else {
-			$contentContext->setInvisibleContentShown(FALSE);
-		}
+		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
 
-		$workspace = $contentContext->getWorkspace(FALSE);
-		if (!$workspace) {
-			return new Error(sprintf('Could not convert %s to Node object because the workspace "%s" as specified in the context node path does not exist.', $source['__contextNodePath'], $workspaceName), 1285162905);
+		try {
+			$node = $this->createNode($nodePath, $workspaceName, $configuration);
+		} catch (NodeException $exception) {
+			return new Error($exception->getMessage(), $exception->getCode());
 		}
-
-		$currentAccessModeFromContext = $contentContext->isInaccessibleContentShown();
-		$contentContext->setInaccessibleContentShown(TRUE);
-		$node = $contentContext->getNode($nodePath);
-		$contentContext->setInaccessibleContentShown($currentAccessModeFromContext);
-
-		if (!$node) {
-			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1285162908);
-		}
-
-		$this->setNodeProperties($node, $source);
+		$this->setNodeProperties($node, $node->getNodeType(), $source);
 		return $node;
 	}
 
 	/**
 	 * Iterates through the given $properties setting them on the specified $node using the appropriate TypeConverters.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param object $nodeLike
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
 	 * @param array $properties
-	 * @return void
 	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
+	 * @return void
 	 */
-	protected function setNodeProperties(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $properties) {
-		$nodeType = $node->getNodeType();
+	protected function setNodeProperties($nodeLike, \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType, array $properties) {
 		$nodeTypeProperties = $nodeType->getProperties();
 		foreach ($properties as $nodePropertyName => $nodePropertyValue) {
 			if (substr($nodePropertyName, 0, 2) === '__') {
@@ -177,7 +160,7 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 						$nodePropertyValue = NULL;
 					}
 				}
-				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($node, $nodePropertyName, $nodePropertyValue);
+				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
 				continue;
 			}
 			if (!isset($nodeTypeProperties[$nodePropertyName])) {
@@ -192,8 +175,56 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 					}
 				}
 			}
-			$node->setProperty($nodePropertyName, $nodePropertyValue);
+			$nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
 		}
+	}
+
+	/**
+	 * Tries to fetch the Node object based on the given path and workspace.
+	 *
+	 * @param string $nodePath
+	 * @param string $workspaceName
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 */
+	protected function createNode($nodePath, $workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+		$nodeContext = $this->createContext($workspaceName, $configuration);
+		$workspace = $nodeContext->getWorkspace(FALSE);
+		if (!$workspace) {
+			throw new NodeException(sprintf('Could not convert %s to Node object because the workspace "%s" as specified in the context node path does not exist.', $nodePath, $workspaceName), 1370502313);
+		}
+
+		$node = $nodeContext->getNode($nodePath);
+		if (!$node) {
+			throw new NodeException(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
+		}
+
+		return $node;
+	}
+
+	/**
+	 * Creates the context for the nodes based on the given workspace.
+	 *
+	 * @param string $workspaceName
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 */
+	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+		$invisibleContentShown = FALSE;
+		$removedContentShown = FALSE;
+		if ($workspaceName !== 'live') {
+			$invisibleContentShown = TRUE;
+			if ($configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
+				$removedContentShown = TRUE;
+			}
+		}
+
+		return $this->contextFactory->create(array(
+			'workspaceName' => $workspaceName,
+			'invisibleContentShown' => $invisibleContentShown,
+			'removedContentShown' => $removedContentShown
+		));
 	}
 }
 ?>

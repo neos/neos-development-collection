@@ -43,20 +43,20 @@ class ChangeNodeType extends AbstractTransformation {
 	 * If the given node has the property this transformation should work on, this
 	 * returns TRUE if the given NodeType is registered with the NodeTypeManager
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		return $this->nodeTypeManager->hasNodeType($this->newType);
 	}
 
 	/**
 	 * Change the Node Type on the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$nodeType = $this->nodeTypeManager->getNodeType($this->newType);
 		$node->setNodeType($nodeType);
 	}

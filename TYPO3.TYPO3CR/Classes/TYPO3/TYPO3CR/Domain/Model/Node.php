@@ -11,241 +11,59 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
-
-use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A Node inside the Content Repository. This is the main API for storing and
- * retrieving content in the system.
+ * This is the main API for storing and retrieving content in the system.
  *
- * Note: If this API is extended, make sure to also implement the additional
- * methods inside ProxyNode and keep NodeInterface / PersistentNodeInterface in sync!
- *
- * @Flow\Entity
+ * @Flow\Scope("prototype")
  * @api
  */
-class Node extends AbstractNode implements PersistentNodeInterface {
+class Node implements NodeInterface {
 
 	/**
-	 * Auto-incrementing version of this node, used for optimistic locking
+	 * The NodeData entity this version is for.
 	 *
-	 * @ORM\Version
-	 * @var integer
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	protected $version;
+	protected $nodeData;
 
 	/**
-	 * Absolute path of this node
-	 *
-	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextInterface
 	 */
-	protected $path;
+	protected $context;
 
 	/**
-	 * Absolute path of the parent path
-	 *
-	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
-	 */
-	protected $parentPath;
-
-	/**
-	 * Workspace this node is contained in
-	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @ORM\ManyToOne
-	 * @ORM\JoinColumn(onDelete="SET NULL")
-	 */
-	protected $workspace;
-
-	/**
-	 * Identifier of this node which is unique within its workspace
-	 *
-	 * @var string
-	 */
-	protected $identifier;
-
-	/**
-	 * Index within the nodes with the same parent
-	 *
-	 * @var integer
-	 * @ORM\Column(name="sortingindex", nullable=true)
-	 */
-	protected $index;
-
-	/**
-	 * Level number within the global node tree
-	 *
-	 * @var integer
-	 * @Flow\Transient
-	 */
-	protected $depth;
-
-	/**
-	 * Node name, derived from its node path
-	 *
-	 * @var string
-	 * @Flow\Transient
-	 */
-	protected $name;
-
-	/**
-	 * Optional proxy for a content object which acts as an alternative property container
-	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
-	 * @ORM\ManyToOne
-	 */
-	protected $contentObjectProxy;
-
-	/**
-	 * If this is a removed node. This flag can and is only used in workspaces
-	 * which do have a base workspace. In a bottom level workspace nodes are
-	 * really removed, in other workspaces, removal is realized by this flag.
+	 * Defines if the NodeData represented by this Node is already
+	 * in the same context or if it is currently just "shining through".
 	 *
 	 * @var boolean
 	 */
-	protected $removed = FALSE;
-
-	/**
-	 * @var \DateTime
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $hiddenBeforeDateTime;
-
-	/**
-	 * @var \DateTime
-	 * @ORM\Column(nullable=true)
-	 */
-	protected $hiddenAfterDateTime;
+	protected $nodeDataIsMatchingContext;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $persistenceManager;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
 	 */
-	protected $nodeRepository;
+	protected $nodeFactory;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @throws \InvalidArgumentException if you give a Node as originalNode.
+	 * @Flow\Autowiring(false)
 	 */
-	protected $proxyNodeFactory;
+	public function __construct(NodeData $nodeData, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+		$this->nodeData = $nodeData;
+		$this->context = $context;
 
-	/**
-	 * Constructs this node
-	 *
-	 * Creating new nodes by instantiating Node is not part of the public API!
-	 * The content repository needs to propertly integrate new nodes into the node
-	 * tree and therefore you must use createNode() or createNodeFromTemplate().
-	 *
-	 * @param string $path Absolute path of this node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
-	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
-	 */
-	public function __construct($path, Workspace $workspace, $identifier = NULL) {
-		$this->setPath($path, FALSE);
-		$this->workspace = $workspace;
-		$this->identifier = ($identifier === NULL) ? \TYPO3\Flow\Utility\Algorithms::generateUUID() : $identifier;
-	}
-
-	/**
-	 * Set the name of the node to $newName, keeping it's position as it is.
-	 *
-	 * @param string $newName
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
-	 * @throws \InvalidArgumentException if $newName is invalid
-	 * @api
-	 */
-	public function setName($newName) {
-		if (!is_string($newName) || preg_match(self::MATCH_PATTERN_NAME, $newName) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
-		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
-		}
-
-		if ($this->getName() === $newName) {
-			return;
-		}
-
-		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
-		$this->update();
-		$this->nodeRepository->persistEntities();
-		$this->emitNodePathChanged();
-	}
-
-	/**
-	 * Returns the name of this node
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function getName() {
-		if ($this->name === NULL) {
-			$this->name = $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
-		}
-		return $this->name;
-	}
-
-	/**
-	 * Sets the absolute path of this node
-	 *
-	 * This method is only for internal use by the content repository. Changing
-	 * the path of a node manually may lead to unexpected behavior and bad breath.
-	 *
-	 * @param string $path
-	 * @param boolean $recursive
-	 * @return void
-	 * @throws \InvalidArgumentException if the given node path is invalid.
-	 */
-	public function setPath($path, $recursive = TRUE) {
-		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
-			throw new \InvalidArgumentException('Invalid path "' . $path . '" (a path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters).', 1284369857);
-		}
-
-		if ($path === $this->path) {
-			return;
-		}
-
-		if ($recursive === TRUE) {
-			/** @var $childNode PersistentNodeInterface */
-			foreach ($this->getChildNodes() as $childNode) {
-				$childNode->setPath($path . '/' . $childNode->getName());
-			}
-		}
-
-		$this->path = $path;
-		if ($path === '/') {
-			$this->parentPath = '';
-			$this->depth = 0;
-		} elseif (substr_count($path, '/') === 1) {
-				$this->parentPath = '/';
-		} else {
-			$this->parentPath = substr($path, 0, strrpos($path, '/'));
-		}
-		$this->emitNodePathChanged();
-	}
-
-	/**
-	 * Returns the path of this node
-	 *
-	 * Example: /sites/mysitecom/homepage/about
-	 *
-	 * @return string The absolute node path
-	 * @api
-	 */
-	public function getPath() {
-		return $this->path;
+		$this->nodeDataIsMatchingContext = $this->isNodeDataMatchingContext();
 	}
 
 	/**
@@ -257,12 +75,63 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function getContextPath() {
-		$contextPath = $this->path;
-		$workspaceName = $this->getContext()->getWorkspace()->getName();
+		$contextPath = $this->nodeData->getPath();
+		$workspaceName = $this->context->getWorkspace()->getName();
 		if ($workspaceName !== 'live') {
 			$contextPath .= '@' . $workspaceName;
 		}
 		return $contextPath;
+	}
+
+	/**
+	 * Set the name of the node to $newName, keeping its position as it is.
+	 *
+	 * @param string $newName
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
+	 * @throws \InvalidArgumentException if $newName is invalid
+	 * @api
+	 */
+	public function setName($newName) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+
+		$this->nodeData->setName($newName);
+	}
+
+	/**
+	 * Sets the absolute path of this node.
+	 *
+	 * This method is only for internal use by the content repository. Changing
+	 * the path of a node manually may lead to unexpected behavior.
+	 *
+	 * @param string $path
+	 * @param boolean $recursive
+	 * @return void
+	 * @throws \InvalidArgumentException
+	 */
+	public function setPath($path, $recursive = TRUE) {
+		if ($recursive === TRUE) {
+			/** @var $childNode NodeInterface */
+			foreach ($this->getChildNodes() as $childNode) {
+				$childNode->setPath($path . '/' . $childNode->getNodeData()->getName(), TRUE);
+			}
+		}
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setPath($path, FALSE);
+	}
+
+	/**
+	 * Returns the path of this node
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getPath() {
+		return $this->nodeData->getPath();
 	}
 
 	/**
@@ -273,10 +142,35 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function getDepth() {
-		if ($this->depth === NULL) {
-			$this->depth = $this->path === '/' ? 0 : substr_count($this->path, '/');
-		}
-		return $this->depth;
+		return $this->nodeData->getDepth();
+	}
+
+	/**
+	 * Returns the name of this node
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getName() {
+		return $this->nodeData->getName();
+	}
+
+	/**
+	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description of this node
+	 *
+	 * @return string
+	 */
+	public function getLabel() {
+		return $this->nodeData->getLabel();
+	}
+
+	/**
+	 * Returns a short abstract describing / containing summarized content of this node
+	 *
+	 * @return string
+	 */
+	public function getAbstract() {
+		return $this->nodeData->getAbstract();
 	}
 
 	/**
@@ -289,10 +183,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @return void
 	 */
 	public function setWorkspace(Workspace $workspace) {
-		if ($this->workspace !== $workspace) {
-			$this->workspace = $workspace;
-			$this->nodeRepository->update($this);
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
+		$this->nodeData->setWorkspace($workspace);
 	}
 
 	/**
@@ -302,40 +196,32 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function getWorkspace() {
-		return $this->workspace;
+		return $this->nodeData->getWorkspace();
 	}
 
 	/**
-	 * Returns the identifier of this node.
+	 * Returns the identifier of this node
 	 *
-	 * This UUID is not the same as the technical persistence identifier used by
-	 * Flow's persistence framework. It is an additional identifier which is unique
-	 * within the same workspace and is used for tracking the same node in across
-	 * workspaces.
-	 *
-	 * It is okay and recommended to use this identifier for synchronisation purposes
-	 * as it does not change even if all of the nodes content or its path changes.
-	 *
-	 * @return string the node's UUID
+	 * @return string the node's UUID (unique within the workspace)
 	 * @api
 	 */
 	public function getIdentifier() {
-		return $this->identifier;
+		return $this->nodeData->getIdentifier();
 	}
 
 	/**
 	 * Sets the index of this node
 	 *
-	 * This method is for internal use and must only be used by other nodes!
+	 * NOTE: This method is meant for internal use and must only be used by other nodes.
 	 *
 	 * @param integer $index The new index
 	 * @return void
 	 */
 	public function setIndex($index) {
-		if ($this->index !== $index) {
-			$this->index = $index;
-			$this->nodeRepository->update($this);
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
+		$this->nodeData->setIndex($index);
 	}
 
 	/**
@@ -345,22 +231,20 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @return integer
 	 */
 	public function getIndex() {
-		return $this->index;
+		return $this->nodeData->getIndex();
 	}
 
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The parent node or NULL if this is the root node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
 	 * @api
 	 */
 	public function getParent() {
-		if ($this->path === '/') {
+		if ($this->getPath() === '/') {
 			return NULL;
 		}
-		$parentNode = $this->nodeRepository->findOneByPath($this->parentPath, $this->getContext()->getWorkspace());
-		$parentNode = $this->createProxyForContextIfNeeded($parentNode);
-		return $this->filterNodeByContext($parentNode);
+		return $this->nodeDataRepository->findOneByPathInContext($this->getParentPath(), $this->context);
 	}
 
 	/**
@@ -370,98 +254,69 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function getParentPath() {
-		return $this->parentPath;
+		return $this->nodeData->getParentPath();
 	}
 
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node
 	 * @api
 	 */
-	public function moveBefore(PersistentNodeInterface $referenceNode) {
-		if ($referenceNode === $this) {
-			return;
+	public function moveBefore(NodeInterface $referenceNode) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
-		}
-
-		if ($referenceNode->getParentPath() !== $this->parentPath) {
-			$parentPath = $referenceNode->getParentPath();
-			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
-			$this->emitNodePathChanged();
-		}
-		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_BEFORE, $referenceNode);
+		$this->nodeData->moveBefore($referenceNode->getNodeData());
 	}
 
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 * @api
 	 */
-	public function moveAfter(PersistentNodeInterface $referenceNode) {
-		if ($referenceNode === $this) {
-			return;
+	public function moveAfter(NodeInterface $referenceNode) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
-		}
-
-		if ($referenceNode->getParentPath() !== $this->parentPath) {
-			$parentPath = $referenceNode->getParentPath();
-			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
-			$this->emitNodePathChanged();
-		}
-		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_AFTER, $referenceNode);
+		$this->nodeData->moveAfter($referenceNode->getNodeData());
 	}
 
 	/**
 	 * Moves this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 * @api
 	 */
-	public function moveInto(PersistentNodeInterface $referenceNode) {
-		if ($referenceNode === $this || $referenceNode === $this->getParent()) {
-			return;
+	public function moveInto(NodeInterface $referenceNode) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1346769001);
-		}
-
-		$parentPath = $referenceNode->getPath();
-		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
-		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_LAST);
-		$this->emitNodePathChanged();
+		$this->nodeData->moveInto($referenceNode->getNodeData());
 	}
 
 	/**
-	 * Copies this node after the given node
+	 * Copies this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */
-	public function copyBefore(PersistentNodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
-		$copiedNode->similarize($this);
-		/** @var $childNode PersistentNodeInterface */
-		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->copyInto($copiedNode, $childNode->getName());
+	public function copyBefore(NodeInterface $referenceNode, $nodeName) {
+		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
 		}
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+
+		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
 		$copiedNode->moveBefore($referenceNode);
 
 		return $copiedNode;
@@ -470,43 +325,191 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	/**
 	 * Copies this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */
-	public function copyAfter(PersistentNodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->getParent()->createSingleNode($nodeName);
-		$copiedNode->similarize($this);
-		/** @var $childNode PersistentNodeInterface */
-		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->copyInto($copiedNode, $childNode->getName());
+	public function copyAfter(NodeInterface $referenceNode, $nodeName) {
+		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
 		}
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+
+		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
 		$copiedNode->moveAfter($referenceNode);
 
 		return $copiedNode;
 	}
 
 	/**
-	 * Copies this node to below the given node. The new node will be added behind
-	 * any existing sub nodes of the given node.
+	 * Copies this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */
-	public function copyInto(PersistentNodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->createSingleNode($nodeName);
-		$copiedNode->similarize($this);
-		/** @var $childNode PersistentNodeInterface */
-		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->copyInto($copiedNode, $childNode->getName());
+	public function copyInto(NodeInterface $referenceNode, $nodeName) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
 
+		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
+
 		return $copiedNode;
+	}
+
+	/**
+	 * Sets the specified property.
+	 *
+	 * If the node has a content object attached, the property will be set there
+	 * if it is settable.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @param mixed $value Value of the property
+	 * @return mixed
+	 * @api
+	 */
+	public function setProperty($propertyName, $value) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setProperty($propertyName, $value);
+	}
+
+	/**
+	 * If this node has a property with the given name.
+	 *
+	 * If the node has a content object attached, the property will be checked
+	 * there.
+	 *
+	 * @param string $propertyName
+	 * @return boolean
+	 * @api
+	 */
+	public function hasProperty($propertyName) {
+		return $this->nodeData->hasProperty($propertyName);
+	}
+
+	/**
+	 * Returns the specified property.
+	 *
+	 * If the node has a content object attached, the property will be fetched
+	 * there if it is gettable.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return mixed value of the property
+	 * @api
+	 */
+	public function getProperty($propertyName) {
+		return $this->nodeData->getProperty($propertyName);
+	}
+
+	/**
+	 * Removes the specified property.
+	 *
+	 * If the node has a content object attached, the property will not be removed on
+	 * that object if it exists.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+	 */
+	public function removeProperty($propertyName) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->nodeData->removeProperty($propertyName);
+		} else {
+			$this->nodeData->removeProperty($propertyName);
+		}
+	}
+
+	/**
+	 * Returns all properties of this node.
+	 *
+	 * If the node has a content object attached, the properties will be fetched
+	 * there.
+	 *
+	 * @return array Property values, indexed by their name
+	 * @api
+	 */
+	public function getProperties() {
+		return $this->nodeData->getProperties();
+	}
+
+	/**
+	 * Returns the names of all properties of this node.
+	 *
+	 * @return array Property names
+	 * @api
+	 */
+	public function getPropertyNames() {
+		return $this->nodeData->getPropertyNames();
+	}
+
+	/**
+	 * Sets a content object for this node.
+	 *
+	 * @param object $contentObject The content object
+	 * @return void
+	 * @api
+	 */
+	public function setContentObject($contentObject) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setContentObject($contentObject);
+	}
+
+	/**
+	 * Returns the content object of this node (if any).
+	 *
+	 * @return object
+	 * @api
+	 */
+	public function getContentObject() {
+		return $this->nodeData->getContentObject();
+	}
+
+	/**
+	 * Unsets the content object of this node.
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function unsetContentObject() {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->unsetContentObject();
+	}
+
+	/**
+	 * Sets the node type of this node.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+	 * @return void
+	 * @api
+	 */
+	public function setNodeType(NodeType $nodeType) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setNodeType($nodeType);
+	}
+
+	/**
+	 * Returns the node type of this node.
+	 *
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
+	 * @api
+	 */
+	public function getNodeType() {
+		return $this->nodeData->getNodeType();
 	}
 
 	/**
@@ -516,9 +519,7 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @throws \InvalidArgumentException if the node name is not accepted.
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @api
 	 */
 	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
@@ -537,36 +538,21 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
-	 * properties or creating subnodes.
+	 * properties or creating subnodes. Only used internally.
 	 *
 	 * For internal use only!
+	 * TODO: Check if we can change the import service to avoid making this public.
 	 *
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @throws \InvalidArgumentException if the node name is not accepted.
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 */
 	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
-		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1292428697);
-		}
+		$nodeData = $this->nodeData->createSingleNode($name, $nodeType, $identifier, $this->context->getWorkspace());
+		$node = $this->nodeFactory->createFromNode($nodeData, $this->context);
 
-		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
-		if ($this->getNode($newPath) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503465);
-		}
-
-		$newNode = new Node($newPath, $this->nodeRepository->getContext()->getWorkspace(), $identifier);
-		$this->nodeRepository->add($newNode);
-		$this->nodeRepository->setNewIndex($newNode, NodeRepository::POSITION_LAST);
-
-		if ($nodeType !== NULL) {
-			$newNode->setNodeType($nodeType);
-		}
-
-		return $this->createProxyForContextIfNeeded($newNode, TRUE);
+		return $node;
 	}
 
 	/**
@@ -574,30 +560,26 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface the freshly generated node
+	 * @return NodeInterface the freshly generated node
 	 * @api
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
-		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
-		$newNode = $this->createNode($newNodeName, $nodeTemplate->getNodeType());
-		$newNode->similarize($nodeTemplate);
-		return $newNode;
+		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName);
+		$node = $this->nodeFactory->createFromNode($nodeData, $this->context);
+
+		return $node;
 	}
 
 	/**
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 * @api
 	 */
 	public function getNode($path) {
-		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->getContext()->getWorkspace());
-		if ($node === NULL) {
-			return NULL;
-		}
-		$node = $this->createProxyForContextIfNeeded($node);
-		return $this->filterNodeByContext($node);
+		$absolutePath = $this->nodeData->normalizePath($path);
+		return $this->nodeDataRepository->findOneByPathInContext($absolutePath, $this->context);
 	}
 
 	/**
@@ -606,16 +588,11 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * node type. For now it is just the first child node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The primary child node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Node The primary child node or NULL if no such node exists
 	 * @api
 	 */
 	public function getPrimaryChildNode() {
-		$node = $this->nodeRepository->findFirstByParentAndNodeType($this->path, NULL, $this->getContext()->getWorkspace());
-		if ($node === NULL) {
-			return NULL;
-		}
-		$node = $this->createProxyForContextIfNeeded($node);
-		return $this->filterNodeByContext($node);
+		return $this->nodeDataRepository->findFirstByParentAndNodeTypeInContext($this->getPath(), NULL, $this->context);
 	}
 
 	/**
@@ -625,12 +602,11 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
 	 * @api
 	 */
 	public function getChildNodes($nodeTypeFilter = NULL, $limit = NULL, $offset = NULL) {
-		$nodes = $this->nodeRepository->findByParentAndNodeType($this->path, $nodeTypeFilter, $this->getContext()->getWorkspace(), $limit, $offset);
-		return $this->proxyAndFilterNodesForContext($nodes);
+		return $this->nodeDataRepository->findByParentAndNodeTypeInContext($this->getPath(), $nodeTypeFilter, $this->context, $limit, $offset);
 	}
 
 	/**
@@ -641,7 +617,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function getNumberOfChildNodes($nodeTypeFilter = NULL) {
-		return $this->nodeRepository->countByParentAndNodeType($this->path, $nodeTypeFilter, $this->getContext()->getWorkspace());
+		if ($this->nodeDataIsMatchingContext) {
+			return $this->nodeData->getNumberOfChildNodes($nodeTypeFilter);
+		}
+		return $this->nodeDataRepository->countByParentAndNodeType($this->getPath(), $nodeTypeFilter, $this->context->getWorkspace());
 	}
 
 	/**
@@ -650,10 +629,9 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
 	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
 	 * @api
-	 * @todo Needs proper implementation in NodeRepository which only counts nodes (considering workspaces, removed nodes etc.)
 	 */
 	public function hasChildNodes($nodeTypeFilter = NULL) {
-		return ($this->getChildNodes($nodeTypeFilter) !== array());
+		return ($this->getNumberOfChildNodes($nodeTypeFilter) > 0);
 	}
 
 	/**
@@ -663,17 +641,10 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function remove() {
-		/** @var $childNode PersistentNodeInterface */
-		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->remove();
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
 		}
-
-		if ($this->workspace->getBaseWorkspace() === NULL) {
-			$this->nodeRepository->remove($this);
-		} else {
-			$this->removed = TRUE;
-			$this->nodeRepository->update($this);
-		}
+		$this->nodeData->remove();
 	}
 
 	/**
@@ -696,28 +667,158 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function isRemoved() {
-		return $this->removed;
+		return $this->nodeData->isRemoved();
+	}
+
+	/**
+	 * Sets the "hidden" flag for this node.
+	 *
+	 * @param boolean $hidden If TRUE, this Node will be hidden
+	 * @return void
+	 * @api
+	 */
+	public function setHidden($hidden) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setHidden($hidden);
+	}
+
+	/**
+	 * Returns the current state of the hidden flag
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isHidden() {
+		return $this->nodeData->isHidden();
+	}
+
+	/**
+	 * Sets the date and time when this node becomes potentially visible.
+	 *
+	 * @param \DateTime $dateTime Date before this node should be hidden
+	 * @return void
+	 * @api
+	 */
+	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setHiddenBeforeDateTime($dateTime);
+	}
+
+	/**
+	 * Returns the date and time before which this node will be automatically hidden.
+	 *
+	 * @return \DateTime Date before this node will be hidden
+	 * @api
+	 */
+	public function getHiddenBeforeDateTime() {
+		return $this->nodeData->getHiddenBeforeDateTime();
+	}
+
+	/**
+	 * Sets the date and time when this node should be automatically hidden
+	 *
+	 * @param \DateTime $dateTime Date after which this node should be hidden
+	 * @return void
+	 * @api
+	 */
+	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setHiddenAfterDateTime($dateTime);
+	}
+
+	/**
+	 * Returns the date and time after which this node will be automatically hidden.
+	 *
+	 * @return \DateTime Date after which this node will be hidden
+	 * @api
+	 */
+	public function getHiddenAfterDateTime() {
+		return $this->nodeData->getHiddenAfterDateTime();
+	}
+
+	/**
+	 * Sets if this node should be hidden in indexes, such as a site navigation.
+	 *
+	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+	 * @return void
+	 * @api
+	 */
+	public function setHiddenInIndex($hidden) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setHiddenInIndex($hidden);
+	}
+
+	/**
+	 * If this node should be hidden in indexes
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isHiddenInIndex() {
+		return $this->nodeData->isHiddenInIndex();
+	}
+
+	/**
+	 * Sets the roles which are required to access this node
+	 *
+	 * @param array $accessRoles
+	 * @return void
+	 * @api
+	 */
+	public function setAccessRoles(array $accessRoles) {
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
+		$this->nodeData->setAccessRoles($accessRoles);
+	}
+
+	/**
+	 * Returns the names of defined access roles
+	 *
+	 * @return array
+	 * @api
+	 */
+	public function getAccessRoles() {
+		return $this->nodeData->getAccessRoles();
+	}
+
+	/**
+	 * Tells if a node, in general,  has access restrictions, independent of the
+	 * current security context.
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function hasAccessRestrictions() {
+		return $this->nodeData->hasAccessRestrictions();
 	}
 
 	/**
 	 * Tells if this node is "visible".
 	 *
-	 * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are taken into account.
-	 * The fact that a node is "visible" does not imply that it can / may be shown to the user. Further modifiers
-	 * such as isAccessible() need to be evaluated.
+	 * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are
+	 * taken into account.
 	 *
 	 * @return boolean
 	 * @api
 	 */
 	public function isVisible() {
-		if ($this->hidden === TRUE) {
+		if ($this->nodeData->isVisible() === FALSE) {
 			return FALSE;
 		}
-		$currentDateTime = $this->getContext()->getCurrentDateTime();
-		if ($this->hiddenBeforeDateTime !== NULL && $this->hiddenBeforeDateTime > $currentDateTime) {
+		$currentDateTime = $this->context->getCurrentDateTime();
+		if ($this->getHiddenBeforeDateTime() !== NULL && $this->getHiddenBeforeDateTime() > $currentDateTime) {
 			return FALSE;
 		}
-		if ($this->hiddenAfterDateTime !== NULL && $this->hiddenAfterDateTime < $currentDateTime) {
+		if ($this->getHiddenAfterDateTime() !== NULL && $this->getHiddenAfterDateTime() < $currentDateTime) {
 			return FALSE;
 		}
 		return TRUE;
@@ -730,205 +831,87 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 * @api
 	 */
 	public function isAccessible() {
-		// TODO: if security context can not be initialized (because too early), we return TRUE.
-		if ($this->hasAccessRestrictions() === FALSE) {
-			return TRUE;
-		}
-
-		foreach ($this->accessRoles as $roleName) {
-			if ($this->securityContext->hasRole($roleName)) {
-				return TRUE;
-			}
-		}
-		return FALSE;
+		return $this->nodeData->isAccessible();
 	}
 
 	/**
-	 * Tells if a node, in general,  has access restrictions, independent of the
-	 * current security context.
-	 *
-	 * @return boolean
-	 * @api
-	 */
-	public function hasAccessRestrictions() {
-		if (!is_array($this->accessRoles) || empty($this->accessRoles)) {
-			return FALSE;
-		}
-		if (count($this->accessRoles) === 1 && in_array('Everybody', $this->accessRoles)) {
-			return FALSE;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * Returns the current context this node operates in.
-	 *
-	 * This is for internal use only.
+	 * Returns the context this node operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @api
 	 */
 	public function getContext() {
-		return $this->nodeRepository->getContext();
+		return $this->context;
 	}
 
 	/**
-	 * Make the node "similar" to the given source node. That means,
-	 *  - all properties
-	 *  - index
-	 *  - node type
-	 *  - content object
-	 * will be set to the same values as in the source node.
+	 * Materializes the original node (of a different workspace) into the current
+	 * workspace.
 	 *
-	 * For internal use only.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sourceNode
 	 * @return void
 	 */
-	public function similarize(NodeInterface $sourceNode) {
-		foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
-			$this->setProperty($propertyName, $propertyValue);
-		}
+	protected function materializeNodeData() {
+		$newNode = $this->createNodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $this->nodeData->getIdentifier());
+		$this->nodeDataRepository->add($newNode);
 
-		$propertyNames = array(
-			'nodeType', 'hidden', 'hiddenAfterDateTime',
-			'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
-		);
-		if ($sourceNode instanceof PersistentNodeInterface) {
-			$propertyNames[] = 'index';
-		}
-		foreach ($propertyNames as $propertyName) {
-			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this, $propertyName, \TYPO3\Flow\Reflection\ObjectAccess::getProperty($sourceNode, $propertyName));
-		}
-
-		$contentObject = $sourceNode->getContentObject();
-		if ($contentObject !== NULL) {
-			$this->setContentObject($contentObject);
-		}
+		$newNode->similarize($this->nodeData);
+		$this->nodeData = $newNode;
+		$this->nodeDataIsMatchingContext = TRUE;
 	}
 
 	/**
-	 * Normalizes the given path and returns an absolute path
+	 * Create a recursive copy of this node below $referenceNode with $nodeName.
 	 *
-	 * @param string $path The non-normalized path
-	 * @return string The normalized absolute path
-	 * @throws \InvalidArgumentException if your node path contains two consecutive slashes.
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	protected function normalizePath($path) {
-		if ($path === '.') {
-			return $this->path;
+	protected function createRecursiveCopy(NodeInterface $referenceNode, $nodeName) {
+		$copiedNode = $referenceNode->createSingleNode($nodeName);
+		$copiedNode->similarize($this);
+		/** @var $childNode Node */
+		foreach ($this->getChildNodes() as $childNode) {
+			$childNode->copyInto($copiedNode, $childNode->getName());
 		}
 
-		if (!is_string($path)) {
-			throw new \InvalidArgumentException(sprintf('An invalid node path was specified: is of type %s but a string is expected.', gettype($path)), 1357832901);
-		}
-
-		if (strpos($path, '//') !== FALSE) {
-			throw new \InvalidArgumentException('Paths must not contain two consecutive slashes.', 1291371910);
-		}
-
-		if ($path[0] === '/') {
-			$absolutePath = $path;
-		} else {
-			$absolutePath = ($this->path === '/' ? '' : $this->path) . '/' . $path;
-		}
-		$pathSegments = explode('/', $absolutePath);
-
-		while (each($pathSegments)) {
-			if (current($pathSegments) === '..') {
-				prev($pathSegments);
-				unset($pathSegments[key($pathSegments)]);
-				unset($pathSegments[key($pathSegments)]);
-				prev($pathSegments);
-			} elseif (current($pathSegments) === '.') {
-				unset($pathSegments[key($pathSegments)]);
-				prev($pathSegments);
-			}
-		}
-		$normalizedPath = implode('/', $pathSegments);
-		return ($normalizedPath === '') ? '/' : $normalizedPath;
+		return $copiedNode;
 	}
 
 	/**
-	 * Proxy nodes for current context if needed and filter with current context.
-	 *
-	 * @param array $originalNodes The nodes to proxy and filter
-	 * @return array nodes filtered and proxied as needed for current context
-	 * @see createProxyForContextIfNeeded()
-	 * @see filterNodeByContext()
-	 */
-	protected function proxyAndFilterNodesForContext(array $originalNodes) {
-		$proxyNodes = array();
-		foreach ($originalNodes as $index => $node) {
-			$treatedNode = $this->createProxyForContextIfNeeded($node);
-			$treatedNode = $this->filterNodeByContext($treatedNode);
-			if ($treatedNode !== NULL) {
-				$proxyNodes[$index] = $treatedNode;
-			}
-		}
-		return $proxyNodes;
-	}
-
-	/**
-	 * Will either return the same node or a proxy for current context.
-	 *
-	 * @param mixed $node The node to proxy
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The same node or a proxy in current context.
-	 */
-	protected function createProxyForContextIfNeeded(PersistentNodeInterface $node) {
-		if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
-			if ($node->getWorkspace() !== $this->nodeRepository->getContext()->getWorkspace()) {
-				$node = $this->proxyNodeFactory->createFromNode($node);
-			}
-		}
-		return $node;
-	}
-
-	/**
-	 * Filter a node by the current context.
-	 * Will either return the node or NULL if it is not permitted in current context.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
-	 */
-	protected function filterNodeByContext(PersistentNodeInterface $node) {
-		if (!$this->nodeRepository->getContext()->isRemovedContentShown() && $node->isRemoved()) {
-			return NULL;
-		}
-		if (!$this->nodeRepository->getContext()->isInvisibleContentShown() && !$node->isVisible()) {
-			return NULL;
-		}
-		if (!$this->nodeRepository->getContext()->isInaccessibleContentShown() && !$node->isAccessible()) {
-			return NULL;
-		}
-		return $node;
-	}
-
-	/**
-	 * Updates this node in the Node Repository
+	 * Updates the represented node in the Node Repository
 	 *
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	protected function update() {
-		$this->nodeRepository->update($this);
+		if (!$this->nodeDataIsMatchingContext) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('You are trying to update a non materialized node, which is not allowed. Materialize the node first by calling materializeNodeData on the Node', 1369591753);
+		}
+		$this->nodeDataRepository->update($this->nodeData);
 	}
 
 	/**
-	 * Updates the attached content object
+	 * The NodeData matches the context if the workspace matches exactly.
+	 * Needs to be adjusted for further context dimensions.
 	 *
-	 * @param object $contentObject
-	 * @return void
+	 * @return boolean
 	 */
-	protected function updateContentObject($contentObject) {
-		$this->persistenceManager->update($contentObject);
+	protected function isNodeDataMatchingContext() {
+		return ($this->nodeData->getWorkspace() === $this->context->getWorkspace());
 	}
 
 	/**
-	 * Signals that a node has changed it's path.
-	 *
-	 * @Flow\Signal
-	 * @return void
+	 * @param NodeInterface $sourceNode
 	 */
-	protected function emitNodePathChanged() {
+	public function similarize(NodeInterface $sourceNode) {
+		$this->nodeData->similarize($sourceNode->nodeData);
+	}
+
+	/**
+	 * @return NodeData
+	 */
+	public function getNodeData() {
+		return $this->nodeData;
 	}
 
 	/**
@@ -938,6 +921,19 @@ class Node extends AbstractNode implements PersistentNodeInterface {
 	 */
 	public function __toString() {
 		return 'Node ' . $this->getContextPath() . '[' . $this->getNodeType()->getName() . ']';
+	}
+
+	/**
+	 * Creates a new NodeData entity for this Node. This is used for materializing
+	 * NodeData from a different context into the context of this Node.
+	 *
+	 * @param string $path
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param string $identifier
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+	 */
+	protected function createNodeData($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
+		return new NodeData($path, $workspace, $identifier);
 	}
 
 }

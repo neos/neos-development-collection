@@ -52,20 +52,20 @@ class AddNewProperty extends AbstractTransformation {
 	 * If the given node has no property this transformation should work on, this
 	 * returns TRUE.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		return !$node->hasProperty($this->newPropertyName);
 	}
 
 	/**
 	 * Add the new property with the given value on the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->setProperty($this->newPropertyName, $this->value);
 	}
 }

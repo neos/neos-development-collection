@@ -56,20 +56,20 @@ class RenameProperty extends AbstractTransformation {
 	 * Returns TRUE if the given node has a property with the name to work on
 	 * and does not yet have a property with the name to rename that property to.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		return ($node->hasProperty($this->oldPropertyName) && !$node->hasProperty($this->newPropertyName));
 	}
 
 	/**
 	 * Renames the configured property to the new name.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->setProperty($this->newPropertyName, $node->getProperty($this->oldPropertyName));
 		$node->removeProperty($this->oldPropertyName);
 	}

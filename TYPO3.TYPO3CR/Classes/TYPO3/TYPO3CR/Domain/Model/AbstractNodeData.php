@@ -12,23 +12,23 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A Node (persisted or transient)
+ * Some NodeData (persisted or transient)
  *
- * Certain methods of AbstractNode belong to the public API so they can be used in
- * the concrete implementations Node, NodeTemplate and ProxyNode.
+ * Certain methods of AbstractNodeData belong to the public API so they can be used in
+ * the concrete implementations Node, NodeTemplate and NodeData.
  *
  * NOTE: This class is not supposed to be subclassed by userland code.
  *       If this API is modified, make sure to also implement the additional
- *       methods inside Node, NodeTemplate and ProxyNode and keep NodeInterface
- *       in sync!
+ *       methods inside NodeData, NodeTemplate and Node and keep
+ *       NodeInterface in sync!
  *
  * @api
  */
-abstract class AbstractNode implements NodeInterface {
+abstract class AbstractNodeData {
 
 	/**
 	 * The node name which acts as a path segment for its node path

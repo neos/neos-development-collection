@@ -24,10 +24,10 @@ interface FilterInterface {
 	/**
 	 * If the given node satisfies the filter constraints, TRUE is returned.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node);
+	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 }
 ?>

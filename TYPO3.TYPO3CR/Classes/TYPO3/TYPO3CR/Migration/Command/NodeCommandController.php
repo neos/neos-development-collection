@@ -31,9 +31,9 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -48,6 +48,12 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	protected $migrationFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
 	 * Do the configured migrations in the given migration file for the given workspace
 	 *
 	 * By default the up direction is applied, using the direction parameter this can
@@ -60,7 +66,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @return void
 	 */
 	public function migrateCommand($workspace, $version, $confirmation = FALSE, $direction = MigrationStatus::DIRECTION_UP) {
-		$this->setContextOnNodeRepository($workspace);
+		$context = $this->prepareContext($workspace);
 		$migrationConfiguration = $direction === MigrationStatus::DIRECTION_UP ?
 			$this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration() :
 			$this->migrationFactory->getMigrationForVersion($version)->getDownConfiguration();
@@ -72,7 +78,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 
-		$nodeMigrationService = new NodeMigration($workspace, $migrationConfiguration->getMigration());
+		$nodeMigrationService = new NodeMigration($context, $migrationConfiguration->getMigration());
 		switch ($direction) {
 			case MigrationStatus::DIRECTION_UP:
 				$nodeMigrationService->migrateUp();
@@ -164,14 +170,14 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * workspace and sets it on the used node repository.
 	 *
 	 * @param string $workspaceName
-	 * @return void
+	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
 	 */
-	protected function setContextOnNodeRepository($workspaceName) {
-		$context = new \TYPO3\TYPO3CR\Domain\Service\Context($workspaceName);
-		$context->setInaccessibleContentShown(TRUE);
-		$context->setInvisibleContentShown(TRUE);
-		$context->setRemovedContentShown(TRUE);
-		$this->nodeRepository->setContext($context);
+	protected function prepareContext($workspaceName) {
+		$contextProperties = array(
+			'workspaceName' => $workspaceName
+		);
+
+		return $this->contextFactory->create($contextProperties);
 	}
 }
 ?>

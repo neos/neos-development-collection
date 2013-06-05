@@ -16,7 +16,7 @@ namespace TYPO3\TYPO3CR;
  *
  * @api
  */
-class Exception extends \Exception {
+class Exception extends \TYPO3\Flow\Exception {
 
 }
 

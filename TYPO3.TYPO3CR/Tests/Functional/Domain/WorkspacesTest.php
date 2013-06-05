@@ -24,9 +24,9 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
@@ -34,15 +34,28 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $rootNode;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
-		$personalContext = new \TYPO3\TYPO3CR\Domain\Service\Context('user-robert');
-		$this->nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $personalContext, TRUE);
-		$this->rootNode = $personalContext->getWorkspace()->getRootNode();
+		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$personalContext = $this->contextFactory->create(array('workspaceName' => 'user-robert'));
+		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+		$this->rootNode = $personalContext->getNode('/');
 		$this->persistenceManager->persistAll();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function tearDown() {
+		parent::tearDown();
+		$this->inject($this->contextFactory, 'contextInstances', array());
 	}
 
 	/**
@@ -64,9 +77,8 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->rootNode->createNode('homepage')->createNode('about');
 		$this->persistenceManager->persistAll();
 
-		$liveContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
-		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
+		$liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$liveRootNode = $liveContext->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/about'));
 	}
@@ -77,9 +89,8 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function evenWithoutPersistAllNodesCreatedInAPersonalWorkspaceAreNotVisibleInTheLiveWorkspace() {
 		$this->rootNode->createNode('homepage')->createNode('imprint');
 
-		$liveContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
-		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
+		$liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$liveRootNode = $liveContext->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));
 	}

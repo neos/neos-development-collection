@@ -30,13 +30,13 @@ class LoggingAspect {
 	/**
 	 * Logs calls of remove()
 	 *
-	 * @Flow\AfterReturning("method(TYPO3\TYPO3CR\Domain\Model\Node->remove())")
+	 * @Flow\AfterReturning("method(TYPO3\TYPO3CR\Domain\Model\NodeData->remove())")
 	 * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 */
 	public function logRemove(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint) {
-		$node = $joinPoint->getProxy();
-		$this->systemLogger->log(sprintf('Removed node "%s" from workspace "%s" (identifier: "%s")', $node->getPath(), $node->getWorkspace()->getName(), $node->getIdentifier()), LOG_DEBUG);
+		$nodeData = $joinPoint->getProxy();
+		$this->systemLogger->log(sprintf('Removed node data "%s" from workspace "%s" (identifier: "%s")', $nodeData->getPath(), $nodeData->getWorkspace()->getName(), $nodeData->getIdentifier()), LOG_DEBUG);
 	}
 
 }

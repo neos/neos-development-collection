@@ -21,7 +21,7 @@ use TYPO3\TYPO3CR\Exception\PageNotFoundException;
 class PaginateController extends AbstractWidgetController {
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $parentNode;
 

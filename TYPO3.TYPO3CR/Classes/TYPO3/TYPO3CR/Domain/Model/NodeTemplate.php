@@ -18,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @api
  */
-class NodeTemplate extends AbstractNode {
+class NodeTemplate extends AbstractNodeData {
 
 	/**
 	 * Set the name of the node to $newName

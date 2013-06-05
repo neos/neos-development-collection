@@ -13,7 +13,7 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
-use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * This ViewHelper renders a Pagination of nodes.
@@ -45,13 +45,13 @@ class PaginateViewHelper extends AbstractWidgetViewHelper {
 	/**
 	 * Render this view helper
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $parentNode The parent node of the child nodes to show
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show
 	 * @param string $as Variable name for the result set
 	 * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
 	 * @param array $configuration Additional configuration
 	 * @return string
 	 */
-	public function render(PersistentNodeInterface $parentNode, $as, $nodeTypeFilter = NULL, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99)) {
+	public function render(NodeInterface $parentNode, $as, $nodeTypeFilter = NULL, array $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99)) {
 		$response = $this->initiateSubRequest();
 		return $response->getContent();
 	}

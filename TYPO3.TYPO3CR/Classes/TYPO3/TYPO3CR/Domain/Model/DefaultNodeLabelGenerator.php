@@ -23,10 +23,10 @@ class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 	/**
 	 * Render a node label
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return string
 	 */
-	public function getLabel(NodeInterface $node) {
+	public function getLabel(NodeData $node) {
 		if ($node->hasProperty('title') === TRUE && $node->getProperty('title') !== '') {
 			$label = strip_tags($node->getProperty('title'));
 		} elseif ($node->hasProperty('text') === TRUE && $node->getProperty('text') !== '') {

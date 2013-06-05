@@ -21,6 +21,24 @@ use TYPO3\Flow\Annotations as Flow;
 class Context implements ContextInterface {
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+	 */
+	protected $nodeFactory;
+
+	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 */
 	protected $workspace;
@@ -36,21 +54,9 @@ class Context implements ContextInterface {
 	protected $currentDateTime;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @var \TYPO3\Flow\I18n\Locale
 	 */
-	protected $currentNode;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
-	 */
-	protected $workspaceRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
+	protected $locale;
 
 	/**
 	 * If TRUE, invisible content elements will be shown.
@@ -74,13 +80,26 @@ class Context implements ContextInterface {
 	protected $inaccessibleContentShown = FALSE;
 
 	/**
-	 * Constructs this context.
+	 * Creates a new Context object.
+	 *
+	 * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
 	 *
 	 * @param string $workspaceName
+	 * @param \DateTime $currentDateTime
+	 * @param \TYPO3\Flow\I18n\Locale $locale
+	 * @param boolean $invisibleContentShown
+	 * @param boolean $removedContentShown
+	 * @param boolean $inaccessibleContentShown
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @see ContextFactoryInterface
 	 */
-	public function __construct($workspaceName) {
+	public function __construct($workspaceName, \DateTime $currentDateTime, \TYPO3\Flow\I18n\Locale $locale, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown) {
 		$this->workspaceName = $workspaceName;
-		$this->currentDateTime = new \DateTime();
+		$this->currentDateTime = $currentDateTime;
+		$this->locale = $locale;
+		$this->invisibleContentShown = $invisibleContentShown;
+		$this->removedContentShown = $removedContentShown;
+		$this->inaccessibleContentShown = $inaccessibleContentShown;
 	}
 
 	/**
@@ -124,27 +143,6 @@ class Context implements ContextInterface {
 	}
 
 	/**
-	 * Sets the current node.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @return void
-	 * @api
-	 */
-	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
-		$this->currentNode = $node;
-	}
-
-	/**
-	 * Returns the current node
-	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
-	 * @api
-	 */
-	public function getCurrentNode() {
-		return $this->currentNode;
-	}
-
-	/**
 	 * Returns the current date and time in form of a \DateTime
 	 * object.
 	 *
@@ -160,22 +158,31 @@ class Context implements ContextInterface {
 	}
 
 	/**
-	 * Sets the simulated date and time. This time will then always be returned
-	 * by getCurrentDateTime().
+	 * Returns the locale of this context.
 	 *
-	 * @param \DateTime $currentDateTime A date and time to simulate.
-	 * @return void
+	 * @return \TYPO3\Flow\I18n\Locale
 	 * @api
 	 */
-	public function setCurrentDateTime(\DateTime $currentDateTime) {
-		$this->currentDateTime = $currentDateTime;
+	public function getLocale() {
+		return $this->locale;
+	}
+
+	/**
+	 * Convenience method returns the root node for
+	 * this context workspace.
+	 *
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @api
+	 */
+	public function getRootNode() {
+		return $this->getNode('/');
 	}
 
 	/**
 	 * Returns a node specified by the given absolute path.
 	 *
 	 * @param string $path Absolute path specifying the node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 * @throws \InvalidArgumentException
 	 * @api
 	 */
@@ -183,7 +190,9 @@ class Context implements ContextInterface {
 		if (!is_string($path) || $path[0] !== '/') {
 			throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
 		}
-		return ($path === '/') ? $this->getWorkspace()->getRootNode() : $this->getWorkspace()->getRootNode()->getNode(substr($path, 1));
+		$workspaceRootNode = $this->getWorkspace()->getRootNode();
+		$node = $this->nodeFactory->createFromNode($workspaceRootNode, $this);
+		return ($path === '/') ? $node : $node->getNode(substr($path, 1));
 	}
 
 	/**
@@ -192,50 +201,26 @@ class Context implements ContextInterface {
 	 *
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found between and including the given paths or an empty array of none were found
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
 	 * @api
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint) {
-		$startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) ? $startingPoint->getPath() : $startingPoint;
-		$endPointPath = ($endPoint instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) ? $endPoint->getPath() : $endPoint;
+		$startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $startingPoint->getPath() : $startingPoint;
+		$endPointPath = ($endPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $endPoint->getPath() : $endPoint;
 
-		$nodes = $this->nodeRepository->findOnPath($startingPointPath, $endPointPath, $this->workspace);
+		$nodes = $this->nodeDataRepository->findOnPathInContext($startingPointPath, $endPointPath, $this);
 		return $nodes;
-	}
-
-	/**
-	 * Sets if nodes which are usually invisible should be accessible through the Node API and queries
-	 *
-	 * @param boolean $invisibleContentShown If TRUE, invisible nodes are shown.
-	 * @return void
-	 * @see Node->filterNodeByContext()
-	 * @api
-	 */
-	public function setInvisibleContentShown($invisibleContentShown) {
-		$this->invisibleContentShown = $invisibleContentShown;
 	}
 
 	/**
 	 * Tells if nodes which are usually invisible should be accessible through the Node API and queries
 	 *
 	 * @return boolean
-	 * @see Node->filterNodeByContext()
+	 * @see NodeFactory->filterNodeByContext()
 	 * @api
 	 */
 	public function isInvisibleContentShown() {
 		return $this->invisibleContentShown;
-	}
-
-	/**
-	 * Sets if nodes which have their "removed" flag set should be accessible through
-	 * the Node API and queries
-	 *
-	 * @param boolean $removedContentShown If TRUE, removed nodes are shown
-	 * @return void
-	 * @api
-	 */
-	public function setRemovedContentShown($removedContentShown) {
-		$this->removedContentShown = (boolean)$removedContentShown;
 	}
 
 	/**
@@ -251,18 +236,6 @@ class Context implements ContextInterface {
 	}
 
 	/**
-	 * Sets if nodes which have access restrictions should be accessible through
-	 * the Node API and queries even without the necessary roles / rights
-	 *
-	 * @param boolean $inaccessibleContentShown
-	 * @return void
-	 * @api
-	 */
-	public function setInaccessibleContentShown($inaccessibleContentShown) {
-		$this->inaccessibleContentShown = (boolean)$inaccessibleContentShown;
-	}
-
-	/**
 	 * Tells if nodes which have access restrictions should be accessible through
 	 * the Node API and queries even without the necessary roles / rights
 	 *
@@ -274,13 +247,19 @@ class Context implements ContextInterface {
 	}
 
 	/**
-	 * Returns this context as a "context path"
+	 * Returns the properties of this context.
 	 *
-	 * @return string
-	 * @api
+	 * @return array
 	 */
-	public function __toString() {
-		return $this->workspaceName . $this->currentNode->getPath();
+	public function getProperties() {
+		return array(
+			'workspaceName' => $this->workspaceName,
+			'currentDateTime' => $this->currentDateTime,
+			'locale' => $this->locale,
+			'invisibleContentShown' => $this->invisibleContentShown,
+			'removedContentShown' => $this->removedContentShown,
+			'inaccessibleContentShown' => $this->inaccessibleContentShown
+		);
 	}
 
 }

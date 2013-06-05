@@ -38,20 +38,20 @@ class StripTagsOnProperty extends AbstractTransformation {
 	/**
 	 * Returns TRUE if the given node has the property to work on.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		return ($node->hasProperty($this->propertyName));
 	}
 
 	/**
 	 * Strips tags on the value of the property to work on.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->setProperty($this->propertyName, strip_tags($node->getProperty($this->propertyName)));
 	}
 }

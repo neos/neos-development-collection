@@ -25,18 +25,18 @@ interface TransformationInterface {
 	/**
 	 * Returns TRUE if the given node can be transformed by this transformation.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	function isTransformable(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node);
+	function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 	/**
 	 * Execute the transformation on the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	function execute(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node);
+	function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 }
 ?>

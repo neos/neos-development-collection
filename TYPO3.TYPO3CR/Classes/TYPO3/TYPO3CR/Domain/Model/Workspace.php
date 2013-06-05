@@ -44,23 +44,17 @@ class Workspace {
 	/**
 	 * Root node of this workspace
 	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 * @ORM\ManyToOne
 	 * @ORM\JoinColumn(referencedColumnName="id")
 	 */
 	protected $rootNode;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @Flow\Transient
-	 */
-	protected $context;
-
-	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -90,8 +84,8 @@ class Workspace {
 	 */
 	public function initializeObject($initializationCause) {
 		if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-			$this->rootNode = new Node('/', $this);
-			$this->nodeRepository->add($this->rootNode);
+			$this->rootNode = new NodeData('/', $this);
+			$this->nodeDataRepository->add($this->rootNode);
 		}
 	}
 
@@ -118,21 +112,10 @@ class Workspace {
 	/**
 	 * Returns the root node of this workspace
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @api
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
 	public function getRootNode() {
 		return $this->rootNode;
-	}
-
-	/**
-	 * Returns the current context this workspace operates in.
-	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @api
-	 */
-	public function getContext() {
-		return $this->nodeRepository->getContext();
 	}
 
 	/**
@@ -145,7 +128,7 @@ class Workspace {
 	 * @api
 	 */
 	public function publish($targetWorkspaceName) {
-		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
+		$sourceNodes = $this->nodeDataRepository->findByWorkspace($this);
 		$this->publishNodes($sourceNodes->toArray(), $targetWorkspaceName);
 	}
 
@@ -154,7 +137,7 @@ class Workspace {
 	 *
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> $nodes
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
 	 * @api
@@ -163,14 +146,14 @@ class Workspace {
 		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
 		foreach ($nodes as $node) {
 			if ($node->getPath() !== '/') {
-				$targetNode = $this->nodeRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
+				$targetNode = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
 				if ($targetNode !== NULL) {
-					$this->nodeRepository->remove($targetNode);
+					$this->nodeDataRepository->remove($targetNode);
 				}
 				if ($node->isRemoved() === FALSE) {
 					$node->setWorkspace($targetWorkspace);
 				} else {
-					$this->nodeRepository->remove($node);
+					$this->nodeDataRepository->remove($node);
 				}
 			}
 		}
@@ -190,7 +173,7 @@ class Workspace {
 	 * @api
 	 */
 	public function getNodeCount() {
-		return $this->nodeRepository->countByWorkspace($this);
+		return $this->nodeDataRepository->countByWorkspace($this);
 	}
 
 	/**
