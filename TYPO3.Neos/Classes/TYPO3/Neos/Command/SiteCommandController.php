@@ -40,9 +40,9 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -55,6 +55,12 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @var \TYPO3\Neos\Domain\Service\SiteExportService
 	 */
 	protected $siteExportService;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
 
 	/**
 	 * Import sites content
@@ -73,19 +79,18 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @return void
 	 */
 	public function importCommand($packageKey = NULL, $filename = NULL) {
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
-		$this->nodeRepository->setContext($contentContext);
+		$contentContext = $this->createContext();
 
 		if ($filename !== NULL) {
 			try {
-				$this->siteImportService->importSitesFromFile($filename);
+				$this->siteImportService->importSitesFromFile($filename, $contentContext);
 			} catch (\Exception $exception) {
 				$this->outputLine('Error: During the import of the file "%s" an exception occurred: %s', array($filename, $exception->getMessage()));
 				$this->quit(1);
 			}
 		} elseif ($packageKey !== NULL) {
 			try {
-				$this->siteImportService->importFromPackage($packageKey);
+				$this->siteImportService->importFromPackage($packageKey, $contentContext);
 			} catch (\Exception $exception) {
 				$this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', array($packageKey, $exception->getMessage()));
 				$this->quit(1);
@@ -106,8 +111,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @return void
 	 */
 	public function exportCommand($siteName = NULL) {
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
-		$this->nodeRepository->setContext($contentContext);
+		$contentContext = $this->createContext();
 
 		if ($siteName === NULL) {
 			$sites = $this->siteRepository->findAll()->toArray();
@@ -118,7 +122,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('Error: No site for exporting found');
 			$this->quit(1);
 		}
-		$this->response->setContent($this->siteExportService->export($sites));
+		$this->response->setContent($this->siteExportService->export($sites, $contentContext));
 	}
 
 	/**
@@ -136,7 +140,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 
-		$this->nodeRepository->removeAll();
+		$this->nodeDataRepository->removeAll();
 		$this->workspaceRepository->removeAll();
 		$this->domainRepository->removeAll();
 		$this->siteRepository->removeAll();
@@ -186,6 +190,17 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . $site['siteResourcesPackageKey']);
 		}
 		$this->outputLine();
+	}
+
+	/**
+	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 */
+	protected function createContext() {
+		return $this->contextFactory->create(array(
+			'workspaceName' => 'live',
+			'invisibleContentShown' => TRUE,
+			'inaccessibleContentShown' => TRUE
+		));
 	}
 
 }

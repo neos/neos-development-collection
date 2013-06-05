@@ -162,10 +162,10 @@ class FeatureContext extends MinkContext {
 	 * @Given /^I imported the site "([^"]*)"$/
 	 */
 	public function iImportedTheSite($packageKey) {
-		/** @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository */
-		$nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
+		/** @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository $nodeDataRepository */
+		$nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
 		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeRepository, 'context', $contentContext, TRUE);
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeDataRepository, 'context', $contentContext, TRUE);
 
 		/** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');

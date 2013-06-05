@@ -38,9 +38,9 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -61,34 +61,44 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $accessDecisionManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @return string View output for the specified node
 	 */
-	public function showAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function showAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
 				// TODO: Introduce check if workspace is visible or accessible to the user
 			if ($this->hasAccessToBackend()) {
-				$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
-				$this->nodeRepository->getContext()->setRemovedContentShown(TRUE);
+				$contextProperties = $node->getContext()->getProperties();
+				$contextProperties['invisibleContentShown'] = TRUE;
+				$contextProperties['removedContentShown'] = TRUE;
+				$contextProperties['invisibleContentShown'] = TRUE;
+				$context = $this->contextFactory->create($contextProperties);
+				$node = $context->getNode($node->getPath());
 			} else {
 				$this->redirect('index', 'Login');
 			}
 		}
 		if ($this->isWireframeModeEnabled($node)) {
-			$this->forward('showWireframe', NULL, NULL, array('node' => $node->getPath()));
+			$this->forward('showWireframe', NULL, NULL, array('node' => $node->getContextPath()));
 		}
 		if (!$node->isAccessible()) {
 			try {
 				$this->authenticationManager->authenticate();
 			} catch (\Exception $exception) {}
 		}
-		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
+		if (!$node->isAccessible() && !$node->getContext()->isInaccessibleContentShown()) {
 			$this->throwStatus(403);
 		}
-		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
+		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
 
@@ -112,7 +122,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			}
 		}
 
-		$this->nodeRepository->getContext()->setCurrentNode($node);
 		$this->view->assign('value', $node);
 
 		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
@@ -127,27 +136,26 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @return string View output for the specified node
 	 */
-	public function showWireframeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function showWireframeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
 		if (!$node->isAccessible()) {
 			try {
 				$this->authenticationManager->authenticate();
 			} catch (\Exception $exception) {
 			}
 		}
-		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
+		if (!$node->isAccessible() && !$node->getContext()->isInaccessibleContentShown()) {
 			$this->throwStatus(403);
 		}
-		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
+		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
 		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
 			$this->view->assign('wireframeMode', $node);
 		}
 
-		$this->nodeRepository->getContext()->setCurrentNode($node);
 		$this->view->assign('value', $node);
 
 		$this->view->setTypoScriptPath('wireframeMode');
@@ -158,10 +166,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Decide if wireframe mode should be enabled.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @return boolean
 	 */
-	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
 		if ($this->securityContext->getParty() !== NULL) {
 			try {
 				$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');

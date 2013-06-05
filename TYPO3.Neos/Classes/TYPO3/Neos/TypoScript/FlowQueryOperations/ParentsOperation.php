@@ -35,19 +35,13 @@ class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 	static protected $priority = 100;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * {@inheritdoc}
 	 *
 	 * @param array (or array-like object) $context onto which this operation should be applied
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface));
+		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
 	}
 
 	/**
@@ -61,8 +55,8 @@ class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 		$output = array();
 		$outputNodePaths = array();
 		foreach ($flowQuery->getContext() as $contextNode) {
-			$siteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
-			while ($contextNode->getParent() !== $siteNode) {
+			$siteNode = $contextNode->getContext()->getCurrentSiteNode();
+			while ($contextNode->getParent() !== $siteNode && $contextNode->getParent() !== NULL) {
 				$contextNode = $contextNode->getParent();
 				if (!isset($outputNodePaths[$contextNode->getPath()])) {
 					$output[] = $contextNode;

@@ -18,130 +18,12 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Service;
 class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @test
+	 * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
 	 */
-	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
-		$mockHttpRequestHandler = $this->getMock('TYPO3\Flow\Http\HttpRequestHandlerInterface');
-		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://myhost/'))));
-		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
-		$mockDomainRepository = $this->getMock('TYPO3\Neos\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
-		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
-		$mockSiteRepository = $this->getMock('TYPO3\Neos\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
-		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('bootstrap', $mockBootstrap);
-		$contentContext->_set('domainRepository', $mockDomainRepository);
-		$contentContext->_set('siteRepository', $mockSiteRepository);
-		$contentContext->initializeObject();
+	protected $contextFactory;
 
-		$almostCurrentTime = new \DateTime();
-		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
-		$currentTime = $contentContext->getCurrentDateTime();
-		$this->assertTrue($almostCurrentTime < $currentTime);
-	}
-
-	/**
-	 * @test
-	 */
-	public function setDateTimeAllowsForMockingTheCurrentTime() {
-		$simulatedCurrentTime = new \DateTime();
-		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
-
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
-		$contentContext->setCurrentDateTime($simulatedCurrentTime);
-
-		$this->assertEquals($simulatedCurrentTime, $contentContext->getCurrentDateTime());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getLocaleReturnsByDefaultAnInternationalMultilingualLocale() {
-		$mockHttpRequestHandler = $this->getMock('TYPO3\Flow\Http\HttpRequestHandlerInterface');
-		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://myhost/'))));
-		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
-
-		$mockDomainRepository = $this->getMock('TYPO3\Neos\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
-		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
-
-		$mockSiteRepository = $this->getMock('TYPO3\Neos\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('bootstrap', $mockBootstrap);
-		$contentContext->_set('domainRepository', $mockDomainRepository);
-		$contentContext->_set('siteRepository', $mockSiteRepository);
-		$contentContext->initializeObject();
-
-		$this->assertEquals('mul_ZZ', (string)$contentContext->getLocale());
-	}
-
-	/**
-	 * @test
-	 */
-	public function initializeObjectResolvesTheBestMatchingDomainAndSetsTheCurrentSiteAndDomain() {
-		$mockHttpRequestHandler = $this->getMock('TYPO3\Flow\Http\HttpRequestHandlerInterface');
-		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://myhost/'))));
-		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
-
-		$mockSite = $this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', FALSE);
-
-		$mockMatchingDomains = array(
-			$this->getMock('TYPO3\Neos\Domain\Model\Domain', array(), array(), '', FALSE),
-			$this->getMock('TYPO3\Neos\Domain\Model\Domain', array(), array(), '', FALSE)
-		);
-
-		$mockMatchingDomains[0]->expects($this->once())->method('getSite')->will($this->returnValue($mockSite));
-
-		$mockDomainRepository = $this->getMock('TYPO3\Neos\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
-		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue($mockMatchingDomains));
-
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('objectManager', $mockObjectManager);
-		$contentContext->_set('domainRepository', $mockDomainRepository);
-		$contentContext->_set('bootstrap', $mockBootstrap);
-
-		$contentContext->initializeObject();
-
-		$this->assertSame($mockMatchingDomains[0], $contentContext->getCurrentDomain());
-		$this->assertSame($mockSite, $contentContext->getCurrentSite());
-	}
-
-	/**
-	 * @test
-	 */
-	public function initializeObjectSetsTheCurrentSiteToTheFirstSiteFoundIfNoDomainsMatchedTheCurrentRequest() {
-		$mockHttpRequestHandler = $this->getMock('TYPO3\Flow\Http\HttpRequestHandlerInterface');
-		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://myhost/'))));
-		$mockBootstrap = $this->getMock('TYPO3\Flow\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
-
-		$mockSites = array(
-			$this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', FALSE),
-			$this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', FALSE)
-		);
-
-		$mockSiteRepository = $this->getMock('TYPO3\Neos\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
-		$mockSiteRepository->expects($this->once())->method('findFirst')->will($this->returnValue($mockSites[0]));
-
-		$mockDomainRepository = $this->getMock('TYPO3\Neos\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
-		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
-
-		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('objectManager', $mockObjectManager);
-		$contentContext->_set('domainRepository', $mockDomainRepository);
-		$contentContext->_set('siteRepository', $mockSiteRepository);
-		$contentContext->_set('bootstrap', $mockBootstrap);
-
-		$contentContext->initializeObject();
-
-		$this->assertSame(NULL, $contentContext->getCurrentDomain());
-		$this->assertSame($mockSites[0], $contentContext->getCurrentSite());
+	public function setUp() {
+		$this->contextFactory = new \TYPO3\Neos\Domain\Service\ContentContextFactory();
 	}
 
 	/**
@@ -150,8 +32,18 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getCurrentSiteReturnsTheCurrentSite() {
 		$mockSite = $this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', FALSE);
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('currentSite', $mockSite);
+		$contextProperties = array(
+			'workspaceName' => NULL,
+			'currentDateTime' => new \DateTime(),
+			'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+			'invisibleContentShown' => NULL,
+			'removedContentShown' => NULL,
+			'inaccessibleContentShown' => NULL,
+			'currentSite' => $mockSite,
+			'currentDomain' => NULL
+		);
+
+		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), $contextProperties);
 		$this->assertSame($mockSite, $contentContext->getCurrentSite());
 	}
 
@@ -161,7 +53,18 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getCurrentDomainReturnsTheCurrentDomainIfAny() {
 		$mockDomain = $this->getMock('TYPO3\Neos\Domain\Model\Domain', array(), array(), '', FALSE);
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), array('live'));
+
+		$contextProperties = array(
+			'workspaceName' => NULL,
+			'currentDateTime' => new \DateTime(),
+			'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+			'invisibleContentShown' => NULL,
+			'removedContentShown' => NULL,
+			'inaccessibleContentShown' => NULL,
+			'currentSite' => NULL,
+			'currentDomain' => NULL
+		);
+		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), $contextProperties);
 
 		$this->assertNull($contentContext->getCurrentDomain());
 		$contentContext->_set('currentDomain', $mockDomain);

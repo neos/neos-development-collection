@@ -21,16 +21,18 @@ use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Service\ContentContext;
 
 /**
+ * Functional test for the NodeViewHelper
  */
 class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	protected $testableSecurityEnabled = TRUE;
+
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @var \TYPO3\Flow\Property\PropertyMapper
@@ -42,14 +44,45 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	protected $viewHelper;
 
+	/**
+	 * @var \TYPO3\TypoScript\Core\Runtime
+	 */
+	protected $tsRuntime;
+
+	/**
+	 * @var \TYPO3\Neos\Domain\Service\ContentContext
+	 */
+	protected $contentContext;
+
+	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
 	public function setUp() {
 		parent::setUp();
-		$this->nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		ObjectAccess::setProperty($this->nodeRepository, 'context', new ContentContext('live'), TRUE);
-		$this->nodeRepository->getContext()->setCurrentSite(new Site('example'));
+		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+		$domainRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\DomainRepository');
+		$siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
+		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$contextProperties = array(
+			'workspaceName' => 'live'
+		);
+		$contentContext = $this->contextFactory->create($contextProperties);
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importSitesFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml');
+		$siteImportService->importSitesFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
 		$this->persistenceManager->persistAll();
+
+		$currentDomain = $domainRepository->findOneByActiveRequest();
+		if ($currentDomain !== NULL) {
+			$contextProperties['currentSite'] = $currentDomain->getSite();
+			$contextProperties['currentDomain'] = $currentDomain;
+		} else {
+			$contextProperties['currentSite'] = $siteRepository->findFirst();
+		}
+		$contentContext = $this->contextFactory->create($contextProperties);
+
+		$this->contentContext = $contentContext;
 
 		$this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 
@@ -58,14 +91,27 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
 		$this->inject($this->viewHelper, 'controllerContext', $controllerContext);
+
+		$fluidTsObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', FALSE);
+		$this->tsRuntime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('dummy'), array(), '', FALSE);
+		$this->tsRuntime->pushContextArray(array('documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home')));
+		$this->inject($fluidTsObject, 'tsRuntime', $this->tsRuntime);
+		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array('fluidTemplateTsObject' => $fluidTsObject));
+		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->inject($this->contextFactory, 'contextInstances', array());
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRendersUriViaGivenNodeObject() {
-		$this->nodeRepository->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home/about-us/mission', 'TYPO3\TYPO3CR\Domain\Model\Node'));
 		$targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
+		//$targetNode->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home/about-us/mission', 'TYPO3\TYPO3CR\Domain\Model\NodeInterface'));
 
 		$this->assertOutputLinkValid('home.html', $this->viewHelper->render($targetNode));
 	}
@@ -74,7 +120,6 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaAbsoluteNodePathString() {
-		$this->nodeRepository->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home/about-us/mission', 'TYPO3\TYPO3CR\Domain\Model\Node'));
 		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home'));
 		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us'));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission'));
@@ -84,7 +129,6 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
-		$this->nodeRepository->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home/about-us/mission', 'TYPO3\TYPO3CR\Domain\Model\Node'));
 		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('~/home'));
 		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('~/home/about-us'));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('~/home/about-us/mission'));
@@ -94,10 +138,9 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaStringPointingToSubNodes() {
-		$this->nodeRepository->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home/about-us/mission', 'TYPO3\TYPO3CR\Domain\Model\Node'));
+		$this->tsRuntime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
 		$this->assertOutputLinkValid('home/about-us/history.html', $this->viewHelper->render('../history'));
-
-		$this->nodeRepository->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node'));
+		$this->tsRuntime->popContext();
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('about-us/mission'));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('./about-us/mission'));
 	}

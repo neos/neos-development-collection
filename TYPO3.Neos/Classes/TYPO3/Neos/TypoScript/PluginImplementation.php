@@ -71,6 +71,11 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	protected $node;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected $documentNode;
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
@@ -162,7 +167,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 		$this->passArgumentsToPluginRequest($pluginRequest);
 
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			if ($pluginRequest->getControllerPackageKey() === NULL) {
 				$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->package);
 			}
@@ -188,6 +193,8 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 					$pluginRequest->setArgument($propertyName, $propertyValue);
 				}
 			}
+			$pluginRequest->setArgument('__node', $this->node);
+			$pluginRequest->setArgument('__documentNode', $this->documentNode);
 		} else {
 			$pluginRequest->setControllerPackageKey($this->getPackage());
 			$pluginRequest->setControllerSubpackageKey($this->getSubpackage());
@@ -207,16 +214,16 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		try {
 			$currentContext = $this->tsRuntime->getCurrentContext();
 			$this->node = $currentContext['node'];
+			$this->documentNode = $currentContext['documentNode'];
 			$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
 			$pluginResponse = new Response($parentResponse);
-			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
+			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 			$content = $pluginResponse->getContent();
 		} catch (\Exception $exception) {
 			$content = $this->tsRuntime->handleRenderingException($this->path, $exception);
 		}
-
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $content);
 		} else {
 			return $content;
@@ -231,7 +238,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
 			if ($nodeArgumentNamespace !== NULL) {
 				return $nodeArgumentNamespace;

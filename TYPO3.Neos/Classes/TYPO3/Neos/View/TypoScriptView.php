@@ -27,12 +27,6 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	protected $typoScriptService;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * The TypoScript path to use for rendering the node given in "value", defaults to "page".
 	 *
 	 * @var string
@@ -48,18 +42,19 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 */
 	public function render() {
 		$currentNode = isset($this->variables['value']) ? $this->variables['value'] : NULL;
-		if (!$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
-			throw new \TYPO3\Neos\Exception('TypoScriptView needs a persisted node as argument.', 1329736456);
+		if (!$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
+			throw new \TYPO3\Neos\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
 			// TODO: find closest document node from this node...
 		$closestDocumentNode = $currentNode;
-		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
+		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
 
 		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
 
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $currentNode,
+			'documentNode' => $closestDocumentNode,
 			'request' => $this->controllerContext->getRequest(),
 			'site' => $currentSiteNode
 		));
@@ -70,16 +65,16 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	}
 
 	/**
-	 * Is it possile to render $node with $typoScriptPath?
+	 * Is it possible to render $node with $typoScriptPath?
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $typoScriptPath
 	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
 	 */
-	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoScriptPath) {
+	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoScriptPath) {
 			// TODO: find closest document node from this node...
 		$closestDocumentNode = $node;
-		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
+		$currentSiteNode = $node->getContext()->getCurrentSiteNode();
 
 		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
 		return $typoScriptRuntime->canRender($typoScriptPath);

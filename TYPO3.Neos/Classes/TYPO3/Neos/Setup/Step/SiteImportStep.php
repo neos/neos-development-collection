@@ -51,9 +51,9 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -89,6 +89,12 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @Flow\Inject
 	 */
 	protected $systemLogger;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
 
 	/**
 	 * Returns the form definitions for the step
@@ -161,7 +167,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		$formValues = $finisherContext->getFormRuntime()->getFormState()->getFormValues();
 
 		if (isset($formValues['prune']) && intval($formValues['prune']) === 1) {
-			$this->nodeRepository->removeAll();
+			$this->nodeDataRepository->removeAll();
 			$this->workspaceRepository->removeAll();
 			$this->domainRepository->removeAll();
 			$this->siteRepository->removeAll();
@@ -187,9 +193,8 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		}
 		if (!empty($packageKey)) {
 			try {
-				$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
-				$this->nodeRepository->setContext($contentContext);
-				$this->siteImportService->importFromPackage($packageKey);
+				$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+				$this->siteImportService->importFromPackage($packageKey, $contentContext);
 			} catch (\Exception $exception) {
 				$finisherContext->cancel();
 				$this->systemLogger->logException($exception);

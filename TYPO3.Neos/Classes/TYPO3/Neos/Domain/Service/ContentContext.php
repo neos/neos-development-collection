@@ -24,34 +24,6 @@ use TYPO3\Flow\Annotations as Flow;
 class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Core\Bootstrap
-	 */
-	protected $bootstrap;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
-	 */
-	protected $siteRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
-	 */
-	protected $domainRepository;
-
-	/**
-	 * @var \DateTime
-	 */
-	protected $currentDateTime;
-
-	/**
-	 * @var \TYPO3\Flow\I18n\Locale
-	 */
-	protected $locale;
-
-	/**
 	 * @var \TYPO3\Neos\Domain\Model\Site
 	 */
 	protected $currentSite;
@@ -62,34 +34,25 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	protected $currentDomain;
 
 	/**
-	 * Initializes the context after all dependencies have been injected.
-	 *
-	 * @return void
+	 * @param string $workspaceName
+	 * @param \DateTime $currentDateTime
+	 * @param \TYPO3\Flow\I18n\Locale $locale
+	 * @param boolean $invisibleContentShown
+	 * @param boolean $removedContentShown
+	 * @param boolean $inaccessibleContentShown
+	 * @param \TYPO3\Neos\Domain\Model\Site $currentSite
+	 * @param \TYPO3\Neos\Domain\Model\Domain $currentDomain
+	 * @return \TYPO3\Neos\Domain\Service\ContentContext
 	 */
-	public function initializeObject() {
-		$this->locale = new Locale('mul_ZZ');
-
-		$activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
-		if ($activeRequestHandler instanceof \TYPO3\Flow\Http\HttpRequestHandlerInterface) {
-			$matchingDomains = $this->domainRepository->findByHost($activeRequestHandler->getHttpRequest()->getUri()->getHost());
-			if (count ($matchingDomains) > 0) {
-				$this->currentDomain = $matchingDomains[0];
-				$this->currentSite = $matchingDomains[0]->getSite();
-			} else {
-				$this->currentSite = $this->siteRepository->findFirst();
-			}
-		} else {
-			$this->currentSite = $this->siteRepository->findFirst();
-		}
-	}
-
-	/**
-	 * Returns the locale of this context.
-	 *
-	 * @return \TYPO3\Flow\I18n\Locale
-	 */
-	public function getLocale() {
-		return $this->locale;
+	public function __construct($workspaceName, \DateTime $currentDateTime, \TYPO3\Flow\I18n\Locale $locale, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain) {
+		$this->workspaceName = $workspaceName;
+		$this->currentDateTime = $currentDateTime;
+		$this->locale = $locale;
+		$this->invisibleContentShown = $invisibleContentShown;
+		$this->removedContentShown = $removedContentShown;
+		$this->inaccessibleContentShown = $inaccessibleContentShown;
+		$this->currentSite = $currentSite;
+		$this->currentDomain = $currentDomain;
 	}
 
 	/**
@@ -99,19 +62,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 */
 	public function getCurrentSite() {
 		return $this->currentSite;
-	}
-
-	/**
-	 * Sets the current site.
-	 *
-	 * Note that changing the current site after the context has been in use
-	 * already can lead to unexpected behavior.
-	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site
-	 * @return void
-	 */
-	public function setCurrentSite(\TYPO3\Neos\Domain\Model\Site $site) {
-		$this->currentSite = $site;
 	}
 
 	/**
@@ -127,10 +77,29 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the node of the current site.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	public function getCurrentSiteNode() {
 		return ($this->currentSite === NULL) ? NULL : $this->getNode('/sites/' . $this->currentSite->getNodeName());
 	}
+
+	/**
+	 * Returns the properties of this context.
+	 *
+	 * @return array
+	 */
+	public function getProperties() {
+		return array(
+			'workspaceName' => $this->workspaceName,
+			'currentDateTime' => $this->currentDateTime,
+			'locale' => $this->locale,
+			'invisibleContentShown' => $this->invisibleContentShown,
+			'removedContentShown' => $this->removedContentShown,
+			'inaccessibleContentShown' => $this->inaccessibleContentShown,
+			'currentSite' => $this->currentSite,
+			'currentDomain' => $this->currentDomain
+		);
+	}
+
 }
 ?>

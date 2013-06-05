@@ -18,73 +18,29 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
 class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Neos\ViewHelpers\Link\NodeViewHelper
-	 */
-	protected $viewHelper;
-
-	/**
-	 * Set up common mocks and object under test
-	 */
-	public function setUp() {
-		$uriBuilderMock = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder', array('build'));
-		$uriBuilderMock->expects($this->any())->method('build')->will($this->returnValue('dummy/final/url'));
-		$parentHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
-		$this->request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($parentHttpRequest));
-		$this->request->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->request));
-		$this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
-		$this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($uriBuilderMock));
-		$this->viewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Link\NodeViewHelper', array('renderChildren'));
-
-		$this->inject($this->viewHelper, 'controllerContext', $this->controllerContext);
-
-		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder();
-		$this->inject($this->viewHelper, 'tag', $tagBuilder);
-	}
-
-	/**
 	 * @test
 	 */
-	public function viewHelperFetchesCurrentNodeIfNotGiven() {
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$nodeContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
-		$nodeContext->expects($this->once())->method('getCurrentNode');
-		$nodeRepository->expects($this->once())->method('getContext')->will($this->returnValue($nodeContext));
-		$this->inject($this->viewHelper, 'nodeRepository', $nodeRepository);
-		$this->viewHelper->render(NULL);
+	public function renderUsesUriNodeViewHelperToBuildTheUri() {
+		$viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\Link\NodeViewHelper', array('renderChildren', 'createUriNodeViewHelper'));
+
+		$uriNodeViewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper');
+		$renderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('a');
+		$this->inject($viewHelper, 'tag', $tagBuilder);
+		$this->inject($viewHelper, 'renderingContext', $renderingContext);
+
+		$viewHelper->expects($this->any())->method('createUriNodeViewHelper')->will($this->returnValue($uriNodeViewHelper));
+		$viewHelper->expects($this->any())->method('renderChildren')->will($this->returnValue('Link label'));
+
+		$uriNodeViewHelper->expects($this->atLeastOnce())->method('render')->with($node, 'html', FALSE, 'otherNode')->will($this->returnValue('some/other/page.html'));
+
+		$output = $viewHelper->render($node, 'html', FALSE, 'otherNode');
+
+		$this->assertEquals('<a href="some/other/page.html">Link label</a>', $output);
 	}
 
-	/**
-	 * @test
-	 */
-	public function viewHelperFetchesRelativePathFromCurrentContextNodeWhenNodeIsGivenAsRelativePathString() {
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$nodeContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
-
-		$currentNodeMock = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
-		$currentNodeMock->expects($this->once())->method('getNode')->with('some/relative/path');
-
-		$nodeContext->expects($this->once())->method('getCurrentNode')->will($this->returnValue($currentNodeMock));
-		$nodeRepository->expects($this->once())->method('getContext')->will($this->returnValue($nodeContext));
-
-		$this->inject($this->viewHelper, 'nodeRepository', $nodeRepository);
-		$this->viewHelper->render('some/relative/path');
-	}
-
-	/**
-	 * @test
-	 */
-	public function viewHelperFetchesRelativePathFromCurrentContextSiteNodeWhenNodeIsGivenWithAStartingTilde() {
-		$currentSiteNodeMock = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
-		$currentSiteNodeMock->expects($this->once())->method('getNode')->will($this->returnValue($this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface')));
-		$nodeContentContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
-		$nodeContentContext->expects($this->once())->method('getCurrentSiteNode')->will($this->returnValue($currentSiteNodeMock));
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$nodeRepository->expects($this->once())->method('getContext')->will($this->returnValue($nodeContentContext));
-
-		$this->inject($this->viewHelper, 'nodeRepository', $nodeRepository);
-		$this->viewHelper->render('~/some/site/path');
-	}
 
 }
 ?>

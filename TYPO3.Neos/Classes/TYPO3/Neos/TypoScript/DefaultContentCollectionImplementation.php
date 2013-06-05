@@ -29,9 +29,9 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -86,7 +86,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 		} else {
 			$contentCollectionNode = $node->getNode($this->getNodePath());
 
-			if ($contentCollectionNode === NULL && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
+			if ($contentCollectionNode === NULL && $node->getContext()->getWorkspaceName() !== 'live') {
 					/**
 					 * In case the user created a new page, this page does not have the necessary content collections created yet.
 					 * The problem is that we only know during TypoScript rendering which content collections we expect to have
@@ -96,7 +96,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 					 * know it is ugly.
 					 */
 				$contentCollectionNode = $node->createNode($this->getNodePath(), $this->nodeTypeManager->getNodeType('TYPO3.Neos:ContentCollection'));
-				$this->nodeRepository->persistEntities();
+				$this->nodeDataRepository->persistEntities();
 			}
 		}
 
@@ -112,10 +112,10 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode
 	 * @return string
 	 */
-	protected function generateIdAttributeForContentCollection(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode) {
+	protected function generateIdAttributeForContentCollection(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode) {
 		$parentNode = $this->deriveParentDocumentNode($contentCollectionNode);
 		$parentDocumentNodePath = $parentNode->getPath();
 		$relativePath = substr($contentCollectionNode->getPath(), strlen($parentDocumentNodePath));
@@ -123,10 +123,10 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	protected function deriveParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $contentCollectionNode) {
+	protected function deriveParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode) {
 		$parentNode = $contentCollectionNode->getParent();
 
 		while ($parentNode->getNodeType()->isOfType('TYPO3.Neos:Document') !== TRUE) {

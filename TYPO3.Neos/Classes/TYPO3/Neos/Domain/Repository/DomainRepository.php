@@ -28,6 +28,12 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository {
 	protected $domainMatchingStrategy;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Core\Bootstrap
+	 */
+	protected $bootstrap;
+
+	/**
 	 * Finds all active domains matching the given host.
 	 *
 	 * Their order is determined by how well they match, best match first.
@@ -38,6 +44,32 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository {
 	 */
 	public function findByHost($host) {
 		return $this->domainMatchingStrategy->getSortedMatches($host, $this->findAll()->toArray());
+	}
+
+	/**
+	 * Find the best matching active domain for the given host.
+	 *
+	 * @param $host
+	 * @return \TYPO3\Neos\Domain\Model\Domain
+	 * @api
+	 */
+	public function findOneByHost($host) {
+		$allMatchingDomains = $this->domainMatchingStrategy->getSortedMatches($host, $this->findAll()->toArray());
+		return count($allMatchingDomains) ? $allMatchingDomains[0] : NULL;
+	}
+
+	/**
+	 *
+	 * @return \TYPO3\Neos\Domain\Model\Domain
+	 */
+	public function findOneByActiveRequest() {
+		$matchingDomain = NULL;
+		$activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
+		if ($activeRequestHandler instanceof \TYPO3\Flow\Http\HttpRequestHandlerInterface) {
+			$matchingDomain = $this->findOneByHost($activeRequestHandler->getHttpRequest()->getUri()->getHost());
+		}
+
+		return $matchingDomain;
 	}
 
 }

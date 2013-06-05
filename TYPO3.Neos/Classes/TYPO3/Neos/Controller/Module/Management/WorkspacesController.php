@@ -22,15 +22,21 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\WorkspacesService
+	 * @var \TYPO3\Neos\Service\PublishingService
 	 */
-	protected $workspacesService;
+	protected $publishingService;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
-	protected $nodeRepository;
+	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 */
+	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -79,14 +85,9 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 			$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 			$workspaceName = $user->getPreferences()->get('context.workspace');
 		}
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext($workspaceName);
-		$contentContext->setInvisibleContentShown(TRUE);
-		$contentContext->setRemovedContentShown(TRUE);
-		$contentContext->setInaccessibleContentShown(TRUE);
-		$this->nodeRepository->setContext($contentContext);
 
 		$sites = array();
-		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
+		foreach ($this->publishingService->getUnpublishedNodes($workspaceName) as $node) {
 			if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
@@ -107,13 +108,13 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 			}
 		}
 
-		$liveWorkspace = $this->workspacesService->getWorkspace('live');
+		$liveWorkspace = $this->workspaceRepository->findOneByName('live');
 
 		ksort($sites);
 		foreach ($sites as $siteKey => $site) {
 			foreach ($site['documents'] as $documentKey => $document) {
 				foreach ($document['changes'] as $changeKey => $change) {
-					$liveNode = $this->nodeRepository->findOneByIdentifier($change['node']->getIdentifier(), $liveWorkspace);
+					$liveNode = $this->nodeDataRepository->findOneByIdentifier($change['node']->getIdentifier(), $liveWorkspace);
 					$sites[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
 					$sites[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
 				}
@@ -122,10 +123,10 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 		}
 
 		$workspaces = array();
-		foreach ($this->workspacesService->getWorkspaces() as $workspace) {
+		foreach ($this->workspaceRepository->findAll() as $workspace) {
 			array_push($workspaces, array(
 				'workspaceNode' => $workspace,
-				'unpublishedNodesCount' => $this->workspacesService->getUnpublishedNodesCount($workspace->getName())
+				'unpublishedNodesCount' => $this->publishingService->getUnpublishedNodesCount($workspace->getName())
 			));
 		}
 
@@ -137,27 +138,27 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
-		$this->workspacesService->publishNode($node);
+	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		$this->publishingService->publishNode($node);
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been published'));
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
-		$this->nodeRepository->remove($node);
+	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		$this->nodeDataRepository->remove($node);
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been discarded'));
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> $nodes
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $action
 	 * @return void
 	 */
@@ -165,18 +166,18 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 		$propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
 		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		foreach ($nodes as $key => $node) {
-			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface', $propertyMappingConfiguration);
+			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
 		}
 		switch ($action) {
 			case 'publish':
 				foreach ($nodes as $node) {
-					$this->workspacesService->publishNode($node);
+					$this->publishingService->publishNode($node);
 				}
 				$message = 'Selected changes have been published';
 			break;
 			case 'discard':
 				foreach ($nodes as $node) {
-					$this->nodeRepository->remove($node);
+					$this->nodeDataRepository->remove($node);
 				}
 				$message = 'Selected changes have been discarded';
 			break;
@@ -193,7 +194,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	 * @return void
 	 */
 	public function publishWorkspaceAction($workspaceName) {
-		$this->workspacesService->getWorkspace($workspaceName)->publish('live');
+		$this->workspaceRepository->findOneByName($workspaceName)->publish('live');
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been published', NULL, array($workspaceName)));
 		$this->redirect('index');
 	}
@@ -203,9 +204,9 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	 * @return void
 	 */
 	public function discardWorkspaceAction($workspaceName) {
-		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
+		foreach ($this->publishingService->getUnpublishedNodes($workspaceName) as $node) {
 			if ($node->getPath() !== '/') {
-				$this->nodeRepository->remove($node);
+				$this->nodeDataRepository->remove($node);
 			}
 		}
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been discarded', NULL, array($workspaceName)));
@@ -216,10 +217,10 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\StandardControl
 	 * Finds the nearest parent document node of the provided node by looping recursively trough
 	 * the node and it's parent nodes and checking if they are a sub node type of TYPO3.Neos:Document
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	protected function findDocumentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	protected function findDocumentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		while ($node) {
 			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 				return $node;

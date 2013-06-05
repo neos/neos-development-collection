@@ -29,12 +29,6 @@ class TypoScriptService {
 	protected $typoScriptParser;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * Pattern used for determining the TypoScripts root path for a site.
 	 *
 	 * @var string
@@ -57,13 +51,13 @@ class TypoScriptService {
 	 * path to take while searching for TypoScript configuration. The path of the
 	 * start node must be the base path of the end node's path.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $startNode Node marking the starting point
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $endNode Node marking the end point
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode Node marking the end point
 	 * @return array The merged object tree as of the given node
 	 * @throws \TYPO3\Neos\Domain\Exception
 	 */
-	public function getMergedTypoScriptObjectTree(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $startNode, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $endNode) {
-		$contentContext = $this->nodeRepository->getContext();
+	public function getMergedTypoScriptObjectTree(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode) {
+		$contentContext = $startNode->getContext();
 		$parentNodes = $contentContext->getNodesOnPath($startNode->getPath(), $endNode->getPath());
 		if (!is_array($parentNodes)) {
 			return NULL;

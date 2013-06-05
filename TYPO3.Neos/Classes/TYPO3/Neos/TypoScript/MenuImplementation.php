@@ -30,12 +30,6 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	const STATE_ACTIVE = 'active';
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * @var string
 	 */
 	protected $templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Menu.html';
@@ -85,9 +79,14 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	protected $items;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $startingPoint;
+
+	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
+	 */
+	protected $currentNode;
 
 	/**
 	 * @param integer $entryLevel
@@ -146,7 +145,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $startingPoint
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint
 	 * @return void
 	 */
 	public function setStartingPoint($startingPoint) {
@@ -154,7 +153,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	public function getStartingPoint() {
 		return $this->tsValue('startingPoint');
@@ -186,16 +185,24 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * Builds the array of menu items containing those items which match the
 	 * configuration set for this Menu object.
 	 *
+	 * @throws \TYPO3\Neos\Domain\Exception
 	 * @return array An array of menu items and further information
 	 */
 	protected function buildItems() {
-		$startingPoint = $this->getStartingPoint() ?: $this->nodeRepository->getContext()->getCurrentNode();
+		$currentContext = $this->tsRuntime->getCurrentContext();
+		if (!isset($currentContext['node']) && !$this->getStartingPoint()) {
+			throw new \TYPO3\Neos\Domain\Exception('You must either set a "startingPoint" for the menu or "node" must be set in the TypoScript context.', 1369596980);
+		} else {
+			$this->currentNode = $currentContext['node'];
+			$contentContext = $currentContext['node']->getContext();
+		}
+		$startingPoint = $this->getStartingPoint() ?: $currentContext['node'];
 
-		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $this->nodeRepository->getContext()->getCurrentSiteNode(), $startingPoint);
+		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $contentContext->getCurrentSiteNode(), $startingPoint);
 		if ($entryParentNode === NULL) {
 			return array();
 		}
-		$lastParentNode = ($this->getLastLevel() !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->getLastLevel(), $this->nodeRepository->getContext()->getCurrentSiteNode(), $this->nodeRepository->getContext()->getCurrentNode()) : NULL;
+		$lastParentNode = ($this->getLastLevel() !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->getLastLevel(), $contentContext->getCurrentSiteNode(), $startingPoint) : NULL;
 
 		return $this->buildRecursiveItemsArray($entryParentNode, $lastParentNode);
 	}
@@ -203,13 +210,13 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	/**
 	 * Recursively called method which builds the actual items array.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode The parent node whose children should be listed as items
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode The parent node whose children should be listed as items
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
 	 * @see buildItems()
 	 */
-	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $entryParentNode, $lastParentNode, $currentLevel = 1) {
+	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode, $lastParentNode, $currentLevel = 1) {
 		$items = array();
 		foreach ($entryParentNode->getChildNodes('TYPO3.Neos:Document') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
@@ -221,7 +228,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 				'node' => $currentNode,
 				'state' => self::STATE_NORMAL
 			);
-			if ($currentNode === $this->nodeRepository->getContext()->getCurrentNode()) {
+			if ($currentNode === $this->currentNode) {
 				$item['state'] = self::STATE_CURRENT;
 			}
 
@@ -251,11 +258,11 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface The parent node of the node at the specified level or NULL if none was found
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node of the node at the specified level or NULL if none was found
 	 */
 	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint) {
 		$parentNode = NULL;
-		$breadcrumbNodes = $this->nodeRepository->getContext()->getNodesOnPath($currentSiteNode, $startingPoint);
+		$breadcrumbNodes = $currentSiteNode->getContext()->getNodesOnPath($currentSiteNode, $startingPoint);
 
 		if ($givenSiteLevel > 0 && isset($breadcrumbNodes[$givenSiteLevel - 1])) {
 			$parentNode = $breadcrumbNodes[$givenSiteLevel - 1];

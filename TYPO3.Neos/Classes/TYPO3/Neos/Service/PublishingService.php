@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class WorkspacesService {
+class PublishingService {
 
 	/**
 	 * @Flow\Inject
@@ -29,38 +29,64 @@ class WorkspacesService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
 	 */
-	public function getCurrentWorkspace() {
-		return $this->nodeRepository->getContext()->getWorkspace(FALSE);
-	}
+	protected $nodeFactory;
 
 	/**
-	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
 	 */
-	public function getWorkspace($workspaceName) {
-		return $this->workspaceRepository->findOneByName($workspaceName);
-	}
+	protected $contextFactory;
 
 	/**
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
 	 */
-	public function getWorkspaces() {
-		return $this->workspaceRepository->findAll();
-	}
+	protected $domainRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 */
+	protected $siteRepository;
 
 	/**
 	 * @param string $workspaceName
 	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
 	 */
 	public function getUnpublishedNodes($workspaceName) {
-		return $this->nodeRepository->findByWorkspace($this->workspaceRepository->findOneByName($workspaceName));
+		$finalNodes = array();
+		$contextProperties = array(
+			'workspaceName' => $workspaceName,
+			'inaccessibleContentShown' => TRUE,
+			'invisibleContentShown' => TRUE,
+			'removedContentShown' => TRUE
+		);
+
+		$currentDomain = $this->domainRepository->findOneByActiveRequest();
+		if ($currentDomain !== NULL) {
+			$contextProperties['currentSite'] = $currentDomain->getSite();
+			$contextProperties['currentDomain'] = $currentDomain;
+		} else {
+			$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+		}
+		$contentContext = $this->contextFactory->create($contextProperties);
+
+		$nodeData = $this->nodeDataRepository->findByWorkspace($contentContext->getWorkspace(FALSE));
+		foreach ($nodeData as $singleNodeData) {
+			$node = $this->nodeFactory->createFromNode($singleNodeData, $contentContext);
+			if ($node !== NULL) {
+				$finalNodes[] = $node;
+			}
+		}
+		return $finalNodes;
 	}
 
 	/**
@@ -72,20 +98,11 @@ class WorkspacesService {
 	}
 
 	/**
-	 * @param string $workspaceName
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 */
-	public function publishWorkspace($workspaceName, $targetWorkspaceName = 'live') {
-		$this->workspaceRepository->findOneByName($workspaceName)->publish($targetWorkspaceName);
-	}
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @param string $targetWorkspaceName
-	 * @return void
-	 */
-	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $targetWorkspaceName = 'live') {
+	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName = 'live') {
 		$nodes = array($node);
 		$nodeType = $node->getNodeType();
 		if ($nodeType->isOfType('TYPO3.Neos:Page') || $nodeType->hasChildNodes()) {
@@ -98,7 +115,7 @@ class WorkspacesService {
 	}
 
 	/**
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> $nodes
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 */

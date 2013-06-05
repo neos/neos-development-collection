@@ -34,11 +34,11 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	/**
 	 * Assigns a node to the NodeView.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node The node to render
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to render
 	 * @param array $propertyNames Optional list of property names to include in the JSON output
 	 * @return void
 	 */
-	public function assignNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'nodeType')) {
+	public function assignNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'nodeType')) {
 		$this->setConfiguration(
 			array(
 				'value' => array(
@@ -55,13 +55,13 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	/**
 	 * Prepares this view to render a list or tree of child nodes of the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node The node to fetch child nodes of
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to fetch child nodes of
 	 * @param string $nodeTypeFilter Criteria for filtering the child nodes
 	 * @param integer $outputStyle Either STYLE_TREE or STYLE_list
 	 * @param integer $depth How many levels of childNodes (0 = unlimited)
 	 * @return void
 	 */
-	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0) {
+	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0) {
 		$this->outputStyle = $outputStyle;
 		$nodes = array();
 		$this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? NULL : $nodeTypeFilter), $depth);
@@ -73,10 +73,10 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	/**
 	 * Collect node data for this node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function assignOneNodeForTree(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	public function assignOneNodeForTree(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 
 		$contextNodePath = $node->getContextPath();
@@ -103,15 +103,15 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * Collect node data and recurse into child nodes
 	 *
 	 * @param array &$nodes
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $nodeTypeFilter
 	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
 	 * @param integer $recursionPointer current recursion level
 	 * @return void
 	 */
-	protected function collectChildNodeData(array &$nodes, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $nodeTypeFilter, $depth = 0, $recursionPointer = 1) {
+	protected function collectChildNodeData(array &$nodes, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $nodeTypeFilter, $depth = 0, $recursionPointer = 1) {
 		foreach ($node->getChildNodes($nodeTypeFilter) as $childNode) {
-			/** @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $childNode */
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $childNode */
 			$contextNodePath = $childNode->getContextPath();
 			$workspaceName = $childNode->getWorkspace()->getName();
 			$nodeName = $childNode->getName();
@@ -144,12 +144,12 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param boolean $expand
 	 * @param array $children
 	 * @return array
 	 */
-	public function collectTreeNodeData(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $expand = TRUE, array $children = array()) {
+	public function collectTreeNodeData(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $expand = TRUE, array $children = array()) {
 		$nodeType = $node->getNodeType()->getName();
 		$isTimedPage = FALSE;
 		$now = new \DateTime();

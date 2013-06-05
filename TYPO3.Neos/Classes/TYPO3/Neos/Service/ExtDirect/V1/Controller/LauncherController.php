@@ -51,12 +51,6 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $securityContext;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * Select special error action
 	 *
 	 * @return void
@@ -77,8 +71,6 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function searchAction($term, $requestIndex) {
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 		$workspaceName = $user->getPreferences()->get('context.workspace');
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext($workspaceName);
-		$this->nodeRepository->setContext($contentContext);
 
 		$searchContentGroups = array();
 		$searchNodeTypes = array();
@@ -166,10 +158,10 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	protected function findNextParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node) {
+	protected function findNextParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		while ($node = $node->getParent()) {
 			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 				return $node;

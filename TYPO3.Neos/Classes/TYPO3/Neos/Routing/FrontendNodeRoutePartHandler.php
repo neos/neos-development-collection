@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -23,15 +23,21 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
 	 */
-	protected $nodeRepository;
+	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\NodeService
+	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
 	 */
-	protected $nodeService;
+	protected $domainRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 */
+	protected $siteRepository;
 
 	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
@@ -48,7 +54,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 	 */
 	protected function matchValue($requestPath) {
 		try {
-			$node = $this->nodeService->getNodeByContextNodePath($requestPath);
+			$node = $this->getNodeByContextNodePath($requestPath);
 		} catch (\TYPO3\Neos\Routing\Exception $exception) {
 			if ($requestPath === '') {
 				throw new \TYPO3\Neos\Routing\Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
@@ -98,34 +104,47 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 	 *
 	 * absolute node path: /sites/neostypo3org/homepage/about@user-admin
 	 * $this->value:       homepage/about@user-admin
-
 	 *
 	 * @param mixed $value Either a Node object or an absolute context node path
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof PersistentNodeInterface && !is_string($value)) {
+		if (!$value instanceof NodeInterface && !is_string($value)) {
 			return FALSE;
 		}
 
 		if (is_string($value)) {
-			preg_match(PersistentNodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
 			if (!isset($matches['NodePath'])) {
 				return FALSE;
 			}
 
-			$contentContext = $this->nodeRepository->getContext();
+			$contextProperties = array(
+				'workspaceName' => (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live'),
+			);
+
+			$currentDomain = $this->domainRepository->findOneByActiveRequest();
+			if ($currentDomain !== NULL) {
+				$contextProperties['currentSite'] = $currentDomain->getSite();
+				$contextProperties['currentDomain'] = $currentDomain;
+			} else {
+				$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+			}
+			$contentContext = $this->contextFactory->create($contextProperties);
+
 			if ($contentContext->getWorkspace(FALSE) === NULL) {
 				return FALSE;
 			}
 
-			$node = $contentContext->getCurrentSiteNode()->getNode($matches['NodePath']);
-		} else {
+			$node = $contentContext->getNode($matches['NodePath']);
+		} elseif ($value instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
 			$node = $value;
-			$contentContext = $this->nodeRepository->getContext();
+			$contentContext = $node->getContext();
+		} else {
+			throw new \InvalidArgumentException('The provided value was neither a string nor a node.', 1371673910);
 		}
 
-		if ($node instanceof PersistentNodeInterface) {
+		if ($node instanceof NodeInterface) {
 			$nodeContextPath = $node->getContextPath();
 			$siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
 		} else {
@@ -138,6 +157,67 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 
 		$this->value = substr($nodeContextPath, strlen($siteNodePath) + 1);
 		return TRUE;
+	}
+
+
+	/**
+	 * Returns the initialized node that is referenced by $relativeContextNodePath
+	 *
+	 * @param string $relativeContextNodePath
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\Neos\Routing\Exception\NoWorkspaceException
+	 * @throws \TYPO3\Neos\Routing\Exception\NoSiteException
+	 * @throws \TYPO3\Neos\Routing\Exception\NoSuchNodeException
+	 * @throws \TYPO3\Neos\Routing\Exception\NoSiteNodeException
+	 * @throws \TYPO3\Neos\Routing\Exception\InvalidRequestPathException
+	 */
+	public function getNodeByContextNodePath($relativeContextNodePath) {
+		if ($relativeContextNodePath !== '') {
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $relativeContextNodePath, $matches);
+			if (!isset($matches['NodePath'])) {
+				throw new Exception\InvalidRequestPathException('The request path "' . $relativeContextNodePath . '" is not valid', 1346949309);
+			}
+			$relativeNodePath = $matches['NodePath'];
+		} else {
+			$relativeNodePath = '';
+		}
+
+		$contextProperties = array(
+			'workspaceName' => (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live'),
+			'invisibleContentShown' => TRUE,
+			'inaccessibleContentShown' => TRUE
+		);
+
+		$currentDomain = $this->domainRepository->findOneByActiveRequest();
+		if ($currentDomain !== NULL) {
+			$contextProperties['currentSite'] = $currentDomain->getSite();
+			$contextProperties['currentDomain'] = $currentDomain;
+		} else {
+			$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+		}
+		$contentContext = $this->contextFactory->create($contextProperties);
+
+		$workspace = $contentContext->getWorkspace(FALSE);
+		if (!$workspace) {
+			throw new Exception\NoWorkspaceException('No workspace found for request path "' . $relativeContextNodePath . '"', 1346949318);
+		}
+
+		$site = $contentContext->getCurrentSite();
+		if (!$site) {
+			throw new Exception\NoSiteException('No site found for request path "' . $relativeContextNodePath . '"', 1346949693);
+		}
+
+		$siteNode = $contentContext->getCurrentSiteNode();
+		if (!$siteNode) {
+			throw new Exception\NoSiteNodeException('No site node found for request path "' . $relativeContextNodePath . '"', 1346949728);
+		}
+
+		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
+
+		if (!$node instanceof NodeInterface) {
+			throw new Exception\NoSuchNodeException('No node found on request path "' . $relativeContextNodePath . '"', 1346949857);
+		}
+		return $node;
 	}
 
 }

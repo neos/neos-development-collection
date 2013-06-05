@@ -47,12 +47,6 @@ class SiteImportService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
@@ -79,18 +73,19 @@ class SiteImportService {
 	 * Checks for the presence of Sites.xml in the given package and imports
 	 * it if found.
 	 *
-	 * @param string $packageKey
+	 * @param $packageKey
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $contentContext
 	 * @return void
 	 * @throws \TYPO3\Neos\Exception
 	 */
-	public function importFromPackage($packageKey) {
+	public function importFromPackage($packageKey, \TYPO3\TYPO3CR\Domain\Service\Context $contentContext) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			throw new \TYPO3\Neos\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
 			throw new \TYPO3\Neos\Exception('Error: No content found in package "' . $packageKey . '".');
 		} else {
 			try {
-				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
+				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml', $contentContext);
 			} catch (\Exception $exception) {
 				throw new \TYPO3\Neos\Exception('Error: During import an exception occurred. ' . $exception->getMessage(), 1300360480, $exception);
 			}
@@ -99,15 +94,12 @@ class SiteImportService {
 
 	/**
 	 * @param string $pathAndFilename
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $contentContext
 	 * @return void
 	 * @throws \TYPO3\Flow\Package\Exception\UnknownPackageException
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageStateException
 	 */
-	public function importSitesFromFile($pathAndFilename) {
-		$contentContext = $this->nodeRepository->getContext();
-		$contentContext->setInvisibleContentShown(TRUE);
-		$contentContext->setInaccessibleContentShown(TRUE);
-
+	public function importSitesFromFile($pathAndFilename, \TYPO3\TYPO3CR\Domain\Service\Context $contentContext) {
 			// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen($pathAndFilename, 'rb');
 		$xmlString = '';
@@ -159,10 +151,10 @@ class SiteImportService {
 	 * Iterates over the nodes and adds them to the workspace.
 	 *
 	 * @param \SimpleXMLElement $parentXml
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $parentNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $parentNode
 	 * @return void
 	 */
-	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $parentNode) {
+	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeData $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
 			$nodeTypeName = (string)$childNodeXml['type'];

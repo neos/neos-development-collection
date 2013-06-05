@@ -22,20 +22,17 @@ class SiteExportService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
 	 */
-	protected $nodeRepository;
+	protected $contextFactory;
 
 	/**
 	 * Fetches the site with the given name and exports it into XML.
-	 *
-	 * @param array<\TYPO3\Neos\Domain\Model\Site> $sites
+	 * @param array $sites
+	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
 	 * @return void
 	 */
-	public function export(array $sites) {
-		$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
-		$this->nodeRepository->getContext()->setInaccessibleContentShown(TRUE);
-
+	public function export(array $sites, \TYPO3\Neos\Domain\Service\ContentContext $contentContext) {
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
 		$xmlWriter->startDocument('1.0', 'UTF-8');
@@ -54,8 +51,13 @@ class SiteExportService {
 			$xmlWriter->writeElement('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
 			$xmlWriter->endElement();
 
+			$contextProperties = $contentContext->getProperties();
+			$contextProperties['currentSite'] = $site;
+			$contentContext = $this->contextFactory->create($contextProperties);
+
 				// on to the nodes...
-			$node = $this->nodeRepository->getContext()->getNode('/Sites/' . $site->getNodeName());
+			$node = $contentContext->getCurrentSiteNode();
+
 			foreach ($node->getChildNodes() as $childNode) {
 				$this->exportNode($childNode, $xmlWriter);
 			}
@@ -71,11 +73,11 @@ class SiteExportService {
 	/**
 	 * Export a single node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @param \XMLWriter $xmlWriter
 	 * @return void
 	 */
-	protected function exportNode(\TYPO3\TYPO3CR\Domain\Model\Node $node, \XMLWriter $xmlWriter) {
+	protected function exportNode(\TYPO3\TYPO3CR\Domain\Model\NodeData $node, \XMLWriter $xmlWriter) {
 		$xmlWriter->startElement('node');
 
 			// node attributes

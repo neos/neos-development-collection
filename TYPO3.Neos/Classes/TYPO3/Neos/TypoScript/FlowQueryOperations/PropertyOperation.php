@@ -50,7 +50,7 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 	 * @return boolean
 	 */
 	public function canEvaluate($context) {
-		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface));
+		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
 	}
 
 	/**

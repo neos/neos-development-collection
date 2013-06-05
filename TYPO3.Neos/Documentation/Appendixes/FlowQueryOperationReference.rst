@@ -74,7 +74,7 @@ filter
 
 This filter implementation contains specific behavior for use on TYPO3CR
 nodes. It will not evaluate any elements that are not instances of the
-`PersistentNodeInterface`.
+`NodeInterface`.
 
 The implementation changes the behavior of the `instanceof` operator to
 work on node types instead of PHP object types, so that::

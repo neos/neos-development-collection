@@ -41,24 +41,18 @@ class ContentElementWrappingService {
 	protected $accessDecisionManager;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $typoscriptPath
 	 * @param string $content
 	 * @param boolean $isPage
 	 * @param boolean $reloadable
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
 		$nodeType = $node->getNodeType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
@@ -74,6 +68,8 @@ class ContentElementWrappingService {
 			);
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
 			$tagBuilder->addAttribute('id', 'c' . $node->getIdentifier());
+		} else {
+			$cssClasses = array();
 		}
 
 		try {
@@ -148,11 +144,11 @@ class ContentElementWrappingService {
 			$this->addScriptTag($tagBuilder, '__nodetype', $nodeType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 'neos-page-metainformation');
-			$tagBuilder->addAttribute('data-__sitename', $this->nodeRepository->getContext()->getCurrentSite()->getName());
+			$tagBuilder->addAttribute('data-__sitename', $node->getContext()->getCurrentSite()->getName());
 			$tagBuilder->addAttribute('data-__siteroot', sprintf(
 				'/sites/%s@%s',
-				$this->nodeRepository->getContext()->getCurrentSite()->getNodeName(),
-				$this->nodeRepository->getContext()->getWorkspace()->getName()
+				$node->getContext()->getCurrentSite()->getNodeName(),
+				$node->getContext()->getWorkspace()->getName()
 			));
 		}
 

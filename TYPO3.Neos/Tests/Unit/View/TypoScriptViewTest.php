@@ -40,14 +40,15 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function renderPutsSiteNodeInTypoScriptContext() {
-		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
-		$mockSiteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
 		$mockContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
+
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
+		$mockContextualizedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', NULL, array($mockNode, $mockContext));
+		$mockSiteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
 		$mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
 
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$mockNodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+		$mockContextualizedNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
 		$mockRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', FALSE);
 
@@ -58,11 +59,10 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('dummy'));
 
-		$this->inject($view, 'nodeRepository', $mockNodeRepository);
 		$this->inject($view, 'controllerContext', $mockControllerContext);
 		$this->inject($view, 'typoScriptService', $mockTypoScriptService);
 
-		$view->_set('variables', array('value' => $mockNode));
+		$view->_set('variables', array('value' => $mockContextualizedNode));
 
 		$mockRuntime->expects($this->once())->method('pushContextArray')->with($this->arrayHasKey('site'));
 

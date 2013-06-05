@@ -12,15 +12,13 @@ namespace TYPO3\Neos\ViewHelpers\Link;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
  *
  * The target node can be provided as string or as a Node object; if not specified
- * at all, the generated URI will refer to the current node.
+ * at all, the generated URI will refer to the current document node inside the TypoScript context.
  *
  * When specifying the ``node`` argument as string, the following conventions apply:
  *
@@ -71,12 +69,6 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 class NodeViewHelper extends AbstractTagBasedViewHelper {
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * @var string
 	 */
 	protected $tagName = 'a';
@@ -97,45 +89,19 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	/**
 	 * Render the link.
 	 *
-	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface object or a string node path
+	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
+	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @return string The rendered link
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE) {
-		$currentContext = $this->nodeRepository->getContext();
-		if ($currentContext === NULL) {
-			$currentContext = new ContentContext('live');
-			$this->nodeRepository->setContext($currentContext);
-		}
-		if ($node === NULL) {
-			$node = $currentContext->getCurrentNode();
-		} elseif (is_string($node)) {
-			if (substr($node, 0, 2) === '~/') {
-				$node = $currentContext->getCurrentSiteNode()->getNode(substr($node, 2));
-			} else {
-				if (substr($node, 0, 1) === '/') {
-					$node = $currentContext->getNode($node);
-				} else {
-					$node = $currentContext->getCurrentNode()->getNode($node);
-				}
-			}
-		}
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
+		$uriViewHelper = $this->createUriNodeViewHelper();
+		$uriViewHelper->setRenderingContext($this->renderingContext);
 
-		if ($node instanceof NodeInterface) {
-			$request = $this->controllerContext->getRequest()->getMainRequest();
+		$uri = $uriViewHelper->render($node, $format, $absolute, $baseNodeName);
 
-			if ($format === NULL) {
-				$format = $request->getFormat();
-			}
-
-			$uriBuilder = clone $this->controllerContext->getUriBuilder();
-			$uriBuilder->setRequest($request);
-			$uri = $uriBuilder
-				->reset()
-				->setCreateAbsoluteUri($absolute)
-				->setFormat($format)
-				->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+		if ($uri !== NULL) {
 			$this->tag->addAttribute('href', $uri);
 		}
 
@@ -143,5 +109,11 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 		return $this->tag->render();
 	}
 
+	/**
+	 * @return \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper
+	 */
+	protected function createUriNodeViewHelper() {
+		return new \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper();
+	}
 }
 ?>

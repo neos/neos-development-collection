@@ -100,7 +100,7 @@ class Site {
 	 * Returns the node name of this site
 	 *
 	 * If you need to fetch the root node for this site, use the content
-	 * context, do not use the NodeRepository!
+	 * context, do not use the NodeDataRepository!
 	 *
 	 * @return string The node name
 	 */
@@ -176,6 +176,5 @@ class Site {
 	public function isOffline() {
 		return $this->state === self::STATE_OFFLINE;
 	}
-
 }
 ?>

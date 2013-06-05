@@ -20,8 +20,8 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function filterWithIdentifierUsesNodeIdentifier() {
-		$node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
-		$node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
+		$node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
 
 		$context = array($node1, $node2);

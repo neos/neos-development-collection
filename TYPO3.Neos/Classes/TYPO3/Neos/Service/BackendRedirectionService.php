@@ -33,9 +33,27 @@ class BackendRedirectionService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+	 */
+	protected $domainRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 */
+	protected $siteRepository;
 
 	/**
 	 * Returns a specific URI string to redirect to after the login; or NULL if there is none.
@@ -46,11 +64,10 @@ class BackendRedirectionService {
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 		$workspaceName = $user->getPreferences()->get('context.workspace');
 
-			// Hack: Create the workspace if it does not exist yet.
-		$contentContext = new ContentContext($workspaceName);
+		$contentContext = $this->createContext($workspaceName);
+
 		$contentContext->getWorkspace();
-		$this->nodeRepository->setContext($contentContext);
-		$this->nodeRepository->persistEntities();
+		$this->nodeDataRepository->persistEntities();
 
 		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
 			return $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
@@ -68,8 +85,7 @@ class BackendRedirectionService {
 	 */
 	public function getAfterLogoutRedirectionUri() {
 		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
-			$contentContext = new ContentContext('live');
-			$this->nodeRepository->setContext($contentContext);
+			$contentContext = $this->createContext('live');
 
 			return $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
 		}
@@ -110,6 +126,27 @@ class BackendRedirectionService {
 		}
 
 		return $redirectionUri;
+	}
+
+	/**
+	 * Create a ContentContext to be used for the backend redirects.
+	 *
+	 * @param string $workspaceName
+	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 */
+	protected function createContext($workspaceName) {
+		$contextProperties = array(
+			'workspaceName' => $workspaceName
+		);
+
+		$currentDomain = $this->domainRepository->findOneByActiveRequest();
+		if ($currentDomain !== NULL) {
+			$contextProperties['currentSite'] = $currentDomain->getSite();
+			$contextProperties['currentDomain'] = $currentDomain;
+		} else {
+			$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+		}
+		return $this->contextFactory->create($contextProperties);
 	}
 }
 

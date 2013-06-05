@@ -22,9 +22,9 @@ class NodeSearchService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
-	protected $nodeRepository;
+	protected $nodeDataRepository;
 
 	/**
 	 * Search all properties for given $term
@@ -34,7 +34,7 @@ class NodeSearchService {
 	 */
 	public function findByProperties($term, array $searchNodeTypes) {
 			// TODO: Implement a better search when Flow offer the possibility
-		$query = $this->nodeRepository->createQuery();
+		$query = $this->nodeDataRepository->createQuery();
 		$constraints = array(
 			$query->like('properties', '%' . $term . '%'),
 			$query->in('nodeType', $searchNodeTypes)

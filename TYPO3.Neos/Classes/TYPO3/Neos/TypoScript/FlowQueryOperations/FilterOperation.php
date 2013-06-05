@@ -16,7 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * This filter implementation contains specific behavior for use on TYPO3CR
  * nodes. It will not evaluate any elements that are not instances of the
- * `PersistentNodeInterface`.
+ * `NodeInterface`.
  *
  * The implementation changes the behavior of the `instanceof` operator to
  * work on node types instead of PHP object types, so that::
@@ -42,7 +42,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface));
+		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
 	}
 
 	/**
@@ -94,7 +94,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 		if ($operator === 'instanceof') {
 			if ($this->operandIsSimpleType($operand)) {
 				return $this->handleSimpleTypeOperand($operand, $value);
-			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface') {
+			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface') {
 				return TRUE;
 			} else {
 				return $value->getNodeType()->isOfType($operand);

@@ -26,9 +26,14 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $homeNode;
+
+	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
 
 	/**
 	 * Set up node structure
@@ -39,19 +44,25 @@ class TypoScriptServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$site = new Site('example');
 		$site->setSiteResourcesPackageKey('TYPO3.Neos');
 
-		$context = new ContentContext('live');
-		$context->setCurrentSite($site);
+		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$context = $this->contextFactory->create(array('workspaceName' => 'live', 'currentSite' => $site));
 
-		$nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		ObjectAccess::setProperty($nodeRepository, 'context', $context, TRUE);
 
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importSitesFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml');
+		$siteImportService->importSitesFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $context);
 		$this->persistenceManager->persistAll();
 
 		$propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 		$this->homeNode = $propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
 		$this->assertFalse($propertyMapper->getMessages()->hasErrors());
+	}
+
+	/**
+	 * @return void
+	 */
+	public function tearDown() {
+		parent::tearDown();
+		$this->inject($this->contextFactory, 'contextInstances', array());
 	}
 
 	/**

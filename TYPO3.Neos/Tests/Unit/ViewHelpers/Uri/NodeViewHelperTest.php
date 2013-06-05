@@ -25,63 +25,126 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $viewHelper;
 
 	/**
+	 * @var \TYPO3\Flow\Mvc\ActionRequest
+	 */
+	protected $request;
+
+	/**
+	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+	 */
+	protected $controllerContext;
+
+	/**
+	 * @var  \TYPO3\TypoScript\Core\Runtime
+	 */
+	protected $tsRuntime;
+
+	/**
+	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
+	 */
+	protected $uriBuilderMock;
+
+	/**
 	 * Set up common mocks and object under test
 	 */
 	public function setUp() {
-		$uriBuilderMock = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder', array('build'));
-		$uriBuilderMock->expects($this->any())->method('build')->will($this->returnValue('dummy/final/url'));
+		$this->uriBuilderMock = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder', array('build'));
+		$this->uriBuilderMock->expects($this->any())->method('build')->will($this->returnValue('dummy/final/url'));
 		$parentHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$this->request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($parentHttpRequest));
 		$this->request->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->request));
 		$this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
-		$this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($uriBuilderMock));
-		$this->viewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper', array('dummy'));
+		$this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilderMock));
+		$this->viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper', array('dummy'));
 
 		$this->inject($this->viewHelper, 'controllerContext', $this->controllerContext);
+
+		$this->tsRuntime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('getCurrentContext'), array(), '', FALSE);
+		$fluidTsObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('getTsRuntime'), array(), '', FALSE);
+		$fluidTsObject->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->tsRuntime));
+		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array('fluidTemplateTsObject' => $fluidTsObject));
+		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
 	}
 
 	/**
 	 * @test
 	 */
-	public function viewHelperFetchesCurrentNodeIfNotGiven() {
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$nodeContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
-		$nodeContext->expects($this->once())->method('getCurrentNode');
-		$nodeRepository->expects($this->once())->method('getContext')->will($this->returnValue($nodeContext));
-		$this->inject($this->viewHelper, 'nodeRepository', $nodeRepository);
+	public function viewHelperUsesNodeInstanceWhenGiven() {
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
+			'node' => $node,
+			'@action' => 'show',
+			'@controller' => 'frontend\node',
+			'@package' => 'typo3.neos'
+		));
+
+		$this->viewHelper->render($node);
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperUsesDocumentNodeFromContextIfNoNodeGiven() {
+		$documentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
+			'node' => $documentNode,
+			'@action' => 'show',
+			'@controller' => 'frontend\node',
+			'@package' => 'typo3.neos'
+		));
+
 		$this->viewHelper->render(NULL);
 	}
 
 	/**
 	 * @test
 	 */
-	public function viewHelperFetchesRelativePathFromCurrentContextNodeWhenNodeIsGivenAsRelativePathString() {
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$nodeContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+	public function viewHelperFetchesNodeWithRelativePathFromDocumentNodeInContextWhenNodeIsGivenAsRelativePathString() {
+		$documentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$relativeNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$currentNodeMock = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
-		$currentNodeMock->expects($this->once())->method('getNode')->with('some/relative/path');
+		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
 
-		$nodeContext->expects($this->once())->method('getCurrentNode')->will($this->returnValue($currentNodeMock));
-		$nodeRepository->expects($this->once())->method('getContext')->will($this->returnValue($nodeContext));
+		$documentNode->expects($this->any())->method('getNode')->with('some/relative/path')->will($this->returnValue($relativeNode));
 
-		$this->inject($this->viewHelper, 'nodeRepository', $nodeRepository);
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
+			'node' => $relativeNode,
+			'@action' => 'show',
+			'@controller' => 'frontend\node',
+			'@package' => 'typo3.neos'
+		));
+
 		$this->viewHelper->render('some/relative/path');
 	}
 
 	/**
 	 * @test
 	 */
-	public function viewHelperFetchesRelativePathFromCurrentContextSiteNodeWhenNodeIsGivenWithAStartingTilde() {
-		$currentSiteNodeMock = $this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface');
-		$currentSiteNodeMock->expects($this->once())->method('getNode')->will($this->returnValue($this->getMock('TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface')));
-		$nodeContentContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
-		$nodeContentContext->expects($this->once())->method('getCurrentSiteNode')->will($this->returnValue($currentSiteNodeMock));
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$nodeRepository->expects($this->once())->method('getContext')->will($this->returnValue($nodeContentContext));
+	public function viewHelperFetchesNodeWithRelativePathFromDocumentNodeSiteNodeWhenNodeIsGivenAsStringWithTilde() {
+		$currentSiteNodeMock = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$documentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$relativeNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$this->inject($this->viewHelper, 'nodeRepository', $nodeRepository);
+		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
+
+		$currentSiteNodeMock->expects($this->atLeastOnce())->method('getNode')->with('some/site/path')->will($this->returnValue($relativeNode));
+		$contentContext = $this->getMock('TYPO3\Neos\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$contentContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($currentSiteNodeMock));
+
+		$documentNode->expects($this->any())->method('getContext')->will($this->returnValue($contentContext));
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
+			'node' => $relativeNode,
+			'@action' => 'show',
+			'@controller' => 'frontend\node',
+			'@package' => 'typo3.neos'
+		));
+
+
 		$this->viewHelper->render('~/some/site/path');
 	}
 }

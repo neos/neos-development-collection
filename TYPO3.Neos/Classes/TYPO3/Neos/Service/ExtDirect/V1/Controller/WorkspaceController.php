@@ -11,8 +11,6 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Neos\Domain\Service\ContentContext;
-
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\ExtJS\Annotations\ExtDirect;
 
@@ -25,9 +23,9 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\WorkspacesService
+	 * @var \TYPO3\Neos\Service\PublishingService
 	 */
-	protected $workspacesService;
+	protected $publishingService;
 
 	/**
 	 * @var string
@@ -53,12 +51,12 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Publishes the given node to the specified targetWorkspace
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $targetWorkspaceName) {
+	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
 			/**
 			 * TODO: The publishing pushes the same node twice, which causes the node to be published
 			 * already when it's processed the second time. This obviously leads to a problem for the
@@ -70,7 +68,7 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			return;
 		}
 
-		$this->workspacesService->publishNode($node, $targetWorkspaceName);
+		$this->publishingService->publishNode($node, $targetWorkspaceName);
 
 		$this->view->assign('value', array('success' => TRUE));
 	}

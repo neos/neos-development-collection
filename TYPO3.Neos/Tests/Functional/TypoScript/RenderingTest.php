@@ -30,21 +30,32 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $node;
 
+	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
 	public function setUp() {
 		parent::setUp();
-		$nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeRepository, 'context', new \TYPO3\Neos\Domain\Service\ContentContext('live'), TRUE);
+		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importSitesFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml');
+		$siteImportService->importSitesFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $contentContext);
 		$this->persistenceManager->persistAll();
 
 		$propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 		$this->node = $propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
 		$this->assertFalse($propertyMapper->getMessages()->hasErrors());
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->inject($this->contextFactory, 'contextInstances', array());
 	}
 
 	/**

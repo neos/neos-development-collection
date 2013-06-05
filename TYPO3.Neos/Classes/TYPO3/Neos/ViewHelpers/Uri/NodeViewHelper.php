@@ -12,7 +12,6 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -20,7 +19,7 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * A view helper for creating URIs pointing to nodes.
  *
  * The target node can be provided as string or as a Node object; if not specified
- * at all, the generated URI will refer to the current node.
+ * at all, the generated URI will refer to the current document node inside the TypoScript context.
  *
  * When specifying the ``node`` argument as string, the following conventions apply:
  *
@@ -71,36 +70,41 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 class NodeViewHelper extends AbstractViewHelper {
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
 	 * Render the Uri.
 	 *
-	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface object or a string node path
+	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path or NULL to resolve the current document node
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
-	 * @return string|NULL The rendered URI or NULL if no URI could be found
+	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+	 * @return string|NULL The rendered URI or NULL if no URI could be resolved for the given node
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE) {
-		$currentContext = $this->nodeRepository->getContext();
-		if ($currentContext === NULL) {
-			$currentContext = new ContentContext('live');
-			$this->nodeRepository->setContext($currentContext);
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
+		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
+			throw new \InvalidArgumentException('Expected NodeInterface, string or NULL for the node argument', 1373101025);
 		}
-		if ($node === NULL) {
-			$node = $currentContext->getCurrentNode();
-		} elseif (is_string($node)) {
-			if (substr($node, 0, 2) === '~/') {
-				$node = $currentContext->getCurrentSiteNode()->getNode(substr($node, 2));
+
+		if ($node === NULL || is_string($node)) {
+			$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
+			$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
+			if (isset($currentContext[$baseNodeName])) {
+				$baseNode = $currentContext[$baseNodeName];
 			} else {
-				if (substr($node, 0, 1) === '/') {
-					$node = $currentContext->getNode($node);
+				throw new \TYPO3\Neos\Exception(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+			}
+
+			if (is_string($node)) {
+				$contentContext = $baseNode->getContext();
+				if (substr($node, 0, 2) === '~/') {
+					$node = $contentContext->getCurrentSiteNode()->getNode(substr($node, 2));
 				} else {
-					$node = $currentContext->getCurrentNode()->getNode($node);
+					if (substr($node, 0, 1) === '/') {
+						$node = $contentContext->getNode($node);
+					} else {
+						$node = $baseNode->getNode($node);
+					}
 				}
+			} else {
+				$node = $baseNode;
 			}
 		}
 
