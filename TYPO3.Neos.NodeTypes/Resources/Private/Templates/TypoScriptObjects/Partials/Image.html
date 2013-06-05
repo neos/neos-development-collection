@@ -17,6 +17,6 @@
 		</f:else>
 	</f:if>
 	<f:if condition="{hasCaption}">
-		<figcaption{f:if(condition: captionAlignment, then: 'class="alignment-{captionAlignment}"')}><neos:contentElement.editable property="caption">{caption -> f:format.raw()}</neos:contentElement.editable></figcaption>
+		<figcaption{f:if(condition: captionAlignment, then: ' class="alignment-{captionAlignment}"')}><neos:contentElement.editable property="caption">{caption -> f:format.raw()}</neos:contentElement.editable></figcaption>
 	</f:if>
 </figure>
