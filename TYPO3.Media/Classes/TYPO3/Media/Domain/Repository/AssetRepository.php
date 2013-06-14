@@ -38,6 +38,18 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 	/**
+	 * Counts Assets with the given Tag assigned
+	 *
+	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 */
+	public function countByTag(\TYPO3\Media\Domain\Model\Tag $tag) {
+		$query = $this->createQuery();
+
+		return $query->matching($query->contains('tags', $tag))->count();
+	}
+
+	/**
 	 * Find Assets without any tag
 	 *
 	 * @return \TYPO3\Flow\Persistence\QueryResultInterface

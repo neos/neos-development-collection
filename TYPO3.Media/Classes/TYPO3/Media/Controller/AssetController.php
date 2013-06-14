@@ -82,7 +82,11 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->view->assign('tagMode', $tagMode);
 		$this->browserState->set('tagMode', $tagMode);
 
-		$this->view->assign('tags', $this->tagRepository->findAll());
+		$tags = array();
+		foreach ($this->tagRepository->findAll() as $tag) {
+			$tags[] = array('tag' => $tag, 'count' => $this->assetRepository->countByTag($tag));
+		}
+		$this->view->assign('tags', $tags);
 		if ($this->browserState->get('tagMode') === self::TAG_NONE) {
 			$this->view->assign('assets', $this->assetRepository->findUntagged());
 		} elseif ($this->browserState->get('activeTag') !== NULL) {
@@ -187,6 +191,23 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Tags an asset with a tag.
+	 *
+	 * No redirection and no response body, no flash message, for use by plupload (or similar).
+	 *
+	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @return boolean
+	 */
+	public function tagAssetAction(\TYPO3\Media\Domain\Model\Asset $asset, \TYPO3\Media\Domain\Model\Tag $tag) {
+		if (!$asset->addTag($tag)) {
+			return FALSE;
+		}
+		$this->assetRepository->update($asset);
+		return TRUE;
+	}
+
+	/**
 	 * Delete an asset
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Asset $asset
@@ -196,6 +217,33 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->resourceManager->deleteResource($asset->getResource());
 		$this->assetRepository->remove($asset);
 		$this->addFlashMessage('Asset has been deleted.');
+		$this->redirect('index');
+	}
+
+	/**
+	 * @param string $label
+	 * @return void
+	 * @Flow\Validate(argumentName="label", type="NotEmpty")
+	 * @Flow\Validate(argumentName="label", type="Label")
+	 */
+	public function createTagAction($label) {
+		$this->tagRepository->add(new \TYPO3\Media\Domain\Model\Tag($label));
+		$this->addFlashMessage(sprintf('Tag "%s" has been created.', $label));
+		$this->redirect('index');
+	}
+
+	/**
+	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @return void
+	 */
+	public function deleteTagAction(\TYPO3\Media\Domain\Model\Tag $tag) {
+		$taggedAssets = $this->assetRepository->findByTag($tag);
+		foreach ($taggedAssets as $asset) {
+			$asset->removeTag($tag);
+			$this->assetRepository->update($asset);
+		}
+		$this->tagRepository->remove($tag);
+		$this->addFlashMessage(sprintf('Tag "%s" has been deleted.', $tag->getLabel()));
 		$this->redirect('index');
 	}
 
