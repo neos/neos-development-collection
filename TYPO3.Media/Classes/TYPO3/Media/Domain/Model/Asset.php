@@ -155,6 +155,23 @@ class Asset implements AssetInterface {
 	}
 
 	/**
+	 * Add a single tag to this asset
+	 *
+	 * @param Tag $tag
+	 * @return boolean
+	 */
+	public function addTag(Tag $tag) {
+		if (!$this->tags->contains($tag)) {
+			$this->lastModified = new \DateTime();
+			$this->tags->add($tag);
+
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Set the tags assigned to this asset
 	 *
 	 * @param \Doctrine\Common\Collections\Collection $tags

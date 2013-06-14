@@ -1,3 +1,4 @@
+{namespace m=TYPO3\Media\ViewHelpers}
 <f:layout name="Default"/>
 
 <f:section name="Title">Edit view of AssetController</f:section>
@@ -8,11 +9,30 @@
 	<f:form method="post" action="update" object="{asset}" objectName="asset">
 		<fieldset>
 			<legend>Basics</legend>
+			<m:image image="{asset}" style="float:right" maximumWidth="400" maximumHeight="600" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="img-polaroid"/>
+			<label for="filename">Filename</label>
+			<f:form.textfield value="{asset.resource.filename}" disabled="disabled"/>
+			<label for="lastmodified">Last modified</label>
+			<f:form.textfield value="{asset.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}" disabled="disabled"/>
 			<label for="title">Title</label>
 			<f:form.textfield property="title" placeholder="Title"/>
+			<label for="caption">Caption</label>
+			<f:form.textarea property="caption" rows="3" placeholder="Caption"/>
 			<br/>
-			<f:form.submit id="save" class="btn" value="Save"/>
-			<f:link.action action="index" title="Cancel editing" class="btn btn-danger">Cancel</f:link.action>
+			<label for="tags">Tags</label>
+			<f:form.select property="tags" options="{tags}" optionLabelField="label" value="{asset.tags}" multiple="true" />
+			<br/>
+			<f:form.submit id="save" class="btn btn-primary" value="Save"/>
+			<f:link.action action="index" title="Cancel editing" class="btn">Cancel</f:link.action>
+			<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: '{asset: asset}')}" class="btn btn-danger" title="Delete asset"><i class="icon-trash icon-white"></i> Delete</button>
+		</fieldset>
+		<fieldset>
+			<legend>Metadata</legend>
+			<label for="lastmodified-resource">Last modified (resource)</label>
+			<f:form.textfield value="{asset.resource.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}" disabled="disabled"/>
+			<label for="filesize">Filesize</label>
+			<f:form.textfield value="{asset.resource.filesize -> f:format.bytes()} ({asset.resource.filesize} bytes)" disabled="disabled"/>
 		</fieldset>
 	</f:form>
+	<f:form action="index" id="postHelper" method="post"></f:form>
 </f:section>

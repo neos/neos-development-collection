@@ -46,6 +46,22 @@ interface AssetInterface {
 	 */
 	public function setResource(\TYPO3\Flow\Resource\Resource $resource);
 
+	/**
+	 * Add a single tag to this asset
+	 *
+	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @return void
+	 */
+	public function addTag(Tag $tag);
+
+	/**
+	 * Set the tags assigned to this asset
+	 *
+	 * @param \Doctrine\Common\Collections\Collection $tags
+	 * @return void
+	 */
+	public function setTags(\Doctrine\Common\Collections\Collection $tags);
+
 }
 
 ?>

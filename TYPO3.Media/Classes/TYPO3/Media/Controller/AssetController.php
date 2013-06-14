@@ -21,6 +21,10 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
+	const TAG_GIVEN = 0;
+	const TAG_ALL = 1;
+	const TAG_NONE = 2;
+
 	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
@@ -28,6 +32,11 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $assetRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Repository\TagRepository
+	 */
+	protected $tagRepository;
+
 	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Resource\ResourceManager
@@ -35,12 +44,53 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $resourceManager;
 
 	/**
-	 * List existing assets
+	 * @Flow\Inject(lazy = false)
+	 * @var \TYPO3\Media\Domain\Session\BrowserState
+	 */
+	protected $browserState;
+
+	/**
+	 * Set common variables on the view
 	 *
+	 * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
 	 * @return void
 	 */
-	public function indexAction() {
-		$this->view->assign('assets', $this->assetRepository->findAll());
+	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
+		$view->assign('view', $this->browserState->get('view'));
+		$view->assign('activeTag', $this->browserState->get('activeTag'));
+	}
+
+	/**
+	 * List existing assets
+	 *
+	 * @param string $view
+	 * @param integer $tagMode
+	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @return void
+	 */
+	public function indexAction($view = NULL, $tagMode = self::TAG_GIVEN, \TYPO3\Media\Domain\Model\Tag $tag = NULL) {
+		if ($view !== NULL) {
+			$this->browserState->set('view', $view);
+			$this->view->assign('view', $view);
+		}
+		if ($tagMode === self::TAG_GIVEN && $tag !== NULL) {
+			$this->browserState->set('activeTag', $tag);
+			$this->view->assign('activeTag', $tag);
+		} elseif ($tagMode === self::TAG_NONE || $tagMode === self::TAG_ALL) {
+			$this->browserState->set('activeTag', NULL);
+			$this->view->assign('activeTag', NULL);
+		}
+		$this->view->assign('tagMode', $tagMode);
+		$this->browserState->set('tagMode', $tagMode);
+
+		$this->view->assign('tags', $this->tagRepository->findAll());
+		if ($this->browserState->get('tagMode') === self::TAG_NONE) {
+			$this->view->assign('assets', $this->assetRepository->findUntagged());
+		} elseif ($this->browserState->get('activeTag') !== NULL) {
+			$this->view->assign('assets', $this->assetRepository->findByTag($this->browserState->get('activeTag')));
+		} else {
+			$this->view->assign('assets', $this->assetRepository->findAll());
+		}
 	}
 
 	/**
@@ -49,6 +99,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function newAction() {
+		$this->view->assign('tags', $this->tagRepository->findAll());
 	}
 
 	/**
@@ -58,6 +109,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function editAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+		$this->view->assign('tags', $this->tagRepository->findAll());
 		$this->view->assign('asset', $asset);
 	}
 
@@ -118,6 +170,9 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function uploadAction(\TYPO3\Media\Domain\Model\Asset $asset) {
 		$asset = $this->transformAsset($asset);
 
+		if (($tag = $this->browserState->get('activeTag')) !== NULL) {
+			$asset->addTag($tag);
+		}
 		$this->assetRepository->add($asset);
 		$this->response->setStatus(201);
 		return '';

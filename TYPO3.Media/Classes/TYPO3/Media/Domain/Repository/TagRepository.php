@@ -20,6 +20,11 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class TagRepository extends \TYPO3\Flow\Persistence\Repository {
 
+	/**
+	 * @var array
+	 */
+	protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
+
 }
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\Domain\Repository;
+namespace TYPO3\Media\Domain\Session;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -14,40 +14,41 @@ namespace TYPO3\Media\Domain\Repository;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A repository for Assets
+ * A container for the state the media browser is in.
  *
- * @Flow\Scope("singleton")
+ * @Flow\Scope("session")
  */
-class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
+class BrowserState {
 
 	/**
 	 * @var array
 	 */
-	protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
+	protected $data = array(
+		'activeTag' => NULL,
+		'view' => 'Thumbnail'
+	);
 
 	/**
-	 * Find Assets with the given Tag assigned
+	 * Set a $value for $key
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 * @Flow\Session(autoStart = TRUE)
 	 */
-	public function findByTag(\TYPO3\Media\Domain\Model\Tag $tag) {
-		$query = $this->createQuery();
-
-		return $query->matching($query->contains('tags', $tag))->execute();
+	public function set($key, $value) {
+		$this->data[$key] = $value;
 	}
 
 	/**
-	 * Find Assets without any tag
+	 * Return a value for $key.
 	 *
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @param string $key
+	 * @return mixed
 	 */
-	public function findUntagged() {
-		$query = $this->createQuery();
-
-		return $query->matching($query->isEmpty('tags'))->execute();
+	public function get($key) {
+		return isset($this->data[$key]) ? $this->data[$key] : NULL;
 	}
-
 }
 
 ?>

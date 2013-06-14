@@ -272,6 +272,27 @@ class ImageVariant implements ImageInterface {
 		throw new \RuntimeException('Setting the title on an ImageVariant is not supported.', 1366627475);
 	}
 
+	/**
+	 * Add a single tag to this asset
+	 *
+	 * @param \TYPO3\Media\Domain\Model\Tag $tag
+	 * @return void
+	 */
+	public function addTag(Tag $tag) {
+		throw new \RuntimeException('Adding a tag on an ImageVariant is not supported.', 1371237593);
+	}
+
+	/**
+	 * Set the tags assigned to this asset
+	 *
+	 * @param \Doctrine\Common\Collections\Collection $tags
+	 * @return void
+	 */
+	public function setTags(\Doctrine\Common\Collections\Collection $tags) {
+		throw new \RuntimeException('Settings tags on an ImageVariant is not supported.', 1371237597);
+	}
+
+
 }
 
 ?>
