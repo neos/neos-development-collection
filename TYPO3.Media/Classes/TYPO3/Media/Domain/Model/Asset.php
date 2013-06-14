@@ -182,4 +182,21 @@ class Asset implements AssetInterface {
 		$this->tags = $tags;
 	}
 
+	/**
+	 * Remove a single tag from this asset
+	 *
+	 * @param Tag $tag
+	 * @return boolean
+	 */
+	public function removeTag(Tag $tag) {
+		if ($this->tags->contains($tag)) {
+			$this->lastModified = new \DateTime();
+			$this->tags->removeElement($tag);
+
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
 }

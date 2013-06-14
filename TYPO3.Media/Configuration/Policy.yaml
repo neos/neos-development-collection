@@ -4,4 +4,4 @@
 
 resources:
   methods:
-    TYPO3_Media_ManageAssets: 'method(TYPO3\Media\Controller\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|delete)Action())'
+    TYPO3_Media_ManageAssets: 'method(TYPO3\Media\Controller\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|deleteTag)Action())'

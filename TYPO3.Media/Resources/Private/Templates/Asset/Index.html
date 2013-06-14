@@ -1,22 +1,27 @@
-<f:layout name="Default"/>
+<f:layout name="Default" />
 
 <f:section name="Title">Index view of AssetController</f:section>
 
 <f:section name="Sidebar">
-
 	<h1>Tags</h1>
-	<f:link.action action="index" title="All assets" class="neos-label {f:if(condition: activeTag, then: 'neos-label-inverse', else: 'neos-label-info')}" arguments="{view: view}">All</f:link.action><br/>
-	<f:link.action action="index" title="Untagged assets" class="neos-label neos-label-inverse" arguments="{view: view}">Untagged</f:link.action><br/>
+	<f:link.action action="index" title="All assets" class="neos-label {f:if(condition: activeTag, then: 'neos-label-inverse', else: 'neos-label-info')}" arguments="{tagMode: 1}">All</f:link.action><br/>
+	<f:link.action action="index" title="Untagged assets" class="neos-label neos-label-inverse" arguments="{tagMode: 2}">Untagged</f:link.action><br/>
 	<f:for each="{tags}" as="tag">
-		<f:if condition="{tag} == {activeTag}">
+		<f:if condition="{tag.tag} == {activeTag}">
 			<f:then>
-				<f:link.action action="index" title="{tag.label}" class="neos-label neos-label-info" arguments="{view: view, tag: tag}">{tag.label}</f:link.action>
+				<f:link.action action="index" title="{tag.tag.label}" class="droppable-tag neos-label neos-label-info" arguments="{tag: tag.tag}" additionalAttributes="{data-tag-identifier: '{tag.tag -> f:format.identifier()}'}">{tag.tag.label}</f:link.action>
 			</f:then>
 			<f:else>
-				<f:link.action action="index" title="{tag.label}" class="neos-label" arguments="{view: view, tag: tag}">{tag.label}</f:link.action>
+				<f:link.action action="index" title="{tag.tag.label}" class="droppable-tag neos-label" arguments="{tag: tag.tag}" additionalAttributes="{data-tag-identifier: '{tag.tag -> f:format.identifier()}'}">{tag.tag.label}</f:link.action>
 			</f:else>
 		</f:if>
+		({tag.count})
+		<f:form action="deleteTag" arguments="{tag: tag.tag}"><button type="submit"><i class="icon-trash"></i></button></f:form>
 	</f:for>
+	<f:form action="createTag">
+		<f:form.textfield name="label" placeholder="Enter tag label" />
+		<f:form.submit value="Create tag" />
+	</f:form>
 
 	<div id="uploader">
 		<div id="filelist"></div>
@@ -24,24 +29,30 @@
 </f:section>
 
 <f:section name="Content">
-	<hr/>
-	<f:link.action action="index" title="Thumbnail view" class="neos-btn neos-btn-mini" arguments="{view: 'Thumbnail', tag: activeTag}"><i class="icon-th"></i></f:link.action>
-	<f:link.action action="index" title="List view" class="neos-btn neos-btn-mini" arguments="{view: 'List', tag: activeTag}"><i class="icon-th-list"></i></f:link.action>
+	<hr />
 	<f:link.action action="new" class="neos-btn neos-btn-mini"><i class="icon-upload"></i> Upload</f:link.action>
-	<hr/>
+	<f:link.action action="index" title="Thumbnail view" class="neos-btn neos-btn-mini pull-right" arguments="{view: 'Thumbnail'}"><i class="icon-th"></i></f:link.action>
+	<f:link.action action="index" title="List view" class="neos-btn neos-btn-mini pull-right" arguments="{view: 'List'}"><i class="icon-th-list"></i></f:link.action>
+	<hr />
 
 	<div id="dropzone" class="neos-well"><p>Drop files here to upload.</p></div>
 	<f:if condition="{assets}">
 		<f:then>
-			<f:render partial="{view}View" arguments="{assets: assets}"/>
+			<f:render partial="{view}View" arguments="{assets: assets}" />
 		</f:then>
 		<f:else>
 			<p class="neos-well">No Assets found. You can drag files here to upload them.</p>
 		</f:else>
 	</f:if>
 	<script type="text/javascript">
-		var uploadUrl = '<f:uri.action action="upload" absolute="true"/>';
+		var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
 	</script>
+	<f:form action="tagAsset" id="tag-asset-form">
+		<f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />
+		<f:form.hidden name="tag[__identity]" id="tag-asset-form-tag" />
+	</f:form>
 	<script type="text/javascript" src="../../Public/Libraries/plupload/plupload.full.js"></script>
+	<script type="text/javascript" src="../../Public/Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js"></script>
 	<script type="text/javascript" src="../../Public/Scripts/upload.js"></script>
+	<script type="text/javascript" src="../../Public/Scripts/tagging.js"></script>
 </f:section>

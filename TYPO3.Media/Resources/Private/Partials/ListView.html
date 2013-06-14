@@ -1,17 +1,20 @@
 {namespace m=TYPO3\Media\ViewHelpers}
 <f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 25, maximumNumberOfLinks: 5}">
 	<table class="neos-table neos-table-striped neos-table-condensed asset-list">
-		<tr>
-			<th>Title</th>
-			<th>Type</th>
-			<th>Tags</th>
-			<th></th>
-		</tr>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Type</th>
+				<th>Tags</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
 		<f:for each="{paginatedAssets}" as="asset">
-			<tr class="asset" data-asset-identifier="{asset -> f:format.identifier()}">
+			<tr class="draggable-asset" data-asset-identifier="{asset -> f:format.identifier()}">
 				<td>{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</td>
 				<td>{asset.resource.mediatype}</td>
-				<td><f:for each="{asset.tags}" as="tag">
+				<td class="tags"><f:for each="{asset.tags}" as="tag">
 					<span class="neos-label">{tag.label}</span>
 				</f:for>
 				</td>
@@ -23,5 +26,6 @@
 				</td>
 			</tr>
 		</f:for>
+		</tbody>
 	</table>
 </f:widget.paginate>
