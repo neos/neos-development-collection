@@ -1,0 +1,17 @@
+#dropzone {
+	display: none;
+	position: absolute;
+	top: 5%;
+	right: 5%;
+	bottom: 5%;
+	left: 5%;
+}
+
+#dropzone p {
+	font-size: 3em;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 2em;
+	margin-left: auto;
+	margin-right: auto;
+}

@@ -91,6 +91,58 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function createAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+		$asset = $this->transformAsset($asset);
+
+		$this->assetRepository->add($asset);
+		$this->addFlashMessage('Asset has been added.');
+		$this->redirect('index', NULL, NULL, array(), 0, 201);
+	}
+
+	/**
+	 * Initialization for uploadAction
+	 *
+	 * @return void
+	 */
+	public function initializeUploadAction() {
+		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
+		$assetMappingConfiguration->allowProperties('title', 'resource');
+		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+	}
+
+	/**
+	 * Upload a new asset. No redirection and no response body, no flash message, for use by plupload (or similar).
+	 *
+	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @return string
+	 */
+	public function uploadAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+		$asset = $this->transformAsset($asset);
+
+		$this->assetRepository->add($asset);
+		$this->response->setStatus(201);
+		return '';
+	}
+
+	/**
+	 * Delete an asset
+	 *
+	 * @param \TYPO3\Media\Domain\Model\Asset $asset
+	 * @return void
+	 */
+	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
+		$this->resourceManager->deleteResource($asset->getResource());
+		$this->assetRepository->remove($asset);
+		$this->addFlashMessage('Asset has been deleted.');
+		$this->redirect('index');
+	}
+
+	/**
+	 *
+	 *
+	 * @param \TYPO3\Media\Domain\Model\AssetInterface $asset
+	 * @return \TYPO3\Media\Domain\Model\AssetInterface
+	 */
+	protected function transformAsset(\TYPO3\Media\Domain\Model\AssetInterface $asset) {
 		$title = $asset->getTitle();
 		if ($title === '') {
 			$title = $asset->getResource()->getFilename();
@@ -117,22 +169,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			break;
 		}
 		$asset->setTitle($title);
-		$this->assetRepository->add($asset);
-		$this->addFlashMessage('Asset has been added.');
-		$this->redirect('index', NULL, NULL, array(), 0, 201);
-	}
 
-	/**
-	 * Delete an asset
-	 *
-	 * @param \TYPO3\Media\Domain\Model\Asset $asset
-	 * @return void
-	 */
-	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$this->resourceManager->deleteResource($asset->getResource());
-		$this->assetRepository->remove($asset);
-		$this->addFlashMessage('Asset has been deleted.');
-		$this->redirect('index');
+		return $asset;
 	}
 
 }

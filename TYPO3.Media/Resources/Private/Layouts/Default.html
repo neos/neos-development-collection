@@ -8,61 +8,7 @@
 	<b:include includeJQuery="true"/>
 
 	<style type="text/css">@import url(../../Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css);</style>
-
-	<!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
-	<script type="text/javascript" src="../../Public/Libraries/plupload/plupload.full.js"></script>
-
-	<script type="text/javascript">
-		$(function() {
-			var uploader = new plupload.Uploader({
-				runtimes : 'html5,flash',
-				container : 'uploader',
-				multipart: true,
-				url : '<f:uri.action action="create" absolute="true"/>',
-				file_data_name: 'asset[resource]',
-				multi_selection: false,
-				multiple_queues: false,
-				drop_element: 'dropzone'
-			});
-
-			uploader.bind('Init', function(up, params) {
-				$('#filelist').html('');
-				if (up.features.dragdrop) {
-					$('#dropzone').html('Go to the <f:link.action action="new">upload form</f:link.action> or drag a file here');
-					$('#dropzone').addClass('well');
-				}
-			});
-
-			uploader.init();
-
-			uploader.bind('FilesAdded', function(up, files) {
-				$.each(files, function(i, file) {
-					$('#filelist').append('<div class="progress"><div class="bar" style="width: 0%;"></div></div>');
-				});
-
-				up.refresh(); // Reposition Flash
-				uploader.start();
-			});
-
-			uploader.bind('UploadProgress', function(up, file) {
-				$('#progress div.progress div.bar').width(file.percent + '%');
-			});
-
-			uploader.bind('Error', function(up, err) {
-				$('#filelist').html('');
-				alert("Error: " + err.code +
-						", Message: " + err.message +
-						(err.file ? ", File: " + err.file.name : "")
-				);
-
-				up.refresh(); // Reposition Flash
-			});
-
-			uploader.bind('FileUploaded', function(up, file, response, headers) {
-				$('html').html(response.response);
-			});
-		});
-	</script>
+	<style type="text/css">@import url(../../Public/Styles/Main.css);</style>
 </head>
 <body>
 <div class="container">
