@@ -25,10 +25,21 @@ use TYPO3\Flow\Annotations as Flow;
 class Asset implements AssetInterface {
 
 	/**
+	 * @var \DateTime
+	 */
+	protected $lastModified;
+
+	/**
 	 * @var string
 	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $title = '';
+
+	/**
+	 * @var string
+	 * @ORM\Column(type="text")
+	 */
+	protected $caption = '';
 
 	/**
 	 * @var \TYPO3\Flow\Resource\Resource
@@ -52,6 +63,7 @@ class Asset implements AssetInterface {
 	public function __construct(\TYPO3\Flow\Resource\Resource $resource) {
 		$this->tags = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->setResource($resource);
+		$this->lastModified = new \DateTime();
 	}
 
 	/**
@@ -63,18 +75,29 @@ class Asset implements AssetInterface {
 	}
 
 	/**
+	 * Returns the last modification timestamp for this asset
+	 *
+	 * @return \DateTime The date and time of last modification.
+	 * @api
+	 */
+	public function getLastModified() {
+		return $this->lastModified;
+	}
+
+	/**
 	 * Sets the asset resource and (re-)initializes the asset.
 	 *
 	 * @param \TYPO3\Flow\Resource\Resource $resource
 	 * @return void
 	 */
 	public function setResource(\TYPO3\Flow\Resource\Resource $resource) {
+		$this->lastModified = new \DateTime();
 		$this->resource = $resource;
 		$this->initialize();
 	}
 
 	/**
-	 * Resource of the original image file
+	 * Resource of the original file
 	 *
 	 * @return \TYPO3\Flow\Resource\Resource
 	 */
@@ -89,6 +112,7 @@ class Asset implements AssetInterface {
 	 * @return void
 	 */
 	public function setTitle($title) {
+		$this->lastModified = new \DateTime();
 		$this->title = $title;
 	}
 
@@ -99,6 +123,26 @@ class Asset implements AssetInterface {
 	 */
 	public function getTitle() {
 		return $this->title;
+	}
+
+	/**
+	 * Sets the caption of this asset (optional)
+	 *
+	 * @param string $caption
+	 * @return void
+	 */
+	public function setCaption($caption) {
+		$this->lastModified = new \DateTime();
+		$this->caption = $caption;
+	}
+
+	/**
+	 * The caption of this asset
+	 *
+	 * @return string
+	 */
+	public function getCaption() {
+		return $this->caption;
 	}
 
 	/**
@@ -117,6 +161,7 @@ class Asset implements AssetInterface {
 	 * @return void
 	 */
 	public function setTags(\Doctrine\Common\Collections\Collection $tags) {
+		$this->lastModified = new \DateTime();
 		$this->tags = $tags;
 	}
 
