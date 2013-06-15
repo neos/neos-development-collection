@@ -79,6 +79,7 @@ body {
 			}
 
 			#neos-inspector {
+				@include box-shadow(none);
 				right: -$property-panel-width;
 				overflow: hidden;
 			}
