@@ -15,23 +15,20 @@
 		<f:section name="body">
 			<div class="container-fluid" id="neos-wireframe-container">
 				<div class="row-fluid">
-					<div class="span2">
-						<div class="well neos-reloadable-content" id="neos-wireframe-menu">
-							<ts:render path="parts.menu" />
-						</div>
-					</div>
-					<div class="span10">
-						<nav class="breadcrumb neos-reloadable-content" id="neos-wireframe-breadcrumb">
-							<ts:render path="parts.breadcrumb" />
-						</nav>
-						<section class="row-fluid">
-							<div class="span4">
-								<div class="input-append">
-									<input type="text" class="span8" id="neos-createcontentcollection-input" placeholder="Name for a new content collection">
-									<button class="btn btn-warning" id="neos-createcontentcollection-button" type="button">Create</button>
-								</div>
+					<div class="span12">
+						<nav class="neos-reloadable-content row-fluid" id="neos-wireframe-breadcrumb">
+							<div class="span8 breadcrumb-container">
+								<ts:render path="parts.breadcrumb" />
 							</div>
-						</section>
+							<section class="span4">
+								<div class="input-append">
+									<input type="text" class="input-small" id="neos-createcontentcollection-input" placeholder="Name for a new content collection">
+									<button class="btn btn-small" id="neos-createcontentcollection-button" type="button">
+										Create
+									</button>
+								</div>
+							</section>
+						</nav>
 						<div class="neos-reloadable-content" id="neos-wireframe-contentcollections-container">
 							<ts:render path="contentCollections.all" />
 						</div>

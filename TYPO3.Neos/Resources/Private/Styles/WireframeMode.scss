@@ -4,46 +4,13 @@ $darkGray: #444;
 $orange: #FF8700;
 
 .neos-wireframeMode {
-	background: url('../Images/WireframeMode/GraphGrid.png');
 	padding: 15px;
-	.breadcrumb {
-		background: $darkGray;
-		color: #fff;
-		a {
-			color: #fff;
-		}
-	}
+
 	#neos-wireframe-menu {
 		padding: 10px 5px;
 	}
 	button {
 		border: none;
-	}
-	.well {
-		.nav-list a {
-			text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
-			&:hover {
-				color: $orange;
-				text-decoration: none;
-			}
-		}
-		.nav-list > .active > a, .nav-list > .active > a:hover {
-			background: transparent;
-			color: #fff;
-		}
-		.nav-list .current > a, .nav-list .current > a:hover {
-			background: transparent;
-			color: $orange;
-		}
-		background: $darkGray;
-		ul {
-			list-style: none;
-			margin: 0 0 0 10px;
-			a {
-				color: #fff;
-				font-size: 12px;
-			}
-		}
 	}
 	.neos-create-new-content {
 		margin-top: 15px;
@@ -58,6 +25,130 @@ $orange: #FF8700;
 			float: left;
 		}
 	}
+
+}
+
+#neos-wireframe-breadcrumb {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	@include box-sizing(border-box);
+	padding: 8px 15px;
+	margin: 0;
+	min-height: 0;
+	background: #999999;
+	color: #fff;
+
+	[class*="span"] {
+		min-height: 0;
+	}
+
+	a {
+		color: #fff;
+	}
+
+	.breadcrumb-container {
+		line-height: 24px;
+	}
+
+	.input-append {
+		text-align: right;
+		display: block;
+		margin-bottom: 0;
+
+		input {
+			padding: 2px 6px;
+			@include border-radius(0);
+			border: 0px none;
+			width: 70%;
+		}
+
+		button {
+			border: 0px none;
+			@include border-radius(0);
+		}
+	}
+}
+
+.neos {
+	.neos-wireframe-contentcollection-container {
+		margin: 10px 0;
+		padding: 10px 15px 15px 15px;
+		font-family: "Georgia", "Times New Roman", serif;
+	}
+
+	.neos-wireframe-contentcollection-container:last-child {
+		margin-bottom: 0;
+	}
+
+	header.neos-wireframe-contentcollection {
+		margin: -10px -15px 5px;
+		font-family: "Georgia", "Times New Roman", serif;
+		font-size: 16px;
+		font-weight: bold;
+		background: #CCCCCC;
+		padding: 10px 15px 5px 15px;
+		text-align: center;
+		@include border-radius(0);
+	}
+
+	.neos-toolbar {
+		li {
+			list-style: none outside none;
+		}
+	}
+}
+
+.neos-wireframeMode #neos-wireframe-container {
+	padding-left: 40px;
+	padding-right: 40px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 850px;
+}
+
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections {
+	background: #FFFFFF;
+	font-size: 14px;
+	line-height: 1.6em;
+
+	h1, h2, h3, h4, h5, h6 {
+		text-shadow: none;
+	}
+
+	h1 {
+		font-size: 21px;
+		font-weight: bold;
+	}
+
+	h2 {
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	h3 {
+		font-size: 17px;
+		font-weight: bold;
+	}
+
+	h4 {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	h5 {
+		font-size: 15px;
+		font-weight: bold;
+	}
+
+	h6 {
+		font-size: 14px;
+		font-weight: bold;
+	}
+
+	.neos-contentelement.neos-contentelement-active .neos-inline-editable, .neos-contentelement .aloha-editable-active, .neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
+		outline: 0px !important;
+	}
+
 	.typo3-neos-nodetypes-twocolumn {
 		.columns-50-50 {
 			.column {
@@ -172,76 +263,5 @@ $orange: #FF8700;
 		.container {
 			width: auto;
 		}
-	}
-}
-
-.neos {
-	.neos-wireframe-contentcollection-container {
-		margin: 10px 0;
-		padding: 10px 15px 15px 15px;
-		background: rgba(240, 240, 240, 0.7);
-		font-family: "Courier New", serif;
-	}
-	.neos-wireframe-contentcollection-container:last-child {
-		margin-bottom: 0;
-	}
-	header.neos-wireframe-contentcollection {
-		margin: -10px -15px 5px;
-		font-family: "Courier New", serif;
-		font-size: 16px;
-		font-weight: bold;
-		background: rgba(232, 232, 232, 1);
-		padding: 10px 15px 5px 15px;
-		text-align: center;
-		@include box-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
-		border-radius: 0;
-	}
-	.neos-toolbar {
-		li {
-			list-style: none outside none;
-		}
-	}
-}
-
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections {
-	font-size: 14px;
-
-	h1, h2, h3, h4, h5, h6 {
-		color: #000000;
-		text-shadow: none;
-	}
-
-	h1 {
-		font-size: 23px;
-		font-weight: bold;
-	}
-
-	h2 {
-		font-size: 21px;
-		font-weight: bold;
-	}
-
-	h3 {
-		font-size: 19px;
-		font-weight: bold;
-	}
-
-	h4 {
-		font-size: 17px;
-		font-weight: bold;
-	}
-
-	h5 {
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	h6 {
-		font-size: 14px;
-		font-weight: bold;
-	}
-
-	p {
-		color: #000000;
 	}
 }

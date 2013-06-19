@@ -1,45 +1,11 @@
 .neos-wireframeMode {
-  background: url("../Images/WireframeMode/GraphGrid.png");
   padding: 15px;
-}
-.neos-wireframeMode .breadcrumb {
-  background: #444444;
-  color: #fff;
-}
-.neos-wireframeMode .breadcrumb a {
-  color: #fff;
 }
 .neos-wireframeMode #neos-wireframe-menu {
   padding: 10px 5px;
 }
 .neos-wireframeMode button {
   border: none;
-}
-.neos-wireframeMode .well {
-  background: #444444;
-}
-.neos-wireframeMode .well .nav-list a {
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
-}
-.neos-wireframeMode .well .nav-list a:hover {
-  color: #ff8700;
-  text-decoration: none;
-}
-.neos-wireframeMode .well .nav-list > .active > a, .neos-wireframeMode .well .nav-list > .active > a:hover {
-  background: transparent;
-  color: #fff;
-}
-.neos-wireframeMode .well .nav-list .current > a, .neos-wireframeMode .well .nav-list .current > a:hover {
-  background: transparent;
-  color: #ff8700;
-}
-.neos-wireframeMode .well ul {
-  list-style: none;
-  margin: 0 0 0 10px;
-}
-.neos-wireframeMode .well ul a {
-  color: #fff;
-  font-size: 12px;
 }
 .neos-wireframeMode .neos-create-new-content {
   margin-top: 15px;
@@ -52,151 +18,205 @@
 .neos-wireframeMode .container .column {
   float: left;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-50-50 .column {
-  width: 48%;
-  margin-right: 4%;
+
+#neos-wireframe-breadcrumb {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 8px 15px;
+  margin: 0;
+  min-height: 0;
+  background: #999999;
+  color: #fff;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-50-50 .column:last-child {
-  margin-right: 0;
+#neos-wireframe-breadcrumb [class*="span"] {
+  min-height: 0;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-75-25 .column:first-child {
-  width: 73%;
-  margin-right: 4%;
+#neos-wireframe-breadcrumb a {
+  color: #fff;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-75-25 .column:last-child {
-  width: 23%;
-  margin-right: 0;
+#neos-wireframe-breadcrumb .breadcrumb-container {
+  line-height: 24px;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-25-75 .column:first-child {
-  width: 23%;
-  margin-right: 4%;
+#neos-wireframe-breadcrumb .input-append {
+  text-align: right;
+  display: block;
+  margin-bottom: 0;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-25-75 .column:last-child {
-  width: 73%;
-  margin-right: 0%;
+#neos-wireframe-breadcrumb .input-append input {
+  padding: 2px 6px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  border: 0px none;
+  width: 70%;
 }
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-66-33 .column:first-child {
-  width: 64.5%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-66-33 .column:last-child {
-  width: 31.5%;
-  margin-right: 0;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-33-66 .column:first-child {
-  width: 31.5%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .columns-33-66 .column:last-child {
-  width: 64.5%;
-  margin-right: 0%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-33-33-33 .column {
-  width: 30.66666666666%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-33-33-33 .column:last-child {
-  margin-right: 0;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-50-25-25 .column {
-  width: 22%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-50-25-25 .column:first-child {
-  width: 48%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-50-25-25 .column:last-child {
-  margin-right: 0;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-25-50-25 .column {
-  width: 22%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-25-50-25 .column:nth-child(2) {
-  width: 48%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-25-50-25 .column:last-child {
-  margin-right: 0%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-25-25-50 .column {
-  width: 22%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .columns-25-25-50 .column:last-child {
-  width: 48%;
-  margin-right: 0;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-fourcolumn .columns-25-25-25-25 .column {
-  width: 22%;
-  margin-right: 4%;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-fourcolumn .columns-25-25-25-25 .column:last-child {
-  margin-right: 0;
-}
-.neos-wireframeMode .typo3-neos-nodetypes-twocolumn .container,
-.neos-wireframeMode .typo3-neos-nodetypes-threecolumn .container,
-.neos-wireframeMode .typo3-neos-nodetypes-fourcolumn .container {
-  width: auto;
+#neos-wireframe-breadcrumb .input-append button {
+  border: 0px none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
 }
 
 .neos .neos-wireframe-contentcollection-container {
   margin: 10px 0;
   padding: 10px 15px 15px 15px;
-  background: rgba(240, 240, 240, 0.7);
-  font-family: "Courier New", serif;
+  font-family: "Georgia", "Times New Roman", serif;
 }
 .neos .neos-wireframe-contentcollection-container:last-child {
   margin-bottom: 0;
 }
 .neos header.neos-wireframe-contentcollection {
   margin: -10px -15px 5px;
-  font-family: "Courier New", serif;
+  font-family: "Georgia", "Times New Roman", serif;
   font-size: 16px;
   font-weight: bold;
-  background: #e8e8e8;
+  background: #CCCCCC;
   padding: 10px 15px 5px 15px;
   text-align: center;
-  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
   border-radius: 0;
 }
 .neos .neos-toolbar li {
   list-style: none outside none;
 }
 
+.neos-wireframeMode #neos-wireframe-container {
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 850px;
+}
+
 .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections {
+  background: #FFFFFF;
   font-size: 14px;
+  line-height: 1.6em;
 }
 .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h1, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h2, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h3, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h4, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h5, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h6 {
-  color: #000000;
   text-shadow: none;
 }
 .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h1 {
-  font-size: 23px;
-  font-weight: bold;
-}
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h2 {
   font-size: 21px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h3 {
-  font-size: 19px;
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h2 {
+  font-size: 18px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h4 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h3 {
   font-size: 17px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h5 {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h4 {
   font-size: 16px;
+  font-weight: bold;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h5 {
+  font-size: 15px;
   font-weight: bold;
 }
 .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections h6 {
   font-size: 14px;
   font-weight: bold;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections p {
-  color: #000000;
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .neos-contentelement.neos-contentelement-active .neos-inline-editable, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .neos-contentelement .aloha-editable-active, .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
+  outline: 0px !important;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-50-50 .column {
+  width: 48%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-50-50 .column:last-child {
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-75-25 .column:first-child {
+  width: 73%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-75-25 .column:last-child {
+  width: 23%;
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-25-75 .column:first-child {
+  width: 23%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-25-75 .column:last-child {
+  width: 73%;
+  margin-right: 0%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-66-33 .column:first-child {
+  width: 64.5%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-66-33 .column:last-child {
+  width: 31.5%;
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-33-66 .column:first-child {
+  width: 31.5%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .columns-33-66 .column:last-child {
+  width: 64.5%;
+  margin-right: 0%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-33-33-33 .column {
+  width: 30.66666666666%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-33-33-33 .column:last-child {
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-50-25-25 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-50-25-25 .column:first-child {
+  width: 48%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-50-25-25 .column:last-child {
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-25-50-25 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-25-50-25 .column:nth-child(2) {
+  width: 48%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-25-50-25 .column:last-child {
+  margin-right: 0%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-25-25-50 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .columns-25-25-50 .column:last-child {
+  width: 48%;
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-fourcolumn .columns-25-25-25-25 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-fourcolumn .columns-25-25-25-25 .column:last-child {
+  margin-right: 0;
+}
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .container,
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .container,
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-fourcolumn .container {
+  width: auto;
 }
