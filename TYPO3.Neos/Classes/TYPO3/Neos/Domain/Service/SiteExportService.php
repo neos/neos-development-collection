@@ -150,7 +150,7 @@ class SiteExportService {
 	 *
 	 * Note: currently only ImageVariant instances are supported.
 	 *
-	 * @param $object
+	 * @param object $object
 	 * @param \XMLWriter $xmlWriter
 	 * @return void
 	 */
@@ -176,8 +176,11 @@ class SiteExportService {
 
 				$xmlWriter->endElement();
 			break;
+			case 'DateTime':
+				$xmlWriter->writeElement('dateTime', $object->format(\DateTime::W3C));
+			break;
 			default:
-				throw new \TYPO3\Neos\Domain\Exception('Unsupported object of type "' . get_class($className) . '" hit during XML export.', 1347144928);
+				throw new \TYPO3\Neos\Domain\Exception('Unsupported object of type "' . get_class($object) . '" hit during XML export.', 1347144928);
 		}
 	}
 }

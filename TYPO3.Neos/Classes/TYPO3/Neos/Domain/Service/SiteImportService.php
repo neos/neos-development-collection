@@ -229,8 +229,11 @@ class SiteImportService {
 					$processingInstructions
 				);
 			break;
+			case 'DateTime':
+				$object = \DateTime::createFromFormat(\DateTime::W3C, (string)$xml->dateTime);
+				break;
 			default:
-				throw new \TYPO3\Neos\Domain\Exception('Unsupported object of type "' . get_class($className) . '" hit during XML import.', 1347144938);
+				throw new \TYPO3\Neos\Domain\Exception('Unsupported object of target type "' . $className . '" hit during XML import.', 1347144938);
 		}
 
 		return $object;
