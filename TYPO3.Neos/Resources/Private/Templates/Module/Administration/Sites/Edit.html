@@ -89,14 +89,14 @@
 										</f:link.action>
 										<f:if condition="{domain.active} == 1">
 											<f:then>
-												<f:link.action action="deactivateDomain" arguments="{domain: domain}" class="btn btn-warning neos-button" title="Click to deactivate">
+												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: '{domain: domain}')}" type="submit" class="btn btn-warning neos-button" title="Click to deactivate">
 													<i class="icon-minus-sign icon-white"></i>
-												</f:link.action>
+												</button>
 											</f:then>
 											<f:else>
-												<f:link.action action="activateDomain" class="btn btn-success neos-button" arguments="{domain: domain}" title="Click to activate">
+												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: '{domain: domain}')}" type="submit" class="btn btn-success neos-button" title="Click to activate">
 													<i class="icon-plus-sign icon-white"></i>
-												</f:link.action>
+												</button>
 											</f:else>
 										</f:if>
 										<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}-{number}">
@@ -109,10 +109,10 @@
 											</div>
 											<div class="modal-footer">
 												<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-												<f:link.action action="deleteDomain" class="btn btn-danger neos-button" arguments="{site: site, domain: domain}" title="Delete">
+												<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: '{site: site, domain: domain}')}" type="submit" class="btn btn-danger neos-button" title="Delete">
 													<i class="icon-trash icon-white"></i>
 													Delete
-												</f:link.action>
+												</button>
 											</div>
 										</div>
 									</div>
@@ -146,28 +146,29 @@
 					</div>
 					<div class="modal-footer">
 						<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-						<f:link.action action="deleteSite" class="btn btn-danger neos-button" arguments="{site: site, domain: domain}" title="Delete">
+						<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: '{site: site, domain: domain}')}" type="submit" class="btn btn-danger neos-button" title="Delete">
 							<i class="icon-trash icon-white"></i>
 							Delete
-						</f:link.action>
+						</button>
 					</div>
 				</div>
 				<f:if condition="{site.online}">
 					<f:then>
-						<f:link.action action="deactivateSite" arguments="{site: site}" class="btn btn-warning neos-button" title="Click to deactivate">
+						<button form="postHelper" formaction="{f:uri.action(action: 'deactivateSite', arguments: '{site: site}')}" type="submit" class="btn btn-warning neos-button" title="Click to deactivate">
 							<i class="icon-minus-sign icon-white"></i>
 							Deactivate
-						</f:link.action>
+						</button>
 					</f:then>
 					<f:else>
-						<f:link.action action="activateSite" class="btn btn-success neos-button" arguments="{site: site}" title="Click to activate">
+						<button form="postHelper" formaction="{f:uri.action(action: 'activateSite', arguments: '{site: site}')}" type="submit" class="btn btn-success neos-button" title="Click to activate">
 							<i class="icon-plus-sign icon-white"></i>
 							Activate
-						</f:link.action>
+						</button>
 					</f:else>
 				</f:if>
 				<f:form.submit value="Save" class="btn btn-primary neos-button" />
 			</div>
 		</div>
 	</f:form>
+	<f:form action="index" id="postHelper" method="post"></f:form>
 </f:section>

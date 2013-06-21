@@ -77,12 +77,12 @@
 											</td>
 											<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
 											<td class="actions">
-												<f:link.action action="publishNode" arguments="{node: change.node.contextPath}" class="btn btn-success neos-button" title="Publish">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="btn btn-success neos-button" title="Publish">
 													<i class="icon-check icon-white"></i>
-												</f:link.action>
-												<f:link.action action="discardNode" arguments="{node: change.node.contextPath}" class="btn btn-danger neos-button" title="Discard">
+												</button>
+												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="btn btn-danger neos-button" title="Discard">
 													<i class="icon-trash icon-white"></i>
-												</f:link.action>
+												</button>
 											</td>
 										</tr>
 									</f:for>
@@ -101,7 +101,6 @@
 						</tfoot>
 					</table>
 				</div>
-
 				<f:render section="actions" arguments="{workspaceName: workspaceName}" />
 			</f:form>
 		</f:then>
@@ -117,12 +116,14 @@
 		</div>
 		<div class="modal-footer">
 			<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-			<f:link.action action="discardWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-danger neos-button">
+			<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="btn btn-danger neos-button">
 				<i class="icon-trash icon-white"></i>
 				Discard
-			</f:link.action>
+			</button>
 		</div>
 	</div>
+
+	<f:form action="index" id="postHelper" method="post"></f:form>
 
 	<script>
 		(function($) {
@@ -164,10 +165,10 @@
 			</button>
 		</div>
 		<div class="pull-right">
-			<f:link.action action="publishWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-primary neos-button">
+			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="btn btn-primary neos-button">
 				<i class="icon-refresh icon-white"></i>
 				Publish <strong>all</strong> changes
-			</f:link.action>
+			</button>
 			<button class="btn btn-danger neos-button" data-toggle="modal" href="#discard">
 				<i class="icon-trash icon-white"></i>
 				Discard <strong>all</strong> changes

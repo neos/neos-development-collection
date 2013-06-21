@@ -30,7 +30,6 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Default action of the backend controller.
 	 *
 	 * @return void
-	 * @Flow\SkipCsrfProtection
 	 */
 	public function indexAction() {
 		$redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri();

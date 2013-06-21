@@ -37,7 +37,6 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Schema format example: http://schema.rdfs.org/all.json
 	 *
 	 * @return string
-	 * @Flow\SkipCsrfProtection
 	 */
 	public function vieSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
@@ -49,7 +48,6 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Get the node type configuration schema for the Neos UI
 	 *
 	 * @return string
-	 * @Flow\SkipCsrfProtection
 	 */
 	public function nodeTypeSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');

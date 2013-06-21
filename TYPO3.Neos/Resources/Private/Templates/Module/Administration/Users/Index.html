@@ -47,10 +47,12 @@
 										</div>
 										<div class="modal-footer">
 											<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-											<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger neos-button" title="Delete">
-												<i class="icon-trash icon-white"></i>
-												Delete
-											</f:link.action>
+											<f:form action="delete" arguments="{account: account}" class="inline">
+												<button type="submit" class="btn btn-danger neos-button" title="Delete">
+													<i class="icon-trash icon-white"></i>
+													Delete
+												</button>
+											</f:form>
 										</div>
 									</div>
 								</f:else>
