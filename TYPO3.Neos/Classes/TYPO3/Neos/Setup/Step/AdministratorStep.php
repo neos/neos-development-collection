@@ -81,7 +81,7 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 		$password->setLabel('Password');
 		$password->setProperty('passwordDescription', 'At least 6 characters');
 
-		$formDefinition->setRenderingOption('skipStepNotice', 'If you skip this step make sure that you have an existing user or create one with the <code>user:create</code> command');
+		$formDefinition->setRenderingOption('skipStepNotice', 'If you skip this step make sure that you have an existing user or create one with the user:create command');
 	}
 
 	/**
