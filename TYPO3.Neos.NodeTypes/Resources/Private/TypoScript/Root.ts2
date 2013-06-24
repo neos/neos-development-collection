@@ -72,7 +72,6 @@ prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) {
 	columnContent = TYPO3.Neos:ContentCollection
 	columnContent {
 		nodePath = '.'
-		collection = ${q(node).children()}
 	}
 }
 
