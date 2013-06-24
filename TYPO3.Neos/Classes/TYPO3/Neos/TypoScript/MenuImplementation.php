@@ -160,16 +160,6 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string
-	 */
-	public function evaluate() {
-		$this['items'] = $this->getItems();
-		return parent::evaluate();
-	}
-
-	/**
 	 * Returns the menu items according to the defined settings.
 	 *
 	 * @return array

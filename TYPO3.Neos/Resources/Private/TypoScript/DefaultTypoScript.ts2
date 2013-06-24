@@ -103,6 +103,7 @@ prototype(TYPO3.Neos:Menu) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos:Menu) {
 	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Menu.html'
+	items = ${this.items}
 }
 
 # Abstract Plugin Implementation

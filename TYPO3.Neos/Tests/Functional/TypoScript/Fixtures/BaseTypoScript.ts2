@@ -6,12 +6,12 @@
 prototype(Acme.Demo:ThreeColumn) < prototype(TYPO3.Neos:Template)
 prototype(Acme.Demo:ThreeColumn) {
 	templatePath = 'FIXTURE_DIRECTORY/ThreeColumnTemplate.html'
-	left = TYPO3.Neos:ContentCollection
-	left.default.collection = ${q(node).children("left").children()}
-	center = TYPO3.Neos:ContentCollection
-	center.default.collection = ${q(node).children("center").children()}
-	right = TYPO3.Neos:ContentCollection
-	right.default.collection = ${q(node).children("right").children()}
+	left = TYPO3.Neos:ContentCollection.Default
+	left.nodePath = 'column0'
+	center = TYPO3.Neos:ContentCollection.Default
+	center.nodePath = 'column1'
+	right = TYPO3.Neos:ContentCollection.Default
+	right.nodePath = 'column2'
 }
 
 prototype(TYPO3.Neos:ContentCase).threeColumn {

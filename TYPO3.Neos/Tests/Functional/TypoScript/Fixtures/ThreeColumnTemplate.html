@@ -2,12 +2,12 @@
 {namespace ts=TYPO3\TypoScript\ViewHelpers}
 <neos:contentElement node="{node}">
 	<div class="left">
-		<ts:render path="left" />
+		{left -> f:format.raw()}
 	</div>
 	<div class="center">
-		<ts:render path="center" />
+		{center -> f:format.raw()}
 	</div>
 	<div class="right">
-		<ts:render path="right" />
+		{right -> f:format.raw()}
 	</div>
 </neos:contentElement>

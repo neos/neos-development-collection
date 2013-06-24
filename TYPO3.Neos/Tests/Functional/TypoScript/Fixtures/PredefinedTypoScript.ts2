@@ -18,12 +18,6 @@ prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects
 # TYPO3.Neos
 #
 
-prototype(TYPO3.Neos:Collection) < prototype(TYPO3.TypoScript:Collection) {
-	collection = ${q(node).children()}
-	itemName = 'node'
-	itemRenderer = TYPO3.Neos:ContentCase
-}
-
 prototype(TYPO3.Neos:ContentCase) < prototype(TYPO3.TypoScript:Case) {
 	default {
 		@position = 'end'
@@ -46,7 +40,7 @@ prototype(TYPO3.Neos:ContentCollection) {
 	}
 }
 
-prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.Neos:Collection)
+prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.TypoScript:Collection)
 prototype(TYPO3.Neos:ContentCollection.Default) {
 	@class = 'TYPO3\\Neos\\TypoScript\\DefaultContentCollectionImplementation'
 
@@ -58,6 +52,9 @@ prototype(TYPO3.Neos:ContentCollection.Default) {
 		# content collection already or if the child nodes of a content collection specified by
 		# nodePath should be rendered
 	collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? q(node).children() : q(node).children(this.nodePath).children()}
+
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
 }
 
 prototype(TYPO3.Neos:Page) < prototype(TYPO3.Neos:Template)

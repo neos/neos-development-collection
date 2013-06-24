@@ -17,9 +17,9 @@
 	<head>
 		<f:base />
 		<meta charset="UTF-8" />
-		<ts:render path="head" />
+		{head -> f:format.raw()}
 
-		<ts:render path="backendHeader" />
+		{backendHeader -> f:format.raw()}
 	</head>
 
 	<body<f:if condition="{bodyAttributes}"><f:for each="{bodyAttributes}" key="attribute" as="value"> {attribute}="{value -> f:format.raw()}"</f:for></f:if>>
@@ -28,7 +28,7 @@
 			<neos:contentElement node="{node}" page="TRUE" />
 		</f:security.ifAccess>
 
-		<ts:render path="body" />
+		{body -> f:format.raw()}
 		<neos:backend.container node="{node}"/>
 	</body>
 </html>
