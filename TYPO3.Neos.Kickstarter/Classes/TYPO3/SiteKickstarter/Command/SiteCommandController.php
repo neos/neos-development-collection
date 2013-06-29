@@ -51,8 +51,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('Package "%s" already exists.', array($packageKey));
 			$this->quit(1);
 		}
-		$packagePath = Files::getUnixStylePath(Files::concatenatePaths(array(FLOW_PATH_PACKAGES, 'Sites')));
-		$this->packageManager->createPackage($packageKey, NULL, $packagePath, 'typo3-flow-site');
+		$this->packageManager->createPackage($packageKey, NULL, NULL, 'typo3-flow-site');
 
 		$generatedFiles = array();
 		$generatedFiles += $this->generatorService->generateSitesXml($packageKey, $siteName);
