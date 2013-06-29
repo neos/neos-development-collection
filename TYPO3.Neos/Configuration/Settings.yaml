@@ -58,6 +58,10 @@ TYPO3:
               variables:
                 errorTitle: 'Missing Homepage'
                 errorDescription: 'Either no site has been defined yet or the site does not contain a homepage.'
+    package:
+      packagesPathByType:
+        'typo3-flow-site': 'Sites'
+        'typo3-flow-plugin': 'Plugins'
 
   DocTools:
     bundles:

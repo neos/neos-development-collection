@@ -119,16 +119,9 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 * @return void
 	 */
 	public function newSiteAction(\TYPO3\Neos\Domain\Model\Site $site = NULL) {
-		$packageGroups = array();
-		foreach ($this->packageManager->getAvailablePackages() as $package) {
-			$packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
-			$packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
-			if ($packageGroup === 'Sites') {
-				$packageGroups[] = $package;
-			}
-		}
+		$sitePackages = $this->packageManager->getFilteredPackages('available', NULL, 'typo3-flow-site');
 		$this->view->assignMultiple(array(
-			'sitePackages' => $packageGroups,
+			'sitePackages' => $sitePackages,
 			'site' => $site,
 			'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('TYPO3.SiteKickstarter')
 		));
@@ -154,7 +147,9 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 				$this->redirect('index');
 			}
 
-			$this->packageManager->createPackage($packageKey, NULL, Files::getUnixStylePath(Files::concatenatePaths(array(FLOW_PATH_PACKAGES, 'Sites'))));
+				//todo This is doing the same thing as SiteImportStep::importSite - can they be refactored?
+				//I would probably move this logic into GeneratorService::generateSite($packageKey, $siteName)
+			$this->packageManager->createPackage($packageKey, NULL, NULL, 'typo3-flow-site');
 			$generatorService = $this->objectManager->get('TYPO3\SiteKickstarter\Service\GeneratorService');
 			$generatorService->generateSitesXml($packageKey, $siteName);
 			$generatorService->generateSitesTypoScript($packageKey, $siteName);
