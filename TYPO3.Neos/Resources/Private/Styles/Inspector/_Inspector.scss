@@ -1,0 +1,390 @@
+#neos-inspector-button {
+	position: fixed;
+	z-index: 10015;
+	top: $menu-height + $topbar-offset;
+	right: 0;
+	width: $unit;
+	height: $unit;
+	border: 1px solid $grayLight;
+	background-color: $grayDark;
+	background-image: none;
+	@include text-shadow(none);
+	@include box-shadow(none);
+
+	&:before {
+		@include font;
+		font-size: 26px;
+		font-weight: normal;
+		content: "‹";
+	}
+
+	&.is-active:before {
+		color: $blue;
+	}
+
+	&.pressed:before {
+		content: "›";
+	}
+}
+
+#neos-inspector {
+	position: fixed;
+	top: $menu-height + $topbar-offset;
+	bottom: 0;
+	right: -$inspector-width;
+	width: $inspector-width;
+	background-color: $grayDark;
+	z-index: 10014;
+	border-top: 1px solid $grayLight;
+	border-left: 1px solid $grayLight;
+	padding-top: $unit;
+	padding-bottom: $unit + 1px;
+	@include transition-property('right');
+	@include transition-duration(.2s);
+	@include font;
+
+	@import "Shared/Chosen";
+
+	.toolbar {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 38px;
+		border-bottom: 1px solid $grayLight;
+	}
+
+	.neos-inspector-form {
+		width: 100%;
+		height: 100%;
+		overflow-x: hidden;
+		overflow-y: auto;
+
+		.neos-breadcrumb {
+			max-width: $inspector-width - 16 * 2;
+			margin: 16px 8px 16px 16px;
+			cursor: pointer;
+			@include user-select(none);
+			position: relative;
+
+			&.open {
+				ul {
+					display: block;
+				}
+			}
+
+			div {
+				position: relative;
+				background-color: $grayMedium;
+				height: $unit;
+
+				span {
+					display: block;
+					margin-right: $unit;
+					border-right: 1px solid $grayDark;
+					line-height: $unit;
+					height: $unit;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					padding: 0 $defaultMargin;
+				}
+
+				&:before,
+				&:after {
+					display: block;
+					position: absolute;
+					right: 15px;
+					font-family: Arial;
+					font-size: 17px;
+					line-height: $unit;
+					content: "▾";
+				}
+
+				&:before {
+					top: -4px;
+					@include rotate(180deg);
+				}
+
+				&:after {
+					top: 4px;
+				}
+			}
+
+			ul {
+				display: none;
+				position: absolute;
+				margin: 0;
+				width: 100%;
+				z-index: 10015;
+				@include box-shadow(1px 2px 5px $grayDark);
+
+				li {
+					position: relative;
+					min-height: $unit;
+					background-color: $grayMedium;
+					border-top: 1px solid $grayDark;
+
+					&:first-child {
+						background-color: $blue;
+					}
+
+					&:hover {
+						background-color: $blue;
+					}
+
+					a {
+						display: block;
+						height: 100%;
+						line-height: $unit;
+						color: #fff;
+						padding: 0 16px;
+						@include box-sizing(border-box);
+
+						&:hover {
+							text-decoration: none;
+						}
+					}
+				}
+			}
+		}
+
+		.collapsed,
+		.open {
+			h2::before {
+				content: "›";
+				font-size: 26px;
+				font-weight: normal;
+				display: inline-block;
+				margin-right: 18px;
+				position: relative;
+				top: 5px;
+			}
+		}
+
+		.collapsed h2::before {
+			@include rotate(-90deg);
+		}
+
+		.open h2::before {
+			@include rotate(90deg);
+			left: 6px;
+		}
+
+		.legend {
+			width: 100%;
+			@include box-sizing(border-box);
+			padding: 0 16px;
+			margin-bottom: 10px;
+			height: 30px;
+			border-bottom: 1px solid $grayLight;
+			cursor: pointer;
+
+			h2 {
+				margin: 0;
+				line-height: 18px;
+				@include font;
+				font-size: 14px;
+				font-weight: bold;
+				@include user-select(none);
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				width: $inspector-width - 16 * 2;
+			}
+		}
+
+		.neos-inspector-field {
+			padding: $relatedMargin $defaultMargin 0 $defaultMargin;
+
+			& > div {
+				padding-bottom: $relatedMargin + $tightMargin;
+			}
+		}
+
+		label {
+			@include font;
+			font-size: 14px;
+			cursor: pointer;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			width: $inspector-width - 16 * 2;
+			padding: 0;
+			margin-bottom: $tightMargin;
+			@include user-select(none);
+
+			&.checkbox {
+				margin-top: $relatedMargin;
+			}
+		}
+
+		input[type="text"],
+		input[type="password"],
+		input[type="datetime"],
+		input[type="datetime-local"],
+		input[type="date"],
+		input[type="month"],
+		input[type="time"],
+		input[type="week"],
+		input[type="number"],
+		input[type="range"],
+		input[type="date"],
+		input[type="email"],
+		input[type="url"],
+		input[type="search"],
+		input[type="tel"],
+		input[type="color"],
+		input[type="number"],
+		.uneditable-input {
+			width: 100%;
+			height: $unit;
+			border: none;
+			background-color: $grayMedium;
+			color: $textOnGray;
+			@include font;
+			font-size: 14px;
+			padding: 0 16px;
+			margin: 0;
+			@include box-sizing(border-box);
+
+			&:focus {
+				background-color: #fff;
+				color: $textOnWhite;
+				@include box-shadow(none);
+			}
+
+			// Highlight changed elements in the Property Panel
+			&.modified {
+				border: 1px solid $light-green;
+			}
+		}
+
+		input[placeholder],
+		input::-webkit-input-placeholder,
+		input:-moz-placeholder {
+			color: $textSubtle;
+		}
+
+		select {
+			width: 100%;
+		}
+
+		input[type=checkbox] {
+			visibility: hidden;
+			margin: 0;
+			width: 22px;
+			height: 22px;
+			margin-right: 16px;
+			@include box-sizing(border-box);
+
+			&:before {
+				display: block;
+				width: 20px;
+				height: 20px;
+				background-color: $grayLight;
+				border: 1px solid #d4cfc8;
+				color: #fff;
+				cursor: pointer;
+				content: "";
+				visibility: visible;
+			}
+
+			&:hover:before {
+				border: 1px solid $blue;
+			}
+
+			&:checked:before {
+				@include font;
+				background-color: $blue;
+				border: 1px solid $blue;
+				content: "√";
+				text-align: center;
+				font-weight: bold;
+			}
+		}
+
+		.input-prepend,
+		.input-append {
+			display: table;
+			width: 100%;
+			white-space: normal;
+			margin: 0;
+		}
+
+		.add-on {
+			display: table-cell;
+			background-color: $grayLight;
+			color: #fff;
+			@include text-shadow(none);
+			border: none;
+			border-right: 1px solid $grayDark;
+			padding: 9px;
+			min-width: $unit + 1;
+			@include border-radius(0);
+			@include box-sizing(border-box);
+
+			input {
+				margin: 0;
+			}
+		}
+
+		.add-on + span {
+			display: table-cell;
+			padding-bottom: 0;
+		}
+
+		span + .add-on {
+			border-left: 1px solid $grayDark;
+			border-right: none;
+		}
+	}
+
+	.actions {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		height: $unit;
+		border-top: 1px solid $grayDark;
+		background-color: $grayDark;
+
+		button {
+			height: $unit;
+			color: #fff;
+			border: none;
+			background-image: none;
+			font-size: 14px;
+			@include text-shadow(none);
+			@include box-shadow(none);
+
+			&[disabled] {
+				@include opacity(.5);
+			}
+
+			&.neos-inspector-cancel {
+				float: left;
+				background-color: $grayLight;
+				width: 37%;
+			}
+
+			&.neos-inspector-apply {
+				float: right;
+				background-color: $successGreen;
+				width: 62%;
+			}
+		}
+	}
+}
+
+#neos-inspector-clickprotection {
+	position: fixed;
+	display: block;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+}
+
+.inspector-dialog {
+	position: fixed;
+	z-index: 11000;
+}

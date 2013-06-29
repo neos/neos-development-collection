@@ -24,6 +24,7 @@
 	padding: 1px;
 	min-width: 15em;
 	width: auto;
+	max-width: none;
 	background-color: $dark-grey2;
 	@include single-box-shadow(rgba(0, 0, 0, 0.3), 0px, 0px, 5px);
 	@include transition-property(opacity);
@@ -208,13 +209,13 @@ body {
 			top: 50% !important;
 			left: 50% !important;
 			margin-top: ($menu-height + $topbar-offset + $toolbar-height) / 2 - $footer-height / 2;
-			margin-left: -30 - $property-panel-width / 2;
+			margin-left: -30 - $inspector-width / 2;
 			@include transition-property(margin);
 			@include transition-duration(0.2s);
 		}
 	}
 	&.neos-tree-panel-open .neos-pageloader-wrapper .neos-pageloader {
-		margin-left: -30 - $tree-panel-width / 2 - $property-panel-width / 2;
+		margin-left: -30 - $tree-panel-width / 2 - $inspector-width / 2;
 	}
 	&.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
 		margin-left: -30px;

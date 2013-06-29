@@ -9,6 +9,7 @@ define(
 	'text!./InspectorBreadcrumb.html',
 	'text!./InspectorUnappliedChangesDialog.html',
 	'../Components/Button',
+	'../Components/ToggleButton',
 	'require'
 ], function(
 	$,
@@ -17,6 +18,7 @@ define(
 	breadcrumbTemplate,
 	unappliedChangesDialogTemplate,
 	Button,
+	ToggleButton,
 	require
 ) {
 	var BreadcrumbItem = Ember.View.extend({
@@ -33,16 +35,25 @@ define(
 	var Breadcrumb = Ember.View.extend({
 		tagName: 'div',
 		classNames: ['neos-breadcrumb'],
+		classNameBindings: ['open'],
 		template: Ember.Handlebars.compile(breadcrumbTemplate),
 		BreadcrumbItem: BreadcrumbItem,
+		open: false,
+
 		nodes: function() {
+			this.set('open', false);
 			return this.get('content').toArray().reverse();
-		}.property('content.@each')
-     });
+		}.property('content.@each'),
+
+		click: function() {
+			this.set('open', !this.get('open'));
+		}
+	});
 
 	// Make the inspector panels collapsible
 	var ToggleInspectorPanelHeadline = Ember.View.extend({
 		tagName: 'div',
+		classNameBindings: ['_collapsed:collapsed:open'],
 		_collapsed: false,
 		_nodeType: '',
 		_automaticallyCollapsed: false,
@@ -82,6 +93,7 @@ define(
 			}
 		}.observes('_collapsed')
 	});
+
 	var PropertyEditor = Ember.ContainerView.extend({
 		propertyDefinition: null,
 
@@ -138,10 +150,10 @@ define(
 	 */
 	return Ember.View.extend({
 		elementId: 'neos-inspector',
-		classNames: ['neos-inspector'],
 
 		template: Ember.Handlebars.compile(template),
 		Button: Button,
+		ToggleButton: ToggleButton,
 		ToggleInspectorPanelHeadline: ToggleInspectorPanelHeadline,
 		Breadcrumb: Breadcrumb,
 		PropertyEditor: PropertyEditor,

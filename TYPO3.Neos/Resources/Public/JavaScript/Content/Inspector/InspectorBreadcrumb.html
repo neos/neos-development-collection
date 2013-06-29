@@ -1,3 +1,4 @@
-{{#collection contentBinding="view.nodes" tagName="ul" classNames="neos-select"}}
+<div><span>{{view.nodes.0.nodeTypeSchema.ui.label}}  {{#if view.nodes.0.status}}({{view.nodes.0.status}}){{/if}}</span></div>
+{{#collection contentBinding="view.nodes" tagName="ul"}}
 	{{view view.parentView.parentView.BreadcrumbItem itemBinding="view.content"}}
 {{/collection}}

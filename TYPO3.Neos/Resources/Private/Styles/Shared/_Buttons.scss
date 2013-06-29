@@ -1,0 +1,19 @@
+.neos-button {
+	@include font;
+	color: #fff;
+	background-color: $grayLight;
+	background-image: none;
+	width: auto;
+	height: $unit;
+	line-height: $unit;
+	text-align: center;
+	padding: 0 $defaultMargin;
+	@include box-sizing(border-box);
+
+	&:hover,
+	&:active,
+	&.active,
+	&.pressed {
+		background-color: $blue;
+	}
+}

@@ -1,4 +1,24 @@
-<div class="header">
+<div class="toolbar"></div>
+<form class="neos-inspector-form" action="#">
+	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
+	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
+		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content" classNames="legend"}}
+		<h2>{{view.content.label}}</h2>
+		{{/view}}
+		{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="view.content.properties"}}
+			{{#if view.content.isBoolean}}
+				<label for="{{unbound view.content.elementId}}" class="checkbox">
+					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
+					{{view.content.ui.label}}
+				</label>
+			{{else}}
+				<label for="{{unbound view.content.elementId}}">{{view.content.ui.label}}</label>
+				{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
+			{{/if}}
+		{{/collection}}
+	{{/collection}}
+</form>
+<div class="actions">
 	{{#view view.Button
 		disabledBinding="T3.Content.Controller.Inspector._unmodified"
 		target="T3.Content.Controller.Inspector"
@@ -15,31 +35,3 @@
 		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
 	}}Apply{{/view}}
 </div>
-<form class="neos-inspector-form" action="#">
-	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
-	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
-		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content"}}
-			<h2>
-				{{view.content.label}}
-				<span class="pull-right">
-					{{#if view._collapsed}}
-						<i class="icon-chevron-up"></i>
-					{{else}}
-						<i class="icon-chevron-down"></i>
-					{{/if}}
-				</span>
-			</h2>
-		{{/view}}
-		{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="view.content.properties"}}
-			{{#if view.content.isBoolean}}
-				<label for="{{unbound view.content.elementId}}" class="checkbox">
-					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
-					{{view.content.ui.label}}
-				</label>
-			{{else}}
-				<label for="{{unbound view.content.elementId}}">{{view.content.ui.label}}</label>
-				{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
-			{{/if}}
-		{{/collection}}
-	{{/collection}}
-</form>

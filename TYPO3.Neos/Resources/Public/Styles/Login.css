@@ -1,4 +1,6 @@
-@charset "UTF-8";
+/* Variables */
+/* Color palette */
+/* Sizes & margins */
 [class^="icon-"], [class*=" icon-"] {
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -148,7 +150,7 @@
 }
 .neos ul.icons {
   list-style-type: none;
-  text-indent: -0.75em;
+  text-indent: -.75em;
 }
 .neos ul.icons li [class^="icon-"],
 .neos ul.icons li [class*=" icon-"] {

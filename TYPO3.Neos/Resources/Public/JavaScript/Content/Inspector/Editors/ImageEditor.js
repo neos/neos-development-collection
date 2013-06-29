@@ -1,5 +1,6 @@
 define(
 [
+	'emberjs',
 	'Library/jquery-with-dependencies',
 	'./FileUpload',
 	'text!./ImageEditor.html',
@@ -8,7 +9,7 @@ define(
 	'./TextFieldEditor',
 	'Library/spinjs/spin'
 ],
-function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinner) {
+function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinner) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -29,7 +30,7 @@ function($, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinne
 		 * .neos-inspector-image-uploadthumbnail-portrait and .neos-inspector-image-uploadthumbnail-landscape
 		 * need to be adjusted.
 		 */
-		imagePreviewMaximumDimensions: {w: 178, h: 178},
+		imagePreviewMaximumDimensions: {w: 288, h: 216},
 
 		/**
 		 * Comma-separated list of allowed file types.

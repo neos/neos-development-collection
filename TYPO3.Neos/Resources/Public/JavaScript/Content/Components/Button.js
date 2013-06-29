@@ -8,7 +8,7 @@ define(
 	function (Ember) {
 		return Ember.View.extend(Ember.TargetActionSupport, {
 			tagName: 'button',
-			classNames: ['neos-button','btn','btn-mini'],
+			classNames: ['neos-button'],
 			attributeBindings: ['disabled', 'title'],
 			classNameBindings: ['iconClass', 'isActive'],
 			disabled: false,
@@ -28,6 +28,7 @@ define(
 					this.set('isActive', true);
 				}
 			},
+
 			mouseUp: function(event) {
 				if (this.get('isActive')) {
 					// Actually invoke the button's target and action.

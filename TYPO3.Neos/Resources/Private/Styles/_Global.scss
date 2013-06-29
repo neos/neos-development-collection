@@ -21,18 +21,17 @@ body {
 	}
 
 	&.neos-inspector-panel-open {
-		margin-right: $property-panel-width;
+		margin-right: $inspector-width;
 		@include transition-property('margin-right');
 		@include transition-duration(0.2s);
 
 		.neos {
 			#neos-inspector {
 				right: 0;
-				@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 			}
 
 			#neos-toolbar {
-				padding-right: $property-panel-width;
+				padding-right: $inspector-width;
 			}
 		}
 	}
@@ -79,8 +78,7 @@ body {
 			}
 
 			#neos-inspector {
-				@include box-shadow(none);
-				right: -$property-panel-width;
+				right: -$inspector-width;
 				overflow: hidden;
 			}
 
@@ -152,15 +150,6 @@ body {
 
 #neos-page-metainformation {
 	display: none;
-}
-
-#neos-inspector-clickprotection {
-	position: fixed;
-	display: block;
-	width: 100%;
-	height: 100%;
-	top: 0px;
-	left: 0px;
 }
 
 #neos-shortcut {

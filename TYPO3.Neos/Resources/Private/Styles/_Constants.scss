@@ -1,13 +1,10 @@
-//Variables//
+/* Variables */
 $menu-height: 26px;
-$toolbar-height: 36px;
-$property-panel-width: 200px;
+$toolbar-height: 40px;
+$inspector-width: 320px;
 $tree-panel-width: 300px;
 $footer-height: 26px;
 $topbar-offset: 4px;
-
-$max-image-width: 180px;
-$max-image-height: 180px;
 
 $green: #69A550;
 $light-green: #54974A;
@@ -28,13 +25,26 @@ $light-grey4: #666666;
 $dark-grey2: #444444;
 $dark-grey3: #373737;
 $dark-grey: #2D2D2D;
-
 $darkest: #000000;
-
 $baseFontSize: 100%;
-$grayDark: $dark-grey2;
-
 $default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-// Mixins //
-// Use Compass for CSS3 Mixins!
+/* Color palette */
+$grayDark: #222;
+$grayMedium: #323232;
+$grayLight: #3f3f3f;
+$textOnWhite: #252525;
+$textOnGray: #fff;
+$textSubtle: #5b5b5b;
+$blueDark: #007fb2;
+$blue: #00b5ff;
+$successGreen: #00a338;
+$warningRed: #ff460d;
+$orange: #ff8700;
+
+/* Sizes & margins */
+$unit: 40px;
+$defaultMargin: 16px;
+$relatedMargin: 8px;
+$tightMargin: 4px;
+$wideMargin: 32px;

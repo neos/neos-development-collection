@@ -145,25 +145,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 	}).create();
 
 	/**
-	 * This controller toggles the inspection mode on and off.
-	 *
-	 * @TODO: rename differently, because it is too similar with "Inspector"
-	 * @TODO: Toggling inspectMode does not show popover
-	 */
-	var Inspect = Ember.Object.extend({
-		inspectMode: false,
-
-		onInspectModeChange: function() {
-			var isInspectEnabled = this.get('inspectMode');
-			if (isInspectEnabled) {
-				$('body').addClass('neos-inspect-active');
-			} else {
-				$('body').removeClass('neos-inspect-active');
-			}
-		}.observes('inspectMode')
-	}).create();
-
-	/**
 	 * Controller for the inspector
 	 */
 	var Inspector = Ember.Object.extend({
@@ -171,8 +152,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		_unmodified: function() {
 			return !this.get('_modified');
 		}.property('_modified'),
-
-		inspectorMode: true,
 
 		nodeProperties: null,
 		configuration: null,
@@ -188,38 +167,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 					T3.Common.LocalStorage.setItem('inspectorConfiguration', this.get('configuration'));
 				}
 			});
-			if (T3.Common.LocalStorage.getItem('inspectorMode') === false) {
-				this.toggleInspectorMode();
-			} else {
-				$('body').addClass('neos-inspector-panel-open');
-			}
 		},
-
-		/**
-		 * Toggle inspector mode
-		 */
-		toggleInspectorMode: function() {
-			this.set('inspectorMode', !this.get('inspectorMode'));
-		},
-
-		/**
-		 * When inspector mode is changing
-		 */
-		onInspectorModeChange: function() {
-			var inspectorMode = this.get('inspectorMode');
-			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
-				if (inspectorMode === true) {
-					$('body').addClass('neos-inspector-panel-open');
-				} else {
-					$('body').removeClass('neos-inspector-panel-open');
-				}
-				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({
-					'contentEditing.inspectorMode': inspectorMode
-				}, function() {
-					T3.Common.LocalStorage.setItem('inspectorMode', inspectorMode);
-				});
-			}
-		}.observes('inspectorMode'),
 
 		/**
 		 * This is a computed property which builds up a nested array powering the
@@ -654,7 +602,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		Preview: Preview,
 		PageTree: PageTree,
 		Wireframe: Wireframe,
-		Inspect: Inspect,
 		NodeActions: NodeActions,
 		Inspector: Inspector,
 		ServerConnection: ServerConnection

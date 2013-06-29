@@ -1,39 +1,41 @@
-<div class="neos-inspector-image-thumbnail-container">
-	<div class="neos-inspector-image-thumbnail">
-		<div class="neos-inspector-image-thumbnail-inner">
-			{{view T3.Content.UI.Image srcBinding="view._previewImageUri" isVisibleBinding="view._uploadPreviewNotShown"}}
+<div class="neos-inspector-image">
+	<div class="neos-inspector-image-thumbnail-container">
+		<div class="neos-inspector-image-thumbnail">
+			<div class="neos-inspector-image-thumbnail-inner">
+				{{view T3.Content.UI.Image srcBinding="view._previewImageUri" isVisibleBinding="view._uploadPreviewNotShown"}}
+			</div>
+		</div>
+		<div class="neos-inspector-image-uploadthumbnail">
+			{{view T3.Content.UI.Image srcBinding="view._uploadPreviewImageSource" isVisibleBinding="view._uploadPreviewShown"}}
 		</div>
 	</div>
-	<div class="neos-inspector-image-uploadthumbnail">
-		{{view T3.Content.UI.Image srcBinding="view._uploadPreviewImageSource" isVisibleBinding="view._uploadPreviewShown"}}
-	</div>
-</div>
 
-<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
-	<button id="{{unbound view._browseButtonId}}" class="neos-button btn btn-mini neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
-		{{view.fileChooserLabel}}
-	</button>
-	{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="neos-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
-	{{view view.Button isVisibleBinding="view._uploadPreviewNotShown" target="parentView" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
-</div>
-
-<div class="neos-inspector-image-width">
-	<label for="image-width">Width:</label>
-	<div class="input-prepend input-append">
-		<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle"}}</span>
-		<span>
-			{{view view.TextFieldEditor elementId="image-width" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageScale.w"}}
-		</span>
-		<span class="add-on">px</span>
+	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
+		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
+			{{view.fileChooserLabel}}
+		</button>
+		{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="neos-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
+		{{view view.Button isVisibleBinding="view._uploadPreviewNotShown" target="parentView" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
 	</div>
-</div>
-<div class="neos-inspector-image-height">
-	<label for="image-height">Height:</label>
-	<div class="input-prepend input-append">
-		<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle"}}</span>
-		<span>
-			{{view view.TextFieldEditor elementId="image-height" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageScale.computedHeight"}}
-		</span>
-		<span class="add-on">px</span>
+
+	<div class="neos-inspector-image-width">
+		<label for="image-width">Width:</label>
+		<div class="input-prepend input-append">
+			<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle"}}</span>
+			<span>
+				{{view view.TextFieldEditor elementId="image-width" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageScale.w"}}
+			</span>
+			<span class="add-on">px</span>
+		</div>
+	</div>
+	<div class="neos-inspector-image-height">
+		<label for="image-height">Height:</label>
+		<div class="input-prepend input-append">
+			<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle"}}</span>
+			<span>
+				{{view view.TextFieldEditor elementId="image-height" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageScale.computedHeight"}}
+			</span>
+			<span class="add-on">px</span>
+		</div>
 	</div>
 </div>
