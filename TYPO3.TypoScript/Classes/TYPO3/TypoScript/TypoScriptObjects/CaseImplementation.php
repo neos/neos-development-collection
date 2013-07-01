@@ -49,6 +49,10 @@ class CaseImplementation extends ArrayImplementation {
 				$renderedMatcher = $this->tsRuntime->render(
 					sprintf('%s/%s', $this->path, $matcherName)
 				);
+			} elseif (!is_array($this->subElements[$matcherName])) {
+				throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
+			} elseif (isset($this->subElements[$matcherName]['__eelExpression'])) {
+				throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
 			} else {
 					// No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
 				$renderedMatcher = $this->tsRuntime->render(
