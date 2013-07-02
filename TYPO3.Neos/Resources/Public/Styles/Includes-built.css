@@ -7009,25 +7009,6 @@
 .neos .neos-htmleditor-window .CodeMirror pre {
   overflow-y: hidden;
 }
-.neos .neos-content-new-selecttype-button {
-  margin: 5px 0px;
-}
-.neos .neos-content-new-selecttype-button:nth-of-type(1) {
-  margin-top: 0;
-}
-.neos .neos-content-new-selecttype-button:nth-last-of-type(1) {
-  margin-bottom: 0;
-}
-.neos .neos-content-new-selecttype-button a {
-  display: block;
-  line-height: 16px;
-  vertical-align: bottom;
-}
-.neos .neos-content-new-selecttype-button a:hover, .neos .neos-content-new-selecttype-button a:focus, .neos .neos-content-new-selecttype-button a:active {
-  color: white;
-  cursor: pointer;
-  text-decoration: none;
-}
 .neos .dynatree-container {
   position: relative;
   font-size: 12px;
@@ -9071,6 +9052,21 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+}
+.neos .neos-content-new-selecttype-button {
+  display: inline-block;
+  margin: 5px 0px;
+  width: 30%;
+}
+.neos .neos-content-new-selecttype-button a {
+  display: block;
+  line-height: 16px;
+  vertical-align: bottom;
+}
+.neos .neos-content-new-selecttype-button a:hover, .neos .neos-content-new-selecttype-button a:focus, .neos .neos-content-new-selecttype-button a:active {
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
 }
 /*  Font Awesome 3.0
     the iconic font designed for use with Twitter Bootstrap
