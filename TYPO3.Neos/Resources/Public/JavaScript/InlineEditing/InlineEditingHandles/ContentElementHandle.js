@@ -8,11 +8,11 @@ define(
 		'vie/instance',
 		'text!InlineEditing/InlineEditingHandles/ContentElementHandle.html',
 		'Content/Application',
-		'neos/content/ui/elements/new-contentelement-popover-content',
 		'Model/NodeCollection',
-		'InlineEditing/Dialogs/DeleteNodeDialog'
+		'InlineEditing/Dialogs/DeleteNodeDialog',
+		'InlineEditing/InsertNodePanel'
 	],
-	function ($, _, Ember, vieInstance, template, Application, ContentElementPopoverContent, NodeCollection, DeleteNodeDialog) {
+	function ($, _, Ember, vieInstance, template, Application, NodeCollection, DeleteNodeDialog, InsertNodePanel) {
 
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
@@ -71,10 +71,6 @@ define(
 				return index + 1;
 			}.property('_selectedNode'),
 
-			didInsertElement: function() {
-				this.$newAfterPopoverContent = $('<div />', {id: this.get(Ember.GUID_KEY)});
-			},
-
 			_entityChanged: function() {
 				this.set('_hidden', this.get('_entity').get('typo3:_hidden'));
 			},
@@ -88,58 +84,11 @@ define(
 			},
 
 			newAfter: function() {
-				var that = this;
-
-				this.$().find('.action-new').popover({
-					additionalClasses: 'neos-new-contentelement-popover',
-					content: this.$newAfterPopoverContent,
-					preventLeft: this.get('_popoverPosition') === 'left' ? false : true,
-					preventRight: this.get('_popoverPosition') === 'right' ? false : true,
-					preventTop: this.get('_popoverPosition') === 'top' ? false : true,
-					preventBottom: this.get('_popoverPosition') === 'bottom' ? false : true,
-					positioning: 'absolute',
-					zindex: 10090,
-					closeEvent: function() {
-						that.set('pressed', false);
-					},
-					openEvent: function() {
-						that.onPopoverOpen.call(that);
-					}
-				});
-				this.$().find('.action-new').trigger('showPopover');
-			},
-
-			onPopoverOpen: function() {
-				var groups = {};
-				_.each(NodeCollection.get('content').options.definition.range, function(nodeType) {
-					var type = NodeCollection.get('content').options.vie.types.get(nodeType);
-					type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(Application.TYPO3_NAMESPACE, '');
-
-					if (type.metadata.ui && type.metadata.ui.group) {
-						if (!groups[type.metadata.ui.group]) {
-							groups[type.metadata.ui.group] = {
-								name: type.metadata.ui.group,
-								children: []
-							};
-						}
-						groups[type.metadata.ui.group].children.push(type.metadata);
-					}
-				}, this);
-
-					// Make the data object an array for usage in #each helper
-				var data = [];
-				T3.Configuration.nodeTypeGroups.forEach(function(groupName) {
-					if (groups[groupName]) {
-						data.push(groups[groupName]);
-					}
-				});
-
-				ContentElementPopoverContent.create({
-					_options: NodeCollection.get('content').options,
-					_index: this.get('_collectionIndex'),
-					_clickedButton: this,
-					data: data
-				}).replaceIn(this.$newAfterPopoverContent);
+				InsertNodePanel.create({
+					_entity: this.get('_entity'),
+					_node: this.get('_selectedNode'),
+					_index: this.get('_collectionIndex')
+				}).appendTo($('#neos-application'));
 			},
 
 			_hideToggleTitle: function() {

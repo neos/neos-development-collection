@@ -1,0 +1,30 @@
+<div class="modal" id="insertNodeDialog">
+	<div class="modal-header">
+		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close neos-button" title="x"}}
+		<h3>Create new node</h3>
+
+		{{#each view.content}}
+			<div>
+				<h4>{{unbound name}}</h4>
+				<ul>
+					{{#each children}}
+						<li class="neos-content-new-selecttype-button">
+							<a class="neos-content-new" {{action "insertNode" nodeType target="view" }}>
+								{{#if ui.icon.light}}
+									<img src="{{unbound ui.icon.light}}" />
+								{{else}}
+									<img src="/_Resources/Static/Packages/TYPO3.Neos/Images/Icons/White/square_shape_icon-16.png" />
+								{{/if}}
+								{{unbound label}}
+							</a>
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+		{{/each}}
+	</div>
+	<div class="modal-footer">
+		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="btn neos-button" title="Cancel"}}
+	</div>
+</div>
+<div class="modal-backdrop in"></div>

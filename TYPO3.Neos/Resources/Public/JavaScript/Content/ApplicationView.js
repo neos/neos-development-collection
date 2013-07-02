@@ -16,13 +16,15 @@ function(
 	NavigationToolbar,
 	TreePanel,
 	Inspector,
-	InlineEditingHandles
+	InlineEditingHandles,
+	InsertNodePanel
 ) {
 	return Ember.View.extend({
 		NavigationToolbar: NavigationToolbar,
 		Inspector: Inspector,
 		TreePanel: TreePanel,
 		InlineEditingHandles: InlineEditingHandles,
+		InsertNodePanel: InsertNodePanel,
 		template: Ember.Handlebars.compile(template)
 	});
 });

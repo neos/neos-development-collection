@@ -17,6 +17,7 @@ define(
 			/**
 			 * This method returns a possible label / title readable for the editor.
 			 * If none found null is returned.
+			 *
 			 * @return {string}
 			 */
 			nodeLabel: function() {

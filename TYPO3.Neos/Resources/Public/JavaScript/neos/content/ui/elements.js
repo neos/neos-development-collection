@@ -3,7 +3,6 @@
  *
  * Contains UI elements for the Content Module
  */
-
 define(
 [
 	'Library/jquery-with-dependencies',
