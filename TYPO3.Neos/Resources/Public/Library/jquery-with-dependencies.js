@@ -25099,35 +25099,15 @@ jQuery.each( ajaxEvents.split("|"),
 
 })(jQuery);
 
-/*************************************************************************
-	jquery.dynatree.js
-	Dynamic tree view control, with support for lazy loading of branches.
-
-	Copyright (c) 2006-2012, Martin Wendt (http://wwWendt.de)
-	Dual licensed under the MIT or GPL Version 2 licenses.
-	http://code.google.com/p/dynatree/wiki/LicenseInfo
-
-	A current version and some documentation is available at
-		http://dynatree.googlecode.com/
-
-	$Version: 1.2.1$
-	$Revision: 606, 2012-06-12 08:10:04$
-
-	@depends: jquery.js
-	@depends: jquery.ui.core.js
-	@depends: jquery.cookie.js
-*************************************************************************/
-
-// Note: We currently allow eval() to parse the 'data' attribtes, when initializing from HTML.
-
-/* jsLint options*/
-// TODO: does not pass jsLint
-/*NOT_YET_jslint browser: true, evil: true, indent: 4, sloppy: true, nomen: true, vars: true, white: true, plusplus: true*/
-/*global alert */
+/*! jQuery Dynatree Plugin - v1.2.4 - 2013-02-12
+* http://dynatree.googlecode.com/
+* Copyright (c) 2013 Martin Wendt; Licensed MIT, GPL */
 
 /* jsHint options*/
+// Note: We currently allow eval() to parse the 'data' attribtes, when initializing from HTML.
 // TODO: pass jsHint with the options given in grunt.js only.
 //       The following should not be required:
+/*global alert */
 /*jshint nomen:false, smarttabs:true, eqeqeq:false, evil:true, regexp:false */
 
 /*************************************************************************
@@ -25165,9 +25145,43 @@ function _log(mode, msg) {
 	} catch(e) {
 		if( !window.console ){
 			_canLog = false; // Permanently disable, when logging is not supported by the browser
+		}else if(e.number === -2146827850){
+			// fix for IE8, where window.console.log() exists, but does not support .apply()
+			window.console.log(args.join(", "));
 		}
 	}
 }
+
+/* Check browser version, since $.browser was removed in jQuery 1.9 */
+function _checkBrowser(){
+	var matched, browser;
+	function uaMatch( ua ) {
+		ua = ua.toLowerCase();
+		var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+			 /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+			 /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+			 /(msie) ([\w.]+)/.exec( ua ) ||
+			 ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+			 [];
+		return {
+			browser: match[ 1 ] || "",
+			version: match[ 2 ] || "0"
+		};
+	}
+	matched = uaMatch( navigator.userAgent );
+	browser = {};
+	 if ( matched.browser ) {
+		 browser[ matched.browser ] = true;
+		 browser.version = matched.version;
+	 }
+	 if ( browser.chrome ) {
+		 browser.webkit = true;
+	 } else if ( browser.webkit ) {
+		 browser.safari = true;
+	 }
+	 return browser;
+}
+var BROWSER = jQuery.browser || _checkBrowser();
 
 function logMsg(msg) {
 	Array.prototype.unshift.apply(arguments, ["debug"]);
@@ -25220,6 +25234,39 @@ function getDtNodeFromElement(el) {
 function noop() {
 }
 
+/** Compare two dotted version strings (like '10.2.3').
+ * @returns {Integer} 0: v1 == v2, -1: v1 < v2, 1: v1 > v2
+ */
+function versionCompare(v1, v2) {
+	var v1parts = ("" + v1).split("."),
+		v2parts = ("" + v2).split("."),
+		minLength = Math.min(v1parts.length, v2parts.length),
+		p1, p2, i;
+	// Compare tuple pair-by-pair.
+	for(i = 0; i < minLength; i++) {
+		// Convert to integer if possible, because "8" > "10".
+		p1 = parseInt(v1parts[i], 10);
+		p2 = parseInt(v2parts[i], 10);
+		if (isNaN(p1)){ p1 = v1parts[i]; }
+		if (isNaN(p2)){ p2 = v2parts[i]; }
+		if (p1 == p2) {
+			continue;
+		}else if (p1 > p2) {
+			return 1;
+		}else if (p1 < p2) {
+			return -1;
+		}
+		// one operand is NaN
+		return NaN;
+	}
+	// The longer tuple is always considered 'greater'
+	if (v1parts.length === v2parts.length) {
+		return 0;
+	}
+	return (v1parts.length < v2parts.length) ? -1 : 1;
+}
+
+
 /*************************************************************************
  *	Class DynaTreeNode
  */
@@ -25235,8 +25282,10 @@ DynaTreeNode.prototype = {
 		if ( typeof data === "string" ){
 			data = { title: data };
 		}
-		if( data.key === undefined ){
+		if( !data.key ){
 			data.key = "_" + tree._nodeCount++;
+		}else{
+			data.key = "" + data.key; // issue 371
 		}
 		this.data = $.extend({}, $.ui.dynatree.nodedatadefaults, data);
 		this.li = null; // not yet created
@@ -25298,7 +25347,8 @@ DynaTreeNode.prototype = {
 			cache = tree.cache,
 			level = this.getLevel(),
 			data = this.data,
-			res = "";
+			res = "",
+			imageSrc;
 		// connector (expanded, expandable or simple)
 		if( level < opts.minExpandLevel ) {
 			if(level > 1){
@@ -25316,10 +25366,17 @@ DynaTreeNode.prototype = {
 		}
 		// folder or doctype icon
 		if ( data.icon ) {
-			res += "<img src='" + opts.imagePath + data.icon + "' alt='' />";
+			if (data.icon.charAt(0) === "/"){
+				imageSrc = data.icon;
+			}else{
+				imageSrc = opts.imagePath + data.icon;
+			}
+			res += "<img src='" + imageSrc + "' alt='' />";
 		} else if ( data.icon === false ) {
 			// icon == false means 'no icon'
-			noop(); // keep JSLint happy
+//			noop(); // keep JSLint happy
+		} else if ( data.iconClass ) {
+			res +=  "<span class='" + " " + data.iconClass +  "'></span>";
 		} else {
 			// icon == null means 'default icon'
 			res += cache.tagNodeIcon;
@@ -26268,7 +26325,8 @@ DynaTreeNode.prototype = {
 			var aTag = this.span.getElementsByTagName("a");
 			if(aTag[0]){
 				// issue 154, 313
-				if(!($.browser.msie && parseInt($.browser.version, 10) < 9)){
+//                if(!($.browser.msie && parseInt($.browser.version, 10) < 9)){
+				if(!(BROWSER.msie && parseInt(BROWSER.version, 10) < 9)){
 					aTag[0].focus();
 				}
 			}else{
@@ -26477,8 +26535,10 @@ DynaTreeNode.prototype = {
 			}
 		}
 		tn.removeChildren(true);
-//		this.div.removeChild(tn.div);
-		this.ul.removeChild(tn.li);
+		if(this.ul){
+//			$("li", $(this.ul)).remove(); // issue 399
+			this.ul.removeChild(tn.li); // issue 402
+		}
 		for(var i=0, l=ac.length; i<l; i++) {
 			if( ac[i] === tn ) {
 				this.childList.splice(i, 1);
@@ -27143,7 +27203,7 @@ var DynaTree = Class.create();
 
 // --- Static members ----------------------------------------------------------
 
-DynaTree.version = "$Version: 1.2.1$";
+DynaTree.version = "$Version:$";
 
 /*
 DynaTree._initTree = function() {
@@ -27465,7 +27525,7 @@ DynaTree.prototype = {
 		var match = null;
 		this.visit(function(node){
 //			window.console.log("%s", node);
-			if(node.data.key == key) {
+			if(node.data.key === key) {
 				match = node;
 				return false;
 			}
@@ -27616,7 +27676,7 @@ TODO: better?
 				data.tooltip = $li.attr("title"); // overrides <a title='...'>
 			}
 			if( $li.attr("id") ){
-				data.key = $li.attr("id");
+				data.key = "" + $li.attr("id");
 			}
 			// If a data attribute is present, evaluate as a JavaScript object
 			if( $li.attr("data") ) {
@@ -27652,8 +27712,9 @@ TODO: better?
 		if( !this.$dndMarker ) {
 			this.$dndMarker = $("<div id='dynatree-drop-marker'></div>")
 				.hide()
+				.css({"z-index": 1000})
 				.prependTo($(this.divTree).parent());
-//				.prependTo("body");
+
 //			logMsg("Creating marker: %o", this.$dndMarker);
 		}
 /*
@@ -27663,31 +27724,28 @@ TODO: better?
 //			sourceNode.removeClass("dynatree-drop-target");
 		}
 */
-//		this.$dndMarker.attr("class", hitMode);
 		if(hitMode === "after" || hitMode === "before" || hitMode === "over"){
 //			$source && $source.addClass("dynatree-drag-source");
-			//var pos = $target.offset();
-			//was edited to adjust the marker to the absolute position of the pagetree container mgoldbeck
-			var pos = $target.position();
-
 //			$target.addClass("dynatree-drop-target");
+
+			var markerOffset = "0 0";
 
 			switch(hitMode){
 			case "before":
 				this.$dndMarker.removeClass("dynatree-drop-after dynatree-drop-over");
 				this.$dndMarker.addClass("dynatree-drop-before");
-				pos.top -= 8;
+				markerOffset = "0 -8";
 				break;
 			case "after":
 				this.$dndMarker.removeClass("dynatree-drop-before dynatree-drop-over");
 				this.$dndMarker.addClass("dynatree-drop-after");
-				pos.top += 8;
+				markerOffset = "0 8";
 				break;
 			default:
 				this.$dndMarker.removeClass("dynatree-drop-after dynatree-drop-before");
 				this.$dndMarker.addClass("dynatree-drop-over");
 				$target.addClass("dynatree-drop-target");
-				pos.left += 8;
+				markerOffset = "8 0";
 			}
 //			logMsg("Creating marker: %o", this.$dndMarker);
 //			logMsg("    $target.offset=%o", $target);
@@ -27700,13 +27758,15 @@ TODO: better?
 //			var parentPos = $target.offsetParent().offset();
 //			var bodyPos = $target.offsetParent().offset();
 
-			this.$dndMarker //.offset({left: pos.left, top: pos.top})
-				.css({
-					"left": pos.left,
-					"top": pos.top,
-					"z-index": 1000
-				})
-				.show();
+			this.$dndMarker
+				.show()
+				.position({
+					my: "left top",
+					at: "left top",
+					of: $target,
+					offset: markerOffset
+				});
+
 //			helper.addClass("dynatree-drop-hover");
 		} else {
 //			$source && $source.removeClass("dynatree-drag-source");
@@ -27785,7 +27845,8 @@ TODO: better?
 		case "helper":
 			// Only event and node argument is available
 			var $helper = $("<div class='dynatree-drag-helper'><span class='dynatree-drag-helper-img' /></div>")
-				.append($(event.target).closest('a').clone());
+				.append($(event.target).closest(".dynatree-title").clone());
+//			    .append($(event.target).closest('a').clone());
 			// issue 244: helper should be child of scrollParent
 			$("ul.dynatree-container", node.tree.divTree).append($helper);
 //			$(node.tree.divTree).append($helper);
@@ -27813,11 +27874,16 @@ TODO: better?
 			break;
 		case "enter":
 			res = dnd.onDragEnter ? dnd.onDragEnter(node, otherNode) : null;
-			res = {
-				over: (res !== false) && ((res === true) || (res === "over") || $.inArray("over", res) >= 0),
-				before: (res !== false) && ((res === true) || (res === "before") || $.inArray("before", res) >= 0),
-				after: (res !== false) && ((res === true) || (res === "after") || $.inArray("after", res) >= 0)
-			};
+			if(!res){
+				// convert null, undefined, false to false
+				res = false;
+			}else{
+				res = {
+					over: ((res === true) || (res === "over") || $.inArray("over", res) >= 0),
+					before: ((res === true) || (res === "before") || $.inArray("before", res) >= 0),
+					after: ((res === true) || (res === "after") || $.inArray("after", res) >= 0)
+				};
+			}
 			ui.helper.data("enterResponse", res);
 //			this.logDebug("helper.enterResponse: %o", res);
 			break;
@@ -27826,7 +27892,8 @@ TODO: better?
 			hitMode = null;
 			if(enterResponse === false){
 				// Don't call onDragOver if onEnter returned false.
-				break;
+				// issue 332
+//				break;
 			} else if(typeof enterResponse === "string") {
 				// Use hitMode from onEnter if provided.
 				hitMode = enterResponse;
@@ -27886,8 +27953,13 @@ TODO: better?
 			}
 			if(hitMode && dnd.onDragOver){
 				res = dnd.onDragOver(node, otherNode, hitMode);
+				if(res === "over" || res === "before" || res === "after") {
+					hitMode = res;
+				}
 			}
-			this._setDndStatus(otherNode, node, ui.helper, hitMode, res!==false);
+			// issue 332
+//			this._setDndStatus(otherNode, node, ui.helper, hitMode, res!==false);
+			this._setDndStatus(otherNode, node, ui.helper, hitMode, res!==false && hitMode !== null);
 			break;
 		case "drop":
 			// issue 286: don't trigger onDrop, if DnD status is 'reject'
@@ -27943,7 +28015,8 @@ $.widget("ui.dynatree", {
 	},
  */
 	_init: function() {
-		if( parseFloat($.ui.version) < 1.8 ) {
+//		if( parseFloat($.ui.version) < 1.8 ) {
+		if(versionCompare($.ui.version, "1.8") < 0){
 			// jquery.ui.core 1.8 renamed _init() to _create(): this stub assures backward compatibility
 			if(this.options.debugLevel >= 0){
 				_log("warn", "ui.dynatree._init() was called; you should upgrade to jquery.ui.core.js v1.8 or higher.");
@@ -28088,14 +28161,15 @@ $.widget("ui.dynatree", {
 
 
 // The following methods return a value (thus breaking the jQuery call chain):
-if( parseFloat($.ui.version) < 1.8 ) {
+if(versionCompare($.ui.version, "1.8") < 0){
+//if( parseFloat($.ui.version) < 1.8 ) {
 	$.ui.dynatree.getter = "getTree getRoot getActiveNode getSelectedNodes";
 }
 
 /*******************************************************************************
  * Tools in ui.dynatree namespace
  */
-$.ui.dynatree.version = "$Version: 1.2.1$";
+$.ui.dynatree.version = "$Version:$";
 
 /**
  * Return a DynaTreeNode object for a given DOM element
@@ -28250,13 +28324,14 @@ $.ui.dynatree.prototype.options = {
 		partsel: "dynatree-partsel",
 		lastsib: "dynatree-lastsib"
 	},
-	debugLevel: 1,
+	debugLevel: 2, // 0:quiet, 1:normal, 2:debug $REPLACE:	debugLevel: 1,
 
 	// ------------------------------------------------------------------------
 	lastentry: undefined
 };
 //
-if( parseFloat($.ui.version) < 1.8 ) {
+if(versionCompare($.ui.version, "1.8") < 0){
+//if( parseFloat($.ui.version) < 1.8 ) {
 	$.ui.dynatree.defaults = $.ui.dynatree.prototype.options;
 }
 
@@ -28348,7 +28423,8 @@ var _registerDnd = function() {
 	// Register proxy-functions for draggable.start/drag/stop
 	$.ui.plugin.add("draggable", "connectToDynatree", {
 		start: function(event, ui) {
-			var draggable = $(this).data("draggable"),
+			// issue 386
+			var draggable = $(this).data("ui-draggable") || $(this).data("draggable"),
 				sourceNode = ui.helper.data("dtSourceNode") || null;
 //			logMsg("draggable-connectToDynatree.start, %s", sourceNode);
 //			logMsg("    this: %o", this);
@@ -28370,7 +28446,8 @@ var _registerDnd = function() {
 			}
 		},
 		drag: function(event, ui) {
-			var draggable = $(this).data("draggable"),
+			// issue 386
+			var draggable = $(this).data("ui-draggable") || $(this).data("draggable"),
 				sourceNode = ui.helper.data("dtSourceNode") || null,
 				prevTargetNode = ui.helper.data("dtTargetNode") || null,
 				targetNode = $.ui.dynatree.getNode(event.target);
@@ -28397,7 +28474,7 @@ var _registerDnd = function() {
 			if(targetNode){
 				if(!targetNode.tree.options.dnd.onDrop) {
 					// not enabled as drop target
-					noop(); // Keep JSLint happy
+//					noop(); // Keep JSLint happy
 				} else if(targetNode === prevTargetNode) {
 					// Moving over same node
 					targetNode.tree._onDragEvent("over", targetNode, sourceNode, event, ui, draggable);
@@ -28409,13 +28486,14 @@ var _registerDnd = function() {
 			// else go ahead with standard event handling
 		},
 		stop: function(event, ui) {
-			var draggable = $(this).data("draggable"),
+			// issue 386
+			var draggable = $(this).data("ui-draggable") || $(this).data("draggable"),
 				sourceNode = ui.helper.data("dtSourceNode") || null,
 				targetNode = ui.helper.data("dtTargetNode") || null,
 				mouseDownEvent = draggable._mouseDownEvent,
 				eventType = event.type,
 				dropped = (eventType == "mouseup" && event.which == 1);
-//			logMsg("draggable-connectToDynatree.stop: targetNode(from event): %s, dtTargetNode: %s", targetNode, ui.helper.data("dtTargetNode"));
+			logMsg("draggable-connectToDynatree.stop: targetNode(from event): %s, dtTargetNode: %s", targetNode, ui.helper.data("dtTargetNode"));
 //			logMsg("draggable-connectToDynatree.stop, %s", sourceNode);
 //			logMsg("    type: %o, downEvent: %o, upEvent: %o", eventType, mouseDownEvent, event);
 //			logMsg("    targetNode: %o", targetNode);
