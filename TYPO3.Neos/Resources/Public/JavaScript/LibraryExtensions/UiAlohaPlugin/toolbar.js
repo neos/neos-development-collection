@@ -28,7 +28,7 @@ define([
 	 *
 	 * As a container for tabs, the toolbar serves to group together groups of
 	 * control components so that they can be shown and hidden together in their
-	 * feature/functional set.  For example groups of table controls would be
+	 * feature/functional set. For example groups of table controls would be
 	 * placed in a table tab, groups of list controls in an image tab, and so
 	 * forth.
 	 *
@@ -128,7 +128,7 @@ define([
 		$inspectorSurfaceContainer: null,
 
 		/**
-		 * Initializes the toolbar manager.  Adds the surface container
+		 * Initializes the toolbar manager. Adds the surface container
 		 * element, and sets up floating behaviour settings.
 		 */
 		init: function () {

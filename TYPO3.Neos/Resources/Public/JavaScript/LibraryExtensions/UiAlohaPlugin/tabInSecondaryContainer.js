@@ -22,8 +22,7 @@ define([
 		}.observes('currentlyShownTabs.length')
 	}).create();
 
-
-	var TabInSecondaryContainer = Tab.extend({
+	return Tab.extend({
 		_constructor: function (context, settings, components) {
 			this._super(context, settings, components);
 		},
@@ -36,6 +35,4 @@ define([
 			currentlyShownTabs.removeObject(this);
 		}
 	});
-
-	return TabInSecondaryContainer;
 });

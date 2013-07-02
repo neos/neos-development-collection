@@ -7,6 +7,6 @@ define([
 
 	return OriginalButton.extend({
 		adoptParent: function (container) {
-		},
+		}
 	});
 });

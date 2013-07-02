@@ -28,7 +28,7 @@ define([
 	'use strict';
 
 	var context = new Context(),
-        toolbar = new Toolbar(context, getToolbarSettings());
+		toolbar = new Toolbar(context, getToolbarSettings());
 
 
 	Aloha.bind('aloha-editable-activated', function(event, alohaEvent) {
@@ -46,7 +46,7 @@ define([
 
 	function getToolbarSettings() {
 		var userSettings = Aloha.settings.toolbar,
-		    defaultSettings = Settings.defaultToolbarSettings;
+			defaultSettings = Settings.defaultToolbarSettings;
 
 		if (!userSettings) {
 			return defaultSettings.tabs;
@@ -65,10 +65,8 @@ define([
 	 * component, at a position in the UI given by the slot
 	 * argument.
 	 *
-	 * @param slot
-	 *        A position argument that is interpreted by the UI however it likes.
-	 * @param component
-	 *        An instance of a component to adopt into the given slot.
+	 * @param slot A position argument that is interpreted by the UI however it likes.
+	 * @param component An instance of a component to adopt into the given slot.
 	 * @api
 	 */
 	function adoptInto(slot, component) {
@@ -116,10 +114,8 @@ define([
 		 * component, at a position in the UI given by the slot
 		 * argument.
 		 *
-		 * @param slot
-		 *        A position argument that is interpreted by the UI however it likes.
-		 * @param component
-		 *        An instance of a component to adopt into the given slot.
+		 * @param slot A position argument that is interpreted by the UI however it likes.
+		 * @param component An instance of a component to adopt into the given slot.
 		 * @api
 		 */
 		adoptInto: adoptInto,

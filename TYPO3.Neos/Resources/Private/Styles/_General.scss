@@ -226,7 +226,7 @@ a {
 	li {
 		float: left;
 		padding-left: 10px;
-		line-height: $toolbar-height;
+		line-height: $toolbar-height - 1px;
 		&:first-child {
 			padding-left: 12px;
 		}

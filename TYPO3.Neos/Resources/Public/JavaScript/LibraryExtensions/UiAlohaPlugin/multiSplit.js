@@ -22,8 +22,8 @@ define([
 	 * @api
 	 * @extends {Component}
 	 */
-	var MultiSplit = Component.extend({
-
+	return Component.extend({
+		select: $('<select />'),
 		_activeButton: null,
 		_isOpen: false,
 
@@ -32,34 +32,39 @@ define([
 		 */
 		init: function () {
 			this._super();
-			var multiSplit = this;
-			var element = this.element = $('<span>');
-			var content = this.contentElement = $('<select>').css('width', 'inherit').appendTo(element);
+			var that = this,
+				element = this.element = $('<span>'),
+				select = this.select;
 
+			element.append(select);
 			this.buttons = [];
 
 			var buttons = this.getButtons();
 			this._internalButtons = buttons;
-			if (0 === buttons.length) {
+			if (buttons.length === 0) {
 				element.hide();
 			}
 
-			for (var i = 0; i < buttons.length; i++) {
-				var option = $('<option />');
-				option.attr('value', i);
-				option.text(buttons[i].name);
-				option.appendTo(content);
-			}
+			var options = [];
+			$.each(buttons, function(index, value) {
+				options.push($('<option />', {value: index, text: value.name}));
+			});
+			select.append(options);
 
-			content.on('change', function() {
-				buttons[content.val()].click();
+			var selectedValue;
+			select.off('change').on('change', function() {
+				var value = $(this).val();
+				if (value !== selectedValue) {
+					selectedValue = value;
+					buttons[value].click();
+				}
 			});
 
 			$('body').click(function (event) {
-				if (multiSplit._isOpen &&
-			        !multiSplit.element.is(event.target) &&
-			        0 === multiSplit.element.find(event.target).length) {
-					multiSplit.close();
+				if (that._isOpen &&
+					!that.element.is(event.target) &&
+					0 === that.element.find(event.target).length) {
+					that.close();
 				}
 			});
 		},
@@ -71,13 +76,14 @@ define([
 		 * @api
 		 */
 		setActiveButton: function (name) {
+			var select = this.select;
 			if (!name) {
-				this.contentElement.val(0);
+				select.val(0);
 				return;
 			}
 			for (var i = 0; i < this._internalButtons.length; i++) {
 				if (this._internalButtons[i].name === name) {
-					this.contentElement.val(i);
+					select.val(i);
 					return;
 				}
 			}
@@ -98,6 +104,7 @@ define([
 				// since we show at least one button now, we need to show the multisplit button
 				this.element.show();
 			}
+			this.select.chosen({width: '130px', disable_search_threshold: 10});
 		},
 
 		/**
@@ -132,14 +139,4 @@ define([
 			}
 		}
 	});
-
-	/**
-	 * This module is part of the Aloha API.
-	 * It is valid to override this module via requirejs to provide a
-	 * custom behaviour. An overriding module must implement all API
-	 * methods. Every member must have an api annotation. No non-api
-	 * members are allowed.
-	 * @api
-	 */
-	return MultiSplit;
 });

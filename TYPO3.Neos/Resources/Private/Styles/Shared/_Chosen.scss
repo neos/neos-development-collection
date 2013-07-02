@@ -87,7 +87,17 @@
 			padding: 0;
 
 			input {
+				width: 100%;
+				height: $unit;
+				border: none;
+				background-color: $grayMedium;
+				color: $textOnGray;
+				@include font;
+				font-size: 14px;
 				margin: 0;
+				padding: 0 $defaultMargin;
+				@include box-sizing(border-box);
+				@include box-shadow(none);
 				background: none;
 				background-color: #fff;
 			}
@@ -107,21 +117,27 @@
 		.chzn-results {
 			margin: 0;
 			padding: 0;
+			max-height: 247px;
 
 			li {
-				border-top: 1px solid $grayDark;
+				width: 100%;
+				border-bottom: 1px solid $grayDark;
 				line-height: inherit;
 				padding: 0 $defaultMargin;
 
-				em {
-					background: none;
-					font-weight: bold;
-					line-height: $unit - 2px;
+				&:first-child {
+					border-top: 1px solid $grayDark;
 				}
 
 				&.highlighted {
 					background-color: $blue;
 					background-image: none;
+				}
+
+				em {
+					background: none;
+					font-weight: bold;
+					line-height: $unit - 2px;
 				}
 			}
 		}

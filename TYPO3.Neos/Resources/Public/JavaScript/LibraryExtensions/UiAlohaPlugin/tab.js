@@ -19,7 +19,7 @@ define([
 
 	/**
 	 * Defines a Container object that represents a collection of related
-	 * component groups to be rendered together on the toolbar.  Tabs are
+	 * component groups to be rendered together on the toolbar. Tabs are
 	 * organized by feature and functionality so that related controls can be
 	 * brought in and out of view depending on whether they are
 	 * appropriate for a given user context.
@@ -58,11 +58,11 @@ define([
 		 */
 		_constructor: function (context, settings, components) {
 			var i, j,
-			    elem,
-			    groupedComponents,
-			    group,
-			    groupProps,
-			    componentName;
+				elem,
+				groupedComponents,
+				group,
+				groupProps,
+				componentName;
 
 			this._elemBySlot = {};
 			this._groupBySlot = {};
@@ -100,7 +100,7 @@ define([
 						this._groupBySlot[groupedComponents[j]] = groupProps;
 						if (groupedComponents[j] &&
 							1 === groupedComponents[j].length &&
-						    groupedComponents[j].charCodeAt(0) === 10) {
+							groupedComponents[j].charCodeAt(0) === 10) {
 							group.append($('<div>', {'unselectable': 'on'}));
 						} else {
 							componentName = groupedComponents[j];
@@ -119,7 +119,7 @@ define([
 
 		adoptInto: function(slot, component) {
 			var elem = this._elemBySlot[slot],
-			    group;
+				group;
 			if (!elem) {
 				return false;
 			}
@@ -219,7 +219,6 @@ define([
 	});
 
 	$.extend(Tab, {
-
 		/**
 		 * Creates holding elements for jQuery UI Tabs for a surface.
 		 *

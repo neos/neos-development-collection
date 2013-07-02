@@ -83,11 +83,9 @@
 	@import "Inspector/Inspector";
 	@import "Inspector/Editors/ImageEditor";
 	@import "Modules/Modules";
-	@import "TopBar/AlohaMenu";
+	@import "ContextBar/AlohaMenu";
 	@import "InlineEditing";
 }
-
-@import "../../Public/Library/fontawesome/scss/font-awesome.scss";
 
 @import "Content";
 @import "Global";
