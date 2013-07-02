@@ -2,9 +2,10 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'Library/underscore',
+		'Model/NodeCollection',
 		'Library/create'
 	],
-	function($, _) {
+	function($, _, NodeCollection) {
 		(function ($, undefined) {
 			$.widget('typo3.typo3CollectionWidget', $.Midgard.midgardCollectionAddBetween, {
 				/**
@@ -15,42 +16,18 @@ define(
 				 * further arguments, and does not change behaviour.
 				 */
 				_create: function() {
-					this.handles = [];
+					NodeCollection.set('content', this);
 					this.options.model.url = function() {};
 					this._super();
 				},
 
-				_destroy: function() {
-					this.removeHandles();
-				},
-
 				enable: function() {
-					this.addHandles();
-				},
-
-				addHandles: function() {
-					var that = this,
-						handle = T3.Content.UI.Util.AddContentElementHandleBars($(this.options.view.el), 0, this, true);
-					if (handle) {
-						this.handles.push(handle);
-					}
-
 					_.each(this.options.collection.models, function(entity, iterator) {
 						var id = entity.id.substring(1, entity.id.length - 1),
-							$element = $('[about="' + id + '"]').first(),
-							handle = T3.Content.UI.Util.AddContentElementHandleBars($element, iterator + 1, this, false);
-						if (handle) {
-							that.handles.push(handle);
-						}
+							$element = $('[about="' + id + '"]').first();
+
 						T3.Content.UI.Util.AddNotInlineEditableOverlay($element, entity);
 					}, this);
-				},
-
-				removeHandles: function() {
-					_.each(this.handles, function(handle) {
-						handle.destroy();
-					});
-					this.handles = [];
 				}
 			});
 		})($);

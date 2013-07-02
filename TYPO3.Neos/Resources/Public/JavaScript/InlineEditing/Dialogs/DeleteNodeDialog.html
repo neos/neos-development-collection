@@ -1,0 +1,15 @@
+<div class="modal">
+	<div class="modal-header">
+		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close neos-button" title="x"}}
+		<h3>Are you sure you want to delete the element {{#if view.nodeLabel}}"{{view.nodeLabel}}"{{/if}}?</h3>
+		<p>
+			This will delete the element.<br />
+			This operation can be undone in the workspace management.
+		</p>
+	</div>
+	<div class="modal-footer">
+		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="btn neos-button" title="Cancel"}}
+		{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete" class="btn btn-danger neos-button" title="Delete" icon="icon-trash icon-white"}}
+	</div>
+</div>
+<div class="modal-backdrop in"></div>

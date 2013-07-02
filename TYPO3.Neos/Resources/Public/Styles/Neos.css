@@ -11,6 +11,8 @@
   /*Dynatree start*/
   /*Pagetree end*/
   /* Modal Dialog Content area*/
+  /** Inline editing handles **/
+  /** End inline editing handles **/
 }
 .neos article,
 .neos aside,
@@ -9049,6 +9051,27 @@
 .neos .neos-breadcrumb ul li a {
   cursor: pointer;
 }
+.neos .neos-handle-container {
+  position: absolute;
+}
+.neos .neos-handle-container .btn-toolbar {
+  text-align: right !important;
+  margin-top: 0;
+  position: relative;
+}
+.neos .neos-handle-container .btn-toolbar .btn-group {
+  position: absolute;
+  right: -6px;
+  top: -32px;
+  border: 3px solid #f18f0b;
+  border-bottom: 0px;
+  background: #f18f0b;
+}
+.neos .neos-handle-container .btn-toolbar .btn-group .btn:last-child {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
 
 /*  Font Awesome 3.0
     the iconic font designed for use with Twitter Bootstrap
@@ -10032,10 +10055,6 @@
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2;
 }
-.neos-contentelement.neos-contentelement-hidden > *.neos-contentelement-handle-container {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-}
 .neos-contentelement.neos-contentelement-removed {
   display: none;
 }
@@ -10054,36 +10073,8 @@
   outline: 3px solid #f18f0b !important;
   outline-offset: 3px;
 }
-.neos-contentelement.neos-contentelement-active > .neos-contentelement-handle-container {
-  visibility: visible;
-}
 .neos-contentelement.neos-contentelement-hover > .neos-contentelement-overlay, .neos-contentelement.neos-contentelement-active > .neos-contentelement-overlay {
   display: block;
-}
-.neos-contentelement .neos-contentelement-handle-container {
-  visibility: hidden;
-  height: 0;
-}
-.neos-contentelement .neos-contentelement-handle-container .btn-toolbar {
-  text-align: right !important;
-  margin-top: 0;
-  position: relative;
-}
-.neos-contentelement .neos-contentelement-handle-container .btn-toolbar .btn {
-  z-index: 10000;
-}
-.neos-contentelement .neos-contentelement-handle-container .btn-toolbar .btn-group {
-  position: absolute;
-  right: -6px;
-  top: -32px;
-  border: 3px solid #f18f0b;
-  border-bottom: 0px;
-  background: #f18f0b;
-}
-.neos-contentelement .neos-contentelement-handle-container .btn-toolbar .btn-group .btn:last-child {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
 }
 .neos-contentelement .neos-handle {
   position: absolute;

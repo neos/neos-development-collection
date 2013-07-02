@@ -8,18 +8,21 @@ define(
 	'./Components/NavigationToolbar',
 	'./Components/TreePanel',
 	'./Inspector/Inspector',
+	'./../InlineEditing/InlineEditingHandles'
 ],
 function(
 	Ember,
 	template,
 	NavigationToolbar,
 	TreePanel,
-	Inspector
+	Inspector,
+	InlineEditingHandles
 ) {
 	return Ember.View.extend({
 		NavigationToolbar: NavigationToolbar,
 		Inspector: Inspector,
 		TreePanel: TreePanel,
+		InlineEditingHandles: InlineEditingHandles,
 		template: Ember.Handlebars.compile(template)
 	});
 });

@@ -78,50 +78,6 @@ function($, Ember, saveIndicatorTemplate) {
 	 */
 	T3.Content.UI.Util = T3.Content.UI.Util || {};
 
-	/**
-	 * @param {object} $contentElement jQuery object for the element to which the handles should be added
-	 * @param {integer} contentElementIndex The position in the collection on which paste / new actions should place the new entity
-	 * @param {object} collection The VIE entity collection to which the element belongs
-	 * @param {boolean} isSection Whether the element is a collection or not
-	 * @return {object|void} The created Ember handle bar object
-	 */
-	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection, isSection) {
-		var handleContainerClassName, handleContainer;
-
-		if (isSection === true) {
-				// Add container BEFORE the contentcollection DOM element
-			handleContainerClassName = 'neos-contentcollection-handle-container';
-			if ($contentElement.prev() && $contentElement.prev().hasClass(handleContainerClassName)) {
-				return;
-			}
-			handleContainer = $('<div />', {'class': 'neos ' + handleContainerClassName}).insertBefore($contentElement);
-
-			return T3.Content.UI.SectionHandle.create({
-				_element: $contentElement,
-				_collection: collection,
-				_entityCollectionIndex: contentElementIndex
-			}).appendTo(handleContainer);
-		}
-
-			// Add container INTO the content elements DOM element
-		handleContainerClassName = 'neos-contentelement-handle-container';
-		if (!$contentElement || $contentElement.find('> .' + handleContainerClassName).length > 0) {
-			return;
-		}
-		handleContainer = $('<div />', {'class': 'neos ' + handleContainerClassName}).prependTo($contentElement);
-
-			// Make sure we have a minimum height to be able to hover
-		if ($contentElement.height() < 16) {
-			$contentElement.css('min-height', '16px');
-		}
-
-		return T3.Content.UI.ContentElementHandle.create({
-			_element: $contentElement,
-			_collection: collection,
-			_entityCollectionIndex: contentElementIndex
-		}).appendTo(handleContainer);
-	};
-
 	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element, entity) {
 		var setOverlaySizeFn = function() {
 				// We use a timeout here to make sure the browser has re-drawn; thus $element
@@ -150,7 +106,7 @@ function($, Ember, saveIndicatorTemplate) {
 					}
 					event.preventDefault();
 				}
-			}).insertBefore($element.find('> .neos-contentelement-handle-container'));
+			}).prependTo($element);
 
 			$('<span />', {'class': 'neos-contentelement-overlay-icon'}).appendTo(overlay);
 
