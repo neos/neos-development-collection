@@ -12,12 +12,12 @@ define(
 	'Shared/LocalStorage',
 	'vie/instance',
 	'emberjs',
+	'Content/InputEvents/KeyboardEvents',
 	'create',
 	'Library/vie',
-	'Library/mousetrap',
 	'Library/spinjs/spin'
 ],
-function($, _, ResourceCache, LocalStorage, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
+function($, _, ResourceCache, LocalStorage, vie, Ember, KeyboardEvents, CreateJS, VIE, Spinner) {
 
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
@@ -78,8 +78,6 @@ function($, _, ResourceCache, LocalStorage, vie, Ember, CreateJS, VIE, Mousetrap
 				this._setPagePosition();
 			}
 
-			this._initializeShortcuts();
-
 			this._initializeDropdowns();
 
 			if (window.T3.isContentModule) {
@@ -87,6 +85,8 @@ function($, _, ResourceCache, LocalStorage, vie, Ember, CreateJS, VIE, Mousetrap
 				// Remove the Aloha sidebar completely from DOM, as there is
 				// currently no other way to deactivate it.
 				$('.aloha-sidebar-bar').remove();
+
+				KeyboardEvents.initializeContentModuleEvents();
 			}
 		},
 
@@ -227,13 +227,6 @@ function($, _, ResourceCache, LocalStorage, vie, Ember, CreateJS, VIE, Mousetrap
 			});
 
 			CreateJS.initialize();
-		},
-
-		_initializeShortcuts: function() {
-			Mousetrap.bind(['alt+p'], function () {
-				T3.Content.Controller.Preview.togglePreview();
-				return false;
-			});
 		},
 
 		_initializeDropdowns: function() {
