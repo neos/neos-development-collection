@@ -4,10 +4,9 @@ define(
 		'Library/underscore',
 		'vie/instance',
 		'Content/Application',
-		'Model/NodeCollection',
 		'text!./InsertNodePanel.html'
 	],
-	function (Ember, _, vie, ContentModule, NodeCollection, template) {
+	function (Ember, _, vie, ContentModule, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 
@@ -16,12 +15,12 @@ define(
 			_node: null,
 			_entity: null,
 			_index: null,
-			_options: {},
 
 			content: function() {
 				var groups = {};
-				_.each(NodeCollection.get('content').options.definition.range, function(nodeType) {
-					var type = NodeCollection.get('content').options.vie.types.get(nodeType);
+
+				_.each(this.get('_entity._enclosingCollectionWidget').options.definition.range, function(nodeType) {
+					var type = this.get('_entity._enclosingCollectionWidget').options.vie.types.get(nodeType);
 					type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, '');
 
 					if (type.metadata.ui && type.metadata.ui.group) {
@@ -46,14 +45,11 @@ define(
 				return data;
 			}.property(),
 
-			didInsertElement: function() {
-				this.set('_options', NodeCollection.get('content').options);
-			},
 
 			insertNode: function(nodeType) {
 				T3.Content.Controller.NodeActions.set('_elementIsAddingNewContent', this.get('_entity').getSubjectUri());
 
-				this.get('_options').collection.add({
+				this.get('_entity._enclosingCollectionWidget').options.collection.add({
 					'@type': 'typo3:' + nodeType
 				}, {at: this.get('_index')});
 
