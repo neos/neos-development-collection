@@ -8,11 +8,10 @@ define(
 		'vie/instance',
 		'text!InlineEditing/InlineEditingHandles/ContentElementHandle.html',
 		'Content/Application',
-		'Model/NodeCollection',
 		'InlineEditing/Dialogs/DeleteNodeDialog',
 		'InlineEditing/InsertNodePanel'
 	],
-	function ($, _, Ember, vieInstance, template, Application, NodeCollection, DeleteNodeDialog, InsertNodePanel) {
+	function ($, _, Ember, vieInstance, template, Application, DeleteNodeDialog, InsertNodePanel) {
 
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
@@ -59,17 +58,17 @@ define(
 			 * Returns the index of the content element in the current section
 			 */
 			_collectionIndex: function() {
-				var index = 0;
-				_.each(this.get('_selectedNode').$element.parent().children().filter('.neos-contentelement'), function(element, iterator) {
-					if (element === this.get('_selectedNode').$element.get(0)) {
-						index = iterator;
-					}
-				}, this);
-				if (index === 0) {
-					return this.get('_selectedNode').$element.parent().children().filter('.neos-contentelement').length + 1;
+				var entity = this.get('_entity'),
+					enclosingCollectionWidget = entity._enclosingCollectionWidget,
+					entityIndex = enclosingCollectionWidget.options.collection.indexOf(entity);
+
+				if (entityIndex === -1) {
+					entityIndex = enclosingCollectionWidget.options.collection.length;
+				} else {
+					entityIndex++;
 				}
-				return index + 1;
-			}.property('_selectedNode'),
+				return entityIndex;
+			}.property('_entity'),
 
 			_entityChanged: function() {
 				this.set('_hidden', this.get('_entity').get('typo3:_hidden'));

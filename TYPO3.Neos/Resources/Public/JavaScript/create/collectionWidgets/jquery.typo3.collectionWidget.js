@@ -2,10 +2,9 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'Library/underscore',
-		'Model/NodeCollection',
 		'Library/create'
 	],
-	function($, _, NodeCollection) {
+	function($, _) {
 		(function ($, undefined) {
 			$.widget('typo3.typo3CollectionWidget', $.Midgard.midgardCollectionAddBetween, {
 				/**
@@ -16,13 +15,14 @@ define(
 				 * further arguments, and does not change behaviour.
 				 */
 				_create: function() {
-					NodeCollection.set('content', this);
 					this.options.model.url = function() {};
 					this._super();
 				},
 
 				enable: function() {
+					var that = this;
 					_.each(this.options.collection.models, function(entity, iterator) {
+						entity._enclosingCollectionWidget = that;
 						var id = entity.id.substring(1, entity.id.length - 1),
 							$element = $('[about="' + id + '"]').first();
 
