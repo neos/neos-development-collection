@@ -18,22 +18,14 @@ define(
 			},
 			mouseUp: function(event) {
 				if (this.get('isActive')) {
+
 					var action = this.get('action'),
 						target = this.get('target');
 
 					this.toggle();
-					if (target && action) {
-						if (typeof action === 'string') {
-							action = target[action];
-						}
-						action.call(target, this.get('pressed'), this);
-					}
-
+					this.triggerAction({actionContext: this.get('pressed')});
 					this.set('isActive', false);
 				}
-
-				this._mouseDown = false;
-				this._mouseEntered = false;
 			}
 		});
 	}

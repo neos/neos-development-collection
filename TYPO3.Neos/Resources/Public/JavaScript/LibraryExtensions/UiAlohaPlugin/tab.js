@@ -46,6 +46,7 @@ define([
 		_elemBySlot: null,
 		_groupBySlot: null,
 		_groupByComponent: null,
+		_settings: null,
 
 		/**
 		 * All that this constructor does is save the components array into a
@@ -67,6 +68,8 @@ define([
 			this._groupBySlot = {};
 			this._groupByComponent = {};
 			this._super(context, settings);
+
+			this._settings = settings;
 
 			this.container = settings.container;
 			this.list = this.container.data('list');
@@ -134,6 +137,9 @@ define([
 				}
 			}
 			return true;
+		},
+		_getSlottedComponents: function() {
+			return slottedComponents;
 		},
 
 		foreground: function() {
@@ -224,7 +230,7 @@ define([
 		 */
 		createContainer: function () {
 			var $container = $('<div>', {'unselectable': 'on'});
-			var $list = $('<ul>', {'unselectable': 'on'});//.appendTo($container);
+			var $list = $('<ul>', {'unselectable': 'on'}); // we deliberately do NOT append the list of tabs anymore...
 			var $panels = $('<div>', {'unselectable': 'on'}).appendTo($container);
 
 			$container

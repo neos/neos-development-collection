@@ -59,7 +59,7 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 					components: [
 						[ 'bold', 'italic', 'underline', 'subscript', 'superscript', 'strikethrough' ],
 						[
-							'formatLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop',
+							'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop',
 							'toggleMetaView', 'wailang', 'toggleFormatlessPaste'
 						], [
 							'alignLeft', 'alignCenter', 'alignRight', 'alignJustify',
@@ -75,7 +75,15 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 					showOn: function() {
 						return false;
 					}
+				},
+				// we completely disable the "link" tab, as this should all be in the "format" tab.
+				{
+					label: 'tab.link.label',
+					showOn: function() {
+						return false;
+					}
 				}
+
 			]
 		},
 
@@ -100,9 +108,13 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 
 		requireConfig: {
 			map: {
+				'../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/button': {
+					'originalButton': 'ui/button'
+				},
 				'*': {
 					'ui/ui-plugin': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/ui-plugin',
-					'ui/multiSplit': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit'
+					'ui/multiSplit': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit',
+					'ui/button': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/button'
 				}
 			}
 		}

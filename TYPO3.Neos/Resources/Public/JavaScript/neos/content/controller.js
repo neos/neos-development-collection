@@ -234,7 +234,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		 * - Image Settings
 		 *   - image (file upload)
 		 */
-		contentCollectionsAndViews: function() {
+		groupedPropertyViews: function() {
 			var selectedNodeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema');
 			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
 				return [];
@@ -245,7 +245,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 				return [];
 			}
 
-			var contentCollectionsAndViews = [];
+			var groupedPropertyViews = [];
 			$.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
 				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
@@ -258,31 +258,50 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
 				});
 
-				contentCollectionsAndViews.push($.extend({}, propertyGroupConfiguration, {
+				groupedPropertyViews.push($.extend({}, propertyGroupConfiguration, {
 					properties: properties,
 					group: groupIdentifier
 				}));
 			});
-			contentCollectionsAndViews.sort(function(a, b) {
+			groupedPropertyViews.sort(function(a, b) {
 				return (a.position || 9999) - (b.position || 9999);
 			});
 
-			return contentCollectionsAndViews;
+			return groupedPropertyViews;
 		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema'),
 
+		/**
+		 * If "true", we show "save" and "cancel" and behave as if the user edited
+		 * the node's properties in a "transaction" (default case for normal editors,
+		 * if a node is selected).
+		 *
+		 * If "false", we hide "save" and "cancel", and the UI controls are responsible
+		 * for saving themselves. needed for Aloha.
+		 */
+		_enableTransactionalInspector: true,
 		/**
 		 * When the selected block changes in the content model,
 		 * we update this.nodeProperties
 		 */
 		onSelectedNodeChange: function() {
 			var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode'),
-				cleanProperties = {};
+				cleanProperties = {}, enableTransactionalInspector = true;
 			this.set('selectedNode', selectedNode);
 			if (selectedNode) {
 				cleanProperties = selectedNode.get('attributes');
+				if (selectedNode.get('_enableTransactionalInspector') === false) {
+					enableTransactionalInspector = false;
+				}
 			}
-			this.set('cleanProperties', cleanProperties);
-			this.set('nodeProperties', Ember.Object.create(cleanProperties));
+			if (enableTransactionalInspector) {
+				this.set('_enableTransactionalInspector', true);
+				this.set('cleanProperties', cleanProperties);
+				this.set('nodeProperties', Ember.Object.create(cleanProperties));
+			} else {
+				this.set('_enableTransactionalInspector', false);
+				this.set('cleanProperties', {});
+				this.set('nodeProperties', {});
+			}
 		}.observes('T3.Content.Model.NodeSelection.selectedNode'),
 
 		/**
@@ -295,7 +314,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 				selectedNodeSchema,
 				editableProperties = [],
 				nodeProperties;
-			if (selectedNode) {
+			if (selectedNode && this.get('_enableTransactionalInspector')) {
 				selectedNodeSchema = selectedNode.get('nodeTypeSchema');
 				nodeProperties = this.get('nodeProperties');
 				if (selectedNodeSchema.properties) {

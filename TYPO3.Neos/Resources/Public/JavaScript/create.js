@@ -124,6 +124,7 @@ define(
 			 */
 			initializeEntitySelection: function() {
 				var that = this;
+
 				$(document)
 					.on('mouseover', 'body:not(.neos-previewmode) .neos-contentelement', function(e) {
 						if (e.result !== 'hovered') {
@@ -166,6 +167,20 @@ define(
 							T3.Content.Model.NodeSelection.updateSelection();
 						}
 					});
+
+				// WORKAROUND: When Aloha-Tables inside a content element are selected, we want
+				// to make the full content element selected as well.
+				//
+				// Somehow, Aloha catches bubbling events which we depend upon in the above event
+				// listeners. That's why we also register a listener for "midgardeditableactivated".
+				//
+				// However, *only* depending on this event handler is also not enough, because it is
+				// not thrown for content elements which do not contain any editables.
+				$(document).on('midgardeditableactivated', '.neos-contentelement', function(e) {
+					T3.Content.Model.NodeSelection.updateSelection($(this));
+					// make sure that the event is only fired for the *innermost* content element.
+					e.stopPropagation();
+				});
 			}
 		});
 	}

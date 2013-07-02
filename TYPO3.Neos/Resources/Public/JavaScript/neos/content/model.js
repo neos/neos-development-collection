@@ -26,7 +26,90 @@ define(
 		 * is responding to that.
 		 */
 		var NodeSelection = Ember.Object.extend({
-			nodes: [],
+			_nodes: [],
+
+			/**
+			 * if FALSE, no aloha tabs are currently shown. if ARRAY, contains
+			 * the references to the "TabInSecondaryContainer" objects from Aloha,
+			 * which should be displayed in the Neos inspector.
+			 */
+			currentlyShownSecondaryAlohaTabs: false,
+
+			nodes: function() {
+				if (this.get('currentlyShownSecondaryAlohaTabs')) {
+					// we show secondary aloha tabs currently, so we *replace* the inspector contents.
+					// we build up a custom-tailored "node type" which can be rendered using the normal
+					// Inspector UI.
+					var currentlyShownSecondaryAlohaTabs = this.get('currentlyShownSecondaryAlohaTabs');
+
+					var nodeTypeGroups = {};
+					var nodeTypeGroupCount = 0;
+					var nodeTypeProperties = {};
+
+					var nodeTypeLabel = null;
+
+					currentlyShownSecondaryAlohaTabs.forEach(function(tab) {
+
+						// by convention, the last tab is the most specific one; so this is the one we show here.
+						nodeTypeLabel = tab._settings.label;
+
+						nodeTypeGroups['group' + nodeTypeGroupCount] = {
+							position: nodeTypeGroupCount,
+							label: tab._settings.label
+						};
+						$.each(tab._elemBySlot, function(componentKey) {
+							var componentObject = tab._getSlottedComponents()[componentKey];
+							if (!componentObject || !componentObject.isVisible()) return;
+
+							// here, the actual mapping between aloha components and Neos editors happens.
+							var editorClass = null;
+							if (componentObject.buttonElement && componentObject._checked !== undefined) {
+								editorClass = 'AlohaToggleButtonEditor';
+							} else if (componentObject.buttonElement) {
+								editorClass = 'AlohaButtonEditor';
+							} else {
+								editorClass = 'AlohaNonDefinedEditor'
+							}
+
+							nodeTypeProperties[componentKey] = {
+								type: 'string', // Dummy, is ignored
+								ui: {
+									inspector: {
+										group: 'group' + nodeTypeGroupCount,
+										editor: 'Content/Inspector/Editors/Aloha/' + editorClass,
+										editorOptions: {
+											alohaComponent: componentObject
+										}
+									}
+								}
+							};
+						});
+						nodeTypeGroupCount++;
+					});
+
+					var nodesWithVirtualNode = [];
+					nodesWithVirtualNode.addObjects(this.get('_nodes'));
+
+					nodesWithVirtualNode.addObject(Ember.Object.create({
+						nodeType: 'ALOHA-CONTROL',
+						_enableTransactionalInspector: false,
+						attributes: Ember.Object.create({
+						}),
+						nodeTypeSchema: Ember.Object.create({
+							properties: nodeTypeProperties,
+							ui: {
+								label: nodeTypeLabel,
+								inspector: {
+									groups: nodeTypeGroups
+								}
+							}
+						})
+					}));
+					return nodesWithVirtualNode;
+				} else {
+					return this.get('_nodes');
+				}
+			}.property('_nodes.@each', 'currentlyShownSecondaryAlohaTabs.@each'),
 
 			/**
 			 *
@@ -72,9 +155,9 @@ define(
 						$element.addClass('neos-contentelement-active');
 					}
 
-					this.addNodeByElement(nodes, $element);
+					this._addNodeByElement(nodes, $element);
 					$element.parents('.neos-contentelement[about], .neos-contentcollection[about]').each(function() {
-						that.addNodeByElement(nodes, this);
+						that._addNodeByElement(nodes, this);
 					});
 
 						// Add class to body that we have a content element selected
@@ -85,11 +168,11 @@ define(
 
 					// add page node
 				if (!$element || !$element.is('#neos-page-metainformation')) {
-					this.addNodeByElement(nodes, $('#neos-page-metainformation'));
+					this._addNodeByElement(nodes, $('#neos-page-metainformation'));
 				}
 
 				nodes = nodes.reverse();
-				this.set('nodes', nodes);
+				this.set('_nodes', nodes);
 
 				this._updating = false;
 			},
@@ -99,7 +182,7 @@ define(
 			 * @param nodes
 			 * @param $element
 			 */
-			addNodeByElement: function(nodes, $element) {
+			_addNodeByElement: function(nodes, $element) {
 				if ($element !== undefined) {
 					var nodeProxy = this._createEntityWrapper($element);
 					if (nodeProxy) {
