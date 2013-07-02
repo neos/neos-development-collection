@@ -1,27 +1,27 @@
 <div class="neos-btn-toolbar">
 	<div class="neos-btn-group">
 		{{#if view._showHide}}
-			<button {{bindAttr title="view._hideToggleTitle" class=":neos-btn :neos-btn-mini :action-toggle-hidden view._hidden:neos-active"}} {{action "toggleHidden" target="view"}}>
+			<button {{bindAttr title="view._hideToggleTitle" class=":neos-btn :neos-btn-mini :action-toggle-hidden view._hidden:neos-active"}} {{action "toggleHidden" target="view"}} tabindex="-1">
 				<i class="icon-eye-close"></i>
 			</button>
 		{{/if}}
 		{{#if view._showRemove}}
-			<button class="neos-btn neos-btn-mini action-remove" title="Remove" {{action "remove" target="view"}}>
+			<button class="neos-btn neos-btn-mini action-remove" title="Remove" {{action "remove" target="view"}} tabindex="-1">
 				<i class="icon-trash"></i>
 			</button>
 		{{/if}}
 		{{#if view._showCut}}
-			<button class="neos-btn neos-btn-mini action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="Cut" {{action "cut" target="view"}}>
+			<button class="neos-btn neos-btn-mini action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="Cut" {{action "cut" target="view"}} tabindex="-1">
 				<i class="icon-cut"></i>
 			</button>
 		{{/if}}
 		{{#if view._showCopy}}
-			<button class="neos-btn neos-btn-mini action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="Copy" {{action "copy" target="view"}}>
+			<button class="neos-btn neos-btn-mini action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="Copy" {{action "copy" target="view"}} tabindex="-1">
 				<i class="icon-copy"></i>
 			</button>
 		{{/if}}
 		{{#if view.nodeActions.clipboardContainsContent}}
-			<button class="neos-btn neos-btn-mini action-paste" title="Paste after" {{action "pasteAfter" target="view"}}>
+			<button class="neos-btn neos-btn-mini action-paste" title="Paste after" {{action "pasteAfter" target="view"}} tabindex="-1">
 				{{#if view._pasteInProgress}}
 					<i class="neos-handle-loading"></i>
 				{{else}}
@@ -29,7 +29,7 @@
 				{{/if}}
 			</button>
 		{{/if}}
-		<button class="neos-btn neos-btn-mini action-new" title="Create after" {{action "newAfter" target="view"}}>
+		<button class="neos-btn neos-btn-mini action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
 			{{#if view._thisElementIsAddingNewContent}}
 				<i class="neos-handle-loading"></i>
 			{{else}}

@@ -80,6 +80,7 @@ class ContentElementWrappingService {
 
 		$tagBuilder->addAttribute('typeof', 'typo3:' . $nodeType->getName());
 		$tagBuilder->addAttribute('about', $node->getContextPath());
+		$tagBuilder->addAttribute('tabindex', '0');
 
 		$this->addScriptTag($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
 		$this->addScriptTag($tagBuilder, '_typoscriptPath', $typoscriptPath);

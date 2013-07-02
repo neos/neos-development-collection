@@ -2,12 +2,14 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Content/Model/NodeSelection'
+		'Content/Model/NodeSelection',
+		'LibraryExtensions/Mousetrap'
 	],
 	function(
 		$,
 		Ember,
-		NodeSelection
+		NodeSelection,
+		Mousetrap
 	) {
 		return Ember.Object.create({
 
@@ -60,6 +62,34 @@ define(
 						}
 						return false;
 					});
+
+				// Keyboard events
+				Mousetrap.bind('tab', function() {
+					if ($('body').hasClass('neos-previewmode')) {
+						// Don't handle navigation in preview mode
+						return;
+					}
+
+					// We don't want to handle node selection if the focus is in an application component like the inspector
+					// because this handler only handles navigation for the nodes.
+					// TODO: make sure we know where the focus was before
+
+					var contentElements = $('.neos-contentelement'),
+						activeContentElementIndex = contentElements.index($('.neos-contentelement-active')),
+						nextActiveContentElementIndex,
+						nextActiveContentElement;
+
+					nextActiveContentElementIndex = activeContentElementIndex + (event.shiftKey === true ? -1 : 1);
+					if (nextActiveContentElementIndex < 0 || nextActiveContentElementIndex >= contentElements.length) {
+						nextActiveContentElementIndex = 0;
+					}
+					nextActiveContentElement = $('.neos-contentelement:eq(' + nextActiveContentElementIndex + ')');
+
+					NodeSelection.updateSelection(nextActiveContentElement);
+					if (nextActiveContentElement.find('> .neos-inline-editable').length > 0) {
+						nextActiveContentElement.find('> .neos-inline-editable').focus();
+					}
+				});
 			}
 		});
 	}
