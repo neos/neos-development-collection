@@ -1,6 +1,6 @@
 {namespace m=TYPO3\Media\ViewHelpers}
 <f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 25, maximumNumberOfLinks: 5}">
-	<table class="table table-striped table-condensed">
+	<table class="table table-striped table-condensed asset-list">
 		<tr>
 			<th>Title</th>
 			<th>Type</th>
@@ -8,7 +8,7 @@
 			<th></th>
 		</tr>
 		<f:for each="{paginatedAssets}" as="asset">
-			<tr>
+			<tr class="asset" data-asset-identifier="{asset -> f:format.identifier()}">
 				<td>{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</td>
 				<td>{asset.resource.mediatype}</td>
 				<td><f:for each="{asset.tags}" as="tag">
