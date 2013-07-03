@@ -10,8 +10,6 @@ define(
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 
-			id: 'deleteNodeDialog',
-
 			_node: null,
 			_entity: null,
 			_index: null,
