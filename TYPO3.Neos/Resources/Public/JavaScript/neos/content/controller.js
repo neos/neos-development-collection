@@ -125,40 +125,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 		}
 	}).create();
 
-	/**
-	 * This controller toggles the page tree visibility on and off.
-	 */
-	var PageTree = Ember.Object.extend({
-		pageTreeMode: false,
-
-		init: function() {
-			if (window.T3.isContentModule) {
-				if (LocalStorage.getItem('pageTreeMode') === true) {
-					$('body').addClass('neos-tree-panel-open');
-					this.togglePageTreeMode();
-				}
-			}
-		},
-
-		togglePageTreeMode: function() {
-			this.set('pageTreeMode', !this.get('pageTreeMode'));
-		},
-
-		onPageTreeModeChange: function() {
-			var pageTreeMode = this.get('pageTreeMode');
-			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
-				if (pageTreeMode === true) {
-					$('body').addClass('neos-tree-panel-open');
-				} else {
-					$('body').removeClass('neos-tree-panel-open');
-				}
-				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.pageTreeMode': pageTreeMode}, function() {
-					LocalStorage.setItem('pageTreeMode', pageTreeMode);
-				});
-			}
-		}.observes('pageTreeMode').on('init')
-	}).create();
-
 	var ServerConnection = Ember.Object.extend({
 		_lastSuccessfulTransfer: null,
 		_failedRequest: false,
@@ -210,7 +176,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 
 	T3.Content.Controller = {
 		Preview: Preview,
-		PageTree: PageTree,
 		Wireframe: Wireframe,
 		ServerConnection: ServerConnection
 	}

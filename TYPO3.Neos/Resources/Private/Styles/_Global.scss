@@ -9,95 +9,25 @@ body {
 		margin-top: $unit * 2 + 2;
 		margin-left: 0;
 
-		&.neos-tree-panel-open {
-			margin-left: $tree-panel-width;
-		}
-
 		#neos-top-bar {
 			display: block;
 		}
 	}
 
-	&.neos-menu-panel-open {
-		.neos {
-			#neos-menu-panel {
-				left: 0;
-			}
-
-			#neos-context-bar {
-				padding-left: $tree-panel-width;
-			}
-
-			#aloha-attribute-field-editLink {
-				margin-left: $tree-panel-width;
-			}
-		}
+	&.neos-menu-panel-open.neos-menu-sticky-on {
+		margin-left: $menuButtonWidth;
 	}
 
-	&.neos-menu-sticky-on {
-		padding-left: $menuButtonWidth;
-
-		&.neos-tree-panel-open {
-			#neos-application.neos {
-				#neos-context-bar {
-					padding-left: $menuButtonWidth + $tree-panel-width - 1px;
-				}
-
-				#neos-tree-panel {
-					left: $menuButtonWidth;
-				}
-			}
-
-		}
-		#neos-application.neos {
-			#neos-context-bar {
-				padding-left: $menuButtonWidth;
-			}
-
-			#aloha-attribute-field-editLink {
-				margin-left: $menuButtonWidth;
-			}
-		}
-		#neos-application {
-			#neos-menu-panel {
-				width: $menuButtonWidth - 1px;
-			}
-		}
+	&.neos-navigate-panel-open {
+		margin-left: $navigatePanelWidth;
 	}
 
-	&.neos-tree-panel-open, {
-		.neos {
-			#neos-tree-panel {
-				left: 0;
-			}
-
-			#neos-context-bar {
-				padding-left: $tree-panel-width;
-			}
-
-			#aloha-attribute-field-editLink {
-				margin-left: $tree-panel-width;
-			}
-		}
+	&.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open {
+		margin-left: $menuButtonWidth + $navigatePanelWidth - 1px;
 	}
 
 	&.neos-inspector-panel-open {
 		margin-right: $inspectorWidth;
-		@include transition-property('margin-right');
-		@include transition-duration(0.2s);
-
-		.neos {
-			#neos-inspector {
-				right: 0;
-			}
-
-			#neos-context-bar {
-				padding-right: $inspectorWidth;
-			}
-			.neos-secondary-inspector.neos-secondary-inspector-open {
-				right: 0;
-			}
-		}
 	}
 
 	// Preview mode
@@ -117,7 +47,8 @@ body {
 	}
 
 	&.neos-previewmode {
-		margin-right: 0;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
 
 		.neos {
 			#neos-top-bar,
@@ -146,8 +77,8 @@ body {
 			}
 
 			#neos-menu-panel,
-			#neos-tree-panel {
-				width: 0;
+			#neos-navigate-panel {
+				left: -($navigatePanelWidth + 1) !important;
 			}
 
 			.neos-overlay-component,

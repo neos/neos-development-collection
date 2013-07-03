@@ -8,6 +8,20 @@
 		left: 0px;
 		border: 5px solid $dark-grey2;
 		border-top: none;
+		@include transition-property('margin-left');
+		@include transition-duration(.2s);
+
+		.neos-navigate-panel-open & {
+			margin-left: $navigatePanelWidth;
+		}
+
+		.neos-menu-panel-open.neos-menu-sticky-on & {
+			margin-left: $menuButtonWidth;
+		}
+
+		.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open & {
+			margin-left: $menuButtonWidth + $navigatePanelWidth - 1px;
+		}
 	}
 
 	// Icons
@@ -15,6 +29,10 @@
 		.ui-state-default {
 			background: none;
 			border: 0px;
+
+			.ui-button-icon-only {
+				width: $wideMargin;
+			}
 
 			.aloha-icon {
 				background: none;

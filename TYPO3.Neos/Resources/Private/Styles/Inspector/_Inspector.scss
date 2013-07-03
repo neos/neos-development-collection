@@ -47,6 +47,10 @@
 	@include transition-duration(.2s);
 	@include font;
 
+	.neos-inspector-panel-open & {
+		right: 0;
+	}
+
 	@import "Shared/Chosen";
 	@import "Editors/DateTimePicker";
 	@import "Editors/ImageEditor";

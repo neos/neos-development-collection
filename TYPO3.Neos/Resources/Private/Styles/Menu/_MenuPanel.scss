@@ -64,6 +64,14 @@
 	@include transition-duration(.2s);
 	@include font;
 
+	.neos-menu-panel-open & {
+		left: 0;
+	}
+
+	.neos-menu-panel-open.neos-menu-sticky-on & {
+		width: $menuButtonWidth - 1px;
+	}
+
 	&.neos-noscript {
 		top: 0;
 		left: 0;

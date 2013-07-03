@@ -10,6 +10,22 @@
 	border-bottom: 1px solid $grayLight;
 	padding-right: 41px;
 
+	.neos-navigate-panel-open & {
+		padding-left: $navigatePanelWidth;
+	}
+
+	.neos-menu-panel-open.neos-menu-sticky-on & {
+		padding-left: $menuButtonWidth;
+	}
+
+	.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open & {
+		padding-left: $menuButtonWidth + $navigatePanelWidth - 1px;
+	}
+
+	.neos-inspector-panel-open & {
+		padding-right: $inspectorWidth;
+	}
+
 	.neos-left {
 		float: left;
 		white-space: nowrap;
@@ -37,10 +53,6 @@
 
 		& + .neos-button {
 			margin-left: $defaultMargin;
-		}
-
-		&.neos-pagetree-button {
-			margin-right: $defaultMargin;
 		}
 	}
 

@@ -27,18 +27,37 @@ class NodeSearchService {
 	protected $nodeDataRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+	 */
+	protected $nodeFactory;
+
+	/**
 	 * Search all properties for given $term
 	 * @param string $term
 	 * @param array $searchNodeTypes
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
-	public function findByProperties($term, array $searchNodeTypes) {
+	public function findByProperties($term, array $searchNodeTypes = array(), \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
 			// TODO: Implement a better search when Flow offer the possibility
 		$query = $this->nodeDataRepository->createQuery();
-		$constraints = array(
-			$query->like('properties', '%' . $term . '%'),
-			$query->in('nodeType', $searchNodeTypes)
-		);
-		return $query->matching($query->logicalAnd($constraints))->execute();
+		$constraints = array($query->like('properties', '%' . $term . '%'));
+
+		if ($searchNodeTypes !== array()) {
+			$constraints[] = $query->in('nodeType', $searchNodeTypes);
+		}
+
+		$searchResult = array();
+		foreach ($query->matching($query->logicalAnd($constraints))->execute() as $nodeData) {
+			if (array_key_exists($nodeData->getPath(), $searchResult) === FALSE) {
+				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if ($node !== NULL) {
+					$searchResult[$node->getPath()] = $node;
+				}
+			}
+		}
+
+		return $searchResult;
 	}
 }

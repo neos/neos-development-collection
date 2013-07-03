@@ -11,8 +11,18 @@
 	padding-right: $inspectorWidth;
 	background-color: $grayDark;
 
-	@include transition-property('right');
+	@include transition-property('right, padding-left');
 	@include transition-duration(.2s);
+
+	.neos-inspector-panel-open & {
+		&.neos-secondary-inspector-open {
+			right: 0;
+		}
+	}
+
+	.neos-navigate-panel-open & {
+		padding-left: $menuWidth;
+	}
 
 	> div {
 		height: 100%;

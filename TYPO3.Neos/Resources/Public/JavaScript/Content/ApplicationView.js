@@ -8,7 +8,7 @@ define(
 	'./Components/ContentContextBar',
 	'./Menu/MenuPanel',
 	'./TopBar/TopBar',
-	'./Components/TreePanel',
+	'./Navigate/NavigatePanel',
 	'./Inspector/InspectorView',
 	'./Inspector/InspectorController',
 	'./Inspector/SecondaryInspectorView',
@@ -22,7 +22,7 @@ function(
 	ContentContextBar,
 	MenuPanel,
 	TopBar,
-	TreePanel,
+	NavigatePanel,
 	InspectorView,
 	InspectorController,
 	SecondaryInspectorView,
@@ -35,7 +35,7 @@ function(
 		_isContentModule: window.T3.isContentModule,
 		ContentContextBar: ContentContextBar,
 		MenuPanel: MenuPanel,
-		TreePanel: TreePanel,
+		NavigatePanel: NavigatePanel,
 		InspectorView: InspectorView,
 
 		// We cannot name the property in UpperCamelCase, as we can not
@@ -49,7 +49,7 @@ function(
 		didInsertElement: function() {
 			// Make sure to create the top bar *after* the DOM is loaded completely,
 			// and the #neos-top-bar is transmitted from the server.
-			TopBar.create().appendTo('#neos-top-bar');
+			TopBar.create({_isContentModule: this.get('_isContentModule')}).appendTo('#neos-top-bar');
 
 			Ember.run.next(function() {
 				EventDispatcher.triggerExternalEvent('Neos.ContentModuleLoaded', 'Content module finished loading.');

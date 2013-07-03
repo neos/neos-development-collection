@@ -4,7 +4,7 @@ define(
 		'Library/jquery-with-dependencies',
 		'Shared/Configuration',
 		'Shared/ResourceCache',
-		'text!./InsertDocumentNodePanel.html'
+		'text!./InsertNodePanel.html'
 	],
 	function(Ember, $, Configuration, ResourceCache, template) {
 		return Ember.View.extend({
@@ -17,19 +17,19 @@ define(
 				this._super();
 
 				var that = this;
-				$.when(ResourceCache.getItem(Configuration.NodeTypeSchemaUri + '&superType=TYPO3.Neos:Document')).done(function(dataString) {
-					var groupedDocumentNodeTypes = [],
+				$.when(ResourceCache.getItem(Configuration.NodeTypeSchemaUri + '&superType=' + this.get('baseNodeType'))).done(function(dataString) {
+					var groupedNodeTypes = [],
 						nodeTypeGroups = [];
 
 					$.each(JSON.parse(dataString), function(nodeType, nodeTypeInfo) {
 						var groupName = nodeTypeInfo.ui.group ? nodeTypeInfo.ui.group : 'General';
-						if (!groupedDocumentNodeTypes[groupName]) {
-							groupedDocumentNodeTypes[groupName] = {
+						if (!groupedNodeTypes[groupName]) {
+							groupedNodeTypes[groupName] = {
 								'name': groupName,
 								'children': []
 							};
 						}
-						groupedDocumentNodeTypes[groupName].children.push({
+						groupedNodeTypes[groupName].children.push({
 							'nodeType': nodeType,
 							'label': nodeTypeInfo.ui.label,
 							'icon': nodeTypeInfo.ui.icon ? nodeTypeInfo.ui.icon : 'icon-file'
@@ -37,8 +37,8 @@ define(
 					});
 
 					Configuration.nodeTypeGroups.forEach(function(groupName) {
-						if (groupedDocumentNodeTypes[groupName]) {
-							nodeTypeGroups.push(groupedDocumentNodeTypes[groupName]);
+						if (groupedNodeTypes[groupName]) {
+							nodeTypeGroups.push(groupedNodeTypes[groupName]);
 						}
 					});
 
@@ -57,6 +57,6 @@ define(
 				this.destroyElement();
 				this.set('insertNode', Ember.K);
 			}
-		}).create();
+		});
 	}
 );

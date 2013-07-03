@@ -41,12 +41,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
-	 */
-	protected $nodeFactory;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
 	 */
 	protected $contextFactory;
@@ -97,6 +91,23 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth) {
 		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth);
+	}
+
+	/**
+	 * Return child nodes of specified node for usage in a TreeLoader based on filter
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node The node to find child nodes for
+	 * @param string $term
+	 * @param string $nodeType
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function filterChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, $term, $nodeType) {
+		$nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document'));
+		$this->view->assignFilteredChildNodes(
+			$node,
+			$this->nodeSearchService->findByProperties($term, $nodeTypes, $node->getContext())
+		);
 	}
 
 	/**
@@ -323,26 +334,37 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @ExtDirect
 	 */
-	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = '') {
+	public function copyAction(Node $node, Node $targetNode, $position, $nodeName) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
 		}
 
-		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
+		if ($nodeName !== '') {
+			$idealNodeName = $nodeName;
+			$possibleNodeName = $idealNodeName;
+			$counter = 1;
+			$parentNode = $position === 'into' ? $targetNode : $targetNode->getParent();
+			while ($parentNode->getNode($possibleNodeName) !== NULL) {
+				$possibleNodeName = $idealNodeName . '-' . $counter;
+				$counter ++;
+			}
+		}
+		$nodeName = isset($possibleNodeName) ? $possibleNodeName : uniqid('node');
 
 		switch ($position) {
 			case 'before':
-				$node->copyBefore($targetNode, $nodeName);
-			break;
-			case 'into':
-				$node->copyInto($targetNode, $nodeName);
+				$copiedNode = $node->copyBefore($targetNode, $nodeName);
 			break;
 			case 'after':
-				$node->copyAfter($targetNode, $nodeName);
+				$copiedNode = $node->copyAfter($targetNode, $nodeName);
+			break;
+			case 'into':
+			default:
+				$copiedNode = $node->copyInto($targetNode, $nodeName);
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos');
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri, 'newNodePath' => $copiedNode->getContextPath()), 'success' => TRUE));
 	}
 
 	/**
@@ -432,18 +454,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function searchPageAction($query) {
-		$contentContext = $this->createContext('live');
-
-		$nodes = $this->nodeSearchService->findByProperties($query, array('TYPO3.Neos:Page'));
-
 		$searchResult = array();
-		foreach ($nodes as $uninitializedNode) {
-			if (array_key_exists($uninitializedNode->getPath(), $searchResult) === FALSE) {
-				$node = $this->nodeFactory->createFromNodeData($uninitializedNode, $contentContext);
-				if ($node !== NULL) {
-					$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
-				}
-			}
+
+		foreach ($this->nodeSearchService->findByProperties($query, array('TYPO3.Neos:Page'), $this->createContext('live')) as $node) {
+			$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
 		}
 
 		$this->view->assign('value', array('searchResult' => $searchResult, 'success' => TRUE));
