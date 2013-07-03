@@ -412,7 +412,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 				return;
 			}
 
-			this.$loader = $('<div />').addClass('neos-pageloader-wrapper').fadeTo(0, .8).appendTo($('body'));
+			this.$loader = $('<div />').addClass('neos-pageloader-wrapper').fadeTo(0, .8).appendTo($('#neos-application'));
 			this.spinner = new Spinner({
 				lines: 13, // The number of lines to draw
 				length: 15, // The length of each line

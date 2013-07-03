@@ -6722,6 +6722,38 @@
 .neos #neos-neos-error-container p {
   margin: 15px 0;
 }
+.neos .neos-pageloader-wrapper {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  z-index: 10001;
+}
+.neos .neos-pageloader-wrapper .neos-pageloader {
+  position: relative;
+  top: 50% !important;
+  left: 50% !important;
+  margin-top: 22px;
+  margin-left: -190px;
+  -webkit-transition-property: margin;
+  -moz-transition-property: margin;
+  -o-transition-property: margin;
+  transition-property: margin;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+}
+.neos.neos-tree-panel-open .neos-pageloader-wrapper .neos-pageloader {
+  margin-left: -340px;
+}
+.neos.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
+  margin-left: -30px;
+  margin-top: 20px;
+}
 .neos ::-webkit-scrollbar {
   width: 8px;
 }
@@ -7692,38 +7724,6 @@
 .neos .neos-backend .notice-wrap .notice-item {
   min-height: 60px;
   height: auto;
-}
-.neos body .neos-pageloader-wrapper {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: white;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  z-index: 10001;
-}
-.neos body .neos-pageloader-wrapper .neos-pageloader {
-  position: relative;
-  top: 50% !important;
-  left: 50% !important;
-  margin-top: 22px;
-  margin-left: -190px;
-  -webkit-transition-property: margin;
-  -moz-transition-property: margin;
-  -o-transition-property: margin;
-  transition-property: margin;
-  -webkit-transition-duration: 0.2s;
-  -moz-transition-duration: 0.2s;
-  -o-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-}
-.neos body.neos-tree-panel-open .neos-pageloader-wrapper .neos-pageloader {
-  margin-left: -340px;
-}
-.neos body.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
-  margin-left: -30px;
-  margin-top: 20px;
 }
 .neos .neos-module {
   margin: 120px 0px 0px 0px;
@@ -9634,7 +9634,7 @@
   cursor: pointer;
   text-decoration: none;
 }
-.neos .neos-empty-contentcollection-overlay {
+.neos.neos-empty-contentcollection-overlay {
   height: 20px;
   outline: 2px solid rgba(0, 0, 0, 0.2);
   inline-offset: 2px;

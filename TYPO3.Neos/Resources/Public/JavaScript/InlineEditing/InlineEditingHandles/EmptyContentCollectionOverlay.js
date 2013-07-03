@@ -4,10 +4,10 @@ define(
 		'emberjs'
 	],
 	function($, Ember) {
-		return Ember.Object.create({
+		return {
 			show: function(collectionWidget) {
 				if (collectionWidget.element.find('.neos-empty-contentcollection-overlay').length === 0) {
-					var $overlay = $('<div />', {'class': 'neos', html: '<div class="neos-empty-contentcollection-overlay"></div>'}).prependTo(collectionWidget.element);
+					var $overlay = $('<div />', {'class': 'neos neos-empty-contentcollection-overlay'}).prependTo(collectionWidget.element);
 
 					$overlay.on('click', function() {
 						T3.Content.Model.NodeSelection.updateSelection($(this).parents('[rel="typo3:content-collection"]').eq(0));
@@ -18,6 +18,6 @@ define(
 			hide: function(collectionWidget) {
 				collectionWidget.element.find('.neos-empty-contentcollection-overlay').parent().remove();
 			}
-		})
+		}
 	}
 );
