@@ -40,10 +40,9 @@
 	@import "Foundation/pagination";
 	@import "Foundation/pager";
 
-	// Components: Popovers
+	// Components: Modals and Tooltips
 	@import "Foundation/modals";
 	@import "Foundation/tooltip";
-	@import "Foundation/popovers";
 
 	// Components: Misc
 	@import "Foundation/thumbnails";
@@ -82,6 +81,7 @@
 	@import "ManagementBase";
 	@import "Inspector/Inspector";
 	@import "Inspector/Editors/ImageEditor";
+	@import "Inspector/SecondaryInspector";
 	@import "Modules/Modules";
 	@import "ContextBar/AlohaMenu";
 	@import "InlineEditing";

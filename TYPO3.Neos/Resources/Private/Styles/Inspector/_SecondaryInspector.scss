@@ -1,0 +1,48 @@
+.neos-secondary-inspector {
+	position: fixed;
+	top: $unit;
+	bottom: 0;
+	z-index: 10014;
+	right: -100%;
+	box-sizing: border-box;
+	width: 100%;
+	padding-right: $inspector-width;
+	background-color: $grayDark;
+
+	@include transition-property('right');
+	@include transition-duration(.2s);
+
+	> div {
+		height: 100%;
+		> div {
+			height: 100%;
+		}
+	}
+}
+
+.neos-secondary-inspector-html-editor {
+	width: 100%;
+	height: 100%;
+
+	.CodeMirror {
+		height: 100%;
+
+		pre {
+			color: inherit;
+			padding: 0;
+		}
+	}
+
+	.CodeMirror-gutter {
+		background-color: $grayMedium;
+		border-right-color: $grayLight;
+	}
+
+	.CodeMirror-gutter-text {
+		color: $textSubtle;
+	}
+
+	.CodeMirror-scroll {
+		height: 100%;
+	}
+}

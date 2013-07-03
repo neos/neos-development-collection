@@ -34,6 +34,14 @@
     '@format':     'html'
 
 -
+  name: 'Backend - Content Module - Media Browser'
+  uriPattern: 'neos/content/assets(/{@action})'
+  defaults:
+    '@package': 'TYPO3.Media'
+    '@controller': 'Asset'
+    '@action': 'index'
+  appendExceedingArguments: true
+-
   name:          'Backend - Content Module - Images'
   uriPattern:    'neos/content/imageWithMetadata/{image}'
   defaults:

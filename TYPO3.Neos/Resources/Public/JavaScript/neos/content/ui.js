@@ -93,19 +93,7 @@ function($, Ember, saveIndicatorTemplate) {
 			// Add overlay to content elements without inline editable properties and no sub-elements
 		if ($element.hasClass('neos-not-inline-editable')) {
 			var overlay = $('<div />', {
-				'class': 'neos-contentelement-overlay',
-				'click': function(event) {
-					if ($('.neos-primary-editor-action').length > 0) {
-							// We need to use setTimeout here because otherwise the popover is aligned to the bottom of the body
-						setTimeout(function() {
-							$('.neos-primary-editor-action').click();
-							if (Ember.View.views[$('.neos-primary-editor-action').attr('id')] && Ember.View.views[$('.neos-primary-editor-action').attr('id')].toggle) {
-								Ember.View.views[$('.neos-primary-editor-action').attr('id')].toggle();
-							}
-						}, 1);
-					}
-					event.preventDefault();
-				}
+				'class': 'neos-contentelement-overlay'
 			}).prependTo($element);
 
 			$('<span />', {'class': 'neos-contentelement-overlay-icon'}).appendTo(overlay);

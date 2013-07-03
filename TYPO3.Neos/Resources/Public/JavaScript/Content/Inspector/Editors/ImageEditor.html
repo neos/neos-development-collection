@@ -11,11 +11,12 @@
 	</div>
 
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
+		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" target="parentView" action="_beforeMediaBrowserIsShown" label="Media"}}
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
 			{{view.fileChooserLabel}}
 		</button>
 		{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="neos-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
-		{{view view.Button isVisibleBinding="view._uploadPreviewNotShown" target="parentView" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
+		{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
 	</div>
 
 	<div class="neos-inspector-image-width">

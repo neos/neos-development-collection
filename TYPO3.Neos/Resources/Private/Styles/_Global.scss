@@ -33,6 +33,9 @@ body {
 			#neos-toolbar {
 				padding-right: $inspector-width;
 			}
+			.neos-secondary-inspector.neos-secondary-inspector-open {
+				right: 0;
+			}
 		}
 	}
 

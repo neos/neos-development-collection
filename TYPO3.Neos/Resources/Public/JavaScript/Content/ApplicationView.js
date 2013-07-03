@@ -9,6 +9,7 @@ define(
 	'./Components/TreePanel',
 	'./Inspector/InspectorButton',
 	'./Inspector/Inspector',
+	'./Inspector/SecondaryInspectorView',
 	'./../InlineEditing/InlineEditingHandles',
 	'./../InlineEditing/InsertNodePanel'
 ],
@@ -19,6 +20,7 @@ function(
 	TreePanel,
 	InspectorButton,
 	Inspector,
+	SecondaryInspectorView,
 	InlineEditingHandles,
 	InsertNodePanel
 ) {
@@ -26,6 +28,7 @@ function(
 		NavigationToolbar: NavigationToolbar,
 		InspectorButton: InspectorButton,
 		Inspector: Inspector,
+		SecondaryInspectorView: SecondaryInspectorView,
 		TreePanel: TreePanel,
 		InlineEditingHandles: InlineEditingHandles,
 		InsertNodePanel: InsertNodePanel,

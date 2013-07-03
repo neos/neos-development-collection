@@ -5,11 +5,13 @@ define(
 	'./FileUpload',
 	'text!./ImageEditor.html',
 	'../../Components/Button',
+	'../../Components/ToggleButton',
 	'./BooleanEditor',
 	'./TextFieldEditor',
-	'Library/spinjs/spin'
+	'Library/spinjs/spin',
+	'Content/Inspector/SecondaryInspectorController'
 ],
-function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor, Spinner) {
+function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -40,8 +42,10 @@ function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor,
 
 		template: Ember.Handlebars.compile(template),
 		Button: Button,
+		ToggleButton: ToggleButton,
 		BooleanEditor: BooleanEditor,
 		TextFieldEditor: TextFieldEditor,
+		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 
 		/**
 		 * The Upload Preview is the image being shown *before* the user presses
@@ -208,6 +212,8 @@ function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor,
 		 * and reads the image if possible
 		 */
 		didInsertElement: function() {
+			var that = this;
+
 			this._super();
 
 			this.$().find('.neos-inspector-image-thumbnail-inner').css({
@@ -219,15 +225,43 @@ function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor,
 				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
 
+			this.$().find('.neos-inspector-image-thumbnail').click(function() {
+				SecondaryInspectorController.toggle(that.get('_cropView'));
+			});
+
 			this._readAndDeserializeValue();
 		},
 
 		willDestroyElement: function() {
 				// Hide popover when the focus changes
-			this.$().find('.neos-inspector-image-crop-button').trigger('hidePopover');
 			if (this.get('_loadPreviewImageHandler')) {
 				this.get('_loadPreviewImageHandler').abort();
 			}
+		},
+
+
+		/****************************************
+		 * MEDIA BROWSER
+		 ***************************************/
+		_mediaBrowserView: Ember.View.extend({
+			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="/neos/content/assets"></iframe>')
+		}),
+
+		_beforeMediaBrowserIsShown: function() {
+			var that = this;
+			window.Typo3MediaBrowserCallbacks = {
+				assetChosen: function(assetIdentifier) {
+					that._displayImageLoader();
+
+					// we hide the default upload preview image; as we only want the loading indicator to be visible
+					that.set('_uploadPreviewShown', false);
+					that.set('_loadPreviewImageHandler', $.get('/neos/content/imageWithMetadata/' + assetIdentifier, function(result) {
+						that.fileUploaded(result);
+						that._hideImageLoader();
+					}));
+					that.set('mediaBrowserShown', false);
+				}
+			};
 		},
 
 		/****************************************
@@ -324,34 +358,14 @@ function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor,
 		/****************************************
 		 * CROPPING
 		 ***************************************/
-		/**
-		 * When the preview image is loaded, we initialize the popover.
-		 */
-		_initializePopover: function() {
-			var that = this,
-				$popoverContent = $('<div class="neos-inspector-image-crop" />'),
-				$imageInThumbnail = $('<img />'),
-				previewImageSize = that.get('_previewImageSize');
+		_cropView: function() {
+			var that = this;
 
-			$popoverContent.append($imageInThumbnail);
-			$popoverContent.css({
-				width: previewImageSize.w + 10 + 'px',
-				height: previewImageSize.h + 10 + 'px'
-			});
-
-			this.$().find('.neos-inspector-image-thumbnail').click(function() {
-				that.$().find('.neos-inspector-image-crop-button').trigger('hidePopover');
-			});
-			this.$().find('.neos-inspector-image-crop-button').popover({
-				content: $popoverContent,
-				header: '<span>Crop Image</span>',
-				preventTop: true,
-				preventBottom: true,
-				preventRight: true,
-				offsetY: -111,
-				offsetX: -140,
-				openEvent: function() {
-					$imageInThumbnail.attr('src', that.get('_previewImageUri'));
+			return Ember.View.extend({
+				template: Ember.Handlebars.compile('<img />'),
+				didInsertElement: function() {
+					var $image = this.$().find('img');
+					$image.attr('src', that.get('_previewImageUri'));
 
 					var settings = {
 							// Triggered when the selection is finished
@@ -377,10 +391,10 @@ function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor,
 							cropOptions.y + cropOptions.h
 						];
 					}
-					$imageInThumbnail.Jcrop(settings);
+					$image.Jcrop(settings);
 				}
 			});
-		}.observes('_previewImageUri'),
+		}.property(),
 
 		/**
 		 *  Update the preview image when the crop options change or the preview image
@@ -534,7 +548,7 @@ function(Ember, $, FileUpload, template, Button, BooleanEditor, TextFieldEditor,
 
 		_displayImageLoader: function() {
 			if (this.loadingindicator !== null) {
-				this.loadingindicator.spin(that.$().find('.neos-inspector-image-thumbnail-container').get(0));
+				this.loadingindicator.spin(this.$().find('.neos-inspector-image-thumbnail-container').get(0));
 				return;
 			}
 			this.loadingindicator = new Spinner({

@@ -2,13 +2,15 @@ define(
 	[
 		'emberjs',
 		'../Components/ToggleButton',
-		'Shared/LocalStorage'
-	], function(Ember, ToggleButton, LocalStorage) {
+		'Shared/LocalStorage',
+		'./SecondaryInspectorController'
+	], function(Ember, ToggleButton, LocalStorage, SecondaryInspectorController) {
 		return ToggleButton.extend({
 			elementId: ['neos-inspector-button'],
 			title: 'Toggle inspector',
 
 			init: function() {
+				this._super();
 				if (LocalStorage.getItem('inspectorMode') !== false) {
 					this.set('pressed', true);
 				}

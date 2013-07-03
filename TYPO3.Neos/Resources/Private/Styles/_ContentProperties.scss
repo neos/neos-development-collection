@@ -9,20 +9,3 @@
 }
 
 // Image position - end
-
-// HTML editor - start
-
-.neos-htmleditor-window {
-	width: 800px;
-	height: 400px;
-	font-size: 13px;
-
-	.CodeMirror-scroll {
-		height: 400px;
-	}
-	.CodeMirror pre {
-		overflow-y: hidden;
-	}
-}
-
-// HTML editor - end

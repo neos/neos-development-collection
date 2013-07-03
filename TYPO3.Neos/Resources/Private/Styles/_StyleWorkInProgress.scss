@@ -215,19 +215,6 @@ button.icon-trash:before {
 }
 
 
-// Page Tree Styling
-.popover .x-tree .neos-gotoPage {
-	display: none;
-	position: absolute;
-	right: 5px;
-	width: 16px;
-	height: 16px;
-	background: url(../Images/Icons/Black/rnd_br_next_icon-16.png) no-repeat;
-}
-.popover .x-tree .x-tree-node-over .neos-gotoPage {
-	display: inline;
-}
-
 // Create content element button
 button.neos-create-new-content {
 }

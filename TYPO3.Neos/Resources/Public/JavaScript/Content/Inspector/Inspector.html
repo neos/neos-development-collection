@@ -1,5 +1,5 @@
 <div class="toolbar"></div>
-<form class="neos-inspector-form" action="#">
+<div class="neos-inspector-form">
 	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
 	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
 		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content" classNames="legend"}}
@@ -17,7 +17,7 @@
 			{{/if}}
 		{{/collection}}
 	{{/collection}}
-</form>
+</div>
 <div class="actions">
 	{{#view view.Button
 		disabledBinding="T3.Content.Controller.Inspector._unmodified"

@@ -3,8 +3,8 @@
  */
 
 define(
-['Content/Application', 'Library/jquery-with-dependencies', 'Library/underscore', 'Library/backbone', 'create', 'emberjs', 'vie/entity', 'neos/common', 'neos/content/model'],
-function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
+['Content/Application', 'Library/jquery-with-dependencies', 'Library/underscore', 'Library/backbone', 'create', 'emberjs', 'vie/entity', 'Content/Inspector/SecondaryInspectorController', 'neos/common', 'neos/content/model'],
+function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspectorController) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
 
 	var T3 = window.T3 || {};
@@ -343,6 +343,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 			cleanProperties = this.get('selectedNode.attributes');
 			this.set('cleanProperties', cleanProperties);
 			this.set('nodeProperties', Ember.Object.create(cleanProperties));
+			SecondaryInspectorController.hide();
 		},
 
 		/**
@@ -351,6 +352,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity) {
 		revert: function() {
 			this.set('nodeProperties', Ember.Object.create(this.get('cleanProperties')));
 			this.set('_modified', false);
+			SecondaryInspectorController.hide();
 		}
 	}).create();
 
