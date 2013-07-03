@@ -12,8 +12,11 @@
 	@include box-shadow(none);
 
 	&:before {
+		position: relative;
+		top: 1px;
 		@include font;
 		font-size: 26px;
+		line-height: 26px;
 		font-weight: normal;
 		content: "‹";
 	}

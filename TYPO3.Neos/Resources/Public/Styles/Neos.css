@@ -7785,9 +7785,12 @@
   box-shadow: none;
 }
 .neos #neos-inspector-button:before {
+  position: relative;
+  top: 1px;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 26px;
+  line-height: 26px;
   font-weight: normal;
   content: "‹";
 }
@@ -7823,6 +7826,7 @@
 .neos #neos-inspector .chzn-container {
   color: #fff;
   line-height: 40px;
+  font-size: 14px;
 }
 .neos #neos-inspector .chzn-container .chzn-single {
   height: 40px;
@@ -7872,23 +7876,28 @@
 }
 .neos #neos-inspector .chzn-container .chzn-single abbr {
   background: none;
+  background-color: #fff;
   top: 12px;
   right: 48px;
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
 }
-.neos #neos-inspector .chzn-container .chzn-single abbr:hover:before {
-  color: #00b5ff;
+.neos #neos-inspector .chzn-container .chzn-single abbr:hover {
+  background-color: #00b5ff;
 }
 .neos #neos-inspector .chzn-container .chzn-single abbr:before {
   display: block;
-  width: 16px;
+  width: 17px;
   text-align: center;
   content: "×";
   font-size: 16px;
   font-weight: bold;
-  line-height: 12px;
+  line-height: 13px;
   vertical-align: top;
+  color: #222222;
 }
 .neos #neos-inspector .chzn-container .chzn-drop {
   border: none;

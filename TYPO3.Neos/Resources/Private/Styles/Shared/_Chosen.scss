@@ -1,6 +1,7 @@
 .chzn-container {
 	color: #fff;
 	line-height: $unit;
+	font-size: 14px;
 
 	.chzn-single {
 		height: $unit;
@@ -49,24 +50,27 @@
 
 		abbr {
 			background: none;
+			background-color: #fff;
 			top: 12px;
 			right: $unit + $relatedMargin;
-			width: 16px;
-			height: 16px;
+			width: 17px;
+			height: 17px;
+			@include border-radius(10px);
 
-			&:hover:before {
-				color: $blue;
+			&:hover {
+				background-color: $blue;
 			}
 
 			&:before {
 				display: block;
-				width: 16px;
+				width: 17px;
 				text-align: center;
 				content: "×";
 				font-size: 16px;
 				font-weight: bold;
-				line-height: 12px;
+				line-height: 13px;
 				vertical-align: top;
+				color: $grayDark;
 			}
 		}
 	}
