@@ -129,7 +129,7 @@ into the generated page. Here is an example:
 
 ::
 
-	page.headerData {
+	page.head {
 		meta = TYPO3.TypoScript:Template
 		meta {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
@@ -149,7 +149,7 @@ into the generated page. Here is an example:
 		}
 	}
 
-The TypoScript fills the `page.headerData` instance of ``TYPO3.TypoScript:Array`` with content.
+The TypoScript fills the `page.head` instance of ``TYPO3.TypoScript:Array`` with content.
 This will render some more head content::
 
 		<head>

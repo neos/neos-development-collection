@@ -67,7 +67,7 @@ prototype(TYPO3.Neos:Page) {
 	body.title = ${q(node).property('title')}
 	body.nodePath = ${q(node).property('_path')}
 
-	headerData = TYPO3.TypoScript:Array
+	head = TYPO3.TypoScript:Array
 
 	backendHeader = TYPO3.Neos:Template
 	backendHeader.templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/PageHead.html'
