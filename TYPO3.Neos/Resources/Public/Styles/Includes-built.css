@@ -9431,6 +9431,11 @@
   cursor: pointer;
   text-decoration: none;
 }
+.neos .neos-empty-contentcollection-overlay {
+  height: 20px;
+  outline: 2px solid rgba(0, 0, 0, 0.2);
+  inline-offset: 2px;
+}
 /*
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
