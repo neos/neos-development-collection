@@ -234,7 +234,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 				window.history.replaceState({uri: window.location.href}, document.title, window.location.href);
 			}
 			window.addEventListener('popstate', function(event) {
-				if (event.state) {
+				if (event.state && event.state.uri !== window.location.href) {
 					that.loadPage(event.state.uri, true);
 				}
 			});
