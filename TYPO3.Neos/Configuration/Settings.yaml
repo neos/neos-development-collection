@@ -148,3 +148,13 @@ TYPO3:
         className: 'TYPO3\Neos\Setup\Step\FinalStep'
     view:
       title: 'TYPO3 Neos Setup'
+
+  Media:
+    bodyClasses: 'neos media-browser'
+    scripts:
+      - resource://TYPO3.Twitter.Bootstrap/Public/Libraries/jQuery/jquery-1.8.2.min.js
+      - resource://TYPO3.Twitter.Bootstrap/Public/2/js/bootstrap.min.js
+    styles:
+      - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
+      - resource://TYPO3.Media/Public/Styles/Main.css
+      - resource://TYPO3.Neos/Public/Styles/Includes-built.css
