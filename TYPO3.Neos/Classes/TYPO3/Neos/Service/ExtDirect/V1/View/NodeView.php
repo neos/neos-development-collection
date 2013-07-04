@@ -151,7 +151,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 */
 	public function collectTreeNodeData(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $expand = TRUE, array $children = array()) {
 		$nodeType = $node->getNodeType()->getName();
-		$classes = array(strtolower(str_replace(array('.', ':'), array('_', '-'), $nodeType)));
 		$isTimedPage = FALSE;
 		$now = new \DateTime();
 		$now = $now->getTimestamp();
@@ -165,6 +164,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			$isTimedPage = TRUE;
 		}
 
+		$classes = array();
 		if ($isTimedPage === TRUE && $node->isHidden() === FALSE) {
 			array_push($classes, 'timedVisibility');
 		}
@@ -177,17 +177,19 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 		$hasChildNodes = $children !== array() ? TRUE : FALSE;
-		$nodeType = $node->getNodeType()->getName();
+		$nodeType = $node->getNodeType();
+		$nodeTypeConfiguration = $nodeType->getConfiguration();
 		$treeNode = array(
 			'key' => $node->getContextPath(),
-			'title' => $nodeType === 'TYPO3.Neos:Document' ? $node->getProperty('title') : $node->getLabel(),
+			'title' => $nodeType->getName() === 'TYPO3.Neos:Document' ? $node->getProperty('title') : $node->getLabel(),
 			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),
-			'nodeType' => $nodeType,
+			'nodeType' => $nodeType->getName(),
 			'expand' => $expand,
 			'addClass' => implode(' ', $classes),
-			'name' => $node->getName()
+			'name' => $node->getName(),
+			'iconClass' => isset($nodeTypeConfiguration['ui']) && isset($nodeTypeConfiguration['ui']['icon']) ? $nodeTypeConfiguration['ui']['icon'] : ''
 		);
 		if ($hasChildNodes) {
 			$treeNode['children'] = $children;

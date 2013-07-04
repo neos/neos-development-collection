@@ -106,9 +106,7 @@
   superTypes: ['TYPO3.Neos:Document']
   ui:
     label: 'Page'
-    icon:
-      light: 'Images/Icons/White/doc_empty_icon-16.png'
-      dark: 'Images/Icons/Black/doc_empty_icon-16.png'
+    icon: 'icon-file'
     inspector:
       groups:
         document:
@@ -118,9 +116,7 @@
   superTypes: ['TYPO3.Neos:Document']
   ui:
     label: 'Shortcut'
-    icon:
-      light: 'Images/Icons/White/shortcut_icon-16.png'
-      dark: 'Images/Icons/Black/shortcut_icon-16.png'
+    icon: 'icon-share'
     inspector:
       groups:
         document:
@@ -156,9 +152,7 @@
   ui:
     label: 'Plugin'
     group: 'Plugins'
-    icon:
-      light: 'Images/Icons/White/app_window_shell_icon-16.png'
-      dark: 'Images/Icons/Black/app_window_shell_icon-16.png'
+    icon: 'icon-puzzle-piece'
     inspector:
       groups:
         pluginSettings:
@@ -216,6 +210,7 @@
   abstract: TRUE
   ui:
     label: 'Content'
+    icon: 'icon-unchecked'
     group: 'General'
     search:
       searchCategory: 'Content'
@@ -224,6 +219,4 @@
   superTypes: ['TYPO3.Neos:Node']
   ui:
     label: 'Content Collection'
-    icon:
-      light: 'Images/Icons/White/page_layout_icon-16.png'
-      dark: 'Images/Icons/Black/page_layout_icon-16.png'
+    icon: 'icon-unchecked'

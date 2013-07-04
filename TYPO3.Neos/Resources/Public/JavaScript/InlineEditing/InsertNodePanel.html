@@ -10,10 +10,10 @@
 					{{#each children}}
 						<li class="neos-content-new-selecttype-button">
 							<a class="neos-content-new" {{action "insertNode" nodeType target="view" }}>
-								{{#if ui.icon.light}}
-									<img src="{{unbound ui.icon.light}}" />
+								{{#if ui.icon}}
+									<i class="{{unbound ui.icon}}"></i>
 								{{else}}
-									<img src="/_Resources/Static/Packages/TYPO3.Neos/Images/Icons/White/square_shape_icon-16.png" />
+									<i class="icon-sign-blank"></i>
 								{{/if}}
 								{{unbound label}}
 							</a>

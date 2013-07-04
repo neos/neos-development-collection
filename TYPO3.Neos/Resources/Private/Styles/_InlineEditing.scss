@@ -19,26 +19,6 @@
 		}
 	}
 }
-/** End inline editing handles **/
-.neos-content-new-selecttype-button {
-	display: inline-block;
-	margin: 5px 0px;
-	width: 30%;
-
-	a {
-		display: block;
-		line-height: 16px;
-		vertical-align: bottom;
-		&:hover,
-		&:focus,
-		&:active {
-			color: $lightest;
-			cursor: pointer;
-			text-decoration: none;
-		}
-	}
-
-}
 
 &.neos-empty-contentcollection-overlay {
 	height: 20px;

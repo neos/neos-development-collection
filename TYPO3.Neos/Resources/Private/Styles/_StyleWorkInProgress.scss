@@ -1,19 +1,16 @@
-// All CSS changes should be done IN THIS FILE, and then our CSS team (aka Berit)
-// will take the changes from this file, review them and merge them with the other files.
+/* Dynatree start */
 
-
-/*Dynatree start*/
 .dynatree-container {
 	position: relative;
 	font-size: 12px;
 
-	/*Inspect Button start*/
+	/* Inspect Button start */
 	#neos-dd-inspecttree {
 		height: 270px;
 		padding-bottom: 7px;
 		width: 250px;
 	}
-	/*Inspect Button end*/
+	/* Inspect Button end */
 
 	/* Pagetree start */
 	#neos-dd-pagetree-con {
@@ -35,6 +32,7 @@
 			}
 		}
 	}
+
 	ul.dynatree-container {
 		background-color: transparent;
 		border:none;
@@ -45,6 +43,13 @@
 		white-space: nowrap;
 		font-family: inherit;
 		font-size: inherit;
+		color: $black;
+
+		[class^="icon-"],
+		[class*=" icon-"] {
+			font-size: 16px;
+		}
+
 		a:hover {
 			background-color: #F8F8F8;
 			border: 1px solid #D7D7D7;
@@ -52,15 +57,19 @@
 			text-decoration: none;
 			outline: none;
 		}
-		a:active, a:focus {
+
+		a:active,
+		a:focus {
 			outline: inherit;
 			border-color: transparent;
 			background-color: inherit;
 		}
+
 		a input {
 			font-family: inherit;
 			font-size: inherit;
 		}
+
 		.dynatree-active {
 			a {
 				background-color: #F8F8F8;
@@ -69,115 +78,129 @@
 				text-decoration: none;
 			}
 		}
+
+		.dynatree-drag-source {
+			background: transparent;
+		}
+
+		.dynatree-drag-helper {
+			&.dynatree-drop-reject {
+				span.dynatree-drag-helper-img {
+					background: transparent;
+					@include icon-FontAwesome();
+					@extend .icon-remove;
+					color: $warningRed;
+				}
+			}
+
+			&.dynatree-drop-accept {
+				span.dynatree-drag-helper-img {
+					background: transparent;
+					@include icon-FontAwesome();
+					@extend .icon-ok;
+					color: $successGreen;
+				}
+			}
+		}
+
 		.dynatree-loading span.dynatree-expander {
 			vertical-align: middle;
 			margin-top: 0;
 			background-image: url('../Images/ajax-preloader.gif');
 			background-position: 0 0;
+
 			&:hover {
 				background-position: 0 0;
 			}
 		}
+
 		.dynatree-expander {
 			margin-top: 1px;
-			background-image: url('../Images/dynatree-icons.png');
-			background-position: 0 0;
+			@include icon-FontAwesome();
+			@extend .icon-caret-right;
+			background: none;
+			position: relative;
+			left: 0px;
+			top: 0px;
+			width: 11px;
+
 			&:hover {
-				background-position: -16px 0;
+				color: $blue;
 			}
 		}
+
 		.dynatree-exp-e,
 		.dynatree-exp-ed,
 		.dynatree-exp-el,
 		.dynatree-exp-edl {
 			.dynatree-expander {
-				background-position: -32px 0;
-				&:hover {
-					background-position: -48px 0;
-				}
+				@extend .icon-caret-right;
+				@include rotate(45deg);
+				top: 3px;
 			}
 		}
-		.dynatree-icon {
-			vertical-align: middle;
-			background-position: 0 0;
-			background-image: url('../Images/Icons/Black/square_shape_icon-16.png');
-		}
-		.typo3_neos-root .dynatree-icon {
-			background-image: url('../Images/Icons/Black/globe_2_icon-16.png');
-		}
-		.typo3_neos-page .dynatree-icon {
-			background-image: url('../Images/Icons/Black/doc_empty_icon-16.png');
-		}
-		.typo3_neos-shortcut .dynatree-icon {
-			background-image: url('../Images/Icons/Black/shortcut_icon-16.png');
-		}
-		.typo3_neos-contentcollection .dynatree-icon {
-			background-image: url('../Images/Icons/Black/page_layout_icon-16.png');
-		}
-		.typo3_neos_nodetypes-headline .dynatree-icon {
-			background-image: url('../Images/Icons/Black/text_letter_t_icon-16.png');
-		}
-		.typo3_neos_nodetypes-text .dynatree-icon {
-			background-image: url('../Images/Icons/Black/doc_lines_stright_icon-16.png');
-		}
-		.typo3_neos_nodetypes-image .dynatree-icon {
-			background-image: url('../Images/Icons/Black/picture_icon-16.png');
-		}
-		.typo3_neos_nodetypes-textwithimage .dynatree-icon {
-			background-image: url('../Images/Icons/Black/image_text_icon-16.png');
-		}
-		.typo3_neos_nodetypes-html .dynatree-icon {
-			background-image: url('../Images/Icons/Black/brackets_icon-16.png');
-		}
-		.typo3_neos_nodetypes-menu .dynatree-icon {
-			background-image: url('../Images/Icons/Black/list_bullets_icon-16.png');
-		}
-		.typo3_neos_nodetypes-twocolumn .dynatree-icon {
-			background-image: url('../Images/Icons/Black/columns_icon-16.png');
-		}
-		.typo3_neos_nodetypes-threecolumn .dynatree-icon {
-			background-image: url('../Images/Icons/Black/columns_icon-16.png');
-		}
-		.typo3_neos_nodetypes-fourcolumn .dynatree-icon {
-			background-image: url('../Images/Icons/Black/columns_icon-16.png');
-		}
-		.typo3_neos-plugin .dynatree-icon {
-			background-image: url('../Images/Icons/Black/page_layout_icon-16.png');
-		}
+
 		.hidden {
 			display: inherit;
 			visibility: visible;
-			.dynatree-icon {
-				background-image: url('../Images/Icons/Black/doc_delete_icon-16.png');
+			@include icon-FontAwesome();
+			@extend .icon-remove-sign;
+			position: relative;
+
+			&:before {
+				position: absolute;
+				left: 16px;
+				top: 0px;
+				font-size: 10px;
+				color: $blue;
+				background: #fff;
+				height: 8px;
+				width: 8px;
+				margin-top: 11px;
+				line-height: 9px;
+				@include border-radius(10px);
 			}
 		}
+
 		.timedVisibility {
 			display: inherit;
 			visibility: visible;
-			.dynatree-icon {
-				background-image: url('../Images/Icons/Black/clock_icon-16.png');
+			@include icon-FontAwesome();
+			@extend .icon-time;
+			position: relative;
+
+			&:before {
+				position: absolute;
+				left: 21px;
+				top: 0px;
+				font-size: 12px;
+				color: $blue;
+				background: #fff;
+				height: 8px;
+				width: 12px;
+				margin-top: 11px;
+				line-height: 9px;
+				@include border-radius(10px);
 			}
 		}
-		.hiddenInIndex .dynatree-icon {
-			@include opacity(.5);
+
+		.hiddenInIndex {
+
+			[class^="icon-"],
+			[class*=" icon-"] {
+				@include opacity(.5);
+			}
 		}
 	}
+
 	#dynatree-drop-marker {
-		background-image: url('../Library/twitter-bootstrap/img/glyphicons-halflings.png');
-		background-position: -264px -96px;
-		width: 14px;
-		height: 14px;
 		&.dynatree-drop-after,
 		&.dynatree-drop-before {
-			width: 64px;
-			background-position: 0 -16px;
-			background-image: url('../Images/dynatree-icons.png');
-		}
-		&.dynatree-drop-copy {
-			background-position: -408px -96px;
-		}
-		&.dynatree-drop-move {
-			background-position: -433px -96px;
+			background: none;
+			@include icon-FontAwesome();
+			@extend .icon-long-arrow-right;
+			color: $black;
+			font-size: 18px;
 		}
 	}
 
@@ -191,25 +214,35 @@
 		top: -27px;
 		@include box-sizing(border-box);
 	}
+
 	.page-action-toolbar {
 		cursor: pointer;
 		float: right;
 		height: 15px;
 		margin: 0 5px !important;
-		padding: 6px 0 5px 25px !important;
+		padding: 6px 0 5px 15px !important;
+		color: $black;
+		font-size: 20px;
+
+		&:hover {
+			color: $blue;
+		}
 	}
 
 	.neos-action-newpage {
-		background: url(../Images/Icons/Black/round_plus_icon-16.png) 3px 50% no-repeat;
+		@include icon-FontAwesome();
+		@extend .icon-plus-sign;
 	}
+
 	.neos-action-deletepage {
-		background: url(../Images/Icons/Black/trash_icon-16.png) 3px 50% no-repeat;
+		@include icon-FontAwesome();
+		@extend .icon-trash;
 	}
 }
 
-/*Pagetree end*/
+/* Pagetree end */
 
-/* Modal Dialog Content area*/
+/* Modal Dialog Content area */
 button.icon-trash:before {
 	padding-right: 3px;
 }
@@ -374,7 +407,7 @@ button.neos-button.neos-connection-status-down {
 	background-color: $light-grey;
 	border: 1px solid #777;
 	@include border-radius(6px);
-	@include box-shadow(0px 0px 5px rgba($darkest, 0.2));
+	@include box-shadow(0px 0px 5px rgba($black, 0.2));
 	height: 300px;
 	position: relative;
 

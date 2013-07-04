@@ -72,7 +72,7 @@ define(
 							select: false,
 							active: false,
 							unselectable: true,
-							addClass: 'typo3_neos-root'
+							iconClass: 'icon-globe'
 						}
 					],
 					dnd: {
