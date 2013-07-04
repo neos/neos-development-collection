@@ -184,7 +184,7 @@ define(
 				zIndex = this.$().css('z-index') - 1;
 				this.$clickProtectionLayer = $('<div id="neos-inspector-clickprotection" />').css({'z-index': zIndex});
 				this.$clickProtectionLayer.click(this._showUnappliedDialog);
-				$('body').append(this.$clickProtectionLayer);
+				$('#neos-application').append(this.$clickProtectionLayer);
 			} else {
 				this.$clickProtectionLayer.remove();
 			}
