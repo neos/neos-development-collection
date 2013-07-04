@@ -12,6 +12,9 @@
 .neos-wireframeMode #neos-wireframe-menu {
   padding: 10px 5px;
 }
+.neos-wireframeMode button {
+  border: none;
+}
 .neos-wireframeMode .well {
   background: #444444;
 }
