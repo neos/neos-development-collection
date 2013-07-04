@@ -20,6 +20,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
+		router: null,
 
 		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 
