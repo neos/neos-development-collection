@@ -372,7 +372,18 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 					var settings = {
 							// Triggered when the selection is finished
 						onSelect: function(previewImageCoordinates) {
+
+							// Besides updating the crop dimensions (_cropProperties.*), we also update
+							// the *width* of the final image, to make sure that if we select only a part
+							// of the final image, the image is not up-scaled but keeps the same resolution.
+							//
+							// NOTE: The height of the image is auto-calculated, so we only need to set the width.
+							var imageWidthBeforeChange = that.get('_finalImageScale.w');
+							var imageWidthScalingFactor = previewImageCoordinates.w / that.get('_cropProperties.w');
+
 							Ember.beginPropertyChanges();
+							that.set('_finalImageScale.w', parseInt(imageWidthBeforeChange * imageWidthScalingFactor));
+
 							that.set('_cropProperties.x', previewImageCoordinates.x);
 							that.set('_cropProperties.y', previewImageCoordinates.y);
 							that.set('_cropProperties.w', previewImageCoordinates.w);
