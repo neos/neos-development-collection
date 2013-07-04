@@ -1,5 +1,5 @@
 /**
- * Toolbar which can contain other views. Has two areas, left and right.
+ * Context bar which can contain other views.
  */
 define(
 	[
@@ -7,7 +7,7 @@ define(
 	], function(Ember) {
 		return Ember.View.extend({
 			tagName: 'div',
-			classNames: ['neos-toolbar'],
+			elementId: ['neos-context-bar'],
 			template: Ember.required()
 		});
 	}

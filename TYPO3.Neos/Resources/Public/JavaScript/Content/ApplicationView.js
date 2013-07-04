@@ -5,7 +5,7 @@ define(
 [
 	'emberjs',
 	'text!./ApplicationView.html',
-	'./Components/NavigationToolbar',
+	'./Components/ContentContextBar',
 	'./Components/TreePanel',
 	'./Inspector/InspectorButton',
 	'./Inspector/Inspector',
@@ -16,7 +16,7 @@ define(
 function(
 	Ember,
 	template,
-	NavigationToolbar,
+	ContentContextBar,
 	TreePanel,
 	InspectorButton,
 	Inspector,
@@ -25,7 +25,7 @@ function(
 	InsertNodePanel
 ) {
 	return Ember.View.extend({
-		NavigationToolbar: NavigationToolbar,
+		ContentContextBar: ContentContextBar,
 		InspectorButton: InspectorButton,
 		Inspector: Inspector,
 		SecondaryInspectorView: SecondaryInspectorView,

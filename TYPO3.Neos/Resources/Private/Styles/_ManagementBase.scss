@@ -20,10 +20,7 @@
 	.neos-content {
 		font-size: 12px;
 	}
-	#neos-top {
-		@include single-box-shadow(transparent, 0, 0, 0);
-	}
-	#neos-toolbar {
+	#neos-context-bar {
 		left: 0px;
 		right: 0px;
 		padding: 0px 8px;

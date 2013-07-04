@@ -79,14 +79,15 @@
 	@import "Shared/Buttons";
 	@import "ContentProperties";
 	@import "StyleWorkInProgress";
-	@import "JsUi";
 	@import "ManagementBase";
 	@import "Inspector/Inspector";
 	@import "Inspector/Editors/ImageEditor";
 	@import "Inspector/SecondaryInspector";
-	@import "Modules/Modules";
+	@import "TopBar/TopBar";
+	@import "ContextBar/ContextBar";
 	@import "ContextBar/AlohaMenu";
 	@import "InlineEditing";
+	@import "Modules/Modules";
 }
 
 @import "Content";

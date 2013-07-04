@@ -3,8 +3,8 @@
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
 		<div id="neos-application" class="neos" role="application">
-			<div id="neos-top">
-				<ul id="neos-top-bar">
+			<div id="neos-top-bar">
+				<ul id="neos-top-bar-modules">
 					<li class="neos-active">
 						<f:link.action package="TYPO3.Neos" controller="Backend\Backend" action="index">Content</f:link.action>
 					</li>

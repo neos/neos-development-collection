@@ -6,22 +6,28 @@ body {
 	}
 
 	&.neos-controls {
-		margin-bottom: $footer-height;
-		margin-top: $menu-height + $topbar-offset + $toolbar-height;
+		margin-top: $unit * 2 + 2;
 		margin-left: 0;
+
 		&.neos-tree-panel-open {
 			margin-left: $tree-panel-width;
 		}
 	}
 
 	&.neos-tree-panel-open {
-		.neos #neos-tree-panel {
-			width: $tree-panel-width;
+		.neos {
+			#neos-tree-panel {
+				width: $tree-panel-width;
+			}
+
+			#neos-context-bar {
+				padding-left: $tree-panel-width;
+			}
 		}
 	}
 
 	&.neos-inspector-panel-open {
-		margin-right: $inspector-width;
+		margin-right: $inspectorWidth;
 		@include transition-property('margin-right');
 		@include transition-duration(0.2s);
 
@@ -30,8 +36,8 @@ body {
 				right: 0;
 			}
 
-			#neos-toolbar {
-				padding-right: $inspector-width;
+			#neos-context-bar {
+				padding-right: $inspectorWidth;
 			}
 			.neos-secondary-inspector.neos-secondary-inspector-open {
 				right: 0;
@@ -40,18 +46,14 @@ body {
 	}
 
 	// Preview mode
-	#neos-top {
+	#neos-top-bar {
 		@include transition-property(height);
 		@include transition-duration(0.2s);
 	}
 
-	#neos-toolbar {
-		@include transition-property(margin-top, padding-right);
+	#neos-context-bar {
+		@include transition-property(margin-top, padding-left, padding-right);
 		@include transition-duration(0.2s);
-		.neos-icon-preview {
-			@include transition-property(margin-top);
-			@include transition-duration(0.125s);
-		}
 	}
 
 	.aloha-block-TYPO3Block {
@@ -63,25 +65,27 @@ body {
 		margin-right: 0;
 
 		.neos {
-			#neos-top,
-			#neos-toolbar,
+			#neos-top-bar,
+			#neos-context-bar,
 			#neos-inspector {
 				display: block !important;
 			}
 
-			#neos-top {
+			#neos-top-bar {
 				height: 0;
 				overflow: hidden;
 			}
 
-			#neos-toolbar {
-				margin-top: -$toolbar-height;
+			#neos-context-bar {
+				margin-top: -$unit;
 				box-shadow: none;
 				display: block;
+				padding-left: 0;
+				padding-right: 0;
 			}
 
 			#neos-inspector {
-				right: -$inspector-width;
+				right: -$inspectorWidth;
 				overflow: hidden;
 			}
 
@@ -98,9 +102,15 @@ body {
 		.neos-preview-close {
 			display: block !important;
 			position: fixed;
-			top: 10px;
-			left: 10px;
-			box-shadow: 0 0 15px rgba(0, 0, 0, .15);
+			top: $defaultMargin;
+			right: $defaultMargin;
+			@include box-shadow(0 0 $relatedMargin rgba(0, 0, 0, .25));
+
+			.neos-button {
+				width: $unit;
+				line-height: $unit + 4px;
+				padding: 0;
+			}
 		}
 
 		.aloha-block-TYPO3Block {
@@ -135,7 +145,8 @@ body {
 		.x-shadow,
 		.neos-contentelement-overlay,
 		button.neos-create-new-content,
-		.neos-contentelement-hidden {
+		.neos-contentelement-hidden,
+		#neos-inspector-button {
 			display: none !important;
 		}
 

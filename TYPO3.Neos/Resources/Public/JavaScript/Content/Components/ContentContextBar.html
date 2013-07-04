@@ -1,0 +1,23 @@
+<div class="left">
+	{{#view view.ToggleButton
+		pressedBinding="T3.Content.Controller.PageTree.pageTreeMode"
+		classNames="neos-pagetree-button"
+	}}Pages{{/view}}
+	<div id="neos-aloha-topmenu"></div>
+</div>
+
+<div class="right">
+	{{view T3.Content.UI.SaveIndicator
+		saveRunningBinding="T3.Content.Controller.ServerConnection._saveRunning"
+		lastSuccessfulTransferBinding="T3.Content.Controller.ServerConnection._lastSuccessfulTransfer"
+		classNames="neos-context-bar-save-indidator"
+	}}
+
+	{{#view view.ToggleButton pressedBinding="T3.Content.Controller.Wireframe.wireframeMode"}}Wireframe{{/view}}
+
+	{{view view.ToggleButton
+		pressedBinding="T3.Content.Controller.Preview.previewMode"
+		icon="resize-full"
+		title="Preview"
+	}}
+</div>

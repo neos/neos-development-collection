@@ -41,118 +41,6 @@ a {
 .neos-clear {
 	clear:both;
 }
-#neos-top {
-	background: $dark-grey;
-	left: 0;
-	top: 0;
-	position: fixed;
-	width: 100%;
-	z-index: 10015;
-	height: $menu-height + $topbar-offset;
-	margin: 0px;
-	padding: 0px;
-
-	.neos-button-logout {
-		float: right;
-		a.dropdown-toggle {
-			display: block;
-			text-decoration: none;
-			color: $light-grey2;
-			line-height: $menu-height;
-
-			.caret {
-				margin-top: 10px;
-				border-top-color: $light-grey2;
-				margin-right: 10px;
-			}
-		}
-		ul.dropdown-menu {
-			right: 10px;
-			left: auto;
-			top: 90%;
-
-			.divider {
-				background-color: #e5e5e5;
-			}
-		}
-		.dropdown-menu:before {
-			position: absolute;
-			top: -7px;
-			right: 9px;
-			display: inline-block;
-			border-right: 7px solid transparent;
-			border-bottom: 7px solid #ccc;
-			border-left: 7px solid transparent;
-			border-bottom-color: rgba(0, 0, 0, 0.2);
-			content: '';
-		}
-		.dropdown-menu:after {
-			position: absolute;
-			top: -6px;
-			right: 10px;
-			display: inline-block;
-			border-right: 6px solid transparent;
-			border-bottom: 6px solid #ffffff;
-			border-left: 6px solid transparent;
-			content: '';
-		}
-	}
-
-	#neos-top-bar {
-		height: $menu-height + $topbar-offset;
-		line-height: $menu-height;
-		float: left;
-		margin: 0;
-		padding: 0;
-
-		li {
-			float: left;
-			list-style-type: none;
-			height: $menu-height - 1px;
-			line-height: $menu-height - 2px;
-			color: darken($light-grey2, 20%);
-			margin-top: $topbar-offset + 1px;
-			margin-left: 1px;
-			border-top: 1px solid $dark-grey;
-			@include box-sizing(border-box);
-
-			a {
-				display: block;
-				height: 100%;
-				color: darken($light-grey2, 20%) !important;
-				text-decoration:none !important;
-				padding-left: 20px;
-				padding-right: 20px;
-			}
-
-			&:first-child {
-				margin-left: 4px;
-			}
-
-			&:hover,
-			&:focus,
-			&:active {
-				background: $dark-grey3;
-				border-color: $lightest;
-				cursor: pointer;
-			}
-
-			&.neos-active {
-				background: $dark-grey2;
-				color: $lightest;
-				border-top: 1px solid $light-orange;
-				&:hover,
-				&:focus,
-				&:active {
-					cursor: default;
-				}
-				a {
-					color: $lightest !important;
-				}
-			}
-		}
-	}
-}
 
 #neos-tree-panel {
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
@@ -164,9 +52,9 @@ a {
 	position: fixed;
 	overflow: hidden;
 	left: 0;
-	top: $menu-height + $topbar-offset + $toolbar-height;
+	top: $unit + 1;
 	bottom: 0;
-	z-index: 10010;
+	z-index: 10012;
 	@include transition-property('width, margin-top');
 	@include transition-duration(.2s);
 	padding-top: 27px;
@@ -181,55 +69,6 @@ a {
 	}
 	.dynatree-container {
 		overflow: visible;
-	}
-}
-
-/*** Toolbar ***/
-#neos-toolbar {
-	background: $dark-grey2;
-	height: $toolbar-height;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	margin: 0px;
-	margin-top: $menu-height + $topbar-offset;
-	padding: 0px;
-	padding-right: 41px;
-	z-index: 10012;
-	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
-
-	ul {
-		margin: 0px;
-
-		li a {
-			line-height: $toolbar-height;
-		}
-	}
-}
-.neos-toolbar-left {
-	float: left;
-	height: 100%;
-	line-height: $toolbar-height;
-	margin: 0px;
-	padding: 0px;
-}
-.neos-toolbar-right {
-	float: right;
-	height: 100%;
-	line-height: $toolbar-height;
-	margin: 0px;
-	padding: 0px;
-}
-.neos-toolbar-left,
-.neos-toolbar-right {
-	li {
-		float: left;
-		padding-left: 10px;
-		line-height: $toolbar-height - 1px;
-		&:first-child {
-			padding-left: 12px;
-		}
 	}
 }
 
@@ -374,18 +213,20 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 		position: relative;
 		top: 50% !important;
 		left: 50% !important;
-		margin-top: ($menu-height + $topbar-offset + $toolbar-height) / 2 - $footer-height / 2;
-		margin-left: -30 - $inspector-width / 2;
+		margin-top: ($unit * 2 + 2) / 2;
+		margin-left: -30 - $inspectorWidth / 2;
 		@include transition-property(margin);
 		@include transition-duration(0.2s);
 	}
 }
+
 &.neos-tree-panel-open .neos-pageloader-wrapper .neos-pageloader {
-	margin-left: -30 - $tree-panel-width / 2 - $inspector-width / 2;
+	margin-left: -30 - $tree-panel-width / 2 - $inspectorWidth / 2;
 }
+
 &.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
 	margin-left: -30px;
-	margin-top: $toolbar-height / 2;
+	margin-top: $unit / 2;
 }
 
 /* Add content dialog styles */

@@ -1,10 +1,5 @@
 /* Variables */
-$menu-height: 26px;
-$toolbar-height: 40px;
-$inspector-width: 320px;
 $tree-panel-width: 300px;
-$footer-height: 26px;
-$topbar-offset: 4px;
 
 $green: #69A550;
 $light-green: #54974A;
@@ -47,3 +42,6 @@ $defaultMargin: 16px;
 $relatedMargin: 8px;
 $tightMargin: 4px;
 $wideMargin: 32px;
+
+/* Components */
+$inspectorWidth: $unit * 8;

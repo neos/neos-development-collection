@@ -1,10 +1,10 @@
 #neos-inspector-button {
 	position: fixed;
 	z-index: 10015;
-	top: $menu-height + $topbar-offset;
+	top: $unit;
 	right: 0;
-	width: $unit;
-	height: $unit;
+	width: $unit + 2;
+	height: $unit + 2;
 	border: 1px solid $grayLight;
 	background-color: $grayDark;
 	background-image: none;
@@ -21,8 +21,9 @@
 		content: "‹";
 	}
 
-	&.is-active:before {
-		color: $blue;
+	&:hover,
+	&.is-active {
+		background-color: $blue;
 	}
 
 	&.pressed:before {
@@ -32,10 +33,10 @@
 
 #neos-inspector {
 	position: fixed;
-	top: $menu-height + $topbar-offset;
+	top: $unit;
 	bottom: 0;
-	right: -$inspector-width;
-	width: $inspector-width;
+	right: -$inspectorWidth;
+	width: $inspectorWidth;
 	background-color: $grayDark;
 	z-index: 10014;
 	border-top: 1px solid $grayLight;
@@ -52,7 +53,7 @@
 		position: absolute;
 		top: 0;
 		width: 100%;
-		height: 38px;
+		height: $unit;
 		border-bottom: 1px solid $grayLight;
 	}
 
@@ -63,8 +64,8 @@
 		overflow-y: auto;
 
 		.neos-breadcrumb {
-			max-width: $inspector-width - 16 * 2;
-			margin: 16px 8px 16px 16px;
+			max-width: $inspectorWidth - $defaultMargin * 2;
+			margin: $defaultMargin $relatedMargin $defaultMargin $defaultMargin;
 			cursor: pointer;
 			@include user-select(none);
 			position: relative;
@@ -140,7 +141,7 @@
 						height: 100%;
 						line-height: $unit;
 						color: #fff;
-						padding: 0 16px;
+						padding: 0 $defaultMargin;
 						@include box-sizing(border-box);
 
 						&:hover {
@@ -176,8 +177,8 @@
 		.legend {
 			width: 100%;
 			@include box-sizing(border-box);
-			padding: 0 16px;
-			margin-bottom: 10px;
+			padding: 0 $defaultMargin;
+			margin-bottom: $relatedMargin;
 			height: 30px;
 			border-bottom: 1px solid $grayLight;
 			cursor: pointer;
@@ -192,7 +193,7 @@
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
-				width: $inspector-width - 16 * 2;
+				width: $inspectorWidth - $defaultMargin * 2;
 			}
 		}
 
@@ -211,7 +212,7 @@
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
-			width: $inspector-width - 16 * 2;
+			width: $inspectorWidth - $defaultMargin * 2;
 			padding: 0;
 			margin-bottom: $tightMargin;
 			@include user-select(none);
@@ -246,7 +247,7 @@
 			color: $textOnGray;
 			@include font;
 			font-size: 14px;
-			padding: 0 16px;
+			padding: 0 $defaultMargin;
 			margin: 0;
 			@include box-sizing(border-box);
 
@@ -277,7 +278,7 @@
 			margin: 0;
 			width: 22px;
 			height: 22px;
-			margin-right: 16px;
+			margin-right: $defaultMargin;
 			@include box-sizing(border-box);
 
 			&:before {

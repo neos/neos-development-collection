@@ -32,7 +32,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 				previewCloseClass = 'neos-preview-close';
 			if (isPreviewEnabled) {
 				$('body')
-					.append($('<div class="neos" />').addClass(previewCloseClass).append($('<button class="neos-button btn btn-mini pressed"><i class="icon-fullscreen"></i></button>'))
+					.append($('<div class="neos" />').addClass(previewCloseClass).append($('<button class="neos-button pressed"><i class="icon-resize-small"></i></button>'))
 					.on('click', function() {
 						that.set('previewMode', false);
 					}));

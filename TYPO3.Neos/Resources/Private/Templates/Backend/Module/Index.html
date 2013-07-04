@@ -21,8 +21,8 @@
 
 <f:section name="body">
 	<body class="neos neos-module neos-module-{moduleClass}">
-		<div id="neos-top">
-			<ul id="neos-top-bar">
+		<div id="neos-top-bar">
+			<ul id="neos-top-bar-modules">
 				<li>
 					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
 				</li>
@@ -49,9 +49,8 @@
 				</f:for>
 			</ul>
 			<f:render partial="Backend/UserMenu" arguments="{_all}" />
-			<div class="neos-clear"></div>
 		</div>
-		<div id="neos-toolbar" class="neos-toolbar">
+		<div id="neos-context-bar">
 			<ul class="nav nav-pills">
 				<f:for each="{settings.modules}" key="module" as="configuration">
 					<f:if condition="{rootModule} == {module}">

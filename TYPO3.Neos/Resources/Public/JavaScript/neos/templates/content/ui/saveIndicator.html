@@ -1,7 +1,7 @@
 {{#if view.saveRunning}}
-    <button class="neos-btn btn-mini neos-indicator"><span class="icon-white icon-refresh"></span> Saving...</button>
+	<button class="neos-button neos-indicator"><span class="icon-white icon-refresh"></span> Saving...</button>
 {{else}}
-    {{#if view.lastSuccessfulTransfer}}
-        <button class="neos-btn btn-mini neos-indicator" {{bindAttr title="view.lastSuccessfulTransferLabel"}}><span class="icon-white icon-ok"></span> Saved</button>
-    {{/if}}
+	{{#if view.lastSuccessfulTransfer}}
+		<button class="neos-button neos-indicator" {{bindAttr title="view.lastSuccessfulTransferLabel"}}><span class="icon-white icon-ok"></span> Saved</button>
+	{{/if}}
 {{/if}}

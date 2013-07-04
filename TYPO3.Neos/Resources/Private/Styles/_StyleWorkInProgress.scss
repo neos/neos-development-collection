@@ -713,18 +713,6 @@ button.neos-button.neos-connection-status-down {
 	}
 }
 
-// Save indicator
-#neos-toolbar {
-	.neos-indicator {
-		margin: 0px;
-		padding: 0px;
-		color: $lightest;
-		cursor: default;
-		background: transparent;
-		border: 0px;
-	}
-}
-
 // Remove blue border from editing
 .neos-inline-editable {
 	&:focus {

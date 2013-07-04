@@ -20,7 +20,7 @@ define(
 			icon: '',
 			iconClass: function() {
 				var icon = this.get('icon');
-				return icon !== '' ? 'neos-icon-' + icon : '';
+				return icon !== '' ? 'icon-' + icon : '';
 			}.property('icon'),
 
 			mouseDown: function() {

@@ -9,6 +9,7 @@
 	text-align: center;
 	padding: 0 $defaultMargin;
 	border: none;
+	margin: 0;
 	@include box-sizing(border-box);
 
 	&:hover,
@@ -16,5 +17,10 @@
 	&.active,
 	&.pressed {
 		background-color: $blue;
+	}
+
+	&[class^="icon-"],
+	&[class*=" icon-"] {
+		font-family: FontAwesome;
 	}
 }
