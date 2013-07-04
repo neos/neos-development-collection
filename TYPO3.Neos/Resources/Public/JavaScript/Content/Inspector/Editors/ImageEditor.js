@@ -362,6 +362,8 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 			var that = this;
 
 			return Ember.View.extend({
+				classNames: ['neos-secondary-inspector-image-crop'],
+
 				template: Ember.Handlebars.compile('<img />'),
 				didInsertElement: function() {
 					var $image = this.$().find('img');

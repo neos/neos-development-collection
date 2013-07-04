@@ -8103,6 +8103,9 @@
 .neos .neos-secondary-inspector-html-editor .CodeMirror-scroll {
   height: 100%;
 }
+.neos .neos-secondary-inspector-image-crop .jcrop-holder {
+  margin: 40px auto;
+}
 .neos.neos-module {
   background: #888888;
   background: url(../Images/module-bg.jpg) left top repeat;
