@@ -88,6 +88,11 @@ body {
 			#neos-tree-panel {
 				width: 0;
 			}
+			.neos-overlay-component,
+			.neos-handle-container,
+			.modal-backdrop {
+				display: none;
+			}
 		}
 
 		.neos-preview-close {

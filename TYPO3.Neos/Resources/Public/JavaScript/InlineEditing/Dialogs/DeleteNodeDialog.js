@@ -7,7 +7,7 @@ define(
 	function($, Ember, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
-			classNames: ['neos-ui'],
+			classNames: ['neos-ui neos-overlay-component'],
 
 			id: 'deleteNodeDialog',
 

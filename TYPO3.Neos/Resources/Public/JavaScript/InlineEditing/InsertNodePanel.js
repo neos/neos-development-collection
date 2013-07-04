@@ -10,6 +10,8 @@ define(
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 
+			classNames: ['neos-overlay-component'],
+
 			_node: null,
 			_entity: null,
 			_index: null,
