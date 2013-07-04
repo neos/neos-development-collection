@@ -85,6 +85,8 @@
 
 		.chzn-search {
 			padding: 0;
+			color: $black;
+			@include icon-FontAwesome();
 
 			input {
 				width: 100%;
@@ -103,14 +105,16 @@
 			}
 
 			&:after {
-				display: block;
 				position: absolute;
 				top: 14px;
 				right: 12px;
 				width: 16px;
 				height: 16px;
-				content: "";
-				background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABLUlEQVQ4T52T3Q2CMBSFLT/vOoEkwLOwgW6gE6gbsImOoBPoBuoE1mcg4gb6zJ/nmpK00BiRpKG9tF/vOffCBtLjeV7EGFsiFIgwr6pqm6bpXt4nzxktHMcZ2rZ9kg629/M8z2dZlj3bHz4A3/c5XpO6rh8YUVmWtB6Yphkgoy3GGEsex3HYAYi0N3S4KIqgfQtlZ1kWF5A1IDtFQnM7tC6g9ajT6rru3DCMgy4LBkBNh6BxpNMoPHLg0Z3myOAju3l6ASDzlSTJ8G8JAFwAmCqAxkQEM8gIdSYi/StVG6NrolxGglAZUY0bxeH+hMooDmt9khvpTL2gq4IU6zSU4igqssLmiEBkGJUNGewg7QgZzQUKRAF8u120ewfyM0D0A/0zCqQXQAfpDWhB+BtgQrrOTNe1UwAAAABJRU5ErkJggg==');
+				text-decoration: inherit;
+				display: inline-block;
+				speak: none;
+				content: $search;
+				line-height: 100%;
 			}
 		}
 
@@ -132,6 +136,10 @@
 				&.highlighted {
 					background-color: $blue;
 					background-image: none;
+				}
+
+				&.no-results {
+					background-color: $grayMedium;
 				}
 
 				em {
