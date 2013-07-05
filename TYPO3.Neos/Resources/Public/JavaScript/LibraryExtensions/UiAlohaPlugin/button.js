@@ -13,7 +13,7 @@ define([
 			this.createButtonElement();
 			Utils.makeButton(this.buttonElement, this)
 				.button('widget')
-				.click(jQuery.proxy(function () {
+				.click(Aloha.jQuery.proxy(function () {
 					this._onClick();
 				}, this));
 		},

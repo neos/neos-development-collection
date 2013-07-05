@@ -1,10 +1,11 @@
 define(
 	[
 		'emberjs',
+		'Library/jquery-with-dependencies',
 		'../Components/ToggleButton',
 		'Shared/LocalStorage',
 		'./SecondaryInspectorController'
-	], function(Ember, ToggleButton, LocalStorage, SecondaryInspectorController) {
+	], function(Ember, $, ToggleButton, LocalStorage, SecondaryInspectorController) {
 		return ToggleButton.extend({
 			elementId: ['neos-inspector-button'],
 			title: 'Toggle inspector',
