@@ -27,7 +27,7 @@ define(
 							Aloha.ready(function() {
 								that.enableEdit();
 							});
-						}, 300);
+						}, 800);
 					} else {
 						this.enableEdit();
 					}
