@@ -45,11 +45,17 @@
 				@extend .icon-table;
 			}
 
-			.aloha-icon-bold {
+			.aloha-icon-toggledragdrop {
+				@extend .icon-move;
+			}
+
+			.aloha-icon-bold,
+			.aloha-icon-strong {
 				@extend .icon-bold;
 			}
 
-			.aloha-icon-italic {
+			.aloha-icon-italic,
+			.aloha-icon-emphasis {
 				@extend .icon-italic;
 			}
 
@@ -103,6 +109,14 @@
 
 			.aloha-icon-unorderedlist {
 				@extend .icon-list-ul;
+			}
+
+			.aloha-icon-indent {
+				@extend .icon-indent-right;
+			}
+
+			.aloha-icon-outdent {
+				@extend .icon-indent-left;
 			}
 		}
 	}
