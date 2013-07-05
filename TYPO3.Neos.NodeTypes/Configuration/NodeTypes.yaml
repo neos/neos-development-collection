@@ -2,9 +2,7 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Headline'
-    icon:
-      light: 'Images/Icons/White/text_letter_t_icon-16.png'
-      dark: 'Images/Icons/Black/text_letter_t_icon-16.png'
+    icon: 'icon-file-text'
   properties:
     title:
       type: string
@@ -16,9 +14,7 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Text'
-    icon:
-      light: 'Images/Icons/White/doc_lines_stright_icon-16.png'
-      dark: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
+    icon: 'icon-file-text'
   properties:
     text:
       type: string
@@ -30,9 +26,7 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Image'
-    icon:
-      light: 'Images/Icons/White/picture_icon-16.png'
-      dark: 'Images/Icons/Black/picture_icon-16.png'
+    icon: 'icon-picture'
     inspector:
       groups:
         image:
@@ -126,17 +120,14 @@
     - 'TYPO3.Neos.NodeTypes:Text'
   ui:
     label: 'Text with Image'
-    icon:
-      light: 'Images/Icons/White/image_text_icon-16.png'
-      dark: 'Images/Icons/Black/image_text_icon-16.png'
+
+    icon: 'icon-picture'
 
 'TYPO3.Neos.NodeTypes:Html':
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'HTML'
-    icon:
-      light: 'Images/Icons/White/brackets_icon-16.png'
-      dark: 'Images/Icons/Black/brackets_icon-16.png'
+    icon: 'icon-code'
     inspector:
       groups:
         html:
@@ -157,9 +148,7 @@
   ui:
     label: 'Menu'
     group: 'Structure'
-    icon:
-      light: 'Images/Icons/White/list_bullets_icon-16.png'
-      dark: 'Images/Icons/Black/list_bullets_icon-16.png'
+    icon: 'icon-sitemap'
     inspector:
       groups:
         options:
@@ -238,9 +227,7 @@
   ui:
     group: 'Structure'
     label: 'Column'
-    icon:
-      light: 'Images/Icons/White/columns_icon-16.png'
-      dark: 'Images/Icons/Black/columns_icon-16.png'
+    icon: 'icon-columns'
     inlineEditable: TRUE
     inspector:
       groups:
