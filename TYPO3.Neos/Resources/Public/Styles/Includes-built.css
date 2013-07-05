@@ -424,10 +424,12 @@
 .neos .icon-font:before {
   content: "\f031";
 }
-.neos .icon-bold:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold:before {
+.neos .icon-bold:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold:before,
+.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strong:before {
   content: "\f032";
 }
-.neos .icon-italic:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic:before {
+.neos .icon-italic:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic:before,
+.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-emphasis:before {
   content: "\f033";
 }
 .neos .icon-text-height:before {
@@ -451,10 +453,10 @@
 .neos .icon-list:before {
   content: "\f03a";
 }
-.neos .icon-indent-left:before {
+.neos .icon-indent-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-outdent:before {
   content: "\f03b";
 }
-.neos .icon-indent-right:before {
+.neos .icon-indent-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-indent:before {
   content: "\f03c";
 }
 .neos .icon-facetime-video:before {
@@ -484,7 +486,7 @@
 .neos .icon-check:before {
   content: "\f046";
 }
-.neos .icon-move:before {
+.neos .icon-move:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-toggledragdrop:before {
   content: "\f047";
 }
 .neos .icon-step-backward:before {
@@ -3445,10 +3447,12 @@
 .neos .icon-font {
   background-position: -144px -48px;
 }
-.neos .icon-bold, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold {
+.neos .icon-bold, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold,
+.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strong {
   background-position: -167px -48px;
 }
-.neos .icon-italic, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic {
+.neos .icon-italic, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic,
+.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-emphasis {
   background-position: -192px -48px;
 }
 .neos .icon-text-height {
@@ -3472,10 +3476,10 @@
 .neos .icon-list {
   background-position: -360px -48px;
 }
-.neos .icon-indent-left {
+.neos .icon-indent-left, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-outdent {
   background-position: -384px -48px;
 }
-.neos .icon-indent-right {
+.neos .icon-indent-right, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-indent {
   background-position: -408px -48px;
 }
 .neos .icon-facetime-video {
@@ -3505,7 +3509,7 @@
 .neos .icon-check {
   background-position: -144px -72px;
 }
-.neos .icon-move {
+.neos .icon-move, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-toggledragdrop {
   background-position: -168px -72px;
 }
 .neos .icon-step-backward {
