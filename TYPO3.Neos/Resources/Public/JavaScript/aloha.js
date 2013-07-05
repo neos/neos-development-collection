@@ -47,7 +47,7 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 				sidebarAttributeEditor: false
 			},
 			format: {
-				config : [ 'b', 'i', 'u', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat' ]
+				config : [ 'b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat' ]
 			}
 		},
 		toolbar: {
@@ -57,7 +57,7 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 						// The "format" tab is shown in the top-menu, the remaining tabs are shown
 						// in the inspector.
 					components: [
-						[ 'bold', 'italic', 'underline', 'subscript', 'superscript', 'strikethrough' ],
+						[ 'bold', 'italic', 'underline', 'subscript', 'superscript' ],
 						[
 							'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop',
 							'toggleMetaView', 'wailang', 'toggleFormatlessPaste'
