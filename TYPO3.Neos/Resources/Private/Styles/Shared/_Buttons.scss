@@ -8,6 +8,7 @@
 	line-height: $unit;
 	text-align: center;
 	padding: 0 $defaultMargin;
+	border: none;
 	@include box-sizing(border-box);
 
 	&:hover,

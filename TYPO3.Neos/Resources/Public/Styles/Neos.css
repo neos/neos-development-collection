@@ -7081,6 +7081,30 @@
     position: static;
   }
 }
+.neos div, .neos dl, .neos dt, .neos dd, .neos ul, .neos ol, .neos li, .neos h1, .neos h2, .neos h3, .neos h4, .neos h5, .neos h6, .neos pre, .neos form, .neos fieldset, .neos input, .neos p, .neos blockquote, .neos th, .neos td {
+  margin: 0;
+  padding: 0;
+}
+.neos img {
+  border: 0;
+}
+.neos address, .neos caption, .neos cite, .neos code, .neos dfn, .neos em, .neos strong, .neos th, .neos var {
+  font-style: normal;
+  font-weight: normal;
+}
+.neos ol, .neos ul, .neos ol li, .neos ul li {
+  list-style: none;
+}
+.neos caption, .neos th {
+  text-align: left;
+}
+.neos h1, .neos h2, .neos h3, .neos h4, .neos h5, .neos h6 {
+  font-size: 14px;
+}
+.neos q:before,
+.neos q:after {
+  content: '';
+}
 .neos form {
   margin: 0px;
 }
@@ -8071,6 +8095,7 @@
   line-height: 40px;
   text-align: center;
   padding: 0 16px;
+  border: none;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
