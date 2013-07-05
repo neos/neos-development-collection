@@ -111,13 +111,10 @@ The following options are allowed:
     All valid groups are given in the`TYPO3.Neos.nodeTypeGroups` setting
 
   `icon`
-    These settings define the icons to use in the Neos UI for the node type
+    This setting define the icon to use in the Neos UI for the node type
 
-    `dark`
-      Dark icon, to be used on light backgrounds (optional)
-
-    `light`
-      Light icon, to be used on dark backgrounds (optional)
+    Currently it's only possible to use a predefined selection of icons, which
+    are available in Font Awesome http://fortawesome.github.io/Font-Awesome/icons/.
 
   `inlineEditable`
     If TRUE, it is possible to interact with this Node directly in the content view.

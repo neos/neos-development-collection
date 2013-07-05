@@ -132,8 +132,8 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				'path' => $result->getPath()
 			);
 			$nodeTypeConfiguration = $nodeType->getConfiguration();
-			if (isset($nodeTypeConfiguration['ui']['icon']['dark'])) {
-				$searchResult['icon'] = $staticWebBaseUri . $nodeTypeConfiguration['ui']['icon']['dark'];
+			if (isset($nodeTypeConfiguration['ui']['icon'])) {
+				$searchResult['icon'] = $staticWebBaseUri . $nodeTypeConfiguration['ui']['icon'];
 			}
 			array_push($groups[$type]['items'], $searchResult);
 		}

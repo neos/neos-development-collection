@@ -69,8 +69,8 @@
 											<td><label for="{change.node.identifier}" title="{change.node.abstract}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>[No title]</em>')}</label></td>
 											<td class="node-type" title="{change.node.nodeType.name}">
 												<label for="{change.node.identifier}">
-													<f:if condition="{change.configuration.ui.icon.light}">
-														<img src="{f:uri.resource(path: change.configuration.ui.icon.light)}" alt="{change.node.nodeType.name}" />
+													<f:if condition="{change.configuration.ui.icon}">
+														<i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}"></i>
 													</f:if>
 													{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.nodeType.name)}
 												</label>

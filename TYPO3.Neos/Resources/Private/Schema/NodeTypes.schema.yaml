@@ -44,9 +44,7 @@ additionalProperties:
 
         'label': { type: string, description: "Human-readable label for this Node Type." }
 
-        'icon':
-          'light': { type: string, description: "Light icon, to be used on dark backgrounds" }
-          'dark': { type: string, description: "Dark icon, to be used on light backgrounds" }
+        'icon': { type: string, description: "Icon class" }
 
         'inlineEditable': { type: boolean, description: "If TRUE, it is possible to interact with this Node directly in the content view. If FALSE, an overlay is shown preventing any interaction with the node." }
 
