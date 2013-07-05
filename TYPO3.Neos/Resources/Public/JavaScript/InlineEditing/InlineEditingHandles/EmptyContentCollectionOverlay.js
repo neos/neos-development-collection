@@ -16,7 +16,7 @@ define(
 			},
 
 			hide: function(collectionWidget) {
-				collectionWidget.element.find('.neos-empty-contentcollection-overlay').parent().remove();
+				collectionWidget.element.find('.neos-empty-contentcollection-overlay').remove();
 			}
 		}
 	}
