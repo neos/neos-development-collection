@@ -449,6 +449,7 @@ define(
 						title: '[New Page]',
 						nodeType: 'TYPO3.Neos:Page',
 						addClass: 'typo3_neos-page',
+						iconClass: 'icon-file',
 						expand: true
 					}),
 					prevTitle = node.data.title,
