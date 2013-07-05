@@ -77,7 +77,9 @@ class TypoScriptService {
 		$currentTypoScriptPath = $typoScriptsPath . '/Nodes';
 		foreach ($parentNodes as $node) {
 			$nodeName = $node->getName();
-			$mergedTypoScriptCode .= Files::getFileContents($this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName . '.ts2')) . chr(10);
+			if ($currentNodeTypoScript = $this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName . '.ts2')) {
+				$mergedTypoScriptCode .= Files::getFileContents($currentNodeTypoScript) . chr(10);
+			}
 			$currentTypoScriptPath .= '/' . basename($this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName));
 
 			$typoScriptNodes = $node->getChildNodes('TYPO3.Neos:TypoScript');
