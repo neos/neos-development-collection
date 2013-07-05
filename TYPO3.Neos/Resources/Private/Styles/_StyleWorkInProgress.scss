@@ -129,6 +129,18 @@
 			}
 		}
 
+		span.dynatree-empty,
+		span.dynatree-vline,
+		span.dynatree-connector,
+		span.dynatree-expander,
+		span.dynatree-icon,
+		span.dynatree-checkbox,
+		span.dynatree-radio,
+		span.dynatree-drag-helper-img,
+		#dynatree-drop-marker {
+			width: 11px;
+		}
+
 		.dynatree-exp-e,
 		.dynatree-exp-ed,
 		.dynatree-exp-el,
@@ -151,7 +163,7 @@
 				position: absolute;
 				left: 16px;
 				top: 0px;
-				font-size: 10px;
+				font-size: 12px;
 				color: $blue;
 				background: #fff;
 				height: 8px;
@@ -171,7 +183,7 @@
 
 			&:before {
 				position: absolute;
-				left: 21px;
+				left: 16px;
 				top: 0px;
 				font-size: 12px;
 				color: $blue;
@@ -185,7 +197,6 @@
 		}
 
 		.hiddenInIndex {
-
 			[class^="icon-"],
 			[class*=" icon-"] {
 				@include opacity(.5);
