@@ -19,6 +19,11 @@ class FeatureContext extends MinkContext {
 	protected $objectManager;
 
 	/**
+	 * @var \Behat\Mink\Element\ElementInterface
+	 */
+	protected $selectedContentElement;
+
+	/**
 	 * Initializes the context
 	 *
 	 * @param array $parameters Context parameters (configured through behat.yml)
@@ -137,7 +142,7 @@ class FeatureContext extends MinkContext {
 	/**
 	 * @Then /^I should not see the top bar$/
 	 */
-	public function iShouldNotSeeTheInspectorPanel() {
+	public function iShouldNotSeeTheTopBar() {
 		$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
 	}
 
@@ -227,6 +232,33 @@ class FeatureContext extends MinkContext {
 		$siteRow = $this->assertSession()->elementExists('xpath', $rowLocator);
 		$siteRow->findLink($link)->click();
     }
+
+	/**
+	 * @When /^I select the first content element$/
+	 */
+	public function iSelectTheFirstContentElement() {
+		$element = $this->assertSession()->elementExists('css', '.neos-contentelement');
+		$element->click();
+
+		$this->selectedContentElement = $element;
+	}
+
+	/**
+	 * @Given /^I set the content to "([^"]*)"$/
+	 */
+	public function iSetTheContentTo($content) {
+		$editable = $this->assertSession()->elementExists('css', '.neos-inline-editable', $this->selectedContentElement);
+
+		$editable->setValue($content);
+	}
+
+	/**
+	 * @Given /^I wait for the changes to be saved$/
+	 */
+	public function iWaitForTheChangesToBeSaved() {
+		$this->getSession()->wait(30000, '$("#neos-application .neos-indicator-saved").length > 0');
+		$this->assertSession()->elementExists('css', '#neos-application .neos-indicator-saved');
+	}
 
 	/**
 	 * @param string $path
