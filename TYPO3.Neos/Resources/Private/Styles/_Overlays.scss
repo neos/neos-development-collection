@@ -1,0 +1,112 @@
+// Modal dialogs
+.modal {
+	top: 120px;
+	margin: 0px 0px 0px -25%;
+	color: $textOnGray;
+	@include border-radius(0);
+	background: $grayDark;
+	border: 1px solid $grayLight;
+	padding: 0px;
+	width: 50%;
+	@include font();
+
+	.modal-header {
+		padding: 0px;
+		border: 0px;
+	}
+
+	.neos-button {
+		&.close {
+			margin: 0;
+			color: #fff;
+			font-size: 18px;
+			line-height: 100%;
+			width: $unit;
+			height: $unit;
+			border-left: 1px solid $grayLight;
+			@include text-shadow(none);
+			@include opacity(1);
+			@include icon-FontAwesome();
+			@include box-sizing(border-box);
+
+			&:before {
+				content: $remove;
+			}
+
+			&:hover {
+				background: $blue;
+			}
+		}
+	}
+
+	// Top area
+	h3 {
+		font-size: 16px;
+		line-height: 100%;
+		padding: 0 $defaultMargin;
+		line-height: $unit;
+		border-bottom: 1px solid $grayLight;
+		@include box-sizing(border-box);
+	}
+
+	// Header
+	h4 {
+		font-size: 15px;
+		padding: $defaultMargin;
+		font-weight: normal;
+		margin: 0;
+		color: $textSubtle;
+	}
+
+	ul {
+		border-bottom: 1px solid $grayLight;
+		padding: 0px $defaultMargin;
+		margin: 0px;
+		width: 100%;
+		@include box-sizing(border-box);
+
+		a {
+			color: #fff;
+
+			&:hover {
+				color: $blue;
+				cursor: pointer;
+				text-decoration: none;
+			}
+		}
+	}
+
+	// Footer area
+	.modal-footer {
+		background: transparent;
+		@include box-shadow(0px 0px 0px transparent);
+		@include border-radius(0px);
+		border: 0px;
+		padding: $defaultMargin;
+	}
+}
+
+.neos-content-new-selecttype-button {
+	float: left;
+	margin: 0px 0px $defaultMargin 0px;
+	width: 100 / 3 * 1%;
+	vertical-align: top;
+
+	a {
+		display: block;
+		line-height: 16px;
+		vertical-align: bottom;
+		position: relative;
+		padding-left: 14px + $relatedMargin;
+		@include box-sizing(border-box);
+
+		i {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 14px;
+			padding-right: $relatedMargin;
+			color: $blue;
+		}
+	}
+}

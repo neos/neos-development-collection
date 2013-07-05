@@ -85,8 +85,7 @@ label {
 // Form footer & modal footer
 // ------------
 
-.form-footer,
-.modal-footer {
+.form-footer {
 	background: #666;
 	border-color: $light-grey3;
 	@include border-bottom-radius(4px);
