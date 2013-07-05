@@ -38,7 +38,8 @@ class NodeData extends AbstractNodeData {
 	 * Absolute path of this node
 	 *
 	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @ORM\Column(length=4000)
+	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=4000 })
 	 */
 	protected $path;
 
@@ -46,7 +47,8 @@ class NodeData extends AbstractNodeData {
 	 * Absolute path of the parent path
 	 *
 	 * @var string
-	 * @Flow\Validate(type="StringLength", options={ "maximum"=255 })
+	 * @ORM\Column(length=4000)
+	 * @Flow\Validate(type="StringLength", options={ "maximum"=4000 })
 	 */
 	protected $parentPath;
 
