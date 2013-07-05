@@ -138,8 +138,7 @@ class FeatureContext extends MinkContext {
 	 * @Then /^I should not see the top bar$/
 	 */
 	public function iShouldNotSeeTheInspectorPanel() {
-		$this->assertElementOnPage('#neos-top-bar');
-		Assert::assertFalse($this->getSession()->getPage()->find('css', '#neos-top-bar')->isVisible());
+		$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
 	}
 
 	/**
