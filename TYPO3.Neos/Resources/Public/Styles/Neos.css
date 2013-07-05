@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
 /* Variables */
 /* Color palette */
@@ -8324,85 +8325,6 @@
 .neos button.neos-button.neos-connection-status-down {
   border: 1px solid #c02f00;
 }
-.neos .widget {
-  overflow: auto;
-  margin-bottom: 20px;
-  background-color: #e8e8e8;
-  border: 1px solid #777;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  height: 300px;
-  position: relative;
-}
-.neos .widget.has-footer .widget-body {
-  padding-bottom: 60px;
-}
-.neos .widget .widget-header {
-  padding: 9px 15px;
-}
-.neos .widget .widget-header h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: normal;
-  color: #444444;
-  border-bottom: 1px solid #444444;
-}
-.neos .widget .widget-header h3 a {
-  color: #2d2d2d;
-}
-.neos .widget .widget-header img.pull-right {
-  margin-top: 5px;
-}
-.neos .widget .widget-body {
-  padding: 15px;
-  overflow-y: auto;
-}
-.neos .widget .widget-body p {
-  color: #5e5e5e;
-}
-.neos .widget .widget-footer {
-  padding: 14px 15px 15px;
-  margin-bottom: 0;
-  text-align: right;
-  background-color: transparent;
-  border-top: 1px solid #ddd;
-  -webkit-border-bottom-right-radius: 6px;
-  -moz-border-radius-bottomright: 6px;
-  border-bottom-right-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
-  -moz-border-radius-bottomleft: 6px;
-  border-bottom-left-radius: 6px;
-  *zoom: 1;
-  -webkit-box-shadow: 0 1px 0 white inset;
-  -moz-box-shadow: 0 1px 0 white inset;
-  box-shadow: 0 1px 0 white inset;
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos .widget .widget-footer:before,
-.neos .widget .widget-footer:after {
-  display: table;
-  content: "";
-}
-.neos .widget .widget-footer:after {
-  clear: both;
-}
-.neos .widget .widget-footer .btn + .btn {
-  margin-bottom: 0;
-  margin-left: 5px;
-}
-.neos .widget .widget-footer .btn-group .btn + .btn {
-  margin-left: -1px;
-}
 .neos .alert p {
   margin: 0px;
 }
@@ -10804,6 +10726,91 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus:active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus.active {
   background-color: #6f6f6f \9;
+}
+.neos .widget {
+  overflow: auto;
+  margin-bottom: 20px;
+  background-color: #e8e8e8;
+  border: 1px solid #777;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  height: 300px;
+  position: relative;
+}
+.neos .widget.has-footer .widget-body {
+  padding-bottom: 60px;
+}
+.neos .widget .widget-header {
+  padding: 9px 15px;
+}
+.neos .widget .widget-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: normal;
+  color: #444444;
+  border-bottom: 1px solid #444444;
+}
+.neos .widget .widget-header h3 a {
+  color: #2d2d2d;
+}
+.neos .widget .widget-header i {
+  color: black;
+  font-size: 24px;
+  width: auto;
+  height: auto;
+}
+.neos .widget .widget-header i:before {
+  line-height: 40px;
+}
+.neos .widget .widget-body {
+  padding: 15px;
+  overflow-y: auto;
+}
+.neos .widget .widget-body p {
+  color: #5e5e5e;
+}
+.neos .widget .widget-footer {
+  padding: 14px 15px 15px;
+  margin-bottom: 0;
+  text-align: right;
+  background-color: transparent;
+  border-top: 1px solid #ddd;
+  -webkit-border-bottom-right-radius: 6px;
+  -moz-border-radius-bottomright: 6px;
+  border-bottom-right-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-radius-bottomleft: 6px;
+  border-bottom-left-radius: 6px;
+  *zoom: 1;
+  -webkit-box-shadow: 0 1px 0 white inset;
+  -moz-box-shadow: 0 1px 0 white inset;
+  box-shadow: 0 1px 0 white inset;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos .widget .widget-footer:before,
+.neos .widget .widget-footer:after {
+  display: table;
+  content: "";
+}
+.neos .widget .widget-footer:after {
+  clear: both;
+}
+.neos .widget .widget-footer .btn + .btn {
+  margin-bottom: 0;
+  margin-left: 5px;
+}
+.neos .widget .widget-footer .btn-group .btn + .btn {
+  margin-left: -1px;
 }
 .neos .modal {
   top: 120px;
