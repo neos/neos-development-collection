@@ -15,21 +15,36 @@ TYPO3 Neos has at least the same system requirements as TYPO3 Flow. You can find
 
 Fundamental Installation
 ------------------------
-
-#. First install composer like this (if you don't have it already):
+#. First you need to install the dependency manager *Composer* (if you don't have it already):
 
    .. code-block:: bash
 
-    curl -s https://getcomposer.org/installer | php
+     curl -sS https://getcomposer.org/installer | php
 
-#. Go to your htdocs directory and create project based on the Neos base distribution:
+  By issuing this command Composer will get downloaded as *composer.phar* to your working directory.
+  If you like to have composer installed globally, you can simply move it to a directory within your $PATH environment.
+
+  .. code-block:: bash
+
+	mv composer.phar /usr/local/bin/composer
+
+  .. note::
+
+	If you are on Windows please refer to the `offical documentation
+	<http://getcomposer.org/doc/00-intro.md#installation-windows>`_ on how to install Composer on Windows
+
+#. Go to your htdocs directory and create a new project based on the TYPO3 Neos base distribution:
 
    .. code-block:: bash
 
      cd /your/htdocs/
-     php /path/to/composer.phar create-project -s alpha typo3/neos-base-distribution TYPO3-Neos
+     php /path/to/composer.phar create-project -s alpha --dev typo3/neos-base-distribution TYPO3-Neos
 
-#. Set up a virtual host inside your Apache configuration, and then restart Apache:
+   Composer will take care of downloading all dependencies for running your TYPO3 Neos installation to the
+   directory ``TYPO3-Neos``.
+
+#. Next set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
+   the TYPO3 Neos installation.
 
    .. code-block:: apache
 
@@ -39,27 +54,39 @@ Fundamental Installation
        DocumentRoot "/your/htdocs/TYPO3-Neos/Web/"
        # enable the following line for production context
        #SetEnv FLOW_CONTEXT Production
+
        ServerName neos.demo
+       AllowOverride FileInfo Options=MultiViews
      </VirtualHost>
 
-#. Add an entry to */etc/hosts*:
+   Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
+   virtual host with apache please refer to the `Apache Virtual Host documentation
+   <https://httpd.apache.org/docs/2.2/en/vhosts/>`_.
+
+
+#. Add an entry to */etc/hosts* to make your virtual host reachable:
 
    .. code-block:: text
 
      127.0.0.1 neos.demo
 
-#. Set file permissions as needed:
+   Make sure to use the same name you defined in ``ServerName`` in the virtual host configuration above.
+
+#. Set file permissions as needed so that the installation is read- and writeable by the webserver's user and group:
 
    .. code-block:: bash
 
        sudo ./flow core:setfilepermissions john www-data www-data
+
+   Replace *john* with your current username and *www-data* with the webserver's user and group.
+
+   For detailed instructions on setting the needed permissions see  `TYPO3 Flow File Permissions`_
 
    .. note::
      Setting file permissions is not necessary and not possible on Windows machines.
      For Apache to be able to create symlinks, you need to use Windows Vista (or
      newer) and Apache needs to be started with Administrator privileges.
 
-   For detailed instructions on setting the needed permissions see  `TYPO3 Flow File Permissions`_
 
 #. Now go to http://neos.demo/setup and follow the on-screen instructions.
 
@@ -72,14 +99,24 @@ The TYPO3 Neos Setup Tool
 
 #. The login screen will tell you the location of a file with a generated password. Keep that password
    in some secure place, the generated file will be removed upon login!
+	.. figure:: Images/Setup-Step-1.png
+		:alt: TYPO3 Neos login page
+		:class: screenshot-fullsize
 
 #. Fill in the database credentials in the first step. The selector box will be updated with
    accessible databases to choose from, or you can create a new one.
 
-   .. tip::
-     Configure your MySQL server to use the ``utf8_unicode_ci`` collation by default if possible!
+	.. tip::
+		Configure your MySQL server to use the ``utf8_unicode_ci`` collation by default if possible!
+
+	.. figure:: Images/Setup-Step-2.png
+		:alt: Setup database credentials
+		:class: screenshot-fullsize
 
 #. In the next step a user with administrator privileges for editing with TYPO3 Neos is created.
+	.. figure:: Images/Setup-Step-3.png
+		:alt: Create admin user
+		:class: screenshot-fullsize
 
 #. The following step allows you to import an existing site or kickstart a new site. To import the
    demo site, just select it in the selector box and go to the next step.
@@ -88,13 +125,16 @@ The TYPO3 Neos Setup Tool
 
    If you are new to Neos, we recommend to import the existing demo site so you can follow the next
    section giving you a basic tour of the user interface.
+	.. figure:: Images/Setup-Step-4.png
+		:alt: Create new site or import an existing
+		:class: screenshot-fullsize
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
 
-.. figure:: Images/StartPage.png
-	:alt: The TYPO3 Neos start page
-	:class: screenshot-fullsize
+	.. figure:: Images/StartPage.png
+		:alt: The TYPO3 Neos start page
+		:class: screenshot-fullsize
 
 	The TYPO3 Neos start page
 
