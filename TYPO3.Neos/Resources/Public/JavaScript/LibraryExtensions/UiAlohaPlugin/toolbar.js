@@ -143,7 +143,7 @@ define([
 				'unselectable': 'on'
 			}).hide();
 
-			// In the built aloha.js, init will happend before the body has
+			// In the built aloha.js, init will happened before the body has
 			// finished loading, so we have to defer appending the element.
 
 			$(function () {

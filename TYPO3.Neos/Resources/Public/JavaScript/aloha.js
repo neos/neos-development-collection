@@ -46,8 +46,22 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 			block: {
 				sidebarAttributeEditor: false
 			},
+			/**
+			 * FIXME:
+			 * Currently the filtering of options for alignment and format don't work correctly,
+			 * meaning that all options are still shown. This seems to be an Aloha bug and needs
+			 * more research.
+			 */
+			table: { editables: { '[property="typo3:title"]': [ ] }},
+			link: { editables: { '[property="typo3:title"]': [ ] }},
+			list: { editables: { '[property="typo3:title"]': [ ] }},
+			align: { editables: { '[property="typo3:title"]': [ ] }},
 			format: {
 				config : [ 'b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat' ]
+				,
+				editables: {
+					'div[property="typo3:title"]': [ 'h1', 'h2', 'h3' ]
+				}
 			}
 		},
 		toolbar: {

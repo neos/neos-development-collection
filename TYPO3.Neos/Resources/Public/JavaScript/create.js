@@ -41,9 +41,7 @@ define(
 					disabled: false,
 					vie: vieInstance,
 					widgets: {
-						'default': 'aloha',
-							// TODO Pull this from the node type definition
-						'typo3:title': 'hallo-blockonly'
+						'default': 'aloha'
 					},
 					collectionWidgets: {
 						'default': 'typo3CollectionWidget'
@@ -51,44 +49,6 @@ define(
 					editors: {
 						aloha: {
 							widget: 'alohaWidget'
-						},
-						hallo: {
-							widget: 'halloWidget',
-							options: {
-								toolbar: 'halloToolbarFixed',
-								parentElement: 'body',
-								buttonCssClass: 'btn btn-mini',
-								plugins: {
-									halloformat: {
-										formattings: {bold: true, italic: true, strikeThrough: true, underline: true}
-									},
-									hallojustify: {},
-									halloblock: {
-										elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'blockquote', 'address']
-									},
-									hallolists: {},
-									// TODO: make plugin integration compatible with hallo on jquery UI 1.10.3
-									// 'hallo-linkplugin': {},
-									halloreundo: {}
-								}
-							}
-						},
-						'hallo-blockonly': {
-							widget: 'halloWidget',
-							options: {
-								toolbar: 'halloToolbarFixed',
-								parentElement: '#neos-application',
-								buttonCssClass: 'btn btn-mini',
-								plugins: {
-									halloblock: {
-										elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-									},
-									halloreundo: {},
-									halloblacklist: {
-										tags: ['br']
-									}
-								}
-							}
 						},
 						'inline-only': {
 							widget: 'editWidget'
