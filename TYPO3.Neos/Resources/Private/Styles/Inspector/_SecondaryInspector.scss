@@ -3,7 +3,9 @@
 	top: $unit;
 	bottom: 0;
 	z-index: 10014;
-	right: -100%;
+	// this is set to 150% instead to 100% because Firefox still shows the
+	// secondary inspector with the width of $inspectorWidth
+	right: -150%;
 	box-sizing: border-box;
 	width: 100%;
 	padding-right: $inspectorWidth;
