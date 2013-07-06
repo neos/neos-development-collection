@@ -230,7 +230,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 		_initializeHistoryManagement: function() {
 			var that = this;
-			if (window.history) {
+			if (window.history && _.isFunction(window.history.replaceState)) {
 				window.history.replaceState({uri: window.location.href}, document.title, window.location.href);
 			}
 			window.addEventListener('popstate', function(event) {
@@ -332,7 +332,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 			this.showPageLoader();
 			this.set('_isLoadingPage', true);
 
-			if (window.history && !ignorePushToHistory) {
+			if (window.history && !ignorePushToHistory && _.isFunction(window.history.pushState)) {
 				window.history.pushState({uri: uri}, document.title, uri);
 			}
 
