@@ -50,3 +50,9 @@ TYPO3  Neos 1.0.0-alpha3
 * Low level features in TypoScript and Eel to prepare for new features
 
 See :ref:`1.0.0-alpha3`
+
+
+TYPO3  Neos 1.0.0-alpha4
+------------------------
+
+See :ref:`1.0.0-alpha4`
