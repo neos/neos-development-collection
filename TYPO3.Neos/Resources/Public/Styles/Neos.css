@@ -6825,6 +6825,277 @@
   font-weight: bold;
   line-height: 38px;
 }
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor {
+  position: relative;
+}
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:before,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  top: 0;
+  left: 0;
+}
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:after,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  top: 38px;
+  left: 0;
+}
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:before,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor .neos-add-on + span:before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 40px;
+  top: 0;
+  left: 0;
+}
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:after,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor .neos-add-on + span:after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 40px;
+  top: 0;
+  right: 0;
+}
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:before, .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:after,
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:before,
+.neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:after {
+  background-color: #00a338;
+}
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor:before, .neos #neos-inspector .neos-error .neos-inspector-datetime-editor:after,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor .neos-add-on + span:before,
+.neos #neos-inspector .neos-error .neos-inspector-datetime-editor .neos-add-on + span:after {
+  background-color: #ff460d;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor {
+  color: #fff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-add-on {
+  cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor input {
+  cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker {
+  direction: ltr;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-datetimepicker-rtl {
+  direction: rtl;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-datetimepicker-rtl table tr td span {
+  float: right;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker > div {
+  display: none;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-minutes div.neos-datetimepicker-minutes, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-hours div.neos-datetimepicker-hours, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-days div.neos-datetimepicker-days, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-months div.neos-datetimepicker-months, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker.neos-years div.neos-datetimepicker-years {
+  display: block;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-minutes table tbody tr td,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-hours table tbody tr td,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-months table tbody tr td,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-years table tbody tr td {
+  border-bottom: none;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-minutes table tfoot tr th,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-hours table tfoot tr th,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-months table tfoot tr th,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker div.neos-datetimepicker-years table tfoot tr th {
+  border-top: none;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table {
+  margin: 0;
+  width: 280px;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table td,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table th {
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border: 1px solid #323232;
+  padding: 0;
+  background-color: #222222;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-minute:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-hour:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-day:hover {
+  background-color: #00b5ff;
+  color: #fff;
+  cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-old, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-new {
+  color: #5b5b5b;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-disabled:hover {
+  background-color: transparent;
+  color: #5b5b5b;
+  cursor: default;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-today, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-today.neos-disabled {
+  background-color: #323232;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover {
+  background-color: #00b5ff;
+  color: white;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active[disabled], .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover[disabled], .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled[disabled], .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover[disabled] {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active:hover.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td.neos-active.neos-disabled:hover.neos-active {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span {
+  display: block;
+  width: 25%;
+  height: 40px;
+  line-height: 40px;
+  float: left;
+  cursor: pointer;
+  border-right: 1px solid #323232;
+  border-bottom: 1px solid #323232;
+  margin-right: -1px;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span:hover {
+  background-color: #00b5ff;
+  color: #fff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-disabled:hover {
+  background-color: transparent;
+  color: #5b5b5b;
+  cursor: default;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover {
+  background-color: #00b5ff;
+  color: white;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-disabled, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active[disabled], .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover[disabled], .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled[disabled], .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover[disabled] {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active:hover.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-active {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker table tr td span.neos-old {
+  color: #5b5b5b;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker .neos-datetimepicker-hours span {
+  height: 26px;
+  line-height: 26px;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker .neos-datetimepicker-hours table tr td span.neos-hour_am,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker .neos-datetimepicker-hours table tr td span.neos-hour_pm {
+  width: 14.6%;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker .neos-datetimepicker-hours fieldset legend,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker .neos-datetimepicker-minutes fieldset legend {
+  margin-bottom: inherit;
+  line-height: 30px;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker .neos-datetimepicker-minutes span {
+  height: 26px;
+  line-height: 26px;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker th.neos-switch {
+  width: 145px;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker thead tr:first-child th,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker tfoot tr:first-child th {
+  cursor: pointer;
+  border-top: none;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker thead tr:first-child th:hover,
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker tfoot tr:first-child th:hover {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker thead tr + tr th {
+  background-color: #323232;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor .neos-datetimepicker-inline {
+  width: 280px;
+}
+.neos #neos-inspector .neos-inspector-image {
+  min-width: 288px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-button {
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container {
+  position: relative;
+  overflow: hidden;
+  border: 1px dashed #323232;
+  margin-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-image-preview-thumbnail {
+  max-width: 288px;
+  max-height: 216px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-loadingindicator {
+  z-index: 1;
+  position: absolute;
+  left: 67px;
+  top: 67px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-thumbnail-inner {
+  overflow: hidden;
+  padding: 0;
+  margin: auto;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-thumbnail-inner img {
+  max-width: none;
+  max-height: none;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-imagebadge {
+  position: absolute;
+  top: 80px;
+  width: 100%;
+  height: 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  display: none;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-imagebadge.neos-imagebadge-visible {
+  display: block;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-uploadthumbnail {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-uploadthumbnail-landscape {
+  width: 288px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-uploadthumbnail-portrait {
+  height: 216px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-upload,
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-width {
+  padding-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-upload .neos-inspector-image-upload-button,
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-upload .neos-inspector-image-crop-button,
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-upload-button,
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-crop-button {
+  float: right;
+  margin-left: 4px;
+}
 .neos #neos-inspector .toolbar {
   position: absolute;
   top: 0;
@@ -7199,19 +7470,24 @@
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on {
   display: table-cell;
-  background-color: #3f3f3f;
+  background-color: #323232;
   color: #fff;
   text-shadow: none;
   border: none;
   border-right: 1px solid #222222;
   padding: 9px;
   min-width: 41px;
+  text-align: center;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.neos #neos-inspector .neos-inspector-form .neos-add-on [class^="icon-"],
+.neos #neos-inspector .neos-inspector-form .neos-add-on [class*=" icon-"] {
+  vertical-align: top;
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on input {
   margin: 0;
@@ -7301,76 +7577,6 @@
 .neos .inspector-dialog {
   position: fixed;
   z-index: 11000;
-}
-.neos .neos-inspector-image {
-  min-width: 288px;
-}
-.neos .neos-inspector-image .neos-button {
-  padding: 0 8px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 13px;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container {
-  position: relative;
-  overflow: hidden;
-  border: 1px dashed #323232;
-  margin-bottom: 12px;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-image-preview-thumbnail {
-  max-width: 288px;
-  max-height: 216px;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-loadingindicator {
-  z-index: 1;
-  position: absolute;
-  left: 67px;
-  top: 67px;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-thumbnail-inner {
-  overflow: hidden;
-  padding: 0;
-  margin: auto;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-thumbnail-inner img {
-  max-width: none;
-  max-height: none;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-imagebadge {
-  position: absolute;
-  top: 80px;
-  width: 100%;
-  height: 20px;
-  color: white;
-  background: rgba(0, 0, 0, 0.7);
-  text-align: center;
-  display: none;
-}
-.neos .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-imagebadge.neos-imagebadge-visible {
-  display: block;
-}
-.neos .neos-inspector-image .neos-inspector-image-uploadthumbnail {
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-.neos .neos-inspector-image .neos-inspector-image-uploadthumbnail-landscape {
-  width: 288px;
-}
-.neos .neos-inspector-image .neos-inspector-image-uploadthumbnail-portrait {
-  height: 216px;
-}
-.neos .neos-inspector-image .neos-inspector-image-upload,
-.neos .neos-inspector-image .neos-inspector-image-width {
-  padding-bottom: 12px;
-}
-.neos .neos-inspector-image .neos-inspector-image-upload .neos-inspector-image-upload-button,
-.neos .neos-inspector-image .neos-inspector-image-upload .neos-inspector-image-crop-button,
-.neos .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-upload-button,
-.neos .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-crop-button {
-  float: right;
-  margin-left: 4px;
 }
 .neos .neos-secondary-inspector {
   position: fixed;

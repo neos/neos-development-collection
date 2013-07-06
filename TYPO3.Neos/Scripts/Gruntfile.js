@@ -12,7 +12,8 @@ module.exports = function(grunt) {
 				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',
 				baseUri + 'twitter-bootstrap/js/bootstrap-dropdown.js',
 				baseUri + 'twitter-bootstrap/js/bootstrap-tooltip.js',
-				baseUri + 'bootstrap-notify/js/bootstrap-notify.js'
+				baseUri + 'bootstrap-notify/js/bootstrap-notify.js',
+				baseUri + 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.js'
 			],
 			dest: baseUri + 'bootstrap-components.js',
 			options: {
@@ -20,17 +21,28 @@ module.exports = function(grunt) {
 				footer: '',
 				process: function(src, filepath) {
 					src = src.replace(/keydown\./g, 'keydown.neos-');
-					src = src.replace(/\.dropdown form/g, '.neos-dropdown form');
+					src = src.replace(/focus\./g, 'focus.neos-');
 					src = src.replace(/click\./g, 'click.neos-');
-					src = src.replace(/Class\('/g, "Class('neos-");
-					src = src.replace(/'\.disabled/g, "'.neos-disabled");
+					src = src.replace(/Class\('(?!icon)/g, "Class('neos-");
 					src = src.replace(/\.divider/g, ".neos-divider");
-					src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
-					src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
-					src = src.replace(/\.tooltip-arrow/g, '.neos-tooltip-arrow');
-					src = src.replace(/\.tooltip-inner/g, '.neos-tooltip-inner');
 					src = src.replace(/pull-right/g, 'neos-pull-right');
-					src = src.replace(/class="/g, 'class="neos-');
+					src = src.replace(/class="(?!icon)/g, 'class="neos-');
+					src = src.replace(/(find|is|closest|filter)\(('|")\./g, "$1($2.neos-");
+					src = src.replace(/, \./g, '., .neos-');
+
+					// Dropdown
+					src = src.replace(/' dropdown-menu'/g, "' neos-dropdown-menu'");
+					src = src.replace(/\.dropdown form/g, '.neos-dropdown form');
+
+					// Tooltip
+					src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
+					src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
+
+					// Datetimepicker
+					src = src.replace(/case '(switch|prev|next|today)'/g, "case 'neos-$1'");
+					src = src.replace(/= ' (old|new|disabled|active|today)'/g, "= ' neos-$1'");
+					src = src.replace(/th\.today/g, 'th.neos-today');
+
 					return src;
 				}
 			}

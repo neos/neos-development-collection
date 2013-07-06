@@ -16,7 +16,7 @@
 		// The editors below are lazily loaded through Require.js, so we need to include them in the build manually.
 		"Content/Inspector/Editors/TextFieldEditor",
 		"Content/Inspector/Editors/BooleanEditor",
-		"Content/Inspector/Editors/DateEditor",
+		"Content/Inspector/Editors/DateTimeEditor",
 		"Content/Inspector/Editors/ImageEditor",
 		"Content/Inspector/Editors/SelectBoxEditor"
 	],

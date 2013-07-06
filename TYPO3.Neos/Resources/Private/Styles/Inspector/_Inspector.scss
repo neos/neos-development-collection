@@ -48,6 +48,8 @@
 	@include font;
 
 	@import "Shared/Chosen";
+	@import "Editors/DateTimePicker";
+	@import "Editors/ImageEditor";
 
 	.toolbar {
 		position: absolute;
@@ -369,10 +371,6 @@
 				color: $warning;
 				border: 2px solid $warning;
 				@include box-shadow(none);
-
-				&:focus {
-
-				}
 			}
 		}
 
@@ -399,15 +397,21 @@
 
 		.neos-add-on {
 			display: table-cell;
-			background-color: $grayLight;
+			background-color: $grayMedium;
 			color: #fff;
 			@include text-shadow(none);
 			border: none;
 			border-right: 1px solid $grayDark;
 			padding: 9px;
-			min-width: $unit + 1;
+			min-width: $unit + 1px;
+			text-align: center;
 			@include border-radius(0);
 			@include box-sizing(border-box);
+
+			[class^="icon-"],
+			[class*=" icon-"] {
+				vertical-align: top;
+			}
 
 			input {
 				margin: 0;

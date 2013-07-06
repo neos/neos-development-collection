@@ -89,7 +89,7 @@ TYPO3:
       'TYPO3\Media\Domain\Model\ImageVariant':
         editor: Content/Inspector/Editors/ImageEditor
       date:
-        editor: Content/Inspector/Editors/DateEditor
+        editor: Content/Inspector/Editors/DateTimeEditor
 
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
