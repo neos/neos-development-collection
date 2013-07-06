@@ -249,6 +249,8 @@ class FeatureContext extends MinkContext {
 	public function iSetTheContentTo($content) {
 		$editable = $this->assertSession()->elementExists('css', '.neos-inline-editable', $this->selectedContentElement);
 
+		$this->spinWait(function() use ($editable) { return $editable->hasAttribute('contenteditable'); }, 10000, 'editable has contenteditable attribute set');
+
 		$editable->setValue($content);
 	}
 
@@ -266,6 +268,23 @@ class FeatureContext extends MinkContext {
 	 */
 	public function locatePath($path) {
 		return parent::locatePath($this->getSubcontext('flow')->resolvePath($path));
+	}
+
+	/**
+	 * @param callable $callback
+	 * @param integer $timeout Timeout in milliseconds
+	 * @param string $message
+	 */
+	public function spinWait($callback, $timeout, $message = '') {
+		$waited = 0;
+		while ($callback() !== TRUE) {
+			if ($waited > $timeout) {
+				Assert::fail($message);
+				return;
+			}
+			usleep(50000);
+			$waited += 50;
+		}
 	}
 
 }
