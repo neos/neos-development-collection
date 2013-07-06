@@ -22,10 +22,11 @@ require(
 		'emberjs',
 		'Content/ContentModule',
 		'Content/ApplicationView',
+		'Content/Components/PublishMenu',
 		'Shared/ResourceCache',
 		'storage'
 	],
-	function(Ember, ContentModule, ApplicationView, ResourceCache) {
+	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache) {
 		var T3 = window.T3;
 		T3.Configuration = window.T3Configuration;
 		delete window.T3Configuration;
@@ -46,6 +47,8 @@ require(
 
 			ContentModule.advanceReadiness();
 			ApplicationView.create().appendTo('#neos-application');
+			PublishMenu.create().appendTo('#neos-user-actions');
+
 		});
 	}
 );

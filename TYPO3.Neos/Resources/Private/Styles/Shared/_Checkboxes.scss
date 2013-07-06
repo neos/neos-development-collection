@@ -1,0 +1,33 @@
+input[type=checkbox] {
+	visibility: hidden;
+	margin: 0;
+	width: 22px;
+	height: 22px;
+	margin-right: $defaultMargin;
+	@include box-sizing(border-box);
+
+	&:before {
+		display: block;
+		width: 20px;
+		height: 20px;
+		background-color: $grayLight;
+		border: 1px solid #d4cfc8;
+		color: #fff;
+		cursor: pointer;
+		content: "";
+		visibility: visible;
+	}
+
+	&:hover:before {
+		border: 1px solid $blue;
+	}
+
+	&:checked:before {
+		@include font;
+		background-color: $blue;
+		border: 1px solid $blue;
+		content: "√";
+		text-align: center;
+		font-weight: bold;
+	}
+}

@@ -1,13 +1,16 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<div class="neos-button-logout dropdown">
-	<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user"></i> {user.name.fullName} <b class="caret"></b></a>
+
+<div class="btn-group neos-user-menu">
+	<button class="dropdown-toggle neos-button" data-toggle="dropdown" href="#">
+		<i class="icon-user"></i> {user.name.fullName}
+		<i class="icon-chevron-down"></i>
+	</button>
 	<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 		<li>
 			<f:link.action controller="Login" action="logout" package="TYPO3.Neos">
 				<i class="icon-off"></i> Logout
 			</f:link.action>
 		</li>
-		<li class="divider"></li>
 		<li>
 			<neos:link.module path="user/usersettings">
 				<i class="icon-wrench"></i> User Settings

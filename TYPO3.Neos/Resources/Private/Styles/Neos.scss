@@ -84,12 +84,15 @@
 	@import "Inspector/Editors/ImageEditor";
 	@import "Inspector/SecondaryInspector";
 	@import "TopBar/TopBar";
+	@import "TopBar/PublishMenu";
+	@import "TopBar/UserMenu";
 	@import "ContextBar/ContextBar";
 	@import "ContextBar/AlohaMenu";
 	@import "InlineEditing";
 	@import "Modules/Modules";
 	@import "Modules/Widget";
 	@import "Overlays";
+	@import "ButtonGroups";
 }
 
 @import "Content";

@@ -30,7 +30,9 @@
 						</f:if>
 					</f:for>
 				</ul>
-				<f:render partial="Backend/UserMenu" arguments="{_all}" />
+				<div id="neos-user-actions">
+					<f:render partial="Backend/UserMenu" arguments="{_all}" />
+				</div>
 			</div>
 		</div>
 	</f:if>

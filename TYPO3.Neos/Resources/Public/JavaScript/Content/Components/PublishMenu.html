@@ -1,0 +1,11 @@
+{{view view.PublishButton autopublishBinding="view.autopublish"}}
+<button class="neos-button dropdown-toggle" data-toggle="dropdown">
+	<i class="icon-chevron-down"></i>
+</button>
+<ul class="dropdown-menu">
+	<li>
+		<label class="checkbox">
+			{{view Ember.Checkbox checkedBinding="view.autopublish"}} Auto-Publish
+		</label>
+	</li>
+</ul>

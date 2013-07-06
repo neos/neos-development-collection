@@ -1,0 +1,11 @@
+.neos-user-menu.btn-group {
+	font-size: $generalFontSize;
+
+	.neos-button {
+		background: none;
+
+		i {
+			margin-top: 3px;
+		}
+	}
+}

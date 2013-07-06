@@ -1,0 +1,32 @@
+.neos-publish-menu.btn-group {
+	&.neos-disabled {
+		.neos-publish-button, .dropdown-toggle {
+			@include opacity(0.5);
+		}
+	}
+
+	&.open {
+		.dropdown-toggle {
+			opacity: 1 !important;
+		}
+	}
+
+	.neos-publish-button {
+		min-width: 165px;
+		background-color: $orange;
+		font-size: $generalFontSize;
+	}
+
+	.dropdown-toggle {
+		width: $unit;
+		border: 0;
+		border-radius: 0;
+		padding: 0;
+		background-color: $orange;
+		line-height: 0;
+		@include box-sizing(content-box);
+		border-right: 1px solid $orange;
+		border-left: 1px solid $grayDark;
+		cursor: pointer;
+	}
+}
