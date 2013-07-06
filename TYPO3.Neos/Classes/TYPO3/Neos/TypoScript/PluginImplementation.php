@@ -204,17 +204,22 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	public function evaluate() {
-		$currentContext = $this->tsRuntime->getCurrentContext();
-		$this->node = $currentContext['node'];
-		$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
-		$pluginResponse = new Response($parentResponse);
+		try {
+			$currentContext = $this->tsRuntime->getCurrentContext();
+			$this->node = $currentContext['node'];
+			$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
+			$pluginResponse = new Response($parentResponse);
+			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-		$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
+			$content = $pluginResponse->getContent();
+		} catch (\Exception $exception) {
+			$content = $this->tsRuntime->handleRenderingException($this->path, $exception);
+		}
 
 		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface) {
-			return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $pluginResponse->getContent());
+			return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $content);
 		} else {
-			return $pluginResponse->getContent();
+			return $content;
 		}
 	}
 

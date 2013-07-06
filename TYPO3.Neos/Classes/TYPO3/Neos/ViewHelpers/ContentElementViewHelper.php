@@ -35,7 +35,14 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 * @return string
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface $node, $page = FALSE, $reloadable = FALSE) {
-		return $this->contentElementWrappingService->wrapContentObject($node, $this->templateVariableContainer->get('fluidTemplateTsObject')->getPath(), $this->renderChildren(), $page, $reloadable);
+		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
+		try {
+			$content = $this->renderChildren();
+		} catch (\Exception $exception) {
+			$content = $fluidTemplateTsObject->getTsRuntime()->handleRenderingException($fluidTemplateTsObject->getPath(), $exception);
+		}
+
+		return $this->contentElementWrappingService->wrapContentObject($node, $fluidTemplateTsObject->getPath(), $content, $page, $reloadable);
 	}
 }
 ?>
