@@ -11214,6 +11214,7 @@ body.neos-previewmode .neos-preview-close {
   -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
   -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
 }
 body.neos-previewmode .neos-preview-close .neos-button {
   width: 40px;
