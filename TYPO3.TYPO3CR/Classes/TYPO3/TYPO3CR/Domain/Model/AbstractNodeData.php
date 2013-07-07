@@ -100,10 +100,28 @@ abstract class AbstractNodeData {
 	protected $nodeTypeManager;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * Set the name to $newName
+	 *
+	 * @param string $newName
+	 * @throws \InvalidArgumentException
+	 * @api
 	 */
-	protected $securityContext;
+	public function setName($newName) {
+		if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290839);
+		}
+		$this->name = $newName;
+	}
+
+	/**
+	 * Get the name of this NodeData object.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getName() {
+		return $this->name;
+	}
 
 	/**
 	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description

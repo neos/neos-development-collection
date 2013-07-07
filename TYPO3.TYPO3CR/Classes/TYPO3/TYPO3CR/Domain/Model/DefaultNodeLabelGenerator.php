@@ -23,16 +23,16 @@ class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 	/**
 	 * Render a node label
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $nodeData
 	 * @return string
 	 */
-	public function getLabel(NodeData $node) {
-		if ($node->hasProperty('title') === TRUE && $node->getProperty('title') !== '') {
-			$label = strip_tags($node->getProperty('title'));
-		} elseif ($node->hasProperty('text') === TRUE && $node->getProperty('text') !== '') {
-			$label = strip_tags($node->getProperty('text'));
+	public function getLabel(AbstractNodeData $nodeData) {
+		if ($nodeData->hasProperty('title') === TRUE && $nodeData->getProperty('title') !== '') {
+			$label = strip_tags($nodeData->getProperty('title'));
+		} elseif ($nodeData->hasProperty('text') === TRUE && $nodeData->getProperty('text') !== '') {
+			$label = strip_tags($nodeData->getProperty('text'));
 		} else {
-			$label = '(' . $node->getNodeType()->getName() . ') ' . $node->getName();
+			$label = '(' . $nodeData->getNodeType()->getName() . ') ' . $nodeData->getName();
 		}
 
 		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, NodeInterface::LABEL_MAXIMUM_CHARACTERS);

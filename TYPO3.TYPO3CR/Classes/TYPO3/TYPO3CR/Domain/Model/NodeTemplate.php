@@ -20,30 +20,5 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class NodeTemplate extends AbstractNodeData {
 
-	/**
-	 * Set the name of the node to $newName
-	 *
-	 * @param string $newName
-	 * @return void
-	 * @throws \InvalidArgumentException
-	 * @api
-	 */
-	public function setName($newName) {
-		if (!is_string($newName) || preg_match(self::MATCH_PATTERN_NAME, $newName) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290839);
-		}
-		$this->name = $newName;
-	}
-
-	/**
-	 * Returns the name of this node
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
 }
 ?>

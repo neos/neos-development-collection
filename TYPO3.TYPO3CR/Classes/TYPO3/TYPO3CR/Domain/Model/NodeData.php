@@ -132,6 +132,12 @@ class NodeData extends AbstractNodeData {
 	protected $nodeDataRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * Constructs this node data container
 	 *
 	 * Creating new nodes by instantiating NodeData is not part of the public API!
