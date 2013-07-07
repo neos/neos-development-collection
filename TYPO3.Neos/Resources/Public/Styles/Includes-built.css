@@ -7880,7 +7880,7 @@
   transition-duration: 0.2s;
 }
 .neos.neos-tree-panel-open .neos-pageloader-wrapper .neos-pageloader {
-  margin-left: -340px;
+  margin-left: -350px;
 }
 .neos.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
   margin-top: 20px;
@@ -9738,6 +9738,1186 @@
 .neos #neos-context-bar .chzn-container .chzn-drop .chzn-results li:first-child {
   border-top: 1px solid #3f3f3f;
 }
+.neos #neos-menu-button {
+  float: left;
+  left: 0;
+  top: 0;
+  position: fixed;
+  width: 54px;
+  height: 40px;
+  z-index: 10030;
+  background-color: #222222;
+  border-right: 1px solid #3f3f3f;
+}
+.neos #neos-menu-button:hover, .neos #neos-menu-button.pressed {
+  background-color: #00b5ff;
+}
+.neos #neos-menu-button:before {
+  display: block;
+  position: absolute;
+  left: 16px;
+  top: 12px;
+  width: 22px;
+  height: 3px;
+  border-top: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  content: "";
+}
+.neos #neos-menu-button:after {
+  display: block;
+  position: absolute;
+  left: 16px;
+  top: 24px;
+  width: 22px;
+  height: 3px;
+  background-color: #fff;
+  content: "";
+}
+.neos #neos-menu-panel {
+  position: fixed;
+  top: 40px;
+  bottom: 0;
+  left: -321px;
+  width: 320px;
+  background-color: #222222;
+  z-index: 10020;
+  border-top: 1px solid #3f3f3f;
+  border-right: 1px solid #3f3f3f;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-transition-property: left;
+  -moz-transition-property: left;
+  -o-transition-property: left;
+  transition-property: left;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.neos #neos-menu-panel.neos-noscript {
+  top: 0;
+  left: 0;
+}
+.neos #neos-menu-panel a {
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #fff;
+}
+.neos #neos-menu-panel a:hover, .neos #neos-menu-panel a:active {
+  color: #00b5ff;
+  text-decoration: none;
+}
+.neos #neos-menu-panel .neos-menu-container {
+  height: 100%;
+}
+.neos #neos-menu-panel .neos-menu-section {
+  position: relative;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-headline {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-left: 56px;
+  padding-right: 54px;
+  height: 40px;
+  border-bottom: 1px solid #3f3f3f;
+  cursor: pointer;
+  line-height: 40px;
+  position: relative;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-left: 1px solid #3f3f3f;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
+  background-color: #00b5ff;
+  color: #fff;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.collapsed::before, .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.open::before {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  top: 0;
+  line-height: 40px;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.collapsed::before {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left: 13px;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.open::before {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 19px;
+}
+.neos #neos-menu-panel .neos-menu-section a {
+  display: block;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 40px;
+  height: 40px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-left: 38px;
+  padding-right: 16px;
+}
+.neos #neos-menu-panel .neos-menu-section a.active {
+  color: #00b5ff;
+}
+.neos #neos-menu-panel .neos-menu-section a i {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 54px;
+  height: 40px;
+  font-size: 20px;
+  line-height: 40px;
+  vertical-align: middle;
+  text-align: center;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-list a {
+  background-color: #323232;
+  border-bottom: 1px solid #3f3f3f;
+  padding-left: 54px;
+  position: relative;
+  font-weight: normal;
+}
+.neos.neos-module {
+  background: #888888;
+  background: url(../Images/module-bg.jpg) left top repeat;
+  color: #fff;
+  margin: 95px 0px 0px 0px;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #0fb9ff;
+  background-image: -moz-linear-gradient(top, #1abcff, #00b5ff);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#1abcff), to(#00b5ff));
+  background-image: -webkit-linear-gradient(top, #1abcff, #00b5ff);
+  background-image: -o-linear-gradient(top, #1abcff, #00b5ff);
+  background-image: linear-gradient(to bottom, #1abcff, #00b5ff);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF1ABCFF', endColorstr='#FF00B5FF', GradientType=0);
+  border-color: #00b5ff #00b5ff #007fb3;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #00b5ff;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #00a3e6;
+  border-bottom-color: #0091cc;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze[disabled] {
+  color: white;
+  background-color: #00b5ff;
+  *background-color: #00a3e6;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.active {
+  background-color: #0091cc \9;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #00b2fb;
+  background-image: -moz-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00b5ff), to(#00aef5));
+  background-image: -webkit-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: -o-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: linear-gradient(to bottom, #00b5ff, #00aef5);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00B5FF', endColorstr='#FF00AEF5', GradientType=0);
+  border-color: #00aef5 #00aef5 #0077a8;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #00aef5;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #0091cc;
+  border-bottom-color: #006d99;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover[disabled], .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus[disabled], .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active[disabled] {
+  color: white;
+  background-color: #00aef5;
+  *background-color: #009cdb;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:hover.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:focus.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze:active.active {
+  background-color: #008ac2 \9;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #0fb9ff;
+  background-image: -moz-linear-gradient(top, #1abcff, #00b5ff);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#1abcff), to(#00b5ff));
+  background-image: -webkit-linear-gradient(top, #1abcff, #00b5ff);
+  background-image: -o-linear-gradient(top, #1abcff, #00b5ff);
+  background-image: linear-gradient(to bottom, #1abcff, #00b5ff);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF1ABCFF', endColorstr='#FF00B5FF', GradientType=0);
+  border-color: #00b5ff #00b5ff #007fb3;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #00b5ff;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled[disabled], .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover[disabled], .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active[disabled], .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus:hover, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus:focus, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus.disabled, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus[disabled] {
+  color: white;
+  background-color: #00b5ff;
+  *background-color: #00a3e6;
+}
+.neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:hover.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:active.active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus:active, .neos.neos-module.neos-module-administration-packages .neos-button.btn-freeze.disabled:focus.active {
+  background-color: #0091cc \9;
+}
+.neos.neos-module.neos-module-administration-packages table td.check,
+.neos.neos-module.neos-module-administration-packages table th.check {
+  width: 12px;
+}
+.neos.neos-module.neos-module-administration-packages table td.check input,
+.neos.neos-module.neos-module-administration-packages table th.check input {
+  margin: 0;
+}
+.neos.neos-module.neos-module-administration-packages table label {
+  padding: 5px 0;
+  margin-bottom: 0;
+  font-size: inherit;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.neos.neos-module.neos-module-administration-packages table .fold-toggle {
+  cursor: pointer;
+  margin-top: -1px;
+  margin-right: 11px;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6d6d6d;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.disabled, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze[disabled],
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.disabled,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active {
+  background-color: #4d4d4d \9;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #00b2fb;
+  background-image: -moz-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00b5ff), to(#00aef5));
+  background-image: -webkit-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: -o-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: linear-gradient(to bottom, #00b5ff, #00aef5);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00B5FF', endColorstr='#FF00AEF5', GradientType=0);
+  border-color: #00aef5 #00aef5 #0077a8;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #00aef5;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #0091cc;
+  border-bottom-color: #006d99;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover:hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover:focus, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover.disabled, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover[disabled], .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus:hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus:focus, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus.disabled, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus[disabled], .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active:hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active:focus, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active.disabled, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active[disabled],
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover:hover,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover:focus,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover.disabled,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover[disabled],
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus:hover,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus:focus,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus.disabled,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus[disabled],
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active:hover,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active:focus,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active.disabled,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active[disabled] {
+  color: white;
+  background-color: #00aef5;
+  *background-color: #009cdb;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:hover.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:focus.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze:active.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:hover.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:focus.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze:active.active {
+  background-color: #008ac2 \9;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #00b2fb;
+  background-image: -moz-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00b5ff), to(#00aef5));
+  background-image: -webkit-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: -o-linear-gradient(top, #00b5ff, #00aef5);
+  background-image: linear-gradient(to bottom, #00b5ff, #00aef5);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00B5FF', endColorstr='#FF00AEF5', GradientType=0);
+  border-color: #00aef5 #00aef5 #0077a8;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #00aef5;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #0091cc;
+  border-bottom-color: #006d99;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active:hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active:focus, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active.active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active.disabled, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active[disabled],
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active:hover,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active:focus,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active.disabled,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active[disabled] {
+  color: white;
+  background-color: #00aef5;
+  *background-color: #009cdb;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active:active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.btn-freeze.active.active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active:active,
+.neos.neos-module.neos-module-administration-packages table td > div.pull-right > .neos-button.btn-freeze.active.active {
+  background-color: #008ac2 \9;
+}
+.neos.neos-module.neos-module-management-workspaces td.node-type {
+  white-space: nowrap;
+}
+.neos.neos-module.neos-module-management-workspaces td.node-type img {
+  vertical-align: text-bottom;
+}
+.neos.neos-module.neos-module-management-workspaces td label {
+  padding: 5px 0;
+  margin-bottom: 0;
+  font-size: inherit;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.neos.neos-module.neos-module-management-workspaces th,
+.neos.neos-module.neos-module-management-workspaces td.actions {
+  white-space: nowrap;
+}
+.neos.neos-module.neos-module-management-workspaces i.legend {
+  vertical-align: text-top;
+}
+.neos.neos-module.neos-module-management-workspaces .fold-toggle {
+  cursor: pointer;
+  margin-top: -1px;
+  margin-right: 11px;
+}
+.neos.neos-module.neos-module-management-workspaces td.check,
+.neos.neos-module.neos-module-management-workspaces th.check {
+  width: 12px;
+}
+.neos.neos-module.neos-module-management-workspaces td.check input,
+.neos.neos-module.neos-module-management-workspaces th.check input {
+  margin: 0;
+}
+.neos.neos-module.neos-module-management-workspaces td.legend,
+.neos.neos-module.neos-module-management-workspaces th.legend {
+  width: 14px;
+  padding: 8px 10px;
+}
+.neos.neos-module.neos-module-management-workspaces td.actions {
+  width: 76px;
+}
+.neos.neos-module.neos-module-management-workspaces tfoot .legend {
+  margin-left: 15px;
+}
+.neos.neos-module p {
+  line-height: 1.6em;
+}
+.neos.neos-module label {
+  font-size: 14px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+.neos.neos-module .alert {
+  font-size: 13px;
+  line-height: 18px;
+}
+.neos.neos-module form.inline {
+  display: inline-block;
+}
+.neos.neos-module.neos-module-user-usersettings .neos-content #electronicAddresses select, .neos.neos-module.neos-module-administration-users .neos-content #electronicAddresses select {
+  width: auto;
+}
+.neos.neos-module.neos-module-user-usersettings .neos-content #electronicAddresses input[type="text"], .neos.neos-module.neos-module-administration-users .neos-content #electronicAddresses input[type="text"] {
+  width: 140px;
+}
+.neos.neos-module.neos-module-user-usersettings .neos-content #electronicAddresses input[type="radio"], .neos.neos-module.neos-module-administration-users .neos-content #electronicAddresses input[type="radio"] {
+  margin: 0;
+}
+.neos.neos-module.neos-module-user-usersettings .neos-content i.icon-user, .neos.neos-module.neos-module-administration-users .neos-content i.icon-user {
+  margin-right: 11px;
+}
+.neos.neos-module .nav-pills > li > a {
+  padding: 0 20px 0 20px;
+  margin: 0px;
+  color: #999999;
+  background: transparent;
+  line-height: 40px;
+}
+.neos.neos-module .nav-pills > li > a:hover, .neos.neos-module .nav-pills > li > a:active, .neos.neos-module .nav-pills > li > a:focus {
+  color: white;
+  background: transparent;
+}
+.neos.neos-module .nav-pills > li:first-child a {
+  padding-left: 15px;
+}
+.neos.neos-module .nav-pills li.active a {
+  background: transparent;
+  color: white;
+}
+.neos.neos-module .neos-content.well {
+  background-color: #777;
+  border-color: #666;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  padding: 0px;
+}
+.neos.neos-module .neos-content.well h1 {
+  padding: 10px 50px 0px 50px;
+}
+.neos.neos-module .neos-content.well p {
+  color: #e8e8e8;
+}
+.neos.neos-module .neos-content.well .alert p {
+  color: inherit;
+}
+.neos.neos-module .neos-content.well .breadcrumb {
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+  border-top-left-radius: 4px;
+  -webkit-border-bottom-right-radius: 0px;
+  -moz-border-radius-bottomright: 0px;
+  border-bottom-right-radius: 0px;
+  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius-bottomleft: 0px;
+  border-bottom-left-radius: 0px;
+  background-color: #666;
+  border-bottom: 1px solid #888888;
+  -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
+  -moz-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
+}
+.neos.neos-module .neos-content.well .breadcrumb li {
+  text-shadow: 0 0 0 transparent;
+  color: #e6e6e6;
+}
+.neos.neos-module .neos-content.well .breadcrumb a {
+  color: #b3b3b3;
+}
+.neos.neos-module .neos-content.well .breadcrumb a:hover, .neos.neos-module .neos-content.well .breadcrumb a:active, .neos.neos-module .neos-content.well .breadcrumb a:focus {
+  color: #e6e6e6;
+  text-decoration: none;
+}
+.neos.neos-module .neos-content.well .neos-module-container {
+  padding: 0px 50px 0px 50px;
+}
+.neos.neos-module .neos-content.well .neos-module-container.indented {
+  margin-left: 0px;
+}
+.neos.neos-module .neos-content .widget {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+.neos.neos-module .neos-content.fluid-container h1 {
+  margin-left: 20px;
+}
+.neos.neos-module table td > .neos-button.btn,
+.neos.neos-module table td > div.pull-right > .neos-button.btn {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6d6d6d;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos.neos-module table td > .neos-button.btn:hover, .neos.neos-module table td > .neos-button.btn:focus, .neos.neos-module table td > .neos-button.btn:active, .neos.neos-module table td > .neos-button.btn.active, .neos.neos-module table td > .neos-button.btn.disabled, .neos.neos-module table td > .neos-button.btn[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.neos.neos-module table td > .neos-button.btn:active, .neos.neos-module table td > .neos-button.btn.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.active {
+  background-color: #4d4d4d \9;
+}
+.neos.neos-module table td > .neos-button.btn:hover, .neos.neos-module table td > .neos-button.btn:focus, .neos.neos-module table td > .neos-button.btn:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #868686;
+  background-image: -moz-linear-gradient(top, #888888, #838383);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#888888), to(#838383));
+  background-image: -webkit-linear-gradient(top, #888888, #838383);
+  background-image: -o-linear-gradient(top, #888888, #838383);
+  background-image: linear-gradient(to bottom, #888888, #838383);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF888888', endColorstr='#FF838383', GradientType=0);
+  border-color: #838383 #838383 #5d5d5d;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #838383;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #6f6f6f;
+  border-bottom-color: #555555;
+}
+.neos.neos-module table td > .neos-button.btn:hover:hover, .neos.neos-module table td > .neos-button.btn:hover:focus, .neos.neos-module table td > .neos-button.btn:hover:active, .neos.neos-module table td > .neos-button.btn:hover.active, .neos.neos-module table td > .neos-button.btn:hover.disabled, .neos.neos-module table td > .neos-button.btn:hover[disabled], .neos.neos-module table td > .neos-button.btn:focus:hover, .neos.neos-module table td > .neos-button.btn:focus:focus, .neos.neos-module table td > .neos-button.btn:focus:active, .neos.neos-module table td > .neos-button.btn:focus.active, .neos.neos-module table td > .neos-button.btn:focus.disabled, .neos.neos-module table td > .neos-button.btn:focus[disabled], .neos.neos-module table td > .neos-button.btn:active:hover, .neos.neos-module table td > .neos-button.btn:active:focus, .neos.neos-module table td > .neos-button.btn:active:active, .neos.neos-module table td > .neos-button.btn:active.active, .neos.neos-module table td > .neos-button.btn:active.disabled, .neos.neos-module table td > .neos-button.btn:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active[disabled] {
+  color: white;
+  background-color: #838383;
+  *background-color: #767676;
+}
+.neos.neos-module table td > .neos-button.btn:hover:active, .neos.neos-module table td > .neos-button.btn:hover.active, .neos.neos-module table td > .neos-button.btn:focus:active, .neos.neos-module table td > .neos-button.btn:focus.active, .neos.neos-module table td > .neos-button.btn:active:active, .neos.neos-module table td > .neos-button.btn:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn:active.active {
+  background-color: dimgrey \9;
+}
+.neos.neos-module table td > .neos-button.btn.disabled, .neos.neos-module table td > .neos-button.btn.disabled:hover, .neos.neos-module table td > .neos-button.btn.disabled:active, .neos.neos-module table td > .neos-button.btn.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #8f8f8f;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.neos.neos-module table td > .neos-button.btn.disabled:hover, .neos.neos-module table td > .neos-button.btn.disabled:focus, .neos.neos-module table td > .neos-button.btn.disabled:active, .neos.neos-module table td > .neos-button.btn.disabled.active, .neos.neos-module table td > .neos-button.btn.disabled.disabled, .neos.neos-module table td > .neos-button.btn.disabled[disabled], .neos.neos-module table td > .neos-button.btn.disabled:hover:hover, .neos.neos-module table td > .neos-button.btn.disabled:hover:focus, .neos.neos-module table td > .neos-button.btn.disabled:hover:active, .neos.neos-module table td > .neos-button.btn.disabled:hover.active, .neos.neos-module table td > .neos-button.btn.disabled:hover.disabled, .neos.neos-module table td > .neos-button.btn.disabled:hover[disabled], .neos.neos-module table td > .neos-button.btn.disabled:active:hover, .neos.neos-module table td > .neos-button.btn.disabled:active:focus, .neos.neos-module table td > .neos-button.btn.disabled:active:active, .neos.neos-module table td > .neos-button.btn.disabled:active.active, .neos.neos-module table td > .neos-button.btn.disabled:active.disabled, .neos.neos-module table td > .neos-button.btn.disabled:active[disabled], .neos.neos-module table td > .neos-button.btn.disabled:focus:hover, .neos.neos-module table td > .neos-button.btn.disabled:focus:focus, .neos.neos-module table td > .neos-button.btn.disabled:focus:active, .neos.neos-module table td > .neos-button.btn.disabled:focus.active, .neos.neos-module table td > .neos-button.btn.disabled:focus.disabled, .neos.neos-module table td > .neos-button.btn.disabled:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.neos.neos-module table td > .neos-button.btn.disabled:active, .neos.neos-module table td > .neos-button.btn.disabled.active, .neos.neos-module table td > .neos-button.btn.disabled:hover:active, .neos.neos-module table td > .neos-button.btn.disabled:hover.active, .neos.neos-module table td > .neos-button.btn.disabled:active:active, .neos.neos-module table td > .neos-button.btn.disabled:active.active, .neos.neos-module table td > .neos-button.btn.disabled:focus:active, .neos.neos-module table td > .neos-button.btn.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn.disabled:focus.active {
+  background-color: #6f6f6f \9;
+}
+.neos.neos-module table td > .neos-button.btn-warning,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6d6d6d;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos.neos-module table td > .neos-button.btn-warning:hover, .neos.neos-module table td > .neos-button.btn-warning:focus, .neos.neos-module table td > .neos-button.btn-warning:active, .neos.neos-module table td > .neos-button.btn-warning.active, .neos.neos-module table td > .neos-button.btn-warning.disabled, .neos.neos-module table td > .neos-button.btn-warning[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.neos.neos-module table td > .neos-button.btn-warning:active, .neos.neos-module table td > .neos-button.btn-warning.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.active {
+  background-color: #4d4d4d \9;
+}
+.neos.neos-module table td > .neos-button.btn-warning:hover, .neos.neos-module table td > .neos-button.btn-warning:focus, .neos.neos-module table td > .neos-button.btn-warning:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #fb8500;
+  background-image: -moz-linear-gradient(top, #ff8700, #f58200);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff8700), to(#f58200));
+  background-image: -webkit-linear-gradient(top, #ff8700, #f58200);
+  background-image: -o-linear-gradient(top, #ff8700, #f58200);
+  background-image: linear-gradient(to bottom, #ff8700, #f58200);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF8700', endColorstr='#FFF58200', GradientType=0);
+  border-color: #f58200 #f58200 #a85900;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #f58200;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #cc6c00;
+  border-bottom-color: #995100;
+}
+.neos.neos-module table td > .neos-button.btn-warning:hover:hover, .neos.neos-module table td > .neos-button.btn-warning:hover:focus, .neos.neos-module table td > .neos-button.btn-warning:hover:active, .neos.neos-module table td > .neos-button.btn-warning:hover.active, .neos.neos-module table td > .neos-button.btn-warning:hover.disabled, .neos.neos-module table td > .neos-button.btn-warning:hover[disabled], .neos.neos-module table td > .neos-button.btn-warning:focus:hover, .neos.neos-module table td > .neos-button.btn-warning:focus:focus, .neos.neos-module table td > .neos-button.btn-warning:focus:active, .neos.neos-module table td > .neos-button.btn-warning:focus.active, .neos.neos-module table td > .neos-button.btn-warning:focus.disabled, .neos.neos-module table td > .neos-button.btn-warning:focus[disabled], .neos.neos-module table td > .neos-button.btn-warning:active:hover, .neos.neos-module table td > .neos-button.btn-warning:active:focus, .neos.neos-module table td > .neos-button.btn-warning:active:active, .neos.neos-module table td > .neos-button.btn-warning:active.active, .neos.neos-module table td > .neos-button.btn-warning:active.disabled, .neos.neos-module table td > .neos-button.btn-warning:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active[disabled] {
+  color: white;
+  background-color: #f58200;
+  *background-color: #db7400;
+}
+.neos.neos-module table td > .neos-button.btn-warning:hover:active, .neos.neos-module table td > .neos-button.btn-warning:hover.active, .neos.neos-module table td > .neos-button.btn-warning:focus:active, .neos.neos-module table td > .neos-button.btn-warning:focus.active, .neos.neos-module table td > .neos-button.btn-warning:active:active, .neos.neos-module table td > .neos-button.btn-warning:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning:active.active {
+  background-color: #c26700 \9;
+}
+.neos.neos-module table td > .neos-button.btn-warning.disabled, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover, .neos.neos-module table td > .neos-button.btn-warning.disabled:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #8f8f8f;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.neos.neos-module table td > .neos-button.btn-warning.disabled:hover, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus, .neos.neos-module table td > .neos-button.btn-warning.disabled:active, .neos.neos-module table td > .neos-button.btn-warning.disabled.active, .neos.neos-module table td > .neos-button.btn-warning.disabled.disabled, .neos.neos-module table td > .neos-button.btn-warning.disabled[disabled], .neos.neos-module table td > .neos-button.btn-warning.disabled:hover:hover, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover:focus, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover.active, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover.disabled, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover[disabled], .neos.neos-module table td > .neos-button.btn-warning.disabled:active:hover, .neos.neos-module table td > .neos-button.btn-warning.disabled:active:focus, .neos.neos-module table td > .neos-button.btn-warning.disabled:active:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:active.active, .neos.neos-module table td > .neos-button.btn-warning.disabled:active.disabled, .neos.neos-module table td > .neos-button.btn-warning.disabled:active[disabled], .neos.neos-module table td > .neos-button.btn-warning.disabled:focus:hover, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus:focus, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus.active, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus.disabled, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.neos.neos-module table td > .neos-button.btn-warning.disabled:active, .neos.neos-module table td > .neos-button.btn-warning.disabled.active, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:hover.active, .neos.neos-module table td > .neos-button.btn-warning.disabled:active:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:active.active, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus:active, .neos.neos-module table td > .neos-button.btn-warning.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-warning.disabled:focus.active {
+  background-color: #6f6f6f \9;
+}
+.neos.neos-module table td > .neos-button.btn-success,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6d6d6d;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos.neos-module table td > .neos-button.btn-success:hover, .neos.neos-module table td > .neos-button.btn-success:focus, .neos.neos-module table td > .neos-button.btn-success:active, .neos.neos-module table td > .neos-button.btn-success.active, .neos.neos-module table td > .neos-button.btn-success.disabled, .neos.neos-module table td > .neos-button.btn-success[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.neos.neos-module table td > .neos-button.btn-success:active, .neos.neos-module table td > .neos-button.btn-success.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.active {
+  background-color: #4d4d4d \9;
+}
+.neos.neos-module table td > .neos-button.btn-success:hover, .neos.neos-module table td > .neos-button.btn-success:focus, .neos.neos-module table td > .neos-button.btn-success:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #67a24e;
+  background-image: -moz-linear-gradient(top, #69a550, #659e4d);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69a550), to(#659e4d));
+  background-image: -webkit-linear-gradient(top, #69a550, #659e4d);
+  background-image: -o-linear-gradient(top, #69a550, #659e4d);
+  background-image: linear-gradient(to bottom, #69a550, #659e4d);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF69A550', endColorstr='#FF659E4D', GradientType=0);
+  border-color: #659e4d #659e4d #446b34;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #659e4d;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #53833f;
+  border-bottom-color: #3d602f;
+}
+.neos.neos-module table td > .neos-button.btn-success:hover:hover, .neos.neos-module table td > .neos-button.btn-success:hover:focus, .neos.neos-module table td > .neos-button.btn-success:hover:active, .neos.neos-module table td > .neos-button.btn-success:hover.active, .neos.neos-module table td > .neos-button.btn-success:hover.disabled, .neos.neos-module table td > .neos-button.btn-success:hover[disabled], .neos.neos-module table td > .neos-button.btn-success:focus:hover, .neos.neos-module table td > .neos-button.btn-success:focus:focus, .neos.neos-module table td > .neos-button.btn-success:focus:active, .neos.neos-module table td > .neos-button.btn-success:focus.active, .neos.neos-module table td > .neos-button.btn-success:focus.disabled, .neos.neos-module table td > .neos-button.btn-success:focus[disabled], .neos.neos-module table td > .neos-button.btn-success:active:hover, .neos.neos-module table td > .neos-button.btn-success:active:focus, .neos.neos-module table td > .neos-button.btn-success:active:active, .neos.neos-module table td > .neos-button.btn-success:active.active, .neos.neos-module table td > .neos-button.btn-success:active.disabled, .neos.neos-module table td > .neos-button.btn-success:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active[disabled] {
+  color: white;
+  background-color: #659e4d;
+  *background-color: #5a8d44;
+}
+.neos.neos-module table td > .neos-button.btn-success:hover:active, .neos.neos-module table td > .neos-button.btn-success:hover.active, .neos.neos-module table td > .neos-button.btn-success:focus:active, .neos.neos-module table td > .neos-button.btn-success:focus.active, .neos.neos-module table td > .neos-button.btn-success:active:active, .neos.neos-module table td > .neos-button.btn-success:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.active {
+  background-color: #4f7c3c \9;
+}
+.neos.neos-module table td > .neos-button.btn-success.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #8f8f8f;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.neos.neos-module table td > .neos-button.btn-success.disabled:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:focus, .neos.neos-module table td > .neos-button.btn-success.disabled:active, .neos.neos-module table td > .neos-button.btn-success.disabled.active, .neos.neos-module table td > .neos-button.btn-success.disabled.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled[disabled], .neos.neos-module table td > .neos-button.btn-success.disabled:hover:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:hover:focus, .neos.neos-module table td > .neos-button.btn-success.disabled:hover:active, .neos.neos-module table td > .neos-button.btn-success.disabled:hover.active, .neos.neos-module table td > .neos-button.btn-success.disabled:hover.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled:hover[disabled], .neos.neos-module table td > .neos-button.btn-success.disabled:active:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:active:focus, .neos.neos-module table td > .neos-button.btn-success.disabled:active:active, .neos.neos-module table td > .neos-button.btn-success.disabled:active.active, .neos.neos-module table td > .neos-button.btn-success.disabled:active.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled:active[disabled], .neos.neos-module table td > .neos-button.btn-success.disabled:focus:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:focus:focus, .neos.neos-module table td > .neos-button.btn-success.disabled:focus:active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus.active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.neos.neos-module table td > .neos-button.btn-success.disabled:active, .neos.neos-module table td > .neos-button.btn-success.disabled.active, .neos.neos-module table td > .neos-button.btn-success.disabled:hover:active, .neos.neos-module table td > .neos-button.btn-success.disabled:hover.active, .neos.neos-module table td > .neos-button.btn-success.disabled:active:active, .neos.neos-module table td > .neos-button.btn-success.disabled:active.active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus:active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled:focus.active {
+  background-color: #6f6f6f \9;
+}
+.neos.neos-module table td > .neos-button.btn-danger,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6d6d6d;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos.neos-module table td > .neos-button.btn-danger:hover, .neos.neos-module table td > .neos-button.btn-danger:focus, .neos.neos-module table td > .neos-button.btn-danger:active, .neos.neos-module table td > .neos-button.btn-danger.active, .neos.neos-module table td > .neos-button.btn-danger.disabled, .neos.neos-module table td > .neos-button.btn-danger[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.neos.neos-module table td > .neos-button.btn-danger:active, .neos.neos-module table td > .neos-button.btn-danger.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.active {
+  background-color: #4d4d4d \9;
+}
+.neos.neos-module table td > .neos-button.btn-danger:hover, .neos.neos-module table td > .neos-button.btn-danger:focus, .neos.neos-module table td > .neos-button.btn-danger:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #da4b46;
+  background-image: -moz-linear-gradient(top, #db4f4a, #d94741);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#db4f4a), to(#d94741));
+  background-image: -webkit-linear-gradient(top, #db4f4a, #d94741);
+  background-image: -o-linear-gradient(top, #db4f4a, #d94741);
+  background-image: linear-gradient(to bottom, #db4f4a, #d94741);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFDB4F4A', endColorstr='#FFD94741', GradientType=0);
+  border-color: #d94741 #d94741 #ac2722;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #d94741;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #ca2e28;
+  border-bottom-color: #9f2420;
+}
+.neos.neos-module table td > .neos-button.btn-danger:hover:hover, .neos.neos-module table td > .neos-button.btn-danger:hover:focus, .neos.neos-module table td > .neos-button.btn-danger:hover:active, .neos.neos-module table td > .neos-button.btn-danger:hover.active, .neos.neos-module table td > .neos-button.btn-danger:hover.disabled, .neos.neos-module table td > .neos-button.btn-danger:hover[disabled], .neos.neos-module table td > .neos-button.btn-danger:focus:hover, .neos.neos-module table td > .neos-button.btn-danger:focus:focus, .neos.neos-module table td > .neos-button.btn-danger:focus:active, .neos.neos-module table td > .neos-button.btn-danger:focus.active, .neos.neos-module table td > .neos-button.btn-danger:focus.disabled, .neos.neos-module table td > .neos-button.btn-danger:focus[disabled], .neos.neos-module table td > .neos-button.btn-danger:active:hover, .neos.neos-module table td > .neos-button.btn-danger:active:focus, .neos.neos-module table td > .neos-button.btn-danger:active:active, .neos.neos-module table td > .neos-button.btn-danger:active.active, .neos.neos-module table td > .neos-button.btn-danger:active.disabled, .neos.neos-module table td > .neos-button.btn-danger:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active[disabled] {
+  color: white;
+  background-color: #d94741;
+  *background-color: #d5322c;
+}
+.neos.neos-module table td > .neos-button.btn-danger:hover:active, .neos.neos-module table td > .neos-button.btn-danger:hover.active, .neos.neos-module table td > .neos-button.btn-danger:focus:active, .neos.neos-module table td > .neos-button.btn-danger:focus.active, .neos.neos-module table td > .neos-button.btn-danger:active:active, .neos.neos-module table td > .neos-button.btn-danger:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger:active.active {
+  background-color: #c12c26 \9;
+}
+.neos.neos-module table td > .neos-button.btn-danger.disabled, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover, .neos.neos-module table td > .neos-button.btn-danger.disabled:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #8f8f8f;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.neos.neos-module table td > .neos-button.btn-danger.disabled:hover, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus, .neos.neos-module table td > .neos-button.btn-danger.disabled:active, .neos.neos-module table td > .neos-button.btn-danger.disabled.active, .neos.neos-module table td > .neos-button.btn-danger.disabled.disabled, .neos.neos-module table td > .neos-button.btn-danger.disabled[disabled], .neos.neos-module table td > .neos-button.btn-danger.disabled:hover:hover, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover:focus, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover.active, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover.disabled, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover[disabled], .neos.neos-module table td > .neos-button.btn-danger.disabled:active:hover, .neos.neos-module table td > .neos-button.btn-danger.disabled:active:focus, .neos.neos-module table td > .neos-button.btn-danger.disabled:active:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:active.active, .neos.neos-module table td > .neos-button.btn-danger.disabled:active.disabled, .neos.neos-module table td > .neos-button.btn-danger.disabled:active[disabled], .neos.neos-module table td > .neos-button.btn-danger.disabled:focus:hover, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus:focus, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus.active, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus.disabled, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active[disabled],
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus:hover,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus:focus,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus.disabled,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.neos.neos-module table td > .neos-button.btn-danger.disabled:active, .neos.neos-module table td > .neos-button.btn-danger.disabled.active, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:hover.active, .neos.neos-module table td > .neos-button.btn-danger.disabled:active:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:active.active, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus:active, .neos.neos-module table td > .neos-button.btn-danger.disabled:focus.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:hover.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:active.active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus:active,
+.neos.neos-module table td > div.pull-right > .neos-button.btn-danger.disabled:focus.active {
+  background-color: #6f6f6f \9;
+}
 .neos #neos-aloha-topmenu {
   display: inline-block;
 }
@@ -11241,13 +12421,19 @@ body.neos-controls {
   margin-left: 0;
 }
 body.neos-controls.neos-tree-panel-open {
-  margin-left: 300px;
+  margin-left: 320px;
+}
+body.neos-menu-panel-open .neos #neos-menu-panel {
+  left: 0;
+}
+body.neos-menu-panel-open .neos #neos-context-bar {
+  padding-left: 320px;
 }
 body.neos-tree-panel-open .neos #neos-tree-panel {
-  width: 300px;
+  width: 320px;
 }
 body.neos-tree-panel-open .neos #neos-context-bar {
-  padding-left: 300px;
+  padding-left: 320px;
 }
 body.neos-inspector-panel-open {
   margin-right: 320px;
@@ -11322,12 +12508,14 @@ body.neos-previewmode .neos #neos-inspector {
   right: -320px;
   overflow: hidden;
 }
+body.neos-previewmode .neos #neos-menu-panel,
 body.neos-previewmode .neos #neos-tree-panel {
   width: 0;
 }
 body.neos-previewmode .neos .neos-overlay-component,
 body.neos-previewmode .neos .neos-handle-container,
-body.neos-previewmode .neos .modal-backdrop {
+body.neos-previewmode .neos .modal-backdrop,
+body.neos-previewmode .neos .neos-menu-button {
   display: none;
 }
 body.neos-previewmode .neos-preview-close {
