@@ -78,9 +78,18 @@ define(
 			activeItem: function() {
 				var that = this;
 				if (location.pathname.substr(0, 6) === '/neos/') {
-					$.each(this.get('items.moduleList'), function(index, value) {
-						if (location.pathname.indexOf(value.modulePath) !== -1) {
-							that.set('items.moduleList.' + index + '.active', true);
+					$.each(this.get('items.moduleList'), function(moduleIndex, moduleConfiguration) {
+						var submoduleMatched = false;
+						$.each(moduleConfiguration.submodules, function(submoduleIndex, submoduleConfiguration) {
+							if (location.pathname.indexOf(submoduleConfiguration.modulePath) !== -1) {
+								that.set('items.moduleList.' + moduleIndex + '.submodules.' + submoduleIndex + '.active', true);
+								submoduleMatched = true;
+							}
+						});
+						if (submoduleMatched === false) {
+							if (location.pathname.indexOf(moduleConfiguration.modulePath) !== -1) {
+								that.set('items.moduleList.' + moduleIndex + '.active', true);
+							}
 						}
 					});
 				} else {
