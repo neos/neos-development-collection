@@ -84,7 +84,7 @@
     hasCaption:
       type: boolean
       ui:
-        label: 'Caption'
+        label: 'Enable caption'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
