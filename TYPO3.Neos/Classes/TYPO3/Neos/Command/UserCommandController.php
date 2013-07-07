@@ -175,18 +175,25 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 
-		$role = new \TYPO3\Flow\Security\Policy\Role($role);
+		if (strpos($role, '.') === FALSE) {
+			$role = 'TYPO3.Neos:' . $role;
+		}
 
-		if (!$account->hasRole($role)) {
+		$roleObject = $this->policyService->getRole($role);
+		if ($roleObject === NULL) {
+			$this->outputLine('Role "%s" does not exist.', array($role));
+			$this->quit(1);
+		}
+
+		if (!$account->hasRole($roleObject)) {
 			$this->outputLine('User "%s" does not have the role "%s" assigned.', array($username, $role));
 			$this->quit(1);
 		}
 
-		$account->removeRole($role);
+		$account->removeRole($roleObject);
 		$this->accountRepository->update($account);
 		$this->outputLine('Removed role "%s" from user "%s".', array($role, $username));
 	}
 
 }
-
 ?>
