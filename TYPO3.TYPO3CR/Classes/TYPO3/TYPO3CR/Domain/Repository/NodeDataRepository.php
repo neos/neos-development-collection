@@ -117,7 +117,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 */
 	public function remove($object) {
 		if ($object instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
-			$object = $object->getRepresentedNode();
+			$object = $object->getNodeData();
 		}
 		if ($this->addedNodes->contains($object)) {
 			$this->addedNodes->detach($object);
