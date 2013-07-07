@@ -35,7 +35,7 @@
 	position: fixed;
 	top: $unit;
 	bottom: 0;
-	right: -$inspectorWidth;
+	right: -($inspectorWidth + 1px);
 	width: $inspectorWidth;
 	background-color: $grayDark;
 	z-index: 10014;

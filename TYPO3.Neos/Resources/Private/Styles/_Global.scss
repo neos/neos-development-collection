@@ -12,6 +12,10 @@ body {
 		&.neos-tree-panel-open {
 			margin-left: $tree-panel-width;
 		}
+
+		#neos-top-bar {
+			display: block;
+		}
 	}
 
 	&.neos-menu-panel-open {
@@ -84,12 +88,13 @@ body {
 			}
 
 			#neos-top-bar {
+				top: -1px;
 				height: 0;
 				overflow: hidden;
 			}
 
 			#neos-context-bar {
-				margin-top: -$unit;
+				margin-top: -($unit + 1px);
 				box-shadow: none;
 				display: block;
 				padding-left: 0;
@@ -109,7 +114,7 @@ body {
 			.neos-overlay-component,
 			.neos-handle-container,
 			.modal-backdrop,
-			.neos-menu-button {
+			#neos-menu-button {
 				display: none;
 			}
 		}
