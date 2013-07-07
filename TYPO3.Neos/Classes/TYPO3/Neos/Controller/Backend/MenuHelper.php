@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
@@ -27,12 +28,30 @@ class MenuHelper {
 	protected $siteRepository;
 
 	/**
+	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @Flow\Inject
+	 */
+	protected $accessDecisionManager;
+
+	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
+	 * @param array $settings
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 * Build a list of sites
 	 *
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return array
 	 */
-	public function buildSiteList(\TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
+	public function buildSiteList(ControllerContext $controllerContext) {
 		$requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
 		$domainsFound = FALSE;
 		$sites = array();
@@ -64,6 +83,69 @@ class MenuHelper {
 		}
 
 		return $sites;
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+	 * @return array
+	 */
+	public function buildModuleList(ControllerContext $controllerContext) {
+		$modules = array();
+		foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
+			if (isset($moduleConfiguration['resource']) && !$this->hasAccessToResource($moduleConfiguration['resource'])) {
+				continue;
+			}
+			$submodules = array();
+			if (isset($moduleConfiguration['submodules'])) {
+				foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
+					if (isset($submoduleConfiguration['resource']) && !$this->hasAccessToResource($submoduleConfiguration['resource'])) {
+						continue;
+					}
+					$submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);
+				}
+			}
+			$modules[] = array_merge(
+				$this->collectModuleData($controllerContext, $module, $moduleConfiguration, $module),
+				array('group' => $module, 'submodules' => $submodules)
+			);
+		}
+		return $modules;
+	}
+
+	/**
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+	 * @param string $module
+	 * @param array $moduleConfiguration
+	 * @param string $modulePath
+	 * @return array
+	 */
+	protected function collectModuleData(ControllerContext $controllerContext, $module, $moduleConfiguration, $modulePath) {
+		$moduleUri = $controllerContext->getUriBuilder()
+			->reset()
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'TYPO3.Neos');
+		return array(
+			'module' => $module,
+			'modulePath' => $modulePath,
+			'uri' => $moduleUri,
+			'label' => isset($moduleConfiguration['label']) ? $moduleConfiguration['label'] : '',
+			'description' => isset($moduleConfiguration['description']) ? $moduleConfiguration['description'] : '',
+			'icon' => isset($moduleConfiguration['icon']) ? $moduleConfiguration['icon'] : '',
+			'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : FALSE
+		);
+	}
+
+	/**
+	 * @param string $resource A policy resource
+	 * @return boolean TRUE if access to the resource is granted
+	 */
+	protected function hasAccessToResource($resource) {
+		try {
+			$this->accessDecisionManager->decideOnResource($resource);
+		} catch(\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 }

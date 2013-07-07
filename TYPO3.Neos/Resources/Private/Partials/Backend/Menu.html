@@ -33,20 +33,10 @@
 				</div>
 			</f:if>
 		</div>
-		<f:for each="{modules}" as="module" key="path">
+		<f:for each="{modules}" as="module">
 			<f:if condition="{module.hideInMenu}">
-				<f:then></f:then>
 				<f:else>
-					<f:if condition="{module.role}">
-						<f:then>
-							<f:security.ifHasRole role="{module.role}">
-								<f:render section="moduleMenu" arguments="{_all}" />
-							</f:security.ifHasRole>
-						</f:then>
-						<f:else>
-							<f:render section="moduleMenu" arguments="{_all}" />
-						</f:else>
-					</f:if>
+					<f:render section="moduleMenu" arguments="{_all}" />
 				</f:else>
 			</f:if>
 		</f:for>
@@ -55,19 +45,27 @@
 
 <f:section name="moduleMenu">
 	<div class="neos-menu-section">
-		<neos:link.module path="{path}" class="neos-menu-headline{f:if(condition: '{path} == {modulePath}', then: ' active')}">
+		<neos:link.module path="{module.modulePath}" class="neos-menu-headline{f:if(condition: '{module.modulePath} == {modulePath}', then: ' active')}">
 			<i class="{f:if(condition: module.icon, then: module.icon, else: 'icon-puzzle-piece')}"></i>
 			{module.label}
 		</neos:link.module>
 		<f:if condition="{module.submodules}">
 			<div class="neos-menu-list">
-				<f:for each="{module.submodules}" as="submodule" key="subpath">
-					<neos:link.module path="{path}/{subpath}" class="neos-menu-headline{f:if(condition: '{0: \'{path}/{subpath}\'} == {0: \'{modulePath}\'}', then: ' active')}">
-						<i class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'icon-puzzle-piece')}"></i>
-						{submodule.label}
-					</neos:link.module>
+				<f:for each="{module.submodules}" as="submodule">
+					<f:if condition="{submodule.hideInMenu}">
+						<f:else>
+							<f:render section="submoduleMenu" arguments="{_all}" />
+						</f:else>
+					</f:if>
 				</f:for>
 			</div>
 		</f:if>
 	</div>
+</f:section>
+
+<f:section name="submoduleMenu">
+	<neos:link.module path="{submodule.modulePath}" class="{f:if(condition: '{submodule.modulePath} == {modulePath}', then: ' active')}">
+		<i class="{f:if(condition: submodule.icon, then: submodule.icon, else: 'icon-puzzle-piece')}"></i>
+		{submodule.label}
+	</neos:link.module>
 </f:section>

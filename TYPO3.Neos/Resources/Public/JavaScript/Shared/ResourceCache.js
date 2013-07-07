@@ -6,16 +6,19 @@ define(
 	'Library/jquery-with-dependencies'
 ],
 function($) {
-
 	var resourceRequests = {};
 
+	/**
+	 * @param {string} resourceUri
+	 * @return {void}
+	 */
 	function preload(resourceUri) {
 		if (resourceRequests[resourceUri] !== undefined) {
 			return;
 		}
 
-		var xhr;
-		var data = (window.sessionStorage ? window.sessionStorage.getItem(resourceUri) : null);
+		var xhr,
+			data = window.sessionStorage ? window.sessionStorage.getItem(resourceUri) : null;
 		resourceRequests[resourceUri] = new $.Deferred();
 		if (data === null) {
 			xhr = $.ajax(resourceUri, {
@@ -36,11 +39,11 @@ function($) {
 	}
 
 	/**
-	 *
 	 * @param {string} resourceUri
+	 * @return {mixed}
 	 */
 	function get(resourceUri) {
-		if (resourceRequests[resourceUri] === undefined) {
+		if (typeof resourceRequests[resourceUri] === 'undefined') {
 			preload(resourceUri);
 		}
 		return resourceRequests[resourceUri];

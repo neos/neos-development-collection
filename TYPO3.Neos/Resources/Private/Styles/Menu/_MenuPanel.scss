@@ -72,6 +72,10 @@ $menuIconWidth: 54px;
 		left: 0;
 	}
 
+	& > .neos-menu-section:first-child .neos-menu-headline {
+		border: none;
+	}
+
 	a {
 		@include font;
 		color: #fff;
@@ -98,10 +102,6 @@ $menuIconWidth: 54px;
 			cursor: pointer;
 			line-height: $unit;
 			position: relative;
-
-			&:first-child {
-				border-top: none;
-			}
 		}
 
 		.neos-menu-collapse {

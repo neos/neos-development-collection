@@ -78,24 +78,26 @@ define(
 			activeItem: function() {
 				var that = this;
 				if (location.pathname.substr(0, 6) === '/neos/') {
-					$.each(this.get('items.moduleList'), function(moduleIndex, moduleConfiguration) {
+					$.each(this.get('items.modules'), function(moduleIndex, moduleConfiguration) {
 						var submoduleMatched = false;
-						$.each(moduleConfiguration.submodules, function(submoduleIndex, submoduleConfiguration) {
-							if (location.pathname.indexOf(submoduleConfiguration.modulePath) !== -1) {
-								that.set('items.moduleList.' + moduleIndex + '.submodules.' + submoduleIndex + '.active', true);
-								submoduleMatched = true;
-							}
-						});
+						if (typeof moduleConfiguration.submodules !== 'undefined') {
+							$.each(moduleConfiguration.submodules, function(submoduleIndex, submoduleConfiguration) {
+								if (location.pathname.indexOf(submoduleConfiguration.modulePath) !== -1) {
+									that.set('items.modules.' + moduleIndex + '.submodules.' + submoduleIndex + '.active', true);
+									submoduleMatched = true;
+								}
+							});
+						}
 						if (submoduleMatched === false) {
 							if (location.pathname.indexOf(moduleConfiguration.modulePath) !== -1) {
-								that.set('items.moduleList.' + moduleIndex + '.active', true);
+								that.set('items.modules.' + moduleIndex + '.active', true);
 							}
 						}
 					});
 				} else {
-					$.each(this.get('items.siteList'), function(index, value) {
+					$.each(this.get('items.sites'), function(index, value) {
 						if (value.uri && value.uri.indexOf(location.hostname) !== -1) {
-							that.set('items.siteList.' + index + '.active', true);
+							that.set('items.sites.' + index + '.active', true);
 						}
 					});
 				}

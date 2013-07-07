@@ -2,7 +2,7 @@
 namespace TYPO3\Neos\Controller\Module\Administration;
 
 /*                                                                        *
- * This script belongs to the Flow package "TYPO3".                      *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -18,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class PackagesController extends \TYPO3\Neos\Controller\Module\StandardController {
+class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
 
 	/**
 	 * @Flow\Inject

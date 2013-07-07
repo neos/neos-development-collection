@@ -18,7 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class UserSettingsController extends \TYPO3\Neos\Controller\Module\StandardController {
+class UserSettingsController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
 
 	/**
 	 * @Flow\Inject

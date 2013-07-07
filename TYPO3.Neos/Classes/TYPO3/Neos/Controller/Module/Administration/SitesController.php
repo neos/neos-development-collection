@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow,
  *
  * @Flow\Scope("singleton")
  */
-class SitesController extends \TYPO3\Neos\Controller\Module\StandardController {
+class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
 
 	/**
 	 * @Flow\Inject

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Routing;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -22,12 +23,7 @@ class BackendModuleRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoute
 
 	const MATCHRESULT_FOUND = TRUE;
 	const MATCHRESULT_NOSUCHMODULE = -1;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
+	const MATCHRESULT_NOCONTROLLER = -2;
 
 	/**
 	 * @var array
@@ -51,39 +47,55 @@ class BackendModuleRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoute
 	 * @return boolean|integer
 	 */
 	protected function matchValue($value) {
-		$segments = explode('/', $value);
-		$rootModule = array_shift($segments);
-		if (!isset($this->settings['modules'][$rootModule])) {
+		$segments = Arrays::trimExplode('/', $value);
+
+		$currentModuleBase = $this->settings['modules'];
+		if ($segments === array() || !isset($currentModuleBase[$segments[0]])) {
 			return self::MATCHRESULT_NOSUCHMODULE;
 		}
-		$moduleConfiguration = $this->settings['modules'][$rootModule];
-		$moduleController = isset($moduleConfiguration['controller']) ? $moduleConfiguration['controller'] : '\TYPO3\Neos\Controller\Module\StandardController';
-		$modulePath = array($rootModule);
-		$level = 1;
-		if (is_array($segments)) {
-			foreach ($segments as $segment) {
-				if (isset($moduleConfiguration['submodules'][$segment])) {
-					array_push($modulePath, $segment);
-					$moduleConfiguration = $moduleConfiguration['submodules'][$segment];
-					$moduleController = isset($moduleConfiguration['controller']) ? $moduleConfiguration['controller'] : '\TYPO3\Neos\Controller\Module\StandardController';
+
+		$modulePath = array();
+		$level = 0;
+		$moduleConfiguration = NULL;
+		$moduleController = NULL;
+		$moduleAction = 'index';
+		foreach ($segments as $segment) {
+			if (isset($currentModuleBase[$segment])) {
+				$modulePath[] = $segment;
+				$moduleConfiguration = $currentModuleBase[$segment];
+
+				if (isset($moduleConfiguration['controller'])) {
+					$moduleController = $moduleConfiguration['controller'];
 				} else {
-					if ($level === count($segments)) {
-						$moduleMethods = array_change_key_case(array_flip(get_class_methods($moduleController)), CASE_LOWER);
-						if (array_key_exists($segment . 'action', $moduleMethods) === TRUE) {
-							$moduleAction = $segment;
-							break;
-						}
-					}
-					return self::MATCHRESULT_NOSUCHMODULE;
+					$moduleController = NULL;
 				}
-				$level++;
+
+				if (isset($moduleConfiguration['submodules'])) {
+					$currentModuleBase = $moduleConfiguration['submodules'];
+				} else {
+					$currentModuleBase = array();
+				}
+			} else {
+				if ($level === count($segments) - 1) {
+					$moduleMethods = array_change_key_case(array_flip(get_class_methods($moduleController)), CASE_LOWER);
+					if (array_key_exists($segment . 'action', $moduleMethods)) {
+						$moduleAction = $segment;
+						break;
+					}
+				}
+				return self::MATCHRESULT_NOSUCHMODULE;
 			}
+			$level++;
+		}
+
+		if ($moduleController === NULL) {
+			return self::MATCHRESULT_NOCONTROLLER;
 		}
 
 		$this->value = array(
 			'module' => implode('/', $modulePath),
 			'controller' => $moduleController,
-			'action' => isset($moduleAction) ? $moduleAction : 'index'
+			'action' => $moduleAction
 		);
 
 		return self::MATCHRESULT_FOUND;

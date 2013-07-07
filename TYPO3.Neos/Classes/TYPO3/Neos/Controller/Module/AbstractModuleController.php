@@ -14,11 +14,11 @@ namespace TYPO3\Neos\Controller\Module;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The TYPO3 Standard module controller
+ * The TYPO3 Abstract module controller
  *
  * @Flow\Scope("singleton")
  */
-class StandardController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+abstract class AbstractModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @var array

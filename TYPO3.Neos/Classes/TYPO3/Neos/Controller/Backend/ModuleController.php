@@ -91,7 +91,7 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				'submodule' => array_shift($modules),
 				'moduleConfiguration' => $moduleConfiguration,
 				'user' => $user,
-				'modules' => $this->settings['modules'],
+				'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
 				'sites' => $sites
 			));
 		}

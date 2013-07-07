@@ -1,0 +1,36 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<f:if condition="{moduleConfiguration.submodules}">
+	<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
+		<f:if condition="{submoduleConfiguration.resource}">
+			<f:then>
+				<f:security.ifAccess resource="{submoduleConfiguration.resource}">
+					<f:render section="submodule" arguments="{_all}" />
+				</f:security.ifAccess>
+			</f:then>
+			<f:else>
+				<f:render section="submodule" arguments="{_all}" />
+			</f:else>
+		</f:if>
+	</f:for>
+</f:if>
+
+<f:section name="submodule">
+	<f:cycle values="{0: 1, 1: 2, 2: 3}" as="cycle">
+		<f:if condition="{cycle} == 1">
+			<div class="fluid-row">
+		</f:if>
+		<div class="span4">
+			<neos:standaloneView templatePathAndFilename="{f:if(condition: submoduleConfiguration.widgetTemplatePathAndFileName, then: submoduleConfiguration.widgetTemplatePathAndFileName, else: settings.moduleConfiguration.widgetTemplatePathAndFileName)}" arguments="{moduleConfiguration: moduleConfiguration, submoduleIdentifier: submoduleIdentifier, submoduleConfiguration: submoduleConfiguration}" />
+		</div>
+		<f:if condition="{iterator.isLast}">
+			<f:then>
+				</div>
+			</f:then>
+			<f:else>
+				<f:if condition="{cycle} == 3">
+					</div>
+				</f:if>
+			</f:else>
+		</f:if>
+	</f:cycle>
+</f:section>
