@@ -99,6 +99,8 @@ One of the bigger changes we did as in preparation for this release was that we
 renamed the packages to their final name, and we `updated the Git repositories to
 reflect these naming changes <http://typo3.org/news/article/git-repositories-for-typo3-flow-packages-have-been-renamed/>`_.
 
+Furthermore, we improved Internet Explorer compatibility.
+
 
 Content Repository
 ==================
@@ -148,7 +150,8 @@ The TYPO3 Neos Team.
 List of important breaking changes with upgrade instructions
 ============================================================
 
-
+* TYPO3CR: Context Cleanup https://review.typo3.org/#/c/21249/
+  *run the provided migrations for upgrading your database*
 * TYPO3 Neos: Paths given to <ts:render> ViewHelper now uses "." instead of "/" https://review.typo3.org/#/c/20951/
   *to adjust your template, run the provided code migration*
 * TYPO3 Neos: <ts:renderTypoScript> has been renamed to <ts:render> https://review.typo3.org/#/c/20950/
@@ -191,6 +194,7 @@ Full list of breaking changes
 
 *TYPO3.TYPO3CR*
 
+* [!!!][TASK] Context Cleanup https://review.typo3.org/#/c/21249/
 * [!!!][FEATURE] Refactored node type definitions https://review.typo3.org/#/c/18147/
 * [!!!][TASK] Remove TYPO3.TYPO3CR:Folder node type
 * [!!!][FEATURE] Enhance node:migrationstatus command
@@ -198,6 +202,7 @@ Full list of breaking changes
 
 *TYPO3.TypoScript*
 
+* [!!!][TASK] Change the TS exception handling to allow more options https://review.typo3.org/#/c/20866/
 * [!!!][FEATURE] Implement real prototype inheritance" https://review.typo3.org/#/c/17573/
 * [!!!][TASK] Paths given to TS render now use . instead of / https://review.typo3.org/#/c/20951/
 * [!!!][TASK] Rename renderTypoScript VH to render https://review.typo3.org/#/c/20950/
