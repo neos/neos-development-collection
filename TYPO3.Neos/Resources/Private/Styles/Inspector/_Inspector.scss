@@ -65,10 +65,12 @@
 		height: 100%;
 		overflow-x: hidden;
 		overflow-y: auto;
+		@include box-sizing(border-box);
+		padding-top: 9px;
 
 		.neos-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
-			margin: $defaultMargin $relatedMargin $defaultMargin $defaultMargin;
+			margin-right: -$relatedMargin;
 			cursor: pointer;
 			@include user-select(none);
 			position: relative;
@@ -77,6 +79,11 @@
 				ul {
 					display: block;
 				}
+			}
+
+			i {
+				display: inline-block;
+				margin-top: 3px;
 			}
 
 			div {

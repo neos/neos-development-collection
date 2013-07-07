@@ -24,11 +24,9 @@ define(
 	var BreadcrumbItem = Ember.View.extend({
 		tagName: 'a',
 		href: '#',
-		template: Ember.Handlebars.compile('{{view.item.nodeTypeSchema.ui.label}} {{#if view.item.status}}<span class="neos-breadcrumbitem-status">({{view.item.status}})</span>{{/if}}'),
-		click: function(event) {
-			event.preventDefault();
-			var item = this.get('item');
-			T3.Content.Model.NodeSelection.selectNode(item);
+		click: function(e) {
+			e.preventDefault();
+			T3.Content.Model.NodeSelection.selectNode(this.get('content'));
 		}
 	});
 

@@ -1,4 +1,14 @@
-<div><span>{{view.nodes.0.nodeTypeSchema.ui.label}}  {{#if view.nodes.0.status}}({{view.nodes.0.status}}){{/if}}</span></div>
+<div>
+	<span>
+		<i {{bindAttr class="view.nodes.0.nodeTypeSchema.ui.icon::icon-sign-blank view.nodes.0.nodeTypeSchema.ui.icon"}}></i>
+		{{view.nodes.0.nodeTypeSchema.ui.label}}
+		{{#if view.nodes.0.status}}({{view.nodes.0.status}}){{/if}}
+	</span>
+</div>
 {{#collection contentBinding="view.nodes" tagName="ul"}}
-	{{view view.parentView.parentView.BreadcrumbItem itemBinding="view.content"}}
+	{{#view view.parentView.parentView.BreadcrumbItem contentBinding="view.content"}}
+		<i {{bindAttr class="view.content.nodeTypeSchema.ui.icon::icon-sign-blank view.content.nodeTypeSchema.ui.icon"}}></i>
+		{{unbound nodeTypeSchema.ui.label}}
+		{{#if status}}<span class="neos-breadcrumbitem-status">({{status}})</span>{{/if}}
+	{{/view}}
 {{/collection}}
