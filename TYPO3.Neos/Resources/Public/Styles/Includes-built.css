@@ -9838,6 +9838,7 @@
   width: 40px;
   height: 40px;
   border-left: 1px solid #3f3f3f;
+  cursor: pointer;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
   background-color: #00b5ff;
