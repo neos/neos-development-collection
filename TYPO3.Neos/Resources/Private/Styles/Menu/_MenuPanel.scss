@@ -96,6 +96,7 @@ $menuIconWidth: 54px;
 			width: $unit;
 			height: $unit;
 			border-left: 1px solid $grayLight;
+			cursor: pointer;
 
 			&:hover {
 				background-color: $blue;
