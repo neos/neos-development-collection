@@ -9513,6 +9513,14 @@
 .neos .neos-publish-menu.btn-group.open .dropdown-toggle {
   opacity: 1 !important;
 }
+.neos .neos-publish-menu.btn-group.open .dropdown-toggle::before {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left: -3px;
+}
 .neos .neos-publish-menu.btn-group .neos-publish-button {
   min-width: 165px;
   background-color: #ff8700;
@@ -9532,14 +9540,55 @@
   border-left: 1px solid #222222;
   cursor: pointer;
 }
+.neos .neos-publish-menu.btn-group .dropdown-toggle::before {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  top: 0;
+  line-height: 40px;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 3px;
+}
 .neos .neos-user-menu.btn-group {
   font-size: 14px;
 }
+.neos .neos-user-menu.btn-group.open .neos-button::after {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  left: 2px;
+}
 .neos .neos-user-menu.btn-group .neos-button {
   background: none;
+  padding-left: 16px;
+  padding-right: 32px;
 }
 .neos .neos-user-menu.btn-group .neos-button i {
   margin-top: 3px;
+}
+.neos .neos-user-menu.btn-group .neos-button::after {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  top: 0;
+  line-height: 40px;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 8px;
+  vertical-align: middle;
 }
 .neos #neos-context-bar {
   position: fixed;
