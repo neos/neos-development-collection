@@ -8651,7 +8651,7 @@
   position: fixed;
   top: 40px;
   bottom: 0;
-  right: -320px;
+  right: -321px;
   width: 320px;
   background-color: #222222;
   z-index: 10014;
@@ -9317,6 +9317,7 @@
   background-color: #222222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
+  display: none;
 }
 .neos #neos-top-bar #neos-user-actions {
   float: right;
@@ -12423,6 +12424,9 @@ body.neos-controls {
 body.neos-controls.neos-tree-panel-open {
   margin-left: 320px;
 }
+body.neos-controls #neos-top-bar {
+  display: block;
+}
 body.neos-menu-panel-open .neos #neos-menu-panel {
   left: 0;
 }
@@ -12494,11 +12498,12 @@ body.neos-previewmode .neos #neos-inspector {
   display: block !important;
 }
 body.neos-previewmode .neos #neos-top-bar {
+  top: -1px;
   height: 0;
   overflow: hidden;
 }
 body.neos-previewmode .neos #neos-context-bar {
-  margin-top: -40px;
+  margin-top: -41px;
   box-shadow: none;
   display: block;
   padding-left: 0;
@@ -12515,7 +12520,7 @@ body.neos-previewmode .neos #neos-tree-panel {
 body.neos-previewmode .neos .neos-overlay-component,
 body.neos-previewmode .neos .neos-handle-container,
 body.neos-previewmode .neos .modal-backdrop,
-body.neos-previewmode .neos .neos-menu-button {
+body.neos-previewmode .neos #neos-menu-button {
   display: none;
 }
 body.neos-previewmode .neos-preview-close {
