@@ -25,8 +25,12 @@ but we'll continue to polish it in the next few weeks.
 	:alt: The TYPO3 Neos Visual Design
 	:class: screenshot-fullsize
 
-.. figure:: Images/alpha4-visualdesign.png
+.. figure:: Images/alpha4-imagecropper.png
 	:alt: Image Cropper
+	:class: screenshot-fullsize
+
+.. figure:: Images/alpha4-menu.png
+	:alt: Module Menu
 	:class: screenshot-fullsize
 
 
