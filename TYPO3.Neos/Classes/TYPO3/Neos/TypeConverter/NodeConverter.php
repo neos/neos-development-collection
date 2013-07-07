@@ -13,8 +13,6 @@ namespace TYPO3\Neos\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
-use TYPO3\TYPO3CR\Exception\NodeException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * An Object Converter for nodes which can be used for routing (but also for other

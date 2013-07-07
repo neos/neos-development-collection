@@ -73,11 +73,11 @@ class SiteExportService {
 	/**
 	 * Export a single node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param \XMLWriter $xmlWriter
 	 * @return void
 	 */
-	protected function exportNode(\TYPO3\TYPO3CR\Domain\Model\NodeData $node, \XMLWriter $xmlWriter) {
+	protected function exportNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \XMLWriter $xmlWriter) {
 		$xmlWriter->startElement('node');
 
 			// node attributes

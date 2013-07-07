@@ -77,6 +77,8 @@ class NodeViewHelper extends AbstractViewHelper {
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @return string|NULL The rendered URI or NULL if no URI could be resolved for the given node
+	 * @throws \TYPO3\Neos\Exception
+	 * @throws \InvalidArgumentException
 	 */
 	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
 		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
