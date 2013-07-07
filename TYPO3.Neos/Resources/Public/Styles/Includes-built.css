@@ -7667,6 +7667,9 @@
   margin: 0px;
   padding: 0px;
 }
+.neos button {
+  outline: 0;
+}
 .neos ul li {
   background: transparent;
 }
@@ -9310,13 +9313,85 @@
   left: 0;
   right: 0;
   top: 0;
-  z-index: 10015;
+  z-index: 10016;
   background-color: #222222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
 }
-.neos #neos-top-bar .neos-button-logout {
+.neos #neos-top-bar #neos-user-actions {
   float: right;
+}
+.neos #neos-top-bar #neos-user-actions .neos-user-menu,
+.neos #neos-top-bar #neos-user-actions .neos-publish-menu {
+  display: inline-block;
+  float: left;
+}
+.neos #neos-top-bar #neos-user-actions i {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu {
+  border: 0;
+  right: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu input[type=checkbox] {
+  visibility: hidden;
+  margin: 0;
+  width: 22px;
+  height: 22px;
+  margin-right: 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu input[type=checkbox]:before {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: #3f3f3f;
+  border: 1px solid #d4cfc8;
+  color: #fff;
+  cursor: pointer;
+  content: "";
+  visibility: visible;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu input[type=checkbox]:hover:before {
+  border: 1px solid #00b5ff;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu input[type=checkbox]:checked:before {
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: #00b5ff;
+  border: 1px solid #00b5ff;
+  content: "√";
+  text-align: center;
+  font-weight: bold;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu li {
+  height: 40px;
+  background: #323232;
+  border-top: 1px solid #222222;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu li:first-child {
+  border-color: #323232;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu li a {
+  height: 40px;
+  padding-top: 10px;
+  box-sizing: border-box;
+  color: white;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu li a:hover {
+  background: #00b5ff;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu li label {
+  padding-top: 10px;
+}
+.neos #neos-top-bar #neos-user-actions .dropdown-menu label {
+  font-size: 14px;
 }
 .neos #neos-top-bar .neos-button-logout a.dropdown-toggle {
   display: block;
@@ -9403,6 +9478,41 @@
 }
 .neos #neos-top-bar #neos-top-bar-modules li.neos-active a {
   color: white !important;
+}
+.neos .neos-publish-menu.btn-group.neos-disabled .neos-publish-button, .neos .neos-publish-menu.btn-group.neos-disabled .dropdown-toggle {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+}
+.neos .neos-publish-menu.btn-group.open .dropdown-toggle {
+  opacity: 1 !important;
+}
+.neos .neos-publish-menu.btn-group .neos-publish-button {
+  min-width: 165px;
+  background-color: #ff8700;
+  font-size: 14px;
+}
+.neos .neos-publish-menu.btn-group .dropdown-toggle {
+  width: 40px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: #ff8700;
+  line-height: 0;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  border-right: 1px solid #ff8700;
+  border-left: 1px solid #222222;
+  cursor: pointer;
+}
+.neos .neos-user-menu.btn-group {
+  font-size: 14px;
+}
+.neos .neos-user-menu.btn-group .neos-button {
+  background: none;
+}
+.neos .neos-user-menu.btn-group .neos-button i {
+  margin-top: 3px;
 }
 .neos #neos-context-bar {
   position: fixed;
@@ -10898,6 +11008,14 @@
   width: 14px;
   padding-right: 8px;
   color: #00b5ff;
+}
+.neos .btn-group.open .dropdown-toggle {
+  -webkit-box-shadow: 0px 0px 0px transparent;
+  -moz-box-shadow: 0px 0px 0px transparent;
+  box-shadow: 0px 0px 0px transparent;
+}
+.neos .btn-group + .btn-group {
+  margin-left: 8px;
 }
 .neos-contentelement {
   z-index: 10001;
