@@ -1,0 +1,27 @@
+#                                                                        #
+# Security policy for the TYPO3 package                                  #
+#                                                                        #
+
+resources:
+  methods:
+    TYPO3_Neos_Backend_BackendController: 'method(TYPO3\Neos\Controller\Backend\BackendController->.*Action())'
+    TYPO3_Neos_Backend_ModuleController: 'method(TYPO3\Neos\Controller\Backend\ModuleController->.*Action())'
+    TYPO3_Neos_Module_Administration: 'method(TYPO3\Neos\Controller\Module\Administration\.*Controller->.*Action())'
+    TYPO3_Neos_Module_Management: 'method(TYPO3\Neos\Controller\Module\Management\.*Controller->.*Action())'
+    TYPO3_Neos_Service: 'method(TYPO3\Neos\Service\.*Controller->.*Action())'
+
+roles:
+  Editor: [ TYPO3.TYPO3CR:Administrator ]
+  Administrator: [ Editor ]
+
+acls:
+  Administrator:
+    methods:
+      TYPO3_Neos_Module_Administration: GRANT
+
+  Editor:
+    methods:
+      TYPO3_Neos_Backend_BackendController: GRANT
+      TYPO3_Neos_Backend_ModuleController: GRANT
+      TYPO3_Neos_Module_Management: GRANT
+      TYPO3_Neos_Service: GRANT

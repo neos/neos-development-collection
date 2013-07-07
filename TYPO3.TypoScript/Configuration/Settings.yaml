@@ -1,0 +1,4 @@
+TYPO3:
+  TypoScript:
+    handleRenderingExceptions: xmlComment
+    debugMode: FALSE

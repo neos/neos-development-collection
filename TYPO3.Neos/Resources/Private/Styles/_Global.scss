@@ -1,0 +1,214 @@
+body {
+	// States
+	&.neos-backend {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+
+	&.neos-controls {
+		margin-top: $unit * 2 + 2;
+		margin-left: 0;
+
+		&.neos-tree-panel-open {
+			margin-left: $tree-panel-width;
+		}
+	}
+
+	&.neos-menu-panel-open {
+		.neos {
+			#neos-menu-panel {
+				left: 0;
+			}
+
+			#neos-context-bar {
+				padding-left: $tree-panel-width;
+			}
+		}
+	}
+
+	&.neos-tree-panel-open, {
+		.neos {
+			#neos-tree-panel {
+				width: $tree-panel-width;
+			}
+
+			#neos-context-bar {
+				padding-left: $tree-panel-width;
+			}
+		}
+	}
+
+	&.neos-inspector-panel-open {
+		margin-right: $inspectorWidth;
+		@include transition-property('margin-right');
+		@include transition-duration(0.2s);
+
+		.neos {
+			#neos-inspector {
+				right: 0;
+			}
+
+			#neos-context-bar {
+				padding-right: $inspectorWidth;
+			}
+			.neos-secondary-inspector.neos-secondary-inspector-open {
+				right: 0;
+			}
+		}
+	}
+
+	// Preview mode
+	#neos-top-bar {
+		@include transition-property(height);
+		@include transition-duration(0.2s);
+	}
+
+	#neos-context-bar {
+		@include transition-property(margin-top, padding-left, padding-right);
+		@include transition-duration(0.2s);
+	}
+
+	.aloha-block-TYPO3Block {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+
+	&.neos-previewmode {
+		margin-right: 0;
+
+		.neos {
+			#neos-top-bar,
+			#neos-context-bar,
+			#neos-inspector {
+				display: block !important;
+			}
+
+			#neos-top-bar {
+				height: 0;
+				overflow: hidden;
+			}
+
+			#neos-context-bar {
+				margin-top: -$unit;
+				box-shadow: none;
+				display: block;
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			#neos-inspector {
+				right: -$inspectorWidth;
+				overflow: hidden;
+			}
+
+			#neos-menu-panel,
+			#neos-tree-panel {
+				width: 0;
+			}
+
+			.neos-overlay-component,
+			.neos-handle-container,
+			.modal-backdrop,
+			.neos-menu-button {
+				display: none;
+			}
+		}
+
+		.neos-preview-close {
+			display: block !important;
+			position: fixed;
+			top: $defaultMargin;
+			right: $defaultMargin;
+			@include box-shadow(0 0 $relatedMargin rgba(0, 0, 0, .25));
+			z-index: 9999;
+
+			.neos-button {
+				width: $unit;
+				line-height: $unit + 4px;
+				padding: 0;
+			}
+		}
+
+		.aloha-block-TYPO3Block {
+			margin: 0;
+		}
+
+		// Aloha Block highlighting
+		div.aloha-block:hover > .aloha-block-inner {
+			cursor: default;
+		}
+
+		div.aloha-block-inner {
+			outline: none !important;
+			background: none !important;
+		}
+
+		.aloha-block-TYPO3Block.aloha-block:hover,
+		.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
+		.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
+			@include box-shadow(none);
+		}
+
+		// Handles around Aloha Blocks
+		.neos-handle,
+		.neos-status-indicator {
+			display: none !important;
+		}
+
+		// Aloha Floating Menu
+		#aloha-floatingmenu-shadow,
+		.aloha-floatingmenu,
+		.x-shadow,
+		.neos-contentelement-overlay,
+		button.neos-create-new-content,
+		.neos-contentelement-hidden,
+		#neos-inspector-button {
+			display: none !important;
+		}
+
+		.aloha-block:hover,
+		.aloha-block.aloha-block-highlighted {
+			cursor: auto;
+		}
+
+		// Content elements
+		.neos-contentelement-active {
+			outline: none !important;
+			outline-offset: 0px;
+
+			> .neos-contentelement-handle-container {
+				visibility: hidden;
+			}
+		}
+	}
+}
+
+#neos-page-metainformation {
+	display: none;
+}
+
+#neos-shortcut {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url('../Images/module-bg.jpg');
+	z-index: 9999;
+
+	p {
+		position: relative;
+		margin: 0 auto;
+		width: 500px;
+		height: 48px;
+		top: 50%;
+		margin-top: -24px;
+		color: #fff;
+		font-size: 24px;
+		line-height: 1;
+		text-align: center;
+	}
+}
+
+// Include other global style files
+@import "ContextBar/AlohaAddTable";

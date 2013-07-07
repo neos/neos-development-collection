@@ -1,0 +1,7 @@
+<div class="typo3-fileupload" id="{{unbound view._containerId}}">
+	<button id="{{unbound view._browseButtonId}}" class="neos-button typo3-fileupload-pickfiles" type="button">
+		{{view.fileChooserLabel}}
+	</button>
+
+	{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes"}}
+</div>

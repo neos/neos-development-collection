@@ -1,0 +1,37 @@
+<div class="toolbar"></div>
+<div class="neos-inspector-form">
+	{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes"}}
+	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
+		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content" classNames="legend"}}
+		<h2>{{view.content.label}}</h2>
+		{{/view}}
+		{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="view.content.properties"}}
+			{{#if view.content.isBoolean}}
+				<label for="{{unbound view.content.elementId}}" class="checkbox">
+					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
+					{{view.content.ui.label}}
+				</label>
+			{{else}}
+				<label for="{{unbound view.content.elementId}}">{{view.content.ui.label}}</label>
+				{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
+			{{/if}}
+		{{/collection}}
+	{{/collection}}
+</div>
+<div class="actions">
+	{{#view view.Button
+		disabledBinding="T3.Content.Controller.Inspector._unmodified"
+		target="T3.Content.Controller.Inspector"
+		action="revert"
+		class="neos-inspector-cancel"
+		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
+	}}Cancel{{/view}}
+
+	{{#view view.Button
+		disabledBinding="T3.Content.Controller.Inspector._unmodified"
+		target="T3.Content.Controller.Inspector"
+		action="onApplyButtonToggle"
+		class="neos-inspector-apply"
+		isVisibleBinding="T3.Content.Controller.Inspector._enableTransactionalInspector"
+	}}Apply{{/view}}
+</div>

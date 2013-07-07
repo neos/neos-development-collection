@@ -1,0 +1,88 @@
+#neos-context-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10012;
+	margin-top: $unit + 1;
+	background-color: $grayDark;
+	height: $unit;
+	border-bottom: 1px solid $grayLight;
+	padding-right: 41px;
+
+	.left {
+		float: left;
+		white-space: nowrap;
+	}
+
+	.right {
+		float: right;
+		white-space: nowrap;
+	}
+
+	.neos-button {
+		background-color: $grayDark;
+		border-left: 1px solid $grayLight;
+		border-right: 1px solid $grayLight;
+		vertical-align: top;
+
+		&:hover,
+		&:active,
+		&.active,
+		&.pressed {
+			background-color: $blue;
+		}
+
+		& + .neos-button {
+			margin-left: $relatedMargin;
+		}
+	}
+
+	.neos-context-bar-save-indidator {
+		display: inline-block;
+		padding-right: $relatedMargin;
+
+		.neos-indicator {
+			margin: 0;
+			padding: 0;
+			cursor: default;
+			background: transparent;
+			border: none;
+
+			span {
+				position: relative;
+				top: 2px;
+			}
+		}
+	}
+
+	@import "Shared/Chosen";
+	.chzn-container {
+		.chzn-single {
+			background-color: $grayDark;
+			border-left: 1px solid $grayLight;
+			border-right: 1px solid $grayLight;
+
+			div {
+				border-left: 1px solid $grayLight;
+			}
+		}
+
+		.chzn-drop {
+			background-color: $grayDark;
+			margin-top: 0;
+
+			.chzn-results {
+				max-height: none;
+
+				li {
+					border-bottom: 1px solid $grayLight;
+
+					&:first-child {
+						border-top: 1px solid $grayLight;
+					}
+				}
+			}
+		}
+	}
+}

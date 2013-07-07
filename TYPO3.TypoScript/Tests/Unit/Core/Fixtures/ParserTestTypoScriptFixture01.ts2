@@ -1,0 +1,11 @@
+// This fixture contains the following features:
+
+#  - single line comments
+#  - empty lines
+#  - value assignments: object type and literal
+
+test = TYPO3.TypoScript:Text
+ 	test.value= "Hello world!"
+
+secondTest = Text
+secondTest.value = 23

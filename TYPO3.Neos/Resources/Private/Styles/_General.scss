@@ -1,0 +1,233 @@
+// Neos variable Include
+// also overriding bootstrap variables
+
+// Neos standard HTML element styles Include
+@import "StandardHtmlStyles";
+
+// **** CSS start ****/
+// *******************/
+
+form {
+	font-family: $default-font;
+	text-align: left;
+	margin: 0px;
+	padding: 0px;
+}
+
+button {
+	outline: 0;
+}
+
+ul {
+	li {
+		background: transparent;
+	}
+}
+
+a {
+	color: $orange;
+	text-decoration: none;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $orange;
+		text-decoration: underline;
+	}
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	background: none;
+	-webkit-font-smoothing: antialiased;
+	font-size: 14px;
+}
+
+.neos-clear {
+	clear:both;
+}
+
+#neos-tree-panel {
+	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
+	@include box-sizing(border-box);
+	background: white;
+	width: 0;
+	margin: 0;
+	padding: 0;
+	position: fixed;
+	overflow: hidden;
+	left: 0;
+	top: $unit + 1;
+	bottom: 0;
+	z-index: 10012;
+	@include transition-property('width, margin-top');
+	@include transition-duration(.2s);
+	padding-top: 27px;
+	& > div.ember-view,
+	& > div.ember-view > div.ember-view {
+		height: 100%;
+	}
+	.neos-pagetree,
+	.dynatree-container,
+	#neos-dd-pagetree-con {
+		height: 100%;
+	}
+	.dynatree-container {
+		overflow: visible;
+	}
+}
+
+.neos-dd-drag-ghost-pagetree {
+	background: $lightest;
+	padding: 2px 5px 2px 25px;
+	@include border-radius(4px);
+	@include single-box-shadow(rgba($darkest, 0.4), 0px, 2px, 3px);
+	cursor: move;
+	a {
+		color: $darkest;
+		text-decoration: none;
+	}
+}
+.x-dd-drop-nodrop .neos-dd-drag-ghost-pagetree {
+	background: $lightest url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat;
+}
+.x-tree-drop-ok-above .neos-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-between .neos-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-append .neos-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-below .neos-dd-drag-ghost-pagetree {
+	background: $lightest url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat;
+}
+.x-tree-drop-delete .neos-dd-drag-ghost-pagetree {
+	background: $lightest url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+}
+
+body.neos-inspect-active {
+
+	// Show status indicator when in inspect mode
+	.neos-status-indicator {
+		display: block;
+		position: absolute;
+		left: -1px;
+		bottom: -17px;
+		width: 50px;
+		height: 16px;
+		overflow: hidden;
+		font-size: 9px;
+		border-width: 0 1px 1px 1px;
+		border-style: none solid solid solid;
+		display:block;
+		background: white;
+		z-index: 10000;
+		text-align:center;
+		border-color: $dark-grey3;
+	}
+
+	.aloha-block:hover > .neos-status-indicator {
+		@include single-box-shadow($light-grey3, 0, 1px, 3px);
+		border-color: $dark-grey3;
+	}
+
+	div.aloha-block > div.aloha-block-inner {
+		outline: 1px solid $dark-grey3;
+	}
+}
+
+div.aloha-block:hover > div.aloha-block-inner {
+	outline: 1px solid $dark-grey3;
+	background: lighten($light-grey, 20%);
+}
+div.aloha-block-active > div.aloha-block-inner,
+div.aloha-block-active:hover > div.aloha-block-inner {
+	outline: 1px solid $dark-grey3;
+	background: lighten($light-grey, 10%);
+}
+
+.neos-controls #neos-neos-top {
+	@include single-box-shadow(transparent, 0, 0, 0);
+}
+
+// Reset Z-Index so that the Floating Menu does not overlap the UI elements.
+.aloha-floatingmenu {
+	z-index:10000 !important;
+}
+
+// Quick fix to remove floating menu & pin - here since Aloha.css isn't included anymore
+.aloha-floatingmenu:hover .aloha-floatingmenu-pin {
+	display: none;
+}
+.aloha-floatingmenu:hover {
+	background: none;
+}
+.aloha-floatingmenu .x-tab-strip-wrap,
+.aloha-floatingmenu .x-tab-panel-header {
+	cursor: default !important;
+}
+
+.ui-dialog a.neos-content-new {
+	@include background-image(linear-gradient($light-grey2, lighten($dark-grey, 5%)));
+	@include border-radius(3px);
+	display: block;
+	font-size: 22px;
+	height: 35px;
+	padding-top: 10px;
+	text-align: center;
+	width: 51px;
+	&:hover {
+		text-decoration:none;
+	}
+}
+
+// Error output
+#neos-neos-error-container {
+	width: 600px;
+	padding: 10px;
+	background: #ffffff;
+	border: 5px solid $light-orange;
+	@include border-radius(3px);
+	@include single-box-shadow($light-grey3, 0, 1px, 3px);
+	position: absolute;
+	top: 10px;
+	left: 50%;
+	margin-left: -305px;
+	z-index: 10016;
+
+	h2 {
+		font-size: 25px;
+		color: $light-orange;
+		font-weight: bold;
+	}
+
+	.neos-neos-error-info {
+		font-weight: bold;
+	}
+
+	p {
+		margin: 15px 0;
+	}
+}
+
+.neos-pageloader-wrapper {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: $lightest;
+	@include opacity(0);
+	z-index: 10001;
+	.neos-pageloader {
+		position: relative;
+		top: 50% !important;
+		left: 50% !important;
+		margin-top: ($unit * 2 + 2) / 2;
+		margin-left: -30 - $inspectorWidth / 2;
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
+	}
+}
+
+&.neos-tree-panel-open .neos-pageloader-wrapper .neos-pageloader {
+	margin-left: -30 - $tree-panel-width / 2 - $inspectorWidth / 2;
+}
+
+&.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
+	margin-top: $unit / 2;
+}

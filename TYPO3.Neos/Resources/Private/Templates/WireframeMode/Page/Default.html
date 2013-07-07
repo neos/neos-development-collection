@@ -1,0 +1,40 @@
+{namespace ts=TYPO3\TypoScript\ViewHelpers}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" xmlns:bootstrap="http://typo3.org/ns/TYPO3/Twitter/Bootstrap/ViewHelpers">
+	<head>
+		<meta charset="utf-8" />
+		<title>Wireframe Mode</title>
+		<f:base/>
+		<f:section name="headerIncludes">
+			<bootstrap:include />
+			<script>window.jQuery || document.write("<script src='{f:uri.resource(path: 'Library/jquery/jquery-1.9.1.js')}'>\x3C/script>")</script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/WireframeMode.css')}" />
+		</f:section>
+	</head>
+	<body>
+		<f:section name="body">
+			<div class="container-fluid" id="neos-wireframe-container">
+				<div class="row-fluid">
+					<div class="span12">
+						<nav class="neos-reloadable-content row-fluid" id="neos-wireframe-breadcrumb">
+							<div class="span8 breadcrumb-container">
+								<ts:render path="parts.breadcrumb" />
+							</div>
+							<section class="span4">
+								<div class="input-append">
+									<input type="text" class="input-small" id="neos-createcontentcollection-input" placeholder="Name for a new content collection">
+									<button class="btn btn-small" id="neos-createcontentcollection-button" type="button">
+										Create
+									</button>
+								</div>
+							</section>
+						</nav>
+						<div class="neos-reloadable-content" id="neos-wireframe-contentcollections-container">
+							<ts:render path="contentCollections.all" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</f:section>
+	</body>
+</html>

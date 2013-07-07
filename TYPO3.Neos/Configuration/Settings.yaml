@@ -1,0 +1,164 @@
+#                                                                        #
+# Settings                                                               #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+TYPO3:
+  Flow:
+    security:
+      authentication:
+        providers:
+          Typo3BackendProvider:
+            provider: 'PersistedUsernamePasswordProvider'
+            requestPatterns:
+              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*'
+            entryPoint: 'WebRedirect'
+            entryPointOptions:
+              uri: neos/login
+        authenticationStrategy: oneToken
+
+    error:
+      exceptionHandler:
+        renderingGroups:
+          notFoundExceptions:
+            matchingStatusCodes: [ 404 ]
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                errorTitle: 'Page Not Found'
+                errorDescription: 'Sorry, the page you requested was not found.'
+          databaseConnectionExceptions:
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                errorTitle: 'No Database Connection'
+                errorDescription: 'Sorry, the database connection could not be established.'
+          noHomepageException:
+            matchingExceptionClassNames: ['TYPO3\Neos\Routing\Exception\NoHomepageException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                errorTitle: 'Missing Homepage'
+                errorDescription: 'Either no site has been defined yet or the site does not contain a homepage.'
+
+  DocTools:
+    bundles:
+      Neos:
+        documentationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/
+        configurationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
+        renderedDocumentationRootPath: %FLOW_PATH_DATA%Temporary/Documentation/TYPO3.Neos/
+        renderingOutputFormat: 'html'
+        renderByDefault: FALSE
+
+  Neos:
+    nodeTypeGroups: ['General', 'Structure', 'Plugins']
+
+    # as Aloha is quite big to load, we do not include it by default. Later on,
+    # this setting will be replaced by a better API.
+    enableAloha: TRUE
+
+    # should minified JavaScript be loaded? For developing the TYPO3 Neos
+    # Content Module, this should be set to FALSE.
+    loadMinifiedJavascript: TRUE
+
+    userInterface:
+      string:
+        editor: Content/Inspector/Editors/TextFieldEditor
+      integer:
+        editor: Content/Inspector/Editors/TextFieldEditor
+      boolean:
+        editor: Content/Inspector/Editors/BooleanEditor
+      'TYPO3\Media\Domain\Model\ImageVariant':
+        editor: Content/Inspector/Editors/ImageEditor
+      date:
+        editor: Content/Inspector/Editors/DateEditor
+
+    moduleConfiguration:
+      widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
+    modules:
+      management:
+        label: 'Management'
+        description: 'Contains multiple modules related to management of content'
+        icon: 'icon-briefcase'
+        submodules:
+          workspaces:
+            label: 'Workspaces'
+            controller: '\TYPO3\Neos\Controller\Module\Management\WorkspacesController'
+            description: 'This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.'
+            icon: 'icon-th-large'
+      administration:
+        label: 'Administration'
+        description: 'Contains multiple modules related to administration'
+        icon: 'icon-gears'
+        role: 'TYPO3.Neos:Administrator'
+        submodules:
+          users:
+            label: 'User Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\UsersController'
+            description: 'The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.'
+            icon: 'icon-group'
+            actions:
+              new:
+                label: 'Create user'
+                title: 'Create a new user'
+          packages:
+            label: 'Package Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
+            description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
+            icon: 'icon-archive'
+          sites:
+            label: 'Sites Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\SitesController'
+            description: 'The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.'
+            icon: 'icon-globe'
+            actions:
+              newSite:
+                label: 'Create site'
+                title: 'Create a new site'
+      user:
+        label: 'User'
+        hideInMenu: TRUE
+        submodules:
+          usersettings:
+            label: 'User Settings'
+            controller: '\TYPO3\Neos\Controller\Module\User\UserSettingsController'
+            description: 'This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.'
+            icon: 'icon-user'
+
+  Setup:
+    stepOrder: ['database', 'administrator', 'siteimport', 'final']
+    steps:
+      administrator:
+        className: 'TYPO3\Neos\Setup\Step\AdministratorStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      siteimport:
+        className: 'TYPO3\Neos\Setup\Step\SiteImportStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      final:
+        className: 'TYPO3\Neos\Setup\Step\FinalStep'
+    view:
+      title: 'TYPO3 Neos Setup'
+
+  Media:
+    bodyClasses: 'neos media-browser'
+    scripts:
+      - resource://TYPO3.Twitter.Bootstrap/Public/Libraries/jQuery/jquery-1.8.2.min.js
+      - resource://TYPO3.Twitter.Bootstrap/Public/2/js/bootstrap.min.js
+    styles:
+      - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
+      - resource://TYPO3.Media/Public/Styles/Main.css
+      - resource://TYPO3.Neos/Public/Styles/Includes-built.css
