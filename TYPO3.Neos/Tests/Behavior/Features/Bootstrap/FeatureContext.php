@@ -103,7 +103,7 @@ class FeatureContext extends MinkContext {
 	public function iShouldBeInTheModule($moduleName) {
 		switch ($moduleName) {
 			case 'Content':
-				$this->assertSession()->elementTextContains('css', '#neos-top-bar .neos-active a', 'Content');
+				$this->assertSession()->addressMatches('/^\/(?!neos).*@.+$/');
 				break;
 			default:
 				throw new PendingException();
@@ -122,14 +122,16 @@ class FeatureContext extends MinkContext {
 	 * @Given /^I should be logged in as "([^"]*)"$/
 	 */
 	public function iShouldBeLoggedInAs($name) {
-		$this->assertSession()->elementTextContains('css', '#neos-application .neos-button-logout a', $name);
+		$this->assertSession()->elementTextContains('css', '#neos-user-actions .neos-user-menu', $name);
 	}
 
 	/**
 	 * @Then /^I should not be logged in$/
 	 */
 	public function iShouldNotBeLoggedIn() {
-		$this->assertSession()->elementNotExists('css', '#neos-application .neos-button-logout');
+		if ($this->getSession()->getPage()->findLink('Logout')) {
+			Assert::fail('"Logout" link not expected');
+		}
 	}
 
 	/**
@@ -164,12 +166,14 @@ class FeatureContext extends MinkContext {
 	public function iImportedTheSite($packageKey) {
 		/** @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository $nodeDataRepository */
 		$nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-		$contentContext = new \TYPO3\Neos\Domain\Service\ContentContext('live');
+		/** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
+		$contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$contentContext = $contextFactory->create(array('workspace' => 'live'));
 		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeDataRepository, 'context', $contentContext, TRUE);
 
 		/** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importFromPackage($packageKey);
+		$siteImportService->importFromPackage($packageKey, $contentContext);
 
 		$this->getSubcontext('flow')->persistAll();
 	}
@@ -197,6 +201,15 @@ class FeatureContext extends MinkContext {
 				\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($directory);
 			}
 		}
+	}
+
+	/**
+	 * @BeforeScenario @fixtures
+	 */
+	public function resetContextFactory() {
+		/** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
+		$contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		\TYPO3\Flow\Reflection\ObjectAccess::setProperty($contextFactory, 'contextInstances', array(), TRUE);
 	}
 
 	/**
