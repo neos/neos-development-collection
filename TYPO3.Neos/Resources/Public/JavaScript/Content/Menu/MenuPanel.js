@@ -85,7 +85,7 @@ define(
 					});
 				} else {
 					$.each(this.get('items.siteList'), function(index, value) {
-						if (value.uri.indexOf(location.hostname) !== -1) {
+						if (value.uri && value.uri.indexOf(location.hostname) !== -1) {
 							that.set('items.siteList.' + index + '.active', true);
 						}
 					});

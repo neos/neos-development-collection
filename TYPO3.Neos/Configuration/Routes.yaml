@@ -78,6 +78,7 @@
     '@controller': 'Backend\Menu'
     '@action':     'index'
     '@format':     'html'
+  appendExceedingArguments: true
 
 -
   name: 'Backend - Modules'

@@ -52,22 +52,22 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 	 * @return string
 	 */
 	public function render() {
-		$schemaCacheIdentifier = $this->cacheManager->getConfigurationCacheVersion();
+		$configurationCacheIdentifier = $this->cacheManager->getConfigurationCacheVersion();
 
 		$vieSchemaUri = $this->controllerContext->getUriBuilder()
 			->reset()
 			->setCreateAbsoluteUri(TRUE)
-			->uriFor('vieSchema', array('version' => $schemaCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
+			->uriFor('vieSchema', array('version' => $configurationCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
 
 		$nodeTypeSchemaUri = $this->controllerContext->getUriBuilder()
 			->reset()
 			->setCreateAbsoluteUri(TRUE)
-			->uriFor('nodeTypeSchema', array('version' => $schemaCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
+			->uriFor('nodeTypeSchema', array('version' => $configurationCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
 
 		$menuDataUri = $this->controllerContext->getUriBuilder()
 			->reset()
 			->setCreateAbsoluteUri(TRUE)
-			->uriFor('index', array(), 'Backend\Menu', 'TYPO3.Neos');
+			->uriFor('index', array('version' => $configurationCacheIdentifier), 'Backend\Menu', 'TYPO3.Neos');
 
 		$configuration = array(
 			'window.T3Configuration = {};',

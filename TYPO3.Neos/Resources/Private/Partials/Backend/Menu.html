@@ -2,15 +2,33 @@
 <noscript>
 	<div id="neos-menu-panel" class="neos-noscript">
 		<div class="neos-menu-section">
-			<f:link.action package="TYPO3.Neos" controller="Backend\Backend" action="index" title="Content view" class="neos-menu-headline active">
+			<f:link.action package="TYPO3.Neos" controller="Backend\Backend" action="index" title="Content view" class="neos-menu-headline">
 				<i class="icon-file"></i> Content
 			</f:link.action>
 			<f:if condition="{sites}">
 				<div class="neos-menu-list">
 					<f:for each="{sites}" as="site">
-						<neos:link.node node="{site.siteNode}" title="{site.nodeName}" class="{f:if(condition: site.active, then: 'active')}">
-							<i class="icon-globe"></i> {site.name}
-						</neos:link.node>
+						<f:if condition="{site.uri}">
+							<f:then>
+								<f:if condition="{modulePath}">
+									<f:then>
+										<a href="{site.uri}" title="{site.nodeName}">
+											<i class="icon-globe"></i> {site.name}
+										</a>
+									</f:then>
+									<f:else>
+										<a href="{site.uri}" title="{site.nodeName}" class="{f:if(condition: site.active, then: 'active')}{f:if(condition: '{sites -> f:count()} == 1', then: ' active')}">
+											<i class="icon-globe"></i> {site.name}
+										</a>
+									</f:else>
+								</f:if>
+							</f:then>
+							<f:else>
+								<span title="{site.nodeName}" class="neos-menu-item disabled">
+									<i class="icon-globe"></i> {site.name}
+								</span>
+							</f:else>
+						</f:if>
 					</f:for>
 				</div>
 			</f:if>

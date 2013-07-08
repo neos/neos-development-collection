@@ -19,22 +19,10 @@ use TYPO3\Flow\Annotations as Flow;
 class MenuController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var \TYPO3\Neos\Controller\Backend\MenuHelper
 	 * @Flow\Inject
 	 */
-	protected $siteRepository;
-
-	/**
-	 * @var \TYPO3\Flow\Security\Context
-	 * @Flow\Inject
-	 */
-	protected $securityContext;
-
-	/**
-	 * @var \TYPO3\Flow\Property\PropertyMapper
-	 * @Flow\Inject
-	 */
-	protected $propertyMapper;
+	protected $menuHelper;
 
 	/**
 	 * @return string
@@ -48,36 +36,15 @@ class MenuController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
 		return json_encode(array(
 			'contentModuleUri' => $contentModuleUri,
-			'siteList' => $this->siteList(),
-			'moduleList' => $this->moduleList()
+			'siteList' => $this->menuHelper->buildSiteList($this->controllerContext),
+			'moduleList' => $this->buildModuleList()
 		));
 	}
 
 	/**
 	 * @return array
 	 */
-	protected function siteList() {
-		$siteList = array();
-		foreach ($this->siteRepository->findAll() as $site) {
-
-			$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName() . '@user-' . $this->securityContext->getAccount()->getAccountIdentifier(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-			$uri = $this->getControllerContext()->getUriBuilder()
-				->reset()
-				->setCreateAbsoluteUri(TRUE)
-				->uriFor('show', array('node' => $siteNode->getPrimaryChildNode()), 'Frontend\Node', 'TYPO3.Neos');
-			$siteList[] = array(
-				'name' => $site->getName(),
-				'nodeName' => $site->getNodeName(),
-				'uri' => $uri
-			);
-		}
-		return $siteList;
-	}
-
-	/**
-	 * @return array
-	 */
-	protected function moduleList() {
+	protected function buildModuleList() {
 		$moduleList = array();
 		foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
 			$submoduleList = array();

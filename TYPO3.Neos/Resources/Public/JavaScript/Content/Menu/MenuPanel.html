@@ -4,9 +4,15 @@
 	</a>
 	{{view view.ToggleMenuPanelHeadline classNames="neos-menu-collapse" group="content"}}
 	{{#collection tagName="div" classNames="neos-menu-list" contentBinding="view.items.siteList"}}
-		<a href="{{unbound uri}}" title="{{unbound nodeName}}" {{bindAttr class="active:active"}}>
-			<i class="icon-globe"></i> {{unbound name}}
-		</a>
+		{{#if uri}}
+			<a href="{{unbound uri}}" title="{{unbound nodeName}}" {{bindAttr class="active:active"}}>
+				<i class="icon-globe"></i> {{unbound name}}
+			</a>
+		{{else}}
+			<span href="#" title="{{unbound nodeName}}" class="neos-menu-item disabled">
+				<i class="icon-globe"></i> {{unbound name}}
+			</span>
+		{{/if}}
 	{{/collection}}
 </div>
 

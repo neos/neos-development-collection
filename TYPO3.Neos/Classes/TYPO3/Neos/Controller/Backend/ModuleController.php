@@ -35,16 +35,10 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var \TYPO3\Neos\Controller\Backend\MenuHelper
 	 * @Flow\Inject
 	 */
-	protected $siteRepository;
-
-	/**
-	 * @var \TYPO3\Flow\Property\PropertyMapper
-	 * @Flow\Inject
-	 */
-	protected $propertyMapper;
+	protected $menuHelper;
 
 	/**
 	 * @param array $module
@@ -87,20 +81,7 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		} else {
 			$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 
-			$sites = array();
-			foreach ($this->siteRepository->findAll() as $site) {
-				$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-				$uri = $this->controllerContext->getUriBuilder()
-					->reset()
-					->setCreateAbsoluteUri(TRUE)
-					->uriFor('show', array('node' => $siteNode), 'Frontend\Node', 'TYPO3.Neos');
-				$sites[] = array(
-					'name' => $site->getName(),
-					'nodeName' => $site->getNodeName(),
-					'siteNode' => $siteNode,
-					'uri' => $uri
-				);
-			}
+			$sites = $this->menuHelper->buildSiteList($this->controllerContext);
 
 			$this->view->assignMultiple(array(
 				'moduleClass' => implode('-', $modules),

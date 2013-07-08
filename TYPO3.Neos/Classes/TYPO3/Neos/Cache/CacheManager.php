@@ -28,7 +28,8 @@ class CacheManager {
 	/**
 	 * Get the version of the configuration cache
 	 *
-	 * This value will be changed on every change of configuration files.
+	 * This value will be changed on every change of configuration files or relevant domain
+	 * model changes (Site or Domain).
 	 *
 	 * @return string
 	 */

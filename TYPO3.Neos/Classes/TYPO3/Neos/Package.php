@@ -25,10 +25,14 @@ class Package extends BasePackage {
 	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 
-		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', function() use ($bootstrap) {
+		$flushConfigurationCache = function () use ($bootstrap) {
 			$cacheManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager');
 			$cacheManager->getCache('TYPO3_Neos_Configuration_Version')->flush();
-		});
+		};
+
+		$dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', $flushConfigurationCache);
+
+		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', $flushConfigurationCache);
 	}
 
 }

@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -53,6 +54,13 @@ class Site {
 	protected $nodeName;
 
 	/**
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain>
+	 * @ORM\OneToMany(mappedBy="site")
+	 * @Flow\Lazy
+	 */
+	protected $domains;
+
+	/**
 	 * The site's state
 	 *
 	 * @var integer
@@ -73,6 +81,7 @@ class Site {
 	 */
 	public function __construct($nodeName) {
 		$this->nodeName = $nodeName;
+		$this->domains = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 
 	/**
@@ -176,5 +185,55 @@ class Site {
 	public function isOffline() {
 		return $this->state === self::STATE_OFFLINE;
 	}
+
+	/**
+	 * @param \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain> $domains
+	 */
+	public function setDomains($domains) {
+		$this->domains = $domains;
+	}
+
+	/**
+	 * @return \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain>
+	 */
+	public function getDomains() {
+		return $this->domains;
+	}
+
+	/**
+	 * @return boolean TRUE if the site has at least one active domain assigned
+	 */
+	public function hasActiveDomains() {
+		return $this->domains->exists(function($index, $domain) { return $domain->getActive(); });
+	}
+
+	/**
+	 * @return \TYPO3\Neos\Domain\Model\Domain
+	 */
+	public function getFirstActiveDomain() {
+		$activeDomains = $this->domains->filter(function($domain) { return $domain->getActive(); });
+		return $activeDomains->first();
+	}
+
+	/**
+	 * Internal event handler to forward site changes to the "siteChanged" signal
+	 *
+	 * @ORM\PostPersist
+	 * @ORM\PostUpdate
+	 * @ORM\PostRemove
+	 * @return void
+	 */
+	public function onPostFlush() {
+		$this->emitSiteChanged();
+	}
+
+	/**
+	 * Internal signal
+	 *
+	 * @Flow\Signal
+	 * @return void
+	 */
+	public function emitSiteChanged() {}
+
 }
 ?>

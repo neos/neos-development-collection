@@ -33,7 +33,7 @@ class Domain  {
 
 	/**
 	 * @var \TYPO3\Neos\Domain\Model\Site
-	 * @ORM\ManyToOne
+	 * @ORM\ManyToOne(inversedBy="domains")
 	 * @Flow\Validate(type="NotEmpty")
 	 */
 	protected $site;
@@ -106,6 +106,18 @@ class Domain  {
 	 */
 	public function getActive() {
 		return $this->active;
+	}
+
+	/**
+	 * Internal event handler to forward domain changes to the "siteChanged" signal
+	 *
+	 * @ORM\PostPersist
+	 * @ORM\PostUpdate
+	 * @ORM\PostRemove
+	 * @return void
+	 */
+	public function onPostFlush() {
+		$this->site->emitSiteChanged();
 	}
 
 }

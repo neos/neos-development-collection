@@ -31,16 +31,16 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var \TYPO3\Neos\Controller\Backend\MenuHelper
 	 * @Flow\Inject
 	 */
-	protected $siteRepository;
+	protected $menuHelper;
 
 	/**
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 * @Flow\Inject
 	 */
-	protected $propertyMapper;
+	protected $accessDecisionManager;
 
 	/**
 	 * @param array $settings
@@ -55,26 +55,19 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 * @return string
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		try {
+			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
+		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
+			return '';
+		}
+
 		$view = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
 		$view->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Backend/Content/Container.html');
 		$view->setPartialRootPath('resource://TYPO3.Neos/Private/Partials');
 
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 
-		$sites = array();
-		foreach ($this->siteRepository->findAll() as $site) {
-			$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-			$uri = $this->controllerContext->getUriBuilder()
-				->reset()
-				->setCreateAbsoluteUri(TRUE)
-				->uriFor('show', array('node' => $siteNode), 'Frontend\Node', 'TYPO3.Neos');
-			$sites[] = array(
-				'name' => $site->getName(),
-				'nodeName' => $site->getNodeName(),
-				'uri' => $uri,
-				'active' => stristr($uri, $_SERVER['HTTP_HOST']) !== FALSE ? TRUE : FALSE
-			);
-		}
+		$sites = $this->menuHelper->buildSiteList($this->controllerContext);
 
 		$view->assignMultiple(array(
 			'node' => $node,
@@ -87,5 +80,6 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 
 		return $view->render();
 	}
+
 }
 ?>

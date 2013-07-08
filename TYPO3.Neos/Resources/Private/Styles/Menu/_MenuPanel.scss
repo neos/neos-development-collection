@@ -127,7 +127,7 @@ $menuIconWidth: 54px;
 			}
 		}
 
-		a {
+		a, span.neos-menu-item {
 			display: block;
 			@include font;
 			font-size: 14px;
@@ -145,6 +145,11 @@ $menuIconWidth: 54px;
 				color: $blue;
 			}
 
+			&.disabled {
+				color: $textSubtle;
+
+			}
+
 			i {
 				display: block;
 				position: absolute;
@@ -160,7 +165,7 @@ $menuIconWidth: 54px;
 		}
 
 		.neos-menu-list {
-			a {
+			a, span.neos-menu-item {
 				background-color: $grayMedium;
 				border-bottom: 1px solid $grayLight;
 				padding-left: $menuIconWidth;

@@ -1,13 +1,11 @@
-<f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
-	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
-		<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
-		<div id="neos-application" class="neos" role="application">
-			<div id="neos-top-bar">
-				<div id="neos-user-actions">
-					<f:render partial="Backend/UserMenu" arguments="{_all}" />
-				</div>
+<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+	<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
+	<div id="neos-application" class="neos" role="application">
+		<div id="neos-top-bar">
+			<div id="neos-user-actions">
+				<f:render partial="Backend/UserMenu" arguments="{_all}" />
 			</div>
-			<f:render partial="Backend/Menu" arguments="{_all}" />
 		</div>
-	</f:if>
-</f:security.ifAccess>
+		<f:render partial="Backend/Menu" arguments="{_all}" />
+	</div>
+</f:if>
