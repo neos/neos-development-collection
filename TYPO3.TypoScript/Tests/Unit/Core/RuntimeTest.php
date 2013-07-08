@@ -18,7 +18,7 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function renderHandlesExceptionDuringRendering() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \Exception('I am a previous exception'));
+		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$runtime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array('evaluateInternal', 'handleRenderingException'), array(array(), $controllerContext));
 		$runtime->injectSettings(array('handleRenderingExceptions' => 'throw'));
 		$runtime->expects($this->any())->method('evaluateInternal')->will($this->throwException($runtimeException));
@@ -30,12 +30,12 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @expectedException \Exception
+	 * @expectedException \TYPO3\Flow\Exception
 	 * @test
 	 */
 	public function handleRenderingExceptionThrowsException() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \Exception('I am a previous exception'));
+		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
 		$runtime->injectSettings(array('handleRenderingExceptions' => 'throw'));
 
@@ -47,7 +47,7 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function handleRenderingExceptionRendersHtmlMessage() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \Exception('I am a previous exception'));
+		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
 		$runtime->injectSettings(array('handleRenderingExceptions' => 'htmlMessage'));
@@ -63,7 +63,7 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function handleRenderingExceptionRendersXmlComment() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \Exception('I am a previous exception'));
+		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
 		$runtime->injectSettings(array('handleRenderingExceptions' => 'xmlComment'));
@@ -79,7 +79,7 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function handleRenderingExceptionRendersPlainText() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \Exception('I am a previous exception'));
+		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
 		$runtime->injectSettings(array('handleRenderingExceptions' => 'plainText'));
@@ -95,7 +95,7 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function handleRenderingExceptionSuppresses() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \Exception('I am a previous exception'));
+		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
 		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
 		$runtime->injectSettings(array('handleRenderingExceptions' => 'suppress'));
