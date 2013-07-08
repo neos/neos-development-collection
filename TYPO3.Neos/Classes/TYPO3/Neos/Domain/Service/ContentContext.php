@@ -34,6 +34,11 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	protected $currentDomain;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected $currentSiteNode;
+
+	/**
 	 * @param string $workspaceName
 	 * @param \DateTime $currentDateTime
 	 * @param \TYPO3\Flow\I18n\Locale $locale
@@ -80,7 +85,10 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	public function getCurrentSiteNode() {
-		return ($this->currentSite === NULL) ? NULL : $this->getNode('/sites/' . $this->currentSite->getNodeName());
+		if ($this->currentSite !== NULL && $this->currentSiteNode === NULL) {
+			$this->currentSiteNode = $this->getNode('/sites/' . $this->currentSite->getNodeName());
+		}
+		return $this->currentSiteNode;
 	}
 
 	/**
