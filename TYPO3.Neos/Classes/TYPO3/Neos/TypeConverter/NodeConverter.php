@@ -51,7 +51,7 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
 	 */
-	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$contextProperties = array(
 			'workspaceName' => $workspaceName,
 			'invisibleContentShown' => FALSE,
