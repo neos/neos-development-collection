@@ -188,7 +188,7 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 */
-	protected function createNode($nodePath, $workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+	protected function createNode($nodePath, $workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$nodeContext = $this->createContext($workspaceName, $configuration);
 		$workspace = $nodeContext->getWorkspace(FALSE);
 		if (!$workspace) {
@@ -210,12 +210,12 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
 	 */
-	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$invisibleContentShown = FALSE;
 		$removedContentShown = FALSE;
 		if ($workspaceName !== 'live') {
 			$invisibleContentShown = TRUE;
-			if ($configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
+			if ($configuration !== NULL && $configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
 				$removedContentShown = TRUE;
 			}
 		}
