@@ -89,7 +89,7 @@
 					background: transparent;
 					@include icon-FontAwesome();
 					@extend .icon-remove;
-					color: $warningRed;
+					color: $warning;
 				}
 			}
 
@@ -98,7 +98,7 @@
 					background: transparent;
 					@include icon-FontAwesome();
 					@extend .icon-ok;
-					color: $successGreen;
+					color: $green;
 				}
 			}
 		}

@@ -126,7 +126,7 @@ td.aloha-table-selectrow {
 }
 
 .aloha-block-droppable {
-	border-left: 1px solid $warningRed;
+	border-left: 1px solid $warning;
 	margin-left: -1px;
 }
 
@@ -138,7 +138,7 @@ td.aloha-table-selectrow {
 	margin-left: 0 !important;
 	border-left: none !important;
 	margin-right: -1px;
-	border-right: 1px solid $warningRed;
+	border-right: 1px solid $warning;
 }
 
 .aloha-block-droppable-blocklevel {
@@ -149,7 +149,7 @@ td.aloha-table-selectrow {
 	position: absolute;
 	width: 100%;
 	height: 2px;
-	background-color: $warningRed;
+	background-color: $warning;
 	bottom: 0;
 }
 
@@ -214,7 +214,7 @@ td.aloha-table-selectrow {
 }
 
 .aloha-block-dropInlineElementIntoEmptyBlock {
-	border: 1px solid $warningRed;
+	border: 1px solid $warning;
 }
 
 .aloha-block-dropzone {

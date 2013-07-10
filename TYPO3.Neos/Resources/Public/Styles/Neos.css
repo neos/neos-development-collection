@@ -1,4 +1,3 @@
-@charset "UTF-8";
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
 /* Variables */
 /* Color palette */
@@ -2848,8 +2847,8 @@
 }
 .neos .input-append .active,
 .neos .input-prepend .active {
-  background-color: #bfdab4;
-  border-color: #69a550;
+  background-color: #3dff80;
+  border-color: #00a338;
 }
 .neos .input-prepend .add-on,
 .neos .input-prepend .btn {
@@ -7464,84 +7463,84 @@
 .neos .btn.neos-button.btn-primary, .neos .btn.neos-button.btn-success {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #70ac58;
-  background-image: -moz-linear-gradient(top, #76b15e, #69a550);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#76b15e), to(#69a550));
-  background-image: -webkit-linear-gradient(top, #76b15e, #69a550);
-  background-image: -o-linear-gradient(top, #76b15e, #69a550);
-  background-image: linear-gradient(to bottom, #76b15e, #69a550);
+  background-color: #00b23d;
+  background-image: -moz-linear-gradient(top, #00bc41, #00a338);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00bc41), to(#00a338));
+  background-image: -webkit-linear-gradient(top, #00bc41, #00a338);
+  background-image: -o-linear-gradient(top, #00bc41, #00a338);
+  background-image: linear-gradient(to bottom, #00bc41, #00a338);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF76B15E', endColorstr='#FF69A550', GradientType=0);
-  border-color: #69a550 #69a550 #487137;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00BC41', endColorstr='#FF00A338', GradientType=0);
+  border-color: #00a338 #00a338 #00561e;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #69a550;
+  *background-color: #00a338;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #5e9448;
-  border-bottom-color: #53833f;
+  border: 1px solid #008a2f;
+  border-bottom-color: #007026;
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .neos .btn.neos-button.btn-primary:hover, .neos .btn.neos-button.btn-primary:focus, .neos .btn.neos-button.btn-primary:active, .neos .btn.neos-button.btn-primary.active, .neos .btn.neos-button.btn-primary.disabled, .neos .btn.neos-button.btn-primary[disabled], .neos .btn.neos-button.btn-success:hover, .neos .btn.neos-button.btn-success:focus, .neos .btn.neos-button.btn-success:active, .neos .btn.neos-button.btn-success.active, .neos .btn.neos-button.btn-success.disabled, .neos .btn.neos-button.btn-success[disabled] {
   color: white;
-  background-color: #69a550;
-  *background-color: #5e9448;
+  background-color: #00a338;
+  *background-color: #008a2f;
 }
 .neos .btn.neos-button.btn-primary:active, .neos .btn.neos-button.btn-primary.active, .neos .btn.neos-button.btn-success:active, .neos .btn.neos-button.btn-success.active {
-  background-color: #53833f \9;
+  background-color: #007026 \9;
 }
 .neos .btn.neos-button.btn-primary:hover, .neos .btn.neos-button.btn-primary:focus, .neos .btn.neos-button.btn-primary:active, .neos .btn.neos-button.btn-success:hover, .neos .btn.neos-button.btn-success:focus, .neos .btn.neos-button.btn-success:active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #67a24e;
-  background-image: -moz-linear-gradient(top, #69a550, #659e4d);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69a550), to(#659e4d));
-  background-image: -webkit-linear-gradient(top, #69a550, #659e4d);
-  background-image: -o-linear-gradient(top, #69a550, #659e4d);
-  background-image: linear-gradient(to bottom, #69a550, #659e4d);
+  background-color: #009f36;
+  background-image: -moz-linear-gradient(top, #00a338, #009934);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00a338), to(#009934));
+  background-image: -webkit-linear-gradient(top, #00a338, #009934);
+  background-image: -o-linear-gradient(top, #00a338, #009934);
+  background-image: linear-gradient(to bottom, #00a338, #009934);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF69A550', endColorstr='#FF659E4D', GradientType=0);
-  border-color: #659e4d #659e4d #446b34;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00A338', endColorstr='#FF009934', GradientType=0);
+  border-color: #009934 #009934 #004c1a;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #659e4d;
+  *background-color: #009934;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #53833f;
-  border-bottom-color: #3d602f;
+  border: 1px solid #007026;
+  border-bottom-color: #003d15;
 }
 .neos .btn.neos-button.btn-primary:hover:hover, .neos .btn.neos-button.btn-primary:hover:focus, .neos .btn.neos-button.btn-primary:hover:active, .neos .btn.neos-button.btn-primary:hover.active, .neos .btn.neos-button.btn-primary:hover.disabled, .neos .btn.neos-button.btn-primary:hover[disabled], .neos .btn.neos-button.btn-primary:focus:hover, .neos .btn.neos-button.btn-primary:focus:focus, .neos .btn.neos-button.btn-primary:focus:active, .neos .btn.neos-button.btn-primary:focus.active, .neos .btn.neos-button.btn-primary:focus.disabled, .neos .btn.neos-button.btn-primary:focus[disabled], .neos .btn.neos-button.btn-primary:active:hover, .neos .btn.neos-button.btn-primary:active:focus, .neos .btn.neos-button.btn-primary:active:active, .neos .btn.neos-button.btn-primary:active.active, .neos .btn.neos-button.btn-primary:active.disabled, .neos .btn.neos-button.btn-primary:active[disabled], .neos .btn.neos-button.btn-success:hover:hover, .neos .btn.neos-button.btn-success:hover:focus, .neos .btn.neos-button.btn-success:hover:active, .neos .btn.neos-button.btn-success:hover.active, .neos .btn.neos-button.btn-success:hover.disabled, .neos .btn.neos-button.btn-success:hover[disabled], .neos .btn.neos-button.btn-success:focus:hover, .neos .btn.neos-button.btn-success:focus:focus, .neos .btn.neos-button.btn-success:focus:active, .neos .btn.neos-button.btn-success:focus.active, .neos .btn.neos-button.btn-success:focus.disabled, .neos .btn.neos-button.btn-success:focus[disabled], .neos .btn.neos-button.btn-success:active:hover, .neos .btn.neos-button.btn-success:active:focus, .neos .btn.neos-button.btn-success:active:active, .neos .btn.neos-button.btn-success:active.active, .neos .btn.neos-button.btn-success:active.disabled, .neos .btn.neos-button.btn-success:active[disabled] {
   color: white;
-  background-color: #659e4d;
-  *background-color: #5a8d44;
+  background-color: #009934;
+  *background-color: #007f2c;
 }
 .neos .btn.neos-button.btn-primary:hover:active, .neos .btn.neos-button.btn-primary:hover.active, .neos .btn.neos-button.btn-primary:focus:active, .neos .btn.neos-button.btn-primary:focus.active, .neos .btn.neos-button.btn-primary:active:active, .neos .btn.neos-button.btn-primary:active.active, .neos .btn.neos-button.btn-success:hover:active, .neos .btn.neos-button.btn-success:hover.active, .neos .btn.neos-button.btn-success:focus:active, .neos .btn.neos-button.btn-success:focus.active, .neos .btn.neos-button.btn-success:active:active, .neos .btn.neos-button.btn-success:active.active {
-  background-color: #4f7c3c \9;
+  background-color: #006623 \9;
 }
 .neos .btn.neos-button.btn-primary.disabled, .neos .btn.neos-button.btn-primary[disabled], .neos .btn.neos-button.btn-success.disabled, .neos .btn.neos-button.btn-success[disabled] {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #70ac58;
-  background-image: -moz-linear-gradient(top, #76b15e, #69a550);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#76b15e), to(#69a550));
-  background-image: -webkit-linear-gradient(top, #76b15e, #69a550);
-  background-image: -o-linear-gradient(top, #76b15e, #69a550);
-  background-image: linear-gradient(to bottom, #76b15e, #69a550);
+  background-color: #00b23d;
+  background-image: -moz-linear-gradient(top, #00bc41, #00a338);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00bc41), to(#00a338));
+  background-image: -webkit-linear-gradient(top, #00bc41, #00a338);
+  background-image: -o-linear-gradient(top, #00bc41, #00a338);
+  background-image: linear-gradient(to bottom, #00bc41, #00a338);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF76B15E', endColorstr='#FF69A550', GradientType=0);
-  border-color: #69a550 #69a550 #487137;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00BC41', endColorstr='#FF00A338', GradientType=0);
+  border-color: #00a338 #00a338 #00561e;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #69a550;
+  *background-color: #00a338;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
 .neos .btn.neos-button.btn-primary.disabled:hover, .neos .btn.neos-button.btn-primary.disabled:focus, .neos .btn.neos-button.btn-primary.disabled:active, .neos .btn.neos-button.btn-primary.disabled.active, .neos .btn.neos-button.btn-primary.disabled.disabled, .neos .btn.neos-button.btn-primary.disabled[disabled], .neos .btn.neos-button.btn-primary[disabled]:hover, .neos .btn.neos-button.btn-primary[disabled]:focus, .neos .btn.neos-button.btn-primary[disabled]:active, .neos .btn.neos-button.btn-primary[disabled].active, .neos .btn.neos-button.btn-primary[disabled].disabled, .neos .btn.neos-button.btn-primary[disabled][disabled], .neos .btn.neos-button.btn-success.disabled:hover, .neos .btn.neos-button.btn-success.disabled:focus, .neos .btn.neos-button.btn-success.disabled:active, .neos .btn.neos-button.btn-success.disabled.active, .neos .btn.neos-button.btn-success.disabled.disabled, .neos .btn.neos-button.btn-success.disabled[disabled], .neos .btn.neos-button.btn-success[disabled]:hover, .neos .btn.neos-button.btn-success[disabled]:focus, .neos .btn.neos-button.btn-success[disabled]:active, .neos .btn.neos-button.btn-success[disabled].active, .neos .btn.neos-button.btn-success[disabled].disabled, .neos .btn.neos-button.btn-success[disabled][disabled] {
   color: white;
-  background-color: #69a550;
-  *background-color: #5e9448;
+  background-color: #00a338;
+  *background-color: #008a2f;
 }
 .neos .btn.neos-button.btn-primary.disabled:active, .neos .btn.neos-button.btn-primary.disabled.active, .neos .btn.neos-button.btn-primary[disabled]:active, .neos .btn.neos-button.btn-primary[disabled].active, .neos .btn.neos-button.btn-success.disabled:active, .neos .btn.neos-button.btn-success.disabled.active, .neos .btn.neos-button.btn-success[disabled]:active, .neos .btn.neos-button.btn-success[disabled].active {
-  background-color: #53833f \9;
+  background-color: #007026 \9;
 }
 .neos .btn.neos-button.btn-danger {
   color: white;
@@ -8230,7 +8229,7 @@
   border-top-color: #db4f4a;
 }
 .neos .neos-notification-container .alert.alert-success {
-  border-top-color: #69a550;
+  border-top-color: #00a338;
 }
 .neos .neos-notification-container .alert.alert-warning {
   border-top-color: #ff8700;
@@ -10687,21 +10686,21 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #67a24e;
-  background-image: -moz-linear-gradient(top, #69a550, #659e4d);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69a550), to(#659e4d));
-  background-image: -webkit-linear-gradient(top, #69a550, #659e4d);
-  background-image: -o-linear-gradient(top, #69a550, #659e4d);
-  background-image: linear-gradient(to bottom, #69a550, #659e4d);
+  background-color: #009f36;
+  background-image: -moz-linear-gradient(top, #00a338, #009934);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00a338), to(#009934));
+  background-image: -webkit-linear-gradient(top, #00a338, #009934);
+  background-image: -o-linear-gradient(top, #00a338, #009934);
+  background-image: linear-gradient(to bottom, #00a338, #009934);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF69A550', endColorstr='#FF659E4D', GradientType=0);
-  border-color: #659e4d #659e4d #446b34;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00A338', endColorstr='#FF009934', GradientType=0);
+  border-color: #009934 #009934 #004c1a;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #659e4d;
+  *background-color: #009934;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #53833f;
-  border-bottom-color: #3d602f;
+  border: 1px solid #007026;
+  border-bottom-color: #003d15;
 }
 .neos.neos-module table td > .neos-button.btn-success:hover:hover, .neos.neos-module table td > .neos-button.btn-success:hover:focus, .neos.neos-module table td > .neos-button.btn-success:hover:active, .neos.neos-module table td > .neos-button.btn-success:hover.active, .neos.neos-module table td > .neos-button.btn-success:hover.disabled, .neos.neos-module table td > .neos-button.btn-success:hover[disabled], .neos.neos-module table td > .neos-button.btn-success:focus:hover, .neos.neos-module table td > .neos-button.btn-success:focus:focus, .neos.neos-module table td > .neos-button.btn-success:focus:active, .neos.neos-module table td > .neos-button.btn-success:focus.active, .neos.neos-module table td > .neos-button.btn-success:focus.disabled, .neos.neos-module table td > .neos-button.btn-success:focus[disabled], .neos.neos-module table td > .neos-button.btn-success:active:hover, .neos.neos-module table td > .neos-button.btn-success:active:focus, .neos.neos-module table td > .neos-button.btn-success:active:active, .neos.neos-module table td > .neos-button.btn-success:active.active, .neos.neos-module table td > .neos-button.btn-success:active.disabled, .neos.neos-module table td > .neos-button.btn-success:active[disabled],
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:hover,
@@ -10723,8 +10722,8 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.disabled,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active[disabled] {
   color: white;
-  background-color: #659e4d;
-  *background-color: #5a8d44;
+  background-color: #009934;
+  *background-color: #007f2c;
 }
 .neos.neos-module table td > .neos-button.btn-success:hover:active, .neos.neos-module table td > .neos-button.btn-success:hover.active, .neos.neos-module table td > .neos-button.btn-success:focus:active, .neos.neos-module table td > .neos-button.btn-success:focus.active, .neos.neos-module table td > .neos-button.btn-success:active:active, .neos.neos-module table td > .neos-button.btn-success:active.active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:active,
@@ -10733,7 +10732,7 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus.active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active:active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.active {
-  background-color: #4f7c3c \9;
+  background-color: #006623 \9;
 }
 .neos.neos-module table td > .neos-button.btn-success.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled,
@@ -11759,21 +11758,21 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #67a24e;
-  background-image: -moz-linear-gradient(top, #69a550, #659e4d);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69a550), to(#659e4d));
-  background-image: -webkit-linear-gradient(top, #69a550, #659e4d);
-  background-image: -o-linear-gradient(top, #69a550, #659e4d);
-  background-image: linear-gradient(to bottom, #69a550, #659e4d);
+  background-color: #009f36;
+  background-image: -moz-linear-gradient(top, #00a338, #009934);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00a338), to(#009934));
+  background-image: -webkit-linear-gradient(top, #00a338, #009934);
+  background-image: -o-linear-gradient(top, #00a338, #009934);
+  background-image: linear-gradient(to bottom, #00a338, #009934);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF69A550', endColorstr='#FF659E4D', GradientType=0);
-  border-color: #659e4d #659e4d #446b34;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF00A338', endColorstr='#FF009934', GradientType=0);
+  border-color: #009934 #009934 #004c1a;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #659e4d;
+  *background-color: #009934;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #53833f;
-  border-bottom-color: #3d602f;
+  border: 1px solid #007026;
+  border-bottom-color: #003d15;
 }
 .neos.neos-module table td > .neos-button.btn-success:hover:hover, .neos.neos-module table td > .neos-button.btn-success:hover:focus, .neos.neos-module table td > .neos-button.btn-success:hover:active, .neos.neos-module table td > .neos-button.btn-success:hover.active, .neos.neos-module table td > .neos-button.btn-success:hover.disabled, .neos.neos-module table td > .neos-button.btn-success:hover[disabled], .neos.neos-module table td > .neos-button.btn-success:focus:hover, .neos.neos-module table td > .neos-button.btn-success:focus:focus, .neos.neos-module table td > .neos-button.btn-success:focus:active, .neos.neos-module table td > .neos-button.btn-success:focus.active, .neos.neos-module table td > .neos-button.btn-success:focus.disabled, .neos.neos-module table td > .neos-button.btn-success:focus[disabled], .neos.neos-module table td > .neos-button.btn-success:active:hover, .neos.neos-module table td > .neos-button.btn-success:active:focus, .neos.neos-module table td > .neos-button.btn-success:active:active, .neos.neos-module table td > .neos-button.btn-success:active.active, .neos.neos-module table td > .neos-button.btn-success:active.disabled, .neos.neos-module table td > .neos-button.btn-success:active[disabled],
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:hover,
@@ -11795,8 +11794,8 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.disabled,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active[disabled] {
   color: white;
-  background-color: #659e4d;
-  *background-color: #5a8d44;
+  background-color: #009934;
+  *background-color: #007f2c;
 }
 .neos.neos-module table td > .neos-button.btn-success:hover:active, .neos.neos-module table td > .neos-button.btn-success:hover.active, .neos.neos-module table td > .neos-button.btn-success:focus:active, .neos.neos-module table td > .neos-button.btn-success:focus.active, .neos.neos-module table td > .neos-button.btn-success:active:active, .neos.neos-module table td > .neos-button.btn-success:active.active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:hover:active,
@@ -11805,7 +11804,7 @@
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:focus.active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active:active,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success:active.active {
-  background-color: #4f7c3c \9;
+  background-color: #006623 \9;
 }
 .neos.neos-module table td > .neos-button.btn-success.disabled, .neos.neos-module table td > .neos-button.btn-success.disabled:hover, .neos.neos-module table td > .neos-button.btn-success.disabled:active, .neos.neos-module table td > .neos-button.btn-success.disabled:focus,
 .neos.neos-module table td > div.pull-right > .neos-button.btn-success.disabled,
