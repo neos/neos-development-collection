@@ -75,6 +75,7 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 						// The "format" tab is shown in the top-menu, the remaining tabs are shown
 						// in the inspector.
 					components: [
+						[ 'formatBlock' ],
 						[ 'bold', 'italic', 'underline', 'subscript', 'superscript' ],
 						[
 							'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop',
@@ -82,8 +83,6 @@ define(['Library/jquery-with-dependencies'], function(jQuery, jQueryUi) {
 						], [
 							'alignLeft', 'alignCenter', 'alignRight', 'alignJustify',
 							'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker'
-						], [
-							'formatBlock'
 						]
 					]
 				},
