@@ -9776,8 +9776,15 @@
   background-color: #222222;
   border-right: 1px solid #3f3f3f;
 }
-.neos #neos-menu-button:hover, .neos #neos-menu-button.pressed {
+.neos #neos-menu-button:hover:before, .neos #neos-menu-button.pressed:before {
+  border-top: 3px solid #00b5ff;
+  border-bottom: 3px solid #00b5ff;
+}
+.neos #neos-menu-button:hover:after, .neos #neos-menu-button.pressed:after {
   background-color: #00b5ff;
+}
+.neos #neos-menu-button.pressed {
+  height: 41px;
 }
 .neos #neos-menu-button:before {
   display: block;
@@ -9849,10 +9856,13 @@
   padding-left: 56px;
   padding-right: 54px;
   height: 40px;
-  border-bottom: 1px solid #3f3f3f;
+  border-top: 1px solid #3f3f3f;
   cursor: pointer;
   line-height: 40px;
   position: relative;
+}
+.neos #neos-menu-panel .neos-menu-section .neos-menu-headline:first-child {
+  border-top: none;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse {
   position: absolute;
@@ -9860,7 +9870,6 @@
   top: 0;
   width: 40px;
   height: 40px;
-  border-left: 1px solid #3f3f3f;
   cursor: pointer;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
@@ -9930,8 +9939,6 @@
   text-align: center;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-list a, .neos #neos-menu-panel .neos-menu-section .neos-menu-list span.neos-menu-item {
-  background-color: #323232;
-  border-bottom: 1px solid #3f3f3f;
   padding-left: 54px;
   position: relative;
   font-weight: normal;

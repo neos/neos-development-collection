@@ -13,7 +13,18 @@ $menuIconWidth: 54px;
 
 	&:hover,
 	&.pressed {
-		background-color: $blue;
+		&:before {
+			border-top: 3px solid $blue;
+			border-bottom: 3px solid $blue;
+		}
+
+		&:after {
+			background-color: $blue;
+		}
+	}
+
+	&.pressed {
+		height: $unit + 1px;
 	}
 
 	&:before {
@@ -83,10 +94,14 @@ $menuIconWidth: 54px;
 			padding-left: $unit + $defaultMargin;
 			padding-right: $menuIconWidth;
 			height: $unit;
-			border-bottom: 1px solid $grayLight;
+			border-top: 1px solid $grayLight;
 			cursor: pointer;
 			line-height: $unit;
 			position: relative;
+
+			&:first-child {
+				border-top: none;
+			}
 		}
 
 		.neos-menu-collapse {
@@ -95,7 +110,6 @@ $menuIconWidth: 54px;
 			top: 0;
 			width: $unit;
 			height: $unit;
-			border-left: 1px solid $grayLight;
 			cursor: pointer;
 
 			&:hover {
@@ -166,8 +180,6 @@ $menuIconWidth: 54px;
 
 		.neos-menu-list {
 			a, span.neos-menu-item {
-				background-color: $grayMedium;
-				border-bottom: 1px solid $grayLight;
 				padding-left: $menuIconWidth;
 				position: relative;
 				font-weight: normal;
