@@ -84,6 +84,7 @@ define([
 			for (var i = 0; i < this._internalButtons.length; i++) {
 				if (this._internalButtons[i].name === name) {
 					select.val(i);
+					select.trigger('liszt:updated');
 					return;
 				}
 			}
