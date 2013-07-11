@@ -108,7 +108,7 @@ body {
 			}
 
 			#neos-inspector {
-				right: -$inspectorWidth;
+				right: -($inspectorWidth + 1px);
 				overflow: hidden;
 			}
 
