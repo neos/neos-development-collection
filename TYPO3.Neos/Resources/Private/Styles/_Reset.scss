@@ -20,3 +20,16 @@ q:before,
 q:after {
 	content:'';
 }
+
+
+// Play well with zurb foundation
+*, *:before, *:after {
+	@include box-sizing(content-box);
+}
+
+@media only screen {
+	button, .button {
+		@include transition(none);
+		@include box-shadow(none);
+	}
+}
