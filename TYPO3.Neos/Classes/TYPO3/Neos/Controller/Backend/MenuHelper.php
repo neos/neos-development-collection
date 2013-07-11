@@ -36,7 +36,7 @@ class MenuHelper {
 		$requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
 		$domainsFound = FALSE;
 		$sites = array();
-		foreach ($this->siteRepository->findAll() as $site) {
+		foreach ($this->siteRepository->findOnline() as $site) {
 			$uri = NULL;
 			/** @var $site \TYPO3\Neos\Domain\Model\Site */
 			if ($site->hasActiveDomains()) {

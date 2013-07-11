@@ -30,6 +30,15 @@ class SiteRepository extends \TYPO3\Flow\Persistence\Repository {
 	public function findFirst() {
 		return $this->createQuery()->execute()->getFirst();
 	}
-}
 
+	/**
+	 * Find all sites with status "online"
+	 *
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 */
+	public function findOnline() {
+		return $this->findByState(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE);
+	}
+
+}
 ?>
