@@ -550,4 +550,18 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->node->setAccessRoles(array('SomeRole', 'Everyone', 'SomeOtherRole'));
 		$this->assertTrue($this->node->isAccessible());
 	}
+
+	/**
+	 * @test
+	 */
+	public function createNodeCreatesNodeDataWithExplicitWorkspaceIfGiven() {
+		$nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+		$this->inject($this->node, 'nodeDataRepository', $nodeDataRepository);
+
+		$nodeDataRepository->expects($this->atLeastOnce())->method('add')->with($this->attributeEqualTo('workspace', $this->mockWorkspace));
+
+		$this->node->createNode('foo', NULL, NULL, $this->mockWorkspace);
+	}
+
 }
+?>

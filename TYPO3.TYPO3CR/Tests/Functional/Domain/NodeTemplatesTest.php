@@ -78,6 +78,21 @@ class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function createNodeFromTemplateUsesWorkspacesOfContext() {
+		$nodeTemplate = $this->generateBasicNodeTemplate();
+
+		$this->context = $this->contextFactory->create(array('workspaceName' => 'user1'));
+
+		$rootNode = $this->context->getNode('/');
+		$node = $rootNode->createNodeFromTemplate($nodeTemplate, 'just-a-node');
+
+		$workspace = $node->getWorkspace();
+		$this->assertEquals('user1', $workspace->getName(), 'Node should be created in workspace of context');
+	}
+
+	/**
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeTemplate
 	 */
 	protected function generateBasicNodeTemplate() {
