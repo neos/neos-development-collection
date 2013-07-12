@@ -12665,6 +12665,9 @@ body.neos-previewmode .neos-contentelement-active > .neos-contentelement-handle-
 #neos-page-metainformation {
   display: none;
 }
+.neos-rendering-exception {
+  word-wrap: break-word;
+}
 #neos-shortcut {
   position: fixed;
   top: 0;
