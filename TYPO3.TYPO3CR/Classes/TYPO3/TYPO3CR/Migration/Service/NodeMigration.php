@@ -81,7 +81,7 @@ class NodeMigration {
 	 * @return void
 	 */
 	public function migrateUp() {
-		$rootNode = $this->nodeDataRepository->findOneByPath('/', $this->context->getWorkspace(FALSE));
+		$rootNode = $this->context->getNode('/');
 		$this->walkNodes($rootNode, MigrationStatus::DIRECTION_UP);
 	}
 
@@ -91,7 +91,7 @@ class NodeMigration {
 	 * @return void
 	 */
 	public function migrateDown() {
-		$rootNode = $this->nodeDataRepository->findOneByPath('/', $this->context->getWorkspace(FALSE));
+		$rootNode = $this->context->getNode('/');
 		$this->walkNodes($rootNode, MigrationStatus::DIRECTION_DOWN);
 	}
 
