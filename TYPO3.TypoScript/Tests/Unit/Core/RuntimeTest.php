@@ -106,4 +106,27 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('', $output);
 	}
 
+	/**
+	 * @test
+	 */
+	public function evaluateProcessorForEelExpressionUsesProtectedContext() {
+		$runtime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->setMethods(array('dummy'))->disableOriginalConstructor()->getMock();
+
+		$tsObject = $this->getMockBuilder('TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject')->disableOriginalConstructor()->getMock();
+		$tsObject->expects($this->any())->method('getInternalProcessors')->will($this->returnValue(array()));
+
+		$eelEvaluator = $this->getMock('TYPO3\Eel\EelEvaluatorInterface');
+
+		$this->inject($runtime, 'eelEvaluator', $eelEvaluator);
+
+		$value = array(
+			'__eelExpression' => 'q(node).property("title")'
+		);
+
+		$eelEvaluator->expects($this->once())->method('evaluate')->with('q(node).property("title")', $this->isInstanceOf('TYPO3\Eel\ProtectedContext'));
+
+		$runtime->evaluateProcessor('page.body.title', $tsObject, $value);
+	}
+
 }
+?>

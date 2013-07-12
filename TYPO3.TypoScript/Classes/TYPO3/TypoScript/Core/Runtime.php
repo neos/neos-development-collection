@@ -478,7 +478,8 @@ class Runtime {
 			}
 			$contextVariables['this'] = $tsObject;
 
-			$context = new \TYPO3\Eel\Context($contextVariables);
+			$context = new \TYPO3\Eel\ProtectedContext($contextVariables);
+			$context->whitelist('q');
 			$value = $this->eelEvaluator->evaluate($value['__eelExpression'], $context);
 		}
 
