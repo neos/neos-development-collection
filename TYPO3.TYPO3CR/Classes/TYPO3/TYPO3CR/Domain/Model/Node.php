@@ -564,7 +564,7 @@ class Node implements NodeInterface {
 	 * @api
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
-		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace());
+		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName);
 		$node = $this->nodeFactory->createFromNode($nodeData, $this->context);
 
 		return $node;

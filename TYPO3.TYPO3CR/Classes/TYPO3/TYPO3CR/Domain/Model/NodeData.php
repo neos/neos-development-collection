@@ -431,18 +431,19 @@ class NodeData extends AbstractNodeData {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+	 * @throws \InvalidArgumentException if the node name is not accepted.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL) {
-		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $workspace);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
+		$newNode = $this->createSingleNode($name, $nodeType, $identifier);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
 				$newNode->setProperty($propertyName, $propertyValue);
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-				$newNode->createNode($childNodeName, $childNodeType, NULL, $workspace);
+				$newNode->createNode($childNodeName, $childNodeType);
 			}
 		}
 		return $newNode;
@@ -485,13 +486,11 @@ class NodeData extends AbstractNodeData {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData the freshly generated node
 	 */
-	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL, Workspace $workspace = NULL) {
+	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
 		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
-		$newNode = $this->createNode($newNodeName, $nodeTemplate->getNodeType(), NULL, $workspace);
+		$newNode = $this->createNode($newNodeName, $nodeTemplate->getNodeType());
 		$newNode->similarize($nodeTemplate);
 		return $newNode;
 	}
