@@ -15,8 +15,12 @@
 		line-height: inherit;
 		text-decoration: none;
 
+		&.chzn-single-with-deselect span {
+			margin-right: $unit + 1px + 18px + $defaultMargin;
+		}
+
 		span {
-			margin-right: $unit + 1px;
+			margin-right: $unit + 1px + $defaultMargin;
 		}
 
 		div {
@@ -45,16 +49,17 @@
 
 			b {
 				display: none;
+				background-image: none !important;
 			}
 		}
 
 		abbr {
 			background: none;
 			background-color: #fff;
-			top: 12px;
+			top: 11px;
 			right: $unit + $relatedMargin;
-			width: 17px;
-			height: 17px;
+			width: 18px;
+			height: 18px;
 			@include border-radius(10px);
 
 			&:hover {
@@ -63,13 +68,12 @@
 
 			&:before {
 				display: block;
-				width: 17px;
+				width: 18px;
 				text-align: center;
 				content: "×";
-				font-size: 16px;
+				font-size: 17px;
 				font-weight: bold;
-				line-height: 13px;
-				vertical-align: top;
+				line-height: 18px;
 				color: $grayDark;
 			}
 		}
@@ -92,7 +96,6 @@
 				width: 100%;
 				height: $unit;
 				border: none;
-				background-color: $grayMedium;
 				color: $textOnGray;
 				@include font;
 				font-size: 14px;
@@ -101,6 +104,7 @@
 				@include box-sizing(border-box);
 				@include box-shadow(none);
 				background: none;
+				background-image: none !important;
 				background-color: #fff;
 			}
 

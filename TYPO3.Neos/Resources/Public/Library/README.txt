@@ -81,8 +81,8 @@ Version 0.9.12 from 2/2/13
 CodeMirror 2.13 from http://codemirror.net/
 
 
-Chosen 0.9.14 from http://harvesthq.github.com/chosen/
-Only the jquery files / needed files are added (skipped coffeescript / prototype / examples)
+Chosen 0.12.1 from http://harvesthq.github.io/chosen/
+Only the jQuery files / needed files are added (skipped prototype / examples / docs / sprites)
 
 
 Antiscroll

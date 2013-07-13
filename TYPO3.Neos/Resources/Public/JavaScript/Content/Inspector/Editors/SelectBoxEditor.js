@@ -9,8 +9,7 @@ function($, Ember) {
 		attributeBindings: ['value', 'selected'],
 		valueBinding: 'content.value',
 		selectedBinding: 'content.selected',
-
-		template: Ember.Handlebars.compile('{{view.content.label}}')
+		template: Ember.Handlebars.compile('{{unbound view.content.label}}')
 	});
 
 	return Ember.CollectionView.extend({

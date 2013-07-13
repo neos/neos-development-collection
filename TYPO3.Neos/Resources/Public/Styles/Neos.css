@@ -8733,8 +8733,11 @@
   line-height: inherit;
   text-decoration: none;
 }
+.neos #neos-inspector .chzn-container .chzn-single.chzn-single-with-deselect span {
+  margin-right: 75px;
+}
 .neos #neos-inspector .chzn-container .chzn-single span {
-  margin-right: 41px;
+  margin-right: 57px;
 }
 .neos #neos-inspector .chzn-container .chzn-single div {
   width: 40px;
@@ -8762,14 +8765,15 @@
 }
 .neos #neos-inspector .chzn-container .chzn-single div b {
   display: none;
+  background-image: none !important;
 }
 .neos #neos-inspector .chzn-container .chzn-single abbr {
   background: none;
   background-color: #fff;
-  top: 12px;
+  top: 11px;
   right: 48px;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -8779,13 +8783,12 @@
 }
 .neos #neos-inspector .chzn-container .chzn-single abbr:before {
   display: block;
-  width: 17px;
+  width: 18px;
   text-align: center;
   content: "×";
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
-  line-height: 13px;
-  vertical-align: top;
+  line-height: 18px;
   color: #222222;
 }
 .neos #neos-inspector .chzn-container .chzn-drop {
@@ -8814,7 +8817,6 @@
   width: 100%;
   height: 40px;
   border: none;
-  background-color: #323232;
   color: white;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -8828,6 +8830,7 @@
   -moz-box-shadow: none;
   box-shadow: none;
   background: none;
+  background-image: none !important;
   background-color: #fff;
 }
 .neos #neos-inspector .chzn-container .chzn-drop .chzn-search:after {
@@ -9700,8 +9703,11 @@
   line-height: inherit;
   text-decoration: none;
 }
+.neos #neos-context-bar .chzn-container .chzn-single.chzn-single-with-deselect span {
+  margin-right: 75px;
+}
 .neos #neos-context-bar .chzn-container .chzn-single span {
-  margin-right: 41px;
+  margin-right: 57px;
 }
 .neos #neos-context-bar .chzn-container .chzn-single div {
   width: 40px;
@@ -9729,14 +9735,15 @@
 }
 .neos #neos-context-bar .chzn-container .chzn-single div b {
   display: none;
+  background-image: none !important;
 }
 .neos #neos-context-bar .chzn-container .chzn-single abbr {
   background: none;
   background-color: #fff;
-  top: 12px;
+  top: 11px;
   right: 48px;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -9746,13 +9753,12 @@
 }
 .neos #neos-context-bar .chzn-container .chzn-single abbr:before {
   display: block;
-  width: 17px;
+  width: 18px;
   text-align: center;
   content: "×";
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
-  line-height: 13px;
-  vertical-align: top;
+  line-height: 18px;
   color: #222222;
 }
 .neos #neos-context-bar .chzn-container .chzn-drop {
@@ -9781,7 +9787,6 @@
   width: 100%;
   height: 40px;
   border: none;
-  background-color: #323232;
   color: white;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -9795,6 +9800,7 @@
   -moz-box-shadow: none;
   box-shadow: none;
   background: none;
+  background-image: none !important;
   background-color: #fff;
 }
 .neos #neos-context-bar .chzn-container .chzn-drop .chzn-search:after {
