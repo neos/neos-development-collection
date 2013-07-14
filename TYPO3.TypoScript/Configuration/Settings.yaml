@@ -2,3 +2,15 @@ TYPO3:
   TypoScript:
     handleRenderingExceptions: xmlComment
     debugMode: FALSE
+
+    # Default context objects that are available in Eel expressions
+    #
+    # New variables should be added with a package key prefix. Example:
+    #
+    #   defaultContext:
+    #     'MyPackage.String': 'MyPackage\Helper\StringHelper'
+    #
+    defaultContext:
+      String: 'TYPO3\Eel\Helper\StringHelper'
+      Array: 'TYPO3\Eel\Helper\ArrayHelper'
+      Date: 'TYPO3\Eel\Helper\DateHelper'

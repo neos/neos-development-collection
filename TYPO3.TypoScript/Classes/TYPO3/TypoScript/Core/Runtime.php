@@ -51,6 +51,12 @@ class Runtime {
 	protected $renderingStack = array();
 
 	/**
+	 * Default context with helper definitions
+	 * @var array
+	 */
+	protected $defaultContextVariables;
+
+	/**
 	 * @var array
 	 */
 	protected $typoScriptConfiguration;
@@ -461,8 +467,8 @@ class Runtime {
 	 */
 	public function evaluateProcessor($variableName, \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject, $value) {
 		if (is_array($value) && isset($value['__eelExpression'])) {
+			$contextVariables = array_merge($this->getDefaultContextVariables(), $this->getCurrentContext());
 
-			$contextVariables = $this->getCurrentContext();
 			if (!isset($contextVariables['context']) && isset($contextVariables['node'])) {
 					// DEPRECATED since sprint release 10; should be removed lateron.
 				$contextVariables['context'] = new \TYPO3\Eel\FlowQuery\FlowQuery(array($contextVariables['node']));
@@ -527,5 +533,30 @@ class Runtime {
 	public function getControllerContext() {
 		return $this->controllerContext;
 	}
+
+	/**
+	 * @return array
+	 */
+	protected function getDefaultContextVariables() {
+		if ($this->defaultContextVariables === NULL) {
+			$this->defaultContextVariables = array();
+			if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
+				foreach ($this->settings['defaultContext'] as $variableName => $objectType) {
+					$base = &$this->defaultContextVariables;
+					$variablePathNames = explode('.', $variableName);
+					foreach ($variablePathNames as $pathName) {
+						if (!isset($base[$pathName])) {
+							$base[$pathName] = array();
+						}
+						$base = &$base[$pathName];
+					}
+					$base = new $objectType();
+				}
+			}
+
+		}
+		return $this->defaultContextVariables;
+	}
+
 }
 ?>

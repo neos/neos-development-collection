@@ -1,3 +1,7 @@
 TYPO3:
   TypoScript:
     handleRenderingExceptions: throw
+
+    # Register an additional prefixed helper for functional tests
+    defaultContext:
+      'Testing.String': 'TYPO3\Eel\Helper\StringHelper'
