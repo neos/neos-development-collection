@@ -20,21 +20,21 @@
 	</div>
 
 	<div class="neos-inspector-image-width">
-		<label for="image-width">Width:</label>
+		<label {{bindAttr for="view.imageWidthField.elementId"}}>Width:</label>
 		<div class="input-prepend input-append">
 			<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle"}}</span>
 			<span>
-				{{view view.TextFieldEditor elementId="image-width" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageScale.w"}}
+				{{view view.TextFieldEditor viewName="imageWidthField" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageScale.w"}}
 			</span>
 			<span class="add-on">px</span>
 		</div>
 	</div>
 	<div class="neos-inspector-image-height">
-		<label for="image-height">Height:</label>
+		<label {{bindAttr for="view.imageHeightField.elementId"}}>Height:</label>
 		<div class="input-prepend input-append">
 			<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle"}}</span>
 			<span>
-				{{view view.TextFieldEditor elementId="image-height" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageScale.computedHeight"}}
+				{{view view.TextFieldEditor viewName="imageHeightField" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageScale.computedHeight"}}
 			</span>
 			<span class="add-on">px</span>
 		</div>

@@ -33,9 +33,9 @@ function(Ember, template, Button, plupload) {
 		Button: Button,
 
 		init: function() {
-			var id = this.get(Ember.GUID_KEY);
-			this._containerId = 'typo3-fileupload' + id;
-			this._browseButtonId = 'typo3-fileupload-browsebutton' + id;
+			var id = this.get('elementId');
+			this.set('_containerId', 'typo3-fileupload-' + id);
+			this.set('_browseButtonId', 'typo3-fileupload-browsebutton-' + id);
 			return this._super();
 		},
 
