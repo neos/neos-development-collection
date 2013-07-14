@@ -9607,7 +9607,7 @@
   right: 0;
   z-index: 10012;
   margin-top: 41px;
-  background-color: #222222;
+  background-color: #323232;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   padding-right: 41px;
@@ -9621,20 +9621,25 @@
   white-space: nowrap;
 }
 .neos #neos-context-bar .neos-button {
-  background-color: #222222;
+  background-color: #323232;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   vertical-align: top;
+  display: inline-block;
+  float: left;
 }
 .neos #neos-context-bar .neos-button:hover, .neos #neos-context-bar .neos-button:active, .neos #neos-context-bar .neos-button.active, .neos #neos-context-bar .neos-button.pressed {
   background-color: #00b5ff;
 }
 .neos #neos-context-bar .neos-button + .neos-button {
-  margin-left: 8px;
+  margin-left: 16px;
+}
+.neos #neos-context-bar .neos-button.neos-pagetree-button {
+  margin-right: 16px;
 }
 .neos #neos-context-bar .neos-context-bar-save-indidator {
   display: inline-block;
-  padding-right: 8px;
+  float: left;
 }
 .neos #neos-context-bar .neos-context-bar-save-indidator .neos-indicator {
   margin: 0;
@@ -9642,6 +9647,7 @@
   cursor: default;
   background: transparent;
   border: none;
+  padding-right: 16px;
 }
 .neos #neos-context-bar .neos-context-bar-save-indidator .neos-indicator span {
   position: relative;
@@ -9804,7 +9810,6 @@
   line-height: 38px;
 }
 .neos #neos-context-bar .chzn-container .chzn-single {
-  background-color: #222222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
 }
@@ -9812,7 +9817,6 @@
   border-left: 1px solid #3f3f3f;
 }
 .neos #neos-context-bar .chzn-container .chzn-drop {
-  background-color: #222222;
   margin-top: 0;
 }
 .neos #neos-context-bar .chzn-container .chzn-drop .chzn-results {
