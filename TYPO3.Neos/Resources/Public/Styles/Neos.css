@@ -1,4 +1,3 @@
-@charset "UTF-8";
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
 /* Variables */
 /* Color palette */
@@ -8873,8 +8872,13 @@
   position: absolute;
   top: 0;
   width: 100%;
-  height: 40px;
+  height: 41px;
   border-bottom: 1px solid #3f3f3f;
+  line-height: 40px;
+  padding-left: 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .neos #neos-inspector .neos-inspector-form {
   width: 100%;

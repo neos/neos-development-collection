@@ -53,8 +53,11 @@
 		position: absolute;
 		top: 0;
 		width: 100%;
-		height: $unit;
+		height: $unit + 1px;
 		border-bottom: 1px solid $grayLight;
+		line-height: $unit;
+		padding-left: $defaultMargin;
+		@include box-sizing(border-box);
 	}
 
 	.neos-inspector-form {
