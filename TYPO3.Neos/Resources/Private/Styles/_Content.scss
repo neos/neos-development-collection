@@ -180,8 +180,11 @@
 	}
 }
 
-.neos-contentcollection-handle-container .btn-toolbar {
-	text-align:right !important;
+.neos-contentcollection {
+	&.neos-contentelement-active {
+		outline: 3px solid $orange !important;
+		outline-offset: 3px;
+	}
 }
 
 // Aloha Blocks

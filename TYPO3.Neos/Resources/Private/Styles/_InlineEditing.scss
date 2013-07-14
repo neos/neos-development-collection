@@ -1,6 +1,7 @@
 /** Inline editing handles **/
 .neos-handle-container {
 	position: absolute;
+
 	.btn-toolbar {
 		text-align:right !important;
 		margin-top: 0;
@@ -12,7 +13,8 @@
 			top: -32px;
 			border: 3px solid $orange;
 			border-bottom: 0px;
-			background: $orange;
+			background-color: $orange;
+
 			.btn:last-child {
 				@include border-radius(0);
 			}

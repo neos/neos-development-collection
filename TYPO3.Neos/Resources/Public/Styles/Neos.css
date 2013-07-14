@@ -11088,7 +11088,7 @@
   top: -32px;
   border: 3px solid #ff8700;
   border-bottom: 0px;
-  background: #ff8700;
+  background-color: #ff8700;
 }
 .neos .neos-handle-container .btn-toolbar .btn-group .btn:last-child {
   -webkit-border-radius: 0;
@@ -12496,8 +12496,9 @@
   background-image: url("../Images/Icons/White/brackets_icon-16.png");
 }
 
-.neos-contentcollection-handle-container .btn-toolbar {
-  text-align: right !important;
+.neos-contentcollection.neos-contentelement-active {
+  outline: 3px solid #ff8700 !important;
+  outline-offset: 3px;
 }
 
 .aloha-block-TYPO3Block.neos-contentelement.aloha-block:hover {

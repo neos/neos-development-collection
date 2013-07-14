@@ -129,8 +129,9 @@ define(
 			 * to the body so that we can modify the appearance of the content element editing handles.
 			 */
 			updateSelection: function($element) {
+				var activeClass = 'neos-contentelement-active';
 					// Do not update the selection if the element is already selected
-				if ($element && $element.hasClass('neos-contentelement-active')) {
+				if ($element && $element.hasClass(activeClass)) {
 					return;
 				}
 
@@ -138,7 +139,7 @@ define(
 					that = this;
 
 					// Remove active class from all previously active nodes (content elements and contentcollection)
-				$('.neos-contentelement-active').removeClass('neos-contentelement-active');
+				$('.' + activeClass).removeClass(activeClass);
 
 					// TODO Check if we need that
 				if (this._updating) {
@@ -148,13 +149,7 @@ define(
 
 				if ($element !== undefined) {
 						// Add active class to selected content element
-					if ($element.is('.neos-contentcollection')) {
-							// If we are inside a contentcollection, we want to mark the outer element as active; as this also
-							// contains the contentcollection handles.
-						$element.parent().addClass('neos-contentelement-active');
-					} else {
-						$element.addClass('neos-contentelement-active');
-					}
+					$element.addClass(activeClass);
 
 					this._addNodeByElement(nodes, $element);
 					$element.parents('.neos-contentelement[about], .neos-contentcollection[about]').each(function() {
