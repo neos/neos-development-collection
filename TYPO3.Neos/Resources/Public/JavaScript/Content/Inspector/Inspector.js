@@ -83,7 +83,7 @@ define(
 		},
 
 		_onCollapsedChange: function() {
-			var $content = this.$().next();
+			var $content = this.$().parent().next();
 			if (this.get('_collapsed') === true) {
 				$content.slideUp(200);
 			} else {

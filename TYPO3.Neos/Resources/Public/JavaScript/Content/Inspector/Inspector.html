@@ -4,18 +4,19 @@
 		<label for="neos-content-breadcrumb">Selected element</label>
 		{{view view.Breadcrumb contentBinding="T3.Content.Model.NodeSelection.nodes" elementId="neos-content-breadcrumb"}}
 	</div>
-	{{#collection tagName="fieldset" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
-		{{#view view.parentView.parentView.ToggleInspectorPanelHeadline contentBinding="view.content" classNames="legend"}}
-			<h2>{{view.content.label}}</h2>
-		{{/view}}
+	{{#collection tagName="div" classNames="neos-inspector-section" contentBinding="T3.Content.Controller.Inspector.groupedPropertyViews"}}
+		<div class="neos-inspector-headline">
+			<span>{{unbound view.content.label}}</span>
+			{{view view.parentView.parentView.ToggleInspectorPanelHeadline classNames="neos-inspector-collapse" contentBinding="view.content"}}
+		</div>
 		{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="view.content.properties"}}
-			{{#if view.content.isBoolean}}
+			{{#if isBoolean}}
 				<label for="{{unbound view.content.elementId}}" class="checkbox">
 					{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
-					{{view.content.ui.label}}
+					{{unbound view.content.ui.label}}
 				</label>
 			{{else}}
-				<label for="{{unbound view.content.elementId}}">{{view.content.ui.label}}</label>
+				<label for="{{unbound view.content.elementId}}">{{unbound view.content.ui.label}}</label>
 				{{view view.parentView.parentView.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
 			{{/if}}
 		{{/collection}}

@@ -8888,7 +8888,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding-top: 9px;
+  padding-top: 11px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-breadcrumb {
   max-width: 288px;
@@ -8979,64 +8979,70 @@
 .neos #neos-inspector .neos-inspector-form .neos-breadcrumb ul li a:hover {
   text-decoration: none;
 }
-.neos #neos-inspector .neos-inspector-form .collapsed h2::before,
-.neos #neos-inspector .neos-inspector-form .open h2::before {
+.neos #neos-inspector .neos-inspector-form .neos-inspector-collapse {
+  float: right;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-form .neos-inspector-collapse:hover {
+  background-color: #00b5ff;
+  color: #fff;
+}
+.neos #neos-inspector .neos-inspector-form .neos-inspector-collapse::before {
   content: "›";
   font-size: 26px;
   font-weight: normal;
   display: inline-block;
   margin-right: 18px;
   position: relative;
-  top: 5px;
-}
-.neos #neos-inspector .neos-inspector-form .collapsed h2::before {
+  left: -3px;
+  width: 40px;
+  text-align: center;
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
   -ms-transform: rotate(-90deg);
   -o-transform: rotate(-90deg);
   transform: rotate(-90deg);
 }
-.neos #neos-inspector .neos-inspector-form .open h2::before {
+.neos #neos-inspector .neos-inspector-form .neos-inspector-collapse.open::before {
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
-  left: 6px;
+  left: 3px;
 }
-.neos #neos-inspector .neos-inspector-form .legend {
+.neos #neos-inspector .neos-inspector-form .neos-inspector-headline {
   width: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  padding: 0 16px;
-  margin-bottom: 8px;
-  height: 30px;
-  border-bottom: 1px solid #3f3f3f;
-  cursor: pointer;
-}
-.neos #neos-inspector .neos-inspector-form .legend h2 {
-  margin: 0;
-  line-height: 18px;
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  font-size: 14px;
+  height: 40px;
+  line-height: 40px;
+  border-top: 1px solid #3f3f3f;
   font-weight: bold;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+.neos #neos-inspector .neos-inspector-form .neos-inspector-headline span {
+  display: block;
+  float: left;
+  padding-left: 16px;
+  padding-right: 16px;
+  max-width: 280px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: 288px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .neos #neos-inspector .neos-inspector-form .neos-inspector-field {
-  padding: 8px 16px 0 16px;
+  padding: 0 16px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-inspector-field > div {
-  padding-bottom: 12px;
+  padding-bottom: 16px;
 }
 .neos #neos-inspector .neos-inspector-form label {
   font-family: 'Noto Sans', sans-serif;
@@ -9077,6 +9083,7 @@
 .neos #neos-inspector .neos-inspector-form input[type="number"],
 .neos #neos-inspector .neos-inspector-form .uneditable-input {
   width: 100%;
+  min-width: 288px;
   height: 40px;
   border: none;
   background-color: #323232;
@@ -9954,7 +9961,7 @@
   background-color: #00b5ff;
   color: #fff;
 }
-.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.collapsed::before, .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.open::before {
+.neos #neos-menu-panel .neos-menu-section .neos-menu-collapse::before {
   content: "›";
   font-size: 26px;
   font-weight: normal;

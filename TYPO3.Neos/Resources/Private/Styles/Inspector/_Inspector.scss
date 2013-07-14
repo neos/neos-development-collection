@@ -66,7 +66,7 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		@include box-sizing(border-box);
-		padding-top: 9px;
+		padding-top: 11px;
 
 		.neos-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
@@ -162,56 +162,62 @@
 			}
 		}
 
-		.collapsed,
-		.open {
-			h2::before {
+		.neos-inspector-collapse {
+			float: right;
+			width: $unit;
+			height: $unit;
+			cursor: pointer;
+
+			&:hover {
+				background-color: $blue;
+				color: #fff;
+			}
+
+			&::before {
 				content: "›";
 				font-size: 26px;
 				font-weight: normal;
 				display: inline-block;
 				margin-right: 18px;
 				position: relative;
-				top: 5px;
+				left: -3px;
+				width: $unit;
+				text-align: center;
+				@include rotate(-90deg);
+			}
+
+			&.open::before {
+				@include rotate(90deg);
+				left: 3px;
 			}
 		}
 
-		.collapsed h2::before {
-			@include rotate(-90deg);
-		}
-
-		.open h2::before {
-			@include rotate(90deg);
-			left: 6px;
-		}
-
-		.legend {
+		.neos-inspector-headline {
 			width: 100%;
-			@include box-sizing(border-box);
-			padding: 0 $defaultMargin;
-			margin-bottom: $relatedMargin;
-			height: 30px;
-			border-bottom: 1px solid $grayLight;
-			cursor: pointer;
+			height: $unit;
+			line-height: $unit;
+			border-top: 1px solid $grayLight;
+			font-weight: bold;
+			@include user-select(none);
 
-			h2 {
-				margin: 0;
-				line-height: 18px;
-				@include font;
-				font-size: 14px;
-				font-weight: bold;
-				@include user-select(none);
+			span {
+				display: block;
+				float: left;
+				padding-left: $defaultMargin;
+				padding-right: $defaultMargin;
+				max-width: $inspectorWidth - $unit;
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
-				width: $inspectorWidth - $defaultMargin * 2;
+				@include box-sizing(border-box);
 			}
 		}
 
 		.neos-inspector-field {
-			padding: $relatedMargin $defaultMargin 0 $defaultMargin;
+			padding: 0 $defaultMargin;
 
 			& > div {
-				padding-bottom: $relatedMargin + $tightMargin;
+				padding-bottom: $defaultMargin;
 			}
 		}
 
@@ -251,6 +257,7 @@
 		input[type="number"],
 		.uneditable-input {
 			width: 100%;
+			min-width: $inspectorWidth - $defaultMargin * 2;
 			height: $unit;
 			border: none;
 			background-color: $grayMedium;
