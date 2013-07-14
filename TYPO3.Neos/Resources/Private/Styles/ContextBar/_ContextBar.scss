@@ -5,7 +5,7 @@
 	right: 0;
 	z-index: 10012;
 	margin-top: $unit + 1;
-	background-color: $grayDark;
+	background-color: $grayMedium;
 	height: $unit;
 	border-bottom: 1px solid $grayLight;
 	padding-right: 41px;
@@ -21,10 +21,12 @@
 	}
 
 	.neos-button {
-		background-color: $grayDark;
+		background-color: $grayMedium;
 		border-left: 1px solid $grayLight;
 		border-right: 1px solid $grayLight;
 		vertical-align: top;
+		display: inline-block;
+		float: left;
 
 		&:hover,
 		&:active,
@@ -34,13 +36,17 @@
 		}
 
 		& + .neos-button {
-			margin-left: $relatedMargin;
+			margin-left: $defaultMargin;
+		}
+
+		&.neos-pagetree-button {
+			margin-right: $defaultMargin;
 		}
 	}
 
 	.neos-context-bar-save-indidator {
 		display: inline-block;
-		padding-right: $relatedMargin;
+		float: left;
 
 		.neos-indicator {
 			margin: 0;
@@ -48,6 +54,7 @@
 			cursor: default;
 			background: transparent;
 			border: none;
+			padding-right: $defaultMargin;
 
 			span {
 				position: relative;
@@ -59,7 +66,6 @@
 	@import "Shared/Chosen";
 	.chzn-container {
 		.chzn-single {
-			background-color: $grayDark;
 			border-left: 1px solid $grayLight;
 			border-right: 1px solid $grayLight;
 
@@ -68,8 +74,8 @@
 			}
 		}
 
+
 		.chzn-drop {
-			background-color: $grayDark;
 			margin-top: 0;
 
 			.chzn-results {
