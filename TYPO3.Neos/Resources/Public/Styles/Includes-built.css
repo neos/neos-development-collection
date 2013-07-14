@@ -8859,10 +8859,14 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-top: 9px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-breadcrumb {
   max-width: 288px;
-  margin: 16px 8px 16px 16px;
+  margin-right: -8px;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -8873,6 +8877,10 @@
 }
 .neos #neos-inspector .neos-inspector-form .neos-breadcrumb.open ul {
   display: block;
+}
+.neos #neos-inspector .neos-inspector-form .neos-breadcrumb i {
+  display: inline-block;
+  margin-top: 3px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-breadcrumb div {
   position: relative;
