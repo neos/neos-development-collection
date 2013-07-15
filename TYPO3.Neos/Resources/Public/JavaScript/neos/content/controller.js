@@ -119,9 +119,11 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		pageTreeMode: false,
 
 		init: function() {
-			if (T3.Common.LocalStorage.getItem('pageTreeMode') === true) {
-				$('body').addClass('neos-tree-panel-open');
-				this.togglePageTreeMode();
+			if (window.T3.isContentModule) {
+				if (T3.Common.LocalStorage.getItem('pageTreeMode') === true) {
+					$('body').addClass('neos-tree-panel-open');
+					this.togglePageTreeMode();
+				}
 			}
 		},
 
