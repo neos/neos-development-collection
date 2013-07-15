@@ -236,7 +236,10 @@ class RenderingTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		if ($debugMode) {
 			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE, 'catchRuntimeExceptions' => FALSE));
 		}
-		$typoScriptRuntime->pushContextArray(array('node' => $this->node));
+		$typoScriptRuntime->pushContextArray(array(
+			'node' => $this->node,
+			'documentNode' => $this->node
+		));
 		$output = $typoScriptRuntime->render('page1');
 		$typoScriptRuntime->popContext();
 

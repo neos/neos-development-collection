@@ -3,12 +3,7 @@
 {namespace aloha=TYPO3\Aloha\ViewHelpers}
 <script>
 	try {
-		with (window.location) {
-			sessionStorage.setItem(
-				'TYPO3.Neos.lastVisitedUri',
-				[protocol, '//', host, pathname, (pathname.charAt(pathname.length - 1) === '/' ? '{node.name}.html' : '')].join('')
-			);
-		}
+		sessionStorage.setItem('TYPO3.Neos.lastVisitedUri', '{neos:uri.node(absolute: 1)}');
 	} catch(e) {}
 </script>
 
