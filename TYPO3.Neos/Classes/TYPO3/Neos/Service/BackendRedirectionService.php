@@ -70,7 +70,10 @@ class BackendRedirectionService {
 		$this->nodeDataRepository->persistEntities();
 
 		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
-			return $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
+			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
+			if ($adjustRedirectionUri !== FALSE) {
+				return $adjustRedirectionUri;
+			}
 		}
 
 		return '/@' . $workspaceName . '.html';
@@ -87,10 +90,13 @@ class BackendRedirectionService {
 		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
 			$contentContext = $this->createContext('live');
 
-			return $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
+			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
+			if ($adjustRedirectionUri !== FALSE) {
+				return $adjustRedirectionUri;
+			}
 		}
 
-		return NULL;
+		return '';
 	}
 
 	/**
@@ -100,7 +106,7 @@ class BackendRedirectionService {
 	 *
 	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
 	 * @param string $redirectionUri
-	 * @return string
+	 * @return string|boolean
 	 */
 	protected function adjustRedirectionUriForContentContext(ContentContext $contentContext, $redirectionUri) {
 		$adjustedUri = $redirectionUri;
@@ -113,19 +119,18 @@ class BackendRedirectionService {
 		}
 
 		$urlParts = parse_url($adjustedUri);
-		$targetNodePath = ($urlParts['path'] === '/' ? '/' : substr($urlParts['path'], 1));
+		$targetNodePath = $urlParts['path'] === '/' ? '/' : substr($urlParts['path'], 1);
 		if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode($targetNodePath))) {
 			if ($contentContext->getWorkspaceName() !== 'live') {
 				$adjustedUri .= '@' . $contentContext->getWorkspaceName();
 			}
-			if ($appendHtml === TRUE) {
+			if ($appendHtml === TRUE && $targetNodePath !== '/') {
 				$adjustedUri .= '.html';
 			}
-
 			return $adjustedUri;
 		}
 
-		return $redirectionUri;
+		return FALSE;
 	}
 
 	/**
