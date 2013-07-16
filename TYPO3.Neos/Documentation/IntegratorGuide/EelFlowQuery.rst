@@ -186,11 +186,11 @@ Property Name Filters
 ---------------------
 
 The first component of a filter query can be a `Property Name` filter. It is given
-as a simple string. Checks against property paths are possible as well::
+as a simple string. Checks against property paths are not currently possible::
 
-	foo
-	foo.bar
-	foo.bar.baz
+	foo          //works
+	foo.bar      //does not work
+	foo.bar.baz  //does not work
 
 In the context of Neos the property name is rarely used, as FlowQuery operates on
 TYPO3CR nodes and the `children` operation has a clear scope. If generic PHP objects are
