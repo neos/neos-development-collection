@@ -8,17 +8,17 @@ define(
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-publish-menu', 'btn-group'],
-			classNameBindings: ['_disabled:neos-disabled'],
-			autopublish: false,
+			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
+			autoPublish: false,
 
-			_disabled: function() {
-				return this.get('_noChanges') && !this.get('autopublish');
-			}.property('_noChanges', 'autopublish'),
+			_hasChanges: function() {
+				return !this.get('_noChanges') && !this.get('autoPublish');
+			}.property('_noChanges', 'autoPublish'),
 
 			_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
 
 			PublishButton: Button.extend({
-				autopublish: false,
+				autoPublish: false,
 				classNameBindings: ['connectionStatusClass'],
 				classNames: ['neos-publish-button'],
 
@@ -29,33 +29,33 @@ define(
 				_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
 
 				label: function() {
-					if (this.get('autopublish')) {
+					if (this.get('autoPublish')) {
 						return 'Auto-Publish';
 					} else {
-						return 'Publish';
+						return this.get('_noChanges') ? 'Published' : 'Publish';
 					}
-				}.property('autopublish'),
+				}.property('_noChanges', 'autoPublish'),
 
-				_autopublishTimer: null,
+				_autoPublishTimer: null,
 
-				_autopublishTimerOnAutopublish: function() {
+				_autoPublishTimerOnAutoPublish: function() {
 					var that = this;
 
-					if (this.get('autopublish') && !this._autopublishTimer) {
-						this._autopublishTimer = window.setInterval(function() {
+					if (this.get('autoPublish') && !this._autoPublishTimer) {
+						this._autoPublishTimer = window.setInterval(function() {
 							if (!that.get('_saveRunning') && !that.get('noChanges')) {
 								that.triggerAction();
 							}
 						}, 10000);
-					} else if (this._autopublishTimer) {
-						window.clearInterval(this._autopublishTimer);
-						this._autopublishTimer = null;
+					} else if (this._autoPublishTimer) {
+						window.clearInterval(this._autoPublishTimer);
+						this._autoPublishTimer = null;
 					}
-				}.observes('autopublish'),
+				}.observes('autoPublish'),
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('_saveRunning');
-				}.property('_noChanges', '_saveRunning'),
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning');
+				}.property('_noChanges', 'autoPublish', '_saveRunning'),
 
 				connectionStatusClass: function() {
 					var className = 'neos-connection-status-';
