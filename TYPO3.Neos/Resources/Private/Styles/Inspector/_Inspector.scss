@@ -67,6 +67,7 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		padding-top: 11px;
+		@include box-sizing(border-box);
 
 		.neos-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
