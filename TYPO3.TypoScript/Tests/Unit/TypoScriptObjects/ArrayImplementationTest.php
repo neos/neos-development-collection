@@ -2,7 +2,7 @@
 namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -15,8 +15,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
 
 /**
- * Testcase for the TypoScript Array Renderer
- *
+ * Testcase for the TypoScript Array object
  */
 class ArrayImplementationTest extends UnitTestCase {
 

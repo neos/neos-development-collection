@@ -1,0 +1,51 @@
+prototype(TYPO3.TypoScript:RawArray) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+}
+prototype(TYPO3.TypoScript:Tag) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
+	attributes = RawArray
+}
+
+tag.plainAttributes = Tag {
+	tagName = 'link'
+	selfClosingTag = TRUE
+	attributes {
+		rel = 'stylesheet'
+		type = 'text/css'
+	}
+}
+
+tag.objectAttributes = Tag {
+	tagName = 'test'
+	selfClosingTag = TRUE
+	attributes {
+		sum = ${2 + 2}
+	}
+}
+
+tag.arrayAttributes = Tag {
+	attributes {
+		class = RawArray
+		class.a = 'a'
+		class.b = 'b'
+	}
+}
+
+tag.plainContent = Tag {
+	tagName = 'span'
+	content = 'test'
+}
+
+tag.objectContent = Tag {
+	tagName = 'span'
+	content = ${2 + 2}
+}
+
+tag.registeredSelfClosingTag = Tag {
+	tagName = 'br'
+}
+
+tag.omitClosingTag = Tag {
+	tagName = 'test'
+	omitClosingTag = TRUE
+}
