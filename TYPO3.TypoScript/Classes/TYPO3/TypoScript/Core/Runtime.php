@@ -289,10 +289,10 @@ class Runtime {
 	 * @return mixed
 	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
 	 * @throws \TYPO3\TypoScript\Exception
-	 * @throws \Exception|\TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
 	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
-	 * @throws \Exception|\TYPO3\TypoScript\Exception\RuntimeException
+	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
 	 */
 	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = NULL) {
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
