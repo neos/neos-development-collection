@@ -314,7 +314,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		},
 
 		isPropertyModified: function(propertyName) {
-			return this.get('cleanProperties.' + propertyName) !== this.get('nodeProperties').get(propertyName);
+			return this.get('cleanProperties.' + propertyName) !== this.get('nodeProperties.' + propertyName);
 		},
 
 		/**

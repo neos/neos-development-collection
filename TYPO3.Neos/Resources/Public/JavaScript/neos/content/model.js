@@ -148,6 +148,7 @@ define(
 					return;
 				}
 				this._updating = true;
+				this.set('currentlyShownSecondaryAlohaTabs', false);
 
 				if ($element !== undefined) {
 						// Add active class to selected content element
@@ -275,6 +276,7 @@ define(
 			}.property('selectedNode'),
 
 			selectNode: function(node) {
+				this.set('currentlyShownSecondaryAlohaTabs', false);
 				this.updateSelection(node.get('$element'));
 			}
 		}).create();
