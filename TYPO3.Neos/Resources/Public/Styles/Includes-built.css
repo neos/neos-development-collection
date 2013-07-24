@@ -10009,6 +10009,9 @@
   top: 0;
   left: 0;
 }
+.neos #neos-menu-panel > .neos-menu-section:first-child .neos-menu-headline {
+  border: none;
+}
 .neos #neos-menu-panel a {
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -10035,9 +10038,6 @@
   cursor: pointer;
   line-height: 40px;
   position: relative;
-}
-.neos #neos-menu-panel .neos-menu-section .neos-menu-headline:first-child {
-  border-top: none;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse {
   position: absolute;
