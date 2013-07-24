@@ -40,7 +40,7 @@
 	}
 
 	// Top area
-	h3 {
+	.neos-header {
 		font-size: 16px;
 		line-height: 100%;
 		padding: 0 $defaultMargin;
@@ -50,7 +50,7 @@
 	}
 
 	// Header
-	h4 {
+	.neos-subheader {
 		font-size: 15px;
 		padding: $defaultMargin;
 		font-weight: normal;

@@ -1,7 +1,7 @@
 <div class="modal" id="pagetreeDeleteDialog">
 	<div class="modal-header">
 		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close neos-button" title="x"}}
-		<h3>Are you sure you want to delete the page "{{view.pageTitle}}"?</h3>
+		<div class="neos-header">Are you sure you want to delete the page "{{view.pageTitle}}"?</div>
 		<p>
 			This will delete the page{{#if view.numberOfChildren}} and it's subpages{{/if}}.<br />
 			This operation can be undone in the workspace management.
