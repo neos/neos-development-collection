@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Flow\Annotations as Flow;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Some NodeData (persisted or transient)
@@ -40,6 +41,7 @@ abstract class AbstractNodeData {
 	/**
 	 * Properties of this Node
 	 *
+	 * @ORM\Column(type="objectarray")
 	 * @var array<mixed>
 	 */
 	protected $properties = array();
