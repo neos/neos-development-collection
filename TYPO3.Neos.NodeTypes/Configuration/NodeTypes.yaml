@@ -90,29 +90,9 @@
           group: 'image'
     caption:
       type: string
-      defaultValue: 'Enter caption here'
+      defaultValue: '<p>Enter caption here</p>'
       ui:
         inlineEditable: TRUE
-    captionAlignment:
-      type: string
-      defaultValue: ''
-      ui:
-        label: 'Caption alignment'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-          editor: Content/Inspector/Editors/SelectBoxEditor
-          editorOptions:
-            placeholder: 'Default'
-            values:
-              '':
-                label: ''
-              left:
-                label: 'Left'
-              right:
-                label: 'Right'
-              center:
-                label: 'Center'
 
 'TYPO3.Neos.NodeTypes:TextWithImage':
   superTypes:
