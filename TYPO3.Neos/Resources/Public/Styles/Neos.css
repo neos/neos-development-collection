@@ -3,7 +3,7 @@
 /* Color palette */
 /* Sizes & margins */
 /* Components */
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -8884,7 +8884,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  z-dinex: 10015;
+  z-index: 10015;
 }
 .neos #neos-inspector .neos-inspector-form {
   width: 100%;

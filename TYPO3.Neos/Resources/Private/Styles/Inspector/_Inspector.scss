@@ -58,7 +58,7 @@
 		line-height: $unit;
 		padding-left: $defaultMargin;
 		@include box-sizing(border-box);
-		z-dinex: 10015;
+		z-index: 10015;
 	}
 
 	.neos-inspector-form {
