@@ -20,13 +20,13 @@
 	}
 
 	&.neos-contentelement-hover {
-		outline: 3px solid rgba(0, 0, 0, .2);
-		outline-offset: 3px;
+		outline: 2px solid rgba(0, 0, 0, .2);
+		outline-offset: 6px;
 	}
 
 	&.neos-contentelement-active {
-		outline: 3px solid $orange !important;
-		outline-offset: 3px;
+		outline: 2px solid $blue !important;
+		outline-offset: 6px;
 	}
 
 	&.neos-contentelement-hover > .neos-contentelement-overlay,
@@ -182,8 +182,8 @@
 
 .neos-contentcollection {
 	&.neos-contentelement-active {
-		outline: 3px solid $orange !important;
-		outline-offset: 3px;
+		outline: 2px solid $blue !important;
+		outline-offset: 6px;
 	}
 }
 

@@ -11200,11 +11200,40 @@
 }
 .neos .neos-handle-container .btn-toolbar .btn-group {
   position: absolute;
-  right: -6px;
-  top: -32px;
-  border: 3px solid #ff8700;
+  right: -8px;
+  top: -43px;
+  border: 2px solid #00b5ff;
   border-bottom: 0px;
-  background-color: #ff8700;
+  background-color: #eee;
+}
+.neos .neos-handle-container .btn-toolbar .btn-group .btn {
+  background: none;
+  background-image: none;
+  width: 32px;
+  height: 32px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border: none;
+}
+.neos .neos-handle-container .btn-toolbar .btn-group .btn:hover {
+  background-color: #e6e6e6;
+}
+.neos .neos-handle-container .btn-toolbar .btn-group .btn.active {
+  background-color: #00b5ff;
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.neos .neos-handle-container .btn-toolbar .btn-group .btn.active i {
+  color: #fff;
+}
+.neos .neos-handle-container .btn-toolbar .btn-group .btn i {
+  color: #000;
+  text-shadow: none;
 }
 .neos .neos-handle-container .btn-toolbar .btn-group .btn:last-child {
   -webkit-border-radius: 0;
@@ -12455,12 +12484,12 @@
   display: block;
 }
 .neos-contentelement.neos-contentelement-hover {
-  outline: 3px solid rgba(0, 0, 0, 0.2);
-  outline-offset: 3px;
+  outline: 2px solid rgba(0, 0, 0, 0.2);
+  outline-offset: 6px;
 }
 .neos-contentelement.neos-contentelement-active {
-  outline: 3px solid #ff8700 !important;
-  outline-offset: 3px;
+  outline: 2px solid #00b5ff !important;
+  outline-offset: 6px;
 }
 .neos-contentelement.neos-contentelement-hover > .neos-contentelement-overlay, .neos-contentelement.neos-contentelement-active > .neos-contentelement-overlay {
   display: block;
@@ -12613,8 +12642,8 @@
 }
 
 .neos-contentcollection.neos-contentelement-active {
-  outline: 3px solid #ff8700 !important;
-  outline-offset: 3px;
+  outline: 2px solid #00b5ff !important;
+  outline-offset: 6px;
 }
 
 .aloha-block-TYPO3Block.neos-contentelement.aloha-block:hover {
