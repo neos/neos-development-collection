@@ -12333,7 +12333,7 @@
 .neos .modal .neos-button.close:hover {
   background: #00b5ff;
 }
-.neos .modal h3 {
+.neos .modal .neos-header {
   font-size: 16px;
   line-height: 100%;
   padding: 0 16px;
@@ -12343,7 +12343,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .modal h4 {
+.neos .modal .neos-subheader {
   font-size: 15px;
   padding: 16px;
   font-weight: normal;
