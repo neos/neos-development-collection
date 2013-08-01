@@ -1,6 +1,10 @@
-define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Application', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], function($, _, ContentModule, vieInstance, Ember, DictionaryObject) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('vie/entity');
-
+define([
+	'Library/jquery-with-dependencies',
+	'Library/underscore',
+	'Content/Application',
+	'vie/instance',
+	'emberjs'
+], function($, _, ContentModule, vieInstance, Ember) {
 	var Entity = Ember.Object.extend({
 		/**
 		 * The jQuery element of the entity
@@ -26,6 +30,8 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 		 * If something is *publishable* and *modified*, i.e. is already saved
 		 * in the current workspace AND has more local changes, the system
 		 * will NOT publish the not-visible changes.
+		 *
+		 * @return {void}
 		 */
 		_onStateChange: function() {
 			if (this.get('modified')) {
@@ -37,6 +43,9 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 			}
 		}.observes('publishable', 'modified'),
 
+		/**
+		 * @return {void}
+		 */
 		_applyHiddenClass: function() {
 			if (this.get('attributes._hidden')) {
 				this.get('$element').addClass('neos-contentelement-hidden');
@@ -45,10 +54,16 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 			}
 		}.observes('typo3:_hidden'),
 
+		/**
+		 * @return {object}
+		 */
 		nodeType: function() {
 			return Entity.extractNodeTypeFromVieEntity(this.get('_vieEntity'));
 		}.property('_vieEntity').volatile(),
 
+		/**
+		 * @return {void}
+		 */
 		init: function() {
 			var that = this,
 				vieEntity = this.get('_vieEntity');
@@ -70,10 +85,14 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 			this.set('$element', $entityElement);
 		},
 
-		attributes: function(k, v) {
-			if (arguments.length == 1) {
+		/**
+		 * @return {object}
+		 */
+		attributes: function() {
+			if (arguments.length === 1) {
 				return Entity.extractAttributesFromVieEntity(this.get('_vieEntity'));
 			}
+			return {};
 		}.property('_vieEntity').volatile(),
 
 		/**
@@ -82,6 +101,7 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 		 * @param {string} key
 		 * @param {mixed} value
 		 * @param {object} options
+		 * @return {void}
 		 */
 		setAttribute: function(key, value, options) {
 			var attributeName = 'typo3:' + key;
@@ -90,6 +110,9 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 			this.propertyDidChange(attributeName);
 		},
 
+		/**
+		 * @return {string}
+		 */
 		nodePath: function() {
 			var subject = this.get('_vieEntity').getSubject();
 			return subject.substring(1, subject.length - 1);
@@ -97,14 +120,21 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 
 		/**
 		 * Receive the node type schema
+		 *
+		 * @return {object}
 		 */
 		nodeTypeSchema: function() {
 			return T3.Configuration.Schema[this.get('nodeType')];
 		}.property().cacheable()
-
 	});
 
 	Entity.reopenClass({
+		/**
+		 * @param {object} vieEntity
+		 * @param {object} attributes
+		 * @param {function} filterFn
+		 * @return {object}
+		 */
 		extractAttributesFromVieEntity: function(vieEntity, attributes, filterFn) {
 			var cleanAttributes = {};
 			attributes = _.isEmpty(attributes) ? vieEntity.attributes : attributes;
@@ -119,6 +149,11 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 			});
 			return cleanAttributes;
 		},
+
+		/**
+		 * @param {object} vieEntity
+		 * @return {string}
+		 */
 		extractNodeTypeFromVieEntity: function(vieEntity) {
 			var types = vieEntity.get('@type'),
 				type;
@@ -131,7 +166,8 @@ define(['Library/jquery-with-dependencies', 'Library/underscore', 'Content/Appli
 					return type.toString();
 				}), function(type) {
 					return type.indexOf('<' + ContentModule.TYPO3_NAMESPACE) === 0;
-				});
+				}
+			);
 
 			if (type) {
 				type = type.substr(ContentModule.TYPO3_NAMESPACE.length + 1);
