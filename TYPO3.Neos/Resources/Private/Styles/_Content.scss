@@ -34,114 +34,6 @@
 		display: block;
 	}
 
-	.neos-handle {
-		position: absolute;
-		right: -1px;
-		top: -21px;
-		width: 22px;
-		height: 20px;
-		overflow: hidden;
-		font-size: 9px;
-		display: none;
-		border-width: 1px 1px 0 1px;
-		border-style: solid solid none solid;
-		border-color: $dark-grey3;
-		text-indent: -9999px;
-		cursor: pointer;
-		background: $lightest;
-
-		&.neos-handle-hidden {
-			display: none !important;
-		}
-
-		span {
-			width: 100%;
-			height: 100%;
-			background-position: 50% 50%;
-			background-repeat: no-repeat;
-			background-color: $lightest;
-			overflow: hidden;
-			@include opacity(1.0);
-			@include transition-property(opacity);
-			@include transition-duration(0.25s);
-
-			&:hover,
-			&:focus,
-			&:active {
-				@include opacity(0.7);
-			}
-		}
-
-		.neos-add-above-handle,
-		.neos-add-below-handle {
-			right: 49%;
-			border-width: 0;
-			border-style: none;
-			top: -31px;
-			padding: 6px;
-			background: transparent;
-			span {
-				background-color: $lightest;
-				background-image: url(../Images/Icons/Black/plus.png);
-			}
-		}
-
-		.neos-add-below-handle {
-			top: auto;
-			bottom: -31px;
-		}
-
-		.neos-delete-handle {
-			right: -1px;
-			top: -21px;
-			span {
-				background-image: url(../Images/Icons/Black/trash_icon-16.png);
-			}
-		}
-
-		.neos-copy-handle,
-		.neos-remove-from-copy-handle {
-			right: 43px;
-			span {
-				background-image: url(../Images/Icons/Black/clipboard_copy_icon-16.png);
-			}
-		}
-
-		.neos-cut-handle,
-		.neos-remove-from-cut-handle {
-			right: 21px;
-			span {
-				background-image: url(../Images/Icons/Black/clipboard_cut_icon-16.png);
-			}
-		}
-
-		.neos-paste-before-handle,
-		.neos-paste-after-handle {
-			right: 49%;
-			top: -31px;
-			border-width: 0;
-			border-style: none;
-			padding: 6px;
-			background: transparent;
-			span {
-				background: $lightest;
-				background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
-				background-repeat: no-repeat;
-				background-position: 50% 50%;
-			}
-		}
-
-		.neos-paste-after-handle {
-			top: auto;
-			bottom: -31px;
-		}
-
-		.neos-remove-from-cut-handle span,
-		.neos-remove-from-copy-handle span {
-			@include opacity(0.3);
-		}
-	}
-
 	&.neos-contentelement-active .neos-inline-editable,
 	.aloha-editable-active,
 	.aloha-editable-active[contenteditable=true]:focus {
@@ -161,22 +53,19 @@
 		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
 
 		.neos-contentelement-overlay-icon {
-			display: none;
-			width: 32px;
-			height: 32px;
-
-			margin: auto;
-			position: relative;
-			top: 35%;
-			background-repeat: no-repeat;
-			background-position: center;
-			cursor: pointer;
+			width: 14px;
+			height: 14px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-top: -7px;
+			margin-left: -7px;
 			@include user-select(none);
-		}
-	}
 
-	&.typo3-neos-nodetypes-html .neos-contentelement-overlay-icon {
-		background-image: url('../Images/Icons/White/brackets_icon-16.png');
+			i {
+				@include icon-FontAwesome();
+			}
+		}
 	}
 }
 

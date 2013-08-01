@@ -76,30 +76,6 @@ a {
 	}
 }
 
-.neos-dd-drag-ghost-pagetree {
-	background: $lightest;
-	padding: 2px 5px 2px 25px;
-	@include border-radius(4px);
-	@include single-box-shadow(rgba($darkest, 0.4), 0px, 2px, 3px);
-	cursor: move;
-	a {
-		color: $darkest;
-		text-decoration: none;
-	}
-}
-.x-dd-drop-nodrop .neos-dd-drag-ghost-pagetree {
-	background: $lightest url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat;
-}
-.x-tree-drop-ok-above .neos-dd-drag-ghost-pagetree,
-.x-tree-drop-ok-between .neos-dd-drag-ghost-pagetree,
-.x-tree-drop-ok-append .neos-dd-drag-ghost-pagetree,
-.x-tree-drop-ok-below .neos-dd-drag-ghost-pagetree {
-	background: $lightest url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat;
-}
-.x-tree-drop-delete .neos-dd-drag-ghost-pagetree {
-	background: $lightest url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
-}
-
 body.neos-inspect-active {
 
 	// Show status indicator when in inspect mode

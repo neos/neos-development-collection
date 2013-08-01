@@ -7769,33 +7769,6 @@
 .neos #neos-tree-panel .dynatree-container {
   overflow: visible;
 }
-.neos .neos-dd-drag-ghost-pagetree {
-  background: white;
-  padding: 2px 5px 2px 25px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
-  cursor: move;
-}
-.neos .neos-dd-drag-ghost-pagetree a {
-  color: black;
-  text-decoration: none;
-}
-.neos .x-dd-drop-nodrop .neos-dd-drag-ghost-pagetree {
-  background: white url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat;
-}
-.neos .x-tree-drop-ok-above .neos-dd-drag-ghost-pagetree,
-.neos .x-tree-drop-ok-between .neos-dd-drag-ghost-pagetree,
-.neos .x-tree-drop-ok-append .neos-dd-drag-ghost-pagetree,
-.neos .x-tree-drop-ok-below .neos-dd-drag-ghost-pagetree {
-  background: white url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat;
-}
-.neos .x-tree-drop-delete .neos-dd-drag-ghost-pagetree {
-  background: white url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
-}
 .neos body.neos-inspect-active .neos-status-indicator {
   display: block;
   position: absolute;
@@ -12494,113 +12467,6 @@
 .neos-contentelement.neos-contentelement-hover > .neos-contentelement-overlay, .neos-contentelement.neos-contentelement-active > .neos-contentelement-overlay {
   display: block;
 }
-.neos-contentelement .neos-handle {
-  position: absolute;
-  right: -1px;
-  top: -21px;
-  width: 22px;
-  height: 20px;
-  overflow: hidden;
-  font-size: 9px;
-  display: none;
-  border-width: 1px 1px 0 1px;
-  border-style: solid solid none solid;
-  border-color: #373737;
-  text-indent: -9999px;
-  cursor: pointer;
-  background: white;
-}
-.neos-contentelement .neos-handle.neos-handle-hidden {
-  display: none !important;
-}
-.neos-contentelement .neos-handle span {
-  width: 100%;
-  height: 100%;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-color: white;
-  overflow: hidden;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-  -webkit-transition-property: opacity;
-  -moz-transition-property: opacity;
-  -o-transition-property: opacity;
-  transition-property: opacity;
-  -webkit-transition-duration: 0.25s;
-  -moz-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  transition-duration: 0.25s;
-}
-.neos-contentelement .neos-handle span:hover, .neos-contentelement .neos-handle span:focus, .neos-contentelement .neos-handle span:active {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
-  opacity: 0.7;
-}
-.neos-contentelement .neos-handle .neos-add-above-handle,
-.neos-contentelement .neos-handle .neos-add-below-handle {
-  right: 49%;
-  border-width: 0;
-  border-style: none;
-  top: -31px;
-  padding: 6px;
-  background: transparent;
-}
-.neos-contentelement .neos-handle .neos-add-above-handle span,
-.neos-contentelement .neos-handle .neos-add-below-handle span {
-  background-color: white;
-  background-image: url(../Images/Icons/Black/plus.png);
-}
-.neos-contentelement .neos-handle .neos-add-below-handle {
-  top: auto;
-  bottom: -31px;
-}
-.neos-contentelement .neos-handle .neos-delete-handle {
-  right: -1px;
-  top: -21px;
-}
-.neos-contentelement .neos-handle .neos-delete-handle span {
-  background-image: url(../Images/Icons/Black/trash_icon-16.png);
-}
-.neos-contentelement .neos-handle .neos-copy-handle,
-.neos-contentelement .neos-handle .neos-remove-from-copy-handle {
-  right: 43px;
-}
-.neos-contentelement .neos-handle .neos-copy-handle span,
-.neos-contentelement .neos-handle .neos-remove-from-copy-handle span {
-  background-image: url(../Images/Icons/Black/clipboard_copy_icon-16.png);
-}
-.neos-contentelement .neos-handle .neos-cut-handle,
-.neos-contentelement .neos-handle .neos-remove-from-cut-handle {
-  right: 21px;
-}
-.neos-contentelement .neos-handle .neos-cut-handle span,
-.neos-contentelement .neos-handle .neos-remove-from-cut-handle span {
-  background-image: url(../Images/Icons/Black/clipboard_cut_icon-16.png);
-}
-.neos-contentelement .neos-handle .neos-paste-before-handle,
-.neos-contentelement .neos-handle .neos-paste-after-handle {
-  right: 49%;
-  top: -31px;
-  border-width: 0;
-  border-style: none;
-  padding: 6px;
-  background: transparent;
-}
-.neos-contentelement .neos-handle .neos-paste-before-handle span,
-.neos-contentelement .neos-handle .neos-paste-after-handle span {
-  background: white;
-  background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-}
-.neos-contentelement .neos-handle .neos-paste-after-handle {
-  top: auto;
-  bottom: -31px;
-}
-.neos-contentelement .neos-handle .neos-remove-from-cut-handle span,
-.neos-contentelement .neos-handle .neos-remove-from-copy-handle span {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
-  opacity: 0.3;
-}
 .neos-contentelement.neos-contentelement-active .neos-inline-editable,
 .neos-contentelement .aloha-editable-active,
 .neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
@@ -12622,23 +12488,26 @@
   background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
 }
 .neos-contentelement > .neos-contentelement-overlay .neos-contentelement-overlay-icon {
-  display: none;
-  width: 32px;
-  height: 32px;
-  margin: auto;
-  position: relative;
-  top: 35%;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -7px;
+  margin-left: -7px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
 }
-.neos-contentelement.typo3-neos-nodetypes-html .neos-contentelement-overlay-icon {
-  background-image: url("../Images/Icons/White/brackets_icon-16.png");
+.neos-contentelement > .neos-contentelement-overlay .neos-contentelement-overlay-icon i {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
 }
 
 .neos-contentcollection.neos-contentelement-active {

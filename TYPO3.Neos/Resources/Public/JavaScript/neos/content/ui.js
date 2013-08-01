@@ -95,7 +95,9 @@ function($, Ember, saveIndicatorTemplate) {
 				'class': 'neos-contentelement-overlay'
 			}).prependTo($element);
 
-			$('<span />', {'class': 'neos-contentelement-overlay-icon'}).appendTo(overlay);
+			var nodeTypeConfiguration = entity.get('@type').pop().metadata;
+
+			$('<span />', {'class': 'neos-contentelement-overlay-icon'}).append($('<i />', {class: nodeTypeConfiguration.ui.icon})).appendTo(overlay);
 
 			setOverlaySizeFn();
 

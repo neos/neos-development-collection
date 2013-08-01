@@ -187,9 +187,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	  ui:
 	    label: 'Image'
 	    group: 'General'
-	    icon:
-	      light: 'Images/Icons/White/picture_icon-16.png'
-	      dark: 'Images/Icons/Black/picture_icon-16.png'
+	    icon: 'icon-picture'
 	    inspector:
 	      groups:
 	        image:
