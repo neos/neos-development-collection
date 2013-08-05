@@ -5,14 +5,15 @@
     "version": "1.0.0 dev",
     "require": {
         "typo3/flow": "*",
-        "typo3/extjs": "*",
-        "typo3/aloha": "*",
-        "typo3/media": "*",
-        "typo3/neos-nodetypes": "*",
-        "typo3/setup": "*",
-        "typo3/twitter-bootstrap": "*",
-        "typo3/typo3cr": "*",
-        "typo3/typoscript": "*"
+        "typo3/extjs": "1.0.0-alpha5",
+        "typo3/aloha": "1.0.0-alpha5",
+        "typo3/media": "1.0.0-alpha5",
+        "typo3/neos-nodetypes": "1.0.0-alpha5",
+        "typo3/setup": "1.0.0-alpha5",
+        "typo3/twitter-bootstrap": "1.0.0-alpha5",
+        "typo3/typo3cr": "1.0.0-alpha5",
+        "typo3/typoscript": "1.0.0-alpha5",
+        "typo3/sitekickstarter": "1.0.0-alpha5"
     },
     "suggest": {
         "typo3/sitekickstarter": "Helps with creating new site packages for TYPO3 Neos."
