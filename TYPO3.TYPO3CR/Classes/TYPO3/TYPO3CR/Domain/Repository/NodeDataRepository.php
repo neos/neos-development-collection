@@ -353,7 +353,25 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 	/**
+	 * Finds recursively nodes by its parent and (optionally) by its node type.
+	 *
+	 * @see this::findByParentAndNodeType
+	 *
+	 * @param string $parentPath Absolute path of the parent node
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
+	 * @param integer $offset An optional offset for the query
+	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
+	 */
+	public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE) {
+		return $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $limit, $offset, $includeRemovedNodes, TRUE);
+	}
+
+	/**
 	 * Finds nodes by its parent and (optionally) by its node type.
+	 * If the $recursive flag is set to TRUE, all matching nodes underneath $parentPath will be returned
 	 *
 	 * Note: Filters out removed nodes.
 	 *
@@ -366,15 +384,15 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
+	 * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
-	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE) {
+	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE, $recursive = FALSE) {
 		$baseWorkspace = $workspace;
 		$foundNodes = array();
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, TRUE);
-
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, TRUE, $recursive);
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIdentifier()])) {
@@ -802,10 +820,11 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @param boolean $recursive Switch to make the Query recursive
 	 * @throws \InvalidArgumentException
 	 * @return \TYPO3\Flow\Persistence\QueryInterface The query
 	 */
-	protected function createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE) {
+	protected function createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE, $recursive = FALSE) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $parentPath . '" is not a valid path: must start but not end with a slash.', 1284985610);
 		}
@@ -813,8 +832,12 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		$query = $this->createQuery();
 		$constraints = array(
 			$query->equals('workspace', $workspace),
-			$query->equals('parentPath', $parentPath),
 		);
+		if ($recursive !== TRUE) {
+			$constraints[] = $query->equals('parentPath', $parentPath);
+		} else {
+			$constraints[] = $query->like('parentPath', $parentPath . '%');
+		}
 
 		if ($includeRemovedNodes === FALSE) {
 			$constraints[] = $query->equals('removed', (integer)$includeRemovedNodes);
