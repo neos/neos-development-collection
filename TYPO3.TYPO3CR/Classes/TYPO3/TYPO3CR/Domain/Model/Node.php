@@ -12,6 +12,10 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Exception\NodeExistsException;
+use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -29,7 +33,7 @@ class Node implements NodeInterface {
 	protected $nodeData;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @var ContextInterface
 	 */
 	protected $context;
 
@@ -55,11 +59,11 @@ class Node implements NodeInterface {
 
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param ContextInterface $context
 	 * @throws \InvalidArgumentException if you give a Node as originalNode.
 	 * @Flow\Autowiring(false)
 	 */
-	public function __construct(NodeData $nodeData, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+	public function __construct(NodeData $nodeData, ContextInterface $context) {
 		$this->nodeData = $nodeData;
 		$this->context = $context;
 
@@ -248,6 +252,20 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Returns the closest ancestor of this node that matches the $nodeTypeFilter
+	 *
+	 * @param string $nodeTypeFilter filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.TYPO3CR:Type1", "!TYPO3.TYPO3CR:Type2,TYPO3.TYPO3CR:Type3" or NULL)
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The found node or NULL if this is the root node or no matching node was found
+	 */
+	public function getClosestAncestor($nodeTypeFilter) {
+		if ($this->getPath() === '/' || $this->getParentPath() === '/') {
+			return NULL;
+		}
+		$ancestorNodes = $this->nodeDataRepository->findOnPathInContext('/', $this->getParentPath(), $this->context, $nodeTypeFilter);
+		return array_pop($ancestorNodes);
+	}
+
+	/**
 	 * Returns the parent node path
 	 *
 	 * @return string Absolute node path of the parent node
@@ -305,12 +323,12 @@ class Node implements NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $nodeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @throws NodeExistsException
 	 * @api
 	 */
 	public function copyBefore(NodeInterface $referenceNode, $nodeName) {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
+			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
 		}
 		if (!$this->nodeDataIsMatchingContext) {
 			$this->materializeNodeData();
@@ -328,12 +346,12 @@ class Node implements NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $nodeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @throws NodeExistsException
 	 * @api
 	 */
 	public function copyAfter(NodeInterface $referenceNode, $nodeName) {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
+			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
 		}
 		if (!$this->nodeDataIsMatchingContext) {
 			$this->materializeNodeData();
@@ -351,7 +369,7 @@ class Node implements NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $nodeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @throws NodeExistsException
 	 * @api
 	 */
 	public function copyInto(NodeInterface $referenceNode, $nodeName) {

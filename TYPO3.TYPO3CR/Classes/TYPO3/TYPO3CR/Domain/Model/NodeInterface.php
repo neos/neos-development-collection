@@ -368,7 +368,7 @@ interface NodeInterface {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
+	 * @return NodeInterface The parent node or NULL if this is the root node
 	 * @api
 	 */
 	public function getParent();
@@ -380,6 +380,14 @@ interface NodeInterface {
 	 * @api
 	 */
 	public function getParentPath();
+
+	/**
+	 * Returns the closest ancestor of this node that matches the $nodeTypeFilter
+	 *
+	 * @param string $nodeTypeFilter  filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.TYPO3CR:Type1", "!TYPO3.TYPO3CR:Type2,TYPO3.TYPO3CR:Type3" or NULL)
+	 * @return NodeInterface The found node or NULL if this is the root node or no matching node was found
+	 */
+	public function getClosestAncestor($nodeTypeFilter);
 
 	/**
 	 * Creates, adds and returns a child node of this node. Also sets default
@@ -415,7 +423,7 @@ interface NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface the freshly generated node
+	 * @return NodeInterface the freshly generated node
 	 * @api
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL);
@@ -424,7 +432,7 @@ interface NodeInterface {
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return NodeInterface The specified node or NULL if no such node exists
 	 * @api
 	 */
 	public function getNode($path);
@@ -435,7 +443,7 @@ interface NodeInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * node type. For now it is just the first child node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
+	 * @return NodeInterface The primary child node or NULL if no such node exists
 	 * @api
 	 */
 	public function getPrimaryChildNode();
@@ -516,7 +524,7 @@ interface NodeInterface {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @return void
 	 * @api
 	 */
@@ -525,7 +533,7 @@ interface NodeInterface {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @return void
 	 * @api
 	 */
@@ -534,7 +542,7 @@ interface NodeInterface {
 	/**
 	 * Moves this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @return void
 	 * @api
 	 */
@@ -543,9 +551,9 @@ interface NodeInterface {
 	/**
 	 * Copies this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */
@@ -554,9 +562,9 @@ interface NodeInterface {
 	/**
 	 * Copies this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */
@@ -566,9 +574,9 @@ interface NodeInterface {
 	 * Copies this node to below the given node. The new node will be added behind
 	 * any existing sub nodes of the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */

@@ -882,5 +882,92 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$fluxNode->copyAfter($bazNode, 'exists');
 	}
+
+	public function getClosestAncestorDataProvider() {
+		return array(
+			array(
+				'currentNodePath' => '/b/b1/b1a',
+				'nodeTypeFilter' => 'TYPO3.TYPO3CR:TestingNodeType',
+				'expectedNodePath' => '/b/b1'
+			),
+			array(
+				'currentNodePath' => '/b/b1/b1a',
+				'nodeTypeFilter' => 'InvalidFilter',
+				'expectedNodePath' => NULL
+			),
+			array(
+				'currentNodePath' => '/b/b3/b3b',
+				'nodeTypeFilter' => 'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes',
+				'expectedNodePath' => '/b/b3'
+			),
+			array(
+				'currentNodePath' => '/b/b3/b3b',
+				'nodeTypeFilter' => 'TYPO3.TYPO3CR:TestingNodeType, TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes',
+				'expectedNodePath' => '/b/b3'
+			),
+			array(
+				'currentNodePath' => '/b/b1/b1a',
+				'nodeTypeFilter' => 'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes',
+				'expectedNodePath' => NULL
+			),
+			array(
+				'currentNodePath' => '/b/b1',
+				'nodeTypeFilter' => 'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes',
+				'expectedNodePath' => NULL
+			),
+			array(
+				'currentNodePath' => '/b/b3/b3a',
+				'nodeTypeFilter' => 'TYPO3.TYPO3CR:TestingNodeType',
+				'expectedNodePath' => '/b'
+			),
+		);
+	}
+
+	/**
+	 * Tests on a tree:
+	 *
+	 * a
+	 *   a1
+	 *   a2
+	 * b (TestingNodeType)
+	 *   b1 (TestingNodeType)
+	 *     b1a
+	 *   b2
+	 *   b3 (TestingNodeTypeWithSubnodes)
+	 *     b3a (TestingNodeType)
+	 *     b3b
+	 *
+	 * @test
+	 * @dataProvider getClosestAncestorDataProvider()
+	 */
+	public function getClosestAncestorTests($currentNodePath, $nodeTypeFilter, $expectedNodePath) {
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeType');
+		$testNodeType2 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes');
+
+		$rootNode = $this->context->getNode('/');
+		$nodeA = $rootNode->createNode('a');
+		$nodeA1 = $nodeA->createNode('a1');
+		$nodeA2 = $nodeA->createNode('a2');
+		$nodeB = $rootNode->createNode('b', $testNodeType1);
+		$nodeB1 = $nodeB->createNode('b1', $testNodeType1);
+		$nodeB1a = $nodeB1->createNode('b1a');
+		$nodeB2 = $nodeB->createNode('b2');
+		$nodeB3 = $nodeB->createNode('b3', $testNodeType2);
+		$nodeB3a = $nodeB3->createNode('b3a', $testNodeType1);
+		$nodeB3b = $nodeB3->createNode('b3b');
+
+		$currentNode = $rootNode->getNode($currentNodePath);
+		$actualNode = $currentNode->getClosestAncestor($nodeTypeFilter);
+
+		if ($expectedNodePath === NULL) {
+			if ($actualNode !== NULL) {
+				$this->fail('Expected resulting node to be NULL');
+			}
+			$this->assertNull($actualNode);
+		} else {
+			$this->assertSame($expectedNodePath, $actualNode->getPath());
+		}
+	}
 }
 ?>

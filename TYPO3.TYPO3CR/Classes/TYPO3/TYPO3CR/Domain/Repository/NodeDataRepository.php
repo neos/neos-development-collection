@@ -11,16 +11,24 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query;
-
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Exception;
 
 /**
  * The repository for node data
  *
  * @Flow\Scope("singleton")
  */
-class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
+class NodeDataRepository extends Repository {
 
 	/**
 	 * Constants for setNewIndex()
@@ -75,7 +83,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
-		'index' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING
+		'index' => QueryInterface::ORDER_ASCENDING
 	);
 
 	/**
@@ -116,7 +124,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @api
 	 */
 	public function remove($object) {
-		if ($object instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
+		if ($object instanceof Node) {
 			$object = $object->getNodeData();
 		}
 		if ($this->addedNodes->contains($object)) {
@@ -130,12 +138,12 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * Find a single node by exact path.
 	 *
 	 * @param string $path Absolute path of the node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The matching node if found, otherwise NULL
+	 * @param Workspace $workspace The containing workspace
+	 * @return NodeData The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
-	 * @throws \TYPO3\TYPO3CR\Exception
+	 * @throws Exception
 	 */
-	public function findOneByPath($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findOneByPath($path, Workspace $workspace) {
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $path . '" is not a valid path: must start but not end with a slash.', 1284985489);
 		}
@@ -146,6 +154,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 
 		$originalWorkspace = $workspace;
 		while ($workspace !== NULL) {
+			/** @var $node NodeData */
 			foreach ($this->addedNodes as $node) {
 				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
 					return $node;
@@ -158,6 +167,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 				}
 			}
 
+			/** @var $query \Doctrine\ORM\Query */
 			$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path = :path AND n.workspace = :workspace');
 			$query->setParameter('path', $path);
 			$query->setParameter('workspace', $workspace);
@@ -179,8 +189,8 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 					}
 					return $node;
 				}
-			} catch (\Doctrine\ORM\NonUniqueResultException $exception) {
-				throw new \TYPO3\TYPO3CR\Exception(sprintf('Non-unique result found for path "%s"', $path), 1328018972, $exception);
+			} catch (NonUniqueResultException $exception) {
+				throw new Exception(sprintf('Non-unique result found for path "%s"', $path), 1328018972, $exception);
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
@@ -202,12 +212,12 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * /foo/      first node on second level, below "foo"
 	 *
 	 * @param string $path Absolute path of the node
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context The containing context
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The matching node if found, otherwise NULL
+	 * @param ContextInterface $context The containing context
+	 * @return NodeData The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
-	 * @throws \TYPO3\TYPO3CR\Exception
+	 * @throws Exception
 	 */
-	public function findOneByPathInContext($path, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+	public function findOneByPathInContext($path, ContextInterface $context) {
 		$node = $this->findOneByPath($path, $context->getWorkspace());
 		if ($node !== NULL) {
 			$node = $this->nodeFactory->createFromNodeData($node, $context);
@@ -223,19 +233,21 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * try to find one with the given identifier in one of the base workspaces (if any).
 	 *
 	 * @param string $identifier Identifier of the node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The matching node if found, otherwise NULL
-	 * @throws \TYPO3\TYPO3CR\Exception
+	 * @param Workspace $workspace The containing workspace
+	 * @return NodeData The matching node if found, otherwise NULL
+	 * @throws Exception
 	 */
-	public function findOneByIdentifier($identifier, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findOneByIdentifier($identifier, Workspace $workspace) {
 		$originalWorkspace = $workspace;
 		while ($workspace !== NULL) {
+			/** @var $node NodeData */
 			foreach ($this->addedNodes as $node) {
 				if ($node->getIdentifier() === $identifier && $node->getWorkspace() === $workspace) {
 					return $node;
 				}
 			}
 
+			/** @var $node NodeData */
 			foreach ($this->removedNodes as $node) {
 				if ($node->getIdentifier() === $identifier && $node->getWorkspace() === $workspace) {
 					return NULL;
@@ -263,8 +275,8 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 					}
 					return $node;
 				}
-			} catch (\Doctrine\ORM\NonUniqueResultException $exception) {
-				throw new \TYPO3\TYPO3CR\Exception(sprintf('Non-unique result found for identifier "%s"', $identifier), 1346947613, $exception);
+			} catch (NonUniqueResultException $exception) {
+				throw new Exception(sprintf('Non-unique result found for identifier "%s"', $identifier), 1346947613, $exception);
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
@@ -282,13 +294,13 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * If no free index is available between two nodes (for "before" and "after"),
 	 * the whole index of the current node level will be renumbered.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node The node to set the new index for
+	 * @param NodeData $node The node to set the new index for
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
+	 * @param NodeData $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public function setNewIndex(\TYPO3\TYPO3CR\Domain\Model\NodeData $node, $position, \TYPO3\TYPO3CR\Domain\Model\NodeData $referenceNode = NULL) {
+	public function setNewIndex(NodeData $node, $position, NodeData $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
 
 		switch ($position) {
@@ -380,20 +392,21 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param Workspace $workspace The containing workspace
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
 	 * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
-	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE, $recursive = FALSE) {
+	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE, $recursive = FALSE) {
 		$baseWorkspace = $workspace;
 		$foundNodes = array();
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, TRUE, $recursive);
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
+			/** @var $node NodeData */
 			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIdentifier()])) {
 					$foundNodes[$node->getIdentifier()] = $node;
@@ -403,11 +416,13 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		}
 
 		if ($parentPath === '/') {
+			/** @var $addedNode NodeData */
 			foreach ($this->addedNodes as $addedNode) {
 				if ($addedNode->getDepth() === 1) {
 					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
 				}
 			}
+			/** @var $removedNode NodeData */
 			foreach ($this->removedNodes as $removedNode) {
 				if (isset($foundNodes[$removedNode->getIdentifier()])) {
 					unset($foundNodes[$removedNode->getIdentifier()]);
@@ -415,11 +430,13 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 			}
 		} else {
 			$childNodeDepth = substr_count($parentPath, '/') + 1;
+			/** @var $addedNode NodeData */
 			foreach ($this->addedNodes as $addedNode) {
 				if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
 					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
 				}
 			}
+			/** @var $removedNode NodeData */
 			foreach ($this->removedNodes as $removedNode) {
 				if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
 					if (isset($foundNodes[$removedNode->getIdentifier()])) {
@@ -452,12 +469,13 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * This is a bugfix for #48214.
 	 *
 	 * @param array $foundNodes
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace
+	 * @param Workspace $baseWorkspace
 	 * @return array
 	 */
-	protected function filterNodesOverlaidInBaseWorkspace(array $foundNodes, \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace) {
+	protected function filterNodesOverlaidInBaseWorkspace(array $foundNodes, Workspace $baseWorkspace) {
 		$identifiersOfNodesNotInBaseWorkspace = array();
 
+		/** @var $foundNode NodeData */
 		foreach ($foundNodes as $i => $foundNode) {
 			if ($foundNode->getWorkspace() !== $baseWorkspace) {
 				$identifiersOfNodesNotInBaseWorkspace[$foundNode->getIdentifier()] = $i;
@@ -492,12 +510,12 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context The containing workspace
+	 * @param ContextInterface $context The containing workspace
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 */
-	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context, $limit = NULL, $offset = NULL) {
+	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context, $limit = NULL, $offset = NULL) {
 		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $limit, $offset, $context->isRemovedContentShown());
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
@@ -517,11 +535,11 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param Workspace $workspace The containing workspace
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
 	 * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
 	 */
-	public function countByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE) {
+	public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $includeRemovedNodes = FALSE) {
 		return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, NULL, NULL, $includeRemovedNodes));
 	}
 
@@ -535,7 +553,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Path to the parent node
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @throws Exception\NodeException
 	 */
 	protected function renumberIndexesInLevel($parentPath) {
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
@@ -544,15 +562,17 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		$query->setParameter('parentPath', $parentPath);
 
 		$nodesOnLevel = array();
+		/** @var $node NodeData */
 		foreach ($query->getResult() as $node) {
 			$nodesOnLevel[$node->getIndex()] = $node;
 		}
 
+		/** @var $node NodeData */
 		foreach ($this->addedNodes as $node) {
 			if ($node->getParentPath() === $parentPath) {
 				$index = $node->getIndex();
 				if (isset($nodesOnLevel[$index])) {
-					throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Index conflict for nodes %s and %s: both have index %s', $nodesOnLevel[$index]->getPath(), $node->getPath(), $index), 1317140401);
+					throw new Exception\NodeException(sprintf('Index conflict for nodes %s and %s: both have index %s', $nodesOnLevel[$index]->getPath(), $node->getPath(), $index), 1317140401);
 				}
 				$nodesOnLevel[$index] = $node;
 			}
@@ -565,7 +585,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		$newIndex = 100;
 		foreach ($nodesOnLevel as $node) {
 			if ($newIndex > self::INDEX_MAXIMUM) {
-				throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node->getPath()), 1317140402);
+				throw new Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node->getPath()), 1317140402);
 			}
 			$node->setIndex($newIndex);
 			$newIndex += 100;
@@ -629,14 +649,15 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * Note: Also counts removed nodes
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
 	 */
-	public function countByWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function countByWorkspace(Workspace $workspace) {
 		$query = $this->createQuery();
 		$nodesInDatabase = $query->matching($query->equals('workspace', $workspace))->execute()->count();
 
 		$nodesInMemory = 0;
+		/** @var $node NodeData */
 		foreach ($this->addedNodes as $node) {
 			if ($node->getWorkspace() === $workspace) {
 				$nodesInMemory ++;
@@ -653,14 +674,14 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @return array Nodes sorted by index
 	 */
 	protected function sortNodesByIndex(array $nodes) {
-		usort($nodes, function($element1, $element2)
+		usort($nodes, function(NodeData $node1, NodeData $node2)
 			{
-				if ($element1->getIndex() < $element2->getIndex()) {
+				if ($node1->getIndex() < $node2->getIndex()) {
 					return -1;
-				} elseif ($element1->getIndex() > $element2->getIndex()) {
+				} elseif ($node1->getIndex() > $node2->getIndex()) {
 					return 1;
 				} else {
-					return strcmp($element1->getIdentifier(), $element2->getIdentifier());
+					return strcmp($node1->getIdentifier(), $node2->getIdentifier());
 				}
 			});
 		return $nodes;
@@ -671,12 +692,12 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param Workspace $workspace The containing workspace
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The node found or NULL
+	 * @return NodeData The node found or NULL
 	 * @todo Check for workspace compliance
 	 */
-	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE) {
+	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $includeRemovedNodes = FALSE) {
 		$baseWorkspace = $workspace;
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $includeRemovedNodes);
@@ -699,10 +720,10 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context The containing context
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The node found or NULL
+	 * @param ContextInterface $context The containing context
+	 * @return NodeData The node found or NULL
 	 */
-	public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+	public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context) {
 		$firstNode = $this->findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->isRemovedContentShown());
 
 		if ($firstNode !== NULL) {
@@ -714,20 +735,21 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
 	 * Finds all nodes of the specified workspace lying on the path specified by
-	 * (and including) the given starting point and end point.
+	 * (and including) the given starting point and end point and (optionally) a node type filter.
 	 *
 	 * If some node does not exist in the specified workspace, this function will
 	 * try to find a corresponding node in one of the base workspaces (if any).
 	 *
 	 * @param string $pathStartingPoint Absolute path specifying the starting point
 	 * @param string $pathEndPoint Absolute path specifying the end point
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param Workspace $workspace The containing workspace
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
-	 * @throws \InvalidArgumentException
+	 * @param string $nodeTypeFilter Optional filter for the node type of the nodes, supports complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
+	 * @throws \InvalidArgumentException
 	 * @todo findOnPath should probably not return child nodes of removed nodes unless removed nodes are included.
 	 */
-	public function findOnPath($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE) {
+	public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, $includeRemovedNodes = FALSE, $nodeTypeFilter = NULL) {
 		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
 			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
 		}
@@ -752,12 +774,15 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 			if ($includeRemovedNodes === FALSE) {
 				$constraints[] = $query->equals('removed', 0);
 			}
-
+			if ($nodeTypeFilter !== NULL) {
+				$constraints = array_merge($constraints, $this->getNodeTypeFilterConstraints($query, $nodeTypeFilter));
+			}
 			$query->matching(
 				$query->logicalAnd($constraints)
 			);
 
 			$nodesInThisWorkspace = $query->execute()->toArray();
+			/** @var $node NodeData */
 			foreach ($nodesInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getDepth()])) {
 					$foundNodes[$node->getDepth()] = $node;
@@ -765,9 +790,8 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
-
 		ksort($foundNodes);
-		return (count($foundNodes) === count($pathSegments)) ? array_values($foundNodes) : array();
+		return array_values($foundNodes);
 	}
 
 	/**
@@ -775,12 +799,13 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $pathStartingPoint
 	 * @param string $pathEndPoint
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param ContextInterface $context
+	 * @param string $nodeTypeFilter Optional filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 * @see findOnPath
 	 */
-	public function findOnPathInContext($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
-		$nodeDataElements = $this->findOnPath($pathStartingPoint, $pathEndPoint, $context->getWorkspace(), $context->isRemovedContentShown());
+	public function findOnPathInContext($pathStartingPoint, $pathEndPoint, ContextInterface $context, $nodeTypeFilter = NULL) {
+		$nodeDataElements = $this->findOnPath($pathStartingPoint, $pathEndPoint, $context->getWorkspace(), $context->isRemovedContentShown(), $nodeTypeFilter);
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
@@ -818,11 +843,11 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param Workspace $workspace The containing workspace
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
 	 * @param boolean $recursive Switch to make the Query recursive
 	 * @throws \InvalidArgumentException
-	 * @return \TYPO3\Flow\Persistence\QueryInterface The query
+	 * @return QueryInterface The query
 	 */
 	protected function createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE, $recursive = FALSE) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
@@ -844,37 +869,47 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		}
 
 		if ($nodeTypeFilter !== NULL) {
-			$includeNodeTypeConstraints = array();
-			$excludeNodeTypeConstraints = array();
-			$nodeTypeFilterParts = explode(',', $nodeTypeFilter);
-			foreach ($nodeTypeFilterParts as $nodeTypeFilterPart) {
-				$nodeTypeFilterPart = trim($nodeTypeFilterPart);
-				if (strpos($nodeTypeFilterPart, '!') === 0) {
-					$negate = TRUE;
-					$nodeTypeFilterPart = substr($nodeTypeFilterPart, 1);
-				} else {
-					$negate = FALSE;
-				}
-				$nodeTypeFilterPartSubTypes = array_merge(array($nodeTypeFilterPart), $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
-
-				foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
-					if ($negate === TRUE) {
-						$excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType));
-					} else {
-						$includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType);
-					}
-				}
-			}
-			if (count($excludeNodeTypeConstraints) > 0) {
-				$constraints = array_merge($excludeNodeTypeConstraints, $constraints);
-			}
-			if (count($includeNodeTypeConstraints) > 0) {
-				$constraints[] = $query->logicalOr($includeNodeTypeConstraints);
-			}
+			$constraints = array_merge($constraints, $this->getNodeTypeFilterConstraints($query, $nodeTypeFilter));
 		}
 
 		$query->matching($query->logicalAnd($constraints));
 		return $query;
+	}
+
+	/**
+	 * @param QueryInterface $query
+	 * @param $nodeTypeFilter
+	 * @return array
+	 */
+	protected function getNodeTypeFilterConstraints(QueryInterface $query, $nodeTypeFilter) {
+		$includeNodeTypeConstraints = array();
+		$excludeNodeTypeConstraints = array();
+		$nodeTypeFilterParts = Arrays::trimExplode(',', $nodeTypeFilter);
+		foreach ($nodeTypeFilterParts as $nodeTypeFilterPart) {
+			$nodeTypeFilterPart = trim($nodeTypeFilterPart);
+			if (strpos($nodeTypeFilterPart, '!') === 0) {
+				$negate = TRUE;
+				$nodeTypeFilterPart = substr($nodeTypeFilterPart, 1);
+			} else {
+				$negate = FALSE;
+			}
+			$nodeTypeFilterPartSubTypes = array_merge(array($nodeTypeFilterPart), $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
+
+			foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
+				if ($negate === TRUE) {
+					$excludeNodeTypeConstraints[] = $query->logicalNot($query->equals('nodeType', $nodeTypeFilterPartSubType));
+				} else {
+					$includeNodeTypeConstraints[] = $query->equals('nodeType', $nodeTypeFilterPartSubType);
+				}
+			}
+		}
+
+		$constraints = $excludeNodeTypeConstraints;
+		if (count($includeNodeTypeConstraints) > 0) {
+			$constraints[] = $query->logicalOr($includeNodeTypeConstraints);
+		}
+
+		return $constraints;
 	}
 
 	/**
@@ -901,7 +936,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @return array NodeData with removed entries removed
 	 */
 	protected function filterRemovedNodes($nodes) {
-		return array_filter($nodes, function($node) {
+		return array_filter($nodes, function(NodeData $node) {
 			return !$node->isRemoved();
 		});
 	}
