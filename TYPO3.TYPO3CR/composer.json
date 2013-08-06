@@ -2,6 +2,7 @@
     "name": "typo3/typo3cr",
     "type": "typo3-flow-package",
     "description": "",
+    "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*"
     },
