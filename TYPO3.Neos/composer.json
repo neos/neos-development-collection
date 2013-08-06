@@ -2,6 +2,7 @@
     "name": "typo3/neos",
     "type": "typo3-flow-package",
     "description": "The next generation of the popular open-source CMS.",
+    "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
         "typo3/extjs": "*",
