@@ -1,7 +1,8 @@
 {
     "name": "typo3/typoscript",
     "type": "typo3-flow-package",
-    "description": "",
+    "description": "TypoScript is a hierarchical, prototype based processing language",
+    "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
         "typo3/eel": "*"
