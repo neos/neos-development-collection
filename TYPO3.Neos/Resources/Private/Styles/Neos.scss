@@ -1,0 +1,101 @@
+// Core variables and mixins
+@import "compass";
+@import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
+@import "Foundation/mixins";
+@import "Constants";
+@import "Mixins";
+@import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
+@import "../../Public/Library/fontawesome/scss/font-awesome.scss";
+
+.neos {
+	// CSS Reset
+	@import "Foundation/reset";
+
+	// Grid system and page structure
+	@import "Foundation/scaffolding";
+	@import "Foundation/grid";
+	@import "Foundation/layouts";
+
+	// Base CSS
+	@import "Foundation/type";
+	@import "Foundation/code";
+	@import "Foundation/forms";
+	@import "Foundation/tables";
+
+	// Components: common
+	@import "Foundation/sprites";
+	@import "Foundation/dropdowns";
+	@import "Foundation/wells";
+	@import "Foundation/component-animations";
+	@import "Foundation/close";
+
+	// Components: Buttons & Alerts
+	@import "Foundation/buttons";
+	@import "Foundation/button-groups";
+	@import "Foundation/alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons
+
+	// Components: Nav
+	@import "Foundation/navs";
+	@import "Foundation/navbar";
+	@import "Foundation/breadcrumbs";
+	@import "Foundation/pagination";
+	@import "Foundation/pager";
+
+	// Components: Modals and Tooltips
+	@import "Foundation/modals";
+	@import "Foundation/tooltip";
+
+	// Components: Misc
+	@import "Foundation/thumbnails";
+	@import "Foundation/media";
+	@import "Foundation/labels-badges";
+//	@import "Foundation/progress-bars";
+	@import "Foundation/accordion";
+	@import "Foundation/carousel";
+	@import "Foundation/hero-unit";
+
+	// Utility classes
+	@import "Foundation/utilities"; // Has to be last to override when necessary
+
+	// Large desktops
+	@import "Foundation/responsive-1200px-min";
+
+	// Tablets to regular desktops
+	@import "Foundation/responsive-768px-979px";
+
+	// Phones to portrait tablets and narrow desktops
+	@import "Foundation/responsive-767px-max";
+
+	// Neos
+	@import "Reset";
+	font-size: 14px;
+	line-height: 1em;
+	text-align: left;
+	font-family: $default-font;
+	color: $textOnGray;
+
+	@import "General";
+	@import "Shared/Scrollbar";
+	@import "Shared/Buttons";
+	@import "ContentProperties";
+	@import "StyleWorkInProgress";
+	@import "ManagementBase";
+	@import "Inspector/Inspector";
+	@import "Inspector/Editors/ImageEditor";
+	@import "Inspector/SecondaryInspector";
+	@import "TopBar/TopBar";
+	@import "TopBar/PublishMenu";
+	@import "TopBar/UserMenu";
+	@import "ContextBar/ContextBar";
+	@import "Menu/MenuPanel";
+	@import "Modules/Modules";
+	@import "ContextBar/AlohaMenu";
+	@import "InlineEditing";
+	@import "Modules/Modules";
+	@import "Modules/Widget";
+	@import "Overlays";
+	@import "ButtonGroups";
+}
+
+@import "Content";
+@import "Global";

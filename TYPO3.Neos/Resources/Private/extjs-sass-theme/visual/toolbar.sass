@@ -1,0 +1,60 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-toolbar
+  border-color: adjust_hue(#a9bfd3, $hue)
+  background-color: adjust_hue(#d0def0, $hue)
+  background-image: url (#{$img_path+"/toolbar/bg.gif"})
+  td, span, input, div, select, label
+    font: normal 11px arial,tahoma, helvetica, sans-serif
+  .x-item-disabled
+    color: gray
+    *
+      color: gray
+  .x-btn-mc em.x-btn-split
+    background-image: url (#{$img_path+"/button/s-arrow-noline.gif"})
+  .x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split
+    background-image: url (#{$img_path+"/button/s-arrow-o.gif"})
+  .x-btn-mc em.x-btn-split-bottom
+    background-image: url (#{$img_path+"/button/s-arrow-b-noline.gif"})
+  .x-btn-over .x-btn-mc em.x-btn-split-bottom, .x-btn-click .x-btn-mc em.x-btn-split-bottom, .x-btn-menu-active .x-btn-mc em.x-btn-split-bottom, .x-btn-pressed .x-btn-mc em.x-btn-split-bottom
+    background-image: url (#{$img_path+"/button/s-arrow-bo.gif"})
+  .xtb-sep
+    background-image: url (#{$img_path+"/grid/grid-blue-split.gif"})
+
+.x-tbar-page-first
+  background-image: url (#{$img_path+"/grid/page-first.gif"}) !important
+
+.x-tbar-loading
+  background-image: url (#{$img_path+"/grid/refresh.gif"}) !important
+
+.x-tbar-page-last
+  background-image: url (#{$img_path+"/grid/page-last.gif"}) !important
+
+.x-tbar-page-next
+  background-image: url (#{$img_path+"/grid/page-next.gif"}) !important
+
+.x-tbar-page-prev
+  background-image: url (#{$img_path+"/grid/page-prev.gif"}) !important
+
+.x-item-disabled
+  .x-tbar-loading
+    background-image: url (#{$img_path+"/grid/refresh-disabled.gif"}) !important
+  .x-tbar-page-first
+    background-image: url (#{$img_path+"/grid/page-first-disabled.gif"}) !important
+  .x-tbar-page-last
+    background-image: url (#{$img_path+"/grid/page-last-disabled.gif"}) !important
+  .x-tbar-page-next
+    background-image: url (#{$img_path+"/grid/page-next-disabled.gif"}) !important
+  .x-tbar-page-prev
+    background-image: url (#{$img_path+"/grid/page-prev-disabled.gif"}) !important
+
+.x-paging-info
+  color: adjust_hue(#444, $hue)
+
+.x-toolbar-more-icon
+  background-image: url (#{$img_path+"/toolbar/more.gif"}) !important

@@ -1,0 +1,53 @@
+/* Variables */
+$tree-panel-width: 320px;
+
+$green: #69A550;
+$light-green: #54974A;
+
+// light-orange is the "TYPO3 orange":
+$orange: #F18F0B;
+$light-orange: #FF8700;
+
+$red: #DB4F4A;
+
+$lightest: #FFFFFF;
+
+$light-grey: #E8E8E8;
+$light-grey2: #CCCCCC;
+$light-grey3: #888888;
+$light-grey4: #666666;
+$dark-grey2: #444444;
+$dark-grey3: #373737;
+$dark-grey: #2D2D2D;
+$darkest: #000000;
+$baseFontSize: 100%;
+$default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+/* Color palette */
+$grayDark: #222;
+$grayMedium: #323232;
+$grayLight: #3f3f3f;
+$textOnWhite: #252525;
+$textOnGray: #fff;
+$textSubtle: #5b5b5b;
+$blue: #00b5ff;
+$blueLight: #39c6ff;
+$blueDark: #007fb2;
+$green: #00a338;
+$warning: #ff460d;
+$orange: #ff8700;
+
+/* Sizes & margins */
+$unit: 40px;
+$defaultMargin: 16px;
+$relatedMargin: 8px;
+$tightMargin: 4px;
+$wideMargin: 32px;
+
+/* Components */
+$inspectorWidth: $unit * 8;
+$menuWidth: $unit * 8;
+$generalFontSize: 14px;
+
+// Mixins //
+// Use Compass for CSS3 Mixins!

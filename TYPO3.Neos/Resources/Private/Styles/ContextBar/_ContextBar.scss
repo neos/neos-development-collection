@@ -1,0 +1,94 @@
+#neos-context-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10012;
+	margin-top: $unit + 1;
+	background-color: $grayMedium;
+	height: $unit;
+	border-bottom: 1px solid $grayLight;
+	padding-right: 41px;
+
+	.left {
+		float: left;
+		white-space: nowrap;
+	}
+
+	.right {
+		float: right;
+		white-space: nowrap;
+	}
+
+	.neos-button {
+		background-color: $grayMedium;
+		border-left: 1px solid $grayLight;
+		border-right: 1px solid $grayLight;
+		vertical-align: top;
+		display: inline-block;
+		float: left;
+
+		&:hover,
+		&:active,
+		&.active,
+		&.pressed {
+			background-color: $blue;
+		}
+
+		& + .neos-button {
+			margin-left: $defaultMargin;
+		}
+
+		&.neos-pagetree-button {
+			margin-right: $defaultMargin;
+		}
+	}
+
+	.neos-context-bar-save-indidator {
+		display: inline-block;
+		float: left;
+
+		.neos-indicator {
+			margin: 0;
+			padding: 0;
+			cursor: default;
+			background: transparent;
+			border: none;
+			padding-right: $defaultMargin;
+
+			span {
+				position: relative;
+				top: 2px;
+			}
+		}
+	}
+
+	@import "Shared/Chosen";
+	.chzn-container {
+		.chzn-single {
+			border-left: 1px solid $grayLight;
+			border-right: 1px solid $grayLight;
+
+			div {
+				border-left: 1px solid $grayLight;
+			}
+		}
+
+
+		.chzn-drop {
+			margin-top: 0;
+
+			.chzn-results {
+				max-height: none;
+
+				li {
+					border-bottom: 1px solid $grayLight;
+
+					&:first-child {
+						border-top: 1px solid $grayLight;
+					}
+				}
+			}
+		}
+	}
+}

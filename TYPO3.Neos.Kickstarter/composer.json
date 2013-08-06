@@ -1,0 +1,14 @@
+{
+    "name": "typo3/sitekickstarter",
+    "type": "typo3-flow-package",
+    "description": "",
+    "require": {
+        "typo3/flow": "*",
+        "typo3/kickstart": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\SiteKickstarter": "Classes"
+        }
+    }
+}

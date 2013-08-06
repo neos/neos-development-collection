@@ -1,0 +1,18 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<f:form action="update" name="person" object="{person}" arguments="{account: account}">
+		<div class="row neos-module-container">
+			<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
+		</div>
+
+		<div class="form-actions form-footer">
+			<neos:link.module path="management" class="btn neos-button">Cancel</neos:link.module>
+			<div class="pull-right">
+				<f:form.submit value="Save" class="btn btn-primary neos-button" />
+			</div>
+		</div>
+	</f:form>
+	<f:form action="index" id="postHelper" method="post"></f:form>
+</f:section>

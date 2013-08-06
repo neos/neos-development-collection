@@ -1,0 +1,36 @@
+####################################
+# BASIC TYPOSCRIPT FOR THE TEST CASE
+####################################
+
+# Definition of custom TypoScript types
+prototype(Acme.Demo:ThreeColumn) < prototype(TYPO3.Neos:Template)
+prototype(Acme.Demo:ThreeColumn) {
+	templatePath = 'FIXTURE_DIRECTORY/ThreeColumnTemplate.html'
+	left = TYPO3.Neos:ContentCollection
+	left.default.collection = ${q(node).children("left").children()}
+	center = TYPO3.Neos:ContentCollection
+	center.default.collection = ${q(node).children("center").children()}
+	right = TYPO3.Neos:ContentCollection
+	right.default.collection = ${q(node).children("right").children()}
+}
+
+prototype(TYPO3.Neos:ContentCase).threeColumn {
+	condition = ${q(node).is('[instanceof Acme.Demo:ThreeColumn]')}
+	type = 'Acme.Demo:ThreeColumn'
+	@position = 4242
+}
+
+# MAIN PAGE TEMPLATE
+
+page1 = TYPO3.Neos:Page
+page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
+page1.body.content {
+	teaser = TYPO3.Neos:ContentCollection
+	teaser.nodePath = 'teaser'
+
+	main = TYPO3.Neos:ContentCollection
+	main.nodePath = 'main'
+
+	sidebar = TYPO3.Neos:ContentCollection
+	sidebar.nodePath = 'sidebar'
+}
