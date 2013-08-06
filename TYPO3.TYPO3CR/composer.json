@@ -2,7 +2,6 @@
     "name": "typo3/typo3cr",
     "type": "typo3-flow-package",
     "description": "",
-    "version": "1.0.0-dev",
     "require": {
         "typo3/flow": "*"
     },
