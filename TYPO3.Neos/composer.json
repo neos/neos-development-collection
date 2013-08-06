@@ -2,7 +2,6 @@
     "name": "typo3/neos",
     "type": "typo3-flow-package",
     "description": "The next generation of the popular open-source CMS.",
-    "version": "1.0.0 dev",
     "require": {
         "typo3/flow": "*",
         "typo3/extjs": "*",
