@@ -131,11 +131,11 @@
 				var value = false;
 				if ($(this).is(':checked')) {
 					value = true;
-					$('.batch-action').removeClass('disabled').removeAttr('disabled')
+					$('.batch-action').removeClass('disabled').removeAttr('disabled');
 				} else {
 					$('.batch-action').addClass('disabled').attr('disabled', 'disabled');
 				}
-				$('tbody input[type="checkbox"]').attr('checked', value);
+				$('tbody input[type="checkbox"]').prop('checked', value);
 			});
 			$('tbody input[type="checkbox"]').change(function() {
 				if ($('tbody input[type="checkbox"]:checked').length > 0) {

@@ -12,6 +12,7 @@
 		</f:for>
 	</f:if>
 
+	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.9.1.js')}"></script>
 	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
 		<f:for each="{moduleConfiguration.additionalResources.javaScripts}" as="additionalResource">
 			<script src="{f:uri.resource(path: additionalResource)}"></script>
@@ -54,6 +55,5 @@
 			<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
-		<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.9.1.js')}"></script>
 	</body>
 </f:section>
