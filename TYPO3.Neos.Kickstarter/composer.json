@@ -1,7 +1,7 @@
 {
     "name": "typo3/sitekickstarter",
     "type": "typo3-flow-package",
-    "description": "",
+    "description": "A simple generator for sites.",
     "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
