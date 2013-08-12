@@ -72,11 +72,8 @@ class NodeType implements FilterInterface {
 		if ($this->withSubTypes === TRUE) {
 			return $this->nodeTypeManager->getNodeType($node->getNodeType())->isOfType($this->nodeTypeName);
 		} else {
-			if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
-				$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($node, 'originalNode.nodeType', TRUE);
-			} else {
-				$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', TRUE);
-			}
+			$nodeData = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeData', TRUE);
+			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($nodeData, 'nodeType', TRUE);
 			return $nodeType === $this->nodeTypeName;
 		}
 	}
