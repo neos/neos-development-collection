@@ -85,12 +85,12 @@
 							</button>
 							<div class="modal hide" id="{electronicAddress.type}">
 								<div class="modal-header">
-									<button type="button" class="close neos-button" data-dismiss="modal">&times;</button>
-									<h3>Are you sure you want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</h3>
+									<button type="button" class="close neos-button" data-dismiss="modal"></button>
+									<div class="neos-header">Are you sure you want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
 								</div>
 								<div class="modal-footer">
 									<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-									<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="btn btn-danger t3-button" title="Delete">
+									<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="btn btn-danger neos-button" title="Delete">
 										<i class="icon-trash icon-white"></i>
 										Delete
 									</button>
