@@ -1,9 +1,10 @@
 define(
 [
 	'emberjs',
-	'Content/Inspector/SecondaryInspectorController'
+	'Content/Inspector/SecondaryInspectorController',
+	'Library/codemirror'
 ],
-function(Ember, SecondaryInspectorController) {
+function(Ember, SecondaryInspectorController, CodeMirror) {
 	return SecondaryInspectorController.SecondaryInspectorButton.extend({
 
 		label: 'Edit HTML',
@@ -20,25 +21,21 @@ function(Ember, SecondaryInspectorController) {
 					var $editorContent = this.$().find('textarea');
 					$editorContent.html(that.get('value'));
 
-					require([
-						'Library/codemirror',
-					], function(CodeMirror) {
-						var editorFullyPopulated = false;
+					var editorFullyPopulated = false;
 
-						var editor = CodeMirror.fromTextArea($editorContent.get(0), {
-							mode: 'text/html',
-							tabMode: 'indent',
-							theme: 'solarized dark',
-							lineNumbers: true,
-							onChange: function() {
-								if (editor && editorFullyPopulated) {
-									that.set('value', editor.getValue());
-								}
+					var editor = CodeMirror.fromTextArea($editorContent.get(0), {
+						mode: 'text/html',
+						tabMode: 'indent',
+						theme: 'solarized dark',
+						lineNumbers: true,
+						onChange: function() {
+							if (editor && editorFullyPopulated) {
+								that.set('value', editor.getValue());
 							}
-						});
-
-						editorFullyPopulated = true;
+						}
 					});
+
+					editorFullyPopulated = true;
 				}
 			});
 		}.property()

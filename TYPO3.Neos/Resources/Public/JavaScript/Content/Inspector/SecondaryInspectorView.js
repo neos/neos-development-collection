@@ -2,7 +2,7 @@ define(
 [
 	'emberjs',
 	'./SecondaryInspectorController',
-	'text!./SecondaryInspectorView.html',
+	'text!./SecondaryInspectorView.html'
 ],
 function(Ember, SecondaryInspectorController, template) {
 

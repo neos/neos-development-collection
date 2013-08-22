@@ -23,7 +23,7 @@ define(
 			 * @return {void}
 			 */
 			addError: function(message) {
-				this._super('The given subject was not a valid UUID.');
+				this._super('The given subject is not a valid UUID.');
 			}
 		});
 	}
