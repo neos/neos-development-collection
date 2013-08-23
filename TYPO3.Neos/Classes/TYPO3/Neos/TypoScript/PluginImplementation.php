@@ -197,15 +197,6 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 				$pluginRequest->setArgument('__' . $key, $evaluatedValue);
 			}
 
-				// TODO: Check if we want to use all properties as arguments
-				//     This enables us to configure plugin controller arguments via
-				//     node type definitions for now.
-			foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
-				$propertyName = '--' . $propertyName;
-				if (!in_array($propertyName, array('--package', '--subpackage', '--controller', '--action', '--format')) && !$pluginRequest->hasArgument($propertyName)) {
-					$pluginRequest->setArgument($propertyName, $propertyValue);
-				}
-			}
 			$pluginRequest->setArgument('__node', $this->node);
 			$pluginRequest->setArgument('__documentNode', $this->documentNode);
 		} else {
