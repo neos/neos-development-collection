@@ -20,7 +20,7 @@ use TYPO3\Flow\Http\Response;
  *
  * @Flow\Scope("prototype")
  */
-class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject implements \ArrayAccess {
+class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
@@ -80,14 +80,6 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
-
-	/**
-	 * List of variables being made available inside the plugin implementation. use
-	 * magic setters for setting them.
-	 *
-	 * @var array
-	 */
-	protected $variables = array();
 
 	/**
 	 * @param string $package
@@ -192,7 +184,7 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 				$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
 			}
 
-			foreach ($this->variables as $key => $value) {
+			foreach ($this->properties as $key => $value) {
 				$evaluatedValue = $this->tsRuntime->evaluateProcessor($key, $this, $value);
 				$pluginRequest->setArgument('__' . $key, $evaluatedValue);
 			}
@@ -269,39 +261,6 @@ class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractT
 		if (isset($arguments[$pluginNamespace])) {
 			$pluginRequest->setArguments($arguments[$pluginNamespace]);
 		}
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return boolean
-	 */
-	public function offsetExists($offset) {
-		return isset($this->variables[$offset]);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return mixed
-	 */
-	public function offsetGet($offset) {
-		return $this->variables[$offset];
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function offsetSet($offset, $value) {
-		$this->variables[$offset] = $value;
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return void
-	 */
-	public function offsetUnset($offset) {
-		unset($this->variables[$offset]);
 	}
 
 	/**
