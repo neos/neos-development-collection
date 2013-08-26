@@ -4,6 +4,13 @@ $max-image-height: $max-image-width / 4 * 3;
 .neos-inspector-image {
 	min-width: $inspectorWidth - $defaultMargin * 2;
 
+	.neos-button {
+		padding: 0 $relatedMargin;
+		height: $wideMargin;
+		line-height: $wideMargin;
+		font-size: 13px;
+	}
+
 	.neos-inspector-image-thumbnail-container {
 		position: relative;
 		overflow: hidden;
@@ -69,8 +76,10 @@ $max-image-height: $max-image-width / 4 * 3;
 	.neos-inspector-image-width {
 		padding-bottom: $defaultMargin - $tightMargin;
 
-		.neos-button {
-			padding: 0 $defaultMargin - $tightMargin;
+		.neos-inspector-image-upload-button,
+		.neos-inspector-image-crop-button {
+			float: right;
+			margin-left: 4px;
 		}
 	}
 }

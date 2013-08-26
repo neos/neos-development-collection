@@ -19,13 +19,13 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 	 * error messages otherwise.
 	 */
 	return FileUpload.extend({
-
 		/****************************************
 		 * GENERAL SETUP
 		 ***************************************/
 		fileChooserLabel: 'Choose Image',
 
 		uploaderLabel: 'Upload!',
+		removeButtonLabel: 'Remove',
 
 		/**
 		 * Size of the image preview. Public configuration.
@@ -146,7 +146,7 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 						y: this.get('y'),
 						w: this.get('w'),
 						h: this.get('h')
-					}
+					};
 				}.property('w', 'h', 'x', 'y'),
 
 				initialized: function() {
@@ -203,7 +203,7 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		}.property('_finalImageScale.h'),
 
 		_aspectRatioChanged: function() {
-			this.set('_finalImageScale.h', parseInt(this.get('_finalImageScale.w') / this.get('_cropProperties.aspectRatio')));
+			this.set('_finalImageScale.h', parseInt(this.get('_finalImageScale.w') / this.get('_cropProperties.aspectRatio'), 10));
 		}.observes('_finalImageScale.w', '_cropProperties.aspectRatio'),
 
 		/****************************************
@@ -241,7 +241,6 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 			}
 		},
 
-
 		/****************************************
 		 * MEDIA BROWSER
 		 ***************************************/
@@ -267,6 +266,19 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		},
 
 		/****************************************
+		 * IMAGE REMOVE
+		 ***************************************/
+		remove: function() {
+			this.set('_originalImageUuid', null);
+			this.set('_previewImageUri', null);
+			this.set('_finalImageScale.w', null);
+			this.set('_finalImageScale.h', null);
+			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
+			this.set('_uploadPreviewShown', true);
+			this.set('value', '');
+		},
+
+		/****************************************
 		 * IMAGE UPLOAD
 		 ***************************************/
 		/**
@@ -277,7 +289,7 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 			if (files.length > 0) {
 				var image = files[0];
 
-				if (window['FileReader']) {
+				if (typeof window.FileReader === 'function') {
 					var reader = new FileReader();
 					reader.onload = function(event) {
 						var binaryData = event.target.result;
@@ -294,14 +306,14 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 									// For landscape images, we set the margin-top correctly to align the image in the center
 								scaleFactor = that.get('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
 								offset = ((that.get('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
-								image.css({'margin-top': parseInt(offset) + 'px', 'margin-left': 0});
+								image.css({'margin-top': parseInt(offset, 10) + 'px', 'margin-left': 0});
 							} else {
 								image.removeClass('neos-inspector-image-uploadthumbnail-landscape').addClass('neos-inspector-image-uploadthumbnail-portrait');
 
 									// For portrait images, we set the margin-left correctly to align the image in the center
 								scaleFactor = that.get('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
 								offset = ((that.get('imagePreviewMaximumDimensions.w') - imageObjForFindingSize.width * scaleFactor) / 2);
-								image.css({'margin-left': parseInt(offset) + 'px', 'margin-top': 0});
+								image.css({'margin-left': parseInt(offset, 10) + 'px', 'margin-top': 0});
 							}
 							that.set('_uploadPreviewShown', true);
 						};
@@ -384,7 +396,7 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 							var imageWidthScalingFactor = previewImageCoordinates.w / that.get('_cropProperties.w');
 
 							Ember.beginPropertyChanges();
-							that.set('_finalImageScale.w', parseInt(imageWidthBeforeChange * imageWidthScalingFactor));
+							that.set('_finalImageScale.w', parseInt(imageWidthBeforeChange * imageWidthScalingFactor, 10));
 
 							that.set('_cropProperties.x', previewImageCoordinates.x);
 							that.set('_cropProperties.y', previewImageCoordinates.y);
@@ -420,7 +432,9 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		 * - scale the preview image and sete the offsets correctly.
 		 */
 		_updateCropPreviewImage: function() {
-			if (!this.get('_previewImageUri')) return;
+			if (!this.get('_previewImageUri')) {
+				return;
+			}
 
 			var cropProperties = this.get('_cropProperties.full');
 
@@ -464,8 +478,9 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		 * dependency.
 		 */
 		_updateValue: function() {
-			if (!this.get('_cropProperties.initialized')) return;
-			if (!this.get('_imageFullyLoaded')) return;
+			if (!this.get('_cropProperties.initialized') || !this.get('_imageFullyLoaded')) {
+				return;
+			}
 			// Prevent the user from setting width and height to empty
 
 			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.get('_cropProperties.full')),
@@ -597,8 +612,8 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		 * The inverse function to this method is _convertCropOptionsToPreviewImageCoordinates
 		 */
 		_convertCropOptionsFromPreviewImageCoordinates: function(previewImageCoordinates) {
-			var previewImageSize = this.get('_previewImageSize');
-			var originalImageSize = this.get('_originalImageSize');
+			var previewImageSize = this.get('_previewImageSize'),
+				originalImageSize = this.get('_originalImageSize');
 
 			return {
 				x: previewImageCoordinates.x * (originalImageSize.w / previewImageSize.w),
@@ -618,14 +633,14 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		 * The inverse function to this method is _convertCropOptionsFromPreviewImageCoordinates
 		 */
 		_convertCropOptionsToPreviewImageCoordinates: function(coordinates) {
-			var previewImageSize = this.get('_previewImageSize');
-			var originalImageSize = this.get('_originalImageSize');
+			var previewImageSize = this.get('_previewImageSize'),
+				originalImageSize = this.get('_originalImageSize');
 
 			return {
-				x: parseInt(coordinates.x / (originalImageSize.w / previewImageSize.w)),
-				y: parseInt(coordinates.y / (originalImageSize.h / previewImageSize.h)),
-				w: parseInt(coordinates.w / (originalImageSize.w / previewImageSize.w)),
-				h: parseInt(coordinates.h / (originalImageSize.h / previewImageSize.h))
+				x: parseInt(coordinates.x / (originalImageSize.w / previewImageSize.w), 10),
+				y: parseInt(coordinates.y / (originalImageSize.h / previewImageSize.h), 10),
+				w: parseInt(coordinates.w / (originalImageSize.w / previewImageSize.w), 10),
+				h: parseInt(coordinates.h / (originalImageSize.h / previewImageSize.h), 10)
 			};
 		}
 	});
