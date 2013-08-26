@@ -79,6 +79,8 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 			this._initializeShortcuts();
 
+			this._initializeDropdowns();
+
 			if (window.T3.isContentModule) {
 				this._initializeHistoryManagement();
 				// Remove the Aloha sidebar completely from DOM, as there is
@@ -89,7 +91,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 		_initializeNotifications: function() {
 				// Initialize notifications
-			$('#neos-application').append('<div class="neos-notification-container"></div>');
+			$(this.rootElement).append('<div class="neos-notification-container"></div>');
 				// TODO: Remove with resolving #45049
 			$('body').midgardNotifications();
 		},
@@ -148,7 +150,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 		 * for generating those templates. The template itself is rendered on the server, and contains the
 		 * rendered output of the requested node type, rendered within the current typoscript path.
 		 *
-		 * @return {Void}
+		 * @return {void}
 		 */
 		_registerVieNodeTypeTemplateCallbacks: function() {
 			_.each(vie.types.toArray(), function(type) {
@@ -233,6 +235,10 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 			});
 		},
 
+		_initializeDropdowns: function() {
+			$('.dropdown-toggle', this.rootElement).dropdown();
+		},
+
 		_initializeHistoryManagement: function() {
 			var that = this;
 			if (window.history && _.isFunction(window.history.replaceState)) {
@@ -261,7 +267,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			this._linkInterceptionHandler($('a:not(#neos-application a, .aloha-floatingmenu a)'));
+			this._linkInterceptionHandler($('a:not(' + this.rootElement + ' a, .aloha-floatingmenu a)'));
 			this._linkInterceptionHandler('a.neos-link-ajax', true);
 		},
 
@@ -417,7 +423,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 				return;
 			}
 
-			this.$loader = $('<div />').addClass('neos-pageloader-wrapper').fadeTo(0, .8).appendTo($('#neos-application'));
+			this.$loader = $('<div />').addClass('neos-pageloader-wrapper').fadeTo(0, .8).appendTo($(this.rootElement));
 			this.spinner = new Spinner({
 				lines: 13, // The number of lines to draw
 				length: 15, // The length of each line

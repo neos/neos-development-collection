@@ -17,6 +17,10 @@ define(
 
 			_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
 
+			didInsertElement: function() {
+				this.$().find('.dropdown-toggle').dropdown();
+			},
+
 			PublishButton: Button.extend({
 				autoPublish: false,
 				classNameBindings: ['connectionStatusClass'],
