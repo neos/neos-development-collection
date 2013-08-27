@@ -12,9 +12,10 @@ define(
 	'emberjs',
 	'Shared/LocalStorage',
 	'Shared/Notification',
+	'Shared/EventDispatcher',
 	'vie/entity'
 ],
-function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notification) {
+function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notification, EventDispatcher) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
 
 	var T3 = window.T3 || {};
@@ -53,10 +54,12 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 					}
 				});
 				CreateJS.disableEdit();
+				EventDispatcher.triggerExternalEvent('Neos.EnablePreview', 'Neos preview is enabled');
 			} else {
 				$('body > .' + previewCloseClass).remove();
 				$(document).off('keyup.wireframe');
 				CreateJS.enableEdit();
+				EventDispatcher.triggerExternalEvent('Neos.DisablePreview', 'Neos preview is disabled.');
 			}
 			$('body').toggleClass('neos-previewmode neos-controls');
 		},

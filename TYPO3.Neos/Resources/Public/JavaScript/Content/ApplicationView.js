@@ -13,7 +13,8 @@ define(
 	'./Inspector/InspectorController',
 	'./Inspector/SecondaryInspectorView',
 	'./../InlineEditing/InlineEditingHandles',
-	'./../InlineEditing/InsertNodePanel'
+	'./../InlineEditing/InsertNodePanel',
+	'../Shared/EventDispatcher'
 ],
 function(
 	Ember,
@@ -26,7 +27,8 @@ function(
 	InspectorController,
 	SecondaryInspectorView,
 	InlineEditingHandles,
-	InsertNodePanel
+	InsertNodePanel,
+	EventDispatcher
 ) {
 	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
@@ -48,6 +50,10 @@ function(
 			// Make sure to create the top bar *after* the DOM is loaded completely,
 			// and the #neos-top-bar is transmitted from the server.
 			TopBar.create().appendTo('#neos-top-bar');
+
+			Ember.run.next(function() {
+				EventDispatcher.triggerExternalEvent('Neos.ContentModuleLoaded', 'Content module finished loading.');
+			});
 		}
 	});
 });

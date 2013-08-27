@@ -11,6 +11,7 @@ define(
 	'Shared/ResourceCache',
 	'Shared/LocalStorage',
 	'Shared/Configuration',
+	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection',
 	'Content/Model/PublishableNodes',
 	'Content/Model/NodeActions',
@@ -27,6 +28,7 @@ function(
 	ResourceCache,
 	LocalStorage,
 	Configuration,
+	EventDispatcher,
 	NodeSelection,
 	PublishableNodes,
 	NodeActions,
@@ -396,6 +398,9 @@ function(
 					NodeSelection.initialize();
 					PublishableNodes.initialize();
 					that.trigger('pageLoaded');
+
+						// Send external event so site JS can act on it
+					EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
 
 						// Refresh CreateJS, renders the button bars f.e.
 					CreateJS.enableEdit();
