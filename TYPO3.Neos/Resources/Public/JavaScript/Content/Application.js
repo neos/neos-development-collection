@@ -9,6 +9,7 @@ define(
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'Shared/ResourceCache',
+	'Shared/LocalStorage',
 	'vie/instance',
 	'emberjs',
 	'create',
@@ -16,7 +17,7 @@ define(
 	'Library/mousetrap',
 	'Library/spinjs/spin'
 ],
-function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
+function($, _, ResourceCache, LocalStorage, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
@@ -254,11 +255,11 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 		_enableDevelopmentFeaturesIfNeeded: function() {
 			if (window.location.hash === '#dev') {
 				this.set('showDevelopmentFeatures', true);
-				T3.Common.LocalStorage.setItem('showDevelopmentFeatures', true);
+				LocalStorage.setItem('showDevelopmentFeatures', true);
 			} else if (window.location.hash === '#nodev') {
 				this.set('showDevelopmentFeatures', false);
-				T3.Common.LocalStorage.removeItem('showDevelopmentFeatures');
-			} else if(T3.Common.LocalStorage.getItem('showDevelopmentFeatures')) {
+				LocalStorage.removeItem('showDevelopmentFeatures');
+			} else if(LocalStorage.getItem('showDevelopmentFeatures')) {
 				this.set('showDevelopmentFeatures', true);
 			}
 		},
