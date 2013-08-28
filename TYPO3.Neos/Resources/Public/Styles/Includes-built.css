@@ -9415,7 +9415,7 @@
   left: 0;
   right: 0;
   top: 0;
-  z-index: 10016;
+  z-index: 10021;
   background-color: #222222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
@@ -9915,12 +9915,8 @@
 }
 .neos #neos-menu-button {
   float: left;
-  left: 0;
-  top: 0;
-  position: fixed;
   width: 54px;
   height: 40px;
-  z-index: 10030;
   background-color: #222222;
   border-right: 1px solid #3f3f3f;
 }
