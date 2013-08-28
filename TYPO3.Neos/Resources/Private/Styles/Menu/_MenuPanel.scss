@@ -2,12 +2,8 @@ $menuIconWidth: 54px;
 
 #neos-menu-button {
 	float: left;
-	left: 0;
-	top: 0;
-	position: fixed;
 	width: $menuIconWidth;
 	height: $unit;
-	z-index: 10030;
 	background-color: $grayDark;
 	border-right: 1px solid $grayLight;
 

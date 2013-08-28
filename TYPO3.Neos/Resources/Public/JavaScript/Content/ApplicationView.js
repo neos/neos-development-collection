@@ -30,7 +30,6 @@ function(
 ) {
 	return Ember.View.extend({
 		ContentContextBar: ContentContextBar,
-		MenuButton: MenuButton,
 		MenuPanel: MenuPanel,
 		TreePanel: TreePanel,
 		InspectorButton: InspectorButton,

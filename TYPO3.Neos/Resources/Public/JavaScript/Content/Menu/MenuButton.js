@@ -20,6 +20,6 @@ define(
 					$('body').removeClass('neos-menu-panel-open');
 				}
 			}.observes('pressed')
-		});
+		}).create().appendTo('#neos-top-bar');
 	}
 );
