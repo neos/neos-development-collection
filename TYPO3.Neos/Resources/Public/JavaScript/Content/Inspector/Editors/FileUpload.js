@@ -3,9 +3,10 @@ define(
 	'emberjs',
 	'text!./FileUpload.html',
 	'../../Components/Button',
-	'Library/plupload'
+	'Library/plupload',
+	'Shared/Notification'
 ],
-function(Ember, template, Button, plupload) {
+function(Ember, template, Button, plupload, Notification) {
 	return Ember.View.extend({
 
 		value: '',
@@ -70,7 +71,7 @@ function(Ember, template, Button, plupload) {
 
 			this._uploader.bind('Error', function(uploader, error) {
 				that.set('_uploadInProgress', false);
-				T3.Common.Notification.error(error.message);
+				Notification.error(error.message);
 				// FilesAdded gets the unfiltered list, so we have to disable the upload on errors
 				if (error.code === plupload.FILE_EXTENSION_ERROR) {
 					that.set('_uploadButtonShown', false);
@@ -83,7 +84,7 @@ function(Ember, template, Button, plupload) {
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {
-				T3.Common.Notification.ok('Uploaded file "' + file.name + '".');
+				Notification.ok('Uploaded file "' + file.name + '".');
 				that.fileUploaded(response.response);
 			});
 

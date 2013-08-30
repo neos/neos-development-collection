@@ -26,9 +26,10 @@ require(
 		'Content/ApplicationView',
 		'Content/Components/PublishMenu',
 		'Shared/ResourceCache',
+		'Shared/Notification',
 		'storage'
 	],
-	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache) {
+	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache, Notification) {
 		var T3 = window.T3;
 		T3.Configuration = window.T3Configuration;
 		delete window.T3Configuration;
@@ -41,7 +42,7 @@ require(
 
 			Ext.Direct.on('exception', function(error) {
 				T3.Content.Controller.ServerConnection.set('_failedRequest', true);
-				T3.Common.Notification.error('ExtDirect error: ' + error.message);
+				Notification.error('ExtDirect error: ' + error.message);
 				ContentModule.hidePageLoaderSpinner();
 			});
 
