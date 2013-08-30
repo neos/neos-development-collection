@@ -10,9 +10,10 @@ define(
 	'./TextFieldEditor',
 	'Library/spinjs/spin',
 	'Content/Inspector/SecondaryInspectorController',
-	'Shared/Notification'
+	'Shared/Notification',
+	'Shared/Utility'
 ],
-function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification) {
+function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification, Utility) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -319,7 +320,7 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		 * Callback after file upload is complete
 		 */
 		fileUploaded: function(response) {
-			if (!T3.Common.Util.isValidJsonString(response)) {
+			if (!Utility.isValidJsonString(response)) {
 				Notification.error('Tried to fetch image metadata: Unexpected result format.');
 				return;
 			}
@@ -509,7 +510,7 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 			var that = this,
 				imageVariant = this.get('value');
 
-			if (!imageVariant || !T3.Common.Util.isValidJsonString(imageVariant)) {
+			if (!imageVariant || !Utility.isValidJsonString(imageVariant)) {
 				return;
 			}
 			try {
