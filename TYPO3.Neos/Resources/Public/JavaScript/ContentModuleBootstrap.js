@@ -34,8 +34,8 @@ require(
 		T3.Configuration = window.T3Configuration;
 		delete window.T3Configuration;
 
-		ResourceCache.preload(T3.Configuration.VieSchemaUri);
-		ResourceCache.preload(T3.Configuration.NodeTypeSchemaUri);
+		ResourceCache.fetch(T3.Configuration.VieSchemaUri);
+		ResourceCache.fetch(T3.Configuration.NodeTypeSchemaUri);
 
 		Ember.$(document).ready(function() {
 			ContentModule.bootstrap();

@@ -59,7 +59,7 @@ define(
 
 			init: function() {
 				var that = this;
-				$.when(ResourceCache.get(T3.Configuration.MenuDataUri)).done(function(dataString) {
+				$.when(ResourceCache.getItem(T3.Configuration.MenuDataUri)).done(function(dataString) {
 					var data = JSON.parse(dataString);
 					that.set('items', data);
 				}).fail(function(xhr, status, error) {

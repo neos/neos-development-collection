@@ -3,13 +3,11 @@
  */
 define(
 [
-	'Library/jquery-with-dependencies',
-	'emberjs'
+	'emberjs',
+	'Library/jquery-with-dependencies'
 ],
-function($, Ember) {
+function(Ember, $) {
 	/**
-	 * Notification handler
-	 *
 	 * @singleton
 	 */
 	return Ember.Object.extend({

@@ -3,54 +3,56 @@
  */
 define(
 [
-	'Library/jquery-with-dependencies'
+	'emberjs',
+	'Library/jquery-with-dependencies',
+	'./SessionStorage'
 ],
-function($) {
-	var resourceRequests = {};
-
+function(Ember, $, SessionStorage) {
 	/**
-	 * @param {string} resourceUri
-	 * @return {void}
+	 * @singleton
 	 */
-	function preload(resourceUri) {
-		if (resourceRequests[resourceUri] !== undefined) {
-			return;
-		}
+	return Ember.Object.extend({
+		resourceRequests: {},
 
-		var xhr,
-			data = window.sessionStorage ? window.sessionStorage.getItem(resourceUri) : null;
-		resourceRequests[resourceUri] = new $.Deferred();
-		if (data === null) {
-			xhr = $.ajax(resourceUri, {
-				dataType: 'text',
-				success: function(data) {
-					if (window.sessionStorage) {
-						window.sessionStorage.setItem(resourceUri, data);
+		/**
+		 * @param {string} resourceUri
+		 * @return {void}
+		 */
+		fetch: function(resourceUri) {
+			var resourceRequests = this.get('resourceRequests');
+			if (resourceRequests[resourceUri] !== undefined) {
+				return;
+			}
+
+			var xhr,
+				data = SessionStorage.getItem(resourceUri);
+			resourceRequests[resourceUri] = new $.Deferred();
+			if (data === null) {
+				xhr = $.ajax(resourceUri, {
+					dataType: 'text',
+					success: function(data) {
+						SessionStorage.setItem(resourceUri, data);
+						resourceRequests[resourceUri].resolve(data);
+					},
+					error: function(xhr, status, error) {
+						resourceRequests[resourceUri].reject(xhr, status, error);
 					}
-					resourceRequests[resourceUri].resolve(data);
-				},
-				error: function(xhr, status, error) {
-					resourceRequests[resourceUri].reject(xhr, status, error);
-				}
-			});
-		} else {
-			resourceRequests[resourceUri].resolve(data);
-		}
-	}
+				});
+			} else {
+				resourceRequests[resourceUri].resolve(data);
+			}
+		},
 
-	/**
-	 * @param {string} resourceUri
-	 * @return {mixed}
-	 */
-	function get(resourceUri) {
-		if (typeof resourceRequests[resourceUri] === 'undefined') {
-			preload(resourceUri);
+		/**
+		 * @param {string} resourceUri
+		 * @return {mixed}
+		 */
+		getItem: function(resourceUri) {
+			var resourceRequests = this.get('resourceRequests');
+			if (typeof resourceRequests[resourceUri] === 'undefined') {
+				this.fetch(resourceUri);
+			}
+			return resourceRequests[resourceUri];
 		}
-		return resourceRequests[resourceUri];
-	}
-
-	return {
-		preload: preload,
-		get: get
-	};
+	}).create();
 });

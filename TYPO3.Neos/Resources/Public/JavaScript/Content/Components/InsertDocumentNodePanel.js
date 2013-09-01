@@ -18,7 +18,7 @@ define(
 				var that = this,
 					configuration = window.T3Configuration;
 				// TODO: Replace window.T3Configuration with configuration object
-				$.when(ResourceCache.get(configuration.NodeTypeSchemaUri + '&superType=TYPO3.Neos:Document')).done(function(dataString) {
+				$.when(ResourceCache.getItem(configuration.NodeTypeSchemaUri + '&superType=TYPO3.Neos:Document')).done(function(dataString) {
 					var groupedDocumentNodeTypes = [],
 						nodeTypeGroups = [];
 

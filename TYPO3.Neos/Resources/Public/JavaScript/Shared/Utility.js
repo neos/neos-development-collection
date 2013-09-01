@@ -14,7 +14,7 @@ function(Ember) {
 		 * The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
 		 *
 		 * @param {string} jsonString
-		 * @returns {boolean}
+		 * @return {boolean}
 		 */
 		isValidJsonString: function(jsonString) {
 			return !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''));

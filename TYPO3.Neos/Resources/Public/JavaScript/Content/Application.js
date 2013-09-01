@@ -122,7 +122,7 @@ function($, _, ResourceCache, LocalStorage, vie, Ember, CreateJS, VIE, Mousetrap
 				}));
 			}
 
-			$.when(ResourceCache.get(T3.Configuration.VieSchemaUri), ResourceCache.get(T3.Configuration.NodeTypeSchemaUri)).done(function(vieSchemaString, nodeTypeSchemaString) {
+			$.when(ResourceCache.getItem(T3.Configuration.VieSchemaUri), ResourceCache.getItem(T3.Configuration.NodeTypeSchemaUri)).done(function(vieSchemaString, nodeTypeSchemaString) {
 					var schema = JSON.parse(vieSchemaString);
 					VIE.Util.loadSchemaOrg(vie, schema, null);
 
