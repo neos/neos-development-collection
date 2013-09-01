@@ -171,7 +171,9 @@ define(
 				}
 
 				nodes = nodes.reverse();
-				this.set('_nodes', nodes);
+				if (nodes.length > 0 && _.last(nodes) !== _.last(this.get('_nodes'))) {
+					this.set('_nodes', nodes);
+				}
 
 				this._updating = false;
 			},
