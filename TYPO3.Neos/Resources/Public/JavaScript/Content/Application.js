@@ -176,7 +176,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 
 								// When adding nested content elements (like the two-column-element),
 								// we need to refresh CreateJS to render the content element handles
-								// for the nested contentcollections.
+								// for the nested content collections.
 							CreateJS.enableEdit();
 						};
 
@@ -194,16 +194,16 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 						});
 
 						if (referenceEntity === null) {
-								// No reference entity found. This only happens when an element is created into a contentcollection
+								// No reference entity found. This only happens when an element is created into a content collection
 							if (collectionView.collection.models.length === 1) {
-									// The contentcollection only contains the new entity and was empty before, so we create the node into the contentcollection
+									// The content collection only contains the new entity and was empty before, so we create the node into the content collection
 								T3.Content.Controller.NodeActions.addInside(
 									nodeType,
 									vie.entities.get($(collectionView.el).attr('about')),
 									afterCreationCallback
 								);
 							} else {
-									// The contentcollection contains other entities, so we create the node before the first entity (index 1 as index 0 is the newly created entity)
+									// The content collection contains other entities, so we create the node before the first entity (index 1 as index 0 is the newly created entity)
 								T3.Content.Controller.NodeActions.addAbove(
 									nodeType,
 									collectionView.collection.models[1],
@@ -396,7 +396,7 @@ function($, _, ResourceCache, vie, Ember, CreateJS, VIE, Mousetrap, Spinner) {
 						T3.Content.Model.NodeSelection.updateSelection($currentlyActiveContentElement);
 					}
 				} else {
-						// FALLBACK: AJAX error occured,
+						// FALLBACK: AJAX error occurred,
 						// so we reload the whole backend.
 					window.location.href = uri;
 				}
