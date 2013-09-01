@@ -7,7 +7,12 @@ define(
 	'emberjs'
 ],
 function(Ember) {
+	/**
+	 * @singleton
+	 */
 	return Ember.Object.extend({
+		_supportsLocalStorageResult: null,
+
 		/**
 		 * Get an item from localStorage
 		 *
@@ -60,14 +65,21 @@ function(Ember) {
 		 * @return {boolean}
 		 */
 		_supportsLocalStorage: function() {
-			var test = 'localStorage';
+			var supportsLocalStorageResult = this.get('_supportsLocalStorageResult');
+			if (supportsLocalStorageResult !== null) {
+				return supportsLocalStorageResult;
+			}
+			var test = 'localStorage',
+				result;
 			try {
 				localStorage.setItem(test, test);
 				localStorage.removeItem(test);
-				return true;
+				result = true;
 			} catch(e) {
-				return false;
+				result = false;
 			}
+			this.set('_supportsLocalStorageResult', result);
+			return result;
 		}
 	}).create();
 });
