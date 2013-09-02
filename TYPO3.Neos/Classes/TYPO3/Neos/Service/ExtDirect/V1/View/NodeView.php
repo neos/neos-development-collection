@@ -100,7 +100,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	}
 
 	/**
-	 * Collect node data and recurse into child nodes
+	 * Collect node data and traverse child nodes
 	 *
 	 * @param array &$nodes
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
