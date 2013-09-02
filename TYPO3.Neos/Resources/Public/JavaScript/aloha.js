@@ -157,6 +157,14 @@ function(
 						'ui/button': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/button'
 					}
 				}
+			},
+
+			// Basic sanitation of content
+			contentHandler: {
+				insertHtml: ['word', 'generic', 'oembed', 'sanitize'],
+				initEditable: ['word', 'sanitize'],
+				getContents: ['blockelement', 'sanitize', 'relaxed'],
+				sanitize: 'relaxed' // relaxed, restricted, basic,
 			}
 		};
 
