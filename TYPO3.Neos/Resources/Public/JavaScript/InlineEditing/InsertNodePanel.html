@@ -1,6 +1,6 @@
 <div class="neos-modal" id="insertNodeDialog">
 	<div class="neos-modal-header">
-		{{view T3.Content.UI.ButtonDialog target="parentView" data-dismiss="modal" action="cancel" class="neos-close neos-button icon-remove" title="close"}}
+		<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
 		<div class="neos-header">Create new</div>
 
 		{{#each view.content}}
@@ -24,7 +24,7 @@
 		{{/each}}
 	</div>
 	<div class="neos-modal-footer">
-		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="neos-button" title="Cancel"}}
+		<button class="neos-button neos-btn" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

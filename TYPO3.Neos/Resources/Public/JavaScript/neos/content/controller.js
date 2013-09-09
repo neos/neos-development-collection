@@ -3,8 +3,19 @@
  */
 
 define(
-['Content/Application', 'Library/jquery-with-dependencies', 'Library/underscore', 'Library/backbone', 'create', 'emberjs', 'vie/entity', 'Content/Inspector/SecondaryInspectorController', 'neos/common', 'neos/content/model'],
-function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspectorController) {
+[
+	'Content/Application',
+	'Library/jquery-with-dependencies',
+	'Library/underscore',
+	'Library/backbone',
+	'create',
+	'emberjs',
+	'Shared/LocalStorage',
+	'Shared/Notification',
+	'vie/entity',
+	'neos/content/model'
+],
+function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notification) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
 
 	var T3 = window.T3 || {};
@@ -17,8 +28,9 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		previewMode: false,
 
 		init: function() {
-			if (T3.Common.LocalStorage.getItem('previewMode') === true) {
-				this.togglePreview();
+			if (LocalStorage.getItem('previewMode') === true) {
+				this.set('previewMode', true);
+				this._togglePreviewMode();
 			}
 		},
 
@@ -26,13 +38,13 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			this.set('previewMode', !this.get('previewMode'));
 		},
 
-		onTogglePreviewMode: function() {
+		_togglePreviewMode: function() {
 			var that = this,
 				isPreviewEnabled = this.get('previewMode'),
 				previewCloseClass = 'neos-preview-close';
 			if (isPreviewEnabled) {
 				$('body')
-					.append($('<div class="neos" />').addClass(previewCloseClass).append($('<button class="neos-button pressed"><i class="icon-resize-small"></i></button>'))
+					.append($('<div class="neos" />').addClass(previewCloseClass).append($('<button class="neos-button neos-pressed"><i class="icon-resize-small"></i></button>'))
 					.on('click', function() {
 						that.set('previewMode', false);
 					}));
@@ -48,10 +60,11 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 				CreateJS.enableEdit();
 			}
 			$('body').toggleClass('neos-previewmode neos-controls');
-		}.observes('previewMode'),
+		},
 
-		onPreviewModeChange: function() {
-			T3.Common.LocalStorage.setItem('previewMode', this.get('previewMode'));
+		onPreviewModeChanged: function() {
+			LocalStorage.setItem('previewMode', this.get('previewMode'));
+			this._togglePreviewMode();
 		}.observes('previewMode')
 	}).create();
 
@@ -62,7 +75,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		wireframeMode: false,
 
 		init: function() {
-			if (T3.Common.LocalStorage.getItem('wireframeMode') === true) {
+			if (LocalStorage.getItem('wireframeMode') === true) {
 				this.toggleWireframeMode();
 				$('#neos-createcontentcollection-input').keypress(function(e) {
 					if ((e.keyCode || e.which) === 13) {
@@ -72,7 +85,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 				$('#neos-createcontentcollection-button').click(function() {
 					var newContentCollectionName = $('#neos-createcontentcollection-input').val();
 					if (newContentCollectionName === '') {
-						T3.Common.Notification.error('You need to give a name for the new content collection.');
+						Notification.error('You need to give a name for the new content collection.');
 					} else {
 						T3.Content.Controller.Wireframe.createContentCollection(newContentCollectionName);
 					}
@@ -90,7 +103,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController === 'object') {
 				ContentModule.showPageLoader();
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.wireframeMode': wireframeMode}, function() {
-					T3.Common.LocalStorage.setItem('wireframeMode', wireframeMode);
+					LocalStorage.setItem('wireframeMode', wireframeMode);
 					window.location.reload(false);
 				});
 			}
@@ -120,7 +133,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 
 		init: function() {
 			if (window.T3.isContentModule) {
-				if (T3.Common.LocalStorage.getItem('pageTreeMode') === true) {
+				if (LocalStorage.getItem('pageTreeMode') === true) {
 					$('body').addClass('neos-tree-panel-open');
 					this.togglePageTreeMode();
 				}
@@ -140,254 +153,10 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 					$('body').removeClass('neos-tree-panel-open');
 				}
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.pageTreeMode': pageTreeMode}, function() {
-					T3.Common.LocalStorage.setItem('pageTreeMode', pageTreeMode);
+					LocalStorage.setItem('pageTreeMode', pageTreeMode);
 				});
 			}
-		}.observes('pageTreeMode')
-	}).create();
-
-	/**
-	 * Controller for the inspector
-	 */
-	var Inspector = Ember.Object.extend({
-		_modified: false,
-		_unmodified: function() {
-			return !this.get('_modified');
-		}.property('_modified'),
-
-		validationErrors: Ember.Object.create(),
-		hasValidationErrors: false,
-
-		nodeProperties: null,
-		configuration: null,
-
-		selectedNode: null,
-		cleanProperties: null,
-
-		init: function() {
-			this.set('nodeProperties', Ember.Object.create());
-			this.set('configuration', T3.Common.LocalStorage.getItem('inspectorConfiguration') || {});
-			Ember.addObserver(this, 'configuration', function() {
-				var configuration = this.get('configuration');
-				if ($.isEmptyObject(configuration) === false) {
-					T3.Common.LocalStorage.setItem('inspectorConfiguration', configuration);
-				}
-			});
-		},
-
-		/**
-		 * This is a computed property which builds up a nested array powering the
-		 * Inspector. It essentially contains two levels: On the first level,
-		 * the groups are displayed, while on the second level, the properties
-		 * belonging to each group are displayed.
-		 *
-		 * Thus, the output looks possibly as follows:
-		 * - Visibility
-		 *   - _hidden (boolean)
-		 *   - _starttime (date)
-		 * - Image Settings
-		 *   - image (file upload)
-		 */
-		groupedPropertyViews: function() {
-			var selectedNodeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema');
-			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
-				return [];
-			}
-
-			var inspectorGroups = Ember.get(selectedNodeSchema, 'ui.inspector.groups');
-			if (!inspectorGroups) {
-				return [];
-			}
-
-			var groupedPropertyViews = [];
-			$.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
-				var properties = [];
-				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-					if (Ember.get(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
-						properties.push($.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
-					}
-				});
-
-				properties.sort(function(a, b) {
-					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
-				});
-
-				groupedPropertyViews.push($.extend({}, propertyGroupConfiguration, {
-					properties: properties,
-					group: groupIdentifier
-				}));
-			});
-			groupedPropertyViews.sort(function(a, b) {
-				return (a.position || 9999) - (b.position || 9999);
-			});
-
-			return groupedPropertyViews;
-		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema'),
-
-		/**
-		 * If "true", we show "save" and "cancel" and behave as if the user edited
-		 * the node's properties in a "transaction" (default case for normal editors,
-		 * if a node is selected).
-		 *
-		 * If "false", we hide "save" and "cancel", and the UI controls are responsible
-		 * for saving themselves. needed for Aloha.
-		 */
-		_enableTransactionalInspector: true,
-		/**
-		 * When the selected block changes in the content model,
-		 * we update this.nodeProperties
-		 */
-		onSelectedNodeChange: function() {
-			var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode'),
-				cleanProperties = {}, enableTransactionalInspector = true;
-			this.set('selectedNode', selectedNode);
-			if (selectedNode) {
-				cleanProperties = selectedNode.get('attributes');
-				if (selectedNode.get('_enableTransactionalInspector') === false) {
-					enableTransactionalInspector = false;
-				}
-			}
-			if (enableTransactionalInspector) {
-				this.set('_enableTransactionalInspector', true);
-				this.set('cleanProperties', cleanProperties);
-				this.set('nodeProperties', Ember.Object.create(cleanProperties));
-			} else {
-				this.set('_enableTransactionalInspector', false);
-				this.set('cleanProperties', {});
-				this.set('nodeProperties', {});
-			}
-		}.observes('T3.Content.Model.NodeSelection.selectedNode'),
-
-		/**
-		 * We'd like to monitor *every* property change except inline editable ones,
-		 * that's why we have to look through the list of properties...
-		 */
-		onNodePropertiesChange: function() {
-			var that = this,
-				selectedNode = this.get('selectedNode'),
-				selectedNodeSchema,
-				editableProperties = [],
-				nodeProperties;
-			if (selectedNode && this.get('_enableTransactionalInspector')) {
-				selectedNodeSchema = selectedNode.get('nodeTypeSchema');
-				nodeProperties = this.get('nodeProperties');
-				if (selectedNodeSchema.properties) {
-					$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-						if (!propertyConfiguration.ui || propertyConfiguration.ui.inlineEditable !== true) {
-							editableProperties.push(propertyName);
-						}
-					});
-				}
-				if (editableProperties.length > 0) {
-					$.each(editableProperties, function(key, propertyName) {
-						nodeProperties.addObserver(propertyName, null, function() {
-							that._somePropertyChanged();
-						});
-					});
-				}
-			}
-		}.observes('nodeProperties'),
-
-			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
-		_somePropertyChanged: function() {
-			var that = this,
-				hasChanges = false,
-				hasValidationErrors = false;
-
-			_.each(this.get('cleanProperties'), function(cleanPropertyValue, propertyName) {
-				var value = that.get('nodeProperties').get(propertyName),
-					errors = that.get('selectedNode._vieEntity').validateAttribute(propertyName, value),
-					existingErrors = that.get('validationErrors.' + propertyName) || [];
-				if (existingErrors.length !== errors.length) {
-					that.set('validationErrors.' + propertyName, errors);
-				}
-				if (errors.length > 0) {
-					hasValidationErrors = true;
-				}
-				if (value !== cleanPropertyValue) {
-					hasChanges = true;
-				}
-			});
-
-			this.set('_modified', hasChanges);
-			this.set('hasValidationErrors', hasValidationErrors);
-		},
-
-		isPropertyModified: function(propertyName) {
-			return this.get('cleanProperties.' + propertyName) !== this.get('nodeProperties.' + propertyName);
-		},
-
-		/**
-		 * When the edit button is toggled, we apply the modified properties back
-		 */
-		onApplyButtonToggle: function(isModified) {
-			if (isModified) {
-				this.apply();
-			}
-		},
-
-		/**
-		 * Apply the edited properties back to the node proxy
-		 */
-		apply: function() {
-			var that = this,
-				cleanProperties,
-				nodeTypeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema'),
-				reloadPage = false,
-				selectedNode = this.get('selectedNode'),
-				attributes = selectedNode.get('attributes');
-
-			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
-				var value = that.get('nodeProperties').get(key);
-				if (value !== cleanPropertyValue || value !== attributes[key]) {
-					selectedNode.setAttribute(key, value, {validate: false});
-					if (value !== cleanPropertyValue) {
-						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {
-							reloadPage = true;
-						}
-					}
-				}
-			});
-
-			var entity = this.get('selectedNode._vieEntity');
-			if (entity.isValid() !== true) {
-				return;
-			}
-
-			if (reloadPage === true) {
-				ContentModule.showPageLoader();
-			}
-
-			Backbone.sync('update', entity, {
-				success: function(model, result) {
-					if (reloadPage === true) {
-						if (result && result.data && result.data.nextUri) {
-								// It might happen that the page has been renamed, so we need to take the server-side URI
-							ContentModule.loadPage(result.data.nextUri);
-						} else {
-							ContentModule.reloadPage();
-						}
-					}
-				}
-			});
-
-			this.set('_modified', false);
-
-			cleanProperties = this.get('selectedNode.attributes');
-			this.set('cleanProperties', cleanProperties);
-			this.set('nodeProperties', Ember.Object.create(cleanProperties));
-			SecondaryInspectorController.hide();
-		},
-
-		/**
-		 * Revert all changed properties
-		 */
-		revert: function() {
-			this.set('nodeProperties', Ember.Object.create(this.get('cleanProperties')));
-			this.set('_modified', false);
-			SecondaryInspectorController.hide();
-			this._somePropertyChanged();
-		}
+		}.observes('pageTreeMode').on('init')
 	}).create();
 
 	/**
@@ -412,8 +181,8 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		 * Initialization lifecycle method. Here, we re-fill the clipboard as needed
 		 */
 		init: function() {
-			if (T3.Common.LocalStorage.getItem('clipboard')) {
-				this.set('_clipboard', T3.Common.LocalStorage.getItem('clipboard'));
+			if (LocalStorage.getItem('clipboard')) {
+				this.set('_clipboard', LocalStorage.getItem('clipboard'));
 			}
 		},
 
@@ -468,11 +237,11 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 				clipboard = this.get('_clipboard');
 
 			if (!clipboard.nodePath) {
-				T3.Common.Notification.notice('No node found on the clipboard');
+				Notification.notice('No node found on the clipboard');
 				return false;
 			}
 			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
-				T3.Common.Notification.notice('It is not possible to paste a node ' + position + ' itself.');
+				Notification.notice('It is not possible to paste a node ' + position + ' itself.');
 				return false;
 			}
 
@@ -581,7 +350,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		 */
 		onClipboardChange: function() {
 			var clipboard = this.get('_clipboard');
-			T3.Common.LocalStorage.setItem('clipboard', clipboard);
+			LocalStorage.setItem('clipboard', clipboard);
 		}.observes('_clipboard')
 	}).create();
 
@@ -598,7 +367,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 					return function(provider, response) {
 						if (!response.result || response.result.success !== true) {
 								// TODO: Find a way to avoid this notice
-							T3.Common.Notification.error('Server communication error, reload the page to return to a safe state if another publish does not work');
+							Notification.error('Server communication error, reload the page to return to a safe state if another publish does not work');
 							that.set('_failedRequest', true);
 							return;
 						} else {
@@ -639,7 +408,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, Entity, SecondaryInspec
 		PageTree: PageTree,
 		Wireframe: Wireframe,
 		NodeActions: NodeActions,
-		Inspector: Inspector,
 		ServerConnection: ServerConnection
 	}
 	window.T3 = T3;

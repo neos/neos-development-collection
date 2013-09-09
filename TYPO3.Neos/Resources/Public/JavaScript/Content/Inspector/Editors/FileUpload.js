@@ -2,13 +2,11 @@ define(
 [
 	'emberjs',
 	'text!./FileUpload.html',
-	'../../Components/Button',
 	'Library/plupload',
 	'Shared/Notification'
 ],
-function(Ember, template, Button, plupload, Notification) {
+function(Ember, template, plupload, Notification) {
 	return Ember.View.extend({
-
 		value: '',
 
 		/**
@@ -31,7 +29,6 @@ function(Ember, template, Button, plupload, Notification) {
 		}.property('_uploadButtonShown'),
 
 		template: Ember.Handlebars.compile(template),
-		Button: Button,
 
 		init: function() {
 			var id = this.get('elementId');
@@ -91,20 +88,24 @@ function(Ember, template, Button, plupload, Notification) {
 			this._uploader.init();
 			this._uploaderInitialized();
 		},
+
 		_uploaderInitialized: function() {
 			var that = this;
 			this.$().find('input[type=file][id^="' + this._uploader.id + '"]').change(function(event) {
 				that.filesScheduledForUpload(event.target.files);
 			});
 		},
+
 		// The "files" is taken from the DOM event when a file changes
 		filesScheduledForUpload: function(files) {
 			// Template method
 		},
+
 		fileUploaded: function(response) {
 			this.set('_uploadInProgress', false);
 			this.set('_uploadButtonShown', false);
 		},
+
 		upload: function() {
 			this.set('_uploadInProgress', true);
 			this._uploader.start();

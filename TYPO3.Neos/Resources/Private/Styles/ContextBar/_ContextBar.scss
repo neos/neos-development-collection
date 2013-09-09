@@ -31,7 +31,7 @@
 		&:hover,
 		&:active,
 		&.active,
-		&.pressed {
+		&.neos-pressed {
 			background-color: $blue;
 		}
 
@@ -44,7 +44,7 @@
 		}
 	}
 
-	.neos-context-bar-save-indidator {
+	.neos-context-bar-save-indicator {
 		display: inline-block;
 		float: left;
 

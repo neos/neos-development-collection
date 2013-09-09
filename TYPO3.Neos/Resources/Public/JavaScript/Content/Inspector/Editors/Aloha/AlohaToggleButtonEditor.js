@@ -25,7 +25,7 @@ function(ToggleButton) {
 			alohaComponent.setState = function(toggled) {
 				that.set('pressed', toggled);
 				that._previousSetStateFn.call(alohaComponent, toggled);
-			}
+			};
 
 			this._super();
 		},
@@ -33,12 +33,13 @@ function(ToggleButton) {
 		willDestroyElement: function() {
 			this.get('alohaComponent').setState = this._previousSetStateFn;
 		},
+
 		triggerAction: function(ctx) {
 			this.get('alohaComponent')._onClick();
 		},
+
 		click: function(event) {
 			event.preventDefault();
 		}
-
 	});
 });

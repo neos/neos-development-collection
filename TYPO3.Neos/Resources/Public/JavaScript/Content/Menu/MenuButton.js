@@ -2,45 +2,32 @@ define(
 	[
 		'emberjs',
 		'Library/jquery-with-dependencies',
-		'../Components/ToggleButton'
-	], function(Ember, $, ToggleButton) {
-		return ToggleButton.extend({
+		'../Components/Button',
+		'./MenuPanelController'
+	], function(Ember, $, Button, MenuPanelController) {
+		return Button.extend({
 			elementId: ['neos-menu-button'],
 			title: 'Toggle menu',
-			toggleStateName: 'pressed',
+			classNames: ['neos-button'],
+			classNameBindings: ['controller.menuPanelMode:neos-pressed'],
+
+			controller: MenuPanelController,
+
+			triggerAction: function() {
+				this.toggleProperty('controller.menuPanelMode');
+			},
 
 			mouseEnter: function() {
-				if (!this.get(this.toggleStateName)) {
-					this.toggleState(this.toggleStateName);
-				}
+				this._super();
+				this.set('controller.menuPanelMode', true);
 			},
 
 			mouseLeave: function() {
+				this._super();
 				if ($('#neos-menu-panel:hover').length !== 0) {
-					this.toggleState(true);
-				} else {
-					this.toggleState(false);
+					this.set('controller.menuPanelMode', false);
 				}
-			},
-
-			toggle: function() {
-				this.toggleState(this.toggleStateName);
-			},
-
-			toggleState: function(state) {
-				if (state === this.toggleStateName) {
-					state = !this.get(this.toggleStateName);
-				}
-				this.set(this.toggleStateName, state);
-			},
-
-			_onPressedChanged: function() {
-				if (this.get(this.toggleStateName) === true) {
-					$('body').addClass('neos-menu-panel-open');
-				} else {
-					$('body').removeClass('neos-menu-panel-open');
-				}
-			}.observes('pressed')
-		}).create().appendTo('#neos-top-bar');
+			}
+		});
 	}
 );

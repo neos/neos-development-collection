@@ -10,6 +10,7 @@ define(
 	'Library/underscore',
 	'Shared/ResourceCache',
 	'Shared/LocalStorage',
+	'Shared/Configuration',
 	'vie/instance',
 	'emberjs',
 	'Content/InputEvents/KeyboardEvents',
@@ -17,7 +18,7 @@ define(
 	'Library/vie',
 	'Library/spinjs/spin'
 ],
-function($, _, ResourceCache, LocalStorage, vie, Ember, KeyboardEvents, CreateJS, VIE, Spinner) {
+function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardEvents, CreateJS, VIE, Spinner) {
 
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
@@ -122,17 +123,16 @@ function($, _, ResourceCache, LocalStorage, vie, Ember, KeyboardEvents, CreateJS
 				}));
 			}
 
-			$.when(ResourceCache.getItem(T3.Configuration.VieSchemaUri), ResourceCache.getItem(T3.Configuration.NodeTypeSchemaUri)).done(function(vieSchemaString, nodeTypeSchemaString) {
-					var schema = JSON.parse(vieSchemaString);
-					VIE.Util.loadSchemaOrg(vie, schema, null);
+			$.when(ResourceCache.getItem(Configuration.get('VieSchemaUri')), ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri'))).done(function(vieSchemaString, nodeTypeSchemaString) {
+				var schema = JSON.parse(vieSchemaString);
+				VIE.Util.loadSchemaOrg(vie, schema, null);
 
-					T3.Configuration.Schema = JSON.parse(nodeTypeSchemaString);
+				Configuration.set('Schema', JSON.parse(nodeTypeSchemaString));
 
-					that._initializeVieAfterSchemaIsLoaded(vie);
-				}).fail(function(xhr, status, error) {
-					console.warn('Error loading schemas.', xhr, status, error);
-				});
-
+				that._initializeVieAfterSchemaIsLoaded(vie);
+			}).fail(function(xhr, status, error) {
+				console.warn('Error loading schemas.', xhr, status, error);
+			});
 		},
 
 		_initializeVieAfterSchemaIsLoaded: function() {

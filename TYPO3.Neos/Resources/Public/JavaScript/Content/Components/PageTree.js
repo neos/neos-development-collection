@@ -8,9 +8,10 @@ define(
 		'Content/Application',
 		'vie/entity',
 		'text!./PageTree.html',
-		'text!neos/templates/content/ui/deletePageDialog.html',
-		'Content/Components/InsertDocumentNodePanel'
-	], function($, Ember, ContentModule, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate, InsertDocumentNodePanel) {
+		'text!./DeletePageDialog.html',
+		'Content/Components/InsertDocumentNodePanel',
+		'Shared/Notification'
+	], function($, Ember, ContentModule, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate, InsertDocumentNodePanel, Notification) {
 		if (window._requirejsLoadingTrace) {
 			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
 		}
@@ -134,7 +135,7 @@ define(
 										sourceNode.data.key = result.data.newNodePath;
 										ContentModule.loadPage(sourceNode.data.href);
 									} else {
-										T3.Common.Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+										Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
 									}
 								}
 							);
@@ -167,7 +168,7 @@ define(
 									node.addChild(result.data);
 								} else {
 									node.setLazyNodeStatus(DTNodeStatus_Error);
-									T3.Common.Notification.error('Page Tree loading error.');
+									Notification.error('Page Tree loading error.');
 								}
 								if (node.getLevel() === 1) {
 									that.$tree.dynatree('getTree').activateKey(pageNodePath);
@@ -241,7 +242,7 @@ define(
 					if (activeNode !== null) {
 						that.showCreateDocumentNodeDialog(activeNode);
 					} else {
-						T3.Common.Notification.notice('You have to select a page');
+						Notification.notice('You have to select a page');
 					}
 					return false;
 				});
@@ -253,10 +254,10 @@ define(
 						if (activeNode.data.key !== siteRootNodePath) {
 							that.showDeletePageDialog(activeNode);
 						} else {
-							T3.Common.Notification.notice('The Root page cannot be deleted.');
+							Notification.notice('The Root page cannot be deleted.');
 						}
 					} else {
-						T3.Common.Notification.notice('You have to select a page');
+						Notification.notice('You have to select a page');
 					}
 				});
 			},
@@ -450,7 +451,7 @@ define(
 									T3.Content.Controller.Inspector.nodeProperties.set('title', title);
 									T3.Content.Controller.Inspector.apply();
 								} else {
-									T3.Common.Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
+									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
 								}
 							}
 						);
@@ -530,7 +531,7 @@ define(
 										tree.$widget.bind();
 										ContentModule.loadPage(node.data.href);
 									} else {
-										T3.Common.notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
+										Notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
 									}
 								}
 							);
@@ -549,7 +550,7 @@ define(
 							node.remove();
 							ContentModule.loadPage(parentNode.data.href);
 						} else {
-							T3.Common.notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
+							Notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
 						}
 					}
 				);

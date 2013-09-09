@@ -1,4 +1,4 @@
-define(function() {/*
+/*
 
  Copyright (C) 2011 by Yehuda Katz
 
@@ -2275,4 +2275,4 @@ var Handlebars = {};
 	;
 // lib/handlebars/browser-suffix.js
 })(Handlebars);
-;  return Handlebars;});
+;

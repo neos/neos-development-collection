@@ -22,11 +22,11 @@
 	}
 
 	&:hover,
-	&.is-active {
+	&.neos-is-active {
 		background-color: $blue;
 	}
 
-	&.pressed:before {
+	&.neos-pressed:before {
 		content: "›";
 	}
 }
@@ -51,7 +51,7 @@
 	@import "Editors/DateTimePicker";
 	@import "Editors/ImageEditor";
 
-	.toolbar {
+	.neos-toolbar {
 		position: absolute;
 		top: 0;
 		width: 100%;
@@ -71,7 +71,7 @@
 		padding-top: 11px;
 		@include box-sizing(border-box);
 
-		.neos-content-breadcrumb {
+		#neos-content-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
 			margin-right: -$relatedMargin;
 			cursor: pointer;
@@ -206,7 +206,7 @@
 			font-weight: bold;
 			@include user-select(none);
 
-			&.validation-error {
+			&.neos-validation-error {
 				span {
 					padding-right: $relatedMargin;
 					max-width: $inspectorWidth - $unit - $relatedMargin - $defaultMargin;
@@ -297,12 +297,12 @@
 			}
 
 			// Highlight changed elements in the Property Panel
-			&.modified {
+			&.neos-modified {
 				border: 2px solid $light-green;
 			}
 		}
 
-		.modified {
+		.neos-modified {
 			& > input[type="text"],
 			& > input[type="password"],
 			& > input[type="datetime"],
@@ -460,7 +460,7 @@
 		}
 	}
 
-	.actions {
+	.neos-actions {
 		position: absolute;
 		bottom: 0;
 		width: 100%;

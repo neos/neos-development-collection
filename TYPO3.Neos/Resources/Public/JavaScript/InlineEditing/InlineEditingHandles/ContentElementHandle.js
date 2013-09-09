@@ -8,10 +8,11 @@ define(
 		'vie/instance',
 		'text!InlineEditing/InlineEditingHandles/ContentElementHandle.html',
 		'Content/Application',
+		'Content/Inspector/InspectorController',
 		'InlineEditing/Dialogs/DeleteNodeDialog',
 		'InlineEditing/InsertNodePanel'
 	],
-	function ($, _, Ember, vieInstance, template, Application, DeleteNodeDialog, InsertNodePanel) {
+	function ($, _, Ember, vieInstance, template, Application, InspectorController, DeleteNodeDialog, InsertNodePanel) {
 
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
@@ -128,8 +129,8 @@ define(
 					value = !entity.get('typo3:_hidden');
 				this.set('_hidden', value);
 				entity.set('typo3:_hidden', value);
-				T3.Content.Controller.Inspector.nodeProperties.set('_hidden', value);
-				T3.Content.Controller.Inspector.apply();
+				InspectorController.set('nodeProperties._hidden', value);
+				InspectorController.apply();
 			},
 
 			cut: function() {

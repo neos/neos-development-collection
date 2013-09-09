@@ -5,17 +5,17 @@ define(
 [
 	'emberjs',
 	'./ContextBar',
-	'text!./ContentContextBar.html',
-	'./ToggleButton'
+	'./SaveIndicator',
+	'text!./ContentContextBar.html'
 ], function(
 	Ember,
 	ContextBar,
-	template,
-	ToggleButton
+	SaveIndicator,
+	template
 ) {
 	return ContextBar.extend({
 		classNames: 'neos-content-context-bar',
 		template: Ember.Handlebars.compile(template),
-		ToggleButton: ToggleButton
+		SaveIndicator: SaveIndicator
 	});
 });

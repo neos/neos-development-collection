@@ -1,6 +1,6 @@
 <div class="neos-modal" id="pagetreeDeleteDialog">
 	<div class="neos-modal-header">
-		{{view T3.Content.UI.ButtonDialog target="parentView" data-dismiss="modal" action="cancel" class="neos-close neos-button" title="x"}}
+		<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
 		<div class="neos-header">Are you sure you want to delete the page "{{view.pageTitle}}"?</div>
 		<p>
 			This will delete the page{{#if view.numberOfChildren}} and it's subpages{{/if}}.<br />
@@ -8,8 +8,10 @@
 		</p>
 	</div>
 	<div class="neos-modal-footer">
-		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="neos-btn neos-button" title="Cancel"}}
-		{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete" class="neos-btn neos-btn-danger neos-button" title="Delete" icon="icon-trash icon-white"}}
+		<button class="neos-button neos-btn" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
+		<button class="neos-button neos-btn neos-btn-danger" title="Delete" {{action "delete" target="view"}}>
+			<i class="icon-trash icon-white"></i> Delete
+		</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

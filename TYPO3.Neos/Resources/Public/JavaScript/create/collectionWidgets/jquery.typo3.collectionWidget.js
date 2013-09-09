@@ -4,9 +4,10 @@ define(
 		'Library/underscore',
 		'vie/instance',
 		'InlineEditing/InlineEditingHandles/EmptyContentCollectionOverlay',
+		'InlineEditing/NotInlineEditableOverlay',
 		'Library/create'
 	],
-	function($, _, vie, EmptyContentCollectionOverlay) {
+	function($, _, vie, EmptyContentCollectionOverlay, NotInlineEditableOverlay) {
 		$.widget('typo3.typo3CollectionWidget', $.Midgard.midgardCollectionAddBetween, {
 			/**
 			 * The midgardCollectionAddBetween widget tries to detect the correct way to store
@@ -48,8 +49,9 @@ define(
 					entity._enclosingCollectionWidget = that;
 					var id = entity.id.substring(1, entity.id.length - 1),
 						$element = $('[about="' + id + '"]').first();
-
-					T3.Content.UI.Util.AddNotInlineEditableOverlay($element, entity);
+					if ($element.hasClass('neos-not-inline-editable')) {
+						NotInlineEditableOverlay.create({$element: $element, entity: entity}).appendTo($element);
+					}
 				}, this);
 			}
 		});

@@ -10,21 +10,25 @@ define(
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/ui/elements/toggle-button');
 
 		return Button.extend({
-			classNameBindings: ['pressed'],
+			classNameBindings: ['pressed:neos-pressed'],
 			pressed: false,
+
 			toggle: function() {
 				this.set('pressed', !this.get('pressed'));
 			},
+
 			mouseUp: function(event) {
 				if (this.get('isActive')) {
-
-					var action = this.get('action'),
-						target = this.get('target');
-
+					// Actually invoke the button's target and action.
+					// This method comes from the Ember.TargetActionSupport mixin.
 					this.toggle();
-					this.triggerAction({actionContext: this.get('pressed')});
+					this.triggerAction();
 					this.set('isActive', false);
 				}
+
+				this._mouseDown = false;
+				this._mouseEntered = false;
+				return this.get('propagateEvents');
 			}
 		});
 	}

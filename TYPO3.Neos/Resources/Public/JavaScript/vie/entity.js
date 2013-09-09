@@ -1,10 +1,11 @@
 define([
+	'emberjs',
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'Content/Application',
-	'vie/instance',
-	'emberjs'
-], function($, _, ContentModule, vieInstance, Ember) {
+	'Shared/Configuration',
+	'vie/instance'
+], function(Ember, $, _, ContentModule, Configuration, vieInstance) {
 	var Entity = Ember.Object.extend({
 		/**
 		 * The jQuery element of the entity
@@ -116,7 +117,7 @@ define([
 		nodePath: function() {
 			var subject = this.get('_vieEntity').getSubject();
 			return subject.substring(1, subject.length - 1);
-		}.property('_vieEntity').cacheable(),
+		}.property('_vieEntity'),
 
 		/**
 		 * Receive the node type schema
@@ -124,8 +125,9 @@ define([
 		 * @return {object}
 		 */
 		nodeTypeSchema: function() {
-			return T3.Configuration.Schema[this.get('nodeType')];
-		}.property().cacheable()
+			var schema = Configuration.get('Schema');
+			return schema[this.get('nodeType')];
+		}.property()
 	});
 
 	Entity.reopenClass({

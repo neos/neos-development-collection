@@ -77,7 +77,7 @@ function(Ember, Button) {
 		 */
 		viewClass: null,
 
-		classNameBindings: ['_currentViewIsActive:pressed'],
+		classNameBindings: ['_currentViewIsActive:neos-pressed'],
 		_secondaryInspectorController: SecondaryInspectorController,
 
 		_currentViewIsActive: function() {

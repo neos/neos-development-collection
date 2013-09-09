@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 		},
 		jQueryWithDependencies: {
 			src: [
-				baseUri + 'jquery/jquery-1.9.1.js',
+				baseUri + 'jquery/jquery-1.10.2.js',
 				baseUri + 'jquery/jquery-migrate-1.2.1.js',
 				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
 				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
@@ -59,20 +59,19 @@ module.exports = function(grunt) {
 			],
 			dest: baseUri + 'jquery-with-dependencies.js',
 			options: {
-				banner: 'define(function() { ',
-				footer: ';  jQuery.migrateMute = true;' +
-							'return jQuery.noConflict(true);' +
+				banner: 'define(function() {',
+				footer: 'return jQuery.noConflict(true);' +
 						'});',
 				process: function(src, filepath) {
 					// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
-					return src.replace('define( "jquery", [], function () { return jQuery; } );', '');
+					return src.replace('define( "jquery", [], function () { return jQuery; } );', 'jQuery.migrateMute = true;');
 				}
 			}
 		},
 
 		handlebars: {
 			src: [
-				baseUri + 'handlebars/handlebars-1.0.0-rc.3.js'
+				baseUri + 'handlebars/handlebars-1.0.0.js'
 			],
 			dest: baseUri + 'handlebars.js',
 			options: {
@@ -85,12 +84,13 @@ module.exports = function(grunt) {
 		// This file needs jQueryWithDependencies first
 		ember: {
 			src: [
-				baseUri + 'emberjs/ember-1.0.0-rc.3.js'
+				baseUri + 'emberjs/ember-1.0.0.js'
 			],
 			dest: baseUri + 'ember.js',
 			options: {
 				banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars"], function(jQuery, Handlebars) {' +
 						'  var Ember = {exports: {}};' +
+						'  var ENV = {LOG_VERSION: false};' +
 						'  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};' +
 						// TODO: window.T3 can be removed!
 						'  Ember.lookup = { Ember: Ember, T3: window.T3};' +

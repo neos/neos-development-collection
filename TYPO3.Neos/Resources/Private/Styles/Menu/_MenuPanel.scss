@@ -8,7 +8,7 @@ $menuIconWidth: 54px;
 	border-right: 1px solid $grayLight;
 
 	&:hover,
-	&.pressed {
+	&.neos-pressed {
 		&:before {
 			border-top: 3px solid $blue;
 			border-bottom: 3px solid $blue;
@@ -19,7 +19,7 @@ $menuIconWidth: 54px;
 		}
 	}
 
-	&.pressed {
+	&.neos-pressed {
 		height: $unit + 1px;
 	}
 

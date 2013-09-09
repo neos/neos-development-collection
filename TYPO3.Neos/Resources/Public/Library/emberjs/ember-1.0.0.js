@@ -1,4 +1,4 @@
-define(["Library/jquery-with-dependencies", "Library/handlebars"], function(jQuery, Handlebars) {  var Ember = {exports: {}};  var ENV = {LOG_VERSION: false};  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};  Ember.lookup = { Ember: Ember, T3: window.T3};  window.Ember = Ember;(function() {
+(function() {
 	var define, requireModule;
 
 	(function() {
@@ -35498,4 +35498,4 @@ define(["Library/jquery-with-dependencies", "Library/handlebars"], function(jQue
 if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
 	Ember.Logger.warn("You are running a production build of Ember on localhost and won't receive detailed error messages. "+
 		"If you want full error messages please use the non-minified build provided on the Ember website.");
-}  return Ember;});
+}

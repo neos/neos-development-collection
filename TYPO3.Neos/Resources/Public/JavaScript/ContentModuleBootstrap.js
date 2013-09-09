@@ -27,15 +27,14 @@ require(
 		'Content/Components/PublishMenu',
 		'Shared/ResourceCache',
 		'Shared/Notification',
+		'Shared/Configuration',
 		'storage'
 	],
-	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache, Notification) {
+	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache, Notification, Configuration) {
 		var T3 = window.T3;
-		T3.Configuration = window.T3Configuration;
-		delete window.T3Configuration;
 
-		ResourceCache.fetch(T3.Configuration.VieSchemaUri);
-		ResourceCache.fetch(T3.Configuration.NodeTypeSchemaUri);
+		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
+		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri'));
 
 		Ember.$(document).ready(function() {
 			ContentModule.bootstrap();
@@ -53,7 +52,6 @@ require(
 			if (window.T3.isContentModule) {
 				PublishMenu.create().appendTo('#neos-user-actions');
 			}
-
 		});
 	}
 );

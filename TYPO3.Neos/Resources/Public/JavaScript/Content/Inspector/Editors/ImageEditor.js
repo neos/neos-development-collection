@@ -4,8 +4,6 @@ define(
 	'Library/jquery-with-dependencies',
 	'./FileUpload',
 	'text!./ImageEditor.html',
-	'../../Components/Button',
-	'../../Components/ToggleButton',
 	'./BooleanEditor',
 	'./TextFieldEditor',
 	'Library/spinjs/spin',
@@ -13,7 +11,7 @@ define(
 	'Shared/Notification',
 	'Shared/Utility'
 ],
-function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification, Utility) {
+function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification, Utility) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -43,8 +41,6 @@ function(Ember, $, FileUpload, template, Button, ToggleButton, BooleanEditor, Te
 		allowedFileTypes: 'jpg,jpeg,png,gif',
 
 		template: Ember.Handlebars.compile(template),
-		Button: Button,
-		ToggleButton: ToggleButton,
 		BooleanEditor: BooleanEditor,
 		TextFieldEditor: TextFieldEditor,
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,

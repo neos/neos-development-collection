@@ -2,10 +2,11 @@ define(
 	[
 		'emberjs',
 		'Library/jquery-with-dependencies',
+		'Shared/Configuration',
 		'Shared/ResourceCache',
 		'text!./InsertDocumentNodePanel.html'
 	],
-	function(Ember, $, ResourceCache, template) {
+	function(Ember, $, Configuration, ResourceCache, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-overlay-component'],
@@ -15,14 +16,12 @@ define(
 			init: function() {
 				this._super();
 
-				var that = this,
-					configuration = window.T3Configuration;
-				// TODO: Replace window.T3Configuration with configuration object
-				$.when(ResourceCache.getItem(configuration.NodeTypeSchemaUri + '&superType=TYPO3.Neos:Document')).done(function(dataString) {
+				var that = this;
+				$.when(ResourceCache.getItem(Configuration.NodeTypeSchemaUri + '&superType=TYPO3.Neos:Document')).done(function(dataString) {
 					var groupedDocumentNodeTypes = [],
 						nodeTypeGroups = [];
 
-					$.each(JSON.parse(dataString), function (nodeType, nodeTypeInfo) {
+					$.each(JSON.parse(dataString), function(nodeType, nodeTypeInfo) {
 						var groupName = nodeTypeInfo.ui.group ? nodeTypeInfo.ui.group : 'General';
 						if (!groupedDocumentNodeTypes[groupName]) {
 							groupedDocumentNodeTypes[groupName] = {
@@ -37,7 +36,7 @@ define(
 						});
 					});
 
-					configuration.nodeTypeGroups.forEach(function(groupName) {
+					Configuration.nodeTypeGroups.forEach(function(groupName) {
 						if (groupedDocumentNodeTypes[groupName]) {
 							nodeTypeGroups.push(groupedDocumentNodeTypes[groupName]);
 						}

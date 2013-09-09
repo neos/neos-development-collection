@@ -130,7 +130,7 @@ label {
 		}
 
 		// Orange button for active buttons
-		&.pressed {
+		&.neos-pressed {
 			@include buttonBackground(lighten($orange, 5%), $orange);
 			border: 1px solid darken($orange, 5%);
 			border-bottom-color: darken($orange, 10%);

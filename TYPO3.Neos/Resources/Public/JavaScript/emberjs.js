@@ -6,7 +6,8 @@ define(['Library/ember'], function(Ember) {
 			CP_DEFAULT_CACHEABLE: true,
 			RAISE_ON_DEPRECATION: true
 		};
-//		Ember.LOG_BINDINGS = true;
+		// for debugging only - do not ship
+		// Ember.LOG_BINDINGS = true;
 	}
 
 	return Ember;

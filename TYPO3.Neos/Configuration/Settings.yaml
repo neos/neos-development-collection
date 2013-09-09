@@ -172,7 +172,7 @@ TYPO3:
   Media:
     bodyClasses: 'neos media-browser'
     scripts:
-      - resource://TYPO3.Neos/Public/Library/jquery/jquery-1.9.1.js
+      - resource://TYPO3.Neos/Public/Library/jquery/jquery-1.10.2.js
       - resource://TYPO3.Neos/Public/Library/bootstrap-components.js
     styles:
       - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css

@@ -1,9 +1,8 @@
 define(
 	[
-		'Library/jquery-with-dependencies',
-		'emberjs'
+		'Library/jquery-with-dependencies'
 	],
-	function($, Ember) {
+	function($) {
 		return {
 			show: function(collectionWidget) {
 				if (collectionWidget.element.find('.neos-empty-contentcollection-overlay').length === 0) {
@@ -18,6 +17,6 @@ define(
 			hide: function(collectionWidget) {
 				collectionWidget.element.find('.neos-empty-contentcollection-overlay').remove();
 			}
-		}
+		};
 	}
 );
