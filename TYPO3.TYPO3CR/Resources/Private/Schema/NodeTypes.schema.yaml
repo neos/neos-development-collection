@@ -6,6 +6,7 @@ additionalProperties:
   properties:
 
     'abstract': { type: boolean, description: "Abstract node type for default/mixin usage" }
+    'final': { type: boolean, description: "If final, this node type cannot be subclassed" }
 
     'superTypes':
       type: array

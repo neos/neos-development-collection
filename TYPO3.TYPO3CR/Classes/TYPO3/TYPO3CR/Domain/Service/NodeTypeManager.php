@@ -157,6 +157,9 @@ class NodeTypeManager {
 		if (isset($nodeTypeConfiguration['superTypes'])) {
 			foreach ($nodeTypeConfiguration['superTypes'] as $superTypeName) {
 				$superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
+				if ($superType->isFinal() === TRUE) {
+					throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a supertype "' . $superType->getName() .'" which is final.', 1316452423);
+				}
 				$superTypes[] = $superType;
 				$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getConfiguration());
 			}

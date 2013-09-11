@@ -41,6 +41,10 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				)
 			)
 		),
+		'TYPO3.Neos:MyFinalType' => array(
+			'superTypes' => array('TYPO3.Neos:ContentObject'),
+			'final' => TRUE
+		),
 		'TYPO3.Neos:Text' => array(
 			'superTypes' => array('TYPO3.Neos:ContentObject'),
 			'label' => 'Text',
@@ -75,7 +79,10 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	protected $configurationManager;
 
-	public function setUp() {
+	public function setUp($nodeTypesFixture = NULL) {
+		if ($nodeTypesFixture === NULL) {
+			$nodeTypesFixture = $this->nodeTypesFixture;
+		}
 		$this->configurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')
 			->disableOriginalConstructor()
 			->getMock();
@@ -83,7 +90,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->expects($this->any())
 			->method('getConfiguration')
 			->with('NodeTypes')
-			->will($this->returnValue($this->nodeTypesFixture));
+			->will($this->returnValue($nodeTypesFixture));
 	}
 
 	/**
@@ -135,6 +142,34 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$fullConfiguration = $nodeTypeManager->getFullConfiguration();
 		$this->assertArrayNotHasKey('TYPO3.Neos:ContentObject', $fullConfiguration);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getNodeTypeAllowsToRetrieveFinalNodeTypes() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.Neos:MyFinalType')->isFinal());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException
+	 */
+	public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->setUp(array(
+			'TYPO3.Neos:Base' => array(
+				'final' => TRUE
+			),
+			'TYPO3.Neos:Sub' => array(
+				'superTypes' => array('TYPO3.Neos:Base')
+			)
+		));
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypeManager->getNodeType('TYPO3.Neos:Sub');
 	}
 }
 ?>

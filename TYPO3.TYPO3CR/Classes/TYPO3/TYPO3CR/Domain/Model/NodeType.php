@@ -46,6 +46,13 @@ class NodeType {
 	protected $abstract = FALSE;
 
 	/**
+	 * Is this node type marked final
+	 *
+	 * @var boolean
+	 */
+	protected $final = FALSE;
+
+	/**
 	 * node types this node type directly inherits from
 	 *
 	 * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
@@ -87,6 +94,11 @@ class NodeType {
 			unset($configuration['abstract']);
 		}
 
+		if (isset($configuration['final']) && $configuration['final'] === TRUE) {
+			$this->final = TRUE;
+			unset($configuration['final']);
+		}
+
 		$this->configuration = $configuration;
 	}
 
@@ -107,6 +119,15 @@ class NodeType {
 	 */
 	public function isAbstract() {
 		return $this->abstract;
+	}
+
+	/**
+	 * Return boolean TRUE if marked final
+	 *
+	 * @return boolean
+	 */
+	public function isFinal() {
+		return $this->final;
 	}
 
 	/**
