@@ -5,8 +5,9 @@ define(
 		'Shared/LocalStorage',
 		'../Components/ToggleButton',
 		'Shared/ResourceCache',
+		'./MenuButton',
 		'text!./MenuPanel.html'
-	], function(Ember, $, LocalStorage, ToggleButton, ResourceCache, template) {
+	], function(Ember, $, LocalStorage, ToggleButton, ResourceCache, MenuButton, template) {
 
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
@@ -73,6 +74,14 @@ define(
 						LocalStorage.setItem('menuConfiguration', configuration);
 					}
 				});
+			},
+
+			mouseEnter: function() {
+				MenuButton.toggleState(true);
+			},
+
+			mouseLeave: function() {
+				MenuButton.toggleState(false);
 			},
 
 			activeItem: function() {
