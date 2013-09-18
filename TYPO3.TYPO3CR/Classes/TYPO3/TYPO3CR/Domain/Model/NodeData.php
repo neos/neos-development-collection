@@ -491,7 +491,14 @@ class NodeData extends AbstractNodeData {
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL, Workspace $workspace = NULL) {
 		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
-		$newNode = $this->createNode($newNodeName, $nodeTemplate->getNodeType(), NULL, $workspace);
+
+		$possibleNodeName = $newNodeName;
+		$counter = 1;
+		while ($this->getNode($possibleNodeName) !== NULL) {
+			$possibleNodeName = $newNodeName . '-' . $counter++;
+		}
+
+		$newNode = $this->createNode($possibleNodeName, $nodeTemplate->getNodeType(), NULL, $workspace);
 		$newNode->similarize($nodeTemplate);
 		return $newNode;
 	}

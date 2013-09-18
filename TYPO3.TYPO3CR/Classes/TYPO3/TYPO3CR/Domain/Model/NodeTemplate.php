@@ -20,5 +20,27 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class NodeTemplate extends AbstractNodeData {
 
+	/**
+	 * Get the name of this node template.
+	 *
+	 * If a name has been set using setName(), it is returned. If not, but the
+	 * template has a (non-empty) title property, this property is used to
+	 * generate a valid name. As a last resort a random name is returned (in
+	 * the form "nameXXXXX").
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getName() {
+		if ($this->name !== NULL) {
+			return $this->name;
+		}
+
+		if ($this->hasProperty('title') && strlen($this->getProperty('title')) > 0) {
+			return \TYPO3\TYPO3CR\Utility::renderValidNodeName($this->getProperty('title'));
+		}
+
+		return uniqid('node');
+	}
 }
 ?>
