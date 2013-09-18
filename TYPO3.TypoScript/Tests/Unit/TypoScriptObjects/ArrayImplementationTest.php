@@ -10,15 +10,12 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\ArraySorter;
-use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
 
 /**
- * Testcase for the TypoScript Array Renderer
+ * Testcase for the TypoScript Array Rrenderer
  *
  */
-class ArrayImplementationTest extends UnitTestCase {
+class ArrayImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -27,8 +24,7 @@ class ArrayImplementationTest extends UnitTestCase {
 		$mockTsRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', FALSE);
 		$path = 'array/test';
 		$typoScriptObjectName = 'TYPO3.TypoScript:Array';
-		$renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
-		$this->inject($renderer, 'arraySorter', new ArraySorter());
+		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
 		$result = $renderer->evaluate();
 		$this->assertNull($result);
 	}
@@ -123,8 +119,7 @@ class ArrayImplementationTest extends UnitTestCase {
 
 		$path = '';
 		$typoScriptObjectName = 'TYPO3.TypoScript:Array';
-		$renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
-		$this->inject($renderer, 'arraySorter', new ArraySorter());
+		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
 		foreach ($subElements as $key => $value) {
 			$renderer[$key] = $value;
 		}
