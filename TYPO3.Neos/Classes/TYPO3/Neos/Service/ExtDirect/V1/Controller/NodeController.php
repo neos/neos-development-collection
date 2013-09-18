@@ -191,7 +191,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function createNodeForTheTreeAction(\TYPO3\TYPO3CR\Domain\Model\Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
 
-		$idealNodeName = $this->renderValidNodeName($newNode->hasProperty('title') ? $newNode->getProperty('title') : uniqid('node'));
+		$idealNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($newNode->hasProperty('title') ? $newNode->getProperty('title') : uniqid('node'));
 		$possibleNodeName = $idealNodeName;
 		$counter = 1;
 		while ($referenceNode->getNode($possibleNodeName) !== NULL) {
@@ -502,36 +502,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		);
 
 		return $this->contextFactory->create($contextProperties);
-	}
-
-	/**
-	 * Transforms a text (for example a node title) into a valid node name  by removing invalid characters and
-	 * transliterating special characters if possible.
-	 *
-	 * @param string $value The possibly invalid node name
-	 * @return string  A valid node name
-	 * TODO Integrate php/intl Transliterator rather than the current poor-man's transliteration
-	 */
-	protected function renderValidNodeName($value) {
-		$transliteration = array(
-			'ä' => 'ae',
-			'ö' => 'oe',
-			'ü' => 'ue',
-			'ß' => 'ss',
-			'å' => 'aa',
-			'æ' => 'ae',
-			'ø' => 'oe',
-			'œ' => 'oe',
-			'Ä' => 'ae',
-			'Ö' => 'oe',
-			'Ü' => 'ue',
-			'Å' => 'aa',
-			'Æ' => 'ae',
-			'Ø' => 'oe',
-			'Œ' => 'oe'
-		);
-		$value = strtr($value, $transliteration);
-		return strtolower(trim(preg_replace('~[^0-9a-z]+~i', '-', html_entity_decode(preg_replace('~&([a-z]{1,2})(?:acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', htmlentities($value, ENT_QUOTES, 'UTF-8')), ENT_QUOTES, 'UTF-8')),'-'));
 	}
 }
 ?>
