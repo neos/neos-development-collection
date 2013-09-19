@@ -35,7 +35,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($parentNode, 'nodeFactory', $nodeFactory);
 
 		$parentNodeData->expects($this->atLeastOnce())->method('createNodeFromTemplate')->with($nodeTemplate, 'bar', $workspace)->will($this->returnValue($newNodeData));
-		$nodeFactory->expects($this->atLeastOnce())->method('createFromNode')->with($newNodeData, $context);
+		$nodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->with($newNodeData, $context);
 
 		$parentNode->createNodeFromTemplate($nodeTemplate, 'bar');
 	}

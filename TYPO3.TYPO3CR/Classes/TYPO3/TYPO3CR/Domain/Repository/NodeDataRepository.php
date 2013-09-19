@@ -210,7 +210,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	public function findOneByPathInContext($path, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
 		$node = $this->findOneByPath($path, $context->getWorkspace());
 		if ($node !== NULL) {
-			$node = $this->nodeFactory->createFromNode($node, $context);
+			$node = $this->nodeFactory->createFromNodeData($node, $context);
 		}
 
 		return $node;
@@ -437,7 +437,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $limit, $offset, $context->isRemovedContentShown());
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
-			$node =$this->nodeFactory->createFromNode($nodeData, $context);
+			$node =$this->nodeFactory->createFromNodeData($nodeData, $context);
 			if ($node !== NULL) {
 				$finalNodes[] = $node;
 			}
@@ -655,7 +655,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		$firstNode = $this->findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->isRemovedContentShown());
 
 		if ($firstNode !== NULL) {
-			$firstNode = $this->nodeFactory->createFromNode($firstNode, $context);
+			$firstNode = $this->nodeFactory->createFromNodeData($firstNode, $context);
 		}
 
 		return $firstNode;
@@ -732,7 +732,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		$nodeDataElements = $this->findOnPath($pathStartingPoint, $pathEndPoint, $context->getWorkspace(), $context->isRemovedContentShown());
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
-			$node = $this->nodeFactory->createFromNode($nodeData, $context);
+			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 			if ($node !== NULL) {
 				$finalNodes[] = $node;
 			}

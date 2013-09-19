@@ -46,7 +46,7 @@ class NodeFactory {
 	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
-	public function createFromNode(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+	public function createFromNodeData(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
 		$internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			$this->nodes[$internalNodeIdentifier] = new Node($nodeData, $context);

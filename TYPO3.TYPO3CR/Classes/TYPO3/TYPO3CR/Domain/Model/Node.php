@@ -550,7 +550,7 @@ class Node implements NodeInterface {
 	 */
 	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
 		$nodeData = $this->nodeData->createSingleNode($name, $nodeType, $identifier, $this->context->getWorkspace());
-		$node = $this->nodeFactory->createFromNode($nodeData, $this->context);
+		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 
 		return $node;
 	}
@@ -565,7 +565,7 @@ class Node implements NodeInterface {
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
 		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace());
-		$node = $this->nodeFactory->createFromNode($nodeData, $this->context);
+		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 
 		return $node;
 	}

@@ -191,7 +191,7 @@ class Context implements ContextInterface {
 			throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
 		}
 		$workspaceRootNode = $this->getWorkspace()->getRootNode();
-		$node = $this->nodeFactory->createFromNode($workspaceRootNode, $this);
+		$node = $this->nodeFactory->createFromNodeData($workspaceRootNode, $this);
 		return ($path === '/') ? $node : $node->getNode(substr($path, 1));
 	}
 
