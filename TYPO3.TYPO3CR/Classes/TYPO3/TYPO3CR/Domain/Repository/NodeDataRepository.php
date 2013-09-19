@@ -141,7 +141,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 		}
 
 		if ($path === '/') {
-			return $workspace->getRootNode();
+			return $workspace->getRootNodeData();
 		}
 
 		$originalWorkspace = $workspace;

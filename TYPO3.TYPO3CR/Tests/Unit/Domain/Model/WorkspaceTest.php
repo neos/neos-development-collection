@@ -41,7 +41,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$workspace->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeData', $workspace->getRootNode());
+		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeData', $workspace->getRootNodeData());
 	}
 
 	/**

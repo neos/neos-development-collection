@@ -169,7 +169,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertTrue($rootNode->hasChildNodes(), 'Second check.');
 
 		$context = $this->contextFactory->create(array('workspaceName' => 'user-admin'));
-		$rootNode = $context->getWorkspace()->getRootNode();
+		$rootNode = $context->getRootNode();
 
 		$rootNode->getNode('bar')->remove();
 		$this->persistenceManager->persistAll();

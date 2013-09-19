@@ -42,13 +42,13 @@ class Workspace {
 	protected $baseWorkspace;
 
 	/**
-	 * Root node of this workspace
+	 * Root node data of this workspace
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 * @ORM\ManyToOne
 	 * @ORM\JoinColumn(referencedColumnName="id")
 	 */
-	protected $rootNode;
+	protected $rootNodeData;
 
 	/**
 	 * @Flow\Inject
@@ -84,8 +84,8 @@ class Workspace {
 	 */
 	public function initializeObject($initializationCause) {
 		if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-			$this->rootNode = new NodeData('/', $this);
-			$this->nodeDataRepository->add($this->rootNode);
+			$this->rootNodeData = new NodeData('/', $this);
+			$this->nodeDataRepository->add($this->rootNodeData);
 		}
 	}
 
@@ -110,12 +110,12 @@ class Workspace {
 	}
 
 	/**
-	 * Returns the root node of this workspace
+	 * Returns the root node data of this workspace
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	public function getRootNode() {
-		return $this->rootNode;
+	public function getRootNodeData() {
+		return $this->rootNodeData;
 	}
 
 	/**
