@@ -438,7 +438,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$searchResult = array();
 		foreach ($nodes as $uninitializedNode) {
 			if (array_key_exists($uninitializedNode->getPath(), $searchResult) === FALSE) {
-				$node = $this->nodeFactory->createFromNode($uninitializedNode, $contentContext);
+				$node = $this->nodeFactory->createFromNodeData($uninitializedNode, $contentContext);
 				if ($node !== NULL) {
 					$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
 				}

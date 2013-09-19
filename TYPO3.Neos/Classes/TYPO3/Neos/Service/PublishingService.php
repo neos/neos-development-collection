@@ -81,7 +81,7 @@ class PublishingService {
 
 		$nodeData = $this->nodeDataRepository->findByWorkspace($contentContext->getWorkspace(FALSE));
 		foreach ($nodeData as $singleNodeData) {
-			$node = $this->nodeFactory->createFromNode($singleNodeData, $contentContext);
+			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $contentContext);
 			if ($node !== NULL) {
 				$finalNodes[] = $node;
 			}
