@@ -6,7 +6,7 @@ define(
 		'Content/Application',
 		'text!./InsertNodePanel.html'
 	],
-	function (Ember, _, vie, ContentModule, template) {
+	function(Ember, _, vie, ContentModule, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 

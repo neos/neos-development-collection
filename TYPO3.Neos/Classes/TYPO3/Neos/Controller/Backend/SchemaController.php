@@ -47,12 +47,23 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Get the node type configuration schema for the Neos UI
 	 *
+	 * @param string $superType
 	 * @return string
 	 */
-	public function nodeTypeSchemaAction() {
+	public function nodeTypeSchemaAction($superType = NULL) {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		return json_encode($this->nodeTypeManager->getFullConfiguration());
+		$nodeTypes = array();
+		if ($superType !== NULL) {
+			foreach ($this->nodeTypeManager->getSubNodeTypes($superType) as $nodeTypeName => $nodeType) {
+				/** @var \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType */
+				$nodeTypes[$nodeTypeName] = $nodeType->getConfiguration();
+			}
+		} else {
+			$nodeTypes = $this->nodeTypeManager->getFullConfiguration();
+		}
+
+		return json_encode($nodeTypes);
 	}
 
 }

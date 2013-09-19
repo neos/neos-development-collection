@@ -8,8 +8,9 @@ define(
 		'Content/Application',
 		'vie/entity',
 		'text!./PageTree.html',
-		'text!neos/templates/content/ui/deletePageDialog.html'
-	], function($, Ember, ContentModule, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate) {
+		'text!neos/templates/content/ui/deletePageDialog.html',
+		'Content/Components/InsertDocumentNodePanel'
+	], function($, Ember, ContentModule, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate, InsertDocumentNodePanel) {
 		if (window._requirejsLoadingTrace) {
 			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
 		}
@@ -226,7 +227,7 @@ define(
 				// Automatically expand the first node when opened
 				this.$tree.dynatree('getRoot').getChildren()[0].expand(true);
 
-				// Handles click events when a page title is in editmode so clicks on other pages leads not to reloads
+				// Handles click events when a page title is in edit mode so clicks on other pages leads not to reloads
 				this.$tree.click(function() {
 					if (that.editNodeTitleMode === true) {
 						return false;
@@ -238,7 +239,7 @@ define(
 				this.$('#neos-action-newpage').click(function() {
 					var activeNode = that.$tree.dynatree('getActiveNode');
 					if (activeNode !== null) {
-						that.createAndEditNode(activeNode);
+						that.showCreateDocumentNodeDialog(activeNode);
 					} else {
 						T3.Common.Notification.notice('You have to select a page');
 					}
@@ -363,6 +364,16 @@ define(
 				return null;
 			},
 
+			showCreateDocumentNodeDialog: function(activeNode) {
+				var that = this;
+
+				InsertDocumentNodePanel.createElement();
+				InsertDocumentNodePanel.set('insertNode', function(nodeTypeInfo) {
+					that.createAndEditNode(activeNode, 'Untitled', nodeTypeInfo.nodeType, nodeTypeInfo.icon);
+					this.cancel();
+				});
+			},
+
 			/**
 			 * When clicking the delete Page, we show a dialog
 			 */
@@ -447,14 +458,14 @@ define(
 					node.focus();
 				});
 			},
-			createAndEditNode: function(activeNode) {
+			createAndEditNode: function(activeNode, title, nodeType, iconClass) {
 				var that = this,
 					position = 'into',
 					node = activeNode.addChild({
-						title: '[New Page]',
-						nodeType: 'TYPO3.Neos:Page',
+						title: title,
+						nodeType: nodeType,
 						addClass: 'typo3_neos-page',
-						iconClass: 'icon-file',
+						iconClass: iconClass,
 						expand: true
 					}),
 					prevTitle = node.data.title,
@@ -495,7 +506,7 @@ define(
 							TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 								activeNode.data.key,
 								{
-									nodeType: 'TYPO3.Neos:Page',
+									nodeType: nodeType,
 									//@todo give a unique nodename from the title
 									properties: {
 										title: title
