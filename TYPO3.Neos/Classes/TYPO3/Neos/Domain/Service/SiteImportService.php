@@ -131,7 +131,7 @@ class SiteImportService {
 			}
 			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
-			$rootNode = $contentContext->getWorkspace()->getRootNode();
+			$rootNode = $contentContext->getRootNode();
 
 			if ($rootNode->getNode('/sites') === NULL) {
 				$rootNode->createSingleNode('sites');
@@ -154,7 +154,7 @@ class SiteImportService {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $parentNode
 	 * @return void
 	 */
-	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeData $parentNode) {
+	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
 			$nodeTypeName = (string)$childNodeXml['type'];
