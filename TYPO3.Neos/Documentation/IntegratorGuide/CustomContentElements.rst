@@ -99,25 +99,25 @@ inside the Neos backend.
 What are the benefits of indirection through TypoScript?
 --------------------------------------------------------
 
-	In the above example the `videoUrl` property of the *Node* is not directly rendered inside the
-	Fluid template. Instead *TypoScript* is used to pass the `videoUrl` from the *Node* into the Fluid
-	template.
+In the above example the `videoUrl` property of the *Node* is not directly rendered inside the
+Fluid template. Instead *TypoScript* is used to pass the `videoUrl` from the *Node* into the Fluid
+template.
 
-	While this indirection might look superfluous at first sight, it has important benefits:
+While this indirection might look superfluous at first sight, it has important benefits:
 
-	* The Fluid Template does not need to know anything about *Nodes*. It just needs to know
-	  that it outputs a certain property, but not where it came from.
+* The Fluid Template does not need to know anything about *Nodes*. It just needs to know
+  that it outputs a certain property, but not where it came from.
 
-	* Because the rendering is decoupled from the data storage this way, the TypoScript object can be
-	  instantiated directly, manually setting a `videoUrl`::
+* Because the rendering is decoupled from the data storage this way, the TypoScript object can be
+  instantiated directly, manually setting a `videoUrl`::
 
-		page.body.parts.teaserVideo = My.Package:YouTube {
-		  videoUrl = 'http://youtube.com/.....'
-		}
+    page.body.parts.teaserVideo = My.Package:YouTube {
+      videoUrl = 'http://youtube.com/.....'
+    }
 
-	* If a property needs to be modified *just slightly*, a *processor* can be used for declarative
-	  modification of this property in TypoScript; not even touching the Fluid template. This is helpful
-	  for smaller adjustments to foreign packages.
+* If a property needs to be modified *just slightly*, a *processor* can be used for declarative
+  modification of this property in TypoScript; not even touching the Fluid template. This is helpful
+  for smaller adjustments to foreign packages.
 
 Creating Editable Content Elements
 ==================================
