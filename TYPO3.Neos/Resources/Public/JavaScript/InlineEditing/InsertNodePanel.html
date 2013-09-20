@@ -1,12 +1,12 @@
-<div class="modal" id="insertNodeDialog">
-	<div class="modal-header">
-		{{view T3.Content.UI.ButtonDialog target="parentView" data-dismiss="modal" action="cancel" class="close neos-button icon-remove" title="close"}}
+<div class="neos-modal" id="insertNodeDialog">
+	<div class="neos-modal-header">
+		{{view T3.Content.UI.ButtonDialog target="parentView" data-dismiss="modal" action="cancel" class="neos-close neos-button icon-remove" title="close"}}
 		<div class="neos-header">Create new</div>
 
 		{{#each view.content}}
 			<div>
 				<div class="neos-subheader">{{unbound name}}</div>
-				<ul class="clearfix">
+				<ul class="neos-clearfix">
 					{{#each children}}
 						<li class="neos-content-new-selecttype-button">
 							<a class="neos-content-new" {{action "insertNode" nodeType target="view"}}>
@@ -23,8 +23,8 @@
 			</div>
 		{{/each}}
 	</div>
-	<div class="modal-footer">
+	<div class="neos-modal-footer">
 		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="neos-button" title="Cancel"}}
 	</div>
 </div>
-<div class="modal-backdrop in"></div>
+<div class="neos-modal-backdrop neos-in"></div>

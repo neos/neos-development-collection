@@ -4,7 +4,7 @@
 
 
 // Base class
-.tooltip {
+.neos-tooltip {
   position: absolute;
   z-index: $zindexTooltip;
   display: block;
@@ -12,15 +12,15 @@
   font-size: 11px;
   line-height: 1.4;
   @include opacity(0);
-  &.in     { @include opacity(.8); }
-  &.top    { margin-top:  -3px; padding: 5px 0; }
-  &.right  { margin-left:  3px; padding: 0 5px; }
-  &.bottom { margin-top:   3px; padding: 5px 0; }
-  &.left   { margin-left: -3px; padding: 0 5px; }
+  &.neos-in     { @include opacity(.8); }
+  &.neos-top    { margin-top:  -3px; padding: 5px 0; }
+  &.neos-right  { margin-left:  3px; padding: 0 5px; }
+  &.neos-bottom { margin-top:   3px; padding: 5px 0; }
+  &.neos-left   { margin-left: -3px; padding: 0 5px; }
 }
 
 // Wrapper for the tooltip content
-.tooltip-inner {
+.neos-tooltip-inner {
   max-width: 200px;
   padding: 8px;
   color: $tooltipColor;
@@ -31,36 +31,36 @@
 }
 
 // Arrows
-.tooltip-arrow {
+.neos-tooltip-arrow {
   position: absolute;
   width: 0;
   height: 0;
   border-color: transparent;
   border-style: solid;
 }
-.tooltip {
-  &.top .tooltip-arrow {
+.neos-tooltip {
+  &.neos-top .neos-tooltip-arrow {
     bottom: 0;
     left: 50%;
     margin-left: -$tooltipArrowWidth;
     border-width: $tooltipArrowWidth $tooltipArrowWidth 0;
     border-top-color: $tooltipArrowColor;
   }
-  &.right .tooltip-arrow {
+  &.neos-right .neos-tooltip-arrow {
     top: 50%;
     left: 0;
     margin-top: -$tooltipArrowWidth;
     border-width: $tooltipArrowWidth $tooltipArrowWidth $tooltipArrowWidth 0;
     border-right-color: $tooltipArrowColor;
   }
-  &.left .tooltip-arrow {
+  &.neos-left .neos-tooltip-arrow {
     top: 50%;
     right: 0;
     margin-top: -$tooltipArrowWidth;
     border-width: $tooltipArrowWidth 0 $tooltipArrowWidth $tooltipArrowWidth;
     border-left-color: $tooltipArrowColor;
   }
-  &.bottom .tooltip-arrow {
+  &.neos-bottom .neos-tooltip-arrow {
     top: 0;
     left: 50%;
     margin-left: -$tooltipArrowWidth;

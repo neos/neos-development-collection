@@ -29,7 +29,7 @@ function($, Ember, saveIndicatorTemplate) {
 	 * =====================
 	 */
 
-		// Is necessary otherwise a button has always the class 'btn-mini'
+		// Is necessary otherwise a button has always the class 'neos-btn-mini'
 	T3.Content.UI.ButtonDialog = Ember.View.extend(Ember.TargetActionSupport, {
 		tagName: 'button',
 		attributeBindings: ['disabled'],

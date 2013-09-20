@@ -1,7 +1,7 @@
-.neos-user-menu.btn-group {
+.neos-user-menu.neos-btn-group {
 	font-size: $generalFontSize;
 
-	&.open .neos-button::after {
+	&.neos-open .neos-button::after {
 		@include rotate(-90deg);
 		left: 2px;
 	}

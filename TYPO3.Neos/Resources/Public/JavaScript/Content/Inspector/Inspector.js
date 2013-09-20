@@ -32,8 +32,8 @@ define(
 
 	var Breadcrumb = Ember.View.extend({
 		tagName: 'div',
-		classNames: ['neos-breadcrumb'],
-		classNameBindings: ['open'],
+		classNames: ['neos-content-breadcrumb'],
+		classNameBindings: ['neos-open'],
 		template: Ember.Handlebars.compile(breadcrumbTemplate),
 		BreadcrumbItem: BreadcrumbItem,
 		open: false,
@@ -53,7 +53,7 @@ define(
 		value: null,
 		isModified: false,
 		hasValidationErrors: false,
-		classNameBindings: ['isModified:modified', 'hasValidationErrors:error'],
+		classNameBindings: ['isModified:modified', 'hasValidationErrors:neos-error'],
 
 		_valueDidChange: function() {
 			if (T3.Content.Controller.Inspector.isPropertyModified(this.get('propertyDefinition.key')) === true) {
@@ -123,7 +123,7 @@ define(
 	// Make the inspector panels collapsible
 	var InspectorSectionToggle = Ember.View.extend({
 		tagName: 'div',
-		classNameBindings: ['_collapsed:collapsed:open'],
+		classNameBindings: ['_collapsed:collapsed:neos-open'],
 		_collapsed: false,
 		_nodeType: '',
 		_automaticallyCollapsed: false,

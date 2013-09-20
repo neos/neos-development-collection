@@ -4,8 +4,8 @@
 
 
 // Base classes
-.label,
-.badge {
+.neos-label,
+.neos-badge {
   display: inline-block;
   padding: 2px 4px;
   font-size: $baseFontSize * .846;
@@ -18,18 +18,18 @@
   background-color: $grayLight;
 }
 // Set unique padding and border-radii
-.label {
+.neos-label {
   @include border-radius(3px);
 }
-.badge {
+.neos-badge {
   padding-left: 9px;
   padding-right: 9px;
   @include border-radius(9px);
 }
 
 // Empty labels/badges collapse
-.label,
-.badge {
+.neos-label,
+.neos-badge {
   &:empty {
     display: none;
   }
@@ -37,10 +37,10 @@
 
 // Hover/focus state, but only for links
 a {
-  &.label:hover,
-  &.label:focus,
-  &.badge:hover,
-  &.badge:focus {
+  &.neos-label:hover,
+  &.neos-label:focus,
+  &.neos-badge:hover,
+  &.neos-badge:focus {
     color: $white;
     text-decoration: none;
     cursor: pointer;
@@ -68,16 +68,16 @@ a {
 }
 
 // Quick fix for labels/badges in buttons
-.btn {
-  .label,
-  .badge {
+.neos-btn {
+  .neos-label,
+  .neos-badge {
     position: relative;
     top: -1px;
   }
 }
-.btn-mini {
-  .label,
-  .badge {
+.neos-btn-mini {
+  .neos-label,
+  .neos-badge {
     top: 0;
   }
 }

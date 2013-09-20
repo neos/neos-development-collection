@@ -30,13 +30,13 @@
 		}
 	}
 
-	.alert-message.Error {
+	.neos-alert-message.Error {
 		background:#C43C35;
 		color: $lightest;
 	}
 }
 
-a.btn {
+a.neos-btn {
 	color: darken($dark-grey, 10%);
 	text-decoration: none;
 	&:hover {

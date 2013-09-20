@@ -24,7 +24,7 @@ input[type="url"],
 input[type="search"],
 input[type="tel"],
 input[type="color"],
-.uneditable-input {
+.neos-uneditable-input {
 	padding: 2px 4px 2px 4px;
 	font-size: 12px;
 	border: 1px solid rgba(0, 0, 0, .5);
@@ -33,14 +33,14 @@ input[type="color"],
 		border-color: rgba($light-orange, 0.8);
 		@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($light-orange, 0.6));
 	}
-	&.error {
+	&.neos-error {
 		border-color: rgba($red, 0.8);
 		@include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($red, 0.6));
 	}
 }
 
-.input-append,
-.input-prepend {
+.neos-input-append,
+.neos-input-prepend {
 	font-size: inherit;
 }
 
@@ -51,7 +51,7 @@ legend {
 	margin-bottom: 0px;
 	font-size: 21px;
 
-	& + .alert {
+	& + .neos-alert {
 		margin-top: 20px;
 		float: left;
 		width: 100%;
@@ -68,13 +68,13 @@ label {
 // --------------------------
 
 
-.form-horizontal {
+.neos-form-horizontal {
 	// Floated labels left
-	.control-label {
+	.neos-control-label {
 		padding-top: 2px;
 	}
 }
-.row-fluid [class*="span"] {
+.neos-row-fluid [class*="span"] {
 	min-height: inherit;
 
 	input {
@@ -85,7 +85,7 @@ label {
 // Form footer & modal footer
 // ------------
 
-.form-footer {
+.neos-form-footer {
 	background: #666;
 	border-color: $light-grey3;
 	@include border-bottom-radius(4px);
@@ -99,7 +99,7 @@ label {
 // Buttons
 // -------
 
-.btn {
+.neos-btn {
 	padding-top: 2px;
 	padding-bottom: 2px;
 	font-size: 12px;
@@ -119,7 +119,7 @@ label {
 		$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
 		@include box-shadow($shadow);
 
-		&.disabled,
+		&.neos-disabled,
 		&[disabled] {
 			@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
 			border: 1px solid darken($light-grey3, 5%);
@@ -145,14 +145,14 @@ label {
 				border-bottom-color: darken($orange, 20%);
 			}
 
-			&.disabled,
+			&.neos-disabled,
 			&[disabled] {
 				@include buttonBackground(lighten($orange, 5%), $orange);
 			}
 		}
 
 		// Orange button for active buttons
-		&.btn-warning {
+		&.neos-btn-warning {
 			@include buttonBackground(lighten($orange, 5%), $orange);
 			border: 1px solid darken($orange, 5%);
 			border-bottom-color: darken($orange, 10%);
@@ -167,15 +167,15 @@ label {
 				border-bottom-color: darken($orange, 20%);
 			}
 
-			&.disabled,
+			&.neos-disabled,
 			&[disabled] {
 				@include buttonBackground(lighten($orange, 5%), $orange);
 			}
 		}
 
 		// Green button for positive actions
-		&.btn-primary,
-		&.btn-success {
+		&.neos-btn-primary,
+		&.neos-btn-success {
 			@include buttonBackground(lighten($green, 5%), $green);
 			border: 1px solid darken($green, 5%);
 			border-bottom-color: darken($green, 10%);
@@ -190,13 +190,13 @@ label {
 				border-bottom-color: darken($green, 20%);
 			}
 
-			&.disabled,
+			&.neos-disabled,
 			&[disabled] {
 				@include buttonBackground(lighten($green, 5%), $green);
 			}
 		}
 
-		&.btn-danger {
+		&.neos-btn-danger {
 			@include buttonBackground(lighten($red, 2%), $red);
 			border: 1px solid darken($red, 2%);
 			border-bottom-color: darken($red, 10%);
@@ -211,7 +211,7 @@ label {
 				border-bottom-color: darken($red, 20%);
 			}
 
-			&.disabled,
+			&.neos-disabled,
 			&[disabled] {
 				@include buttonBackground(lighten($red, 5%), $red);
 			}
@@ -223,7 +223,7 @@ a.neos-button {
 }
 
 // Tables
-table.table {
+table.neos-table {
 	@include border-radius(6px);
 
 	tbody {
@@ -243,7 +243,7 @@ table.table {
 		@include text-shadow(1px 1px 1px rgba($darkest, 0.5));
 	}
 
-	&.table-striped {
+	&.neos-table-striped {
 		background: #aaa;
 	}
 
@@ -276,14 +276,14 @@ table.table {
 }
 
 // Dropdown menus
-.dropdown-menu {
+.neos-dropdown-menu {
 	@include border-radius(0);
 }
-.dropdown-menu li > a:hover,
-.dropdown-menu li > a:focus,
-.dropdown-submenu:hover > a,
-.dropdown-menu .active > a,
-.dropdown-menu .active > a:hover {
+.neos-dropdown-menu li > a:hover,
+.neos-dropdown-menu li > a:focus,
+.neos-dropdown-submenu:hover > a,
+.neos-dropdown-menu .neos-active > a,
+.neos-dropdown-menu .neos-active > a:hover {
 	background-color: $light-orange;
 	@include gradient-vertical($light-orange, darken($light-orange, 5%));
 }

@@ -14,7 +14,7 @@
 
 	&:hover,
 	&:active,
-	&.active,
+	&.neos-active,
 	&.pressed {
 		background-color: $blue;
 	}

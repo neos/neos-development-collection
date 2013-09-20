@@ -218,7 +218,7 @@ class FeatureContext extends MinkContext {
 	public function iShouldSeeTheFollowingSitesInATable(TableNode $table) {
 		$sites = $table->getHash();
 
-		$tableLocator = '.neos-module-container table.table';
+		$tableLocator = '.neos-module-container table.neos-table';
 		$sitesTable = $this->assertSession()->elementExists('css', $tableLocator);
 
 		$siteRows = $sitesTable->findAll('css', 'tbody tr');
@@ -241,7 +241,7 @@ class FeatureContext extends MinkContext {
      * @Given /^I follow "([^"]*)" for site "([^"]*)"$/
      */
     public function iFollowForSite($link, $siteName) {
-		$rowLocator = sprintf("//table[@class='table']//tr[td/text()='%s']", $siteName);
+		$rowLocator = sprintf("//table[@class='neos-table']//tr[td/text()='%s']", $siteName);
 		$siteRow = $this->assertSession()->elementExists('xpath', $rowLocator);
 		$siteRow->findLink($link)->click();
     }

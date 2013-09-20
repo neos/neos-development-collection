@@ -6,7 +6,7 @@
 // Base styles
 // -------------------------
 
-.alert {
+.neos-alert {
   padding: 8px 35px 8px 14px;
   margin-bottom: $baseLineHeight;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
@@ -14,17 +14,17 @@
   border: 1px solid $warningBorder;
   @include border-radius($baseBorderRadius);
 }
-.alert,
-.alert h4 {
+.neos-alert,
+.neos-alert h4 {
   // Specified for the h4 to prevent conflicts of changing $headingsColor
   color: $warningText;
 }
-.alert h4 {
+.neos-alert h4 {
   margin: 0;
 }
 
 // Adjust close link position
-.alert .close {
+.neos-alert .neos-close {
   position: relative;
   top: -2px;
   right: -21px;
@@ -35,45 +35,45 @@
 // Alternate styles
 // -------------------------
 
-.alert-success {
+.neos-alert-success {
   background-color: $successBackground;
   border-color: $successBorder;
   color: $successText;
 }
-.alert-success h4 {
+.neos-alert-success h4 {
   color: $successText;
 }
-.alert-danger,
-.alert-error {
+.neos-alert-danger,
+.neos-alert-error {
   background-color: $errorBackground;
   border-color: $errorBorder;
   color: $errorText;
 }
-.alert-danger h4,
-.alert-error h4 {
+.neos-alert-danger h4,
+.neos-alert-error h4 {
   color: $errorText;
 }
-.alert-info {
+.neos-alert-info {
   background-color: $infoBackground;
   border-color: $infoBorder;
   color: $infoText;
 }
-.alert-info h4 {
+.neos-alert-info h4 {
   color: $infoText;
 }
 
 
-// Block alerts
+// Block neos-alerts
 // -------------------------
 
-.alert-block {
+.neos-alert-block {
   padding-top: 14px;
   padding-bottom: 14px;
 }
-.alert-block > p,
-.alert-block > ul {
+.neos-alert-block > p,
+.neos-alert-block > ul {
   margin-bottom: 0;
 }
-.alert-block p + p {
+.neos-alert-block p + p {
   margin-top: 5px;
 }

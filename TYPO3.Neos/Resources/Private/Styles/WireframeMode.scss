@@ -12,7 +12,7 @@ $orange: #FF8700;
 	.neos-create-new-content {
 		margin-top: 15px;
 	}
-	.container {
+	.neos-container {
 		&:before, &:after {
 			display: table;
 			content: "";
@@ -43,11 +43,11 @@ $orange: #FF8700;
 		color: #fff;
 	}
 
-	.breadcrumb-container {
+	.neos-breadcrumb-container {
 		line-height: 24px;
 	}
 
-	.input-append {
+	.neos-input-append {
 		text-align: right;
 		display: block;
 		margin-bottom: 0;
@@ -257,7 +257,7 @@ $orange: #FF8700;
 	.typo3-neos-nodetypes-twocolumn,
 	.typo3-neos-nodetypes-threecolumn,
 	.typo3-neos-nodetypes-fourcolumn {
-		.container {
+		.neos-container {
 			width: auto;
 		}
 	}

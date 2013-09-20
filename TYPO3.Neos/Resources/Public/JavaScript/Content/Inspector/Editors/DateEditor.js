@@ -5,7 +5,7 @@ define(
 ],
 function($, Ember) {
 	return Ember.TextField.extend({
-		classNames: ['input-small'],
+		classNames: ['neos-input-small'],
 		didInsertElement: function() {
 			this.$().attr('placeholder', 'No date set');
 

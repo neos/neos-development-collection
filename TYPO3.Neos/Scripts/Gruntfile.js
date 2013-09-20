@@ -2,9 +2,39 @@ module.exports = function(grunt) {
 	var gruntConfig = {};
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-trimtrailingspaces');
+
 	var baseUri = '../Resources/Public/Library/';
 
 	gruntConfig.concat = {
+		bootstrap: {
+			src: [
+				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',
+				baseUri + 'twitter-bootstrap/js/bootstrap-dropdown.js',
+				baseUri + 'twitter-bootstrap/js/bootstrap-tooltip.js',
+				baseUri + 'bootstrap-notify/js/bootstrap-notify.js'
+			],
+			dest: baseUri + '_built-bootstrap-components.js',
+			options: {
+				banner: '',
+				footer: '',
+				process: function(src, filepath) {
+					src = src.replace('<div class="alert"></div>', '<div class="neos-alert"></div>');
+					src = src.replace(/keydown\./g, 'keydown.neos-');
+					src = src.replace(/\.dropdown form/g, '.neos-dropdown form');
+					src = src.replace(/click\./g, 'click.neos-');
+					src = src.replace(/Class\('/g, "Class('neos-");
+					src = src.replace(/'\.disabled/g, "'.neos-disabled");
+					src = src.replace(/\.divider/g, ".neos-divider");
+					src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
+					src = src.replace(/\.tooltip-arrow/g, '.neos-tooltip-arrow');
+					src = src.replace(/\.tooltip-inner/g, '.neos-tooltip-inner');
+					src = src.replace(/pull-right/g, 'neos-pull-right');
+					src = src.replace(/class="/g, 'class="neos-');
+					return src;
+				}
+			}
+		},
 		jQueryWithDependencies: {
 			src: [
 				baseUri + 'jquery/jquery-1.9.1.js',
@@ -13,10 +43,7 @@ module.exports = function(grunt) {
 				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
 				baseUri + 'chosen/chosen/chosen.jquery.js',
 				baseUri + 'jcrop/js/jquery.Jcrop.js',
-				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',
-				baseUri + 'twitter-bootstrap/js/bootstrap-dropdown.js',
-				baseUri + 'twitter-bootstrap/js/bootstrap-tooltip.js',
-				baseUri + 'bootstrap-notify/js/bootstrap-notify.js'
+				baseUri + '_built-bootstrap-components.js'
 			],
 			dest: baseUri + 'jquery-with-dependencies.js',
 			options: {

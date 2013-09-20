@@ -123,12 +123,12 @@ $menuIconWidth: 54px;
 				line-height: $unit;
 			}
 
-			&.collapsed::before {
+			&.neos-collapsed::before {
 				@include rotate(-90deg);
 				left: 13px;
 			}
 
-			&.open::before {
+			&.neos-open::before {
 				@include rotate(90deg);
 				left: 19px;
 			}
@@ -148,11 +148,11 @@ $menuIconWidth: 54px;
 			padding-left: 38px;
 			padding-right: $defaultMargin;
 
-			&.active {
+			&.neos-active {
 				color: $blue;
 			}
 
-			&.disabled {
+			&.neos-disabled {
 				color: $textSubtle;
 
 			}

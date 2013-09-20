@@ -69,14 +69,14 @@
 		padding-top: 11px;
 		@include box-sizing(border-box);
 
-		.neos-breadcrumb {
+		.neos-content-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
 			margin-right: -$relatedMargin;
 			cursor: pointer;
 			@include user-select(none);
 			position: relative;
 
-			&.open {
+			&.neos-open {
 				ul {
 					display: block;
 				}
@@ -191,7 +191,7 @@
 				@include rotate(-90deg);
 			}
 
-			&.open::before {
+			&.neos-open::before {
 				@include rotate(90deg);
 				left: 3px;
 			}
@@ -251,7 +251,7 @@
 			margin-bottom: $tightMargin;
 			@include user-select(none);
 
-			&.checkbox {
+			&.neos-checkbox {
 				margin-top: $relatedMargin;
 			}
 		}
@@ -273,7 +273,7 @@
 		input[type="tel"],
 		input[type="color"],
 		input[type="number"],
-		.uneditable-input {
+		.neos-uneditable-input {
 			width: 100%;
 			min-width: $inspectorWidth - $defaultMargin * 2;
 			height: $unit;
@@ -319,7 +319,7 @@
 			& > input[type="tel"],
 			& > input[type="color"],
 			& > input[type="number"],
-			& > .uneditable-input {
+			& > .neos-uneditable-input {
 				border: 2px solid $green;
 			}
 
@@ -348,7 +348,7 @@
 			}
 		}
 
-		.error {
+		.neos-error {
 			& > input[type="text"],
 			& > input[type="password"],
 			& > input[type="datetime"],
@@ -366,7 +366,7 @@
 			& > input[type="tel"],
 			& > input[type="color"],
 			& > input[type="number"],
-			& > .uneditable-input {
+			& > .neos-uneditable-input {
 				color: $warning;
 				border: 2px solid $warning;
 				@include box-shadow(none);
@@ -390,15 +390,15 @@
 
 		@import "../Shared/Checkboxes";
 
-		.input-prepend,
-		.input-append {
+		.neos-input-prepend,
+		.neos-input-append {
 			display: table;
 			width: 100%;
 			white-space: normal;
 			margin: 0;
 		}
 
-		.add-on {
+		.neos-add-on {
 			display: table-cell;
 			background-color: $grayLight;
 			color: #fff;
@@ -415,7 +415,7 @@
 			}
 		}
 
-		.add-on + span {
+		.neos-add-on + span {
 			display: table-cell;
 			padding-bottom: 0;
 
@@ -424,29 +424,29 @@
 			}
 		}
 
-		span + .add-on {
+		span + .neos-add-on {
 			border-left: 1px solid $grayDark;
 			border-right: none;
 		}
 
-		.tooltip {
+		.neos-tooltip {
 			&.bottom {
 				padding: $relatedMargin 0 0 0;
 				margin-left: $tightMargin;
 				margin-top: -1px;
 			}
 
-			&.in {
+			&.neos-in {
 				@include opacity(1);
 			}
 
-			.tooltip-arrow {
+			.neos-tooltip-arrow {
 				margin-left: -$relatedMargin;
 				border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
 				border-bottom-color: $warning;
 			}
 
-			.tooltip-inner {
+			.neos-tooltip-inner {
 				max-width: $inspectorWidth - $defaultMargin * 2;
 				background-color: $warning;
 				font-size: 13px;
@@ -474,7 +474,7 @@
 			@include text-shadow(none);
 			@include box-shadow(none);
 
-			&.disabled,
+			&.neos-disabled,
 			&[disabled] {
 				@include opacity(.5);
 			}

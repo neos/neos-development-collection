@@ -25,7 +25,7 @@
 		}
 
 
-		.dropdown-menu {
+		.neos-dropdown-menu {
 			@import "../Shared/Checkboxes";
 			border: 0;
 			right: 0;
@@ -65,30 +65,30 @@
 	}
 
 	.neos-button-logout {
-		a.dropdown-toggle {
+		a.neos-dropdown-toggle {
 			display: block;
 			text-decoration: none;
 			color: $light-grey2;
 			line-height: $unit;
 
-			.caret {
+			.neos-caret {
 				margin-top: 10px;
 				border-top-color: $light-grey2;
 				margin-right: 10px;
 			}
 		}
 
-		ul.dropdown-menu {
+		ul.neos-dropdown-menu {
 			right: 10px;
 			left: auto;
 			top: 90%;
 
-			.divider {
+			.neos-divider {
 				background-color: #e5e5e5;
 			}
 		}
 
-		.dropdown-menu:before {
+		.neos-dropdown-menu:before {
 			position: absolute;
 			top: -7px;
 			right: 9px;
@@ -100,7 +100,7 @@
 			content: '';
 		}
 
-		.dropdown-menu:after {
+		.neos-dropdown-menu:after {
 			position: absolute;
 			top: -6px;
 			right: 10px;

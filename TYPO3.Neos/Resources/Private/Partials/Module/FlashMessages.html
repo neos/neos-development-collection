@@ -1,20 +1,20 @@
 <f:flashMessages as="flashMessages">
 	<f:for each="{flashMessages}" as="flashMessage">
 		<f:if condition="{0: flashMessage.severity} == {0: 'OK'}">
-			<div class="alert alert-success">
+			<div class="neos-alert neos-alert-success">
 		</f:if>
 		<f:if condition="{0: flashMessage.severity} == {0: 'Notice'}">
-			<div class="alert alert-notice">
+			<div class="neos-alert neos-alert-notice">
 		</f:if>
 		<f:if condition="{0: flashMessage.severity} == {0: 'Warning'}">
-			<div class="alert alert-warning">
+			<div class="neos-alert neos-alert-warning">
 		</f:if>
 		<f:if condition="{0: flashMessage.severity} == {0: 'Error'}">
-			<div class="alert alert-error">
+			<div class="neos-alert neos-alert-error">
 		</f:if>
-			<a class="close" data-dismiss="alert" href="#">×</a>
+			<a class="neos-close" data-dismiss="neos-alert" href="#">×</a>
 			<f:if condition="{flashMessage.title}">
-				<h4 class="alert-heading">{flashMessage.title}</h4>
+				<h4 class="neos-alert-heading">{flashMessage.title}</h4>
 			</f:if>
 			{flashMessage}
 		</div>

@@ -5,7 +5,7 @@
 
 	<f:form.validationResults>
 		<f:if condition="{validationResults.flattenedErrors}">
-			<ul class="error">
+			<ul class="neos-error">
 				<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
 					<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
 				</f:for>

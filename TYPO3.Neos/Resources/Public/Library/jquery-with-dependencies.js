@@ -31391,13 +31391,13 @@ var _registerDnd = function() {
 
     e && e.preventDefault()
 
-    $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
+    $parent.length || ($parent = $this.hasClass('neos-alert') ? $this : $this.parent())
 
     $parent.trigger(e = $.Event('close'))
 
     if (e.isDefaultPrevented()) return
 
-    $parent.removeClass('in')
+    $parent.removeClass('neos-in')
 
     function removeElement() {
       $parent
@@ -31405,7 +31405,7 @@ var _registerDnd = function() {
         .remove()
     }
 
-    $.support.transition && $parent.hasClass('fade') ?
+    $.support.transition && $parent.hasClass('neos-fade') ?
       $parent.on($.support.transition.end, removeElement) :
       removeElement()
   }
@@ -31440,7 +31440,7 @@ var _registerDnd = function() {
  /* ALERT DATA-API
   * ============== */
 
-  $(document).on('click.alert.data-api', dismiss, Alert.prototype.close)
+  $(document).on('click.neos-alert.data-api', dismiss, Alert.prototype.close)
 
 }(window.jQuery);
 /* ============================================================
@@ -31473,9 +31473,9 @@ var _registerDnd = function() {
 
 	var toggle = '[data-toggle=dropdown]'
 		, Dropdown = function (element) {
-			var $el = $(element).on('click.dropdown.data-api', this.toggle)
-			$('html').on('click.dropdown.data-api', function () {
-				$el.parent().removeClass('open')
+			var $el = $(element).on('click.neos-dropdown.data-api', this.toggle)
+			$('html').on('click.neos-dropdown.data-api', function () {
+				$el.parent().removeClass('neos-open')
 			})
 		}
 
@@ -31488,16 +31488,16 @@ var _registerDnd = function() {
 				, $parent
 				, isActive
 
-			if ($this.is('.disabled, :disabled')) return
+			if ($this.is('.neos-disabled, :disabled')) return
 
 			$parent = getParent($this)
 
-			isActive = $parent.hasClass('open')
+			isActive = $parent.hasClass('neos-open')
 
 			clearMenus()
 
 			if (!isActive) {
-				$parent.toggleClass('open')
+				$parent.toggleClass('neos-open')
 			}
 
 			$this.focus()
@@ -31520,18 +31520,18 @@ var _registerDnd = function() {
 			e.preventDefault()
 			e.stopPropagation()
 
-			if ($this.is('.disabled, :disabled')) return
+			if ($this.is('.neos-disabled, :disabled')) return
 
 			$parent = getParent($this)
 
-			isActive = $parent.hasClass('open')
+			isActive = $parent.hasClass('neos-open')
 
 			if (!isActive || (isActive && e.keyCode == 27)) {
 				if (e.which == 27) $parent.find(toggle).focus()
 				return $this.click()
 			}
 
-			$items = $('[role=menu] li:not(.divider):visible a', $parent)
+			$items = $('[role=menu] li:not(.neos-divider):visible a', $parent)
 
 			if (!$items.length) return
 
@@ -31550,7 +31550,7 @@ var _registerDnd = function() {
 
 	function clearMenus() {
 		$(toggle).each(function () {
-			getParent($(this)).removeClass('open')
+			getParent($(this)).removeClass('neos-open')
 		})
 	}
 
@@ -31601,11 +31601,11 @@ var _registerDnd = function() {
 	 * =================================== */
 
 	$(document)
-		.on('click.dropdown.data-api', clearMenus)
-		.on('click.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
-		.on('click.dropdown-menu', function (e) { e.stopPropagation() })
-		.on('click.dropdown.data-api'  , toggle, Dropdown.prototype.toggle)
-		.on('keydown.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
+		.on('click.neos-dropdown.data-api', clearMenus)
+		.on('click.neos-dropdown.data-api', '.neos-dropdown form', function (e) { e.stopPropagation() })
+		.on('click.neos-dropdown-menu', function (e) { e.stopPropagation() })
+		.on('click.neos-dropdown.data-api'  , toggle, Dropdown.prototype.toggle)
+		.on('keydown.neos-dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
 
 }(window.jQuery);
 /* ===========================================================
@@ -31662,7 +31662,7 @@ var _registerDnd = function() {
 			for (i = triggers.length; i--;) {
 				trigger = triggers[i]
 				if (trigger == 'click') {
-					this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
+					this.$element.on('click.neos-' + this.type, this.options.selector, $.proxy(this.toggle, this))
 				} else if (trigger != 'manual') {
 					eventIn = trigger == 'hover' ? 'mouseenter' : 'focus'
 					eventOut = trigger == 'hover' ? 'mouseleave' : 'blur'
@@ -31737,7 +31737,7 @@ var _registerDnd = function() {
 				this.setContent()
 
 				if (this.options.animation) {
-					$tip.addClass('fade')
+					$tip.addClass('neos-fade')
 				}
 
 				placement = typeof this.options.placement == 'function' ?
@@ -31787,7 +31787,7 @@ var _registerDnd = function() {
 			$tip
 				.offset(offset)
 				.addClass(placement)
-				.addClass('in')
+				.addClass('neos-in')
 
 			actualWidth = $tip[0].offsetWidth
 			actualHeight = $tip[0].offsetHeight
@@ -31826,8 +31826,8 @@ var _registerDnd = function() {
 			var $tip = this.tip()
 				, title = this.getTitle()
 
-			$tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title)
-			$tip.removeClass('fade in top bottom left right')
+			$tip.find('.neos-tooltip-inner')[this.options.html ? 'html' : 'text'](title)
+			$tip.removeClass('neos-fade neos-in neos-top neos-bottom neos-left neos-right')
 		}
 
 		, hide: function () {
@@ -31838,7 +31838,7 @@ var _registerDnd = function() {
 			this.$element.trigger(e)
 			if (e.isDefaultPrevented()) return
 
-			$tip.removeClass('in')
+			$tip.removeClass('neos-in')
 
 			function removeWithAnimation() {
 				var timeout = setTimeout(function () {
@@ -31851,7 +31851,7 @@ var _registerDnd = function() {
 				})
 			}
 
-			$.support.transition && this.$tip.hasClass('fade') ?
+			$.support.transition && this.$tip.hasClass('neos-fade') ?
 				removeWithAnimation() :
 				$tip.detach()
 
@@ -31895,7 +31895,7 @@ var _registerDnd = function() {
 		}
 
 		, arrow: function(){
-			return this.$arrow = this.$arrow || this.tip().find(".tooltip-arrow")
+			return this.$arrow = this.$arrow || this.tip().find(".neos-tooltip-arrow")
 		}
 
 		, validate: function () {
@@ -31920,7 +31920,7 @@ var _registerDnd = function() {
 
 		, toggle: function (e) {
 			var self = e ? $(e.currentTarget)[this.type](this._options).data(this.type) : this
-			self.tip().hasClass('in') ? self.hide() : self.show()
+			self.tip().hasClass('neos-in') ? self.hide() : self.show()
 		}
 
 		, destroy: function () {
@@ -31951,7 +31951,7 @@ var _registerDnd = function() {
 		animation: true
 		, placement: 'top'
 		, selector: false
-		, template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+		, template: '<div class="neos-tooltip"><div class="neos-tooltip-arrow"></div><div class="neos-tooltip-inner"></div></div>'
 		, trigger: 'hover focus'
 		, title: ''
 		, delay: 0
@@ -31992,19 +31992,19 @@ var _registerDnd = function() {
   var Notification = function (element, options) {
     // Element collection
     this.$element = $(element);
-    this.$note    = $('<div class="alert"></div>');
+    this.$note    = $('<div class="neos-neos-alert"></div>');
     this.options  = $.extend(true, $.fn.notify.defaults, options, this.$element.data());
 
     // Setup from options
     if(this.options.transition)
       if(this.options.transition == 'fade')
-        this.$note.addClass('in').addClass(this.options.transition);
+        this.$note.addClass('neos-in').addClass(this.options.transition);
       else this.$note.addClass(this.options.transition);
-    else this.$note.addClass('fade').addClass('in');
+    else this.$note.addClass('neos-fade').addClass('neos-in');
 
     if(this.options.type)
-      this.$note.addClass('alert-' + this.options.type);
-    else this.$note.addClass('alert-success');
+      this.$note.addClass('neos-alert-' + this.options.type);
+    else this.$note.addClass('neos-alert-success');
 
     if(this.options.message)
       if(typeof this.options.message === 'string')
@@ -32016,7 +32016,7 @@ var _registerDnd = function() {
           this.$note.text(this.options.message.text);
 
     if(this.options.closable)
-      var link = $('<a class="close pull-right">&times;</a>');
+      var link = $('<a class="neos-close neos-pull-right">&times;</a>');
       $(link).on('click', $.proxy(onClose, this));
       this.$note.prepend(link);
 

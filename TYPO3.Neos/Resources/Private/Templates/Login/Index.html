@@ -2,25 +2,23 @@
 
 <f:section name="head">
 	<title>TYPO3 Neos Login</title>
-	<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'TYPO3.Twitter.Bootstrap')}" />
-	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}" />
 	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Login.css')}" />
 	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.9.1.js')}"></script>
 	<script src="{f:uri.resource(path: 'Library/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
 </f:section>
 
 <f:section name="body">
-	<body>
-		<div class="container">
-			<div class="modal neos-login-box" id="neos-login-box">
-				<div class="modal-header">
+	<body class="neos">
+		<div class="neos-container">
+			<div class="neos-modal neos-login-box" id="neos-login-box">
+				<div class="neos-modal-header">
 					<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png')}" width="115" height="50" alt="TYPO3 Neos" />
 				</div>
-				<div class="modal-body neos">
+				<div class="neos-modal-body neos">
 					<f:form name="login" action="authenticate">
 						<f:form.hidden name="lastVisitedUri" />
-						<div class="row-fluid">
-							<div class="span5">
+						<div class="neos-row-fluid">
+							<div class="neos-span5">
 								<f:alias map="{flashMessages: '{f:render(partial: \'Login\\FlashMessages\')}'}">
 									<f:if condition="{flashMessages}">
 										<f:then>
@@ -37,17 +35,17 @@
 									</f:if>
 								</f:alias>
 							</div>
-							<div class="span6 pull-right row-fluid">
+							<div class="neos-span6 neos-pull-right neos-row-fluid">
 								<fieldset>
-									<div class="controls">
-										<f:form.textfield id="username" type="text" placeholder="Username" class="span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
+									<div class="neos-controls">
+										<f:form.textfield id="username" type="text" placeholder="Username" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
 									</div>
-									<div class="controls">
-										<f:form.textfield id="password" type="password" placeholder="Password" class="span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
+									<div class="neos-controls">
+										<f:form.textfield id="password" type="password" placeholder="Password" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
 									</div>
-									<div class="controls">
+									<div class="neos-controls">
 										<!-- Forgot password link will be here -->
-										<f:form.button type="submit" class="span5 pull-right btn btn-primary btn-warning">
+										<f:form.button type="submit" class="neos-span5 neos-pull-right neos-btn neos-btn-primary neos-btn-warning">
 											Login
 										</f:form.button>
 									</div>

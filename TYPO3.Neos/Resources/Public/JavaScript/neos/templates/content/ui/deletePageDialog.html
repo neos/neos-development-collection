@@ -1,15 +1,15 @@
-<div class="modal" id="pagetreeDeleteDialog">
-	<div class="modal-header">
-		{{view T3.Content.UI.ButtonDialog target="parentView" data-dismiss="modal" action="cancel" class="close neos-button" title="x"}}
+<div class="neos-modal" id="pagetreeDeleteDialog">
+	<div class="neos-modal-header">
+		{{view T3.Content.UI.ButtonDialog target="parentView" data-dismiss="modal" action="cancel" class="neos-close neos-button" title="x"}}
 		<div class="neos-header">Are you sure you want to delete the page "{{view.pageTitle}}"?</div>
 		<p>
 			This will delete the page{{#if view.numberOfChildren}} and it's subpages{{/if}}.<br />
 			This operation can be undone in the workspace management.
 		</p>
 	</div>
-	<div class="modal-footer">
-		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="btn neos-button" title="Cancel"}}
-		{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete" class="btn btn-danger neos-button" title="Delete" icon="icon-trash icon-white"}}
+	<div class="neos-modal-footer">
+		{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel" class="neos-btn neos-button" title="Cancel"}}
+		{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete" class="neos-btn neos-btn-danger neos-button" title="Delete" icon="icon-trash icon-white"}}
 	</div>
 </div>
-<div class="modal-backdrop in"></div>
+<div class="neos-modal-backdrop neos-in"></div>

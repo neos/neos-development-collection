@@ -4,12 +4,12 @@
 
 
 // Container (centered, fixed-width layouts)
-.container {
+.neos-container {
   @include container-fixed();
 }
 
 // Fluid layouts (left aligned, with sidebar, min- & max-width content)
-.container-fluid {
+.neos-container-fluid {
   padding-right: $gridGutterWidth;
   padding-left: $gridGutterWidth;
   @include clearfix();

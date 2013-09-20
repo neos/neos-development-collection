@@ -1,7 +1,7 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 <f:render section="itemList" arguments="{items: items}" />
 <f:section name="itemList">
-	<ul class="nav nav-list">
+	<ul class="neos-nav neos-nav-list">
 		<f:for each="{items}" as="item">
 			<li class="{item.state}">
 				<neos:link.node node="{item.node}">{item.label}</neos:link.node>

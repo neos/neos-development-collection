@@ -7,7 +7,7 @@ define(
 	function (Ember, Button, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
-			classNames: ['neos-publish-menu', 'btn-group'],
+			classNames: ['neos-publish-menu', 'neos-btn-group'],
 			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
 			autoPublish: false,
 
@@ -18,7 +18,7 @@ define(
 			_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
 
 			didInsertElement: function() {
-				this.$().find('.dropdown-toggle').dropdown();
+				this.$().find('.neos-dropdown-toggle').dropdown();
 			},
 
 			PublishButton: Button.extend({

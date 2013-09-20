@@ -4,7 +4,7 @@
 
 
 // Base class
-.well {
+.neos-well {
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
@@ -19,11 +19,11 @@
 }
 
 // Sizes
-.well-large {
+.neos-well-large {
   padding: 24px;
   @include border-radius($borderRadiusLarge);
 }
-.well-small {
+.neos-well-small {
   padding: 9px;
   @include border-radius($borderRadiusSmall);
 }

@@ -1,20 +1,20 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<div class="row neos-module-container indented">
+	<div class="neos-row neos-module-container neos-indented">
 		<h2>Edit user "{account.accountIdentifier}"</h2>
 	</div>
 </f:section>
 <f:section name="content">
 	<f:form action="update" name="person" object="{person}" arguments="{account: account}">
-		<div class="row neos-module-container">
+		<div class="neos-row neos-module-container">
 			<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
 		</div>
 
-		<div class="form-actions form-footer">
-			<f:link.action action="index" class="btn neos-button">Cancel</f:link.action>
-			<div class="pull-right">
-				<f:form.submit value="Save" class="btn btn-primary neos-button" />
+		<div class="neos-form-actions neos-form-footer">
+			<f:link.action action="index" class="neos-btn neos-button">Cancel</f:link.action>
+			<div class="neos-pull-right">
+				<f:form.submit value="Save" class="neos-btn neos-btn-primary neos-button" />
 			</div>
 		</div>
 	</f:form>

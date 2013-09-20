@@ -13,7 +13,7 @@
 			</div>
 			{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="properties"}}
 				{{#if isBoolean}}
-					<label for="{{unbound elementId}}" class="checkbox">
+					<label for="{{unbound elementId}}" class="neos-checkbox">
 						{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content"}}
 						{{unbound ui.label}}
 					</label>
@@ -35,7 +35,7 @@
 	}}Cancel{{/view}}
 
 	{{#if T3.Content.Controller.Inspector.hasValidationErrors}}
-		<button class="neos-button neos-inspector-apply disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
+		<button class="neos-button neos-inspector-apply neos-disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
 			<i class="icon-warning-sign"></i> Apply
 		</button>
 	{{else}}

@@ -1,8 +1,8 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<div class="row neos-module-container indented">
-		<table class="table">
+	<div class="neos-row neos-module-container neos-indented">
+		<table class="neos-table">
 			<thead>
 				<tr>
 					<th>Username</th>
@@ -22,25 +22,25 @@
 						<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 					</td>
 					<td>
-						<div class="pull-right">
-							<f:link.action action="show" arguments="{account: account}" class="btn neos-button" title="Click to view">
+						<div class="neos-pull-right">
+							<f:link.action action="show" arguments="{account: account}" class="neos-btn neos-button" title="Click to view">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{account: account}" class="btn neos-button" title="Click to edit">
+							<f:link.action action="edit" arguments="{account: account}" class="neos-btn neos-button" title="Click to edit">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
 							<f:if condition="{currentAccount} == {account}">
 								<f:then>
-									<button class="btn btn-danger disabled neos-button" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
+									<button class="neos-btn neos-btn-danger neos-disabled neos-button" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
-									<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
+									<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
 										<i class="icon-trash icon-white"></i>
 									</button>
-									<div class="modal hide" id="{flowidentifier}">
-										<div class="modal-header">
-											<button type="button" class="close neos-button" data-dismiss="modal"></button>
+									<div class="neos-modal neos-hide" id="{flowidentifier}">
+										<div class="neos-modal-header">
+											<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
 											<div class="neos-header">Are you sure you want to delete user "{account.accountIdentifier}"?</div>
 											<div>
 												<div class="neos-subheader">
@@ -49,10 +49,10 @@
 												</div>
 											</div>
 										</div>
-										<div class="modal-footer">
-											<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-											<f:form action="delete" arguments="{account: account}" class="inline">
-												<button type="submit" class="btn btn-danger neos-button" title="Delete">
+										<div class="neos-modal-footer">
+											<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+											<f:form action="delete" arguments="{account: account}" class="neos-inline">
+												<button type="submit" class="neos-btn neos-btn-danger neos-button" title="Delete">
 													<i class="icon-trash icon-white"></i>
 													Delete
 												</button>
@@ -67,9 +67,9 @@
 			</f:for>
 		</table>
 	</div>
-	<div class="form-actions form-footer">
-		<div class="pull-right">
-			<f:link.action action="new" class="btn neos-button btn-primary" title="Create new user">
+	<div class="neos-form-actions neos-form-footer">
+		<div class="neos-pull-right">
+			<f:link.action action="new" class="neos-btn neos-button neos-btn-primary" title="Create new user">
 				<i class="icon-user icon-white"></i>
 				New user
 			</f:link.action>

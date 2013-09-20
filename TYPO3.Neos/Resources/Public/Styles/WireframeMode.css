@@ -7,12 +7,12 @@
 .neos-wireframeMode .neos-create-new-content {
   margin-top: 15px;
 }
-.neos-wireframeMode .container:before, .neos-wireframeMode .container:after {
+.neos-wireframeMode .neos-container:before, .neos-wireframeMode .neos-container:after {
   display: table;
   content: "";
   clear: both;
 }
-.neos-wireframeMode .container .column {
+.neos-wireframeMode .neos-container .column {
   float: left;
 }
 
@@ -34,15 +34,15 @@
 #neos-wireframe-breadcrumb a {
   color: #fff;
 }
-#neos-wireframe-breadcrumb .breadcrumb-container {
+#neos-wireframe-breadcrumb .neos-breadcrumb-container {
   line-height: 24px;
 }
-#neos-wireframe-breadcrumb .input-append {
+#neos-wireframe-breadcrumb .neos-input-append {
   text-align: right;
   display: block;
   margin-bottom: 0;
 }
-#neos-wireframe-breadcrumb .input-append input {
+#neos-wireframe-breadcrumb .neos-input-append input {
   padding: 2px 6px;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -52,7 +52,7 @@
   border: 0px none;
   width: 70%;
 }
-#neos-wireframe-breadcrumb .input-append button {
+#neos-wireframe-breadcrumb .neos-input-append button {
   border: 0px none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -212,9 +212,9 @@
 .neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-fourcolumn .columns-25-25-25-25 .column:last-child {
   margin-right: 0;
 }
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .container,
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .container,
-.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-fourcolumn .container {
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-twocolumn .neos-container,
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-threecolumn .neos-container,
+.neos-wireframeMode #neos-wireframe-container .neos-wireframe-contentcollections .typo3-neos-nodetypes-fourcolumn .neos-container {
   width: auto;
 }
 

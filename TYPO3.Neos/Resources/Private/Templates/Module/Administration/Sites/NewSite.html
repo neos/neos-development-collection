@@ -2,55 +2,55 @@
 
 <f:section name="content">
 	<f:form action="createSite">
-		<div class="neos-module-container indented">
-			<div class="row-fluid">
-				<div class="span6">
+		<div class="neos-module-container neos-indented">
+			<div class="neos-row-fluid">
+				<div class="neos-span6">
 					<legend>Import a site</legend>
 					<f:if condition="{sitePackages -> f:count()} > 0">
 						<f:then>
-							<div class="control-group">
-								<label class="control-label" for="site">Select a site</label>
-								<div class="controls">
+							<div class="neos-control-group">
+								<label class="neos-control-label" for="site">Select a site</label>
+								<div class="neos-controls">
 									<f:form.select name="site" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" />
 								</div>
 							</div>
 						</f:then>
 						<f:else>
-							<div class="alert alert-warning">No site packages were available, make sure you have an active site package</div>
+							<div class="neos-alert neos-alert-warning">No site packages were available, make sure you have an active site package</div>
 						</f:else>
 					</f:if>
 				</div>
-				<div class="span6">
+				<div class="neos-span6">
 					<f:if condition="{generatorServiceIsAvailable}">
 						<f:then>
 							<legend>Create a blank site</legend>
-							<div class="control-group">
-								<label class="control-label" for="package-key">Package Key</label>
-								<div class="controls">
+							<div class="neos-control-group">
+								<label class="neos-control-label" for="package-key">Package Key</label>
+								<div class="neos-controls">
 									<f:form.textfield name="packageKey" value="{packageKey}" id="package-key" />
-									<span class="help-block">A valid package key should be in the form <code>VendorName.MyPackageKey</code>.</span>
+									<span class="neos-help-block">A valid package key should be in the form <em>VendorName.MyPackageKey</em>.</span>
 								</div>
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="site-name">Site Name</label>
-								<div class="controls">
+							<div class="neos-control-group">
+								<label class="neos-control-label" for="site-name">Site Name</label>
+								<div class="neos-controls">
 									<f:form.textfield name="siteName" value="{siteName}" id="site-name" />
 								</div>
 							</div>
 						</f:then>
 						<f:else>
-							<div class="alert alert-warning">The Site Kickstarter package is not installed, install it for kickstarting new sites</div>
+							<div class="neos-alert neos-alert-warning">The Site Kickstarter package is not installed, install it for kickstarting new sites</div>
 						</f:else>
 					</f:if>
 				</div>
 			</div>
 		</div>
-		<div class="form-actions form-footer">
-			<div class="pull-left">
-				<f:link.action action="index" class="btn neos-button">Cancel</f:link.action>
+		<div class="neos-form-actions neos-form-footer">
+			<div class="neos-pull-left">
+				<f:link.action action="index" class="neos-btn neos-button">Cancel</f:link.action>
 			</div>
-			<div class="pull-right">
-				<f:form.submit value="Create" class="btn btn-primary neos-button" />
+			<div class="neos-pull-right">
+				<f:form.submit value="Create" class="neos-btn neos-btn-primary neos-button" />
 			</div>
 		</div>
 	</f:form>

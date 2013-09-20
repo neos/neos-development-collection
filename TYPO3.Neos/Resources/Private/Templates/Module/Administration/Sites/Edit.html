@@ -1,26 +1,26 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<div class="neos-module-container indented">
+	<div class="neos-module-container neos-indented">
 		<h2>{site.name}</h2>
 	</div>
 </f:section>
 
 <f:section name="content">
 	<f:form action="updateSite" name="site" object="{site}">
-		<div class="row neos-module-container indented">
-			<div class="row-fluid">
-				<div class="span6">
+		<div class="neos-row neos-module-container neos-indented">
+			<div class="neos-row-fluid">
+				<div class="neos-span6">
 					<legend>Site</legend>
-					<div class="control-group">
-						<label class="control-label" for="name">Name</label>
-						<div class="controls">
+					<div class="neos-control-group">
+						<label class="neos-control-label" for="name">Name</label>
+						<div class="neos-controls">
 							<f:form.textfield property="name" id="name" />
 						</div>
 					</div>
-					<div class="control-group">
-						<label class="control-label" for="node-name">Node name</label>
-						<div class="controls">
+					<div class="neos-control-group">
+						<label class="neos-control-label" for="node-name">Node name</label>
+						<div class="neos-controls">
 							<f:form.textfield property="nodeName" id="node-name" value="{site.nodeName}" />
 							<f:form.hidden name="originalNodeName" value="{site.nodeName}" />
 						</div>
@@ -29,10 +29,10 @@
 						<label>State</label>
 						<f:if condition="{site.online}">
 							<f:then>
-								<span class="badge badge-success">Active</span>
+								<span class="neos-badge neos-badge-success">Active</span>
 							</f:then>
 							<f:else>
-								<span class="badge badge-important">Deactivated</span>
+								<span class="neos-badge neos-badge-important">Deactivated</span>
 							</f:else>
 						</f:if>
 					</p>
@@ -61,10 +61,10 @@
 						</p>
 					</f:if>
 				</div>
-				<div class="span6">
+				<div class="neos-span6">
 					<legend>Domains</legend>
 					<br />
-					<table class="table">
+					<table class="neos-table">
 						<thead>
 							<th>Domain</th>
 						</thead>
@@ -75,41 +75,41 @@
 								<td>
 									<f:if condition="{domain.active} == 1">
 										<f:then>
-											<span class="badge badge-success">Active</span>
+											<span class="neos-badge neos-badge-success">Active</span>
 										</f:then>
 										<f:else>
-											<span class="badge badge-important">Inactive</span>
+											<span class="neos-badge neos-badge-important">Inactive</span>
 										</f:else>
 									</f:if>
 								</td>
 								<td>
-									<div class="pull-right">
-										<f:link.action action="editDomain" arguments="{domain: domain}" class="btn neos-button" title="Click to edit">
+									<div class="neos-pull-right">
+										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-btn neos-button" title="Click to edit">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
 										<f:if condition="{domain.active} == 1">
 											<f:then>
-												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: '{domain: domain}')}" type="submit" class="btn btn-warning neos-button" title="Click to deactivate">
+												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: '{domain: domain}')}" type="submit" class="neos-btn neos-btn-warning neos-button" title="Click to deactivate">
 													<i class="icon-minus-sign icon-white"></i>
 												</button>
 											</f:then>
 											<f:else>
-												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: '{domain: domain}')}" type="submit" class="btn btn-success neos-button" title="Click to activate">
+												<button form="postHelper" formaction="{f:uri.action(action: 'activateDomain', arguments: '{domain: domain}')}" type="submit" class="neos-btn neos-btn-success neos-button" title="Click to activate">
 													<i class="icon-plus-sign icon-white"></i>
 												</button>
 											</f:else>
 										</f:if>
-										<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}-{number}">
+										<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}-{number}">
 											<i class="icon-trash icon-white"></i>
 										</button>
-										<div class="modal hide" id="{site.nodeName}-{number}">
-											<div class="modal-header">
-												<button type="button" class="close neos-button" data-dismiss="modal"></button>
+										<div class="neos-modal neos-hide" id="{site.nodeName}-{number}">
+											<div class="neos-modal-header">
+												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
 												<div class="neos-header">Are you sure you want to delete "{domain.hostPattern}"?</div>
 											</div>
-											<div class="modal-footer">
-												<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-												<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: '{site: site, domain: domain}')}" type="submit" class="btn btn-danger neos-button" title="Delete">
+											<div class="neos-modal-footer">
+												<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+												<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: '{site: site, domain: domain}')}" type="submit" class="neos-btn neos-btn-danger neos-button" title="Delete">
 													<i class="icon-trash icon-white"></i>
 													Delete
 												</button>
@@ -121,8 +121,8 @@
 						</f:for>
 						</tbody>
 					</table>
-					<div class="pull-right">
-						<f:link.action action="newDomain" arguments="{site: site}" class="btn neos-button btn-primary" title="Click to create a new domain">
+					<div class="neos-pull-right">
+						<f:link.action action="newDomain" arguments="{site: site}" class="neos-btn neos-button neos-btn-primary" title="Click to create a new domain">
 							<i class="icon-globe icon-white"></i>
 							Add domain
 						</f:link.action>
@@ -130,23 +130,23 @@
 				</div>
 			</div>
 		</div>
-		<div class="form-actions form-footer">
-			<div class="pull-left">
-				<f:link.action action="index" class="btn neos-button">Cancel</f:link.action>
+		<div class="neos-form-actions neos-form-footer">
+			<div class="neos-pull-left">
+				<f:link.action action="index" class="neos-btn neos-button">Cancel</f:link.action>
 			</div>
-			<div class="pull-right">
-				<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
+			<div class="neos-pull-right">
+				<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
 					<i class="icon-trash icon-white"></i>
 					Delete
 				</button>
-				<div class="modal hide" id="{site.nodeName}">
-					<div class="modal-header">
-						<button type="button" class="close neos-button" data-dismiss="modal"></button>
+				<div class="neos-modal neos-hide" id="{site.nodeName}">
+					<div class="neos-modal-header">
+						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
 						<div class="neos-header">Are you sure you want to delete "{site.name}"?</div>
 					</div>
-					<div class="modal-footer">
-						<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-						<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: '{site: site, domain: domain}')}" type="submit" class="btn btn-danger neos-button" title="Delete">
+					<div class="neos-modal-footer">
+						<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+						<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: '{site: site, domain: domain}')}" type="submit" class="neos-btn neos-btn-danger neos-button" title="Delete">
 							<i class="icon-trash icon-white"></i>
 							Delete
 						</button>
@@ -154,19 +154,19 @@
 				</div>
 				<f:if condition="{site.online}">
 					<f:then>
-						<button form="postHelper" formaction="{f:uri.action(action: 'deactivateSite', arguments: '{site: site}')}" type="submit" class="btn btn-warning neos-button" title="Click to deactivate">
+						<button form="postHelper" formaction="{f:uri.action(action: 'deactivateSite', arguments: '{site: site}')}" type="submit" class="neos-btn neos-btn-warning neos-button" title="Click to deactivate">
 							<i class="icon-minus-sign icon-white"></i>
 							Deactivate
 						</button>
 					</f:then>
 					<f:else>
-						<button form="postHelper" formaction="{f:uri.action(action: 'activateSite', arguments: '{site: site}')}" type="submit" class="btn btn-success neos-button" title="Click to activate">
+						<button form="postHelper" formaction="{f:uri.action(action: 'activateSite', arguments: '{site: site}')}" type="submit" class="neos-btn neos-btn-success neos-button" title="Click to activate">
 							<i class="icon-plus-sign icon-white"></i>
 							Activate
 						</button>
 					</f:else>
 				</f:if>
-				<f:form.submit value="Save" class="btn btn-primary neos-button" />
+				<f:form.submit value="Save" class="neos-btn neos-btn-primary neos-button" />
 			</div>
 		</div>
 	</f:form>

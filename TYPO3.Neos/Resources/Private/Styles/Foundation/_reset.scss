@@ -89,7 +89,7 @@ img {
 
 // Prevent max-width from affecting Google Maps
 #map_canvas img,
-.google-maps img {
+.neos-google-maps img {
   max-width: none;
 }
 
@@ -173,7 +173,7 @@ textarea {
   }
 
   // Don't show links for images, or javascript/internal links
-  .ir a:after,
+  .neos-ir a:after,
   a[href^="javascript:"]:after,
   a[href^="#"]:after {
     content: "";

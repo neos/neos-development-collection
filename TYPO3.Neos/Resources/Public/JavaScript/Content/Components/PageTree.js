@@ -313,14 +313,14 @@ define(
 					var classes = node.data.addClass;
 					if (attributes._hidden === true) {
 						classes = $.trim(classes.replace(/timedVisibility/g, ''));
-						classes = classes + ' hidden';
+						classes = classes + ' neos-hidden';
 					} else if (attributes._hiddenBeforeDateTime !== ''
 						&& new Date(attributes._hiddenBeforeDateTime).getTime() > now
 						|| attributes._hiddenAfterDateTime !== '') {
 						classes = classes + ' timedVisibility';
 					} else {
 						classes = $.trim(classes.replace(/timedVisibility/g, ''));
-						classes = $.trim(classes.replace(/hidden/g, ''));
+						classes = $.trim(classes.replace(/neos-hidden/g, ''));
 					}
 					if (attributes._hiddenInIndex === true) {
 						classes = classes + ' hiddenInIndex';

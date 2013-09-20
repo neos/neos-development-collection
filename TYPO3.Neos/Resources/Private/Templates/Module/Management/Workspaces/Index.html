@@ -6,8 +6,8 @@
 	<f:if condition="{sites}">
 		<f:then>
 			<f:form action="publishOrDiscardNodes">
-				<div class="row neos-module-container indented">
-					<table class="table">
+				<div class="neos-row neos-module-container neos-indented">
+					<table class="neos-table">
 						<thead>
 							<tr>
 								<th class="check"><input type="checkbox" id="check-all" /></th>
@@ -23,12 +23,12 @@
 								<f:for each="{site.documents}" key="documentPath" as="document">
 									<tr>
 										<td colspan="6" class="folder">
-											<div class="pull-left">
+											<div class="neos-pull-left">
 												<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
 												<strong>Path: <neos:link.node node="{document.documentNode}" absolute="1">/{documentPath}</neos:link.node></strong>
 											</div>
 											<f:if condition="{sites -> f:count()} > 1">
-												<div class="pull-right">
+												<div class="neos-pull-right">
 													<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
 												</div>
 											</f:if>
@@ -77,10 +77,10 @@
 											</td>
 											<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
 											<td class="actions">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="btn btn-success neos-button" title="Publish">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-btn neos-btn-success neos-button" title="Publish">
 													<i class="icon-check icon-white"></i>
 												</button>
-												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="btn btn-danger neos-button" title="Discard">
+												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-btn neos-btn-danger neos-button" title="Discard">
 													<i class="icon-trash icon-white"></i>
 												</button>
 											</td>
@@ -105,18 +105,18 @@
 			</f:form>
 		</f:then>
 		<f:else>
-			<div class="row neos-module-container indented"><p>No unpublished changes in this workspace</p></div>
+			<div class="neos-row neos-module-container neos-indented"><p>No unpublished changes in this workspace</p></div>
 		</f:else>
 	</f:if>
 
-	<div class="modal hide" id="discard">
-		<div class="modal-header">
-			<button type="button" class="close neos-button" data-dismiss="modal"></button>
+	<div class="neos-modal neos-hide" id="discard">
+		<div class="neos-modal-header">
+			<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
 			<div class="neos-header">Are you sure you want to discard all changes in the "{workspaceName}" workspace?</div>
 		</div>
-		<div class="modal-footer">
-			<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-			<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="btn btn-danger neos-button">
+		<div class="neos-modal-footer">
+			<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+			<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-btn neos-btn-danger neos-button">
 				<i class="icon-trash icon-white"></i>
 				Discard
 			</button>
@@ -131,17 +131,17 @@
 				var value = false;
 				if ($(this).is(':checked')) {
 					value = true;
-					$('.batch-action').removeClass('disabled').removeAttr('disabled');
+					$('.batch-action').removeClass('neos-disabled').removeAttr('disabled');
 				} else {
-					$('.batch-action').addClass('disabled').attr('disabled', 'disabled');
+					$('.batch-action').addClass('neos-disabled').attr('disabled', 'disabled');
 				}
 				$('tbody input[type="checkbox"]').prop('checked', value);
 			});
 			$('tbody input[type="checkbox"]').change(function() {
 				if ($('tbody input[type="checkbox"]:checked').length > 0) {
-					$('.batch-action').removeClass('disabled').removeAttr('disabled')
+					$('.batch-action').removeClass('neos-disabled').removeAttr('disabled')
 				} else {
-					$('.batch-action').addClass('disabled').attr('disabled', 'disabled');
+					$('.batch-action').addClass('neos-disabled').attr('disabled', 'disabled');
 				}
 			});
 			$('.fold-toggle').click(function() {
@@ -153,23 +153,23 @@
 </f:section>
 
 <f:section name="actions">
-	<div class="form-actions form-footer">
-		<div class="pull-left">
-			<button type="submit" name="moduleArguments[action]" value="publish" class="btn btn-success disabled batch-action neos-button" disabled="disabled">
+	<div class="neos-form-actions neos-form-footer">
+		<div class="neos-pull-left">
+			<button type="submit" name="moduleArguments[action]" value="publish" class="neos-btn neos-btn-success neos-disabled batch-action neos-button" disabled="disabled">
 				<i class="icon-ok-circle icon-white"></i>
 				Publish <strong>selected</strong> changes
 			</button>
-			<button type="submit" name="moduleArguments[action]" value="discard" class="btn btn-warning disabled batch-action neos-button" disabled="disabled">
+			<button type="submit" name="moduleArguments[action]" value="discard" class="neos-btn neos-btn-warning neos-disabled batch-action neos-button" disabled="disabled">
 				<i class="icon-remove-circle icon-white"></i>
 				Discard <strong>selected</strong> changes
 			</button>
 		</div>
-		<div class="pull-right">
-			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="btn btn-primary neos-button">
+		<div class="neos-pull-right">
+			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-btn neos-btn-primary neos-button">
 				<i class="icon-refresh icon-white"></i>
 				Publish <strong>all</strong> changes
 			</button>
-			<button class="btn btn-danger neos-button" data-toggle="modal" href="#discard">
+			<button class="neos-btn neos-btn-danger neos-button" data-toggle="modal" href="#discard">
 				<i class="icon-trash icon-white"></i>
 				Discard <strong>all</strong> changes
 			</button>

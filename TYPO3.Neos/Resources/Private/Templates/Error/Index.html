@@ -10,17 +10,17 @@
 
 <f:section name="body">
 	<body>
-		<div class="container neos">
-			<div class="modal neos-login-box">
-				<div class="modal-header">
+		<div class="neos-container neos">
+			<div class="neos-modal neos-login-box">
+				<div class="neos-modal-header">
 					<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png', package: 'TYPO3.Neos')}" width="115" height="50" alt="TYPO3 Neos" />
 				</div>
-				<div class="modal-body">
-					<div class="row-fluid">
-						<div class="span3 typo3-message-icon">
+				<div class="neos-modal-body">
+					<div class="neos-row-fluid">
+						<div class="neos-span3 typo3-message-icon">
 							<i class="icon-exclamation-sign"></i>
 						</div>
-						<div class="span9">
+						<div class="neos-span9">
 							<h1>{errorTitle}</h1>
 							<p>{errorDescription -> f:format.raw()}</p>
 						</div>

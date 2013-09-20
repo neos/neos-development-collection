@@ -12,7 +12,7 @@
 
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
 		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" target="parentView" action="_beforeMediaBrowserIsShown" label="Media"}}
-		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:disabled"}}>
+		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled"}}>
 			{{view.fileChooserLabel}}
 		</button>
 		{{view view.Button isVisibleBinding="view._uploadButtonShown" target="parentView" class="neos-inspector-image-upload-button" action="upload" labelBinding="view.uploaderLabel" allowedFileTypesBinding="view.allowedFileTypes" disabledBinding="view._uploadInProgress"}}
@@ -21,22 +21,22 @@
 
 	<div class="neos-inspector-image-width">
 		<label {{bindAttr for="view.imageWidthField.elementId"}}>Width:</label>
-		<div class="input-prepend input-append">
-			<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle"}}</span>
+		<div class="neos-input-prepend neos-input-append">
+			<span class="neos-add-on">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle"}}</span>
 			<span>
 				{{view view.TextFieldEditor viewName="imageWidthField" type="number" pattern="\d*" step="1" min="0" name="width" valueBinding="view._finalImageScale.w"}}
 			</span>
-			<span class="add-on">px</span>
+			<span class="neos-add-on">px</span>
 		</div>
 	</div>
 	<div class="neos-inspector-image-height">
 		<label {{bindAttr for="view.imageHeightField.elementId"}}>Height:</label>
-		<div class="input-prepend input-append">
-			<span class="add-on">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle"}}</span>
+		<div class="neos-input-prepend neos-input-append">
+			<span class="neos-add-on">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle"}}</span>
 			<span>
 				{{view view.TextFieldEditor viewName="imageHeightField" type="number" pattern="\d*" step="1" min="0" name="height" valueBinding="view._finalImageScale.computedHeight"}}
 			</span>
-			<span class="add-on">px</span>
+			<span class="neos-add-on">px</span>
 		</div>
 	</div>
 </div>

@@ -7,7 +7,7 @@ define(
 	],
 	function($, Ember, ContentElementHandle, SectionHandle) {
 		return Ember.View.extend({
-			classNameBindings: ['isPage:hide'],
+			classNameBindings: ['isPage:neos-hide'],
 			classNames: ['neos-handle-container'],
 			template: Ember.Handlebars.compile(
 				'{{view view.ContentElementHandle isVisibleBinding="view.isContentElementBar"}}' +

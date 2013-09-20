@@ -13,7 +13,7 @@ define(
 			template: Ember.Handlebars.compile(template),
 			ToggleMenuPanelHeadline: Ember.View.extend({
 				tagName: 'div',
-				classNameBindings: ['_collapsed:collapsed:open'],
+				classNameBindings: ['_collapsed:collapsed:neos-open'],
 				_collapsed: false,
 
 				didInsertElement: function() {

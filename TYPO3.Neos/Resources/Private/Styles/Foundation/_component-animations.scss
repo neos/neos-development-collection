@@ -3,20 +3,20 @@
 // --------------------------------------------------
 
 
-.fade {
+.neos-fade {
   opacity: 0;
   @include transition(opacity .15s linear);
-  &.in {
+  &.neos-in {
     opacity: 1;
   }
 }
 
-.collapse {
+.neos-collapse {
   position: relative;
   height: 0;
   overflow: hidden;
   @include transition(height .35s ease);
-  &.in {
+  &.neos-in {
     height: auto;
   }
 }

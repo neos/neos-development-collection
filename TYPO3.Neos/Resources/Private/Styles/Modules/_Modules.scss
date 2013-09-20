@@ -16,13 +16,21 @@
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 	}
 
-	.alert {
+	.neos-alert {
 		font-size: 13px;
 		line-height: 18px;
 	}
 
-	form.inline {
+	form.neos-inline {
 		display: inline-block;
+	}
+
+	.neos-help-block em {
+		padding: 2px 4px;
+		color: #d14;
+		background-color: #f7f7f9;
+		border: 1px solid #e1e1e8;
+		white-space: nowrap;
 	}
 
 	&.neos-module-user-usersettings,
@@ -46,7 +54,7 @@
 	}
 
 	// Navigation elements
-	.nav-pills > li > a {
+	.neos-nav-pills > li > a {
 		padding: 0 20px 0 20px;
 		margin: 0px;
 		color: darken($light-grey2, 20%);
@@ -60,12 +68,12 @@
 			background: transparent;
 		}
 	}
-	.nav-pills > li:first-child a {
+	.neos-nav-pills > li:first-child a {
 		padding-left: 15px;
 	}
-	.nav-pills {
+	.neos-nav-pills {
 		li {
-			&.active a {
+			&.neos-active a {
 				background: transparent;
 				color: $lightest;
 			}
@@ -86,11 +94,11 @@
 			p {
 				color: $light-grey;
 			}
-			.alert p {
+			.neos-alert p {
 				color: inherit;
 			}
 
-			.breadcrumb {
+			.neos-breadcrumb {
 				@include border-top-radius(4px);
 				@include border-bottom-radius(0px);
 				background-color: #666;
@@ -101,7 +109,7 @@
 					@include text-shadow(0 0 0 transparent);
 					color: darken($lightest, 10%);
 
-					&.active {
+					&.neos-active {
 					}
 				}
 
@@ -120,7 +128,7 @@
 			.neos-module-container {
 				padding: 0px 50px 0px 50px;
 
-				&.indented {
+				&.neos-indented {
 					margin-left: 0px;
 				}
 			}
@@ -140,10 +148,10 @@
 	// Tables within Modules
 	table {
 		td > .neos-button,
-		td > div.pull-right > .neos-button {
+		td > div.neos-pull-right > .neos-button {
 
 			// Button
-			&.btn {
+			&.neos-btn {
 				@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
 				border: 1px solid darken($light-grey4, 5%);
 				border-bottom-color: darken($light-grey4, 10%);
@@ -158,16 +166,16 @@
 					border-bottom-color: darken($light-grey3, 20%);
 				}
 
-				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&.neos-disabled,
+				&.neos-disabled:hover,
+				&.neos-disabled:active,
+				&.neos-disabled:focus {
 					@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
 				}
 			}
 
 			// Warning Button
-			&.btn-warning {
+			&.neos-btn-warning {
 				@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
 				border: 1px solid darken($light-grey4, 5%);
 				border-bottom-color: darken($light-grey4, 10%);
@@ -182,16 +190,16 @@
 					border-bottom-color: darken($orange, 20%);
 				}
 
-				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&.neos-disabled,
+				&.neos-disabled:hover,
+				&.neos-disabled:active,
+				&.neos-disabled:focus {
 					@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
 				}
 			}
 
 			// Success Button
-			&.btn-success {
+			&.neos-btn-success {
 				@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
 				border: 1px solid darken($light-grey4, 5%);
 				border-bottom-color: darken($light-grey4, 10%);
@@ -206,16 +214,16 @@
 					border-bottom-color: darken($green, 20%);
 				}
 
-				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&.neos-disabled,
+				&.neos-disabled:hover,
+				&.neos-disabled:active,
+				&.neos-disabled:focus {
 					@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
 				}
 			}
 
 			// Danger Button
-			&.btn-danger {
+			&.neos-btn-danger {
 				@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
 				border: 1px solid darken($light-grey4, 5%);
 				border-bottom-color: darken($light-grey4, 10%);
@@ -230,10 +238,10 @@
 					border-bottom-color: darken($red, 20%);
 				}
 
-				&.disabled,
-				&.disabled:hover,
-				&.disabled:active,
-				&.disabled:focus {
+				&.neos-disabled,
+				&.neos-disabled:hover,
+				&.neos-disabled:active,
+				&.neos-disabled:focus {
 					@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
 				}
 			}

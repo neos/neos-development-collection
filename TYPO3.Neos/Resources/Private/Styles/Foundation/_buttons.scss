@@ -7,11 +7,11 @@
 // --------------------------------------------------
 
 // Core
-.btn {
+.neos-btn {
   display: inline-block;
   @include ie7-inline-block();
   padding: 4px 12px;
-  margin-bottom: 0; // For input.btn
+  margin-bottom: 0; // For input.neos-btn
   font-size: $baseFontSize;
   line-height: $baseLineHeight;
   text-align: center;
@@ -43,7 +43,7 @@
   }
 
   // Active state
-  &.active,
+  &.neos-active,
   &:active {
     background-image: none;
     outline: 0;
@@ -51,7 +51,7 @@
   }
 
   // Disabled state
-  &.disabled,
+  &.neos-disabled,
   &[disabled] {
     cursor: default;
     background-image: none;
@@ -67,33 +67,33 @@
 // --------------------------------------------------
 
 // Large
-.btn-large {
+.neos-btn-large {
   padding: $paddingLarge;
   font-size: $fontSizeLarge;
   @include border-radius($borderRadiusLarge);
 }
-.btn-large [class^="icon-"],
-.btn-large [class*=" icon-"] {
+.neos-btn-large [class^="icon-"],
+.neos-btn-large [class*=" icon-"] {
   margin-top: 4px;
 }
 
 // Small
-.btn-small {
+.neos-btn-small {
   padding: $paddingSmall;
   font-size: $fontSizeSmall;
   @include border-radius($borderRadiusSmall);
 }
-.btn-small [class^="icon-"],
-.btn-small [class*=" icon-"] {
+.neos-btn-small [class^="icon-"],
+.neos-btn-small [class*=" icon-"] {
   margin-top: 0;
 }
-.btn-mini [class^="icon-"],
-.btn-mini [class*=" icon-"] {
+.neos-btn-mini [class^="icon-"],
+.neos-btn-mini [class*=" icon-"] {
   margin-top: -1px;
 }
 
 // Mini
-.btn-mini {
+.neos-btn-mini {
   padding: $paddingMini;
   font-size: $fontSizeMini;
   line-height: $baseLineHeight * .8;
@@ -104,7 +104,7 @@
 // Block button
 // -------------------------
 
-.btn-block {
+.neos-btn-block {
   display: block;
   width: 100%;
   padding-left: 0;
@@ -113,7 +113,7 @@
 }
 
 // Vertically space out multiple block buttons
-.btn-block + .btn-block {
+.neos-btn-block + .neos-btn-block {
   margin-top: 5px;
 }
 
@@ -121,7 +121,7 @@
 input[type="submit"],
 input[type="reset"],
 input[type="button"] {
-  &.btn-block {
+  &.neos-btn-block {
     width: 100%;
   }
 }
@@ -132,38 +132,38 @@ input[type="button"] {
 // --------------------------------------------------
 
 // Provide *some* extra contrast for those who can get it
-.btn-primary.active,
-.btn-warning.active,
-.btn-danger.active,
-.btn-success.active,
-.btn-info.active,
-.btn-inverse.active {
+.neos-btn-primary.neos-active,
+.neos-btn-warning.neos-active,
+.neos-btn-danger.neos-active,
+.neos-btn-success.neos-active,
+.neos-btn-info.neos-active,
+.neos-btn-inverse.neos-active {
   color: rgba(255,255,255,.75);
 }
 
 // Set the backgrounds
 // -------------------------
-.btn-primary {
+.neos-btn-primary {
   @include buttonBackground($btnPrimaryBackground, $btnPrimaryBackgroundHighlight);
 }
 // Warning appears are orange
-.btn-warning {
+.neos-btn-warning {
   @include buttonBackground($btnWarningBackground, $btnWarningBackgroundHighlight);
 }
 // Danger and error appear as red
-.btn-danger {
+.neos-btn-danger {
   @include buttonBackground($btnDangerBackground, $btnDangerBackgroundHighlight);
 }
 // Success appears as green
-.btn-success {
+.neos-btn-success {
   @include buttonBackground($btnSuccessBackground, $btnSuccessBackgroundHighlight);
 }
 // Info appears as a neutral blue
-.btn-info {
+.neos-btn-info {
   @include buttonBackground($btnInfoBackground, $btnInfoBackgroundHighlight);
 }
 // Inverse appears as dark gray
-.btn-inverse {
+.neos-btn-inverse {
   @include buttonBackground($btnInverseBackground, $btnInverseBackgroundHighlight);
 }
 
@@ -171,8 +171,8 @@ input[type="button"] {
 // Cross-browser Jank
 // --------------------------------------------------
 
-button.btn,
-input[type="submit"].btn {
+button.neos-btn,
+input[type="submit"].neos-btn {
 
   // Firefox 3.6 only I believe
   &::-moz-focus-inner {
@@ -184,15 +184,15 @@ input[type="submit"].btn {
   *padding-top: 3px;
   *padding-bottom: 3px;
 
-  &.btn-large {
+  &.neos-btn-large {
     *padding-top: 7px;
     *padding-bottom: 7px;
   }
-  &.btn-small {
+  &.neos-btn-small {
     *padding-top: 3px;
     *padding-bottom: 3px;
   }
-  &.btn-mini {
+  &.neos-btn-mini {
     *padding-top: 1px;
     *padding-bottom: 1px;
   }
@@ -203,27 +203,27 @@ input[type="submit"].btn {
 // --------------------------------------------------
 
 // Make a button look and behave like a link
-.btn-link,
-.btn-link:active,
-.btn-link[disabled] {
+.neos-btn-link,
+.neos-btn-link:active,
+.neos-btn-link[disabled] {
   background-color: transparent;
   background-image: none;
   @include box-shadow(none);
 }
-.btn-link {
+.neos-btn-link {
   border-color: transparent;
   cursor: pointer;
   color: $linkColor;
   @include border-radius(0);
 }
-.btn-link:hover,
-.btn-link:focus {
+.neos-btn-link:hover,
+.neos-btn-link:focus {
   color: $linkColorHover;
   text-decoration: underline;
   background-color: transparent;
 }
-.btn-link[disabled]:hover,
-.btn-link[disabled]:focus {
+.neos-btn-link[disabled]:hover,
+.neos-btn-link[disabled]:focus {
   color: $grayDark;
   text-decoration: none;
 }

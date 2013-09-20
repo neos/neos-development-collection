@@ -1,7 +1,7 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<div class="row neos-module-container indented">
+	<div class="neos-row neos-module-container neos-indented">
 		<h2>New user</h2>
 	</div>
 </f:section>
@@ -9,54 +9,54 @@
 <f:section name="content">
 	<f:form action="create" name="account">
 
-		<div class="row neos-module-container">
-			<fieldset class="span5">
+		<div class="neos-row neos-module-container">
+			<fieldset class="neos-span5">
 				<legend>User</legend>
 
-				<div class="control-group">
-					<label class="control-label" for="identifier">Username</label>
-					<div class="controls">
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="identifier">Username</label>
+					<div class="neos-controls">
 						<f:form.textfield name="identifier" id="identifier" />
 					</div>
 				</div>
 
-				<div class="control-group">
-					<label class="control-label" for="password[0]">Password</label>
-					<div class="controls">
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="password[0]">Password</label>
+					<div class="neos-controls">
 						<f:form.password name="password[0]" id="password[0]" />
 					</div>
 				</div>
 
-				<div class="control-group">
-					<label class="control-label" for="password[1]">Repeat password</label>
-					<div class="controls">
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="password[1]">Repeat password</label>
+					<div class="neos-controls">
 						<f:form.password name="password[1]" id="password[1]" />
 					</div>
 				</div>
 			</fieldset>
 
-			<fieldset class="span5">
+			<fieldset class="neos-span5">
 				<legend>Personal Data</legend>
 
-				<div class="control-group">
-					<label class="control-label" for="firstName">First Name</label>
-					<div class="controls">
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="firstName">First Name</label>
+					<div class="neos-controls">
 							<f:form.textfield name="firstName" id="firstName" />
 					</div>
 				</div>
-				<div class="control-group">
-					<label class="control-label" for="lastName">Last Name</label>
-					<div class="controls">
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="lastName">Last Name</label>
+					<div class="neos-controls">
 							<f:form.textfield name="lastName" id="lastName"/>
 					</div>
 				</div>
 			</fieldset>
 		</div>
 
-		<div class="form-actions form-footer">
-			<f:link.action action="index" class="btn neos-button">Cancel</f:link.action>
-			<div class="pull-right">
-				<f:form.submit value="Save" class="btn btn-primary neos-button" />
+		<div class="neos-form-actions neos-form-footer">
+			<f:link.action action="index" class="neos-btn neos-button">Cancel</f:link.action>
+			<div class="neos-pull-right">
+				<f:form.submit value="Save" class="neos-btn neos-btn-primary neos-button" />
 			</div>
 		</div>
 	</f:form>

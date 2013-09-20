@@ -3,23 +3,23 @@
 // --------------------------------------------------
 
 
-// Use the .menu class on any <li> element within the topbar or ul.tabs and you'll get some superfancy dropdowns
-.dropup,
-.dropdown {
+// Use the .neos-menu class on any <li> element within the topbar or ul.neos-tabs and you'll get some superfancy dropdowns
+.neos-dropup,
+	.neos-dropdown {
   position: relative;
 }
-.dropdown-toggle {
+.neos-dropdown-toggle {
   // The caret makes the toggle a bit too tall in IE7
   *margin-bottom: -3px;
 }
-.dropdown-toggle:active,
-.open .dropdown-toggle {
+.neos-dropdown-toggle:active,
+.neos-open .neos-dropdown-toggle {
   outline: 0;
 }
 
 // Dropdown arrow/caret
 // --------------------
-.caret {
+.neos-caret {
   display: inline-block;
   width: 0;
   height: 0;
@@ -31,14 +31,14 @@
 }
 
 // Place the caret
-.dropdown .caret {
+.neos-dropdown .neos-caret {
   margin-top: 8px;
   margin-left: 2px;
 }
 
 // The dropdown menu (ul)
 // ----------------------
-.dropdown-menu {
+.neos-dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
@@ -61,13 +61,13 @@
           background-clip: padding-box;
 
   // Aligns the dropdown menu to right
-  &.pull-right {
+  &.neos-pull-right {
     right: 0;
     left: auto;
   }
 
   // Dividers (basically an hr) within the dropdown
-  .divider {
+  .neos-divider {
     @include nav-divider($dropdownDividerTop, $dropdownDividerBottom);
   }
 
@@ -85,10 +85,10 @@
 
 // Hover/Focus state
 // -----------
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus,
-.dropdown-submenu:hover > a,
-.dropdown-submenu:focus > a {
+.neos-dropdown-menu > li > a:hover,
+.neos-dropdown-menu > li > a:focus,
+.neos-dropdown-submenu:hover > a,
+.neos-dropdown-submenu:focus > a {
   text-decoration: none;
   color: $dropdownLinkColorHover;
   @include gradient-vertical($dropdownLinkBackgroundHover, darken($dropdownLinkBackgroundHover, 5%));
@@ -96,9 +96,9 @@
 
 // Active state
 // ------------
-.dropdown-menu > .active > a,
-.dropdown-menu > .active > a:hover,
-.dropdown-menu > .active > a:focus {
+.neos-dropdown-menu > .neos-active > a,
+.neos-dropdown-menu > .neos-active > a:hover,
+.neos-dropdown-menu > .neos-active > a:focus {
   color: $dropdownLinkColorActive;
   text-decoration: none;
   outline: 0;
@@ -108,14 +108,14 @@
 // Disabled state
 // --------------
 // Gray out text and ensure the hover/focus state remains gray
-.dropdown-menu > .disabled > a,
-.dropdown-menu > .disabled > a:hover,
-.dropdown-menu > .disabled > a:focus {
+.neos-dropdown-menu > .neos-disabled > a,
+.neos-dropdown-menu > .neos-disabled > a:hover,
+.neos-dropdown-menu > .neos-disabled > a:focus {
   color: $grayLight;
 }
 // Nuke hover/focus effects
-.dropdown-menu > .disabled > a:hover,
-.dropdown-menu > .disabled > a:focus {
+.neos-dropdown-menu > .neos-disabled > a:hover,
+.neos-dropdown-menu > .neos-disabled > a:focus {
   text-decoration: none;
   background-color: transparent;
   background-image: none; // Remove CSS gradient
@@ -125,37 +125,37 @@
 
 // Open state for the dropdown
 // ---------------------------
-.open {
+.neos-open {
   // IE7's z-index only goes to the nearest positioned ancestor, which would
   // make the menu appear below buttons that appeared later on the page
   *z-index: $zindexDropdown;
 
-  & > .dropdown-menu {
+  & > .neos-dropdown-menu {
     display: block;
   }
 }
 
 // Right aligned dropdowns
 // ---------------------------
-.pull-right > .dropdown-menu {
+.neos-pull-right > .neos-dropdown-menu {
   right: 0;
   left: auto;
 }
 
 // Allow for dropdowns to go bottom up (aka, dropup-menu)
 // ------------------------------------------------------
-// Just add .dropup after the standard .dropdown class and you're set, bro.
+// Just add .neos-dropup after the standard .neos-dropdown class and you're set, bro.
 // TODO: abstract this so that the navbar fixed styles are not placed here?
-.dropup,
-.navbar-fixed-bottom .dropdown {
+.neos-dropup,
+.neos-navbar-fixed-bottom .neos-dropdown {
   // Reverse the caret
-  .caret {
+  .neos-caret {
     border-top: 0;
     border-bottom: 4px solid $black;
     content: "";
   }
   // Different positioning for bottom up menu
-  .dropdown-menu {
+  .neos-dropdown-menu {
     top: auto;
     bottom: 100%;
     margin-bottom: 1px;
@@ -164,23 +164,23 @@
 
 // Sub menus
 // ---------------------------
-.dropdown-submenu {
+.neos-dropdown-submenu {
   position: relative;
 }
 // Default dropdowns
-.dropdown-submenu > .dropdown-menu {
+.neos-dropdown-submenu > .neos-dropdown-menu {
   top: 0;
   left: 100%;
   margin-top: -6px;
   margin-left: -1px;
   @include border-radius(0 6px 6px 6px);
 }
-.dropdown-submenu:hover > .dropdown-menu {
+.neos-dropdown-submenu:hover > .neos-dropdown-menu {
   display: block;
 }
 
 // Dropups
-.dropup .dropdown-submenu > .dropdown-menu {
+.neos-dropup .neos-dropdown-submenu > .neos-dropdown-menu {
   top: auto;
   bottom: 0;
   margin-top: 0;
@@ -189,7 +189,7 @@
 }
 
 // Caret to indicate there is a submenu
-.dropdown-submenu > a:after {
+.neos-dropdown-submenu > a:after {
   display: block;
   content: " ";
   float: right;
@@ -202,18 +202,18 @@
   margin-top: 5px;
   margin-right: -10px;
 }
-.dropdown-submenu:hover > a:after {
+.neos-dropdown-submenu:hover > a:after {
   border-left-color: $dropdownLinkColorHover;
 }
 
 // Left aligned submenus
-.dropdown-submenu.pull-left {
+.neos-dropdown-submenu.neos-pull-left {
   // Undo the float
-  // Yes, this is awkward since .pull-left adds a float, but it sticks to our conventions elsewhere.
+  // Yes, this is awkward since .neos-pull-left adds a float, but it sticks to our conventions elsewhere.
   float: none;
 
   // Positioning the submenu
-  > .dropdown-menu {
+  > .neos-dropdown-menu {
     left: -100%;
     margin-left: 10px;
     @include border-radius(6px 0 6px 6px);
@@ -223,14 +223,14 @@
 // Tweak nav headers
 // -----------------
 // Increase padding from 15px to 20px on sides
-.dropdown .dropdown-menu .nav-header {
+.neos-dropdown .neos-dropdown-menu .neos-nav-header {
   padding-left: 20px;
   padding-right: 20px;
 }
 
 // Typeahead
 // ---------
-.typeahead {
+.neos-typeahead {
   z-index: 1051;
   margin-top: 2px; // give it some space to breathe
   @include border-radius($baseBorderRadius);

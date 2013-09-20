@@ -12,18 +12,14 @@
 	@import "Foundation/reset";
 
 	// Grid system and page structure
-	@import "Foundation/scaffolding";
 	@import "Foundation/grid";
 	@import "Foundation/layouts";
 
 	// Base CSS
-	@import "Foundation/type";
-	@import "Foundation/code";
 	@import "Foundation/forms";
 	@import "Foundation/tables";
 
 	// Components: common
-	@import "Foundation/sprites";
 	@import "Foundation/dropdowns";
 	@import "Foundation/wells";
 	@import "Foundation/component-animations";
@@ -35,24 +31,14 @@
 	@import "Foundation/alerts"; // Note: alerts share common CSS with buttons and thus have styles in buttons
 
 	// Components: Nav
-	@import "Foundation/navs";
-	@import "Foundation/navbar";
 	@import "Foundation/breadcrumbs";
-	@import "Foundation/pagination";
-	@import "Foundation/pager";
 
 	// Components: Modals and Tooltips
 	@import "Foundation/modals";
 	@import "Foundation/tooltip";
 
 	// Components: Misc
-	@import "Foundation/thumbnails";
-	@import "Foundation/media";
 	@import "Foundation/labels-badges";
-//	@import "Foundation/progress-bars";
-	@import "Foundation/accordion";
-	@import "Foundation/carousel";
-	@import "Foundation/hero-unit";
 
 	// Utility classes
 	@import "Foundation/utilities"; // Has to be last to override when necessary

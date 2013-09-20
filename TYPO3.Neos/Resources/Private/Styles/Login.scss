@@ -1,5 +1,8 @@
 @import "compass";
+@import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
+@import "Foundation/mixins";
 @import "Constants";
+@import "Mixins";
 
 // Fontawesome include
 [class^="icon-"], [class*=" icon-"] {
@@ -45,6 +48,23 @@ $font-share: Share-Regular, Arial, sans-serif;
 	@include border-radius(3px);
 }
 
+.neos {
+	// CSS Reset
+	@import "Foundation/reset";
+
+	// Grid system and page structure
+	@import "Foundation/grid";
+
+	// Base CSS
+	@import "Foundation/forms";
+
+	// Components: Buttons & Alerts
+	@import "Foundation/buttons";
+
+	// Components: Modals and Tooltips
+	@import "Foundation/modals";
+}
+
 html {
 	height: 100%;
 	overflow: auto;
@@ -64,59 +84,61 @@ body {
 	height: 100%;
 }
 
-.container {
-	@include background-image(radial-gradient(50% 50%, rgba(255, 255, 255, 0.10) 10px, rgba(255, 255, 255, 0) 500px));
-	width: 100%;
-	height: 100%;
-}
-
-.modal {
-	background-color: #2B2B2B;
-}
-
-.btn-link {
-	text-shadow: none;
-	font-size: 11px;
-	color: #888888;
-}
-
-.neos-login-box {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 450px;
-	height: 250px;
-	margin-top: -125px;
-	margin-left: -225px;
-	z-index: 10;
-
-	p {
-		color: #CCCCCC;
+.neos {
+	.neos-container {
+		@include background-image(radial-gradient(50% 50%, rgba(255, 255, 255, 0.10) 10px, rgba(255, 255, 255, 0) 500px));
+		width: 100%;
+		height: 100%;
 	}
 
-	.modal-header {
-		padding-left: 30px;
-		background-color: #252525;
-		border-bottom: 1px solid #444444;
+	.neos-modal {
+		background-color: #2B2B2B;
 	}
 
-	.modal-body {
-		padding: 30px;
-		background: #2c2c2c;
-		@include box-shadow(0 2px 2px 1px #2c2c2c);
-		overflow: hidden;
+	.neos-btn-link {
+		text-shadow: none;
+		font-size: 11px;
+		color: #888888;
+	}
 
-		h1 {
-			margin: 0;
-			font-weight: normal;
-			font-size: 14px;
+	.neos-login-box {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 450px;
+		height: 250px;
+		margin-top: -125px;
+		margin-left: -225px;
+		z-index: 10;
+
+		p {
+			color: #CCCCCC;
 		}
 
-		.typo3-message-icon {
-			font-size: 70px;
-			font-weight:bold;
-			color: $light-orange;
-			margin-top: 15px;
+		.neos-modal-header {
+			padding-left: 30px;
+			background-color: #252525;
+			border-bottom: 1px solid #444444;
+		}
+
+		.neos-modal-body {
+			padding: 30px;
+			background: #2c2c2c;
+			@include box-shadow(0 2px 2px 1px #2c2c2c);
+			overflow: hidden;
+
+			h1 {
+				margin: 0;
+				font-weight: normal;
+				font-size: 14px;
+			}
+
+			.typo3-message-icon {
+				font-size: 70px;
+				font-weight:bold;
+				color: $light-orange;
+				margin-top: 15px;
+			}
 		}
 	}
 }

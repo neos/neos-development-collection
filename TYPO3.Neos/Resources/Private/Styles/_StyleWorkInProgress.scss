@@ -146,13 +146,13 @@
 		.dynatree-exp-el,
 		.dynatree-exp-edl {
 			.dynatree-expander {
-				@extend .icon-caret-right;
+				@extend .icon-neos-caret-right;
 				@include rotate(45deg);
 				top: 3px;
 			}
 		}
 
-		.hidden {
+		.neos-hidden {
 			display: inherit;
 			visibility: visible;
 			@include icon-FontAwesome();
@@ -270,7 +270,7 @@ button.neos-create-new-content {
 	position: fixed;
 	color: white;
 	z-index: 10100;
-	.alert {
+	.neos-alert {
 		background-color: $dark-grey2;
 		color: white;
 		@include text-shadow(none);
@@ -286,23 +286,23 @@ button.neos-create-new-content {
 		margin-bottom: 10px;
 		word-wrap: break-word;
 		@include border-radius(0);
-		&.alert-error {
+		&.neos-alert-error {
 			border-top-color: $red;
 		}
-		&.alert-success {
+		&.neos-alert-success {
 			border-top-color: $green;
 		}
-		&.alert-warning {
+		&.neos-alert-warning {
 			border-top-color: $light-orange;
 		}
-		&.alert-info {
+		&.neos-alert-info {
 			border-top-color: $blue;
 		}
 		i {
 			padding-right: 5px;
 			vertical-align: text-bottom;
 		}
-		.close {
+		.neos-close {
 			top: -6px !important;
 			font-size: 16px;
 			color: black;
@@ -322,10 +322,10 @@ button.neos-create-new-content {
 	background-position: 50% 50% !important;
 }
 
-.popover {
+.neos-popover {
 	display: none;
 
-	&.active {
+	&.neos-active {
 		display: block;
 	}
 }
@@ -413,7 +413,7 @@ button.neos-button.neos-connection-status-down {
 }
 
 // Alert Windows
-.alert {
+.neos-alert {
 	p {
 		margin: 0px;
 
@@ -439,7 +439,7 @@ button.neos-button.neos-connection-status-down {
 		}
 	}
 
-	.close {
+	.neos-close {
 		top: -4px;
 		color: $light-grey4;
 		@include opacity(1);
@@ -460,7 +460,7 @@ button.neos-button.neos-connection-status-down {
 	width: auto !important;
 	max-width: 210px;
 
-	.btn {
+	.neos-btn {
 		width: 28px;
 		height: 23px;
 		margin-right: 0;
@@ -481,34 +481,34 @@ button.neos-button.neos-connection-status-down {
 		margin-right: 5px;
 		margin-top: 5px;
 
-		.btn {
+		.neos-btn {
 			position: relative;
 			@include border-radius(0);
 		}
 
 		span + span {
-			.btn {
+			.neos-btn {
 				margin-left: -1px;
 			}
 		}
 
-		span:first-child .btn {
+		span:first-child .neos-btn {
 			@include border-top-left-radius(4px);
 			@include border-bottom-left-radius(4px);
 		}
 
-		span:last-child .btn {
+		span:last-child .neos-btn {
 			@include border-top-right-radius(4px);
 			@include border-bottom-right-radius(4px);
 		}
 
-		div.dropdown-menu + span .btn {
+		div.neos-dropdown-menu + span .neos-btn {
 			@include border-top-left-radius(4px);
 			@include border-bottom-left-radius(4px);
 		}
 	}
 
-	.dropdown-menu {
+	.neos-dropdown-menu {
 		position: absolute;
 		top: 100%;
 		left: 0;

@@ -14,15 +14,4 @@
   // Input grid
   @include grid-input($gridColumnWidth1200, $gridGutterWidth1200);
 
-  // Thumbnails
-  .thumbnails {
-    margin-left: -$gridGutterWidth1200;
-  }
-  .thumbnails > li {
-    margin-left: $gridGutterWidth1200;
-  }
-  .row-fluid .thumbnails {
-    margin-left: 0;
-  }
-
 }

@@ -1,8 +1,8 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<div class="neos-module-container indented">
-		<table class="table">
+	<div class="neos-module-container neos-indented">
+		<table class="neos-table">
 			<thead>
 				<th>Name</th>
 				<th>Node name</th>
@@ -19,46 +19,46 @@
 						<td>
 							<f:if condition="{site.online}">
 								<f:then>
-									<span class="badge badge-success">Active</span>
+									<span class="neos-badge neos-badge-success">Active</span>
 								</f:then>
 								<f:else>
-									<span class="badge badge-important">Inactive</span>
+									<span class="neos-badge neos-badge-important">Inactive</span>
 								</f:else>
 							</f:if>
 						</td>
 						<td>
-							<div class="pull-right">
-								<f:link.action action="edit" arguments="{site: site}" class="btn neos-button" title="Click to edit">
+							<div class="neos-pull-right">
+								<f:link.action action="edit" arguments="{site: site}" class="neos-btn neos-button" title="Click to edit">
 									<i class="icon-pencil icon-white"></i>
 								</f:link.action>
 								<f:if condition="{site.state} == 1">
 									<f:then>
-										<f:form action="deactivateSite" arguments="{site: site}" class="inline">
-											<button class="btn btn-warning neos-button" title="Click to deactivate">
+										<f:form action="deactivateSite" arguments="{site: site}" class="neos-inline">
+											<button class="neos-btn neos-btn-warning neos-button" title="Click to deactivate">
 												<i class="icon-minus-sign icon-white"></i>
 											</button>
 										</f:form>
 									</f:then>
 									<f:else>
-										<f:form action="activateSite" arguments="{site: site}" class="inline">
-											<button class="btn btn-success neos-button" title="Click to activate">
+										<f:form action="activateSite" arguments="{site: site}" class="neos-inline">
+											<button class="neos-btn neos-btn-success neos-button" title="Click to activate">
 												<i class="icon-plus-sign icon-white"></i>
 											</button>
 										</f:form>
 									</f:else>
 								</f:if>
-								<button class="btn btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
+								<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
 									<i class="icon-trash icon-white"></i>
 								</button>
-								<div class="modal hide" id="{site.nodeName}">
-									<div class="modal-header">
-										<button type="button" class="close neos-button" data-dismiss="modal"></button>
+								<div class="neos-modal neos-hide" id="{site.nodeName}">
+									<div class="neos-modal-header">
+										<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
 										<div class="neos-header">Are you sure you want to delete "{site.name}"?</div>
 									</div>
-									<div class="modal-footer">
-										<a href="#" class="btn neos-button" data-dismiss="modal">Cancel</a>
-										<f:form action="deleteSite" arguments="{site: site}" class="inline">
-											<button class="btn btn-danger neos-button" title="Delete">
+									<div class="neos-modal-footer">
+										<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+										<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
+											<button class="neos-btn neos-btn-danger neos-button" title="Delete">
 												<i class="icon-trash icon-white"></i>
 												Delete
 											</button>
@@ -72,9 +72,9 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="form-actions form-footer">
-		<div class="pull-right">
-			<f:link.action action="newSite" class="btn btn-success neos-button" title="Click to add a new site">
+	<div class="neos-form-actions neos-form-footer">
+		<div class="neos-pull-right">
+			<f:link.action action="newSite" class="neos-btn neos-btn-success neos-button" title="Click to add a new site">
 				<i class="icon-plus-sign icon-white"></i>
 				Add site
 			</f:link.action>

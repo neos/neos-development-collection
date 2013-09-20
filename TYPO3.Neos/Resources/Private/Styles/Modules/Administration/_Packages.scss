@@ -1,5 +1,5 @@
 &.neos-module-administration-packages {
-	.neos-button.btn-freeze {
+	.neos-button.neos-btn-freeze {
 		@include buttonBackground(lighten($blue, 5%), $blue);
 		border: 1px solid darken($blue, 5%);
 		border-bottom-color: darken($blue, 10%);
@@ -14,10 +14,10 @@
 			border-bottom-color: darken($blue, 20%);
 		}
 
-		&.disabled,
-		&.disabled:hover,
-		&.disabled:active,
-		&.disabled:focus {
+		&.neos-disabled,
+		&.neos-disabled:hover,
+		&.neos-disabled:active,
+		&.neos-disabled:focus {
 			@include buttonBackground(lighten($blue, 5%), $blue);
 		}
 	}
@@ -49,9 +49,9 @@
 		}
 
 		td > .neos-button,
-		td > div.pull-right > .neos-button {
+		td > div.neos-pull-right > .neos-button {
 			// Freeze Button
-			&.btn-freeze {
+			&.neos-btn-freeze {
 				@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
 				border: 1px solid darken($light-grey4, 5%);
 				border-bottom-color: darken($light-grey4, 10%);
@@ -66,7 +66,7 @@
 					border-bottom-color: darken($blue, 20%);
 				}
 
-				&.active {
+				&.neos-active {
 					@include buttonBackground($blue, darken($blue, 2%));
 					border: 1px solid darken($blue, 10%);
 					border-bottom-color: darken($blue, 20%);

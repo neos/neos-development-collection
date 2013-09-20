@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 // Background
-.modal-backdrop {
+.neos-modal-backdrop {
   position: fixed;
   top: 0;
   right: 0;
@@ -12,16 +12,16 @@
   z-index: $zindexModalBackdrop;
   background-color: $black;
   // Fade for backdrop
-  &.fade { opacity: 0; }
+  &.neos-fade { opacity: 0; }
 }
 
-.modal-backdrop,
-.modal-backdrop.fade.in {
+.neos-modal-backdrop,
+.neos-modal-backdrop.neos-fade.neos-in {
   @include opacity(.8);
 }
 
 // Base modal
-.modal {
+.neos-modal {
   position: fixed;
   top: 10%;
   left: 50%;
@@ -38,17 +38,17 @@
   // Remove focus outline from opened modal
   outline: none;
 
-  &.fade {
+  &.neos-fade {
     @include transition(opacity .3s linear, top .3s ease-out);
     top: -25%;
   }
-  &.fade.in { top: 10%; }
+  &.neos-fade.neos-in { top: 10%; }
 }
-.modal-header {
+.neos-modal-header {
   padding: 9px 15px;
   border-bottom: 1px solid #eee;
   // Close icon
-  .close { margin-top: 2px; }
+  .neos-close { margin-top: 2px; }
   // Heading
   h3 {
     margin: 0;
@@ -57,19 +57,19 @@
 }
 
 // Body (where all modal content resides)
-.modal-body {
+.neos-modal-body {
   position: relative;
   overflow-y: auto;
   max-height: 400px;
   padding: 15px;
 }
 // Remove bottom margin if need be
-.modal-form {
+.neos-modal-form {
   margin-bottom: 0;
 }
 
 // Footer (for actions)
-.modal-footer {
+.neos-modal-footer {
   padding: 14px 15px 15px;
   margin-bottom: 0;
   text-align: right; // right align buttons
@@ -77,19 +77,19 @@
   border-top: 1px solid #ddd;
   @include border-radius(0 0 6px 6px);
   @include box-shadow(inset 0 1px 0 $white);
-  @include clearfix(); // clear it in case folks use .pull-* classes on buttons
+  @include clearfix(); // clear it in case folks use .neos-pull-* classes on buttons
 
   // Properly space out buttons
-  .btn + .btn {
+  .neos-btn + .neos-btn {
     margin-left: 5px;
     margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
   }
   // but override that for button groups
-  .btn-group .btn + .btn {
+  .neos-neos-btn-group .neos-btn + .neos-btn {
     margin-left: -1px;
   }
   // and override it for block buttons as well
-  .btn-block + .btn-block {
+  .neos-btn-block + .neos-btn-block {
     margin-left: 0;
   }
 }

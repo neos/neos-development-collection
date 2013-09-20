@@ -16,7 +16,7 @@ table {
 // BASELINE STYLES
 // ---------------
 
-.table {
+.neos-table {
   width: 100%;
   margin-bottom: $baseLineHeight;
   // Cells
@@ -50,7 +50,7 @@ table {
   }
 
   // Nesting
-  .table {
+  .neos-table {
     background-color: $bodyBackground;
   }
 }
@@ -60,7 +60,7 @@ table {
 // CONDENSED TABLE W/ HALF PADDING
 // -------------------------------
 
-.table-condensed {
+.neos-table-condensed {
   th,
   td {
     padding: 4px 5px;
@@ -71,7 +71,7 @@ table {
 // BORDERED VERSION
 // ----------------
 
-.table-bordered {
+.neos-table-bordered {
   border: 1px solid $tableBorder;
   border-collapse: separate; // Done so we can round those corners!
   *border-collapse: collapse; // IE7 can't round corners anyway
@@ -153,7 +153,7 @@ table {
 // --------------
 
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
-.table-striped {
+.neos-table-striped {
   tbody {
     > tr:nth-child(odd) > td,
     > tr:nth-child(odd) > th {
@@ -166,7 +166,7 @@ table {
 // HOVER EFFECT
 // ------------
 // Placed here since it has to come after the potential zebra striping
-.table-hover {
+.neos-table-hover {
   tbody {
     tr:hover > td,
     tr:hover > th {
@@ -182,18 +182,18 @@ table {
 // Reset default grid behavior
 table td[class*="span"],
 table th[class*="span"],
-.row-fluid table td[class*="span"],
-.row-fluid table th[class*="span"] {
+.neos-row-fluid table td[class*="span"],
+.neos-row-fluid table th[class*="span"] {
   display: table-cell;
   float: none; // undo default grid column styles
   margin-left: 0; // undo default grid column styles
 }
 
 // Change the column widths to account for td/th padding
-.table td,
-.table th {
+.neos-table td,
+.neos-table th {
   @for $i from 1 through 12 {
-    &.span#{$i} { @include tableColumns($i); }
+    &.neos-span#{$i} { @include tableColumns($i); }
   }
 }
 
@@ -201,35 +201,35 @@ table th[class*="span"],
 
 // TABLE BACKGROUNDS
 // -----------------
-// Exact selectors below required to override .table-striped
+// Exact selectors below required to override .neos-table-striped
 
-.table tbody tr {
-  &.success > td {
+.neos-table tbody tr {
+  &.neos-success > td {
     background-color: $successBackground;
   }
-  &.error > td {
+  &.neos-error > td {
     background-color: $errorBackground;
   }
-  &.warning > td {
+  &.neos-warning > td {
     background-color: $warningBackground;
   }
-  &.info > td {
+  &.neos-info > td {
     background-color: $infoBackground;
   }
 }
 
-// Hover states for .table-hover
-.table-hover tbody tr {
-  &.success:hover > td {
+// Hover states for .neos-table-hover
+.neos-table-hover tbody tr {
+  &.neos-success:hover > td {
     background-color: darken($successBackground, 5%);
   }
-  &.error:hover > td {
+  &.neos-error:hover > td {
     background-color: darken($errorBackground, 5%);
   }
-  &.warning:hover > td {
+  &.neos-warning:hover > td {
     background-color: darken($warningBackground, 5%);
   }
-  &.info:hover > td {
+  &.neos-info:hover > td {
     background-color: darken($infoBackground, 5%);
   }
 }

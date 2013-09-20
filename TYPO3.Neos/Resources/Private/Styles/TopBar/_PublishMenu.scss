@@ -1,7 +1,7 @@
-.neos-publish-menu.btn-group {
+.neos-publish-menu.neos-btn-group {
 	&.neos-publish-menu-active {
 		.neos-publish-button,
-		.dropdown-toggle {
+		.neos-dropdown-toggle {
 			background-color: $orange;
 			cursor: pointer;
 			border-right: 1px solid $orange;
@@ -9,8 +9,8 @@
 		}
 	}
 
-	&.open {
-		.dropdown-toggle {
+	&.neos-open {
+		.neos-dropdown-toggle {
 			@include opacity(1);
 
 			&::before {
@@ -32,7 +32,7 @@
 		}
 	}
 
-	.dropdown-toggle {
+	.neos-dropdown-toggle {
 		width: $unit;
 		border: 0;
 		@include border-radius(0);
