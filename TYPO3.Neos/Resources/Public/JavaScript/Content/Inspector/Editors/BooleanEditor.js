@@ -1,8 +1,9 @@
 define(
 [
-	'emberjs'
+	'emberjs',
+	'Library/jquery-with-dependencies'
 ],
-function(Ember) {
+function(Ember, $) {
 	return Ember.Checkbox.extend({
 		/**
 		 * The value attribute of Ember.Checkbox is renamed to 'checked' in Emberjs 0.9.7
@@ -15,6 +16,10 @@ function(Ember) {
 			} else {
 				return this.get('checked');
 			}
-		}.property('checked')
+		}.property('checked'),
+
+		didInsertElement: function() {
+			this.$().after($('<span />'));
+		}
 	});
 });

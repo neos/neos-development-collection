@@ -6,7 +6,7 @@ input[type=checkbox] {
 	margin-right: $defaultMargin;
 	@include box-sizing(border-box);
 
-	&:before {
+	& + span:before {
 		display: block;
 		width: 20px;
 		height: 20px;
@@ -15,14 +15,14 @@ input[type=checkbox] {
 		color: #fff;
 		cursor: pointer;
 		content: "";
-		visibility: visible;
+		position: absolute;
 	}
 
-	&:hover:before {
+	&:hover + span:before {
 		border: 1px solid $blue;
 	}
 
-	&:checked:before {
+	&:checked + span:before {
 		@include font;
 		background-color: $blue;
 		border: 1px solid $blue;
