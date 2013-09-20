@@ -28,23 +28,23 @@ in your site package or in a package dedicated to content elements, if reuse is 
 
 ::
 
-	'Acme.Demo:YouTube':
-	  superTypes: ['TYPO3.Neos:Content']
-	  ui:
-	    group: 'General'
-	    label: 'YouTube Video'
-		inspector:
-		  groups:
-			video:
-			  label: 'Video'
-	  properties:
-	    videoUrl:
-	      type: string
-	      ui:
-	        label: 'Video URL'
-			inspector:
-			  group: 'video'
-			reloadIfChanged: TRUE
+	   'Acme.Demo:YouTube':
+	     superTypes: ['TYPO3.Neos:Content']
+	     ui:
+	       group: 'General'
+	       label: 'YouTube Video'
+	       inspector:
+	         groups:
+	           video:
+	             label: 'Video'
+	     properties:
+	       videoUrl:
+	         type: string
+	         ui:
+	           label: 'Video URL'
+	           reloadIfChanged: TRUE
+	           inspector:
+	             group: 'video'
 
 The declaration of node types with all required and optional properties is documented in
 :ref:`node-type-definition`.
