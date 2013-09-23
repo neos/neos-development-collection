@@ -117,6 +117,13 @@ prototype(TYPO3.Neos:Plugin).@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementa
 #
 root = TYPO3.TypoScript:Case
 root {
+	layout {
+		@position = 'end 9997'
+		layout = ${q(node).property('layout') != null && q(node).property('layout') != '' ? q(node).property('layout') : q(node).parents('[subpageLayout]').first().property('subpageLayout')}
+		condition = ${this.layout != null && this.layout != ''}
+		renderPath = ${'/' + this.layout}
+	}
+
 	format {
 		@position = 'end 9998'
 		condition = ${request.format != 'html'}

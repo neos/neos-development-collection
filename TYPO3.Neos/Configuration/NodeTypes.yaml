@@ -105,13 +105,42 @@
 
 'TYPO3.Neos:Page':
   superTypes: ['TYPO3.Neos:Document']
+  properties:
+    layout:
+     type: string
+     ui:
+       label: 'Layout for this page only'
+       reloadIfChanged: TRUE
+       inspector:
+         group: 'layout'
+         editor: Content/Inspector/Editors/SelectBoxEditor
+         editorOptions:
+           placeholder: 'Inherit from parent'
+           values:
+             '':
+               label: ''
+    subpageLayout:
+     type: string
+     ui:
+       label: 'Layout for subpages of this page'
+       inspector:
+         group: 'layout'
+         editor: Content/Inspector/Editors/SelectBoxEditor
+         editorOptions:
+           placeholder: 'Inherit from parent'
+           values:
+             '':
+               label: ''
   ui:
     label: 'Page'
     icon: 'icon-file'
     inspector:
       groups:
         document:
-          label: 'Page options'
+          label: 'Title'
+        layout:
+          label: 'Layout'
+          position: 150
 
 'TYPO3.Neos:Shortcut':
   superTypes: ['TYPO3.Neos:Document']
