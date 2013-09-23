@@ -33,7 +33,7 @@ define(
 	var Breadcrumb = Ember.View.extend({
 		tagName: 'div',
 		classNames: ['neos-content-breadcrumb'],
-		classNameBindings: ['neos-open'],
+		classNameBindings: ['open:neos-open'],
 		template: Ember.Handlebars.compile(breadcrumbTemplate),
 		BreadcrumbItem: BreadcrumbItem,
 		open: false,

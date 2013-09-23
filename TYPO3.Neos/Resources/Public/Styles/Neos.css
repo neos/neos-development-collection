@@ -4087,64 +4087,64 @@
   text-decoration: none;
   cursor: pointer;
 }
-.neos .label-important {
+.neos .neos-label-important {
   background-color: #b94a48;
 }
-.neos .label-important[href] {
+.neos .neos-label-important[href] {
   background-color: #953b39;
 }
-.neos .label-warning {
+.neos .neos-label-warning {
   background-color: #ff8700;
 }
-.neos .label-warning[href] {
+.neos .neos-label-warning[href] {
   background-color: #cc6c00;
 }
-.neos .label-success {
+.neos .neos-label-success {
   background-color: #468847;
 }
-.neos .label-success[href] {
+.neos .neos-label-success[href] {
   background-color: #356635;
 }
-.neos .label-info {
+.neos .neos-label-info {
   background-color: #3a87ad;
 }
-.neos .label-info[href] {
+.neos .neos-label-info[href] {
   background-color: #2d6987;
 }
-.neos .label-inverse {
+.neos .neos-label-inverse {
   background-color: #222222;
 }
-.neos .label-inverse[href] {
+.neos .neos-label-inverse[href] {
   background-color: #090909;
 }
-.neos .badge-important {
+.neos .neos-badge-important {
   background-color: #b94a48;
 }
-.neos .badge-important[href] {
+.neos .neos-badge-important[href] {
   background-color: #953b39;
 }
-.neos .badge-warning {
+.neos .neos-badge-warning {
   background-color: #ff8700;
 }
-.neos .badge-warning[href] {
+.neos .neos-badge-warning[href] {
   background-color: #cc6c00;
 }
-.neos .badge-success {
+.neos .neos-badge-success {
   background-color: #468847;
 }
-.neos .badge-success[href] {
+.neos .neos-badge-success[href] {
   background-color: #356635;
 }
-.neos .badge-info {
+.neos .neos-badge-info {
   background-color: #3a87ad;
 }
-.neos .badge-info[href] {
+.neos .neos-badge-info[href] {
   background-color: #2d6987;
 }
-.neos .badge-inverse {
+.neos .neos-badge-inverse {
   background-color: #222222;
 }
-.neos .badge-inverse[href] {
+.neos .neos-badge-inverse[href] {
   background-color: #090909;
 }
 .neos .neos-btn .neos-label,
@@ -8370,7 +8370,7 @@
   background: transparent;
   color: white;
 }
-.neos.neos-module .neos-content.well {
+.neos.neos-module .neos-content.neos-well {
   background-color: #777;
   border-color: #666;
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
@@ -8381,16 +8381,16 @@
   border-radius: 0;
   padding: 0px;
 }
-.neos.neos-module .neos-content.well h1 {
+.neos.neos-module .neos-content.neos-well h1 {
   padding: 10px 50px 0px 50px;
 }
-.neos.neos-module .neos-content.well p {
+.neos.neos-module .neos-content.neos-well p {
   color: #e8e8e8;
 }
-.neos.neos-module .neos-content.well .neos-alert p {
+.neos.neos-module .neos-content.neos-well .neos-alert p {
   color: inherit;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb {
   -webkit-border-top-right-radius: 4px;
   -moz-border-radius-topright: 4px;
   border-top-right-radius: 4px;
@@ -8409,21 +8409,21 @@
   -moz-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb li {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb li {
   text-shadow: 0 0 0 transparent;
   color: #e6e6e6;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb a {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb a {
   color: #b3b3b3;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb a:hover, .neos.neos-module .neos-content.well .neos-breadcrumb a:active, .neos.neos-module .neos-content.well .neos-breadcrumb a:focus {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb a:hover, .neos.neos-module .neos-content.neos-well .neos-breadcrumb a:active, .neos.neos-module .neos-content.neos-well .neos-breadcrumb a:focus {
   color: #e6e6e6;
   text-decoration: none;
 }
-.neos.neos-module .neos-content.well .neos-module-container {
+.neos.neos-module .neos-content.neos-well .neos-module-container {
   padding: 0px 50px 0px 50px;
 }
-.neos.neos-module .neos-content.well .neos-module-container.neos-indented {
+.neos.neos-module .neos-content.neos-well .neos-module-container.neos-indented {
   margin-left: 0px;
 }
 .neos.neos-module .neos-content .widget {
@@ -9478,7 +9478,7 @@
   background: transparent;
   color: white;
 }
-.neos.neos-module .neos-content.well {
+.neos.neos-module .neos-content.neos-well {
   background-color: #777;
   border-color: #666;
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
@@ -9489,16 +9489,16 @@
   border-radius: 0;
   padding: 0px;
 }
-.neos.neos-module .neos-content.well h1 {
+.neos.neos-module .neos-content.neos-well h1 {
   padding: 10px 50px 0px 50px;
 }
-.neos.neos-module .neos-content.well p {
+.neos.neos-module .neos-content.neos-well p {
   color: #e8e8e8;
 }
-.neos.neos-module .neos-content.well .neos-alert p {
+.neos.neos-module .neos-content.neos-well .neos-alert p {
   color: inherit;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb {
   -webkit-border-top-right-radius: 4px;
   -moz-border-radius-topright: 4px;
   border-top-right-radius: 4px;
@@ -9517,21 +9517,21 @@
   -moz-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb li {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb li {
   text-shadow: 0 0 0 transparent;
   color: #e6e6e6;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb a {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb a {
   color: #b3b3b3;
 }
-.neos.neos-module .neos-content.well .neos-breadcrumb a:hover, .neos.neos-module .neos-content.well .neos-breadcrumb a:active, .neos.neos-module .neos-content.well .neos-breadcrumb a:focus {
+.neos.neos-module .neos-content.neos-well .neos-breadcrumb a:hover, .neos.neos-module .neos-content.neos-well .neos-breadcrumb a:active, .neos.neos-module .neos-content.neos-well .neos-breadcrumb a:focus {
   color: #e6e6e6;
   text-decoration: none;
 }
-.neos.neos-module .neos-content.well .neos-module-container {
+.neos.neos-module .neos-content.neos-well .neos-module-container {
   padding: 0px 50px 0px 50px;
 }
-.neos.neos-module .neos-content.well .neos-module-container.neos-indented {
+.neos.neos-module .neos-content.neos-well .neos-module-container.neos-indented {
   margin-left: 0px;
 }
 .neos.neos-module .neos-content .widget {

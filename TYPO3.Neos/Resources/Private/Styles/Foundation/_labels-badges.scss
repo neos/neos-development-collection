@@ -49,7 +49,7 @@ a {
 
 // Colors
 // Only give background-color difference to links (and to simplify, we don't qualifty with `a` but [href] attribute)
-@each $item in label, badge {
+@each $item in neos-label, neos-badge {
   // Important (red)
   .#{$item}-important         { background-color: $errorText; }
   .#{$item}-important[href]   { background-color: darken($errorText, 10%); }

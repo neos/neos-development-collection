@@ -80,7 +80,7 @@
 		}
 	}
 	.neos-content {
-		&.well {
+		&.neos-well {
 			background-color: #777;
 			border-color: #666;
 			@include box-shadow(0 0 5px rgba($darkest, 0.2) inset);
