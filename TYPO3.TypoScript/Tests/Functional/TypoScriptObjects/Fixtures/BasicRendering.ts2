@@ -3,9 +3,3 @@ prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Fun
 basicRendering.test = TYPO3.TypoScript:TestRenderer {
 	test = 'Hello World'
 }
-
-prototype(TYPO3.TypoScript:AlternativeTestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
-
-basicRendering.deprecatedImplementationClassName = TYPO3.TypoScript:AlternativeTestRenderer {
-	test = 'Hello World'
-}

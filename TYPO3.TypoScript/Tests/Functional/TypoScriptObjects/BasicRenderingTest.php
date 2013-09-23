@@ -26,14 +26,5 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('XHello World', $view->render());
 	}
 
-	/**
-	 * @test
-	 */
-	public function deprecatedImplementationClassName() {
-		$view = $this->buildView();
-		$view->setTypoScriptPath('basicRendering/deprecatedImplementationClassName');
-		$this->assertEquals('XHello World', $view->render());
-	}
-
 }
 ?>
