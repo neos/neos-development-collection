@@ -69,9 +69,8 @@ $max-image-height: $max-image-width / 4 * 3;
 	.neos-inspector-image-width {
 		padding-bottom: $defaultMargin - $tightMargin;
 
-		.neos-inspector-image-upload-button,
-		.neos-inspector-image-crop-button {
-			float: right;
+		.neos-button {
+			padding: 0 $defaultMargin - $tightMargin;
 		}
 	}
 }
