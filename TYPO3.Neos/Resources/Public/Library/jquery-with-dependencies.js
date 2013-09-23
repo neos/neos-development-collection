@@ -31992,7 +31992,7 @@ var _registerDnd = function() {
   var Notification = function (element, options) {
     // Element collection
     this.$element = $(element);
-    this.$note    = $('<div class="neos-neos-alert"></div>');
+    this.$note    = $('<div class="neos-alert"></div>');
     this.options  = $.extend(true, $.fn.notify.defaults, options, this.$element.data());
 
     // Setup from options

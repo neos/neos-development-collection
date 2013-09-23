@@ -19,7 +19,6 @@ module.exports = function(grunt) {
 				banner: '',
 				footer: '',
 				process: function(src, filepath) {
-					src = src.replace('<div class="alert"></div>', '<div class="neos-alert"></div>');
 					src = src.replace(/keydown\./g, 'keydown.neos-');
 					src = src.replace(/\.dropdown form/g, '.neos-dropdown form');
 					src = src.replace(/click\./g, 'click.neos-');
