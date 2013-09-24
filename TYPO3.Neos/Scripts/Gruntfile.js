@@ -25,6 +25,7 @@ module.exports = function(grunt) {
 					src = src.replace(/Class\('/g, "Class('neos-");
 					src = src.replace(/'\.disabled/g, "'.neos-disabled");
 					src = src.replace(/\.divider/g, ".neos-divider");
+					src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
 					src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
 					src = src.replace(/\.tooltip-arrow/g, '.neos-tooltip-arrow');
 					src = src.replace(/\.tooltip-inner/g, '.neos-tooltip-inner');

@@ -7227,7 +7227,7 @@
   border-left: 1px solid #222222;
   border-right: none;
 }
-.neos #neos-inspector .neos-inspector-form .neos-tooltip.bottom {
+.neos #neos-inspector .neos-inspector-form .neos-tooltip.neos-bottom {
   padding: 8px 0 0 0;
   margin-left: 4px;
   margin-top: -1px;

@@ -31786,7 +31786,7 @@ var _registerDnd = function() {
 
 			$tip
 				.offset(offset)
-				.addClass(placement)
+				.addClass('neos-' + placement)
 				.addClass('neos-in')
 
 			actualWidth = $tip[0].offsetWidth
