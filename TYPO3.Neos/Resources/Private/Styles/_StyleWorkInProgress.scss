@@ -146,7 +146,7 @@
 		.dynatree-exp-el,
 		.dynatree-exp-edl {
 			.dynatree-expander {
-				@extend .icon-neos-caret-right;
+				@extend .icon-caret-right;
 				@include rotate(45deg);
 				top: 3px;
 			}
