@@ -44,6 +44,8 @@ Implementation notes:
 * The main UI elements have an ID, and a partial reset is used to give us predictable behavior inside them.
 * We use *sass*. To install, use +gem install sass compass+. Then, before modifying CSS, go to css/ and run
   +sass --compass --watch style.scss:style.css+. This will update style.css at every modification of style.scss.
+* We use r.js for generating the Includes-built.css file. The command used by the built server is
+  ``r.js -o cssIn=Includes.css out=Includes-built.css``
 
 Z-Indexes
 ---------

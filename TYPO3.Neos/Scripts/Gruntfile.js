@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 				baseUri + 'twitter-bootstrap/js/bootstrap-tooltip.js',
 				baseUri + 'bootstrap-notify/js/bootstrap-notify.js'
 			],
-			dest: baseUri + '_built-bootstrap-components.js',
+			dest: baseUri + 'bootstrap-components.js',
 			options: {
 				banner: '',
 				footer: '',
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
 				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
 				baseUri + 'chosen/chosen/chosen.jquery.js',
 				baseUri + 'jcrop/js/jquery.Jcrop.js',
-				baseUri + '_built-bootstrap-components.js'
+				baseUri + 'bootstrap-components.js'
 			],
 			dest: baseUri + 'jquery-with-dependencies.js',
 			options: {
