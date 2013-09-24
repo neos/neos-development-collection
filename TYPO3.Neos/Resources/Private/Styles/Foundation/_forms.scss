@@ -265,29 +265,29 @@ textarea {
 .neos-input-xxlarge    { width: 530px; }
 
 // Grid style input sizes
-input[class*="span"],
-select[class*="span"],
-textarea[class*="span"],
-.neos-uneditable-input[class*="span"],
+input[class*="neos-span"],
+select[class*="neos-span"],
+textarea[class*="neos-span"],
+.neos-uneditable-input[class*="neos-span"],
 // Redeclare since the fluid row class is more specific
-.neos-row-fluid input[class*="span"],
-.neos-row-fluid select[class*="span"],
-.neos-row-fluid textarea[class*="span"],
-.neos-row-fluid .neos-uneditable-input[class*="span"] {
+.neos-row-fluid input[class*="neos-span"],
+.neos-row-fluid select[class*="neos-span"],
+.neos-row-fluid textarea[class*="neos-span"],
+.neos-row-fluid .neos-uneditable-input[class*="neos-span"] {
   float: none;
   margin-left: 0;
 }
 // Ensure neos-input-prepend/append never wraps
-.neos-input-append input[class*="span"],
-.neos-input-append .neos-uneditable-input[class*="span"],
-.neos-input-prepend input[class*="span"],
-.neos-input-prepend .neos-uneditable-input[class*="span"],
-.neos-row-fluid input[class*="span"],
-.neos-row-fluid select[class*="span"],
-.neos-row-fluid textarea[class*="span"],
-.neos-row-fluid .neos-uneditable-input[class*="span"],
-.neos-row-fluid .neos-input-prepend [class*="span"],
-.neos-row-fluid .neos-input-append [class*="span"] {
+.neos-input-append input[class*="neos-span"],
+.neos-input-append .neos-uneditable-input[class*="neos-span"],
+.neos-input-prepend input[class*="neos-span"],
+.neos-input-prepend .neos-uneditable-input[class*="neos-span"],
+.neos-row-fluid input[class*="neos-span"],
+.neos-row-fluid select[class*="neos-span"],
+.neos-row-fluid textarea[class*="neos-span"],
+.neos-row-fluid .neos-uneditable-input[class*="neos-span"],
+.neos-row-fluid .neos-input-prepend [class*="neos-span"],
+.neos-row-fluid .neos-input-append [class*="neos-span"] {
   display: inline-block;
 }
 
@@ -305,14 +305,14 @@ textarea[class*="span"],
 }
 
 // Float to collapse white-space for proper grid alignment
-.neos-controls-row [class*="span"],
+.neos-controls-row [class*="neos-span"],
 // Redeclare the fluid grid collapse since we undo the float for inputs
-.neos-row-fluid .neos-controls-row [class*="span"] {
+.neos-row-fluid .neos-controls-row [class*="neos-span"] {
   float: left;
 }
 // Explicity set top padding on all checkboxes/radios, not just first-child
-.neos-controls-row .neos-checkbox[class*="span"],
-.neos-controls-row .neos-radio[class*="span"] {
+.neos-controls-row .neos-checkbox[class*="neos-span"],
+.neos-controls-row .neos-radio[class*="neos-span"] {
   padding-top: 5px;
 }
 

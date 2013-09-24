@@ -559,7 +559,7 @@
     @include clearfix();
   }
 
-  [class*="span"] {
+  [class*="neos-span"] {
     float: left;
     min-height: 1px; // prevent collapsing columns
     margin-left: $gridGutterWidth;
@@ -604,18 +604,18 @@
   .neos-row-fluid {
     width: 100%;
     @include clearfix();
-    [class*="span"] {
+    [class*="neos-span"] {
       @include input-block-level();
       float: left;
       margin-left: $fluidGridGutterWidth;
       *margin-left: $fluidGridGutterWidth - (.5 / $gridRowWidth * 100px * 1%);
     }
-    [class*="span"]:first-child {
+    [class*="neos-span"]:first-child {
       margin-left: 0;
     }
 
     // Space grid-sized controls properly if multiple per line
-    .neos-controls-row [class*="span"] + [class*="span"] {
+    .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
       margin-left: $fluidGridGutterWidth;
     }
 
@@ -663,7 +663,7 @@
   }
 
   // Space grid-sized controls properly if multiple per line
-  .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: $gridGutterWidth;
   }
 

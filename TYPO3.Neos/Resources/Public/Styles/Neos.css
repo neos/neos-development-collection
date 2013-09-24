@@ -1599,7 +1599,7 @@
 .neos .neos-row:after {
   clear: both;
 }
-.neos [class*="span"] {
+.neos [class*="neos-span"] {
   float: left;
   min-height: 1px;
   margin-left: 20px;
@@ -1694,7 +1694,7 @@
 .neos .neos-row-fluid:after {
   clear: both;
 }
-.neos .neos-row-fluid [class*="span"] {
+.neos .neos-row-fluid [class*="neos-span"] {
   display: block;
   width: 100%;
   min-height: 30px;
@@ -1705,10 +1705,10 @@
   margin-left: 2.12766%;
   *margin-left: 2.07447%;
 }
-.neos .neos-row-fluid [class*="span"]:first-child {
+.neos .neos-row-fluid [class*="neos-span"]:first-child {
   margin-left: 0;
 }
-.neos .neos-row-fluid .neos-controls-row [class*="span"] + [class*="span"] {
+.neos .neos-row-fluid .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
   margin-left: 2.12766%;
 }
 .neos .neos-row-fluid .neos-span1 {
@@ -1855,12 +1855,12 @@
   margin-left: 102.12766%;
   *margin-left: 102.02128%;
 }
-.neos [class*="span"].neos-hide,
-.neos .neos-row-fluid [class*="span"].neos-hide {
+.neos [class*="neos-span"].neos-hide,
+.neos .neos-row-fluid [class*="neos-span"].neos-hide {
   display: none;
 }
-.neos [class*="span"].neos-pull-right,
-.neos .neos-row-fluid [class*="span"].neos-pull-right {
+.neos [class*="neos-span"].neos-pull-right,
+.neos .neos-row-fluid [class*="neos-span"].neos-pull-right {
   float: right;
 }
 .neos .neos-container {
@@ -2134,27 +2134,27 @@
 .neos .neos-input-xxlarge {
   width: 530px;
 }
-.neos input[class*="span"],
-.neos select[class*="span"],
-.neos textarea[class*="span"],
-.neos .neos-uneditable-input[class*="span"],
-.neos .neos-row-fluid input[class*="span"],
-.neos .neos-row-fluid select[class*="span"],
-.neos .neos-row-fluid textarea[class*="span"],
-.neos .neos-row-fluid .neos-uneditable-input[class*="span"] {
+.neos input[class*="neos-span"],
+.neos select[class*="neos-span"],
+.neos textarea[class*="neos-span"],
+.neos .neos-uneditable-input[class*="neos-span"],
+.neos .neos-row-fluid input[class*="neos-span"],
+.neos .neos-row-fluid select[class*="neos-span"],
+.neos .neos-row-fluid textarea[class*="neos-span"],
+.neos .neos-row-fluid .neos-uneditable-input[class*="neos-span"] {
   float: none;
   margin-left: 0;
 }
-.neos .neos-input-append input[class*="span"],
-.neos .neos-input-append .neos-uneditable-input[class*="span"],
-.neos .neos-input-prepend input[class*="span"],
-.neos .neos-input-prepend .neos-uneditable-input[class*="span"],
-.neos .neos-row-fluid input[class*="span"],
-.neos .neos-row-fluid select[class*="span"],
-.neos .neos-row-fluid textarea[class*="span"],
-.neos .neos-row-fluid .neos-uneditable-input[class*="span"],
-.neos .neos-row-fluid .neos-input-prepend [class*="span"],
-.neos .neos-row-fluid .neos-input-append [class*="span"] {
+.neos .neos-input-append input[class*="neos-span"],
+.neos .neos-input-append .neos-uneditable-input[class*="neos-span"],
+.neos .neos-input-prepend input[class*="neos-span"],
+.neos .neos-input-prepend .neos-uneditable-input[class*="neos-span"],
+.neos .neos-row-fluid input[class*="neos-span"],
+.neos .neos-row-fluid select[class*="neos-span"],
+.neos .neos-row-fluid textarea[class*="neos-span"],
+.neos .neos-row-fluid .neos-uneditable-input[class*="neos-span"],
+.neos .neos-row-fluid .neos-input-prepend [class*="neos-span"],
+.neos .neos-row-fluid .neos-input-append [class*="neos-span"] {
   display: inline-block;
 }
 .neos input,
@@ -2162,7 +2162,7 @@
 .neos .neos-uneditable-input {
   margin-left: 0;
 }
-.neos .neos-controls-row [class*="span"] + [class*="span"] {
+.neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
   margin-left: 20px;
 }
 .neos input.neos-span1,
@@ -2236,12 +2236,12 @@
 .neos .neos-controls-row:after {
   clear: both;
 }
-.neos .neos-controls-row [class*="span"],
-.neos .neos-row-fluid .neos-controls-row [class*="span"] {
+.neos .neos-controls-row [class*="neos-span"],
+.neos .neos-row-fluid .neos-controls-row [class*="neos-span"] {
   float: left;
 }
-.neos .neos-controls-row .neos-checkbox[class*="span"],
-.neos .neos-controls-row .neos-radio[class*="span"] {
+.neos .neos-controls-row .neos-checkbox[class*="neos-span"],
+.neos .neos-controls-row .neos-radio[class*="neos-span"] {
   padding-top: 5px;
 }
 .neos input[disabled],
@@ -2859,10 +2859,10 @@
 .neos .neos-table-hover tbody tr:hover > th {
   background-color: whitesmoke;
 }
-.neos table td[class*="span"],
-.neos table th[class*="span"],
-.neos .neos-row-fluid table td[class*="span"],
-.neos .neos-row-fluid table th[class*="span"] {
+.neos table td[class*="neos-span"],
+.neos table th[class*="neos-span"],
+.neos .neos-row-fluid table td[class*="neos-span"],
+.neos .neos-row-fluid table th[class*="neos-span"] {
   display: table-cell;
   float: none;
   margin-left: 0;
@@ -4267,7 +4267,7 @@
   .neos .neos-row:after {
     clear: both;
   }
-  .neos [class*="span"] {
+  .neos [class*="neos-span"] {
     float: left;
     min-height: 1px;
     margin-left: 30px;
@@ -4362,7 +4362,7 @@
   .neos .neos-row-fluid:after {
     clear: both;
   }
-  .neos .neos-row-fluid [class*="span"] {
+  .neos .neos-row-fluid [class*="neos-span"] {
     display: block;
     width: 100%;
     min-height: 30px;
@@ -4373,10 +4373,10 @@
     margin-left: 2.5641%;
     *margin-left: 2.51091%;
   }
-  .neos .neos-row-fluid [class*="span"]:first-child {
+  .neos .neos-row-fluid [class*="neos-span"]:first-child {
     margin-left: 0;
   }
-  .neos .neos-row-fluid .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos .neos-row-fluid .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 2.5641%;
   }
   .neos .neos-row-fluid .neos-span1 {
@@ -4528,7 +4528,7 @@
   .neos .neos-uneditable-input {
     margin-left: 0;
   }
-  .neos .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 30px;
   }
   .neos input.neos-span1,
@@ -4605,7 +4605,7 @@
   .neos .neos-row:after {
     clear: both;
   }
-  .neos [class*="span"] {
+  .neos [class*="neos-span"] {
     float: left;
     min-height: 1px;
     margin-left: 20px;
@@ -4700,7 +4700,7 @@
   .neos .neos-row-fluid:after {
     clear: both;
   }
-  .neos .neos-row-fluid [class*="span"] {
+  .neos .neos-row-fluid [class*="neos-span"] {
     display: block;
     width: 100%;
     min-height: 30px;
@@ -4711,10 +4711,10 @@
     margin-left: 2.76243%;
     *margin-left: 2.70924%;
   }
-  .neos .neos-row-fluid [class*="span"]:first-child {
+  .neos .neos-row-fluid [class*="neos-span"]:first-child {
     margin-left: 0;
   }
-  .neos .neos-row-fluid .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos .neos-row-fluid .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 2.76243%;
   }
   .neos .neos-row-fluid .neos-span1 {
@@ -4866,7 +4866,7 @@
   .neos .neos-uneditable-input {
     margin-left: 0;
   }
-  .neos .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 20px;
   }
   .neos input.neos-span1,
@@ -4962,9 +4962,9 @@
   .neos .neos-row {
     margin-left: 0;
   }
-  .neos [class*="span"],
-  .neos .neos-uneditable-input[class*="span"],
-  .neos .neos-row-fluid [class*="span"] {
+  .neos [class*="neos-span"],
+  .neos .neos-uneditable-input[class*="neos-span"],
+  .neos .neos-row-fluid [class*="neos-span"] {
     float: none;
     display: block;
     width: 100%;
@@ -4986,9 +4986,9 @@
   .neos .neos-input-large,
   .neos .neos-input-xlarge,
   .neos .neos-input-xxlarge,
-  .neos input[class*="span"],
-  .neos select[class*="span"],
-  .neos textarea[class*="span"],
+  .neos input[class*="neos-span"],
+  .neos select[class*="neos-span"],
+  .neos textarea[class*="neos-span"],
   .neos .neos-uneditable-input {
     display: block;
     width: 100%;
@@ -4999,12 +4999,12 @@
   }
   .neos .neos-input-prepend input,
   .neos .neos-input-append input,
-  .neos .neos-input-prepend input[class*="span"],
-  .neos .neos-input-append input[class*="span"] {
+  .neos .neos-input-prepend input[class*="neos-span"],
+  .neos .neos-input-append input[class*="neos-span"] {
     display: inline-block;
     width: auto;
   }
-  .neos .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 0;
   }
   .neos .neos-modal {
@@ -8378,6 +8378,9 @@
 .neos.neos-module.neos-module-management-workspaces tfoot .legend {
   margin-left: 15px;
 }
+.neos.neos-module h1, .neos.neos-module h2, .neos.neos-module h3, .neos.neos-module h4, .neos.neos-module h5, .neos.neos-module h6 {
+  text-rendering: optimizelegibility;
+}
 .neos.neos-module p {
   line-height: 1.6em;
 }
@@ -8428,6 +8431,9 @@
 .neos.neos-module .neos-nav-pills li.neos-active a {
   background: transparent;
   color: white;
+}
+.neos.neos-module .neos-content {
+  padding: 0 30px;
 }
 .neos.neos-module .neos-content.neos-well {
   background-color: #777;
@@ -9486,6 +9492,9 @@
 .neos.neos-module.neos-module-management-workspaces tfoot .legend {
   margin-left: 15px;
 }
+.neos.neos-module h1, .neos.neos-module h2, .neos.neos-module h3, .neos.neos-module h4, .neos.neos-module h5, .neos.neos-module h6 {
+  text-rendering: optimizelegibility;
+}
 .neos.neos-module p {
   line-height: 1.6em;
 }
@@ -9536,6 +9545,9 @@
 .neos.neos-module .neos-nav-pills li.neos-active a {
   background: transparent;
   color: white;
+}
+.neos.neos-module .neos-content {
+  padding: 0 30px;
 }
 .neos.neos-module .neos-content.neos-well {
   background-color: #777;
@@ -10240,6 +10252,7 @@
 .neos .widget .widget-header h3 {
   margin: 0;
   font-size: 20px;
+  line-height: 40px;
   font-weight: normal;
   color: #444444;
   border-bottom: 1px solid #444444;

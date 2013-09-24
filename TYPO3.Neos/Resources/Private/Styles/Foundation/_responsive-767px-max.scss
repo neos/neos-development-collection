@@ -52,9 +52,9 @@
     margin-left: 0;
   }
   // Make all grid-sized elements block level again
-  [class*="span"],
-  .neos-uneditable-input[class*="span"], // Makes uneditable inputs full-width when using grid sizing
-  .neos-row-fluid [class*="span"] {
+  [class*="neos-span"],
+  .neos-uneditable-input[class*="neos-span"], // Makes uneditable inputs full-width when using grid sizing
+  .neos-row-fluid [class*="neos-span"] {
     float: none;
     display: block;
     width: 100%;
@@ -76,21 +76,21 @@
   .neos-input-large,
   .neos-input-xlarge,
   .neos-input-xxlarge,
-  input[class*="span"],
-  select[class*="span"],
-  textarea[class*="span"],
+  input[class*="neos-span"],
+  select[class*="neos-span"],
+  textarea[class*="neos-span"],
   .neos-uneditable-input {
     @include input-block-level();
   }
   // But don't let it screw up prepend/append inputs
   .neos-input-prepend input,
   .neos-input-append input,
-  .neos-input-prepend input[class*="span"],
-  .neos-input-append input[class*="span"] {
+  .neos-input-prepend input[class*="neos-span"],
+  .neos-input-append input[class*="neos-span"] {
     display: inline-block; // redeclare so they don't wrap to new lines
     width: auto;
   }
-  .neos-controls-row [class*="span"] + [class*="span"] {
+  .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
     margin-left: 0;
   }
 

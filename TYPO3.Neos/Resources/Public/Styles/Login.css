@@ -7,7 +7,7 @@
   font-size: 14px;
 }
 
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -1592,7 +1592,7 @@
 .neos .neos-row:after {
   clear: both;
 }
-.neos [class*="span"] {
+.neos [class*="neos-span"] {
   float: left;
   min-height: 1px;
   margin-left: 20px;
@@ -1687,7 +1687,7 @@
 .neos .neos-row-fluid:after {
   clear: both;
 }
-.neos .neos-row-fluid [class*="span"] {
+.neos .neos-row-fluid [class*="neos-span"] {
   display: block;
   width: 100%;
   min-height: 30px;
@@ -1698,10 +1698,10 @@
   margin-left: 2.12766%;
   *margin-left: 2.07447%;
 }
-.neos .neos-row-fluid [class*="span"]:first-child {
+.neos .neos-row-fluid [class*="neos-span"]:first-child {
   margin-left: 0;
 }
-.neos .neos-row-fluid .neos-controls-row [class*="span"] + [class*="span"] {
+.neos .neos-row-fluid .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
   margin-left: 2.12766%;
 }
 .neos .neos-row-fluid .neos-span1 {
@@ -1848,12 +1848,12 @@
   margin-left: 102.12766%;
   *margin-left: 102.02128%;
 }
-.neos [class*="span"].neos-hide,
-.neos .neos-row-fluid [class*="span"].neos-hide {
+.neos [class*="neos-span"].neos-hide,
+.neos .neos-row-fluid [class*="neos-span"].neos-hide {
   display: none;
 }
-.neos [class*="span"].neos-pull-right,
-.neos .neos-row-fluid [class*="span"].neos-pull-right {
+.neos [class*="neos-span"].neos-pull-right,
+.neos .neos-row-fluid [class*="neos-span"].neos-pull-right {
   float: right;
 }
 .neos form {
@@ -2101,27 +2101,27 @@
 .neos .neos-input-xxlarge {
   width: 530px;
 }
-.neos input[class*="span"],
-.neos select[class*="span"],
-.neos textarea[class*="span"],
-.neos .neos-uneditable-input[class*="span"],
-.neos .neos-row-fluid input[class*="span"],
-.neos .neos-row-fluid select[class*="span"],
-.neos .neos-row-fluid textarea[class*="span"],
-.neos .neos-row-fluid .neos-uneditable-input[class*="span"] {
+.neos input[class*="neos-span"],
+.neos select[class*="neos-span"],
+.neos textarea[class*="neos-span"],
+.neos .neos-uneditable-input[class*="neos-span"],
+.neos .neos-row-fluid input[class*="neos-span"],
+.neos .neos-row-fluid select[class*="neos-span"],
+.neos .neos-row-fluid textarea[class*="neos-span"],
+.neos .neos-row-fluid .neos-uneditable-input[class*="neos-span"] {
   float: none;
   margin-left: 0;
 }
-.neos .neos-input-append input[class*="span"],
-.neos .neos-input-append .neos-uneditable-input[class*="span"],
-.neos .neos-input-prepend input[class*="span"],
-.neos .neos-input-prepend .neos-uneditable-input[class*="span"],
-.neos .neos-row-fluid input[class*="span"],
-.neos .neos-row-fluid select[class*="span"],
-.neos .neos-row-fluid textarea[class*="span"],
-.neos .neos-row-fluid .neos-uneditable-input[class*="span"],
-.neos .neos-row-fluid .neos-input-prepend [class*="span"],
-.neos .neos-row-fluid .neos-input-append [class*="span"] {
+.neos .neos-input-append input[class*="neos-span"],
+.neos .neos-input-append .neos-uneditable-input[class*="neos-span"],
+.neos .neos-input-prepend input[class*="neos-span"],
+.neos .neos-input-prepend .neos-uneditable-input[class*="neos-span"],
+.neos .neos-row-fluid input[class*="neos-span"],
+.neos .neos-row-fluid select[class*="neos-span"],
+.neos .neos-row-fluid textarea[class*="neos-span"],
+.neos .neos-row-fluid .neos-uneditable-input[class*="neos-span"],
+.neos .neos-row-fluid .neos-input-prepend [class*="neos-span"],
+.neos .neos-row-fluid .neos-input-append [class*="neos-span"] {
   display: inline-block;
 }
 .neos input,
@@ -2129,7 +2129,7 @@
 .neos .neos-uneditable-input {
   margin-left: 0;
 }
-.neos .neos-controls-row [class*="span"] + [class*="span"] {
+.neos .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
   margin-left: 20px;
 }
 .neos input.neos-span1,
@@ -2203,12 +2203,12 @@
 .neos .neos-controls-row:after {
   clear: both;
 }
-.neos .neos-controls-row [class*="span"],
-.neos .neos-row-fluid .neos-controls-row [class*="span"] {
+.neos .neos-controls-row [class*="neos-span"],
+.neos .neos-row-fluid .neos-controls-row [class*="neos-span"] {
   float: left;
 }
-.neos .neos-controls-row .neos-checkbox[class*="span"],
-.neos .neos-controls-row .neos-radio[class*="span"] {
+.neos .neos-controls-row .neos-checkbox[class*="neos-span"],
+.neos .neos-controls-row .neos-radio[class*="neos-span"] {
   padding-top: 5px;
 }
 .neos input[disabled],

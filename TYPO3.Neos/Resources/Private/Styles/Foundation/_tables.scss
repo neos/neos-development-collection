@@ -180,10 +180,10 @@ table {
 // -----------------
 
 // Reset default grid behavior
-table td[class*="span"],
-table th[class*="span"],
-.neos-row-fluid table td[class*="span"],
-.neos-row-fluid table th[class*="span"] {
+table td[class*="neos-span"],
+table th[class*="neos-span"],
+.neos-row-fluid table td[class*="neos-span"],
+.neos-row-fluid table th[class*="neos-span"] {
   display: table-cell;
   float: none; // undo default grid column styles
   margin-left: 0; // undo default grid column styles
