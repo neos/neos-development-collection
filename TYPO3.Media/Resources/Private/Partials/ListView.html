@@ -1,6 +1,6 @@
 {namespace m=TYPO3\Media\ViewHelpers}
 <f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 25, maximumNumberOfLinks: 5}">
-	<table class="table table-striped table-condensed asset-list">
+	<table class="neos-table neos-table-striped neos-table-condensed asset-list">
 		<tr>
 			<th>Title</th>
 			<th>Type</th>
@@ -12,13 +12,13 @@
 				<td>{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</td>
 				<td>{asset.resource.mediatype}</td>
 				<td><f:for each="{asset.tags}" as="tag">
-					<span class="label">{tag.label}</span>
+					<span class="neos-label">{tag.label}</span>
 				</f:for>
 				</td>
 				<td>
 					<f:form action="delete" method="post" object="{asset}" objectName="asset">
-						<f:link.action action="edit" title="Edit asset" class="btn btn-mini" arguments="{asset: asset}"><i class="icon-pencil"></i></f:link.action>
-						<button type="submit" title="Delete asset" class="btn btn-mini btn-danger"><i class="icon-trash icon-white"></i></button>
+						<f:link.action action="edit" title="Edit asset" class="neos-btn neos-btn-mini" arguments="{asset: asset}"><i class="icon-pencil"></i></f:link.action>
+						<button type="submit" title="Delete asset" class="neos-btn neos-btn-mini neos-btn-danger"><i class="icon-trash icon-white"></i></button>
 					</f:form>
 				</td>
 			</tr>

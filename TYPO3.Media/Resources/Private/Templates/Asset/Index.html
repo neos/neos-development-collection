@@ -5,15 +5,15 @@
 <f:section name="Sidebar">
 
 	<h1>Tags</h1>
-	<f:link.action action="index" title="All assets" class="label {f:if(condition: activeTag, then: 'label-inverse', else: ' label-info')}" arguments="{view: view}">All</f:link.action><br/>
-	<f:link.action action="index" title="Untagged assets" class="label label-inverse" arguments="{view: view}">Untagged</f:link.action><br/>
+	<f:link.action action="index" title="All assets" class="neos-label {f:if(condition: activeTag, then: 'neos-label-inverse', else: 'neos-label-info')}" arguments="{view: view}">All</f:link.action><br/>
+	<f:link.action action="index" title="Untagged assets" class="neos-label neos-label-inverse" arguments="{view: view}">Untagged</f:link.action><br/>
 	<f:for each="{tags}" as="tag">
 		<f:if condition="{tag} == {activeTag}">
 			<f:then>
-				<f:link.action action="index" title="{tag.label}" class="label label-info" arguments="{view: view, tag: tag}">{tag.label}</f:link.action>
+				<f:link.action action="index" title="{tag.label}" class="neos-label neos-label-info" arguments="{view: view, tag: tag}">{tag.label}</f:link.action>
 			</f:then>
 			<f:else>
-				<f:link.action action="index" title="{tag.label}" class="label" arguments="{view: view, tag: tag}">{tag.label}</f:link.action>
+				<f:link.action action="index" title="{tag.label}" class="neos-label" arguments="{view: view, tag: tag}">{tag.label}</f:link.action>
 			</f:else>
 		</f:if>
 	</f:for>
@@ -25,18 +25,18 @@
 
 <f:section name="Content">
 	<hr/>
-	<f:link.action action="index" title="Thumbnail view" class="btn btn-mini" arguments="{view: 'Thumbnail', tag: activeTag}"><i class="icon-th"></i></f:link.action>
-	<f:link.action action="index" title="List view" class="btn btn-mini" arguments="{view: 'List', tag: activeTag}"><i class="icon-th-list"></i></f:link.action>
-	<f:link.action action="new" class="btn btn-mini"><i class="icon-upload"></i> Upload</f:link.action>
+	<f:link.action action="index" title="Thumbnail view" class="neos-btn neos-btn-mini" arguments="{view: 'Thumbnail', tag: activeTag}"><i class="icon-th"></i></f:link.action>
+	<f:link.action action="index" title="List view" class="neos-btn neos-btn-mini" arguments="{view: 'List', tag: activeTag}"><i class="icon-th-list"></i></f:link.action>
+	<f:link.action action="new" class="neos-btn neos-btn-mini"><i class="icon-upload"></i> Upload</f:link.action>
 	<hr/>
 
-	<div id="dropzone" class="well"><p>Drop files here to upload.</p></div>
+	<div id="dropzone" class="neos-well"><p>Drop files here to upload.</p></div>
 	<f:if condition="{assets}">
 		<f:then>
 			<f:render partial="{view}View" arguments="{assets: assets}"/>
 		</f:then>
 		<f:else>
-			<p class="well">No Assets found. You can drag files here to upload them.</p>
+			<p class="neos-well">No Assets found. You can drag files here to upload them.</p>
 		</f:else>
 	</f:if>
 	<script type="text/javascript">
