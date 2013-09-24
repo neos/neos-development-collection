@@ -5697,9 +5697,15 @@
   text-decoration: underline;
 }
 .neos [class^="icon-"], .neos [class*=" icon-"] {
-  background: none;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  *margin-right: .3em;
+  line-height: 14px;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
+  vertical-align: text-top;
+  margin-top: 1px;
 }
 .neos .neos-clear {
   clear: both;
@@ -6857,7 +6863,6 @@
   display: block;
 }
 .neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb i {
-  display: inline-block;
   margin-top: 3px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div {
