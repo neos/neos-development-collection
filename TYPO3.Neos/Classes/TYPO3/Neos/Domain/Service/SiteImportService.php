@@ -108,7 +108,7 @@ class SiteImportService {
 		}
 		fclose($fp);
 
-		$xml = new \SimpleXMLElement($xmlString);
+		$xml = new \SimpleXMLElement($xmlString, LIBXML_PARSEHUGE);
 		foreach ($xml->site as $siteXml) {
 			$site = $this->siteRepository->findOneByNodeName((string)$siteXml['nodeName']);
 			if ($site === NULL) {
