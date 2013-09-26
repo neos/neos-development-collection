@@ -1,5 +1,8 @@
 TYPO3:
   Media:
+    image:
+      defaultOptions:
+        'quality': 90
     bodyClasses: 'media-browser'
     scripts:
       - resource://TYPO3.Twitter.Bootstrap/Public/Libraries/jQuery/jquery-1.8.2.min.js

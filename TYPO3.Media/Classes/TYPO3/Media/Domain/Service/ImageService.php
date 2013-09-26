@@ -33,6 +33,19 @@ class ImageService {
 	protected $resourceManager;
 
 	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image
 	 * @param array $processingInstructions
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
@@ -43,7 +56,7 @@ class ImageService {
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
 			$imagineImage = $imagine->open('resource://' . $image->getResource()->getResourcePointer()->getHash());
 			$imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
-			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension()));
+			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension(), $this->settings['image']['defaultOptions']));
 		}
 		$resource = new \TYPO3\Flow\Resource\Resource();
 		$resource->setFilename($image->getResource()->getFilename());
