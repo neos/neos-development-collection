@@ -20,6 +20,10 @@ define(
 			return this.get('publishableEntitySubjects').length === 0;
 		}.property('publishableEntitySubjects.length'),
 
+		numberOfPublishableNodes: function() {
+			return this.get('publishableEntitySubjects').length;
+		}.property('publishableEntitySubjects.length'),
+
 		initialize: function() {
 			vie.entities.on('change', this._updatePublishableEntities, this);
 			this._updatePublishableEntities();

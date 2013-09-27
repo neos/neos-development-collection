@@ -39,15 +39,26 @@ define(
 				action: 'publishAll',
 				_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
 				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+
 				_noChangesBinding: 'controller.noChanges',
+				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
 				label: function() {
 					if (this.get('autoPublish')) {
 						return 'Auto-Publish';
 					} else {
-						return this.get('_noChanges') ? 'Published' : 'Publish';
+						return this.get('_noChanges') ? 'Published' : 'Publish' + ' ('  + this.get('_numberOfChanges') + ')';
 					}
-				}.property('_noChanges', 'autoPublish'),
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges'),
+
+				title: function() {
+					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
+					if (this.get('autoPublish')) {
+						return titleText;
+					} else if (!this.get('_noChanges')) {
+						return titleText;
+					}
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges'),
 
 				_autoPublishTimer: null,
 
