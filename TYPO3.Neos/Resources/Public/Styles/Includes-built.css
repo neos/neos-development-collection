@@ -1,6 +1,6 @@
 
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*!
+/*
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -7279,6 +7279,12 @@
 .neos .neos-inspector-image {
   min-width: 288px;
 }
+.neos .neos-inspector-image .neos-button {
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+}
 .neos .neos-inspector-image .neos-inspector-image-thumbnail-container {
   position: relative;
   overflow: hidden;
@@ -7333,9 +7339,12 @@
 .neos .neos-inspector-image .neos-inspector-image-width {
   padding-bottom: 12px;
 }
-.neos .neos-inspector-image .neos-inspector-image-upload .neos-button,
-.neos .neos-inspector-image .neos-inspector-image-width .neos-button {
-  padding: 0 12px;
+.neos .neos-inspector-image .neos-inspector-image-upload .neos-inspector-image-upload-button,
+.neos .neos-inspector-image .neos-inspector-image-upload .neos-inspector-image-crop-button,
+.neos .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-upload-button,
+.neos .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-crop-button {
+  float: right;
+  margin-left: 4px;
 }
 .neos .neos-secondary-inspector {
   position: fixed;
