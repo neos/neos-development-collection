@@ -1,6 +1,6 @@
 
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -7141,7 +7141,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-inspector .neos-inspector-form input[type=checkbox]:before {
+.neos #neos-inspector .neos-inspector-form input[type=checkbox] + span:before {
   display: block;
   width: 20px;
   height: 20px;
@@ -7150,12 +7150,12 @@
   color: #fff;
   cursor: pointer;
   content: "";
-  visibility: visible;
+  position: absolute;
 }
-.neos #neos-inspector .neos-inspector-form input[type=checkbox]:hover:before {
+.neos #neos-inspector .neos-inspector-form input[type=checkbox]:hover + span:before {
   border: 1px solid #00b5ff;
 }
-.neos #neos-inspector .neos-inspector-form input[type=checkbox]:checked:before {
+.neos #neos-inspector .neos-inspector-form input[type=checkbox]:checked + span:before {
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: #00b5ff;
@@ -7435,7 +7435,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox]:before {
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox] + span:before {
   display: block;
   width: 20px;
   height: 20px;
@@ -7444,12 +7444,12 @@
   color: #fff;
   cursor: pointer;
   content: "";
-  visibility: visible;
+  position: absolute;
 }
-.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox]:hover:before {
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox]:hover + span:before {
   border: 1px solid #00b5ff;
 }
-.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox]:checked:before {
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox]:checked + span:before {
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: #00b5ff;
