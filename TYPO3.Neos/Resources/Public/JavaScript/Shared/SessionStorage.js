@@ -42,7 +42,13 @@ function(Ember) {
 			if (!this._supportsSessionStorage()) {
 				return;
 			}
-			window.sessionStorage.setItem(key, JSON.stringify(value));
+			try {
+				window.sessionStorage.setItem(key, JSON.stringify(value));
+			} catch (e) {
+				// Clear the session storage in case an quota error is thrown
+				window.sessionStorage.clear();
+				window.sessionStorage.setItem(key, JSON.stringify(value));
+			}
 		},
 
 		/**
