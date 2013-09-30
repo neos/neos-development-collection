@@ -1,9 +1,9 @@
-.chzn-container {
+.chosen-container {
 	color: #fff;
 	line-height: $unit;
 	font-size: 14px;
 
-	.chzn-single {
+	.chosen-single {
 		height: $unit;
 		border: none;
 		background-color: $grayMedium;
@@ -15,7 +15,7 @@
 		line-height: inherit;
 		text-decoration: none;
 
-		&.chzn-single-with-deselect span {
+		&.chosen-single-with-deselect span {
 			margin-right: $unit + 1px + 18px + $defaultMargin;
 		}
 
@@ -79,7 +79,7 @@
 		}
 	}
 
-	.chzn-drop {
+	.chosen-drop {
 		border: none;
 		background-color: $grayMedium;
 		background-image: none;
@@ -88,7 +88,7 @@
 		color: inherit;
 		margin-top: 0;
 
-		.chzn-search {
+		.chosen-search {
 			padding: 0;
 			color: $black;
 			@include icon-FontAwesome();
@@ -124,7 +124,7 @@
 			}
 		}
 
-		.chzn-results {
+		.chosen-results {
 			margin: 0;
 			padding: 0;
 			max-height: 247px;

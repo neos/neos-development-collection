@@ -64,8 +64,8 @@
 	}
 
 	@import "Shared/Chosen";
-	.chzn-container {
-		.chzn-single {
+	.chosen-container {
+		.chosen-single {
 			border-left: 1px solid $grayLight;
 			border-right: 1px solid $grayLight;
 
@@ -75,10 +75,10 @@
 		}
 
 
-		.chzn-drop {
+		.chosen-drop {
 			margin-top: 0;
 
-			.chzn-results {
+			.chosen-results {
 				max-height: none;
 
 				li {

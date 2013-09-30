@@ -56,7 +56,7 @@ function($, Ember) {
 			}
 
 			// TODO Check value binding
-			this.$().addClass('chzn-select').chosen({allow_single_deselect: true}).change(function() {
+			this.$().addClass('chosen-select').chosen({allow_single_deselect: true}).change(function() {
 				that.set('value', that.$().val());
 			});
 		}
