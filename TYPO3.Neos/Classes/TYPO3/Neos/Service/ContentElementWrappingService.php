@@ -171,7 +171,7 @@ class ContentElementWrappingService {
 		} else {
 			$dataTypeAttribute = sprintf(' datatype="%s"', $dataType);
 		}
-		$tag = sprintf('<script type="text/x-typo3" property="typo3:%s"%s>%s</script>', $propertyName, $dataTypeAttribute, $propertyValue);
+		$tag = sprintf('<script type="text/x-typo3" property="typo3:%s"%s content="%s"></script>', $propertyName, $dataTypeAttribute, htmlentities($propertyValue));
 		$tagBuilder->setContent($tag . $tagBuilder->getContent());
 	}
 
