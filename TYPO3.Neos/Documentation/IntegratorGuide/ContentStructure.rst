@@ -137,7 +137,10 @@ The following options are allowed:
   A list of named properties for this node type. For each property the following settings are available.
 
   `type`
-    PHP type of this property. Either simple type or fully qualified PHP class name.
+    Data type of this property. This may be a simple type (like in PHP), a fully qualified PHP class name, or one of
+    these three special types: `date`, `references`, or `reference`. Use `date` to store dates / time as a DateTime object.
+    Use `reference` and `references` to store references that point to other nodes. `reference` only accepts a single node
+    or node identifier, while `references` accepts an array of nodes or node identifiers.
 
   `defaultValue`
     Default value of this property. Used at node creation time. Type must match specified 'type'.

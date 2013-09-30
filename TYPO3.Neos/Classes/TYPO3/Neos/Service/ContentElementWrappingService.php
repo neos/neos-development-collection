@@ -12,11 +12,13 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * The content element wrapping service adds the necessary markup around
  * a content element such that it can be edited using the Content Module
- * of the TYPO3 Backend.
+ * of the Neos Backend.
  *
  * @Flow\Scope("singleton")
  */
@@ -104,23 +106,43 @@ class ContentElementWrappingService {
 			}
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			if ($propertyName[0] === '_') {
-				$propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
+				$propertyValue = ObjectAccess::getProperty($node, substr($propertyName, 1));
 			} else {
 				$propertyValue = $node->getProperty($propertyName);
 			}
 			// Serialize boolean values to String
-			if (isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'boolean') {
+			if ($dataType === 'boolean') {
 				$propertyValue = ($propertyValue ? 'true' : 'false');
 			}
 
 			// Serialize date values to String
-			if ($propertyValue instanceof \DateTime && isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'date') {
+			if ($propertyValue instanceof \DateTime && $dataType === 'date') {
 				$propertyValue = $propertyValue->format('Y-m-d');
+			}
+
+			// Serialize node references to node identifiers
+			if ($dataType === 'references') {
+				$nodeIdentifiers = array();
+				if (is_array($propertyValue)) {
+					foreach ($propertyValue as $subNode) {
+						$nodeIdentifiers[] = $subNode->getIdentifier();
+					}
+				}
+				$propertyValue = json_encode($nodeIdentifiers);
+			}
+
+			// Serialize node reference to node identifier
+			if ($dataType === 'reference') {
+				if ($propertyValue instanceof NodeInterface) {
+					$propertyValue = $propertyValue->getIdentifier();
+				} else {
+					$propertyValue = '';
+				}
 			}
 
 			// Serialize objects to JSON strings
 			if (is_object($propertyValue) && $propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
-				$gettableProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($propertyValue);
+				$gettableProperties = ObjectAccess::getGettableProperties($propertyValue);
 				$convertedProperties = array();
 				foreach ($gettableProperties as $key => $value) {
 					if (is_object($value)) {

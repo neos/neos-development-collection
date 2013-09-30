@@ -154,3 +154,7 @@ Apache 2.0 license
 
 DateTime Picker - http://www.malot.fr/bootstrap-datetimepicker/
 Apache 2.0 license
+
+Select2 - http://ivaynberg.github.io/select2/
+Version 3.4.5
+Apache 2.0 or GPL 2.0 License

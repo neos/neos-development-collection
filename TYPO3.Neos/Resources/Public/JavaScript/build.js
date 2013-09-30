@@ -20,7 +20,9 @@
 		"Content/Inspector/Editors/BooleanEditor",
 		"Content/Inspector/Editors/DateTimeEditor",
 		"Content/Inspector/Editors/ImageEditor",
-		"Content/Inspector/Editors/SelectBoxEditor"
+		"Content/Inspector/Editors/SelectBoxEditor",
+		"Content/Inspector/Editors/ReferenceEditor",
+		"Content/Inspector/Editors/ReferencesEditor"
 	],
 	out: "ContentModule-built.js"
 
