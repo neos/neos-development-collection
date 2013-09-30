@@ -5259,7 +5259,7 @@
 .neos .neos-btn.neos-button.neos-disabled:hover, .neos .neos-btn.neos-button[disabled]:hover {
   background-position: 0 0;
 }
-.neos .neos-btn.neos-button.pressed {
+.neos .neos-btn.neos-button.neos-pressed {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #ff8e0f;
@@ -5281,15 +5281,15 @@
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.neos .neos-btn.neos-button.pressed:hover, .neos .neos-btn.neos-button.pressed:focus, .neos .neos-btn.neos-button.pressed:active, .neos .neos-btn.neos-button.pressed.neos-active, .neos .neos-btn.neos-button.pressed.neos-disabled, .neos .neos-btn.neos-button.pressed[disabled] {
+.neos .neos-btn.neos-button.neos-pressed:hover, .neos .neos-btn.neos-button.neos-pressed:focus, .neos .neos-btn.neos-button.neos-pressed:active, .neos .neos-btn.neos-button.neos-pressed.neos-active, .neos .neos-btn.neos-button.neos-pressed.neos-disabled, .neos .neos-btn.neos-button.neos-pressed[disabled] {
   color: white;
   background-color: #ff8700;
   *background-color: #e67a00;
 }
-.neos .neos-btn.neos-button.pressed:active, .neos .neos-btn.neos-button.pressed.neos-active {
+.neos .neos-btn.neos-button.neos-pressed:active, .neos .neos-btn.neos-button.neos-pressed.neos-active {
   background-color: #cc6c00 \9;
 }
-.neos .neos-btn.neos-button.pressed:hover, .neos .neos-btn.neos-button.pressed:focus, .neos .neos-btn.neos-button.pressed:active {
+.neos .neos-btn.neos-button.neos-pressed:hover, .neos .neos-btn.neos-button.neos-pressed:focus, .neos .neos-btn.neos-button.neos-pressed:active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #fb8500;
@@ -5308,15 +5308,15 @@
   border: 1px solid #cc6c00;
   border-bottom-color: #995100;
 }
-.neos .neos-btn.neos-button.pressed:hover:hover, .neos .neos-btn.neos-button.pressed:hover:focus, .neos .neos-btn.neos-button.pressed:hover:active, .neos .neos-btn.neos-button.pressed:hover.neos-active, .neos .neos-btn.neos-button.pressed:hover.neos-disabled, .neos .neos-btn.neos-button.pressed:hover[disabled], .neos .neos-btn.neos-button.pressed:focus:hover, .neos .neos-btn.neos-button.pressed:focus:focus, .neos .neos-btn.neos-button.pressed:focus:active, .neos .neos-btn.neos-button.pressed:focus.neos-active, .neos .neos-btn.neos-button.pressed:focus.neos-disabled, .neos .neos-btn.neos-button.pressed:focus[disabled], .neos .neos-btn.neos-button.pressed:active:hover, .neos .neos-btn.neos-button.pressed:active:focus, .neos .neos-btn.neos-button.pressed:active:active, .neos .neos-btn.neos-button.pressed:active.neos-active, .neos .neos-btn.neos-button.pressed:active.neos-disabled, .neos .neos-btn.neos-button.pressed:active[disabled] {
+.neos .neos-btn.neos-button.neos-pressed:hover:hover, .neos .neos-btn.neos-button.neos-pressed:hover:focus, .neos .neos-btn.neos-button.neos-pressed:hover:active, .neos .neos-btn.neos-button.neos-pressed:hover.neos-active, .neos .neos-btn.neos-button.neos-pressed:hover.neos-disabled, .neos .neos-btn.neos-button.neos-pressed:hover[disabled], .neos .neos-btn.neos-button.neos-pressed:focus:hover, .neos .neos-btn.neos-button.neos-pressed:focus:focus, .neos .neos-btn.neos-button.neos-pressed:focus:active, .neos .neos-btn.neos-button.neos-pressed:focus.neos-active, .neos .neos-btn.neos-button.neos-pressed:focus.neos-disabled, .neos .neos-btn.neos-button.neos-pressed:focus[disabled], .neos .neos-btn.neos-button.neos-pressed:active:hover, .neos .neos-btn.neos-button.neos-pressed:active:focus, .neos .neos-btn.neos-button.neos-pressed:active:active, .neos .neos-btn.neos-button.neos-pressed:active.neos-active, .neos .neos-btn.neos-button.neos-pressed:active.neos-disabled, .neos .neos-btn.neos-button.neos-pressed:active[disabled] {
   color: white;
   background-color: #f58200;
   *background-color: #db7400;
 }
-.neos .neos-btn.neos-button.pressed:hover:active, .neos .neos-btn.neos-button.pressed:hover.neos-active, .neos .neos-btn.neos-button.pressed:focus:active, .neos .neos-btn.neos-button.pressed:focus.neos-active, .neos .neos-btn.neos-button.pressed:active:active, .neos .neos-btn.neos-button.pressed:active.neos-active {
+.neos .neos-btn.neos-button.neos-pressed:hover:active, .neos .neos-btn.neos-button.neos-pressed:hover.neos-active, .neos .neos-btn.neos-button.neos-pressed:focus:active, .neos .neos-btn.neos-button.neos-pressed:focus.neos-active, .neos .neos-btn.neos-button.neos-pressed:active:active, .neos .neos-btn.neos-button.neos-pressed:active.neos-active {
   background-color: #c26700 \9;
 }
-.neos .neos-btn.neos-button.pressed.neos-disabled, .neos .neos-btn.neos-button.pressed[disabled] {
+.neos .neos-btn.neos-button.neos-pressed.neos-disabled, .neos .neos-btn.neos-button.neos-pressed[disabled] {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #ff8e0f;
@@ -5333,12 +5333,12 @@
   
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.neos .neos-btn.neos-button.pressed.neos-disabled:hover, .neos .neos-btn.neos-button.pressed.neos-disabled:focus, .neos .neos-btn.neos-button.pressed.neos-disabled:active, .neos .neos-btn.neos-button.pressed.neos-disabled.neos-active, .neos .neos-btn.neos-button.pressed.neos-disabled.neos-disabled, .neos .neos-btn.neos-button.pressed.neos-disabled[disabled], .neos .neos-btn.neos-button.pressed[disabled]:hover, .neos .neos-btn.neos-button.pressed[disabled]:focus, .neos .neos-btn.neos-button.pressed[disabled]:active, .neos .neos-btn.neos-button.pressed[disabled].neos-active, .neos .neos-btn.neos-button.pressed[disabled].neos-disabled, .neos .neos-btn.neos-button.pressed[disabled][disabled] {
+.neos .neos-btn.neos-button.neos-pressed.neos-disabled:hover, .neos .neos-btn.neos-button.neos-pressed.neos-disabled:focus, .neos .neos-btn.neos-button.neos-pressed.neos-disabled:active, .neos .neos-btn.neos-button.neos-pressed.neos-disabled.neos-active, .neos .neos-btn.neos-button.neos-pressed.neos-disabled.neos-disabled, .neos .neos-btn.neos-button.neos-pressed.neos-disabled[disabled], .neos .neos-btn.neos-button.neos-pressed[disabled]:hover, .neos .neos-btn.neos-button.neos-pressed[disabled]:focus, .neos .neos-btn.neos-button.neos-pressed[disabled]:active, .neos .neos-btn.neos-button.neos-pressed[disabled].neos-active, .neos .neos-btn.neos-button.neos-pressed[disabled].neos-disabled, .neos .neos-btn.neos-button.neos-pressed[disabled][disabled] {
   color: white;
   background-color: #ff8700;
   *background-color: #e67a00;
 }
-.neos .neos-btn.neos-button.pressed.neos-disabled:active, .neos .neos-btn.neos-button.pressed.neos-disabled.neos-active, .neos .neos-btn.neos-button.pressed[disabled]:active, .neos .neos-btn.neos-button.pressed[disabled].neos-active {
+.neos .neos-btn.neos-button.neos-pressed.neos-disabled:active, .neos .neos-btn.neos-button.neos-pressed.neos-disabled.neos-active, .neos .neos-btn.neos-button.neos-pressed[disabled]:active, .neos .neos-btn.neos-button.neos-pressed[disabled].neos-active {
   background-color: #cc6c00 \9;
 }
 .neos .neos-btn.neos-button.neos-btn-warning {
@@ -5880,7 +5880,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-button:hover, .neos .neos-button:active, .neos .neos-button.neos-active, .neos .neos-button.pressed {
+.neos .neos-button:hover, .neos .neos-button:active, .neos .neos-button.neos-active, .neos .neos-button.neos-pressed {
   background-color: #00b5ff;
 }
 .neos .neos-button[class^="icon-"], .neos .neos-button[class*=" icon-"] {
@@ -6609,10 +6609,10 @@
   font-weight: normal;
   content: "‹";
 }
-.neos #neos-inspector-button:hover, .neos #neos-inspector-button.is-active {
+.neos #neos-inspector-button:hover, .neos #neos-inspector-button.neos-is-active {
   background-color: #00b5ff;
 }
-.neos #neos-inspector-button.pressed:before {
+.neos #neos-inspector-button.neos-pressed:before {
   content: "›";
 }
 .neos #neos-inspector {
@@ -7070,7 +7070,7 @@
   float: right;
   margin-left: 4px;
 }
-.neos #neos-inspector .toolbar {
+.neos #neos-inspector .neos-toolbar {
   position: absolute;
   top: 0;
   width: 100%;
@@ -7093,7 +7093,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb {
   max-width: 288px;
   margin-right: -8px;
   cursor: pointer;
@@ -7104,18 +7104,18 @@
   user-select: none;
   position: relative;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb.neos-open ul {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb.neos-open ul {
   display: block;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb i {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb i {
   margin-top: 3px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div {
   position: relative;
   background-color: #323232;
   height: 40px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div span {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div span {
   display: block;
   margin-right: 40px;
   border-right: 1px solid #222222;
@@ -7126,7 +7126,7 @@
   white-space: nowrap;
   padding: 0 16px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div:before, .neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div:after {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:before, .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:after {
   display: block;
   position: absolute;
   right: 15px;
@@ -7135,7 +7135,7 @@
   line-height: 40px;
   content: "▾";
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div:before {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:before {
   top: -4px;
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
@@ -7143,10 +7143,10 @@
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb div:after {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div:after {
   top: 4px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb ul {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul {
   display: none;
   position: absolute;
   margin: 0;
@@ -7156,19 +7156,19 @@
   -moz-box-shadow: 1px 2px 5px #222222;
   box-shadow: 1px 2px 5px #222222;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb ul li {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li {
   position: relative;
   min-height: 40px;
   background-color: #323232;
   border-top: 1px solid #222222;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb ul li:first-child {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li:first-child {
   background-color: #00b5ff;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb ul li:hover {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li:hover {
   background-color: #00b5ff;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb ul li a {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li a {
   display: block;
   height: 100%;
   line-height: 40px;
@@ -7178,7 +7178,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-inspector .neos-inspector-form .neos-content-breadcrumb ul li a:hover {
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li a:hover {
   text-decoration: none;
 }
 .neos #neos-inspector .neos-inspector-form .neos-inspector-section {
@@ -7230,11 +7230,11 @@
   -o-user-select: none;
   user-select: none;
 }
-.neos #neos-inspector .neos-inspector-form .neos-inspector-headline.validation-error span {
+.neos #neos-inspector .neos-inspector-form .neos-inspector-headline.neos-validation-error span {
   padding-right: 8px;
   max-width: 256px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-inspector-headline.validation-error i {
+.neos #neos-inspector .neos-inspector-form .neos-inspector-headline.neos-validation-error i {
   float: left;
   color: #ff460d;
   line-height: 40px;
@@ -7343,46 +7343,46 @@
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.neos #neos-inspector .neos-inspector-form input[type="text"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="password"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="datetime"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="datetime-local"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="date"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="month"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="time"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="week"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="number"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="range"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="date"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="email"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="url"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="search"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="tel"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="color"].modified,
-.neos #neos-inspector .neos-inspector-form input[type="number"].modified,
-.neos #neos-inspector .neos-inspector-form .neos-uneditable-input.modified {
+.neos #neos-inspector .neos-inspector-form input[type="text"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="password"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="datetime"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="datetime-local"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="date"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="month"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="time"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="week"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="number"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="range"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="date"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="email"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="url"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="search"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="tel"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="color"].neos-modified,
+.neos #neos-inspector .neos-inspector-form input[type="number"].neos-modified,
+.neos #neos-inspector .neos-inspector-form .neos-uneditable-input.neos-modified {
   border: 2px solid #54974a;
 }
-.neos #neos-inspector .neos-inspector-form .modified > input[type="text"], .neos #neos-inspector .neos-inspector-form .modified > input[type="password"], .neos #neos-inspector .neos-inspector-form .modified > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .modified > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .modified > input[type="month"], .neos #neos-inspector .neos-inspector-form .modified > input[type="time"], .neos #neos-inspector .neos-inspector-form .modified > input[type="week"], .neos #neos-inspector .neos-inspector-form .modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .modified > input[type="range"], .neos #neos-inspector .neos-inspector-form .modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .modified > input[type="email"], .neos #neos-inspector .neos-inspector-form .modified > input[type="url"], .neos #neos-inspector .neos-inspector-form .modified > input[type="search"], .neos #neos-inspector .neos-inspector-form .modified > input[type="tel"], .neos #neos-inspector .neos-inspector-form .modified > input[type="color"], .neos #neos-inspector .neos-inspector-form .modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .modified > .neos-uneditable-input {
+.neos #neos-inspector .neos-inspector-form .neos-modified > input[type="text"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="password"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="month"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="time"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="week"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="range"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="email"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="url"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="search"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="tel"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="color"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > .neos-uneditable-input {
   border: 2px solid #00a338;
 }
-.neos #neos-inspector .neos-inspector-form .modified .chzn-container .chzn-single {
+.neos #neos-inspector .neos-inspector-form .neos-modified .chzn-container .chzn-single {
   border: 2px solid #00a338;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding-left: 14px;
 }
-.neos #neos-inspector .neos-inspector-form .modified .chzn-container .chzn-single span {
+.neos #neos-inspector .neos-inspector-form .neos-modified .chzn-container .chzn-single span {
   line-height: 36px;
 }
-.neos #neos-inspector .neos-inspector-form .modified .chzn-container .chzn-single abbr {
+.neos #neos-inspector .neos-inspector-form .neos-modified .chzn-container .chzn-single abbr {
   top: 9px;
 }
-.neos #neos-inspector .neos-inspector-form .modified .chzn-container .chzn-single div {
+.neos #neos-inspector .neos-inspector-form .neos-modified .chzn-container .chzn-single div {
   width: 38px;
 }
-.neos #neos-inspector .neos-inspector-form .modified .chzn-container .chzn-single div:before, .neos #neos-inspector .neos-inspector-form .modified .chzn-container .chzn-single div:after {
+.neos #neos-inspector .neos-inspector-form .neos-modified .chzn-container .chzn-single div:before, .neos #neos-inspector .neos-inspector-form .neos-modified .chzn-container .chzn-single div:after {
   right: 13px;
   line-height: 36px;
 }
@@ -7503,7 +7503,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos #neos-inspector .actions {
+.neos #neos-inspector .neos-actions {
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -7511,7 +7511,7 @@
   border-top: 1px solid #222222;
   background-color: #222222;
 }
-.neos #neos-inspector .actions button {
+.neos #neos-inspector .neos-actions button {
   height: 40px;
   color: #fff;
   border: none;
@@ -7522,21 +7522,21 @@
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.neos #neos-inspector .actions button.neos-disabled, .neos #neos-inspector .actions button[disabled] {
+.neos #neos-inspector .neos-actions button.neos-disabled, .neos #neos-inspector .neos-actions button[disabled] {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
 }
-.neos #neos-inspector .actions button.neos-inspector-cancel {
+.neos #neos-inspector .neos-actions button.neos-inspector-cancel {
   float: left;
   background-color: #3f3f3f;
   width: 37%;
 }
-.neos #neos-inspector .actions button.neos-inspector-apply {
+.neos #neos-inspector .neos-actions button.neos-inspector-apply {
   float: right;
   background-color: #00a338;
   width: 62%;
 }
-.neos #neos-inspector .actions button.neos-inspector-apply i {
+.neos #neos-inspector .neos-actions button.neos-inspector-apply i {
   position: relative;
   top: 3px;
 }
@@ -7899,7 +7899,7 @@
   display: inline-block;
   float: left;
 }
-.neos #neos-context-bar .neos-button:hover, .neos #neos-context-bar .neos-button:active, .neos #neos-context-bar .neos-button.active, .neos #neos-context-bar .neos-button.pressed {
+.neos #neos-context-bar .neos-button:hover, .neos #neos-context-bar .neos-button:active, .neos #neos-context-bar .neos-button.active, .neos #neos-context-bar .neos-button.neos-pressed {
   background-color: #00b5ff;
 }
 .neos #neos-context-bar .neos-button + .neos-button {
@@ -7908,11 +7908,11 @@
 .neos #neos-context-bar .neos-button.neos-pagetree-button {
   margin-right: 16px;
 }
-.neos #neos-context-bar .neos-context-bar-save-indidator {
+.neos #neos-context-bar .neos-context-bar-save-indicator {
   display: inline-block;
   float: left;
 }
-.neos #neos-context-bar .neos-context-bar-save-indidator .neos-indicator {
+.neos #neos-context-bar .neos-context-bar-save-indicator .neos-indicator {
   margin: 0;
   padding: 0;
   cursor: default;
@@ -7920,7 +7920,7 @@
   border: none;
   padding-right: 16px;
 }
-.neos #neos-context-bar .neos-context-bar-save-indidator .neos-indicator span {
+.neos #neos-context-bar .neos-context-bar-save-indicator .neos-indicator span {
   position: relative;
   top: 2px;
 }
@@ -8111,14 +8111,14 @@
   background-color: #222222;
   border-right: 1px solid #3f3f3f;
 }
-.neos #neos-menu-button:hover:before, .neos #neos-menu-button.pressed:before {
+.neos #neos-menu-button:hover:before, .neos #neos-menu-button.neos-pressed:before {
   border-top: 3px solid #00b5ff;
   border-bottom: 3px solid #00b5ff;
 }
-.neos #neos-menu-button:hover:after, .neos #neos-menu-button.pressed:after {
+.neos #neos-menu-button:hover:after, .neos #neos-menu-button.neos-pressed:after {
   background-color: #00b5ff;
 }
-.neos #neos-menu-button.pressed {
+.neos #neos-menu-button.neos-pressed {
   height: 41px;
 }
 .neos #neos-menu-button:before {
