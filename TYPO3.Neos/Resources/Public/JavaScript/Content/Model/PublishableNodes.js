@@ -52,7 +52,7 @@ define(
 		/**
 		 * Publish all blocks which are unsaved *and* on current page.
 		 */
-		publishAll: function() {
+		publishChanges: function() {
 			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this.get('publishableEntitySubjects'),
 				function(subject) {
@@ -66,6 +66,19 @@ define(
 					entity.set('typo3:__workspacename', 'live');
 				}
 			);
+		},
+
+		/**
+		 * Publishes everything inside the current workspace.
+		 */
+		publishAll: function() {
+			$.each(this.get('publishableEntitySubjects'), function(index, element) {
+				var entity = vie.entities.get(element);
+				entity.set('typo3:__workspacename', 'live');
+			});
+			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot');
+			var workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
+			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAllWorkspace(workspaceName);
 		}
 	}).create();
 });

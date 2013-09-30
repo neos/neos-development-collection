@@ -3,14 +3,10 @@ define(
 		'emberjs',
 		'./Button',
 		'Content/Model/PublishableNodes',
+		'./PublishAllDialog',
 		'text!./PublishMenu.html'
 	],
-	function (
-		Ember,
-		Button,
-		PublishableNodes,
-		template
-	) {
+	function (Ember, Button, PublishableNodes, PublishAllDialog, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-publish-menu', 'neos-btn-group'],
@@ -36,7 +32,8 @@ define(
 				controller: PublishableNodes,
 
 				target: 'controller',
-				action: 'publishAll',
+				action: 'publishChanges',
+
 				_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
 				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
 
@@ -86,6 +83,29 @@ define(
 					className += this.get('_connectionFailed') ? 'down' : 'up';
 					return className;
 				}.property('_connectionFailed')
+			}),
+
+			PublishAllButton: Button.extend({
+				classNameBindings: ['disabledClass'],
+				classNames: ['neos-publish-all-button'],
+				label: 'Publish all',
+				controller: PublishableNodes,
+				confirmationDialog: PublishAllDialog.create(),
+
+				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+				_noChangesBinding: 'controller.noChanges',
+
+				click: function() {
+					this.confirmationDialog.createElement();
+				},
+
+				disabled: function() {
+					return this.get('_noChanges') || this.get('_saveRunning');
+				}.property('_noChanges', '_saveRunning'),
+
+				disabledClass: function() {
+					return this.get('_noChanges') || this.get('_saveRunning') ? 'disabled' : '';
+				}.property('_noChanges', '_saveRunning')
 			})
 		});
 	}

@@ -56,4 +56,14 @@
 			left: 3px;
 		}
 	}
+
+	.neos-publish-all-button {
+		&.neos-button {
+			width: 100%;
+			font-size: $generalFontSize;
+		}
+		&.disabled {
+			@include opacity(.5);
+		}
+	}
 }

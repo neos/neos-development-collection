@@ -74,6 +74,20 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Publish everything in the workspace with the given workspaceName
+	 *
+	 * @param string workspaceName
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function publishAllWorkspaceAction($workspaceName) {
+		$unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspaceName);
+		$this->publishingService->publishNodes($unpublishedNodes);
+
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
 	 * A preliminary error action for handling validation errors
 	 * by assigning them to the ExtDirect View that takes care of
 	 * converting them.
