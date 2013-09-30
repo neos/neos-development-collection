@@ -27,11 +27,12 @@ function(
 		_index: null,
 
 		content: function() {
-			var groups = {};
+			var groups = {},
+				namespace = Configuration.get('TYPO3_NAMESPACE');
 
 			_.each(this.get('_entity._enclosingCollectionWidget').options.definition.range, function(nodeType) {
 				var type = this.get('_entity._enclosingCollectionWidget').options.vie.types.get(nodeType);
-				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(Configuration.TYPO3_NAMESPACE, '');
+				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
 
 				if (type.metadata.ui && type.metadata.ui.group) {
 					if (!groups[type.metadata.ui.group]) {

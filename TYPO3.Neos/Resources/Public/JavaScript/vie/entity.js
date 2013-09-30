@@ -74,10 +74,11 @@ define([
 		 */
 		init: function() {
 			var that = this,
-				vieEntity = this.get('_vieEntity');
+				vieEntity = this.get('_vieEntity'),
+				namespace = Configuration.get('TYPO3_NAMESPACE');
 
 			this.set('modified', !$.isEmptyObject(vieEntity.changed));
-			this.set('publishable', vieEntity.get(Configuration.TYPO3_NAMESPACE + '__workspacename') !== 'live');
+			this.set('publishable', vieEntity.get(namespace + '__workspacename') !== 'live');
 
 			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
 				// this event fires if inline content changes
@@ -87,7 +88,7 @@ define([
 				// this event fires if content changes through the property inspector
 			vieEntity.on('change', function() {
 				that.set('modified', !$.isEmptyObject(vieEntity.changed));
-				that.set('publishable', vieEntity.get(Configuration.TYPO3_NAMESPACE + '__workspacename') !== 'live');
+				that.set('publishable', vieEntity.get(namespace + '__workspacename') !== 'live');
 			});
 
 			this.set('$element', $entityElement);
@@ -145,12 +146,13 @@ define([
 		 * @return {object}
 		 */
 		extractAttributesFromVieEntity: function(vieEntity, attributes, filterFn) {
-			var cleanAttributes = {};
+			var cleanAttributes = {},
+				namespace = Configuration.get('TYPO3_NAMESPACE');
 			attributes = _.isEmpty(attributes) ? vieEntity.attributes : attributes;
 			_.each(attributes, function(value, subject) {
 				var property = vieEntity.fromReference(subject);
-				if (property.indexOf(Configuration.TYPO3_NAMESPACE) === 0) {
-					property = property.replace(Configuration.TYPO3_NAMESPACE, '');
+				if (property.indexOf(namespace) === 0) {
+					property = property.replace(namespace, '');
 					if (!filterFn || filterFn(property, value)) {
 						cleanAttributes[property] = value;
 					}
@@ -165,7 +167,8 @@ define([
 		 */
 		extractNodeTypeFromVieEntity: function(vieEntity) {
 			var types = vieEntity.get('@type'),
-				type;
+				type,
+				namespace = Configuration.get('TYPO3_NAMESPACE');
 			if (!_.isArray(types)) {
 				types = [types];
 			}
@@ -174,12 +177,12 @@ define([
 				_.map(types, function(type) {
 					return type.toString();
 				}), function(type) {
-					return type.indexOf('<' + Configuration.TYPO3_NAMESPACE) === 0;
+					return type.indexOf('<' + namespace) === 0;
 				}
 			);
 
 			if (type) {
-				type = type.substr(Configuration.TYPO3_NAMESPACE.length + 1);
+				type = type.substr(namespace.length + 1);
 				type = type.substr(0, type.length - 1);
 			}
 			return type;

@@ -169,15 +169,16 @@ function(
 		 * @return {void}
 		 */
 		_registerVieNodeTypeTemplateCallbacks: function() {
+			var namespace = Configuration.get('TYPO3_NAMESPACE');
 			_.each(vie.types.toArray(), function(type) {
-				var nodeType = type.id.substring(1, type.id.length - 1).replace(Configuration.TYPO3_NAMESPACE, '');
+				var nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
 				var prefix = vie.namespaces.getPrefix(type.id);
 
 				if (prefix === 'typo3') {
 					vie.service('rdfa').setTemplate('typo3:' + nodeType, 'typo3:content-collection', function(entity, callBack, collectionView) {
 							// This callback function is called whenever we create a content element
 						var type = entity.get('@type'),
-							nodeType = type.id.substring(1, type.id.length - 1).replace(Configuration.TYPO3_NAMESPACE, ''),
+							nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, ''),
 							referenceEntity = null,
 							lastMatchedEntity = null;
 
