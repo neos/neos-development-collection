@@ -1,4 +1,14 @@
-define(['vie/entity', 'Library/backbone', 'neos/content/controller', 'neos/content/model'], function(Entity, Backbone) {
+define(
+[
+	'vie/entity',
+	'Library/backbone',
+	'Content/Model/PublishableNodes',
+	'neos/content/controller'
+], function(
+	Entity,
+	Backbone,
+	PublishableNodes
+) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('storage');
 
 	Backbone.sync = function(method, model, options) {
@@ -30,7 +40,7 @@ define(['vie/entity', 'Library/backbone', 'neos/content/controller', 'neos/conte
 					if (result !== undefined) {
 						model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
 						T3.Content.Controller.ServerConnection.set('_lastSuccessfulTransfer', new Date());
-						T3.Content.Model.PublishableNodes._updatePublishableEntities();
+						PublishableNodes._updatePublishableEntities();
 						if (options && options.success) {
 							options.success(model, result);
 						}

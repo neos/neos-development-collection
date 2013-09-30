@@ -12,8 +12,7 @@ define(
 	'emberjs',
 	'Shared/LocalStorage',
 	'Shared/Notification',
-	'vie/entity',
-	'neos/content/model'
+	'vie/entity'
 ],
 function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notification) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
@@ -159,201 +158,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 		}.observes('pageTreeMode').on('init')
 	}).create();
 
-	/**
-	 * The BlockActions is a container for numerous actions which can happen with blocks.
-	 * They are normally triggered when clicking Block UI handles.
-	 * Examples include:
-	 * - deletion of content
-	 * - creation of content
-	 *
-	 * @singleton
-	 */
-	var NodeActions = Ember.Object.extend({
-			// TODO: Move this to a separate controller
-		_clipboard: null,
-		_elementIsAddingNewContent: null,
-
-		clipboardContainsContent: function() {
-			return this.get('_clipboard') !== null;
-		}.property('_clipboard'),
-
-		/**
-		 * Initialization lifecycle method. Here, we re-fill the clipboard as needed
-		 */
-		init: function() {
-			if (LocalStorage.getItem('clipboard')) {
-				this.set('_clipboard', LocalStorage.getItem('clipboard'));
-			}
-		},
-
-		/**
-		 * Cut a node and put it on the clipboard
-		 * TODO: Decide if we move cut copy paste to another controller
-		 * @return {void}
-		 */
-		cut: function(nodePath) {
-			if (this.get('_clipboard.type') === 'cut' && this.get('_clipboard.nodePath') === nodePath) {
-				this.set('_clipboard', null);
-			} else {
-				this.set('_clipboard', {
-					type: 'cut',
-					nodePath: nodePath
-				});
-			}
-		},
-
-		/**
-		 * Copy a node and put it on the clipboard
-		 * @return {void}
-		 */
-		copy: function(nodePath) {
-			if (this.get('_clipboard.type') === 'copy' && this.get('_clipboard.nodePath') === nodePath) {
-				this.set('_clipboard', null);
-			} else {
-				this.set('_clipboard', {
-					type: 'copy',
-					nodePath: nodePath
-				});
-			}
-		},
-
-		/**
-		 * Paste the current node on the clipboard after another node
-		 * @param {String} nodePath the nodePath of the target node
-		 * @return {boolean}
-		 */
-		pasteAfter: function(nodePath) {
-			return this._paste(nodePath, 'after');
-		},
-
-		/**
-		 * Paste a node on a certain location, relative to another node
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {String} position
-		 * @return {boolean}
-		 */
-		_paste: function(nodePath, position) {
-			var that = this,
-				clipboard = this.get('_clipboard');
-
-			if (!clipboard.nodePath) {
-				Notification.notice('No node found on the clipboard');
-				return false;
-			}
-			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
-				Notification.notice('It is not possible to paste a node ' + position + ' itself.');
-				return false;
-			}
-
-			var action = clipboard.type === 'cut' ? 'move' : 'copy';
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController[action].call(
-				that,
-				clipboard.nodePath,
-				nodePath,
-				position,
-				function (result) {
-					if (result.success) {
-						that.set('_clipboard', null);
-						ContentModule.reloadPage();
-					}
-				}
-			);
-			return true;
-		},
-
-		remove: function(model) {
-			model.set('typo3:_removed', true);
-			model.save(null);
-			T3.Content.Model.NodeSelection.updateSelection();
-		},
-
-		addAbove: function(nodeType, referenceEntity, callBack) {
-			this._add(nodeType, referenceEntity, 'before', callBack);
-		},
-
-		addBelow: function(nodeType, referenceEntity, callBack) {
-			this._add(nodeType, referenceEntity, 'after', callBack);
-		},
-
-		addInside: function(nodeType, referenceEntity, callBack) {
-			this._add(nodeType, referenceEntity, 'into', callBack);
-		},
-
-		/**
-		 * Creates a node on the server. When the result is received the callback function is called.
-		 * The first argument passed to the callback is the nodepath of the new node, second argument
-		 * is the $ object containing the rendered HTML of the new node.
-		 *
-		 * @param {String} nodeType
-		 * @param {Object} referenceEntity
-		 * @param {String} position
-		 * @param {Function} callBack This function is called after element creation and receives the $ DOM element as arguments
-		 * @private
-		 */
-		_add: function(nodeType, referenceEntity, position, callBack) {
-			var that = this;
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
-				referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
-				referenceEntity.get('typo3:_typoscriptPath'),
-				{
-					nodeType: nodeType,
-					properties: {}
-				},
-				position,
-				function(result) {
-					var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
-					callBack(result.nodePath, template);
-
-					// Remove the loading icon from the parent content element where current element was created from.
-					that.set('_elementIsAddingNewContent', null);
-				}
-			);
-		},
-
-		/**
-		 * Paste the current node on the clipboard before another node
-		 *
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {$} $handle the clicked handle
-		 * @return {boolean}
-		 */
-		pasteBefore: function(nodePath, $handle) {
-			return this._paste(nodePath, $handle, 'before');
-		},
-
-		/**
-		 * Paste the current node on the clipboard after another node
-		 *
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {$} $handle the clicked handle
-		 * @return {void}
-		 */
-		removeFromClipboard: function(nodePath, $handle) {
-			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath),
-				clipboard = this.get('_clipboard');
-
-			if (clipboard.nodePath === nodePath) {
-				this.set('_clipboard', null);
-			}
-
-			block.hideHandle('remove-from-cut');
-			block.hideHandle('remove-from-copy');
-			$('.neos-paste-before-handle, .neos-paste-after-handle').addClass('neos-handle-hidden');
-			$('.neos-add-above-handle, .neos-add-below-handle').removeClass('neos-handle-hidden');
-			block.showHandle('cut');
-			block.showHandle('copy');
-		},
-
-		/**
-		 * Observes the _clipboard property and processes changes
-		 * @return {void}
-		 */
-		onClipboardChange: function() {
-			var clipboard = this.get('_clipboard');
-			LocalStorage.setItem('clipboard', clipboard);
-		}.observes('_clipboard')
-	}).create();
-
 	var ServerConnection = Ember.Object.extend({
 		_lastSuccessfulTransfer: null,
 		_failedRequest: false,
@@ -407,7 +211,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 		Preview: Preview,
 		PageTree: PageTree,
 		Wireframe: Wireframe,
-		NodeActions: NodeActions,
 		ServerConnection: ServerConnection
 	}
 	window.T3 = T3;

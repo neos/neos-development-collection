@@ -1,7 +1,9 @@
 define([
-	'./tab'
+	'./tab',
+	'NeosNodeSelection'
 ], function (
-	Tab
+	Tab,
+	NodeSelection
 ) {
 	'use strict';
 
@@ -11,13 +13,13 @@ define([
 		currentlyShownTabs: currentlyShownTabs,
 		pushStateToModelIfCurrentlyShownTabsIsZero: function() {
 			var that = this;
-			if (this.get('currentlyShownTabs.length') === 0 && T3.Content.Model.NodeSelection.get('currentlyShownSecondaryAlohaTabs')) {
-				T3.Content.Model.NodeSelection.set('currentlyShownSecondaryAlohaTabs', false);
+			if (this.get('currentlyShownTabs.length') === 0 && NodeSelection.get('currentlyShownSecondaryAlohaTabs')) {
+				NodeSelection.set('currentlyShownSecondaryAlohaTabs', false);
 			}
 
-			if (this.get('currentlyShownTabs.length') > 0 && !T3.Content.Model.NodeSelection.get('currentlyShownSecondaryAlohaTabs')) {
+			if (this.get('currentlyShownTabs.length') > 0 && !NodeSelection.get('currentlyShownSecondaryAlohaTabs')) {
 				// execute in next run loop in order to make sure all aloha controls have been updated.
-				T3.Content.Model.NodeSelection.set('currentlyShownSecondaryAlohaTabs', that.get('currentlyShownTabs'));
+				NodeSelection.set('currentlyShownSecondaryAlohaTabs', that.get('currentlyShownTabs'));
 			}
 		}.observes('currentlyShownTabs.length')
 	}).create();

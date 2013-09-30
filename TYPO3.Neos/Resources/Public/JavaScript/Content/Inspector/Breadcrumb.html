@@ -8,7 +8,7 @@
 <ul>
 	{{#each node in view.nodes}}
 		<li>
-			<a href="#" {{action "selectNode" node bubbles=false target="T3.Content.Model.NodeSelection"}}>
+			<a href="#" {{action "selectNode" node bubbles=false target="view.nodeSelection"}}>
 				<i {{bindAttr class="node.nodeTypeSchema.ui.icon::icon-sign-blank node.nodeTypeSchema.ui.icon"}}></i>
 				{{unbound node.nodeTypeSchema.ui.label}}
 				{{#if status}}<span class="neos-breadcrumbitem-status">({{status}})</span>{{/if}}

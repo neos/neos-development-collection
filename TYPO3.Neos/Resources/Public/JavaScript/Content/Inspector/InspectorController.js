@@ -9,8 +9,8 @@ define(
 	'Library/underscore',
 	'Library/backbone',
 	'Shared/LocalStorage',
-	'Content/Application',
-	'neos/content/model'
+	'Content/Model/NodeSelection',
+	'Content/Application'
 ], function(
 	Ember,
 	$,
@@ -18,6 +18,7 @@ define(
 	_,
 	Backbone,
 	LocalStorage,
+	NodeSelection,
 	ContentModule
 ) {
 	/**
@@ -26,6 +27,7 @@ define(
 	 * Furthermore, it contains *Editors*
 	 */
 	return Ember.Object.extend({
+		nodeSelection: NodeSelection,
 
 		inspectorMode: false,
 
@@ -77,7 +79,7 @@ define(
 		 *   - image (file upload)
 		 */
 		groupedPropertyViews: function() {
-			var selectedNodeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema');
+			var selectedNodeSchema = NodeSelection.get('selectedNodeSchema');
 			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
 				return [];
 			}
@@ -110,7 +112,7 @@ define(
 			});
 
 			return groupedPropertyViews;
-		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema'),
+		}.property('nodeSelection.selectedNodeSchema'),
 
 		/**
 		 * If "true", we show "save" and "cancel" and behave as if the user edited
@@ -127,7 +129,7 @@ define(
 		 * we update this.nodeProperties
 		 */
 		onSelectedNodeChange: function() {
-			var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode'),
+			var selectedNode = NodeSelection.get('selectedNode'),
 				cleanProperties = {},
 				enableTransactionalInspector = true;
 			this.set('selectedNode', selectedNode);
@@ -146,7 +148,7 @@ define(
 				this.set('cleanProperties', {});
 				this.set('nodeProperties', {});
 			}
-		}.observes('T3.Content.Model.NodeSelection.selectedNode').on('init'),
+		}.observes('nodeSelection.selectedNode').on('init'),
 
 		/**
 		 * We'd like to monitor *every* property change except inline editable ones,
@@ -213,7 +215,7 @@ define(
 		apply: function() {
 			var that = this,
 				cleanProperties,
-				nodeTypeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema'),
+				nodeTypeSchema = NodeSelection.get('selectedNodeSchema'),
 				reloadPage = false,
 				selectedNode = this.get('selectedNode'),
 				attributes = selectedNode.get('attributes');

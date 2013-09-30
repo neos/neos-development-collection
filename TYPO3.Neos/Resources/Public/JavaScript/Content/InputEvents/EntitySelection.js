@@ -1,10 +1,14 @@
 define(
 	[
 		'Library/jquery-with-dependencies',
-		'emberjs'
+		'emberjs',
+		'Content/Model/NodeSelection'
 	],
-	function($, Ember) {
-
+	function(
+		$,
+		Ember,
+		NodeSelection
+	) {
 		return Ember.Object.create({
 
 			/**
@@ -31,7 +35,7 @@ define(
 					.on('click', 'body:not(.neos-previewmode) .neos-contentelement', function(e) {
 						// Don't unselect if a previous handler activated an element
 						if (e.result !== 'activated') {
-							T3.Content.Model.NodeSelection.updateSelection($(this));
+							NodeSelection.updateSelection($(this));
 						}
 						return 'activated';
 					})
@@ -51,13 +55,12 @@ define(
 						}
 
 						// Unselect any other active element
-						if (T3.Content.Model.NodeSelection.get('selectedNode') !== null) {
-							T3.Content.Model.NodeSelection.updateSelection();
+						if (NodeSelection.get('selectedNode') !== null) {
+							NodeSelection.updateSelection();
 						}
 						return false;
 					});
 			}
-		})
-
+		});
 	}
 );

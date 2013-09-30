@@ -1,9 +1,14 @@
 define(
 	[
 		'Library/jquery-with-dependencies',
-		'Shared/Configuration'
+		'Shared/Configuration',
+		'Content/Model/NodeSelection'
 	],
-	function($, Configuration) {
+	function(
+		$,
+		Configuration,
+		NodeSelection
+	) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha');
 
 		if (!window.T3.isContentModule) {
@@ -125,7 +130,8 @@ define(
 			jQuery: $,
 
 			predefinedModules: {
-				'jqueryui': $.ui
+				'jqueryui': $.ui,
+				NeosNodeSelection: NodeSelection
 			},
 
 			requireConfig: {

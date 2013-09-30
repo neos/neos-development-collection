@@ -4,13 +4,20 @@ define(
 		'vie/instance',
 		'emberjs',
 		'Content/InputEvents/EntitySelection',
+		'Content/Model/NodeSelection',
 		'Library/create',
 		'Library/hallo',
 		'halloplugins/linkplugin',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
 		'aloha'
 	],
-	function($, vieInstance, Ember, EntitySelection) {
+	function(
+		$,
+		vieInstance,
+		Ember,
+		EntitySelection,
+		NodeSelection
+	) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');
 
 		return Ember.Object.create({
@@ -89,7 +96,7 @@ define(
 			 */
 			initializeAlohaEntitySelectionWorkaround: function() {
 				$(document).on('midgardeditableactivated', '.neos-contentelement', function(e) {
-					T3.Content.Model.NodeSelection.updateSelection($(this));
+					NodeSelection.updateSelection($(this));
 					// make sure that the event is only fired for the *innermost* content element.
 					e.stopPropagation();
 				});

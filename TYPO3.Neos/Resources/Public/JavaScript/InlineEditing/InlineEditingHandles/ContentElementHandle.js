@@ -9,11 +9,24 @@ define(
 		'text!InlineEditing/InlineEditingHandles/ContentElementHandle.html',
 		'Content/Application',
 		'Content/Inspector/InspectorController',
+		'Content/Model/NodeSelection',
+		'Content/Model/NodeActions',
 		'InlineEditing/Dialogs/DeleteNodeDialog',
 		'InlineEditing/InsertNodePanel'
 	],
-	function ($, _, Ember, vieInstance, template, Application, InspectorController, DeleteNodeDialog, InsertNodePanel) {
-
+	function (
+		$,
+		_,
+		Ember,
+		vieInstance,
+		template,
+		Application,
+		InspectorController,
+		NodeSelection,
+		NodeActions,
+		DeleteNodeDialog,
+		InsertNodePanel
+	) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 
@@ -23,10 +36,12 @@ define(
 
 			$newAfterPopoverContent: null,
 
+			nodeSelection: NodeSelection,
+			nodeActions: NodeActions,
+
 			_onNodeSelectionChange: function() {
 				this.$().find('.action-new').trigger('hidePopover');
-
-				var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode');
+				var selectedNode = NodeSelection.get('selectedNode');
 
 				this.set('_selectedNode', selectedNode);
 				if (selectedNode) {
@@ -45,7 +60,7 @@ define(
 
 					this.set('_nodePath', this.get('_entity').getSubjectUri());
 				}
-			}.observes('T3.Content.Model.NodeSelection.selectedNode'),
+			}.observes('nodeSelection.selectedNode'),
 
 			// Button visibility flags
 			_showHide: false,
@@ -96,31 +111,31 @@ define(
 			}.property('_hidden'),
 
 			_thisElementStartedCut: function() {
-				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
+				var clipboard = NodeActions.get('_clipboard');
 				if (!clipboard) {
 					return false;
 				}
 
 				return (clipboard.type === 'cut' && clipboard.nodePath === this.get('_nodePath'));
-			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath'),
+			}.property('nodeActions._clipboard', '_nodePath'),
 
 			_thisElementStartedCopy: function() {
-				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
+				var clipboard = NodeActions.get('_clipboard');
 				if (!clipboard) {
 					return false;
 				}
 
 				return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_nodePath'));
-			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath'),
+			}.property('nodeActions._clipboard', '_nodePath'),
 
 			_thisElementIsAddingNewContent: function() {
-				var elementIsAddingNewContent = T3.Content.Controller.NodeActions.get('_elementIsAddingNewContent');
+				var elementIsAddingNewContent = NodeActions.get('_elementIsAddingNewContent');
 				if (!elementIsAddingNewContent) {
 					return false;
 				}
 
 				return (elementIsAddingNewContent === this.get('_nodePath'));
-			}.property('T3.Content.Controller.NodeActions._elementIsAddingNewContent', '_nodePath'),
+			}.property('nodeActions._elementIsAddingNewContent', '_nodePath'),
 
 			_pasteInProgress: false,
 
@@ -134,15 +149,15 @@ define(
 			},
 
 			cut: function() {
-				T3.Content.Controller.NodeActions.cut(this.get('_nodePath'));
+				NodeActions.cut(this.get('_nodePath'));
 			},
 
 			copy: function() {
-				T3.Content.Controller.NodeActions.copy(this.get('_nodePath'));
+				NodeActions.copy(this.get('_nodePath'));
 			},
 
 			pasteAfter: function() {
-				if (T3.Content.Controller.NodeActions.pasteAfter(this.get('_nodePath')) === true) {
+				if (NodeActions.pasteAfter(this.get('_nodePath')) === true) {
 					this.set('_pasteInProgress', true);
 				}
 			}

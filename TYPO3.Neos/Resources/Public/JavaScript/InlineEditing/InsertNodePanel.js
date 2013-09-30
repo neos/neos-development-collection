@@ -5,9 +5,18 @@ define(
 	'vie/instance',
 	'Content/Application',
 	'Shared/Configuration',
+	'Content/Model/NodeActions',
 	'text!./InsertNodePanel.html'
 ],
-function(Ember, _, vie, ContentModule, Configuration, template) {
+function(
+	Ember,
+	_,
+	vie,
+	ContentModule,
+	Configuration,
+	NodeActions,
+	template
+) {
 	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
 
@@ -22,7 +31,7 @@ function(Ember, _, vie, ContentModule, Configuration, template) {
 
 			_.each(this.get('_entity._enclosingCollectionWidget').options.definition.range, function(nodeType) {
 				var type = this.get('_entity._enclosingCollectionWidget').options.vie.types.get(nodeType);
-				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, '');
+				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(Configuration.TYPO3_NAMESPACE, '');
 
 				if (type.metadata.ui && type.metadata.ui.group) {
 					if (!groups[type.metadata.ui.group]) {
@@ -47,7 +56,7 @@ function(Ember, _, vie, ContentModule, Configuration, template) {
 		}.property(),
 
 		insertNode: function(nodeType) {
-			T3.Content.Controller.NodeActions.set('_elementIsAddingNewContent', this.get('_entity').getSubjectUri());
+			NodeActions.set('_elementIsAddingNewContent', this.get('_entity').getSubjectUri());
 
 			this.get('_entity._enclosingCollectionWidget').options.collection.add({
 				'@type': 'typo3:' + nodeType

@@ -2,20 +2,28 @@ define(
 	[
 		'emberjs',
 		'./Button',
+		'Content/Model/PublishableNodes',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, Button, template) {
+	function (
+		Ember,
+		Button,
+		PublishableNodes,
+		template
+	) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-publish-menu', 'neos-btn-group'],
 			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
 			autoPublish: false,
 
+			controller: PublishableNodes,
+
 			_hasChanges: function() {
 				return !this.get('_noChanges') && !this.get('autoPublish');
 			}.property('_noChanges', 'autoPublish'),
 
-			_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
+			_noChangesBinding: 'controller.noChanges',
 
 			didInsertElement: function() {
 				this.$().find('.neos-dropdown-toggle').dropdown();
@@ -25,12 +33,13 @@ define(
 				autoPublish: false,
 				classNameBindings: ['connectionStatusClass'],
 				classNames: ['neos-publish-button'],
+				controller: PublishableNodes,
 
-				target: 'T3.Content.Model.PublishableNodes',
+				target: 'controller',
 				action: 'publishAll',
 				_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
 				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
-				_noChangesBinding: 'T3.Content.Model.PublishableNodes.noChanges',
+				_noChangesBinding: 'controller.noChanges',
 
 				label: function() {
 					if (this.get('autoPublish')) {
@@ -67,7 +76,6 @@ define(
 					return className;
 				}.property('_connectionFailed')
 			})
-
 		});
 	}
 );

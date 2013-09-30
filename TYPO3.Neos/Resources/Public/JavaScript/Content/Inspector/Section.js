@@ -4,10 +4,12 @@
 define(
 [
 	'emberjs',
-	'./PropertyEditor'
+	'./PropertyEditor',
+	'Content/Model/NodeSelection'
 ], function(
 	Ember,
-	PropertyEditor
+	PropertyEditor,
+	NodeSelection
 ) {
 	return Ember.View.extend({
 		PropertyEditor: PropertyEditor,
@@ -18,7 +20,7 @@ define(
 
 		didInsertElement: function() {
 			var that = this,
-				selectedNode = T3.Content.Model.NodeSelection.get('selectedNode'),
+				selectedNode = NodeSelection.get('selectedNode'),
 				nodeType = (selectedNode.$element ? selectedNode.$element.attr('typeof').replace(/\./g,'_') : 'ALOHA'),
 				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('group'));
 

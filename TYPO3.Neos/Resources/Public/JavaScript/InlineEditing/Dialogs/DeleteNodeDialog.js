@@ -2,9 +2,15 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
+		'Content/Model/NodeActions',
 		'text!InlineEditing/Dialogs/DeleteNodeDialog.html'
 	],
-	function($, Ember, template) {
+	function(
+		$,
+		Ember,
+		NodeActions,
+		template
+	) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-ui neos-overlay-component'],
@@ -34,7 +40,7 @@ define(
 
 			'delete': function() {
 				this.get('_node').$element.remove();
-				T3.Content.Controller.NodeActions.remove(this.get('_entity'));
+				NodeActions.remove(this.get('_entity'));
 
 				this.destroy();
 			}

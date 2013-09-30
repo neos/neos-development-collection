@@ -20,7 +20,7 @@
 				<i class="icon-copy"></i>
 			</button>
 		{{/if}}
-		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}
+		{{#if view.nodeActions.clipboardContainsContent}}
 			<button class="neos-btn neos-btn-mini action-paste" title="Paste after" {{action "pasteAfter" target="view"}}>
 				{{#if view._pasteInProgress}}
 					<i class="neos-handle-loading"></i>

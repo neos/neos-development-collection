@@ -7,11 +7,13 @@ define(
 		'emberjs',
 		'Content/Application',
 		'vie/entity',
+		'Content/Model/NodeSelection',
 		'text!./PageTree.html',
 		'text!./DeletePageDialog.html',
 		'Content/Components/InsertDocumentNodePanel',
 		'Shared/Notification'
-	], function($, Ember, ContentModule, EntityWrapper, pageTreeTemplate, deletePageDialogTemplate, InsertDocumentNodePanel, Notification) {
+	], function(
+		$, Ember, ContentModule, EntityWrapper, NodeSelection, pageTreeTemplate, deletePageDialogTemplate, InsertDocumentNodePanel, Notification) {
 		if (window._requirejsLoadingTrace) {
 			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
 		}
@@ -269,7 +271,7 @@ define(
 					return;
 				}
 
-				var entityWrapper = T3.Content.Model.NodeSelection._createEntityWrapper($metainformation);
+				var entityWrapper = NodeSelection._createEntityWrapper($metainformation);
 				if (!entityWrapper) {
 					// page might not have been loaded; so we directly return
 					return;

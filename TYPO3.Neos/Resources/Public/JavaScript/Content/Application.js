@@ -11,6 +11,9 @@ define(
 	'Shared/ResourceCache',
 	'Shared/LocalStorage',
 	'Shared/Configuration',
+	'Content/Model/NodeSelection',
+	'Content/Model/PublishableNodes',
+	'Content/Model/NodeActions',
 	'vie/instance',
 	'emberjs',
 	'Content/InputEvents/KeyboardEvents',
@@ -18,13 +21,25 @@ define(
 	'Library/vie',
 	'Library/spinjs/spin'
 ],
-function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardEvents, CreateJS, VIE, Spinner) {
-
+function(
+	$,
+	_,
+	ResourceCache,
+	LocalStorage,
+	Configuration,
+	NodeSelection,
+	PublishableNodes,
+	NodeActions,
+	vie,
+	Ember,
+	KeyboardEvents,
+	CreateJS,
+	VIE,
+	Spinner
+) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
 		router: null,
-
-		TYPO3_NAMESPACE: 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 
 		/**
 		 * The following setting is set to "true" when unfinished features should be shown.
@@ -136,8 +151,8 @@ function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardE
 		},
 
 		_initializeVieAfterSchemaIsLoaded: function() {
-			T3.Content.Model.NodeSelection.initialize();
-			T3.Content.Model.PublishableNodes.initialize();
+			NodeSelection.initialize();
+			PublishableNodes.initialize();
 			this.trigger('pageLoaded');
 
 			this._registerVieNodeTypeTemplateCallbacks();
@@ -155,14 +170,14 @@ function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardE
 		 */
 		_registerVieNodeTypeTemplateCallbacks: function() {
 			_.each(vie.types.toArray(), function(type) {
-				var nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, '');
+				var nodeType = type.id.substring(1, type.id.length - 1).replace(Configuration.TYPO3_NAMESPACE, '');
 				var prefix = vie.namespaces.getPrefix(type.id);
 
 				if (prefix === 'typo3') {
 					vie.service('rdfa').setTemplate('typo3:' + nodeType, 'typo3:content-collection', function(entity, callBack, collectionView) {
 							// This callback function is called whenever we create a content element
 						var type = entity.get('@type'),
-							nodeType = type.id.substring(1, type.id.length - 1).replace(ContentModule.TYPO3_NAMESPACE, ''),
+							nodeType = type.id.substring(1, type.id.length - 1).replace(Configuration.TYPO3_NAMESPACE, ''),
 							referenceEntity = null,
 							lastMatchedEntity = null;
 
@@ -184,7 +199,7 @@ function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardE
 						_.each(collectionView.collection.models, function(matchEntity) {
 							if (entity === matchEntity && lastMatchedEntity) {
 								referenceEntity = lastMatchedEntity;
-								T3.Content.Controller.NodeActions.addBelow(
+								NodeActions.addBelow(
 									nodeType,
 									referenceEntity,
 									afterCreationCallback
@@ -198,14 +213,14 @@ function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardE
 								// No reference entity found. This only happens when an element is created into a content collection
 							if (collectionView.collection.models.length === 1) {
 									// The content collection only contains the new entity and was empty before, so we create the node into the content collection
-								T3.Content.Controller.NodeActions.addInside(
+								NodeActions.addInside(
 									nodeType,
 									vie.entities.get($(collectionView.el).attr('about')),
 									afterCreationCallback
 								);
 							} else {
 									// The content collection contains other entities, so we create the node before the first entity (index 1 as index 0 is the newly created entity)
-								T3.Content.Controller.NodeActions.addAbove(
+								NodeActions.addAbove(
 									nodeType,
 									collectionView.collection.models[1],
 									afterCreationCallback
@@ -377,8 +392,8 @@ function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardE
 					that._setPagePosition();
 
 						// Update node selection (will update VIE)
-					T3.Content.Model.NodeSelection.initialize();
-					T3.Content.Model.PublishableNodes.initialize();
+					NodeSelection.initialize();
+					PublishableNodes.initialize();
 					that.trigger('pageLoaded');
 
 						// Refresh CreateJS, renders the button bars f.e.
@@ -387,7 +402,7 @@ function($, _, ResourceCache, LocalStorage, Configuration, vie, Ember, KeyboardE
 						// If doing a reload, we highlight the currently active content element again
 					var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
 					if ($currentlyActiveContentElement.length === 1) {
-						T3.Content.Model.NodeSelection.updateSelection($currentlyActiveContentElement);
+						NodeSelection.updateSelection($currentlyActiveContentElement);
 					}
 				} else {
 						// FALLBACK: AJAX error occurred,

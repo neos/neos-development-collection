@@ -2,10 +2,17 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
+		'Content/Model/NodeSelection',
 		'InlineEditing/InlineEditingHandles/ContentElementHandle',
 		'InlineEditing/InlineEditingHandles/SectionHandle'
 	],
-	function($, Ember, ContentElementHandle, SectionHandle) {
+	function(
+		$,
+		Ember,
+		NodeSelection,
+		ContentElementHandle,
+		SectionHandle
+	) {
 		return Ember.View.extend({
 			classNameBindings: ['isPage:neos-hide'],
 			classNames: ['neos-handle-container'],
@@ -13,6 +20,8 @@ define(
 				'{{view view.ContentElementHandle isVisibleBinding="view.isContentElementBar"}}' +
 				'{{view view.SectionHandle isVisibleBinding="view.isSectionBar"}}'
 			),
+
+			nodeSelection: NodeSelection,
 
 			// Register views
 			ContentElementHandle: ContentElementHandle,
@@ -52,8 +61,8 @@ define(
 			 * @return {Entity}
 			 */
 			_selectedNode: function() {
-				return T3.Content.Model.NodeSelection.get('selectedNode');
-			}.property('T3.Content.Model.NodeSelection.selectedNode'),
+				return NodeSelection.get('selectedNode');
+			}.property('nodeSelection.selectedNode'),
 
 			/**
 			 * Updates the position of the InlineEditingHandles

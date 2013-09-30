@@ -4,9 +4,11 @@
 define(
 [
 	'emberjs',
+	'Content/Model/NodeSelection',
 	'text!./Breadcrumb.html'
 ], function(
 	Ember,
+	NodeSelection,
 	template
 ) {
 	return Ember.View.extend({
@@ -15,10 +17,12 @@ define(
 		template: Ember.Handlebars.compile(template),
 		open: false,
 
+		nodeSelection: NodeSelection,
+
 		nodes: function() {
 			this.set('open', false);
-			return T3.Content.Model.NodeSelection.get('nodes').toArray().reverse();
-		}.property('T3.Content.Model.NodeSelection.nodes'),
+			return NodeSelection.get('nodes').toArray().reverse();
+		}.property('nodeSelection.nodes'),
 
 		click: function() {
 			this.set('open', !this.get('open'));
