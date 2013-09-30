@@ -70,6 +70,12 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 class NodeViewHelper extends AbstractViewHelper {
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * Render the Uri.
 	 *
 	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path or NULL to resolve the current document node
@@ -83,6 +89,13 @@ class NodeViewHelper extends AbstractViewHelper {
 	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
 		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
 			throw new \InvalidArgumentException('Expected NodeInterface, string or NULL for the node argument', 1373101025);
+		}
+
+		if (is_string($node)) {
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $node, $matches);
+			if (isset($matches['WorkspaceName'])) {
+				$node = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+			}
 		}
 
 		if ($node === NULL || is_string($node)) {

@@ -146,6 +146,20 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * We empty the TemplateVariableContainer for this test, as it shouldn't be needed for rendering a link to a node
+	 * identified by ContextNodePath
+	 *
+	 * @test
+	 */
+	public function viewHelperRendersUriViaContextNodePathString() {
+		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
+		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
+		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
+		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+	}
+
+	/**
 	 * A wrapper function for the appropriate assertion for the Link- and its Uri-ViewHelper derivate.
 	 * Is overridden in the FunctionalTest for the LinkViewHelper.
 	 */
