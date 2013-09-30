@@ -1,4 +1,7 @@
-.neos-publish-menu.neos-btn-group {
+#neos-publish-menu.neos-btn-group {
+	@include font;
+	float: right;
+
 	&.neos-publish-menu-active {
 		.neos-publish-button,
 		.neos-dropdown-toggle {
@@ -57,13 +60,27 @@
 		}
 	}
 
-	.neos-publish-all-button {
-		&.neos-button {
-			width: 100%;
-			font-size: $generalFontSize;
-		}
-		&.disabled {
-			@include opacity(.5);
+	.neos-dropdown-menu {
+		.neos-publish-all-button {
+			&.neos-button {
+				width: 100%;
+				font-size: $generalFontSize;
+				background-color: $grayMedium;
+				text-align: left;
+			}
+
+			&:hover {
+				background-color: $blue;
+			}
+
+			&.disabled {
+				color: $textSubtle;
+				cursor: not-allowed;
+
+				&:hover {
+					background-color: $grayMedium;
+				}
+			}
 		}
 	}
 }

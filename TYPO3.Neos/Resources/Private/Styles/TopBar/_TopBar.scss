@@ -8,22 +8,20 @@
 	height: $unit;
 	border-bottom: 1px solid $grayLight;
 	display: none;
+	@include font;
 
-	#neos-user-actions {
+	#neos-top-bar-right {
 		float: right;
+	}
 
-		.neos-user-menu ,
-		.neos-publish-menu {
-			display: inline-block;
-			float: left;
-		}
-
+	#neos-user-actions,
+	#neos-publish-menu {
+		float: left;
 
 		i {
 			margin-left: $relatedMargin;
 			margin-right: $relatedMargin;
 		}
-
 
 		.neos-dropdown-menu {
 			@import "../Shared/Checkboxes";
@@ -44,17 +42,27 @@
 
 				a {
 					height: $unit;
-					padding-top: 10px;
-					box-sizing: border-box;
 					color: white;
+					font-size: $generalFontSize;
+					line-height: $unit;
+					padding: 0 $defaultMargin;
+					@include box-sizing(border-box);
 
 					&:hover {
 						background: $blue;
 					}
+
+					i {
+						line-height: 22px;
+					}
 				}
 
 				label {
-					padding-top: 10px;
+					padding-top: 9px;
+				}
+
+				button i {
+					line-height: 18px;
 				}
 			}
 

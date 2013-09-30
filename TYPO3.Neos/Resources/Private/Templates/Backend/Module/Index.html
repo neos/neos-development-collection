@@ -48,8 +48,10 @@
 		</f:if>
 		<div id="neos-application" class="neos">
 			<div id="neos-top-bar">
-				<div id="neos-user-actions">
-					<f:render partial="Backend/UserMenu" arguments="{_all}" />
+				<div id="neos-top-bar-right">
+					<div id="neos-user-actions">
+						<f:render partial="Backend/UserMenu" arguments="{_all}" />
+					</div>
 				</div>
 			</div>
 			<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />

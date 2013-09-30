@@ -9,7 +9,8 @@ define(
 	function (Ember, Button, PublishableNodes, PublishAllDialog, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
-			classNames: ['neos-publish-menu', 'neos-btn-group'],
+			elementId: 'neos-publish-menu',
+			classNames: ['neos-btn-group'],
 			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
 			autoPublish: false,
 
@@ -88,7 +89,7 @@ define(
 			PublishAllButton: Button.extend({
 				classNameBindings: ['disabledClass'],
 				classNames: ['neos-publish-all-button'],
-				label: 'Publish all',
+				label: '<i class="icon-upload"></i> Publish all'.htmlSafe(),
 				controller: PublishableNodes,
 				confirmationDialog: PublishAllDialog.create(),
 

@@ -2,11 +2,16 @@
 <button class="neos-button neos-dropdown-toggle" data-toggle="dropdown"></button>
 <ul class="neos-dropdown-menu">
 	<li>
+		{{view view.PublishAllButton}}
+	</li>
+	<li>
 		<label class="neos-checkbox">
 			{{view Ember.Checkbox checkedBinding="view.autoPublish"}}<span></span> Auto-Publish
 		</label>
 	</li>
 	<li>
-		{{view view.PublishAllButton}}
+		<a href="/neos/management/workspaces">
+			<i class="icon-th-large"></i> Workspaces
+		</a>
 	</li>
 </ul>

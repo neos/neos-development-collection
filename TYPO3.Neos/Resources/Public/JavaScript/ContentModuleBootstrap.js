@@ -45,7 +45,7 @@ require(
 			ContentModule.advanceReadiness();
 			ApplicationView.create().appendTo('#neos-application');
 			if (window.T3.isContentModule) {
-				PublishMenu.create().appendTo('#neos-user-actions');
+				PublishMenu.create().appendTo('#neos-top-bar-right');
 			}
 		});
 	}
