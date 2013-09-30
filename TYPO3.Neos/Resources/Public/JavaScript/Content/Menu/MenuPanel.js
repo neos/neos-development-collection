@@ -62,8 +62,6 @@ define(
 				this.set('controller.menuPanelMode', false);
 			},
 
-
-
 			toggleMenuPanelMode: function() {
 				this.set('controller.menuPanelMode', !this.get('controller.menuPanelMode'));
 			},
