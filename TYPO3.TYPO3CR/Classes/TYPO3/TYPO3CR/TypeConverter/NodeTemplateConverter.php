@@ -78,7 +78,12 @@ class NodeTemplateConverter extends NodeConverter {
 		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
 		$nodeType = $this->extractNodeType($targetType, $source);
 		$nodeTemplate->setNodeType($nodeType);
-		$this->setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source);
+
+		// we don't need a context or workspace for creating NodeTemplate objects, but in order to satisfy the method
+		// signature of setNodeProperties(), we do need one:
+		$context = $this->createContext('live');
+
+		$this->setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source, $context);
 		return $nodeTemplate;
 	}
 

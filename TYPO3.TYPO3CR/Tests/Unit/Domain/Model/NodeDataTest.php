@@ -11,12 +11,30 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+
 /**
- * Testcase for the "NodeData" domain model
+ * Test case for the "NodeData" domain model
  */
 class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
+	/**
+	 * @var Workspace
+	 */
 	protected $mockWorkspace;
+
+	/**
+	 * @var NodeTypeManager
+	 */
+	protected $mockNodeTypeManager;
+
+	/**
+	 * @var NodeType
+	 */
+	protected $nodeType;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
@@ -25,7 +43,11 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	public function setUp() {
 		$this->mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$this->mockNodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', FALSE);
+		$this->mockNodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array(), array(), '', FALSE);
+		$this->mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
 		$this->node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/bar', $this->mockWorkspace));
+		$this->node->_set('nodeTypeManager', $this->mockNodeTypeManager);
 		$this->node->_set('nodeDataRepository', $this->getMock('TYPO3\Flow\Persistence\RepositoryInterface'));
 	}
 
@@ -33,7 +55,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function constructorSetsPathWorkspaceAndIdentifier() {
-		$node = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/foo/bar', $this->mockWorkspace, '12345abcde');
+		$node = new NodeData('/foo/bar', $this->mockWorkspace, '12345abcde');
 		$this->assertSame('/foo/bar', $node->getPath());
 		$this->assertSame('bar', $node->getName());
 		$this->assertSame($this->mockWorkspace, $node->getWorkspace());
@@ -114,16 +136,16 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getDepthReturnsThePathDepthOfTheNode() {
-		$node = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/', $this->mockWorkspace);
+		$node = new NodeData('/', $this->mockWorkspace);
 		$this->assertEquals(0, $node->getDepth());
 
-		$node = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/foo', $this->mockWorkspace);
+		$node = new NodeData('/foo', $this->mockWorkspace);
 		$this->assertEquals(1, $node->getDepth());
 
-		$node = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/foo/bar', $this->mockWorkspace);
+		$node = new NodeData('/foo/bar', $this->mockWorkspace);
 		$this->assertEquals(2, $node->getDepth());
 
-		$node = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/foo/bar/baz/quux', $this->mockWorkspace);
+		$node = new NodeData('/foo/bar/baz/quux', $this->mockWorkspace);
 		$this->assertEquals(4, $node->getDepth());
 	}
 
@@ -151,7 +173,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getParentReturnsNullForARootNode() {
-		$node = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/', $this->mockWorkspace);
+		$node = new NodeData('/', $this->mockWorkspace);
 		$this->assertNull($node->getParent());
 	}
 
@@ -170,7 +192,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function aContentObjectMustBeAnObject() {
 		$this->node->setContentObject('not an object');
@@ -439,7 +461,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue($baseWorkspace));
 
-		$nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove'), array(), '', FALSE);
+		$nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove', 'update'), array(), '', FALSE);
 		$nodeDataRepository->_set('entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
 		$nodeDataRepository->_set('persistenceManager', $mockPersistenceManager);
 
@@ -448,6 +470,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$currentNode->expects($this->once())->method('getChildNodes')->will($this->returnValue(array()));
 
 		$nodeDataRepository->expects($this->never())->method('remove');
+		$nodeDataRepository->expects($this->atLeastOnce())->method('update');
 
 		$currentNode->remove();
 

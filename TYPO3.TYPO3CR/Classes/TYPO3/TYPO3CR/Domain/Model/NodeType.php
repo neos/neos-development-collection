@@ -269,6 +269,19 @@ class NodeType {
 	}
 
 	/**
+	 * Returns the configured type of the specified property
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return string
+	 */
+	public function getPropertyType($propertyName) {
+		if (!isset($this->configuration['properties']) || !isset($this->configuration['properties'][$propertyName]) || !isset($this->configuration['properties'][$propertyName]['type'])) {
+			return 'string';
+		}
+		return $this->configuration['properties'][$propertyName]['type'];
+	}
+
+	/**
 	 * Return an array with the defined default values for each property, if any.
 	 *
 	 * The default value is configured for each property under the "default" key.

@@ -1099,4 +1099,65 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			$this->assertSame($expectedNodePath, $actualNode->getPath());
 		}
 	}
+
+	/**
+	 * @test
+	 */
+	public function setPropertyAcceptsAndConvertsIdentifierIfTargetTypeIsReference() {
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+
+		$rootNode = $this->context->getNode('/');
+		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+
+		$nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$this->assertSame($nodeB, $nodeA->getProperty('property2'));
+
+		$nodeA->setProperty('property2', $nodeB);
+		$this->assertSame($nodeB, $nodeA->getProperty('property2'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setPropertyAcceptsAndConvertsIdentifiersIfTargetTypeIsReferences() {
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+
+		$rootNode = $this->context->getNode('/');
+		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeC = $rootNode->createNode('nodeC', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+
+		$expectedNodes = array($nodeB, $nodeC);
+
+		$nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
+		$this->assertSame($expectedNodes, $nodeA->getProperty('property3'));
+
+		$nodeA->setProperty('property3', $expectedNodes);
+		$this->assertSame($expectedNodes, $nodeA->getProperty('property3'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertiesReturnsReferencePropertiesAsNodeObjects() {
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+
+		$rootNode = $this->context->getNode('/');
+		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeC = $rootNode->createNode('nodeC', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+
+		$expectedNodes = array($nodeB, $nodeC);
+
+		$nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
+
+		$actualProperties = $nodeA->getProperties();
+		$this->assertSame($nodeB, $actualProperties['property2']);
+		$this->assertSame($expectedNodes, $actualProperties['property3']);
+	}
 }

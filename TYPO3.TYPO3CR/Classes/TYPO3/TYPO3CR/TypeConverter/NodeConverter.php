@@ -27,6 +27,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -162,13 +163,18 @@ class NodeConverter extends AbstractTypeConverter {
 		$nodePath = $matches['NodePath'];
 
 		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
+		$context = $this->createContext($workspaceName);
+		$workspace = $context->getWorkspace(FALSE);
+		if (!$workspace) {
+			throw new NodeException(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $nodePath, $workspaceName), 1383577859);
+		}
 
 		try {
 			$node = $this->createNode($nodePath, $workspaceName, $configuration);
 		} catch (NodeException $exception) {
 			return new Error($exception->getMessage(), $exception->getCode());
 		}
-		$this->setNodeProperties($node, $node->getNodeType(), $source);
+		$this->setNodeProperties($node, $node->getNodeType(), $source, $context);
 		return $node;
 	}
 
@@ -178,40 +184,58 @@ class NodeConverter extends AbstractTypeConverter {
 	 * @param object $nodeLike
 	 * @param NodeType $nodeType
 	 * @param array $properties
-	 * @throws TypeConverterException
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
+	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
 	 * @return void
 	 */
-	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties) {
+	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context) {
 		$nodeTypeProperties = $nodeType->getProperties();
 		foreach ($properties as $nodePropertyName => $nodePropertyValue) {
 			if (substr($nodePropertyName, 0, 2) === '__') {
 				continue;
 			}
-			if (substr($nodePropertyName, 0, 1) === '_') {
-				$nodePropertyName = substr($nodePropertyName, 1);
-
-				// TODO: Hack: we need to create DateTime objects for some properties of Node
-				if (($nodePropertyName === 'hiddenBeforeDateTime' || $nodePropertyName === 'hiddenAfterDateTime') && is_string($nodePropertyValue)) {
+			$nodePropertyType = isset($nodeTypeProperties[$nodePropertyName]['type']) ? $nodeTypeProperties[$nodePropertyName]['type'] : NULL;
+			switch ($nodePropertyType) {
+				case 'reference':
+					$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodePropertyValue, $context->getWorkspace(FALSE));
+					if ($nodeData === NULL) {
+						$nodePropertyValue = NULL;
+					} else {
+						$nodePropertyValue = $this->nodeFactory->createFromNodeData($nodeData, $context);
+					}
+				break;
+				case 'references':
+					$nodeIdentifiers = json_decode($nodePropertyValue);
+					$nodePropertyValue = array();
+					if (is_array($nodeIdentifiers)) {
+						foreach ($nodeIdentifiers as $nodeIdentifier) {
+							$foundReferencedNodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $context->getWorkspace(FALSE));
+							if ($foundReferencedNodeData !== NULL) {
+								$nodePropertyValue[] = $this->nodeFactory->createFromNodeData($foundReferencedNodeData, $context);
+							}
+						}
+					} else {
+						throw new TypeConverterException(sprintf('node type "%s" expects an array of identifiers for its property "%s"', $nodeType->getName(), $nodePropertyName), 1383587419);
+					}
+				break;
+				case 'date':
 					if ($nodePropertyValue !== '') {
 						$nodePropertyValue = \DateTime::createFromFormat('!Y-m-d', $nodePropertyValue);
 					} else {
 						$nodePropertyValue = NULL;
 					}
-				}
+				break;
+			}
+			if (substr($nodePropertyName, 0, 1) === '_') {
+				$nodePropertyName = substr($nodePropertyName, 1);
 				ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
 				continue;
 			}
 			if (!isset($nodeTypeProperties[$nodePropertyName])) {
 				throw new TypeConverterException(sprintf('node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
 			}
-			if (isset($nodeTypeProperties[$nodePropertyName]['type'])) {
-				$targetType = $nodeTypeProperties[$nodePropertyName]['type'];
-				if ($this->objectManager->isRegistered($targetType)) {
-					// If $nodePropertyValue is not empty then convert it
-					if ($nodePropertyValue !== '') {
-						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $targetType);
-					}
-				}
+			if ($this->objectManager->isRegistered($nodePropertyType) && $nodePropertyValue !== '') {
+				$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $nodePropertyType);
 			}
 			$nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
 		}

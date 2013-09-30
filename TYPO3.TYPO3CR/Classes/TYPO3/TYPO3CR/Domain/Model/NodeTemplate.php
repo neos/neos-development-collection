@@ -42,4 +42,14 @@ class NodeTemplate extends AbstractNodeData {
 
 		return uniqid('node');
 	}
+
+	/**
+	 * A NodeTemplate is not stored in any workspace, thus this method returns NULL.
+	 *
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 */
+	public function getWorkspace() {
+		return;
+	}
+
 }

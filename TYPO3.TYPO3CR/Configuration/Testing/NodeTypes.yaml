@@ -23,3 +23,12 @@
       postprocessorOptions:
         someOption: 'someOverriddenValue'
         someOtherOption: 'someOtherValue'
+
+'TYPO3.TYPO3CR:TestingNodeTypeWithReferences':
+  properties:
+    property1:
+      type: string
+    property2:
+      type: reference
+    property3:
+      type: references

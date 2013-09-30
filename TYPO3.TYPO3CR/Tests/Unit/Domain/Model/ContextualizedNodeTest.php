@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  *                                                                        */
 
 /**
- * Testcase for the "Node" domain model
+ * Test case for the "Node" domain model
  */
 class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
@@ -41,9 +41,12 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = NULL) {
 		$userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', FALSE);
+		$nodeType->expects($this->any())->method('getPropertyType')->will($this->returnValue('string'));
 
 		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$originalNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
+		$originalNode->expects($this->any())->method('getNodeType')->will($this->returnValue($nodeType));
 		if ($argument1 === NULL) {
 			$originalNode->expects($this->any())->method($methodName)->will($this->returnValue('originalNodeResult'));
 		} else {
@@ -52,6 +55,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$newNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
+		$newNode->expects($this->any())->method('getNodeType')->will($this->returnValue($nodeType));
 		if ($argument1 === NULL) {
 			$newNode->expects($this->any())->method($methodName)->will($this->returnValue('newNodeResult'));
 		} else {
@@ -123,7 +127,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setIndexOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function setIndexOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 
 		$node->getNodeData()->expects($this->once())->method('setIndex')->with(5);
@@ -134,7 +138,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function moveBeforeOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function moveBeforeOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 
 		$referenceNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
@@ -150,7 +154,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function moveAfterOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function moveAfterOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 
 		$referenceNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
@@ -166,7 +170,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setPropertyOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function setPropertyOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 
 		$node->getNodeData()->expects($this->once())->method('setProperty')->with('propertyName', 'value');
@@ -191,13 +195,6 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getPropertiesCallsGetPropertiesOnTheParentNodeFromTheOriginalOrNewNode() {
-		$this->assertThatOriginalOrNewNodeIsCalled('getProperties');
-	}
-
-	/**
-	 * @test
-	 */
 	public function getPropertyNamesCallsGetPropertyNamesOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getPropertyNames');
 	}
@@ -205,7 +202,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setContentObjectOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function setContentObjectOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$contentObject = new \stdClass();
 
 		$node = $this->setUpNodeWithNonMatchingContext();
@@ -225,7 +222,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function unsetContentObjectOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function unsetContentObjectOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 
 		$node->getNodeData()->expects($this->once())->method('unsetContentObject');
@@ -236,7 +233,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setNodeTypeOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function setNodeTypeOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', FALSE);
 
 		$node = $this->setUpNodeWithNonMatchingContext();
@@ -249,14 +246,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getNodeTypeCallsGetNodeTypeOnTheParentNodeFromTheOriginalOrNewNode() {
-		$this->assertThatOriginalOrNewNodeIsCalled('getNodeType');
-	}
-
-	/**
-	 * @test
-	 */
-	public function removeCallsOnNodeWithNonMatchinContextMaterializesNodeData() {
+	public function removeCallsOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 
 		$node->getNodeData()->expects($this->once())->method('remove');

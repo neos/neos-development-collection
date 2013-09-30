@@ -12,10 +12,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
-use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -437,7 +435,22 @@ class Node implements NodeInterface {
 	 * @api
 	 */
 	public function getProperty($propertyName) {
-		return $this->nodeData->getProperty($propertyName);
+		$value = $this->nodeData->getProperty($propertyName);
+		if (!empty($value)) {
+			switch($this->getNodeType()->getPropertyType($propertyName)) {
+				case 'references' :
+					$nodes = array();
+					foreach ($value as $nodeData) {
+						$nodes[] = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+					}
+					$value = $nodes;
+				break;
+				case 'reference' :
+					$value = $this->nodeFactory->createFromNodeData($value, $this->context);
+				break;
+			}
+		}
+		return $value;
 	}
 
 	/**
@@ -468,7 +481,11 @@ class Node implements NodeInterface {
 	 * @api
 	 */
 	public function getProperties() {
-		return $this->nodeData->getProperties();
+		$properties = array();
+		foreach ($this->getPropertyNames() as $propertyName) {
+			$properties[$propertyName] = $this->getProperty($propertyName);
+		}
+		return $properties;
 	}
 
 	/**

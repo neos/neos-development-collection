@@ -97,6 +97,12 @@ abstract class AbstractNodeData {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
 	protected $nodeTypeManager;
@@ -176,6 +182,30 @@ abstract class AbstractNodeData {
 	 */
 	public function setProperty($propertyName, $value) {
 		if (!is_object($this->contentObjectProxy)) {
+			switch($this->getNodeType()->getPropertyType($propertyName)) {
+				case 'references':
+					$nodeIdentifiers = array();
+					if (is_array($value)) {
+						foreach ($value as $nodeIdentifier) {
+							if ($nodeIdentifier instanceof NodeInterface) {
+								$nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
+							} elseif ($this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace()) !== NULL) {
+								$nodeIdentifiers[] = $nodeIdentifier;
+							}
+						}
+					}
+					$value = $nodeIdentifiers;
+					break;
+				case 'reference':
+					$nodeIdentifier = NULL;
+					if ($value instanceof NodeInterface) {
+						$nodeIdentifier = $value->getIdentifier();
+					} elseif ($this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace()) !== NULL) {
+						$nodeIdentifier = $value;
+					}
+					$value = $nodeIdentifier;
+					break;
+			}
 			if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
 				return;
 			}
@@ -218,7 +248,31 @@ abstract class AbstractNodeData {
 	 */
 	public function getProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
-			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
+			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
+			if (!empty($value)) {
+				switch($this->getNodeType()->getPropertyType($propertyName)) {
+					case 'references' :
+						$nodeDatas = array();
+						if (!is_array($value)) {
+							$value = array();
+						}
+						foreach ($value as $nodeIdentifier) {
+							$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace());
+							if ($nodeData instanceof NodeData) {
+								$nodeDatas[] = $nodeData;
+							}
+						}
+						$value = $nodeDatas;
+						break;
+					case 'reference' :
+						$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
+						if ($nodeData instanceof NodeData) {
+							$value = $nodeData;
+						}
+						break;
+				}
+			}
+			return $value;
 		} elseif (ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			return ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
 		}
@@ -260,7 +314,12 @@ abstract class AbstractNodeData {
 		if (is_object($this->contentObjectProxy)) {
 			return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		}
-		return $this->properties;
+
+		$properties = array();
+		foreach (array_keys($this->properties) as $propertyName) {
+			$properties[$propertyName] = $this->getProperty($propertyName);
+		}
+		return $properties;
 	}
 
 	/**
@@ -485,5 +544,12 @@ abstract class AbstractNodeData {
 	 */
 	protected function updateContentObject($contentObject) {
 	}
+
+	/**
+	 * Returns the workspace this node is contained in
+	 *
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 */
+	abstract public function getWorkspace();
 
 }
