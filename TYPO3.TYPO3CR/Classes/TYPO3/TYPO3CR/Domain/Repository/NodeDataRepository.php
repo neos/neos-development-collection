@@ -372,13 +372,8 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE) {
 		$foundNodes = array();
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $includeRemovedNodes);
-			if ($limit !== NULL) {
-				$query->setLimit($limit);
-			}
-			if ($offset !== NULL) {
-				$query->setOffset($offset);
-			}
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, TRUE);
+
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIdentifier()])) {
@@ -415,7 +410,15 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 			}
 		}
 
-		return $this->sortNodesByIndex($foundNodes);
+		$foundNodes = $this->sortNodesByIndex($foundNodes);
+		if (!$includeRemovedNodes) {
+			$foundNodes = $this->filterRemovedNodes($foundNodes);
+		}
+		if ($limit !== NULL || $offset !== NULL) {
+			$foundNodes = $this->applyLimitAndOffset($foundNodes, $limit, ($offset === NULL ? 0 : $offset));
+		}
+
+		return $foundNodes;
 	}
 
 	/**
@@ -458,26 +461,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
 	 */
 	public function countByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE) {
-		$nodeCount = 0;
-			// FIXME: Try to find a more efficient way to do this.
-		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $includeRemovedNodes);
-			$subNodes = $query->execute()->toArray();
-			$subNodesByIdentifier = array();
-			foreach ($subNodes as $subNode) {
-				$subNodesByIdentifier[$subNode->getIdentifier()] = TRUE;
-			}
-			unset($subNodes);
-			foreach ($this->removedNodes as $removedNode) {
-				if (isset($subNodesByIdentifier[$removedNode->getIdentifier()])) {
-					unset ($subNodesByIdentifier[$removedNode->getIdentifier()]);
-				}
-			}
-
-			$nodeCount += count($subNodesByIdentifier);
-			$workspace = $workspace->getBaseWorkspace();
-		}
-		return $nodeCount;
+		return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, NULL, NULL, $includeRemovedNodes));
 	}
 
 	/**
@@ -836,6 +820,30 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 				unset($objects[$index]);
 			}
 		}
+	}
+
+	/**
+	 * Removes NodeData with the removed property set from the given array.
+	 *
+	 * @param array $nodes NodeData including removed entries
+	 * @return array NodeData with removed entries removed
+	 */
+	protected function filterRemovedNodes($nodes) {
+		return array_filter($nodes, function($node) {
+			return !$node->isRemoved();
+		});
+	}
+
+	/**
+	 * Apply limit and offset to the array of nodes.
+	 *
+	 * @param array $nodes
+	 * @param integer $limit
+	 * @param integer $offset
+	 * @return array
+	 */
+	protected function applyLimitAndOffset(array $nodes, $limit = NULL, $offset = 0) {
+		return array_slice($nodes, $offset, $limit);
 	}
 
 	/**
