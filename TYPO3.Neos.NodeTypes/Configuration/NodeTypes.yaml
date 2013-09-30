@@ -118,6 +118,7 @@
       type: string
       ui:
         label: 'HTML Content'
+        reloadIfChanged: TRUE
         inspector:
           group: 'html'
           editor: Content/Inspector/Editors/HtmlEditor
