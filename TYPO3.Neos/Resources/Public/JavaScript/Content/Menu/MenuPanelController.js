@@ -9,9 +9,8 @@ define(
 	'Library/jquery-with-dependencies',
 	'Shared/LocalStorage',
 	'Shared/ResourceCache',
-	'Shared/Configuration',
-	'text!./MenuPanel.html'
-], function(Ember, $, LocalStorage, ResourceCache, Configuration, template) {
+	'Shared/Configuration'
+], function(Ember, $, LocalStorage, ResourceCache, Configuration) {
 	return Ember.Object.extend({
 		configuration: null,
 		menuPanelMode: false,
