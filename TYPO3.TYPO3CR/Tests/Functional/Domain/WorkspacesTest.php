@@ -203,7 +203,37 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$parentNode3 = $this->rootNode->getNode('parentNode1');
 		$childNodes = $parentNode3->getChildNodes();
 		$this->assertSame(1, count($childNodes), 'parentNode is only allowed to have a single child node (childNode1A).');
+	}
 
+	/**
+	 * For test setup / node structure, see nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldBeRemovedFromOriginalLocation
+	 *
+	 * Here, we move childNodeC underneath childNodeA.
+	 *
+	 * @test
+	 */
+	public function nodesWhichAreMovedAcrossLevelsAndWorkspacesShouldWorkWhenUsingPrimaryChildNode() {
+		$parentNode = $this->rootNode->createNode('parentNode');
+		$parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB->createNode('childNodeC');
+		$parentNode->getWorkspace()->publish('live');
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$childNodeC2 = $this->rootNode->getNode('parentNode/childNodeB/childNodeC');
+		$childNodeA2 = $this->rootNode->getNode('parentNode/childNodeA');
+		$childNodeC2->moveInto($childNodeA2);
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$childNodeB3 = $this->rootNode->getNode('parentNode/childNodeB');
+		$this->assertNull($childNodeB3->getPrimaryChildNode());
+		$childNodeA3 = $this->rootNode->getNode('parentNode/childNodeA');
+		$childNodeC3 = $childNodeA3->getPrimaryChildNode();
+		$this->assertNotNull($childNodeC3);
 	}
 }
 

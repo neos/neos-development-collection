@@ -667,7 +667,7 @@ class NodeDataRepository extends \TYPO3\Flow\Persistence\Repository {
 				$resultingNodeArray = $this->filterNodesOverlaidInBaseWorkspace(array($firstNodeFoundInThisWorkspace), $baseWorkspace);
 
 				if (count($resultingNodeArray) > 0) {
-					return key($resultingNodeArray);
+					return current($resultingNodeArray);
 				}
 			}
 
