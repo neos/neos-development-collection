@@ -1,6 +1,4 @@
 define(['emberjs'], function(Ember) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('emberjs/dictionary-object');
-
 	var DictionaryObject = Ember.Object.extend({
 		setUnknownProperty: function(key, value) {
 			this[key] = value;

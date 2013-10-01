@@ -1,8 +1,3 @@
-window._requirejsLoadingTrace = [];
-window.renderLoadingTrace = function() {
-	return JSON.stringify(window._requirejsLoadingTrace);
-};
-
 window.T3 = {
 	isContentModule: location.pathname.substr(0, 6) !== '/neos/'
 } || window.T3;

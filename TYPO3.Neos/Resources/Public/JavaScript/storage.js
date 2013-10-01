@@ -9,15 +9,13 @@ define(
 	Backbone,
 	PublishableNodes
 ) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('storage');
-
 	Backbone.sync = function(method, model, options) {
 		var methods = {
 			'create': function(model, options) {
-				console.log("CREATE", arguments);
+				console.log('CREATE', arguments);
 			},
 			'read': function(model, options) {
-				console.log("READ", arguments);
+				console.log('READ', arguments);
 			},
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model);
@@ -48,7 +46,7 @@ define(
 				});
 			},
 			'delete': function(model, options) {
-				console.log("DELETE", arguments);
+				console.log('DELETE', arguments);
 			},
 			_convertModelToJson: function(model) {
 				var contextPath = model.fromReference(model.id);

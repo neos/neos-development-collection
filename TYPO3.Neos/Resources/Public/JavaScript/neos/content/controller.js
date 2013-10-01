@@ -16,8 +16,6 @@ define(
 	'vie/entity'
 ],
 function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notification, EventDispatcher) {
-	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('neos/content/controller');
-
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 

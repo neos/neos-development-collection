@@ -9,8 +9,6 @@ define(
 		Configuration,
 		NodeSelection
 	) {
-		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha');
-
 		if (!window.T3.isContentModule) {
 			return;
 		}
@@ -158,7 +156,6 @@ define(
 				},
 				['aloha'],
 				function() {
-					if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha (inner require)');
 				}
 			);
 		}

@@ -14,9 +14,6 @@ define(
 		'Shared/Notification'
 	], function(
 		$, Ember, ContentModule, EntityWrapper, NodeSelection, pageTreeTemplate, deletePageDialogTemplate, InsertDocumentNodePanel, Notification) {
-		if (window._requirejsLoadingTrace) {
-			window._requirejsLoadingTrace.push('neos/content/ui/elements/page-tree');
-		}
 
 		var DTNodeStatus_Error = -1,
 			DTNodeStatus_Loading = 1,

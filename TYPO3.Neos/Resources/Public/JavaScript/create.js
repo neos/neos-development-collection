@@ -18,8 +18,6 @@ define(
 		EntitySelection,
 		NodeSelection
 	) {
-		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');
-
 		return Ember.Object.create({
 				// Initially set state to null
 			_state: null,
