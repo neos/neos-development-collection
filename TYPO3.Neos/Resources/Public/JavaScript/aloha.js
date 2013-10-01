@@ -73,7 +73,7 @@ function(
 					//'extra/cite',
 					//'flag-icons/flag-icons-plugin',
 					//'numerated-headers/numerated-headers-plugin',
-					'extra/formatlesspaste'
+					'extra/formatlesspaste',
 					//'linkbrowser/linkbrowser-plugin',
 					//'imagebrowser/imagebrowser-plugin',
 					//'extra/ribbon',
@@ -82,8 +82,9 @@ function(
 					//'metaview/metaview-plugin',
 					//'extra/listenforcer'
 
-					//  'neosAloha/neosintegration',
-					//                'neosAloha/neos-links'
+					// 'neosAloha/neosintegration',
+					// 'neosAloha/neos-links'
+					'neosAloha/ajax-repository'
 				].join(','),
 				block: {
 					sidebarAttributeEditor: false
@@ -104,13 +105,13 @@ function(
 				tabs: [
 					{
 						label: 'tab.format.label',
-							// The "format" tab is shown in the top-menu, the remaining tabs are shown
-							// in the inspector.
+						// The "format" tab is shown in the top-menu, the remaining tabs are shown
+						// in the inspector.
 						components: [
 							[ 'formatBlock', 'bold', 'italic', 'underline', 'subscript', 'superscript', 'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop', 'toggleMetaView', 'wailang', 'toggleFormatlessPaste', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker']
 						]
 					},
-						// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.
+					// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.
 					{
 						label: "tab.insert.label",
 						showOn: function() {
@@ -128,19 +129,19 @@ function(
 				]
 			},
 
-				// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
+			// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
 			smartContentChange: {
 				idle: 500,
 				delay: 150
 			},
 			bundles: {
-					// Path for custom bundle relative from require.js path
+				// Path for custom bundle relative from require.js path
 				//neosAloha: '/_Resources/Static/Packages/TYPO3.Neos/JavaScript/alohaplugins/'
 			},
 
 			baseUrl: alohaBaseUrl,
 
-				// Pass on our jQuery instance to Aloha to prevent double loading of jQuery
+			// Pass on our jQuery instance to Aloha to prevent double loading of jQuery
 			jQuery: $,
 			predefinedModules: {
 				'jqueryui': $.ui,
@@ -156,15 +157,35 @@ function(
 						'ui/multiSplit': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit',
 						'ui/button': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/button'
 					}
+				},
+				paths: {
+					'ajax-repository': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib'
 				}
 			},
-
 			// Basic sanitation of content
 			contentHandler: {
 				insertHtml: ['word', 'generic', 'oembed', 'sanitize'],
-				initEditable: ['word', 'sanitize'],
-				getContents: ['blockelement', 'sanitize', 'relaxed'],
-				sanitize: 'relaxed' // relaxed, restricted, basic,
+				initEditable: ['sanitize'],
+				getContents: ['blockelement', 'sanitize', 'basic'],
+				sanitize: 'relaxed', // relaxed, restricted, basic
+				allows: {
+					elements: [
+						'strong', 'em', 'i', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'div', 'dl', 'dt', 'em',
+						'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'sub',
+						'sup', 'u', 'ul', 'a'
+					],
+					attributes: {
+						'a': ['href', 'data-gentics-aloha-repository', 'data-gentics-aloha-object-id', 'data-ajax-repository-temporary-data'],
+						'blockquote': ['cite'],
+						'q': ['cite']
+					},
+
+					protocols: {
+						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node']},
+						'blockquote': {'cite': ['http', 'https', '__relative__']},
+						'q': {'cite': ['http', 'https', '__relative__']}
+					}
+				}
 			}
 		};
 
@@ -174,6 +195,6 @@ function(
 				baseUrl: alohaBaseUrl
 			},
 			['aloha']
-		);
+		)
 	}
 });

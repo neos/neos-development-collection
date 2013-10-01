@@ -8,6 +8,17 @@ include: Prototypes/Breadcrumb.ts2
 include: Prototypes/Menu.ts2
 include: Prototypes/Plugin.ts2
 
+
+# ConvertNodeUri implementation
+#
+# replaces all occurrences of "node://<UUID>" by proper URIs.
+#
+prototype(TYPO3.Neos:ConvertNodeUris) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ConvertNodeUrisImplementation'
+	value = ${value}
+	node = ${node}
+}
+
 # The root matcher used to start rendering in Neos
 #
 # The default is to use a render path of "page", unless the requested format is not "html"
