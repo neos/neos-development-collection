@@ -13,4 +13,4 @@ Feature: Content module / Preview mode
     Then I should be in the "Content" module
     When I press "Preview"
     Then I should not see the top bar
-    And the button "Preview" should be active
+    And the Previewbutton should be active

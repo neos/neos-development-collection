@@ -11,7 +11,7 @@ Feature: Content module / Inline editing
       | jdoe     | password | John      | Doe      | Editor |
     And I am authenticated with "jdoe" and "password" for the backend
     Then I should be in the "Content" module
-    When I select the first content element
+    When I select the first headline content element
     And I set the content to "NewContent"
     And I wait for the changes to be saved
     And I reload the page

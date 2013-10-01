@@ -149,15 +149,16 @@ class FeatureContext extends MinkContext {
 	}
 
 	/**
-	 * @Given /^the button "([^"]*)" should be active$/
+	 * @Given /^the Previewbutton should be active$/
 	 */
-	public function theButtonShouldBeActive($buttonName) {
-		$button = $this->getSession()->getPage()->findButton($buttonName);
+	public function thePreviewButtonShouldBeActive() {
+
+		$button = $this->getSession()->getPage()->find('css', '.neos-preview-close > .neos-pressed');
 		if ($button === NULL) {
-			throw new \Behat\Mink\Exception\ElementNotFoundException($this->getSession(), 'button', 'id|name|label|value', $buttonName);
+			throw new \Behat\Mink\Exception\ElementNotFoundException($this->getSession(), 'button', 'id|name|label|value');
 		}
 
-		Assert::assertTrue($button->hasClass('pressed'), 'Button should be pressed');
+		Assert::assertTrue($button->hasClass('neos-pressed'), 'Button should be pressed');
 	}
 
 	/**
@@ -257,6 +258,16 @@ class FeatureContext extends MinkContext {
 	}
 
 	/**
+	 * @When /^I select the first headline content element$/
+	 */
+	public function iSelectTheFirstHeadlineContentElement() {
+		$element = $this->assertSession()->elementExists('css', '.typo3-neos-nodetypes-headline');
+		$element->click();
+
+		$this->selectedContentElement = $element;
+	}
+
+	/**
 	 * @Given /^I set the content to "([^"]*)"$/
 	 */
 	public function iSetTheContentTo($content) {
@@ -271,8 +282,8 @@ class FeatureContext extends MinkContext {
 	 * @Given /^I wait for the changes to be saved$/
 	 */
 	public function iWaitForTheChangesToBeSaved() {
-		$this->getSession()->wait(30000, '$("#neos-application .neos-indicator-saved").length > 0');
-		$this->assertSession()->elementExists('css', '#neos-application .neos-indicator-saved');
+		$this->getSession()->wait(30000, '$(".neos-indicator-saved").length > 0');
+		$this->assertSession()->elementExists('css', '.neos-indicator-saved');
 	}
 
 	/**
