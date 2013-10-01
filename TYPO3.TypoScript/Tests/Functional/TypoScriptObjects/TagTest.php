@@ -80,5 +80,14 @@ class TagTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame('<test>', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function tagWithEelExpressionUsingThis() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('tag/withThis');
+		$this->assertSame('<title databar="baz" datafoo="baz_baz">foo</title>', $view->render());
+	}
+
 }
 ?>

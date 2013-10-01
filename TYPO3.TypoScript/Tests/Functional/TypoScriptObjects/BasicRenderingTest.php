@@ -26,5 +26,23 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('XHello World', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function basicRenderingReusingTypoScriptVariables() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('basicRendering/reuseTypoScriptVariables');
+		$this->assertEquals('XHello World', $view->render());
+	}
+
+	/**
+	 * @test
+	 */
+	public function basicRenderingReusingTypoScriptVariablesWithEel() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('basicRendering/reuseTypoScriptVariablesWithEel');
+		$this->assertEquals('XHello World', $view->render());
+	}
+
 }
 ?>

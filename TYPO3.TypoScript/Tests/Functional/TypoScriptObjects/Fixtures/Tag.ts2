@@ -49,3 +49,12 @@ tag.omitClosingTag = Tag {
 	tagName = 'test'
 	omitClosingTag = TRUE
 }
+
+tag.withThis = Tag {
+	tagName = 'title'
+	attributes {
+		databar = 'baz'
+		datafoo = ${this.databar + '_baz'}
+	}
+	content = 'foo'
+}

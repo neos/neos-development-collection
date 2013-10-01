@@ -19,14 +19,7 @@ use TYPO3\TypoScript;
 /**
  * The old "COA" object
  */
-class ArrayImplementation extends AbstractTypoScriptObject implements \ArrayAccess {
-
-	/**
-	 * Sub-typoscript elements of this object
-	 *
-	 * @var array
-	 */
-	protected $subElements = array();
+class ArrayImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * {@inheritdoc}
@@ -42,7 +35,7 @@ class ArrayImplementation extends AbstractTypoScriptObject implements \ArrayAcce
 
 		$output = '';
 		foreach ($sortedChildTypoScriptKeys as $key) {
-			$output .= $this->tsRuntime->render($this->path . '/' . $key);
+			$output .= $this->tsValue($key);
 		}
 
 		return $output;
@@ -54,48 +47,19 @@ class ArrayImplementation extends AbstractTypoScriptObject implements \ArrayAcce
 	 * - position meta-property
 	 *
 	 * @see \TYPO3\Flow\Utility\PositionalArraySorter
+	 * TODO Detect circles in after / before dependencies
 	 *
-	 * @return array
-	 * @throws TypoScript\Exception
+	 * @return array an ordered list of keys
+	 * @throws TypoScript\Exception if the positional string has an unsupported format
 	 */
 	protected function sortNestedTypoScriptKeys() {
-		$arraySorter = new PositionalArraySorter($this->subElements, '__meta.position');
+		$arraySorter = new PositionalArraySorter($this->properties, '__meta.position');
 		try {
 			$sortedTypoScriptKeys = $arraySorter->getSortedKeys();
 		} catch (InvalidPositionException $exception) {
 			throw new TypoScript\Exception('Invalid position string', 1345126502, $exception);
 		}
 		return $sortedTypoScriptKeys;
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return boolean
-	 */
-	public function offsetExists($offset) {
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return mixed
-	 */
-	public function offsetGet($offset) {
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function offsetSet($offset, $value) {
-		$this->subElements[$offset] = $value;
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return void
-	 */
-	public function offsetUnset($offset) {
 	}
 }
 ?>

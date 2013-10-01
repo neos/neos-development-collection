@@ -32,7 +32,7 @@ class RawArrayImplementation extends ArrayImplementation {
 
 		$output = array();
 		foreach ($sortedChildTypoScriptKeys as $key) {
-			$output[$key] = $this->tsRuntime->evaluate($this->path . '/' . $key);
+			$output[$key] = $this->tsValue($key);
 		}
 
 		return $output;

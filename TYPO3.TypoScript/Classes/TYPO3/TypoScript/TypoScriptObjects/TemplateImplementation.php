@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  * //tsPath variables TODO The result of this TS object is made available inside the template as "variables"
  * @api
  */
-class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayAccess {
+class TemplateImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * Path to the template which should be rendered
@@ -49,14 +49,6 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 	 * @var string
 	 */
 	protected $sectionName = NULL;
-
-	/**
-	 * List of variables being made available inside the fluid template. use
-	 * magic setters for setting them.
-	 *
-	 * @var array
-	 */
-	protected $variables = array();
 
 	/**
 	 * Allows to set the template path.
@@ -143,7 +135,7 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 			$fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
 		}
 
-		foreach ($this->variables as $key => $value) {
+		foreach ($this->properties as $key => $value) {
 			if (!is_array($value)) {
 					// if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a TypoScript object,
 					// we can just evaluate it (to handle processors) and then assign it to the template.
@@ -166,39 +158,6 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 		} else {
 			return $fluidTemplate->render();
 		}
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return boolean
-	 */
-	public function offsetExists($offset) {
-		return isset($this->variables[$offset]);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return mixed
-	 */
-	public function offsetGet($offset) {
-		return $this->variables[$offset];
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function offsetSet($offset, $value) {
-		$this->variables[$offset] = $value;
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return void
-	 */
-	public function offsetUnset($offset) {
-		unset($this->variables[$offset]);
 	}
 }
 ?>

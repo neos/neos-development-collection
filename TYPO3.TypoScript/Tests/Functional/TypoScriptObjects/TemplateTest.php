@@ -22,7 +22,6 @@ class TemplateTest extends AbstractTypoScriptObjectTest {
 	 */
 	public function basicFluidTemplateCanBeUsedForRendering() {
 		$view = $this->buildView();
-
 		$view->setTypoScriptPath('template/basicTemplate');
 		$this->assertEquals('Test Templatefoo', $view->render());
 	}
@@ -30,9 +29,17 @@ class TemplateTest extends AbstractTypoScriptObjectTest {
 	/**
 	 * @test
 	 */
+	public function basicFluidTemplateContainsEelVariables() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('template/basicTemplateWithEelVariable');
+		$this->assertEquals('Test Templatefoobar', $view->render());
+	}
+
+	/**
+	 * @test
+	 */
 	public function customPartialPathCanBeSetOnRendering() {
 		$view = $this->buildView();
-
 		$view->setTypoScriptPath('template/partial');
 		$this->assertEquals('Test Template--partial contents', $view->render());
 	}
@@ -42,7 +49,6 @@ class TemplateTest extends AbstractTypoScriptObjectTest {
 	 */
 	public function customLayoutPathCanBeSetOnRendering() {
 		$view = $this->buildView();
-
 		$view->setTypoScriptPath('template/layout');
 		$this->assertEquals('layout start -- Test Template -- layout end', $view->render());
 	}

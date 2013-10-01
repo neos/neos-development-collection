@@ -115,7 +115,7 @@ class ArrayImplementationTest extends UnitTestCase {
 	public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder) {
 		$mockTsRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', FALSE);
 
-		$mockTsRuntime->expects($this->any())->method('render')->will($this->returnCallback(function($path) use(&$renderedPaths) {
+		$mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($path) use(&$renderedPaths) {
 			$renderedPaths[] = $path;
 		}));
 

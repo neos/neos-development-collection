@@ -5,6 +5,12 @@ template.basicTemplate = TYPO3.TypoScript:Template {
 	myVariable = 'foo'
 }
 
+template.basicTemplateWithEelVariable = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+	bar = ${'b' + 'a' + 'r'}
+	myVariable = ${'foo' + this.bar}
+}
+
 template.partial = TYPO3.TypoScript:Template {
 	templatePath = ${fixtureDirectory + 'PartialTemplate.html'}
 	partialPath = ${fixtureDirectory + 'Partials/'}

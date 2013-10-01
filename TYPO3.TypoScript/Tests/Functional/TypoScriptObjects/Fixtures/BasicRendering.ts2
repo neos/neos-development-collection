@@ -3,3 +3,13 @@ prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Fun
 basicRendering.test = TYPO3.TypoScript:TestRenderer {
 	test = 'Hello World'
 }
+
+basicRendering.reuseTypoScriptVariables = TYPO3.TypoScript:TestRenderer {
+	test2 = 'orld'
+	test = ${'Hello W' + this.test2}
+}
+
+basicRendering.reuseTypoScriptVariablesWithEel = TYPO3.TypoScript:TestRenderer {
+	test2 = ${'or' + 'ld'}
+	test = ${'Hello W' + this.test2}
+}
