@@ -22,6 +22,41 @@ additionalProperties:
 
               'inlineEditable': { type: boolean, description: "Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?" }
 
+              'aloha':
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+
+                  'format':
+                    type: 'array'
+                    items:
+                      type: 'string'
+                      pattern: '/^(b|i|u|sub|sup|p|h1|h2|h3|pre|removeFormat)$/'
+
+                  'table':
+                    type: 'array'
+                    items:
+                      type: 'string'
+                      pattern: '/^(table)$/'
+
+                  'link':
+                    type: 'array'
+                    items:
+                      type: 'string'
+                      pattern: '/^(a)$/'
+
+                  'list':
+                    type: 'array'
+                    items:
+                      type: 'string'
+                      pattern: '/^(ol|ul)$/'
+
+                  'alignment':
+                    type: 'array'
+                    items:
+                      type: 'string'
+                      pattern: '/^(right|left|center|justify|top|middle|bottom)$/'
+
               'inspector':
                 type: dictionary
                 additionalProperties: FALSE

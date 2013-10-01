@@ -1,17 +1,47 @@
 define(
-	[
-		'Library/jquery-with-dependencies',
-		'Shared/Configuration',
-		'Content/Model/NodeSelection'
-	],
-	function(
-		$,
-		Configuration,
-		NodeSelection
-	) {
-		if (!window.T3.isContentModule) {
-			return;
-		}
+[
+	'Library/jquery-with-dependencies',
+	'Shared/Configuration',
+	'Content/Model/NodeSelection'
+],
+function(
+	$,
+	Configuration,
+	NodeSelection
+) {
+	if (!window.T3.isContentModule) {
+		return;
+	}
+
+	if (Configuration.get('Schema') === undefined) {
+		// schema not yet loaded, we need to initialize aloha
+		Configuration.addObserver('Schema', function() {
+			initAloha();
+		});
+	} else {
+		initAloha();
+	}
+
+	function initAloha() {
+
+		var nodeTypes = Configuration.get('Schema');
+
+		var nodeSettings = {};
+		$.each(nodeTypes, function(nodeTypeName, nodeType) {
+			if (nodeType.properties && typeof nodeType.properties == 'object') {
+				$.each(nodeType.properties, function(propertyName, property) {
+					$.each(['table', 'link', 'list', 'alignment', 'format'], function(i, mode) {
+						if (property.ui && property.ui.aloha && property.ui.aloha[mode]) {
+							var selector = '[typeof="typo3:' + nodeTypeName + '"]' +
+								 ' [property="typo3:' + propertyName + '"]';
+							nodeSettings[mode] = nodeSettings[mode] ? nodeSettings[mode] : {};
+							nodeSettings[mode][selector] = property.ui.aloha[mode];
+						}
+					});
+				});
+			}
+		});
+
 		var Aloha = window.Aloha = window.Aloha || {__shouldInit: true};
 
 		Aloha.settings = {
@@ -64,17 +94,11 @@ define(
 				 * meaning that all options are still shown. This seems to be an Aloha bug and needs
 				 * more research.
 				 */
-				table: { editables: { '[property="typo3:title"]': [ ] }},
-				link: { editables: { '[property="typo3:title"]': [ ] }},
-				list: { editables: { '[property="typo3:title"]': [ ] }},
-				align: { editables: { '[property="typo3:title"]': [ ] }},
-				format: {
-					config : [ 'b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat' ]
-					,
-					editables: {
-						'div[property="typo3:title"]': [ 'h1', 'h2', 'h3' ]
-					}
-				}
+				table: { config: [], editables: nodeSettings['table'] },
+				link: { config: [], editables: nodeSettings['link'] },
+				list: { config: [], editables: nodeSettings['list'] },
+				alignment: { config: [], editables: nodeSettings['alignment'] },
+				format: { config: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings['format'] }
 			},
 			toolbar: {
 				tabs: [
@@ -83,15 +107,7 @@ define(
 							// The "format" tab is shown in the top-menu, the remaining tabs are shown
 							// in the inspector.
 						components: [
-							[ 'formatBlock' ],
-							[ 'bold', 'italic', 'underline', 'subscript', 'superscript' ],
-							[
-								'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop',
-								'toggleMetaView', 'wailang', 'toggleFormatlessPaste'
-							], [
-								'alignLeft', 'alignCenter', 'alignRight', 'alignJustify',
-								'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker'
-							]
+							[ 'formatBlock', 'bold', 'italic', 'underline', 'subscript', 'superscript', 'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop', 'toggleMetaView', 'wailang', 'toggleFormatlessPaste', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker']
 						]
 					},
 						// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.
@@ -126,12 +142,10 @@ define(
 
 				// Pass on our jQuery instance to Aloha to prevent double loading of jQuery
 			jQuery: $,
-
 			predefinedModules: {
 				'jqueryui': $.ui,
 				NeosNodeSelection: NodeSelection
 			},
-
 			requireConfig: {
 				map: {
 					'../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/button': {
@@ -146,8 +160,6 @@ define(
 			}
 		};
 
-			// because this method is called during bootstrap, it might happen that T3.Configuration is not yet available.
-			// Thus, we need to check the configuration in window.T3Configuration as well.
 		if (Configuration.get('enableAloha')) {
 			require(
 				{
@@ -160,4 +172,4 @@ define(
 			);
 		}
 	}
-);
+});
