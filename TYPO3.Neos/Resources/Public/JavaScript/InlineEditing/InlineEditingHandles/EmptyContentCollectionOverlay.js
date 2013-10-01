@@ -9,7 +9,7 @@ define(
 	) {
 		return {
 			show: function(collectionWidget) {
-				if (collectionWidget.element.find('.neos-empty-contentcollection-overlay').length === 0) {
+				if (collectionWidget.element.find('> .neos-empty-contentcollection-overlay').length === 0) {
 					var $overlay = $('<div />', {'class': 'neos neos-empty-contentcollection-overlay'}).prependTo(collectionWidget.element);
 
 					$overlay.on('click', function() {
@@ -19,7 +19,7 @@ define(
 			},
 
 			hide: function(collectionWidget) {
-				collectionWidget.element.find('.neos-empty-contentcollection-overlay').remove();
+				collectionWidget.element.find('> .neos-empty-contentcollection-overlay').remove();
 			}
 		};
 	}
