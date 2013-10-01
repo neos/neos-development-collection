@@ -226,7 +226,18 @@ class NodeType {
 	 */
 	public function getLabel() {
 		$this->initialize();
-		return (isset($this->configuration['label']) ? $this->configuration['label'] : '');
+		return (isset($this->configuration['ui']['label']) ? $this->configuration['ui']['label'] : '');
+	}
+
+	/**
+	 * Get additional options (if specified)
+	 *
+	 * @return array
+	 * @api
+	 */
+	public function getOptions() {
+		$this->initialize();
+		return (isset($this->configuration['options']) ? $this->configuration['options'] : array());
 	}
 
 	/**
