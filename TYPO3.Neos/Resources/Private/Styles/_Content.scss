@@ -92,3 +92,31 @@ button.neos-create-new-content {
 .neos-status-indicator {
 	display: none;
 }
+
+/**
+ * if content elements cannot be rendered
+ * the exception is displayed instead of the actual element
+ *
+ * its format is defined here
+ */
+.neos-rendering-exception {
+	background-color: $light-grey2;
+	padding-top: $defaultMargin / 2;
+	padding-left: $defaultMargin;
+	padding-right: $defaultMargin;
+	padding-bottom: $defaultMargin / 2;
+	margin-top: $defaultMargin;
+	margin-bottom: $defaultMargin;
+
+	.neos-rendering-exception-title, .neos-exception-message {
+		color: $dark-orange;
+		font-weight: bold;
+	}
+
+	.neos-typoscript-path {
+		color: $blueDark;
+		.neos-typoscript-subpath {
+			padding-left: 2em;
+		}
+	}
+}

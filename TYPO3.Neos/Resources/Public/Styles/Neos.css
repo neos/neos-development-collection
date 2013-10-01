@@ -9320,6 +9320,32 @@ button.neos-create-new-content {
   display: none;
 }
 
+/**
+ * if content elements cannot be rendered
+ * the exception is displayed instead of the actual element
+ *
+ * its format is defined here
+ */
+.neos-rendering-exception {
+  background-color: #cccccc;
+  padding-top: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 8px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.neos-rendering-exception .neos-rendering-exception-title, .neos-rendering-exception .neos-exception-message {
+  color: #ff460d;
+  font-weight: bold;
+}
+.neos-rendering-exception .neos-typoscript-path {
+  color: #007fb2;
+}
+.neos-rendering-exception .neos-typoscript-path .neos-typoscript-subpath {
+  padding-left: 2em;
+}
+
 body.neos-backend {
   -webkit-transition-property: margin;
   -moz-transition-property: margin;

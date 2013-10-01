@@ -208,7 +208,7 @@ class RenderingTest extends AbstractNodeTest {
 	protected function simulateRendering($additionalTypoScriptFile = NULL, $debugMode = FALSE) {
 		$typoScriptRuntime = $this->parseTypoScript($additionalTypoScriptFile);
 		if ($debugMode) {
-			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE, 'handleRenderingExceptions' => 'throw'));
+			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE, 'rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
 		}
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $this->node,
