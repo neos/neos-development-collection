@@ -9,6 +9,9 @@
       defaultValue: '<h1>Enter headline here</h1>'
       ui:
         inlineEditable: TRUE
+        aloha:
+          format: ['sub', 'sup', 'p', 'h1', 'h2', 'h3', 'removeFormat']
+          link: ['a']
 
 'TYPO3.Neos.NodeTypes:Text':
   superTypes: ['TYPO3.Neos:Content']
@@ -21,6 +24,11 @@
       defaultValue: '<p>Enter text here</p>'
       ui:
         inlineEditable: TRUE
+        aloha:
+          format: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat']
+          table: ['table']
+          list: ['ol', 'ul']
+          link: ['a']
 
 'TYPO3.Neos.NodeTypes:Image':
   superTypes: ['TYPO3.Neos:Content']
