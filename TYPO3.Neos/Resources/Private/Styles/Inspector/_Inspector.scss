@@ -476,6 +476,7 @@
 			font-size: 14px;
 			@include text-shadow(none);
 			@include box-shadow(none);
+			@include box-sizing(border-box);
 
 			&.neos-disabled,
 			&[disabled] {
