@@ -82,8 +82,8 @@ class ContentElementWrappingService {
 		$tagBuilder->addAttribute('about', $node->getContextPath());
 		$tagBuilder->addAttribute('tabindex', '0');
 
-		$this->addScriptTag($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
-		$this->addScriptTag($tagBuilder, '_typoscriptPath', $typoscriptPath);
+		$this->addDataAttribute($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
+		$this->addDataAttribute($tagBuilder, '_typoscriptPath', $typoscriptPath);
 		$hasInlineEditableProperties = FALSE;
 		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
@@ -119,7 +119,7 @@ class ContentElementWrappingService {
 				$dataType = 'jsonEncoded';
 			}
 
-			$this->addScriptTag($tagBuilder, $propertyName, $propertyValue, $dataType);
+			$this->addDataAttribute($tagBuilder, $propertyName, $propertyValue, $dataType);
 
 			if (isset($propertyConfiguration['ui']) && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === TRUE) {
 				$hasInlineEditableProperties = TRUE;
@@ -142,7 +142,7 @@ class ContentElementWrappingService {
 			}
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
 
-			$this->addScriptTag($tagBuilder, '__nodetype', $nodeType->getName());
+			$this->addDataAttribute($tagBuilder, '__nodetype', $nodeType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 'neos-page-metainformation');
 			$tagBuilder->addAttribute('data-__sitename', $node->getContext()->getCurrentSite()->getName());
@@ -157,7 +157,11 @@ class ContentElementWrappingService {
 	}
 
 	/**
-	 * Prepend a script tag with property metadata to the content
+	 * Add a data attribute with the property metadata to the content.
+	 *
+	 * We are converting the lowerCamelCased versions of properties to dash-er-ized versions,
+	 * because properties are case-insensitive, but the UI needs to be able to work with the
+	 * proper lowerCamelCased versions.
 	 *
 	 * @param \TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder
 	 * @param string $propertyName
@@ -165,15 +169,17 @@ class ContentElementWrappingService {
 	 * @param string $dataType
 	 * @return void
 	 */
-	protected function addScriptTag(\TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder, $propertyName, $propertyValue, $dataType = 'string') {
+	protected function addDataAttribute(\TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder, $propertyName, $propertyValue, $dataType = 'string') {
+
+		$dasherizedPropertyName = preg_replace_callback('/([A-Z])/', function($character) {
+			return '-' . strtolower($character[1]);
+		}, $propertyName);
+		$tagBuilder->addAttribute('data-neos-' . $dasherizedPropertyName, $propertyValue);
+
 		$dataType = $this->getDataTypeCurie($dataType);
-		if ($dataType === 'xsd:string') {
-			$dataTypeAttribute = '';
-		} else {
-			$dataTypeAttribute = sprintf(' datatype="%s"', $dataType);
+		if ($dataType !== 'xsd:string') {
+			$tagBuilder->addAttribute('data-neosdatatype-' . $dasherizedPropertyName, $dataType);
 		}
-		$tag = sprintf('<script type="text/x-typo3" property="typo3:%s"%s content="%s"></script>', $propertyName, $dataTypeAttribute, htmlentities($propertyValue));
-		$tagBuilder->setContent($tag . $tagBuilder->getContent());
 	}
 
 	/**
