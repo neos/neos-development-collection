@@ -20,7 +20,7 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function createActionCreatesAndAddsUserAsAdministrator() {
+	public function createActionCreatesAndAddsUserWithTheGivenRole() {
 		$mockUserFactory = $this->getMock('TYPO3\Neos\Domain\Factory\UserFactory');
 		$mockPartyRepository = $this->getMock('TYPO3\Party\Domain\Repository\PartyRepository');
 		$mockAccountRepository = $this->getMock('TYPO3\Flow\Security\AccountRepository');
@@ -39,7 +39,7 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockPartyRepository->expects($this->once())->method('add')->with($mockUser);
 		$mockAccountRepository->expects($this->once())->method('add')->with($mockAccount);
 
-		$controller->createAction('username', array('password'), 'John', 'Doe');
+		$controller->createAction('username', array('password'), 'John', 'Doe', 'TYPO3.Neos:Administrator');
 	}
 
 }

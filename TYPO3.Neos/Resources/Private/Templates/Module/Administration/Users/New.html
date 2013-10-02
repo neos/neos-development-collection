@@ -33,6 +33,18 @@
 						<f:form.password name="password[1]" id="password[1]" />
 					</div>
 				</div>
+
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="roleIdentifier">Role</label>
+					<div class="neos-controls">
+						<f:for each="{neosRoles}" as="role">
+							<label class="neos-radio neos-inline">
+								<f:form.radio name="roleIdentifier" value="{role.identifier}" />
+								{role.name}
+							</label>
+						</f:for>
+					</div>
+				</div>
 			</fieldset>
 
 			<fieldset class="neos-span5">

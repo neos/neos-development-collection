@@ -51,6 +51,12 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	protected $securityContext;
 
 	/**
+	 * @var \TYPO3\Flow\Security\Policy\PolicyService
+	 * @Flow\Inject
+	 */
+	protected $policyService;
+
+	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
@@ -85,6 +91,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 */
 	public function newAction(\TYPO3\Flow\Security\Account $account = NULL) {
 		$this->view->assign('account', $account);
+		$this->view->assign('neosRoles', $this->getNeosRoles());
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
 
@@ -101,12 +108,14 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 * @param string $lastName
 	 * @Flow\Validate(argumentName="lastName", type="NotEmpty")
 	 * @Flow\Validate(argumentName="lastName", type="StringLength", options={ "minimum"=1, "maximum"=255 })
+	 * @param string $roleIdentifier The role indentifier of the role this user should have
 	 * @return void
 	 * @todo Security
 	 */
-	public function createAction($identifier, array $password, $firstName, $lastName) {
+	public function createAction($identifier, array $password, $firstName, $lastName, $roleIdentifier) {
 		$password = array_shift($password);
-		$user = $this->userFactory->create($identifier, $password, $firstName, $lastName, array('TYPO3.Neos:Administrator'));
+
+		$user = $this->userFactory->create($identifier, $password, $firstName, $lastName, array($roleIdentifier));
 
 		$this->partyRepository->add($user);
 		$accounts = $user->getAccounts();
@@ -123,9 +132,20 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 */
 	public function editAction(\TYPO3\Flow\Security\Account $account) {
 		$this->assignElectronicAddressOptions();
+
+		$currentRole = NULL;
+		foreach ($account->getRoles() as $role) {
+			if ($role->getPackageKey() === 'TYPO3.Neos') {
+				$currentRole = $role;
+				break;
+			}
+		}
+
 		$this->view->assignMultiple(array(
 			'account' => $account,
-			'person' => $account->getParty()
+			'person' => $account->getParty(),
+			'neosRoles' => $this->getNeosRoles(),
+			'currentRole' => $currentRole
 		));
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}
@@ -144,18 +164,21 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 * @param \TYPO3\Flow\Security\Account $account
 	 * @param \TYPO3\Party\Domain\Model\Person $person
 	 * @param array $password
+	 * @param string $roleIdentifier The role indentifier of the role this user should have
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
 	 * @return void
 	 * @todo Handle validation errors for account (accountIdentifier) & check if there's another account with the same accountIdentifier when changing it
 	 * @todo Security
 	 */
-	public function updateAction(\TYPO3\Flow\Security\Account $account, \TYPO3\Party\Domain\Model\Person $person, array $password = array()) {
+	public function updateAction(\TYPO3\Flow\Security\Account $account, \TYPO3\Party\Domain\Model\Person $person, array $password = array(), $roleIdentifier) {
 		$password = array_shift($password);
 		if (strlen(trim(strval($password))) > 0) {
 			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
-			$this->accountRepository->update($account);
 		}
 
+		$account->setRoles(array($this->policyService->getRole($roleIdentifier)));
+
+		$this->accountRepository->update($account);
 		$this->partyRepository->update($person);
 
 		$this->addFlashMessage('The user profile has been updated.');
@@ -248,5 +271,19 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		));
 	}
 
+	/**
+	 * Returns all roles defined in the Neos package
+	 *
+	 * @return array<\TYPO3\Flow\Security\Policy\Role>
+	 */
+	protected function getNeosRoles() {
+		$neosRoles = array();
+		foreach ($this->policyService->getRoles() as $role) {
+			if ($role->getPackageKey() === 'TYPO3.Neos') {
+				$neosRoles[] = $role;
+			}
+		}
+		return $neosRoles;
+	}
 }
 ?>
