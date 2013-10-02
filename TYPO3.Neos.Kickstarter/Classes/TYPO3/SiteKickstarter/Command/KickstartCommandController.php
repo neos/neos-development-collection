@@ -51,12 +51,8 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('Package "%s" already exists.', array($packageKey));
 			$this->quit(1);
 		}
-		$this->packageManager->createPackage($packageKey, NULL, NULL, 'typo3-flow-site');
 
-		$generatedFiles = array();
-		$generatedFiles += $this->generatorService->generateSitesXml($packageKey, $siteName);
-		$generatedFiles += $this->generatorService->generateSitesTypoScript($packageKey, $siteName);
-		$generatedFiles += $this->generatorService->generateSitesTemplate($packageKey, $siteName);
+		$generatedFiles = $this->generatorService->generateSitePackage($packageKey, $siteName);
 		$this->outputLine(implode(PHP_EOL, $generatedFiles));
 	}
 }

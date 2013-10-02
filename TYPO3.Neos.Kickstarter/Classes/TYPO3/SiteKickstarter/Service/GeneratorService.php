@@ -20,13 +20,35 @@ use TYPO3\Flow\Annotations as Flow;
 class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 	/**
-	 * Generate a Sites.xml for the given package and name.
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
+	 * Generate a site package and fill it with boilerplate data.
 	 *
 	 * @param string $packageKey
 	 * @param string $siteName
 	 * @return array
 	 */
-	public function generateSitesXml($packageKey, $siteName) {
+	public function generateSitePackage($packageKey, $siteName) {
+		$this->packageManager->createPackage($packageKey, NULL, NULL, 'typo3-flow-site');
+		$this->generateSitesXml($packageKey, $siteName);
+		$this->generateSitesTypoScript($packageKey, $siteName);
+		$this->generateSitesTemplate($packageKey, $siteName);
+
+		return $this->generatedFiles;
+	}
+
+	/**
+	 * Generate a Sites.xml for the given package and name.
+	 *
+	 * @param string $packageKey
+	 * @param string $siteName
+	 * @return void
+	 */
+	protected function generateSitesXml($packageKey, $siteName) {
 		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Content/Sites.xml';
 
 		$contextVariables = array();
@@ -39,8 +61,6 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$sitesXmlPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Content/Sites.xml';
 		$this->generateFile($sitesXmlPathAndFilename, $fileContent);
-
-		return $this->generatedFiles;
 	}
 
 	/**
@@ -48,9 +68,9 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 *
 	 * @param string $packageKey
 	 * @param string $siteName
-	 * @return array
+	 * @return void
 	 */
-	public function generateSitesTypoScript($packageKey, $siteName) {
+	protected function generateSitesTypoScript($packageKey, $siteName) {
 		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/TypoScripts/Root.ts2';
 
 		$contextVariables = array();
@@ -63,8 +83,6 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScripts/Library/Root.ts2';
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
-
-		return $this->generatedFiles;
 	}
 
 	/**
@@ -72,9 +90,9 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 *
 	 * @param string $packageKey
 	 * @param string $siteName
-	 * @return array
+	 * @return void
 	 */
-	public function generateSitesTemplate($packageKey, $siteName) {
+	protected function generateSitesTemplate($packageKey, $siteName) {
 		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
 
 		$contextVariables = array();
@@ -88,8 +106,6 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/Page/Default.html';
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
-
-		return $this->generatedFiles;
 	}
 }
 
