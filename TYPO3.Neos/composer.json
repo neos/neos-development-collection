@@ -13,7 +13,7 @@
         "typo3/typoscript": "*"
     },
     "suggest": {
-        "typo3/sitekickstarter": "Helps with creating new site packages for TYPO3 Neos."
+        "typo3/neos-kickstarter": "Helps with creating new packages for TYPO3 Neos."
     },
     "autoload": {
         "psr-0": {

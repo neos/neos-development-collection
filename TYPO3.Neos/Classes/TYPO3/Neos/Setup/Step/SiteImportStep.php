@@ -128,7 +128,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$error->setProperty('class', 'alert alert-warning');
 		}
 
-		if ($this->packageManager->isPackageActive('TYPO3.SiteKickstarter')) {
+		if ($this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
 			$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
 			$newPackageSection->setLabel('Create a new site');
 			$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
@@ -138,8 +138,8 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
 			$siteName->setLabel('Site Name');
 		} else {
-			$error = $title->createElement('siteKickstarterUnavailableError', 'TYPO3.Form:StaticText');
-			$error->setProperty('text', 'The Site Kickstarter package is not installed, install it for kickstarting new sites (using "composer require typo3/sitekickstarter")');
+			$error = $title->createElement('neosKickstarterUnavailableError', 'TYPO3.Form:StaticText');
+			$error->setProperty('text', 'The Neos Kickstarter package (TYPO3.Neos.Kickstarter) is not installed, install it for kickstarting new sites (using "composer require typo3/neos-kickstarter")');
 			$error->setProperty('class', 'alert alert-warning');
 		}
 
@@ -177,7 +177,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$packageKey = $formValues['packageKey'];
 			$siteName = $formValues['siteName'];
 
-			$generatorService = $this->objectManager->get('TYPO3\SiteKickstarter\Service\GeneratorService');
+			$generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
 			$generatorService->generateSitePackage($packageKey, $siteName);
 			$this->packageManager->activatePackage($packageKey);
 		} elseif (!empty($formValues['site'])) {

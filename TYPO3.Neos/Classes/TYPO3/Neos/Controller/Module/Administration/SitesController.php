@@ -117,7 +117,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		$this->view->assignMultiple(array(
 			'sitePackages' => $sitePackages,
 			'site' => $site,
-			'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('TYPO3.SiteKickstarter')
+			'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')
 		));
 	}
 
@@ -131,7 +131,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 * @return void
 	 */
 	public function createSiteAction($site, $packageKey, $siteName) {
-		if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.SiteKickstarter')) {
+		if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
 			if ($this->packageManager->isPackageAvailable($packageKey)) {
 				$this->addFlashMessage(
 					sprintf('The package key "%s" already exists.', $packageKey),
@@ -141,7 +141,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 				$this->redirect('index');
 			}
 
-			$generatorService = $this->objectManager->get('TYPO3\SiteKickstarter\Service\GeneratorService');
+			$generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
 			$generatorService->generateSitePackage($packageKey, $siteName);
 			$this->packageManager->activatePackage($packageKey);
 		} else {
