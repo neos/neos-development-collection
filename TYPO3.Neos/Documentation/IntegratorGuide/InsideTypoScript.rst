@@ -303,7 +303,7 @@ resides.
 
 Fully qualified identifiers can be used everywhere an identifier is used::
 
-	prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.Neos:Collection)
+	prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Collection)
 
 In Neos a `default` namespace of `TYPO3.Neos` is set. So whenever `Page` is used in
 TypoScript within Neos, it is a shortcut for `TYPO3.Neos:Page`.

@@ -30,23 +30,10 @@ prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 }
 
-prototype(TYPO3.Neos:ContentCollection) {
-	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionCaseImplementation'
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Collection) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
 
-	default {
-		condition = ${true}
-		type = 'TYPO3.Neos:ContentCollection.Default'
-		@position = 'end'
-	}
-}
-
-prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.TypoScript:Collection)
-prototype(TYPO3.Neos:ContentCollection.Default) {
-	@class = 'TYPO3\\Neos\\TypoScript\\DefaultContentCollectionImplementation'
-
-		# The node path is set by the user on TYPO3.Neos:ContentCollection. This
-		# path needs to be copied from the context to the local variable of ContentCollection.Default
-	nodePath = ${nodePath}
+	nodePath = 'to-be-set-by-user'
 
 		# To enable direct rendering of a ContentCollection we check if the current node is a
 		# content collection already or if the child nodes of a content collection specified by

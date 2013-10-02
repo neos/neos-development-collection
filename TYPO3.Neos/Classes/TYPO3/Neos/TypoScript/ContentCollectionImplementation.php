@@ -18,7 +18,7 @@ use TYPO3\TypoScript\TypoScriptObjects\CollectionImplementation;
  * TypoScript object for specific content collections, which also renders a
  * "create-new-content" button when not being in live workspace.
  */
-class DefaultContentCollectionImplementation extends CollectionImplementation {
+class ContentCollectionImplementation extends CollectionImplementation {
 
 	/**
 	 * The name of the content collection node which shall be rendered.

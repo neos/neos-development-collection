@@ -17,35 +17,20 @@ prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 }
 
-# Case TS Object for ContentCollection
-#
-# Using a Case object allows for defining custom rendering of content collections
-# for specific node types.
-#
-# The default case is to render all children of the current content collection node.
-# This is the case for regular pages: A page contains a content collection which contains
-# content elements.
-#
-prototype(TYPO3.Neos:ContentCollection) {
-	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionCaseImplementation'
-
+prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
 	default {
 		condition = ${true}
-		type = 'TYPO3.Neos:ContentCollection.Default'
+		type = 'TYPO3.Neos:ContentCollection'
 		@position = 'end'
 	}
 }
 
-prototype(TYPO3.Neos:PrimaryContentCollection) < prototype(TYPO3.Neos:ContentCollection)
-
 # Default case for ContentCollection TS Object
 #
-prototype(TYPO3.Neos:ContentCollection.Default) < prototype(TYPO3.TypoScript:Collection) {
-	@class = 'TYPO3\\Neos\\TypoScript\\DefaultContentCollectionImplementation'
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Collection) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
 
-		# The node path is set by the user on TYPO3.Neos:ContentCollection. This
-		# path needs to be copied from the context to the local variable of ContentCollection.Default
-	nodePath = ${nodePath}
+	nodePath = 'to-be-set-by-user'
 
 		# To enable direct rendering of a ContentCollection we check if the current node is a
 		# content collection already or if the child nodes of a content collection specified by
