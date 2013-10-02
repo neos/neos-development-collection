@@ -93,7 +93,8 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			),
 			'secondTest' => array(
 				'__objectType' => 'TYPO3.TypoScript:Text',
-				'value' => 23
+				'value' => 23,
+				'value-with-dash' => 42
 			)
 		);
 

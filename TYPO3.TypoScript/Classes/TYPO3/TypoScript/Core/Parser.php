@@ -34,10 +34,10 @@ class Parser implements ParserInterface {
 	/x';
 	const SCAN_PATTERN_OPENINGCONFINEMENT = '/
 		^\s*                      # beginning of line; with numerous whitespace
-		[a-zA-Z0-9():@]*          # first part of a TS path
+		[a-zA-Z0-9():@\-]*          # first part of a TS path
 		(?:                       # followed by multiple .<tsPathPart> sections:
 			\.
-			[a-zA-Z0-9():@]*
+			[a-zA-Z0-9():@\-]*
 		)*
 		\s*                       # followed by multiple whitespace
 		\{                        # followed by opening {
@@ -56,7 +56,7 @@ class Parser implements ParserInterface {
 	/x';
 	const SCAN_PATTERN_OBJECTDEFINITION = '/
 		^\s*                      # beginning of line; with numerous whitespace
-		[a-zA-Z0-9.\\\\$():@]+
+		[a-zA-Z0-9.\\\\$():@\-]+
 		\s*
 		(=|<|>|\.processors\.)
 	/x';
@@ -64,13 +64,13 @@ class Parser implements ParserInterface {
 		^
 			\.?
 			(?:
-				@?[a-zA-Z0-9]*
+				@?[a-zA-Z0-9\-]*
 				| prototype\([a-zA-Z0-9.:]+\)
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9]*
+					@?[a-zA-Z0-9\-]*
 					| prototype\([a-zA-Z0-9.:]+\)
 				)
 			)*
@@ -108,13 +108,13 @@ class Parser implements ParserInterface {
 
 			\.?
 			(?:
-				@?[a-zA-Z0-9]*
+				@?[a-zA-Z0-9\-]*
 				|prototype\([a-zA-Z0-9.:]+\)
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9]*
+					@?[a-zA-Z0-9\-]*
 					|prototype\([a-zA-Z0-9.:]+\)
 				)
 			)*
