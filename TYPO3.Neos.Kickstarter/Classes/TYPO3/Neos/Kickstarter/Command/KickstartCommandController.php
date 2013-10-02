@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\SiteKickstarter\Command;
+namespace TYPO3\Neos\Kickstarter\Command;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "SiteKickstarter".       *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Neos.Kickstarter".*
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -12,22 +12,24 @@ namespace TYPO3\SiteKickstarter\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Files as Files;
+use TYPO3\Neos\Kickstarter\Service\GeneratorService;
 
 /**
  * Command controller for the Kickstart generator
- *
  */
-class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
+class KickstartCommandController extends CommandController {
 
 	/**
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @var PackageManagerInterface
 	 * @Flow\Inject
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \TYPO3\SiteKickstarter\Service\GeneratorService
+	 * @var GeneratorService
 	 * @Flow\Inject
 	 */
 	protected $generatorService;
@@ -55,4 +57,5 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$generatedFiles = $this->generatorService->generateSitePackage($packageKey, $siteName);
 		$this->outputLine(implode(PHP_EOL, $generatedFiles));
 	}
+
 }

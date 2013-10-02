@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\SiteKickstarter\Service;
+namespace TYPO3\Neos\Kickstarter\Service;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "SiteKickstarter".       *
+ * This script belongs to the TYPO3 Flow package "TYPO3.Neos.Kickstarter".*
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -12,16 +12,16 @@ namespace TYPO3\SiteKickstarter\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Package\PackageManagerInterface;
 
 /**
  * Service to generate site packages
- *
  */
 class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -45,14 +45,14 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	}
 
 	/**
-	 * Generate a Sites.xml for the given package and name.
+	 * Generate a "Sites.xml" for the given package and name.
 	 *
 	 * @param string $packageKey
 	 * @param string $siteName
 	 * @return void
 	 */
 	protected function generateSitesXml($packageKey, $siteName) {
-		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Content/Sites.xml';
+		$templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/Content/Sites.xml';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -74,7 +74,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 * @return void
 	 */
 	protected function generateSitesTypoScript($packageKey, $siteName) {
-		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/TypoScripts/Root.ts2';
+		$templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/TypoScripts/Root.ts2';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -96,7 +96,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 * @return void
 	 */
 	protected function generateSitesTemplate($packageKey, $siteName) {
-		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
+		$templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/Template/SiteTemplate.html';
 
 		$contextVariables = array();
 		$contextVariables['siteName'] = $siteName;
@@ -118,7 +118,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 * @return void
 	 */
 	protected function generateNodeTypesConfiguration($packageKey) {
-		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Configuration/NodeTypes.yaml';
+		$templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/Configuration/NodeTypes.yaml';
 
 		$fileContent = file_get_contents($templatePathAndFilename);
 
