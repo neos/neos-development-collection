@@ -154,30 +154,14 @@ define(
 		 * We'd like to monitor *every* property change except inline editable ones,
 		 * that's why we have to look through the list of properties...
 		 */
-		onNodePropertiesChange: function() {
-			var that = this,
-				selectedNode = this.get('selectedNode'),
-				selectedNodeSchema,
-				editableProperties = [],
-				nodeProperties;
-			if (selectedNode && this.get('_enableTransactionalInspector')) {
-				selectedNodeSchema = selectedNode.get('nodeTypeSchema');
-				nodeProperties = this.get('nodeProperties');
-				if (selectedNodeSchema.properties) {
-					$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-						if (!propertyConfiguration.ui || propertyConfiguration.ui.inlineEditable !== true) {
-							editableProperties.push(propertyName);
-						}
-					});
-				}
-				if (editableProperties.length > 0) {
-					$.each(editableProperties, function(key, propertyName) {
-						nodeProperties.addObserver(propertyName, null, function() {
-							that._somePropertyChanged();
-						});
-					});
-				}
-			}
+		_registerGenericNodePropertyChangeEventListener: function() {
+			var nodeProperties = this.get('nodeProperties'),
+				that = this;
+			$.each(this.get('cleanProperties'), function(propertyName) {
+				nodeProperties.addObserver(propertyName, null, function() {
+					that._somePropertyChanged();
+				});
+			});
 		}.observes('nodeProperties'),
 
 		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
@@ -217,12 +201,11 @@ define(
 				cleanProperties,
 				nodeTypeSchema = NodeSelection.get('selectedNodeSchema'),
 				reloadPage = false,
-				selectedNode = this.get('selectedNode'),
-				attributes = selectedNode.get('attributes');
+				selectedNode = this.get('selectedNode');
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
 				var value = that.get('nodeProperties').get(key);
-				if (value !== cleanPropertyValue || value !== attributes[key]) {
+				if (value !== cleanPropertyValue) {
 					selectedNode.setAttribute(key, value, {validate: false});
 					if (value !== cleanPropertyValue) {
 						if (Ember.get(nodeTypeSchema, 'properties.' + key + '.ui.reloadIfChanged')) {

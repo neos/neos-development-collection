@@ -24,7 +24,9 @@ define(
 			} else {
 				this.set('isModified', false);
 			}
-		}.observes('value'),
+		// we cannot just observe "value", but we also need to refresh when all properties changed (i.e. the user pressed apply).
+		// Else, the change indication is not working correctly.
+		}.observes('value', 'inspector.cleanProperties'),
 
 		_validationErrorsDidChange: function() {
 			if (this.get('isDestroyed') === true) {
