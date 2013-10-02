@@ -179,14 +179,8 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$packageKey = $formValues['packageKey'];
 			$siteName = $formValues['siteName'];
 
-				//todo This is doing the same thing as SitesController::createSiteAction - can they be refactored?
-				//I would probably move this logic into GeneratorService::generateSite($packageKey, $siteName)
-			$this->packageManager->createPackage($packageKey, NULL, NULL, 'typo3-flow-site');
-
 			$generatorService = $this->objectManager->get('TYPO3\SiteKickstarter\Service\GeneratorService');
-			$generatorService->generateSitesXml($packageKey, $siteName);
-			$generatorService->generateSitesTypoScript($packageKey, $siteName);
-			$generatorService->generateSitesTemplate($packageKey, $siteName);
+			$generatorService->generateSitePackage($packageKey, $siteName);
 			$this->packageManager->activatePackage($packageKey);
 		} elseif (!empty($formValues['site'])) {
 			$packageKey = $formValues['site'];
