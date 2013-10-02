@@ -1,18 +1,24 @@
 define(
 	[
 		'emberjs',
+		'Shared/LocalStorage',
 		'./Button',
 		'Content/Model/PublishableNodes',
 		'./PublishAllDialog',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, Button, PublishableNodes, PublishAllDialog, template) {
+	function (Ember, LocalStorage, Button, PublishableNodes, PublishAllDialog, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
 			classNames: ['neos-btn-group'],
 			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
-			autoPublish: false,
+			autoPublish: function(key, value) {
+				if (arguments.length > 1) {
+					LocalStorage.setItem('isAutoPublishEnabled', value);
+				}
+				return LocalStorage.getItem('isAutoPublishEnabled');
+			}.property(),
 
 			controller: PublishableNodes,
 
