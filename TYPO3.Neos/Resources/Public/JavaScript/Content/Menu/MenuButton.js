@@ -26,6 +26,8 @@ define(
 				this._super();
 				if ($('#neos-menu-panel:hover').length !== 0) {
 					this.set('controller.menuPanelMode', false);
+				} else if (this.get('controller.menuPanelMode') === true) {
+					this.set('controller.menuPanelMode', false);
 				}
 			}
 		});
