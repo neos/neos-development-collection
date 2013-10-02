@@ -49,7 +49,7 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 		$content = $this->renderChildren();
 		$this->tag->setContent($content);
 
-		if ($this->hasAccessToResource('TYPO3_Neos_Backend_BackendController')) {
+		if ($this->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
 			$this->tag->addAttribute('property', 'typo3:' . $property);
 			$classAttribute = 'neos-inline-editable';
 			if ($this->tag->hasAttribute('class')) {

@@ -76,7 +76,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 		$node = $currentContext['node'];
 		$output = parent::evaluate();
 		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
+			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
 		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
 			return $output;
 		}

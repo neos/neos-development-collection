@@ -72,7 +72,7 @@ class ContentElementWrappingService {
 		}
 
 		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
+			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
 		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
 			return $tagBuilder->render();
 		}

@@ -7,7 +7,7 @@
 	} catch(e) {}
 </script>
 
-<f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
+<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<script type="text/javascript">
 					// TODO Get rid of those global variables

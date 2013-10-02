@@ -56,7 +56,7 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_BackendController');
+			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
 		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
 			return '';
 		}

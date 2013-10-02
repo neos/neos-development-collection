@@ -24,7 +24,7 @@
 
 	<body<f:if condition="{bodyAttributes}"><f:for each="{bodyAttributes}" key="attribute" as="value"> {attribute}="{value -> f:format.raw()}"</f:for></f:if>>
 
-		<f:security.ifAccess resource="TYPO3_Neos_Backend_BackendController">
+		<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 			<neos:contentElement node="{node}" page="TRUE" />
 		</f:security.ifAccess>
 
