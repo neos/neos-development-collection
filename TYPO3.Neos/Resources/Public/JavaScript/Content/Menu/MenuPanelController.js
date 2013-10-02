@@ -14,6 +14,7 @@ define(
 	return Ember.Object.extend({
 		configuration: null,
 		menuPanelMode: false,
+		stickyMenuPanelMode: false,
 
 		items: [],
 
@@ -42,6 +43,12 @@ define(
 			var newCollapsedState = this.toggleProperty('configuration.' + menuGroup);
 			this.propertyDidChange('configuration');
 			return newCollapsedState;
+		},
+
+		toggleStickyMenu: function() {
+			var stickyMenuState = this.toggleProperty('configuration.stickyMenuState');
+			this.propertyDidChange('configuration');
+			return stickyMenuState;
 		},
 
 		activeItem: function() {

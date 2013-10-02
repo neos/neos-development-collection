@@ -1,8 +1,6 @@
-$menuIconWidth: 54px;
-
 #neos-menu-button {
 	float: left;
-	width: $menuIconWidth;
+	width: $menuButtonWidth;
 	height: $unit;
 	background-color: $grayDark;
 	border-right: 1px solid $grayLight;
@@ -46,6 +44,9 @@ $menuIconWidth: 54px;
 		content: "";
 	}
 }
+#neos-menu-panel.neos-menu-sticky-on {
+	width: $menuButtonWidth - 1;
+}
 
 #neos-menu-panel {
 	position: fixed;
@@ -59,7 +60,7 @@ $menuIconWidth: 54px;
 	border-right: 1px solid $grayLight;
 	overflow-x: hidden;
 	overflow-y: auto;
-	@include transition-property('left');
+	@include transition-property('left, width');
 	@include transition-duration(.2s);
 	@include font;
 
@@ -92,7 +93,7 @@ $menuIconWidth: 54px;
 		.neos-menu-headline {
 			@include box-sizing(border-box);
 			padding-left: $unit + $defaultMargin;
-			padding-right: $menuIconWidth;
+			padding-right: $menuButtonWidth;
 			height: $unit;
 			border-top: 1px solid $grayLight;
 			cursor: pointer;
@@ -160,23 +161,61 @@ $menuIconWidth: 54px;
 			i {
 				display: block;
 				position: absolute;
+				background-color: $grayDark;
 				top: 0;
 				left: 0;
-				width: $menuIconWidth;
+				width: $menuButtonWidth;
 				height: $unit;
 				font-size: 20px;
 				line-height: $unit;
 				vertical-align: middle;
 				text-align: center;
+				z-index: 10010;
 			}
 		}
 
 		.neos-menu-list {
 			a, span.neos-menu-item {
-				padding-left: $menuIconWidth;
+				padding-left: $menuButtonWidth;
 				position: relative;
 				font-weight: normal;
 			}
 		}
+	}
+	.neos-menu-stickybutton {
+		position: absolute;
+		z-index: 10015;
+		bottom: 0;
+		left: 0;
+		width: $menuButtonWidth - 1;
+		height: $unit + 2;
+		border: 1px solid $grayLight;
+		background-color: $grayDark;
+		background-image: none;
+		@include text-shadow(none);
+		@include box-shadow(none);
+
+		&:before {
+			position: relative;
+			top: 1px;
+			@include font;
+			font-size: 26px;
+			line-height: 26px;
+			font-weight: normal;
+			content: "‹";
+		}
+
+		&:hover,
+		&.neos-is-active {
+			background-color: $blue;
+		}
+
+		&.neos-pressed:before {
+			content: "›";
+		}
+	}
+
+	&.neos-menu-sticky .neos-menu-section .neos-menu-collapse:hover {
+		background: none;
 	}
 }

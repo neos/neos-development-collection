@@ -13,6 +13,12 @@ define(
 
 			controller: MenuPanelController,
 
+			init: function() {
+				if (this.get('controller.configuration.stickyMenuState')){
+					this.toggleProperty('controller.menuPanelMode');
+				}
+			},
+
 			triggerAction: function() {
 				this.toggleProperty('controller.menuPanelMode');
 			},
@@ -24,10 +30,13 @@ define(
 
 			mouseLeave: function() {
 				this._super();
-				if ($('#neos-menu-panel:hover').length !== 0) {
-					this.set('controller.menuPanelMode', false);
-				} else if (this.get('controller.menuPanelMode') === true) {
-					this.set('controller.menuPanelMode', false);
+
+				if (this.get('controller.stickyMenuPanelMode') === false) {
+					if ($('#neos-menu-panel:hover').length !== 0) {
+						this.set('controller.menuPanelMode', false);
+					} else if (this.get('controller.menuPanelMode') === true) {
+						this.set('controller.menuPanelMode', false);
+					}
 				}
 			}
 		});

@@ -56,16 +56,16 @@ a {
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
 	background: white;
-	width: 0;
+	width: $tree-panel-width;
 	margin: 0;
 	padding: 0;
 	position: fixed;
 	overflow: hidden;
-	left: 0;
+	left: -$tree-panel-width;
 	top: $unit + 1;
 	bottom: 0;
 	z-index: 10012;
-	@include transition-property('width, margin-top');
+	@include transition-property('left, margin-top');
 	@include transition-duration(.2s);
 	padding-top: 27px;
 	& > div.ember-view,

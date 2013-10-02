@@ -12,13 +12,55 @@ define(
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
 			template: Ember.Handlebars.compile(template),
-
+			classNameBindings: ['_menuIsSticky:neos-menu-sticky-on:neos-menu-sticky'],
+			_menuIsSticky: false,
 			controller: MenuPanelController,
+
+			StickyMenuButton: Ember.View.extend({
+				tagName: 'div',
+				classNames: ['neos-btn', 'neos-button', 'neos-menu-stickybutton'],
+				classNameBindings: ['_menuIsSticky:neos-menu-stickybutton neos-pressed:neos-menu-stickybutton'],
+				_menuIsSticky: null,
+
+				didInsertElement: function() {
+					var stickyMenuState = this.get('controller.configuration.stickyMenuState');
+					if (stickyMenuState === undefined || stickyMenuState === null) {
+						stickyMenuState = false;
+						this.set('controller.configuration.stickyMenuState', stickyMenuState);
+					}
+					this.set('_menuIsSticky', stickyMenuState);
+					this.set('controller.stickyMenuPanelMode', stickyMenuState);
+				},
+
+				click: function() {
+					var stickyMenuState = this.get('controller').toggleStickyMenu();
+					this.set('_menuIsSticky', stickyMenuState);
+					this.set('controller.stickyMenuPanelMode', stickyMenuState);
+				},
+
+				onStickyMenuModeChanged: function() {
+					if (this.get('controller.stickyMenuPanelMode')) {
+						$('body').addClass('neos-menu-sticky-on');
+					} else {
+						$('body').removeClass('neos-menu-sticky-on');
+					}
+				}.observes('controller.stickyMenuPanelMode')
+			}),
 
 			ToggleMenuPanelHeadline: Ember.View.extend({
 				tagName: 'div',
-				classNameBindings: ['_collapsed:neos-collapsed:neos-open'],
+				classNameBindings: ['collapsed:neos-collapsed:neos-open'],
 				_collapsed: false,
+				_menuIsSticky: null,
+
+				collapsed: function() {
+					if(this.get('controller.configuration.stickyMenuState')) {
+						return false;
+					} else {
+						return this.get('_collapsed');
+					}
+				}.property('_collapsed', 'controller.configuration.stickyMenuState'),
+
 				// bound in handlebar
 				group: undefined,
 
@@ -46,12 +88,12 @@ define(
 
 				_onCollapsedChange: function() {
 					var $content = this.$().next();
-					if (this.get('_collapsed') === true) {
+					if (this.get('collapsed') === true) {
 						$content.slideUp(200);
 					} else {
 						$content.slideDown(200);
 					}
-				}.observes('_collapsed')
+				}.observes('collapsed')
 			}),
 
 			mouseEnter: function() {
@@ -59,7 +101,9 @@ define(
 			},
 
 			mouseLeave: function() {
-				this.set('controller.menuPanelMode', false);
+				if (this.get('controller.configuration.stickyMenuState') === false) {
+					this.set('controller.menuPanelMode', false);
+				}
 			},
 
 			toggleMenuPanelMode: function() {

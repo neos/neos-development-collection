@@ -34,10 +34,41 @@ body {
 		}
 	}
 
+	&.neos-menu-sticky-on {
+		padding-left: $menuButtonWidth;
+
+		&.neos-tree-panel-open {
+			#neos-application.neos {
+				#neos-context-bar {
+					padding-left: $menuButtonWidth + $tree-panel-width - 1px;
+				}
+
+				#neos-tree-panel {
+					left: $menuButtonWidth;
+				}
+			}
+
+		}
+		#neos-application.neos {
+			#neos-context-bar {
+				padding-left: $menuButtonWidth;
+			}
+
+			#aloha-attribute-field-editLink {
+				margin-left: $menuButtonWidth;
+			}
+		}
+		#neos-application {
+			#neos-menu-panel {
+				width: $menuButtonWidth - 1px;
+			}
+		}
+	}
+
 	&.neos-tree-panel-open, {
 		.neos {
 			#neos-tree-panel {
-				width: $tree-panel-width;
+				left: 0;
 			}
 
 			#neos-context-bar {
