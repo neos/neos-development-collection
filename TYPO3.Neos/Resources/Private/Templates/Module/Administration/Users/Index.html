@@ -38,26 +38,29 @@
 									<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
 										<i class="icon-trash icon-white"></i>
 									</button>
-									<div class="neos-modal neos-hide" id="{flowidentifier}">
-										<div class="neos-modal-header">
-											<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-											<div class="neos-header">Are you sure you want to delete user "{account.accountIdentifier}"?</div>
-											<div>
-												<div class="neos-subheader">
-													This will delete the user and his personal workspace, including all unpublished content.
-													This operation cannot be undone.
+									<div class="neos-hide" id="{flowidentifier}">
+										<div class="neos-modal">
+											<div class="neos-modal-header">
+												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+												<div class="neos-header">Are you sure you want to delete user "{account.accountIdentifier}"?</div>
+												<div>
+													<div class="neos-subheader">
+														This will delete the user and his personal workspace, including all unpublished content.
+														This operation cannot be undone.
+													</div>
 												</div>
 											</div>
+											<div class="neos-modal-footer">
+												<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+												<f:form action="delete" arguments="{account: account}" class="neos-inline">
+													<button type="submit" class="neos-btn neos-btn-danger neos-button" title="Delete">
+														<i class="icon-trash icon-white"></i>
+														Delete
+													</button>
+												</f:form>
+											</div>
 										</div>
-										<div class="neos-modal-footer">
-											<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
-											<f:form action="delete" arguments="{account: account}" class="neos-inline">
-												<button type="submit" class="neos-btn neos-btn-danger neos-button" title="Delete">
-													<i class="icon-trash icon-white"></i>
-													Delete
-												</button>
-											</f:form>
-										</div>
+										<div class="neos-modal-backdrop neos-in"></div>
 									</div>
 								</f:else>
 							</f:if>

@@ -84,18 +84,21 @@
 												<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{package.sanitizedPackageKey}">
 													<i class="icon-trash icon-white"></i>
 												</button>
-												<div class="neos-modal neos-hide" id="{package.sanitizedPackageKey}">
-													<div class="neos-modal-header">
-														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-														<div class="neos-header">Are you sure you want to delete "{packageKey}"?</div>
+												<div class="neos-hide" id="{package.sanitizedPackageKey}">
+													<div class="neos-modal">
+														<div class="neos-modal-header">
+															<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+															<div class="neos-header">Are you sure you want to delete "{packageKey}"?</div>
+														</div>
+														<div class="neos-modal-footer">
+															<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+															<f:link.action action="delete" class="neos-btn neos-btn-danger neos-button" arguments="{packageKey: packageKey}" title="Delete">
+																<i class="icon-trash icon-white"></i>
+																Delete
+															</f:link.action>
+														</div>
 													</div>
-													<div class="neos-modal-footer">
-														<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
-														<f:link.action action="delete" class="neos-btn neos-btn-danger neos-button" arguments="{packageKey: packageKey}" title="Delete">
-															<i class="icon-trash icon-white"></i>
-															Delete
-														</f:link.action>
-													</div>
+													<div class="neos-modal-backdrop neos-in"></div>
 												</div>
 											</f:else>
 										</f:if>
@@ -133,18 +136,21 @@
 				</button>
 			</div>
 		</div>
-		<div class="neos-modal neos-hide" id="delete">
-			<div class="neos-modal-header">
-				<button type="button" class="neos-close" data-dismiss="modal">&times;</button>
-				<h3>Are you sure you want to delete the selected packages?</h3>
+		<div class="neos-hide" id="delete">
+			<div class="neos-modal">
+				<div class="neos-modal-header">
+					<button type="button" class="neos-close" data-dismiss="modal">&times;</button>
+					<h3>Are you sure you want to delete the selected packages?</h3>
+				</div>
+				<div class="neos-modal-footer">
+					<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+					<button type="submit" name="moduleArguments[action]" value="delete" class="neos-btn neos-btn-danger neos-button">
+						<i class="icon-trash icon-white"></i>
+						Delete
+					</button>
+				</div>
 			</div>
-			<div class="neos-modal-footer">
-				<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
-				<button type="submit" name="moduleArguments[action]" value="delete" class="neos-btn neos-btn-danger neos-button">
-					<i class="icon-trash icon-white"></i>
-					Delete
-				</button>
-			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
 		</div>
 	</f:form>
 
