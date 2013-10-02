@@ -16,7 +16,7 @@
 				};
 				{neos:backend.javascriptConfiguration()}
 				var Aloha,
-					alohaBaseUrl = '{aloha:baseUri()}';
+					alohaBaseUrl = '{f:uri.resource(path: 'Aloha', package: 'TYPO3.Aloha')}';
 		</script>
 
 		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
