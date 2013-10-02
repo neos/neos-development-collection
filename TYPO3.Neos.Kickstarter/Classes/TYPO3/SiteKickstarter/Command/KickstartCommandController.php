@@ -18,7 +18,7 @@ use TYPO3\Flow\Utility\Files as Files;
  * Command controller for the Kickstart generator
  *
  */
-class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
+class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @var \TYPO3\Flow\Package\PackageManagerInterface
@@ -41,7 +41,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @param string $siteName The siteName of your site
 	 * @return string
 	 */
-	public function kickstartCommand($packageKey, $siteName) {
+	public function siteCommand($packageKey, $siteName) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
 			$this->quit(1);
