@@ -2,6 +2,7 @@
 <neos:contentElement node="{node}">
 	<div class="typo3-image{f:if(condition: alignment, then: ' typo3-image-alignment-{alignment}')}">
 		<f:render partial="Image" arguments="{
+			node: node,
 			image: image,
 			alternativeText: alternativeText,
 			title: title,
