@@ -73,7 +73,7 @@ class PaginateController extends AbstractWidgetController {
 	/**
 	 * @return void
 	 */
-	public function initializeAction() {
+	protected function initializeAction() {
 		$this->parentNode = $this->widgetConfiguration['parentNode'];
 		$this->nodeTypeFilter = $this->widgetConfiguration['nodeTypeFilter'] ?: NULL;
 		$this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], TRUE);
