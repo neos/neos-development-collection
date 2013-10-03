@@ -37,6 +37,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$this->generateSitesXml($packageKey, $siteName);
 		$this->generateSitesTypoScript($packageKey, $siteName);
 		$this->generateSitesTemplate($packageKey, $siteName);
+		$this->generateNodeTypesConfiguration($packageKey);
 
 		return $this->generatedFiles;
 	}
@@ -105,6 +106,21 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
 		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/Page/Default.html';
+		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
+	}
+
+	/**
+	 * Generate a example NodeTypes.yaml
+	 *
+	 * @param string $packageKey
+	 * @return void
+	 */
+	protected function generateNodeTypesConfiguration($packageKey) {
+		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Configuration/NodeTypes.yaml';
+
+		$fileContent = file_get_contents($templatePathAndFilename);
+
+		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
 	}
 }
