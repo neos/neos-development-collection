@@ -9440,6 +9440,7 @@
 }
 .neos .neos-handle-container {
   position: absolute;
+  z-index: 10001;
 }
 .neos .neos-handle-container .neos-btn-toolbar {
   text-align: right !important;
@@ -10728,9 +10729,6 @@
   margin-left: 8px;
 }
 
-.neos-contentelement {
-  z-index: 10001;
-}
 .neos-contentelement.neos-contentelement-hidden > * {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2;

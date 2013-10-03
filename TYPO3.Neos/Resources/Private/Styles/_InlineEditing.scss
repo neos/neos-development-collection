@@ -1,6 +1,7 @@
 /** Inline editing handles **/
 .neos-handle-container {
 	position: absolute;
+	z-index: 10001;
 
 	.neos-btn-toolbar {
 		text-align: right !important;
