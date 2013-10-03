@@ -105,6 +105,9 @@
 
 'TYPO3.Neos:Page':
   superTypes: ['TYPO3.Neos:Document']
+  childNodes:
+    main:
+      type: 'TYPO3.Neos:ContentCollection'
   properties:
     layout:
      type: string

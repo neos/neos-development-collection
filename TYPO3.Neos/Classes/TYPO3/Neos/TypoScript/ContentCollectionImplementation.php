@@ -123,19 +123,6 @@ class ContentCollectionImplementation extends CollectionImplementation {
 			$contentCollectionNode = $node;
 		} else {
 			$contentCollectionNode = $node->getNode($this->getNodePath());
-
-			if ($contentCollectionNode === NULL && $node->getContext()->getWorkspaceName() !== 'live') {
-					/**
-					 * In case the user created a new page, this page does not have the necessary content collections created yet.
-					 * The problem is that we only know during TypoScript rendering which content collections we expect to have
-					 * on a certain page; as it is only stored in the "nodePath" property of this ContentCollection TypoScript object.
-					 *
-					 * Thus, as a workaround, we create new content collection nodes as we need them during rendering, although we
-					 * know it is ugly.
-					 */
-				$contentCollectionNode = $node->createNode($this->getNodePath(), $this->nodeTypeManager->getNodeType('TYPO3.Neos:ContentCollection'));
-				$this->nodeDataRepository->persistEntities();
-			}
 		}
 
 		if ($contentCollectionNode === NULL) {
