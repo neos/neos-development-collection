@@ -1,6 +1,6 @@
 
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -6659,6 +6659,12 @@
   line-height: inherit;
   text-decoration: none;
 }
+.neos #neos-inspector .chosen-container .chosen-single.chosen-default {
+  color: #adadad;
+}
+.neos #neos-inspector .chosen-container .chosen-single.chosen-default div {
+  color: #fff;
+}
 .neos #neos-inspector .chosen-container .chosen-single.chosen-single-with-deselect span {
   margin-right: 75px;
 }
@@ -6772,6 +6778,7 @@
   speak: none;
   content: "\f002";
   line-height: 100%;
+  font-size: 12px;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results {
   margin: 0;
@@ -6781,8 +6788,11 @@
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
   border-bottom: 1px solid #222222;
-  line-height: inherit;
-  padding: 0 16px;
+  line-height: 24px;
+  padding: 8px 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li:first-child {
   border-top: 1px solid #222222;
@@ -6793,6 +6803,9 @@
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.no-results {
   background-color: #323232;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.disabled-result {
+  color: #5b5b5b;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li em {
   background: none;
@@ -7994,6 +8007,12 @@
   line-height: inherit;
   text-decoration: none;
 }
+.neos #neos-context-bar .chosen-container .chosen-single.chosen-default {
+  color: #adadad;
+}
+.neos #neos-context-bar .chosen-container .chosen-single.chosen-default div {
+  color: #fff;
+}
 .neos #neos-context-bar .chosen-container .chosen-single.chosen-single-with-deselect span {
   margin-right: 75px;
 }
@@ -8107,6 +8126,7 @@
   speak: none;
   content: "\f002";
   line-height: 100%;
+  font-size: 12px;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results {
   margin: 0;
@@ -8116,8 +8136,11 @@
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
   border-bottom: 1px solid #222222;
-  line-height: inherit;
-  padding: 0 16px;
+  line-height: 24px;
+  padding: 8px 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li:first-child {
   border-top: 1px solid #222222;
@@ -8128,6 +8151,9 @@
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li.no-results {
   background-color: #323232;
+}
+.neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li.disabled-result {
+  color: #5b5b5b;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li em {
   background: none;
