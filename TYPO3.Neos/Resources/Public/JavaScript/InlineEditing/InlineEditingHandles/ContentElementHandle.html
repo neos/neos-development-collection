@@ -1,13 +1,15 @@
 <div class="neos-btn-toolbar">
 	<div class="neos-btn-group">
+		<button class="neos-btn neos-btn-mini action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
+			{{#if view._thisElementIsAddingNewContent}}
+				<i class="neos-handle-loading"></i>
+			{{else}}
+				<i class="icon-plus"></i>
+			{{/if}}
+		</button>
 		{{#if view._showHide}}
 			<button {{bindAttr title="view._hideToggleTitle" class=":neos-btn :neos-btn-mini :action-toggle-hidden view._hidden:neos-active"}} {{action "toggleHidden" target="view"}} tabindex="-1">
 				<i class="icon-eye-close"></i>
-			</button>
-		{{/if}}
-		{{#if view._showRemove}}
-			<button class="neos-btn neos-btn-mini action-remove" title="Remove" {{action "remove" target="view"}} tabindex="-1">
-				<i class="icon-trash"></i>
 			</button>
 		{{/if}}
 		{{#if view._showCut}}
@@ -29,12 +31,10 @@
 				{{/if}}
 			</button>
 		{{/if}}
-		<button class="neos-btn neos-btn-mini action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
-			{{#if view._thisElementIsAddingNewContent}}
-				<i class="neos-handle-loading"></i>
-			{{else}}
-				<i class="icon-plus"></i>
-			{{/if}}
-		</button>
+		{{#if view._showRemove}}
+			<button class="neos-btn neos-btn-mini action-remove" title="Remove" {{action "remove" target="view"}} tabindex="-1">
+				<i class="icon-trash"></i>
+			</button>
+		{{/if}}
 	</div>
 </div>
