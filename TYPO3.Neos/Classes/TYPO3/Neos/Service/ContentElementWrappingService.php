@@ -49,10 +49,9 @@ class ContentElementWrappingService {
 	 * @param string $typoscriptPath
 	 * @param string $content
 	 * @param boolean $isPage
-	 * @param boolean $reloadable
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE, $reloadable = FALSE) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE) {
 		$nodeType = $node->getNodeType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
@@ -133,9 +132,7 @@ class ContentElementWrappingService {
 			if ($node->isRemoved()) {
 				$cssClasses[] = 'neos-contentelement-removed';
 			}
-			if ($reloadable === TRUE) {
-				$cssClasses[] = 'neos-reloadable-content';
-			}
+
 			$uiConfiguration = $nodeType->hasUi() ? $nodeType->getUi() : array();
 			if ((!isset($uiConfiguration['inlineEditable']) && !$hasInlineEditableProperties) || (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE)) {
 				$cssClasses[] = 'neos-not-inline-editable';

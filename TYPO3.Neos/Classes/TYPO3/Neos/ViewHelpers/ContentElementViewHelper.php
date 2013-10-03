@@ -31,10 +31,9 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param boolean $page
-	 * @param boolean $reloadable Should the wrapped content be reloaded on changes that refresh
 	 * @return string
 	 */
-	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE, $reloadable = FALSE) {
+	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE) {
 		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
 		try {
 			$content = $this->renderChildren();
@@ -42,7 +41,7 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 			$content = $fluidTemplateTsObject->getTsRuntime()->handleRenderingException($fluidTemplateTsObject->getPath(), $exception);
 		}
 
-		return $this->contentElementWrappingService->wrapContentObject($node, $fluidTemplateTsObject->getPath(), $content, $page, $reloadable);
+		return $this->contentElementWrappingService->wrapContentObject($node, $fluidTemplateTsObject->getPath(), $content, $page);
 	}
 }
 ?>

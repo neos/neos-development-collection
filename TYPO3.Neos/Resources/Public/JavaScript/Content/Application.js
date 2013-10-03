@@ -329,26 +329,6 @@ function(
 				uri = '@' + workspaceName;
 			}
 
-			var selectorsToReplace = [];
-
-			$('.neos-reloadable-content').each(function() {
-				if (!$(this).parents('.neos-reloadable-content').length) {
-					var id = $(this).attr('id');
-					if (!id) {
-						// TODO: we need cleaner developer error handling
-						throw 'You have marked a DOM element with the CSS class neos-reloadable-content; but this element has no ID.';
-					}
-					selectorsToReplace.push('#' + id);
-				}
-			});
-
-			if (selectorsToReplace.length === 0) {
-					// FALLBACK: The user did not configure reloadable content;
-					// so we fall back to classical reload.
-				window.location.href = uri;
-				return;
-			}
-
 			this.showPageLoader();
 			this.set('_isLoadingPage', true);
 
@@ -361,36 +341,23 @@ function(
 				if (status === 'success') {
 					var $htmlDom = $(htmlString);
 
-					$.each(selectorsToReplace, function(index, selector) {
-						if ($htmlDom.find(selector).length > 0) {
-							$(selector).replaceWith($htmlDom.find(selector));
-						} else if ($htmlDom.filter(selector).length > 0) {
-							// find only looks inside the *descendants* of the result
-							// set; that's why we might need to use "filter" if a top-
-							// level element has the neos-reloadable-content CSS class applied
-							$(selector).replaceWith($htmlDom.filter(selector));
-						} else {
-							// todo find cleaner solution for pages with different structures
-							// but without the classic reload, loadPage breaks here
-							if (typeof console !== 'undefined') {
-								console.log('Target HTML selector was not found because of a different page structure');
-							}
-							window.location.href = uri;
-						}
+					// Extract the HTML from the page, starting at (including) #neos-page-metainformation until #neos-application.
+					var $newContent = $($.parseHTML(htmlString, null)).filter('#neos-page-metainformation').nextUntil('#neos-application').andSelf();
 
-						that._linkInterceptionHandler($(selector).find('a'));
-					});
+					// remove the current HTML content
+					var $neosApplication = $('#neos-application');
+					$neosApplication.prevAll().remove();
+					$('body').prepend($newContent);
+					that.set('_isLoadingPage', false);
 
-					var $newMetaInformation = $htmlDom.filter('#neos-page-metainformation');
-					if ($newMetaInformation.length === 0) {
-						// FALLBACK: Something went really wrong with the fetching.
-						// so we reload the whole backend.
-						window.location.href = uri;
-					} else {
-						ContentModule.set('currentUri', uri);
-					}
-					$('#neos-page-metainformation').replaceWith($newMetaInformation);
+					var $insertedContent = $('#neos-application').prevAll();
+					var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
+					that._linkInterceptionHandler($links);
+					that.hidePageLoader();
+
 					$('title').html($htmlDom.filter('title').html());
+
+					// TODO: transfer body classes
 
 					that._setPagePosition();
 

@@ -107,33 +107,7 @@ class DefaultContentCollectionImplementation extends CollectionImplementation {
 			return $output;
 		}
 
-		$idAttribute = $this->generateIdAttributeForContentCollection($contentCollectionNode);
-		return sprintf('<div about="%s" id="%s" typeof="typo3:%s" rel="typo3:content-collection" class="neos-contentcollection neos-reloadable-content" data-neos-_typoscript-path="%s" data-neos-__workspacename="%s">%s</div>', $contentCollectionNode->getContextPath(), $idAttribute, 'TYPO3.Neos:ContentCollection', $this->path, $contentCollectionNode->getWorkspace()->getName(), $output);
-	}
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode
-	 * @return string
-	 */
-	protected function generateIdAttributeForContentCollection(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode) {
-		$parentNode = $this->deriveParentDocumentNode($contentCollectionNode);
-		$parentDocumentNodePath = $parentNode->getPath();
-		$relativePath = substr($contentCollectionNode->getPath(), strlen($parentDocumentNodePath));
-		return 'neos-content' . str_replace('/', '-', $relativePath);
-	}
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 */
-	protected function deriveParentDocumentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $contentCollectionNode) {
-		$parentNode = $contentCollectionNode->getParent();
-
-		while ($parentNode->getNodeType()->isOfType('TYPO3.Neos:Document') !== TRUE) {
-			$parentNode = $parentNode->getParent();
-		}
-
-		return $parentNode;
+		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="neos-contentcollection" data-neos-_typoscript-path="%s" data-neos-__workspacename="%s">%s</div>', $contentCollectionNode->getContextPath(), 'TYPO3.Neos:ContentCollection', $this->path, $contentCollectionNode->getWorkspace()->getName(), $output);
 	}
 }
 ?>
