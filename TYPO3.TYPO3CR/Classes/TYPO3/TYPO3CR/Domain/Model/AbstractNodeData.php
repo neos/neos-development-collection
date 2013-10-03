@@ -153,24 +153,6 @@ abstract class AbstractNodeData {
 	}
 
 	/**
-	 * Returns a short abstract describing / containing summarized content of this node
-	 *
-	 * @return string
-	 * @todo Implement real abstract rendering and use a property specified in the node type
-	 */
-	public function getAbstract() {
-		$abstractParts = array();
-		foreach ($this->getProperties() as $propertyValue) {
-			if (!is_object($propertyValue) || method_exists($propertyValue, '__toString')) {
-				$abstractParts[] = $propertyValue;
-			}
-		}
-		$abstract = strip_tags(implode(' – ', $abstractParts));
-		$croppedAbstract = \TYPO3\Flow\Utility\Unicode\Functions::substr($abstract, 0, 253);
-		return $croppedAbstract . (strlen($croppedAbstract) < strlen($abstract) ? ' …' : '');
-	}
-
-	/**
 	 * Sets the specified property.
 	 * If the node has a content object attached, the property will be set there
 	 * if it is settable.

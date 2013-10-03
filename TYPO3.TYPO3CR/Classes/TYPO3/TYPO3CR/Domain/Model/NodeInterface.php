@@ -74,14 +74,6 @@ interface NodeInterface {
 	public function getFullLabel();
 
 	/**
-	 * Returns a short abstract describing / containing summarized content of this node
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function getAbstract();
-
-	/**
 	 * Sets the specified property.
 	 *
 	 * If the node has a content object attached, the property will be set there

@@ -176,15 +176,6 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Returns a short abstract describing / containing summarized content of this node
-	 *
-	 * @return string
-	 */
-	public function getAbstract() {
-		return $this->nodeData->getAbstract();
-	}
-
-	/**
 	 * Sets the workspace of this node.
 	 *
 	 * This method is only for internal use by the content repository. Changing

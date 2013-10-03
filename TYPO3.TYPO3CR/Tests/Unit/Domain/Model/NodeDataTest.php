@@ -64,28 +64,6 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 */
-	public function getAbstractReturnsAnAbstract() {
-		$this->node->setProperty('title', 'The title of this node');
-		$this->node->setProperty('text', 'Shall I or <em>shall</em> I not, leak or not leak?');
-
-		$this->assertEquals('The title of this node – Shall I or shall I not, leak or not leak?', $this->node->getAbstract());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getAbstractIgnoresPropertiesWhichAreObjects() {
-		$this->node->setProperty('title', 'The title of this node');
-		$this->node->setProperty('subtitle', 'The sub title');
-		$this->node->setProperty('uri', new \TYPO3\Flow\Http\Uri('http://localhost'));
-		$this->node->setProperty('myObject', new \stdClass());
-
-		$this->assertEquals('The title of this node – The sub title – http://localhost', $this->node->getAbstract());
-	}
-
-	/**
-	 * @test
 	 * @expectedException \InvalidArgumentException
 	 * @dataProvider invalidPaths()
 	 */
