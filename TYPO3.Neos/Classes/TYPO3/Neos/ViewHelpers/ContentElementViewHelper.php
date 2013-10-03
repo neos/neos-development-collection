@@ -30,10 +30,11 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 * and not matching the exclude regular expression.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param string $class CSS class to apply to, if any
 	 * @param boolean $page
 	 * @return string
 	 */
-	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE) {
+	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $class = '', $page = FALSE) {
 		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
 		try {
 			$content = $this->renderChildren();
@@ -41,7 +42,14 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 			$content = $fluidTemplateTsObject->getTsRuntime()->handleRenderingException($fluidTemplateTsObject->getPath(), $exception);
 		}
 
-		return $this->contentElementWrappingService->wrapContentObject($node, $fluidTemplateTsObject->getPath(), $content, $page);
+		$tagBuilder = $this->contentElementWrappingService->wrapContentObjectAndReturnTagBuilder($node, $fluidTemplateTsObject->getPath(), $content, $page);
+
+		if ($class !== '') {
+			$class = ' ' . $class;
+		}
+		$tagBuilder->addAttribute('class', $tagBuilder->getAttribute('class') . $class);
+
+		return $tagBuilder->render();
 	}
 }
 ?>

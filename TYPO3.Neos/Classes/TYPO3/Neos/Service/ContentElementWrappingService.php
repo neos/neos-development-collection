@@ -52,6 +52,21 @@ class ContentElementWrappingService {
 	 * @return string
 	 */
 	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE) {
+		$tagBuilder = $this->wrapContentObjectAndReturnTagBuilder($node, $typoscriptPath, $content, $isPage);
+		return $tagBuilder->render();
+	}
+
+	/**
+	 * Wrap the $content identified by $node with the needed markup for
+	 * the backend, and return the tag builder instance for further modification.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $typoscriptPath
+	 * @param string $content
+	 * @param boolean $isPage
+	 * @return \TYPO3\Fluid\Core\ViewHelper\TagBuilder
+	 */
+	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE) {
 		$nodeType = $node->getNodeType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
@@ -74,7 +89,7 @@ class ContentElementWrappingService {
 		try {
 			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
 		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
-			return $tagBuilder->render();
+			return $tagBuilder;
 		}
 
 		$tagBuilder->addAttribute('typeof', 'typo3:' . $nodeType->getName());
@@ -91,17 +106,17 @@ class ContentElementWrappingService {
 			} else {
 				$propertyValue = $node->getProperty($propertyName);
 			}
-				// Serialize boolean values to String
+			// Serialize boolean values to String
 			if (isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'boolean') {
 				$propertyValue = ($propertyValue ? 'true' : 'false');
 			}
 
-				// Serialize date values to String
+			// Serialize date values to String
 			if ($propertyValue instanceof \DateTime && isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'date') {
 				$propertyValue = $propertyValue->format('Y-m-d');
 			}
 
-				// Serialize objects to JSON strings
+			// Serialize objects to JSON strings
 			if (is_object($propertyValue) && $propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
 				$gettableProperties = \TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($propertyValue);
 				$convertedProperties = array();
@@ -150,7 +165,7 @@ class ContentElementWrappingService {
 			));
 		}
 
-		return $tagBuilder->render();
+		return $tagBuilder;
 	}
 
 	/**
