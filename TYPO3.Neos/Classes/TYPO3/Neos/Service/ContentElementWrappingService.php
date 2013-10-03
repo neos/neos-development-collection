@@ -86,9 +86,7 @@ class ContentElementWrappingService {
 			$cssClasses = array();
 		}
 
-		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
-		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
+		if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
 			return $tagBuilder;
 		}
 

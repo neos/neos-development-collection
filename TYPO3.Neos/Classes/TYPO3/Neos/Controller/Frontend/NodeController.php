@@ -165,14 +165,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
 		if ($this->securityContext->getParty() !== NULL) {
-			try {
-				$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
+			if ($this->hasAccessToBackend()) {
 				if (!$this->view->canRenderWithNodeAndPath($node, $this->view->getTypoScriptPath())) {
 					return TRUE;
 				}
 				$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 				return $user->getPreferences()->get('contentEditing.wireframeMode') ? TRUE : FALSE;
-			} catch (\Exception $e) {}
+			}
 		}
 		return FALSE;
 	}
@@ -181,12 +180,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return boolean
 	 */
 	protected function hasAccessToBackend() {
-		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
-			return TRUE;
-		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $aexception) {
-			return FALSE;
-		}
+		return $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess');
 	}
 
 }

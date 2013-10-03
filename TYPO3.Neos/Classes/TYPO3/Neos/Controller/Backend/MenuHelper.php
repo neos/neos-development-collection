@@ -92,13 +92,13 @@ class MenuHelper {
 	public function buildModuleList(ControllerContext $controllerContext) {
 		$modules = array();
 		foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
-			if (isset($moduleConfiguration['resource']) && !$this->hasAccessToResource($moduleConfiguration['resource'])) {
+			if (isset($moduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($moduleConfiguration['resource'])) {
 				continue;
 			}
 			$submodules = array();
 			if (isset($moduleConfiguration['submodules'])) {
 				foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
-					if (isset($submoduleConfiguration['resource']) && !$this->hasAccessToResource($submoduleConfiguration['resource'])) {
+					if (isset($submoduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($submoduleConfiguration['resource'])) {
 						continue;
 					}
 					$submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);
@@ -134,19 +134,5 @@ class MenuHelper {
 			'hideInMenu' => isset($moduleConfiguration['hideInMenu']) ? (boolean)$moduleConfiguration['hideInMenu'] : FALSE
 		);
 	}
-
-	/**
-	 * @param string $resource A policy resource
-	 * @return boolean TRUE if access to the resource is granted
-	 */
-	protected function hasAccessToResource($resource) {
-		try {
-			$this->accessDecisionManager->decideOnResource($resource);
-		} catch(\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
-			return FALSE;
-		}
-		return TRUE;
-	}
-
 }
 ?>

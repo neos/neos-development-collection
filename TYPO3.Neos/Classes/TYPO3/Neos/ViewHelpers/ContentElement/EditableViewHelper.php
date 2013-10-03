@@ -40,7 +40,7 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 		$content = $this->renderChildren();
 		$this->tag->setContent($content);
 
-		if ($this->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+		if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
 			$this->tag->addAttribute('property', 'typo3:' . $property);
 			$classAttribute = 'neos-inline-editable';
 			if ($this->tag->hasAttribute('class')) {
@@ -51,22 +51,6 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 			return '';
 		}
 		return $this->tag->render();
-	}
-
-	/**
-	 * Check if we currently have access to the given resource
-	 *
-	 * @param string $resource The resource to check
-	 * @return boolean TRUE if we currently have access to the given resource
-	 */
-	protected function hasAccessToResource($resource) {
-		try {
-			$this->accessDecisionManager->decideOnResource($resource);
-		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
-			return FALSE;
-		}
-
-		return TRUE;
 	}
 }
 ?>
