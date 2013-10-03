@@ -2,8 +2,97 @@
 Wrapping a List of Content Elements
 ===================================
 
-(Thomas)
+Create a simple Wrapper that can contain multiple content Elements.
 
-* "highlight-box"
-* custom "wrapper-tag" around a list of content elements
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+  'Vendor:Box':
+    superTypes:
+      - 'TYPO3.Neos:Content'
+    ui:
+      group: Structure
+      label: Box
+      icon: icon-columns
+      inlineEditable: true
+    childNodes:
+      column0:
+        type: 'TYPO3.Neos:ContentCollection'
 
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
+	prototype(Vendor:Box) < prototype(TYPO3.Neos:Template)
+	prototype(Vendor:Box) {
+		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
+		columnContent = TYPO3.Neos:ContentCollection
+		columnContent {
+			nodePath = 'column0'
+		}
+	}
+
+Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
+	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+
+	<neos:contentElement node="{node}">
+		<div class="container box">
+			<div class="column">
+				<ts:render path="columnContent" />
+			</div>
+		</div>
+	</neos:contentElement>
+
+
+Extending it to use an option
+=============================
+
+You can even simply extend the box to provide a checkbox for different properties.
+
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+  'Vendor:Box':
+    superTypes:
+      - 'TYPO3.Neos:Content'
+    ui:
+      group: Structure
+      label: Box
+      icon: icon-columns
+      inlineEditable: true
+      inspector:
+        groups:
+          display:
+            label: Display
+            position: 5
+    properties:
+      collapsed:
+        type: boolean
+        ui:
+          label: Collapsed
+          reloadIfChanged: true
+          inspector:
+            group: display
+    childNodes:
+      column0:
+        type: 'TYPO3.Neos:ContentCollection'
+
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
+	prototype(Vendor:Box) < prototype(TYPO3.Neos:Template)
+	prototype(Vendor:Box) {
+		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
+		columnContent = TYPO3.Neos:ContentCollection
+		columnContent {
+			nodePath = 'column0'
+		}
+		collapsed = ${q(node).property('collapsed')}
+	}
+
+Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
+	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+
+	<neos:contentElement node="{node}">
+		<f:if condition="{collapsed}">
+			<button>open the collapsed box via js</button>
+		</f:if>
+		<div class="container box {f:if(condition: collapsed, then: 'collapsed', else: '')}>
+			<div class="column">
+				<ts:render path="columnContent" />
+			</div>
+		</div>
+	</neos:contentElement>
