@@ -16,7 +16,7 @@ TYPO3:
           Typo3BackendProvider:
             provider: 'PersistedUsernamePasswordProvider'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*'
+              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
               uri: neos/login

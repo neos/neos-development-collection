@@ -1,5 +1,5 @@
 #                                                                        #
-# Security policy for the TYPO3 package                                  #
+# Security policy for the TYPO3 Neos package                             #
 #                                                                        #
 
 resources:
@@ -46,6 +46,8 @@ acls:
       TYPO3_Neos_Backend_Module_Content: GRANT
       TYPO3_Neos_Backend_EditContent: GRANT
       TYPO3_Neos_Backend_PublishContent: GRANT
+
+      TYPO3_Media_ManageAssets: GRANT
 
       TYPO3_Neos_Backend_Module_User: GRANT
       TYPO3_Neos_Backend_Module_User_UserSettings: GRANT
