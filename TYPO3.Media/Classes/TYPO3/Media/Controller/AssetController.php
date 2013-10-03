@@ -129,7 +129,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @return void
 	 */
-	public function initializeCreateAction() {
+	protected function initializeCreateAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource', 'tags');
 		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
@@ -154,7 +154,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @return void
 	 */
-	public function initializeUploadAction() {
+	protected function initializeUploadAction() {
 		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
 		$assetMappingConfiguration->allowProperties('title', 'resource');
 		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
