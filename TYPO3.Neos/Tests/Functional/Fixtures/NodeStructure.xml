@@ -9,8 +9,12 @@
 		<node type="TYPO3.Neos:Page" nodeName="home" locale="">
 			<properties>
 				<title><![CDATA[<h1>Home</h1>]]></title>
+				<someSpecialProperty><![CDATA[<h1>SomeValue</h1>]]></someSpecialProperty>
 			</properties>
 			<node nodeName="teaser" type="TYPO3.Neos:ContentCollection">
+				<properties>
+					<someSpecialProperty><![CDATA[xx]]></someSpecialProperty>
+				</properties>
 				<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">
 					<properties>
 						<title><![CDATA[<h1>Welcome to this example</h1>]]></title>
