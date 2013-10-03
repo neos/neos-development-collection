@@ -1,0 +1,7 @@
+#                                                                        #
+# Security policy for the TYPO3 Media package                            #
+#                                                                        #
+
+resources:
+  methods:
+    TYPO3_Media_ManageAssets: 'method(TYPO3\Media\Controller\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|delete)Action())'
