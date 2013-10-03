@@ -117,7 +117,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			$nodeName = $childNode->getName();
 			$nodeType = $childNode->getNodeType()->getName();
 			$title = $nodeType === 'TYPO3.Neos:Document' ? $childNode->getProperty('title'): $childNode->getLabel();
-			$abstract = $childNode->getAbstract();
 			$expand = ($depth === 0 || $recursionPointer < $depth);
 			switch ($this->outputStyle) {
 				case self::STYLE_LIST:
@@ -127,7 +126,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					$properties['__nodeName'] = $nodeName;
 					$properties['__nodeType'] = $nodeType;
 					$properties['__title'] = $title;
-					$properties['__abstract'] = $abstract;
 					array_push($nodes, $properties);
 					if ($expand) {
 						$this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, ($recursionPointer + 1));
