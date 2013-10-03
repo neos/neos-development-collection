@@ -41,7 +41,7 @@ TYPO3:
                 errorTitle: 'Page Not Found'
                 errorDescription: 'Sorry, the page you requested was not found.'
           databaseConnectionExceptions:
-            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\DatabaseConnectionException']
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
