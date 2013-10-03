@@ -311,3 +311,29 @@
             values:
               '25-25-25-25':
                 label: '25% / 25% / 25% / 25%'
+
+'TYPO3.Neos.NodeTypes:Form':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Form'
+    group: 'General'
+    icon: 'icon-envelope-alt'
+    inspector:
+      groups:
+        form:
+          label: 'Form'
+          priority: 30
+  properties:
+    formIdentifier:
+      type: string
+      ui:
+        label: 'Form identifier'
+        reloadIfChanged: true
+        inspector:
+          group: form
+          editor: Content/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            placeholder: 'Select the Form identifier'
+            values:
+              '':
+                label: ''

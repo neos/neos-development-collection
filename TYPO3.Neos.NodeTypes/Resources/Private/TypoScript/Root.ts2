@@ -82,3 +82,11 @@ prototype(TYPO3.Neos.NodeTypes:ThreeColumn) < prototype(TYPO3.Neos.NodeTypes:Mul
 
 # Four Column TS Object
 prototype(TYPO3.Neos.NodeTypes:FourColumn) < prototype(TYPO3.Neos.NodeTypes:MultiColumn)
+
+# Form TS Object
+prototype(TYPO3.Neos.NodeTypes:Form) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos.NodeTypes:Form) {
+	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Form.html'
+	formIdentifier = ${q(node).property('formIdentifier')}
+	presetName = 'default'
+}
