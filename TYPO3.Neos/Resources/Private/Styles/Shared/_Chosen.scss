@@ -15,6 +15,14 @@
 		line-height: inherit;
 		text-decoration: none;
 
+		&.chosen-default {
+			color: $textSubtleLight;
+
+			div {
+				color: #fff;
+			}
+		}
+
 		&.chosen-single-with-deselect span {
 			margin-right: $unit + 1px + 18px + $defaultMargin;
 		}
@@ -121,6 +129,7 @@
 				speak: none;
 				content: $search;
 				line-height: 100%;
+				font-size: 12px;
 			}
 		}
 
@@ -132,8 +141,9 @@
 			li {
 				width: 100%;
 				border-bottom: 1px solid $grayDark;
-				line-height: inherit;
-				padding: 0 $defaultMargin;
+				line-height: $unit - $defaultMargin;
+				padding: ($unit - $defaultMargin * 2) $defaultMargin;
+				@include box-sizing(border-box);
 
 				&:first-child {
 					border-top: 1px solid $grayDark;
@@ -146,6 +156,10 @@
 
 				&.no-results {
 					background-color: $grayMedium;
+				}
+
+				&.disabled-result {
+					color: $textSubtle;
 				}
 
 				em {
