@@ -6668,6 +6668,7 @@
   color: #fff;
   line-height: 40px;
   font-size: 14px;
+  width: 100% !important;
 }
 .neos #neos-inspector .chosen-container .chosen-single {
   height: 40px;
@@ -6774,6 +6775,7 @@
   font-size: 0;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-search input {
+  min-width: 0px;
   width: 100%;
   height: 40px;
   border: none;
@@ -8023,6 +8025,7 @@
   color: #fff;
   line-height: 40px;
   font-size: 14px;
+  width: 100% !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single {
   height: 40px;
@@ -8129,6 +8132,7 @@
   font-size: 0;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search input {
+  min-width: 0px;
   width: 100%;
   height: 40px;
   border: none;
