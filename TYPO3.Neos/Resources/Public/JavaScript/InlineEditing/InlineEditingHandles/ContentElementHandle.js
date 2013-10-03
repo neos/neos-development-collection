@@ -72,6 +72,8 @@ function (
 
 		_popoverPosition: 'right',
 
+		_pasteTitle: 'Paste after',
+
 		/**
 		 * Returns the index of the content element in the current section
 		 */
@@ -158,8 +160,8 @@ function (
 			ContentCommands.copy();
 		},
 
-		pasteAfter: function() {
-			if (ContentCommands.paste('after') === true) {
+		paste: function() {
+			if (ContentCommands.paste() === true) {
 				this.set('_pasteInProgress', true);
 			}
 		}

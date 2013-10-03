@@ -14,6 +14,8 @@ function ($, EntityWrapper, ContentElementHandle, ContentCommands) {
 		_showCopy: false,
 		_showHide: false,
 
+		_pasteTitle: 'Paste into',
+
 		newAfter: function() {
 			ContentCommands.create('after', null, 0);
 		}
