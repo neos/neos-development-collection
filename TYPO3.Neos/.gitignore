@@ -1,7 +1,5 @@
 /Scripts/node_modules/
 .sass-cache
 .DS_Store
-/Scripts/create/
-/Scripts/vie/
-/Scripts/hallo/
+/Scripts/**/src
 /Tests/Behavior/behat.yml

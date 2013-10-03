@@ -148,13 +148,13 @@ function(
 			},
 			requireConfig: {
 				map: {
-					'../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/button': {
+					'../../JavaScript/LibraryExtensions/UiAlohaPlugin/button': {
 						'originalButton': 'ui/button'
 					},
 					'*': {
-						'ui/ui-plugin': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/ui-plugin',
-						'ui/multiSplit': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit',
-						'ui/button': '../../TYPO3.Neos/JavaScript/LibraryExtensions/UiAlohaPlugin/button'
+						'ui/ui-plugin': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/ui-plugin',
+						'ui/multiSplit': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit',
+						'ui/button': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/button'
 					}
 				}
 			},
