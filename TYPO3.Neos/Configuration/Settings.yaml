@@ -47,8 +47,8 @@ TYPO3:
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
               variables:
-                errorTitle: 'No Database Connection'
-                errorDescription: 'Sorry, the database connection could not be established.'
+                errorTitle: 'Database Error'
+                errorDescription: 'Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.'
           noHomepageException:
             matchingExceptionClassNames: ['TYPO3\Neos\Routing\Exception\NoHomepageException']
             options:
