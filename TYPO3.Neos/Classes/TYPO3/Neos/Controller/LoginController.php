@@ -44,10 +44,7 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * @return void
 	 */
 	public function indexAction($username = NULL) {
-		$this->view->assignMultiple(array(
-			'username' => $username,
-			'welcomeMessage' => 'Please enter your username and password in order to proceed.'
-		));
+		$this->view->assign('username', $username);
 	}
 
 	/**
@@ -57,7 +54,7 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * @return void
 	 */
 	protected function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = NULL) {
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error('The entered username or password was wrong.', ($exception === NULL ? 1347016771 : $exception->getCode())));
+		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error('The entered username or password was wrong', ($exception === NULL ? 1347016771 : $exception->getCode())));
 		$this->redirect('index');
 	}
 
@@ -92,12 +89,10 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 				$this->view->assign('value', array('success' => TRUE));
 			break;
 			default:
-				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out.', 1318421560));
-				if ($possibleRedirectionUri !== '') {
-					$this->redirectToUri($possibleRedirectionUri);
-				} else {
+
+					$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out', 1318421560));
 					$this->redirect('index');
-				}
+
 		}
 	}
 }
