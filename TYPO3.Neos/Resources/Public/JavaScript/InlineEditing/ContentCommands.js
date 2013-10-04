@@ -1,12 +1,13 @@
 define(
 [
 	'emberjs',
+	'Library/jquery-with-dependencies',
 	'vie/instance',
 	'Content/Model/NodeActions',
 	'Content/Model/NodeSelection',
 	'Shared/Notification'
 ],
-function (Ember, vieInstance, NodeActions, NodeSelection, Notification) {
+function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification) {
 	return Ember.Object.create({
 
 		_entity: null,
