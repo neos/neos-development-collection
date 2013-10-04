@@ -103,6 +103,7 @@ class ContentCollectionImplementation extends CollectionImplementation {
 		$output = parent::evaluate();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
+		$tagBuilder->forceClosingTag(TRUE);
 		$tagBuilder->setContent($output);
 
 		$class = 'neos-contentcollection';
