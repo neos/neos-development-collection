@@ -101,10 +101,21 @@ class ContentCollectionImplementation extends CollectionImplementation {
 		$currentContext = $this->tsRuntime->getCurrentContext();
 		$node = $currentContext['node'];
 		$output = parent::evaluate();
+
+		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
+		$tagBuilder->setContent($output);
+
+		$class = 'neos-contentcollection';
+		$additionalClass = $this->tsValue('class');
+		if ($additionalClass) {
+			$class .= ' ' . $additionalClass;
+		}
+		$tagBuilder->addAttribute('class', $class);
+
 		try {
 			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
 		} catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $e) {
-			return $output;
+			return $tagBuilder->render();
 		}
 
 		if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
@@ -130,24 +141,15 @@ class ContentCollectionImplementation extends CollectionImplementation {
 				// It might still happen that there is no content collection node on the page,
 				// f.e. when we are in live workspace. In this case, we just silently
 				// return what we have so far.
-			return $output;
-		}
-
-		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
-
-		$class = 'neos-contentcollection';
-		$additionalClass = $this->tsValue('class');
-		if ($additionalClass) {
-			$class .= ' ' . $additionalClass;
+			return $tagBuilder->render();
 		}
 
 		$tagBuilder->addAttribute('about', $contentCollectionNode->getContextPath());
 		$tagBuilder->addAttribute('typeof', 'typo3:TYPO3.Neos:ContentCollection');
 		$tagBuilder->addAttribute('rel', 'typo3:content-collection');
-		$tagBuilder->addAttribute('class', $class);
+
 		$tagBuilder->addAttribute('data-neos-_typoscript-path', $this->path);
 		$tagBuilder->addAttribute('data-neos-__workspacename', $contentCollectionNode->getWorkspace()->getName());
-		$tagBuilder->setContent($output);
 
 		return $tagBuilder->render();
 	}
