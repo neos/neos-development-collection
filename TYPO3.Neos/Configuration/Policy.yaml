@@ -14,7 +14,7 @@ resources:
 
     TYPO3_Neos_Backend_Module_Content: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showWireframeAction()) || method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction())'
     TYPO3_Neos_Backend_EditContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|getChildNodesgetChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|copy|copyBefore|copyAfter|copyInto|update|delete|searchPage|getPageByNodePath|extError)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadImage|imageWithMetadata|pluginViews|masterPlugins)Action())'
-    TYPO3_Neos_Backend_PublishContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|publishAll|extError)Action())'
+    TYPO3_Neos_Backend_PublishOwnWorkspaceContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|extError)Action()) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->publishAllWorkspaceAction(workspaceName == current.userInformation.currentWorkspace))'
 
     TYPO3_Neos_Backend_Module_User: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
     TYPO3_Neos_Backend_Module_User_UserSettings: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress)Action())'
@@ -22,7 +22,8 @@ resources:
     TYPO3_Neos_Backend_EditUserPreferences: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\UserController->(getPreference|updatePreferences|extError)Action())'
 
     TYPO3_Neos_Backend_Module_Management: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
-    TYPO3_Neos_Backend_Module_Management_Workspaces: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace)Action())'
+    TYPO3_Neos_Backend_Module_Management_Workspaces: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishNode|discardNode|publishOrDiscardNodes)Action())'
+    TYPO3_Neos_Backend_Module_Management_Workspaces_ManageOwnWorkspace: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspaceName == current.userInformation.currentWorkspace)) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspaceName == NULL))'
 
     TYPO3_Neos_Backend_Module_Administration: 'method(TYPO3\Neos\Controller\Module\AdministrationController->indexAction())'
     TYPO3_Neos_Backend_Module_Administration_Users: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|)Action())'
@@ -46,7 +47,7 @@ acls:
 
       TYPO3_Neos_Backend_Module_Content: GRANT
       TYPO3_Neos_Backend_EditContent: GRANT
-      TYPO3_Neos_Backend_PublishContent: GRANT
+      TYPO3_Neos_Backend_PublishOwnWorkspaceContent: GRANT
 
       TYPO3_Media_ManageAssets: GRANT
 
@@ -57,6 +58,7 @@ acls:
 
       TYPO3_Neos_Backend_Module_Management: GRANT
       TYPO3_Neos_Backend_Module_Management_Workspaces: GRANT
+      TYPO3_Neos_Backend_Module_Management_Workspaces_ManageOwnWorkspace: GRANT
 
   Administrator:
     methods:

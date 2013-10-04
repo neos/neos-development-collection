@@ -10,6 +10,11 @@
 
 TYPO3:
   Flow:
+
+    aop:
+      globalObjects:
+        userInformation: TYPO3\Neos\Service\UserService
+
     security:
       authentication:
         providers:
