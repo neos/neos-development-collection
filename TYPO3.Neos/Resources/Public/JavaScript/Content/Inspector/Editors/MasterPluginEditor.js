@@ -30,7 +30,7 @@ function(
 					};
 					i++;
 				}
-				if (i > 1) {
+				if (i > 0) {
 					placeholder = 'Select a Plugin';
 				} else {
 					placeholder = 'No plugin configured';

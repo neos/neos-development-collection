@@ -101,7 +101,7 @@ function(Ember, template, plupload, Notification) {
 			// Template method
 		},
 
-		fileUploaded: function(response) {
+		fileUploaded: function() {
 			this.set('_uploadInProgress', false);
 			this.set('_uploadButtonShown', false);
 		},

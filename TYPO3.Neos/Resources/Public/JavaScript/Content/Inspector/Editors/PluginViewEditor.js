@@ -39,7 +39,7 @@ function(
 						};
 						i++;
 					}
-					if (i > 1) {
+					if (i > 0) {
 						placeholder = 'Select a View';
 					} else {
 						placeholder = 'No view configured for this plugin';

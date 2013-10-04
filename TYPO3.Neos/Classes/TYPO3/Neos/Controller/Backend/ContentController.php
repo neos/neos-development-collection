@@ -65,6 +65,7 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return string
 	 */
 	public function imageWithMetadataAction(\TYPO3\Media\Domain\Model\Image $image) {
+		$this->response->setHeader('Content-Type', 'application/json');
 		$thumbnail = $image->getThumbnail(500, 500);
 
 		return json_encode(array(
@@ -82,6 +83,8 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return string
 	 */
 	public function pluginViewsAction(NodeInterface $node) {
+		$this->response->setHeader('Content-Type', 'application/json');
+
 		$pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
 		$views = array();
 		/** @var $pluginViewDefinition \TYPO3\Neos\Domain\Model\PluginViewDefinition */
@@ -110,7 +113,7 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				)
 			);
 		}
-		return json_encode($views);
+		return json_encode((object) $views);
 	}
 
 	/**
@@ -121,6 +124,8 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return string JSON encoded array of node path => label
 	 */
 	public function masterPluginsAction(NodeInterface $node) {
+		$this->response->setHeader('Content-Type', 'application/json');
+
 		$pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($node->getContext());
 		$masterPlugins = array();
 		if (is_array($pluginNodes)) {
@@ -136,7 +141,7 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$masterPlugins[$pluginNode->getPath()] = sprintf('"%s" on page "%s"', $pluginNode->getNodeType()->getLabel(), $page->getProperty('title'));
 			}
 		}
-		return json_encode($masterPlugins);
+		return json_encode((object) $masterPlugins);
 	}
 }
 ?>

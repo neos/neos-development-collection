@@ -16,9 +16,8 @@ function(
 		init: function() {
 			var nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath');
 			var that = this;
-			$.get('/neos/content/pluginViews?node=' + nodePath, function(result) {
+			$.getJSON('/neos/content/pluginViews?node=' + nodePath, function(views) {
 				Ember.run(function() {
-					var views = JSON.parse(result);
 					var viewsArray = [];
 					for (var viewName in views) {
 						viewsArray.push(views[viewName]);

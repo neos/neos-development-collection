@@ -252,8 +252,8 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 					that.set('_uploadPreviewShown', false);
-					that.set('_loadPreviewImageHandler', $.get('/neos/content/imageWithMetadata/' + assetIdentifier, function(result) {
-						that.fileUploaded(result);
+					that.set('_loadPreviewImageHandler', $.getJSON('/neos/content/imageWithMetadata/' + assetIdentifier, function(result) {
+						that.fileUploaded();
 						that._hideImageLoader();
 					}));
 					that.set('mediaBrowserShown', false);
@@ -537,9 +537,8 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 				this.set('_uploadPreviewShown', false);
-				that.set('_loadPreviewImageHandler', $.get('/neos/content/imageWithMetadata/' + imageVariant.originalImage, function(result) {
+				that.set('_loadPreviewImageHandler', $.getJSON('/neos/content/imageWithMetadata/' + imageVariant.originalImage, function(metadata) {
 					that._hideImageLoader();
-					var metadata = JSON.parse(result);
 					that.beginPropertyChanges();
 					that._setPreviewImage(metadata);
 					that.set('_originalImageUuid', imageVariant.originalImage);
