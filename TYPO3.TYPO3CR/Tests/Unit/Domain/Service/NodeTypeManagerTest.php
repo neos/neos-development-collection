@@ -24,7 +24,9 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	protected $nodeTypesFixture = array(
 		'TYPO3.Neos:ContentObject' => array(
-			'label' => 'Abstract content object',
+			'ui' => array(
+				'label' => 'Abstract content object',
+			),
 			'abstract' => TRUE,
 			'properties' => array(
 				'_hidden' => array(
@@ -47,7 +49,9 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		),
 		'TYPO3.Neos:Text' => array(
 			'superTypes' => array('TYPO3.Neos:ContentObject'),
-			'label' => 'Text',
+			'ui' => array(
+				'label' => 'Text',
+			),
 			'properties' => array(
 				'headline' => array(
 					'type' => 'string',
@@ -62,7 +66,9 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		),
 		'TYPO3.Neos:TextWithImage' => array(
 			'superTypes' => array('TYPO3.Neos:Text'),
-			'label' => 'Text with image',
+			'ui' => array(
+				'label' => 'Text with image',
+			),
 			'properties' => array(
 				'image' => array(
 					'type' => 'TYPO3\Neos\Domain\Model\Media\Image',
