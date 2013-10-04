@@ -19,6 +19,7 @@ prototype(TYPO3.Neos.NodeTypes:Headline) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:Headline) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Headline.html'
 	title = ${q(node).property('title')}
+	title.@process.convertNodeUris = TYPO3.Neos:ConvertNodeUris
 }
 
 # Image TS Object
@@ -42,6 +43,7 @@ prototype(TYPO3.Neos.NodeTypes:Text) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:Text) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Text.html'
 	text = ${q(node).property('text')}
+	text.@process.convertNodeUris = TYPO3.Neos:ConvertNodeUris
 }
 
 # TextWithImage TS Object
@@ -49,6 +51,7 @@ prototype(TYPO3.Neos.NodeTypes:TextWithImage) < prototype(TYPO3.Neos.NodeTypes:I
 prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/TextWithImage.html'
 	text = ${q(node).property('text')}
+	text.@process.convertNodeUris = TYPO3.Neos:ConvertNodeUris
 	position = ${q(node).property('position')}
 }
 
