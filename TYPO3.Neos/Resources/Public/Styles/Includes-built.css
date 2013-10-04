@@ -1,6 +1,6 @@
 
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*!
+/*
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -3909,7 +3909,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1040;
+  z-index: 10040;
   background-color: black;
 }
 .neos .neos-modal-backdrop.neos-fade {
@@ -3924,7 +3924,7 @@
   position: fixed;
   top: 10%;
   left: 50%;
-  z-index: 1050;
+  z-index: 10050;
   width: 560px;
   margin-left: -280px;
   background-color: white;
