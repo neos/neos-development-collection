@@ -5,18 +5,14 @@ define(
 	function(Ember) {
 		return Ember.View.extend({
 			classNames: ['neos-contentelement-overlay'],
-			template: Ember.Handlebars.compile('<span><i {{bindAttr class="view.iconClass"}}></i></span>'),
+			template: Ember.Handlebars.compile('<span></span>'),
 
 			init: function() {
 				this._super();
 
 				var that = this,
 					$element = this.get('$element'),
-					entity = this.get('entity'),
-					entityType = entity.get('@type'),
-					nodeTypeConfiguration = typeof entityType.pop !== 'undefined' ? entityType.pop().metadata : entityType.metadata;
-
-				this.set('iconClass', nodeTypeConfiguration.ui.icon);
+					entity = this.get('entity');
 
 				entity.on('change', function() {
 					// If the entity changed, it might happen that the size changed as well; thus we need to reload the overlay size

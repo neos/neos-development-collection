@@ -50,21 +50,6 @@
 		position: absolute;
 		display: none;
 		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
-
-		.neos-contentelement-overlay-icon {
-			width: 14px;
-			height: 14px;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin-top: -7px;
-			margin-left: -7px;
-			@include user-select(none);
-
-			i {
-				@include icon-FontAwesome();
-			}
-		}
 	}
 }
 
