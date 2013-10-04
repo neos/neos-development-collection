@@ -14,6 +14,8 @@ resources:
 
     TYPO3_Neos_Backend_Module_Content: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showWireframeAction()) || method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction())'
     TYPO3_Neos_Backend_EditContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|getChildNodesgetChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|copy|copyBefore|copyAfter|copyInto|update|delete|searchPage|getPageByNodePath|extError)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadImage|imageWithMetadata|pluginViews|masterPlugins)Action())'
+    TYPO3_Neos_Backend_AccessContentInOwnOrLiveWorkspace: 'method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName == current.userInformation.currentWorkspace)) || method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName == "live"))'
+    TYPO3_Neos_Backend_AccessContentInOthersWorkspace: 'method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName != current.userInformation.currentWorkspace)) && method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName != "live"))'
     TYPO3_Neos_Backend_PublishOwnWorkspaceContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|extError)Action()) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->publishAllWorkspaceAction(workspaceName == current.userInformation.currentWorkspace))'
 
     TYPO3_Neos_Backend_Module_User: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
@@ -38,6 +40,8 @@ acls:
   Everybody:
     methods:
       TYPO3_Neos_PublicFrontendAccess: GRANT
+      TYPO3_Neos_Backend_AccessContentInOthersWorkspace: DENY
+      TYPO3_Neos_Backend_AccessContentInOwnOrLiveWorkspace: GRANT
       TYPO3_Neos_BackendLogin: GRANT
       TYPO3_Neos_WidgetControllers: GRANT
 
