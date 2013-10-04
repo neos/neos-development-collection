@@ -28,6 +28,13 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	protected $nodePath;
 
 	/**
+	 * additional CSS classes to be applied to the content collection
+	 *
+	 * @var string
+	 */
+	protected $class;
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
 	 */
@@ -62,6 +69,25 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	 */
 	public function getNodePath() {
 		return $this->tsValue('nodePath');
+	}
+
+	/**
+	 * additional CSS classes to be applied to the content collection
+	 *
+	 * @param string $class
+	 * @return void
+	 */
+	public function setClass($class) {
+		$this->class = $class;
+	}
+
+	/**
+	 * additional CSS classes to be applied to the content collection
+	 *
+	 * @return string
+	 */
+	public function getClass() {
+		return $this->tsValue('class');
 	}
 
 	/**
@@ -107,7 +133,23 @@ class ContentCollectionImplementation extends CollectionImplementation {
 			return $output;
 		}
 
-		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="neos-contentcollection" data-neos-_typoscript-path="%s" data-neos-__workspacename="%s">%s</div>', $contentCollectionNode->getContextPath(), 'TYPO3.Neos:ContentCollection', $this->path, $contentCollectionNode->getWorkspace()->getName(), $output);
+		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
+
+		$class = 'neos-contentcollection';
+		$additionalClass = $this->tsValue('class');
+		if ($additionalClass) {
+			$class .= ' ' . $additionalClass;
+		}
+
+		$tagBuilder->addAttribute('about', $contentCollectionNode->getContextPath());
+		$tagBuilder->addAttribute('typeof', 'typo3:TYPO3.Neos:ContentCollection');
+		$tagBuilder->addAttribute('rel', 'typo3:content-collection');
+		$tagBuilder->addAttribute('class', $class);
+		$tagBuilder->addAttribute('data-neos-_typoscript-path', $this->path);
+		$tagBuilder->addAttribute('data-neos-__workspacename', $contentCollectionNode->getWorkspace()->getName());
+		$tagBuilder->setContent($output);
+
+		return $tagBuilder->render();
 	}
 }
 ?>
