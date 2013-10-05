@@ -47,12 +47,6 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
