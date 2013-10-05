@@ -70,9 +70,10 @@ class PluginUriAspect {
 	 * and generate a controllerObjectName
 	 *
 	 * @param object $request
+	 * @param array $arguments
 	 * @return string $controllerObjectName
 	 */
-	public function getControllerObjectName($request, $arguments) {
+	public function getControllerObjectName($request, array $arguments) {
 		$controllerName = $arguments['controllerName'] !== NULL ? $arguments['controllerName'] : $request->getControllerName();
 		$subPackageKey = $arguments['subPackageKey'] !== NULL ? $arguments['subPackageKey'] : $request->getControllerSubpackageKey();
 		$packageKey = $arguments['packageKey'] !== NULL ? $arguments['packageKey'] : $request->getControllerPackageKey();
