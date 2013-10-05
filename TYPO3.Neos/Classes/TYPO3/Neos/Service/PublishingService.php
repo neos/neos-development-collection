@@ -105,7 +105,7 @@ class PublishingService {
 	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName = 'live') {
 		$nodes = array($node);
 		$nodeType = $node->getNodeType();
-		if ($nodeType->isOfType('TYPO3.Neos:Page') || $nodeType->hasChildNodes()) {
+		if ($nodeType->isOfType('TYPO3.Neos:Document') || $nodeType->hasChildNodes()) {
 			foreach ($node->getChildNodes('TYPO3.Neos:ContentCollection') as $contentCollectionNode) {
 				array_push($nodes, $contentCollectionNode);
 			}
