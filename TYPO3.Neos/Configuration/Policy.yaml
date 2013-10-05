@@ -14,7 +14,7 @@ resources:
 
     TYPO3_Neos_Backend_Module_Content: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showWireframeAction()) || method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction())'
     TYPO3_Neos_Backend_EditContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|getChildNodesgetChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|copy|copyBefore|copyAfter|copyInto|update|delete|searchPage|getPageByNodePath|extError)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadImage|imageWithMetadata|pluginViews|masterPlugins)Action())'
-    TYPO3_Neos_Backend_PublishContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|extError)Action())'
+    TYPO3_Neos_Backend_PublishContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|publishAll|extError)Action())'
 
     TYPO3_Neos_Backend_Module_User: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
     TYPO3_Neos_Backend_Module_User_UserSettings: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|update|newElectronicAddress|createElectronicAddress|deleteElectronicAddress)Action())'
