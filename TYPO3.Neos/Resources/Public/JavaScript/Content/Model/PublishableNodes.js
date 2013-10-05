@@ -6,12 +6,16 @@
 define(
 [
 	'emberjs',
+	'Library/jquery-with-dependencies',
 	'vie/instance',
-	'vie/entity'
+	'vie/entity',
+	'Shared/Notification'
 ], function(
 	Ember,
+	$,
 	vie,
-	EntityWrapper
+	EntityWrapper,
+	Notification
 ) {
 	return Ember.Object.extend({
 		publishableEntitySubjects: [],
@@ -72,13 +76,18 @@ define(
 		 * Publishes everything inside the current workspace.
 		 */
 		publishAll: function() {
-			$.each(this.get('publishableEntitySubjects'), function(index, element) {
-				var entity = vie.entities.get(element);
-				entity.set('typo3:__workspacename', 'live');
+			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
+				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
+				publishableEntities = this.get('publishableEntitySubjects');
+			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAll(workspaceName, function(result) {
+				if (result !== null && result.success === true) {
+					$.each(publishableEntities, function(index, element) {
+						vie.entities.get(element).set('typo3:__workspacename', 'live');
+					});
+				} else {
+					Notification.error('Unexpected error while publishing all changes: ' + JSON.stringify(result));
+				}
 			});
-			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot');
-			var workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAll(workspaceName);
 		}
 	}).create();
 });
