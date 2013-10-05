@@ -800,7 +800,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$workspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
 		$nodeData = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/bar', $workspace);
 		$this->inject($nodeData, 'nodeDataRepository', $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository'));
-		$this->assertEquals('(unstructured) bar', $nodeData->getLabel());
+		$this->assertEquals('unstructured (bar)', $nodeData->getLabel());
 
 		$nodeData->setProperty('title', 'The point of this title is, that it`s a bit long and needs to be cropped.');
 		$this->assertEquals('The point of this title is, th …', $nodeData->getLabel());

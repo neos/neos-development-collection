@@ -33,7 +33,7 @@ class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 		} elseif ($nodeData->hasProperty('text') === TRUE && $nodeData->getProperty('text') !== '') {
 			$label = strip_tags($nodeData->getProperty('text'));
 		} else {
-			$label = '(' . $nodeData->getNodeType()->getName() . ') ' . $nodeData->getName();
+			$label = ($nodeData->getNodeType()->getLabel() ?: $nodeData->getNodeType()->getName()) . ' (' . $nodeData->getName() . ')';
 		}
 
 		if ($crop === FALSE) {
