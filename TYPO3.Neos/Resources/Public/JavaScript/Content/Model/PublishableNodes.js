@@ -78,7 +78,7 @@ define(
 			});
 			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot');
 			var workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAllWorkspace(workspaceName);
+			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAll(workspaceName);
 		}
 	}).create();
 });

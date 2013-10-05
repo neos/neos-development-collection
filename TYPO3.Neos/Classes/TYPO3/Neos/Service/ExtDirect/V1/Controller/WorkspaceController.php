@@ -74,15 +74,14 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * Publish everything in the workspace with the given workspaceName
+	 * Publish everything in the workspace with the given workspace name
 	 *
-	 * @param string workspaceName
+	 * @param string $workspaceName
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function publishAllWorkspaceAction($workspaceName) {
-		$unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspaceName);
-		$this->publishingService->publishNodes($unpublishedNodes);
+	public function publishAllAction($workspaceName) {
+		$this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspaceName));
 
 		$this->view->assign('value', array('success' => TRUE));
 	}
