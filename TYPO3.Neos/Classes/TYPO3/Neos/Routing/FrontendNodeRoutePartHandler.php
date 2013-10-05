@@ -107,6 +107,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 	 *
 	 * @param mixed $value Either a Node object or an absolute context node path
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
+	 * @throws \InvalidArgumentException If provided value was neither a string nor a node
 	 */
 	protected function resolveValue($value) {
 		if (!$value instanceof NodeInterface && !is_string($value)) {
