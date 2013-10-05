@@ -137,6 +137,16 @@ abstract class AbstractNodeData {
 	}
 
 	/**
+	 * Returns a full length plain text description of this node
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getFullLabel() {
+		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this, FALSE);
+	}
+
+	/**
 	 * Returns a short abstract describing / containing summarized content of this node
 	 *
 	 * @return string

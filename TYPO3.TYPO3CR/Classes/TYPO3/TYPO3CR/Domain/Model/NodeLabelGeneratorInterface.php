@@ -22,8 +22,9 @@ interface NodeLabelGeneratorInterface {
 	 * Render a node label
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $nodeData
+	 * @param boolean $crop
 	 * @return string
 	 * @api
 	 */
-	public function getLabel(AbstractNodeData $nodeData);
+	public function getLabel(AbstractNodeData $nodeData, $crop = TRUE);
 }
