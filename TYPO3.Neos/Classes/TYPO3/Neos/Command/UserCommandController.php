@@ -34,12 +34,6 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\AccountFactory
-	 */
-	protected $accountFactory;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Security\Cryptography\HashService
 	 */
 	protected $hashService;
