@@ -38,12 +38,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Security\Context
 	 */
 	protected $securityContext;
