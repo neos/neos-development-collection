@@ -59,7 +59,7 @@ class PublishingService {
 
 	/**
 	 * @param string $workspaceName
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
 	 */
 	public function getUnpublishedNodes($workspaceName) {
 		$finalNodes = array();
