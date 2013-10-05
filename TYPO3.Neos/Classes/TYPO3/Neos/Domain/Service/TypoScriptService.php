@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * The TypoScript Service
@@ -56,7 +57,7 @@ class TypoScriptService {
 	 * @return array The merged object tree as of the given node
 	 * @throws \TYPO3\Neos\Domain\Exception
 	 */
-	public function getMergedTypoScriptObjectTree(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode) {
+	public function getMergedTypoScriptObjectTree(NodeInterface $startNode, NodeInterface $endNode) {
 		$contentContext = $startNode->getContext();
 		$parentNodes = $contentContext->getNodesOnPath($startNode->getPath(), $endNode->getPath());
 		if (!is_array($parentNodes)) {
@@ -131,7 +132,7 @@ class TypoScriptService {
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return \TYPO3\TypoScript\Core\Runtime
 	 */
-	public function createRuntime($currentSiteNode, $closestDocumentNode, $controllerContext) {
+	public function createRuntime(NodeInterface $currentSiteNode, NodeInterface $closestDocumentNode, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode, $closestDocumentNode);
 		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptObjectTree, $controllerContext);
 		return $typoScriptRuntime;
