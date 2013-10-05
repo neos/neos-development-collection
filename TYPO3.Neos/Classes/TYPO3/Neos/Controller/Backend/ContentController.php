@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Controller\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Neos\Controller\Exception\NodeCreationException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
