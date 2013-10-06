@@ -98,6 +98,31 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
+	 * Remove a user
+	 *
+	 * @param string $username
+	 * @param boolean $confirmation
+	 * @return void
+	 */
+	public function removeCommand($username, $confirmation = FALSE) {
+		if ($confirmation === FALSE) {
+			$this->outputLine('Please confirm that you really want to remove the user from the database.');
+			$this->outputLine('');
+			$this->outputLine('Syntax:');
+			$this->outputLine('  ./flow user:remove --username <username> --confirmation TRUE');
+			$this->quit(1);
+		}
+
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!($account instanceof \TYPO3\Flow\Security\Account)) {
+			$this->outputLine('The username "%s" is not in use', array($username));
+			$this->quit(1);
+		}
+		$this->accountRepository->remove($account);
+		$this->outputLine('Removed user "%s".', array($username));
+	}
+
+	/**
 	 * Set a new password for the given user
 	 *
 	 * This allows for setting a new password for an existing user account.
