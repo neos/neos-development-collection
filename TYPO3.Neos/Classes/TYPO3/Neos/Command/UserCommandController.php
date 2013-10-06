@@ -61,7 +61,6 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @param string $firstName First name of the user to be created
 	 * @param string $lastName Last name of the user to be created
 	 * @param string $roles A comma separated list of roles to assign
-	 * @Flow\Validate(argumentName="username", type="EmailAddress")
 	 * @return void
 	 */
 	public function createCommand($username, $password, $firstName, $lastName, $roles = NULL) {
