@@ -23,19 +23,10 @@ use TYPO3\Flow\Annotations as Flow;
 class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
-
-	/**
-	 * Injects the access decision manager
-	 *
-	 * @param \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
-	 * @return void
-	 */
-	public function injectAccessDecisionManager(\TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
-		$this->accessDecisionManager = $accessDecisionManager;
-	}
 
 	/**
 	 * @param string $property the property to render
