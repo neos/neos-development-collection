@@ -11,8 +11,7 @@ namespace TYPO3\Neos\Setup\Step;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow,
-	TYPO3\Form\Core\Model\FormDefinition;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  * @Flow\Scope("singleton")
