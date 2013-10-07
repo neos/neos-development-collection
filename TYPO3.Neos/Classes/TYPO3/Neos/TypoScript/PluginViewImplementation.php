@@ -45,7 +45,7 @@ class PluginViewImplementation extends PluginImplementation {
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
 		$pluginRequest = new ActionRequest($parentRequest);
 
-		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+		if ($this->node instanceof NodeInterface) {
 			$pluginNodePath = $this->node->getProperty('plugin');
 			$pluginViewName = $this->node->getProperty('view');
 
@@ -55,7 +55,7 @@ class PluginViewImplementation extends PluginImplementation {
 				$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 				$this->passArgumentsToPluginRequest($pluginRequest);
 
-				if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+				if ($this->node instanceof NodeInterface) {
 					$controllerObjectPairs = array();
 					foreach ($this->pluginService->getPluginViewDefinitionsByPluginNodeType($this->node->getNodeType()) as $pluginViewDefinition) {
 						/** @var PluginViewDefinition $pluginViewDefinition */
