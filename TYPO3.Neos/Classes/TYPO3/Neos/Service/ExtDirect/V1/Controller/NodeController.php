@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\ExtJS\Annotations\ExtDirect;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 
 /**
  * ExtDirect Controller for managing Nodes
@@ -66,35 +67,35 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Returns the specified node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function showAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	public function showAction(Node $node) {
 		$this->view->assignNode($node);
 	}
 
 	/**
 	 * Returns the primary child node (if any) of the specified node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getPrimaryChildNodeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	public function getPrimaryChildNodeAction(Node $node) {
 		$this->view->assignNode($node->getPrimaryChildNode());
 	}
 
 	/**
 	 * Return child nodes of specified node for usage in a TreeLoader
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node The node to find child nodes for
+	 * @param Node $node The node to find child nodes for
 	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, $nodeTypeFilter, $depth) {
+	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth) {
 		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth);
 	}
 
@@ -102,13 +103,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Return child nodes of specified node with all details and
 	 * metadata.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, $nodeTypeFilter, $depth) {
+	public function getChildNodesAction(Node $node, $nodeTypeFilter, $depth) {
 		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_LIST, $depth);
 	}
 
@@ -116,20 +117,20 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Return child nodes of specified node with all details and
 	 * metadata.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesFromParentAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, $nodeTypeFilter, $depth) {
+	public function getChildNodesFromParentAction(Node $node, $nodeTypeFilter, $depth) {
 		$this->getChildNodesAction($node->getParent(), $nodeTypeFilter, $depth);
 	}
 
 	/**
 	 * Creates a new node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
@@ -137,7 +138,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @todo maybe the actual creation should be put in a helper / service class
 	 * @ExtDirect
 	 */
-	public function createAction(\TYPO3\TYPO3CR\Domain\Model\Node $referenceNode, array $nodeData, $position) {
+	public function createAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
@@ -146,7 +147,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Creates a new node and renders the node inside the containing section
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param Node $referenceNode
 	 * @param string $typoScriptPath The TypoScript path of the collection
 	 * @param array $nodeData
 	 * @param string $position where the node should be added (allowed: before, into, after)
@@ -154,7 +155,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @throws \InvalidArgumentException
 	 * @ExtDirect
 	 */
-	public function createAndRenderAction(\TYPO3\TYPO3CR\Domain\Model\Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
+	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
 		if ($position !== 'into') {
 				// We are creating a node *inside* another section; so the client side
@@ -180,7 +181,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Creates a new node and returns tree structure
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
@@ -188,7 +189,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @todo maybe the actual creation should be put in a helper / service class
 	 * @ExtDirect
 	 */
-	public function createNodeForTheTreeAction(\TYPO3\TYPO3CR\Domain\Model\Node $referenceNode, array $nodeData, $position) {
+	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
 
 		$idealNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($newNode->hasProperty('title') ? $newNode->getProperty('title') : uniqid('node'));
@@ -204,13 +205,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @return Node
 	 * @throws \InvalidArgumentException
 	 */
-	protected function createNewNode(\TYPO3\TYPO3CR\Domain\Model\Node $referenceNode, array $nodeData, $position) {
+	protected function createNewNode(Node $referenceNode, array $nodeData, $position) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
 		}
@@ -245,14 +246,14 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Move $node before, into or after $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @ExtDirect
 	 */
-	public function moveAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode, $position) {
+	public function moveAction(Node $node, Node $targetNode, $position) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
 		}
@@ -275,12 +276,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Move $node before $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function moveBeforeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode) {
+	public function moveBeforeAction(Node $node, Node $targetNode) {
 		$node->moveBefore($targetNode);
 		$this->view->assign('value', array('success' => TRUE));
 	}
@@ -288,12 +289,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Move $node after $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode) {
+	public function moveAfterAction(Node $node, Node $targetNode) {
 		$node->moveAfter($targetNode);
 		$this->view->assign('value', array('success' => TRUE));
 	}
@@ -301,12 +302,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Move $node into $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function moveIntoAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode) {
+	public function moveIntoAction(Node $node, Node $targetNode) {
 		$node->moveInto($targetNode);
 		$this->view->assign('value', array('success' => TRUE));
 	}
@@ -314,15 +315,15 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Copy $node before, into or after $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @ExtDirect
 	 */
-	public function copyAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode, $position, $nodeName = '') {
+	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = '') {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
 		}
@@ -347,13 +348,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Copy $node before $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function copyBeforeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode, $nodeName = '') {
+	public function copyBeforeAction(Node $node, Node $targetNode, $nodeName = '') {
 		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
 		$node->copyBefore($targetNode, $nodeName);
 		$this->view->assign('value', array('success' => TRUE));
@@ -362,13 +363,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Copy $node after $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function copyAfterAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode, $nodeName = '') {
+	public function copyAfterAction(Node $node, Node $targetNode, $nodeName = '') {
 		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
 		$node->copyAfter($targetNode, $nodeName);
 		$this->view->assign('value', array('success' => TRUE));
@@ -377,13 +378,13 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Copy $node into $targetNode
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param Node $node
+	 * @param Node $targetNode
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function copyIntoAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, \TYPO3\TYPO3CR\Domain\Model\Node $targetNode, $nodeName = '') {
+	public function copyIntoAction(Node $node, Node $targetNode, $nodeName = '') {
 		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
 		$node->copyInto($targetNode, $nodeName);
 		$this->view->assign('value', array('success' => TRUE));
@@ -397,11 +398,11 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * Note: We do not call $nodeDataRepository->update() here, as TYPO3CR has a stateful API for now.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	public function updateAction(Node $node) {
 		$closestDocumentNode = $node;
 		while (!$closestDocumentNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 			$closestDocumentNode = $closestDocumentNode->getParent();
@@ -413,11 +414,11 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	/**
 	 * Deletes the specified node and all of its sub nodes
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function deleteAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	public function deleteAction(Node $node) {
 		$node->remove();
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
@@ -466,10 +467,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * Returns an array with the data needed by for example the Hallo and Aloha
 	 * link plugins to represent the passed Node instance.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @return array
 	 */
-	protected function processNodeForEditorPlugins(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	protected function processNodeForEditorPlugins(Node $node) {
 		return array(
 			'id' => $node->getPath(),
 			'name' => $node->getLabel(),
