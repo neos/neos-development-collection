@@ -19,7 +19,7 @@ use TYPO3\Flow\Annotations as Flow;
  * = Examples =
  *
  * <code title="Defaults">
- * <typo3:link.module path="system/useradmin">some link</typo3:link.module>
+ * <neos:link.module path="system/useradmin">some link</neos:link.module>
  * </code>
  *
  * Output:
