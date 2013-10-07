@@ -12,6 +12,7 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A TypoScript Menu object
@@ -200,13 +201,13 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	/**
 	 * Recursively called method which builds the actual items array.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode The parent node whose children should be listed as items
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
+	 * @param NodeInterface $entryParentNode The parent node whose children should be listed as items
+	 * @param NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
 	 * @see buildItems()
 	 */
-	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode, $lastParentNode, $currentLevel = 1) {
+	private function buildRecursiveItemsArray(NodeInterface $entryParentNode, NodeInterface $lastParentNode = NULL, $currentLevel = 1) {
 		$items = array();
 		foreach ($entryParentNode->getChildNodes('TYPO3.Neos:Document') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
@@ -246,11 +247,11 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * current node whose level matches the specified entry level.
 	 *
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node of the node at the specified level or NULL if none was found
+	 * @param NodeInterface $currentSiteNode
+	 * @param NodeInterface $startingPoint
+	 * @return NodeInterface The parent node of the node at the specified level or NULL if none was found
 	 */
-	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint) {
+	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, NodeInterface $currentSiteNode, NodeInterface $startingPoint) {
 		$parentNode = NULL;
 		$breadcrumbNodes = $currentSiteNode->getContext()->getNodesOnPath($currentSiteNode, $startingPoint);
 
