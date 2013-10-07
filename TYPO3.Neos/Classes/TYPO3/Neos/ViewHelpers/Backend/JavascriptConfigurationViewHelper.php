@@ -12,12 +12,13 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * ViewHelper for the backend 'container'. Renders the required HTML to integrate
  * the Neos backend into a website.
  */
-class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @var array
@@ -49,6 +50,12 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 	protected $i18nService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @return string
 	 */
 	public function render() {
@@ -71,6 +78,7 @@ class JavascriptConfigurationViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abs
 
 		$configuration = array(
 			'window.T3Configuration = {};',
+			'window.T3Configuration.CsrfToken = ' . json_encode($this->securityContext->getCsrfProtectionToken()) . ';',
 			'window.T3Configuration.NodeTypeSchemaUri = ' . json_encode($nodeTypeSchemaUri) . ';',
 			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
 			'window.T3Configuration.MenuDataUri = ' . json_encode($menuDataUri) . ';',

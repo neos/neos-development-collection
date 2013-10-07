@@ -3,9 +3,10 @@ define(
 	'emberjs',
 	'text!./FileUpload.html',
 	'Library/plupload',
-	'Shared/Notification'
+	'Shared/Notification',
+	'Shared/Configuration'
 ],
-function(Ember, template, plupload, Notification) {
+function(Ember, template, plupload, Notification, Configuration) {
 	return Ember.View.extend({
 		value: '',
 
@@ -76,6 +77,7 @@ function(Ember, template, plupload, Notification) {
 			});
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
+				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
 				uploader.settings.multipart_params['image[type]'] = 'plupload';
 				uploader.settings.multipart_params['image[fileName]'] = file.name;
 			});
