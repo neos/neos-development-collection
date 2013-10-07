@@ -34,6 +34,7 @@ prototype(TYPO3.Neos.NodeTypes:Image) {
 	caption = ${q(node).property('caption')}
 	maximumWidth = 2560
 	maximumHeight = 2560
+	imageClassName = ''
 }
 
 # Text TS Object
@@ -55,7 +56,7 @@ prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
 prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/MultiColumn.html'
-	layout = ${q(node).property('layout')}
+	className = ${'container columns-' + q(node).property('layout')}
 	columns = TYPO3.TypoScript:Collection
 	columns {
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
@@ -68,6 +69,7 @@ prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
 prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/MultiColumnItem.html'
+	className = 'column'
 	columnContent = TYPO3.Neos:ContentCollection
 	columnContent {
 		nodePath = '.'
