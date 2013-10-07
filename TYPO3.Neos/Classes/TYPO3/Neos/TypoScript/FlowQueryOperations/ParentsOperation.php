@@ -11,14 +11,17 @@ namespace TYPO3\Neos\TypoScript\FlowQueryOperations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * "parents" operation working on TYPO3CR nodes. It iterates over all
  * context elements and returns the parent nodes or only those matching
  * the filter expression specified as optional argument.
  */
-class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation {
+class ParentsOperation extends AbstractOperation {
 
 	/**
 	 * {@inheritdoc}
@@ -41,17 +44,17 @@ class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
+		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
 	}
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery the FlowQuery object
+	 * @param FlowQuery $flowQuery the FlowQuery object
 	 * @param array $arguments the arguments for this operation
 	 * @return void
 	 */
-	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
+	public function evaluate(FlowQuery $flowQuery, array $arguments) {
 		$output = array();
 		$outputNodePaths = array();
 		foreach ($flowQuery->getContext() as $contextNode) {

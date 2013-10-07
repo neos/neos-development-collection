@@ -12,6 +12,7 @@ namespace TYPO3\Neos\TypoScript\FlowQueryOperations;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * This filter implementation contains specific behavior for use on TYPO3CR
@@ -42,7 +43,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return (isset($context[0]) && ($context[0] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface));
+		return (isset($context[0]) && ($context[0] instanceof NodeInterface));
 	}
 
 	/**
