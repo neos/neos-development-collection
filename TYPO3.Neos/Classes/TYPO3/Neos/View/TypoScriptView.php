@@ -12,7 +12,6 @@ namespace TYPO3\Neos\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Controller for displaying nodes in the frontend
