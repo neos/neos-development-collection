@@ -53,7 +53,7 @@ Next the TypoScript rendering for the content element has to be defined. By conv
 a TypoScript object with the same name as the content element is used for rendering; thus
 in this case a TypoScript object `My.Package:YouTube`::
 
-	prototype(Acme.Demo:YouTube) < prototype(TYPO3.TypoScript:Template) {
+	prototype(Acme.Demo:YouTube) < prototype(TYPO3.Neos:Template) {
 		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/YouTube.html'
 		videoUrl = ${q(node).property('videoUrl')}
 		width = '640'
@@ -148,7 +148,7 @@ The node type definition must define which properties are inline editable throug
 The TypoScript for the content element is the same as for a non-inline-editable content
 element::
 
-	prototype(Acme.Demo:Quote) < prototype(TYPO3.TypoScript:Template) {
+	prototype(Acme.Demo:Quote) < prototype(TYPO3.Neos:Template) {
 		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/Quote.html'
 		quote = ${q(node).property('quote')}
 	}
@@ -210,7 +210,7 @@ can contain two texts and two videos.
 
 #. The needed TypoScript is created::
 
-	prototype(Acme.Demo:VideoGrid) < prototype(TYPO3.TypoScript:Template) {
+	prototype(Acme.Demo:VideoGrid) < prototype(TYPO3.Neos:Template) {
 		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/VideoGrid.html'
 
 		videoRenderer = Acme.Demo:YouTube
