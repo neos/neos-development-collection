@@ -3,5 +3,5 @@
 #
 
 page1.body.content.sidebar.prototype(TYPO3.Neos.NodeTypes:Headline).title = 'Static Headline'
-page1.body.content.sidebar.prototype(TYPO3.Neos.NodeTypes:Headline).title << 1.wrap(prefix: '<div class="processor-wrap">BEFORE', suffix: 'AFTER</div>')
-prototype(TYPO3.Neos.NodeTypes:Headline).title << 2.wrap(prefix: '<header>', suffix: '</header>')
+page1.body.content.sidebar.prototype(TYPO3.Neos.NodeTypes:Headline).title.@process.1 = ${'<div class="processor-wrap">BEFORE' + value + 'AFTER</div>'}
+prototype(TYPO3.Neos.NodeTypes:Headline).title.@process.2 = ${'<header>' + value + '</header>'}

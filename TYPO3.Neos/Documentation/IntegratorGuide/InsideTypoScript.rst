@@ -369,32 +369,31 @@ Processors
 ==========
 
 Processors allow the manipulation of values in TypoScript properties. A processor is applied to
-a property using a simple syntax::
+a property using the `@process` meta-property::
 
 	myObject = MyObject {
 		value = 'some value'
-		value << 1.wrap(prefix: 'before ', suffix: ' after')
+		value.@process.1 = ${'before ' + value + ' after'}
 	}
 	# results in 'before some value after'
 
 Multiple processors can be used, their execution order is defined by the numeric position given
-in the TypoScript. In the example above a `2.wrap()` would run on the results of `1.wrap()`.
+in the TypoScript after `@process`. In the example above a `@process.2` would run on the results of `@process.1`.
 
-Processors are PHP classes implementing the `TYPO3\TypoScript\ProcessorInterface`, which mandates
-only the `process($subject)` method. The value returned from this method is used as the result
-of the processor.
+Additionally, an extended syntax can be used as well::
 
-The processor name can be given in short form or as a fully qualified object name. If given in short
-form, the processor will be looked up in the default PHP namespace of `TYPO3\TypoScript\Processors`
-by making it's first character uppercase and appending `Processor` to it. If the fully qualified
-object name is given, then it will be used as is. This allows the use of custom processors. The
-following declarations are equivalent::
+	myObject = MyObject {
+		value = 'some value'
+		value.@process.someWrap {
+			expression = ${'before ' + value + ' after'}
+			@position = 'start'
+		}
+	}
 
-	value << 1.wrap(prefix: 'before ', suffix: ' after')
-	value << 1.TYPO3\TypoScript\Processors\WrapProcessor(prefix: 'before ', suffix: ' after')
+This allows to use string keys for the processor name, and support `@position` arguments as explained for Arrays.
 
-A reference of all processors defined in TYPO3.TypoScript can be found in the
-:ref:`TypoScript Processor Reference`.
+
+Processors are Eel Expressions or TypoScript objects operating on the `value` property of the context.
 
 Important TypoScript objects and patterns
 =========================================

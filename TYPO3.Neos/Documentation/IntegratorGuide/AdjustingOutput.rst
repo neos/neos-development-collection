@@ -197,10 +197,8 @@ Neos.NodeTypes:
 	prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu)
 	prototype(TYPO3.Neos.NodeTypes:Menu) {
 		templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
-		entryLevel = ${q(node).property('startLevel')}
-		entryLevel << 1.toInteger()
-		maximumLevels = ${q(node).property('maximumLevels')}
-		maximumLevels << 1.toInteger()
+		entryLevel = ${String.toInteger(q(node).property('startLevel'))}
+		maximumLevels = ${String.toInteger(q(node).property('maximumLevels'))}
 		node = ${node}
 	}
 

@@ -66,9 +66,7 @@ root {
 	format {
 		@position = 'end 9998'
 		condition = ${request.format != 'html'}
-		renderPath = ${request.format}
-		renderPath << 1.replace(search: '.', replace: '/')
-		renderPath << 2.wrap(prefix: '/')
+		renderPath = ${'/' + String.replace(request.format, '.', '/')}
 	}
 
 	default {

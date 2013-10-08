@@ -3,4 +3,4 @@
 #
 
 prototype(Acme.Demo:ThreeColumn).prototype(TYPO3.Neos.NodeTypes:Headline).title = 'Static Headline'
-prototype(Acme.Demo:ThreeColumn).prototype(TYPO3.Neos.NodeTypes:Headline).title << 1.wrap(prefix: '<header>', suffix: '</header>')
+prototype(Acme.Demo:ThreeColumn).prototype(TYPO3.Neos.NodeTypes:Headline).title.@process.1 = ${'<header>' + value + '</header>'}
