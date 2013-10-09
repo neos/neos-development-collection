@@ -28,11 +28,11 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	protected $nodePath;
 
 	/**
-	 * additional CSS classes to be applied to the content collection
+	 * additional CSS class names to be applied to the content collection
 	 *
 	 * @var string
 	 */
-	protected $class;
+	protected $className;
 
 	/**
 	 * @Flow\Inject
@@ -60,22 +60,22 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
-	 * additional CSS classes to be applied to the content collection
+	 * additional CSS class names to be applied to the content collection
 	 *
-	 * @param string $class
+	 * @param string $className
 	 * @return void
 	 */
-	public function setClass($class) {
-		$this->class = $class;
+	public function setClassName($className) {
+		$this->className = $className;
 	}
 
 	/**
-	 * additional CSS classes to be applied to the content collection
+	 * additional CSS class names to be applied to the content collection
 	 *
 	 * @return string
 	 */
-	public function getClass() {
-		return $this->tsValue('class');
+	public function getClassName() {
+		return $this->tsValue('className');
 	}
 
 	/**
@@ -94,12 +94,12 @@ class ContentCollectionImplementation extends CollectionImplementation {
 		$tagBuilder->forceClosingTag(TRUE);
 		$tagBuilder->setContent($output);
 
-		$class = 'neos-contentcollection';
-		$additionalClass = $this->tsValue('class');
+		$className = 'neos-contentcollection';
+		$additionalClass = $this->tsValue('className');
 		if ($additionalClass) {
-			$class .= ' ' . $additionalClass;
+			$className .= ' ' . $additionalClass;
 		}
-		$tagBuilder->addAttribute('class', $class);
+		$tagBuilder->addAttribute('class', $className);
 
 		try {
 			$this->accessDecisionManager->decideOnResource('TYPO3_Neos_Backend_GeneralAccess');
