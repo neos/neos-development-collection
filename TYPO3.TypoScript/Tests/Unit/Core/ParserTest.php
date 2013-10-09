@@ -679,21 +679,15 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 15.');
 	}
 
-	/**
-	 * @test
-	 */
-	public function parserCorrectlyParsesFixture16($fixtureNumber = 16) {
-		$fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture' . $fixtureNumber . '.ts2';
-		$sourceCode = file_get_contents($fixture, FILE_TEXT);
-
+	protected function getExpectedParseTreeForFixture16() {
 		$expectedParseTree = array(
 			'__prototypes' => array(
 				'TYPO3.Foo:Bar' => array(
 					'baz' => 'Hallo'
 				),
 				'TYPO3.Foo:Bar2' => array(
-						'baz' => 'Foo',
-						'test2' => 42
+					'baz' => 'Foo',
+					'test2' => 42
 				),
 				'Foo.Bar:Baz' => array(
 					'__prototypes' => array(
@@ -701,6 +695,11 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 							'test' => 'asdf'
 						)
 					)
+				),
+				'TYPO3.Foo:Bar3' => array(
+					'baz' => 'Foo',
+					'test2' => 42,
+					'__prototypeObjectName' => 'TYPO3.Foo:Bar2'
 				)
 			),
 			'test' => array(
@@ -731,15 +730,36 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			)
 		);
 
+		return $expectedParseTree;
+	}
+
+	/**
+	 * @test
+	 */
+	public function parserCorrectlyParsesFixture16() {
+		$fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16.ts2';
+		$sourceCode = file_get_contents($fixture, FILE_TEXT);
+
+		$expectedParseTree = $this->getExpectedParseTreeForFixture16();
+
 		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture ' . $fixtureNumber);
+		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
 	}
 
 	/**
 	 * @test
 	 */
 	public function parserCorrectlyParsesFixture17() {
-		$this->parserCorrectlyParsesFixture16(17);
+		$fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture17.ts2';
+		$sourceCode = file_get_contents($fixture, FILE_TEXT);
+
+		$expectedParseTree = $this->getExpectedParseTreeForFixture16();
+		$expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
+		$expectedParseTree['__prototypes']['TYPO3.Foo:Bar3']['baz'] = 'New Value';
+
+		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
+		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
+
 	}
 
 	/**

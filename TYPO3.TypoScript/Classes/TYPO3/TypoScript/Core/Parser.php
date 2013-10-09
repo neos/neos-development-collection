@@ -587,7 +587,7 @@ class Parser implements ParserInterface {
 			if (!file_exists($include)) {
 				throw new Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
 			}
-			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree);
+			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree, FALSE);
 		} elseif ($this->contextPathAndFilename !== NULL) {
 			$include = dirname($this->contextPathAndFilename) . '/' . $include;
 			if (!file_exists($include)) {
