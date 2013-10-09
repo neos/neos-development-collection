@@ -1,8 +1,8 @@
 @import "compass";
 @import "Foundation/variables"; // Modify this for custom colors, font-sizes, etc
 @import "Foundation/mixins";
-//@import "Constants";
-//@import "Mixins";
+@import "Constants";
+@import "Mixins";
 
 $darkGray: #444;
 $orange: #FF8700;

@@ -102,21 +102,23 @@
 								</td>
 								<td>
 									<div class="neos-pull-right">
-										<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{electronicAddress.type}">
+										<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{electronicAddress.type}">
 											<i class="icon-trash icon-white"></i>
 										</button>
-										<div class="neos-modal neos-hide" id="{electronicAddress.type}">
-											<div class="neos-modal-header">
-												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-												<div class="neos-header">Are you sure you want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
+										<div class="neos-hide" id="{electronicAddress.type}">
+											<div class="neos-modal">
+												<div class="neos-modal-header">
+													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+													<div class="neos-header">Are you sure you want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
+												</div>
+												<div class="neos-modal-footer">
+													<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+													<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="neos-button neos-button-danger" title="Delete">
+														Delete
+													</button>
+												</div>
 											</div>
-											<div class="neos-modal-footer">
-												<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
-												<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="neos-btn neos-btn-danger neos-button" title="Delete">
-													<i class="icon-trash icon-white"></i>
-													Delete
-												</button>
-											</div>
+											<div class="neos-modal-backdrop neos-in"></div>
 										</div>
 									</div>
 								</td>
@@ -125,8 +127,7 @@
 						</tbody>
 					</table>
 					<div class="neos-pull-right">
-						<f:link.action action="newElectronicAddress" arguments="{account: account}" class="neos-btn neos-button neos-btn-primary" title="Click to add a new Electronic address">
-							<i class="icon-plus-sign icon-white"></i>
+						<f:link.action action="newElectronicAddress" arguments="{account: account}" class="neos-button neos-button-primary" title="Click to add a new Electronic address">
 							Add electronic address
 						</f:link.action>
 					</div>
@@ -135,9 +136,9 @@
 		</div>
 
 		<div class="neos-form-actions neos-form-footer">
-			<f:link.action action="index" class="neos-btn neos-button">Cancel</f:link.action>
+			<f:link.action action="index" class="neos-button">Cancel</f:link.action>
 			<div class="neos-pull-right">
-				<f:form.submit value="Save" class="neos-btn neos-btn-primary neos-button" />
+				<f:form.submit value="Save" class="neos-button neos-button-primary" />
 			</div>
 		</div>
 	</f:form>

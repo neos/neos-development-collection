@@ -28,26 +28,26 @@
 						</td>
 						<td>
 							<div class="neos-pull-right">
-								<f:link.action action="edit" arguments="{site: site}" class="neos-btn neos-button" title="Click to edit">
+								<f:link.action action="edit" arguments="{site: site}" class="neos-button" title="Click to edit">
 									<i class="icon-pencil icon-white"></i>
 								</f:link.action>
 								<f:if condition="{site.state} == 1">
 									<f:then>
 										<f:form action="deactivateSite" arguments="{site: site}" class="neos-inline">
-											<button class="neos-btn neos-btn-warning neos-button" title="Click to deactivate">
+											<button class="neos-button neos-button-warning" title="Click to deactivate">
 												<i class="icon-minus-sign icon-white"></i>
 											</button>
 										</f:form>
 									</f:then>
 									<f:else>
 										<f:form action="activateSite" arguments="{site: site}" class="neos-inline">
-											<button class="neos-btn neos-btn-success neos-button" title="Click to activate">
+											<button class="neos-button neos-button-success" title="Click to activate">
 												<i class="icon-plus-sign icon-white"></i>
 											</button>
 										</f:form>
 									</f:else>
 								</f:if>
-								<button class="neos-btn neos-btn-danger neos-button" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
+								<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
 									<i class="icon-trash icon-white"></i>
 								</button>
 								<div class="neos-hide"id="{site.nodeName}">
@@ -57,10 +57,9 @@
 											<div class="neos-header">Are you sure you want to delete "{site.name}"?</div>
 										</div>
 										<div class="neos-modal-footer">
-											<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
+											<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 											<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
-												<button class="neos-btn neos-btn-danger neos-button" title="Delete">
-													<i class="icon-trash icon-white"></i>
+												<button class="neos-button neos-button-danger" title="Delete">
 													Delete
 												</button>
 											</f:form>
@@ -77,8 +76,7 @@
 	</div>
 	<div class="neos-form-actions neos-form-footer">
 		<div class="neos-pull-right">
-			<f:link.action action="newSite" class="neos-btn neos-btn-success neos-button" title="Click to add a new site">
-				<i class="icon-plus-sign icon-white"></i>
+			<f:link.action action="newSite" class="neos-button neos-button-success" title="Click to add a new site">
 				Add site
 			</f:link.action>
 		</div>

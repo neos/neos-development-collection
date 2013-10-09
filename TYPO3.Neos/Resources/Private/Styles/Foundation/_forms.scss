@@ -463,7 +463,7 @@ select:focus:invalid {
     border: 1px solid #ccc;
   }
   .neos-add-on,
-  .neos-btn,
+  .neos-button,
   .neos-btn-group > .neos-dropdown-toggle {
     vertical-align: top;
     @include border-radius(0);
@@ -476,11 +476,11 @@ select:focus:invalid {
 
 .neos-input-prepend {
   .neos-add-on,
-  .neos-btn {
+  .neos-button {
     margin-right: -1px;
   }
   .neos-add-on:first-child,
-  .neos-btn:first-child {
+  .neos-button:first-child {
     // FYI, `.neos-btn:first-child` accounts for a button group that's prepended
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
   }
@@ -491,17 +491,17 @@ select:focus:invalid {
   select,
   .neos-uneditable-input {
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
-    + .neos-btn-group .neos-btn:last-child {
+    + .neos-btn-group .neos-button:last-child {
       @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
     }
   }
   .neos-add-on,
-  .neos-btn,
+  .neos-button,
   .neos-btn-group {
     margin-left: -1px;
   }
   .neos-add-on:last-child,
-  .neos-btn:last-child,
+  .neos-button:last-child,
   .neos-btn-group:last-child > .neos-dropdown-toggle {
     @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
   }
@@ -513,17 +513,17 @@ select:focus:invalid {
   select,
   .neos-uneditable-input {
     @include border-radius(0);
-    + .neos-btn-group .neos-btn {
+    + .neos-btn-group .neos-button {
       @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
     }
   }
   .neos-add-on:first-child,
-  .neos-btn:first-child {
+  .neos-button:first-child {
     margin-right: -1px;
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
   }
   .neos-add-on:last-child,
-  .neos-btn:last-child {
+  .neos-button:last-child {
     margin-left: -1px;
     @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
   }
@@ -555,13 +555,13 @@ input.neos-search-query {
 .neos-form-search .neos-input-append .neos-search-query {
   @include border-radius(14px 0 0 14px);
 }
-.neos-form-search .neos-input-append .neos-btn {
+.neos-form-search .neos-input-append .neos-button {
   @include border-radius(0 14px 14px 0);
 }
 .neos-form-search .neos-input-prepend .neos-search-query {
   @include border-radius(0 14px 14px 0);
 }
-.neos-form-search .neos-input-prepend .neos-btn {
+.neos-form-search .neos-input-prepend .neos-button {
   @include border-radius(14px 0 0 14px);
 }
 

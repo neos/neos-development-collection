@@ -6,14 +6,14 @@
 		</div>
 	</div>
 	<div class="neos-modal-footer">
-		<button class="neos-button neos-btn neos-btn-danger" {{action "revert" target="view"}}>Throw away</button>
-		<button class="neos-button neos-btn" {{action "cancel" target="view"}}>Continue editing</button>
+		<button class="neos-button neos-button-danger" {{action "revert" target="view"}}>Throw away</button>
+		<button class="neos-button" {{action "cancel" target="view"}}>Continue editing</button>
 		{{#if hasValidationErrors}}
-			<button class="neos-button neos-btn neos-btn-success neos-disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
-				<i class="icon-warning-sign"></i> Apply
+			<button class="neos-button neos-button-success neos-disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
+				Apply
 			</button>
 		{{else}}
-			<button class="neos-button neos-btn neos-btn-success" {{action "apply" target="view"}}>Apply</button>
+			<button class="neos-button neos-button-success" {{action "apply" target="view"}}>Apply</button>
 		{{/if}}
 	</div>
 </div>

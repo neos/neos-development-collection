@@ -15,27 +15,25 @@
 		border: 0px;
 	}
 
-	.neos-button {
-		&.neos-close {
-			margin: 0;
-			color: #fff;
-			font-size: 18px;
-			line-height: 100%;
-			width: $unit;
-			height: $unit;
-			border-left: 1px solid $grayLight;
-			@include text-shadow(none);
-			@include opacity(1);
-			@include icon-FontAwesome();
-			@include box-sizing(border-box);
+	.neos-close {
+		margin: 0;
+		color: #fff;
+		font-size: 18px;
+		line-height: 100%;
+		width: $unit;
+		height: $unit;
+		border-left: 1px solid $grayLight;
+		@include text-shadow(none);
+		@include opacity(1);
+		@include icon-FontAwesome();
+		@include box-sizing(border-box);
 
-			&:before {
-				content: $remove;
-			}
+		&:before {
+			content: $remove;
+		}
 
-			&:hover {
-				background: $blue;
-			}
+		&:hover {
+			background: $blue;
 		}
 	}
 

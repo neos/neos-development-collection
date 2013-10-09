@@ -68,16 +68,10 @@ a {
 }
 
 // Quick fix for labels/badges in buttons
-.neos-btn {
+.neos-button {
   .neos-label,
   .neos-badge {
     position: relative;
     top: -1px;
-  }
-}
-.neos-btn-mini {
-  .neos-label,
-  .neos-badge {
-    top: 0;
   }
 }

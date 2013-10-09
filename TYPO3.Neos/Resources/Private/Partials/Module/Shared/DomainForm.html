@@ -24,9 +24,9 @@
 </div>
 <div class="neos-form-actions neos-form-footer">
 	<div class="neos-pull-left">
-		<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="neos-btn neos-button">Cancel</f:link.action>
+		<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="neos-button">Cancel</f:link.action>
 	</div>
 	<div class="neos-pull-right">
-		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save')}" class="neos-btn neos-btn-primary neos-button" />
+		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save')}" class="neos-button neos-button-primary" />
 	</div>
 </div>

@@ -147,15 +147,6 @@ button.neos-create-new-content {
 	margin-bottom: 20px;
 }
 
-// connection status indication
-
-button.neos-button.neos-connection-status-up {
-}
-
-button.neos-button.neos-connection-status-down {
-	border: 1px solid #c02f00;
-}
-
 // Alert Windows
 .neos-alert {
 	p {
@@ -204,7 +195,7 @@ button.neos-button.neos-connection-status-down {
 	width: auto !important;
 	max-width: 210px;
 
-	.neos-btn {
+	.neos-button {
 		width: 28px;
 		height: 23px;
 		margin-right: 0;
@@ -225,28 +216,28 @@ button.neos-button.neos-connection-status-down {
 		margin-right: 5px;
 		margin-top: 5px;
 
-		.neos-btn {
+		.neos-button {
 			position: relative;
 			@include border-radius(0);
 		}
 
 		span + span {
-			.neos-btn {
+			.neos-button {
 				margin-left: -1px;
 			}
 		}
 
-		span:first-child .neos-btn {
+		span:first-child .neos-button {
 			@include border-top-left-radius(4px);
 			@include border-bottom-left-radius(4px);
 		}
 
-		span:last-child .neos-btn {
+		span:last-child .neos-button {
 			@include border-top-right-radius(4px);
 			@include border-bottom-right-radius(4px);
 		}
 
-		div.neos-dropdown-menu + span .neos-btn {
+		div.neos-dropdown-menu + span .neos-button {
 			@include border-top-left-radius(4px);
 			@include border-bottom-left-radius(4px);
 		}

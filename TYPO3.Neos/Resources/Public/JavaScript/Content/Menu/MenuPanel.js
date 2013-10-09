@@ -18,7 +18,7 @@ define(
 
 			StickyMenuButton: Ember.View.extend({
 				tagName: 'div',
-				classNames: ['neos-btn', 'neos-button', 'neos-menu-stickybutton'],
+				classNames: ['neos-button', 'neos-menu-stickybutton'],
 				classNameBindings: ['_menuIsSticky:neos-menu-stickybutton neos-pressed:neos-menu-stickybutton'],
 				_menuIsSticky: null,
 

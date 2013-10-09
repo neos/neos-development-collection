@@ -7,8 +7,8 @@
 		.neos-dropdown-toggle {
 			background-color: $orange;
 			cursor: pointer;
-			border-right: 1px solid $orange;
 			@include opacity(1);
+			@include box-shadow(none);
 		}
 	}
 
@@ -29,6 +29,7 @@
 		font-size: $generalFontSize;
 		cursor: default;
 		@include opacity(.5);
+		margin-right: 2px;
 
 		&.neos-connection-status-down {
 			background-color: $warning;
@@ -43,8 +44,6 @@
 		background-color: $green;
 		line-height: 0;
 		@include box-sizing(content-box);
-		border-right: 1px solid $green;
-		border-left: 1px solid $grayDark;
 		@include opacity(.5);
 
 		&::before {

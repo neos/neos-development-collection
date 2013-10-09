@@ -35,14 +35,14 @@
 	<div class="neos-form-actions neos-form-footer">
 		<f:if condition="{account}">
 			<f:then>
-				<f:link.action action="edit" arguments="{account: account}" class="neos-btn neos-button">Cancel</f:link.action>
+				<f:link.action action="edit" arguments="{account: account}" class="neos-button">Cancel</f:link.action>
 			</f:then>
 			<f:else>
-				<f:link.action action="index" class="neos-btn neos-button">Cancel</f:link.action>
+				<f:link.action action="index" class="neos-button">Cancel</f:link.action>
 			</f:else>
 		</f:if>
 		<div class="neos-pull-right">
-			<f:form.submit value="Save" class="neos-btn neos-btn-primary neos-button" />
+			<f:form.submit value="Save" class="neos-button neos-button-primary" />
 		</div>
 	</div>
 </f:form>

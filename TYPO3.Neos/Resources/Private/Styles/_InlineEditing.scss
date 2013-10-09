@@ -16,14 +16,10 @@
 			border-bottom: 0px;
 			background-color: #eee;
 
-			.neos-btn {
-				background: none;
-				background-image: none;
+			.neos-button {
+				background-color: transparent;
 				width: 32px;
 				height: 32px;
-				@include box-sizing(border-box);
-				@include box-shadow(none);
-				border: none;
 
 				&:hover {
 					background-color: #e6e6e6;
@@ -38,14 +34,20 @@
 					}
 				}
 
+				[class^="icon-"],
+				[class*=" icon-"] {
+					margin-left: -6px;
+					margin-top: -10px;
+				}
+
 				i {
 					color: #000;
 					@include text-shadow(none);
 				}
 			}
 
-			.neos-btn:last-child {
-				@include border-radius(0);
+			.neos-button:last-child {
+				//@include border-radius(0);
 			}
 		}
 	}

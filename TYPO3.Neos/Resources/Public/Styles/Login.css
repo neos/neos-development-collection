@@ -2469,10 +2469,10 @@ body {
   border: 1px solid #ccc;
 }
 .neos .neos-input-append .neos-add-on,
-.neos .neos-input-append .neos-btn,
+.neos .neos-input-append .neos-button,
 .neos .neos-input-append .neos-btn-group > .neos-dropdown-toggle,
 .neos .neos-input-prepend .neos-add-on,
-.neos .neos-input-prepend .neos-btn,
+.neos .neos-input-prepend .neos-button,
 .neos .neos-input-prepend .neos-btn-group > .neos-dropdown-toggle {
   vertical-align: top;
   -webkit-border-radius: 0;
@@ -2485,11 +2485,11 @@ body {
   border-color: #00a338;
 }
 .neos .neos-input-prepend .neos-add-on,
-.neos .neos-input-prepend .neos-btn {
+.neos .neos-input-prepend .neos-button {
   margin-right: -1px;
 }
 .neos .neos-input-prepend .neos-add-on:first-child,
-.neos .neos-input-prepend .neos-btn:first-child {
+.neos .neos-input-prepend .neos-button:first-child {
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
@@ -2501,20 +2501,20 @@ body {
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
 }
-.neos .neos-input-append input + .neos-btn-group .neos-btn:last-child,
-.neos .neos-input-append select + .neos-btn-group .neos-btn:last-child,
-.neos .neos-input-append .neos-uneditable-input + .neos-btn-group .neos-btn:last-child {
+.neos .neos-input-append input + .neos-btn-group .neos-button:last-child,
+.neos .neos-input-append select + .neos-btn-group .neos-button:last-child,
+.neos .neos-input-append .neos-uneditable-input + .neos-btn-group .neos-button:last-child {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
 }
 .neos .neos-input-append .neos-add-on,
-.neos .neos-input-append .neos-btn,
+.neos .neos-input-append .neos-button,
 .neos .neos-input-append .neos-btn-group {
   margin-left: -1px;
 }
 .neos .neos-input-append .neos-add-on:last-child,
-.neos .neos-input-append .neos-btn:last-child,
+.neos .neos-input-append .neos-button:last-child,
 .neos .neos-input-append .neos-btn-group:last-child > .neos-dropdown-toggle {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
@@ -2527,22 +2527,22 @@ body {
   -moz-border-radius: 0;
   border-radius: 0;
 }
-.neos .neos-input-prepend.neos-input-append input + .neos-btn-group .neos-btn,
-.neos .neos-input-prepend.neos-input-append select + .neos-btn-group .neos-btn,
-.neos .neos-input-prepend.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-btn {
+.neos .neos-input-prepend.neos-input-append input + .neos-btn-group .neos-button,
+.neos .neos-input-prepend.neos-input-append select + .neos-btn-group .neos-button,
+.neos .neos-input-prepend.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-button {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
 }
 .neos .neos-input-prepend.neos-input-append .neos-add-on:first-child,
-.neos .neos-input-prepend.neos-input-append .neos-btn:first-child {
+.neos .neos-input-prepend.neos-input-append .neos-button:first-child {
   margin-right: -1px;
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
 }
 .neos .neos-input-prepend.neos-input-append .neos-add-on:last-child,
-.neos .neos-input-prepend.neos-input-append .neos-btn:last-child {
+.neos .neos-input-prepend.neos-input-append .neos-button:last-child {
   margin-left: -1px;
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
@@ -2573,7 +2573,7 @@ body {
   -moz-border-radius: 14px 0 0 14px;
   border-radius: 14px 0 0 14px;
 }
-.neos .neos-form-search .neos-input-append .neos-btn {
+.neos .neos-form-search .neos-input-append .neos-button {
   -webkit-border-radius: 0 14px 14px 0;
   -moz-border-radius: 0 14px 14px 0;
   border-radius: 0 14px 14px 0;
@@ -2583,7 +2583,7 @@ body {
   -moz-border-radius: 0 14px 14px 0;
   border-radius: 0 14px 14px 0;
 }
-.neos .neos-form-search .neos-input-prepend .neos-btn {
+.neos .neos-form-search .neos-input-prepend .neos-button {
   -webkit-border-radius: 14px 0 0 14px;
   -moz-border-radius: 14px 0 0 14px;
   border-radius: 14px 0 0 14px;
@@ -2791,7 +2791,7 @@ body {
   padding: 0px;
   border: 0px;
 }
-.neos .neos-modal .neos-button.neos-close {
+.neos .neos-modal .neos-close {
   margin: 0;
   color: #fff;
   font-size: 18px;
@@ -2812,10 +2812,10 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-modal .neos-button.neos-close:before {
+.neos .neos-modal .neos-close:before {
   content: "\f00d";
 }
-.neos .neos-modal .neos-button.neos-close:hover {
+.neos .neos-modal .neos-close:hover {
   background: #00b5ff;
 }
 .neos .neos-modal .neos-header {

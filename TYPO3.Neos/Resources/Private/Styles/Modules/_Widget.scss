@@ -78,12 +78,12 @@
 		clear: both;
 	}
 
-	.widget-footer .neos-btneos-btn .neos-btn {
+	.widget-footer .neos-btn-group .neos-button {
 		margin-bottom: 0;
 		margin-left: 5px;
 	}
 
-	.widget-footer .neos-btn-group .neos-btn + .neos-btn {
+	.widget-footer .neos-btn-group .neos-button + .neos-button {
 		margin-left: -1px;
 	}
 }

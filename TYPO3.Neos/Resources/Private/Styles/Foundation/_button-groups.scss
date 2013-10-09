@@ -24,22 +24,22 @@
   font-size: 0; // Hack to remove whitespace that results from using inline-block
   margin-top: $baseLineHeight / 2;
   margin-bottom: $baseLineHeight / 2;
-  > .neos-btn + .neos-btn,
-  > .neos-btn-group + .neos-btn,
-  > .neos-btn + .neos-btn-group {
+  > .neos-button + .neos-button,
+  > .neos-btn-group + .neos-button,
+  > .neos-button + .neos-btn-group {
     margin-left: 5px;
   }
 }
 
 // Float them, remove border radius, then re-add to first and last elements
-.neos-btn-group > .neos-btn {
+.neos-btn-group > .neos-button {
   position: relative;
   @include border-radius(0);
 }
-.neos-btn-group > .neos-btn + .neos-btn {
+.neos-btn-group > .neos-button + .neos-button {
   margin-left: -1px;
 }
-.neos-btn-group > .neos-btn,
+.neos-btn-group > .neos-button,
 .neos-btn-group > .neos-dropdown-menu,
 .neos-btn-group > .neos-popover {
   font-size: $baseFontSize; // redeclare as part 2 of font-size inline-block hack
@@ -57,34 +57,20 @@
 }
 
 // Set corners individual because sometimes a single button can be in a .neos-btn-group and we need :first-child and :last-child to both match
-.neos-btn-group > .neos-btn:first-child {
+.neos-btn-group > .neos-button:first-child {
   margin-left: 0;
-  @include border-top-left-radius($baseBorderRadius);
-  @include border-bottom-left-radius($baseBorderRadius);
 }
-// Need .neos-dropdown-toggle since :last-child doesn't apply given a .neos-dropdown-menu immediately after it
-.neos-btn-group > .neos-btn:last-child,
-.neos-btn-group > .neos-dropdown-toggle {
-  @include border-top-right-radius($baseBorderRadius);
-  @include border-bottom-right-radius($baseBorderRadius);
-}
+
 // Reset corners for large buttons
-.neos-btn-group > .neos-btn.neos-large:first-child {
+.neos-btn-group > .neos-button.neos-large:first-child {
   margin-left: 0;
-  @include border-top-left-radius($borderRadiusLarge);
-  @include border-bottom-left-radius($borderRadiusLarge);
-}
-.neos-btn-group > .neos-btn.neos-large:last-child,
-.neos-btn-group > .neos-large.neos-dropdown-toggle {
-  @include border-top-right-radius($borderRadiusLarge);
-  @include border-bottom-right-radius($borderRadiusLarge);
 }
 
 // On hover/focus/active, bring the proper btn to front
-.neos-btn-group > .neos-btn:hover,
-.neos-btn-group > .neos-btn:focus,
-.neos-btn-group > .neos-btn:active,
-.neos-btn-group > .neos-btn.neos-active {
+.neos-btn-group > .neos-button:hover,
+.neos-btn-group > .neos-button:focus,
+.neos-btn-group > .neos-button:active,
+.neos-btn-group > .neos-button.neos-active {
   z-index: 2;
 }
 
@@ -100,7 +86,7 @@
 // ----------------------
 
 // Give the line between buttons some depth
-.neos-btn-group > .neos-btn + .neos-dropdown-toggle {
+.neos-btn-group > .neos-button + .neos-dropdown-toggle {
   padding-left: 8px;
   padding-right: 8px;
   @include box-shadow(inset 1px 0 0 rgba(255,255,255,.125), inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05));
@@ -134,19 +120,16 @@
   }
 
   // Keep the hover's background when .neos-dropdown is open
-  .neos-btn.neos-dropdown-toggle {
-    background-color: $btnBackgroundHighlight;
-  }
-  .neos-btn-primary.neos-dropdown-toggle {
+  .neos-button-primary.neos-dropdown-toggle {
     background-color: $btnPrimaryBackgroundHighlight;
   }
-  .neos-btn-warning.neos-dropdown-toggle {
+  .neos-button-warning.neos-dropdown-toggle {
     background-color: $btnWarningBackgroundHighlight;
   }
-  .neos-btn-danger.neos-dropdown-toggle {
+  .neos-button-danger.neos-dropdown-toggle {
     background-color: $btnDangerBackgroundHighlight;
   }
-  .neos-btn-success.neos-dropdown-toggle {
+  .neos-button-success.neos-dropdown-toggle {
     background-color: $btnSuccessBackgroundHighlight;
   }
   .neos-btn-info.neos-dropdown-toggle {
@@ -159,7 +142,7 @@
 
 
 // Reposition the caret
-.neos-btn .neos-caret {
+.neos-button .neos-caret {
   margin-top: 8px;
   margin-left: 0;
 }
@@ -184,11 +167,11 @@
 
 
 // Account for other colors
-.neos-btn-primary,
-.neos-btn-warning,
-.neos-btn-danger,
+.neos-button-primary,
+.neos-button-warning,
+.neos-button-danger,
 .neos-btn-info,
-.neos-btn-success,
+.neos-button-success,
 .neos-btn-inverse {
   .neos-caret {
     border-top-color: $white;
@@ -205,20 +188,20 @@
   display: inline-block; // makes buttons only take up the width they need
   @include ie7-inline-block();
 }
-.neos-btn-group-vertical > .neos-btn {
+.neos-btn-group-vertical > .neos-button {
   display: block;
   float: none;
   max-width: 100%;
   @include border-radius(0);
 }
-.neos-btn-group-vertical > .neos-btn + .neos-btn {
+.neos-btn-group-vertical > .neos-button + .neos-button {
   margin-left: 0;
   margin-top: -1px;
 }
-.neos-btn-group-vertical > .neos-btn:first-child {
+.neos-btn-group-vertical > .neos-button:first-child {
   @include border-radius($baseBorderRadius $baseBorderRadius 0 0);
 }
-.neos-btn-group-vertical > .neos-btn:last-child {
+.neos-btn-group-vertical > .neos-button:last-child {
   @include border-radius(0 0 $baseBorderRadius $baseBorderRadius);
 }
 .neos-btn-group-vertical > .neos-btn-large:first-child {

@@ -77,10 +77,10 @@
 											</td>
 											<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
 											<td class="actions">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-btn neos-btn-success neos-button" title="Publish">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-button neos-button-success" title="Publish">
 													<i class="icon-check icon-white"></i>
 												</button>
-												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-btn neos-btn-danger neos-button" title="Discard">
+												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-button neos-button-danger" title="Discard">
 													<i class="icon-trash icon-white"></i>
 												</button>
 											</td>
@@ -116,8 +116,8 @@
 				<div class="neos-header">Are you sure you want to discard all changes in the "{workspaceName}" workspace?</div>
 			</div>
 			<div class="neos-modal-footer">
-				<a href="#" class="neos-btn neos-button" data-dismiss="modal">Cancel</a>
-				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-btn neos-btn-danger neos-button">
+				<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-button neos-button-danger">
 					<i class="icon-trash icon-white"></i>
 					Discard
 				</button>
@@ -158,22 +158,18 @@
 <f:section name="actions">
 	<div class="neos-form-actions neos-form-footer">
 		<div class="neos-pull-left">
-			<button type="submit" name="moduleArguments[action]" value="publish" class="neos-btn neos-btn-success neos-disabled batch-action neos-button" disabled="disabled">
-				<i class="icon-ok-circle icon-white"></i>
+			<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-success neos-disabled batch-action" disabled="disabled">
 				Publish <strong>selected</strong> changes
 			</button>
-			<button type="submit" name="moduleArguments[action]" value="discard" class="neos-btn neos-btn-warning neos-disabled batch-action neos-button" disabled="disabled">
-				<i class="icon-remove-circle icon-white"></i>
+			<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-button-warning neos-disabled batch-action" disabled="disabled">
 				Discard <strong>selected</strong> changes
 			</button>
 		</div>
 		<div class="neos-pull-right">
-			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-btn neos-btn-primary neos-button">
-				<i class="icon-refresh icon-white"></i>
+			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-button neos-button-primary">
 				Publish <strong>all</strong> changes
 			</button>
-			<button class="neos-btn neos-btn-danger neos-button" data-toggle="modal" href="#discard">
-				<i class="icon-trash icon-white"></i>
+			<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">
 				Discard <strong>all</strong> changes
 			</button>
 		</div>

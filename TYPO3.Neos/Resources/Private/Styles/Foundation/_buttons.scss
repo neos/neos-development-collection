@@ -7,223 +7,108 @@
 // --------------------------------------------------
 
 // Core
-.neos-btn {
-  display: inline-block;
-  @include ie7-inline-block();
-  padding: 4px 12px;
-  margin-bottom: 0; // For input.neos-btn
-  font-size: $baseFontSize;
-  line-height: $baseLineHeight;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  @include buttonBackground($btnBackground, $btnBackgroundHighlight, $grayDark, 0 1px 1px rgba(255,255,255,.75));
-  border: 1px solid $btnBorder;
-  *border: 0; // Remove the border to prevent IE7's black border on input:focus
-  border-bottom-color: darken($btnBorder, 10%);
-  @include border-radius($baseBorderRadius);
-  @include ie7-restore-left-whitespace(); // Give IE7 some love
-  @include box-shadow(inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05));
+button,
+.neos-button {
+	display: inline-block;
+	padding: 0 $defaultMargin;
+	margin: 0;
+	@include font;
+	color: #fff;
+	font-size: $generalFontSize;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	width: auto;
+	height: $unit;
+	line-height: $unit;
+	background-color: $grayLight;
+	background-image: none;
+	border: none;
+	@include text-shadow(none);
+	@include box-shadow(none);
+	@include box-sizing(border-box);
+	@include transition(all 0 ease 0);
 
-  // Hover/focus state
-  &:hover,
-  &:focus {
-    color: $grayDark;
-    text-decoration: none;
-    background-position: 0 -15px;
+	&.neos-button-small {
+		height: $defaultMargin + $relatedMargin;
+		line-height: $defaultMargin + $relatedMargin;
+		font-size: 12px;
+		padding: 0 $relatedMargin;
+	}
 
-    // transition is only when going to hover/focus, otherwise the background
-    // behind the gradient (there for IE<=9 fallback) gets mismatched
-    @include transition(background-position .1s linear);
-  }
+	// Hover/focus state
+	&:hover,
+	&:active,
+	&.neos-active,
+	&.neos-pressed {
+		color: #fff;
+		background-color: $blue;
+		text-decoration: none;
+		outline: none;
+	}
 
-  // Focus state for keyboard and accessibility
-  &:focus {
-    @include tab-focus();
-  }
+	// Focus state for keyboard and accessibility
+	&:focus {
+		@include tab-focus();
+		outline: none;
+	}
 
-  // Active state
-  &.neos-active,
-  &:active {
-    background-image: none;
-    outline: 0;
-    @include box-shadow(inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05));
-  }
+	// Disabled state
+	&.neos-disabled,
+	&[disabled] {
+		cursor: not-allowed;
+		@include opacity(.65);
+	}
 
-  // Disabled state
-  &.neos-disabled,
-  &[disabled] {
-    cursor: default;
-    background-image: none;
-    @include opacity(.65);
-    @include box-shadow(none);
-  }
+	&[class^="icon-"],
+	&[class*=" icon-"] {
+		font-family: FontAwesome;
+	}
 
+	&.neos-button-primary {
+		background-color: $blue;
+	}
+
+	&.neos-button-success {
+		background-color: $green;
+
+		&:hover,
+		&:active {
+			background-color: $green;
+		}
+	}
+
+	&.neos-button-warning {
+		background-color: $orange;
+
+		&:hover,
+		&:active {
+			background-color: $orange;
+		}
+	}
+
+	&.neos-button-danger {
+		background-color: $warning;
+
+		&:hover,
+		&:active {
+			background-color: $warning;
+		}
+	}
+
+	i {
+		margin-top: 3px;
+	}
 }
 
+a.neos-button {
+	color: #fff;
 
+	&:hover {
+		color: #fff;
+	}
 
-// Button Sizes
-// --------------------------------------------------
-
-// Large
-.neos-btn-large {
-  padding: $paddingLarge;
-  font-size: $fontSizeLarge;
-  @include border-radius($borderRadiusLarge);
-}
-.neos-btn-large [class^="icon-"],
-.neos-btn-large [class*=" icon-"] {
-  margin-top: 4px;
-}
-
-// Small
-.neos-btn-small {
-  padding: $paddingSmall;
-  font-size: $fontSizeSmall;
-  @include border-radius($borderRadiusSmall);
-}
-.neos-btn-small [class^="icon-"],
-.neos-btn-small [class*=" icon-"] {
-  margin-top: 0;
-}
-.neos-btn-mini [class^="icon-"],
-.neos-btn-mini [class*=" icon-"] {
-  margin-top: -1px;
-}
-
-// Mini
-.neos-btn-mini {
-  padding: $paddingMini;
-  font-size: $fontSizeMini;
-  line-height: $baseLineHeight * .8;
-  @include border-radius($borderRadiusSmall);
-}
-
-
-// Block button
-// -------------------------
-
-.neos-btn-block {
-  display: block;
-  width: 100%;
-  padding-left: 0;
-  padding-right: 0;
-  @include box-sizing(border-box);
-}
-
-// Vertically space out multiple block buttons
-.neos-btn-block + .neos-btn-block {
-  margin-top: 5px;
-}
-
-// Specificity overrides
-input[type="submit"],
-input[type="reset"],
-input[type="button"] {
-  &.neos-btn-block {
-    width: 100%;
-  }
-}
-
-
-
-// Alternate buttons
-// --------------------------------------------------
-
-// Provide *some* extra contrast for those who can get it
-.neos-btn-primary.neos-active,
-.neos-btn-warning.neos-active,
-.neos-btn-danger.neos-active,
-.neos-btn-success.neos-active,
-.neos-btn-info.neos-active,
-.neos-btn-inverse.neos-active {
-  color: rgba(255,255,255,.75);
-}
-
-// Set the backgrounds
-// -------------------------
-.neos-btn-primary {
-  @include buttonBackground($btnPrimaryBackground, $btnPrimaryBackgroundHighlight);
-}
-// Warning appears are orange
-.neos-btn-warning {
-  @include buttonBackground($btnWarningBackground, $btnWarningBackgroundHighlight);
-}
-// Danger and error appear as red
-.neos-btn-danger {
-  @include buttonBackground($btnDangerBackground, $btnDangerBackgroundHighlight);
-}
-// Success appears as green
-.neos-btn-success {
-  @include buttonBackground($btnSuccessBackground, $btnSuccessBackgroundHighlight);
-}
-// Info appears as a neutral blue
-.neos-btn-info {
-  @include buttonBackground($btnInfoBackground, $btnInfoBackgroundHighlight);
-}
-// Inverse appears as dark gray
-.neos-btn-inverse {
-  @include buttonBackground($btnInverseBackground, $btnInverseBackgroundHighlight);
-}
-
-
-// Cross-browser Jank
-// --------------------------------------------------
-
-button.neos-btn,
-input[type="submit"].neos-btn {
-
-  // Firefox 3.6 only I believe
-  &::-moz-focus-inner {
-    padding: 0;
-    border: 0;
-  }
-
-  // IE7 has some default padding on button controls
-  *padding-top: 3px;
-  *padding-bottom: 3px;
-
-  &.neos-btn-large {
-    *padding-top: 7px;
-    *padding-bottom: 7px;
-  }
-  &.neos-btn-small {
-    *padding-top: 3px;
-    *padding-bottom: 3px;
-  }
-  &.neos-btn-mini {
-    *padding-top: 1px;
-    *padding-bottom: 1px;
-  }
-}
-
-
-// Link buttons
-// --------------------------------------------------
-
-// Make a button look and behave like a link
-.neos-btn-link,
-.neos-btn-link:active,
-.neos-btn-link[disabled] {
-  background-color: transparent;
-  background-image: none;
-  @include box-shadow(none);
-}
-.neos-btn-link {
-  border-color: transparent;
-  cursor: pointer;
-  color: $linkColor;
-  @include border-radius(0);
-}
-.neos-btn-link:hover,
-.neos-btn-link:focus {
-  color: $linkColorHover;
-  text-decoration: underline;
-  background-color: transparent;
-}
-.neos-btn-link[disabled]:hover,
-.neos-btn-link[disabled]:focus {
-  color: $grayDark;
-  text-decoration: none;
+	i {
+		display: inline-block !important;
+	}
 }

@@ -1,3 +1,7 @@
+/* Variables */
+/* Color palette */
+/* Sizes & margins */
+/* Components */
 .neos-container {
   margin-right: auto;
   margin-left: auto;
@@ -347,15 +351,15 @@ legend {
   width: 100%;
   padding: 0;
   margin-bottom: 20px;
-  font-size: 21px;
+  font-size: 150%;
   line-height: 40px;
-  color: #333333;
+  color: #222222;
   border: 0;
   border-bottom: 1px solid #e5e5e5;
 }
 legend small {
   font-size: 15px;
-  color: #999999;
+  color: #3f3f3f;
 }
 
 label,
@@ -363,7 +367,7 @@ input,
 button,
 select,
 textarea {
-  font-size: 14px;
+  font-size: 100%;
   font-weight: normal;
   line-height: 20px;
 }
@@ -401,7 +405,7 @@ input[type="color"],
   height: 20px;
   padding: 4px 6px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   color: #555555;
   -webkit-border-radius: 4px;
@@ -522,7 +526,7 @@ input[type="checkbox"]:focus {
 
 .neos-uneditable-input,
 .neos-uneditable-textarea {
-  color: #999999;
+  color: #3f3f3f;
   background-color: #fcfcfc;
   border-color: #cccccc;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
@@ -963,7 +967,7 @@ select:focus:invalid:focus {
 .neos-input-prepend .neos-uneditable-input,
 .neos-input-prepend .neos-dropdown-menu,
 .neos-input-prepend .neos-popover {
-  font-size: 14px;
+  font-size: 100%;
 }
 .neos-input-append input,
 .neos-input-append select,
@@ -994,7 +998,7 @@ select:focus:invalid:focus {
   height: 20px;
   min-width: 16px;
   padding: 4px 5px;
-  font-size: 14px;
+  font-size: 100%;
   font-weight: normal;
   line-height: 20px;
   text-align: center;
@@ -1003,10 +1007,10 @@ select:focus:invalid:focus {
   border: 1px solid #ccc;
 }
 .neos-input-append .neos-add-on,
-.neos-input-append .neos-btn,
+.neos-input-append .neos-button,
 .neos-input-append .neos-btn-group > .neos-dropdown-toggle,
 .neos-input-prepend .neos-add-on,
-.neos-input-prepend .neos-btn,
+.neos-input-prepend .neos-button,
 .neos-input-prepend .neos-btn-group > .neos-dropdown-toggle {
   vertical-align: top;
   -webkit-border-radius: 0;
@@ -1015,16 +1019,16 @@ select:focus:invalid:focus {
 }
 .neos-input-append .neos-active,
 .neos-input-prepend .neos-active {
-  background-color: #a9dba9;
-  border-color: #46a546;
+  background-color: #3dff80;
+  border-color: #00a338;
 }
 
 .neos-input-prepend .neos-add-on,
-.neos-input-prepend .neos-btn {
+.neos-input-prepend .neos-button {
   margin-right: -1px;
 }
 .neos-input-prepend .neos-add-on:first-child,
-.neos-input-prepend .neos-btn:first-child {
+.neos-input-prepend .neos-button:first-child {
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
@@ -1037,20 +1041,20 @@ select:focus:invalid:focus {
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
 }
-.neos-input-append input + .neos-btn-group .neos-btn:last-child,
-.neos-input-append select + .neos-btn-group .neos-btn:last-child,
-.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-btn:last-child {
+.neos-input-append input + .neos-btn-group .neos-button:last-child,
+.neos-input-append select + .neos-btn-group .neos-button:last-child,
+.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-button:last-child {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
 }
 .neos-input-append .neos-add-on,
-.neos-input-append .neos-btn,
+.neos-input-append .neos-button,
 .neos-input-append .neos-btn-group {
   margin-left: -1px;
 }
 .neos-input-append .neos-add-on:last-child,
-.neos-input-append .neos-btn:last-child,
+.neos-input-append .neos-button:last-child,
 .neos-input-append .neos-btn-group:last-child > .neos-dropdown-toggle {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
@@ -1064,22 +1068,22 @@ select:focus:invalid:focus {
   -moz-border-radius: 0;
   border-radius: 0;
 }
-.neos-input-prepend.neos-input-append input + .neos-btn-group .neos-btn,
-.neos-input-prepend.neos-input-append select + .neos-btn-group .neos-btn,
-.neos-input-prepend.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-btn {
+.neos-input-prepend.neos-input-append input + .neos-btn-group .neos-button,
+.neos-input-prepend.neos-input-append select + .neos-btn-group .neos-button,
+.neos-input-prepend.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-button {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
 }
 .neos-input-prepend.neos-input-append .neos-add-on:first-child,
-.neos-input-prepend.neos-input-append .neos-btn:first-child {
+.neos-input-prepend.neos-input-append .neos-button:first-child {
   margin-right: -1px;
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
 }
 .neos-input-prepend.neos-input-append .neos-add-on:last-child,
-.neos-input-prepend.neos-input-append .neos-btn:last-child {
+.neos-input-prepend.neos-input-append .neos-button:last-child {
   margin-left: -1px;
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
@@ -1115,7 +1119,7 @@ input.neos-search-query {
   border-radius: 14px 0 0 14px;
 }
 
-.neos-form-search .neos-input-append .neos-btn {
+.neos-form-search .neos-input-append .neos-button {
   -webkit-border-radius: 0 14px 14px 0;
   -moz-border-radius: 0 14px 14px 0;
   border-radius: 0 14px 14px 0;
@@ -1127,7 +1131,7 @@ input.neos-search-query {
   border-radius: 0 14px 14px 0;
 }
 
-.neos-form-search .neos-input-prepend .neos-btn {
+.neos-form-search .neos-input-prepend .neos-button {
   -webkit-border-radius: 14px 0 0 14px;
   -moz-border-radius: 14px 0 0 14px;
   border-radius: 14px 0 0 14px;
@@ -1250,367 +1254,116 @@ legend + .neos-control-group {
   padding-left: 180px;
 }
 
-.neos-btn {
+button,
+.neos-button {
   display: inline-block;
-  *display: inline;
-  /* IE7 inline-block hack */
-  *zoom: 1;
-  padding: 4px 12px;
-  margin-bottom: 0;
+  padding: 0 16px;
+  margin: 0;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #fff;
   font-size: 14px;
-  line-height: 20px;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
-  color: #333333;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-  background-color: whitesmoke;
-  background-image: -moz-linear-gradient(top, white, #e6e6e6);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(#e6e6e6));
-  background-image: -webkit-linear-gradient(top, white, #e6e6e6);
-  background-image: -o-linear-gradient(top, white, #e6e6e6);
-  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFFFF', endColorstr='#FFE6E6E6', GradientType=0);
-  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #e6e6e6;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #cccccc;
-  *border: 0;
-  border-bottom-color: #b3b3b3;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  *margin-left: .3em;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.neos-btn:hover, .neos-btn:focus, .neos-btn:active, .neos-btn.neos-active, .neos-btn.neos-disabled, .neos-btn[disabled] {
-  color: #333333;
-  background-color: #e6e6e6;
-  *background-color: #d9d9d9;
-}
-.neos-btn:active, .neos-btn.neos-active {
-  background-color: #cccccc \9;
-}
-.neos-btn:first-child {
-  *margin-left: 0;
-}
-.neos-btn:hover, .neos-btn:focus {
-  color: #333333;
-  text-decoration: none;
-  background-position: 0 -15px;
-  -webkit-transition: background-position 0.1s linear;
-  -moz-transition: background-position 0.1s linear;
-  -o-transition: background-position 0.1s linear;
-  transition: background-position 0.1s linear;
-}
-.neos-btn:focus {
-  outline: thin dotted #333;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
-}
-.neos-btn.neos-active, .neos-btn:active {
+  width: auto;
+  height: 40px;
+  line-height: 40px;
+  background-color: #3f3f3f;
   background-image: none;
-  outline: 0;
-  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.neos-btn.neos-disabled, .neos-btn[disabled] {
-  cursor: default;
-  background-image: none;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
-  opacity: 0.65;
+  border: none;
+  text-shadow: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-}
-
-.neos-btn-large {
-  padding: 11px 19px;
-  font-size: 17.5px;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-}
-
-.neos-btn-large [class^="icon-"],
-.neos-btn-large [class*=" icon-"] {
-  margin-top: 4px;
-}
-
-.neos-btn-small {
-  padding: 2px 10px;
-  font-size: 11.9px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-
-.neos-btn-small [class^="icon-"],
-.neos-btn-small [class*=" icon-"] {
-  margin-top: 0;
-}
-
-.neos-btn-mini [class^="icon-"],
-.neos-btn-mini [class*=" icon-"] {
-  margin-top: -1px;
-}
-
-.neos-btn-mini {
-  padding: 0px 6px;
-  font-size: 10.5px;
-  line-height: 16px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-
-.neos-btn-block {
-  display: block;
-  width: 100%;
-  padding-left: 0;
-  padding-right: 0;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  -webkit-transition: all 0 ease 0;
+  -moz-transition: all 0 ease 0;
+  -o-transition: all 0 ease 0;
+  transition: all 0 ease 0;
 }
-
-.neos-btn-block + .neos-btn-block {
-  margin-top: 5px;
+button.neos-button-small,
+.neos-button.neos-button-small {
+  height: 24px;
+  line-height: 24px;
+  font-size: 12px;
+  padding: 0 8px;
 }
-
-input[type="submit"].neos-btn-block,
-input[type="reset"].neos-btn-block,
-input[type="button"].neos-btn-block {
-  width: 100%;
-}
-
-.neos-btn-primary.neos-active,
-.neos-btn-warning.neos-active,
-.neos-btn-danger.neos-active,
-.neos-btn-success.neos-active,
-.neos-btn-info.neos-active,
-.neos-btn-inverse.neos-active {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.neos-btn-primary {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #006ccc;
-  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-  background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF0088CC', endColorstr='#FF0044CC', GradientType=0);
-  border-color: #0044cc #0044cc #002a80;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #0044cc;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.neos-btn-primary:hover, .neos-btn-primary:focus, .neos-btn-primary:active, .neos-btn-primary.neos-active, .neos-btn-primary.neos-disabled, .neos-btn-primary[disabled] {
-  color: white;
-  background-color: #0044cc;
-  *background-color: #003bb3;
-}
-.neos-btn-primary:active, .neos-btn-primary.neos-active {
-  background-color: #003399 \9;
-}
-
-.neos-btn-warning {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #f9a732;
-  background-image: -moz-linear-gradient(top, #fbb450, #f89406);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
-  background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
-  background-image: -o-linear-gradient(top, #fbb450, #f89406);
-  background-image: linear-gradient(to bottom, #fbb450, #f89406);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFBB450', endColorstr='#FFF89406', GradientType=0);
-  border-color: #f89406 #f89406 #ad6704;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #f89406;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.neos-btn-warning:hover, .neos-btn-warning:focus, .neos-btn-warning:active, .neos-btn-warning.neos-active, .neos-btn-warning.neos-disabled, .neos-btn-warning[disabled] {
-  color: white;
-  background-color: #f89406;
-  *background-color: #df8505;
-}
-.neos-btn-warning:active, .neos-btn-warning.neos-active {
-  background-color: #c67605 \9;
-}
-
-.neos-btn-danger {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #da4e49;
-  background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
-  background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
-  background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
-  background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFEE5F5B', endColorstr='#FFBD362F', GradientType=0);
-  border-color: #bd362f #bd362f #802420;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #bd362f;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.neos-btn-danger:hover, .neos-btn-danger:focus, .neos-btn-danger:active, .neos-btn-danger.neos-active, .neos-btn-danger.neos-disabled, .neos-btn-danger[disabled] {
-  color: white;
-  background-color: #bd362f;
-  *background-color: #a9302a;
-}
-.neos-btn-danger:active, .neos-btn-danger.neos-active {
-  background-color: #942a25 \9;
-}
-
-.neos-btn-success {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #5bb65b;
-  background-image: -moz-linear-gradient(top, #62c462, #51a351);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #62c462, #51a351);
-  background-image: -o-linear-gradient(top, #62c462, #51a351);
-  background-image: linear-gradient(to bottom, #62c462, #51a351);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF62C462', endColorstr='#FF51A351', GradientType=0);
-  border-color: #51a351 #51a351 #387038;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #51a351;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.neos-btn-success:hover, .neos-btn-success:focus, .neos-btn-success:active, .neos-btn-success.neos-active, .neos-btn-success.neos-disabled, .neos-btn-success[disabled] {
-  color: white;
-  background-color: #51a351;
-  *background-color: #499249;
-}
-.neos-btn-success:active, .neos-btn-success.neos-active {
-  background-color: #408140 \9;
-}
-
-.neos-btn-info {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #49afcd;
-  background-image: -moz-linear-gradient(top, #5bc0de, #2f96b4);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#5bc0de), to(#2f96b4));
-  background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
-  background-image: -o-linear-gradient(top, #5bc0de, #2f96b4);
-  background-image: linear-gradient(to bottom, #5bc0de, #2f96b4);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF5BC0DE', endColorstr='#FF2F96B4', GradientType=0);
-  border-color: #2f96b4 #2f96b4 #1f6377;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #2f96b4;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.neos-btn-info:hover, .neos-btn-info:focus, .neos-btn-info:active, .neos-btn-info.neos-active, .neos-btn-info.neos-disabled, .neos-btn-info[disabled] {
-  color: white;
-  background-color: #2f96b4;
-  *background-color: #2a85a0;
-}
-.neos-btn-info:active, .neos-btn-info.neos-active {
-  background-color: #24748c \9;
-}
-
-.neos-btn-inverse {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #363636;
-  background-image: -moz-linear-gradient(top, #444444, #222222);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444444), to(#222222));
-  background-image: -webkit-linear-gradient(top, #444444, #222222);
-  background-image: -o-linear-gradient(top, #444444, #222222);
-  background-image: linear-gradient(to bottom, #444444, #222222);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF444444', endColorstr='#FF222222', GradientType=0);
-  border-color: #222222 #222222 black;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #222222;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.neos-btn-inverse:hover, .neos-btn-inverse:focus, .neos-btn-inverse:active, .neos-btn-inverse.neos-active, .neos-btn-inverse.neos-disabled, .neos-btn-inverse[disabled] {
-  color: white;
-  background-color: #222222;
-  *background-color: #151515;
-}
-.neos-btn-inverse:active, .neos-btn-inverse.neos-active {
-  background-color: #090909 \9;
-}
-
-button.neos-btn,
-input[type="submit"].neos-btn {
-  *padding-top: 3px;
-  *padding-bottom: 3px;
-}
-button.neos-btn::-moz-focus-inner,
-input[type="submit"].neos-btn::-moz-focus-inner {
-  padding: 0;
-  border: 0;
-}
-button.neos-btn.neos-btn-large,
-input[type="submit"].neos-btn.neos-btn-large {
-  *padding-top: 7px;
-  *padding-bottom: 7px;
-}
-button.neos-btn.neos-btn-small,
-input[type="submit"].neos-btn.neos-btn-small {
-  *padding-top: 3px;
-  *padding-bottom: 3px;
-}
-button.neos-btn.neos-btn-mini,
-input[type="submit"].neos-btn.neos-btn-mini {
-  *padding-top: 1px;
-  *padding-bottom: 1px;
-}
-
-.neos-btn-link,
-.neos-btn-link:active,
-.neos-btn-link[disabled] {
-  background-color: transparent;
-  background-image: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-
-.neos-btn-link {
-  border-color: transparent;
-  cursor: pointer;
-  color: #0088cc;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-}
-
-.neos-btn-link:hover,
-.neos-btn-link:focus {
-  color: #005580;
-  text-decoration: underline;
-  background-color: transparent;
-}
-
-.neos-btn-link[disabled]:hover,
-.neos-btn-link[disabled]:focus {
-  color: #333333;
+button:hover, button:active, button.neos-active, button.neos-pressed,
+.neos-button:hover,
+.neos-button:active,
+.neos-button.neos-active,
+.neos-button.neos-pressed {
+  color: #fff;
+  background-color: #00b5ff;
   text-decoration: none;
+  outline: none;
+}
+button:focus,
+.neos-button:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+  outline: none;
+}
+button.neos-disabled, button[disabled],
+.neos-button.neos-disabled,
+.neos-button[disabled] {
+  cursor: not-allowed;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
+  opacity: 0.65;
+}
+button[class^="icon-"], button[class*=" icon-"],
+.neos-button[class^="icon-"],
+.neos-button[class*=" icon-"] {
+  font-family: FontAwesome;
+}
+button.neos-button-primary,
+.neos-button.neos-button-primary {
+  background-color: #00b5ff;
+}
+button.neos-button-success,
+.neos-button.neos-button-success {
+  background-color: #00a338;
+}
+button.neos-button-success:hover, button.neos-button-success:active,
+.neos-button.neos-button-success:hover,
+.neos-button.neos-button-success:active {
+  background-color: #00a338;
+}
+button.neos-button-warning,
+.neos-button.neos-button-warning {
+  background-color: #ff8700;
+}
+button.neos-button-warning:hover, button.neos-button-warning:active,
+.neos-button.neos-button-warning:hover,
+.neos-button.neos-button-warning:active {
+  background-color: #ff8700;
+}
+button.neos-button-danger,
+.neos-button.neos-button-danger {
+  background-color: #ff460d;
+}
+button.neos-button-danger:hover, button.neos-button-danger:active,
+.neos-button.neos-button-danger:hover,
+.neos-button.neos-button-danger:active {
+  background-color: #ff460d;
+}
+button i,
+.neos-button i {
+  margin-top: 3px;
+}
+
+a.neos-button {
+  color: #fff;
+}
+a.neos-button:hover {
+  color: #fff;
+}
+a.neos-button i {
+  display: inline-block !important;
 }
 
 .neos-wireframeMode {

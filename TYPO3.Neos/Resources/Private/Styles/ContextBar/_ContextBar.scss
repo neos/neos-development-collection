@@ -8,7 +8,7 @@
 	background-color: $grayMedium;
 	height: $unit;
 	border-bottom: 1px solid $grayLight;
-	padding-right: 41px;
+	padding-right: $unit;
 
 	.neos-navigate-panel-open & {
 		padding-left: $navigatePanelWidth;

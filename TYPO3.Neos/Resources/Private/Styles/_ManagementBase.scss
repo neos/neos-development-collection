@@ -35,12 +35,3 @@
 		color: $lightest;
 	}
 }
-
-a.neos-btn {
-	color: darken($dark-grey, 10%);
-	text-decoration: none;
-	&:hover {
-		color: darken($dark-grey, 10%);
-		text-decoration: none;
-	}
-}
