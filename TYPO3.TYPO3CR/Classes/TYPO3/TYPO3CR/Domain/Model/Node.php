@@ -351,7 +351,7 @@ class Node implements NodeInterface {
 	 */
 	public function copyAfter(NodeInterface $referenceNode, $nodeName) {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
-			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
+			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503466);
 		}
 		if (!$this->nodeDataIsMatchingContext) {
 			$this->materializeNodeData();
@@ -373,6 +373,9 @@ class Node implements NodeInterface {
 	 * @api
 	 */
 	public function copyInto(NodeInterface $referenceNode, $nodeName) {
+		if ($referenceNode->getNode($nodeName) !== NULL) {
+			throw new NodeExistsException('Node with path "' . $referenceNode->getPath() . '/' . $nodeName . '" already exists.', 1292503467);
+		}
 		if (!$this->nodeDataIsMatchingContext) {
 			$this->materializeNodeData();
 		}

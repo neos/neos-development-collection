@@ -372,6 +372,10 @@ class NodeData extends AbstractNodeData {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
 
+		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
+		}
+
 		if ($referenceNode->getParentPath() !== $this->parentPath) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -396,6 +400,10 @@ class NodeData extends AbstractNodeData {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
 		}
 
+		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
+		}
+
 		if ($referenceNode->getParentPath() !== $this->parentPath) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -418,6 +426,10 @@ class NodeData extends AbstractNodeData {
 
 		if ($this->path === '/') {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1346769001);
+		}
+
+		if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
 		}
 
 		$parentPath = $referenceNode->getPath();
@@ -469,7 +481,7 @@ class NodeData extends AbstractNodeData {
 
 		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
 		if ($this->getNode($newPath) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503465);
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503471);
 		}
 
 		$newNode = new NodeData($newPath, ($workspace ?: $this->workspace), $identifier);

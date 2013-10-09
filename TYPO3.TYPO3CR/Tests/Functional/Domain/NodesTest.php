@@ -657,6 +657,45 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function moveBeforeThrowsExceptionIfTargetExists() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$alfaChildNode = $alfaNode->createNode('alfa');
+
+		$alfaChildNode->moveBefore($alfaNode);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function moveAfterThrowsExceptionIfTargetExists() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$alfaChildNode = $alfaNode->createNode('alfa');
+
+		$alfaChildNode->moveAfter($alfaNode);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function moveIntoThrowsExceptionIfTargetExists() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$alfaChildNode = $alfaNode->createNode('alfa');
+
+		$alfaChildNode->moveInto($rootNode);
+	}
+
+	/**
 	 * Testcase for bug #34291 (TYPO3CR reordering does not take unpersisted
 	 * node order changes into account)
 	 *
@@ -959,6 +998,19 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$fluxNode = $rootNode->createNode('flux');
 
 		$fluxNode->copyAfter($bazNode, 'exists');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyIntoThrowsExceptionIfTargetExists() {
+		$rootNode = $this->context->getNode('/');
+
+		$rootNode->createNode('exists');
+		$alfaNode = $rootNode->createNode('alfa');
+
+		$alfaNode->copyInto($rootNode, 'exists');
 	}
 
 	public function getClosestAncestorDataProvider() {
