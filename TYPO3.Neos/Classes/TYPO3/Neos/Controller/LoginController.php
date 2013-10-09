@@ -89,10 +89,12 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 				$this->view->assign('value', array('success' => TRUE));
 			break;
 			default:
-
-					$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out', 1318421560));
+				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out', 1318421560));
+				if ($possibleRedirectionUri !== '') {
+					$this->redirectToUri($possibleRedirectionUri);
+				} else {
 					$this->redirect('index');
-
+				}
 		}
 	}
 }
