@@ -889,7 +889,10 @@ class Node implements NodeInterface {
 		$copiedNode->similarize($this);
 		/** @var $childNode Node */
 		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->copyInto($copiedNode, $childNode->getName());
+			// Prevent recursive copy when copying into itself
+			if ($childNode !== $copiedNode) {
+				$childNode->copyInto($copiedNode, $childNode->getName());
+			}
 		}
 
 		return $copiedNode;

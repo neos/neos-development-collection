@@ -831,6 +831,36 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function nodesCanBeCopiedInto() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$bravoNode = $rootNode->createNode('bravo');
+		$bravoNode->setProperty('test', TRUE);
+
+		$bravoNode->copyInto($alfaNode, 'charlie');
+
+		$this->assertSame($alfaNode->getNode('charlie')->getProperty('test'), TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesCanBeCopiedIntoThemselves() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$alfaNode->setProperty('test', TRUE);
+
+		$bravoNode = $alfaNode->copyInto($alfaNode, 'bravo');
+
+		$this->assertSame($bravoNode->getProperty('test'), TRUE);
+		$this->assertSame($alfaNode->getNode('bravo'), $bravoNode);
+	}
+
+	/**
+	 * @test
+	 */
 	public function nodesAreCopiedBeforeRecursively() {
 		$rootNode = $this->context->getNode('/');
 
@@ -866,6 +896,41 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$names->names = array();
 		array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
 		$this->assertSame(array('capacitor', 'second', 'third'), $names->names);
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesAreCopiedIntoRecursively() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$bravoNode = $rootNode->createNode('bravo');
+		$bravoNode->setProperty('test', TRUE);
+		$charlieNode = $bravoNode->createNode('charlie');
+		$charlieNode->setProperty('test2', TRUE);
+
+		$deltaNode = $bravoNode->copyInto($alfaNode, 'delta');
+
+		$this->assertSame($alfaNode->getNode('delta'), $deltaNode);
+		$this->assertSame($alfaNode->getNode('delta')->getProperty('test'), TRUE);
+		$this->assertSame($alfaNode->getNode('delta')->getNode('charlie')->getProperty('test2'), TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesAreCopiedIntoThemselvesRecursively() {
+		$rootNode = $this->context->getNode('/');
+
+		$alfaNode = $rootNode->createNode('alfa');
+		$bravoNode = $alfaNode->createNode('bravo');
+		$bravoNode->setProperty('test', TRUE);
+
+		$charlieNode = $alfaNode->copyInto($alfaNode, 'charlie');
+
+		$this->assertSame($alfaNode->getNode('charlie'), $charlieNode);
+		$this->assertSame($alfaNode->getNode('charlie')->getNode('bravo')->getProperty('test'), TRUE);
 	}
 
 	/**
