@@ -2,9 +2,9 @@
 prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
 	entryLevel = ${q(node).property('startLevel')}
-	entryLevel << 1.toInteger()
+	entryLevel.@process.1 = ${String.toInteger(value)}
 	maximumLevels = ${q(node).property('maximumLevels')}
-	maximumLevels << 1.toInteger()
+	maximumLevels.@process.1 = ${String.toInteger(value)}
 }
 
 # HTML TS Object
