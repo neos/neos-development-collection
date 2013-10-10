@@ -39,23 +39,23 @@ function($, Ember) {
 		},
 
 		options: function() {
-            var options = [],
+			var options = [],
 				values = this.get('values'),
 				currentValue = this.get('value');
 
-            if (this.get('allowEmpty')) {
-                options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
-            }
+			if (this.get('allowEmpty')) {
+				options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
+			}
 
-			$.each(this.get('values'), function(value) {
+			$.each(values, function(value) {
 				options.push(Ember.Object.create($.extend({
 					selected: value === currentValue,
 					value: value,
-					disabled: values[value].disabled
+					disabled: value && values[value] && values[value].disabled
 				}, this)));
 			});
 
-            return options;
+			return options;
 		}.property('values.@each', 'value', 'placeholder', 'allowEmpty'),
 
 		onItemsChange: function() {
