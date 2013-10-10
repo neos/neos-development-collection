@@ -12,44 +12,51 @@ namespace TYPO3\Neos\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 
 /**
  * Find nodes based on a fulltext search
  *
- * @Flow\Scope("prototype")
+ * @Flow\Scope("singleton")
  */
 class NodeSearchService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+	 * @var NodeFactory
 	 */
 	protected $nodeFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Search all properties for given $term
+	 *
+	 * TODO: Implement a better search when Flow offer the possibility
+	 *
 	 * @param string $term
 	 * @param array $searchNodeTypes
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param ContextInterface $context
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
-	public function findByProperties($term, array $searchNodeTypes = array(), \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
-			// TODO: Implement a better search when Flow offer the possibility
-		$query = $this->nodeDataRepository->createQuery();
-		$constraints = array($query->like('properties', '%' . $term . '%'));
-
-		if ($searchNodeTypes !== array()) {
-			$constraints[] = $query->in('nodeType', $searchNodeTypes);
-		}
-
+	public function findByProperties($term, array $searchNodeTypes, ContextInterface $context) {
 		$searchResult = array();
-		foreach ($query->matching($query->logicalAnd($constraints))->execute() as $nodeData) {
+		$nodeDataRecords = $this->getNodeDataRecordsByWorkspace($term, $searchNodeTypes, $context->getWorkspace());
+		foreach ($nodeDataRecords as $nodeData) {
 			if (array_key_exists($nodeData->getPath(), $searchResult) === FALSE) {
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if ($node !== NULL) {
@@ -59,5 +66,43 @@ class NodeSearchService {
 		}
 
 		return $searchResult;
+	}
+
+	/**
+	 * Returns matching nodes for the given $term, $searchNodeTypes with workspace-fallback
+	 *
+	 * @param string $term
+	 * @param array $searchNodeTypes
+	 * @param Workspace $workspace
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+	 */
+	protected function getNodeDataRecordsByWorkspace($term, array $searchNodeTypes, Workspace $workspace) {
+		$result = array();
+		while ($workspace !== NULL) {
+			$workspaceQuery = $this->nodeDataRepository->createQuery();
+			$nodes = $workspaceQuery->matching($workspaceQuery->logicalAnd(array(
+				$workspaceQuery->equals('workspace', $workspace),
+				$workspaceQuery->like('properties', '%' . $term . '%', FALSE),
+				$workspaceQuery->in('nodeType', $searchNodeTypes)
+			)))->execute();
+
+			foreach ($nodes as $node) {
+				if (isset($result[$node->getIdentifier()])) {
+					continue;
+				}
+				$result[$node->getIdentifier()] = $this->persistenceManager->getIdentifierByObject($workspace);
+			}
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		$query = $this->nodeDataRepository->createQuery();
+		$constraints = array();
+		foreach ($result as $nodeIdentifier => $workspaceIdentifier) {
+			$constraints[] = $query->logicalAnd(
+				$query->equals('workspace', $workspaceIdentifier),
+				$query->equals('identifier', $nodeIdentifier)
+			);
+		}
+		return $query->matching($query->logicalOr($constraints))->execute()->toArray();
 	}
 }

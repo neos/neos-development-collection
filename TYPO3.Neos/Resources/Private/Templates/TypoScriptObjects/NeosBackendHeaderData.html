@@ -9,6 +9,9 @@
 
 <f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+
+		<link type="application/vnd.typo3.neos.nodes" href="{f:uri.action(action: 'index', controller: 'Service\Node', package: 'TYPO3.Neos', format:'html', absolute: true)}" />
+
 		<script type="text/javascript">
 					// TODO Get rid of those global variables
 				var ExtDirectInitialization = function() {

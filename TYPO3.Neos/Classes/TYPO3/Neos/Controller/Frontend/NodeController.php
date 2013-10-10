@@ -12,13 +12,15 @@ namespace TYPO3\Neos\Controller\Frontend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * Controller for displaying nodes in the frontend
  *
  * @Flow\Scope("singleton")
  */
-class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class NodeController extends ActionController {
 
 	/**
 	 * @Flow\Inject
@@ -27,14 +29,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $authenticationManager;
 
 	/**
-	 * @var array
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
 	 */
-	protected $supportedFormats = array('html');
-
-	/**
-	 * @var array
-	 */
-	protected $defaultViewObjectName = 'TYPO3\Neos\View\TypoScriptView';
+	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
@@ -55,10 +53,9 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $accessDecisionManager;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var string
 	 */
-	protected $contextFactory;
+	protected $defaultViewObjectName = 'TYPO3\Neos\View\TypoScriptView';
 
 	/**
 	 * Shows the specified node and takes visibility and access restrictions into
