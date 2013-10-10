@@ -56,7 +56,8 @@ prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
 prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Template)
 prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/MultiColumn.html'
-	className = ${'container columns-' + q(node).property('layout')}
+	layout = ${q(node).property('layout')}
+	className = ${'container columns-' + this.layout}
 	columns = TYPO3.TypoScript:Collection
 	columns {
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
