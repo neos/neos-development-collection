@@ -136,7 +136,7 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Menu'
-    group: 'Structure'
+    group: 'structure'
     icon: 'icon-sitemap'
     inspector:
       groups:
@@ -214,7 +214,7 @@
   superTypes: ['TYPO3.Neos:Content']
   abstract: TRUE
   ui:
-    group: 'Structure'
+    group: 'structure'
     label: 'Column'
     icon: 'icon-columns'
     inlineEditable: TRUE
@@ -316,7 +316,7 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Form'
-    group: 'General'
+    group: 'general'
     icon: 'icon-envelope-alt'
     inspector:
       groups:
