@@ -95,7 +95,11 @@ define(
 			PublishAllButton: Button.extend({
 				classNameBindings: ['disabledClass'],
 				classNames: ['neos-publish-all-button'],
-				label: '<i class="icon-upload"></i> Publish all'.htmlSafe(),
+				attributeBindings: ['title'],
+				title: 'Publish all',
+				label: function() {
+					return ('<i class="icon-upload"></i> ' + this.get('title')).htmlSafe();
+				}.property('title'),
 				controller: PublishableNodes,
 				confirmationDialog: PublishAllDialog.create(),
 
