@@ -23,14 +23,17 @@ prototype(TYPO3.Neos:ContentCase).threeColumn {
 # MAIN PAGE TEMPLATE
 
 page1 = TYPO3.Neos:Page
-page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
-page1.body.content {
-	teaser = TYPO3.Neos:ContentCollection
-	teaser.nodePath = 'teaser'
+page1.body {
+	templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
+	content {
+		teaser = TYPO3.Neos:ContentCollection
+		teaser.nodePath = 'teaser'
 
-	main = TYPO3.Neos:ContentCollection
-	main.nodePath = 'main'
+		main = TYPO3.Neos:ContentCollection
+		main.nodePath = 'main'
 
-	sidebar = TYPO3.Neos:ContentCollection
-	sidebar.nodePath = 'sidebar'
+		sidebar = TYPO3.Neos:ContentCollection
+		sidebar.nodePath = 'sidebar'
+	}
+	title = ${q(node).property('title')}
 }
