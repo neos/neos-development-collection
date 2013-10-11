@@ -14,7 +14,6 @@ namespace TYPO3\TypoScript\Core;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TypoScript\Exception;
-use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
  * The TypoScript Parser
@@ -58,7 +57,7 @@ class Parser implements ParserInterface {
 		^\s*                      # beginning of line; with numerous whitespace
 		[a-zA-Z0-9.\\\\$():@\-]+
 		\s*
-		(=|<|>|\.processors\.)
+		(=|<|>)
 	/x';
 	const SCAN_PATTERN_OBJECTPATH = '/
 		^
@@ -121,7 +120,7 @@ class Parser implements ParserInterface {
 		)
 		\s*
 		(?P<Operator>             # the operators which are supported
-			=|<<|<|>
+			=|<|>
 		)
 		\s*
 		(?P<Value>                # the remaining line inside the value
@@ -152,10 +151,6 @@ class Parser implements ParserInterface {
 		)
 		\s*$
 	/x';
-
-	const SPLIT_PATTERN_INDEXANDPROCESSORCALL = '/(?P<Index>\d+)\.(?P<ProcessorSignature>[^(]+)\s*\((?P<Arguments>.*?)\)\s*$/';
-	const SPLIT_PATTERN_PHPNAMESPACEANDPROCESSORNAME = '/(?:(?P<PhpNamespace>[a-zA-Z]+[a-zA-Z0-9\\\\]*+)\s*:\s*)?(?P<ProcessorName>\w+)/';
-	const SPLIT_PATTERN_PROCESSORARGUMENTS = '/(?P<ArgumentName>[a-zA-Z0-9]+):\s*(?P<ArgumentValue>"(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|-?[0-9]+(\.\d+)?)/';
 
 	/**
 	 * @Flow\Inject
@@ -213,12 +208,6 @@ class Parser implements ParserInterface {
 	protected $objectTypeNamespaces = array(
 		'default' => 'TYPO3.TypoScript'
 	);
-
-	/**
-	 * Default class namespace used for processors. This fallback is currently not
-	 * configurable.
-	 */
-	const DEFAULT_PROCESSOR_NAMESPACE = 'TYPO3\TypoScript\Processors';
 
 	/**
 	 * Parses the given TypoScript source code and returns an object tree
@@ -433,9 +422,6 @@ class Parser implements ParserInterface {
 			case '<' :
 				$this->parseValueCopy($matches['Value'], $objectPath);
 				break;
-			case '<<' :
-				$this->parseValueProcessing($matches['Value'], $objectPath);
-				break;
 		}
 
 		if (isset($matches['OpeningConfinement'])) {
@@ -510,51 +496,6 @@ class Parser implements ParserInterface {
 	}
 
 	/**
-	 * Creates a processor invocation for a property, defined by the method call
-	 * and adds it to the position indicated by an index to the processor chain
-	 * of the property specified by the object path.
-	 *
-	 * @param string $indexAndMethodCall The raw string defining the index within the processor chain and the method call. Eg. 3.wrap("<em>", "</em">)
-	 * @param string $objectPropertyPath Specifies the object path of the property to process
-	 * @return void
-	 * @throws \TYPO3\TypoScript\Exception
-	 */
-	protected function parseValueProcessing($indexAndMethodCall, $objectPropertyPath) {
-		if (preg_match(self::SPLIT_PATTERN_INDEXANDPROCESSORCALL, $indexAndMethodCall, $matches) > 0) {
-			$objectPropertyPathArray = $this->getParsedObjectPath($objectPropertyPath);
-
-			$typoScriptObject = &$this->getValueFromObjectTree($objectPropertyPathArray);
-			if (is_array($typoScriptObject) && isset($typoScriptObject['__objectType'])) {
-					// The processor is put onto a complete object instance
-				$propertyName = '__all';
-			} elseif ($objectPropertyPathArray[count($objectPropertyPathArray) - 2] === '__prototypes') {
-					// The processor is put onto a prototype object
-				$propertyName = '__all';
-			} else {
-				$objectPathArray = array_slice($objectPropertyPathArray, 0, -1);
-				$propertyName = implode(array_slice($objectPropertyPathArray, -1, 1));
-				$typoScriptObject = &$this->getValueFromObjectTree($objectPathArray);
-			}
-
-			// TODO: re-implement some checking logic
-			$processorArguments = array();
-			if (preg_match_all(self::SPLIT_PATTERN_PROCESSORARGUMENTS, $matches['Arguments'], $matchedArguments) > 0) {
-				foreach ($matchedArguments['ArgumentValue'] as $argumentIndex => $matchedArgumentValue) {
-					$matchedArgumentName = $matchedArguments['ArgumentName'][$argumentIndex];
-					$processorArguments[$matchedArgumentName] = $this->getProcessedValue($matchedArgumentValue);
-				}
-			}
-
-			$processorArguments['__processorClassName'] = $this->getProcessorObjectName($matches['ProcessorSignature']);
-
-			$typoScriptObject['__processors'][$propertyName][$matches['Index']] = $processorArguments;
-			ksort($typoScriptObject['__processors'][$propertyName]);
-		} else {
-			throw new Exception('Invalid processing instruction "' . $indexAndMethodCall . '"', 1182705997);
-		}
-	}
-
-	/**
 	 * Parses a namespace declaration and stores the result in the namespace registry.
 	 *
 	 * @param string $namespaceDeclaration The namespace declaration, for example "neos = TYPO3.Neos"
@@ -600,32 +541,6 @@ class Parser implements ParserInterface {
 	}
 
 	/**
-	 * Parses the given object-and-method-name string and then returns a new processor invocation
-	 * object calling the specified processor with the given arguments.
-	 *
-	 * @param string $processorSignature Either just a method name (then DEFAULT_PROCESSOR_NAMESPACE will be used) or a full object/method name as in "Acme\Foo\Object->methodName"
-	 * @return string the processor object name
-	 * @throws \TYPO3\TypoScript\Exception
-	 */
-	protected function getProcessorObjectName($processorSignature) {
-		$matchedObjectAndMethodName = array();
-		preg_match(self::SPLIT_PATTERN_PHPNAMESPACEANDPROCESSORNAME, $processorSignature, $matchedObjectAndMethodName);
-
-		if (isset($matchedObjectAndMethodName['PhpNamespace']) && strlen($matchedObjectAndMethodName['PhpNamespace']) > 0) {
-			$processorNamespace = $matchedObjectAndMethodName['PhpNamespace'];
-		} else {
-			$processorNamespace = self::DEFAULT_PROCESSOR_NAMESPACE;
-		}
-		$processorObjectName = $processorNamespace . '\\' . ucfirst($matchedObjectAndMethodName['ProcessorName']) . 'Processor';
-
-		if (!$this->objectManager->isRegistered($processorObjectName)) {
-			throw new Exception('Unknown processor object "' . $processorObjectName . '"', 1181903856);
-		}
-
-		return $processorObjectName;
-	}
-
-	/**
 	 * Parse an object path specified as a string and returns an array.
 	 *
 	 * @param string $objectPath The object path to parse
@@ -663,6 +578,7 @@ class Parser implements ParserInterface {
 		} else {
 			throw new Exception('Syntax error: Invalid object path "' . $objectPath . '".', 1180603499);
 		}
+
 		return $objectPathArray;
 	}
 
@@ -681,7 +597,9 @@ class Parser implements ParserInterface {
 			$processedValue = floatval($unparsedValue);
 		} elseif (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
 			$processedValue = array(
-				'__eelExpression' => $matches[1]
+				'__eelExpression' => $matches[1],
+				'__value' => NULL,
+				'__objectType' => NULL
 			);
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUELITERAL, $unparsedValue, $matches) === 1) {
 			$processedValue = stripslashes(isset($matches[2]) ? $matches[2] : $matches[1]);
@@ -705,7 +623,9 @@ class Parser implements ParserInterface {
 				$objectTypeNamespace = (isset($this->objectTypeNamespaces[$matches['namespace']])) ? $this->objectTypeNamespaces[$matches['namespace']] : $matches['namespace'];
 			}
 			$processedValue = array(
-				'__objectType' => $objectTypeNamespace . ':' . $matches['unqualifiedType']
+				'__objectType' => $objectTypeNamespace . ':' . $matches['unqualifiedType'],
+				'__value' => NULL,
+				'__eelExpression' => NULL
 			);
 		} else {
 			throw new Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
@@ -717,11 +637,11 @@ class Parser implements ParserInterface {
 	 * Assigns a value to a node or a property in the object tree, specified by the object path array.
 	 *
 	 * @param array $objectPathArray The object path, specifying the node / property to set
-	 * @param mixed $value The value to assign
+	 * @param mixed $value The value to assign, is a non-array type or an array with __eelExpression etc.
 	 * @param array $objectTree The current (sub-) tree, used internally - don't specify!
 	 * @return array The modified object tree
 	 */
-	protected function setValueInObjectTree(array $objectPathArray, $value, $objectTree = NULL) {
+	protected function setValueInObjectTree(array $objectPathArray, $value, &$objectTree = NULL) {
 		if ($objectTree === NULL) {
 			$objectTree = &$this->objectTree;
 		}
@@ -731,29 +651,31 @@ class Parser implements ParserInterface {
 			$currentKey = (integer)$currentKey;
 		}
 
-		if (count($objectPathArray) > 1) {
-			$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
-
-			$objectTree[$currentKey] = $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
-		} elseif (count($objectPathArray) === 1) {
-			$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
-			$propertyName = array_shift($objectPathArray);
-
-			if ($propertyName === NULL && $value === NULL) {
+		if (count($objectPathArray) === 0) {
+			// last part of the iteration, setting the final value
+			if (isset($objectTree[$currentKey]) && $value === NULL) {
 				unset($objectTree[$currentKey]);
+			} elseif (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey]) && is_array($value)) {
+				$objectTree[$currentKey] = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
 			} else {
-				if (!isset($objectTree[$currentKey])) {
-					$objectTree[$currentKey] = array();
-				}
-				ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
+				$objectTree[$currentKey] = $value;
 			}
-		} else {
-			if ($value === NULL && (is_array($objectTree) || $objectTree instanceof \ArrayAccess)) {
-				unset($objectTree[$currentKey]);
-			} else {
-				ObjectAccess::setProperty($objectTree, $currentKey, $value);
+		} elseif (count($objectPathArray) >= 1) {
+			// we still need to traverse further down
+			if (isset($objectTree[$currentKey]) && !is_array($objectTree[$currentKey])) {
+				// the element one-level-down is already defined, but it is NOT an array. So we need to convert the simple type to __value
+				$objectTree[$currentKey] = array(
+					'__value' => $objectTree[$currentKey],
+					'__eelExpression' => NULL,
+					'__objectType' => NULL
+				);
+			} elseif (!isset($objectTree[$currentKey])) {
+				$objectTree[$currentKey] = array();
 			}
+
+			$this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
 		}
+
 		return $objectTree;
 	}
 
@@ -778,22 +700,6 @@ class Parser implements ParserInterface {
 			$value = &$objectTree;
 		}
 		return $value;
-	}
-
-	/**
-	 * Sets the child node of $objectTree specified by $childNodeKey to an empty array
-	 * if the childNodeKey is not the offset of a Content Array and the child node is
-	 * not already an array or Content Array.
-	 *
-	 * @param mixed &$objectTree An object tree or sub part of the object tree which contains the child node
-	 * @param string $childNodeKey Key in the objectTree which identifies the child node
-	 * @return void
-	 * @see setValueInObjectTree()
-	 */
-	protected function setChildNodeToEmptyArrayIfNeccessary(&$objectTree, $childNodeKey) {
-		if (!is_object($objectTree) && !is_integer($childNodeKey) && !isset($objectTree[$childNodeKey])) {
-			$objectTree[$childNodeKey] = array();
-		}
 	}
 
 	/**

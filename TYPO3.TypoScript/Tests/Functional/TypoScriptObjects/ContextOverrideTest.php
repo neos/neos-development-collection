@@ -24,7 +24,7 @@ class ContextOverrideTest extends AbstractTypoScriptObjectTest {
 		$view = $this->buildView();
 		$view->assign('var1', 'var1');
 		$view->setTypoScriptPath('contextOverride/test');
-		$this->assertEquals('Xvar1Xvar1Xvar1', $view->render());
+		$this->assertEquals('Xvar1Xvar1Xvar1Xfooofooofooo', $view->render());
 	}
 }
 ?>

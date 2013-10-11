@@ -4,37 +4,17 @@
  *  This fixture serves for testing the processors syntax
  *
  */
-
-object1 = Text
-object1.value = "Hello world!"
-object1.value << 1.wrap(prefix: '<strong>', suffix: '</strong>')
-
-# TypoScript processors can also be applied to full objects
-object1 << 1.wrap(prefix: '<div>', suffix: '</div>')
-
-# ... and also on full prototype objects
-prototype(Foo) << 1.wrap(prefix: '<div>', suffix: '</div>')
-
-object2 = Text
-object2.value = "Bumerang"
-object2.value << 1.wrap(prefix: 'ein ', suffix: ';')
-object2.value << 3.wrap(prefix:'War ')
-object2.value << 2. wrap(prefix:  'einmal (vielleicht auch zweimal) ')
-
-object3 = Text
-#object3.$one = "1"
-#object3.$sevenEightNine = "789"
-object3 {
-	value = 345
-	value << 1.wrap(prefix: 2, suffix: "6")
-#	value << 2.wrap(prefix: $one, suffix: "$sevenEightNine ...")
+newObject1 = Text
+newObject1.value = 'Hello'
+newObject1.value.@process.1 = ${value + ' world'}
+newObject1.value.@process.other = ${value + ' world'}
+newObject1.value.@process.default {
+	expression = ${value + ' world'}
+	@position = 'start'
 }
 
-object4 = ContentArray
-object4.10 = Text
-object4.10.value = "cc"
-object4.10.value << 1.wrap(prefix: 'su', suffix: 'ess')
+newObject2 = Text
+newObject2.value = 'Hello'
+newObject2.@process.1 = ${value + ' world'}
 
-# TODO: Processors need to be registered on the nearest content object
-#object4.10.foo.value = 'asdf'
-#object4.10.foo.value << 1.wrap(prefix: 'su', suffix: 'ess')
+prototype(Foo).@process.1 = ${value + ' world'}

@@ -165,10 +165,7 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 	 * @return string
 	 */
 	public function __toString() {
-		if ($this->count() === 1 && isset($this->partialTypoScriptTree['__simpleValue'])) {
-			return (string)$this->tsRuntime->evaluate($this->path);
-		}
-		return '';
+		return (string)$this->tsRuntime->evaluate($this->path);
 	}
 }
 ?>

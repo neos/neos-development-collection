@@ -18,4 +18,10 @@ contextOverride.test = TYPO3.TypoScript:Array {
 		}
 	}
 	300.test = ${var1alias}
+
+	400 = TYPO3.TypoScript:TestRenderer
+	400.@override.var1alias = TYPO3.TypoScript:Value {
+		value = 'fooofooofooo'
+	}
+	400.test = ${var1alias}
 }

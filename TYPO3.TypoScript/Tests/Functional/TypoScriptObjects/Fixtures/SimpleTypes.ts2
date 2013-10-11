@@ -9,7 +9,7 @@ simpleTypes.booleanFalse = Value {
 }
 simpleTypes.wrappedString = Value {
 	value = 'Hello, '
-	value << 1.TYPO3\TypoScript\Processors:wrap(suffix: 'Foo')
+	value.@process.1 = ${value + 'Foo'}
 }
 
 

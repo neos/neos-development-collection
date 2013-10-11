@@ -2,10 +2,7 @@
  *  TypoScript Fixture 08
  *
  *  This fixture serves for testing the copy operator for
- *  objects, variables and properties.
- *
- * TODO: Implement for variables
- *
+ *  objects and properties.
  */
 
 object1 = Text
@@ -29,6 +26,3 @@ lib {
 object7 = Text
 object7.value < object1.value
 
-#object8 = Text
-#object8.$message < object1
-#object8.value = 'I say "$message"'

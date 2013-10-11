@@ -46,9 +46,9 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
 	 * @param string $basePath
 	 */
 	protected function assertMultipleTypoScriptPaths($expected, $basePath) {
-		$this->assertTyposcriptPath($expected, $basePath . 'TypoScript');
 		$this->assertTyposcriptPath($expected, $basePath . 'Eel');
 		$this->assertTyposcriptPath($expected, $basePath . 'PlainValue');
+		$this->assertTyposcriptPath($expected, $basePath . 'TypoScript');
 	}
 
 	/**

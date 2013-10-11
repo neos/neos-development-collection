@@ -14,6 +14,7 @@ namespace TYPO3\TypoScript\Core;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
 use TYPO3\TypoScript\RuntimeAwareProcessorInterface;
@@ -309,7 +310,7 @@ class Runtime {
 			}
 		}
 		if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
-			return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptConfiguration, $contextObject);
+			return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
 		}
 
 		$tsObject = $this->instanciateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
@@ -318,17 +319,9 @@ class Runtime {
 		if (isset($typoScriptConfiguration['__meta']['override'])) {
 			$contextArray = $this->getCurrentContext();
 			foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
-				$contextArray[$overrideKey] = $this->evaluateProcessor('@override.' . $overrideKey, $tsObject, $overrideValue);
+				$contextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
 			}
 			$this->pushContextArray($contextArray);
-		}
-
-		$processorsForTypoScriptObject = $this->getProcessors($tsObject->getInternalProcessors(), '__all');
-
-		foreach ($processorsForTypoScriptObject as $processor) {
-			if ($processor instanceof RuntimeAwareProcessorInterface) {
-				$processor->beforeInvocation($this, $tsObject, $typoScriptPath);
-			}
 		}
 
 		try {
@@ -341,13 +334,18 @@ class Runtime {
 			throw new Exceptions\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
 		}
 
-		foreach ($processorsForTypoScriptObject as $processor) {
-			$output = $processor->process($output);
-		}
+		if (isset($typoScriptConfiguration['__meta']['process'])) {
+			$positionalArraySorter = new PositionalArraySorter($typoScriptConfiguration['__meta']['process'], '__meta.position');
+			foreach ($positionalArraySorter->getSortedKeys() as $key) {
 
-		foreach ($processorsForTypoScriptObject as $processor) {
-			if ($processor instanceof RuntimeAwareProcessorInterface) {
-				$processor->afterInvocation($this, $tsObject, $typoScriptPath);
+				$processorPath = $typoScriptPath . '/__meta/process/' . $key;
+				if (isset($typoScriptConfiguration['__meta']['process'][$key]['expression'])) {
+					$processorPath .= '/expression';
+				}
+
+				$this->pushContext('value', $output);
+				$output = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
+				$this->popContext();
 			}
 		}
 
@@ -401,9 +399,6 @@ class Runtime {
 					}
 				} else {
 					$configuration = array();
-				}
-				if (isset($configurationOnLastLevel['__processors'][$currentPathSegment])) {
-					$configuration['__processorsForThisLevel'] = $configurationOnLastLevel['__processors'][$currentPathSegment];
 				}
 
 				if (isset($configuration['__prototypes'])) {
@@ -468,9 +463,6 @@ class Runtime {
 		 */
 		$typoScriptObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
 		$this->setPropertiesOnTypoScriptObject($typoScriptObject, $typoScriptConfiguration);
-		if (isset($typoScriptConfiguration['__processors'])) {
-			$typoScriptObject->setInternalProcessors($typoScriptConfiguration['__processors']);
-		}
 
 		return $typoScriptObject;
 	}
@@ -494,47 +486,36 @@ class Runtime {
 	}
 
 	/**
-	 * Evaluate the processors for $variableName
-	 *
-	 * @param string $variableName The variable name
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
-	 * @param mixed $value
-	 * @return mixed
-	 */
-	public function evaluateProcessor($variableName, AbstractTypoScriptObject $contextObject, $value) {
-		if (is_array($value) && isset($value['__eelExpression'])) {
-			$value = $this->evaluateEelExpression($value['__eelExpression'], $contextObject);
-		}
-
-		$processors = $this->getProcessors($contextObject->getInternalProcessors(), $variableName);
-		foreach ($processors as $processor) {
-			$value = $processor->process($value);
-		}
-
-		return $value;
-	}
-
-	/**
 	 * Evaluate a simple value or eel expression with processors
 	 *
+	 * @param string $typoScriptPath the typoscript path up to now
 	 * @param array $value TypoScript configuration for the value
 	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
 	 * @return mixed The result of the evaluation
 	 */
-	protected function evaluateEelExpressionOrSimpleValueWithProcessor(array $value, AbstractTypoScriptObject $contextObject = NULL) {
+	protected function evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, array $value, AbstractTypoScriptObject $contextObject = NULL) {
 		if (isset($value['__eelExpression'])) {
 			$evaluatedValue = $this->evaluateEelExpression($value['__eelExpression'], $contextObject);
 		} else {
-				// must be simple type, as this is the only place where this method is called.
+			// must be simple type, as this is the only place where this method is called.
 			$evaluatedValue = $value['__value'];
 		}
 
-		if (isset($value['__processorsForThisLevel'])) {
-			$processors = $this->getProcessorsForSingleProperty($value['__processorsForThisLevel']);
-			foreach ($processors as $processor) {
-				$evaluatedValue = $processor->process($evaluatedValue);
+		if (isset($value['__meta']['process'])) {
+			$positionalArraySorter = new PositionalArraySorter($value['__meta']['process'], '__meta.position');
+			foreach ($positionalArraySorter->getSortedKeys() as $key) {
+
+				$processorPath = $typoScriptPath . '/__meta/process/' . $key;
+				if (isset($value['__meta']['process'][$key]['expression'])) {
+					$processorPath .= '/expression';
+				}
+
+				$this->pushContext('value', $evaluatedValue);
+				$evaluatedValue = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
+				$this->popContext();
 			}
 		}
+
 
 		return $evaluatedValue;
 	}
@@ -568,47 +549,6 @@ class Runtime {
 		$context->whitelist('q');
 		$value = $this->eelEvaluator->evaluate($expression, $context);
 		return $value;
-	}
-
-	/**
-	 * Instantiate and return all processors for a given $processorConfiguration and $propertyName,
-	 * in the right ordering.
-	 *
-	 * @param array $processorConfiguration
-	 * @param string $propertyName
-	 * @return array<\TYPO3\TypoScript\ProcessorInterface> the fully initialized processors, ready for further use.
-	 */
-	protected function getProcessors(array $processorConfiguration, $propertyName) {
-		if (!isset($processorConfiguration[$propertyName])) {
-			return array();
-		}
-
-		return $this->getProcessorsForSingleProperty($processorConfiguration[$propertyName]);
-	}
-
-	/**
-	 * Build processors for a single property with the given processor configuration
-	 *
-	 * @param array $processorConfiguration
-	 * @return array Array of processors for the given properties
-	 * @throws \TYPO3\TypoScript\Exception
-	 */
-	protected function getProcessorsForSingleProperty(array $processorConfiguration) {
-		$processors = array();
-		ksort($processorConfiguration);
-		foreach ($processorConfiguration as $singleProcessorConfiguration) {
-			$processorClassName = $singleProcessorConfiguration['__processorClassName'];
-			$processor = new $processorClassName();
-			unset($singleProcessorConfiguration['__processorClassName']);
-
-			foreach ($singleProcessorConfiguration as $propertyName => $propertyValue) {
-				if (!ObjectAccess::setProperty($processor, $propertyName, $propertyValue)) {
-					throw new Exception(sprintf('Property "%s" could not be set on processor "%s".', $propertyName, $processorClassName), 1332493740);
-				}
-			}
-			$processors[] = $processor;
-		}
-		return $processors;
 	}
 
 	/**

@@ -44,5 +44,23 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('XHello World', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function complexExample() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('basicRendering/complexExample/toRender');
+		$this->assertEquals('Static string post', $view->render());
+	}
+
+	/**
+	 * @test
+	 */
+	public function complexExample2() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('basicRendering/complexExample2/toRender');
+		$this->assertEquals('Static string post', $view->render());
+	}
+
 }
 ?>

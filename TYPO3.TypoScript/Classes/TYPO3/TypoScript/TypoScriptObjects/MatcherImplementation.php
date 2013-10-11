@@ -77,7 +77,6 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 				$renderedElement = $this->tsRuntime->render(
 					sprintf('%s/element<%s>', $this->path, $type)
 				);
-				$renderedElement = $this->tsRuntime->evaluateProcessor('element', $this, $renderedElement);
 			}
 			return $renderedElement;
 		} else {

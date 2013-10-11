@@ -1,4 +1,5 @@
 prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 
 basicRendering.test = TYPO3.TypoScript:TestRenderer {
 	test = 'Hello World'
@@ -12,4 +13,33 @@ basicRendering.reuseTypoScriptVariables = TYPO3.TypoScript:TestRenderer {
 basicRendering.reuseTypoScriptVariablesWithEel = TYPO3.TypoScript:TestRenderer {
 	test2 = ${'or' + 'ld'}
 	test = ${'Hello W' + this.test2}
+}
+
+
+prototype(TYPO3.TypoScript:FooValue) < prototype(TYPO3.TypoScript:Value) {
+	value = ${'my eel expression'}
+}
+basicRendering.complexExample {
+	toRender = TYPO3.TypoScript:FooValue
+
+	prototype(TYPO3.TypoScript:FooValue) {
+		value = 'Static string'
+		value.@process.1 = ${value + ' post'}
+	}
+}
+
+
+prototype(TYPO3.TypoScript:FooValue2) < prototype(TYPO3.TypoScript:Value) {
+	value = TYPO3.TypoScript:Value {
+		value = 'my nested value'
+	}
+}
+
+basicRendering.complexExample2 {
+	toRender = TYPO3.TypoScript:FooValue2
+
+	prototype(TYPO3.TypoScript:FooValue2) {
+		value = 'Static string'
+		value.@process.1 = ${value + ' post'}
+	}
 }

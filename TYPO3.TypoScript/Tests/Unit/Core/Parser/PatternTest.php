@@ -217,29 +217,6 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
-	 * Checks the regular expression SPLIT_PATTERN_PROCESSORARGUMENTS
-	 *
-	 *
-	 */
-	public function testSPLIT_PATTERN_PROCESSORARGUMENTS() {
-		$pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_PROCESSORARGUMENTS;
-
-		$this->assertEquals(preg_match($pattern, 'foo: " hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a double-quoted string.');
-		$this->assertEquals(preg_match($pattern, 'foo:"hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a key-value pair without whitespace.');
-		$this->assertEquals(preg_match($pattern, 'foo:  "hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a key-value pair with more than one whitespace.');
-		$this->assertEquals(preg_match($pattern, 'foo: " ha\"llo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a double-quoted string with an escaped quote inside.');
-		$this->assertEquals(preg_match($pattern, 'foo: \'huhu\''), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a single-quoted string.');
-		$this->assertEquals(preg_match($pattern, "foo: 'huh\'u'"), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a single-quoted string with an escaped quote.');
-		$this->assertEquals(preg_match($pattern, 'foo: -12'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a negative number.');
-		$this->assertEquals(preg_match($pattern, 'foo: 12'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a number.');
-		$this->assertEquals(preg_match($pattern, 'foo: 123.23'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a float number.');
-		$this->assertEquals(preg_match($pattern, 'foo: -123.23'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a negative float number.');
-		$this->assertEquals(preg_match($pattern, '\'noName\''), 0, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did match an unnamed string argument.');
-		$this->assertEquals(preg_match($pattern, '123'), 0, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did match an unnamed integer argument.');
-		$this->assertEquals(preg_match($pattern, '"foo": "bar"'), 0, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did match a quoted argument name.');
-	}
-
-	/**
 	 * @test
 	 */
 	public function testSCAN_PATTERN_VALUEOBJECTTYPE() {

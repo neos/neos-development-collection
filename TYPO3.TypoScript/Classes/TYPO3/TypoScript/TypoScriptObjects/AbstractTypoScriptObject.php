@@ -39,14 +39,6 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	protected $typoScriptObjectName;
 
 	/**
-	 * List of processors, purely internal.
-	 *
-	 * @var array
-	 * @internal
-	 */
-	protected $internalProcessors = array();
-
-	/**
 	 * List of properties which have been set using array access. We store this for *every* TypoScript object
 	 * in order to do things like:
 	 * x = Foo {
@@ -78,22 +70,6 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	 * @return mixed
 	 */
 	abstract public function evaluate();
-
-	/**
-	 * @param array $internalProcessors
-	 * @internal
-	 */
-	public function setInternalProcessors(array $internalProcessors) {
-		$this->internalProcessors = $internalProcessors;
-	}
-
-	/**
-	 * @return array
-	 * @internal
-	 */
-	public function getInternalProcessors() {
-		return $this->internalProcessors;
-	}
 
 	/**
 	 * Return the typoscript value relative to this TypoScript object (with processors

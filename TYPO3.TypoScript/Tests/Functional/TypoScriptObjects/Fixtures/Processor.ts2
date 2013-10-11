@@ -1,54 +1,86 @@
 prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-processors.runtimeAware = TYPO3.TypoScript:TestRenderer {
-	test = ${var1alias}
-}
-
-processors.runtimeAware << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:alias()
-
-
-prototype(TYPO3.TypoScript:TestRenderer2) < prototype(TYPO3.TypoScript:TestRenderer)
-prototype(TYPO3.TypoScript:TestRenderer2) << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:alias()
-
-processors.runtimeAwarePrototype = TYPO3.TypoScript:TestRenderer2 {
-	test = ${var1alias}
-}
-
-// Test that simple values, eel and TypoScript can all be wrapped by processors when
-// being run through TsRuntime::evaluate. (the corresponding test without processors
-// can be found in SimpleTypes.ts2)
-processors {
-	objectAsTypoScript = Value {
-		value = 'MyValue'
-	}
-	objectAsTypoScript << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
-
-	objectAsEel = ${'MyValue'}
-	objectAsEel << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
-
-	objectAsPlainValue = 'MyValue'
-	objectAsPlainValue << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
-}
-
-// Test that simple values, eel and TypoScript can all be wrapped by processors when
-// being run through AbstractTsObject::tsValue(). (the corresponding test without processors
-// can be found in SimpleTypes.ts2)
-processors {
+processors.newSyntax.basicProcessor {
 	valueWithNestedPlainValue = Value {
-		value = 'MyValue'
-		value << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+		value = 'Hello'
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
 	}
 
 	valueWithNestedEel = Value {
-		value = ${'MyValue'}
-		value << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+		value = ${'Hello'}
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
 	}
 
 	valueWithNestedTypoScript = Value {
 		value = Value {
-			value = 'MyValue'
+			value = 'Hello'
 		}
-		value << 1.TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Processors:wrap()
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
 	}
+}
+
+processors.newSyntax.extendedSyntaxProcessor {
+	valueWithNestedPlainValue = Value {
+		value = 'Hello'
+		value.@process.1 = ${value + ' foo'}
+		value.@process.default {
+			expression = ${value + ' World'}
+			@position = 'start'
+		}
+	}
+
+	valueWithNestedEel = Value {
+		value = ${'Hello'}
+		value.@process.1 = ${value + ' foo'}
+		value.@process.default {
+			expression = ${value + ' World'}
+			@position = 'start'
+		}
+	}
+
+	valueWithNestedTypoScript = Value {
+		value = Value {
+			value = 'Hello'
+		}
+		value.@process.1 = ${value + ' foo'}
+		value.@process.default {
+			expression = ${value + ' World'}
+			@position = 'start'
+		}
+	}
+}
+
+prototype(TYPO3.TypoScript:ProcessorUnset1) < prototype(TYPO3.TypoScript:Value) {
+	value = "Foo"
+	value.@process.1 = ${value + 'bar'}
+	value.@process.2 = ${value + 'baz'}
+}
+
+prototype(TYPO3.TypoScript:ProcessorUnset2) < prototype(TYPO3.TypoScript:ProcessorUnset1) {
+	value.@process.1 >
+}
+
+processors.newSyntax.unset {
+	simple = 'Foo'
+	simple.@process.1 = ${value + 'bar'}
+	simple.@process.2 = ${value + 'baz'}
+
+	simple.@process.1 >
+
+	prototypes1 = TYPO3.TypoScript:ProcessorUnset1
+	prototypes1.value.@process.1 >
+
+	prototypes2 = TYPO3.TypoScript:ProcessorUnset2
+
+	nestedScope {
+		prototypes3 = TYPO3.TypoScript:ProcessorUnset1
+		prototype(TYPO3.TypoScript:ProcessorUnset1).value.@process.1 >
+	}
+
+
+
 }
