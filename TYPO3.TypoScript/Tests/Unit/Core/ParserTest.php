@@ -97,7 +97,8 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				'__value' => NULL,
 				'__eelExpression' => NULL,
 				'value' => 23,
-				'value-with-dash' => 42
+				'value-with-dash' => 42,
+				'value:with:colon' => 59
 			)
 		);
 

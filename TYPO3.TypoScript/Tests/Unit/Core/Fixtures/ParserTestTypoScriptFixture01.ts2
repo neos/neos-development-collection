@@ -10,3 +10,4 @@ test = TYPO3.TypoScript:Text
 secondTest = Text
 secondTest.value = 23
 secondTest.value-with-dash = 42
+secondTest.value:with:colon = 59

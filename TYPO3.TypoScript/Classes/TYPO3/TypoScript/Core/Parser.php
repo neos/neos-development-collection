@@ -63,13 +63,13 @@ class Parser implements ParserInterface {
 		^
 			\.?
 			(?:
-				@?[a-zA-Z0-9\-]*
+				@?[a-zA-Z0-9:\-]*
 				| prototype\([a-zA-Z0-9.:]+\)
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9\-]*
+					@?[a-zA-Z0-9:\-]*
 					| prototype\([a-zA-Z0-9.:]+\)
 				)
 			)*
@@ -107,13 +107,13 @@ class Parser implements ParserInterface {
 
 			\.?
 			(?:
-				@?[a-zA-Z0-9\-]*
+				@?[a-zA-Z0-9:\-]*
 				|prototype\([a-zA-Z0-9.:]+\)
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9\-]*
+					@?[a-zA-Z0-9:\-]*
 					|prototype\([a-zA-Z0-9.:]+\)
 				)
 			)*

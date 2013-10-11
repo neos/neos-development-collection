@@ -40,6 +40,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OPENINGCONFINEMENT;
 		$this->assertEquals(preg_match($pattern, 'foo.bar.baz {'), 1, 'a confinement was not matched');
 		$this->assertEquals(preg_match($pattern, 'fo-o.bar-la.baz {'), 1, 'a confinement with dashes was not matched');
+		$this->assertEquals(preg_match($pattern, 'fo:o.bar:la.baz {'), 1, 'a confinement with colons was not matched');
 		$this->assertEquals(preg_match($pattern, 'f21oo.b12ar.baz {'), 1, 'a confinement with a number was not matched');
 		$this->assertEquals(preg_match($pattern, '		foo.bar.baz	    {	'), 1, 'a path which contained numerous whitespace was not matched');
 		$this->assertEquals(preg_match($pattern, 'f21oo.b12ar.baz { foo'), 0, 'a confinement with parts after the opening confinement matched');
@@ -87,6 +88,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(preg_match($pattern, '  myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment with leading whitespace.');
 		$this->assertEquals(preg_match($pattern, 'myObject.content = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a literal assignment of a property.');
 		$this->assertEquals(preg_match($pattern, 'my-object.con-tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a dasherized path.');
+		$this->assertEquals(preg_match($pattern, 'my:object.con:tent = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a colonrized path.');
 		$this->assertEquals(preg_match($pattern, 'myObject.10 = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a content array item.');
 	}
 
@@ -102,6 +104,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(preg_match($pattern, 'foo.bar.as10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (5)');
 		$this->assertEquals(preg_match($pattern, '12foo.bar.as.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path (6)');
 		$this->assertEquals(preg_match($pattern, '12f-o-o.ba-r.as.ba-z'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path with dashes (7)');
+		$this->assertEquals(preg_match($pattern, '12f:o:o.ba:r.as.ba:z'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path with colons (7)');
 	}
 
 	/**
@@ -144,6 +147,14 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			3 => 'b-ar'
 		);
 		$this->assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(TYPO3.Foo).b-ar'));
+
+		$expected = array(
+			0 =>  'b:lah',
+			1 => 'asdf',
+			2 => 'prototype(TYPO3.Foo)',
+			3 => 'b:ar'
+		);
+		$this->assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(TYPO3.Foo).b:ar'));
 	}
 
 	/**
