@@ -1,7 +1,7 @@
 <div class="neos-modal" id="pagetreeDeleteDialog">
 	<div class="neos-modal-header">
 		<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">Are you sure you want to delete the page "{{view.pageTitle}}"?</div>
+		<div class="neos-header">Do you really want to delete the page? "{{view.pageTitle}}"?</div>
 		<p>
 			This will delete the page{{#if view.numberOfChildren}} and it's subpages{{/if}}.<br />
 			This operation can be undone in the workspace management.
@@ -9,7 +9,7 @@
 	</div>
 	<div class="neos-modal-footer">
 		<button class="neos-button" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
-		<button class="neos-button neos-button-danger" title="Delete" {{action "delete" target="view"}}>Delete</button>
+		<button class="neos-button neos-button-danger" title="Yes, delete the page" {{action "delete" target="view"}}>Yes, delete the page</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

@@ -27,10 +27,10 @@
 </div>
 {{#if _enableTransactionalInspector}}
 	<div class="neos-actions">
-		<button class="neos-inspector-cancel" title="Discard changes" {{bindAttr disabled="unmodified"}} {{action "revert"}}>Cancel</button>
+		<button class="neos-inspector-cancel" title="Discard changes" {{bindAttr disabled="unmodified"}} {{action "revert"}}>Discard changes</button>
 		{{#if hasValidationErrors}}
-			<button class="neos-button neos-inspector-apply neos-disabled" title="There are fields that are not correctly filled in." onclick="alert('The fields marked with an error are not yet correctly filled in. Please complete them properly.');">
-				<i class="icon-warning-sign"></i> Apply
+			<button class="neos-button neos-inspector-apply neos-disabled" title="There are fields that are not correctly filled in." onclick="alert('Some fields are not filled in correctly. Please fill in the marked values properly.');">
+				<i class="icon-warning-sign"></i> OK
 			</button>
 		{{else}}
 			<button class="neos-inspector-apply" title="Apply changes" {{bindAttr disabled="unmodified"}} {{action "apply"}}>Apply</button>

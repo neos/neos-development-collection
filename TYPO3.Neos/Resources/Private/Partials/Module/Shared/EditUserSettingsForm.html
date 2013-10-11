@@ -1,5 +1,5 @@
 <fieldset class="neos-span5">
-	<legend>User</legend>
+	<legend>User Settings</legend>
 
 	<div class="neos-control-group">
 		<label class="neos-control-label">Username</label>
@@ -80,19 +80,19 @@
 					</td>
 					<td>
 						<div class="neos-pull-right">
-							<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{electronicAddress.type}">
+							<button class="neos-button neos-button-danger" title="Click here to delete electronic address" data-toggle="modal" href="#{electronicAddress.type}">
 								<i class="icon-trash icon-white"></i>
 							</button>
 							<div class="neos-hide" id="{electronicAddress.type}">
 								<div class="neos-modal">
 									<div class="neos-modal-header">
 										<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-										<div class="neos-header">Are you sure you want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
+										<div class="neos-header">Do you really want to delete "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
 									</div>
 									<div class="neos-modal-footer">
 										<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-										<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="neos-button neos-button-danger" title="Delete">
-											Delete
+										<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="neos-button neos-button-danger" title="Delete electronic address">
+											Delete electronic address
 										</button>
 									</div>
 								</div>
@@ -105,7 +105,7 @@
 			</tbody>
 		</table>
 		<div class="neos-pull-right">
-			<f:link.action action="newElectronicAddress" arguments="{account: account}" class="neos-button neos-button-primary" title="Click to add a new Electronic address">
+			<f:link.action action="newElectronicAddress" arguments="{account: account}" class="neos-btn neos-button neos-btn-primary" title="Click to add a new electronic address">
 				Add electronic address
 			</f:link.action>
 		</div>

@@ -8,15 +8,15 @@
 			</div>
 		</div>
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="active">Activated</label>
+			<label class="neos-control-label" for="active">State</label>
 			<div class="neos-controls">
 				<label class="neos-radio neos-inline">
 					<f:form.radio property="active" value="1" id="active" />
-					Yes
+					active
 				</label>
 				<label class="neos-radio neos-inline">
 					<f:form.radio property="active" value="0" checked="{f:if(condition: domain.active, else: 'checked')}" />
-					No
+					inactive
 				</label>
 			</div>
 		</div>
@@ -27,6 +27,6 @@
 		<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="neos-button">Cancel</f:link.action>
 	</div>
 	<div class="neos-pull-right">
-		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save')}" class="neos-button neos-button-primary" />
+		<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save Domain')}" class="neos-button neos-button-primary" />
 	</div>
 </div>

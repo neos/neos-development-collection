@@ -8,10 +8,10 @@
 			<table class="neos-table">
 				<thead>
 					<th class="check"><input type="checkbox" id="check-all" /></th>
-					<th>Package name</th>
+					<th>Package Name</th>
 					<th>Version</th>
-					<th>Package key</th>
-					<th>Package type</th>
+					<th>Package Key</th>
+					<th>Package Type</th>
 					<th>&nbsp;</th>
 				</thead>
 				<tbody>
@@ -56,44 +56,44 @@
 												<f:if condition="{isDevelopmentContext}">
 													<f:if condition="{package.isFrozen}">
 														<f:then>
-															<f:link.action action="unfreeze" class="neos-button neos-button-freeze neos-active" arguments="{packageKey: packageKey}" title="This package is frozen. Click to unfreeze"><i class="icon-asterisk icon-white"></i></f:link.action>
+															<f:link.action action="unfreeze" class="neos-button neos-button-freeze neos-active" arguments="{packageKey: packageKey}" title="This package is currently frozen. Click here to unfreeze it."><i class="icon-asterisk icon-white"></i></f:link.action>
 														</f:then>
 														<f:else>
-															<f:link.action action="freeze" class="neos-button neos-button-freeze" arguments="{packageKey: packageKey}" title="This package is not frozen. Click to freeze"><i class="icon-asterisk icon-white"></i></f:link.action>
+															<f:link.action action="freeze" class="neos-button neos-button-freeze" arguments="{packageKey: packageKey}" title="Click here to freeze the package in order to speed up your website."><i class="icon-asterisk icon-white"></i></f:link.action>
 														</f:else>
 													</f:if>
 												</f:if>
 												<f:if condition="{package.isProtected}">
 													<f:then>
-														<button class="neos-button neos-button-warning neos-disabled" title="This package is protected so it cannot be deactivated"><i class="icon-pause icon-white"></i></button>
+														<button class="neos-button neos-button-warning neos-disabled" title="This package is protected and cannot be deactivated."><i class="icon-pause icon-white"></i></button>
 													</f:then>
 													<f:else>
-														<f:link.action action="deactivate" class="neos-button neos-button-warning" arguments="{packageKey: packageKey}" title="Click to deactivate"><i class="icon-pause icon-white"></i></f:link.action>
+														<f:link.action action="deactivate" class="neos-button neos-button-warning" arguments="{packageKey: packageKey}" title="Click to deactivate {packageKey}."><i class="icon-pause icon-white"></i></f:link.action>
 													</f:else>
 												</f:if>
 											</f:then>
 											<f:else>
-												<f:link.action action="activate" class="neos-button neos-button-success" arguments="{packageKey: packageKey}" title="Click to activate"><i class="icon-play icon-white"></i></f:link.action>
+												<f:link.action action="activate" class="neos-button neos-button-success" arguments="{packageKey: packageKey}" title="Click to activate {packageName}."><i class="icon-play icon-white"></i></f:link.action>
 											</f:else>
 										</f:if>
 										<f:if condition="{package.isProtected}">
 											<f:then>
-												<button class="neos-button neos-button-danger neos-disabled" title="This package is protected so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
+												<button class="neos-button neos-button-danger neos-disabled" title="This package is protected and cannot be deleted."><i class="icon-trash icon-white"></i></button>
 											</f:then>
 											<f:else>
-												<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{package.sanitizedPackageKey}">
+												<button class="neos-button neos-button-danger" title="Click to delete {packageKey}." data-toggle="modal" href="#{package.sanitizedPackageKey}">
 													<i class="icon-trash icon-white"></i>
 												</button>
 												<div class="neos-hide" id="{package.sanitizedPackageKey}">
 													<div class="neos-modal">
 														<div class="neos-modal-header">
 															<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-															<div class="neos-header">Are you sure you want to delete "{packageKey}"?</div>
+															<div class="neos-header">Do you really want to delete "{packageKey}"?</div>
 														</div>
 														<div class="neos-modal-footer">
 															<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 															<f:link.action action="delete" class="neos-button neos-button-danger" arguments="{packageKey: packageKey}" title="Delete">
-																Delete
+																Delete {packageKey}
 															</f:link.action>
 														</div>
 													</div>
@@ -134,13 +134,13 @@
 			<div class="neos-modal">
 				<div class="neos-modal-header">
 					<button type="button" class="neos-close" data-dismiss="modal">&times;</button>
-					<h3>Are you sure you want to delete the selected packages?</h3>
+					<h3>Do you really want to delete the selected packages? This action cannot be undone.</h3>
 				</div>
 				<div class="neos-modal-footer">
 					<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 					<button type="submit" name="moduleArguments[action]" value="delete" class="neos-button neos-button-danger">
 						<i class="icon-trash icon-white"></i>
-						Delete
+						Yes, delete them
 					</button>
 				</div>
 			</div>

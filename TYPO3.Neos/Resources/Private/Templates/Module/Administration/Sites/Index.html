@@ -5,7 +5,7 @@
 		<table class="neos-table">
 			<thead>
 				<th>Name</th>
-				<th>Node name</th>
+				<th>Rootnode name</th>
 				<th>Resource package key</th>
 				<th>State</th>
 				<th></th>
@@ -54,13 +54,13 @@
 									<div class="neos-modal">
 										<div class="neos-modal-header">
 											<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-											<div class="neos-header">Are you sure you want to delete "{site.name}"?</div>
+											<div class="neos-header">Do you really want to delete "{site.name}"? This action cannot be undone.</div>
 										</div>
 										<div class="neos-modal-footer">
 											<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 											<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
-												<button class="neos-button neos-button-danger" title="Delete">
-													Delete
+												<button class="neos-button neos-button-danger" title="Delete this site">
+													Delete this site
 												</button>
 											</f:form>
 										</div>
@@ -77,7 +77,7 @@
 	<div class="neos-form-actions neos-form-footer">
 		<div class="neos-pull-right">
 			<f:link.action action="newSite" class="neos-button neos-button-success" title="Click to add a new site">
-				Add site
+				Add new site
 			</f:link.action>
 		</div>
 	</div>

@@ -23,16 +23,16 @@
 					</td>
 					<td>
 						<div class="neos-pull-right">
-							<f:link.action action="show" arguments="{account: account}" class="neos-button" title="Click to view">
+							<f:link.action action="show" arguments="{account: account}" class="neos-button" title="View user">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{account: account}" class="neos-button" title="Click to edit">
+							<f:link.action action="edit" arguments="{account: account}" class="neos-button" title="Edit user">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
 							<f:if condition="{currentAccount} == {account}">
 								<f:then>
-									<button class="neos-button neos-button-danger neos-disabled" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
+									<button class="neos-button neos-button-danger neos-disabled" title="You are logged in as this user and you cannot delete yourself."><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
 									<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
@@ -42,7 +42,7 @@
 										<div class="neos-modal">
 											<div class="neos-modal-header">
 												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-												<div class="neos-header">Are you sure you want to delete user "{account.accountIdentifier}"?</div>
+												<div class="neos-header">Do you really want to delete user ... ?"{account.accountIdentifier}"?</div>
 												<div>
 													<div class="neos-subheader">
 														This will delete the user and his personal workspace, including all unpublished content.
@@ -53,8 +53,8 @@
 											<div class="neos-modal-footer">
 												<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 												<f:form action="delete" arguments="{account: account}" class="neos-inline">
-													<button type="submit" class="neos-button neos-button-danger" title="Delete">
-														Delete
+													<button type="submit" class="neos-button neos-button-danger" title="Delete User">
+														Delete User
 													</button>
 												</f:form>
 											</div>
@@ -72,7 +72,7 @@
 	<div class="neos-form-actions neos-form-footer">
 		<div class="neos-pull-right">
 			<f:link.action action="new" class="neos-button neos-button-primary" title="Create new user">
-				New user
+				Create new user
 			</f:link.action>
 		</div>
 	</div>

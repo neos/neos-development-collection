@@ -19,7 +19,7 @@
 						</div>
 					</div>
 					<div class="neos-control-group">
-						<label class="neos-control-label" for="node-name">Node name</label>
+						<label class="neos-control-label" for="node-name">Root node name</label>
 						<div class="neos-controls">
 							<f:form.textfield property="nodeName" id="node-name" value="{site.nodeName}" />
 							<f:form.hidden name="originalNodeName" value="{site.nodeName}" />
@@ -32,7 +32,7 @@
 								<span class="neos-badge neos-badge-success">Active</span>
 							</f:then>
 							<f:else>
-								<span class="neos-badge neos-badge-important">Deactivated</span>
+								<span class="neos-badge neos-badge-important">Inactive</span>
 							</f:else>
 						</f:if>
 					</p>
@@ -106,11 +106,11 @@
 											<div class="neos-modal">
 												<div class="neos-modal-header">
 													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-													<div class="neos-header">Are you sure you want to delete "{domain.hostPattern}"?</div>
+													<div class="neos-header">Do you really want to delete "{domain.hostPattern}"? This action cannot be undone.</div>
 												</div>
 												<div class="neos-modal-footer">
 													<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-													<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: '{site: site, domain: domain}')}" type="submit" class="neos-button neos-button-danger" title="Delete">
+													<button form="postHelper" formaction="{f:uri.action(action: 'deleteDomain', arguments: '{site: site, domain: domain}')}" type="submit" class="neos-btn-danger neos-button" title="Yes, delete it">
 														<i class="icon-trash icon-white"></i>
 														Delete
 													</button>
@@ -137,19 +137,19 @@
 				<f:link.action action="index" class="neos-button">Cancel</f:link.action>
 			</div>
 			<div class="neos-pull-right">
-				<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{site.nodeName}">
-					Delete
+				<button class="neos-button neos-button-danger" title="Click here to delete this site" data-toggle="modal" href="#{site.nodeName}">
+					Delete this site
 				</button>
 				<div class="neos-hide" id="{site.nodeName}">
 					<div class="neos-modal">
 						<div class="neos-modal-header">
 							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">Are you sure you want to delete "{site.name}"?</div>
+							<div class="neos-header">Do you really want to delete "{site.name}"? This action cannot be undone.</div>
 						</div>
 						<div class="neos-modal-footer">
 							<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-							<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: '{site: site, domain: domain}')}" type="submit" class="neos-button neos-button-danger" title="Delete">
-								Delete
+							<button form="postHelper" formaction="{f:uri.action(action: 'deleteSite', arguments: '{site: site, domain: domain}')}" type="submit" class="neos-button neos-button-danger" title="Yes, delete the site">
+								Yes, delete the site
 							</button>
 						</div>
 					</div>
@@ -158,12 +158,12 @@
 				<f:if condition="{site.online}">
 					<f:then>
 						<button form="postHelper" formaction="{f:uri.action(action: 'deactivateSite', arguments: '{site: site}')}" type="submit" class="neos-button neos-button-warning" title="Click to deactivate">
-							Deactivate
+							Deactivate site
 						</button>
 					</f:then>
 					<f:else>
 						<button form="postHelper" formaction="{f:uri.action(action: 'activateSite', arguments: '{site: site}')}" type="submit" class="neos-button neos-button-success" title="Click to activate">
-							Activate
+							Activate site
 						</button>
 					</f:else>
 				</f:if>

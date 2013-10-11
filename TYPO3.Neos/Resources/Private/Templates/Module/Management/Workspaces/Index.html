@@ -105,7 +105,7 @@
 			</f:form>
 		</f:then>
 		<f:else>
-			<div class="neos-row neos-module-container neos-indented"><p>No unpublished changes in this workspace</p></div>
+			<div class="neos-row neos-module-container neos-indented"><p>There are no unpublished changes in this workspace.</p></div>
 		</f:else>
 	</f:if>
 
@@ -113,13 +113,13 @@
 		<div class="neos-modal">
 			<div class="neos-modal-header">
 				<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-				<div class="neos-header">Are you sure you want to discard all changes in the "{workspaceName}" workspace?</div>
+				<div class="neos-header">Do you really want to discard all changes in the "{workspaceName}" workspace?</div>
 			</div>
 			<div class="neos-modal-footer">
 				<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-button neos-button-danger">
 					<i class="icon-trash icon-white"></i>
-					Discard
+					Discard all changes
 				</button>
 			</div>
 		</div>

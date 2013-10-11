@@ -22,7 +22,7 @@ Feature: Site management / List sites
   @fixtures
   Scenario: Add site by creating a new package
     When I go to the "Administration / Site Management" module
-    And I follow "Add site"
+    And I follow "Add new site"
     And I fill in "Package Key" with "Test.DemoSite"
     And I fill in "Site Name" with "Test Demo Site"
     And I press "Create"
