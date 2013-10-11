@@ -1,6 +1,6 @@
 
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -5679,7 +5679,7 @@
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   vertical-align: text-top;
-  margin-top: 1px;
+  margin: 1px 0 0 0;
 }
 .neos .neos-clear {
   clear: both;
@@ -5692,19 +5692,19 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   background: white;
-  width: 0;
+  width: 320px;
   margin: 0;
   padding: 0;
   position: fixed;
   overflow: hidden;
-  left: 0;
+  left: -320px;
   top: 41px;
   bottom: 0;
   z-index: 10012;
-  -webkit-transition-property: width, margin-top;
-  -moz-transition-property: width, margin-top;
-  -o-transition-property: width, margin-top;
-  transition-property: width, margin-top;
+  -webkit-transition-property: left, margin-top;
+  -moz-transition-property: left, margin-top;
+  -o-transition-property: left, margin-top;
+  transition-property: left, margin-top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
@@ -8228,6 +8228,9 @@
   background-color: #fff;
   content: "";
 }
+.neos #neos-menu-panel.neos-menu-sticky-on {
+  width: 53px;
+}
 .neos #neos-menu-panel {
   position: fixed;
   top: 40px;
@@ -8240,10 +8243,10 @@
   border-right: 1px solid #3f3f3f;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-transition-property: left;
-  -moz-transition-property: left;
-  -o-transition-property: left;
-  transition-property: left;
+  -webkit-transition-property: left, width;
+  -moz-transition-property: left, width;
+  -o-transition-property: left, width;
+  transition-property: left, width;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
@@ -8350,6 +8353,7 @@
 .neos #neos-menu-panel .neos-menu-section a i, .neos #neos-menu-panel .neos-menu-section span.neos-menu-item i {
   display: block;
   position: absolute;
+  background-color: #222222;
   top: 0;
   left: 0;
   width: 54px;
@@ -8358,11 +8362,46 @@
   line-height: 40px;
   vertical-align: middle;
   text-align: center;
+  z-index: 10010;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-list a, .neos #neos-menu-panel .neos-menu-section .neos-menu-list span.neos-menu-item {
   padding-left: 54px;
   position: relative;
   font-weight: normal;
+}
+.neos #neos-menu-panel .neos-menu-stickybutton {
+  position: absolute;
+  z-index: 10015;
+  bottom: 0;
+  left: 0;
+  width: 53px;
+  height: 42px;
+  border: 1px solid #3f3f3f;
+  background-color: #222222;
+  background-image: none;
+  text-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.neos #neos-menu-panel .neos-menu-stickybutton:before {
+  position: relative;
+  top: 1px;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 26px;
+  line-height: 26px;
+  font-weight: normal;
+  content: "‹";
+}
+.neos #neos-menu-panel .neos-menu-stickybutton:hover, .neos #neos-menu-panel .neos-menu-stickybutton.neos-is-active {
+  background-color: #00b5ff;
+}
+.neos #neos-menu-panel .neos-menu-stickybutton.neos-pressed:before {
+  content: "›";
+}
+.neos #neos-menu-panel.neos-menu-sticky .neos-menu-section .neos-menu-collapse:hover {
+  background: none;
 }
 .neos.neos-module {
   background: #888888;
@@ -10823,8 +10862,26 @@ body.neos-menu-panel-open .neos #neos-context-bar {
 body.neos-menu-panel-open .neos #aloha-attribute-field-editLink {
   margin-left: 320px;
 }
+body.neos-menu-sticky-on {
+  padding-left: 54px;
+}
+body.neos-menu-sticky-on.neos-tree-panel-open #neos-application.neos #neos-context-bar {
+  padding-left: 373px;
+}
+body.neos-menu-sticky-on.neos-tree-panel-open #neos-application.neos #neos-tree-panel {
+  left: 54px;
+}
+body.neos-menu-sticky-on #neos-application.neos #neos-context-bar {
+  padding-left: 54px;
+}
+body.neos-menu-sticky-on #neos-application.neos #aloha-attribute-field-editLink {
+  margin-left: 54px;
+}
+body.neos-menu-sticky-on #neos-application #neos-menu-panel {
+  width: 53px;
+}
 body.neos-tree-panel-open .neos #neos-tree-panel {
-  width: 320px;
+  left: 0;
 }
 body.neos-tree-panel-open .neos #neos-context-bar {
   padding-left: 320px;
