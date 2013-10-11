@@ -148,6 +148,8 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 			}
 		}
 
+		$this->initializeView($fluidTemplate);
+
 			// TODO this should be done differently lateron
 		$fluidTemplate->assign('fluidTemplateTsObject', $this);
 
@@ -158,6 +160,17 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 		} else {
 			return $fluidTemplate->render();
 		}
+	}
+
+	/**
+	 * This is a template method which can be overridden in subclasses to add new variables which should
+	 * be available inside the Fluid template. It is needed e.g. for Expose.
+	 *
+	 * @param Helpers\FluidView $view
+	 * @return void
+	 */
+	protected function initializeView(\TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView $view) {
+		// template method
 	}
 }
 ?>
