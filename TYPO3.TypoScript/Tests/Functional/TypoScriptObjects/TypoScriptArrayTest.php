@@ -57,4 +57,3 @@ class TypoScriptArrayTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
 	}
 }
-?>

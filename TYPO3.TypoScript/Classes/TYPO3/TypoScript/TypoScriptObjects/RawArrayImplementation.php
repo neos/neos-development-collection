@@ -39,4 +39,3 @@ class RawArrayImplementation extends ArrayImplementation {
 	}
 
 }
-?>

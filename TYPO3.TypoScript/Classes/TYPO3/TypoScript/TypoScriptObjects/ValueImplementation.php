@@ -42,4 +42,3 @@ class ValueImplementation extends AbstractTypoScriptObject {
 		return $this->tsValue('value');
 	}
 }
-?>

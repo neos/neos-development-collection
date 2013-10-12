@@ -58,4 +58,3 @@ class CollectionTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('Xelement1-0-1-1-Xelement2-1-2--Xelement3-2-3--1', $view->render());
 	}
 }
-?>

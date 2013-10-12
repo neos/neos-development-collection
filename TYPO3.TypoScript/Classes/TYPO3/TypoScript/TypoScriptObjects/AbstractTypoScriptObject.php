@@ -115,4 +115,3 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 		unset($this->properties[$offset]);
 	}
 }
-?>

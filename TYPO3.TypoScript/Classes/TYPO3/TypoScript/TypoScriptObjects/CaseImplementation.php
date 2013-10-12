@@ -68,4 +68,3 @@ class CaseImplementation extends ArrayImplementation {
 		return NULL;
 	}
 }
-?>

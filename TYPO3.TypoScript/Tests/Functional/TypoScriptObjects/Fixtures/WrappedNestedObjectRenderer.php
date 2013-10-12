@@ -53,4 +53,3 @@ class WrappedNestedObjectRenderer extends \TYPO3\TypoScript\TypoScriptObjects\Ab
 		return $this->tsValue('prepend') . $this->tsRuntime->evaluate($this->path . '/value') . $this->tsValue('append');
 	}
 }
-?>

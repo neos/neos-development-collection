@@ -90,4 +90,3 @@ class TagTest extends AbstractTypoScriptObjectTest {
 	}
 
 }
-?>

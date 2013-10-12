@@ -55,4 +55,3 @@ class FluidView extends \TYPO3\Fluid\View\StandaloneView {
 	}
 
 }
-?>

@@ -270,4 +270,3 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedMatches, $matches, $explanation);
 	}
 }
-?>

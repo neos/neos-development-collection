@@ -56,4 +56,3 @@ class ProcessorTest extends AbstractTypoScriptObjectTest {
 	}
 
 }
-?>

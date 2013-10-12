@@ -38,4 +38,3 @@ class ExpressionsTest extends AbstractTypoScriptObjectTest {
 	}
 
 }
-?>

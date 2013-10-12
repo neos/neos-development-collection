@@ -168,4 +168,3 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 		return (string)$this->tsRuntime->evaluate($this->path);
 	}
 }
-?>

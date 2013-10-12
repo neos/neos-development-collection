@@ -752,4 +752,3 @@ class Parser implements ParserInterface {
 		return $flattenedPrototype;
 	}
 }
-?>

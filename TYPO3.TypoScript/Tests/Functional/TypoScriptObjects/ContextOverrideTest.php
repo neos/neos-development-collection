@@ -27,4 +27,3 @@ class ContextOverrideTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('Xvar1Xvar1Xvar1Xfooofooofooo', $view->render());
 	}
 }
-?>

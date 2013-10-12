@@ -18,4 +18,3 @@ namespace TYPO3\TypoScript;
 class Exception extends \TYPO3\Flow\Exception {
 
 }
-?>

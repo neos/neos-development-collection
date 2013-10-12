@@ -64,4 +64,3 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
 	}
 
 }
-?>

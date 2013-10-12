@@ -778,4 +778,3 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

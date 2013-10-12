@@ -62,4 +62,3 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest {
 	}
 
 }
-?>

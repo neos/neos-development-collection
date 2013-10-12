@@ -55,4 +55,3 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 		$this->assertMatchingWorks('case/renderPathWillWin');
 	}
 }
-?>

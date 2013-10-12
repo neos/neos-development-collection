@@ -19,4 +19,3 @@ namespace TYPO3\TypoScript\Exception;
 class UnsupportedObjectTypeAtPathException extends \TYPO3\TypoScript\Exception {
 
 }
-?>

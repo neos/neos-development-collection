@@ -128,4 +128,3 @@ class CollectionImplementation extends AbstractTypoScriptObject {
 		return $iteration;
 	}
 }
-?>

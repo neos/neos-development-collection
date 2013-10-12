@@ -63,4 +63,3 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest {
 	}
 
 }
-?>

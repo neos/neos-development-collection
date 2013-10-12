@@ -62,4 +62,3 @@ class ArrayImplementation extends AbstractTypoScriptObject {
 		return $sortedTypoScriptKeys;
 	}
 }
-?>

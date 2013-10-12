@@ -173,4 +173,3 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 		// template method
 	}
 }
-?>

@@ -33,4 +33,3 @@ class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScrip
 		return 'X' . $this->tsValue('test');
 	}
 }
-?>

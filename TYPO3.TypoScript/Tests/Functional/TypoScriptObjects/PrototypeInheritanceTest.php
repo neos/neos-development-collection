@@ -70,4 +70,3 @@ class PrototypeInheritanceTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('prepend_inSub|value_from_nested_prototype|append_afterOverride', $view->render());
 	}
 }
-?>

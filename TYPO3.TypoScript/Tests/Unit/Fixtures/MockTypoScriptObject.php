@@ -37,4 +37,3 @@ class MockTypoScriptObject {
 		return (string)$this->value;
 	}
 }
-?>

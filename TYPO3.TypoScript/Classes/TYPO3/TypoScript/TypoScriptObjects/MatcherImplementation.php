@@ -84,4 +84,3 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 		}
 	}
 }
-?>

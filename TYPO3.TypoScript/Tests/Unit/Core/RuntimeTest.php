@@ -128,4 +128,3 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -275,4 +275,3 @@ class TypoScriptView extends AbstractView {
 		return $this->fallbackView->render();
 	}
 }
-?>

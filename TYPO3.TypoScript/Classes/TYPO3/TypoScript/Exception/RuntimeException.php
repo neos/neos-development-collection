@@ -41,4 +41,3 @@ class RuntimeException extends \TYPO3\TypoScript\Exception {
 	}
 
 }
-?>

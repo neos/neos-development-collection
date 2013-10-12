@@ -97,4 +97,3 @@ class TypoScriptViewTest extends FunctionalTestCase {
 		return $view;
 	}
 }
-?>

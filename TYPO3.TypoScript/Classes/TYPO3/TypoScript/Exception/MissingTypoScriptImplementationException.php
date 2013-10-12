@@ -18,4 +18,3 @@ namespace TYPO3\TypoScript\Exception;
 class MissingTypoScriptImplementationException extends \TYPO3\TypoScript\Exception {
 
 }
-?>

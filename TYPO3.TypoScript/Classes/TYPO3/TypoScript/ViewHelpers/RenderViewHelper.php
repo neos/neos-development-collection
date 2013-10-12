@@ -116,4 +116,3 @@ class RenderViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 		}
 	}
 }
-?>

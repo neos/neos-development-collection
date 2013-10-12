@@ -53,4 +53,3 @@ interface ParserInterface {
 	public function setObjectTypeNamespace($alias, $namespace);
 
 }
-?>

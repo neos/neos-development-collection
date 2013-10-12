@@ -18,4 +18,3 @@ namespace TYPO3\TypoScript\Exception;
 class UnsupportedProxyMethodException extends \TYPO3\TypoScript\Exception {
 
 }
-?>
