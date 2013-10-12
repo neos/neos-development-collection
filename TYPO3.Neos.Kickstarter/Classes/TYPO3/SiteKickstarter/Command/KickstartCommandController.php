@@ -56,5 +56,3 @@ class KickstartCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->outputLine(implode(PHP_EOL, $generatedFiles));
 	}
 }
-
-?>

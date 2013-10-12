@@ -124,5 +124,3 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
 	}
 }
-
-?>
