@@ -43,4 +43,3 @@ class NodeTemplate extends AbstractNodeData {
 		return uniqid('node');
 	}
 }
-?>

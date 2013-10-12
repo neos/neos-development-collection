@@ -35,5 +35,3 @@ class Version20110928114048 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_node ADD depth INT DEFAULT NULL");
 	}
 }
-
-?>

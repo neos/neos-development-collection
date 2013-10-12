@@ -597,4 +597,3 @@ interface NodeInterface {
 	public function getContext();
 
 }
-?>

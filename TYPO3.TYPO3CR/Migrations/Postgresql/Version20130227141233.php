@@ -29,5 +29,3 @@ class Version20130227141233 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_node RENAME COLUMN nodetype TO contenttype");
 	}
 }
-
-?>

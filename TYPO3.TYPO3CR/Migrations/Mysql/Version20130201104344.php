@@ -29,5 +29,3 @@ class Version20130201104344 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_node CHANGE nodetype contenttype VARCHAR(255) NOT NULL");
 	}
 }
-
-?>

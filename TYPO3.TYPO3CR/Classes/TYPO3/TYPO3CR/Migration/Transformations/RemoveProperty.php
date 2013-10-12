@@ -54,4 +54,3 @@ class RemoveProperty extends AbstractTransformation {
 		$node->removeProperty($this->propertyName);
 	}
 }
-?>

@@ -236,5 +236,3 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertNotNull($childNodeC3);
 	}
 }
-
-?>

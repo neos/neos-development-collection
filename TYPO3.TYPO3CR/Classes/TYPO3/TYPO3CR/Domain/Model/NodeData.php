@@ -770,4 +770,3 @@ class NodeData extends AbstractNodeData {
 	protected function emitNodePathChanged() {
 	}
 }
-?>

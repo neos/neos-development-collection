@@ -110,4 +110,3 @@ class NodeTransformation {
 		throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('A transformation with the name "' . $transformationName . '" could not be found.', 1343293064);
 	}
 }
-?>

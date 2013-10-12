@@ -27,4 +27,3 @@ interface NodeLabelGeneratorInterface {
 	 */
 	public function getLabel(AbstractNodeData $nodeData);
 }
-?>

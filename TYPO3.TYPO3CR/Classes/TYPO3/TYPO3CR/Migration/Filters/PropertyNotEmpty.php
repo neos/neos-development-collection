@@ -50,4 +50,3 @@ class PropertyNotEmpty implements FilterInterface {
 	}
 
 }
-?>

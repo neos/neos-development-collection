@@ -36,4 +36,3 @@ class NodeTemplateTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

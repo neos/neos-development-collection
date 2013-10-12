@@ -195,5 +195,3 @@ class Workspace {
 		return $targetWorkspace;
 	}
 }
-
-?>

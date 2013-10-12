@@ -30,4 +30,3 @@ interface NodeTypePostprocessorInterface {
 	public function process(NodeType $nodeType, array &$configuration, array $options);
 
 }
-?>

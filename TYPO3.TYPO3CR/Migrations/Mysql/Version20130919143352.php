@@ -37,5 +37,3 @@ class Version20130919143352 extends AbstractMigration {
 		$this->addSql("CREATE INDEX IDX_71DE9CFB750166F ON typo3_typo3cr_domain_model_workspace (rootnode)");
 	}
 }
-
-?>

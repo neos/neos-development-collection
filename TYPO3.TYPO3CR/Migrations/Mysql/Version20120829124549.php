@@ -29,5 +29,3 @@ class Version20120829124549 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_typo3cr_migration_domain_model_migrationstatus");
 	}
 }
-
-?>

@@ -477,4 +477,3 @@ abstract class AbstractNodeData {
 	}
 
 }
-?>

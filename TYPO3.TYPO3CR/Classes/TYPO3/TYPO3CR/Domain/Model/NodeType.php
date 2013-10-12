@@ -347,4 +347,3 @@ class NodeType {
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
 	}
 }
-?>

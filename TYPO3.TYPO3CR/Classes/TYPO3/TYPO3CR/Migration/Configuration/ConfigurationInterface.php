@@ -41,5 +41,3 @@ interface ConfigurationInterface {
 	 */
 	public function getMigrationVersion($version);
 }
-
-?>

@@ -99,5 +99,3 @@ abstract class Configuration implements \TYPO3\TYPO3CR\Migration\Configuration\C
 	abstract protected function registerAvailableVersions();
 
 }
-
-?>

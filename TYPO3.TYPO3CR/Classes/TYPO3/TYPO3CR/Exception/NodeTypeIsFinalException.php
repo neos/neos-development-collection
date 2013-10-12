@@ -18,4 +18,3 @@ namespace TYPO3\TYPO3CR\Exception;
 class NodeTypeIsFinalException extends \TYPO3\TYPO3CR\Exception {
 
 }
-?>

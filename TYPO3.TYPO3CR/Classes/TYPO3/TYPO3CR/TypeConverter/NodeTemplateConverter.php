@@ -104,4 +104,3 @@ class NodeTemplateConverter extends NodeConverter {
 		return $this->nodeTypeManager->getNodeType($nodeTypeName);
 	}
 }
-?>

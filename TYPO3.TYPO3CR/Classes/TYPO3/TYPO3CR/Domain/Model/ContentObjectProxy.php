@@ -92,5 +92,3 @@ class ContentObjectProxy {
 		return $this->contentObject;
 	}
 }
-
-?>

@@ -29,5 +29,3 @@ class Version20120429225207 extends AbstractMigration {
 		$this->addSql("DROP INDEX flow3_identity_typo3_typo3cr_domain_model_workspace");
 	}
 }
-
-?>

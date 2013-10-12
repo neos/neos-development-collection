@@ -180,4 +180,3 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 		return $this->contextFactory->create($contextProperties);
 	}
 }
-?>

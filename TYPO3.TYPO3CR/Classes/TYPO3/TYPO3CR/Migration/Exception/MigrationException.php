@@ -16,5 +16,3 @@ namespace TYPO3\TYPO3CR\Migration\Exception;
  * migration.
  */
 class MigrationException extends \TYPO3\TYPO3CR\Exception {}
-
-?>

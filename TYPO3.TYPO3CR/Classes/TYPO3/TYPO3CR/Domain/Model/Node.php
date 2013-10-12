@@ -961,4 +961,3 @@ class Node implements NodeInterface {
 	}
 
 }
-?>

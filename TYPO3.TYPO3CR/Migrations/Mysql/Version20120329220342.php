@@ -33,5 +33,3 @@ class Version20120329220342 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace CHANGE name name VARCHAR(255) DEFAULT NULL");
 	}
 }
-
-?>

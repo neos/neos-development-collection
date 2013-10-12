@@ -125,4 +125,3 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeType->getSomeProperty();
 	}
 }
-?>

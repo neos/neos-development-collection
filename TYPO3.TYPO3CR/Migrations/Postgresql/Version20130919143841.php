@@ -29,5 +29,3 @@ class Version20130919143841 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace RENAME COLUMN rootnodedata TO rootnode");
 	}
 }
-
-?>

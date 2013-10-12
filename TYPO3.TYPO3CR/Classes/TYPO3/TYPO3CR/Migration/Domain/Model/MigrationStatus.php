@@ -110,4 +110,3 @@ class MigrationStatus {
 		return $this->workspaceName;
 	}
 }
-?>

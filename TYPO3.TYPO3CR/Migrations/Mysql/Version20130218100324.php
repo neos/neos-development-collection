@@ -29,5 +29,3 @@ class Version20130218100324 extends AbstractMigration {
 		$this->addSql("UPDATE typo3_typo3cr_domain_model_contentobjectproxy SET targettype = 'TYPO3\\\\TYPO3\\\\Domain\\\\Model\\\\Site' WHERE targettype = 'TYPO3\\\\Neos\\\\Domain\\\\Model\\\\Site'");
 	}
 }
-
-?>

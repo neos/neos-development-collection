@@ -55,4 +55,3 @@ class RenameNode extends AbstractTransformation {
 		$node->setName($this->newName);
 	}
 }
-?>

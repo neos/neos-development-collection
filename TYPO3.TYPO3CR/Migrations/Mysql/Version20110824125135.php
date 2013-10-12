@@ -35,5 +35,3 @@ class Version20110824125135 extends AbstractMigration {
 		$this->addSql("RENAME TABLE typo3_typo3cr_domain_model_workspace TO typo3cr_workspace");
 	}
 }
-
-?>

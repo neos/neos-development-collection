@@ -67,4 +67,3 @@ class Migration {
 		return $this->upConfiguration;
 	}
 }
-?>

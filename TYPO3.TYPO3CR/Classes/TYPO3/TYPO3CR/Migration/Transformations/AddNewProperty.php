@@ -69,4 +69,3 @@ class AddNewProperty extends AbstractTransformation {
 		$node->setProperty($this->newPropertyName, $this->value);
 	}
 }
-?>

@@ -33,5 +33,3 @@ class Version20130702151425 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace ADD CONSTRAINT typo3_typo3cr_domain_model_workspace_ibfk_2 FOREIGN KEY (rootnode) REFERENCES typo3_typo3cr_domain_model_node (persistence_object_identifier)");
 	}
 }
-
-?>

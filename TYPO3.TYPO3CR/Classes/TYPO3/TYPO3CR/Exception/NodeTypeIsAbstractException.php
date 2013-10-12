@@ -18,4 +18,3 @@ namespace TYPO3\TYPO3CR\Exception;
 class NodeTypeIsAbstractException extends \TYPO3\TYPO3CR\Exception {
 
 }
-?>

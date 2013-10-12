@@ -979,4 +979,3 @@ class NodeDataRepository extends Repository {
 	protected function emitRepositoryObjectsPersisted() {
 	}
 }
-?>

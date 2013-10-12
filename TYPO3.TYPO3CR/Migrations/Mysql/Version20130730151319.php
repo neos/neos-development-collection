@@ -29,5 +29,3 @@ class Version20130730151319 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE properties properties LONGTEXT NOT NULL COMMENT '(DC2Type:array)'");
 	}
 }
-
-?>

@@ -18,5 +18,3 @@ use TYPO3\TYPO3CR\Exception;
 class InvalidNodeTypePostprocessorException extends Exception {
 
 }
-
-?>

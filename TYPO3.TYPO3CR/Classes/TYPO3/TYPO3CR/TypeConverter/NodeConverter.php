@@ -227,4 +227,3 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 		));
 	}
 }
-?>

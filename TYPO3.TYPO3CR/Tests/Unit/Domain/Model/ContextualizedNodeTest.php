@@ -340,4 +340,3 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

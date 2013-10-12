@@ -19,5 +19,3 @@ namespace TYPO3\TYPO3CR\Exception;
 class InvalidNodeContextException extends \TYPO3\TYPO3CR\Exception {
 
 }
-
-?>

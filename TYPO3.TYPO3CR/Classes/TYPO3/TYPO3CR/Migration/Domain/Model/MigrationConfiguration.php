@@ -78,4 +78,3 @@ class MigrationConfiguration {
 		return ($this->warnings !== NULL);
 	}
 }
-?>

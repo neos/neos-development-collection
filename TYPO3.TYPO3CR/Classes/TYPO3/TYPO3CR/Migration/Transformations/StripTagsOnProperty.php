@@ -55,4 +55,3 @@ class StripTagsOnProperty extends AbstractTransformation {
 		$node->setProperty($this->propertyName, strip_tags($node->getProperty($this->propertyName)));
 	}
 }
-?>

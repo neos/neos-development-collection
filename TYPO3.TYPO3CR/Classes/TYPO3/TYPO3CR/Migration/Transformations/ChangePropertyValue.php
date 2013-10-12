@@ -92,4 +92,3 @@ class ChangePropertyValue extends AbstractTransformation {
 		$node->setProperty($this->propertyName, $newValueWithReplacedCurrentValue);
 	}
 }
-?>

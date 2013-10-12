@@ -39,4 +39,3 @@ class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}
 }
-?>

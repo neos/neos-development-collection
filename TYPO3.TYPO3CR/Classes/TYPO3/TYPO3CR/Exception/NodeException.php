@@ -18,5 +18,3 @@ namespace TYPO3\TYPO3CR\Exception;
 class NodeException extends \TYPO3\TYPO3CR\Exception {
 
 }
-
-?>

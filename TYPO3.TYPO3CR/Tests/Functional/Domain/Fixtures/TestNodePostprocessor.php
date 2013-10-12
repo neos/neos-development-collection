@@ -34,4 +34,3 @@ class TestNodePostprocessor implements NodeTypePostprocessorInterface {
 	}
 
 }
-?>

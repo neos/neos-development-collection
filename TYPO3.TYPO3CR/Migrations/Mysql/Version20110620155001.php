@@ -49,5 +49,3 @@ class Version20110620155001 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3cr_workspace");
 	}
 }
-
-?>

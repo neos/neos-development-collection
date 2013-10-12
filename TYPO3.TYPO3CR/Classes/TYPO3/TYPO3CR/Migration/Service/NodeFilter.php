@@ -107,4 +107,3 @@ class NodeFilter {
 		throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('A filter with the name "' . $name . '" could not be found.', 1343199467);
 	}
 }
-?>

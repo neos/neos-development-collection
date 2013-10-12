@@ -30,4 +30,3 @@ interface FilterInterface {
 	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 }
-?>

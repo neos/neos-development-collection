@@ -40,5 +40,3 @@ interface ContextFactoryInterface {
 	public function create(array $contextConfiguration);
 
 }
-
-?>

@@ -74,4 +74,3 @@ class RenameProperty extends AbstractTransformation {
 		$node->removeProperty($this->oldPropertyName);
 	}
 }
-?>

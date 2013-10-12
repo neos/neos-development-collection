@@ -44,4 +44,3 @@ class MigrationFactory {
 		return $this->migrationConfiguration->getAvailableVersions();
 	}
 }
-?>

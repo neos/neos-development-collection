@@ -29,5 +29,3 @@ class MigrationStatusRepository extends \TYPO3\Flow\Persistence\Repository {
 	);
 
 }
-
-?>

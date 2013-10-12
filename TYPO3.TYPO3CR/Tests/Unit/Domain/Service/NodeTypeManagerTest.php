@@ -178,4 +178,3 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeTypeManager->getNodeType('TYPO3.Neos:Sub');
 	}
 }
-?>

@@ -157,5 +157,3 @@ class PaginateController extends AbstractWidgetController {
 		return $pagination;
 	}
 }
-
-?>

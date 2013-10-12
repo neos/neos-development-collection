@@ -21,4 +21,3 @@ use TYPO3\Flow\Annotations as Flow;
 class WorkspaceRepository extends \TYPO3\Flow\Persistence\Repository {
 
 }
-?>

@@ -31,5 +31,3 @@ class Version20111215172027 extends AbstractMigration {
 		$this->addSql('ALTER TABLE typo3_typo3cr_domain_model_node CHANGE hiddenafterdatetime hiddenafterdate DATETIME DEFAULT NULL');
 	}
 }
-
-?>

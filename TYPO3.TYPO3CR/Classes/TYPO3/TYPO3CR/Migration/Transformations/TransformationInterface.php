@@ -39,4 +39,3 @@ interface TransformationInterface {
 	function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 }
-?>

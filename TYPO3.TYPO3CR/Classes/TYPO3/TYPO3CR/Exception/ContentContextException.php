@@ -18,5 +18,3 @@ namespace TYPO3\TYPO3CR\Exception;
 class ContentContextException extends \TYPO3\TYPO3CR\Exception {
 
 }
-
-?>

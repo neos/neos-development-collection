@@ -40,4 +40,3 @@ abstract class AbstractTransformation implements TransformationInterface {
 		return $node;
 	}
 }
-?>

@@ -105,5 +105,3 @@ class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		return $typeConverter->convertFrom($source, 'TYPO3\TYPO3CR\Domain\Model\NodeTemplate');
 	}
 }
-
-?>

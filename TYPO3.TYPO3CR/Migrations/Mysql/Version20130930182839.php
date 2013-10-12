@@ -31,5 +31,3 @@ class Version20130930182839 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata CHANGE parentpath parentpath VARCHAR(255) NOT NULL");
 	}
 }
-
-?>

@@ -79,4 +79,3 @@ class NodeType implements FilterInterface {
 	}
 
 }
-?>

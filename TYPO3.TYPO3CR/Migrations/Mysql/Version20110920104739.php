@@ -33,4 +33,3 @@ class Version20110920104739 extends AbstractMigration {
 		$this->addSql("ALTER TABLE contentTypesDeclaredSuperTypes ADD CONSTRAINT contenttypesdeclaredsupertypes_ibfk_1 FOREIGN KEY (declaredSuperTypeId) REFERENCES typo3_typo3cr_domain_model_contenttype(flow3_persistence_identifier)");
 	}
 }
-?>

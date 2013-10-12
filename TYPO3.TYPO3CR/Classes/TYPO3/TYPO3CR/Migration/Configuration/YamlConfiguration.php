@@ -87,4 +87,3 @@ class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configura
 		return $configuration;
 	}
 }
-?>

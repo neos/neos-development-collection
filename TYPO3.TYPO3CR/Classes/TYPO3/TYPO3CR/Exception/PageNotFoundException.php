@@ -23,5 +23,3 @@ class PageNotFoundException extends \TYPO3\Flow\Exception {
 	protected $statusCode = 404;
 
 }
-
-?>

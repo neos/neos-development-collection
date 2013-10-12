@@ -98,4 +98,3 @@ interface ContextInterface {
 	public function isInaccessibleContentShown();
 
 }
-?>

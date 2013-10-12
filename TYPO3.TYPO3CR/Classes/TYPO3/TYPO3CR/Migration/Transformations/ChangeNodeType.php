@@ -61,4 +61,3 @@ class ChangeNodeType extends AbstractTransformation {
 		$node->setNodeType($nodeType);
 	}
 }
-?>

@@ -31,5 +31,3 @@ class Version20130730151320 extends AbstractMigration {
 		$this->addSql("COMMENT ON COLUMN typo3_typo3cr_domain_model_nodedata.properties IS '(DC2Type:array)'");
 	}
 }
-
-?>

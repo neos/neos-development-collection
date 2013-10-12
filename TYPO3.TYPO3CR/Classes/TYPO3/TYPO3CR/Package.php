@@ -36,5 +36,3 @@ class Package extends BasePackage {
 	}
 
 }
-
-?>

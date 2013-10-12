@@ -46,4 +46,3 @@ class NodeName implements FilterInterface {
 	}
 
 }
-?>
