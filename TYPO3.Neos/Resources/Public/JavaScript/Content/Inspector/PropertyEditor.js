@@ -58,7 +58,7 @@ define(
 				propertyDefinition = this.get('propertyDefinition');
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
 
-			var typeDefinition = Configuration.get('UserInterface.' + propertyDefinition.type);
+			var typeDefinition = Configuration.get('UserInterface.inspector.editors.' + propertyDefinition.type);
 			Ember.assert('Type defaults for "' + propertyDefinition.type + '" not found!', !!typeDefinition);
 
 			var editorClassName = Ember.get(propertyDefinition, 'ui.inspector.editor') || typeDefinition.editor;

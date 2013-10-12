@@ -35,6 +35,6 @@ class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelpe
 	 * @return boolean
 	 */
 	public function render() {
-		return $this->settings['loadMinifiedJavascript'];
+		return $this->settings['userInterface']['loadMinifiedJavascript'];
 	}
 }

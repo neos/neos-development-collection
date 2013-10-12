@@ -90,21 +90,23 @@ TYPO3:
           position: 200
           label: 'Plugins'
 
-    # should minified JavaScript be loaded? For developing the TYPO3 Neos
-    # Content Module, this should be set to FALSE.
-    loadMinifiedJavascript: TRUE
-
     userInterface:
-      string:
-        editor: Content/Inspector/Editors/TextFieldEditor
-      integer:
-        editor: Content/Inspector/Editors/TextFieldEditor
-      boolean:
-        editor: Content/Inspector/Editors/BooleanEditor
-      'TYPO3\Media\Domain\Model\ImageVariant':
-        editor: Content/Inspector/Editors/ImageEditor
-      date:
-        editor: Content/Inspector/Editors/DateTimeEditor
+      # should minified JavaScript be loaded? For developing the TYPO3 Neos
+      # Content Module, this should be set to FALSE.
+      loadMinifiedJavascript: TRUE
+
+      inspector:
+        editors:
+          string:
+            editor: Content/Inspector/Editors/TextFieldEditor
+          integer:
+            editor: Content/Inspector/Editors/TextFieldEditor
+          boolean:
+            editor: Content/Inspector/Editors/BooleanEditor
+          'TYPO3\Media\Domain\Model\ImageVariant':
+            editor: Content/Inspector/Editors/ImageEditor
+          date:
+            editor: Content/Inspector/Editors/DateTimeEditor
 
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
