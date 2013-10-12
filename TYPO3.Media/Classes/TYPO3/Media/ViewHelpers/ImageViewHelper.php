@@ -141,4 +141,3 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 	}
 
 }
-?>

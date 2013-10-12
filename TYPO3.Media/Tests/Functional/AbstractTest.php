@@ -87,4 +87,3 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	}
 
 }
-?>

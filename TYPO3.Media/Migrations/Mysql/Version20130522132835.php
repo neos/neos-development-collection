@@ -34,5 +34,3 @@ class Version20130522132835 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_media_domain_model_tag");
 	}
 }
-
-?>

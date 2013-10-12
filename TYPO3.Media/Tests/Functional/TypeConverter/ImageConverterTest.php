@@ -138,4 +138,3 @@ class ImageConverterTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 	}
 
 }
-?>

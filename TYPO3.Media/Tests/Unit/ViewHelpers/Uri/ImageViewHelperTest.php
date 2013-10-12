@@ -97,4 +97,3 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->viewHelper->render($this->mockImage, NULL, 456, FALSE, TRUE);
 	}
 }
-?>

@@ -82,4 +82,3 @@ class ImageOrientationValidator extends \TYPO3\Flow\Validation\Validator\Abstrac
 		}
 	}
 }
-?>

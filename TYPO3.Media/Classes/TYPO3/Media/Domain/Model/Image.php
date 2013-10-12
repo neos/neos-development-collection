@@ -288,5 +288,3 @@ class Image extends Asset implements ImageInterface {
 	}
 
 }
-
-?>

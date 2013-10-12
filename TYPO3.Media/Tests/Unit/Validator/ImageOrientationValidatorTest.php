@@ -87,5 +87,3 @@ class ImageOrientationValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}
 	}
 }
-
-?>

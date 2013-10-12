@@ -298,5 +298,3 @@ class ImageVariant implements ImageInterface {
 
 
 }
-
-?>

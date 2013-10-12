@@ -50,5 +50,3 @@ class BrowserState {
 		return isset($this->data[$key]) ? $this->data[$key] : NULL;
 	}
 }
-
-?>

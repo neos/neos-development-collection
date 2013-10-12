@@ -64,5 +64,3 @@ class Video extends Asset {
 	}
 
 }
-
-?>

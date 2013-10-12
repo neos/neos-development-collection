@@ -94,4 +94,3 @@ class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
 		}
 	}
 }
-?>

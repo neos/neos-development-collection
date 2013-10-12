@@ -82,4 +82,3 @@ class ImageVariantConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 		return new \TYPO3\Media\Domain\Model\ImageVariant($convertedChildProperties['originalImage'], $convertedChildProperties['processingInstructions']);
 	}
 }
-?>

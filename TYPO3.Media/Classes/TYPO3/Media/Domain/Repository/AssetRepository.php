@@ -49,5 +49,3 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 }
-
-?>

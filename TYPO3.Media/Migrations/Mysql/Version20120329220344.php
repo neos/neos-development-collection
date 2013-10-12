@@ -29,5 +29,3 @@ class Version20120329220344 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_media_domain_model_image CHANGE title title VARCHAR(255) DEFAULT NULL, CHANGE width width INT DEFAULT NULL, CHANGE height height INT DEFAULT NULL, CHANGE type type INT DEFAULT NULL, CHANGE imagevariants imagevariants LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'");
 	}
 }
-
-?>

@@ -104,4 +104,3 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	}
 
 }
-?>

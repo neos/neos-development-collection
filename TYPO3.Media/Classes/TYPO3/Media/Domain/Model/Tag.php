@@ -56,5 +56,3 @@ class Tag {
 		return $this->label;
 	}
 }
-
-?>

@@ -82,4 +82,3 @@ class ImageTypeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
 		return $allowedImageTypes;
 	}
 }
-?>

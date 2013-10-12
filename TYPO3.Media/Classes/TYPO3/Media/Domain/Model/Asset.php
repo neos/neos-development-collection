@@ -183,5 +183,3 @@ class Asset implements AssetInterface {
 	}
 
 }
-
-?>

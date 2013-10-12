@@ -31,5 +31,3 @@ class Version20130605174713 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_media_domain_model_asset DROP caption");
 	}
 }
-
-?>

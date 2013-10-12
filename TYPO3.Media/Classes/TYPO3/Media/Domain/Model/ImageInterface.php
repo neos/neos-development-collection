@@ -105,5 +105,3 @@ interface ImageInterface extends AssetInterface {
 	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL);
 
 }
-
-?>

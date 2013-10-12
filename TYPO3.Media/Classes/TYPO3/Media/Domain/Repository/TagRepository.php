@@ -26,5 +26,3 @@ class TagRepository extends \TYPO3\Flow\Persistence\Repository {
 	protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 
 }
-
-?>

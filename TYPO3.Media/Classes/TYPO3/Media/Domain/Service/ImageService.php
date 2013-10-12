@@ -217,5 +217,3 @@ class ImageService {
 		return $this->objectManager->get('Imagine\Image\FontInterface', $file, $size, $color);
 	}
 }
-
-?>

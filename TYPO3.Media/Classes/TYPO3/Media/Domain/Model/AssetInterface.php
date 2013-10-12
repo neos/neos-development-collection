@@ -63,5 +63,3 @@ interface AssetInterface {
 	public function setTags(\Doctrine\Common\Collections\Collection $tags);
 
 }
-
-?>

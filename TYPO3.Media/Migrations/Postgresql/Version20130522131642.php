@@ -64,5 +64,3 @@ class Version20130522131642 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_media_domain_model_video");
 	}
 }
-
-?>

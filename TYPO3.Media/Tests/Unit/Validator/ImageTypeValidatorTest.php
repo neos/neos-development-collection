@@ -84,5 +84,3 @@ class ImageTypeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}
 	}
 }
-
-?>

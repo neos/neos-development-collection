@@ -118,5 +118,3 @@ class MediaCommandController extends CommandController {
 	}
 
 }
-
-?>

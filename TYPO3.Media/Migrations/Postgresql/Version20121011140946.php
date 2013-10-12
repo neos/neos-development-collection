@@ -34,5 +34,3 @@ class Version20121011140946 extends AbstractMigration {
 		$this->addSql("UPDATE typo3_media_domain_model_image SET imagevariants = REPLACE(imagevariants, 's:32:\"\\000*\\000Persistence_Object_Identifier\";', 's:31:\"\\000*\\000FLOW3_Persistence_Identifier\";') WHERE imagevariants LIKE '%s:32:\"\\000*\\000Persistence_Object_Identifier\";%'");
 	}
 }
-
-?>

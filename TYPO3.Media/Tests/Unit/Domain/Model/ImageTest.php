@@ -216,4 +216,3 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>
