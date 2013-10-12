@@ -11,7 +11,9 @@ require(
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 
 		paths: {
-			'Library': '../Library'
+			'Library': '../Library',
+			'text': '../Library/requirejs/text',
+			'i18n': '../Library/requirejs/i18n'
 		},
 		locale: 'en'
 	},

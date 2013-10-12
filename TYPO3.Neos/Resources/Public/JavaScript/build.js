@@ -7,7 +7,9 @@
 ({
 	baseUrl: ".",
 	paths: {
-		'Library': '../Library/'
+		'Library': '../Library/',
+		'text': '../Library/requirejs/text',
+		'i18n': '../Library/requirejs/i18n'
 	},
 	locale: 'en',
 
