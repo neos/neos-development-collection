@@ -52,4 +52,3 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 		return $tagBuilder->render();
 	}
 }
-?>

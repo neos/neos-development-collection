@@ -99,4 +99,3 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 	}
 
 }
-?>

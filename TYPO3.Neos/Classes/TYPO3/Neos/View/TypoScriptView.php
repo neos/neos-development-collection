@@ -96,5 +96,3 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 		return $this->typoScriptPath;
 	}
 }
-
-?>

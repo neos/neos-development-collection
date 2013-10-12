@@ -110,4 +110,3 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	}
 
 }
-?>

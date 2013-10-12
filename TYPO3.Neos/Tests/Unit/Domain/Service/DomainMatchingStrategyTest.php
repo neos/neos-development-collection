@@ -74,4 +74,3 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedDomains, $actualDomains);
 	}
 }
-?>

@@ -196,4 +196,3 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	}
 
 }
-?>

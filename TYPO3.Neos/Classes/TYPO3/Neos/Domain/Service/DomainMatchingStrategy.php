@@ -65,4 +65,3 @@ class DomainMatchingStrategy {
 		return $matchingDomains;
 	}
 }
-?>

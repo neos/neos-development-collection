@@ -29,5 +29,3 @@ class Version20121031190214 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_neos_domain_model_domain DROP active");
 	}
 }
-
-?>

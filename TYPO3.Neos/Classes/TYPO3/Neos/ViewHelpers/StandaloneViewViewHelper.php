@@ -32,4 +32,3 @@ class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	}
 
 }
-?>

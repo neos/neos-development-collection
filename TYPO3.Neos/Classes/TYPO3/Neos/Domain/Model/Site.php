@@ -243,4 +243,3 @@ class Site {
 	public function emitSiteChanged() {}
 
 }
-?>

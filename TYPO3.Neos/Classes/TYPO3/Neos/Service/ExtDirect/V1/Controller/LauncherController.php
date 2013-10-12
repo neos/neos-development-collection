@@ -171,4 +171,3 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 }
-?>

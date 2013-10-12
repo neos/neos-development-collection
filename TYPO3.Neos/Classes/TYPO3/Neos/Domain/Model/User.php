@@ -49,4 +49,3 @@ class User extends Person {
 	}
 
 }
-?>

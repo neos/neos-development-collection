@@ -64,4 +64,3 @@ class FindOperation extends AbstractOperation {
 		$flowQuery->setContext(array($contextNode->getNode($path)));
 	}
 }
-?>

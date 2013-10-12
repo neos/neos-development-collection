@@ -38,4 +38,3 @@ class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelpe
 		return $this->settings['loadMinifiedJavascript'];
 	}
 }
-?>

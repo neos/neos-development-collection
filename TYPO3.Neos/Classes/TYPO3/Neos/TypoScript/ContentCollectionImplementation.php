@@ -128,4 +128,3 @@ class ContentCollectionImplementation extends CollectionImplementation {
 		return $tagBuilder->render();
 	}
 }
-?>

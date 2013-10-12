@@ -268,4 +268,3 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 		return $parentNode;
 	}
 }
-?>

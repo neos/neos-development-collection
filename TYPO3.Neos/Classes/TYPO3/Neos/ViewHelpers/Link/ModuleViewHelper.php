@@ -97,4 +97,3 @@ class ModuleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedView
 	}
 
 }
-?>

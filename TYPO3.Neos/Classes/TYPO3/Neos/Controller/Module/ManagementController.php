@@ -20,4 +20,3 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class ManagementController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
 }
-?>

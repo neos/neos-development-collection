@@ -312,4 +312,3 @@ class FeatureContext extends MinkContext {
 	}
 
 }
-?>

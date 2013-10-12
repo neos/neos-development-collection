@@ -72,4 +72,3 @@ class SiblingsOperation extends AbstractOperation {
 		}
 	}
 }
-?>

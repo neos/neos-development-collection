@@ -80,4 +80,3 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	}
 
 }
-?>

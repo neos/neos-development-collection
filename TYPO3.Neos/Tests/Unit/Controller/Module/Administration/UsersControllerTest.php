@@ -43,5 +43,3 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

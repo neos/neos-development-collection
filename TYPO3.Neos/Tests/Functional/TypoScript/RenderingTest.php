@@ -253,4 +253,3 @@ class RenderingTest extends AbstractNodeTest {
 		return new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $controllerContext);
 	}
 }
-?>

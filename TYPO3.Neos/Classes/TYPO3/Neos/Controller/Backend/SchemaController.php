@@ -67,4 +67,3 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 }
-?>

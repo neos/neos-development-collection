@@ -110,4 +110,3 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 
 
 }
-?>

@@ -220,4 +220,3 @@ class PluginService {
 		return NULL;
 	}
 }
-?>

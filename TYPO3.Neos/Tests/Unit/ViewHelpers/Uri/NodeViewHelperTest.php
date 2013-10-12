@@ -148,4 +148,3 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->viewHelper->render('~/some/site/path');
 	}
 }
-?>

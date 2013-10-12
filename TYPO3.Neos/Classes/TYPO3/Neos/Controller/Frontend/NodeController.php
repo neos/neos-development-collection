@@ -184,4 +184,3 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 }
-?>

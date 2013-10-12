@@ -30,4 +30,3 @@ class FlowQueryTest extends AbstractNodeTest {
 		$this->assertTrue($expected === $actual);
 	}
 }
-?>

@@ -66,5 +66,3 @@ class BackendModuleRoutePartHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

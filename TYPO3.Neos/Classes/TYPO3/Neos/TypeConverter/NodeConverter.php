@@ -74,4 +74,3 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 		return $this->contextFactory->create($contextProperties);
 	}
 }
-?>

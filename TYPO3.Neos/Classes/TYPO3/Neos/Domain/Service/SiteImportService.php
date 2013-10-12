@@ -221,4 +221,3 @@ class SiteImportService {
 		return $object;
 	}
 }
-?>

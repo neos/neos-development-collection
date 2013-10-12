@@ -75,4 +75,3 @@ class ParentsOperation extends AbstractOperation {
 		}
 	}
 }
-?>

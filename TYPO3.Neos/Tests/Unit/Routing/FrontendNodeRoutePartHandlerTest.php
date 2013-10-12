@@ -69,5 +69,3 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedResult, $actualResult);
 	}
 }
-
-?>

@@ -36,4 +36,3 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->redirectToUri($redirectionUri);
 	}
 }
-?>

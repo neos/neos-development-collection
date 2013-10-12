@@ -48,5 +48,3 @@ class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 		$this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
 	}
 }
-
-?>

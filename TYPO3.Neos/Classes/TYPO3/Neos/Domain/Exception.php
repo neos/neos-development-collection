@@ -19,5 +19,3 @@ namespace TYPO3\Neos\Domain;
 class Exception extends \TYPO3\Neos\Exception {
 
 }
-
-?>

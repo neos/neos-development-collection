@@ -29,5 +29,3 @@ class Version20130213180302 extends AbstractMigration {
 		$this->addSql("DROP INDEX flow_identity_typo3_neos_domain_model_domain");
 	}
 }
-
-?>

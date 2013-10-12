@@ -117,4 +117,3 @@ class PluginViewDefinition {
 		return $this->getPluginNodeType()->getName() . '/' . $this->getName();
 	}
 }
-?>

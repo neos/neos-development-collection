@@ -283,4 +283,3 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 		return $this->evaluate();
 	}
 }
-?>

@@ -214,4 +214,3 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 }
-?>

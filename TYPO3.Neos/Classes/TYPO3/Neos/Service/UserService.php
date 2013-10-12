@@ -50,4 +50,3 @@ class UserService {
 		return $user->getPreferences()->get('context.workspace');
 	}
 }
-?>

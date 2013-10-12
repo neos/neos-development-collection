@@ -138,5 +138,3 @@ class TypoScriptService {
 		return $typoScriptRuntime;
 	}
 }
-
-?>

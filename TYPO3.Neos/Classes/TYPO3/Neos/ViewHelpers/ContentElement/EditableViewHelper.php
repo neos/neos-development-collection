@@ -53,4 +53,3 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 		return $this->tag->render();
 	}
 }
-?>

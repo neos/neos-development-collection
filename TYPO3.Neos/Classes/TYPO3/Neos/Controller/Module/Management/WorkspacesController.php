@@ -231,4 +231,3 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 }
-?>

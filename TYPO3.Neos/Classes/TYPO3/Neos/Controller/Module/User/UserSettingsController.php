@@ -161,4 +161,3 @@ class UserSettingsController extends \TYPO3\Neos\Controller\Module\AbstractModul
 	}
 
 }
-?>

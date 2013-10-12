@@ -261,4 +261,3 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 	}
 
 }
-?>

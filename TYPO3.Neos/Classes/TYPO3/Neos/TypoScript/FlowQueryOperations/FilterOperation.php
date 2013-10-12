@@ -105,4 +105,3 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 		}
 	}
 }
-?>

@@ -18,5 +18,3 @@ namespace TYPO3\Neos\Controller\Exception;
 class NodeCreationException extends \TYPO3\Neos\Controller\Exception {
 
 }
-
-?>

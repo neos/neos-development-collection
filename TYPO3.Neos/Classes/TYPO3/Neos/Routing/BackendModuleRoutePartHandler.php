@@ -126,4 +126,3 @@ class BackendModuleRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoute
 	}
 
 }
-?>

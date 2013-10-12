@@ -83,4 +83,3 @@ class PropertyOperation extends AbstractOperation {
 		}
 	}
 }
-?>

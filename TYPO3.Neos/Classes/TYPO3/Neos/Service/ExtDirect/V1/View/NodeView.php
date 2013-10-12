@@ -196,4 +196,3 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		return $treeNode;
 	}
 }
-?>

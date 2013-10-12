@@ -99,4 +99,3 @@ class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 		return $pattern !== NULL && preg_match('/^' . str_replace('/', '\/', $pattern) . '$/', $path);
 	}
 }
-?>

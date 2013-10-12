@@ -167,4 +167,3 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertStringEndsWith($expected, $actual);
 	}
 }
-?>

@@ -56,4 +56,3 @@ class BackendModuleArgumentsRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\Dyn
 	}
 
 }
-?>

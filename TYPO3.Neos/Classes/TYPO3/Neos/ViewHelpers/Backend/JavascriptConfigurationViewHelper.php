@@ -113,4 +113,3 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	}
 
 }
-?>

@@ -20,4 +20,3 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class UserController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
 }
-?>

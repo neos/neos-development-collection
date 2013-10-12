@@ -18,5 +18,3 @@ namespace TYPO3\Neos\Controller;
 class Exception extends \TYPO3\Neos\Exception {
 
 }
-
-?>

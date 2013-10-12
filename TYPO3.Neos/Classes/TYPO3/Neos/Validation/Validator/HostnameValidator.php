@@ -47,4 +47,3 @@ class HostnameValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
 	}
 
 }
-?>

@@ -41,4 +41,3 @@ class SiteRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 }
-?>

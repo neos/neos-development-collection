@@ -126,4 +126,3 @@ class PluginViewImplementation extends PluginImplementation {
 		}
 	}
 }
-?>

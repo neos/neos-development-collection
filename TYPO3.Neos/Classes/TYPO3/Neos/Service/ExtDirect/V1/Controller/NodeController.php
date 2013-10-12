@@ -505,4 +505,3 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		return $this->contextFactory->create($contextProperties);
 	}
 }
-?>

@@ -97,4 +97,3 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$this->view->assignErrors($this->arguments->getValidationResults());
 	}
 }
-?>

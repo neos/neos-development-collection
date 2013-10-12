@@ -222,4 +222,3 @@ class FrontendNodeRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRouteP
 	}
 
 }
-?>

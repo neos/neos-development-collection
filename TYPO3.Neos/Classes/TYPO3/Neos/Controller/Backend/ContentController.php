@@ -144,4 +144,3 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		return json_encode((object) $masterPlugins);
 	}
 }
-?>

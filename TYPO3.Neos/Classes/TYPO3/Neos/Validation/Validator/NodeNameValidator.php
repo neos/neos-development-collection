@@ -26,4 +26,3 @@ class NodeNameValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressi
 	);
 
 }
-?>

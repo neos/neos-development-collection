@@ -35,5 +35,3 @@ class Version20110824125035 extends AbstractMigration {
 		$this->addSql("RENAME TABLE typo3_typo3_domain_model_userpreferences TO typo3_userpreferences");
 	}
 }
-
-?>

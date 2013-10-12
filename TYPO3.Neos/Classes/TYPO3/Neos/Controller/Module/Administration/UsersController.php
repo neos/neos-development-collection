@@ -286,4 +286,3 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		return $neosRoles;
 	}
 }
-?>

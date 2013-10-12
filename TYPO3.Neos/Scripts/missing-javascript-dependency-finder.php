@@ -88,5 +88,3 @@ printf('----------------
 
 Found %d orders which might be responsible for loading order problems.
 ', implode("\n", $possibleErrorClauses), count($possibleErrorClauses));
-
-?>

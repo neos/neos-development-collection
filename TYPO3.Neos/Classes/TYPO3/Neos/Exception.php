@@ -17,5 +17,3 @@ namespace TYPO3\Neos;
 class Exception extends \TYPO3\Flow\Exception {
 
 }
-
-?>

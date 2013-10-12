@@ -46,4 +46,3 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 	}
 
 }
-?>

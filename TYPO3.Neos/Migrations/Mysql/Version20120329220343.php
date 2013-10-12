@@ -33,5 +33,3 @@ class Version20120329220343 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3_domain_model_userpreferences CHANGE preferences preferences LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'");
 	}
 }
-
-?>

@@ -22,4 +22,3 @@ class InvalidRequestPathException extends \TYPO3\Neos\Routing\Exception {
 	protected $statusCode = 404;
 
 }
-?>

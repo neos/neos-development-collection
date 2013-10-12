@@ -37,5 +37,3 @@ class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($mockSite, $domain->getSite());
 	}
 }
-
-?>

@@ -22,4 +22,3 @@ class NoWorkspaceException extends \TYPO3\Neos\Routing\Exception {
 	protected $statusCode = 404;
 
 }
-?>

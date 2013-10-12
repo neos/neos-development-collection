@@ -41,5 +41,3 @@ class Version20110620155002 extends AbstractMigration {
 		$this->addSql("DROP TABLE typo3_userpreferences");
 	}
 }
-
-?>

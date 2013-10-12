@@ -73,4 +73,3 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 }
-?>

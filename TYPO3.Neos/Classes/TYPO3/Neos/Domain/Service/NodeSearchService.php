@@ -42,4 +42,3 @@ class NodeSearchService {
 		return $query->matching($query->logicalAnd($constraints))->execute();
 	}
 }
-?>

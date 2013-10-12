@@ -56,4 +56,3 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->inject($this->contextFactory, 'contextInstances', array());
 	}
 }
-?>

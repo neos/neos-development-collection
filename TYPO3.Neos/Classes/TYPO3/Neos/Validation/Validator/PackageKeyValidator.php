@@ -26,4 +26,3 @@ class PackageKeyValidator extends \TYPO3\Flow\Validation\Validator\RegularExpres
 	);
 
 }
-?>

@@ -22,4 +22,3 @@ class Exception extends \TYPO3\Neos\Exception {
 	protected $statusCode = 500;
 
 }
-?>

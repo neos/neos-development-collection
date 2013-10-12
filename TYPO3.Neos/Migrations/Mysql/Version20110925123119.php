@@ -31,5 +31,3 @@ class Version20110925123119 extends AbstractMigration {
 		$this->addSql("ALTER TABLE typo3_typo3_domain_model_media_image ADD CONSTRAINT typo3_typo3_domain_model_media_image_ibfk_1 FOREIGN KEY (resource) REFERENCES typo3_flow3_resource_resource(flow3_persistence_identifier)");
 	}
 }
-
-?>

@@ -34,4 +34,3 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

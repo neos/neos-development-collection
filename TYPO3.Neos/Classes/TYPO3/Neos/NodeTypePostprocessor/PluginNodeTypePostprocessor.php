@@ -64,4 +64,3 @@ class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface {
 		);
 	}
 }
-?>

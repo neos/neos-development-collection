@@ -142,4 +142,3 @@ class NodeViewHelper extends AbstractViewHelper {
 		return NULL;
 	}
 }
-?>

@@ -98,4 +98,3 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 		}
 	}
 }
-?>

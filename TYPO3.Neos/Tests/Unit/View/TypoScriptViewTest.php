@@ -70,5 +70,3 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

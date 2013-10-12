@@ -69,4 +69,3 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals('<script src="StaticResourceUri/Packages/MyPackage/MySubpackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}
 }
-?>

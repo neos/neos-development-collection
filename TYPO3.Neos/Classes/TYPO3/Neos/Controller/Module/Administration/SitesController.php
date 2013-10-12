@@ -316,4 +316,3 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	}
 
 }
-?>

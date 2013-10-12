@@ -78,4 +78,3 @@ class ImageTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractType
 		return $image;
 	}
 }
-?>

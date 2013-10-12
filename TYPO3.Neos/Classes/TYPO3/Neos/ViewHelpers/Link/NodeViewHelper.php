@@ -116,4 +116,3 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 		return new \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper();
 	}
 }
-?>

@@ -72,4 +72,3 @@ class ChildrenOperation extends AbstractOperation {
 		}
 	}
 }
-?>

@@ -124,4 +124,3 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 }
-?>

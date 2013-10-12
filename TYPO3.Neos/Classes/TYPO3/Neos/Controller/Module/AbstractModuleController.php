@@ -75,4 +75,3 @@ abstract class AbstractModuleController extends \TYPO3\Flow\Mvc\Controller\Actio
 	}
 
 }
-?>

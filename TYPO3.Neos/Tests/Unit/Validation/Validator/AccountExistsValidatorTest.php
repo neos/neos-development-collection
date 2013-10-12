@@ -65,4 +65,3 @@ class AccountExistsValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-?>

@@ -65,5 +65,3 @@ class UserFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 }
-
-?>

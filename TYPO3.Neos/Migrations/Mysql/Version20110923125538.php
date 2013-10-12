@@ -61,5 +61,3 @@ class Version20110923125538 extends AbstractMigration {
 		$this->addSql("CREATE UNIQUE INDEX UNIQ_5FCB1CAF3210CEC ON typo3_typo3_domain_model_user (typo3_userpreferences)");
 	}
 }
-
-?>
