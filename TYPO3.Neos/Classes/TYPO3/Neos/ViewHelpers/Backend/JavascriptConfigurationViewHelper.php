@@ -83,7 +83,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
 			'window.T3Configuration.MenuDataUri = ' . json_encode($menuDataUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
-			'window.T3Configuration.enableAloha = ' . json_encode($this->settings['enableAloha']) . ';',
 			'window.T3Configuration.nodeTypeGroups = ' . json_encode($this->settings['nodeTypeGroups']) . ';'
 		);
 

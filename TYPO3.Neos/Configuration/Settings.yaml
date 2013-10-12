@@ -80,10 +80,6 @@ TYPO3:
   Neos:
     nodeTypeGroups: ['General', 'Structure', 'Plugins']
 
-    # as Aloha is quite big to load, we do not include it by default. Later on,
-    # this setting will be replaced by a better API.
-    enableAloha: TRUE
-
     # should minified JavaScript be loaded? For developing the TYPO3 Neos
     # Content Module, this should be set to FALSE.
     loadMinifiedJavascript: TRUE

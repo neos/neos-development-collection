@@ -168,16 +168,12 @@ function(
 			}
 		};
 
-		if (Configuration.get('enableAloha')) {
-			require(
-				{
-					context: 'aloha',
-					baseUrl: alohaBaseUrl
-				},
-				['aloha'],
-				function() {
-				}
-			);
-		}
+		require(
+			{
+				context: 'aloha',
+				baseUrl: alohaBaseUrl
+			},
+			['aloha']
+		);
 	}
 });
