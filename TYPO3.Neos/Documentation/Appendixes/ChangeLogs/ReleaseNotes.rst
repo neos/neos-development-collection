@@ -56,3 +56,14 @@ TYPO3  Neos 1.0.0-alpha4
 ------------------------
 
 See :ref:`1.0.0-alpha4`
+
+TYPO3  Neos 1.0.0-alpha5
+------------------------
+
+See :ref:`1.0.0-alpha5`
+
+
+TYPO3  Neos 1.0.0-alpha6
+------------------------
+
+See :ref:`1.0.0-alpha6`
