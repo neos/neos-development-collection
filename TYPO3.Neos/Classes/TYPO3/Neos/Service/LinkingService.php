@@ -17,7 +17,7 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
@@ -69,9 +69,9 @@ class LinkingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var ResourcePublisher
+	 * @var ResourceManager
 	 */
-	protected $resourcePublisher;
+	protected $resourceManager;
 
 	/**
 	 * @Flow\Inject
@@ -152,7 +152,7 @@ class LinkingService {
 			$this->systemLogger->log(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri));
 			return NULL;
 		}
-		return $this->resourcePublisher->getPersistentResourceWebUri($targetObject->getResource());
+		return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
 	}
 
 	/**

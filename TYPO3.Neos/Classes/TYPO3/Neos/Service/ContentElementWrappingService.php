@@ -16,6 +16,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -51,6 +52,12 @@ class ContentElementWrappingService {
 	 * @var HtmlAugmenter
 	 */
 	protected $htmlAugmenter;
+
+	/**
+	 * @Flow\Inject
+	 * @var ImageInterfaceJsonSerializer
+	 */
+	protected $imageInterfaceJsonSerializer;
 
 	/**
 	 * Wrap the $content identified by $node with the needed markup for the backend.
@@ -158,6 +165,7 @@ class ContentElementWrappingService {
 				// skip the node name of the site node
 				continue;
 			}
+			// Serialize objects to JSON strings
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			$dasherizedPropertyName = $this->dasherize($propertyName);
 			$attributes['data-node-' . $dasherizedPropertyName] = $this->getNodeProperty($node, $propertyName, $dataType);
@@ -170,7 +178,8 @@ class ContentElementWrappingService {
 	}
 
 	/**
-	 * TODO This implementation is directly linked to the inspector editors, since they need the actual values
+	 * TODO This implementation is directly linked to the inspector editors, since they need the actual values,
+	 * this should change to use TypeConverters
 	 *
 	 * @param NodeInterface $node
 	 * @param string $propertyName
@@ -223,20 +232,10 @@ class ContentElementWrappingService {
 			}
 		}
 
-		// Serialize ImageVariant to JSON
-		if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
-			$gettableProperties = ObjectAccess::getGettableProperties($propertyValue);
-			$convertedProperties = array();
-			foreach ($gettableProperties as $key => $value) {
-				if (is_object($value)) {
-					$entityIdentifier = $this->persistenceManager->getIdentifierByObject($value);
-					if ($entityIdentifier !== NULL) {
-						$value = $entityIdentifier;
-					}
-				}
-				$convertedProperties[$key] = $value;
-			}
-			return json_encode($convertedProperties);
+		if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
+			$propertyMappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+			$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer', ImageInterfaceJsonSerializer::CONFIGURATION_ESCAPE_SLASHES, TRUE);
+			return $this->imageInterfaceJsonSerializer->convertFrom($propertyValue, 'string', array(), $propertyMappingConfiguration);
 		}
 
 		// Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)

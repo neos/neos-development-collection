@@ -2,10 +2,4 @@
 	<button id="{{unbound view._browseButtonId}}" class="neos-button typo3-fileupload-pickfiles" type="button">
 		{{view.fileChooserLabel}}
 	</button>
-
-	{{#if view._uploadButtonShown}}
-		<button class="neos-inspector-image-upload-button" allowed-file-types="{{unbound view.allowedFileTypes}}" {{bindAttr disabled="view._uploadInProgress"}} {{action "upload" target="view"}}>
-			{{unbound view.uploaderLabel}}
-		</button>
-	{{/if}}
 </div>
