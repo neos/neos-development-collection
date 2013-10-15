@@ -2,7 +2,7 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Three column content'
-    group: 'Structure'
+    group: 'structure'
   childNodes:
     column0:
       type: 'TYPO3.Neos:ContentCollection'

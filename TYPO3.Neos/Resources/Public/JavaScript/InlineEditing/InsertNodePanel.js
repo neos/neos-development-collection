@@ -38,6 +38,7 @@ function(
 					if (!groups[type.metadata.ui.group]) {
 						groups[type.metadata.ui.group] = {
 							name: type.metadata.ui.group,
+							label: '',
 							children: []
 						};
 					}
@@ -47,9 +48,10 @@ function(
 
 			// Make the data object an array for usage in #each helper
 			var data = [];
-			Configuration.get('nodeTypeGroups').forEach(function(groupName) {
-				if (groups[groupName]) {
-					data.push(groups[groupName]);
+			Configuration.get('nodeTypes.groups').forEach(function(group) {
+				if (groups[group.name]) {
+					groups[group.name].label = group.label;
+					data.push(groups[group.name]);
 				}
 			});
 

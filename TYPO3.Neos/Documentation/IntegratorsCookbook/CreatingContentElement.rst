@@ -12,7 +12,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 	    - 'TYPO3.Neos:Content'
 	  ui:
 	    label: 'My first custom content element'
-	    group: 'General'
+	    group: 'general'
 	    inspector:
 	      groups:
 	        image:

@@ -73,7 +73,7 @@ A node type definition can look as follows::
 	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    label: 'Special Headline'
-	    group: 'General'
+	    group: 'general'
 	  properties:
 	    headline:
 	      type: 'string'
@@ -108,7 +108,7 @@ The following options are allowed:
     Name of the group this content element is grouped into for the 'New Content Element' dialog.
     It can only be created through the user interface if `group` is defined and it is valid.
 
-    All valid groups are given in the`TYPO3.Neos.nodeTypeGroups` setting
+    All valid groups are given in the`TYPO3.Neos.nodeTypes.groups` setting
 
   `icon`
     This setting define the icon to use in the Neos UI for the node type
@@ -186,7 +186,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    label: 'Image'
-	    group: 'General'
+	    group: 'general'
 	    icon: 'icon-picture'
 	    inspector:
 	      groups:

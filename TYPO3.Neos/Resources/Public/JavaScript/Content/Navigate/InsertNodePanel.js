@@ -22,10 +22,11 @@ define(
 						nodeTypeGroups = [];
 
 					$.each(JSON.parse(dataString), function(nodeType, nodeTypeInfo) {
-						var groupName = nodeTypeInfo.ui.group ? nodeTypeInfo.ui.group : 'General';
+						var groupName = nodeTypeInfo.ui.group ? nodeTypeInfo.ui.group : 'general';
 						if (!groupedNodeTypes[groupName]) {
 							groupedNodeTypes[groupName] = {
 								'name': groupName,
+								'label': '',
 								'children': []
 							};
 						}
@@ -36,9 +37,10 @@ define(
 						});
 					});
 
-					Configuration.nodeTypeGroups.forEach(function(groupName) {
-						if (groupedNodeTypes[groupName]) {
-							nodeTypeGroups.push(groupedNodeTypes[groupName]);
+					Configuration.get('nodeTypes.groups').forEach(function(group) {
+						if (groupedNodeTypes[group.name]) {
+							groupedNodeTypes[group.name].label = group.label;
+							nodeTypeGroups.push(groupedNodeTypes[group.name]);
 						}
 					});
 

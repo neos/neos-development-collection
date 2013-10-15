@@ -78,7 +78,17 @@ TYPO3:
         renderByDefault: FALSE
 
   Neos:
-    nodeTypeGroups: ['General', 'Structure', 'Plugins']
+    nodeTypes:
+      groups:
+        general:
+          position: 'start'
+          label: 'General'
+        structure:
+          position: 100
+          label: 'Structure'
+        plugins:
+          position: 200
+          label: 'Plugins'
 
     # should minified JavaScript be loaded? For developing the TYPO3 Neos
     # Content Module, this should be set to FALSE.

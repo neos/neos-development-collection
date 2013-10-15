@@ -31,7 +31,7 @@ in your site package or in a package dedicated to content elements, if reuse is 
 	   'Acme.Demo:YouTube':
 	     superTypes: ['TYPO3.Neos:Content']
 	     ui:
-	       group: 'General'
+	       group: 'general'
 	       label: 'YouTube Video'
 	       inspector:
 	         groups:
@@ -135,7 +135,7 @@ The node type definition must define which properties are inline editable throug
 	'Acme.Demo:Quote':
 	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
-	    group: 'General'
+	    group: 'general'
 	    label: 'Quote'
 	  properties:
 	    quote:
@@ -196,7 +196,7 @@ can contain two texts and two videos.
 	'Acme.Demo:VideoGrid':
 	  superTypes: ['TYPO3.Neos.NodeTypes:AbstractNode']
 	  ui:
-	    group: 'Structure'
+	    group: 'structure'
 	    label: 'Video Grid'
 	  childNodes:
 	    video0:
@@ -251,3 +251,32 @@ As explained earlier (in `What are the benefits of indirection through TypoScrip
 if using TypoScript to decouple the rendering of items this way is flexibility. In the video grid
 it shows how this enables *composability*, other TypoScript objects can be re-used for rendering
 smaller parts of the element.
+
+Content Element Group
+=====================
+
+In Neos content elements are grouped by type. By default the following groups are available:
+
+`general`
+	Basic content elements, like `text` and `image`.
+
+`structure`
+	Elements defining a structure. This group contains for example the 2 column element.
+
+`plugins`
+	Available plugins in the site installation.
+
+It is possible to create new groups by using the `TYPO3.Neos.nodeTypes.groups` settings.
+Registering 2 new groups could look like::
+
+	TYPO3:
+	  Neos:
+	    nodeTypes:
+	      groups:
+	        form:
+	          label: 'Form elements'
+	        special:
+	          position: 50
+	          label: 'Special elements'
+
+The groups are ordered by the position argument.

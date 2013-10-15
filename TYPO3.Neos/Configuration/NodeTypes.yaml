@@ -184,7 +184,7 @@
   abstract: TRUE
   ui:
     label: 'Plugin'
-    group: 'Plugins'
+    group: 'plugins'
     icon: 'icon-puzzle-piece'
     inspector:
       groups:
@@ -242,7 +242,7 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Plugin View'
-    group: 'Plugins'
+    group: 'plugins'
     inspector:
       groups:
         pluginViews:
@@ -307,7 +307,7 @@
   ui:
     label: 'Content'
     icon: 'icon-unchecked'
-    group: 'General'
+    group: 'general'
     search:
       searchCategory: 'Content'
 

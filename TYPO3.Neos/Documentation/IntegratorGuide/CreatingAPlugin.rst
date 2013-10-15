@@ -101,7 +101,7 @@ Add the following to *Configuration/NodeTypes.yaml* of your package:
     superTypes: ['TYPO3.Neos:Plugin']
     ui:
       label: 'CD Collection'
-      group: 'Plugins'
+      group: 'plugins'
 
 This will add a new entry labeled "CD Collection" to the "Plugins" group in the content
 element selector (existing groups are *General*, *Structure* and *Plugins*).

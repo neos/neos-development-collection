@@ -12,6 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -83,7 +84,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
 			'window.T3Configuration.MenuDataUri = ' . json_encode($menuDataUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
-			'window.T3Configuration.nodeTypeGroups = ' . json_encode($this->settings['nodeTypeGroups']) . ';'
+			'window.T3Configuration.nodeTypes = {};',
+			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';'
 		);
 
 		$resourcePath = 'resource://TYPO3.Neos/Public/JavaScript';
@@ -102,6 +104,25 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 		}
 
 		return (implode("\n", $configuration));
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getNodeTypeGroupsSettings() {
+		$settings = array();
+		$nodeTypeGroupsSettings = new PositionalArraySorter($this->settings['nodeTypes']['groups']);
+		foreach ($nodeTypeGroupsSettings->toArray() as $nodeTypeGroupName => $nodeTypeGroupSettings) {
+			if (!isset($nodeTypeGroupSettings['label'])) {
+				continue;
+			}
+			$settings[] = array(
+				'name' => $nodeTypeGroupName,
+				'label' => $nodeTypeGroupSettings['label']
+			);
+		}
+
+		return $settings;
 	}
 
 	/**
