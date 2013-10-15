@@ -20,13 +20,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	headerComment = Template {
-		@position = 'after htmlTag 10'
+		@position = 'before headTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
 	}
 
 	# The opening head tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
 	headTag = TYPO3.TypoScript:Tag {
-		@position = '10'
+		@position = 'after htmlTag'
 		tagName = 'head'
 		omitClosingTag = TRUE
 	}
@@ -37,7 +37,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		@position = 'after headTag'
 
 		characterSetMetaTag = TYPO3.TypoScript:Tag {
-			@position = '10'
+			@position = 'start 10'
 			tagName = 'meta'
 			attributes {
 				charset = 'UTF-8'
@@ -45,7 +45,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		}
 
 		neosBackendHeader = TYPO3.Neos:Template {
-			@position = '10000'
+			@position = 'end 10000'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 		}
 	}
@@ -62,13 +62,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 
 	# Required for the backend to work.
 	neosBackendDocumentNodeData = TYPO3.Neos:Template {
-		@position = 'after bodyTag'
+		@position = 'before body'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendDocumentNodeData.html'
 	}
 
 	# Content of the body tag. To be defined by the integrator.
 	body = Template
-	body.@position = '100'
+	body.@position = 'after bodyTag'
 
 	# Required for the backend to work.
 	neosBackendContainer = TYPO3.Neos:Template {
