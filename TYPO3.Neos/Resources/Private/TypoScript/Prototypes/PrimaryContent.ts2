@@ -1,0 +1,7 @@
+prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
+	default {
+		condition = ${true}
+		type = 'TYPO3.Neos:ContentCollection'
+		@position = 'end'
+	}
+}

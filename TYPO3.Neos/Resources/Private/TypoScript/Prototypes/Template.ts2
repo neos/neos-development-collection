@@ -1,0 +1,6 @@
+# TYPO3.Neos:Template makes the current node available in addition to the default
+# TYPO3.TypoScript:Template properties
+#
+prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template) {
+	node = ${node}
+}

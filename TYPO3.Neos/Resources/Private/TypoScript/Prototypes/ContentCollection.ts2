@@ -1,0 +1,15 @@
+# Default case for ContentCollection TS Object
+#
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Collection) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
+
+	nodePath = 'to-be-set-by-user'
+
+		# To enable direct rendering of a ContentCollection we check if the current node is a
+		# content collection already or if the child nodes of a content collection specified by
+		# nodePath should be rendered
+	collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? q(node).children() : q(node).children(this.nodePath).children()}
+
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
+}

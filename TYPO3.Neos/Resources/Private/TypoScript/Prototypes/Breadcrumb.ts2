@@ -1,0 +1,7 @@
+# TYPO3.Neos:Breadcrumb provides a basic breadcrumb navigation
+#
+prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.Neos:Template)
+prototype(TYPO3.Neos:Breadcrumb) {
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+	items = ${q(node).add(q(node).parents())}
+}
