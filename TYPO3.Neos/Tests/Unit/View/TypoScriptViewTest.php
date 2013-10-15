@@ -57,7 +57,8 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockTypoScriptService = $this->getMock('TYPO3\Neos\Domain\Service\TypoScriptService');
 		$mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($mockRuntime));
 
-		$view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('dummy'));
+		$view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('getClosestDocumentNode'));
+		$view->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($mockContextualizedNode));
 
 		$this->inject($view, 'controllerContext', $mockControllerContext);
 		$this->inject($view, 'typoScriptService', $mockTypoScriptService);

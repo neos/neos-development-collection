@@ -11,6 +11,7 @@ namespace TYPO3\Neos\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -45,8 +46,7 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 			throw new \TYPO3\Neos\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
-			// TODO: find closest document node from this node...
-		$closestDocumentNode = $currentNode;
+		$closestDocumentNode = $this->getClosestDocumentNode($currentNode);
 		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
 
 		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
@@ -94,5 +94,15 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 */
 	public function getTypoScriptPath() {
 		return $this->typoScriptPath;
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected function getClosestDocumentNode($node) {
+		$q = new FlowQuery(array($node));
+		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+		return $closestDocumentNode;
 	}
 }
