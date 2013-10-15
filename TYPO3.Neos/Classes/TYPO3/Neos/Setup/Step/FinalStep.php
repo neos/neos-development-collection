@@ -32,17 +32,17 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$success = $title->createElement('success', 'TYPO3.Form:StaticText');
 		$success->setProperty('text', 'You successfully completed the setup');
-		$success->setProperty('class', 'neos-alert neos-alert-success');
+		$success->setProperty('class', 'alert alert-success');
 
 		$link = $title->createElement('link', 'TYPO3.Setup:LinkElement');
 		$link->setLabel('Go to the homepage');
 		$link->setProperty('href', '/');
-		$link->setProperty('class', 'neos-btn neos-btn-large neos-btn-primary');
+		$link->setProperty('class', 'btn btn-large btn-primary');
 
 		$backendLink = $title->createElement('backendLink', 'TYPO3.Setup:LinkElement');
 		$backendLink->setLabel('Go to the backend');
 		$backendLink->setProperty('href', '/neos');
-		$backendLink->setProperty('class', 'neos-btn neos-btn-large');
+		$backendLink->setProperty('class', 'btn btn-large');
 	}
 
 }
