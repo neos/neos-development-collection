@@ -269,35 +269,6 @@
           position: 20
           editor: Content/Inspector/Editors/PluginViewEditor
 
-'TYPO3.Neos:PluginView':
-  superTypes: ['TYPO3.Neos:Content']
-  ui:
-    label: 'Plugin View'
-    group: 'Plugins'
-    inspector:
-      groups:
-        pluginViews:
-          label: 'Plugin Views'
-          position: 100
-  nonEditableOverlay: false
-  properties:
-    plugin:
-      type: string
-      ui:
-        label: 'Plugin'
-        inspector:
-          group: 'pluginViews'
-          position: 20
-          editor: Content/Inspector/Editors/MasterPluginEditor
-    view:
-      type: string
-      ui:
-        label: 'View'
-        inspector:
-          group: 'pluginViews'
-          position: 20
-          editor: Content/Inspector/Editors/PluginViewEditor
-
 'TYPO3.Neos:Content':
   superTypes:
     - 'TYPO3.Neos:Node'
