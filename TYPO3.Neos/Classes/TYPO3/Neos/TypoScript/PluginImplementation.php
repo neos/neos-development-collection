@@ -191,8 +191,7 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 			}
 
 			foreach ($this->properties as $key => $value) {
-				$evaluatedValue = $this->tsRuntime->evaluateProcessor($key, $this, $value);
-				$pluginRequest->setArgument('__' . $key, $evaluatedValue);
+				$pluginRequest->setArgument('__' . $key, $this->tsValue($key));
 			}
 
 			$pluginRequest->setArgument('__node', $this->node);
