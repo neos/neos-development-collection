@@ -82,7 +82,7 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * @return void
 	 */
 	public function logoutAction() {
-		$possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri();
+		$possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri($this->request->getHttpRequest());
 		parent::logoutAction();
 		switch ($this->request->getFormat()) {
 			case 'json':

@@ -1,5 +1,5 @@
 window.T3 = {
-	isContentModule: location.pathname.substr(0, 6) !== '/neos/'
+	isContentModule: location.pathname.match(/@user-/)
 } || window.T3;
 /**
  * WARNING: if changing any of the require() statements below, make sure to also

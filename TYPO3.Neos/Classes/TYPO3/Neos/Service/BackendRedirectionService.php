@@ -58,9 +58,10 @@ class BackendRedirectionService {
 	/**
 	 * Returns a specific URI string to redirect to after the login; or NULL if there is none.
 	 *
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 * @return string
 	 */
-	public function getAfterLoginRedirectionUri() {
+	public function getAfterLoginRedirectionUri(\TYPO3\Flow\Http\Request $httpRequest) {
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 		$workspaceName = $user->getPreferences()->get('context.workspace');
 
@@ -70,13 +71,13 @@ class BackendRedirectionService {
 		$this->nodeDataRepository->persistEntities();
 
 		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
-			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
+			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'), $httpRequest);
 			if ($adjustRedirectionUri !== FALSE) {
 				return $adjustRedirectionUri;
 			}
 		}
 
-		return '/@' . $workspaceName . '.html';
+		return $httpRequest->getBaseUri()->getPath() . '@' . $workspaceName . '.html';
 	}
 
 	/**
@@ -84,13 +85,14 @@ class BackendRedirectionService {
 	 * In case of NULL, it's the responsibility of the AuthenticationController where to redirect,
 	 * most likely to the authentication's index action.
 	 *
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 * @return string A possible redirection URI, if any
 	 */
-	public function getAfterLogoutRedirectionUri() {
+	public function getAfterLogoutRedirectionUri(\TYPO3\Flow\Http\Request $httpRequest) {
 		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
 			$contentContext = $this->createContext('live');
 
-			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'));
+			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'), $httpRequest);
 			if ($adjustRedirectionUri !== FALSE) {
 				return $adjustRedirectionUri;
 			}
@@ -106,9 +108,10 @@ class BackendRedirectionService {
 	 *
 	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
 	 * @param string $redirectionUri
+	 * @param \TYPO3\Flow\Http\Request $httpRequest
 	 * @return string|boolean
 	 */
-	protected function adjustRedirectionUriForContentContext(ContentContext $contentContext, $redirectionUri) {
+	protected function adjustRedirectionUriForContentContext(ContentContext $contentContext, $redirectionUri, \TYPO3\Flow\Http\Request $httpRequest) {
 		$adjustedUri = $redirectionUri;
 
 		$appendHtml = !strpos($adjustedUri, '.html') ? FALSE : TRUE;
@@ -119,7 +122,13 @@ class BackendRedirectionService {
 		}
 
 		$urlParts = parse_url($adjustedUri);
-		$targetNodePath = $urlParts['path'] === '/' ? '/' : substr($urlParts['path'], 1);
+		$baseUri = $httpRequest->getBaseUri()->getPath();
+		$targetNodePath = substr($urlParts['path'], strlen($baseUri));
+
+		if ((string)$targetNodePath === '') {
+			$targetNodePath = '/';
+		}
+
 		if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode($targetNodePath))) {
 			if ($contentContext->getWorkspaceName() !== 'live') {
 				$adjustedUri .= '@' . $contentContext->getWorkspaceName();

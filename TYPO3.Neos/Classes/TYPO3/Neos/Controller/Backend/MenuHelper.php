@@ -52,7 +52,9 @@ class MenuHelper {
 	 * @return array
 	 */
 	public function buildSiteList(ControllerContext $controllerContext) {
-		$requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
+		$requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
+		$baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+
 		$domainsFound = FALSE;
 		$sites = array();
 		foreach ($this->siteRepository->findOnline() as $site) {
@@ -62,7 +64,12 @@ class MenuHelper {
 				$uri = $controllerContext->getUriBuilder()
 					->reset()
 					->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
-				$uri = 'http://' . $site->getFirstActiveDomain()->getHostPattern() . '/' . $uri;
+				$uri = sprintf('%s://%s%s%s',
+					$requestUri->getScheme(),
+					$site->getFirstActiveDomain()->getHostPattern(),
+					$baseUri->getPath(),
+					$uri
+				);
 				$domainsFound = TRUE;
 			}
 
@@ -70,7 +77,7 @@ class MenuHelper {
 				'name' => $site->getName(),
 				'nodeName' => $site->getNodeName(),
 				'uri' => $uri,
-				'active' => stristr($uri, $requestUriHost) !== FALSE ? TRUE : FALSE
+				'active' => stristr($uri, $requestUri->getHost()) !== FALSE ? TRUE : FALSE
 			);
 		}
 
