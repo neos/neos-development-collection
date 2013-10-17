@@ -13,6 +13,20 @@ namespace TYPO3\TYPO3CR\TypeConverter;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\Exception\TypeConverterException;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -22,7 +36,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @Flow\Scope("singleton")
  */
-class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter {
+class NodeConverter extends AbstractTypeConverter {
 
 	/**
 	 * @var boolean
@@ -36,39 +50,45 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeFactory
+	 */
+	protected $nodeFactory;
 
 	/**
 	 * @var string
@@ -82,7 +102,11 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 
 
 	/**
-	 * Converts the specified node path into a Node.
+	 * Converts the specified $source into a Node.
+	 *
+	 * If $source is a UUID it is expected to refer to the identifier of a NodeData record of the "live" workspace
+	 *
+	 * Otherwise $source has to be a valid node path:
 	 *
 	 * The node path must be an absolute context node path and can be specified as a string or as an array item with the
 	 * key "__contextNodePath". The latter case is for updating existing nodes.
@@ -104,12 +128,20 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
 	 * @param string $targetType not used
 	 * @param array $subProperties not used
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration not used
+	 * @param PropertyMappingConfigurationInterface $configuration not used
 	 * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @throws \Exception
 	 */
-	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
+			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $source) !== 0) {
+				/** @var $nodeData NodeData */
+				$nodeData = $this->nodeDataRepository->findByIdentifier($source);
+				if ($nodeData === NULL) {
+					return new Error('Could not convert the given UUID to a Node object, no matching NodeData record was found.', 1382608594);
+				}
+				return $this->nodeFactory->createFromNodeData($nodeData, $this->createContext('live', $configuration));
+			}
 			$source = array('__contextNodePath' => $source);
 		}
 
@@ -138,12 +170,12 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * Iterates through the given $properties setting them on the specified $node using the appropriate TypeConverters.
 	 *
 	 * @param object $nodeLike
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+	 * @param NodeType $nodeType
 	 * @param array $properties
-	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
+	 * @throws TypeConverterException
 	 * @return void
 	 */
-	protected function setNodeProperties($nodeLike, \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType, array $properties) {
+	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties) {
 		$nodeTypeProperties = $nodeType->getProperties();
 		foreach ($properties as $nodePropertyName => $nodePropertyValue) {
 			if (substr($nodePropertyName, 0, 2) === '__') {
@@ -160,11 +192,11 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 						$nodePropertyValue = NULL;
 					}
 				}
-				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
+				ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
 				continue;
 			}
 			if (!isset($nodeTypeProperties[$nodePropertyName])) {
-				throw new \TYPO3\Flow\Property\Exception\TypeConverterException(sprintf('node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
+				throw new TypeConverterException(sprintf('node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
 			}
 			if (isset($nodeTypeProperties[$nodePropertyName]['type'])) {
 				$targetType = $nodeTypeProperties[$nodePropertyName]['type'];
@@ -184,11 +216,11 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 *
 	 * @param string $nodePath
 	 * @param string $workspaceName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 */
-	protected function createNode($nodePath, $workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	protected function createNode($nodePath, $workspaceName, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$nodeContext = $this->createContext($workspaceName, $configuration);
 		$workspace = $nodeContext->getWorkspace(FALSE);
 		if (!$workspace) {
@@ -207,10 +239,10 @@ class NodeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConve
 	 * Creates the context for the nodes based on the given workspace.
 	 *
 	 * @param string $workspaceName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
 	 */
-	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	protected function createContext($workspaceName, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$invisibleContentShown = FALSE;
 		$removedContentShown = FALSE;
 		if ($workspaceName !== 'live') {
