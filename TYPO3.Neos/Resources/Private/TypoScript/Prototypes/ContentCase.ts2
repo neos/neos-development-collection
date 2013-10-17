@@ -5,7 +5,7 @@
 prototype(TYPO3.Neos:ContentCase) < prototype(TYPO3.TypoScript:Case) {
 	default {
 		@position = 'end'
-		condition = ${true}
+		condition = TRUE
 		type = ${q(node).property('_nodeType.name')}
 	}
 }

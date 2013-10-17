@@ -1,12 +1,12 @@
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/ContentCase.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/Template.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/PrimaryContent.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/ContentCollection.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/Page.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/Shortcut.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/Breadcrumb.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/Menu.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/Prototypes/Plugin.ts2
+include: Prototypes/ContentCase.ts2
+include: Prototypes/Template.ts2
+include: Prototypes/PrimaryContent.ts2
+include: Prototypes/ContentCollection.ts2
+include: Prototypes/Page.ts2
+include: Prototypes/Shortcut.ts2
+include: Prototypes/Breadcrumb.ts2
+include: Prototypes/Menu.ts2
+include: Prototypes/Plugin.ts2
 
 # The root matcher used to start rendering in Neos
 #
@@ -30,7 +30,7 @@ root {
 
 	default {
 		@position = 'end 9999'
-		condition = ${true}
+		condition = TRUE
 		renderPath = '/page'
 	}
 }

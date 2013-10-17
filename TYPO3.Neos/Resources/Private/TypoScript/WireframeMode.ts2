@@ -1,8 +1,6 @@
-wireframeMode = TYPO3.Neos:Page
-wireframeMode {
+wireframeMode = TYPO3.Neos:Page {
 	head {
-		stylesheets = TYPO3.Neos:Template
-		stylesheets {
+		stylesheets = TYPO3.Neos:Template {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/Page/Default.html'
 			sectionName = 'headerIncludes'
 		}
@@ -15,18 +13,17 @@ wireframeMode {
 		sectionName = 'body'
 
 		parts {
-			menu = TYPO3.Neos:Menu
-			menu {
+			menu = TYPO3.Neos:Menu {
 				templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/Menu.html'
 				entryLevel = 1
 				maximumLevels = 4
 			}
-			breadcrumb = TYPO3.Neos:Breadcrumb
-			breadcrumb.templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
+			breadcrumb = TYPO3.Neos:Breadcrumb {
+				templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
+			}
 		}
 
-		contentCollections.all = TYPO3.Neos.NodeTypes:MultiColumn
-		contentCollections.all {
+		contentCollections.all = TYPO3.Neos.NodeTypes:MultiColumn {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
 			layout = ''
 			columns {
