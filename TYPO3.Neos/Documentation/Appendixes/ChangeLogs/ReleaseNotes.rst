@@ -62,8 +62,12 @@ TYPO3  Neos 1.0.0-alpha5
 
 See :ref:`1.0.0-alpha5`
 
-
 TYPO3  Neos 1.0.0-alpha6
 ------------------------
 
 See :ref:`1.0.0-alpha6`
+
+TYPO3  Neos 1.0.0-alpha7
+------------------------
+
+See :ref:`1.0.0-alpha7`
