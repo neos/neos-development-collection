@@ -63,6 +63,12 @@ class Workspace {
 	protected $objectManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Service\PublishingService
+	 */
+	protected $publishingService;
+
+	/**
 	 * Constructs a new workspace
 	 *
 	 * @param string $name Name of this workspace
@@ -128,8 +134,8 @@ class Workspace {
 	 * @api
 	 */
 	public function publish($targetWorkspaceName) {
-		$sourceNodes = $this->nodeDataRepository->findByWorkspace($this);
-		$this->publishNodes($sourceNodes->toArray(), $targetWorkspaceName);
+		$sourceNodes = $this->publishingService->getUnpublishedNodes($this->getName());
+		$this->publishNodes($sourceNodes, $targetWorkspaceName);
 	}
 
 	/**
@@ -143,20 +149,37 @@ class Workspace {
 	 * @api
 	 */
 	public function publishNodes(array $nodes, $targetWorkspaceName) {
-		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
 		foreach ($nodes as $node) {
-			if ($node->getPath() !== '/') {
-				$targetNode = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
-				if ($targetNode !== NULL) {
-					$this->nodeDataRepository->remove($targetNode);
-				}
-				if ($node->isRemoved() === FALSE) {
-					$node->setWorkspace($targetWorkspace);
-				} else {
-					$this->nodeDataRepository->remove($node);
-				}
-			}
+			$this->publishNode($node, $targetWorkspaceName);
 		}
+	}
+
+	/**
+	 * Publishes the given node to the target workspace.
+	 *
+	 * The specified workspace must be a base workspace of this workspace.
+	 *
+	 * @param NodeInterface $node
+	 * @param string $targetWorkspaceName Name of the workspace to publish to
+	 * @return void
+	 * @api
+	 */
+	public function publishNode(NodeInterface $node, $targetWorkspaceName) {
+		$this->emitBeforeNodePublishing($node, $targetWorkspaceName);
+		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
+		if ($node->getPath() === '/') {
+			return;
+		}
+		$targetNode = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
+		if ($targetNode !== NULL) {
+			$this->nodeDataRepository->remove($targetNode);
+		}
+		if ($node->isRemoved() === FALSE) {
+			$node->setWorkspace($targetWorkspace);
+		} else {
+			$this->nodeDataRepository->remove($node);
+		}
+		$this->emitAfterNodePublishing($node, $targetWorkspaceName);
 	}
 
 	/**
@@ -194,4 +217,25 @@ class Workspace {
 		}
 		return $targetWorkspace;
 	}
+
+	/**
+	 * Emits a signal just before a node is being published
+	 *
+	 * @param NodeInterface $node
+	 * @param string $targetWorkspaceName
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitBeforeNodePublishing(NodeInterface $node, $targetWorkspaceName) {}
+
+	/**
+	 * Emits a signal when a node has been published
+	 *
+	 * @param NodeInterface $node
+	 * @param string $targetWorkspaceName
+	 * @return void
+	 * @Flow\Signal
+	 */
+	protected function emitAfterNodePublishing(NodeInterface $node, $targetWorkspaceName) {}
+
 }
