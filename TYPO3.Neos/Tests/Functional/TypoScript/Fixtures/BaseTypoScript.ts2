@@ -29,7 +29,7 @@ page1.body {
 		teaser = TYPO3.Neos:ContentCollection
 		teaser.nodePath = 'teaser'
 
-		main = TYPO3.Neos:ContentCollection
+		main = TYPO3.Neos:PrimaryContent
 		main.nodePath = 'main'
 
 		sidebar = TYPO3.Neos:ContentCollection

@@ -1,5 +1,14 @@
 prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
+	nodePath = 'to-be-defined-by-user'
+
+	@override.nodePath = ${this.nodePath}
+	@ignoreProperties = ${['nodePath']}
+
 	default {
+		prototype(TYPO3.Neos:ContentCollection) {
+			nodePath = ${nodePath}
+		}
+
 		condition = ${true}
 		type = 'TYPO3.Neos:ContentCollection'
 		@position = 'end'
