@@ -54,4 +54,11 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 	public function renderPathWillWinOverType() {
 		$this->assertMatchingWorks('case/renderPathWillWin');
 	}
+
+	/**
+	 * @test
+	 */
+	public function ignorePropertiesWorks() {
+		$this->assertMatchingWorks('case/ignoredPropertiesAreIgnored');
+	}
 }

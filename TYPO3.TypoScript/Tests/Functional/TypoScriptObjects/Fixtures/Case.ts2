@@ -45,3 +45,10 @@ case.renderPathWillWin {
 
 renderPathRenderer.false = TYPO3.TypoScript:Case.Test1
 renderPathRenderer.true = TYPO3.TypoScript:Case.Test2
+
+case.ignoredPropertiesAreIgnored < case.numericMatching {
+	@ignoreProperties = ${[1]}
+	1 = TYPO3.TypoScript:TestRenderer {
+		test = 'somethingwhichshallnotbeshown'
+	}
+}

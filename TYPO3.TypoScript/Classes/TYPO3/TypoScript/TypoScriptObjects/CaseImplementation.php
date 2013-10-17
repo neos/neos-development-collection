@@ -39,32 +39,62 @@ class CaseImplementation extends ArrayImplementation {
 	 * @return mixed
 	 */
 	public function evaluate() {
+		$this->unsetIgnoredProperties();
+
 		$matcherKeys = $this->sortNestedTypoScriptKeys();
 
 		foreach ($matcherKeys as $matcherName) {
-			$renderedMatcher = NULL;
-
-			if (isset($this->properties[$matcherName]['__objectType'])) {
-					// object type already set, so no need to set it
-				$renderedMatcher = $this->tsRuntime->render(
-					sprintf('%s/%s', $this->path, $matcherName)
-				);
-			} elseif (!is_array($this->properties[$matcherName])) {
-				throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
-			} elseif (isset($this->properties[$matcherName]['__eelExpression'])) {
-				throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
-			} else {
-					// No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
-				$renderedMatcher = $this->tsRuntime->render(
-					sprintf('%s/%s<TYPO3.TypoScript:Matcher>', $this->path, $matcherName)
-				);
-			}
-
+			$renderedMatcher = $this->renderMatcher($matcherName);
 			if ($renderedMatcher !== self::MATCH_NORESULT) {
 				return $renderedMatcher;
 			}
 		}
 
 		return NULL;
+	}
+
+	/**
+	 * Unset ignored properties to exclude them when sorting the array and evaluating matchers
+	 *
+	 * @return void
+	 */
+	protected function unsetIgnoredProperties() {
+		$ignoredProperties = $this->tsValue('__meta/ignoreProperties');
+		if (is_array($ignoredProperties)) {
+			foreach ($ignoredProperties as $ignoredProperty) {
+				unset($this->properties[$ignoredProperty]);
+			}
+		}
+	}
+
+	/**
+	 * Render the given matcher
+	 *
+	 * A result value of MATCH_NORESULT means that the condition of the matcher did not match and the case should
+	 * continue.
+	 *
+	 * @param string $matcherKey
+	 * @return string
+	 */
+	protected function renderMatcher($matcherKey) {
+		$renderedMatcher = NULL;
+
+		if (isset($this->properties[$matcherKey]['__objectType'])) {
+			// object type already set, so no need to set it
+			$renderedMatcher = $this->tsRuntime->render(
+				sprintf('%s/%s', $this->path, $matcherKey)
+			);
+			return $renderedMatcher;
+		} elseif (!is_array($this->properties[$matcherKey])) {
+			throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
+		} elseif (isset($this->properties[$matcherKey]['__eelExpression'])) {
+			throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
+		} else {
+			// No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
+			$renderedMatcher = $this->tsRuntime->render(
+				sprintf('%s/%s<TYPO3.TypoScript:Matcher>', $this->path, $matcherKey)
+			);
+			return $renderedMatcher;
+		}
 	}
 }
