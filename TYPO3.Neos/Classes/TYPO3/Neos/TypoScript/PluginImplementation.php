@@ -184,7 +184,7 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 			}
 			if ($pluginRequest->getControllerActionName() === NULL) {
 				$actionName = $this->node->getProperty('action');
-				if ($actionName === NULL) {
+				if ($actionName === NULL || $actionName === '') {
 					$actionName = $this->getAction() !== NULL ? $this->getAction() : 'index';
 				}
 				$pluginRequest->setControllerActionName($actionName);
