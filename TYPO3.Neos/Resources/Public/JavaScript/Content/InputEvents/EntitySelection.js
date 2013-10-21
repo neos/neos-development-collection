@@ -13,12 +13,24 @@ define(
 	) {
 		return Ember.Object.create({
 
+			_neosHasFocus: false,
+
 			/**
 			 * Register a delegate for handling
 			 * - disable selection if in browse (preview) mode
 			 * - set currently selected entity
 			 */
 			initialize: function() {
+				var that = this;
+
+				$('#neos-application')
+					.on('focusout', function() {
+						that.set('_neosHasFocus', false);
+					})
+					.on('focusin', function() {
+						that.set('_neosHasFocus', true);
+					});
+
 				$(document)
 					.on('mouseover', 'body:not(.neos-previewmode) .neos-contentelement', function(e) {
 						if (e.result !== 'hovered') {
@@ -70,9 +82,11 @@ define(
 						return;
 					}
 
-					// We don't want to handle node selection if the focus is in an application component like the inspector
+					// We don't want to handle node selection if the focus is in a Neos application component like the inspector
 					// because this handler only handles navigation for the nodes.
-					// TODO: make sure we know where the focus was before
+					if (that.get('_neosHasFocus')) {
+						return;
+					}
 
 					var contentElements = $('.neos-contentelement'),
 						activeContentElementIndex = contentElements.index($('.neos-contentelement-active')),
