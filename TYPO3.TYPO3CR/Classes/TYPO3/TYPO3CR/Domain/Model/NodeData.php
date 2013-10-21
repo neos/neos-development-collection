@@ -156,13 +156,13 @@ class NodeData extends AbstractNodeData {
 	 * Constructs this node data container
 	 *
 	 * Creating new nodes by instantiating NodeData is not part of the public API!
-	 * The content repository needs to propertly integrate new nodes into the node
+	 * The content repository needs to properly integrate new nodes into the node
 	 * tree and therefore you must use createNode() or createNodeFromTemplate()
-	 * in a Node object which will interally create a NodeData object.
+	 * in a Node object which will internally create a NodeData object.
 	 *
 	 * @param string $path Absolute path of this node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
-	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
+	 * @param string $identifier The node identifier (not the persistence object identifier!). Specifying this only makes sense while creating corresponding nodes
 	 */
 	public function __construct($path, Workspace $workspace, $identifier = NULL) {
 		$this->setPath($path, FALSE);

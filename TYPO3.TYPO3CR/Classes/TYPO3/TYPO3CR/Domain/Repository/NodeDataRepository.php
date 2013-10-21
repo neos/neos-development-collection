@@ -110,7 +110,9 @@ class NodeDataRepository extends Repository {
 		if ($this->removedNodes->contains($object)) {
 			$this->removedNodes->detach($object);
 		}
-		$this->addedNodes->attach($object);
+		if (!$this->addedNodes->contains($object)) {
+			$this->addedNodes->attach($object);
+		}
 		parent::add($object);
 	}
 
@@ -131,7 +133,9 @@ class NodeDataRepository extends Repository {
 		if ($this->addedNodes->contains($object)) {
 			$this->addedNodes->detach($object);
 		}
-		$this->removedNodes->attach($object);
+		if (!$this->removedNodes->contains($object)) {
+			$this->removedNodes->attach($object);
+		}
 		parent::remove($object);
 	}
 
@@ -979,4 +983,5 @@ class NodeDataRepository extends Repository {
 	 */
 	protected function emitRepositoryObjectsPersisted() {
 	}
+
 }

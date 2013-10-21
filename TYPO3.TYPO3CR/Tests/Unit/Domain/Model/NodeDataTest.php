@@ -12,9 +12,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  *                                                                        */
 
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Test case for the "NodeData" domain model

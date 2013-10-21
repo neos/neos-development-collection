@@ -111,6 +111,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->setPath($this->getParentPath() . ($this->getParentPath() === '/' ? '' : '/') . $newName);
 		$this->nodeDataRepository->persistEntities();
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -202,6 +203,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setWorkspace($workspace);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -237,6 +239,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setIndex($index);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -304,6 +307,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -338,6 +342,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -370,6 +375,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$this->nodeDataRepository->persistEntities();
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -391,6 +397,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
 		$copiedNode->moveBefore($referenceNode);
+		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
 	}
@@ -414,6 +421,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
 		$copiedNode->moveAfter($referenceNode);
+		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
 	}
@@ -436,6 +444,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
+		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
 	}
@@ -456,6 +465,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setProperty($propertyName, $value);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -521,6 +531,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->removeProperty($propertyName);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -563,6 +574,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setContentObject($contentObject);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -586,6 +598,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->unsetContentObject();
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -600,6 +613,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setNodeType($nodeType);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -633,6 +647,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 				$newNode->createNode($childNodeName, $childNodeType);
 			}
 		}
+		$this->emitNodeAdded($newNode);
 		return $newNode;
 	}
 
@@ -666,6 +681,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
 		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace());
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+		$this->emitNodeAdded($node);
 
 		return $node;
 	}
@@ -745,6 +761,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->remove();
+		$this->emitNodeRemoved($this);
 	}
 
 	/**
@@ -782,6 +799,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHidden($hidden);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -806,6 +824,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenBeforeDateTime($dateTime);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -830,6 +849,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenAfterDateTime($dateTime);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -854,6 +874,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenInIndex($hidden);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -878,6 +899,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setAccessRoles($accessRoles);
+		$this->emitNodeUpdated($this);
 	}
 
 	/**
@@ -1047,6 +1069,36 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	protected function createNodeData($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
 		return new NodeData($path, $workspace, $identifier);
+	}
+
+	/**
+	 * Signals that a node was added.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function emitNodeAdded(NodeInterface $node) {
+	}
+
+	/**
+	 * Signals that a node was updated.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function emitNodeUpdated(NodeInterface $node) {
+	}
+
+	/**
+	 * Signals that a node was removed.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function emitNodeRemoved(NodeInterface $node) {
 	}
 
 }

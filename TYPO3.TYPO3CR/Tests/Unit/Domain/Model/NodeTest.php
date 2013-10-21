@@ -23,6 +23,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$parentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$newNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
+		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
 		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
 
@@ -35,7 +36,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($parentNode, 'nodeFactory', $nodeFactory);
 
 		$parentNodeData->expects($this->atLeastOnce())->method('createNodeFromTemplate')->with($nodeTemplate, 'bar', $workspace)->will($this->returnValue($newNodeData));
-		$nodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->with($newNodeData, $context);
+		$nodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->with($newNodeData, $context)->will($this->returnValue($newNode));
 
 		$parentNode->createNodeFromTemplate($nodeTemplate, 'bar');
 	}
