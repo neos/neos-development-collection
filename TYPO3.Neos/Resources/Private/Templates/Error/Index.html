@@ -2,32 +2,17 @@
 
 <f:section name="head">
 	<title>TYPO3 Neos Error</title>
-	<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'TYPO3.Twitter.Bootstrap')}" />
-	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Setup.css', package: 'TYPO3.Setup')}" />
-	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Login.css', package: 'TYPO3.Neos')}" />
-	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.10.2.js', package: 'TYPO3.Neos')}"></script>
+	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Error.css', package: 'TYPO3.Neos')}" />
 </f:section>
 
 <f:section name="body">
-	<body>
-		<div class="neos-container neos">
-			<div class="neos-modal neos-login-box">
-				<div class="neos-modal-header">
-					<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png', package: 'TYPO3.Neos')}" width="115" height="50" alt="TYPO3 Neos" />
-				</div>
-				<div class="neos-modal-body">
-					<div class="neos-row-fluid">
-						<div class="neos-span3 typo3-message-icon">
-							<i class="icon-exclamation-sign"></i>
-						</div>
-						<div class="neos-span9">
-							<h1>{errorTitle}</h1>
-							<p>{errorDescription -> f:format.raw()}</p>
-						</div>
-					</div>
-				</div>
+	<body class="neos">
+		<div class="neos-error-screen">
+			<div class="neos-message-icon">
+				<i class="icon-warning-sign"></i>
 			</div>
+			<h1>{errorTitle}</h1>
+			<p>{errorDescription -> f:format.raw()}</p>
 		</div>
-		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
 	</body>
 </f:section>
