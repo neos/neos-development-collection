@@ -382,14 +382,6 @@ interface NodeInterface {
 	public function getParentPath();
 
 	/**
-	 * Returns the closest ancestor of this node that matches the $nodeTypeFilter
-	 *
-	 * @param string $nodeTypeFilter  filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.TYPO3CR:Type1", "!TYPO3.TYPO3CR:Type2,TYPO3.TYPO3CR:Type3" or NULL)
-	 * @return NodeInterface The found node or NULL if this is the root node or no matching node was found
-	 */
-	public function getClosestAncestor($nodeTypeFilter);
-
-	/**
 	 * Creates, adds and returns a child node of this node. Also sets default
 	 * properties and creates default subnodes.
 	 *

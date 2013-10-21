@@ -250,20 +250,6 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Returns the closest ancestor of this node that matches the $nodeTypeFilter
-	 *
-	 * @param string $nodeTypeFilter filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.TYPO3CR:Type1", "!TYPO3.TYPO3CR:Type2,TYPO3.TYPO3CR:Type3" or NULL)
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The found node or NULL if this is the root node or no matching node was found
-	 */
-	public function getClosestAncestor($nodeTypeFilter) {
-		if ($this->getPath() === '/' || $this->getParentPath() === '/') {
-			return NULL;
-		}
-		$ancestorNodes = $this->nodeDataRepository->findOnPathInContext('/', $this->getParentPath(), $this->context, $nodeTypeFilter);
-		return array_pop($ancestorNodes);
-	}
-
-	/**
 	 * Returns the parent node path
 	 *
 	 * @return string Absolute node path of the parent node
