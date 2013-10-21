@@ -16,6 +16,7 @@ use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\Eel\FlowQuery\FlowQuery;
 
 /**
  * @Flow\Scope("singleton")
@@ -59,7 +60,8 @@ class PluginUriAspect {
 
 		// TODO override namespace
 
-		$pageNode = $targetNode->getClosestAncestor('TYPO3.Neos:Document');
+		$q = new FlowQuery(array($targetNode));
+		$pageNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 		$result = $this->generateUriForNode($request, $joinPoint, $pageNode);
 
 		return $result;

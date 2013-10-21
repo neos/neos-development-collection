@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\ExtJS\Annotations\ExtDirect;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 
@@ -425,10 +426,8 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function updateAction(Node $node) {
-		$closestDocumentNode = $node;
-		while (!$closestDocumentNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-			$closestDocumentNode = $closestDocumentNode->getParent();
-		}
+		$q = new FlowQuery(array($node));
+		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
 		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => TRUE));
 	}

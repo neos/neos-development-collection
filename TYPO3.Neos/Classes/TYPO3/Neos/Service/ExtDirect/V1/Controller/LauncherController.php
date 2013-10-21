@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\ExtJS\Annotations\ExtDirect;
 
@@ -111,10 +112,11 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			}
 
 			$this->uriBuilder->reset();
-			if ($result->getNodeType()->isOfType('TYPO3.Neos:Page')) {
+			if ($result->getNodeType()->isOfType('TYPO3.Neos:Document')) {
 				$pageNode = $result;
 			} else {
-				$pageNode = $this->findNextParentDocumentNode($result);
+				$q = new FlowQuery(array($result));
+				$pageNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 				$this->uriBuilder->setSection('c' . $result->getIdentifier());
 			}
 			$searchResult = array(

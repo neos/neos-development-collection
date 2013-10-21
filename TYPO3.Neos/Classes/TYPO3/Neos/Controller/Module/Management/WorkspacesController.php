@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Controller\Module\Management;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
@@ -92,7 +93,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
 					$siteNodeName = $pathParts[2];
-					$document = $this->findDocumentNode($node);
+					$q = new FlowQuery(array($node));
+					$document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 					$documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
 					$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
 					if (!isset($sites[$siteNodeName]['siteNode'])) {
@@ -211,23 +213,6 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 		}
 		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been discarded', NULL, array($workspaceName)));
 		$this->redirect('index');
-	}
-
-	/**
-	 * Finds the nearest parent document node of the provided node by looping recursively trough
-	 * the node and it's parent nodes and checking if they are a sub node type of TYPO3.Neos:Document
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 */
-	protected function findDocumentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		while ($node) {
-			if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-				return $node;
-			}
-			$node = $node->getParent();
-		}
-		return NULL;
 	}
 
 }

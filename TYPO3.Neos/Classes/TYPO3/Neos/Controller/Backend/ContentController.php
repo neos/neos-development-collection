@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\Eel\FlowQuery\FlowQuery;
 
 /**
  * The TYPO3 ContentModule controller; providing backend functionality for the Content Module.
@@ -99,7 +100,8 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			if ($pluginViewNode === NULL) {
 				continue;
 			}
-			$page = $pluginViewNode->getClosestAncestor('TYPO3.Neos:Document');
+			$q = new FlowQuery(array($pluginViewNode));
+			$page = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 			$uri = $this->uriBuilder
 						->reset()
 						->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
@@ -134,7 +136,8 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				if ($pluginNode->isRemoved()) {
 					continue;
 				}
-				$page = $pluginNode->getClosestAncestor('TYPO3.Neos:Document');
+				$q = new FlowQuery(array($pluginNode));
+				$page = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 				if ($page === NULL) {
 					continue;
 				}
