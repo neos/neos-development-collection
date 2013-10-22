@@ -372,8 +372,8 @@ Processors allow the manipulation of values in TypoScript properties. A processo
 a property using the `@process` meta-property::
 
 	myObject = MyObject {
-		value = 'some value'
-		value.@process.1 = ${'before ' + value + ' after'}
+		property = 'some value'
+		property.@process.1 = ${'before ' + value + ' after'}
 	}
 	# results in 'before some value after'
 
@@ -383,8 +383,8 @@ in the TypoScript after `@process`. In the example above a `@process.2` would ru
 Additionally, an extended syntax can be used as well::
 
 	myObject = MyObject {
-		value = 'some value'
-		value.@process.someWrap {
+		property = 'some value'
+		property.@process.someWrap {
 			expression = ${'before ' + value + ' after'}
 			@position = 'start'
 		}
