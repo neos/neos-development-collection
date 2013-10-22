@@ -12,54 +12,20 @@ define(
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
 			template: Ember.Handlebars.compile(template),
-			classNameBindings: ['_menuIsSticky:neos-menu-sticky-on:neos-menu-sticky'],
-			_menuIsSticky: false,
 			controller: MenuPanelController,
-
-			StickyMenuButton: Ember.View.extend({
-				tagName: 'div',
-				classNames: ['neos-button', 'neos-menu-stickybutton'],
-				classNameBindings: ['_menuIsSticky:neos-menu-stickybutton neos-pressed:neos-menu-stickybutton'],
-				_menuIsSticky: null,
-
-				didInsertElement: function() {
-					var stickyMenuState = this.get('controller.configuration.stickyMenuState');
-					if (stickyMenuState === undefined || stickyMenuState === null) {
-						stickyMenuState = false;
-						this.set('controller.configuration.stickyMenuState', stickyMenuState);
-					}
-					this.set('_menuIsSticky', stickyMenuState);
-					this.set('controller.stickyMenuPanelMode', stickyMenuState);
-				},
-
-				click: function() {
-					var stickyMenuState = this.get('controller').toggleStickyMenu();
-					this.set('_menuIsSticky', stickyMenuState);
-					this.set('controller.stickyMenuPanelMode', stickyMenuState);
-				},
-
-				onStickyMenuModeChanged: function() {
-					if (this.get('controller.stickyMenuPanelMode')) {
-						$('body').addClass('neos-menu-sticky-on');
-					} else {
-						$('body').removeClass('neos-menu-sticky-on');
-					}
-				}.observes('controller.stickyMenuPanelMode')
-			}),
 
 			ToggleMenuPanelHeadline: Ember.View.extend({
 				tagName: 'div',
 				classNameBindings: ['collapsed:neos-collapsed:neos-open'],
 				_collapsed: false,
-				_menuIsSticky: null,
 
 				collapsed: function() {
-					if(this.get('controller.configuration.stickyMenuState')) {
+					if (this.get('controller.menuPanelStickyMode')) {
 						return false;
 					} else {
 						return this.get('_collapsed');
 					}
-				}.property('_collapsed', 'controller.configuration.stickyMenuState'),
+				}.property('_collapsed', 'controller.menuPanelStickyMode'),
 
 				// bound in handlebar
 				group: undefined,
@@ -96,18 +62,25 @@ define(
 				}.observes('collapsed')
 			}),
 
-			mouseEnter: function() {
-				this.set('controller.menuPanelMode', true);
-			},
+			LinkView: Ember.View.extend({
+				tagName: 'a',
+				attributeBindings: ['href', 'title'],
+				description: '',
+				label: '',
+				href: '',
+				shouldShowDescription: function() {
+					return !this.get('controller.menuPanelStickyMode');
+				}.property('controller.menuPanelStickyMode'),
+
+				title: function() {
+					return this.get('shouldShowDescription') ? this.get('description') : this.get('label');
+				}.property('description', 'label', 'shouldShowDescription')
+			}),
 
 			mouseLeave: function() {
-				if (this.get('controller.configuration.stickyMenuState') === false) {
+				if (this.get('controller.menuPanelStickyMode') === false) {
 					this.set('controller.menuPanelMode', false);
 				}
-			},
-
-			toggleMenuPanelMode: function() {
-				this.set('controller.menuPanelMode', !this.get('controller.menuPanelMode'));
 			},
 
 			onMenuPanelModeChanged: function() {
@@ -116,7 +89,15 @@ define(
 				} else {
 					$('body').removeClass('neos-menu-panel-open');
 				}
-			}.observes('controller.menuPanelMode')
+			}.observes('controller.menuPanelMode').on('init'),
+
+			onMenuPanelStickyModeChanged: function() {
+				if (this.get('controller.menuPanelStickyMode')) {
+					$('body').addClass('neos-menu-panel-sticky');
+				} else {
+					$('body').removeClass('neos-menu-panel-sticky');
+				}
+			}.observes('controller.menuPanelStickyMode').on('init')
 		});
 	}
 );

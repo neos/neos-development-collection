@@ -14,7 +14,7 @@ body {
 		}
 	}
 
-	&.neos-menu-panel-open.neos-menu-sticky-on {
+	&.neos-menu-panel-open.neos-menu-panel-sticky {
 		margin-left: $menuButtonWidth;
 	}
 
@@ -22,7 +22,7 @@ body {
 		margin-left: $navigatePanelWidth;
 	}
 
-	&.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open {
+	&.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open {
 		margin-left: $menuButtonWidth + $navigatePanelWidth - 1px;
 	}
 

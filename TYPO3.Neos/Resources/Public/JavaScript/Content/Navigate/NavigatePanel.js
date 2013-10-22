@@ -29,6 +29,6 @@ define(
 			} else {
 				$('body').removeClass('neos-navigate-panel-open');
 			}
-		}.observes('controller.navigatePanelMode').on('init'),
+		}.observes('controller.navigatePanelMode').on('init')
 	});
 });

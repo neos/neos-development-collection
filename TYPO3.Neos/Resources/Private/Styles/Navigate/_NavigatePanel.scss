@@ -8,7 +8,7 @@
 		color: $blue;
 	}
 
-	.neos-menu-panel-open & {
+	.neos-menu-panel-open:not(.neos-menu-panel-sticky) & {
 		&.neos-pressed:after {
 			display: none;
 		}
@@ -50,7 +50,7 @@
 		left: 0;
 	}
 
-	.neos-navigate-panel-open.neos-menu-panel-open.neos-menu-sticky-on & {
+	.neos-navigate-panel-open.neos-menu-panel-open.neos-menu-panel-sticky & {
 		left: $menuButtonWidth;
 	}
 

@@ -2,7 +2,7 @@
 	<a href="{{unbound items.contentModuleUri}}" title="Content view" class="neos-menu-headline">
 		<i class="icon-file"></i> Content
 	</a>
-	{{view view.ToggleMenuPanelHeadline _menuIsStickyBinding="view._menuIsSticky" classNames="neos-menu-collapse" group="content"}}
+	{{view view.ToggleMenuPanelHeadline classNames="neos-menu-collapse" group="content"}}
 	{{#collection tagName="div" classNames="neos-menu-list" contentBinding="items.sites"}}
 		{{#if uri}}
 			<a href="{{unbound uri}}" title="{{unbound nodeName}}" {{bindAttr class="active:neos-active"}}>
@@ -18,19 +18,19 @@
 
 {{#collection tagName="div" itemClassNames="neos-menu-section" contentBinding="items.modules"}}
 	{{#unless hideInMenu}}
-		<a href="{{unbound uri}}" title="{{unbound description}}" {{bindAttr class=":neos-menu-headline active:neos-active"}}>
+		{{#view view.parentView.parentView.LinkView hrefBinding="uri" labelBinding="label" descriptionBinding="description" classNameBindings=":neos-menu-headline active:neos-active"}}
 			{{#if icon}}<i class="{{unbound icon}}"></i>{{else}}<i class="icon-puzzle-piece"></i>{{/if}} {{unbound label}}
-		</a>
-		{{view view.parentView.parentView.ToggleMenuPanelHeadline _menuIsStickyBinding="view.parentView.parentView._menuIsSticky" classNames="neos-menu-collapse" groupBinding="view.content.group"}}
+		{{/view}}
+		{{view view.parentView.parentView.ToggleMenuPanelHeadline classNames="neos-menu-collapse" groupBinding="view.content.group"}}
 
 		{{#collection tagName="div" classNames="neos-menu-list" contentBinding="submodules"}}
 			{{#unless hideInMenu}}
-				<a href="{{unbound uri}}" title="{{unbound description}}" {{bindAttr class="active:neos-active"}}>
+				{{#view view.parentView.parentView.parentView.parentView.LinkView hrefBinding="uri" labelBinding="label" descriptionBinding="description" classNameBindings="active:neos-active"}}
 					{{#if icon}}<i class="{{unbound icon}}"></i>{{else}}<i class="icon-puzzle-piece"></i>{{/if}} {{unbound label}}
-				</a>
+				{{/view}}
 			{{/unless}}
 		{{/collection}}
 	{{/unless}}
 {{/collection}}
 
-{{view view.StickyMenuButton _menuIsNotStickyBinding="view._menuIsNotSticky" classNameBindings="neos-button" }}
+<button id="neos-menu-sticky-button" {{bindAttr class=":neos-button controller.menuPanelStickyMode:neos-pressed"}} {{action "toggleMenuPanelStickyMode" target="controller"}}></button>
