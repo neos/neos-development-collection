@@ -37,6 +37,22 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 	/**
 	 * @test
 	 */
+	public function matchingWithDebugModeWorks() {
+		$view = $this->buildView();
+
+		$view->setOption('debugMode', TRUE);
+
+		$view->assign('cond', TRUE);
+		$view->setTypoScriptPath('case/numericMatching');
+		$this->assertContains('Xtestconditiontrue', $view->render());
+
+		$view->assign('cond', FALSE);
+		$this->assertContains('Xtestconditionfalse', $view->render());
+	}
+
+	/**
+	 * @test
+	 */
 	public function positionalMatchingWorks() {
 		$this->assertMatchingWorks('case/positionalMatching');
 	}

@@ -45,7 +45,7 @@ class CaseImplementation extends ArrayImplementation {
 
 		foreach ($matcherKeys as $matcherName) {
 			$renderedMatcher = $this->renderMatcher($matcherName);
-			if ($renderedMatcher !== self::MATCH_NORESULT) {
+			if ($this->matcherMatched($renderedMatcher)) {
 				return $renderedMatcher;
 			}
 		}
@@ -97,4 +97,20 @@ class CaseImplementation extends ArrayImplementation {
 			return $renderedMatcher;
 		}
 	}
+
+	/**
+	 * Test wether the output of the matcher does not equal the MATCH_NORESULT
+	 *
+	 * If the debug mode is enabled, we have to strip the debug output before comparing the rendered result.
+	 *
+	 * @param string $renderedMatcher
+	 * @return boolean
+	 */
+	protected function matcherMatched($renderedMatcher) {
+		if ($this->tsRuntime->isDebugMode()) {
+			$renderedMatcher = preg_replace('/\s*<!--.*?-->\s*/', '', $renderedMatcher);
+		}
+		return $renderedMatcher !== self::MATCH_NORESULT;
+	}
+
 }

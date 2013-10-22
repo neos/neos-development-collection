@@ -89,6 +89,11 @@ class Runtime {
 	protected $configurationOnPathRuntimeCache = array();
 
 	/**
+	 * @var boolean
+	 */
+	protected $debugMode = FALSE;
+
+	/**
 	 * Constructor for the TypoScript Runtime
 	 * @param array $typoScriptConfiguration
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
@@ -106,6 +111,9 @@ class Runtime {
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
+		if (isset($this->settings['debugMode'])) {
+			$this->debugMode = ($this->settings['debugMode'] === TRUE);
+		}
 	}
 
 	/**
@@ -175,7 +183,7 @@ class Runtime {
 	public function render($typoScriptPath) {
 		try {
 			$output = $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_EXCEPTION);
-			if (isset($this->settings['debugMode']) && $this->settings['debugMode'] === TRUE) {
+			if ($this->debugMode) {
 				$output = sprintf('%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
 					chr(10),
 					$typoScriptPath,
@@ -586,6 +594,21 @@ class Runtime {
 			}
 		}
 		return $this->defaultContextVariables;
+	}
+
+	/**
+	 * @param boolean $debugMode
+	 * @return void
+	 */
+	public function setDebugMode($debugMode) {
+		$this->debugMode = $debugMode;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isDebugMode() {
+		return $this->debugMode;
 	}
 
 }
