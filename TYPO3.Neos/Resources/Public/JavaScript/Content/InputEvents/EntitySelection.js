@@ -72,7 +72,6 @@ define(
 						if (NodeSelection.get('selectedNode') !== null) {
 							NodeSelection.updateSelection();
 						}
-						return false;
 					});
 
 				// Keyboard events
