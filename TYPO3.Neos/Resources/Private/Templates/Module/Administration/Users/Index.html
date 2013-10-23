@@ -42,7 +42,7 @@
 										<div class="neos-modal">
 											<div class="neos-modal-header">
 												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-												<div class="neos-header">Do you really want to delete user ... ?"{account.accountIdentifier}"?</div>
+												<div class="neos-header">Do you really want to delete user "{account.accountIdentifier}"?</div>
 												<div>
 													<div class="neos-subheader">
 														This will delete the user and his personal workspace, including all unpublished content.
@@ -54,7 +54,7 @@
 												<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 												<f:form action="delete" arguments="{account: account}" class="neos-inline">
 													<button type="submit" class="neos-button neos-button-danger" title="Delete User">
-														Delete User
+														Yes, delete the user
 													</button>
 												</f:form>
 											</div>

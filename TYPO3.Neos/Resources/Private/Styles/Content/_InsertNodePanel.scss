@@ -1,0 +1,24 @@
+.neos-content-new-selecttype-button {
+	float: left;
+	margin: 0px 0px $defaultMargin 0px;
+	width: 100 / 3 * 1%;
+	vertical-align: top;
+
+	a {
+		display: block;
+		line-height: 16px;
+		vertical-align: bottom;
+		position: relative;
+		padding-left: 14px + $relatedMargin;
+		@include box-sizing(border-box);
+
+		i {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 14px;
+			padding-right: $relatedMargin;
+			color: $blue;
+		}
+	}
+}
