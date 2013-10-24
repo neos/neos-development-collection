@@ -11,6 +11,7 @@ TYPO3 Neos is a free enterprise web content management system licensed under the
 	Introduction/Index
 	GettingStarted/Index
 	IntegratorGuide/Index
+	IntegratorsCookbook/Index
 	DeveloperGuide/Index
 	Appendixes/Index
 	Contributors
