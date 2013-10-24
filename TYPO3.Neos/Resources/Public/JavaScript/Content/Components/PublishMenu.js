@@ -11,7 +11,7 @@ define(
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
-			classNames: ['neos-btn-group'],
+			classNames: ['neos-button-group'],
 			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
 			autoPublish: function(key, value) {
 				if (arguments.length > 1) {

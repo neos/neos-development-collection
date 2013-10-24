@@ -85,11 +85,11 @@
     margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
   }
   // but override that for button groups
-  .neos-neos-btn-group .neos-button + .neos-button {
+  .neos-neos-button-group .neos-button + .neos-button {
     margin-left: -1px;
   }
   // and override it for block buttons as well
-  .neos-btn-block + .neos-btn-block {
+  .neos-button-block + .neos-button-block {
     margin-left: 0;
   }
 }

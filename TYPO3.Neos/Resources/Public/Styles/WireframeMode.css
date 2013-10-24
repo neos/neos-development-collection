@@ -1008,10 +1008,10 @@ select:focus:invalid:focus {
 }
 .neos-input-append .neos-add-on,
 .neos-input-append .neos-button,
-.neos-input-append .neos-btn-group > .neos-dropdown-toggle,
+.neos-input-append .neos-button-group > .neos-dropdown-toggle,
 .neos-input-prepend .neos-add-on,
 .neos-input-prepend .neos-button,
-.neos-input-prepend .neos-btn-group > .neos-dropdown-toggle {
+.neos-input-prepend .neos-button-group > .neos-dropdown-toggle {
   vertical-align: top;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -1041,21 +1041,21 @@ select:focus:invalid:focus {
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
 }
-.neos-input-append input + .neos-btn-group .neos-button:last-child,
-.neos-input-append select + .neos-btn-group .neos-button:last-child,
-.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-button:last-child {
+.neos-input-append input + .neos-button-group .neos-button:last-child,
+.neos-input-append select + .neos-button-group .neos-button:last-child,
+.neos-input-append .neos-uneditable-input + .neos-button-group .neos-button:last-child {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
 }
 .neos-input-append .neos-add-on,
 .neos-input-append .neos-button,
-.neos-input-append .neos-btn-group {
+.neos-input-append .neos-button-group {
   margin-left: -1px;
 }
 .neos-input-append .neos-add-on:last-child,
 .neos-input-append .neos-button:last-child,
-.neos-input-append .neos-btn-group:last-child > .neos-dropdown-toggle {
+.neos-input-append .neos-button-group:last-child > .neos-dropdown-toggle {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
@@ -1068,9 +1068,9 @@ select:focus:invalid:focus {
   -moz-border-radius: 0;
   border-radius: 0;
 }
-.neos-input-prepend.neos-input-append input + .neos-btn-group .neos-button,
-.neos-input-prepend.neos-input-append select + .neos-btn-group .neos-button,
-.neos-input-prepend.neos-input-append .neos-uneditable-input + .neos-btn-group .neos-button {
+.neos-input-prepend.neos-input-append input + .neos-button-group .neos-button,
+.neos-input-prepend.neos-input-append select + .neos-button-group .neos-button,
+.neos-input-prepend.neos-input-append .neos-uneditable-input + .neos-button-group .neos-button {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
@@ -1089,7 +1089,7 @@ select:focus:invalid:focus {
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
 }
-.neos-input-prepend.neos-input-append .neos-btn-group:first-child {
+.neos-input-prepend.neos-input-append .neos-button-group:first-child {
   margin-left: 0;
 }
 
@@ -1173,8 +1173,8 @@ input.neos-search-query {
 
 .neos-form-search label,
 .neos-form-inline label,
-.neos-form-search .neos-btn-group,
-.neos-form-inline .neos-btn-group {
+.neos-form-search .neos-button-group,
+.neos-form-inline .neos-button-group {
   display: inline-block;
 }
 

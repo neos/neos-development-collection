@@ -464,7 +464,7 @@ select:focus:invalid {
   }
   .neos-add-on,
   .neos-button,
-  .neos-btn-group > .neos-dropdown-toggle {
+  .neos-button-group > .neos-dropdown-toggle {
     vertical-align: top;
     @include border-radius(0);
   }
@@ -481,7 +481,7 @@ select:focus:invalid {
   }
   .neos-add-on:first-child,
   .neos-button:first-child {
-    // FYI, `.neos-btn:first-child` accounts for a button group that's prepended
+    // FYI, `.neos-button:first-child` accounts for a button group that's prepended
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
   }
 }
@@ -491,18 +491,18 @@ select:focus:invalid {
   select,
   .neos-uneditable-input {
     @include border-radius($inputBorderRadius 0 0 $inputBorderRadius);
-    + .neos-btn-group .neos-button:last-child {
+    + .neos-button-group .neos-button:last-child {
       @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
     }
   }
   .neos-add-on,
   .neos-button,
-  .neos-btn-group {
+  .neos-button-group {
     margin-left: -1px;
   }
   .neos-add-on:last-child,
   .neos-button:last-child,
-  .neos-btn-group:last-child > .neos-dropdown-toggle {
+  .neos-button-group:last-child > .neos-dropdown-toggle {
     @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
   }
 }
@@ -513,7 +513,7 @@ select:focus:invalid {
   select,
   .neos-uneditable-input {
     @include border-radius(0);
-    + .neos-btn-group .neos-button {
+    + .neos-button-group .neos-button {
       @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
     }
   }
@@ -527,7 +527,7 @@ select:focus:invalid {
     margin-left: -1px;
     @include border-radius(0 $inputBorderRadius $inputBorderRadius 0);
   }
-  .neos-btn-group:first-child {
+  .neos-button-group:first-child {
     margin-left: 0;
   }
 }
@@ -593,8 +593,8 @@ input.neos-search-query {
 }
 .neos-form-search label,
 .neos-form-inline label,
-.neos-form-search .neos-btn-group,
-.neos-form-inline .neos-btn-group {
+.neos-form-search .neos-button-group,
+.neos-form-inline .neos-button-group {
   display: inline-block;
 }
 // Remove margin for neos-input-prepend/-append
