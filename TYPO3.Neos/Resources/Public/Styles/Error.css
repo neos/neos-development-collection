@@ -3,7 +3,7 @@
 /* Color palette */
 /* Sizes & margins */
 /* Components */
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -1876,7 +1876,7 @@ body {
   padding: 0px;
   border: 0px;
 }
-.neos .neos-modal .neos-button.neos-close {
+.neos .neos-modal .neos-close {
   margin: 0;
   color: #fff;
   font-size: 18px;
@@ -1897,10 +1897,10 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.neos .neos-modal .neos-button.neos-close:before {
+.neos .neos-modal .neos-close:before {
   content: "\f00d";
 }
-.neos .neos-modal .neos-button.neos-close:hover {
+.neos .neos-modal .neos-close:hover {
   background: #00b5ff;
 }
 .neos .neos-modal .neos-header {
