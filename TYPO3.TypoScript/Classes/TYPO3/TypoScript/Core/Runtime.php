@@ -538,7 +538,11 @@ class Runtime {
 			throw new Exception('Context variable "q" not allowed, as it is already reserved for FlowQuery use.', 1344325040);
 		}
 		$contextVariables['q'] = function ($element) {
-			return new FlowQuery(array($element));
+			if (is_array($element) || $element instanceof \Traversable) {
+				return new FlowQuery($element);
+			} else {
+				return new FlowQuery(array($element));
+			}
 		};
 		if (isset($contextVariables['this'])) {
 			throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current TypoScript object.', 1344325044);

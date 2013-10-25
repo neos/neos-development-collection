@@ -20,3 +20,7 @@ expressions.arrayHelper = Value {
 expressions.customHelper = Value {
 	value = ${Testing.String.substr('TYPO3 Flow', 6)}
 }
+
+expressions.flowQuery = Value {
+	value = ${q(q(['a', 'b', 'c'])).count()}
+}

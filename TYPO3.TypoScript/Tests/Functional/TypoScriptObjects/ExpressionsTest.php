@@ -23,6 +23,7 @@ class ExpressionsTest extends AbstractTypoScriptObjectTest {
 			array('expressions/dateHelper', '14.07.2013 12:14'),
 			array('expressions/arrayHelper', 3),
 			array('expressions/customHelper', 'Flow'),
+			array('expressions/flowQuery', 3)
 		);
 	}
 
