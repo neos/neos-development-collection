@@ -24,7 +24,7 @@ define([
 	 * brought in and out of view depending on whether they are
 	 * appropriate for a given user context.
 	 *
-	 * Tabs can be defined declaritively in the Aloha configuration in the
+	 * Tabs can be defined declaratively in the Aloha configuration in the
 	 * following manner:
 	 *
 	 *    Aloha.settings.toolbar: [

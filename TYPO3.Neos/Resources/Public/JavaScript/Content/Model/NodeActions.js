@@ -150,7 +150,7 @@ define(
 
 		/**
 		 * Creates a node on the server. When the result is received the callback function is called.
-		 * The first argument passed to the callback is the nodepath of the new node, second argument
+		 * The first argument passed to the callback is the node path of the new node, second argument
 		 * is the $ object containing the rendered HTML of the new node.
 		 *
 		 * @param {String} nodeType
