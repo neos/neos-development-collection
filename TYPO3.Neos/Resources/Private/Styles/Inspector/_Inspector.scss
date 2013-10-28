@@ -483,35 +483,16 @@
 		background-color: $grayDark;
 
 		button {
-			height: $unit;
-			color: #fff;
-			border: none;
-			background-image: none;
-			font-size: 14px;
-			@include text-shadow(none);
-			@include box-shadow(none);
-			@include box-sizing(border-box);
-
-			&.neos-disabled,
-			&[disabled] {
-				@include opacity(.5);
-			}
-
 			&.neos-inspector-cancel {
 				float: left;
 				background-color: $grayLight;
-				width: 37%;
+				width: 144px;
 			}
 
 			&.neos-inspector-apply {
 				float: right;
 				background-color: $green;
-				width: 62%;
-
-				i {
-					position: relative;
-					top: 3px;
-				}
+				width: 172px;
 			}
 		}
 	}
