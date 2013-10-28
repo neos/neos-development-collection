@@ -134,30 +134,31 @@ up onto different pages. For this use case there is a node type called
 ``Plugin View``. A plugin view is basically a view of a specific set of actions
 configured in your Settings.yaml.
 
-Addtionally to your plugin node type you configured in your NodeTypes.yaml you can add
-a configuration like this to your *Settings.yaml*. This example adds 2 Plugin Views
-for a plugin node type called ``Flowstarter.Contact:ContactPlugin``.
+You can update your *Configuration/NodeTypes.yaml* like this to configure which actions
+will be available for the ``Plugin View``:
 
 .. code-block:: yaml
 
-TYPO3:
-  Neos:
-    Plugins:
-      'Flowstarter.Contact:ContactPlugin':
-        label: 'Contacts'
-        pluginViews:
-          'ContactShow':
-            label: 'Show Contact'
-            controllerActions:
-              'Flowstarter\Contact\Controller\ContactPersonController': ['show']
-          'ContactForm':
-            label: 'Edit Contact'
-            controllerActions:
-              'Flowstarter\Contact\Controller\ContactPersonController': ['edit']
+  'Sarkosh.CdCollection:Plugin':
+    superTypes: ['TYPO3.Neos:Plugin']
+    ui:
+      label: 'CD Collection'
+      group: 'plugins'
+    options:
+      pluginViews:
+        'CollectionShow':
+          label: 'Show Collection'
+          controllerActions:
+            'Sarkosh\CdCollection\Controller\CollectionController': ['show']
+        'CollectionOverview':
+          label: 'Collection Overview'
+          controllerActions:
+            'Sarkosh\CdCollection\Controller\CollectionController': ['overview']
 
 When you insert a plugin view for a node the links in both of this nodes get rewritten
 automatically to link to the view or plugin, depending on the action the link points
-to.
+to. Insert a "Plugin View" node in your page, and then, in the inspector, configure
+the "Master View" (the master plugin instance) and the "Plugin View".
 
 Fixing Plugin Output
 --------------------
