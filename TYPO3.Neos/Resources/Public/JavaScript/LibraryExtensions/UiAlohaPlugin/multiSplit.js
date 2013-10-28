@@ -26,6 +26,7 @@ define([
 		select: $('<select />'),
 		_activeButton: null,
 		_isOpen: false,
+		_chosenInitialized: false,
 
 		/**
 		 * @override
@@ -76,6 +77,8 @@ define([
 		 * @api
 		 */
 		setActiveButton: function (name) {
+			var that = this;
+
 			var select = this.select;
 			if (!name) {
 				select.val(0);
@@ -84,7 +87,13 @@ define([
 			for (var i = 0; i < this._internalButtons.length; i++) {
 				if (this._internalButtons[i].name === name) {
 					select.val(i);
-					select.trigger('liszt:updated');
+
+					if (!this._chosenInitialized) {
+						that.select.chosen({width: '130px', disable_search_threshold: 10});
+						that._chosenInitialized = true;
+					}
+
+					select.trigger('chosen:updated.chosen');
 					return;
 				}
 			}
@@ -105,7 +114,6 @@ define([
 				// since we show at least one button now, we need to show the multisplit button
 				this.element.show();
 			}
-			this.select.chosen({width: '130px', disable_search_threshold: 10});
 		},
 
 		/**

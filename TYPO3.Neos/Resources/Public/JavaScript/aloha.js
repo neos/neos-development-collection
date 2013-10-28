@@ -172,7 +172,7 @@ function(
 					elements: [
 						'strong', 'em', 'i', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'div', 'dl', 'dt', 'em',
 						'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'sub',
-						'sup', 'u', 'ul', 'a'
+						'sup', 'u', 'ul', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
 					],
 					attributes: {
 						'a': ['href', 'data-gentics-aloha-repository', 'data-gentics-aloha-object-id', 'data-ajax-repository-temporary-data'],
