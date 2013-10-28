@@ -71,15 +71,21 @@ class NodeController extends ActionController {
 	 * @param array $nodeTypes
 	 * @return string
 	 */
-	public function indexAction($searchTerm, $workspaceName = 'live', array $nodeTypes = array('TYPO3.Neos:Page')) {
+	public function indexAction($searchTerm, $workspaceName = 'live', array $nodeTypes = array('TYPO3.Neos:Document')) {
+		$searchableNodeTypes = array();
 		foreach ($nodeTypes as $nodeType) {
 			if (!$this->nodeTypeManager->hasNodeType($nodeType)) {
-				$this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeType));
+				$subNodeTypes = array_keys($this->nodeTypeManager->getSubNodeTypes($nodeType));
+				if (count($subNodeTypes) === 0) {
+					$this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeType));
+				}
+				$searchableNodeTypes = array_merge($searchableNodeTypes, $subNodeTypes);
 			}
+			$searchableNodeTypes[] = $nodeType;
 		}
 
 		$contentContext = $this->createContentContext($workspaceName);
-		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $nodeTypes, $contentContext);
+		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypes, $contentContext);
 		$this->view->assign('nodes', $nodes);
 	}
 
