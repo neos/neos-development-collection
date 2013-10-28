@@ -6549,37 +6549,15 @@
   border-top: 1px solid #222222;
   background-color: #222222;
 }
-.neos #neos-inspector .neos-actions button {
-  height: 40px;
-  color: #fff;
-  border: none;
-  background-image: none;
-  font-size: 14px;
-  text-shadow: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos #neos-inspector .neos-actions button.neos-disabled, .neos #neos-inspector .neos-actions button[disabled] {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  opacity: 0.5;
-}
 .neos #neos-inspector .neos-actions button.neos-inspector-cancel {
   float: left;
   background-color: #3f3f3f;
-  width: 37%;
+  width: 144px;
 }
 .neos #neos-inspector .neos-actions button.neos-inspector-apply {
   float: right;
   background-color: #00a338;
-  width: 62%;
-}
-.neos #neos-inspector .neos-actions button.neos-inspector-apply i {
-  position: relative;
-  top: 3px;
+  width: 172px;
 }
 .neos #neos-inspector-clickprotection {
   position: fixed;
