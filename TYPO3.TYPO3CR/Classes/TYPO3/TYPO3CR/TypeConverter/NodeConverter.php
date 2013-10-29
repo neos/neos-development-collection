@@ -24,6 +24,7 @@ use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
@@ -135,10 +136,15 @@ class NodeConverter extends AbstractTypeConverter {
 	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
 			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $source) !== 0) {
+				/** @var $liveWorkspace Workspace */
+				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+				if ($liveWorkspace === NULL) {
+					return new Error('Could not fetch "live" workspace.', 1382616458);
+				}
 				/** @var $nodeData NodeData */
-				$nodeData = $this->nodeDataRepository->findByIdentifier($source);
+				$nodeData = $this->nodeDataRepository->findOneByIdentifier($source, $liveWorkspace);
 				if ($nodeData === NULL) {
-					return new Error('Could not convert the given UUID to a Node object, no matching NodeData record was found.', 1382608594);
+					return new Error(sprintf('Could not convert the given UUID "%s" to a Node object, no node with this identifier exists in live workspace.', $source), 1382608594);
 				}
 				return $this->nodeFactory->createFromNodeData($nodeData, $this->createContext('live', $configuration));
 			}
