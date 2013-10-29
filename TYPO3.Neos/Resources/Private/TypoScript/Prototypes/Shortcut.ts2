@@ -9,7 +9,7 @@ prototype(TYPO3.Neos:Shortcut) {
 	firstChildNode = ${q(node).children('[instanceof TYPO3.Neos:Document]').get(0)}
 	parentNode = ${q(node).parents().get(0)}
 }
-prototype(TYPO3.Neos:ContentCollection).shortcut {
+prototype(TYPO3.Neos:PrimaryContent).shortcut {
 	condition = ${q(node).is('[instanceof TYPO3.Neos:Shortcut]')}
 	type = 'TYPO3.Neos:Shortcut'
 }
