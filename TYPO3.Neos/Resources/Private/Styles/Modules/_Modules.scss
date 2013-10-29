@@ -158,27 +158,42 @@
 			&.neos-button-success {
 				background-color: $grayLight;
 
-				&:hover,
-				&:active {
-					background-color: $green;
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $green;
+					}
 				}
 			}
 
 			&.neos-button-warning {
 				background-color: $grayLight;
 
-				&:hover,
-				&:active {
-					background-color: $orange;
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $orange;
+					}
 				}
 			}
 
 			&.neos-button-danger {
 				background-color: $grayLight;
 
-				&:hover,
-				&:active {
-					background-color: $warning;
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $warning;
+					}
 				}
 			}
 		}

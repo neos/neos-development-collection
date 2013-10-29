@@ -519,7 +519,7 @@ select:focus,
 input[type="file"]:focus,
 input[type="radio"]:focus,
 input[type="checkbox"]:focus {
-  outline: thin dotted #333;
+  outline: thin dotted #333333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -1004,7 +1004,7 @@ select:focus:invalid:focus {
   text-align: center;
   text-shadow: 0 1px 0 white;
   background-color: #eeeeee;
-  border: 1px solid #ccc;
+  border: 1px solid #cccccc;
 }
 .neos-input-append .neos-add-on,
 .neos-input-append .neos-button,
@@ -1259,7 +1259,7 @@ button,
   display: inline-block;
   padding: 0 16px;
   margin: 0;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #fff;
   font-size: 14px;
@@ -1303,7 +1303,7 @@ button:hover, button:active, button.neos-active, button.neos-pressed,
 }
 button:focus,
 .neos-button:focus {
-  outline: thin dotted #333;
+  outline: thin dotted #333333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
   outline: none;

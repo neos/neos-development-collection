@@ -36,9 +36,14 @@
 			&.neos-button-freeze {
 				background-color: $grayLight;
 
-				&:hover,
-				&:active {
-					background-color: $blue;
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $blue;
+					}
 				}
 			}
 		}
