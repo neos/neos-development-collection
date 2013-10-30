@@ -36,6 +36,23 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest {
 	}
 
 	/**
+	 * The view cannot be rendered since it is broken
+	 * in this case an exception handler is called.
+	 * It takes the exceptions and shall produce some log message.
+	 *
+	 * The default handler for the tests rethrows the exception
+	 * TODO: test different exception handlers
+	 *
+	 * @test
+	 * @expectedException TYPO3\Fluid\View\Exception\InvalidTemplateResourceException
+	 */
+	public function basicRenderingCrashing() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('basicRendering/crashing');
+		$this->assertEquals('XHello World', $view->render());
+	}
+
+	/**
 	 * @test
 	 */
 	public function basicRenderingReusingTypoScriptVariablesWithEel() {

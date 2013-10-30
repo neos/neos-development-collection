@@ -10,11 +10,14 @@ basicRendering.reuseTypoScriptVariables = TYPO3.TypoScript:TestRenderer {
 	test = ${'Hello W' + this.test2}
 }
 
+basicRendering.crashing = TYPO3.TypoScript:Template {
+	templatePath = 'no.such.file.here.so.crash.please'
+}
+
 basicRendering.reuseTypoScriptVariablesWithEel = TYPO3.TypoScript:TestRenderer {
 	test2 = ${'or' + 'ld'}
 	test = ${'Hello W' + this.test2}
 }
-
 
 prototype(TYPO3.TypoScript:FooValue) < prototype(TYPO3.TypoScript:Value) {
 	value = ${'my eel expression'}

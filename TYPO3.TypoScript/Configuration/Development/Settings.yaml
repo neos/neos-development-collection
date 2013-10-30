@@ -1,3 +1,4 @@
 TYPO3:
   TypoScript:
-    handleRenderingExceptions: htmlMessage
+    rendering:
+      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\HtmlMessageHandler'

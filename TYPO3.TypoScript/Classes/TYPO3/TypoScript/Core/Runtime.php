@@ -12,12 +12,13 @@ namespace TYPO3\TypoScript\Core;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\PositionalArraySorter;
+use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
-use TYPO3\TypoScript\RuntimeAwareProcessorInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 
@@ -49,6 +50,12 @@ class Runtime {
 	 * @Flow\Inject
 	 */
 	protected $eelEvaluator;
+
+	/**
+	 * @var ObjectManagerInterface
+	 * @Flow\Inject
+	 */
+	protected $objectManager;
 
 	/**
 	 * Contains list of contexts
@@ -203,7 +210,7 @@ class Runtime {
 
 	/**
 	 * Handle an Exception thrown while rendering TypoScript according to
-	 * settings specified in TYPO3.TypoScript.handleRenderingExceptions
+	 * settings specified in TYPO3.TypoScript.rendering.exceptionHandler
 	 *
 	 * @param array $typoScriptPath
 	 * @param \Exception $exception
@@ -213,44 +220,37 @@ class Runtime {
 	 * @throws \Exception|\TYPO3\Flow\Exception
 	 */
 	public function handleRenderingException($typoScriptPath, \Exception $exception) {
-		if ($exception instanceof \TYPO3\Flow\Mvc\Exception\StopActionException) {
-			throw $exception;
+		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
+
+		if (isset($typoScriptConfiguration['__meta']['exceptionHandler'])) {
+			$exceptionHandlerClass = $typoScriptConfiguration['__meta']['exceptionHandler'];
+			$invalidExceptionHandlerMessage = 'The class "%s" is not valid for property "@exceptionHandler".';
+		} else {
+			$exceptionHandlerClass = $this->settings['rendering']['exceptionHandler'];
+			$invalidExceptionHandlerMessage = 'The class "%s" is not valid for setting "TYPO3.TypoScript.rendering.exceptionHandler".';
 		}
-		if ($exception instanceof Exceptions\RuntimeException) {
-			$typoScriptPath = $exception->getTypoScriptPath();
-			$exception = $exception->getPrevious();
+		$exceptionHandler = NULL;
+		if ($this->objectManager->isRegistered($exceptionHandlerClass)) {
+			$exceptionHandler = $this->objectManager->get($exceptionHandlerClass);
 		}
-		$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
-		switch ($this->settings['handleRenderingExceptions']) {
-			case 'throw':
-				throw $exception;
-			case 'htmlMessage':
-				if (isset($referenceCode)) {
-					$output = sprintf('<div class="neos-rendering-exception">Exception while rendering <div class="typoscript-path">%s:</div> <div class="exception-message">%s (%s)</div></div>', htmlspecialchars($typoScriptPath), $exception->getMessage(), $referenceCode);
-				} else {
-					$output = sprintf('<div class="neos-rendering-exception">Exception while rendering <div class="typoscript-path">%s:</div> <div class="exception-message">%s</div></div>', htmlspecialchars($typoScriptPath), $exception->getMessage());
-				}
-				break;
-			case 'xmlComment':
-				if (isset($referenceCode)) {
-					$output = sprintf('<!-- Exception while rendering %s: %s (%s) -->', htmlspecialchars($typoScriptPath), $exception->getMessage(), $referenceCode);
-				} else {
-					$output = sprintf('<!-- Exception while rendering %s -->', htmlspecialchars($typoScriptPath), $exception->getMessage());
-				}
-				break;
-			case 'plainText':
-				if (isset($referenceCode)) {
-					$output = sprintf('Exception while rendering %s: %s (%s)', $typoScriptPath, $exception->getMessage(), $referenceCode);
-				} else {
-					$output = sprintf('Exception while rendering %s: %s', $typoScriptPath, $exception->getMessage());
-				}
-				break;
-			case 'suppress':
-				$output = '';
-				break;
-			default:
-				throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException('The option "' . $this->settings['handleRenderingExceptions'] . '" is not valid for Setting TYPO3.TypoScript.handleRenderingExceptions. Please choose between throw, htmlMessage, plainText, xmlComment and suppress.', 1368788926);
+
+		if ($exceptionHandler === NULL || !($exceptionHandler instanceof AbstractRenderingExceptionHandler)) {
+			$message = sprintf(
+				$invalidExceptionHandlerMessage . "\n" .
+					'Please specify a fully qualified classname to a subclass of %2$s\AbstractRenderingExceptionHandler.' . "\n" .
+					'You might implement an own handler or use one of the following:' . "\n" .
+					'%2$s\AbsorbingHandler' . "\n" .
+					'%2$s\HtmlMessageHandler' . "\n" .
+					'%2$s\PlainTextHandler' . "\n" .
+					'%2$s\ThrowingHandler' . "\n" .
+					'%2$s\XmlCommentHandler',
+				$exceptionHandlerClass,
+				'TYPO3\TypoScript\Core\ExceptionHandlers'
+			);
+			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException($message, 1368788926);
 		}
+		$exceptionHandler->setRuntime($this);
+		$output = $exceptionHandler->handleRenderingException($typoScriptPath, $exception);
 		$this->systemLogger->logException($exception);
 		return $output;
 	}

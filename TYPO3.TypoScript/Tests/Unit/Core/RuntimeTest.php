@@ -11,16 +11,21 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler;
+
 class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
+	 * if the rendering leads to an exception
+	 * the exception is transformed into 'content' by calling 'handleRenderingException'
+	 *
 	 * @test
 	 */
 	public function renderHandlesExceptionDuringRendering() {
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
 		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$runtime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array('evaluateInternal', 'handleRenderingException'), array(array(), $controllerContext));
-		$runtime->injectSettings(array('handleRenderingExceptions' => 'throw'));
+		$runtime->injectSettings(array('rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
 		$runtime->expects($this->any())->method('evaluateInternal')->will($this->throwException($runtimeException));
 		$runtime->expects($this->once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will($this->returnValue('Exception Message'));
 
@@ -30,81 +35,28 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * exceptions are rendered using the renderer from configuration
+	 *
+	 * if this handler throws exceptions, they are not handled
+	 *
 	 * @expectedException \TYPO3\Flow\Exception
 	 * @test
 	 */
 	public function handleRenderingExceptionThrowsException() {
+		$objectManager = $this->getMock('TYPO3\Flow\Object\ObjectManager', array('isRegistered', 'get'), array(), '', FALSE);
 		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
 		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
 		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
-		$runtime->injectSettings(array('handleRenderingExceptions' => 'throw'));
+		$this->inject($runtime, 'objectManager', $objectManager);
+		$exceptionHandlerSetting = 'settings';
+		$runtime->injectSettings(array('rendering' => array('exceptionHandler' => $exceptionHandlerSetting)));
+
+		$objectManager->expects($this->once())->method('isRegistered')->with($exceptionHandlerSetting)->will($this->returnValue(TRUE));
+		$objectManager->expects($this->once())->method('get')->with($exceptionHandlerSetting)->will($this->returnValue(new ThrowingHandler()));
 
 		$runtime->handleRenderingException('/foo/bar', $runtimeException);
 	}
 
-	/**
-	 * @test
-	 */
-	public function handleRenderingExceptionRendersHtmlMessage() {
-		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
-		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
-		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
-		$runtime->injectSettings(array('handleRenderingExceptions' => 'htmlMessage'));
-		$this->inject($runtime, 'systemLogger', $systemLogger);
-
-		$output = $runtime->handleRenderingException('/foo/bar', $runtimeException);
-
-		$this->assertContains('neos-rendering-exception', $output);
-	}
-
-	/**
-	 * @test
-	 */
-	public function handleRenderingExceptionRendersXmlComment() {
-		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
-		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
-		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
-		$runtime->injectSettings(array('handleRenderingExceptions' => 'xmlComment'));
-		$this->inject($runtime, 'systemLogger', $systemLogger);
-
-		$output = $runtime->handleRenderingException('/foo/bar', $runtimeException);
-
-		$this->assertContains('<!-- Exception while', $output);
-	}
-
-	/**
-	 * @test
-	 */
-	public function handleRenderingExceptionRendersPlainText() {
-		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
-		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
-		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
-		$runtime->injectSettings(array('handleRenderingExceptions' => 'plainText'));
-		$this->inject($runtime, 'systemLogger', $systemLogger);
-
-		$output = $runtime->handleRenderingException('/foo/bar', $runtimeException);
-
-		$this->assertContains('Exception while rendering', $output);
-	}
-
-	/**
-	 * @test
-	 */
-	public function handleRenderingExceptionSuppresses() {
-		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
-		$runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
-		$systemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
-		$runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
-		$runtime->injectSettings(array('handleRenderingExceptions' => 'suppress'));
-		$this->inject($runtime, 'systemLogger', $systemLogger);
-
-		$output = $runtime->handleRenderingException('/foo/bar', $runtimeException);
-
-		$this->assertEquals('', $output);
-	}
 
 	/**
 	 * @test

@@ -1,6 +1,7 @@
 TYPO3:
   TypoScript:
-    handleRenderingExceptions: throw
+    rendering:
+      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
 
     # Register an additional prefixed helper for functional tests
     defaultContext:

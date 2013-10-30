@@ -1,6 +1,7 @@
 TYPO3:
   TypoScript:
-    handleRenderingExceptions: xmlComment
+    rendering:
+      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\XmlCommentHandler'
     debugMode: FALSE
 
     # Default context objects that are available in Eel expressions
