@@ -80,7 +80,7 @@ define(
 				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
 				publishableEntities = this.get('publishableEntitySubjects');
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAll(workspaceName, function(result) {
-				if (result !== null && result.success === true) {
+				if (typeof result !== 'undefined' && result !== null && result.success === true) {
 					$.each(publishableEntities, function(index, element) {
 						vie.entities.get(element).set('typo3:__workspacename', 'live');
 					});
