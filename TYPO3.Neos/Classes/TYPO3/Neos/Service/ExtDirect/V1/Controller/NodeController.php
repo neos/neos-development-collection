@@ -210,7 +210,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$counter = 1;
 		while ($referenceNode->getNode($possibleNodeName) !== NULL) {
 			$possibleNodeName = $idealNodeName . '-' . $counter;
-			$counter ++;
+			$counter++;
 		}
 
 		$newNode->setName($possibleNodeName);
@@ -348,7 +348,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$parentNode = $position === 'into' ? $targetNode : $targetNode->getParent();
 			while ($parentNode->getNode($possibleNodeName) !== NULL) {
 				$possibleNodeName = $idealNodeName . '-' . $counter;
-				$counter ++;
+				$counter++;
 			}
 		}
 		$nodeName = isset($possibleNodeName) ? $possibleNodeName : uniqid('node');
@@ -365,8 +365,19 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$copiedNode = $node->copyInto($targetNode, $nodeName);
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos');
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri, 'newNodePath' => $copiedNode->getContextPath()), 'success' => TRUE));
+		$q = new FlowQuery(array($copiedNode));
+		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+		$this->view->assign(
+			'value',
+			array(
+				'data' => array(
+					'nodeUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos'),
+					'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos'),
+					'newNodePath' => $copiedNode->getContextPath()
+				),
+				'success' => TRUE
+			)
+		);
 	}
 
 	/**

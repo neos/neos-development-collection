@@ -104,12 +104,22 @@ define(
 				clipboard.nodePath,
 				nodePath,
 				position,
+				'',
 				function (result) {
 					if (result.success) {
 						that.set('_clipboard', null);
-						require(['Content/Application'], function(ContentModule) {
-							ContentModule.reloadPage();
-						});
+						require(
+							[
+								'Content/Application'
+							],
+							function(ContentModule) {
+								if ('data' in result && 'nextUri' in result.data) {
+									ContentModule.loadPage(result.data.nextUri);
+								} else {
+									ContentModule.reloadPage();
+								}
+							}
+						);
 					}
 				}
 			);

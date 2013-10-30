@@ -672,7 +672,7 @@ define(
 						function(result) {
 							if (result !== null && result.success === true) {
 								// after we finished moving, update the node path/url
-								newNode.data.href = result.data.nextUri;
+								newNode.data.href = result.data.nodeUri;
 								newNode.data.key = result.data.newNodePath;
 								newNode.render();
 								newNode.setLazyNodeStatus(that.statusCodes.ok);
@@ -707,7 +707,7 @@ define(
 							if (result !== null && result.success === true) {
 								var isCurrentNode = sourceNode.data.key === NodeSelection.get('selectedNode').$element.attr('about');
 								// after we finished moving, update the node path/url
-								sourceNode.data.href = result.data.nextUri;
+								sourceNode.data.href = result.data.nodeUri;
 								sourceNode.data.key = result.data.newNodePath;
 								sourceNode.render();
 								sourceNode.setLazyNodeStatus(that.statusCodes.ok);
