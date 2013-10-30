@@ -868,7 +868,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -7181,6 +7181,9 @@
   background: none;
   font-weight: bold;
   line-height: 38px;
+}
+.neos #neos-context-bar .chosen-container {
+  width: 130px !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single {
   border-left: 1px solid #3f3f3f;
