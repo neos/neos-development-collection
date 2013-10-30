@@ -77,6 +77,11 @@ define(
 				}
 			}),
 
+			init: function() {
+				this._super();
+				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
+			},
+
 			didInsertElement: function() {
 				this._super();
 
@@ -117,7 +122,7 @@ define(
 					children: [
 						{
 							title: pageMetaInformation.data('__sitename'),
-							key: this.siteRootNodePath,
+							key: this.get('siteRootNodePath'),
 							isFolder: true,
 							expand: false,
 							isLazy: true,
@@ -207,7 +212,7 @@ define(
 
 			getPageTreeNode: function() {
 				if (this.$nodeTree && this.$nodeTree.children().length > 0) {
-					return this.$nodeTree.dynatree('getTree').getNodeByKey($('#neos-page-metainformation').attr('about'));
+					return this.$nodeTree.dynatree('getTree').getNodeByKey(this.get('pageNodePath'));
 				}
 				return null;
 			},
@@ -375,7 +380,7 @@ define(
 				if (this.get('searchTerm') === '' && this.get('nodeType') === '') {
 					this.set('filtering', false);
 					node._currentlySendingExtDirectAjaxRequest = false;
-					this.loadNode(node, 4);
+					this.loadNode(node, this.get('loadingDepth'));
 				} else {
 					var filterQuery = Ember.generateGuid();
 					that.set('latestFilterQuery', filterQuery);

@@ -9,9 +9,7 @@
 #                                                                        #
 
 TYPO3:
-
   Flow:
-
     aop:
       globalObjects:
         userInformation: TYPO3\Neos\Service\UserService
@@ -27,6 +25,7 @@ TYPO3:
             entryPointOptions:
               uri: neos/login
         authenticationStrategy: oneToken
+
     persistence:
       doctrine:
         eventListeners:
@@ -64,6 +63,7 @@ TYPO3:
               variables:
                 errorTitle: 'Missing Homepage'
                 errorDescription: 'Either no site has been defined yet or the site does not contain a homepage.'
+
     package:
       packagesPathByType:
         'typo3-flow-site': 'Sites'
@@ -95,6 +95,12 @@ TYPO3:
       # should minified JavaScript be loaded? For developing the TYPO3 Neos
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
+
+      navigateComponent:
+        nodeTree:
+          # number of levels inside the node tree which shall be loaded eagerly, at start.
+          # if you have lots of nodes you should maybe reduce this number of elements.
+          loadingDepth: 4
 
       inspector:
         editors:

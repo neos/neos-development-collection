@@ -87,11 +87,12 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param Node $node The node to find child nodes for
 	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth) {
-		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth);
+	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode) {
+		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth, $untilNode);
 	}
 
 	/**

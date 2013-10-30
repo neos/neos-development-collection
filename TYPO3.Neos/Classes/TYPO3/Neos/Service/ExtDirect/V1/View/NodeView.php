@@ -61,12 +61,13 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param string $nodeTypeFilter Criteria for filtering the child nodes
 	 * @param integer $outputStyle Either STYLE_TREE or STYLE_list
 	 * @param integer $depth How many levels of childNodes (0 = unlimited)
+	 * @param NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
 	 * @return void
 	 */
-	public function assignChildNodes(NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0) {
+	public function assignChildNodes(NodeInterface $node, $nodeTypeFilter, $outputStyle = self::STYLE_LIST, $depth = 0, NodeInterface $untilNode = NULL) {
 		$this->outputStyle = $outputStyle;
 		$nodes = array();
-		$this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? NULL : $nodeTypeFilter), $depth);
+		$this->collectChildNodeData($nodes, $node, ($nodeTypeFilter === '' ? NULL : $nodeTypeFilter), $depth, $untilNode);
 		$this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
 
 		$this->assign('value', array('data' => $nodes, 'success' => TRUE));
@@ -124,13 +125,20 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param NodeInterface $node
 	 * @param string $nodeTypeFilter
 	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
 	 * @param integer $recursionPointer current recursion level
 	 * @return void
 	 */
-	protected function collectChildNodeData(array &$nodes, NodeInterface $node, $nodeTypeFilter, $depth = 0, $recursionPointer = 1) {
+	protected function collectChildNodeData(array &$nodes, NodeInterface $node, $nodeTypeFilter, $depth = 0, NodeInterface $untilNode = NULL, $recursionPointer = 1) {
 		foreach ($node->getChildNodes($nodeTypeFilter) as $childNode) {
 			/** @var NodeInterface $childNode */
 			$expand = ($depth === 0 || $recursionPointer < $depth);
+
+			if ($expand === FALSE && $untilNode !== NULL && strpos($untilNode->getPath(), $childNode->getPath()) === 0 && $childNode !== $untilNode) {
+				// in case $untilNode is set, and the current childNode is on the rootline of $untilNode (and not the node itself), expand the node.
+				$expand = TRUE;
+			}
+
 			switch ($this->outputStyle) {
 				case self::STYLE_LIST:
 					$nodeType = $childNode->getNodeType()->getName();
@@ -142,14 +150,14 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					$properties['__title'] = $nodeType === 'TYPO3.Neos:Document' ? $childNode->getProperty('title') : $childNode->getLabel();
 					array_push($nodes, $properties);
 					if ($expand) {
-						$this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, ($recursionPointer + 1));
+						$this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
 					}
 				break;
 				case self::STYLE_TREE:
 					$children = array();
 					$hasChildNodes = $childNode->hasChildNodes($nodeTypeFilter) === TRUE;
 					if ($expand && $hasChildNodes) {
-						$this->collectChildNodeData($children, $childNode, $nodeTypeFilter, $depth, ($recursionPointer + 1));
+						$this->collectChildNodeData($children, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
 					}
 					array_push($nodes, $this->collectTreeNodeData($childNode, $expand, $children, $hasChildNodes));
 			}

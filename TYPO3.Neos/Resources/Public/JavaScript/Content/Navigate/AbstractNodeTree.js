@@ -47,6 +47,7 @@ define(
 			copiedNode: null,
 			activeNode: null,
 			dragInProgress: false,
+			loadingDepth: 4,
 
 			pageNodePath: pageMetaInformation.attr('about'),
 			siteRootNodePath: pageMetaInformation.data('__siteroot'),
@@ -156,6 +157,11 @@ define(
 			init: function() {
 				this._super();
 				this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: this.baseNodeType}).create());
+
+				var that = this;
+				ContentModule.on('pageLoaded', this, function() {
+					that.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
+				});
 			},
 
 			didInsertElement: function() {
@@ -276,7 +282,8 @@ define(
 				 * using node._currentlySendingExtDirectAjaxRequest.
 				 */
 				onLazyRead: function(node) {
-					this.options.parent.loadNode(node, node.getLevel() === 1 ? 4 : 1);
+					var parent = node.tree.options.parent;
+					this.options.parent.loadNode(node, node.getLevel() === 1 ? parent.get('loadingDepth') : 1);
 				},
 
 				onActivate: function(node) {
@@ -747,6 +754,7 @@ define(
 					node.data.key,
 					this.baseNodeType,
 					depth,
+					this.get('pageNodePath'),
 					function(result) {
 						node._currentlySendingExtDirectAjaxRequest = false;
 						if (result !== null && result.success === true) {

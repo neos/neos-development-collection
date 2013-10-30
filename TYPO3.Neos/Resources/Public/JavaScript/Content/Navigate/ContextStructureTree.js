@@ -38,6 +38,7 @@ define(
 		nodeSelection: NodeSelection,
 		baseNodeType: '!TYPO3.Neos:Document',
 		treeSelector: '#neos-context-structure-tree',
+		loadingDepth: 0,
 		unmodifiableLevels: 2,
 
 		init: function() {
@@ -100,7 +101,7 @@ define(
 				children: [
 					{
 						title: pageTitle,
-						key: this.pageNodePath,
+						key: this.get('pageNodePath'),
 						isFolder: true,
 						expand: false,
 						isLazy: true,
