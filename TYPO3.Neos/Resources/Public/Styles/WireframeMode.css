@@ -1,3 +1,7 @@
+/* Variables */
+/* Color palette */
+/* Sizes & margins */
+/* Components */
 /*!
  *
 .||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||.
@@ -50,7 +54,7 @@ pre code {
  *
  */
 html {
-  font: normal 112.5%/1.65 arial, serif;
+  font: normal 112.5%/1.65 serif;
 }
 
 body {
@@ -374,7 +378,7 @@ img {
 }
 
 a {
-  color: #428bca;
+  color: #007fb2;
 }
 
 .typo3-image-alignment-right {

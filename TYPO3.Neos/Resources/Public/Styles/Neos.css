@@ -5033,6 +5033,7 @@
   font-size: 14px;
   vertical-align: text-top;
   margin: 1px 0 0 0;
+  background-image: none;
 }
 .neos .neos-clear {
   clear: both;
