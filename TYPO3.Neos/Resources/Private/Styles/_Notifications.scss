@@ -1,0 +1,51 @@
+// Notifications
+.neos-notification-container {
+	top: 103px;
+	right: 207px;
+	position: fixed;
+	color: white;
+	z-index: 10100;
+	.neos-alert {
+		background-color: $dark-grey2;
+		color: white;
+		@include text-shadow(none);
+		border-top: 1px solid;
+		border-left: none;
+		border-right: none;
+		border-bottom: none;
+		position: relative;
+		width: 280px;
+		outline: 3px solid $dark-grey;
+		line-height: 1.4em;
+		padding: 10px 35px 10px 10px;
+		margin-bottom: 10px;
+		word-wrap: break-word;
+		@include border-radius(0);
+		&.neos-alert-error {
+			border-top-color: $red;
+		}
+		&.neos-alert-success {
+			border-top-color: $green;
+		}
+		&.neos-alert-warning {
+			border-top-color: $light-orange;
+		}
+		&.neos-alert-info {
+			border-top-color: $blue;
+		}
+		i {
+			padding-right: 5px;
+			vertical-align: text-bottom;
+		}
+		.neos-close {
+			top: -6px !important;
+			font-size: 16px;
+			color: black;
+			@include text-shadow(0 1px 0 white);
+			@include opacity(.2);
+		}
+		&.fade {
+			@include opacity(1);
+		}
+	}
+}
