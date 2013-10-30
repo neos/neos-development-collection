@@ -1,0 +1,12 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace form=TYPO3\Form\ViewHelpers}
+<neos:contentElement node="{node}">
+	<f:if condition="{formIdentifier}">
+		<f:then>
+			<form:render persistenceIdentifier="{formIdentifier}" presetName="{presetName}" />
+		</f:then>
+		<f:else>
+			<p>Please select a valid Form identifier in the inspector</p>
+		</f:else>
+	</f:if>
+</neos:contentElement>

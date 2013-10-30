@@ -1,0 +1,8 @@
+//
+// TypoScript Fixture 17
+//
+// - Inclusion
+
+include: ParserTestTypoScriptFixture16.ts2
+
+prototype(TYPO3.Foo:Bar2).baz = "New Value"
