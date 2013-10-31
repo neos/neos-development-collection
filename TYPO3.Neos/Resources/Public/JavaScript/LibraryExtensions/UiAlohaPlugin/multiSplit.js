@@ -77,23 +77,20 @@ define([
 		 * @api
 		 */
 		setActiveButton: function (name) {
-			var that = this;
-
-			var select = this.select;
-			if (!name) {
-				select.val(0);
-				return;
+			if (name === null) {
+				name = 'removeFormat';
 			}
+
 			for (var i = 0; i < this._internalButtons.length; i++) {
 				if (this._internalButtons[i].name === name) {
-					select.val(i);
+					this.select.val(i);
 
 					if (!this._chosenInitialized) {
-						that.select.chosen({width: '185px', disable_search_threshold: 10});
-						that._chosenInitialized = true;
+						this.select.chosen({width: '185px', disable_search_threshold: 10, display_disabled_options: false});
+						this._chosenInitialized = true;
 					}
 
-					select.trigger('chosen:updated.chosen');
+					this.select.trigger('chosen:updated.chosen');
 					return;
 				}
 			}
@@ -108,12 +105,14 @@ define([
 			if (!name) {
 				name = null;
 			}
-			if (null !== name && this.buttons[name] !== undefined) {
-				this.buttons[name].element.show();
-				this.buttons[name].visible = true;
-				// since we show at least one button now, we need to show the multisplit button
-				this.element.show();
+
+			for (var i = 0; i < this._internalButtons.length; i++) {
+				if (this._internalButtons[i].name === name) {
+					$(this.select.children('option').get(i)).removeAttr('disabled');
+				}
 			}
+
+			this.select.trigger('chosen:updated.chosen');
 		},
 
 		/**
@@ -122,30 +121,15 @@ define([
 		 * @param {Number} index button index
 		 */
 		hide: function (name) {
-			var button, visible = false;
-
 			if (!name) {
 				name = null;
 			}
-			if (null !== name && this.buttons[name] !== undefined) {
-				this.buttons[name].element.hide();
-				this.buttons[name].visible = false;
-
-				// now check, if there is a visible button
-				for (button in this.buttons) {
-					if (this.buttons.hasOwnProperty(button)) {
-						if (this.buttons[button].visible) {
-							this.element.show();
-							visible = true;
-							break;
-						}
-					}
-				}
-
-				if (!visible) {
-					this.element.hide();
+			for (var i = 0; i < this._internalButtons.length; i++) {
+				if (this._internalButtons[i].name === name) {
+					$(this.select.children('option').get(i)).attr('disabled', 'disabled');
 				}
 			}
+			this.select.trigger('chosen:updated.chosen');
 		}
 	});
 });
