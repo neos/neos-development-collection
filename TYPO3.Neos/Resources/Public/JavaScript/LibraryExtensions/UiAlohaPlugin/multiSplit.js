@@ -48,7 +48,7 @@ define([
 
 			var options = [];
 			$.each(buttons, function(index, value) {
-				options.push($('<option />', {value: index, text: value.name}));
+				options.push($('<option />', {value: index, text: value.tooltip}));
 			});
 			select.append(options);
 
@@ -89,7 +89,7 @@ define([
 					select.val(i);
 
 					if (!this._chosenInitialized) {
-						that.select.chosen({width: '130px', disable_search_threshold: 10});
+						that.select.chosen({width: '185px', disable_search_threshold: 10});
 						that._chosenInitialized = true;
 					}
 
