@@ -90,6 +90,7 @@
 
 			i {
 				margin-top: 3px;
+				margin-right: 5px;
 			}
 
 			div {
@@ -150,6 +151,10 @@
 
 					&:hover {
 						background-color: $blue;
+					}
+
+					i {
+						display: inline-block;
 					}
 
 					a {

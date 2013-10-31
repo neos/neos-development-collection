@@ -893,7 +893,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -6164,6 +6164,7 @@
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb i {
   margin-top: 3px;
+  margin-right: 5px;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div {
   position: relative;
@@ -6222,6 +6223,9 @@
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li:hover {
   background-color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li i {
+  display: inline-block;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li a {
   display: block;
