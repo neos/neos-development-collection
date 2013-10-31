@@ -100,9 +100,6 @@ function(
 
 			if (window.T3.isContentModule) {
 				this._initializeHistoryManagement();
-				// Remove the Aloha sidebar completely from DOM, as there is
-				// currently no other way to deactivate it.
-				$('.aloha-sidebar-bar').remove();
 
 				KeyboardEvents.initializeContentModuleEvents();
 			}
