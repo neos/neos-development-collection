@@ -12,18 +12,11 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use \TYPO3\Neos\Service\ContentElementWrappingService;
 
 /**
  * Renders the exception as HTML.
  */
 class HtmlMessageHandler extends AbstractRenderingExceptionHandler {
-
-	/**
-	 * @Flow\Inject
-	 * @var ContentElementWrappingService
-	 */
-	protected $contentElementWrappingService;
 
 	/**
 	 * Renders the exception in HTML for display
