@@ -434,6 +434,7 @@
 			padding: 9px;
 			min-width: $unit + 1px;
 			text-align: center;
+			position: relative;
 			@include border-radius(0);
 			@include box-sizing(border-box);
 
@@ -444,6 +445,10 @@
 
 			input {
 				margin: 0;
+			}
+
+			input[type=checkbox] + span:before {
+				top: $relatedMargin + 1px;
 			}
 		}
 
