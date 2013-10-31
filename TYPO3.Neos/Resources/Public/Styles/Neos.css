@@ -892,7 +892,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -6381,6 +6381,16 @@
 .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="text"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="password"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="month"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="time"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="week"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="range"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="email"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="url"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="search"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="tel"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="color"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > .neos-uneditable-input {
   border: 2px solid #00a338;
 }
+.neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox] + span:before {
+  border: 1px solid #00a338;
+}
+.neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox]:hover + span:before {
+  border: 1px solid #00a338;
+}
+.neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox]:checked + span:before {
+  background-color: #00a338;
+  border: 1px solid #00a338;
+}
 .neos #neos-inspector .neos-inspector-form .neos-modified .chosen-container .chosen-single {
   border: 2px solid #00a338;
   -webkit-box-sizing: border-box;
@@ -6432,7 +6442,7 @@
   width: 20px;
   height: 20px;
   background-color: #3f3f3f;
-  border: 1px solid #d4cfc8;
+  border: 1px solid #adadad;
   color: #fff;
   cursor: pointer;
   content: "";
@@ -6653,7 +6663,7 @@
   width: 20px;
   height: 20px;
   background-color: #3f3f3f;
-  border: 1px solid #d4cfc8;
+  border: 1px solid #adadad;
   color: #fff;
   cursor: pointer;
   content: "";

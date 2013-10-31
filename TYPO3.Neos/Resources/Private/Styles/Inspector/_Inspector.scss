@@ -338,6 +338,21 @@
 				border: 2px solid $green;
 			}
 
+			input[type=checkbox] {
+				& + span:before {
+					border: 1px solid $green;
+				}
+
+				&:hover + span:before {
+					border: 1px solid $green;
+				}
+
+				&:checked + span:before {
+					background-color: $green;
+					border: 1px solid $green;
+				}
+			}
+
 			.chosen-container .chosen-single {
 				border: 2px solid $green;
 				@include box-sizing(border-box);
