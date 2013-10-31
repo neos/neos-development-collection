@@ -51,9 +51,13 @@
 		right: 0;
 	}
 
-	@import "Shared/Chosen";
 	@import "Editors/DateTimePicker";
 	@import "Editors/ImageEditor";
+	@import "Shared/Chosen";
+
+	.chosen-container {
+		width: 100% !important;
+	}
 
 	.neos-toolbar {
 		position: absolute;

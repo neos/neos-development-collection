@@ -4,7 +4,7 @@
 /* Color palette */
 /* Sizes & margins */
 /* Components */
-/*!
+/*
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -5678,182 +5678,6 @@
 .neos-inspector-panel-open .neos #neos-inspector {
   right: 0;
 }
-.neos #neos-inspector .chosen-container {
-  color: #fff;
-  line-height: 40px;
-  font-size: 14px;
-  width: 100% !important;
-}
-.neos #neos-inspector .chosen-container .chosen-single {
-  height: 40px;
-  border: none;
-  background-color: #323232;
-  background-image: none;
-  padding-left: 16px;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  color: inherit;
-  line-height: inherit;
-  text-decoration: none;
-}
-.neos #neos-inspector .chosen-container .chosen-single.chosen-default {
-  color: #adadad;
-}
-.neos #neos-inspector .chosen-container .chosen-single.chosen-default div {
-  color: #fff;
-}
-.neos #neos-inspector .chosen-container .chosen-single.chosen-single-with-deselect span {
-  margin-right: 75px;
-}
-.neos #neos-inspector .chosen-container .chosen-single span {
-  margin-right: 57px;
-}
-.neos #neos-inspector .chosen-container .chosen-single div {
-  width: 40px;
-  border-left: 1px solid #222222;
-}
-.neos #neos-inspector .chosen-container .chosen-single div:before, .neos #neos-inspector .chosen-container .chosen-single div:after {
-  display: block;
-  position: absolute;
-  right: 15px;
-  font-family: Arial;
-  font-size: 17px;
-  line-height: 40px;
-  content: "▾";
-}
-.neos #neos-inspector .chosen-container .chosen-single div:before {
-  top: -4px;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
-}
-.neos #neos-inspector .chosen-container .chosen-single div:after {
-  top: 4px;
-}
-.neos #neos-inspector .chosen-container .chosen-single div b {
-  display: none;
-  background-image: none !important;
-}
-.neos #neos-inspector .chosen-container .chosen-single abbr {
-  background: none;
-  background-color: #fff;
-  top: 11px;
-  right: 48px;
-  width: 18px;
-  height: 18px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-}
-.neos #neos-inspector .chosen-container .chosen-single abbr:hover {
-  background-color: #00b5ff;
-}
-.neos #neos-inspector .chosen-container .chosen-single abbr:before {
-  display: block;
-  width: 18px;
-  text-align: center;
-  content: "×";
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 18px;
-  color: #222222;
-}
-.neos #neos-inspector .chosen-container .chosen-drop {
-  border: none;
-  background-color: #323232;
-  background-image: none;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
-  color: inherit;
-  margin-top: 0;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-search {
-  padding: 0;
-  color: black;
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  font-size: 0;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-search input {
-  min-width: 0px;
-  width: 100%;
-  height: 40px;
-  border: none;
-  color: white;
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  font-size: 14px;
-  margin: 0;
-  padding: 0 16px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  background: none;
-  background-image: none !important;
-  background-color: #fff;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-search:after {
-  position: absolute;
-  top: 14px;
-  right: 12px;
-  width: 16px;
-  height: 16px;
-  text-decoration: inherit;
-  display: inline-block;
-  speak: none;
-  content: "\f002";
-  line-height: 100%;
-  font-size: 12px;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results {
-  margin: 0;
-  padding: 0;
-  max-height: 247px;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li {
-  width: 100%;
-  border-bottom: 1px solid #222222;
-  line-height: 24px;
-  padding: 8px 16px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.highlighted {
-  background-color: #00b5ff;
-  background-image: none;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.no-results {
-  background-color: #323232;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.disabled-result {
-  color: #5b5b5b;
-}
-.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li em {
-  background: none;
-  font-weight: bold;
-  line-height: 38px;
-}
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor,
 .neos #neos-inspector .neos-error .neos-inspector-datetime-editor {
   position: relative;
@@ -6124,6 +5948,184 @@
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-width .neos-inspector-image-crop-button {
   float: right;
   margin-left: 4px;
+}
+.neos #neos-inspector .chosen-container {
+  color: #fff;
+  line-height: 40px;
+  font-size: 14px;
+}
+.neos #neos-inspector .chosen-container .chosen-single {
+  height: 40px;
+  border: none;
+  background-color: #323232;
+  background-image: none;
+  padding-left: 16px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: inherit;
+  line-height: inherit;
+  text-decoration: none;
+}
+.neos #neos-inspector .chosen-container .chosen-single.chosen-default {
+  color: #adadad;
+}
+.neos #neos-inspector .chosen-container .chosen-single.chosen-default div {
+  color: #fff;
+}
+.neos #neos-inspector .chosen-container .chosen-single.chosen-single-with-deselect span {
+  margin-right: 75px;
+}
+.neos #neos-inspector .chosen-container .chosen-single span {
+  margin-right: 57px;
+}
+.neos #neos-inspector .chosen-container .chosen-single div {
+  width: 40px;
+  border-left: 1px solid #222222;
+}
+.neos #neos-inspector .chosen-container .chosen-single div:before, .neos #neos-inspector .chosen-container .chosen-single div:after {
+  display: block;
+  position: absolute;
+  right: 15px;
+  font-family: Arial;
+  font-size: 17px;
+  line-height: 40px;
+  content: "▾";
+}
+.neos #neos-inspector .chosen-container .chosen-single div:before {
+  top: -4px;
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.neos #neos-inspector .chosen-container .chosen-single div:after {
+  top: 4px;
+}
+.neos #neos-inspector .chosen-container .chosen-single div b {
+  display: none;
+  background-image: none !important;
+}
+.neos #neos-inspector .chosen-container .chosen-single abbr {
+  background: none;
+  background-color: #fff;
+  top: 11px;
+  right: 48px;
+  width: 18px;
+  height: 18px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+.neos #neos-inspector .chosen-container .chosen-single abbr:hover {
+  background-color: #00b5ff;
+}
+.neos #neos-inspector .chosen-container .chosen-single abbr:before {
+  display: block;
+  width: 18px;
+  text-align: center;
+  content: "×";
+  font-size: 17px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #222222;
+}
+.neos #neos-inspector .chosen-container .chosen-drop {
+  border: none;
+  background-color: #323232;
+  background-image: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: 1px 2px 5px #222222;
+  -moz-box-shadow: 1px 2px 5px #222222;
+  box-shadow: 1px 2px 5px #222222;
+  color: inherit;
+  margin-top: 0;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-search {
+  padding: 0;
+  color: black;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  font-size: 0;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-search input {
+  min-width: 0px;
+  width: 100%;
+  height: 40px;
+  border: none;
+  color: white;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  margin: 0;
+  padding: 0 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background: none;
+  background-image: none !important;
+  background-color: #fff;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-search:after {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  text-decoration: inherit;
+  display: inline-block;
+  speak: none;
+  content: "\f002";
+  line-height: 100%;
+  font-size: 12px;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results {
+  margin: 0;
+  padding: 0;
+  max-height: 247px;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li {
+  width: 100%;
+  border-bottom: 1px solid #222222;
+  line-height: 24px;
+  padding: 8px 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li:first-child {
+  border-top: 1px solid #222222;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.highlighted {
+  background-color: #00b5ff;
+  background-image: none;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.no-results {
+  background-color: #323232;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.disabled-result {
+  color: #5b5b5b;
+}
+.neos #neos-inspector .chosen-container .chosen-drop .chosen-results li em {
+  background: none;
+  font-weight: bold;
+  line-height: 38px;
+}
+.neos #neos-inspector .chosen-container {
+  width: 100% !important;
 }
 .neos #neos-inspector .neos-toolbar {
   position: absolute;
@@ -7051,7 +7053,6 @@
   color: #fff;
   line-height: 40px;
   font-size: 14px;
-  width: 100% !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single {
   height: 40px;
@@ -7222,9 +7223,6 @@
   background: none;
   font-weight: bold;
   line-height: 38px;
-}
-.neos #neos-context-bar .chosen-container {
-  width: 130px !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single {
   border-left: 1px solid #3f3f3f;
@@ -7856,7 +7854,6 @@
   color: #fff;
   line-height: 40px;
   font-size: 14px;
-  width: 100% !important;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single {
   height: 40px;
