@@ -92,14 +92,14 @@ class ConvertNodeUrisImplementation extends AbstractTypoScriptObject {
 	 * @param NodeInterface $contextNode
 	 * @return string
 	 */
-	protected function convertNodeIdentifierToUri($nodeIdentifier, NodeInterface $contextNode) {
+	public function convertNodeIdentifierToUri($nodeIdentifier, NodeInterface $contextNode) {
 		$targetNodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $contextNode->getContext()->getWorkspace());
 		if ($targetNodeData === NULL) {
 			return '';
 		}
 		$targetNode = $this->nodeFactory->createFromNodeData($targetNodeData, $contextNode->getContext());
 		$uriBuilder = $this->tsRuntime->getControllerContext()->getUriBuilder();
-		return $uriBuilder->setFormat('html')->uriFor('show', array('node' => $targetNode), 'Frontend\\Node', 'TYPO3.Neos', NULL);
+		return $uriBuilder->setFormat('html')->uriFor('show', array('node' => $targetNode), 'Frontend\\Node', 'TYPO3.Neos');
 	}
 }
 ?>
