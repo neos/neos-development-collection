@@ -26,6 +26,11 @@ class PaginateController extends AbstractWidgetController {
 	protected $parentNode;
 
 	/**
+	 * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+	 */
+	protected $nodes;
+
+	/**
 	 * @var string
 	 */
 	protected $nodeTypeFilter = '';
@@ -33,7 +38,7 @@ class PaginateController extends AbstractWidgetController {
 	/**
 	 * @var array
 	 */
-	protected $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99);
+	protected $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE, 'maximumNumberOfLinks' => 99, 'maximumNumberOfItems' => 0, 'maximumNumberOfNodes' => 0);
 
 	/**
 	 * @var integer
@@ -58,6 +63,11 @@ class PaginateController extends AbstractWidgetController {
 	/**
 	 * @var integer
 	 */
+	protected $maximumNumberOfNodes = 0;
+
+	/**
+	 * @var integer
+	 */
 	protected $numberOfPages = 1;
 
 	/**
@@ -75,9 +85,17 @@ class PaginateController extends AbstractWidgetController {
 	 */
 	protected function initializeAction() {
 		$this->parentNode = $this->widgetConfiguration['parentNode'];
+		$this->nodes = $this->widgetConfiguration['nodes'];
 		$this->nodeTypeFilter = $this->widgetConfiguration['nodeTypeFilter'] ?: NULL;
 		$this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], TRUE);
-		$this->numberOfPages = ceil($this->parentNode->getNumberOfChildNodes($this->nodeTypeFilter) / (integer)$this->configuration['itemsPerPage']);
+		$this->maximumNumberOfNodes = $this->configuration['maximumNumberOfNodes'];
+
+		$numberOfNodes = ($this->parentNode === NULL ? count($this->nodes) : $this->parentNode->getNumberOfChildNodes($this->nodeTypeFilter));
+		if ($this->maximumNumberOfNodes > 0 && $numberOfNodes > $this->maximumNumberOfNodes) {
+			$numberOfNodes = $this->maximumNumberOfNodes;
+		}
+
+		$this->numberOfPages = ceil($numberOfNodes / (integer)$this->configuration['itemsPerPage']);
 		$this->maximumNumberOfLinks = (integer)$this->configuration['maximumNumberOfLinks'];
 	}
 
@@ -94,11 +112,18 @@ class PaginateController extends AbstractWidgetController {
 		}
 
 		$itemsPerPage = (integer)$this->configuration['itemsPerPage'];
+		if ($this->maximumNumberOfNodes > 0 && $this->maximumNumberOfNodes < $itemsPerPage) {
+			$itemsPerPage = $this->maximumNumberOfNodes;
+		}
 		$offset = ($this->currentPage > 1) ? (integer)($itemsPerPage * ($this->currentPage - 1)) : NULL;
-		$childNodes = $this->parentNode->getChildNodes($this->nodeTypeFilter, $itemsPerPage, $offset);
+		if ($this->parentNode === NULL) {
+			$nodes = array_slice($this->nodes, $offset, $itemsPerPage);
+		} else {
+			$nodes = $this->parentNode->getChildNodes($this->nodeTypeFilter, $itemsPerPage, $offset);
+		}
 
 		$this->view->assign('contentArguments', array(
-			$this->widgetConfiguration['as'] => $childNodes
+			$this->widgetConfiguration['as'] => $nodes
 		));
 		$this->view->assign('configuration', $this->configuration);
 		$this->view->assign('pagination', $this->buildPagination());
