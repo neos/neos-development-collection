@@ -64,40 +64,6 @@ function(
 		 */
 		_selectedNode: function() {
 			return NodeSelection.get('selectedNode');
-		}.property('nodeSelection.selectedNode'),
-
-		/**
-		 * Updates the position of the InlineEditingHandles
-		 * FIXME: Fix positioning on viewport change (window resize, inspector collapse, and so on)
-		 *
-		 * @return {void}
-		 */
-		updatePosition: function() {
-			if (!this.$() || !this.get('_selectedNode').$element) {
-				return;
-			}
-
-			var positioning = function($handle, $node) {
-				$handle.position({
-					of: $node,
-					my: 'right top',
-					at: 'right top',
-					using: function(position, elements) {
-						if (elements.target.element) {
-							var $target = elements.target.element;
-							if ($('body').css('position') === 'relative') {
-								position.top = $target.offset().top - $('body').offset().top - elements.element.element.height() + parseInt($target.css('outline-width')) + 1;
-							} else {
-								position.top = $target.offset().top - elements.element.element.height() + parseInt($target.css('outline-width')) + 1;
-							}
-
-							elements.element.element.css(position);
-						}
-					}
-				});
-			};
-
-			positioning.call(this, this.$(), this.get('_selectedNode').$element);
-		}.observes('_selectedNode')
+		}.property('nodeSelection.selectedNode')
 	});
 });

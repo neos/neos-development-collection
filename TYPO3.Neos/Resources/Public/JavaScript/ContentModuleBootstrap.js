@@ -25,6 +25,7 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
+		'InlineEditing/PositioningHelper',
 		'storage'
 	],
 	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache, Notification, Configuration) {
