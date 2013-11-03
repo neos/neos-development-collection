@@ -12,13 +12,15 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  *                                                                        */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
  * Functional test case which covers all workspace-related behavior of the
  * content repository.
  *
  */
-class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class WorkspacesTest extends FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -46,12 +48,26 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $currentTestWorkspaceName;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @var Workspace
+	 */
+	protected $liveWorkspace;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
 		$this->currentTestWorkspaceName = uniqid('user-', TRUE);
+
 		$this->setUpRootNodeAndRepository();
+
+		$this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+		$this->liveWorkspace = $this->workspaceRepository->findOneByName('live');
 	}
 
 	/**
@@ -143,7 +159,7 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$parentNode->createNode('childNodeA');
 		$childNodeB = $parentNode->createNode('childNodeB');
 		$childNodeB->createNode('childNodeC');
-		$parentNode->getWorkspace()->publish('live');
+		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
@@ -178,7 +194,7 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$childNodeA = $parentNode->createNode('childNode1A');
 		$childNodeB = $parentNode->createNode('childNode1B');
 		$childNodeB->createNode('childNode1C');
-		$parentNode->getWorkspace()->publish('live');
+		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();
@@ -217,7 +233,7 @@ class WorkspacesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$parentNode->createNode('childNodeA');
 		$childNodeB = $parentNode->createNode('childNodeB');
 		$childNodeB->createNode('childNodeC');
-		$parentNode->getWorkspace()->publish('live');
+		$parentNode->getWorkspace()->publish($this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		$this->setUpRootNodeAndRepository();

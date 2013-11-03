@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
  * A Workspace
@@ -129,13 +130,13 @@ class Workspace {
 	 *
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
-	 * @param string $targetWorkspaceName Name of the workspace to publish to
+	 * @param Workspace $targetWorkspace The workspace to publish to
 	 * @return void
 	 * @api
 	 */
-	public function publish($targetWorkspaceName) {
-		$sourceNodes = $this->publishingService->getUnpublishedNodes($this->getName());
-		$this->publishNodes($sourceNodes, $targetWorkspaceName);
+	public function publish(Workspace $targetWorkspace) {
+		$sourceNodes = $this->publishingService->getUnpublishedNodes($this);
+		$this->publishNodes($sourceNodes, $targetWorkspace);
 	}
 
 	/**
@@ -144,13 +145,13 @@ class Workspace {
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
-	 * @param string $targetWorkspaceName Name of the workspace to publish to
+	 * @param Workspace $targetWorkspace The workspace to publish to
 	 * @return void
 	 * @api
 	 */
-	public function publishNodes(array $nodes, $targetWorkspaceName) {
+	public function publishNodes(array $nodes, Workspace $targetWorkspace) {
 		foreach ($nodes as $node) {
-			$this->publishNode($node, $targetWorkspaceName);
+			$this->publishNode($node, $targetWorkspace);
 		}
 	}
 
@@ -160,13 +161,13 @@ class Workspace {
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
 	 * @param NodeInterface $node
-	 * @param string $targetWorkspaceName Name of the workspace to publish to
+	 * @param Workspace $targetWorkspace The workspace to publish to
 	 * @return void
 	 * @api
 	 */
-	public function publishNode(NodeInterface $node, $targetWorkspaceName) {
-		$this->emitBeforeNodePublishing($node, $targetWorkspaceName);
-		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
+	public function publishNode(NodeInterface $node, Workspace $targetWorkspace) {
+		$this->verifyPublishingTargetWorkspace($targetWorkspace);
+		$this->emitBeforeNodePublishing($node, $targetWorkspace);
 		if ($node->getPath() === '/') {
 			return;
 		}
@@ -179,7 +180,7 @@ class Workspace {
 		} else {
 			$this->nodeDataRepository->remove($node);
 		}
-		$this->emitAfterNodePublishing($node, $targetWorkspaceName);
+		$this->emitAfterNodePublishing($node, $targetWorkspace);
 	}
 
 	/**
@@ -201,41 +202,39 @@ class Workspace {
 
 	/**
 	 * Checks if the specified workspace is a base workspace of this workspace
-	 * and if so, returns it.
+	 * and if not, throws an exception
 	 *
-	 * @param string $targetWorkspaceName Name of the target workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The target workspace
-	 * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException if the specified workspace is not a base workspace of this workspace
+	 * @param Workspace $targetWorkspace The publishing target workspace
+	 * @throws WorkspaceException if the specified workspace is not a base workspace of this workspace
 	 */
-	protected function getPublishingTargetWorkspace($targetWorkspaceName) {
-		$targetWorkspace = $this->baseWorkspace;
-		while ($targetWorkspaceName !== $targetWorkspace->getName()) {
-			$targetWorkspace = $targetWorkspace->getBaseWorkspace();
-			if ($targetWorkspace === NULL) {
-				throw new \TYPO3\TYPO3CR\Exception\WorkspaceException('The specified workspace "' . $targetWorkspaceName . ' is not a base workspace of "' . $this->name . '".', 1289499117);
+	protected function verifyPublishingTargetWorkspace(Workspace $targetWorkspace) {
+		$baseWorkspace = $this->baseWorkspace;
+		while ($targetWorkspace !== $baseWorkspace) {
+			$baseWorkspace = $baseWorkspace->getBaseWorkspace();
+			if ($baseWorkspace === NULL) {
+				throw new WorkspaceException(sprintf('The specified workspace "%s" is not a base workspace of "%s".', $targetWorkspace->getName(), $this->getName()), 1289499117);
 			}
 		}
-		return $targetWorkspace;
 	}
 
 	/**
 	 * Emits a signal just before a node is being published
 	 *
-	 * @param NodeInterface $node
-	 * @param string $targetWorkspaceName
+	 * @param NodeInterface $node The node to be published
+	 * @param Workspace $targetWorkspace The publishing target workspace
 	 * @return void
 	 * @Flow\Signal
 	 */
-	protected function emitBeforeNodePublishing(NodeInterface $node, $targetWorkspaceName) {}
+	protected function emitBeforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace) {}
 
 	/**
 	 * Emits a signal when a node has been published
 	 *
-	 * @param NodeInterface $node
-	 * @param string $targetWorkspaceName
+	 * @param NodeInterface $node The node that was published
+	 * @param Workspace $targetWorkspace The publishing target workspace
 	 * @return void
 	 * @Flow\Signal
 	 */
-	protected function emitAfterNodePublishing(NodeInterface $node, $targetWorkspaceName) {}
+	protected function emitAfterNodePublishing(NodeInterface $node, Workspace $targetWorkspace) {}
 
 }

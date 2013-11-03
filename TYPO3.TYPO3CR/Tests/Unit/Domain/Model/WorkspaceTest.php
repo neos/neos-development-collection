@@ -11,19 +11,22 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+
 /**
  * Testcase for the "Workspace" domain model
  *
  */
-class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class WorkspaceTest extends UnitTestCase {
 
 	/**
 	 * @test
 	 */
 	public function aWorkspaceCanBeBasedOnAnotherWorkspace() {
-		$baseWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('BaseWorkspace');
+		$baseWorkspace = new Workspace('BaseWorkspace');
 
-		$workspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('MyWorkspace', $baseWorkspace);
+		$workspace = new Workspace('MyWorkspace', $baseWorkspace);
 		$this->assertSame('MyWorkspace', $workspace->getName());
 		$this->assertSame($baseWorkspace, $workspace->getBaseWorkspace());
 	}
@@ -47,19 +50,17 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePubslished() {
-		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
+	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePublished() {
+		$liveWorkspace = new Workspace('live');
+		$currentWorkspace = new Workspace('current', $liveWorkspace);
 
-		$mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'remove', 'add'))->getMock();
 		$this->inject($currentWorkspace, 'nodeDataRepository', $mockNodeDataRepository);
 
 		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
 		$this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
 
-		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
-
-		$currentWorkspace->expects($this->atLeastOnce())->method('getPublishingTargetWorkspace')->with('live')->will($this->returnValue($targetWorkspace));
+		$existingNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
@@ -68,32 +69,30 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockNode2->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/sites/foo/homepage'));
 		$mockNode2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
 		$mockNode2->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
-		$mockNode2->expects($this->once())->method('setWorkspace')->with($targetWorkspace);
+		$mockNode2->expects($this->once())->method('setWorkspace')->with($liveWorkspace);
 		$nodesInCurrentWorkspace = array($mockNode1, $mockNode2);
 
 		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
-		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid', $targetWorkspace)->will($this->returnValue($existingNode));
+		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid', $liveWorkspace)->will($this->returnValue($existingNode));
 		$mockNodeDataRepository->expects($this->once())->method('remove')->with($existingNode);
 
-		$currentWorkspace->publish('live');
+		$currentWorkspace->publish($liveWorkspace);
 	}
 
 	/**
 	 * @test
 	 */
 	public function publishWillRemoveNodesInTargetWorkspaceIfTheyHaveBeenMarkedAsRemovedInSourceWorkspace() {
-		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
+		$liveWorkspace = new Workspace('live');
+		$currentWorkspace = new Workspace('current', $liveWorkspace);
 
-		$mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'remove', 'add'))->getMock();
 		$this->inject($currentWorkspace, 'nodeDataRepository', $mockNodeDataRepository);
 
 		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
 		$this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
 
-		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
-
-		$currentWorkspace->expects($this->atLeastOnce())->method('getPublishingTargetWorkspace')->with('live')->will($this->returnValue($targetWorkspace));
+		$existingNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
@@ -109,7 +108,7 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockNodeDataRepository->expects($this->at(1))->method('remove')->with($existingNode);
 		$mockNodeDataRepository->expects($this->at(2))->method('remove')->with($mockNode2);
 
-		$currentWorkspace->publish('live');
+		$currentWorkspace->publish($liveWorkspace);
 	}
 
 	/**
@@ -129,33 +128,26 @@ class WorkspaceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getPublishingTargetWorkspaceReturnsSpecifiedWorkspaceIfItIsABaseWorkspace() {
-		$lowesWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
-		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $lowesWorkspace));
+	public function verifyPublishingTargetWorkspaceDoesNotThrowAnExceptionIfTargetWorkspaceIsABaseWorkspace() {
+		$someBaseWorkspace = new Workspace('live');
+		$reviewWorkspace = new Workspace('review', $someBaseWorkspace);
+		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $reviewWorkspace));
 
-		$actualTargetWorkspace = $currentWorkspace->_call('getPublishingTargetWorkspace', 'live');
-		$this->assertSame($lowesWorkspace, $actualTargetWorkspace);
-
-		$lowesWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
-		$intermediateWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('foo', $lowesWorkspace);
-		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('bar', $intermediateWorkspace));
-
-		$actualTargetWorkspace = $currentWorkspace->_call('getPublishingTargetWorkspace', 'live');
-		$this->assertSame($lowesWorkspace, $actualTargetWorkspace);
-
-		$actualTargetWorkspace = $currentWorkspace->_call('getPublishingTargetWorkspace', 'foo');
-		$this->assertSame($intermediateWorkspace, $actualTargetWorkspace);
+		$currentWorkspace->_call('verifyPublishingTargetWorkspace', $reviewWorkspace);
+		$currentWorkspace->_call('verifyPublishingTargetWorkspace', $someBaseWorkspace);
+		$this->assertTrue(TRUE);
 	}
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\TYPO3CR\Exception\WorkspaceException
+	 * @expectedException \TYPO3\TYPO3CR\Exception\WorkspaceException
 	 */
-	public function getPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace() {
-		$someBaseWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
+	public function verifyPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace() {
+		$someBaseWorkspace = new Workspace('live');
 		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $someBaseWorkspace));
+		$otherWorkspace = new Workspace('user-bar', $someBaseWorkspace);
 
-		$currentWorkspace->_call('getPublishingTargetWorkspace', 'group-bar');
+		$currentWorkspace->_call('verifyPublishingTargetWorkspace', $otherWorkspace);
 	}
 
 	/**
