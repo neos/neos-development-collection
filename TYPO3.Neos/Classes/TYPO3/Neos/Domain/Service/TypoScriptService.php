@@ -59,11 +59,6 @@ class TypoScriptService {
 	 */
 	public function getMergedTypoScriptObjectTree(NodeInterface $startNode, NodeInterface $endNode) {
 		$contentContext = $startNode->getContext();
-		$parentNodes = $contentContext->getNodesOnPath($startNode->getPath(), $endNode->getPath());
-		if (!is_array($parentNodes)) {
-			return NULL;
-		}
-
 		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
 		$typoScriptsPath = sprintf($this->typoScriptsPathPattern, $siteResourcesPackageKey);
 
@@ -76,17 +71,6 @@ class TypoScriptService {
 		$mergedTypoScriptCode = $this->readExternalTypoScriptFile('resource://TYPO3.Neos/Private/TypoScript/Root.ts2') . $siteRootTypoScriptCode;
 
 		return $this->typoScriptParser->parse($mergedTypoScriptCode, $typoScriptsPath);
-	}
-
-	/**
-	 * Returns a merged TypoScript object tree loaded from a specified resource location.
-	 *
-	 * @param string $typoScriptResourcePath
-	 * @return array The merged object tree as of the given node
-	 */
-	public function readTypoScriptFromSpecificPath($typoScriptResourcePath) {
-		$mergedTypoScriptCode = $this->readExternalTypoScriptFiles($typoScriptResourcePath) . chr(10);
-		return $this->typoScriptParser->parse($mergedTypoScriptCode);
 	}
 
 	/**
