@@ -28,6 +28,12 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $publishingService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
 	 * @var string
 	 */
 	protected $viewObjectNamePattern = 'TYPO3\Neos\Service\ExtDirect\V1\View\NodeView';
@@ -57,18 +63,19 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
+		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
 			/**
 			 * TODO: The publishing pushes the same node twice, which causes the node to be published
 			 * already when it's processed the second time. This obviously leads to a problem for the
 			 * Workspace object which will (in the second time) try to publish a node in the live workspace
 			 * to the baseWorkspace of the live workspace (which does not exist).
 			 */
-		if ($targetWorkspaceName === $node->getWorkspace()->getName()) {
+		if ($targetWorkspace === $node->getWorkspace()) {
 			$this->view->assign('value', array('success' => TRUE));
 			return;
 		}
 
-		$this->publishingService->publishNode($node, $targetWorkspaceName);
+		$this->publishingService->publishNode($node, $targetWorkspace);
 
 		$this->view->assign('value', array('success' => TRUE));
 	}
@@ -81,7 +88,8 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function publishAllAction($workspaceName) {
-		$this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspaceName));
+		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
+		$this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace));
 
 		$this->view->assign('value', array('success' => TRUE));
 	}

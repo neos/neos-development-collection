@@ -101,7 +101,7 @@
 						</tfoot>
 					</table>
 				</div>
-				<f:render section="actions" arguments="{workspaceName: workspaceName}" />
+				<f:render section="actions" arguments="{workspace: workspace}" />
 			</f:form>
 		</f:then>
 		<f:else>
@@ -113,11 +113,12 @@
 		<div class="neos-modal">
 			<div class="neos-modal-header">
 				<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-				<div class="neos-header">Do you really want to discard all changes in the "{workspaceName}" workspace?</div>
+				<div class="neos-header">Do you really want to discard all changes in the "{workspace.name}" workspace?</div>
 			</div>
 			<div class="neos-modal-footer">
 				<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
 				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-button neos-button-danger">
+					<i class="icon-trash icon-white"></i>
 					Discard all changes
 				</button>
 			</div>
@@ -165,7 +166,7 @@
 			</button>
 		</div>
 		<div class="neos-pull-right">
-			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspaceName: workspaceName}')}" type="submit" class="neos-button neos-button-primary">
+			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspace: workspace}')}" type="submit" class="neos-button neos-button-primary">
 				Publish <strong>all</strong> changes
 			</button>
 			<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">

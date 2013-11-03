@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Controller\Module\Management;
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
  * The TYPO3 Workspaces module controller
@@ -74,21 +76,22 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	}
 
 	/**
-	 * @param string $workspaceName
+	 * @param Workspace $workspace
 	 * @return void
 	 * @todo Pagination
 	 * @todo Tree filtering + level limit
 	 * @todo Search field
 	 * @todo Difference mechanism
 	 */
-	public function indexAction($workspaceName = NULL) {
-		if (is_null($workspaceName)) {
+	public function indexAction(Workspace $workspace = NULL) {
+		if ($workspace === NULL) {
 			$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-			$workspaceName = $user->getPreferences()->get('context.workspace');
+			$userWorkspaceName = $user->getPreferences()->get('context.workspace');
+			$workspace = $this->workspaceRepository->findOneByName($userWorkspaceName);
 		}
 
 		$sites = array();
-		foreach ($this->publishingService->getUnpublishedNodes($workspaceName) as $node) {
+		foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
 			if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
@@ -125,15 +128,15 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 		}
 
 		$workspaces = array();
-		foreach ($this->workspaceRepository->findAll() as $workspace) {
+		foreach ($this->workspaceRepository->findAll() as $workspaceInstance) {
 			array_push($workspaces, array(
-				'workspaceNode' => $workspace,
-				'unpublishedNodesCount' => $this->publishingService->getUnpublishedNodesCount($workspace->getName())
+				'workspaceNode' => $workspaceInstance,
+				'unpublishedNodesCount' => $this->publishingService->getUnpublishedNodesCount($workspaceInstance)
 			));
 		}
 
 		$this->view->assignMultiple(array(
-			'workspaceName' => $workspaceName,
+			'workspace' => $workspace,
 			'workspaces' => $workspaces,
 			'sites' => $sites
 		));
@@ -145,7 +148,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->publishingService->publishNode($node);
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been published'));
+		$this->addFlashMessage('Node has been published', 'Node published');
 		$this->redirect('index');
 	}
 
@@ -155,7 +158,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->nodeDataRepository->remove($node);
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Node has been discarded'));
+		$this->addFlashMessage('Node has been discarded', 'Node discarded');
 		$this->redirect('index');
 	}
 
@@ -187,31 +190,32 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 				throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
 		}
 
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message($message));
+		$this->addFlashMessage($message);
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param string $workspaceName
+	 * @param Workspace $workspace
 	 * @return void
 	 */
-	public function publishWorkspaceAction($workspaceName) {
-		$this->workspaceRepository->findOneByName($workspaceName)->publish('live');
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been published', NULL, array($workspaceName)));
+	public function publishWorkspaceAction(Workspace $workspace) {
+		$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+		$workspace->publish($liveWorkspace);
+		$this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array($workspace->getName()));
 		$this->redirect('index');
 	}
 
 	/**
-	 * @param string $workspaceName
+	 * @param Workspace $workspace
 	 * @return void
 	 */
-	public function discardWorkspaceAction($workspaceName) {
-		foreach ($this->publishingService->getUnpublishedNodes($workspaceName) as $node) {
+	public function discardWorkspaceAction(Workspace $workspace) {
+		foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
 			if ($node->getPath() !== '/') {
 				$this->nodeDataRepository->remove($node);
 			}
 		}
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Message('Changes in workspace "%s" have been discarded', NULL, array($workspaceName)));
+		$this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()));
 		$this->redirect('index');
 	}
 

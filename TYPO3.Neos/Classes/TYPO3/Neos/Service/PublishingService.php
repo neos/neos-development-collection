@@ -12,6 +12,8 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
  * The workspaces service adds some basic helper methods for getting workspaces,
@@ -58,13 +60,12 @@ class PublishingService {
 	protected $siteRepository;
 
 	/**
-	 * @param string $workspaceName
+	 * @param Workspace $workspace
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
 	 */
-	public function getUnpublishedNodes($workspaceName) {
-		$finalNodes = array();
+	public function getUnpublishedNodes(Workspace $workspace) {
 		$contextProperties = array(
-			'workspaceName' => $workspaceName,
+			'workspaceName' => $workspace->getName(),
 			'inaccessibleContentShown' => TRUE,
 			'invisibleContentShown' => TRUE,
 			'removedContentShown' => TRUE
@@ -79,30 +80,45 @@ class PublishingService {
 		}
 		$contentContext = $this->contextFactory->create($contextProperties);
 
-		$nodeData = $this->nodeDataRepository->findByWorkspace($contentContext->getWorkspace(FALSE));
+		$nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
+		$unpublishedNodes = array();
 		foreach ($nodeData as $singleNodeData) {
 			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $contentContext);
 			if ($node !== NULL) {
-				$finalNodes[] = $node;
+				$unpublishedNodes[] = $node;
 			}
 		}
-		return $finalNodes;
+		return $unpublishedNodes;
 	}
 
 	/**
-	 * @param string $targetWorkspaceName
+	 * @param Workspace $targetWorkspace
 	 * @return integer
 	 */
-	public function getUnpublishedNodesCount($targetWorkspaceName) {
-		return $this->workspaceRepository->findOneByName($targetWorkspaceName)->getNodeCount() - 1;
+	public function getUnpublishedNodesCount(Workspace $targetWorkspace) {
+		return $targetWorkspace->getNodeCount() - 1;
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param string $targetWorkspaceName
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+	 * @param Workspace $targetWorkspace
 	 * @return void
 	 */
-	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName = 'live') {
+	public function publishNodes(array $nodes, Workspace $targetWorkspace = NULL) {
+		foreach ($nodes as $node) {
+			$this->publishNode($node, $targetWorkspace);
+		}
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @param Workspace $targetWorkspace If not set the "live" Workspace is assumed to be the publishing target
+	 * @return void
+	 */
+	public function publishNode(NodeInterface $node, $targetWorkspace = NULL) {
+		if ($targetWorkspace === NULL) {
+			$targetWorkspace = $this->workspaceRepository->findOneByName('live');
+		}
 		$nodes = array($node);
 		$nodeType = $node->getNodeType();
 		if ($nodeType->isOfType('TYPO3.Neos:Document') || $nodeType->hasChildNodes()) {
@@ -111,18 +127,7 @@ class PublishingService {
 			}
 		}
 		$sourceWorkspace = $node->getWorkspace();
-		$sourceWorkspace->publishNodes($nodes, $targetWorkspaceName);
-	}
-
-	/**
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
-	 * @param string $targetWorkspaceName
-	 * @return void
-	 */
-	public function publishNodes(array $nodes, $targetWorkspaceName = 'live') {
-		foreach ($nodes as $node) {
-			$this->publishNode($node, $targetWorkspaceName);
-		}
+		$sourceWorkspace->publishNodes($nodes, $targetWorkspace);
 	}
 
 }
