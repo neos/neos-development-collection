@@ -37,7 +37,7 @@ define(
 			 * @return {void}
 			 */
 			updateContentElementHandlePosition: function() {
-				if (!this.get('nodeSelection.selectedNode').$element || $('.neos-handle-container:visible').length === 0) {
+				if (!this.get('nodeSelection.selectedNode') || !this.get('nodeSelection.selectedNode').$element || $('.neos-handle-container:visible').length === 0) {
 					return;
 				}
 
