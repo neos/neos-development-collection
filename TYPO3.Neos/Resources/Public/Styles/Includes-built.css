@@ -6451,6 +6451,7 @@
   padding: 9px;
   min-width: 41px;
   text-align: center;
+  position: relative;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -6464,6 +6465,9 @@
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on input {
   margin: 0;
+}
+.neos #neos-inspector .neos-inspector-form .neos-add-on input[type=checkbox] + span:before {
+  top: 9px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on + span {
   display: table-cell;
