@@ -98,6 +98,10 @@ class ContentElementWrappingService {
 		$this->addDataAttribute($tagBuilder, '_typoscriptPath', $typoscriptPath);
 		$hasInlineEditableProperties = FALSE;
 		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
+			if ($propertyName[0] === '_' && $propertyName[1] === '_') {
+				// skip fully-private properties
+				continue;
+			}
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			if ($propertyName[0] === '_') {
 				$propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
