@@ -30,6 +30,11 @@ define(
 		 */
 		currentlyShownSecondaryAlohaTabs: false,
 
+		/**
+		 * Identity map "RDFa Subject" -> "Entity" instances
+		 */
+		_entitiesBySubject: {},
+
 		nodes: function() {
 			if (this.get('currentlyShownSecondaryAlohaTabs')) {
 				// we show secondary aloha tabs currently, so we *replace* the inspector contents.
@@ -112,6 +117,7 @@ define(
 		initialize: function() {
 			vie.entities.reset();
 			vie.load({element: $('body')}).from('rdfa').execute();
+			this._entitiesBySubject = {};
 
 			// Update the selection on initialize, such that the current Page is added to the breadcrumb
 			this.updateSelection();
@@ -236,8 +242,6 @@ define(
 				}
 			}
 		},
-
-		_entitiesBySubject: {},
 
 		_createEntityWrapper: function($element) {
 			var subject = vie.service('rdfa').getElementSubject($element);
