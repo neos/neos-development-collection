@@ -1,5 +1,6 @@
 # TYPO3.Neos:Page is the default object used for rendering in most sites
 #
+prototype(TYPO3.Neos:Page) >
 prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 
 	doctype = '<!DOCTYPE html>'

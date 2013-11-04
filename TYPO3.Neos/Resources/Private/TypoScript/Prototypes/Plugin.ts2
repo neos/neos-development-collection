@@ -1,3 +1,4 @@
 # Abstract Plugin Implementation
 #
+prototype(TYPO3.Neos:Plugin) >
 prototype(TYPO3.Neos:Plugin).@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementation'

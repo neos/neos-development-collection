@@ -1,3 +1,4 @@
 # PluginView Implementation
 #
+prototype(TYPO3.Neos:PluginView) >
 prototype(TYPO3.Neos:PluginView).@class = 'TYPO3\\Neos\\TypoScript\\PluginViewImplementation'

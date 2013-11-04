@@ -30,11 +30,31 @@ class TypoScriptService {
 	protected $typoScriptParser;
 
 	/**
-	 * Pattern used for determining the TypoScripts root path for a site.
+	 * Pattern used for determining the TypoScript root file for a site
 	 *
 	 * @var string
 	 */
-	protected $typoScriptsPathPattern = 'resource://%s/Private/TypoScripts';
+	protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScripts/Library/Root.ts2';
+
+	/**
+	 * Array of TypoScript files to include before the site TypoScript
+	 *
+	 * @var array
+	 */
+	protected $prependTypoScriptIncludes = array('resource://TYPO3.Neos/Private/TypoScript/Root.ts2');
+
+	/**
+	 * Array of TypoScript files to include after the site TypoScript
+	 *
+	 * @var array
+	 */
+	protected $appendTypoScriptIncludes = array();
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 */
+	protected $nodeTypeManager;
 
 	/**
 	 * Initializes the parser
@@ -46,11 +66,21 @@ class TypoScriptService {
 	}
 
 	/**
-	 * Returns a merged TypoScript object tree in the context of the given nodes
+	 * Create a runtime for the given site node
 	 *
-	 * The start node and end node mark the starting point and end point of the
-	 * path to take while searching for TypoScript configuration. The path of the
-	 * start node must be the base path of the end node's path.
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $closestDocumentNode
+	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+	 * @return \TYPO3\TypoScript\Core\Runtime
+	 */
+	public function createRuntime(NodeInterface $currentSiteNode, NodeInterface $closestDocumentNode, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
+		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode, $closestDocumentNode);
+		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptObjectTree, $controllerContext);
+		return $typoScriptRuntime;
+	}
+
+	/**
+	 * Returns a merged TypoScript object tree in the context of the given nodes
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode Node marking the end point
@@ -60,17 +90,20 @@ class TypoScriptService {
 	public function getMergedTypoScriptObjectTree(NodeInterface $startNode, NodeInterface $endNode) {
 		$contentContext = $startNode->getContext();
 		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
-		$typoScriptsPath = sprintf($this->typoScriptsPathPattern, $siteResourcesPackageKey);
+		$siteRootTypoScriptPathAndFilename = sprintf($this->siteRootTypoScriptPattern, $siteResourcesPackageKey);
 
-		$rootTypoScriptPath = $typoScriptsPath . '/Library/Root.ts2';
-		$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($rootTypoScriptPath);
+		$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
 		if (trim($siteRootTypoScriptCode) === '') {
-			throw new \TYPO3\Neos\Domain\Exception(sprintf('The site package %s did not contain a root TypoScript configuration. Please make sure that there is one at %s.', $siteResourcesPackageKey, $rootTypoScriptPath), 1357215211);
+			throw new \TYPO3\Neos\Domain\Exception(sprintf('The site package %s did not contain a root TypoScript configuration. Please make sure that there is one at %s.', $siteResourcesPackageKey, $siteRootTypoScriptPathAndFilename), 1357215211);
 		}
 
-		$mergedTypoScriptCode = $this->readExternalTypoScriptFile('resource://TYPO3.Neos/Private/TypoScript/Root.ts2') . $siteRootTypoScriptCode;
+		$mergedTypoScriptCode = '';
+		$mergedTypoScriptCode .= $this->generateNodeTypeDefinitions();
+		$mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->prependTypoScriptIncludes);
+		$mergedTypoScriptCode .= $siteRootTypoScriptCode;
+		$mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->appendTypoScriptIncludes);
 
-		return $this->typoScriptParser->parse($mergedTypoScriptCode, $typoScriptsPath);
+		return $this->typoScriptParser->parse($mergedTypoScriptCode, $siteRootTypoScriptPathAndFilename);
 	}
 
 	/**
@@ -85,40 +118,97 @@ class TypoScriptService {
 	}
 
 	/**
-	 * Checks if the directory specified in $pathAndFilename exists and if so,
-	 * tries to find a file matching the name in $pathAndFilename through case
-	 * insensitive comparison of the file name.
+	 * Generate TypoScript prototype definitions for all node types
 	 *
-	 * You must specify a valid case sensitive path – only the filename maybe
-	 * case insensitive.
+	 * Only fully qualified node types (e.g. MyVendor.MyPackage:NodeType) will be considered.
 	 *
-	 * @param string $pathAndFilename Path and filename
-	 * @return mixed Either the resolved case sensitive path and filename or FALSE
+	 * @return string
 	 */
-	protected function getMixedCasedPathAndFilename($pathAndFilename) {
-		$path = dirname($pathAndFilename);
-		if (!is_dir($path)) {
-			return FALSE;
-		}
-		$needleFilename = strtolower(basename($pathAndFilename));
-		foreach (new \DirectoryIterator($path) as $fileInfo) {
-			$haystackFilename = $fileInfo->getBasename();
-			if (strtolower($haystackFilename) === $needleFilename) {
-				return $fileInfo->getPathname();
+	protected function generateNodeTypeDefinitions() {
+		$nodeTypesConfiguration = $this->nodeTypeManager->getFullConfiguration();
+		$code = '';
+		foreach ($nodeTypesConfiguration as $nodeTypeName => $nodeTypeConfiguration) {
+			if (strpos($nodeTypeName, ':') === FALSE) {
+				continue;
 			}
+			$code .= $this->generateTypoScriptForNodeType($nodeTypeName, $nodeTypeConfiguration);
 		}
-		return FALSE;
+		return $code;
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $closestDocumentNode
-	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
-	 * @return \TYPO3\TypoScript\Core\Runtime
+	 * Generate a TypoScript prototype definition for a given node type
+	 *
+	 * A node will be rendered by a TYPO3.Neos:Template by default with a template in
+	 * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
+	 * node properties to the template TypoScript object.
+	 *
+	 * @param string $nodeTypeName
+	 * @param array $nodeTypeConfiguration
+	 * @return string
 	 */
-	public function createRuntime(NodeInterface $currentSiteNode, NodeInterface $closestDocumentNode, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
-		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode, $closestDocumentNode);
-		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptObjectTree, $controllerContext);
-		return $typoScriptRuntime;
+	protected function generateTypoScriptForNodeType($nodeTypeName, array $nodeTypeConfiguration) {
+		list($packageKey, $relativeName) = explode(':', $nodeTypeName, 2);
+		$templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
+
+		$output = 'prototype(' . $nodeTypeName . ') < prototype(TYPO3.Neos:Template) {' . chr(10);
+		$output .= "\t" . 'templatePath = \'' . $templatePath . '\'' . chr(10);
+		if (isset($nodeTypeConfiguration['properties'])) {
+			foreach ($nodeTypeConfiguration['properties'] as $propertyName => $propertyConfiguration) {
+				if (isset($propertyName[0]) && $propertyName[0] !== '_') {
+					$output .= "\t" . $propertyName . ' = ${node.properties.' . $propertyName . '}' . chr(10);
+				}
+			}
+		}
+		$output .= '}' . chr(10);
+		return $output;
 	}
+
+	/**
+	 * Concatenate the given TypoScript resources with include statements
+	 *
+	 * @param array $typoScriptResources An array of TypoScript resource URIs
+	 * @return string A string of include statements for all resources
+	 */
+	protected function getTypoScriptIncludes(array $typoScriptResources) {
+		$code = chr(10);
+		foreach ($typoScriptResources as $typoScriptResource) {
+			$code .= 'include: ' . (string)$typoScriptResource . chr(10);
+		}
+		$code .= chr(10);
+		return $code;
+	}
+
+	/**
+	 * Set the pattern for including the site root TypoScript
+	 *
+	 * @param string $siteRootTypoScriptPattern A string for the sprintf format that takes the site package key as a single placeholder
+	 * @return void
+	 */
+	public function setSiteRootTypoScriptPattern($siteRootTypoScriptPattern) {
+		$this->siteRootTypoScriptPattern = $siteRootTypoScriptPattern;
+	}
+
+	/**
+	 * Set TypoScript resources that should be prepended before the site TypoScript,
+	 * it defaults to the Neos Root.ts2 TypoScript.
+	 *
+	 * @param array $prependTypoScriptIncludes
+	 * @return void
+	 */
+	public function setPrependTypoScriptIncludes(array $prependTypoScriptIncludes) {
+		$this->prependTypoScriptIncludes = $prependTypoScriptIncludes;
+	}
+
+	/**
+	 * Set TypoScript resources that should be appended after the site TypoScript,
+	 * this defaults to an empty array.
+	 *
+	 * @param array $appendTypoScriptIncludes An array of TypoScript resource URIs
+	 * @return void
+	 */
+	public function setAppendTypoScriptIncludes(array $appendTypoScriptIncludes) {
+		$this->appendTypoScriptIncludes = $appendTypoScriptIncludes;
+	}
+
 }

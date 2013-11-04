@@ -1,5 +1,6 @@
 # Default case for ContentCollection TS Object
 #
+prototype(TYPO3.Neos:ContentCollection) >
 prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Collection) {
 	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
 

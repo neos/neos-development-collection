@@ -209,19 +209,21 @@ class RenderingTest extends AbstractNodeTest {
 	}
 
 	/**
-	 * Simulate rendering
+	 * Simulate the rendering
+	 *
 	 * @param string $additionalTypoScriptFile
 	 * @param boolean $debugMode
 	 * @return string
 	 */
 	protected function simulateRendering($additionalTypoScriptFile = NULL, $debugMode = FALSE) {
-		$typoScriptRuntime = $this->parseTypoScript($additionalTypoScriptFile);
+		$typoScriptRuntime = $this->createRuntimeWithFixtures($additionalTypoScriptFile);
 		if ($debugMode) {
 			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE, 'rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
 		}
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $this->node,
-			'documentNode' => $this->node
+			'documentNode' => $this->node,
+			'fixturesDirectory' => __DIR__ . '/Fixtures'
 		));
 		$output = $typoScriptRuntime->render('page1');
 		$typoScriptRuntime->popContext();
@@ -230,24 +232,30 @@ class RenderingTest extends AbstractNodeTest {
 	}
 
 	/**
-	 * Parse TypoScript
+	 * Create a TypoScript runtime with the test base TypoScript and an optional additional fixture
+	 *
 	 * @param string $additionalTypoScriptFile
 	 * @return \TYPO3\TypoScript\Core\Runtime
 	 */
-	protected function parseTypoScript($additionalTypoScriptFile = NULL) {
-		$typoScript = file_get_contents(__DIR__ . '/Fixtures/PredefinedTypoScript.ts2');
-		$typoScript .= chr(10) . chr(10) . file_get_contents(__DIR__ . '/Fixtures/BaseTypoScript.ts2');
-
-		$fixtureDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(__DIR__, 'Fixtures'));
+	protected function createRuntimeWithFixtures($additionalTypoScriptFile = NULL) {
+		$typoScriptService = new \TYPO3\Neos\Domain\Service\TypoScriptService();
+		$typoScriptService->setSiteRootTypoScriptPattern(__DIR__ . '/Fixtures/BaseTypoScript.ts2');
 
 		if ($additionalTypoScriptFile !== NULL) {
-			$typoScript .= chr(10) . chr(10) . file_get_contents(\TYPO3\Flow\Utility\Files::concatenatePaths(array($fixtureDirectory, $additionalTypoScriptFile)));
+			$typoScriptService->setAppendTypoScriptIncludes(array($additionalTypoScriptFile));
 		}
-		$typoScript = str_replace('FIXTURE_DIRECTORY', $fixtureDirectory, $typoScript);
 
-		$parser = new \TYPO3\TypoScript\Core\Parser();
-		$typoScriptConfiguration = $parser->parse($typoScript);
+		$controllerContext = $this->buildMockControllerContext();
 
+		$runtime = $typoScriptService->createRuntime($this->node->getParent(), $this->node, $controllerContext);
+
+		return $runtime;
+	}
+
+	/**
+	 * @return \TYPO3\Flow\Mvc\Controller\ControllerContext
+	 */
+	protected function buildMockControllerContext() {
 		$httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
 		$request = $httpRequest->createActionRequest();
 		$response = new \TYPO3\Flow\Http\Response();
@@ -259,6 +267,7 @@ class RenderingTest extends AbstractNodeTest {
 			$this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder'),
 			$this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
 		);
-		return new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $controllerContext);
+		return $controllerContext;
 	}
+
 }
