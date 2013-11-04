@@ -72,7 +72,22 @@
         document:
           label: 'Document options'
           position: 10
+        type:
+          label: 'Change type'
+          position: 1000
   properties:
+    _nodeType:
+      type: string
+      ui:
+        label: 'Type'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'type'
+          position: 100
+          editor: Content/Inspector/Editors/NodeTypeEditor
+          editorOptions:
+            placeholder: 'Loading ...'
+            baseNodeType: 'TYPO3.Neos:Document'
     title:
       type: string
       ui:
@@ -208,6 +223,23 @@
     group: 'general'
     search:
       searchCategory: 'Content'
+    inspector:
+      groups:
+        type:
+          label: 'Change type'
+          position: 100
+  properties:
+    _nodeType:
+      type: string
+      ui:
+        label: 'Type'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'type'
+          editor: Content/Inspector/Editors/NodeTypeEditor
+          editorOptions:
+            placeholder: 'Loading ...'
+            baseNodeType: 'TYPO3.Neos:Content'
 
 # A content collection is a collection of "TYPO3.Neos:Content" (and its subclasses),
 # i.e. contains variable number of children.
