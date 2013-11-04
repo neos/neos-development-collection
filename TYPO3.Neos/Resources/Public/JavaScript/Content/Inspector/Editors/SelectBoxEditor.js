@@ -58,14 +58,14 @@ function($, Ember) {
 			return options;
 		}.property('values.@each', 'value', 'placeholder', 'allowEmpty'),
 
-		onItemsChange: function() {
+		_initializePlaceholder: function() {
 			var that = this;
 
 			this.$().attr('data-placeholder', that.get('placeholder'));
 			Ember.run.next(function() {
 				that.$().trigger('chosen:updated');
 			});
-		}.observes('values.@each'),
+		}.observes('placeholder', 'values.@each'),
 
 		_loadValuesFromController: function(uri, callback) {
 			$.getJSON(uri, function(results) {
