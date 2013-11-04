@@ -254,7 +254,7 @@ function(
 				window.history.replaceState({uri: window.location.href}, document.title, window.location.href);
 			}
 			window.addEventListener('popstate', function(event) {
-				if (event.state && event.state.uri !== window.location.href) {
+				if (event.state && event.state.uri) {
 					that.loadPage(event.state.uri, true);
 				}
 			});
