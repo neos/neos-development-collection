@@ -115,7 +115,7 @@ class NodeTypeManager {
 		$fullConfiguration = array();
 		foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
 			if (!$nodeType->isAbstract()) {
-				$fullConfiguration[$nodeTypeName] = $nodeType->getConfiguration();
+				$fullConfiguration[$nodeTypeName] = $nodeType->getFullConfiguration();
 			}
 		}
 		return $fullConfiguration;
@@ -161,7 +161,7 @@ class NodeTypeManager {
 					throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a supertype "' . $superType->getName() .'" which is final.', 1316452423);
 				}
 				$superTypes[] = $superType;
-				$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getConfiguration());
+				$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getFullConfiguration());
 			}
 			unset($mergedConfiguration['superTypes']);
 		}

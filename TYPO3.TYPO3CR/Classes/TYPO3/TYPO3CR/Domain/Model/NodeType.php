@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
 
@@ -209,13 +210,36 @@ class NodeType {
 	/**
 	 * Get the full configuration of the node type. Should only be used internally.
 	 *
-	 * Instead, use the get* / has* methods which exist for every configuration property.
+	 * Instead, use the hasConfiguration()/getConfiguration() methods to check/retrieve single configuration values.
 	 *
 	 * @return array
 	 */
-	public function getConfiguration() {
+	public function getFullConfiguration() {
 		$this->initialize();
 		return $this->configuration;
+	}
+
+	/**
+	 * Checks if the configuration of this node type contains a setting for the given $configurationPath
+	 *
+	 * @param string $configurationPath The name of the configuration option to verify
+	 * @return boolean
+	 * @api
+	 */
+	public function hasConfiguration($configurationPath) {
+		return $this->getConfiguration($configurationPath) !== NULL;
+	}
+
+	/**
+	 * Returns the configuration option with the specified $configurationPath or NULL if it does not exist
+	 *
+	 * @param string $configurationPath The name of the configuration option to retrieve
+	 * @return mixed
+	 * @api
+	 */
+	public function getConfiguration($configurationPath) {
+		$this->initialize();
+		return ObjectAccess::getPropertyPath($this->configuration, $configurationPath);
 	}
 
 	/**
@@ -343,18 +367,15 @@ class NodeType {
 	 * @param string $methodName
 	 * @param array $arguments
 	 * @return mixed
-	 * @api
+	 * @deprecated Use hasConfigurationForKey() or getConfigurationByKey() instead
 	 */
 	public function __call($methodName, array $arguments) {
-		$this->initialize();
 		if (substr($methodName, 0, 3) === 'get') {
-			$propertyName = lcfirst(substr($methodName, 3));
-			if (isset($this->configuration[$propertyName])) {
-				return $this->configuration[$propertyName];
-			}
+			$configurationKey = lcfirst(substr($methodName, 3));
+			return $this->getConfiguration($configurationKey);
 		} elseif (substr($methodName, 0, 3) === 'has') {
-			$propertyName = lcfirst(substr($methodName, 3));
-			return isset($this->configuration[$propertyName]);
+			$configurationKey = lcfirst(substr($methodName, 3));
+			return $this->hasConfiguration($configurationKey);
 		}
 
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);

@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+
 /**
  * Testcase for the "NodeType" domain model
  *
@@ -21,7 +23,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function aNodeTypeHasAName() {
-		$nodeType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:Text', array(), array());
+		$nodeType = new NodeType('TYPO3.Neos:Text', array(), array());
 		$this->assertSame('TYPO3.Neos:Text', $nodeType->getName());
 	}
 
@@ -30,19 +32,19 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypes() {
-		$folderType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3CR:Folder', array('foo'), array());
+		$folderType = new NodeType('TYPO3CR:Folder', array('foo'), array());
 	}
 
 	/**
 	 * @test
 	 */
 	public function nodeTypesCanHaveAnyNumberOfSuperTypes() {
-		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array());
+		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
 
-		$folderType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:Document', array($baseType), array());
+		$folderType = new NodeType('TYPO3.Neos:Document', array($baseType), array());
 
-		$hideableNodeType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:HideableContent', array(), array());
-		$pageType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.Neos:Page', array($folderType, $hideableNodeType), array());
+		$hideableNodeType = new NodeType('TYPO3.Neos:HideableContent', array(), array());
+		$pageType = new NodeType('TYPO3.Neos:Page', array($folderType, $hideableNodeType), array());
 
 		$this->assertEquals(array($folderType, $hideableNodeType), $pageType->getDeclaredSuperTypes());
 
@@ -57,7 +59,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function labelIsEmptyStringByDefault() {
-		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array());
+		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
 		$this->assertSame('', $baseType->getLabel());
 	}
 
@@ -65,27 +67,66 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function propertiesAreEmptyArrayByDefault() {
-		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array());
+		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
 		$this->assertSame(array(), $baseType->getProperties());
 	}
 
 	/**
 	 * @test
 	 */
-	public function configurationCanBeReturnedViaMagicGetter() {
-		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array(
-			'someKey' => 'someValue'
-		));
-		$this->assertTrue($baseType->hasSomeKey());
-		$this->assertSame('someValue', $baseType->getSomeKey());
+	public function hasConfigurationInitializesTheNodeType() {
+		$nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', FALSE);
+		$nodeType->expects($this->once())->method('initialize');
+		$nodeType->hasConfiguration('foo');
 	}
 
 	/**
 	 * @test
 	 */
-	public function magicHasReturnsFalseIfPropertyDoesNotExist() {
-		$baseType = new \TYPO3\TYPO3CR\Domain\Model\NodeType('TYPO3.TYPO3CR:Base', array(), array());
-		$this->assertFalse($baseType->hasFooKey());
+	public function hasConfigurationReturnsTrueIfSpecifiedConfigurationPathExists() {
+		$nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
+			'someKey' => array(
+				'someSubKey' => 'someValue'
+			)
+		));
+		$this->assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasConfigurationReturnsFalseIfSpecifiedConfigurationPathDoesNotExist() {
+		$nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
+		$this->assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getConfigurationInitializesTheNodeType() {
+		$nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', FALSE);
+		$nodeType->expects($this->once())->method('initialize');
+		$nodeType->getConfiguration('foo');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getConfigurationReturnsTheConfigurationWithTheSpecifiedPath() {
+		$nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
+			'someKey' => array(
+				'someSubKey' => 'someValue'
+			)
+		));
+		$this->assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getConfigurationReturnsNullIfTheSpecifiedPathDoesNotExist() {
+		$nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
+		$this->assertNull($nodeType->getConfiguration('some.nonExisting.path'));
 	}
 
 	/**
@@ -93,7 +134,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function gettersThatRequiresInitialization() {
 		return array(
-			array('getConfiguration'),
+			array('getFullConfiguration'),
 			array('getLabel'),
 			array('getNodeLabelGenerator'),
 			array('getProperties'),
@@ -116,6 +157,29 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Tests for the deprecated __call method to verify backwards compatibility
+	 */
+
+	/**
+	 * @test
+	 */
+	public function configurationCanBeReturnedViaMagicGetter() {
+		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
+			'someKey' => 'someValue'
+		));
+		$this->assertTrue($baseType->hasSomeKey());
+		$this->assertSame('someValue', $baseType->getSomeKey());
+	}
+
+	/**
+	 * @test
+	 */
+	public function magicHasReturnsFalseIfPropertyDoesNotExist() {
+		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
+		$this->assertFalse($baseType->hasFooKey());
+	}
+
+	/**
 	 * @test
 	 */
 	public function magicGettersInitializesTheNodeType() {
@@ -124,4 +188,5 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeType->expects($this->once())->method('initialize');
 		$nodeType->getSomeProperty();
 	}
+
 }
