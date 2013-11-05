@@ -12,12 +12,12 @@ namespace TYPO3\Neos\ViewHelpers;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
- * ViewHelper which wraps all content elements, and adds an additional div wrapper
- * if we are in backend mode.
+ * View helper to wrap nodes for editing in the backend
  */
-class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
 	 * @Flow\Inject
@@ -26,15 +26,39 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	protected $contentElementWrappingService;
 
 	/**
-	 * Include all JavaScript files matching the include regular expression
-	 * and not matching the exclude regular expression.
+	 * Initialize arguments
+	 *
+	 * @return void
+	 */
+	public function initializeArguments() {
+		$this->registerUniversalTagAttributes();
+	}
+
+	/**
+	 * Wrap the child content in a tag with information about the given node
+	 *
+	 * Depending on the authentication status additional metadata for editing will be added to the tag.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param string $class CSS class to apply to, if any
 	 * @param boolean $page
-	 * @return string
+	 * @param string $tag
+	 * @return string The wrapped output
 	 */
-	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $class = '', $page = FALSE) {
+	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE, $tag = 'div') {
+		$wrappedTagBuilder = $this->getWrappedTagBuilder($node, $page);
+
+		$wrappedTagBuilder->setTagName($tag);
+		$this->applyTagArgumentsFromViewHelper($wrappedTagBuilder);
+
+		return $wrappedTagBuilder->render();
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param boolean $isPage
+	 * @return \TYPO3\Fluid\Core\ViewHelper\TagBuilder
+	 */
+	protected function getWrappedTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $isPage) {
 		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
 		try {
 			$content = $this->renderChildren();
@@ -42,13 +66,21 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 			$content = $fluidTemplateTsObject->getTsRuntime()->handleRenderingException($fluidTemplateTsObject->getPath(), $exception);
 		}
 
-		$tagBuilder = $this->contentElementWrappingService->wrapContentObjectAndReturnTagBuilder($node, $fluidTemplateTsObject->getPath(), $content, $page);
-
-		if ($class !== '') {
-			$class = ' ' . $class;
-		}
-		$tagBuilder->addAttribute('class', $tagBuilder->getAttribute('class') . $class);
-
-		return $tagBuilder->render();
+		return $this->contentElementWrappingService->wrapContentObjectAndReturnTagBuilder($node, $fluidTemplateTsObject->getPath(), $content, $isPage);
 	}
+
+	/**
+	 * @param \TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder The tag builder of the wrapped content
+	 * @return void
+	 */
+	protected function applyTagArgumentsFromViewHelper(TagBuilder $tagBuilder) {
+		$tagAttributes = $this->tag->getAttributes();
+		foreach ($tagAttributes as $attributeName => $attributeValue) {
+			if ($attributeName === 'class') {
+				$attributeValue = $tagBuilder->getAttribute('class') . ' ' . $attributeValue;
+			}
+			$tagBuilder->addAttribute($attributeName, $attributeValue, FALSE);
+		}
+	}
+
 }

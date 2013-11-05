@@ -62,13 +62,13 @@ class ContentElementWrappingService {
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend, and return the tag builder instance for further modification.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $typoscriptPath
 	 * @param string $content
 	 * @param boolean $isPage
 	 * @return \TYPO3\Fluid\Core\ViewHelper\TagBuilder
 	 */
-	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE) {
+	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE) {
 		$nodeType = $node->getNodeType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
