@@ -121,7 +121,7 @@ class PublishingService {
 		}
 		$nodes = array($node);
 		$nodeType = $node->getNodeType();
-		if ($nodeType->isOfType('TYPO3.Neos:Document') || $nodeType->hasChildNodes()) {
+		if ($nodeType->isOfType('TYPO3.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
 			foreach ($node->getChildNodes('TYPO3.Neos:ContentCollection') as $contentCollectionNode) {
 				array_push($nodes, $contentCollectionNode);
 			}

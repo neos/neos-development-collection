@@ -179,7 +179,7 @@ class ContentElementWrappingService {
 				$cssClasses[] = 'neos-contentelement-removed';
 			}
 
-			$uiConfiguration = $nodeType->hasUi() ? $nodeType->getUi() : array();
+			$uiConfiguration = $nodeType->hasConfiguration('ui') ? $nodeType->getConfiguration('ui') : array();
 			if ((!isset($uiConfiguration['inlineEditable']) && !$hasInlineEditableProperties) || (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE)) {
 				$cssClasses[] = 'neos-not-inline-editable';
 			}

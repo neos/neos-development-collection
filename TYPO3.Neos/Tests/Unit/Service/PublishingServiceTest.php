@@ -240,8 +240,8 @@ class PublishingServiceTest extends UnitTestCase {
 		$mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 		$mockChildNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
-		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->setMethods(array('hasChildNodes', 'isOfType'))->getMock();
-		$mockNodeType->expects($this->atLeastOnce())->method('hasChildNodes')->will($this->returnValue(TRUE));
+		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->setMethods(array('hasConfiguration', 'isOfType'))->getMock();
+		$mockNodeType->expects($this->atLeastOnce())->method('hasConfiguration')->with('childNodes')->will($this->returnValue(TRUE));
 		$mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
 		$mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));

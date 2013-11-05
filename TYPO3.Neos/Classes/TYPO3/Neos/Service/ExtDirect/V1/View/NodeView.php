@@ -253,7 +253,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 		$nodeType = $node->getNodeType();
-		$nodeTypeConfiguration = $nodeType->getConfiguration();
+		$nodeTypeConfiguration = $nodeType->getFullConfiguration();
 		$treeNode = array(
 			'key' => $node->getContextPath(),
 			'title' => $node->getLabel(),

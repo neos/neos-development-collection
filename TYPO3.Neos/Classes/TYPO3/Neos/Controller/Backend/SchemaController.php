@@ -57,7 +57,7 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if ($superType !== NULL) {
 			foreach ($this->nodeTypeManager->getSubNodeTypes($superType) as $nodeTypeName => $nodeType) {
 				/** @var \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType */
-				$nodeTypes[$nodeTypeName] = $nodeType->getConfiguration();
+				$nodeTypes[$nodeTypeName] = $nodeType->getFullConfiguration();
 			}
 		} else {
 			$nodeTypes = $this->nodeTypeManager->getFullConfiguration();

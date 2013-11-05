@@ -76,7 +76,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$searchContentGroups = array();
 		$searchNodeTypes = array();
 		foreach (array('TYPO3.Neos:Page', 'TYPO3.Neos:Content') as $nodeType) {
-			$searchContentGroups[$nodeType] = $this->nodeTypeManager->getNodeType($nodeType)->getConfiguration();
+			$searchContentGroups[$nodeType] = $this->nodeTypeManager->getNodeType($nodeType)->getFullConfiguration();
 			array_push($searchNodeTypes, $nodeType);
 			$subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType);
 			if (count($subNodeTypes) > 0) {
@@ -125,7 +125,7 @@ class LauncherController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.Neos'),
 				'path' => $result->getPath()
 			);
-			$nodeTypeConfiguration = $nodeType->getConfiguration();
+			$nodeTypeConfiguration = $nodeType->getFullConfiguration();
 			if (isset($nodeTypeConfiguration['ui']['icon'])) {
 				$searchResult['icon'] = $staticWebBaseUri . $nodeTypeConfiguration['ui']['icon'];
 			}

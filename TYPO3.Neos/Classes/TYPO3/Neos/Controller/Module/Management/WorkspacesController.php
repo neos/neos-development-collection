@@ -106,7 +106,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 					$sites[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
 					$change = array('node' => $node);
 					if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
-						$change['configuration'] = $node->getNodeType()->getConfiguration();
+						$change['configuration'] = $node->getNodeType()->getFullConfiguration();
 					}
 					$sites[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
 				}
