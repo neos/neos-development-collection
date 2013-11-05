@@ -150,6 +150,47 @@ class NodeTypeManagerTest extends UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception
+	 */
+	public function createNodeTypeAlwaysThrowAnException() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypeManager->createNodeType('TYPO3.Neos:ContentObject');
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasNodeTypeReturnTrueIfTheGivenNodeTypeIsFound() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypeManager->hasNodeType('TYPO3.Neos:TextWithImage');
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasNodeTypeReturnTrueIfTheGivenNodeTypeIsNotFound() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypeManager->hasNodeType('TYPO3.Neos:TextFooBarNotHere');
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasNodeTypeReturnFalseForAbstractNodeTypes() {
+		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypeManager->hasNodeType('TYPO3.Neos:ContentObject');
+	}
+
+	/**
+	 * @test
 	 */
 	public function getNodeTypesReturnsRegisteredNodeTypes() {
 		$nodeTypeManager = new NodeTypeManager();
