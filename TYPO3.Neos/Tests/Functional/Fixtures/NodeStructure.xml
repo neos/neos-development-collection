@@ -75,6 +75,25 @@
 					<node nodeName="column2" type="TYPO3.Neos:ContentCollection">
 					</node>
 				</node>
+				<node nodeName="dummy45" type="Acme.Demo:List">
+					<node nodeName="items" type="TYPO3.Neos:ContentCollection">
+						<node nodeName="dummy45a" type="Acme.Demo:ListItem">
+							<properties>
+								<text>First</text>
+							</properties>
+						</node>
+						<node nodeName="dummy45b" type="Acme.Demo:ListItem">
+							<properties>
+								<text>Second</text>
+							</properties>
+						</node>
+						<node nodeName="dummy45c" type="Acme.Demo:ListItem">
+							<properties>
+								<text>Last</text>
+							</properties>
+						</node>
+					</node>
+				</node>
 			</node>
 			<node nodeName="sidebar" type="TYPO3.Neos:ContentCollection">
 				<node nodeName="dummy42a" type="TYPO3.Neos.NodeTypes:Headline">

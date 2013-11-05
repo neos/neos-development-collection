@@ -50,8 +50,8 @@ class RenderingTest extends AbstractNodeTest {
 		$this->assertTeaserConformsToBasicRendering($output);
 		$this->assertMainContentConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.sidebar > .neos-contentcollection  > .typo3-neos-nodetypes-headline > div', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.sidebar > .neos-contentcollection  > .typo3-neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .neos-contentcollection > .typo3-neos-nodetypes-headline > div', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .neos-contentcollection > .typo3-neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
 		$this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', TRUE, $output);
 	}
 
@@ -137,10 +137,19 @@ class RenderingTest extends AbstractNodeTest {
 		$output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.ts2');
 		$this->assertTeaserConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .neos-contentcollection  > .acme-demo-threecolumn > .left > .neos-contentcollection  > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.main > .neos-contentcollection  > .acme-demo-threecolumn > .center > .neos-contentcollection  > .typo3-neos-nodetypes-headline > div > h1', 'Development Process', TRUE, $output);
+		$this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .center > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > h1', 'Development Process', TRUE, $output);
 
 		$this->assertSidebarConformsToBasicRendering($output);
+	}
+
+	/**
+	 * @test
+	 */
+	public function contentCollectionsAndWrappedContentElementsCanBeRenderedWithCustomTagsAndAttributes() {
+		$output = $this->simulateRendering();
+
+		$this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-list > ul.my-list > li.my-list-item > p', 'First', TRUE, $output);
 	}
 
 	/**
@@ -151,8 +160,8 @@ class RenderingTest extends AbstractNodeTest {
 		$this->assertContains('TYPO3 Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
 		$this->assertSelectEquals('h1', 'Home', TRUE, $output);
 
-		$this->assertSelectEquals('.teaser > .neos-contentcollection  > .typo3-neos-nodetypes-headline > div > h1', 'Welcome to this example', TRUE, $output);
-		$this->assertSelectEquals('.teaser > .neos-contentcollection  > .typo3-neos-nodetypes-text > div', 'This is our exemplary rendering test.', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > h1', 'Welcome to this example', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-text > div', 'This is our exemplary rendering test.', TRUE, $output);
 	}
 
 	/**
@@ -194,7 +203,7 @@ class RenderingTest extends AbstractNodeTest {
 	 */
 	public static function assertSelectEquals($selector, $content, $count, $actual, $message = '', $isHtml = TRUE) {
 		if ($message === '') {
-			$message = $selector . ' did not match.';
+			$message = $selector . ' did not match: ' . $actual;
 		}
 		parent::assertSelectEquals($selector, $content, $count, $actual, $message, $isHtml);
 	}

@@ -3,6 +3,8 @@
 prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Collection) {
 	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
 
+	attributes = TYPO3.TypoScript:RawArray
+
 	nodePath = 'to-be-set-by-user'
 
 		# To enable direct rendering of a ContentCollection we check if the current node is a

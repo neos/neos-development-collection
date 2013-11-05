@@ -28,11 +28,11 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	protected $nodePath;
 
 	/**
-	 * additional CSS class names to be applied to the content collection
+	 * Tag name of the tag around the content collection, defaults to "div"
 	 *
 	 * @var string
 	 */
-	protected $className;
+	protected $tagName;
 
 	/**
 	 * @Flow\Inject
@@ -60,22 +60,22 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
-	 * additional CSS class names to be applied to the content collection
-	 *
-	 * @param string $className
-	 * @return void
+	 * @param string $tagName
 	 */
-	public function setClassName($className) {
-		$this->className = $className;
+	public function setTagName($tagName) {
+		$this->tagName = $tagName;
 	}
 
 	/**
-	 * additional CSS class names to be applied to the content collection
-	 *
 	 * @return string
 	 */
-	public function getClassName() {
-		return $this->tsValue('className');
+	public function getTagName() {
+		$tagName = $this->tsValue('tagName');
+		if ((string)$tagName === '') {
+			return 'div';
+		} else {
+			return $tagName;
+		}
 	}
 
 	/**
@@ -90,16 +90,25 @@ class ContentCollectionImplementation extends CollectionImplementation {
 		$node = $currentContext['node'];
 		$output = parent::evaluate();
 
-		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
+		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder($this->getTagName());
 		$tagBuilder->forceClosingTag(TRUE);
 		$tagBuilder->setContent($output);
 
 		$className = 'neos-contentcollection';
-		$additionalClass = $this->tsValue('className');
-		if ($additionalClass) {
-			$className .= ' ' . $additionalClass;
-		}
 		$tagBuilder->addAttribute('class', $className);
+
+		$attributes = $this->tsValue('attributes');
+		if (is_array($attributes)) {
+			foreach ($attributes as $attributeName => $attributeValue) {
+				if (is_array($attributeValue)) {
+					$attributeValue = implode(' ', $attributeValue);
+				}
+				if ($attributeName === 'class') {
+					$attributeValue = $tagBuilder->getAttribute('class') . ' ' . $attributeValue;
+				}
+				$tagBuilder->addAttribute($attributeName, $attributeValue);
+			}
+		}
 
 		if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
 			return $tagBuilder->render();
