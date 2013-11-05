@@ -21,9 +21,12 @@ use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -67,6 +70,24 @@ class NodeConverter extends AbstractTypeConverter {
 	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeFactory
+	 */
+	protected $nodeFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeTypeManager
+	 */
+	protected $nodeTypeManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeService
+	 */
+	protected $nodeService;
 
 	/**
 	 * @var string
@@ -150,7 +171,22 @@ class NodeConverter extends AbstractTypeConverter {
 			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
 		}
 
+		$targetNodeType = NULL;
+		if (isset($source['_nodeType'])) {
+			$source['_nodeType'] = $this->nodeTypeManager->getNodeType($source['_nodeType']);
+			if ($source['_nodeType'] !== $node->getNodeType()) {
+				if ($context->getWorkspace()->getName() === 'live') {
+					throw new NodeException('Could not convert the node type in live workspace');
+				}
+				$targetNodeType = $source['_nodeType'];
+			}
+		}
 		$this->setNodeProperties($node, $node->getNodeType(), $source, $context);
+		if ($targetNodeType !== NULL) {
+			$this->nodeService->setDefaultValues($node, $targetNodeType);
+			$this->nodeService->createChildNodes($node, $targetNodeType);
+		}
+
 		return $node;
 	}
 
