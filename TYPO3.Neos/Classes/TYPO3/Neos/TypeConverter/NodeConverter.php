@@ -58,7 +58,7 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 		);
 		if ($workspaceName !== 'live') {
 			$contextProperties['invisibleContentShown'] = TRUE;
-			if ($configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
+			if ($configuration !== NULL && $configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
 				$contextProperties['removedContentShown'] = TRUE;
 			}
 		}
