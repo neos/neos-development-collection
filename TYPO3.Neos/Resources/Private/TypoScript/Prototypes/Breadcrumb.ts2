@@ -2,5 +2,5 @@
 #
 prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.Neos:Template) {
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
-	items = ${q(node).add(q(node).parents())}
+	items = ${q(node).add(q(node).parents('[instanceof TYPO3.Neos:Document]'))}
 }

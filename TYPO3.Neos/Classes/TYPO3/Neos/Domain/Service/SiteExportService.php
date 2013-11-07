@@ -115,24 +115,29 @@ class SiteExportService {
 	 * @return void
 	 */
 	protected function exportSite(Site $site, ContentContext $contentContext) {
-		$this->xmlWriter->startElement('site');
-
-		// site attributes
-		$this->xmlWriter->writeAttribute('nodeName', $site->getNodeName());
-
-		// site properties
-		$this->xmlWriter->startElement('properties');
-		$this->xmlWriter->writeElement('name', $site->getName());
-		$this->xmlWriter->writeElement('state', $site->getState());
-		$this->xmlWriter->writeElement('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
-		$this->xmlWriter->endElement();
-
 		$contextProperties = $contentContext->getProperties();
 		$contextProperties['currentSite'] = $site;
 		$contentContext = $this->contextFactory->create($contextProperties);
 
-		// on to the nodes...
 		$siteNode = $contentContext->getCurrentSiteNode();
+		$this->xmlWriter->startElement('site');
+
+		$this->exportNodeAttributes($siteNode);
+		$this->exportNodeAccessRoles($siteNode);
+		$siteProperties = array(
+			'name' => $site->getName(),
+			'state' => $site->getState(),
+			'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey()
+		);
+		if ($siteNode->getContentObject() !== NULL) {
+			$this->xmlWriter->startElement('properties');
+			foreach ($siteProperties as $propertyName => $propertyValue) {
+				$this->exportNodeProperty($siteNode, $propertyName, $propertyValue);
+			}
+			$this->xmlWriter->endElement();
+		} else {
+			$this->exportNodeProperties($siteNode, $siteProperties);
+		}
 
 		foreach ($siteNode->getChildNodes() as $childNode) {
 			$this->exportNode($childNode);

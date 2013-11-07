@@ -117,19 +117,25 @@ define(
 					return;
 				}
 
+				var siteRoot = pageMetaInformation.data('__siteroot'),
+					siteName = pageMetaInformation.data('__sitename'),
+					nodeType = pageMetaInformation.attr('typeof').substr(6),
+					workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					parent: this,
 					children: [
 						{
-							title: pageMetaInformation.data('__sitename'),
+							title: siteName,
+							tooltip: siteName + ' (' + nodeType + ')',
+							href: '@' + workspaceName,
 							key: this.get('siteRootNodePath'),
 							isFolder: true,
 							expand: false,
 							isLazy: true,
 							select: false,
 							active: false,
-							unselectable: true,
-							nodeType: 'unstructured',
+							unselectable: false,
+							nodeType: nodeType,
 							addClass: 'neos-matched',
 							iconClass: 'icon-globe'
 						}
@@ -142,7 +148,7 @@ define(
 						// only if the node title was clicked
 						// and it was not active at this time
 						// it should be navigated to the target node
-						if (node.data.key !== this.options.parent.get('siteRootNodePath') && (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === null)) {
+						if (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === null) {
 							var that = this;
 							setTimeout(function() {
 								if (!that.isDblClick) {
@@ -189,26 +195,23 @@ define(
 					pageTreeNode.select();
 				}
 
-				var that = this;
-				ContentModule.on('pageLoaded', function() {
-					var pageNode = that.getPageTreeNode();
-					if (pageNode) {
-						pageNode.activate();
-						pageNode.select();
-						that.scrollToCurrentNode();
-						// for in-page reloads we need to re-monitor the current page
-						that._initializePropertyObservers($('#neos-page-metainformation'));
-					}
-				});
-
 				// Handles click events when a page title is in edit mode so clicks on other pages leads not to reloads
+				var that = this;
 				this.$nodeTree.click(function() {
-					if (that.get('editNodeTitleMode') === true) {
-						return false;
-					}
-					return true;
+					return that.get('editNodeTitleMode') !== true;
 				});
 			},
+
+			_onPageNodePathChanged: function() {
+				var pageNode = this.getPageTreeNode();
+				if (pageNode) {
+					pageNode.activate();
+					pageNode.select();
+					this.scrollToCurrentNode();
+					// for in-page reloads we need to re-monitor the current page
+					this._initializePropertyObservers($('#neos-page-metainformation'));
+				}
+			}.observes('pageNodePath'),
 
 			getPageTreeNode: function() {
 				if (this.$nodeTree && this.$nodeTree.children().length > 0) {

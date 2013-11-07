@@ -65,6 +65,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			}
 			return FALSE;
 		}
+		if ($this->onlyMatchSiteNodes() && $node !== $node->getContext()->getCurrentSiteNode()) {
+			return FALSE;
+		}
 
 		$this->value = $node->getContextPath();
 		return TRUE;
@@ -131,12 +134,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		}
 
 		$nodeContextPath = $node->getContextPath();
-		$siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
-		if (substr($nodeContextPath, 0, strlen($siteNodePath)) !== $siteNodePath) {
+		$siteNode = $contentContext->getCurrentSiteNode();
+		$siteNodePath = $siteNode->getPath();
+		if ($this->onlyMatchSiteNodes() && $node !== $siteNode) {
 			return FALSE;
 		}
 
-		$this->value = substr($nodeContextPath, strlen($siteNodePath) + 1);
+		if ($nodeContextPath === $siteNodePath) {
+			$this->value = '';
+		} else {
+			$this->value = ltrim(substr($nodeContextPath, strlen($siteNodePath)), '/');
+		}
 		return TRUE;
 	}
 
@@ -169,7 +177,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s"', $nodeContextPath), 1346949728);
 		}
 
-		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
+		$node = ($relativeNodePath === '') ? $siteNode : $siteNode->getNode($relativeNodePath);
 		if (!$node instanceof NodeInterface) {
 			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $nodeContextPath), 1346949857);
 		}
@@ -230,4 +238,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		return NULL;
 	}
 
+	/**
+	 * Whether the current route part should only match/resolve site nodes (e.g. the homepage)
+	 *
+	 * @return boolean
+	 */
+	protected function onlyMatchSiteNodes() {
+		return isset($this->options['onlyMatchSiteNodes']) && $this->options['onlyMatchSiteNodes'] === TRUE;
+	}
 }

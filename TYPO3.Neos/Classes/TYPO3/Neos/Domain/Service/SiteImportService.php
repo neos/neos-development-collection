@@ -167,16 +167,7 @@ class SiteImportService {
 			if ($rootNode->getNode('/sites') === NULL) {
 				$rootNode->createSingleNode('sites');
 			}
-
-			$siteNode = $rootNode->getNode('/sites/' . $site->getNodeName());
-			if ($siteNode === NULL) {
-				$siteNode = $rootNode->getNode('/sites')->createSingleNode($site->getNodeName());
-			}
-			$siteNode->setContentObject($site);
-
-			foreach ($siteXml->node as $childNodeXml) {
-				$this->importNode($childNodeXml, $siteNode);
-			}
+			$this->importNode($siteXml, $rootNode->getNode('/sites'), 'TYPO3.Neos:Shortcut');
 		}
 	}
 
@@ -231,11 +222,12 @@ class SiteImportService {
 	 *
 	 * @param \SimpleXMLElement $nodeXml
 	 * @param NodeInterface $parentNode
+	 * @param string $defaultNodeTypeName the node type to use when no type is specified in the $nodeXml
 	 * @return void
 	 */
-	protected function importNode(\SimpleXMLElement $nodeXml, NodeInterface $parentNode) {
+	protected function importNode(\SimpleXMLElement $nodeXml, NodeInterface $parentNode, $defaultNodeTypeName = NULL) {
 		$nodeName = (string)$nodeXml['nodeName'];
-		$nodeType = $this->parseNodeType($nodeXml);
+		$nodeType = $this->parseNodeType($nodeXml, $defaultNodeTypeName);
 		$node = $parentNode->getNode($nodeName);
 
 		if ($node === NULL) {
@@ -260,10 +252,14 @@ class SiteImportService {
 	 * Detects and retrieves the NodeType of the given $nodeXml
 	 *
 	 * @param \SimpleXMLElement $nodeXml
+	 * @param string $defaultNodeTypeName the node type to use when no type is specified in the $nodeXml
 	 * @return NodeType
 	 */
-	protected function parseNodeType(\SimpleXMLElement $nodeXml) {
+	protected function parseNodeType(\SimpleXMLElement $nodeXml, $defaultNodeTypeName) {
 		$nodeTypeName = (string)$nodeXml['type'];
+		if ($nodeTypeName === '') {
+			$nodeTypeName = $defaultNodeTypeName;
+		}
 		if ($this->nodeTypeManager->hasNodeType($nodeTypeName)) {
 			return $this->nodeTypeManager->getNodeType($nodeTypeName);
 		}

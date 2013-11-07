@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -70,6 +71,8 @@ class ContentElementWrappingService {
 	 */
 	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE) {
 		$nodeType = $node->getNodeType();
+		/** @var $contentContext ContentContext */
+		$contentContext = $node->getContext();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->forceClosingTag(TRUE);
@@ -100,12 +103,16 @@ class ContentElementWrappingService {
 		$this->addDataAttribute($tagBuilder, '_typoscriptPath', $typoscriptPath);
 		$hasInlineEditableProperties = FALSE;
 		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
-			if ($propertyName[0] === '_' && $propertyName[1] === '_') {
+			if (substr($propertyName, 0, 2) === '__') {
 				// skip fully-private properties
 				continue;
 			}
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
-			if ($propertyName[0] === '_') {
+			if ($propertyName === '_name' && $node === $contentContext->getCurrentSiteNode()) {
+				// skip the node name of the site node
+				continue;
+			}
+			if (substr($propertyName, 0, 1) === '_') {
 				$propertyValue = ObjectAccess::getProperty($node, substr($propertyName, 1));
 			} else {
 				$propertyValue = $node->getProperty($propertyName);
@@ -181,11 +188,11 @@ class ContentElementWrappingService {
 			$this->addDataAttribute($tagBuilder, '__nodetype', $nodeType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 'neos-page-metainformation');
-			$tagBuilder->addAttribute('data-__sitename', $node->getContext()->getCurrentSite()->getName());
+			$tagBuilder->addAttribute('data-__sitename', $contentContext->getCurrentSite()->getName());
 			$tagBuilder->addAttribute('data-__siteroot', sprintf(
 				'/sites/%s@%s',
-				$node->getContext()->getCurrentSite()->getNodeName(),
-				$node->getContext()->getWorkspace()->getName()
+				$contentContext->getCurrentSite()->getNodeName(),
+				$contentContext->getWorkspace()->getName()
 			));
 		}
 

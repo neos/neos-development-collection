@@ -44,22 +44,21 @@ define(
 		unmodifiableLevels: 2,
 
 		init: function() {
+			this._super();
 			this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: 'TYPO3.Neos:Content'}).create());
-			var that = this;
-			ContentModule.on('pageLoaded', function() {
-				var pageMetaInformation = $('#neos-page-metainformation'),
-					pageNodePath = pageMetaInformation.attr('about'),
-					page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(pageMetaInformation)),
-					namespace = Configuration.get('TYPO3_NAMESPACE'),
-					pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : pageNodePath,
-					siteNode = that.$nodeTree.dynatree('getRoot').getChildren()[0];
-				siteNode.fromDict({key: pageNodePath, title: pageTitle});
-				that.refresh();
-			});
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
 			});
 		},
+
+		_onPageNodePathChanged: function() {
+			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-page-metainformation'))),
+				namespace = Configuration.get('TYPO3_NAMESPACE'),
+				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.get('pageNodePath'),
+				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
+			siteNode.fromDict({key: this.get('pageNodePath'), title: pageTitle});
+			this.refresh();
+		}.observes('pageNodePath'),
 
 		pasteIsActive: function() {
 			if (this.get('activeNode') && this.get('activeNode').data.nodeType === 'TYPO3.Neos:Page') {

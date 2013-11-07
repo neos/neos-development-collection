@@ -59,7 +59,7 @@ class ParentsOperation extends AbstractOperation {
 		$outputNodePaths = array();
 		foreach ($flowQuery->getContext() as $contextNode) {
 			$siteNode = $contextNode->getContext()->getCurrentSiteNode();
-			while ($contextNode->getParent() !== $siteNode && $contextNode->getParent() !== NULL) {
+			while ($contextNode !== $siteNode && $contextNode->getParent() !== NULL) {
 				$contextNode = $contextNode->getParent();
 				if (!isset($outputNodePaths[$contextNode->getPath()])) {
 					$output[] = $contextNode;

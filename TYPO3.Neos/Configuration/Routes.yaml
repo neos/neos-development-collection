@@ -151,6 +151,21 @@
 # Frontend
 
 -
+  name:          'Homepage'
+  uriPattern:    '{node}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Frontend\Node'
+    '@format':     'html'
+    '@action':     'show'
+  routeParts:
+    node:
+      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+      options:
+        onlyMatchSiteNodes: true
+  appendExceedingArguments: true
+
+-
   name:          'Frontend content with format and type'
   uriPattern:    '{node}.html/{type}'
   defaults:
@@ -184,20 +199,6 @@
   routeParts:
     node:
       handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-
--
-  name:          'Frontend content without a specified format'
-  uriPattern:    '{node}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Frontend\Node'
-    '@format':     'html'
-    '@action':     'show'
-  routeParts:
-    node:
-      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-  appendExceedingArguments: true
-
 
 # This route is just a dummy, it should always be last as it should never be used to actually match a incoming request.
 -
