@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Frontend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Controller for displaying nodes in the frontend
@@ -97,7 +98,10 @@ class NodeController extends ActionController {
 				while ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
 					switch ($node->getProperty('targetMode')) {
 						case 'selectedNode':
-							$node = $node->getNode($node->getProperty('targetNode'));
+							$node = $node->getProperty('targetNode');
+							if (!$node instanceof NodeInterface) {
+								$this->throwStatus(404);
+							}
 						break;
 						case 'parentNode':
 							$node = $node->getParent();
@@ -105,7 +109,11 @@ class NodeController extends ActionController {
 						case 'firstChildNode':
 						default:
 							$childNodes = $node->getChildNodes('TYPO3.Neos:Document');
-							$node = current($childNodes);
+							if ($childNodes !== array()) {
+								$node = current($childNodes);
+							} else {
+								$this->throwStatus(404);
+							}
 					}
 				}
 				$this->redirect('show', NULL, NULL, array('node' => $node));

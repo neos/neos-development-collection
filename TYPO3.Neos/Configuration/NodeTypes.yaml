@@ -157,23 +157,23 @@
   properties:
     targetMode:
       type: string
+      defaultValue: 'firstChildNode'
       ui:
         label: 'Target mode'
-        defaultValue: 'firstChildNode'
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
           editor: Content/Inspector/Editors/SelectBoxEditor
           editorOptions:
             values:
-              selectedNode:
-                label: 'Selected node'
               firstChildNode:
                 label: 'First child node'
               parentNode:
                 label: 'Parent node'
+              selectedNode:
+                label: 'Selected node'
     targetNode:
-      type: string
+      type: reference
       ui:
         label: 'Target node'
         inspector:
