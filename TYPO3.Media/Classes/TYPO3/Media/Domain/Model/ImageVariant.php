@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 
 /**
  * An image variant that has a relation to the original image
@@ -20,6 +21,12 @@ use TYPO3\Flow\Annotations as Flow;
  * Note: This is neither an entity nor a value object, ImageVariants won't be persisted on their own.
  */
 class ImageVariant implements ImageInterface {
+
+	/**
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 */
+	protected $persistenceManager;
 
 	/**
 	 * @var \TYPO3\Media\Domain\Service\ImageService
@@ -250,6 +257,17 @@ class ImageVariant implements ImageInterface {
 	 */
 	public function __sleep() {
 		return array('originalImage', 'processingInstructions', 'alias');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function __wakeup() {
+		if ($this->originalImage->getResource() === NULL) {
+			// hack for working around a bug that is caused by serialization under some (unknown) circumstances
+			$this->originalImage = $this->persistenceManager->getObjectByIdentifier(\TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->originalImage, 'Persistence_Object_Identifier', TRUE), 'TYPO3\Media\Domain\Model\Image');
+		}
+		$this->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED);
 	}
 
 	/**
