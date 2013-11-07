@@ -1,22 +1,12 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-{namespace ext=TYPO3\ExtJS\ViewHelpers}
-
 <f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 	<f:if condition="{node.context.workspace.name} != 'live'">
-		<link rel="neos-site" href="{f:uri.action(action: 'show', controller: 'Frontend\Node', package: 'TYPO3.Neos', format:'html', arguments: '{node: node.context.currentSiteNode}', absolute: true)}" />
-		<link type="application/vnd.typo3.neos.nodes" data-current-workspace="{node.context.workspace.name}" href="{f:uri.action(action: 'index', controller: 'Service\Node', package: 'TYPO3.Neos', format:'html', absolute: true)}" />
-
 		<script type="text/javascript">
 					// TODO Get rid of those global variables
-				var ExtDirectInitialization = function() {
-					<ext:extDirect.provider />;
-				};
 				{neos:backend.javascriptConfiguration()}
 				var Aloha,
 					alohaBaseUrl = '{f:uri.resource(path: 'Library/aloha', package: 'TYPO3.Neos')}';
 		</script>
-
-		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
 
 		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 			<f:then>

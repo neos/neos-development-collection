@@ -7,7 +7,7 @@
   uriPattern: 'nodes'
   defaults:
     '@controller': 'Service\Node'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
   httpMethods: ['GET']
 
 -
@@ -16,5 +16,222 @@
   defaults:
     '@controller': 'Service\Node'
     '@action':     'show'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
   httpMethods: ['GET']
+
+# UserPreferencesController routes
+-
+  name: 'Services - UserPreferencesController->index'
+  uriPattern: 'user-preferences'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'UserPreference'
+    '@action':     'index'
+    '@format':     'html'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - UserPreferencesController->update'
+  uriPattern: 'user-preferences'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'UserPreference'
+    '@action':     'update'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+
+# WorkspaceController routes
+-
+  name: 'Services - WorkspaceController->getWorkspaceWideUnpublishedNodes'
+  uriPattern: 'workspaces/get-workspace-wide-unpublished-nodes'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'getWorkspaceWideUnpublishedNodes'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Services - WorkspaceController->publishNode'
+  uriPattern: 'workspaces/publish-node'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'publishNode'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->discardNode'
+  uriPattern: 'workspaces/discard-node'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'discardNode'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->publishAll'
+  uriPattern: 'workspaces/publish-all'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'publishAll'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->discardAll'
+  uriPattern: 'workspaces/discard-all'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'discardAll'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+# NodeController routes
+-
+  name: 'Services - NodeController->getChildNodesForTree'
+  uriPattern: 'node/get-child-nodes-for-tree'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'getChildNodesForTree'
+    '@format':     'html'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->filterChildNodesForTree'
+  uriPattern: 'node/filter-child-nodes-for-tree'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'filterChildNodesForTree'
+    '@format':     'html'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->searchPage'
+  uriPattern: 'node/search-page'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'searchPage'
+    '@format':     'html'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->getPageByNodePath'
+  uriPattern: 'node/get-page-by-node-path'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'getPageByNodePath'
+    '@format':     'html'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->create'
+  uriPattern: 'node/create'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'create'
+    '@format':     'html'
+  httpMethods: ['POST']
+
+-
+  name: 'Services - NodeController->createAndRender'
+  uriPattern: 'node/create-and-render'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'createAndRender'
+    '@format':     'html'
+  httpMethods: ['POST']
+
+-
+  name: 'Services - NodeController->createNodeForTheTree'
+  uriPattern: 'node/create-node-for-the-tree'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'createNodeForTheTree'
+    '@format':     'html'
+  httpMethods: ['POST']
+
+-
+  name: 'Services - NodeController->discardNode'
+  uriPattern: 'node/discard-node'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'discardNode'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->move'
+  uriPattern: 'node/move'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'move'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->copy'
+  uriPattern: 'node/copy'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'copy'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->update'
+  uriPattern: 'node/update'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'update'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->delete'
+  uriPattern: 'node/delete'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'delete'
+    '@format':     'html'
+  # TODO: make DELETE method with the full REST implementation
+  # For now we can not use DELETE and also pass arguments using the request body,
+  # and client side we don\t have a UrlTemplates implementation yet
+  httpMethods: ['POST']

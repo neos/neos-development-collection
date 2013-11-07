@@ -4,14 +4,14 @@
 define(
 [
 	'emberjs',
-	'Library/jquery-with-dependencies',
-	'./SessionStorage'
+	'./SessionStorage',
+	'Shared/HttpClient'
 ],
-function(Ember, $, SessionStorage) {
+function(Ember, SessionStorage, HttpClient) {
 	/**
 	 * @singleton
 	 */
-	return Ember.Object.extend({
+	return Ember.Object.create({
 		resourceRequests: {},
 
 		/**
@@ -24,20 +24,18 @@ function(Ember, $, SessionStorage) {
 				return;
 			}
 
-			var xhr,
-				data = SessionStorage.getItem(resourceUri);
-			resourceRequests[resourceUri] = new $.Deferred();
+			var data = SessionStorage.getItem(resourceUri);
+			resourceRequests[resourceUri] = Ember.Deferred.create();
 			if (data === null) {
-				xhr = $.ajax(resourceUri, {
-					dataType: 'json',
-					success: function(data) {
+				HttpClient.getResource(resourceUri, {dataType: 'json'}).then(
+					function(data) {
 						SessionStorage.setItem(resourceUri, data);
 						resourceRequests[resourceUri].resolve(data);
 					},
-					error: function(xhr, status, error) {
-						resourceRequests[resourceUri].reject(xhr, status, error);
+					function() {
+						resourceRequests[resourceUri].reject(arguments);
 					}
-				});
+				);
 			} else {
 				resourceRequests[resourceUri].resolve(data);
 			}
@@ -54,5 +52,5 @@ function(Ember, $, SessionStorage) {
 			}
 			return resourceRequests[resourceUri];
 		}
-	}).create();
+	});
 });

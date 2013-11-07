@@ -1,9 +1,10 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'emberjs'
+	'emberjs',
+	'Shared/HttpClient'
 ],
-function($, Ember) {
+function($, Ember, HttpClient) {
 	var SelectboxOption = Ember.View.extend({
 		tagName: 'option',
 		attributeBindings: ['value', 'selected', 'disabled'],
@@ -68,11 +69,7 @@ function($, Ember) {
 		}.observes('placeholder', 'values.@each'),
 
 		_loadValuesFromController: function(uri, callback) {
-			$.getJSON(uri, function(results) {
-				Ember.run(function() {
-					callback(results);
-				});
-			});
+			HttpClient.getResource(uri, {dataType: 'json'}).then(callback);
 		},
 
 		didInsertElement: function() {

@@ -16,7 +16,8 @@ define(
 		'../Model/PublishableNodes',
 		'./NavigatePanelController',
 		'../Inspector/InspectorController',
-		'text!./NodeTree.html'
+		'text!./NodeTree.html',
+		'Shared/Endpoint/NodeEndpoint'
 	], function(
 		Ember,
 		$,
@@ -31,7 +32,8 @@ define(
 		PublishableNodes,
 		NavigatePanelController,
 		InspectorController,
-		template
+		template,
+		NodeEndpoint
 	) {
 		var pageMetaInformation = $('#neos-page-metainformation');
 
@@ -111,14 +113,17 @@ define(
 				var that = this,
 					$neosNodeTypeSelect = that.$().find('#neos-node-tree-filter select');
 				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
-				$.when(ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType)).done(function(data) {
-					$.each(data, function(key) {
-						$neosNodeTypeSelect.append('<option value="' + key + '">' + this.ui.label + '</option>');
-					});
-					$neosNodeTypeSelect.trigger('chosen:updated.chosen');
-				}).fail(function(xhr, status, error) {
-					console.error('Error loading node types.', xhr, status, error);
-				});
+				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType).then(
+					function(data) {
+						$.each(data, function(key) {
+							$neosNodeTypeSelect.append('<option value="' + key + '">' + this.ui.label + '</option>');
+						});
+						$neosNodeTypeSelect.trigger('chosen:updated.chosen');
+					},
+					function(error) {
+						console.error('Error loading node types.', error);
+					}
+				);
 
 				// Type filter
 				$neosNodeTypeSelect.change(function() {
@@ -321,11 +326,12 @@ define(
 					} else {
 						title = newTitle;
 						node.setLazyNodeStatus(that.statusCodes.loading);
-						TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.update(
+						NodeEndpoint.update(
 							{
 								__contextNodePath: node.data.key,
 								title: title
-							},
+							}
+						).then(
 							function(result) {
 								if (result !== null && result.success === true) {
 									var selectedNode = NodeSelection.get('selectedNode'),
@@ -440,21 +446,22 @@ define(
 
 				if (this.get('searchTerm') === '' && this.get('nodeType') === '') {
 					this.set('filtering', false);
-					node._currentlySendingExtDirectAjaxRequest = false;
+					node._currentlySendingServerRequest = false;
 					this.loadNode(node, this.get('loadingDepth'));
 				} else {
 					var filterQuery = Ember.generateGuid();
 					that.set('latestFilterQuery', filterQuery);
 					this.set('filtering', true);
-					node._currentlySendingExtDirectAjaxRequest = true;
-					TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.filterChildNodesForTree(
+					node._currentlySendingServerRequest = true;
+					NodeEndpoint.filterChildNodesForTree(
 						this.get('siteRootNodePath'),
 						this.get('searchTerm'),
-						this.get('nodeType'),
+						this.get('nodeType')
+					).then(
 						function(result) {
 							if (that.get('latestFilterQuery') === filterQuery) {
 								node.removeChildren();
-								node._currentlySendingExtDirectAjaxRequest = false;
+								node._currentlySendingServerRequest = false;
 								if (result !== null && result.success === true) {
 									node.setLazyNodeStatus(that.statusCodes.ok);
 									node.addChild(result.data);

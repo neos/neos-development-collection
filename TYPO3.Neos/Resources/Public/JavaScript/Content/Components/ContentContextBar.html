@@ -4,8 +4,8 @@
 
 <div class="neos-right">
 	{{view view.SaveIndicator
-		saveRunningBinding="T3.Content.Controller.ServerConnection._saveRunning"
-		lastSuccessfulTransferBinding="T3.Content.Controller.ServerConnection._lastSuccessfulTransfer"
+		saveRunningBinding="view._nodeEndpoint._saveRunning"
+		lastSuccessfulTransferBinding="view._nodeEndpoint._lastSuccessfulTransfer"
 		classNames="neos-context-bar-save-indicator"
 	}}
 

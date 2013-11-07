@@ -1,9 +1,10 @@
 define(
 	[
 		'Library/jquery-with-dependencies',
-		'emberjs'
+		'emberjs',
+		'Shared/HttpClient'
 	],
-	function($, Ember) {
+	function($, Ember, HttpClient) {
 		return Ember.View.extend({
 
 			tagName: 'input',
@@ -22,7 +23,7 @@ define(
 
 			didInsertElement: function() {
 				var that = this;
-				var nodesEndpoint = $('link[type="application/vnd.typo3.neos.nodes"]').attr('href');
+				var nodesEndpoint = $('link[rel="neos-nodes"]').attr('href');
 
 				var currentQueryTimer = null;
 				this.$().select2({
@@ -71,7 +72,7 @@ define(
 				var that = this;
 
 				if (value) {
-					var nodesEndpoint = $('link[type="application/vnd.typo3.neos.nodes"]').attr('href');
+					var nodesEndpoint = $('link[rel="neos-nodes"]').attr('href');
 
 					// Remove all items so they don't appear multiple times.
 					// TODO: cache already found items and load multiple node records at once
@@ -86,10 +87,12 @@ define(
 
 						that.get('content').pushObject(item);
 
-						$.ajax(nodesEndpoint + '/' + nodeIdentifier).done(function(response) {
-							item.set('text', $(response).filter('div').text());
-							that._updateSelect2();
-						});
+						HttpClient.getResource(nodesEndpoint + '/' + nodeIdentifier).then(
+							function(response) {
+								item.set('text', $(response).filter('div').text());
+								that._updateSelect2();
+							}
+						);
 					});
 					that._updateSelect2();
 				}

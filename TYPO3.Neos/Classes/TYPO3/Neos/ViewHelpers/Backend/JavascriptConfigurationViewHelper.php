@@ -61,35 +61,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	 * @return string
 	 */
 	public function render() {
-		$configurationCacheIdentifier = $this->cacheManager->getConfigurationCacheVersion();
-
-		$vieSchemaUri = $this->controllerContext->getUriBuilder()
-			->reset()
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('vieSchema', array('version' => $configurationCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
-
-		$nodeTypeSchemaUri = $this->controllerContext->getUriBuilder()
-			->reset()
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('nodeTypeSchema', array('version' => $configurationCacheIdentifier), 'Backend\Schema', 'TYPO3.Neos');
-
-		$menuDataUri = $this->controllerContext->getUriBuilder()
-			->reset()
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('index', array('version' => $configurationCacheIdentifier), 'Backend\Menu', 'TYPO3.Neos');
-
-		$editPreviewDataUri = $this->controllerContext->getUriBuilder()
-			->reset()
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('editPreview', array('version' => $configurationCacheIdentifier), 'Backend\Settings', 'TYPO3.Neos');
-
 		$configuration = array(
 			'window.T3Configuration = {};',
-			'window.T3Configuration.CsrfToken = ' . json_encode($this->securityContext->getCsrfProtectionToken()) . ';',
-			'window.T3Configuration.NodeTypeSchemaUri = ' . json_encode($nodeTypeSchemaUri) . ';',
-			'window.T3Configuration.VieSchemaUri = ' . json_encode($vieSchemaUri) . ';',
-			'window.T3Configuration.MenuDataUri = ' . json_encode($menuDataUri) . ';',
-			'window.T3Configuration.EditPreviewDataUri = ' . json_encode($editPreviewDataUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.nodeTypes = {};',
 			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',

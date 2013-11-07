@@ -2,10 +2,9 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Shared/ResourceCache',
 	'text!./DeleteNodeDialog.html'
 ],
-function(Ember, $, ResourceCache, template) {
+function(Ember, $, template) {
 	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
 		classNames: ['neos-overlay-component'],

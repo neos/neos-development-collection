@@ -9,9 +9,10 @@ define(
 	'Library/spinjs/spin',
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Notification',
-	'Shared/Utility'
+	'Shared/Utility',
+	'Shared/HttpClient'
 ],
-function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification, Utility) {
+function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -96,11 +97,16 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		// Contains the handler for the AJAX request loading the preview image
 		_loadPreviewImageHandler: null,
 
+		// The url of the image service endpoint used for fetching image metadata
+		_imageServiceEndpointUri: null,
+
 		loadingindicator: null,
 
 		init: function() {
 			var that = this;
 			this._super();
+
+			this.set('_imageServiceEndpointUri', $('link[rel="neos-images"]').attr('href'));
 
 			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
 
@@ -252,10 +258,14 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 					that.set('_uploadPreviewShown', false);
-					that.set('_loadPreviewImageHandler', $.getJSON('/neos/content/imageWithMetadata/' + assetIdentifier, function(result) {
+					that.set('_loadPreviewImageHandler', HttpClient.getResource(
+						that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
+						{dataType: 'json'}
+					));
+					that.get('_loadPreviewImageHandler').then(function(result) {
 						that.fileUploaded(result);
 						that._hideImageLoader();
-					}));
+					});
 					that.set('mediaBrowserShown', false);
 				}
 			};
@@ -541,7 +551,11 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 				this.set('_uploadPreviewShown', false);
-				that.set('_loadPreviewImageHandler', $.getJSON('/neos/content/imageWithMetadata/' + imageVariant.originalImage, function(metadata) {
+				that.set('_loadPreviewImageHandler', HttpClient.getResource(
+					$('link[rel="neos-images"]').attr('href') + '?image=' + imageVariant.originalImage,
+					{dataType: 'json'}
+				));
+				that.get('_loadPreviewImageHandler').then(function(metadata) {
 					that._hideImageLoader();
 					that.beginPropertyChanges();
 					that._setPreviewImage(metadata);
@@ -570,7 +584,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 					that.endPropertyChanges();
 					that.set('_imageFullyLoaded', true);
-				}));
+				});
 			}
 		},
 

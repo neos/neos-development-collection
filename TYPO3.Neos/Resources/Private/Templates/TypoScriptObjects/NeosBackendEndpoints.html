@@ -1,0 +1,44 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+		<meta name="neos-workspace" content="{node.context.workspace.name}" />
+		<meta name="neos-csrf-token" content="{f:security.csrfToken()}" />
+
+		<link rel="neos-site" href="{f:uri.action(action: 'show', controller: 'Frontend\Node', package: 'TYPO3.Neos', format:'html', arguments: '{node: node.context.currentSiteNode}', absolute: true)}" />
+		<link type="application/vnd.typo3.neos.nodes" data-current-workspace="{node.context.workspace.name}" href="{f:uri.action(action: 'index', controller: 'Service\Node', package: 'TYPO3.Neos', format:'html', absolute: true)}" />
+
+		<f:alias map="{configurationCacheIdentifier: '{neos:backend.configurationCacheVersion()}'}">
+			<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+			<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+			<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+			<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+			<link rel="neos-dimensionpresetsdata" href="{f:uri.action(action: 'dimensionPresets', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: '{version: configurationCacheIdentifier}')}" />
+		</f:alias>
+
+		<!-- Temporary URL endpoints, will be removed / grouped when a REST interface is fully implemented -->
+		<link rel="neos-service-workspace-publishNode" href="{f:uri.action(action: 'publishNode', controller: 'Workspace', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-workspace-publishAll" href="{f:uri.action(action: 'publishAll', controller: 'Workspace', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-workspace-discardNode" href="{f:uri.action(action: 'discardNode', controller: 'Workspace', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-workspace-discardAll" href="{f:uri.action(action: 'discardAll', controller: 'Workspace', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-workspace-getWorkspaceWideUnpublishedNodes" href="{f:uri.action(action: 'getWorkspaceWideUnpublishedNodes', controller: 'Workspace', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-getChildNodesForTree" href="{f:uri.action(action: 'getChildNodesForTree', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-createNodeForTheTree" href="{f:uri.action(action: 'createNodeForTheTree', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-filterChildNodesForTree" href="{f:uri.action(action: 'filterChildNodesForTree', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-create" href="{f:uri.action(action: 'create', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-createAndRender" href="{f:uri.action(action: 'createAndRender', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-move" href="{f:uri.action(action: 'move', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-copy" href="{f:uri.action(action: 'copy', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-update" href="{f:uri.action(action: 'update', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-delete" href="{f:uri.action(action: 'delete', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-searchPage" href="{f:uri.action(action: 'searchPage', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-service-node-getPageByNodePath" href="{f:uri.action(action: 'getPageByNodePath', controller: 'Node', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-images" href="{f:uri.action(action: 'imageWithMetadata', controller: 'Backend\Content', package: 'TYPO3.Neos', absolute: true)}" />
+		<link rel="neos-images-upload" href="{f:uri.action(action: 'uploadImage', controller: 'Backend\Content', package: 'TYPO3.Neos', absolute: true)}" />
+		<link rel="neos-pluginviews" href="{f:uri.action(action: 'pluginViews', controller: 'Backend\Content', package: 'TYPO3.Neos', absolute: true)}" />
+		<link rel="neos-masterplugins" href="{f:uri.action(action: 'masterPlugins', controller: 'Backend\Content', package: 'TYPO3.Neos', absolute: true)}" />
+		<link rel="neos-user-preferences" href="{f:uri.action(action: 'index', controller: 'UserPreference', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<!-- /Temporary URL endpoints -->
+
+		<link rel="neos-nodes" href="{f:uri.action(action: 'index', controller: 'Service\Node', package: 'TYPO3.Neos', absolute: true)}" />
+	</f:if>
+</f:security.ifAccess>

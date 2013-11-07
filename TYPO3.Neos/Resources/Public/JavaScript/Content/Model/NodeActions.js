@@ -15,7 +15,8 @@ define(
 	'Shared/Notification',
 	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection',
-	'vie/instance'
+	'vie/instance',
+	'Shared/Endpoint/NodeEndpoint'
 ], function(
 	Ember,
 	$,
@@ -23,7 +24,8 @@ define(
 	Notification,
 	EventDispatcher,
 	NodeSelection,
-	vieInstance
+	vieInstance,
+	NodeEndpoint
 ) {
 	return Ember.Object.extend({
 		// TODO: Move this to a separate controller
@@ -103,12 +105,13 @@ define(
 			}
 
 			var action = clipboard.type === 'cut' ? 'move' : 'copy';
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController[action].call(
+			NodeEndpoint[action].call(
 				that,
 				clipboard.nodePath,
 				nodePath,
 				position,
-				'',
+				''
+			).then(
 				function (result) {
 					if (result.success) {
 						that.set('_clipboard', null);
@@ -169,15 +172,17 @@ define(
 				$closestCollection = $entityElement.closest('[rel="typo3:content-collection"]'),
 				closestCollectionEntity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject($closestCollection));
 			var typoScriptPath = position === 'into' ? referenceEntity.get('typo3:_typoscriptPath') : closestCollectionEntity.get('typo3:_typoscriptPath');
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
+			NodeEndpoint.createAndRender(
 				nodePath,
 				typoScriptPath,
 				{
 					nodeType: nodeType,
 					properties: {}
 				},
-				position,
+				position
+			).then(
 				function(result) {
+					result = JSON.parse(result);
 					var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
 					callBack(result.nodePath, template);
 
