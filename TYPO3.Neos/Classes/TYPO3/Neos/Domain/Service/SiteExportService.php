@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * The Site Export Service
@@ -115,26 +116,56 @@ class SiteExportService {
 		}
 
 			// node properties
+		$nodeType = $node->getNodeType();
 		$properties = $node->getProperties();
 		if (count($properties) > 0) {
 			$xmlWriter->startElement('properties');
 			foreach ($properties as $propertyName => $propertyValue) {
-				if (is_object($propertyValue)) {
-					$xmlWriter->startElement($propertyName);
-					$xmlWriter->writeAttribute('__type', 'object');
-					$xmlWriter->writeAttribute('__classname', get_class($propertyValue));
-					$this->objectToXml($propertyValue, $xmlWriter);
-					$xmlWriter->endElement();
-				} elseif (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
-					$xmlWriter->startElement($propertyName);
-					if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
-						$xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
-					} else {
-						$xmlWriter->writeCdata($propertyValue);
-					}
-					$xmlWriter->endElement();
-				} else {
-					$xmlWriter->writeElement($propertyName, $propertyValue);
+				$propertyType = $nodeType->getPropertyType($propertyName);
+				switch ($propertyType) {
+					case 'reference':
+						$xmlWriter->startElement($propertyName);
+						$xmlWriter->writeAttribute('__type', 'reference');
+						if ($propertyValue instanceof NodeInterface) {
+							$xmlWriter->startElement('node');
+							$xmlWriter->writeAttribute('identifier', $propertyValue->getIdentifier());
+							$xmlWriter->endElement();
+						}
+						$xmlWriter->endElement();
+					break;
+					case 'references':
+						$xmlWriter->startElement($propertyName);
+						$xmlWriter->writeAttribute('__type', 'references');
+						if (is_array($propertyValue)) {
+							foreach ($propertyValue as $referencedTargetNode) {
+								if ($referencedTargetNode instanceof NodeInterface) {
+									$xmlWriter->startElement('node');
+									$xmlWriter->writeAttribute('identifier', $referencedTargetNode->getIdentifier());
+									$xmlWriter->endElement();
+								}
+							}
+						}
+						$xmlWriter->endElement();
+					break;
+					default:
+						if (is_object($propertyValue)) {
+							$xmlWriter->startElement($propertyName);
+							$xmlWriter->writeAttribute('__type', 'object');
+							$xmlWriter->writeAttribute('__classname', get_class($propertyValue));
+							$this->objectToXml($propertyValue, $xmlWriter);
+							$xmlWriter->endElement();
+						} elseif (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
+							$xmlWriter->startElement($propertyName);
+							if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
+								$xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
+							} else {
+								$xmlWriter->writeCdata($propertyValue);
+							}
+							$xmlWriter->endElement();
+						} else {
+							$xmlWriter->writeElement($propertyName, $propertyValue);
+						}
+					break;
 				}
 			}
 			$xmlWriter->endElement();

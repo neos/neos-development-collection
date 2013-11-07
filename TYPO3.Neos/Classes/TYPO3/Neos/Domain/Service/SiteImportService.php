@@ -163,8 +163,25 @@ class SiteImportService {
 
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {
-					if (isset($childXml['__type']) && (string)$childXml['__type'] == 'object') {
-						$childNode->setProperty($childXml->getName(), $this->xmlToObject($childXml));
+					if (isset($childXml['__type'])) {
+						switch ($childXml['__type']) {
+							case 'reference':
+								$targetIdentifier = ((string)$childXml->node['identifier'] === '' ? NULL : (string)$childXml->node['identifier']);
+								$childNode->setProperty($childXml->getName(), $targetIdentifier);
+							break;
+							case 'references':
+								$referencedNodeIdentifiers = array();
+								foreach ($childXml->node as $referenceNodeXml) {
+									if ((string)$referenceNodeXml['identifier'] !== '') {
+										$referencedNodeIdentifiers[] = (string)$referenceNodeXml['identifier'];
+									}
+								}
+								$childNode->setProperty($childXml->getName(), $referencedNodeIdentifiers);
+							break;
+							case 'object':
+								$childNode->setProperty($childXml->getName(), $this->xmlToObject($childXml));
+							break;
+						}
 					} else {
 						$childNode->setProperty($childXml->getName(), (string)$childXml);
 					}
