@@ -19,14 +19,15 @@
 	</f:if>
 
 	<script type="text/javascript">
-		// TODO Get rid of those global variables
-		var ExtDirectInitialization = function() {
-			<ext:extDirect.provider />;
-		};
+		// TODO: Get rid of those global variables
 		{neos:backend.javascriptConfiguration()}
 	</script>
 
-	<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
+	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
+	<!-- TODO: Make sure the schema information and edit / preview panel data isn't necessary in backend modules -->
+	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
+	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
+	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: '{version: \'{neos:backend.configurationCacheVersion()}\'}')}" />
 
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>

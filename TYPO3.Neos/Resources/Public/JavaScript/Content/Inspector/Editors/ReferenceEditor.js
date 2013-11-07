@@ -1,9 +1,10 @@
 define(
 	[
 		'Library/jquery-with-dependencies',
-		'emberjs'
+		'emberjs',
+		'Shared/HttpClient'
 	],
-	function($, Ember) {
+	function($, Ember, HttpClient) {
 		return Ember.View.extend({
 
 			tagName: 'input',
@@ -18,10 +19,10 @@ define(
 			}.property(),
 
 			didInsertElement: function() {
-				var that = this;
-				var nodesEndpoint = $('link[type="application/vnd.typo3.neos.nodes"]').attr('href');
+				var that = this,
+					nodesEndpoint = $('link[rel="neos-nodes"]').attr('href'),
+					currentQueryTimer = null;
 
-				var currentQueryTimer = null;
 				this.$().select2({
 					minimumInputLength: 1,
 					maximumSelectionSize: 1,
@@ -34,20 +35,24 @@ define(
 						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							$.get(nodesEndpoint + '?searchTerm=' + query.term + that.get('nodeTypes').reduce(function(previousValue, item) {
+							var url = nodesEndpoint + '?searchTerm=' + query.term + that.get('nodeTypes').reduce(function(previousValue, item) {
 								return previousValue + '&nodeTypes[]=' + item;
-							}, ''), function(parsedResponse) {
-								var data = {results: []};
+							}, '');
 
-								$(parsedResponse).find('li').each(function(index, value){
-									data.results.push({
-										id: $(value).data('identifier'),
-										text:  $(value).text()
+							HttpClient.getResource(url).then(
+								function(parsedResponse) {
+									var data = {results: []};
+
+									$(parsedResponse).find('li').each(function(index, value){
+										data.results.push({
+											id: $(value).data('identifier'),
+											text:  $(value).text()
+										});
 									});
-								});
 
-								query.callback(data);
-							}, 'html');
+									query.callback(data);
+								}
+							);
 						}, 200);
 					}
 				});
@@ -84,17 +89,20 @@ define(
 				var that = this;
 
 				if (value) {
-					var nodesEndpoint = $('link[type="application/vnd.typo3.neos.nodes"]').attr('href');
+					var nodesEndpoint = $('link[rel="neos-nodes"]').attr('href');
 
 					var item = Ember.Object.extend({
 						id: value,
 						text: 'Loading ...'
 					}).create();
 					that.set('content', item);
-					$.ajax(nodesEndpoint + '/' + value).done(function(response) {
-						item.set('text', $(response).filter('div').text());
-						that._updateSelect2();
-					});
+
+					HttpClient.getResource(nodesEndpoint + '/' + value).then(
+						function(response) {
+							item.set('text', $(response).filter('div').text());
+							that._updateSelect2();
+						}
+					);
 
 					that._updateSelect2();
 				}

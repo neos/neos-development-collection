@@ -6,9 +6,10 @@ define(
 		'Content/Model/PublishableNodes',
 		'./PublishAllDialog',
 		'./DiscardAllDialog',
+		'Shared/Endpoint/NodeEndpoint',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, LocalStorage, Button, PublishableNodes, PublishAllDialog, DiscardAllDialog, template) {
+	function (Ember, LocalStorage, Button, PublishableNodes, PublishAllDialog, DiscardAllDialog, NodeEndpoint, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -41,8 +42,10 @@ define(
 				target: 'controller',
 				action: 'publishChanges',
 
-				_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
-				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+				_nodeEndpoint: NodeEndpoint,
+
+				_connectionFailedBinding: '_nodeEndpoint._failedRequest',
+				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				_noChangesBinding: 'controller.noChanges',
 				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
@@ -104,8 +107,10 @@ define(
 				target: 'controller',
 				action: 'discardChanges',
 
-				_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
-				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+				_nodeEndpoint: NodeEndpoint,
+
+				_connectionFailedBinding: '_nodeEndpoint._failedRequest',
+				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				_noChangesBinding: 'controller.noChanges',
 				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
@@ -145,9 +150,11 @@ define(
 				controller: PublishableNodes,
 				confirmationDialog: PublishAllDialog.create(),
 
-				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
+				_nodeEndpoint: NodeEndpoint,
+
+				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				click: function() {
 					this.confirmationDialog.createElement();
@@ -182,9 +189,11 @@ define(
 				controller: PublishableNodes,
 				confirmationDialog: DiscardAllDialog.create(),
 
-				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
+				_nodeEndpoint: NodeEndpoint,
+
+				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				click: function() {
 					this.confirmationDialog.createElement();

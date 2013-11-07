@@ -13,7 +13,8 @@ define(
 	'Shared/Notification',
 	'Content/LoadingIndicator',
 	'./EditingMode',
-	'./PreviewMode'
+	'./PreviewMode',
+	'Shared/Endpoint/UserPreferenceEndpoint'
 ], function(
 	Ember,
 	$,
@@ -23,7 +24,8 @@ define(
 	Notification,
 	LoadingIndicator,
 	EditingMode,
-	PreviewMode
+	PreviewMode,
+	UserPreferenceEndpoint
 ) {
 	return Ember.Controller.extend({
 		editPreviewPanelMode: false,
@@ -69,21 +71,26 @@ define(
 			if (reloadRequired) {
 				LoadingIndicator.start();
 			}
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.editPreviewMode': identifier}, function() {
-				if (reloadRequired) {
-					window.location.reload(false);
+			UserPreferenceEndpoint.updatePreference('contentEditing.editPreviewMode', identifier).then(
+				function() {
+					if (reloadRequired) {
+						window.location.reload(false);
+					}
 				}
-			});
+			);
 		}.observes('currentlyActiveMode'),
 
 		init: function() {
 			var that = this;
-			$.when(ResourceCache.getItem(Configuration.get('EditPreviewDataUri'))).done(function(data) {
-				that.set('configuration', data);
-			}).fail(function(xhr, status, error) {
-				Notification.error('Failed loading edit / preview data.');
-				console.error('Error loading menu data.', xhr, status, error);
-			});
+			ResourceCache.getItem(Configuration.get('EditPreviewDataUri')).then(
+				function(data) {
+					that.set('configuration', data);
+				},
+				function(error) {
+					Notification.error('Failed loading edit / preview data.');
+					console.error('Error loading edit / preview data.', error);
+				}
+			);
 
 			if (LocalStorage.getItem('editPreviewPanelMode') === true) {
 				this.toggleEditPreviewPanelMode();

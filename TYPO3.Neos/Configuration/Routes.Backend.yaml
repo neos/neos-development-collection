@@ -14,35 +14,38 @@
   defaults:
     '@package':    'TYPO3.Neos'
     '@controller': 'Backend\MediaBrowser'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
 
 -
-  name: 'Content Module - Images'
-  uriPattern: 'content/imageWithMetadata/{image}'
+  name: 'Content Module - Images upload'
+  uriPattern: 'content/upload-image'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'uploadImage'
+  appendExceedingArguments: TRUE
+  httpMethods: ['POST']
+
+-
+  name: 'Content Module - Images metadata'
+  uriPattern: 'content/image-with-metadata'
   defaults:
     '@controller': 'Backend\Content'
     '@action':     'imageWithMetadata'
+  appendExceedingArguments: TRUE
 
 -
   name: 'Content Module - Plugin Views'
-  uriPattern: 'content/pluginViews'
+  uriPattern: 'content/plugin-views'
   defaults:
     '@controller': 'Backend\Content'
     '@action':     'pluginViews'
 
 -
   name: 'Content Module - Master Plugins'
-  uriPattern: 'content/masterPlugins'
+  uriPattern: 'content/master-plugins'
   defaults:
     '@controller': 'Backend\Content'
     '@action':     'masterPlugins'
-
--
-  name: 'Content Module'
-  uriPattern: 'content/{@action}'
-  defaults:
-    '@controller': 'Backend\Content'
-  appendExceedingArguments: true
 
 -
   name: 'Schema - VIE'
@@ -50,7 +53,7 @@
   defaults:
     '@controller': 'Backend\Schema'
     '@action':     'vieSchema'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
 
 -
   name: 'Schema - NodeType'
@@ -58,21 +61,21 @@
   defaults:
     '@controller': 'Backend\Schema'
     '@action':     'nodeTypeSchema'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
 
 -
   name: 'Menu'
   uriPattern: 'menu'
   defaults:
     '@controller': 'Backend\Menu'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
 
 -
   name: 'Settings'
   uriPattern: 'settings/{@action}'
   defaults:
     '@controller': 'Backend\Settings'
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE
 
 -
   name: 'Modules'
@@ -94,4 +97,4 @@
     moduleArguments:
       handler: 'TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
   toLowerCase: false
-  appendExceedingArguments: true
+  appendExceedingArguments: TRUE

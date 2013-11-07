@@ -29,21 +29,21 @@ class UserPreferences {
 	/**
 	 * The actual settings
 	 *
-	 * @var array<string>
+	 * @var array
 	 */
 	protected $preferences = array();
 
 	/**
 	 * Get preferences
 	 *
-	 * @return array UserPreferences
+	 * @return array
 	 */
 	public function getPreferences() {
 		return $this->preferences;
 	}
 
 	/**
-	 * @param mixed $key
+	 * @param string $key
 	 * @param mixed $value
 	 * @return void
 	 */
@@ -52,8 +52,8 @@ class UserPreferences {
 	}
 
 	/**
-	 * @param mixed $key
-	 * @return array|null
+	 * @param string $key
+	 * @return mixed
 	 */
 	public function get($key) {
 		return isset($this->preferences[$key]) ? $this->preferences[$key] : NULL;

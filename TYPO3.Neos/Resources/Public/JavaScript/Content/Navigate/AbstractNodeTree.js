@@ -15,7 +15,8 @@ define(
 		'../Inspector/InspectorController',
 		'./DeleteNodeDialog',
 		'./InsertNodePanel',
-		'LibraryExtensions/Mousetrap'
+		'LibraryExtensions/Mousetrap',
+		'Shared/Endpoint/NodeEndpoint'
 	], function(
 		Ember,
 		$,
@@ -29,7 +30,8 @@ define(
 		InspectorController,
 		DeleteNodeDialog,
 		InsertNodePanel,
-		Mousetrap
+		Mousetrap,
+		NodeEndpoint
 	) {
 		var pageMetaInformation = $('#neos-page-metainformation');
 
@@ -236,10 +238,11 @@ define(
 
 			init: function() {
 				this._super();
+				var that = this;
 				this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: this.baseNodeType}).create());
 
 				ContentModule.on('pageLoaded', this, function() {
-					this.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
+					that.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
 					this.trigger('afterPageLoaded');
 				});
 			},
@@ -288,7 +291,7 @@ define(
 				clickFolderMode: 1,
 				debugLevel: 0, // 0: quiet, 1: normal, 2: debug
 				strings: {
-					loading: 'Loading…',
+					loading: 'Loading...',
 					loadError: 'Load error!'
 				},
 				cookieId: 'nodes',
@@ -358,12 +361,13 @@ define(
 				 *
 				 * It might be executed multiple times in rapid succession,
 				 * and needs to take care itself that it only fires one
-				 * ExtDirect request per node at a time. This is implemented
-				 * using node._currentlySendingExtDirectAjaxRequest.
+				 * request per node at a time. This is implemented
+				 * using node._currentlySendingServerRequest.
 				 */
 				onLazyRead: function(node) {
-					var parent = node.tree.options.parent;
-					this.options.parent.loadNode(node, node.getLevel() === 1 ? parent.get('loadingDepth') : 1);
+					var parent = node.tree.options.parent,
+						parentLoadingDepth = parent.get('loadingDepth') ? parent.get('loadingDepth') : 0;
+					this.options.parent.loadNode(node, node.getLevel() === 1 ? parentLoadingDepth : 1);
 				},
 
 				onActivate: function(node) {
@@ -522,7 +526,7 @@ define(
 				var nodeType = this.get('nodeType');
 				if (nodeType !== '') {
 					var that = this;
-					$.when(ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType)).done(function(data) {
+					ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType).then(function(data) {
 						that.createNode(activeNode, 'Untitled', nodeType, data[nodeType].ui.icon);
 					});
 				} else {
@@ -542,8 +546,8 @@ define(
 				});
 				insertNodePanel.set('cancel', function() {
 					that.set('insertNodePanelShown', false);
+					that.set('deleteNode', Ember.K);
 					this.destroyElement();
-					this.set('deleteNode', Ember.K);
 				});
 			},
 
@@ -601,7 +605,7 @@ define(
 				var that = this,
 					tree = node.tree;
 				node.setLazyNodeStatus(this.statusCodes.loading);
-				TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
+				NodeEndpoint.createNodeForTheTree(
 					activeNode.data.key,
 					{
 						nodeType: nodeType,
@@ -610,30 +614,30 @@ define(
 							title: node.data.title
 						}
 					},
-					position,
+					position
+				).then(
 					function(result) {
-						if (result !== null && result.success === true) {
-							// Actualizing the created dynatree node
-							node.data.key = result.data.key;
-							node.data.name = result.data.name;
-							node.data.title = result.data.title;
-							node.data.tooltip = result.data.tooltip;
-							node.data.href = result.data.href;
-							node.data.isFolder = result.data.isFolder;
-							node.data.isLazy = result.data.isLazy;
-							node.data.nodeType = result.data.nodeType;
-							node.data.expand = result.data.expand;
-							node.data.addClass = result.data.addClass;
-							node.setLazyNodeStatus(that.statusCodes.ok);
+						// Actualizing the created dynatree node
+						node.data.key = result.data.key;
+						node.data.name = result.data.name;
+						node.data.title = result.data.title;
+						node.data.tooltip = result.data.tooltip;
+						node.data.href = result.data.href;
+						node.data.isFolder = result.data.isFolder;
+						node.data.isLazy = result.data.isLazy;
+						node.data.nodeType = result.data.nodeType;
+						node.data.expand = result.data.expand;
+						node.data.addClass = result.data.addClass;
+						node.setLazyNodeStatus(that.statusCodes.ok);
 
-							// Re-enable mouse and keyboard handling
-							tree.$widget.bind();
+						// Re-enable mouse and keyboard handling
+						tree.$widget.bind();
 
-							that.afterPersistNode(node);
-						} else {
-							Notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
-							node.setLazyNodeStatus(that.statusCodes.error);
-						}
+						that.afterPersistNode(node);
+					},
+					function(result) {
+						Notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
+						node.setLazyNodeStatus(that.statusCodes.error);
 					}
 				);
 			},
@@ -643,17 +647,15 @@ define(
 			deleteNode: function(node) {
 				node.setLazyNodeStatus(this.statusCodes.loading);
 				var that = this;
-				TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController['delete'](
-					node.data.key,
-					function(result) {
-						if (result !== null && result.success === true) {
-							var parentNode = node.getParent();
-							parentNode.activate();
-							node.remove();
-							that.afterDeleteNode(node);
-						} else {
-							Notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
-						}
+				NodeEndpoint['delete'](node.data.key).then(
+					function() {
+						var parentNode = node.getParent();
+						parentNode.activate();
+						node.remove();
+						that.afterDeleteNode(node);
+					},
+					function() {
+						Notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
 					}
 				);
 			},
@@ -677,28 +679,28 @@ define(
 				node.render();
 				node.setLazyNodeStatus(this.statusCodes.loading);
 				var that = this;
-				TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.update(
+				NodeEndpoint.update(
 					{
 						__contextNodePath: node.data.key,
 						_hidden: value
-					},
+					}
+				).then(
 					function(result) {
-						if (result !== null && result.success === true) {
-							var selectedNode = NodeSelection.get('selectedNode'),
-								entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-							if (entity) {
-								entity.set('typo3:_hidden', value);
-							}
-							if (node.data.key === selectedNode.$element.attr('about')) {
-								InspectorController.set('nodeProperties._hidden', value);
-								InspectorController.apply();
-							}
-							node.setLazyNodeStatus(that.statusCodes.ok);
-							that.afterToggleHidden(node);
-						} else {
-							node.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
+						var selectedNode = NodeSelection.get('selectedNode'),
+							entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
+						if (entity) {
+							entity.set('typo3:_hidden', value);
 						}
+						if (node.data.key === selectedNode.$element.attr('about')) {
+							InspectorController.set('nodeProperties._hidden', value);
+							InspectorController.apply();
+						}
+						node.setLazyNodeStatus(that.statusCodes.ok);
+						that.afterToggleHidden(node);
+					},
+					function() {
+						node.setLazyNodeStatus(that.statusCodes.error);
+						Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
 					}
 				);
 			},
@@ -771,28 +773,28 @@ define(
 							newNode = targetNode.addChild(copiedNode.data);
 					}
 					newNode.setLazyNodeStatus(this.statusCodes.loading);
-					TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.copy(
+					NodeEndpoint.copy(
 						copiedNode.data.key,
 						targetNode.data.key,
 						pastePosition,
-						copiedNode.data.name,
+						copiedNode.data.name
+					).then(
 						function(result) {
-							if (result !== null && result.success === true) {
-								// after we finished moving, update the node path/url
-								newNode.data.href = result.data.nodeUri;
-								newNode.data.key = result.data.newNodePath;
-								newNode.render();
-								newNode.setLazyNodeStatus(that.statusCodes.ok);
-								if (typeof newNode.data.children !== 'undefined') {
-									newNode.removeChildren();
-									newNode.setLazyNodeStatus(that.statusCodes.loading);
-									that.loadNode(newNode, 1);
-								}
-								that.afterPaste(newNode);
-							} else {
-								newNode.setLazyNodeStatus(that.statusCodes.error);
-								Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+							// after we finished moving, update the node path/url
+							newNode.data.href = result.data.nodeUri;
+							newNode.data.key = result.data.newNodePath;
+							newNode.render();
+							newNode.setLazyNodeStatus(that.statusCodes.ok);
+							if (typeof newNode.data.children !== 'undefined') {
+								newNode.removeChildren();
+								newNode.setLazyNodeStatus(that.statusCodes.loading);
+								that.loadNode(newNode, 1);
 							}
+							that.afterPaste(newNode);
+						},
+						function() {
+							newNode.setLazyNodeStatus(that.statusCodes.error);
+							Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
 						}
 					);
 				}
@@ -809,31 +811,31 @@ define(
 					sourceNode.move(targetNode, position === 'into' ? 'over' : position);
 					sourceNode.activate();
 					sourceNode.setLazyNodeStatus(this.statusCodes.loading);
-					TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.move(
+					NodeEndpoint.move(
 						sourceNode.data.key,
 						targetNode.data.key,
-						position,
+						position
+					).then(
 						function(result) {
-							if (result !== null && result.success === true) {
-								// Update the pageNodePath if we moved the current page
-								if (that.get('pageNodePath') === sourceNode.data.key) {
-									that.set('pageNodePath', result.data.newNodePath);
-								}
-								// after we finished moving, update the node path/url
-								sourceNode.data.href = result.data.nextUri;
-								sourceNode.data.key = result.data.newNodePath;
-								sourceNode.render();
-								sourceNode.setLazyNodeStatus(that.statusCodes.ok);
-								if (typeof sourceNode.data.children !== 'undefined') {
-									sourceNode.removeChildren();
-									sourceNode.setLazyNodeStatus(that.statusCodes.loading);
-									that.loadNode(sourceNode, 1);
-								}
-								that.afterMove(sourceNode);
-							} else {
-								sourceNode.setLazyNodeStatus(that.statusCodes.error);
-								Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+							// Update the pageNodePath if we moved the current page
+							if (that.get('pageNodePath') === sourceNode.data.key) {
+								that.set('pageNodePath', result.data.newNodePath);
 							}
+							// after we finished moving, update the node path/url
+							sourceNode.data.href = result.data.nextUri;
+							sourceNode.data.key = result.data.newNodePath;
+							sourceNode.render();
+							sourceNode.setLazyNodeStatus(that.statusCodes.ok);
+							if (typeof sourceNode.data.children !== 'undefined') {
+								sourceNode.removeChildren();
+								sourceNode.setLazyNodeStatus(that.statusCodes.loading);
+								that.loadNode(sourceNode, 1);
+							}
+							that.afterMove(sourceNode);
+						},
+						function() {
+							sourceNode.setLazyNodeStatus(that.statusCodes.error);
+							Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
 						}
 					);
 				} catch(e) {
@@ -856,36 +858,36 @@ define(
 			 * @param {number} depth
 			 */
 			loadNode: function(node, depth) {
-				if (node._currentlySendingExtDirectAjaxRequest) {
+				if (node._currentlySendingServerRequest) {
 					return;
 				}
 
 				var that = this;
-				node._currentlySendingExtDirectAjaxRequest = true;
+				node._currentlySendingServerRequest = true;
 				node.setLazyNodeStatus(this.statusCodes.loading);
-				TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
+				NodeEndpoint.getChildNodesForTree(
 					node.data.key,
 					this.baseNodeType,
 					depth,
-					this.get('pageNodePath'),
+					this.get('pageNodePath')
+				).then(
 					function(result) {
-						node._currentlySendingExtDirectAjaxRequest = false;
-						if (result !== null && result.success === true) {
-							node.setLazyNodeStatus(that.statusCodes.ok);
-							node.addChild(result.data);
-							if (node.getLevel() === 1) {
-								var tree = that.$nodeTree.dynatree('getTree'),
-									currentNode = tree.getNodeByKey(that.get('pageNodePath'));
-								if (currentNode) {
-									currentNode.activate();
-									currentNode.select();
-									that.scrollToCurrentNode();
-								}
+						node._currentlySendingServerRequest = false;
+						node.setLazyNodeStatus(that.statusCodes.ok);
+						node.addChild(result.data);
+						if (node.getLevel() === 1) {
+							var tree = that.$nodeTree.dynatree('getTree'),
+								currentNode = tree.getNodeByKey(that.get('pageNodePath'));
+							if (currentNode) {
+								currentNode.activate();
+								currentNode.select();
+								that.scrollToCurrentNode();
 							}
-						} else {
-							node.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Node Tree loading error.');
 						}
+					},
+					function() {
+						node.setLazyNodeStatus(that.statusCodes.error);
+						Notification.error('Node Tree loading error.');
 					}
 				);
 			}

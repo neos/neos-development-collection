@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
+namespace TYPO3\Neos\Service\Controller;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
@@ -13,20 +13,17 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\ExtJS\Annotations\ExtDirect;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 
 /**
- * ExtDirect Controller for managing Nodes
- *
- * @Flow\Scope("singleton")
+ * Service Controller for managing Nodes
  */
-class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class NodeController extends AbstractServiceController {
 
 	/**
 	 * @var string
 	 */
-	protected $viewObjectNamePattern = 'TYPO3\Neos\Service\ExtDirect\V1\View\NodeView';
+	protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
 
 	/**
 	 * @Flow\Inject
@@ -52,33 +49,10 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	protected function initializeAction() {
-		$this->errorMethodName = 'extErrorAction';
 		if ($this->arguments->hasArgument('referenceNode')) {
 			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
 		$this->uriBuilder->setRequest($this->request->getMainRequest());
-	}
-
-	/**
-	 * Returns the specified node
-	 *
-	 * @param Node $node
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function showAction(Node $node) {
-		$this->view->assignNode($node);
-	}
-
-	/**
-	 * Returns the primary child node (if any) of the specified node
-	 *
-	 * @param Node $node
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function getPrimaryChildNodeAction(Node $node) {
-		$this->view->assignNode($node->getPrimaryChildNode());
 	}
 
 	/**
@@ -89,10 +63,9 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode) {
-		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_TREE, $depth, $untilNode);
+		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\View\NodeView::STYLE_TREE, $depth, $untilNode);
 	}
 
 	/**
@@ -102,7 +75,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param string $term
 	 * @param string $nodeType
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function filterChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, $term, $nodeType) {
 		$nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', FALSE));
@@ -110,34 +82,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$node,
 			$this->nodeSearchService->findByProperties($term, $nodeTypes, $node->getContext())
 		);
-	}
-
-	/**
-	 * Return child nodes of specified node with all details and
-	 * metadata.
-	 *
-	 * @param Node $node
-	 * @param string $nodeTypeFilter A node type filter
-	 * @param integer $depth levels of childNodes (0 = unlimited)
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function getChildNodesAction(Node $node, $nodeTypeFilter, $depth) {
-		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\ExtDirect\V1\View\NodeView::STYLE_LIST, $depth);
-	}
-
-	/**
-	 * Return child nodes of specified node with all details and
-	 * metadata.
-	 *
-	 * @param Node $node
-	 * @param string $nodeTypeFilter A node type filter
-	 * @param integer $depth levels of childNodes (0 = unlimited)
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function getChildNodesFromParentAction(Node $node, $nodeTypeFilter, $depth) {
-		$this->getChildNodesAction($node->getParent(), $nodeTypeFilter, $depth);
 	}
 
 	/**
@@ -149,7 +93,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 * @todo maybe the actual creation should be put in a helper / service class
-	 * @ExtDirect
 	 */
 	public function createAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
@@ -166,7 +109,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return string
 	 * @throws \InvalidArgumentException
-	 * @ExtDirect
 	 */
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
@@ -179,8 +121,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$view->assign('value', $newNode->getParent());
 
 		$result = $view->render();
-		$this->response->setResult(array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath()));
-		$this->response->setSuccess(TRUE);
+		$this->response->setContent(json_encode((object)array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath())));
 
 		return '';
 	}
@@ -194,7 +135,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 * @todo maybe the actual creation should be put in a helper / service class
-	 * @ExtDirect
 	 */
 	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
@@ -262,7 +202,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
-	 * @ExtDirect
 	 */
 	public function moveAction(Node $node, Node $targetNode, $position) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
@@ -288,45 +227,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * Move $node before $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function moveBeforeAction(Node $node, Node $targetNode) {
-		$node->moveBefore($targetNode);
-		$this->view->assign('value', array('success' => TRUE));
-	}
-
-	/**
-	 * Move $node after $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function moveAfterAction(Node $node, Node $targetNode) {
-		$node->moveAfter($targetNode);
-		$this->view->assign('value', array('success' => TRUE));
-	}
-
-	/**
-	 * Move $node into $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function moveIntoAction(Node $node, Node $targetNode) {
-		$node->moveInto($targetNode);
-		$this->view->assign('value', array('success' => TRUE));
-	}
-
-	/**
 	 * Copy $node before, into or after $targetNode
 	 *
 	 * @param Node $node
@@ -335,7 +235,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
-	 * @ExtDirect
 	 */
 	public function copyAction(Node $node, Node $targetNode, $position, $nodeName) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
@@ -368,62 +267,17 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		$q = new FlowQuery(array($copiedNode));
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-		$this->view->assign(
-			'value',
-			array(
-				'data' => array(
-					'nodeUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos'),
-					'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos'),
-					'newNodePath' => $copiedNode->getContextPath()
-				),
-				'success' => TRUE
-			)
+
+		$requestData = array(
+			'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos'),
+			'newNodePath' => $copiedNode->getContextPath()
 		);
-	}
 
-	/**
-	 * Copy $node before $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @param string $nodeName optional node name (if empty random node name will be generated)
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function copyBeforeAction(Node $node, Node $targetNode, $nodeName = '') {
-		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
-		$node->copyBefore($targetNode, $nodeName);
-		$this->view->assign('value', array('success' => TRUE));
-	}
+		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			$requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos');
+		}
 
-	/**
-	 * Copy $node after $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @param string $nodeName optional node name (if empty random node name will be generated)
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function copyAfterAction(Node $node, Node $targetNode, $nodeName = '') {
-		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
-		$node->copyAfter($targetNode, $nodeName);
-		$this->view->assign('value', array('success' => TRUE));
-	}
-
-	/**
-	 * Copy $node into $targetNode
-	 *
-	 * @param Node $node
-	 * @param Node $targetNode
-	 * @param string $nodeName optional node name (if empty random node name will be generated)
-	 * @return void
-	 * @ExtDirect
-	 */
-	public function copyIntoAction(Node $node, Node $targetNode, $nodeName = '') {
-		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
-		$node->copyInto($targetNode, $nodeName);
-		$this->view->assign('value', array('success' => TRUE));
+		$this->view->assign('value', array('data' => $requestData, 'success' => TRUE));
 	}
 
 	/**
@@ -436,7 +290,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param Node $node
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function updateAction(Node $node) {
 		$q = new FlowQuery(array($node));
@@ -450,7 +303,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param Node $node
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function deleteAction(Node $node) {
 		$q = new FlowQuery(array($node));
@@ -466,7 +318,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param string $query
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function searchPageAction($query) {
 		$searchResult = array();
@@ -484,7 +335,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param string $nodePath
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function getPageByNodePathAction($nodePath) {
 		$contentContext = $this->createContext('live');
@@ -507,17 +357,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
 			'type' => 'neos/internal-link'
 		);
-	}
-
-	/**
-	 * A preliminary error action for handling validation errors
-	 * by assigning them to the ExtDirect View that takes care of
-	 * converting them.
-	 *
-	 * @return void
-	 */
-	public function extErrorAction() {
-		$this->view->assignErrors($this->arguments->getValidationResults());
 	}
 
 	/**

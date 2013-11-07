@@ -27,7 +27,7 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
-		'Content/LoadingIndicator',
+		'Shared/HttpClient',
 		'InlineEditing/PositioningHelper',
 		'storage'
 	],
@@ -38,8 +38,7 @@ require(
 		PublishMenu,
 		ResourceCache,
 		Notification,
-		Configuration,
-		LoadingIndicator
+		Configuration
 	) {
 		var T3 = window.T3;
 
@@ -52,14 +51,6 @@ require(
 
 		Ember.$(document).ready(function() {
 			ContentModule.bootstrap();
-
-			Ext.Direct.on('exception', function(error) {
-				T3.Content.Controller.ServerConnection.set('_failedRequest', true);
-				Notification.error('ExtDirect error: ' + error.message);
-				LoadingIndicator.stop();
-			});
-
-			ExtDirectInitialization();
 
 			ContentModule.advanceReadiness();
 			ApplicationView.create().appendTo('#neos-application');

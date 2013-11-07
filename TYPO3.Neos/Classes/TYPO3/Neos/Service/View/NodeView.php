@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Service\ExtDirect\V1\View;
+namespace TYPO3\Neos\Service\View;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
@@ -18,11 +18,11 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
- * An ExtDirect View specialized on single or multiple Nodes
+ * An View specialized on single or multiple Nodes in a tree structure
  *
  * @Flow\Scope("prototype")
  */
-class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
+class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 
 	/**
 	 * @var integer

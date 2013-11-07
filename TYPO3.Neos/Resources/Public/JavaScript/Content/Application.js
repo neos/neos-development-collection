@@ -22,7 +22,8 @@ define(
 	'Content/InputEvents/KeyboardEvents',
 	'create',
 	'Library/vie',
-	'Shared/Notification'
+	'Shared/Notification',
+	'Shared/HttpClient'
 ],
 function(
 	$,
@@ -41,7 +42,8 @@ function(
 	KeyboardEvents,
 	CreateJS,
 	VIE,
-	Notification
+	Notification,
+	HttpClient
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
@@ -87,6 +89,11 @@ function(
 		spinner: null,
 
 		bootstrap: function() {
+			HttpClient.on('error', function(errorMessage) {
+				Notification.error('Server communication error: ' + errorMessage);
+				LoadingIndicator.stop();
+			});
+
 			this.set('vie', vie);
 			if (window.T3.isContentModule) {
 				this._initializeAjaxPageReload();
@@ -127,7 +134,10 @@ function(
 		},
 
 		_initializeVie: function() {
-			var that = this;
+			var that = this,
+				schemaLoadErrorCallback = function() {
+					console.warn('Error loading schemas.', arguments);
+				};
 
 			if (this.get('_vieOptions').stanbolUrl) {
 				vie.use(new vie.StanbolService({
@@ -143,15 +153,19 @@ function(
 				}));
 			}
 
-			$.when(ResourceCache.getItem(Configuration.get('VieSchemaUri')), ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri'))).done(function(vieSchema, nodeTypeSchema) {
-				VIE.Util.loadSchemaOrg(vie, vieSchema, null);
-
-				Configuration.set('Schema', nodeTypeSchema);
-
-				that._initializeVieAfterSchemaIsLoaded(vie);
-			}).fail(function(xhr, status, error) {
-				console.warn('Error loading schemas.', xhr, status, error);
-			});
+			ResourceCache.getItem(Configuration.get('VieSchemaUri')).then(
+				function(vieSchema) {
+					ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(
+						function(nodeTypeSchema) {
+							VIE.Util.loadSchemaOrg(vie, vieSchema, null);
+							Configuration.set('Schema', nodeTypeSchema);
+							that._initializeVieAfterSchemaIsLoaded(vie);
+						},
+						schemaLoadErrorCallback
+					);
+				},
+				schemaLoadErrorCallback
+			);
 		},
 
 		_initializeVieAfterSchemaIsLoaded: function() {
@@ -365,9 +379,26 @@ function(
 			}
 
 			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
-			$.ajax(uri, {
-				success: function(htmlString, status) {
-					if (status === 'success') {
+			HttpClient.getResource(
+				uri,
+				{
+					xhr: function() {
+						var xhr = $.ajaxSettings.xhr();
+						xhr.onreadystatechange = function() {
+							if (xhr.readyState === 1) {
+								LoadingIndicator.set(0.1, 200);
+							}
+							if (xhr.readyState === 2) {
+								LoadingIndicator.set(0.9, 100);
+							}
+							if (xhr.readyState === 3) {
+								LoadingIndicator.set(0.99, 50);
+							}
+						};
+						return xhr;
+					}
+				}).then(
+					function(htmlString) {
 						var $htmlDom = $($.parseHTML(htmlString));
 
 						var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
@@ -400,48 +431,36 @@ function(
 
 						that._setPagePosition();
 
-							// Update node selection (will update VIE)
+						// Update node selection (will update VIE)
 						NodeSelection.initialize();
 						that.trigger('pageLoaded');
 
-							// Send external event so site JS can act on it
+						// Send external event so site JS can act on it
 						EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
 
 						if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
-								// Refresh CreateJS, renders the button bars f.e.
+							// Refresh CreateJS, renders the button bars f.e.
 							CreateJS.enableEdit();
 						}
 
-							// If doing a reload, we highlight the currently active content element again
+						// If doing a reload, we highlight the currently active content element again
 						var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
 						if ($currentlyActiveContentElement.length === 1) {
 							NodeSelection.updateSelection($currentlyActiveContentElement);
 						}
-					} else {
-							// FALLBACK: AJAX error occurred,
-							// so we reload the whole backend.
+						that.set('_isLoadingPage', false);
+						LoadingIndicator.done();
+					},
+					/**
+					 * FALLBACK: AJAX error occurred,
+					 * so we reload the whole backend.
+					 */
+					function() {
 						window.location.href = uri;
 					}
-					that.set('_isLoadingPage', false);
-					LoadingIndicator.done();
-				},
-				xhr: function() {
-					var xhr = $.ajaxSettings.xhr();
-					xhr.onreadystatechange = function() {
-						if (xhr.readyState === 1) {
-							LoadingIndicator.set(0.1, 200);
-						}
-						if (xhr.readyState === 2) {
-							LoadingIndicator.set(0.9, 100);
-						}
-						if (xhr.readyState === 3) {
-							LoadingIndicator.set(0.99, 50);
-						}
-					};
-					return xhr;
-				}
-			});
+				);
 		}
+
 	}).create();
 	ContentModule.deferReadiness();
 

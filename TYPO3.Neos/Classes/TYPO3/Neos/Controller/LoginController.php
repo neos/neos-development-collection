@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\ExtJS\ExtDirect\Request as ExtDirectRequest;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Mvc\ActionRequest;
@@ -73,9 +72,12 @@ class LoginController extends AbstractAuthenticationController {
 		if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
 			$this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
 		}
-		if ($originalRequest !== NULL && !$originalRequest instanceof ExtDirectRequest) {
+
+		if ($originalRequest !== NULL) {
+			// Redirect to the location that redirected to the login form because the user was nog logged in
 			$this->redirectToRequest($originalRequest);
 		}
+
 		$this->redirect('index', 'Backend\Backend');
 	}
 

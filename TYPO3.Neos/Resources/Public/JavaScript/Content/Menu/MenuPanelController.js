@@ -21,11 +21,14 @@ define(
 
 		init: function() {
 			var that = this;
-			$.when(ResourceCache.getItem(Configuration.get('MenuDataUri'))).done(function(data) {
-				that.set('items', data);
-			}).fail(function(xhr, status, error) {
-				console.error('Error loading menu data.', xhr, status, error);
-			});
+			ResourceCache.getItem(Configuration.get('MenuDataUri')).then(
+				function(data) {
+					that.set('items', data);
+				},
+				function(error) {
+					console.error('Error loading menu data.', error);
+				}
+			);
 
 			this.set('configuration', LocalStorage.getItem('menuConfiguration') || {});
 			Ember.addObserver(this, 'configuration', function() {

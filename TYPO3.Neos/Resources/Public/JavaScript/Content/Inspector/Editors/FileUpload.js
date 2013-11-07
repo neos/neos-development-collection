@@ -50,7 +50,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 				browse_button : this._browseButtonId,
 				container : this._containerId,
 				max_file_size : '10mb',
-				url : '/neos/content/uploadImage',
+				url : $('link[rel="neos-images-upload"]').attr('href'),
 				multipart_params: {}
 			});
 			if (this.allowedFileTypes) {

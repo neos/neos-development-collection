@@ -11,8 +11,10 @@ define( [
 	return Plugin.create( 'ajax-repository-plugin', {
 
 		init: function () {
-			var endpointLink = $('link[type="application/vnd.typo3.neos.nodes"]');
-			var repository = new Repository(endpointLink.attr('href'), endpointLink.data('current-workspace'));
+			var repository = new Repository(
+				$('link[rel="neos-nodes"]').attr('href'),
+				$('meta[name="neos-workspace"]').attr('content')
+			);
 		},
 
 		/**

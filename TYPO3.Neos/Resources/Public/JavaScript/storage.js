@@ -3,11 +3,12 @@ define(
 	'vie/entity',
 	'Library/backbone',
 	'Content/Model/PublishableNodes',
-	'neos/content/controller'
+	'Shared/Endpoint/NodeEndpoint'
 ], function(
 	Entity,
 	Backbone,
-	PublishableNodes
+	PublishableNodes,
+	NodeEndpoint
 ) {
 	Backbone.sync = function(method, model, options) {
 		var methods = {
@@ -20,8 +21,9 @@ define(
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model);
 
-				T3.Content.Controller.ServerConnection.set('_saveRunning', true);
-				window.TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.update(nodeJson, function(result) {
+				NodeEndpoint.set('_saveRunning', true);
+				NodeEndpoint.update(nodeJson).then(
+					function(result) {
 						// when we save a node, it could be the case that it was in
 						// live workspace beforehand, but because of some modifications,
 						// is now copied into the user's workspace.
@@ -33,17 +35,18 @@ define(
 						//
 						// The PublishableNodes are explicitly uppdated, as changes from the backbone models
 						// workspacename attribute are suppressed and our entity wrapper would not notice.
-					T3.Content.Controller.ServerConnection.set('_saveRunning', false);
+						NodeEndpoint.set('_saveRunning', false);
 
-					if (result !== undefined) {
-						model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
-						T3.Content.Controller.ServerConnection.set('_lastSuccessfulTransfer', new Date());
-						PublishableNodes._updatePublishableEntities();
-						if (options && options.success) {
-							options.success(model, result);
+						if (result !== undefined) {
+							model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
+							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
+							PublishableNodes._updatePublishableEntities();
+							if (options && options.success) {
+								options.success(model, result);
+							}
 						}
 					}
-				});
+				);
 			},
 			'delete': function(model, options) {
 				console.log('DELETE', arguments);

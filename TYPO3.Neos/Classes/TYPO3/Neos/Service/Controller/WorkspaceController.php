@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
+namespace TYPO3\Neos\Service\Controller;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
@@ -12,14 +12,16 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\ExtJS\Annotations\ExtDirect;
 
 /**
- * ExtDirect Controller for managing Workspaces
- *
- * @Flow\Scope("singleton")
+ * Service Controller for managing Workspaces
  */
-class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class WorkspaceController extends AbstractServiceController {
+
+	/**
+	 * @var string
+	 */
+	protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
 
 	/**
 	 * @Flow\Inject
@@ -40,17 +42,9 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $workspaceRepository;
 
 	/**
-	 * @var string
-	 */
-	protected $viewObjectNamePattern = 'TYPO3\Neos\Service\ExtDirect\V1\View\NodeView';
-
-	/**
-	 * Select special error action
-	 *
 	 * @return void
 	 */
 	protected function initializeAction() {
-		$this->errorMethodName = 'extErrorAction';
 		if ($this->arguments->hasArgument('node')) {
 			$this
 				->arguments
@@ -66,24 +60,23 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
 		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
-			/**
-			 * TODO: The publishing pushes the same node twice, which causes the node to be published
-			 * already when it's processed the second time. This obviously leads to a problem for the
-			 * Workspace object which will (in the second time) try to publish a node in the live workspace
-			 * to the baseWorkspace of the live workspace (which does not exist).
-			 */
+		/**
+		 * TODO: The publishing pushes the same node twice, which causes the node to be published
+		 * already when it's processed the second time. This obviously leads to a problem for the
+		 * Workspace object which will (in the second time) try to publish a node in the live workspace
+		 * to the baseWorkspace of the live workspace (which does not exist).
+		 */
 		if ($targetWorkspace === $node->getWorkspace()) {
-			$this->view->assign('value', array('success' => TRUE));
+			$this->throwStatus(204, 'Node has been published');
 			return;
 		}
 
 		$this->publishingService->publishNode($node, $targetWorkspace);
 
-		$this->view->assign('value', array('success' => TRUE));
+		$this->throwStatus(204, 'Node has been published');
 	}
 
 	/**
@@ -91,12 +84,11 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->publishingService->discardNode($node);
 
-		$this->view->assign('value', array('success' => TRUE));
+		$this->throwStatus(204, 'Node changes have been discarded');
 	}
 
 	/**
@@ -104,13 +96,12 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param string $workspaceName
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function publishAllAction($workspaceName) {
 		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
 		$this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace));
 
-		$this->view->assign('value', array('success' => TRUE));
+		$this->throwStatus(204, 'Workspace changes have been published');
 	}
 
 	/**
@@ -118,7 +109,6 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function getWorkspaceWideUnpublishedNodesAction($workspace) {
 		$nodes = $this->publishingService->getUnpublishedNodes($workspace);
@@ -131,22 +121,11 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
-	 * @ExtDirect
 	 */
 	public function discardAllAction($workspace) {
 		$this->publishingService->discardNodes($this->publishingService->getUnpublishedNodes($workspace));
 
-		$this->view->assign('value', array('success' => TRUE));
+		$this->throwStatus(204, 'Workspace changes have been discarded');
 	}
 
-	/**
-	 * A preliminary error action for handling validation errors
-	 * by assigning them to the ExtDirect View that takes care of
-	 * converting them.
-	 *
-	 * @return void
-	 */
-	public function extErrorAction() {
-		$this->view->assignErrors($this->arguments->getValidationResults());
-	}
 }

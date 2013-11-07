@@ -11,11 +11,12 @@ function(
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
-			var nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath');
-			var that = this;
+			var that = this,
+				nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath'),
+				url = $('link[rel="neos-masterplugins"]').attr('href');
 
 			this.set('placeholder', 'Loading ...');
-			this._loadValuesFromController('/neos/content/masterPlugins?node=' + nodePath, function(results) {
+			this._loadValuesFromController(url + '?node=' + nodePath, function(results) {
 				var values = {}, placeholder, i = 0;
 
 				values[''] = {};
