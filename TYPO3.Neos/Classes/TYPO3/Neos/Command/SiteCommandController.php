@@ -108,9 +108,10 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Export one or multiple sites and their content into an XML format.
 	 *
 	 * @param string $siteName the site name to be exported; if none given will export all sites.
+	 * @param boolean $tidy Whether to export formatted XML.
 	 * @return void
 	 */
-	public function exportCommand($siteName = NULL) {
+	public function exportCommand($siteName = NULL, $tidy = FALSE) {
 		$contentContext = $this->createContext();
 
 		if ($siteName === NULL) {
@@ -122,7 +123,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('Error: No site for exporting found');
 			$this->quit(1);
 		}
-		$this->response->setContent($this->siteExportService->export($sites, $contentContext));
+		$this->siteExportService->export($sites, $contentContext, $tidy);
 	}
 
 	/**

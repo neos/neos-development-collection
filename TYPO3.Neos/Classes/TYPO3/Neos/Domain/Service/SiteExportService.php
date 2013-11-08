@@ -30,11 +30,15 @@ class SiteExportService {
 	 * Fetches the site with the given name and exports it into XML.
 	 * @param array $sites
 	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
+	 * @param boolean $tidy Whether to export formatted XML.
 	 * @return void
 	 */
-	public function export(array $sites, \TYPO3\Neos\Domain\Service\ContentContext $contentContext) {
+	public function export(array $sites, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $tidy = FALSE) {
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
+		if ($tidy) {
+			$xmlWriter->setIndent(TRUE);
+		}
 		$xmlWriter->startDocument('1.0', 'UTF-8');
 		$xmlWriter->startElement('root');
 
