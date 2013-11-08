@@ -71,3 +71,8 @@ TYPO3  Neos 1.0.0-alpha7
 ------------------------
 
 See :ref:`1.0.0-alpha7`
+
+TYPO3  Neos 1.0.0-beta1
+------------------------
+
+See :ref:`1.0.0-beta1`
