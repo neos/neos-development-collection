@@ -268,6 +268,8 @@ abstract class AbstractNodeData {
 						$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
 						if ($nodeData instanceof NodeData) {
 							$value = $nodeData;
+						} else {
+							$value = NULL;
 						}
 						break;
 				}
