@@ -123,22 +123,36 @@ class NodeViewHelper extends AbstractViewHelper {
 			}
 		}
 
-		if ($node instanceof NodeInterface) {
-			$request = $this->controllerContext->getRequest()->getMainRequest();
-
-			if ($format === NULL) {
-				$format = $request->getFormat();
-			}
-
-			$uriBuilder = clone $this->controllerContext->getUriBuilder();
-			$uriBuilder->setRequest($request);
-			$uri = $uriBuilder
-				->reset()
-				->setCreateAbsoluteUri($absolute)
-				->setFormat($format)
-				->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
-			return $uri;
+		if (!$node instanceof NodeInterface) {
+			return NULL;
 		}
-		return NULL;
+		$request = $this->controllerContext->getRequest()->getMainRequest();
+
+		if ($format === NULL) {
+			$format = $request->getFormat();
+		}
+
+		$uriBuilder = clone $this->controllerContext->getUriBuilder();
+		$uriBuilder->setRequest($request);
+		return $uriBuilder
+			->reset()
+			->setCreateAbsoluteUri($absolute)
+			->setFormat($format)
+			->uriFor('show', array('node' => $this->convertNode($node)), 'Frontend\Node', 'TYPO3.Neos');
+	}
+
+	/**
+	 * Converts the given $node to a string being:
+	 * - in "live" workspace: The node identifier (not the technical identifier)
+	 * - otherwise: The node context path ("some/path@workspace-name")
+	 *
+	 * @param NodeInterface $node
+	 * @return string
+	 */
+	protected function convertNode(NodeInterface $node) {
+		if ($node->getContext()->getWorkspace(FALSE)->getName() === 'live') {
+			return $node->getIdentifier();
+		}
+		return $node->getContextPath();
 	}
 }

@@ -21,7 +21,6 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Testcase for the Content Routepart Handler
- *
  */
 class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
@@ -229,11 +228,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function matchValueSetsValueToContextPathAndReturnsTrueIfNodePathCouldBeResolved() {
+	public function matchValueSetsValueToTheNodeContextPathAndReturnsTrueIfNodePathCouldBeResolvedAndWorkspaceIsNotLive() {
 		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
 
 		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
 		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
 
 		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
@@ -280,11 +281,35 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$this->mockSiteNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue(''));
+		$this->mockSiteNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 
 		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
 		$this->mockSiteNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
 
 		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('matchValue', '@some-context'));
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function matchValueSetsValueToTheNodeIdentifierAndReturnsTrueIfNodePathCouldBeResolvedAndWorkspaceIsLive() {
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+
+		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
+
+		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
+
+		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue($this->mockNode));
+		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
+
+		$this->mockNode->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('TheNodeIdentifier'));
+		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
+		$this->assertSame('TheNodeIdentifier', $this->frontendNodeRoutePartHandler->getValue());
 	}
 
 	/**
@@ -421,6 +446,65 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function resolveValueReturnsFalseIfSpecifiedValueIsAUuidButLiveWorkspaceCantBeRetrieved() {
+		$nodeIdentifier = '044412ab-5bd7-45a5-ba17-95fc87a42dac';
+
+		$mockWorkspaceRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->setMethods(array('findOneByName'))->disableOriginalConstructor()->getMock();
+		$mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue(NULL));
+		$this->inject($this->frontendNodeRoutePartHandler, 'workspaceRepository', $mockWorkspaceRepository);
+
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueReturnsFalseIfSpecifiedValueIsAUuidWithNoCorrespondingNodeDataInLiveWorkspace() {
+		$nodeIdentifier = '044412ab-5bd7-45a5-ba17-95fc87a42dac';
+
+		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+
+		$mockWorkspaceRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->setMethods(array('findOneByName'))->disableOriginalConstructor()->getMock();
+		$mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
+		$this->inject($this->frontendNodeRoutePartHandler, 'workspaceRepository', $mockWorkspaceRepository);
+
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
+		$mockNodeDataRepository->expects($this->atLeastOnce())->method('findOneByIdentifier')->with($nodeIdentifier, $mockLiveWorkspace)->will($this->returnValue(NULL));
+		$this->inject($this->frontendNodeRoutePartHandler, 'nodeDataRepository', $mockNodeDataRepository);
+
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueReturnsFalseIfSpecifiedValueIsAUuidThatCantBeConvertedToANode() {
+		$nodeIdentifier = '044412ab-5bd7-45a5-ba17-95fc87a42dac';
+
+		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+
+		$mockWorkspaceRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->setMethods(array('findOneByName'))->disableOriginalConstructor()->getMock();
+		$mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
+		$this->inject($this->frontendNodeRoutePartHandler, 'workspaceRepository', $mockWorkspaceRepository);
+
+		$mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
+		$mockNodeDataRepository->expects($this->atLeastOnce())->method('findOneByIdentifier')->with($nodeIdentifier, $mockLiveWorkspace)->will($this->returnValue($mockNodeData));
+		$this->inject($this->frontendNodeRoutePartHandler, 'nodeDataRepository', $mockNodeDataRepository);
+
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+
+		$mockNodeFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Factory\NodeFactory')->disableOriginalConstructor()->getMock();
+		$mockNodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->with($mockNodeData)->will($this->returnValue(NULL));
+		$this->inject($this->frontendNodeRoutePartHandler, 'nodeFactory', $mockNodeFactory);
+
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
+	}
+
+	/**
+	 * @test
+	 */
 	public function resolveValueSetsValueToContextPathAndReturnsTrueIfSpecifiedValueIsAValidNode() {
 		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
 		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('the/site/root/the/context/path@some-workspace'));
@@ -449,6 +533,38 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
 		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('resolveValue', 'the/context/path@some-workspace'));
 		$this->assertSame('the/context/path@some-workspace', $this->frontendNodeRoutePartHandler->getValue());
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueSetsValueToContextPathAndReturnsTrueIfSpecifiedValueIsAValidNodeIdentifier() {
+		$nodeIdentifier = '044412ab-5bd7-45a5-ba17-95fc87a42dac';
+
+		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+
+		$mockWorkspaceRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->setMethods(array('findOneByName'))->disableOriginalConstructor()->getMock();
+		$mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('live')->will($this->returnValue($mockLiveWorkspace));
+		$this->inject($this->frontendNodeRoutePartHandler, 'workspaceRepository', $mockWorkspaceRepository);
+
+		$mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
+		$mockNodeDataRepository->expects($this->atLeastOnce())->method('findOneByIdentifier')->with($nodeIdentifier, $mockLiveWorkspace)->will($this->returnValue($mockNodeData));
+		$this->inject($this->frontendNodeRoutePartHandler, 'nodeDataRepository', $mockNodeDataRepository);
+
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+
+		$mockNodeFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Factory\NodeFactory')->disableOriginalConstructor()->getMock();
+		$mockNodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->with($mockNodeData)->will($this->returnValue($this->mockNode));
+		$this->inject($this->frontendNodeRoutePartHandler, 'nodeFactory', $mockNodeFactory);
+
+		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('the/site/root/the/context/path'));
+		$this->mockSiteNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root'));
+		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
+
+		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
+		$this->assertSame('the/context/path', $this->frontendNodeRoutePartHandler->getValue());
 	}
 
 	/**

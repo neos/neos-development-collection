@@ -13,11 +13,17 @@ namespace TYPO3\Neos\Routing;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -41,6 +47,24 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 * @var SiteRepository
 	 */
 	protected $siteRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeFactory
+	 */
+	protected $nodeFactory;
 
 	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
@@ -72,7 +96,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			return FALSE;
 		}
 
-		$this->value = $node->getContextPath();
+		if ($node->getContext()->getWorkspace(FALSE)->getName() === 'live') {
+			$this->value = $node->getIdentifier();
+		} else {
+			$this->value = $node->getContextPath();
+		}
 		return TRUE;
 	}
 
@@ -124,11 +152,20 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		}
 
 		if (is_string($node)) {
-			$contentContext = $this->buildContextFromNodeContextPath($node);
-			if ($contentContext->getWorkspace(FALSE) === NULL) {
-				return FALSE;
+			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $node) === 1) {
+				$contentContext = $this->buildContextFromWorkspaceName('live');
+				try {
+					$node = $this->convertNodeIdentifierToNode($node);
+				} catch (Exception $exception) {
+					return FALSE;
+				}
+			} else {
+				$contentContext = $this->buildContextFromNodeContextPath($node);
+				if ($contentContext->getWorkspace(FALSE) === NULL) {
+					return FALSE;
+				}
+				$node = $contentContext->getNode($this->convertNodeContextPathToNodePath($node));
 			}
-			$node = $contentContext->getNode($this->convertNodeContextPathToNodePath($node));
 			if ($node === NULL) {
 				return FALSE;
 			}
@@ -153,6 +190,31 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			$this->value = ltrim(substr($nodeContextPath, strlen($siteNodePath)), '/');
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Converts the given $nodeIdentifier to the corresponding node instance, or throws an exception if that fails
+	 *
+	 * @param string $nodeIdentifier
+	 * @return NodeInterface
+	 * @throws Exception
+	 */
+	protected function convertNodeIdentifierToNode($nodeIdentifier) {
+		/** @var $liveWorkspace Workspace */
+		$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+		if ($liveWorkspace === NULL) {
+			throw new Exception\NoWorkspaceException('"live" workspace could not be fetched.', 1382617454);
+		}
+		/** @var $nodeData NodeData */
+		$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $liveWorkspace);
+		if ($nodeData === NULL) {
+			throw new Exception\NoSuchNodeException(sprintf('No node found in live workspace with identifier "%s".', $nodeIdentifier), 1382114820);
+		}
+		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->buildContextFromWorkspaceName('live'));
+		if ($node === NULL) {
+			throw new Exception\NoSuchNodeException(sprintf('Node "%s" could not be created from node data.', $nodeIdentifier), 1382114825);
+		}
+		return $node;
 	}
 
 	/**
@@ -207,7 +269,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	}
 
 	/**
-	 * @param $workspaceName
+	 * @param string $workspaceName
 	 * @return ContentContext
 	 */
 	protected function buildContextFromWorkspaceName($workspaceName) {
