@@ -157,7 +157,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification) {
 			}
 
 			require(['InlineEditing/Dialogs/DeleteNodeDialog'], function(DeleteNodeDialog) {
-				if($('.neos-modal:visible').length > 0) {
+				if ($('.neos-modal:visible').length > 0) {
 					$('.neos-modal .neos-close').trigger('click');
 				}
 
