@@ -52,6 +52,11 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	protected $properties = array();
 
 	/**
+	 * @var array
+	 */
+	protected $tsValueCache = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param \TYPO3\TypoScript\Core\Runtime $tsRuntime
@@ -72,14 +77,20 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	abstract public function evaluate();
 
 	/**
-	 * Return the typoscript value relative to this TypoScript object (with processors
-	 * etc applied)
+	 * Return the TypoScript value relative to this TypoScript object (with processors etc applied).
+	 *
+	 * Note that subsequent calls of tsValue() with the same TypoScript path will return the same values since the
+	 * first evaluated value will be cached in memory.
 	 *
 	 * @param string $path
 	 * @return mixed
 	 */
 	protected function tsValue($path) {
-		return $this->tsRuntime->evaluate($this->path . '/' . $path, $this);
+		$fullPath = $this->path . '/' . $path;
+		if (!isset($this->tsValueCache[$fullPath])) {
+			$this->tsValueCache[$fullPath] = $this->tsRuntime->evaluate($fullPath, $this);
+		}
+		return $this->tsValueCache[$fullPath];
 	}
 
 	/**
