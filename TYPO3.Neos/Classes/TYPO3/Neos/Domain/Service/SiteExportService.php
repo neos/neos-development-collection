@@ -117,7 +117,7 @@ class SiteExportService {
 
 			// node properties
 		$nodeType = $node->getNodeType();
-		$properties = $node->getProperties();
+		$properties = $node->getProperties(TRUE);
 		if (count($properties) > 0) {
 			$xmlWriter->startElement('properties');
 			foreach ($properties as $propertyName => $propertyValue) {
@@ -126,9 +126,9 @@ class SiteExportService {
 					case 'reference':
 						$xmlWriter->startElement($propertyName);
 						$xmlWriter->writeAttribute('__type', 'reference');
-						if ($propertyValue instanceof NodeInterface) {
+						if (!empty($propertyValue)) {
 							$xmlWriter->startElement('node');
-							$xmlWriter->writeAttribute('identifier', $propertyValue->getIdentifier());
+							$xmlWriter->writeAttribute('identifier', $propertyValue);
 							$xmlWriter->endElement();
 						}
 						$xmlWriter->endElement();
@@ -138,11 +138,9 @@ class SiteExportService {
 						$xmlWriter->writeAttribute('__type', 'references');
 						if (is_array($propertyValue)) {
 							foreach ($propertyValue as $referencedTargetNode) {
-								if ($referencedTargetNode instanceof NodeInterface) {
-									$xmlWriter->startElement('node');
-									$xmlWriter->writeAttribute('identifier', $referencedTargetNode->getIdentifier());
-									$xmlWriter->endElement();
-								}
+								$xmlWriter->startElement('node');
+								$xmlWriter->writeAttribute('identifier', $referencedTargetNode);
+								$xmlWriter->endElement();
 							}
 						}
 						$xmlWriter->endElement();
