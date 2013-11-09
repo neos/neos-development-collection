@@ -422,12 +422,13 @@ class Node implements NodeInterface {
 	 * there if it is gettable.
 	 *
 	 * @param string $propertyName Name of the property
+	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
 	 * @return mixed value of the property
 	 * @api
 	 */
-	public function getProperty($propertyName) {
-		$value = $this->nodeData->getProperty($propertyName);
-		if (!empty($value)) {
+	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
+		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers);
+		if (!empty($value) && $returnNodesAsIdentifiers === FALSE) {
 			switch($this->getNodeType()->getPropertyType($propertyName)) {
 				case 'references' :
 					$nodes = array();
@@ -468,13 +469,14 @@ class Node implements NodeInterface {
 	 * If the node has a content object attached, the properties will be fetched
 	 * there.
 	 *
+	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
 	 * @return array Property values, indexed by their name
 	 * @api
 	 */
-	public function getProperties() {
+	public function getProperties($returnNodesAsIdentifiers = FALSE) {
 		$properties = array();
 		foreach ($this->getPropertyNames() as $propertyName) {
-			$properties[$propertyName] = $this->getProperty($propertyName);
+			$properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers);
 		}
 		return $properties;
 	}

@@ -224,11 +224,12 @@ abstract class AbstractNodeData {
 	 * there if it is gettable.
 	 *
 	 * @param string $propertyName Name of the property
+	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
 	 * @api
 	 */
-	public function getProperty($propertyName) {
+	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
 		if (!is_object($this->contentObjectProxy)) {
 			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
 			if (!empty($value)) {
@@ -239,19 +240,25 @@ abstract class AbstractNodeData {
 							$value = array();
 						}
 						foreach ($value as $nodeIdentifier) {
-							$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace());
-							if ($nodeData instanceof NodeData) {
-								$nodeDatas[] = $nodeData;
+							if ($returnNodesAsIdentifiers === FALSE) {
+								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace());
+								if ($nodeData instanceof NodeData) {
+									$nodeDatas[] = $nodeData;
+								}
+							} else {
+								$nodeDatas[] = $nodeIdentifier;
 							}
 						}
 						$value = $nodeDatas;
 						break;
 					case 'reference' :
-						$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
-						if ($nodeData instanceof NodeData) {
-							$value = $nodeData;
-						} else {
-							$value = NULL;
+						if ($returnNodesAsIdentifiers === FALSE) {
+							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
+							if ($nodeData instanceof NodeData) {
+								$value = $nodeData;
+							} else {
+								$value = NULL;
+							}
 						}
 						break;
 				}
@@ -291,17 +298,18 @@ abstract class AbstractNodeData {
 	 * If the node has a content object attached, the properties will be fetched
 	 * there.
 	 *
+	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
 	 * @return array Property values, indexed by their name
 	 * @api
 	 */
-	public function getProperties() {
+	public function getProperties($returnNodesAsIdentifiers = FALSE) {
 		if (is_object($this->contentObjectProxy)) {
 			return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		}
 
 		$properties = array();
 		foreach (array_keys($this->properties) as $propertyName) {
-			$properties[$propertyName] = $this->getProperty($propertyName);
+			$properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers);
 		}
 		return $properties;
 	}
