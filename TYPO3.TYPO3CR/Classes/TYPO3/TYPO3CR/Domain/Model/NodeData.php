@@ -422,7 +422,7 @@ class NodeData extends AbstractNodeData {
 			$possibleNodeName = $newNodeName . '-' . $counter++;
 		}
 
-		$newNode = $this->createNode($possibleNodeName, $nodeTemplate->getNodeType(), NULL, $workspace);
+		$newNode = $this->createNode($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace);
 		$newNode->similarize($nodeTemplate);
 		return $newNode;
 	}

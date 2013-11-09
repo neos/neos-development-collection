@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 
 /**
  * A container of properties which can be used as a template for generating new nodes.
@@ -21,11 +22,42 @@ use TYPO3\Flow\Annotations as Flow;
 class NodeTemplate extends AbstractNodeData {
 
 	/**
+	 * The UUID to use for the new node. Use with care.
+	 *
+	 * @var string
+	 */
+	protected $identifier;
+
+	/**
 	 * The node name which acts as a path segment for its node path
 	 *
 	 * @var string
 	 */
 	protected $name;
+
+	/**
+	 * Allows to set a UUID to use for the node that will be created from this
+	 * NodeTemplate. Use with care, usually identifier generation should be left
+	 * to the TYPO3CR.
+	 *
+	 * @param string $identifier
+	 * @return void
+	 */
+	public function setIdentifier($identifier) {
+		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $identifier) !== 1) {
+			throw new \InvalidArgumentException(sprintf('Invalid UUID "%s" given.', $identifier), 1385026112);
+		}
+		$this->identifier = $identifier;
+	}
+
+	/**
+	 * Returns the UUID set in this NodeTemplate.
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
+	}
 
 	/**
 	 * Set the name to $newName
