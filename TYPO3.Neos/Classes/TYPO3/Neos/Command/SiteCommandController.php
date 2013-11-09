@@ -105,13 +105,21 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	/**
 	 * Export sites content
 	 *
-	 * Export one or multiple sites and their content into an XML format.
+	 * This command exports all or one specific site with all its content into an XML
+	 * format.
 	 *
-	 * @param string $siteName the site name to be exported; if none given will export all sites.
-	 * @param boolean $tidy Whether to export formatted XML.
+	 * If the output option is given and points to a file, any resources will be exported
+	 * to files in a folder named "Resources" alongside the XML file.
+	 *
+	 * If not given, the XML will be output to standard output and assets will be embedded
+	 * into the XML in base64 encoded form.
+	 *
+	 * @param string $siteName the site name to be exported; if none given will export all sites
+	 * @param boolean $tidy Whether to export formatted XML
+	 * @param string $output Where to write the XML to
 	 * @return void
 	 */
-	public function exportCommand($siteName = NULL, $tidy = FALSE) {
+	public function exportCommand($siteName = NULL, $tidy = FALSE, $output = 'php://stdout') {
 		$contentContext = $this->createContext();
 
 		if ($siteName === NULL) {
@@ -123,7 +131,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('Error: No site for exporting found');
 			$this->quit(1);
 		}
-		$this->siteExportService->export($sites, $contentContext, $tidy);
+		$this->siteExportService->export($sites, $contentContext, $tidy, $output);
 	}
 
 	/**

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -28,15 +29,27 @@ class SiteExportService {
 	protected $contextFactory;
 
 	/**
+	 * @var string
+	 */
+	protected $resourcesPath;
+
+	/**
 	 * Fetches the site with the given name and exports it into XML.
+	 *
 	 * @param array $sites
 	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
-	 * @param boolean $tidy Whether to export formatted XML.
+	 * @param boolean $tidy Whether to export formatted XML
+	 * @param string $output Path or URI where the export output should be sent to
 	 * @return void
 	 */
-	public function export(array $sites, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $tidy = FALSE) {
+	public function export(array $sites, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $tidy = FALSE, $output = 'php://stdout') {
+		if ($output !== 'php://stdout' && $output !== 'php://output') {
+			$this->resourcesPath = dirname($output) . '/Resources';
+			Files::createDirectoryRecursively($this->resourcesPath);
+		}
+
 		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openUri('php://output');
+		$xmlWriter->openUri($output);
 		if ($tidy) {
 			$xmlWriter->setIndent(TRUE);
 		}
@@ -78,11 +91,11 @@ class SiteExportService {
 	/**
 	 * Export a single node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param NodeInterface $node
 	 * @param \XMLWriter $xmlWriter
 	 * @return void
 	 */
-	protected function exportNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \XMLWriter $xmlWriter) {
+	protected function exportNode(NodeInterface $node, \XMLWriter $xmlWriter) {
 		$xmlWriter->startElement('node');
 
 			// node attributes
@@ -186,11 +199,13 @@ class SiteExportService {
 	 * @param object $object
 	 * @param \XMLWriter $xmlWriter
 	 * @return void
+	 * @throws \TYPO3\Neos\Domain\Exception
 	 */
 	protected function objectToXml($object, \XMLWriter $xmlWriter) {
 		$className = get_class($object);
 		switch ($className) {
 			case 'TYPO3\Media\Domain\Model\ImageVariant':
+				/** @var \TYPO3\Media\Domain\Model\ImageVariant $object */
 				$xmlWriter->startElement('processingInstructions');
 				$xmlWriter->writeCdata(serialize($object->getProcessingInstructions()));
 				$xmlWriter->endElement();
@@ -204,7 +219,13 @@ class SiteExportService {
 				$xmlWriter->writeAttribute('__classname', '\TYPO3\Flow\Resource\Resource');
 				$resource = $object->getOriginalImage()->getResource();
 				$xmlWriter->writeElement('filename', $resource->getFilename());
-				$xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
+				if ($this->resourcesPath === NULL) {
+					$xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
+				} else {
+					$hash = $resource->getResourcePointer()->getHash();
+					copy($resource->getUri(), $this->resourcesPath . '/'  . $hash);
+					$xmlWriter->writeElement('hash', $hash);
+				}
 				$xmlWriter->endElement();
 
 				$xmlWriter->endElement();

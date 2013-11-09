@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * The Site Import Service
@@ -52,15 +53,20 @@ class SiteImportService {
 	protected $imageRepository;
 
 	/**
+	 * @var string
+	 */
+	protected $resourcesPath;
+
+	/**
 	 * Checks for the presence of Sites.xml in the given package and imports
 	 * it if found.
 	 *
 	 * @param $packageKey
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $contentContext
+	 * @param Context $contentContext
 	 * @return void
 	 * @throws \TYPO3\Neos\Exception
 	 */
-	public function importFromPackage($packageKey, \TYPO3\TYPO3CR\Domain\Service\Context $contentContext) {
+	public function importFromPackage($packageKey, Context $contentContext) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			throw new \TYPO3\Neos\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
@@ -76,19 +82,24 @@ class SiteImportService {
 
 	/**
 	 * @param string $pathAndFilename
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $contentContext
+	 * @param Context $contentContext
 	 * @return void
 	 * @throws \TYPO3\Flow\Package\Exception\UnknownPackageException
 	 * @throws \TYPO3\Flow\Package\Exception\InvalidPackageStateException
 	 */
-	public function importSitesFromFile($pathAndFilename, \TYPO3\TYPO3CR\Domain\Service\Context $contentContext) {
-			// no file_get_contents here because it does not work on php://stdin
-		$fp = fopen($pathAndFilename, 'rb');
-		$xmlString = '';
-		while (!feof($fp)) {
-			$xmlString .= fread($fp, 4096);
+	public function importSitesFromFile($pathAndFilename, Context $contentContext) {
+		if ($pathAndFilename === 'php://stdin') {
+				// no file_get_contents here because it does not work on php://stdin
+			$fp = fopen($pathAndFilename, 'rb');
+			$xmlString = '';
+			while (!feof($fp)) {
+				$xmlString .= fread($fp, 4096);
+			}
+			fclose($fp);
+		} else {
+			$this->resourcesPath = dirname($pathAndFilename) . '/Resources';
+			$xmlString = file_get_contents($pathAndFilename);
 		}
-		fclose($fp);
 
 		$xml = new \SimpleXMLElement($xmlString, LIBXML_PARSEHUGE);
 		foreach ($xml->site as $siteXml) {
@@ -133,7 +144,7 @@ class SiteImportService {
 	 * Iterates over the nodes and adds them to the workspace.
 	 *
 	 * @param \SimpleXMLElement $parentXml
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $parentNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode
 	 * @return void
 	 */
 	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
@@ -217,10 +228,17 @@ class SiteImportService {
 		switch ($className) {
 			case 'TYPO3\Media\Domain\Model\ImageVariant':
 				$processingInstructions = unserialize(trim((string)$xml->processingInstructions));
-				$originalResource = $this->resourceManager->createResourceFromContent(
-					base64_decode(trim((string)$xml->originalImage->resource->content)),
-					(string)$xml->originalImage->resource->filename
-				);
+				if ($hash = (string)$xml->originalImage->resource->hash) {
+					$originalResource = $this->resourceManager->createResourceFromContent(
+						file_get_contents($this->resourcesPath . '/' . $hash),
+						(string)$xml->originalImage->resource->filename
+					);
+				} else {
+					$originalResource = $this->resourceManager->createResourceFromContent(
+						base64_decode(trim((string)$xml->originalImage->resource->content)),
+						(string)$xml->originalImage->resource->filename
+					);
+				}
 				$image = new \TYPO3\Media\Domain\Model\Image($originalResource);
 				$this->imageRepository->add($image);
 				$object = new \TYPO3\Media\Domain\Model\ImageVariant(
