@@ -44,7 +44,7 @@ interface ContextInterface {
 	 * Convenience method returns the root node for
 	 * this context workspace.
 	 *
-	 * @return mixed
+	 * @return NodeInterface
 	 * @api
 	 */
 	public function getRootNode();
