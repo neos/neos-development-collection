@@ -15,6 +15,7 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 
 /**
  * Some NodeData (persisted or transient)
@@ -171,7 +172,7 @@ abstract class AbstractNodeData {
 						foreach ($value as $nodeIdentifier) {
 							if ($nodeIdentifier instanceof NodeInterface) {
 								$nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
-							} elseif ($this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace()) !== NULL) {
+							} elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodeIdentifier) !== 0) {
 								$nodeIdentifiers[] = $nodeIdentifier;
 							}
 						}
@@ -182,7 +183,7 @@ abstract class AbstractNodeData {
 					$nodeIdentifier = NULL;
 					if ($value instanceof NodeInterface) {
 						$nodeIdentifier = $value->getIdentifier();
-					} elseif ($this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace()) !== NULL) {
+					} elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
 						$nodeIdentifier = $value;
 					}
 					$value = $nodeIdentifier;
