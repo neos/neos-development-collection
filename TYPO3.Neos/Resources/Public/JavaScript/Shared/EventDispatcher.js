@@ -13,7 +13,7 @@ function(
 	/**
 	 * @singleton
 	 */
-	return Ember.Object.extend({
+	return Ember.Object.extend(Ember.Evented, {
 		/**
 		 * Trigger events for notification to external (site-specific) JavaScript.
 		 *
