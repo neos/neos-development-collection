@@ -13,228 +13,325 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Neos\Domain\Exception as DomainException;
+use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * The Site Export Service
  *
- * @Flow\Scope("prototype")
+ * @Flow\Scope("singleton")
  */
 class SiteExportService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
+	 * Absolute path to exported resources, or NULL if resources should be inlined in the exported XML
+	 *
 	 * @var string
 	 */
-	protected $resourcesPath;
+	protected $resourcesPath = NULL;
+
+	/**
+	 * The XMLWriter that is used to construct the export.
+	 *
+	 * @var \XMLWriter
+	 */
+	protected $xmlWriter;
 
 	/**
 	 * Fetches the site with the given name and exports it into XML.
 	 *
-	 * @param array $sites
-	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
+	 * @param array<Site> $sites
+	 * @param ContentContext $contentContext
 	 * @param boolean $tidy Whether to export formatted XML
-	 * @param string $output Path or URI where the export output should be sent to
-	 * @return void
+	 * @return string
 	 */
-	public function export(array $sites, \TYPO3\Neos\Domain\Service\ContentContext $contentContext, $tidy = FALSE, $output = 'php://stdout') {
-		if ($output !== 'php://stdout' && $output !== 'php://output') {
-			$this->resourcesPath = dirname($output) . '/Resources';
-			Files::createDirectoryRecursively($this->resourcesPath);
-		}
+	public function export(array $sites, ContentContext $contentContext, $tidy = FALSE) {
+		$this->xmlWriter = new \XMLWriter();
+		$this->xmlWriter->openMemory();
 
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openUri($output);
 		if ($tidy) {
-			$xmlWriter->setIndent(TRUE);
+			$this->xmlWriter->setIndent(TRUE);
 		}
-		$xmlWriter->startDocument('1.0', 'UTF-8');
-		$xmlWriter->startElement('root');
+		$this->exportSites($sites, $contentContext);
 
-		foreach ($sites as $site) {
-			$xmlWriter->startElement('site');
-
-				// site attributes
-			$xmlWriter->writeAttribute('nodeName', $site->getNodeName());
-
-				// site properties
-			$xmlWriter->startElement('properties');
-			$xmlWriter->writeElement('name', $site->getName());
-			$xmlWriter->writeElement('state', $site->getState());
-			$xmlWriter->writeElement('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
-			$xmlWriter->endElement();
-
-			$contextProperties = $contentContext->getProperties();
-			$contextProperties['currentSite'] = $site;
-			$contentContext = $this->contextFactory->create($contextProperties);
-
-				// on to the nodes...
-			$node = $contentContext->getCurrentSiteNode();
-
-			foreach ($node->getChildNodes() as $childNode) {
-				$this->exportNode($childNode, $xmlWriter);
-			}
-
-			$xmlWriter->endElement();
-		}
-		$xmlWriter->endElement();
-		$xmlWriter->endDocument();
-
-		$xmlWriter->flush();
+		return $this->xmlWriter->outputMemory(TRUE);
 	}
 
 	/**
-	 * Export a single node.
+	 * Fetches the site with the given name and exports it into XML.
 	 *
-	 * @param NodeInterface $node
-	 * @param \XMLWriter $xmlWriter
+	 * @param array<Site> $sites
+	 * @param ContentContext $contentContext
+	 * @param boolean $tidy Whether to export formatted XML
+	 * @param string $pathAndFilename Path to where the export output should be saved to
 	 * @return void
 	 */
-	protected function exportNode(NodeInterface $node, \XMLWriter $xmlWriter) {
-		$xmlWriter->startElement('node');
+	public function exportToFile(array $sites, ContentContext $contentContext, $tidy = FALSE, $pathAndFilename) {
+		$this->resourcesPath = Files::concatenatePaths(array(dirname($pathAndFilename), 'Resources'));
+		Files::createDirectoryRecursively($this->resourcesPath);
 
-			// node attributes
-		$xmlWriter->writeAttribute('identifier', $node->getIdentifier());
-		$xmlWriter->writeAttribute('type', $node->getNodeType()->getName());
-		$xmlWriter->writeAttribute('nodeName', $node->getName());
-		$xmlWriter->writeAttribute('locale', '');
+		$this->xmlWriter = new \XMLWriter();
+		$this->xmlWriter->openUri($pathAndFilename);
+
+		if ($tidy) {
+			$this->xmlWriter->setIndent(TRUE);
+		}
+		$this->exportSites($sites, $contentContext);
+		$this->xmlWriter->flush();
+	}
+
+	/**
+	 * Exports the given sites to the XMLWriter
+	 *
+	 * @param array<Site> $sites
+	 * @param ContentContext $contentContext
+	 * @return void
+	 */
+	protected function exportSites(array $sites, ContentContext $contentContext) {
+		$this->xmlWriter->startDocument('1.0', 'UTF-8');
+		$this->xmlWriter->startElement('root');
+
+		foreach ($sites as $site) {
+			$this->exportSite($site, $contentContext);
+		}
+		$this->xmlWriter->endElement();
+		$this->xmlWriter->endDocument();
+	}
+
+	/**
+	 * Export the given $site to the XMLWriter
+	 *
+	 * @param Site $site
+	 * @param ContentContext $contentContext
+	 * @return void
+	 */
+	protected function exportSite(Site $site, ContentContext $contentContext) {
+		$this->xmlWriter->startElement('site');
+
+		// site attributes
+		$this->xmlWriter->writeAttribute('nodeName', $site->getNodeName());
+
+		// site properties
+		$this->xmlWriter->startElement('properties');
+		$this->xmlWriter->writeElement('name', $site->getName());
+		$this->xmlWriter->writeElement('state', $site->getState());
+		$this->xmlWriter->writeElement('siteResourcesPackageKey', $site->getSiteResourcesPackageKey());
+		$this->xmlWriter->endElement();
+
+		$contextProperties = $contentContext->getProperties();
+		$contextProperties['currentSite'] = $site;
+		$contentContext = $this->contextFactory->create($contextProperties);
+
+		// on to the nodes...
+		$siteNode = $contentContext->getCurrentSiteNode();
+
+		foreach ($siteNode->getChildNodes() as $childNode) {
+			$this->exportNode($childNode);
+		}
+
+		$this->xmlWriter->endElement();
+	}
+
+	/**
+	 * Export a single node to the XMLWriter
+	 *
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function exportNode(NodeInterface $node) {
+		$this->xmlWriter->startElement('node');
+
+		$this->exportNodeAttributes($node);
+		$this->exportNodeAccessRoles($node);
+		$this->exportNodeProperties($node);
+
+		// and the child nodes recursively
+		foreach ($node->getChildNodes() as $childNode) {
+			$this->exportNode($childNode);
+		}
+
+		$this->xmlWriter->endElement();
+	}
+
+	/**
+	 * Export all attributes of $node to the XMLWriter
+	 *
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function exportNodeAttributes(NodeInterface $node) {
+		$this->xmlWriter->writeAttribute('identifier', $node->getIdentifier());
+		$this->xmlWriter->writeAttribute('type', $node->getNodeType()->getName());
+		$this->xmlWriter->writeAttribute('nodeName', $node->getName());
+		$this->xmlWriter->writeAttribute('locale', '');
 		if ($node->isHidden() === TRUE) {
-			$xmlWriter->writeAttribute('hidden', 'true');
+			$this->xmlWriter->writeAttribute('hidden', 'true');
 		}
 		if ($node->isHiddenInIndex() === TRUE) {
-			$xmlWriter->writeAttribute('hiddenInIndex', 'true');
+			$this->xmlWriter->writeAttribute('hiddenInIndex', 'true');
 		}
 		$hiddenBeforeDateTime = $node->getHiddenBeforeDateTime();
 		if ($hiddenBeforeDateTime !== NULL) {
-			$xmlWriter->writeAttribute('hiddenBeforeDateTime', $hiddenBeforeDateTime->format(\DateTime::W3C));
+			$this->xmlWriter->writeAttribute('hiddenBeforeDateTime', $hiddenBeforeDateTime->format(\DateTime::W3C));
 		}
 		$hiddenAfterDateTime = $node->getHiddenAfterDateTime();
 		if ($hiddenAfterDateTime !== NULL) {
-			$xmlWriter->writeAttribute('hiddenAfterDateTime', $hiddenAfterDateTime->format(\DateTime::W3C));
+			$this->xmlWriter->writeAttribute('hiddenAfterDateTime', $hiddenAfterDateTime->format(\DateTime::W3C));
 		}
+	}
 
-			// access roles
+	/**
+	 * Export access roles of $node to the XMLWriter
+	 *
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function exportNodeAccessRoles(NodeInterface $node) {
 		$accessRoles = $node->getAccessRoles();
 		if (count($accessRoles) > 0) {
-			$xmlWriter->startElement('accessRoles');
+			$this->xmlWriter->startElement('accessRoles');
 			foreach ($accessRoles as $role) {
-				$xmlWriter->writeElement('role', $role);
+				$this->xmlWriter->writeElement('role', $role);
 			}
-			$xmlWriter->endElement();
+			$this->xmlWriter->endElement();
 		}
+	}
 
-			// node properties
-		$nodeType = $node->getNodeType();
+	/**
+	 * Export all properties of $node to the XMLWriter
+	 *
+	 * @param NodeInterface $node
+	 * @param array $additionalProperties additional key/value pairs to export as properties
+	 * @return void
+	 */
+	protected function exportNodeProperties(NodeInterface $node, array $additionalProperties = array()) {
 		$properties = $node->getProperties(TRUE);
+		$properties = array_merge($properties, $additionalProperties);
 		if (count($properties) > 0) {
-			$xmlWriter->startElement('properties');
+			$this->xmlWriter->startElement('properties');
 			foreach ($properties as $propertyName => $propertyValue) {
-				$propertyType = $nodeType->getPropertyType($propertyName);
-				switch ($propertyType) {
-					case 'reference':
-						$xmlWriter->startElement($propertyName);
-						$xmlWriter->writeAttribute('__type', 'reference');
-						if (!empty($propertyValue)) {
-							$xmlWriter->startElement('node');
-							$xmlWriter->writeAttribute('identifier', $propertyValue);
-							$xmlWriter->endElement();
-						}
-						$xmlWriter->endElement();
-					break;
-					case 'references':
-						$xmlWriter->startElement($propertyName);
-						$xmlWriter->writeAttribute('__type', 'references');
-						if (is_array($propertyValue)) {
-							foreach ($propertyValue as $referencedTargetNode) {
-								$xmlWriter->startElement('node');
-								$xmlWriter->writeAttribute('identifier', $referencedTargetNode);
-								$xmlWriter->endElement();
-							}
-						}
-						$xmlWriter->endElement();
-					break;
-					default:
-						if (is_object($propertyValue)) {
-							$xmlWriter->startElement($propertyName);
-							$xmlWriter->writeAttribute('__type', 'object');
-							$xmlWriter->writeAttribute('__classname', get_class($propertyValue));
-							$this->objectToXml($propertyValue, $xmlWriter);
-							$xmlWriter->endElement();
-						} elseif (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
-							$xmlWriter->startElement($propertyName);
-							if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
-								$xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
-							} else {
-								$xmlWriter->writeCdata($propertyValue);
-							}
-							$xmlWriter->endElement();
-						} else {
-							$xmlWriter->writeElement($propertyName, $propertyValue);
-						}
-					break;
-				}
+				$this->exportNodeProperty($node, $propertyName, $propertyValue);
 			}
-			$xmlWriter->endElement();
+			$this->xmlWriter->endElement();
 		}
+	}
 
-			// and the child nodes recursively
-		foreach ($node->getChildNodes() as $childNode) {
-			$this->exportNode($childNode, $xmlWriter);
+	/**
+	 * Exports the property $propertyName to the the XMLWriter
+	 *
+	 * @param NodeInterface $node
+	 * @param string $propertyName
+	 * @param mixed $propertyValue
+	 * @return void
+	 */
+	protected function exportNodeProperty(NodeInterface $node, $propertyName, $propertyValue) {
+		$nodeType = $node->getNodeType();
+		$propertyType = $nodeType->getPropertyType($propertyName);
+		switch ($propertyType) {
+			case 'reference':
+				$this->xmlWriter->startElement($propertyName);
+				$this->xmlWriter->writeAttribute('__type', 'reference');
+				if (!empty($propertyValue)) {
+					$this->xmlWriter->startElement('node');
+					$this->xmlWriter->writeAttribute('identifier', is_string($propertyValue) ? $propertyValue : '');
+					$this->xmlWriter->endElement();
+				}
+				$this->xmlWriter->endElement();
+				break;
+			case 'references':
+				$this->xmlWriter->startElement($propertyName);
+				$this->xmlWriter->writeAttribute('__type', 'references');
+				if (is_array($propertyValue)) {
+					foreach ($propertyValue as $referencedTargetNode) {
+						$this->xmlWriter->startElement('node');
+						$this->xmlWriter->writeAttribute('identifier', is_string($referencedTargetNode) ? $referencedTargetNode : '');
+						$this->xmlWriter->endElement();
+					}
+				}
+				$this->xmlWriter->endElement();
+				break;
+			default:
+				if (is_object($propertyValue)) {
+					$this->xmlWriter->startElement($propertyName);
+					$this->xmlWriter->writeAttribute('__type', 'object');
+					$this->xmlWriter->writeAttribute('__classname', get_class($propertyValue));
+					$this->objectToXml($propertyValue);
+					$this->xmlWriter->endElement();
+				} elseif (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
+					$this->xmlWriter->startElement($propertyName);
+					if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
+						$this->xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
+					} else {
+						$this->xmlWriter->writeCdata($propertyValue);
+					}
+					$this->xmlWriter->endElement();
+				} else {
+					$this->xmlWriter->writeElement($propertyName, is_string($propertyValue) ? $propertyValue : '');
+				}
+				break;
 		}
-
-		$xmlWriter->endElement();
 	}
 
 	/**
 	 * Handles conversion of objects into a string format that can be exported in our
 	 * XML format.
-	 *
 	 * Note: currently only ImageVariant instances are supported.
 	 *
 	 * @param object $object
-	 * @param \XMLWriter $xmlWriter
 	 * @return void
-	 * @throws \TYPO3\Neos\Domain\Exception
+	 * @throws DomainException
 	 */
-	protected function objectToXml($object, \XMLWriter $xmlWriter) {
-		$className = get_class($object);
-		switch ($className) {
-			case 'TYPO3\Media\Domain\Model\ImageVariant':
-				/** @var \TYPO3\Media\Domain\Model\ImageVariant $object */
-				$xmlWriter->startElement('processingInstructions');
-				$xmlWriter->writeCdata(serialize($object->getProcessingInstructions()));
-				$xmlWriter->endElement();
+	protected function objectToXml($object) {
+		if ($object instanceof ImageVariant) {
+			$this->exportImageVariant($object);
 
-				$xmlWriter->startElement('originalImage');
-				$xmlWriter->writeAttribute('__type', 'object');
-				$xmlWriter->writeAttribute('__classname', '\TYPO3\Media\Domain\Model\Image');
-
-				$xmlWriter->startElement('resource');
-				$xmlWriter->writeAttribute('__type', 'object');
-				$xmlWriter->writeAttribute('__classname', '\TYPO3\Flow\Resource\Resource');
-				$resource = $object->getOriginalImage()->getResource();
-				$xmlWriter->writeElement('filename', $resource->getFilename());
-				if ($this->resourcesPath === NULL) {
-					$xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
-				} else {
-					$hash = $resource->getResourcePointer()->getHash();
-					copy($resource->getUri(), $this->resourcesPath . '/'  . $hash);
-					$xmlWriter->writeElement('hash', $hash);
-				}
-				$xmlWriter->endElement();
-
-				$xmlWriter->endElement();
-			break;
-			case 'DateTime':
-				$xmlWriter->writeElement('dateTime', $object->format(\DateTime::W3C));
-			break;
-			default:
-				throw new \TYPO3\Neos\Domain\Exception('Unsupported object of type "' . get_class($object) . '" hit during XML export.', 1347144928);
+			return;
 		}
+		if ($object instanceof \DateTime) {
+			$this->xmlWriter->writeElement('dateTime', $object->format(\DateTime::W3C));
+
+			return;
+		}
+		throw new DomainException(sprintf('Unsupported object of type "%s" hit during XML export.', get_class($object)), 1347144928);
+	}
+
+	/**
+	 * Exports the given $imageVariant to the XMLWriter
+	 *
+	 * @param ImageVariant $imageVariant
+	 * @return void
+	 */
+	protected function exportImageVariant(ImageVariant $imageVariant) {
+		$this->xmlWriter->startElement('processingInstructions');
+		$this->xmlWriter->writeCdata(serialize($imageVariant->getProcessingInstructions()));
+		$this->xmlWriter->endElement();
+
+		$this->xmlWriter->startElement('originalImage');
+		$this->xmlWriter->writeAttribute('__type', 'object');
+		$this->xmlWriter->writeAttribute('__classname', 'TYPO3\Media\Domain\Model\Image');
+
+		$this->xmlWriter->startElement('resource');
+		$this->xmlWriter->writeAttribute('__type', 'object');
+		$this->xmlWriter->writeAttribute('__classname', 'TYPO3\Flow\Resource\Resource');
+		$resource = $imageVariant->getOriginalImage()->getResource();
+		$this->xmlWriter->writeElement('filename', $resource->getFilename());
+		if ($this->resourcesPath === NULL) {
+			$this->xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
+		} else {
+			$hash = $resource->getResourcePointer()->getHash();
+			copy($resource->getUri(), Files::concatenatePaths(array($this->resourcesPath, $hash)));
+			$this->xmlWriter->writeElement('hash', $hash);
+		}
+		$this->xmlWriter->endElement();
+		$this->xmlWriter->endElement();
 	}
 }

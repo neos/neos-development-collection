@@ -108,30 +108,39 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * This command exports all or one specific site with all its content into an XML
 	 * format.
 	 *
-	 * If the output option is given and points to a file, any resources will be exported
+	 * If the filename option is given, any resources will be exported
 	 * to files in a folder named "Resources" alongside the XML file.
 	 *
-	 * If not given, the XML will be output to standard output and assets will be embedded
+	 * If not given, the XML will be printed to standard output and assets will be embedded
 	 * into the XML in base64 encoded form.
 	 *
-	 * @param string $siteName the site name to be exported; if none given will export all sites
+	 * @param string $siteNode the node name of the site to be exported; if none given will export all sites
 	 * @param boolean $tidy Whether to export formatted XML
-	 * @param string $output Where to write the XML to
+	 * @param string $filename relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources". If omitted the export will be printed to standard output
 	 * @return void
 	 */
-	public function exportCommand($siteName = NULL, $tidy = FALSE, $output = 'php://stdout') {
+	public function exportCommand($siteNode = NULL, $tidy = FALSE, $filename = NULL) {
 		$contentContext = $this->createContext();
 
-		if ($siteName === NULL) {
+		if ($siteNode === NULL) {
 			$sites = $this->siteRepository->findAll()->toArray();
 		} else {
-			$sites = $this->siteRepository->findByNodeName($siteName)->toArray();
+			$sites = $this->siteRepository->findByNodeName($siteNode)->toArray();
 		}
 		if (count($sites) === 0) {
 			$this->outputLine('Error: No site for exporting found');
 			$this->quit(1);
 		}
-		$this->siteExportService->export($sites, $contentContext, $tidy, $output);
+		if ($filename === NULL) {
+			$this->output($this->siteExportService->export($sites, $contentContext, $tidy));
+		} else {
+			$this->siteExportService->exportToFile($sites, $contentContext, $tidy, $filename);
+			if ($siteNode !== NULL) {
+				$this->outputLine('The site "%s" has been exported to "%s".', array($siteNode, $filename));
+			} else {
+				$this->outputLine('All sites have been exported to "%s".', array($filename));
+			}
+		}
 	}
 
 	/**
@@ -211,5 +220,4 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 			'inaccessibleContentShown' => TRUE
 		));
 	}
-
 }
