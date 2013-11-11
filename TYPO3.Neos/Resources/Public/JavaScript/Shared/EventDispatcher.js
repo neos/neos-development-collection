@@ -3,9 +3,13 @@
  */
 define(
 [
-	'emberjs'
+	'emberjs',
+	'Library/jquery-with-dependencies'
 ],
-function(Ember) {
+function(
+	Ember,
+	$
+) {
 	/**
 	 * @singleton
 	 */
