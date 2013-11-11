@@ -50,11 +50,10 @@ class ContentElementWrappingService {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $typoscriptPath
 	 * @param string $content
-	 * @param boolean $isPage
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE) {
-		$tagBuilder = $this->wrapContentObjectAndReturnTagBuilder($node, $typoscriptPath, $content, $isPage);
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content) {
+		$tagBuilder = $this->wrapContentObjectAndReturnTagBuilder($node, $typoscriptPath, $content);
 		return $tagBuilder->render();
 	}
 
@@ -65,10 +64,9 @@ class ContentElementWrappingService {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $typoscriptPath
 	 * @param string $content
-	 * @param boolean $isPage
 	 * @return \TYPO3\Fluid\Core\ViewHelper\TagBuilder
 	 */
-	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE) {
+	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content) {
 		$nodeType = $node->getNodeType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
@@ -77,7 +75,9 @@ class ContentElementWrappingService {
 			$tagBuilder->setContent($content);
 		}
 
-		if (!$isPage) {
+		$isDocumentNode = $node->getNodeType()->isOfType('TYPO3.Neos:Document');
+
+		if (!$isDocumentNode) {
 			$cssClasses = array(
 				'neos-contentelement',
 				str_replace(array(':', '.'), '-', strtolower($nodeType->getName()))
@@ -164,7 +164,7 @@ class ContentElementWrappingService {
 			}
 		}
 
-		if (!$isPage) {
+		if (!$isDocumentNode) {
 			if ($node->isHidden()) {
 				$cssClasses[] = 'neos-contentelement-hidden';
 			}

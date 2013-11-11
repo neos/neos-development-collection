@@ -49,7 +49,7 @@ class ContentElementViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBa
 			)
 		));
 
-		$output = $viewHelper->render($this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface'), FALSE, 'ul');
+		$output = $viewHelper->render($this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface'), 'ul');
 
 		$this->assertEquals('<ul class="neos-content-element my-class" data-foo="bar" id="c123245678" data-custom="bar"><span>Inner content</span></ul>', $output);
 	}
