@@ -6970,10 +6970,10 @@
 .neos-navigate-panel-open .neos #neos-context-bar {
   padding-left: 320px;
 }
-.neos-menu-panel-open.neos-menu-sticky-on .neos #neos-context-bar {
+.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-context-bar {
   padding-left: 54px;
 }
-.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open .neos #neos-context-bar {
+.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos #neos-context-bar {
   padding-left: 373px;
 }
 .neos-inspector-panel-open .neos #neos-context-bar {
@@ -7253,9 +7253,6 @@
   background-color: #fff;
   content: "";
 }
-.neos #neos-menu-panel.neos-menu-sticky-on {
-  width: 53px;
-}
 .neos #neos-menu-panel {
   position: fixed;
   top: 40px;
@@ -7266,6 +7263,7 @@
   z-index: 10020;
   border-top: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
+  padding-top: 1px;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-transition-property: left, width;
@@ -7282,8 +7280,12 @@
 .neos-menu-panel-open .neos #neos-menu-panel {
   left: 0;
 }
-.neos-menu-panel-open.neos-menu-sticky-on .neos #neos-menu-panel {
+.neos-menu-panel-sticky .neos #neos-menu-panel {
+  left: -55px;
   width: 53px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-menu-panel {
+  left: 0;
 }
 .neos #neos-menu-panel.neos-noscript {
   top: 0;
@@ -7356,7 +7358,8 @@
   transform: rotate(90deg);
   left: 19px;
 }
-.neos #neos-menu-panel .neos-menu-section a, .neos #neos-menu-panel .neos-menu-section span.neos-menu-item {
+.neos #neos-menu-panel .neos-menu-section a,
+.neos #neos-menu-panel .neos-menu-section span.neos-menu-item {
   display: block;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -7375,13 +7378,16 @@
   padding-left: 38px;
   padding-right: 16px;
 }
-.neos #neos-menu-panel .neos-menu-section a.neos-active, .neos #neos-menu-panel .neos-menu-section span.neos-menu-item.neos-active {
+.neos #neos-menu-panel .neos-menu-section a.neos-active,
+.neos #neos-menu-panel .neos-menu-section span.neos-menu-item.neos-active {
   color: #00b5ff;
 }
-.neos #neos-menu-panel .neos-menu-section a.neos-disabled, .neos #neos-menu-panel .neos-menu-section span.neos-menu-item.neos-disabled {
+.neos #neos-menu-panel .neos-menu-section a.neos-disabled,
+.neos #neos-menu-panel .neos-menu-section span.neos-menu-item.neos-disabled {
   color: #5b5b5b;
 }
-.neos #neos-menu-panel .neos-menu-section a i, .neos #neos-menu-panel .neos-menu-section span.neos-menu-item i {
+.neos #neos-menu-panel .neos-menu-section a i,
+.neos #neos-menu-panel .neos-menu-section span.neos-menu-item i {
   display: block;
   position: absolute;
   background-color: #222222;
@@ -7395,19 +7401,19 @@
   text-align: center;
   z-index: 10010;
 }
-.neos #neos-menu-panel .neos-menu-section .neos-menu-list a, .neos #neos-menu-panel .neos-menu-section .neos-menu-list span.neos-menu-item {
+.neos #neos-menu-panel .neos-menu-section .neos-menu-list a,
+.neos #neos-menu-panel .neos-menu-section .neos-menu-list span.neos-menu-item {
   padding-left: 54px;
   position: relative;
   font-weight: normal;
 }
-.neos #neos-menu-panel .neos-menu-stickybutton {
+.neos #neos-menu-panel #neos-menu-sticky-button {
   position: absolute;
   z-index: 10015;
   bottom: 0;
   left: 0;
   width: 53px;
   height: 42px;
-  border: 1px solid #3f3f3f;
   background-color: #222222;
   background-image: none;
   text-shadow: none;
@@ -7415,7 +7421,7 @@
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.neos #neos-menu-panel .neos-menu-stickybutton:before {
+.neos #neos-menu-panel #neos-menu-sticky-button::before {
   position: relative;
   top: 1px;
   font-family: 'Noto Sans', sans-serif;
@@ -7425,14 +7431,11 @@
   font-weight: normal;
   content: "‹";
 }
-.neos #neos-menu-panel .neos-menu-stickybutton:hover, .neos #neos-menu-panel .neos-menu-stickybutton.neos-is-active {
+.neos #neos-menu-panel #neos-menu-sticky-button:hover {
   background-color: #00b5ff;
 }
-.neos #neos-menu-panel .neos-menu-stickybutton.neos-pressed:before {
+.neos #neos-menu-panel #neos-menu-sticky-button.neos-pressed::before {
   content: "›";
-}
-.neos #neos-menu-panel.neos-menu-sticky .neos-menu-section .neos-menu-collapse:hover {
-  background: none;
 }
 .neos #neos-navigate-button {
   position: relative;
@@ -7442,7 +7445,7 @@
 .neos #neos-navigate-button:hover, .neos #neos-navigate-button.neos-pressed {
   color: #00b5ff;
 }
-.neos-menu-panel-open .neos #neos-navigate-button.neos-pressed:after {
+.neos-menu-panel-open:not(.neos-menu-panel-sticky) .neos #neos-navigate-button.neos-pressed:after {
   display: none;
 }
 .neos #neos-navigate-button.neos-pressed:after {
@@ -7487,7 +7490,7 @@
 .neos-navigate-panel-open .neos #neos-navigate-panel {
   left: 0;
 }
-.neos-navigate-panel-open.neos-menu-panel-open.neos-menu-sticky-on .neos #neos-navigate-panel {
+.neos-navigate-panel-open.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-navigate-panel {
   left: 54px;
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container {
@@ -8669,10 +8672,10 @@
 .neos-navigate-panel-open .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
   margin-left: 320px;
 }
-.neos-menu-panel-open.neos-menu-sticky-on .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
+.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
   margin-left: 54px;
 }
-.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
+.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
   margin-left: 373px;
 }
 .neos #neos-aloha-topmenu .aloha .ui-state-default {
@@ -9300,13 +9303,13 @@ body.neos-controls {
 body.neos-controls #neos-top-bar {
   display: block;
 }
-body.neos-menu-panel-open.neos-menu-sticky-on {
+body.neos-menu-panel-open.neos-menu-panel-sticky {
   margin-left: 54px;
 }
 body.neos-navigate-panel-open {
   margin-left: 320px;
 }
-body.neos-menu-panel-open.neos-menu-sticky-on.neos-navigate-panel-open {
+body.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open {
   margin-left: 373px;
 }
 body.neos-inspector-panel-open {
