@@ -40,11 +40,12 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagB
 	 * Depending on the authentication status additional metadata for editing will be added to the tag.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param boolean $page
 	 * @param string $tag
 	 * @return string The wrapped output
 	 */
-	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $tag = 'div') {
-		$wrappedTagBuilder = $this->getWrappedTagBuilder($node);
+	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE, $tag = 'div') {
+		$wrappedTagBuilder = $this->getWrappedTagBuilder($node, $page);
 
 		$wrappedTagBuilder->setTagName($tag);
 		$this->applyTagArgumentsFromViewHelper($wrappedTagBuilder);
@@ -54,9 +55,10 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagB
 
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param boolean $isPage
 	 * @return \TYPO3\Fluid\Core\ViewHelper\TagBuilder
 	 */
-	protected function getWrappedTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function getWrappedTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $isPage) {
 		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
 		try {
 			$content = $this->renderChildren();
@@ -64,7 +66,7 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagB
 			$content = $fluidTemplateTsObject->getTsRuntime()->handleRenderingException($fluidTemplateTsObject->getPath(), $exception);
 		}
 
-		return $this->contentElementWrappingService->wrapContentObjectAndReturnTagBuilder($node, $fluidTemplateTsObject->getPath(), $content);
+		return $this->contentElementWrappingService->wrapContentObjectAndReturnTagBuilder($node, $fluidTemplateTsObject->getPath(), $content, $isPage);
 	}
 
 	/**
