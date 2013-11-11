@@ -236,13 +236,21 @@ class ImageVariant implements ImageInterface {
 	/**
 	 * Creates a thumbnail of the original image
 	 *
+	 * If maximum width/height is not specified or exceed the original images size,
+	 * width/height of the original image is used
+	 *
+	 * Note: The image variant that will be created is intentionally not added to the
+	 * imageVariants collection of the original image. If you want to create a persisted
+	 * image variant, use createImageVariant() instead.
+	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
+	 * @param string $ratioMode
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 * @see \TYPO3\Media\Domain\Model\Image::getThumbnail
 	 */
-	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL) {
-		return $this->originalImage->getThumbnail($maximumWidth, $maximumHeight);
+	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
+		return $this->originalImage->getThumbnail($maximumWidth, $maximumHeight, $ratioMode);
 	}
 
 	/**

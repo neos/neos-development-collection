@@ -178,8 +178,9 @@ class Image extends Asset implements ImageInterface {
 	 * If maximum width/height is not specified or exceed the original images size,
 	 * width/height of the original image is used
 	 *
-	 * Note: The image variant that will be created is intentionally not added to the imageVariants collection of this image
-	 * If you want to create a persisted image variant, use createImageVariant() instead
+	 * Note: The image variant that will be created is intentionally not added to the
+	 * imageVariants collection of this image. If you want to create a persisted image
+	 * variant, use createImageVariant() instead.
 	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
