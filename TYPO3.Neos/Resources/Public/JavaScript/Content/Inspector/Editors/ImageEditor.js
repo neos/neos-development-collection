@@ -253,7 +253,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 					that.set('_uploadPreviewShown', false);
 					that.set('_loadPreviewImageHandler', $.getJSON('/neos/content/imageWithMetadata/' + assetIdentifier, function(result) {
-						that.fileUploaded();
+						that.fileUploaded(result);
 						that._hideImageLoader();
 					}));
 					that.set('mediaBrowserShown', false);
@@ -328,19 +328,18 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 * Callback after file upload is complete
 		 */
 		fileUploaded: function(response) {
-			if (!Utility.isValidJsonString(response)) {
+			if (response === null) {
 				Notification.error('Tried to fetch image metadata: Unexpected result format.');
 				return;
 			}
 			this._super();
-			var responseJson = JSON.parse(response);
 
-			this.set('_originalImageUuid', responseJson.imageUuid);
-			this._setPreviewImage(responseJson);
+			this.set('_originalImageUuid', response.imageUuid);
+			this._setPreviewImage(response);
 
 				// We only need to set the width here; as the height is automatically
 				// calculated from the aspect ratio in the cropper
-			this.set('_finalImageScale.w', responseJson.originalSize.w);
+			this.set('_finalImageScale.w', response.originalSize.w);
 
 			this._resetCropPropertiesToCurrentPreviewImageSize();
 			this.set('_imageFullyLoaded', true);
