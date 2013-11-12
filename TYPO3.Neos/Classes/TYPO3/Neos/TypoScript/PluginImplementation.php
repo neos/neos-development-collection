@@ -190,10 +190,6 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 				$pluginRequest->setControllerActionName($actionName);
 			}
 
-			foreach ($this->properties as $key => $value) {
-				$pluginRequest->setArgument('__' . $key, $this->tsValue($key));
-			}
-
 			$pluginRequest->setArgument('__node', $this->node);
 			$pluginRequest->setArgument('__documentNode', $this->documentNode);
 		} else {
@@ -201,6 +197,10 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 			$pluginRequest->setControllerSubpackageKey($this->getSubpackage());
 			$pluginRequest->setControllerName($this->getController());
 			$pluginRequest->setControllerActionName($this->getAction());
+		}
+
+		foreach ($this->properties as $key => $value) {
+			$pluginRequest->setArgument('__' . $key, $this->tsValue($key));
 		}
 		return $pluginRequest;
 	}
