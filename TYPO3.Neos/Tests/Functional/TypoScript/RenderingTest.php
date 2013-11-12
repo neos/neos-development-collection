@@ -10,7 +10,7 @@ namespace TYPO3\Neos\Tests\Functional\TypoScript;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-
+use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests the rendering
