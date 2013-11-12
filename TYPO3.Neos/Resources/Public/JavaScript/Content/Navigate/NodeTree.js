@@ -217,6 +217,20 @@ define(
 				return null;
 			},
 
+			afterDeleteNode: function(node) {
+				var isCurrentNode = node.data.key === NodeSelection.get('selectedNode').$element.attr('about');
+				if (isCurrentNode) {
+					ContentModule.loadPage(node.getParent().data.href);
+				}
+			},
+
+			afterMove: function(node) {
+				var isCurrentNode = node.data.key === NodeSelection.get('selectedNode').$element.attr('about');
+				if (isCurrentNode) {
+					ContentModule.loadPage(node.data.href);
+				}
+			},
+
 			editNode: function(node) {
 				if (typeof node === 'undefined') {
 					if (this.get('editNodeTitleMode') === true) {

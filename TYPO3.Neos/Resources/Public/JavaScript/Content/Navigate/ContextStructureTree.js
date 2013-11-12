@@ -11,6 +11,7 @@ define(
 	'vie/instance',
 	'Shared/Configuration',
 	'Shared/Notification',
+	'Shared/EventDispatcher',
 	'../Model/NodeSelection',
 	'./NavigatePanelController',
 	'./InsertNodePanel',
@@ -24,6 +25,7 @@ define(
 	InstanceWrapper,
 	Configuration,
 	Notification,
+	EventDispatcher,
 	NodeSelection,
 	NavigatePanelController,
 	InsertNodePanel,
@@ -52,6 +54,9 @@ define(
 					pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : pageNodePath,
 					siteNode = that.$nodeTree.dynatree('getRoot').getChildren()[0];
 				siteNode.fromDict({key: pageNodePath, title: pageTitle});
+				that.refresh();
+			});
+			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
 			});
 		},
@@ -158,6 +163,22 @@ define(
 			this._super();
 
 			this._initializePropertyObservers(pageMetaInformation);
+		},
+
+		afterDeleteNode: function() {
+			ContentModule.reloadPage();
+		},
+
+		afterPersistNode: function() {
+			ContentModule.reloadPage();
+		},
+
+		afterPaste: function() {
+			ContentModule.reloadPage();
+		},
+
+		afterMove: function() {
+			ContentModule.reloadPage();
 		}
 	});
 });

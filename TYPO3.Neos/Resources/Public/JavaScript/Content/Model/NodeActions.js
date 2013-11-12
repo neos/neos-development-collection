@@ -13,12 +13,14 @@ define(
 	'Library/jquery-with-dependencies',
 	'Shared/LocalStorage',
 	'Shared/Notification',
+	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection'
 ], function(
 	Ember,
 	$,
 	LocalStorage,
 	Notification,
+	EventDispatcher,
 	NodeSelection
 ) {
 	return Ember.Object.extend({
@@ -123,6 +125,7 @@ define(
 					}
 				}
 			);
+
 			return true;
 		},
 
@@ -130,6 +133,7 @@ define(
 			model.set('typo3:_removed', true);
 			model.save(null);
 			NodeSelection.updateSelection();
+			EventDispatcher.trigger('contentChanged');
 		},
 
 		addAbove: function(nodeType, referenceEntity, callBack) {
@@ -171,6 +175,8 @@ define(
 
 					// Remove the loading icon from the parent content element where current element was created from.
 					that.set('_elementIsAddingNewContent', null);
+
+					EventDispatcher.trigger('contentChanged');
 				}
 			);
 		},

@@ -531,6 +531,8 @@ define(
 
 							// Re-enable mouse and keyboard handling
 							tree.$widget.bind();
+
+							that.afterPersistNode(node);
 						} else {
 							Notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
 							node.setLazyNodeStatus(that.statusCodes.error);
@@ -539,8 +541,11 @@ define(
 				);
 			},
 
+			afterPersistNode: Ember.K,
+
 			deleteNode: function(node) {
 				node.setLazyNodeStatus(this.statusCodes.loading);
+				var that = this;
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController['delete'](
 					node.data.key,
 					function(result) {
@@ -548,13 +553,15 @@ define(
 							var parentNode = node.getParent();
 							parentNode.activate();
 							node.remove();
-							ContentModule.loadPage(parentNode.data.href);
+							that.afterDeleteNode(node);
 						} else {
 							Notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
 						}
 					}
 				);
 			},
+
+			afterDeleteNode: Ember.K,
 
 			toggleHidden: function() {
 				var node = this.get('activeNode');
@@ -590,6 +597,7 @@ define(
 								InspectorController.apply();
 							}
 							node.setLazyNodeStatus(that.statusCodes.ok);
+							that.afterToggleHidden(node);
 						} else {
 							node.setLazyNodeStatus(that.statusCodes.error);
 							Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
@@ -597,6 +605,8 @@ define(
 					}
 				);
 			},
+
+			afterToggleHidden: Ember.K,
 
 			copy: function() {
 				var node = this.get('activeNode');
@@ -681,6 +691,7 @@ define(
 									newNode.setLazyNodeStatus(that.statusCodes.loading);
 									that.loadNode(newNode, 1);
 								}
+								that.afterPaste(newNode);
 							} else {
 								newNode.setLazyNodeStatus(that.statusCodes.error);
 								Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
@@ -689,6 +700,8 @@ define(
 					);
 				}
 			},
+
+			afterPaste: Ember.K,
 
 			move: function(sourceNode, targetNode, position) {
 				if (sourceNode === targetNode) {
@@ -705,20 +718,17 @@ define(
 						position,
 						function(result) {
 							if (result !== null && result.success === true) {
-								var isCurrentNode = sourceNode.data.key === NodeSelection.get('selectedNode').$element.attr('about');
 								// after we finished moving, update the node path/url
 								sourceNode.data.href = result.data.nodeUri;
 								sourceNode.data.key = result.data.newNodePath;
 								sourceNode.render();
 								sourceNode.setLazyNodeStatus(that.statusCodes.ok);
-								if (isCurrentNode) {
-									ContentModule.loadPage(sourceNode.data.href);
-								}
 								if (typeof sourceNode.data.children !== 'undefined') {
 									sourceNode.removeChildren();
 									sourceNode.setLazyNodeStatus(that.statusCodes.loading);
 									that.loadNode(sourceNode, 1);
 								}
+								that.afterMove(sourceNode);
 							} else {
 								sourceNode.setLazyNodeStatus(that.statusCodes.error);
 								Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
@@ -729,6 +739,8 @@ define(
 					Notification.error('Unexpected error while moving node: ' + e.toString());
 				}
 			},
+
+			afterMove: Ember.K,
 
 			refresh: function() {
 				var node = this.$nodeTree.dynatree('getRoot').getChildren()[0];
