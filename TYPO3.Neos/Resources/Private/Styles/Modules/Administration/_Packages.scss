@@ -1,0 +1,51 @@
+&.neos-module-administration-packages {
+	.neos-button.neos-button-freeze {
+		background-color: $blue;
+	}
+
+	table {
+		td.check,
+		th.check {
+			width: 12px;
+			input {
+				margin: 0;
+			}
+		}
+
+		label {
+			padding: 5px 0;
+			margin-bottom: 0;
+			font-size: inherit;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		.fold-toggle {
+			cursor: pointer;
+			margin-top: -1px;
+			margin-right: 11px;
+		}
+
+		td > .neos-button,
+		td > div.neos-pull-right > .neos-button {
+			// Freeze Button
+			&.neos-button-freeze {
+				background-color: $grayLight;
+
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $blue;
+					}
+				}
+			}
+		}
+	}
+}

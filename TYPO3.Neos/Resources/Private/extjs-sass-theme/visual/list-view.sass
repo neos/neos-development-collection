@@ -1,0 +1,32 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-list-header
+  background-color: adjust_hue(#f9f9f9, $hue)
+  background-image: url (#{$img_path+"/grid/grid3-hrow.gif"})
+
+.x-list-header-inner div em
+  border-left-color: adjust_hue(#ddd, $hue)
+  font: normal 11px arial, tahoma, helvetica, sans-serif
+
+.x-list-body dt em
+  font: normal 11px arial, tahoma, helvetica, sans-serif
+
+.x-list-over
+  background-color: adjust_hue(#eee, $hue)
+
+.x-list-selected
+  background-color: adjust_hue(#dfe8f6, $hue)
+
+.x-list-resizer
+  border-left-color: adjust_hue(#555, $hue)
+  border-right-color: adjust_hue(#555, $hue)
+
+.x-list-header-inner em
+  &.sort-asc, &.sort-desc
+    background-image: url (#{$img_path+"/grid/sort-hd.gif"})
+    border-color: adjust_hue(#99bbe8, $hue)

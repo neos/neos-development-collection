@@ -1,0 +1,45 @@
+//
+// Utility classes
+// --------------------------------------------------
+
+
+// Quick floats
+.neos-pull-right {
+  float: right;
+}
+.neos-pull-left {
+  float: left;
+}
+
+// Toggling content
+.neos-hide {
+  display: none;
+}
+.neos-show {
+  display: block;
+}
+
+// Visibility
+.neos-invisible {
+  visibility: hidden;
+}
+
+// For Affix plugin
+.neos-affix {
+  position: fixed;
+}
+
+// Clearing floats
+.neos-clearfix {
+  @include clearfix();
+}
+
+// Accessible yet invisible text
+.neos-hide-text {
+  @include hide-text();
+}
+
+// Uses box-sizing mixin, so must be defined here
+.neos-input-block-level {
+  @include input-block-level();
+}

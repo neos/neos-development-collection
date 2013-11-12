@@ -1,0 +1,64 @@
+.neos-secondary-inspector {
+	position: fixed;
+	top: $unit;
+	bottom: 0;
+	z-index: 10014;
+	// this is set to 150% instead to 100% because Firefox still shows the
+	// secondary inspector with the width of $inspectorWidth
+	right: -150%;
+	box-sizing: border-box;
+	width: 100%;
+	padding-right: $inspectorWidth;
+	background-color: $grayDark;
+
+	@include transition-property('right, padding-left');
+	@include transition-duration(.2s);
+
+	.neos-inspector-panel-open & {
+		&.neos-secondary-inspector-open {
+			right: 0;
+		}
+	}
+
+	.neos-navigate-panel-open & {
+		padding-left: $menuWidth;
+	}
+
+	> div {
+		height: 100%;
+		> div {
+			height: 100%;
+		}
+	}
+}
+
+.neos-secondary-inspector-html-editor {
+	width: 100%;
+	height: 100%;
+
+	.CodeMirror {
+		height: 100%;
+
+		pre {
+			color: inherit;
+			padding: 0;
+		}
+	}
+
+	.CodeMirror-gutter {
+		background-color: $grayMedium;
+		border-right-color: $grayLight;
+	}
+
+	.CodeMirror-gutter-text {
+		color: $textSubtle;
+	}
+
+	.CodeMirror-scroll {
+		height: 100%;
+	}
+}
+
+.neos-secondary-inspector-image-crop .jcrop-holder {
+	margin: $unit auto;
+}

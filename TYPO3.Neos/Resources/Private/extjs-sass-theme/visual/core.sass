@@ -1,0 +1,63 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.ext-el-mask
+  background-color: adjust_hue(#ccc, $hue)
+
+.ext-el-mask-msg
+  border-color: adjust_hue(#6593cf, $hue)
+  background-color: adjust_hue(#c3daf9, $hue)
+  background-image: url (#{$img_path+"/box/tb-blue.gif"})
+  div
+    background-color: adjust_hue(#eee, $hue)
+    border-color: adjust_hue(#a3bad9, $hue)
+    color: adjust_hue(#222, $hue)
+    font: normal 11px tahoma, arial, helvetica, sans-serif
+
+.x-mask-loading div
+  background-color: adjust_hue(#fbfbfb, $hue)
+  background-image: url (#{$img_path+"/grid/loading.gif"})
+
+.x-item-disabled
+  color: gray
+  *
+    color: gray !important
+
+.x-splitbar-proxy
+  background-color: adjust_hue(#aaa, $hue)
+
+.x-color-palette
+  a
+    border-color: adjust_hue(#fff, $hue)
+    &:hover, &.x-color-palette-sel
+      border-color: adjust_hue(#8bb8f3, $hue)
+      background-color: adjust_hue(#deecfd, $hue)
+  em
+    border-color: adjust_hue(#aca899, $hue)
+
+/*
+ *.x-color-palette em:hover, .x-color-palette span:hover{   
+ *    background-color: adjust_hue(#deecfd, $hue);
+ *}
+
+.x-ie-shadow
+  background-color: adjust_hue(#777, $hue)
+
+.x-shadow
+  .xsmc
+    background-image: url (#{$img_path+"/shadow-c.png"})
+  .xsml, .xsmr
+    background-image: url (#{$img_path+"/shadow-lr.png"})
+  .xstl, .xstc, .xstr, .xsbl, .xsbc, .xsbr
+    background-image: url (#{$img_path+"/shadow.png"})
+
+.loading-indicator
+  font-size: 11px
+  background-image: url (#{$img_path+"/grid/loading.gif"})
+
+.x-spotlight
+  background-color: adjust_hue(#ccc, $hue)
