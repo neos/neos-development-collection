@@ -12,7 +12,6 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
@@ -20,24 +19,15 @@ use TYPO3\Flow\Validation\Validator\UuidValidator;
 /**
  * Some NodeData (persisted or transient)
  *
- * Certain methods of AbstractNodeData belong to the public API so they can be used in
- * the concrete implementations Node, NodeTemplate and NodeData.
  *
  * NOTE: This class is not supposed to be subclassed by userland code.
  *       If this API is modified, make sure to also implement the additional
  *       methods inside NodeData, NodeTemplate and Node and keep
  *       NodeInterface in sync!
  *
- * @api
  */
 abstract class AbstractNodeData {
 
-	/**
-	 * The node name which acts as a path segment for its node path
-	 *
-	 * @var string
-	 */
-	protected $name;
 
 	/**
 	 * Properties of this Node
@@ -109,35 +99,10 @@ abstract class AbstractNodeData {
 	protected $nodeTypeManager;
 
 	/**
-	 * Set the name to $newName
-	 *
-	 * @param string $newName
-	 * @throws \InvalidArgumentException
-	 * @api
-	 */
-	public function setName($newName) {
-		if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290839);
-		}
-		$this->name = $newName;
-	}
-
-	/**
-	 * Get the name of this NodeData object.
-	 *
-	 * @return string
-	 * @api
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
 	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description
 	 * of this node.
 	 *
 	 * @return string
-	 * @api
 	 */
 	public function getLabel() {
 		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
@@ -147,7 +112,6 @@ abstract class AbstractNodeData {
 	 * Returns a full length plain text description of this node
 	 *
 	 * @return string
-	 * @api
 	 */
 	public function getFullLabel() {
 		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this, FALSE);
@@ -161,7 +125,6 @@ abstract class AbstractNodeData {
 	 * @param string $propertyName Name of the property
 	 * @param mixed $value Value of the property
 	 * @return void
-	 * @api
 	 */
 	public function setProperty($propertyName, $value) {
 		if (!is_object($this->contentObjectProxy)) {
@@ -209,7 +172,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param string $propertyName Name of the property to test for
 	 * @return boolean
-	 * @api
 	 */
 	public function hasProperty($propertyName) {
 		if (is_object($this->contentObjectProxy)) {
@@ -228,7 +190,6 @@ abstract class AbstractNodeData {
 	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
-	 * @api
 	 */
 	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
 		if (!is_object($this->contentObjectProxy)) {
@@ -280,7 +241,6 @@ abstract class AbstractNodeData {
 	 * @param string $propertyName Name of the property
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
-	 * @api
 	 */
 	public function removeProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
@@ -301,7 +261,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
 	 * @return array Property values, indexed by their name
-	 * @api
 	 */
 	public function getProperties($returnNodesAsIdentifiers = FALSE) {
 		if (is_object($this->contentObjectProxy)) {
@@ -319,7 +278,6 @@ abstract class AbstractNodeData {
 	 * Returns the names of all properties of this node.
 	 *
 	 * @return array Property names
-	 * @api
 	 */
 	public function getPropertyNames() {
 		if (is_object($this->contentObjectProxy)) {
@@ -334,7 +292,6 @@ abstract class AbstractNodeData {
 	 * @param object $contentObject The content object
 	 * @return void
 	 * @throws \InvalidArgumentException if the given contentObject is no object.
-	 * @api
 	 */
 	public function setContentObject($contentObject) {
 		if (!is_object($contentObject)) {
@@ -350,7 +307,6 @@ abstract class AbstractNodeData {
 	 * Returns the content object of this node (if any).
 	 *
 	 * @return object The content object or NULL if none was set
-	 * @api
 	 */
 	public function getContentObject() {
 		return ($this->contentObjectProxy !== NULL ? $this->contentObjectProxy->getObject() : NULL);
@@ -360,7 +316,6 @@ abstract class AbstractNodeData {
 	 * Unsets the content object of this node.
 	 *
 	 * @return void
-	 * @api
 	 */
 	public function unsetContentObject() {
 		if ($this->contentObjectProxy !== NULL) {
@@ -374,7 +329,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
 	 * @return void
-	 * @api
 	 */
 	public function setNodeType(NodeType $nodeType) {
 		if ($this->nodeType !== $nodeType->getName()) {
@@ -387,7 +341,6 @@ abstract class AbstractNodeData {
 	 * Returns the node type of this node.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
-	 * @api
 	 */
 	public function getNodeType() {
 		return $this->nodeTypeManager->getNodeType($this->nodeType);
@@ -398,7 +351,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param boolean $hidden If TRUE, this Node will be hidden
 	 * @return void
-	 * @api
 	 */
 	public function setHidden($hidden) {
 		if ($this->hidden !== (boolean)$hidden) {
@@ -411,7 +363,6 @@ abstract class AbstractNodeData {
 	 * Returns the current state of the hidden flag
 	 *
 	 * @return boolean
-	 * @api
 	 */
 	public function isHidden() {
 		return $this->hidden;
@@ -422,7 +373,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param \DateTime $dateTime Date before this node should be hidden
 	 * @return void
-	 * @api
 	 */
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
 		if ($this->hiddenBeforeDateTime != $dateTime) {
@@ -435,7 +385,6 @@ abstract class AbstractNodeData {
 	 * Returns the date and time before which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date before this node will be hidden or NULL if no such time was set
-	 * @api
 	 */
 	public function getHiddenBeforeDateTime() {
 		return $this->hiddenBeforeDateTime;
@@ -446,7 +395,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param \DateTime $dateTime Date after which this node should be hidden or NULL if no such time was set
 	 * @return void
-	 * @api
 	 */
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
 		if ($this->hiddenAfterDateTime != $dateTime) {
@@ -459,7 +407,6 @@ abstract class AbstractNodeData {
 	 * Returns the date and time after which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date after which this node will be hidden
-	 * @api
 	 */
 	public function getHiddenAfterDateTime() {
 		return $this->hiddenAfterDateTime;
@@ -470,7 +417,6 @@ abstract class AbstractNodeData {
 	 *
 	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
 	 * @return void
-	 * @api
 	 */
 	public function setHiddenInIndex($hidden) {
 		if ($this->hiddenInIndex !== (boolean)$hidden) {
@@ -483,7 +429,6 @@ abstract class AbstractNodeData {
 	 * If this node should be hidden in indexes
 	 *
 	 * @return boolean
-	 * @api
 	 */
 	public function isHiddenInIndex() {
 		return $this->hiddenInIndex;
@@ -495,7 +440,6 @@ abstract class AbstractNodeData {
 	 * @param array $accessRoles
 	 * @return void
 	 * @throws \InvalidArgumentException if the array of roles contains something else than strings.
-	 * @api
 	 */
 	public function setAccessRoles(array $accessRoles) {
 		foreach ($accessRoles as $role) {
@@ -513,7 +457,6 @@ abstract class AbstractNodeData {
 	 * Returns the names of defined access roles
 	 *
 	 * @return array
-	 * @api
 	 */
 	public function getAccessRoles() {
 		return $this->accessRoles;

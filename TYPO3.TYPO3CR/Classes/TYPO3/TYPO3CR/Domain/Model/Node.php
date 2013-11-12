@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
@@ -45,7 +46,7 @@ class Node implements NodeInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
@@ -95,11 +96,19 @@ class Node implements NodeInterface {
 	 * @api
 	 */
 	public function setName($newName) {
-		if (!$this->nodeDataIsMatchingContext) {
-			$this->materializeNodeData();
+		if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
 		}
 
-		$this->nodeData->setName($newName);
+		if ($this->getPath() === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
+		}
+
+		if ($this->getName() === $newName) {
+			return;
+		}
+
+		$this->setPath($this->getParentPath() . ($this->getParentPath() === '/' ? '' : '/') . $newName);
 	}
 
 	/**
@@ -114,6 +123,9 @@ class Node implements NodeInterface {
 	 * @throws \InvalidArgumentException
 	 */
 	public function setPath($path, $recursive = TRUE) {
+		if ($this->nodeData->getPath() === $path) {
+			return;
+		}
 		if ($recursive === TRUE) {
 			/** @var $childNode NodeInterface */
 			foreach ($this->getChildNodes() as $childNode) {
@@ -124,6 +136,7 @@ class Node implements NodeInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setPath($path, FALSE);
+		$this->nodeDataRepository->persistEntities();
 	}
 
 	/**
@@ -264,41 +277,87 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
 	 * @api
 	 */
 	public function moveBefore(NodeInterface $referenceNode) {
-		if (!$this->nodeDataIsMatchingContext) {
-			$this->materializeNodeData();
+		if ($referenceNode === $this) {
+			return;
 		}
-		$this->nodeData->moveBefore($referenceNode->getNodeData());
+
+		if ($this->getPath() === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+		}
+
+		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
+		}
+
+		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
+			$parentPath = $referenceNode->getParentPath();
+			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+
+		}
+
+		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
 	}
 
 	/**
 	 * Moves this node after the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @return void
 	 * @api
 	 */
 	public function moveAfter(NodeInterface $referenceNode) {
-		if (!$this->nodeDataIsMatchingContext) {
-			$this->materializeNodeData();
+		if ($referenceNode === $this) {
+			return;
 		}
-		$this->nodeData->moveAfter($referenceNode->getNodeData());
+
+		if ($this->getPath() === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
+		}
+
+		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
+		}
+
+		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
+			$parentPath = $referenceNode->getParentPath();
+			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		}
+
+		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
 	}
 
 	/**
 	 * Moves this node into the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @return void
 	 * @api
 	 */
 	public function moveInto(NodeInterface $referenceNode) {
-		if (!$this->nodeDataIsMatchingContext) {
-			$this->materializeNodeData();
+		if ($referenceNode === $this || $referenceNode === $this->getParent()) {
+			return;
 		}
-		$this->nodeData->moveInto($referenceNode->getNodeData());
+
+		if ($this->getPath() === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1346769001);
+		}
+
+		if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
+		}
+
+		$parentPath = $referenceNode->getPath();
+		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
 	}
 
 	/**

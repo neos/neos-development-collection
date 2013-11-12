@@ -128,6 +128,20 @@ class WorkspaceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function publishNodeReturnsIfTheCurrentWorkspaceHasNoBaseWorkspace() {
+		$targetWorkspace = new Workspace('live');
+
+		$currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('verifyPublishingTargetWorkspace'), array('live'));
+		$currentWorkspace->expects($this->never())->method('verifyPublishingTargetWorkspace');
+
+		$mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+
+		$currentWorkspace->publishNode($mockNode, $targetWorkspace);
+	}
+
+	/**
+	 * @test
+	 */
 	public function verifyPublishingTargetWorkspaceDoesNotThrowAnExceptionIfTargetWorkspaceIsABaseWorkspace() {
 		$someBaseWorkspace = new Workspace('live');
 		$reviewWorkspace = new Workspace('review', $someBaseWorkspace);

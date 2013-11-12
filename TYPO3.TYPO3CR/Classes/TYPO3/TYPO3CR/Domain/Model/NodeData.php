@@ -158,42 +158,12 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Set the name of the node to $newName, keeping it's position as it is.
-	 *
-	 * @param string $newName
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
-	 * @throws \InvalidArgumentException if $newName is invalid
-	 */
-	public function setName($newName) {
-		if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290748);
-		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
-		}
-
-		if ($this->getName() === $newName) {
-			return;
-		}
-
-		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
-		$this->update();
-		$this->nodeDataRepository->persistEntities();
-		$this->emitNodePathChanged();
-	}
-
-	/**
 	 * Returns the name of this node
 	 *
 	 * @return string
 	 */
 	public function getName() {
-		if ($this->name === NULL) {
-			$this->name = $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
-		}
-		return $this->name;
+		return $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
 	}
 
 	/**
@@ -220,6 +190,8 @@ class NodeData extends AbstractNodeData {
 			}
 		}
 
+		$pathBeforeChange = $this->path;
+
 		$this->path = $path;
 		if ($path === '/') {
 			$this->parentPath = '';
@@ -229,7 +201,13 @@ class NodeData extends AbstractNodeData {
 		} else {
 			$this->parentPath = substr($path, 0, strrpos($path, '/'));
 		}
-		$this->emitNodePathChanged();
+
+		if ($pathBeforeChange !== NULL) {
+			// this method is called both for changing the path AND in the constructor of Node; so we only want to do
+			// these things below if called OUTSIDE a constructor.
+			$this->emitNodePathChanged();
+			$this->update();
+		}
 	}
 
 	/**
@@ -354,88 +332,6 @@ class NodeData extends AbstractNodeData {
 	 */
 	public function getParentPath() {
 		return $this->parentPath;
-	}
-
-	/**
-	 * Moves this node before the given node
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $referenceNode
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node
-	 */
-	public function moveBefore(NodeData $referenceNode) {
-		if ($referenceNode === $this) {
-			return;
-		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
-		}
-
-		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
-		}
-
-		if ($referenceNode->getParentPath() !== $this->parentPath) {
-			$parentPath = $referenceNode->getParentPath();
-			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
-			$this->emitNodePathChanged();
-		}
-		$this->nodeDataRepository->setNewIndex($this, NodeDataRepository::POSITION_BEFORE, $referenceNode);
-	}
-
-	/**
-	 * Moves this node after the given node
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $referenceNode
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
-	 */
-	public function moveAfter(NodeData $referenceNode) {
-		if ($referenceNode === $this) {
-			return;
-		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
-		}
-
-		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
-		}
-
-		if ($referenceNode->getParentPath() !== $this->parentPath) {
-			$parentPath = $referenceNode->getParentPath();
-			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
-			$this->emitNodePathChanged();
-		}
-		$this->nodeDataRepository->setNewIndex($this, NodeDataRepository::POSITION_AFTER, $referenceNode);
-	}
-
-	/**
-	 * Moves this node into the given node
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $referenceNode
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
-	 */
-	public function moveInto(NodeData $referenceNode) {
-		if ($referenceNode === $this || $referenceNode === $this->getParent()) {
-			return;
-		}
-
-		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1346769001);
-		}
-
-		if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
-		}
-
-		$parentPath = $referenceNode->getPath();
-		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
-		$this->nodeDataRepository->setNewIndex($this, NodeDataRepository::POSITION_LAST);
-		$this->emitNodePathChanged();
 	}
 
 	/**

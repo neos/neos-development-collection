@@ -296,11 +296,11 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param NodeData $node The node to set the new index for
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
-	 * @param NodeData $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
-	 * @return void
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
 	 * @throws \InvalidArgumentException
+	 * @return void
 	 */
-	public function setNewIndex(NodeData $node, $position, NodeData $referenceNode = NULL) {
+	public function setNewIndex(NodeData $node, $position, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
 
 		switch ($position) {

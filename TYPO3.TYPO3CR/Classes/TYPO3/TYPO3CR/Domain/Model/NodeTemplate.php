@@ -21,6 +21,28 @@ use TYPO3\Flow\Annotations as Flow;
 class NodeTemplate extends AbstractNodeData {
 
 	/**
+	 * The node name which acts as a path segment for its node path
+	 *
+	 * @var string
+	 */
+	protected $name;
+
+	/**
+	 * Set the name to $newName
+	 *
+	 * @param string $newName
+	 * @return void
+	 * @throws \InvalidArgumentException
+	 * @api
+	 */
+	public function setName($newName) {
+		if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain characters, numbers and the "-" sign).', 1364290839);
+		}
+		$this->name = $newName;
+	}
+
+	/**
 	 * Get the name of this node template.
 	 *
 	 * If a name has been set using setName(), it is returned. If not, but the

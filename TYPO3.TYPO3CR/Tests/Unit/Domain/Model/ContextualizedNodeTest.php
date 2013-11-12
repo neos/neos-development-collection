@@ -138,38 +138,6 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function moveBeforeOnNodeWithNonMatchingContextMaterializesNodeData() {
-		$node = $this->setUpNodeWithNonMatchingContext();
-
-		$referenceNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
-
-		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-		$referenceNode->expects($this->any())->method('getNodeData')->will($this->returnValue($referenceNodeData));
-
-		$node->getNodeData()->expects($this->once())->method('moveBefore')->with($referenceNodeData);
-
-		$node->moveBefore($referenceNode);
-	}
-
-	/**
-	 * @test
-	 */
-	public function moveAfterOnNodeWithNonMatchingContextMaterializesNodeData() {
-		$node = $this->setUpNodeWithNonMatchingContext();
-
-		$referenceNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
-
-		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-		$referenceNode->expects($this->any())->method('getNodeData')->will($this->returnValue($referenceNodeData));
-
-		$node->getNodeData()->expects($this->once())->method('moveAfter')->with($referenceNodeData);
-
-		$node->moveAfter($referenceNode);
-	}
-
-	/**
-	 * @test
-	 */
 	public function setPropertyOnNodeWithNonMatchingContextMaterializesNodeData() {
 		$node = $this->setUpNodeWithNonMatchingContext();
 

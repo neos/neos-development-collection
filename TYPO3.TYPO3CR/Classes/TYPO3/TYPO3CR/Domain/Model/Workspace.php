@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
@@ -36,7 +37,7 @@ class Workspace {
 	 * Content from the base workspace will shine through in this workspace
 	 * as long as they are not modified in this workspace.
 	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @var Workspace
 	 * @ORM\ManyToOne
 	 * @ORM\JoinColumn(onDelete="SET NULL")
 	 */
@@ -59,7 +60,7 @@ class Workspace {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -73,10 +74,10 @@ class Workspace {
 	 * Constructs a new workspace
 	 *
 	 * @param string $name Name of this workspace
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace A workspace this workspace is based on (if any)
+	 * @param Workspace $baseWorkspace A workspace this workspace is based on (if any)
 	 * @api
 	 */
-	public function __construct($name, \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace = NULL) {
+	public function __construct($name, Workspace $baseWorkspace = NULL) {
 		$this->name = $name;
 		$this->baseWorkspace = $baseWorkspace;
 	}
@@ -90,7 +91,7 @@ class Workspace {
 	 * @return void
 	 */
 	public function initializeObject($initializationCause) {
-		if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+		if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
 			$this->rootNodeData = new NodeData('/', $this);
 			$this->nodeDataRepository->add($this->rootNodeData);
 		}
@@ -109,7 +110,7 @@ class Workspace {
 	/**
 	 * Returns the base workspace, if any
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @return Workspace
 	 * @api
 	 */
 	public function getBaseWorkspace() {
@@ -166,6 +167,9 @@ class Workspace {
 	 * @api
 	 */
 	public function publishNode(NodeInterface $node, Workspace $targetWorkspace) {
+		if ($this->baseWorkspace === NULL) {
+			return;
+		}
 		$this->verifyPublishingTargetWorkspace($targetWorkspace);
 		$this->emitBeforeNodePublishing($node, $targetWorkspace);
 		if ($node->getPath() === '/') {
@@ -205,15 +209,16 @@ class Workspace {
 	 * and if not, throws an exception
 	 *
 	 * @param Workspace $targetWorkspace The publishing target workspace
+	 * @return void
 	 * @throws WorkspaceException if the specified workspace is not a base workspace of this workspace
 	 */
 	protected function verifyPublishingTargetWorkspace(Workspace $targetWorkspace) {
 		$baseWorkspace = $this->baseWorkspace;
 		while ($targetWorkspace !== $baseWorkspace) {
-			$baseWorkspace = $baseWorkspace->getBaseWorkspace();
 			if ($baseWorkspace === NULL) {
 				throw new WorkspaceException(sprintf('The specified workspace "%s" is not a base workspace of "%s".', $targetWorkspace->getName(), $this->getName()), 1289499117);
 			}
+			$baseWorkspace = $baseWorkspace->getBaseWorkspace();
 		}
 	}
 
