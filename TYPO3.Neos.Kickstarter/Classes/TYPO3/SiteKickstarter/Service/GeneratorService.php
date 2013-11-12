@@ -98,7 +98,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$contextVariables = array();
 		$contextVariables['siteName'] = $siteName;
-		$contextVariables['neosViewHelper'] = '{namespace typo3=TYPO3\Neos\ViewHelpers}';
+		$contextVariables['neosViewHelper'] = '{namespace neos=TYPO3\Neos\ViewHelpers}';
 		$contextVariables['typoScriptViewHelper'] = '{namespace ts=TYPO3\TypoScript\ViewHelpers}';
 		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
 		$contextVariables['siteNodeName'] = lcfirst($packageKeyDomainPart);

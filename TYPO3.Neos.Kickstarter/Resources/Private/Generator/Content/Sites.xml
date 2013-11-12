@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<site nodeName="{siteNodeName}">
+	<site nodeName="{siteNodeName}" type="TYPO3.Neos:Page">
 		<properties>
 			<name>{siteName}</name>
+			<title><![CDATA[<![CDATA[Home]]>]]></title>
 			<state>1</state>
 			<siteResourcesPackageKey>{packageKey}</siteResourcesPackageKey>
 		</properties>
-		<node identifier="" type="TYPO3.Neos:Page" nodeName="homepage" locale="en_EN">
+		<node type="TYPO3.Neos:ContentCollection" nodeName="main">
+			<node type="TYPO3.Neos.NodeTypes:Text" nodeName="text1">
+				<properties>
+					<text><![CDATA[<![CDATA[<p>This is the homepage</p>]]>]]></text>
+				</properties>
+			</node>
+		</node>
+		<node type="TYPO3.Neos:Page" nodeName="subpage">
 			<properties>
-				<title>Home</title>
+				<title>A sub page</title>
 			</properties>
-			<node identifier="" type="TYPO3.Neos:ContentCollection" nodeName="main" locale="en_EN"></node>
+			<node type="TYPO3.Neos:ContentCollection" nodeName="main">
+				<node type="TYPO3.Neos.NodeTypes:Text" nodeName="text1">
+					<properties>
+						<text><![CDATA[<![CDATA[<p>This is the first sub page</p>]]>]]></text>
+					</properties>
+				</node>
+			</node>
 		</node>
 	</site>
 </root>

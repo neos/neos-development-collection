@@ -2,32 +2,32 @@
 /**
  * Root TypoScript template for the {siteName} Site
  */
-page = Page
+page = Page {
+	head {
+		stylesheets = TYPO3.TypoScript:Template
+		stylesheets {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'stylesheets'
+		}
 
-page.head {
-	stylesheets = TYPO3.TypoScript:Template
-	stylesheets {
+		scripts = TYPO3.TypoScript:Template
+		scripts {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'scripts'
+		}
+	}
+
+	body {
 		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-		sectionName = 'stylesheets'
-	}
-
-	scripts = TYPO3.TypoScript:Template
-	scripts {
-		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-		sectionName = 'scripts'
-	}
-}
-
-page.body {
-	templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
-	sectionName = 'body'
-	parts {
-		menu = Menu
-		breadcrumb =  Breadcrumb
-	}
-		// These are your content areas, you can define as many as you want, just name them and the nodePath.
-	content {
-		main = ContentCollection
-		main.nodePath = 'main'
+		sectionName = 'body'
+		parts {
+			menu = Menu
+			breadcrumb =  Breadcrumb
+		}
+			// These are your content areas, you can define as many as you want, just name them and the nodePath.
+		content {
+			main = ContentCollection
+			main.nodePath = 'main'
+		}
 	}
 }
