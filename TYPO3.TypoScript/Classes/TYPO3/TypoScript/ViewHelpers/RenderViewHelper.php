@@ -24,14 +24,14 @@ namespace TYPO3\TypoScript\ViewHelpers;
  * 	…
  * }
  * ViewHelper:
- * <ts:renderTypoScript path="some.given.path" />
+ * <ts:render path="some.given.path" />
  * </code>
  * <output>
  * (the evaluated TypoScript, depending on the given path)
  * </output>
  *
  * <code title="TypoScript from a foreign package">
- * <ts:renderTypoScript path="some.given.path" typoScriptPackageKey="Acme.Bookstore" />
+ * <ts:render path="some.given.path" typoScriptPackageKey="Acme.Bookstore" />
  * </code>
  * <output>
  * (the evaluated TypoScript, depending on the given path)
