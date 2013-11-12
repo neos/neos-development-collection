@@ -33,6 +33,9 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function indexAction() {
 		$redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request->getHttpRequest());
+		if ($redirectionUri === '') {
+			$redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
+		}
 		$this->redirectToUri($redirectionUri);
 	}
 }

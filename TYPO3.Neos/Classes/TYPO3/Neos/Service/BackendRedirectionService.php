@@ -63,6 +63,10 @@ class BackendRedirectionService {
 	 */
 	public function getAfterLoginRedirectionUri(\TYPO3\Flow\Http\Request $httpRequest) {
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
+		if ($user === NULL) {
+			return '';
+		}
+
 		$workspaceName = $user->getPreferences()->get('context.workspace');
 
 		$contentContext = $this->createContext($workspaceName);
