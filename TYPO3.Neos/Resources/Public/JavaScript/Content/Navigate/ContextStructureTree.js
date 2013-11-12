@@ -139,10 +139,13 @@ define(
 							offsetFromTop = 150,
 							$element = $('[about="' + nodePath + '"]');
 
-						NodeSelection.updateSelection($element);
-						$('html, body').animate({
-							scrollTop: $element.offset().top - offsetFromTop
-						}, 500);
+						// Prevent errors if the element cannot be found on the page
+						if ($element.length > 0) {
+							NodeSelection.updateSelection($element);
+							$('html, body').animate({
+								scrollTop: $element.offset().top - offsetFromTop
+							}, 500);
+						}
 					}
 				},
 
