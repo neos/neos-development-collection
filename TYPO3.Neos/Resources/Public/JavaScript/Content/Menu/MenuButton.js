@@ -34,10 +34,14 @@ define(
 			mouseLeave: function() {
 				this._super();
 
+				var that = this;
 				if (this.get('controller.menuPanelStickyMode') === false) {
-					if (this.get('controller.menuPanelMode') === true && $('#neos-menu-panel:hover').length === 0) {
-						this.set('controller.menuPanelMode', false);
-					}
+						// Defer the check of the hover state as some browser will not update the hover status synchronously
+					setTimeout(function() {
+						if (that.get('controller.menuPanelMode') === true && $('#neos-menu-panel:hover').length === 0) {
+							that.set('controller.menuPanelMode', false);
+						}
+					}, 1);
 				}
 			}
 		});
