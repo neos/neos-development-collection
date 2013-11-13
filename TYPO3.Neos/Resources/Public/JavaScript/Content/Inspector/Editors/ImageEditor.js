@@ -328,6 +328,11 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 * Callback after file upload is complete
 		 */
 		fileUploaded: function(response) {
+			// if used directly as callback for in filesScheduledForUpload and not in the media
+			// browser via getJSON() a string will be handed over.
+			if (typeof response === 'string') {
+				response = JSON.parse(response);
+			}
 			if (response === null) {
 				Notification.error('Tried to fetch image metadata: Unexpected result format.');
 				return;
