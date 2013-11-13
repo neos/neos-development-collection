@@ -280,7 +280,7 @@ class SiteExportService {
 					}
 					$this->xmlWriter->endElement();
 				} else {
-					$this->xmlWriter->writeElement($propertyName, is_string($propertyValue) ? $propertyValue : '');
+					$this->xmlWriter->writeElement($propertyName, is_scalar($propertyValue) ? (string)$propertyValue : '');
 				}
 				break;
 		}
