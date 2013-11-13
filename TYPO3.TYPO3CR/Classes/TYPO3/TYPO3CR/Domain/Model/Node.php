@@ -478,7 +478,11 @@ class Node implements NodeInterface {
 				case 'references' :
 					$nodes = array();
 					foreach ($value as $nodeData) {
-						$nodes[] = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+						$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+						// $node can be NULL if the node is not visible according to the current content context:
+						if ($node !== NULL) {
+							$nodes[] = $node;
+						}
 					}
 					$value = $nodes;
 				break;

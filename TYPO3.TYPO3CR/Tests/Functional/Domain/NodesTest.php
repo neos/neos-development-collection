@@ -1073,4 +1073,27 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($nodeB, $actualProperties['property2']);
 		$this->assertSame($expectedNodes, $actualProperties['property3']);
 	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyDoesNotReturnNodeReferencesIfTheyAreNotVisibleAccordingToTheContentContext() {
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+
+		$this->context = $this->contextFactory->create(array('workspaceName' => 'live', 'invisibleContentShown' => FALSE));
+
+		$rootNode = $this->context->getNode('/');
+		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$nodeB = $rootNode->createNode('nodeB', $nodeType, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeC = $rootNode->createNode('nodeC', $nodeType, 'e3b99700-f632-4a4c-2f93-0ad07eaf733f');
+
+		$nodeA->setProperty('property2', '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+		$nodeA->setProperty('property3', array('81c848ed-abb5-7608-a5db-7eea0331ccfa', 'e3b99700-f632-4a4c-2f93-0ad07eaf733f'));
+
+		$nodeB->setHidden(TRUE);
+
+		$this->assertNull($nodeA->getProperty('property2'));
+		$this->assertSame(array($nodeC), $nodeA->getProperty('property3'));
+	}
 }
