@@ -15,18 +15,21 @@ Main highlights are
 ===================
 
 Node References
-___________________________________________________________________________________________
+---------------
+
 Creating references to other nodes was one of the key missing features needed in order to create dynamic content. It's now possible to create node types with a reference or multiple references to other nodes of specific types, e.g. allowing selection
 of a target node for shortcuts or related nodes.
 
 Allow site root to contain content
-___________________________________________________________________________________________
+----------------------------------
+
 In earlier releases of Neos the site root (which would be the url / on a domain) could not contain content. The beta 1
 release now allows using the site root as a normal page, allowing a more SEO friendly implementation and a cleaner url as
 well as a more straight forward structure.
 
 Customizable output
-___________________________________________________________________________________________
+-------------------
+
 For editing content in Neos we need to add wrapping elements in the source code. To make sure the website is rendered the
 same in 'backend' and 'frontend' we add those wrapping elements in the frontend rendering too. As this in some way limited
 the integrators in outputting the HTML to their own needs, Neos beta 1 ships with more configuration options to configure the
@@ -34,39 +37,44 @@ output rendering of content elements. The integrators now has far more control o
 HTML output on a much higher level. Both the content collection and the content element view helper has became flexible._
 
 Easier creation of content element
-___________________________________________________________________________________________
+----------------------------------
+
 Neos now automatically generates the required TypoScript code for the configured node types. It is still possible to extend
 and overwrite this default configuration, but the amount of boilerplate code has been greatly reduced by this change, allowing
 creation of basic content types without using any TypoScript.
 
 Styling improvements
-___________________________________________________________________________________________
- - Overlays/modals
- - Sticky menu
- - Various minor tweaks
+--------------------
+
+- Overlays/modals
+- Sticky menu
+- Various minor tweaks
 
 Navigate Component
-___________________________________________________________________________________________
- - Configurable expand level
- - Always show current page regardless of level
- - Allow more than four levels in context structure tree
- - Selection of current page after page reload
- - Synchronization with page content changes
+------------------
+
+- Configurable expand level
+- Always show current page regardless of level
+- Allow more than four levels in context structure tree
+- Selection of current page after page reload
+- Synchronization with page content changes
 
 Pagination of nodes
-___________________________________________________________________________________________
+-------------------
+
 The paginate view helper has been improved to make it easier
 to create lists views using nodes.
 
 Bugfixes & stability improvements
-___________________________________________________________________________________________
+---------------------------------
+
 Neos beta 1 comes with a total of 25 bugfixes, mostly related to content editing stability and user experience. A few highligths from this list:
 
-  - Publishing more stable
-  - Copy/paste more stable
-  - Aloha integration more stable
-  - Importing and exporting more stable
-  - Content element handles (copy, paste and so on) are now correctly positioned & more reliable
+- Publishing more stable
+- Copy/paste more stable
+- Aloha integration more stable
+- Importing and exporting more stable
+- Content element handles (copy, paste and so on) are now correctly positioned & more reliable
 
 Full list of breaking changes
 =============================
@@ -231,7 +239,7 @@ page in the site root.
 
 You usually want to avoid this because it's not the best SEO-wise.
 Currently the easiest way to achieve this, is to export the migrated
-site with:
+site with::
 
   ./flow site:export --tidy --filename "Some/Path/Sites.xml"
 
