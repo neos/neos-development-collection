@@ -46,6 +46,7 @@ define(
 		init: function() {
 			this._super();
 			this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: 'TYPO3.Neos:Content'}).create());
+			var that = this;
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
 			});
