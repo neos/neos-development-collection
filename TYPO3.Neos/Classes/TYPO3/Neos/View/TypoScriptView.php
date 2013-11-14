@@ -57,7 +57,8 @@ class TypoScriptView extends AbstractView {
 			'node' => $currentNode,
 			'documentNode' => $closestDocumentNode,
 			'request' => $this->controllerContext->getRequest(),
-			'site' => $currentSiteNode
+			'site' => $currentSiteNode,
+			'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : NULL
 		));
 		$output = $typoScriptRuntime->render($this->typoScriptPath);
 		$typoScriptRuntime->popContext();

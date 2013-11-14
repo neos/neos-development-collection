@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Controller\Frontend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -58,13 +60,18 @@ class NodeController extends ActionController {
 	protected $defaultViewObjectName = 'TYPO3\Neos\View\TypoScriptView';
 
 	/**
+	 * @var \TYPO3\Neos\View\TypoScriptView
+	 */
+	protected $view;
+
+	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @return string View output for the specified node
 	 */
-	public function showAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	public function showAction(Node $node) {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
 				// TODO: Introduce check if workspace is visible or accessible to the user
 			if ($this->hasAccessToBackend()) {
@@ -77,9 +84,6 @@ class NodeController extends ActionController {
 			} else {
 				$this->redirect('index', 'Login');
 			}
-		}
-		if ($this->isWireframeModeEnabled($node)) {
-			$this->forward('showWireframe', NULL, NULL, array('node' => $node->getContextPath()));
 		}
 		if (!$node->isAccessible()) {
 			try {
@@ -120,6 +124,17 @@ class NodeController extends ActionController {
 			}
 		}
 
+		if ($this->hasAccessToBackend() && $node->getContext()->getWorkspace()->getName() !== 'live') {
+			$editPreviewMode = $this->getEditPreviewModeTypoScriptRenderingPath($node);
+			if ($editPreviewMode !== NULL) {
+				$this->view->assign('editPreviewMode', $editPreviewMode);
+			} else {
+				if (!$this->view->canRenderWithNodeAndPath($node, $this->view->getTypoScriptPath())) {
+					$this->view->setTypoScriptPath('rawContent');
+				}
+			}
+		}
+
 		$this->view->assign('value', $node);
 
 		if ($this->securityContext->isInitialized() && $this->hasAccessToBackend()) {
@@ -128,52 +143,23 @@ class NodeController extends ActionController {
 	}
 
 	/**
-	 * Shows the specified node and takes visibility and access restrictions into
-	 * account.
+	 * Return a specific rendering mode if set.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @return string View output for the specified node
+	 * @return string|NULL
 	 */
-	public function showWireframeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
-		if (!$node->isAccessible()) {
-			try {
-				$this->authenticationManager->authenticate();
-			} catch (\Exception $exception) {
-			}
+	protected function getEditPreviewModeTypoScriptRenderingPath() {
+		if ($this->securityContext->getParty() === NULL || !$this->hasAccessToBackend()) {
+			return NULL;
 		}
-		if (!$node->isAccessible() && !$node->getContext()->isInaccessibleContentShown()) {
-			$this->throwStatus(403);
-		}
-		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
-			$this->throwStatus(404);
-		}
-		if ($node->getNodeType()->isOfType('TYPO3.Neos.NodeTypes:Shortcut')) {
-			$this->view->assign('wireframeMode', $node);
+		/** @var \TYPO3\Neos\Domain\Model\User $user */
+		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
+		$editPreviewMode = $user->getPreferences()->get('contentEditing.editPreviewMode');
+		if ($editPreviewMode === NULL) {
+			return NULL;
 		}
 
-		$this->view->assign('value', $node);
-
-		$this->view->setTypoScriptPath('wireframeMode');
-
-	}
-
-	/**
-	 * Decide if wireframe mode should be enabled.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @return boolean
-	 */
-	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
-		if ($this->securityContext->getParty() !== NULL) {
-			if ($this->hasAccessToBackend()) {
-				if (!$this->view->canRenderWithNodeAndPath($node, $this->view->getTypoScriptPath())) {
-					return TRUE;
-				}
-				$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-				return $user->getPreferences()->get('contentEditing.wireframeMode') ? TRUE : FALSE;
-			}
-		}
-		return FALSE;
+		$editPreviewModeTypoScriptRenderingPath = Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes.' . $editPreviewMode . '.typoScriptRenderingPath');
+		return $editPreviewModeTypoScriptRenderingPath ?: NULL;
 	}
 
 	/**

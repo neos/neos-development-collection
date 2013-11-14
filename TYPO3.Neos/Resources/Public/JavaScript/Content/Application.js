@@ -92,7 +92,7 @@ function(
 			this._initializeNotifications();
 
 			if (window.T3.isContentModule) {
-				$('body').toggleClass('neos-controls neos-backend');
+				$('body').addClass('neos-backend');
 				this._setPagePosition();
 			}
 
@@ -433,5 +433,6 @@ function(
 		}
 	}).create();
 	ContentModule.deferReadiness();
+
 	return ContentModule;
 });

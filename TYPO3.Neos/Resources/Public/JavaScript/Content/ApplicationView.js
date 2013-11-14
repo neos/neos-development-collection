@@ -8,6 +8,7 @@ define(
 	'./Components/ContentContextBar',
 	'./Menu/MenuPanel',
 	'./TopBar/TopBar',
+	'./EditPreviewPanel/EditPreviewPanel',
 	'./Navigate/NavigatePanel',
 	'./Inspector/InspectorView',
 	'./Inspector/InspectorController',
@@ -22,6 +23,7 @@ function(
 	ContentContextBar,
 	MenuPanel,
 	TopBar,
+	EditPreviewPanel,
 	NavigatePanel,
 	InspectorView,
 	InspectorController,
@@ -35,6 +37,7 @@ function(
 		_isContentModule: window.T3.isContentModule,
 		ContentContextBar: ContentContextBar,
 		MenuPanel: MenuPanel,
+		EditPreviewPanel: EditPreviewPanel,
 		NavigatePanel: NavigatePanel,
 		InspectorView: InspectorView,
 

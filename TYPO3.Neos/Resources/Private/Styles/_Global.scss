@@ -14,34 +14,28 @@ body {
 		}
 	}
 
+	&.neos-edit-preview-panel-open {
+		margin-top: $editPreviewPanelHeight + ($unit * 2 + 2);
+	}
+
 	&.neos-menu-panel-open.neos-menu-panel-sticky {
 		margin-left: $menuButtonWidth;
 	}
 
 	&.neos-navigate-panel-open {
-		margin-left: $navigatePanelWidth;
+		margin-left: $navigatePanelWidth + 1;
 	}
 
 	&.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open {
-		margin-left: $menuButtonWidth + $navigatePanelWidth - 1px;
+		margin-left: $menuButtonWidth + $navigatePanelWidth + 1;
 	}
 
 	&.neos-inspector-panel-open {
-		margin-right: $inspectorWidth;
+		margin-right: $inspectorWidth + 1;
 	}
 
-	// Preview mode
-	#neos-top-bar {
-		@include transition-property(height);
-		@include transition-duration(0.2s);
-	}
-
-	#neos-context-bar {
-		@include transition-property(margin-top, padding-left, padding-right);
-		@include transition-duration(0.2s);
-	}
-
-	&.neos-previewmode {
+	&.neos-full-screen {
+		margin-top: 0 !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
 
@@ -53,21 +47,31 @@ body {
 			}
 
 			#neos-top-bar {
-				top: -1px;
-				height: 0;
-				overflow: hidden;
+				top: -($unit + 1);
+			}
+
+			#neos-inspector-button {
+				top: -($unit + 2);
+			}
+
+			#neos-menu-button {
+				top: -$unit;
 			}
 
 			#neos-context-bar {
-				margin-top: -($unit + 1px);
+				top: -($unit + 1);
 				box-shadow: none;
 				display: block;
 				padding-left: 0;
 				padding-right: 0;
 			}
 
+			#neos-edit-preview-panel {
+				top: -($editPreviewPanelHeight + 1);
+			}
+
 			#neos-inspector {
-				right: -($inspectorWidth + 1px);
+				right: -($inspectorWidth + 1);
 				overflow: hidden;
 			}
 
@@ -75,16 +79,9 @@ body {
 			#neos-navigate-panel {
 				left: -($navigatePanelWidth + 1) !important;
 			}
-
-			.neos-overlay-component,
-			.neos-handle-container,
-			.neos-modal-backdrop,
-			#neos-menu-button {
-				display: none;
-			}
 		}
 
-		.neos-preview-close {
+		.neos-full-screen-close {
 			display: block !important;
 			position: fixed;
 			top: $defaultMargin;
@@ -102,6 +99,17 @@ body {
 				}
 			}
 		}
+	}
+
+	&.neos-preview-mode {
+		.neos-contentelement {
+			outline: none !important;
+		}
+
+		div.neos-inline-editable {
+			outline: none !important;
+			background: none !important;
+		}
 
 		// Handles around Aloha Blocks
 		.neos-handle,
@@ -115,8 +123,7 @@ body {
 		.x-shadow,
 		.neos-contentelement-overlay,
 		button.neos-create-new-content,
-		.neos-contentelement-hidden,
-		#neos-inspector-button {
+		.neos-contentelement-hidden {
 			display: none !important;
 		}
 
@@ -127,6 +134,15 @@ body {
 
 			> .neos-contentelement-handle-container {
 				visibility: hidden;
+			}
+		}
+
+		.neos {
+			&.neos-empty-contentcollection-overlay,
+			.neos-overlay-component,
+			.neos-handle-container,
+			.neos-modal-backdrop {
+				display: none;
 			}
 		}
 	}

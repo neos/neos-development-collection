@@ -11,6 +11,9 @@
 	@include text-shadow(none);
 	@include box-shadow(none);
 
+	@include transition-property(top);
+	@include transition-duration(0.2s);
+
 	&:before {
 		position: relative;
 		top: 1px;

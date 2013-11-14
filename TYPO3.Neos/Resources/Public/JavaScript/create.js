@@ -5,6 +5,7 @@ define(
 		'emberjs',
 		'Content/InputEvents/EntitySelection',
 		'Content/Model/NodeSelection',
+		'Content/EditPreviewPanel/EditPreviewPanelController',
 		'Library/create',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
 		'aloha'
@@ -14,7 +15,8 @@ define(
 		vieInstance,
 		Ember,
 		EntitySelection,
-		NodeSelection
+		NodeSelection,
+		EditPreviewPanelController
 	) {
 		return Ember.Object.create({
 				// Initially set state to null
@@ -23,21 +25,21 @@ define(
 			initialize: function() {
 				var that = this;
 
-				if (!T3.Content.Controller.Preview.get('previewMode')) {
-						// Wait until Aloha is loaded if we use Aloha
-					if (Aloha.__shouldInit) {
-						require({
-							context: 'aloha'
-						}, [
-							'aloha'
-						], function(Aloha) {
-							Aloha.ready(function() {
+					// Wait until Aloha is loaded if we use Aloha
+				if (Aloha.__shouldInit) {
+					require({
+						context: 'aloha'
+					}, [
+						'aloha'
+					], function(Aloha) {
+						Aloha.ready(function() {
+							if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
 								that.enableEdit();
-							});
+							}
 						});
-					} else {
-						this.enableEdit();
-					}
+					});
+				} else {
+					this.enableEdit();
 				}
 
 				EntitySelection.initialize();

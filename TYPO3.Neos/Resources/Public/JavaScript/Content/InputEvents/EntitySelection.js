@@ -32,13 +32,13 @@ define(
 					});
 
 				$(document)
-					.on('mouseover', 'body:not(.neos-previewmode) .neos-contentelement', function(e) {
+					.on('mouseover', 'body:not(.neos-preview-mode) .neos-contentelement', function(e) {
 						if (e.result !== 'hovered') {
 							$(this).addClass('neos-contentelement-hover');
 						}
 						return 'hovered';
 					})
-					.on('mouseout', 'body:not(.neos-previewmode) .neos-contentelement', function() {
+					.on('mouseout', 'body:not(.neos-preview-mode) .neos-contentelement', function() {
 						$(this).removeClass('neos-contentelement-hover');
 					})
 					.on('click', '.neos, .ui-widget-overlay', function(e) {
@@ -46,7 +46,7 @@ define(
 						e.stopPropagation();
 						// TODO Test if we can use e.result for stopping unselect, too
 					})
-					.on('click', 'body:not(.neos-previewmode) .neos-contentelement', function(e) {
+					.on('click', 'body:not(.neos-preview-mode) .neos-contentelement', function(e) {
 						// Don't unselect if a previous handler activated an element
 						if (e.result !== 'activated') {
 							NodeSelection.updateSelection($(this));
@@ -76,7 +76,7 @@ define(
 
 				// Keyboard events
 				Mousetrap.bind('tab', function() {
-					if ($('body').hasClass('neos-previewmode')) {
+					if ($('body').hasClass('neos-preview-mode')) {
 						// Don't handle navigation in preview mode
 						return;
 					}

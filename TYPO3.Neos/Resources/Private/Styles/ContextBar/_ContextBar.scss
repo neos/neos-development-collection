@@ -4,11 +4,22 @@
 	left: 0;
 	right: 0;
 	z-index: 10012;
-	margin-top: $unit + 1;
+	top: $unit + 1;
 	background-color: $grayMedium;
 	height: $unit;
 	border-bottom: 1px solid $grayLight;
 	padding-right: $unit;
+
+	@include transition-property(top,padding);
+	@include transition-duration(0.2s);
+
+	.neos-edit-preview-panel-open & {
+		top: $editPreviewPanelHeight + $unit + 1;
+	}
+
+	.neos-edit-preview-panel-open:not(.neos-inspector-panel-open) & {
+		padding-right: 0;
+	}
 
 	.neos-navigate-panel-open & {
 		padding-left: $navigatePanelWidth;
@@ -53,6 +64,11 @@
 
 		& + .neos-button {
 			margin-left: $defaultMargin;
+		}
+
+		&.neos-full-screen-open {
+			width: 40px;
+			padding: 0;
 		}
 	}
 

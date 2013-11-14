@@ -68,6 +68,13 @@
   appendExceedingArguments: true
 
 -
+  name: 'Settings'
+  uriPattern: 'settings/{@action}'
+  defaults:
+    '@controller': 'Backend\Settings'
+  appendExceedingArguments: true
+
+-
   name: 'Modules'
   uriPattern: '{module}'
   defaults:

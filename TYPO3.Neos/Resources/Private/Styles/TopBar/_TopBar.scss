@@ -9,6 +9,10 @@
 	border-bottom: 1px solid $grayLight;
 	display: none;
 	@include font;
+	font-size: 0;
+
+	@include transition-property(top);
+	@include transition-duration(0.2s);
 
 	#neos-top-bar-right {
 		float: right;
@@ -37,7 +41,7 @@
 				border-top: 1px solid $grayDark;
 
 				&:first-child {
-					border-color: $grayMedium;
+					border-color: $grayLight;
 				}
 
 				a,

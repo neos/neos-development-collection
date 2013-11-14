@@ -16,7 +16,7 @@ define(
 		contextStructureMode: false,
 
 		init: function() {
-			if (LocalStorage.getItem('navigateTreeMode') !== false) {
+			if (LocalStorage.getItem('navigatePanelMode') !== false) {
 				this.toggleNavigatePanelMode();
 			}
 			if (LocalStorage.getItem('contextStructureMode') !== false) {
@@ -25,18 +25,18 @@ define(
 		},
 
 		toggleNavigatePanelMode: function() {
-			this.set('navigatePanelMode', !this.get('navigatePanelMode'));
+			this.toggleProperty('navigatePanelMode');
 		},
 
 		toggleContextStructureMode: function() {
-			this.set('contextStructureMode', !this.get('contextStructureMode'));
+			this.toggleProperty('contextStructureMode');
 		},
 
-		navigatePanelModeChanged: function() {
-			LocalStorage.setItem('navigateTreeMode', this.get('navigatePanelMode'));
+		_navigatePanelModeChanged: function() {
+			LocalStorage.setItem('navigatePanelMode', this.get('navigatePanelMode'));
 		}.observes('navigatePanelMode'),
 
-		contextStructureModeChanged: function() {
+		_contextStructureModeChanged: function() {
 			LocalStorage.setItem('contextStructureMode', this.get('contextStructureMode'));
 		}.observes('contextStructureMode')
 	}).create();

@@ -5,6 +5,9 @@
 	background-color: $grayDark;
 	border-right: 1px solid $grayLight;
 
+	@include transition-property(top);
+	@include transition-duration(0.2s);
+
 	&:hover,
 	&.neos-pressed {
 		&:before {

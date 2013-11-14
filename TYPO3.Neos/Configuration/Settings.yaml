@@ -140,6 +140,26 @@ TYPO3:
           'references':
             editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
 
+      editPreviewModes:
+        inPlace:
+          isEditingMode: TRUE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: ''
+          title: 'In-Place'
+          position: 100
+        rawContent:
+          isEditingMode: TRUE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: 'rawContent'
+          title: 'Raw Content'
+          position: 200
+        desktop:
+          isEditingMode: FALSE
+          isPreviewMode: TRUE
+          typoScriptRenderingPath: ''
+          title: 'Desktop'
+          position: 100
+
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
     modules:

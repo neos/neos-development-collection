@@ -68,6 +68,6 @@ a {
 	margin-left: -30 - $navigatePanelWidth / 2 - $inspectorWidth / 2;
 }
 
-&.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
+&.neos-full-screen .neos-pageloader-wrapper .neos-pageloader {
 	margin-top: $unit / 2;
 }
