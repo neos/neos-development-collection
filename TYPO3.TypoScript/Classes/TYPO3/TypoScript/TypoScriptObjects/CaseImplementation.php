@@ -75,6 +75,7 @@ class CaseImplementation extends ArrayImplementation {
 	 *
 	 * @param string $matcherKey
 	 * @return string
+	 * @throws \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException
 	 */
 	protected function renderMatcher($matcherKey) {
 		$renderedMatcher = NULL;
@@ -99,7 +100,7 @@ class CaseImplementation extends ArrayImplementation {
 	}
 
 	/**
-	 * Test wether the output of the matcher does not equal the MATCH_NORESULT
+	 * Test whether the output of the matcher does not equal the MATCH_NORESULT
 	 *
 	 * If the debug mode is enabled, we have to strip the debug output before comparing the rendered result.
 	 *
