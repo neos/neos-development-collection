@@ -30,7 +30,7 @@ body {
 		margin-right: $inspectorWidth;
 	}
 
-	// Preview mode
+	// Full Screen Mode
 	#neos-top-bar {
 		@include transition-property(height);
 		@include transition-duration(0.2s);
@@ -46,7 +46,7 @@ body {
 		@include transition-duration(0.2s);
 	}
 
-	&.neos-previewmode {
+	&.neos-full-screen {
 		margin-left: 0 !important;
 		margin-right: 0 !important;
 
@@ -81,15 +81,13 @@ body {
 				left: -($navigatePanelWidth + 1) !important;
 			}
 
-			.neos-overlay-component,
-			.neos-handle-container,
-			.neos-modal-backdrop,
-			#neos-menu-button {
+			#neos-menu-button,
+			#neos-inspector-button {
 				display: none;
 			}
 		}
 
-		.neos-preview-close {
+		.neos-full-screen-close {
 			display: block !important;
 			position: fixed;
 			top: $defaultMargin;
@@ -103,25 +101,16 @@ body {
 				padding: 0;
 			}
 		}
+	}
 
-		.aloha-block-TYPO3Block {
-			margin: 0;
+	&.neos-previewmode {
+		.neos-contentelement {
+			outline: none !important;
 		}
 
-		// Aloha Block highlighting
-		div.aloha-block:hover > .aloha-block-inner {
-			cursor: default;
-		}
-
-		div.aloha-block-inner {
+		div.neos-inline-editable {
 			outline: none !important;
 			background: none !important;
-		}
-
-		.aloha-block-TYPO3Block.aloha-block:hover,
-		.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
-		.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
-			@include box-shadow(none);
 		}
 
 		// Handles around Aloha Blocks
@@ -153,6 +142,15 @@ body {
 
 			> .neos-contentelement-handle-container {
 				visibility: hidden;
+			}
+		}
+
+		.neos {
+			&.neos-empty-contentcollection-overlay,
+			.neos-overlay-component,
+			.neos-handle-container,
+			.neos-modal-backdrop {
+				display: none;
 			}
 		}
 	}

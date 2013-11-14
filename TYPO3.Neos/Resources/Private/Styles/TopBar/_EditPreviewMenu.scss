@@ -1,0 +1,56 @@
+#neos-views-button {
+	@extend #neos-navigate-button;
+	left: -3px; // no clue why this is needed in order to fix the button
+
+	&.neos-pressed {
+		background-color: $grayDarker;
+	}
+}
+#neos-views-panel {
+	$viewsPanelHeight: 3*$unit;
+	position: fixed;
+	top: $unit;
+	left: 0;
+
+	height: $viewsPanelHeight;
+
+	right: -1px;
+
+	@include transition-property(right);
+	@include transition-duration(0.2s);
+
+	background-color: $grayDarker;
+	z-index: 10013;
+
+
+
+	.neos-inspector-panel-open & {
+		right: $inspectorWidth;
+	}
+	.neos-preview {
+		border-left: 1px solid $grayLight;
+		box-sizing: border-box;
+	}
+
+	.neos-edit, .neos-preview {
+		width: 49%;
+		height: $viewsPanelHeight;
+		float: left;
+
+		.neos-view-panel-title {
+			padding-left: $unit;
+			padding-top: $unit/2;
+			@include font();
+		}
+
+		ul.neos-edit-preview-modes {
+			padding-left: $unit;
+			padding-top: $unit/4;
+
+			li {
+				float: left;
+				padding-right: 8px;
+			}
+		}
+	}
+}

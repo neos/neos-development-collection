@@ -433,5 +433,6 @@ function(
 		}
 	}).create();
 	ContentModule.deferReadiness();
+
 	return ContentModule;
 });

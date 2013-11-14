@@ -1,0 +1,25 @@
+<div class="neos-edit">
+	<div class="neos-view-panel-title">Editing Experience</div>
+	<ul class="neos-edit-preview-modes">
+		{{#each editingMode in editingModes}}
+			<li>
+				<button {{bindAttr class=":neos-button editingMode.active:neos-pressed"}} {{action activateMode editingMode}}>
+					{{editingMode.title}}
+				</button>
+			</li>
+		{{/each}}
+	</ul>
+</div>
+
+<div class="neos-preview">
+	<div class="neos-view-panel-title">Preview Central</div>
+	<ul class="neos-edit-preview-modes">
+		{{#each editingMode in previewModes}}
+		<li>
+			<button {{bindAttr class=":neos-button editingMode.active:neos-pressed"}} {{action activateMode editingMode}}>
+			{{editingMode.title}}
+			</button>
+		</li>
+		{{/each}}
+	</ul>
+</div>
