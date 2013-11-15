@@ -11,14 +11,16 @@ namespace TYPO3\Neos\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\View\AbstractView;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Controller for displaying nodes in the frontend
  *
  */
-class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
+class TypoScriptView extends AbstractView {
 
 	/**
 	 * @Flow\Inject
@@ -42,7 +44,7 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 */
 	public function render() {
 		$currentNode = isset($this->variables['value']) ? $this->variables['value'] : NULL;
-		if (!$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
+		if (!$currentNode instanceof Node) {
 			throw new \TYPO3\Neos\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
@@ -66,11 +68,11 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	/**
 	 * Is it possible to render $node with $typoScriptPath?
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param Node $node
 	 * @param string $typoScriptPath
 	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
 	 */
-	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoScriptPath) {
+	public function canRenderWithNodeAndPath(Node $node, $typoScriptPath) {
 			// TODO: find closest document node from this node...
 		$closestDocumentNode = $node;
 		$currentSiteNode = $node->getContext()->getCurrentSiteNode();
@@ -97,12 +99,13 @@ class TypoScriptView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @param NodeInterface $node
+	 * @return NodeInterface
 	 */
-	protected function getClosestDocumentNode($node) {
-		$q = new FlowQuery(array($node));
-		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-		return $closestDocumentNode;
+	protected function getClosestDocumentNode(NodeInterface $node) {
+		while ($node !== NULL && !$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			$node = $node->getParent();
+		}
+		return $node;
 	}
 }
