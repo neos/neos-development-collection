@@ -25,19 +25,21 @@ define(
 			initialize: function() {
 				var that = this;
 
-					// Wait until Aloha is loaded if we use Aloha
-				if (Aloha.__shouldInit) {
-					require({
-						context: 'aloha'
-					}, [
-						'aloha'
-					], function(Aloha) {
-						Aloha.ready(function() {
-							that.enableEdit();
+				if (!T3.Content.Controller.Preview.get('previewMode')) {
+						// Wait until Aloha is loaded if we use Aloha
+					if (Aloha.__shouldInit) {
+						require({
+							context: 'aloha'
+						}, [
+							'aloha'
+						], function(Aloha) {
+							Aloha.ready(function() {
+								that.enableEdit();
+							});
 						});
-					});
-				} else {
-					this.enableEdit();
+					} else {
+						this.enableEdit();
+					}
 				}
 
 				EntitySelection.initialize();

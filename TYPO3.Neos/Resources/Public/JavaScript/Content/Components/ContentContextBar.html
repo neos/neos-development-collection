@@ -8,6 +8,7 @@
 		lastSuccessfulTransferBinding="T3.Content.Controller.ServerConnection._lastSuccessfulTransfer"
 		classNames="neos-context-bar-save-indicator"
 	}}
+	<button title="Wireframe" {{bindAttr class=":neos-button T3.Content.Controller.Wireframe.wireframeMode:neos-pressed"}} {{action "toggleWireframeMode" target="T3.Content.Controller.Wireframe"}}>Wireframe</button>
 
-	<button class="neos-button icon-resize-full" title="Full Screen" {{action "toggleFullScreen" target="view.fullScreenController"}}></button>
+	<button class="neos-button" title="Preview" {{action "togglePreview" target="T3.Content.Controller.Preview"}}><i class="icon-resize-full"></i></button>
 </div>

@@ -25,18 +25,18 @@ define(
 		},
 
 		toggleNavigatePanelMode: function() {
-			this.toggleProperty('navigatePanelMode');
+			this.set('navigatePanelMode', !this.get('navigatePanelMode'));
 		},
 
 		toggleContextStructureMode: function() {
-			this.toggleProperty('contextStructureMode');
+			this.set('contextStructureMode', !this.get('contextStructureMode'));
 		},
 
-		_navigatePanelModeChanged: function() {
+		navigatePanelModeChanged: function() {
 			LocalStorage.setItem('navigateTreeMode', this.get('navigatePanelMode'));
 		}.observes('navigatePanelMode'),
 
-		_contextStructureModeChanged: function() {
+		contextStructureModeChanged: function() {
 			LocalStorage.setItem('contextStructureMode', this.get('contextStructureMode'));
 		}.observes('contextStructureMode')
 	}).create();

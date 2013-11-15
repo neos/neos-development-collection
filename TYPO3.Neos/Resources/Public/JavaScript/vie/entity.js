@@ -2,12 +2,14 @@ define([
 	'emberjs',
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
+	'Content/Application',
 	'Shared/Configuration',
 	'vie/instance'
 ], function(
 	Ember,
 	$,
 	_,
+	ContentModule,
 	Configuration,
 	vieInstance
 ) {

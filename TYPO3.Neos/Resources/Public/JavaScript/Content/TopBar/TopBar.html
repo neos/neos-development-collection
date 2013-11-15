@@ -1,5 +1,4 @@
 {{view view.MenuButton}}
 {{#unbound if view._isContentModule}}
 	<button id="neos-navigate-button" title="Navigate" {{bindAttr class=":neos-button view.navigatePanelController.navigatePanelMode:neos-pressed"}} {{action "toggleNavigatePanelMode" target="view.navigatePanelController"}}>Navigate</button>
-	<button id="neos-views-button" title="Edit & Preview" {{bindAttr class=":neos-button view.editPreviewPanelController.visible:neos-pressed"}} {{action "toggleVisibility" target="view.editPreviewPanelController"}}>Edit & Preview</button>
 {{/unbound}}
