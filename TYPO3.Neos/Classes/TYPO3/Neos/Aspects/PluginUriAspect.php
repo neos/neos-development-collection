@@ -104,7 +104,7 @@ class PluginUriAspect {
 		$originalNodePath = $request->getMainRequest()->getArgument('node');
 
 		// generate the uri for the given node
-		$request->getMainRequest()->setArgument('node', $node->getPath());
+		$request->getMainRequest()->setArgument('node', $node->getContextPath());
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		// restore the original node path
