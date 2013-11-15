@@ -20,7 +20,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		}
 	}
 
-	headerComment = Template {
+	headerComment = TYPO3.TypoScript:Template {
 		@position = 'before headTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
 	}
@@ -73,7 +73,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# Content of the body tag. To be defined by the integrator.
-	body = Template {
+	body = TYPO3.TypoScript:Template {
 		@position = 'after bodyTag'
 		node = ${node}
 
@@ -91,9 +91,10 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# This enables redirecting to the last visited page after login
-	lastVisitedNode = TYPO3.Neos:Template {
+	lastVisitedNode = TYPO3.TypoScript:Template {
 		@position = 'before closingBodyTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/LastVisitedNode.html'
+		node = ${node}
 	}
 
 	closingBodyTag = '</body>'
