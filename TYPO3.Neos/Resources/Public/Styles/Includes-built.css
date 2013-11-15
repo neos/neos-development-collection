@@ -1,7 +1,7 @@
 
 @charset "UTF-8";
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*!
+/*
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -5187,7 +5187,7 @@
 .neos.neos-navigate-panel-open .neos-pageloader-wrapper .neos-pageloader {
   margin-left: -350px;
 }
-.neos.neos-full-screen .neos-pageloader-wrapper .neos-pageloader {
+.neos.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
   margin-top: 20px;
 }
 .neos ::-webkit-scrollbar {
@@ -6961,55 +6961,6 @@
   left: 8px;
   vertical-align: middle;
 }
-.neos #neos-views-button {
-  left: -3px;
-}
-.neos #neos-views-button.neos-pressed {
-  background-color: #141414;
-}
-.neos #neos-views-panel {
-  position: fixed;
-  top: 40px;
-  left: 0;
-  height: 120px;
-  right: -1px;
-  -webkit-transition-property: right;
-  -moz-transition-property: right;
-  -o-transition-property: right;
-  transition-property: right;
-  -webkit-transition-duration: 0.2s;
-  -moz-transition-duration: 0.2s;
-  -o-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  background-color: #141414;
-  z-index: 10013;
-}
-.neos-inspector-panel-open .neos #neos-views-panel {
-  right: 320px;
-}
-.neos #neos-views-panel .neos-preview {
-  border-left: 1px solid #3f3f3f;
-  box-sizing: border-box;
-}
-.neos #neos-views-panel .neos-edit, .neos #neos-views-panel .neos-preview {
-  width: 49%;
-  height: 120px;
-  float: left;
-}
-.neos #neos-views-panel .neos-edit .neos-view-panel-title, .neos #neos-views-panel .neos-preview .neos-view-panel-title {
-  padding-left: 40px;
-  padding-top: 20px;
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-.neos #neos-views-panel .neos-edit ul.neos-edit-preview-modes, .neos #neos-views-panel .neos-preview ul.neos-edit-preview-modes {
-  padding-left: 40px;
-  padding-top: 10px;
-}
-.neos #neos-views-panel .neos-edit ul.neos-edit-preview-modes li, .neos #neos-views-panel .neos-preview ul.neos-edit-preview-modes li {
-  float: left;
-  padding-right: 8px;
-}
 .neos #neos-context-bar {
   position: fixed;
   top: 0;
@@ -7488,18 +7439,18 @@
 .neos #neos-menu-panel #neos-menu-sticky-button.neos-pressed::before {
   content: "›";
 }
-.neos #neos-navigate-button, .neos #neos-views-button {
+.neos #neos-navigate-button {
   position: relative;
   background-color: #222222;
   border-right: 1px solid #3f3f3f;
 }
-.neos #neos-navigate-button:hover, .neos #neos-views-button:hover, .neos #neos-navigate-button.neos-pressed, .neos .neos-pressed#neos-views-button {
+.neos #neos-navigate-button:hover, .neos #neos-navigate-button.neos-pressed {
   color: #00b5ff;
 }
-.neos-menu-panel-open:not(.neos-menu-panel-sticky) .neos #neos-navigate-button.neos-pressed:after, .neos-menu-panel-open:not(.neos-menu-panel-sticky) .neos .neos-pressed#neos-views-button:after {
+.neos-menu-panel-open:not(.neos-menu-panel-sticky) .neos #neos-navigate-button.neos-pressed:after {
   display: none;
 }
-.neos #neos-navigate-button.neos-pressed:after, .neos .neos-pressed#neos-views-button:after {
+.neos #neos-navigate-button.neos-pressed:after {
   display: block;
   content: "";
   width: 100%;
@@ -9395,40 +9346,42 @@ body .aloha-block-TYPO3Block {
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
 }
-body.neos-full-screen {
+body.neos-previewmode {
   margin-left: 0 !important;
   margin-right: 0 !important;
 }
-body.neos-full-screen .neos #neos-top-bar,
-body.neos-full-screen .neos #neos-context-bar,
-body.neos-full-screen .neos #neos-inspector {
+body.neos-previewmode .neos #neos-top-bar,
+body.neos-previewmode .neos #neos-context-bar,
+body.neos-previewmode .neos #neos-inspector {
   display: block !important;
 }
-body.neos-full-screen .neos #neos-top-bar {
+body.neos-previewmode .neos #neos-top-bar {
   top: -1px;
   height: 0;
   overflow: hidden;
 }
-body.neos-full-screen .neos #neos-context-bar {
+body.neos-previewmode .neos #neos-context-bar {
   margin-top: -41px;
   box-shadow: none;
   display: block;
   padding-left: 0;
   padding-right: 0;
 }
-body.neos-full-screen .neos #neos-inspector {
+body.neos-previewmode .neos #neos-inspector {
   right: -321px;
   overflow: hidden;
 }
-body.neos-full-screen .neos #neos-menu-panel,
-body.neos-full-screen .neos #neos-navigate-panel {
+body.neos-previewmode .neos #neos-menu-panel,
+body.neos-previewmode .neos #neos-navigate-panel {
   left: -321px !important;
 }
-body.neos-full-screen .neos #neos-menu-button,
-body.neos-full-screen .neos #neos-inspector-button {
+body.neos-previewmode .neos .neos-overlay-component,
+body.neos-previewmode .neos .neos-handle-container,
+body.neos-previewmode .neos .neos-modal-backdrop,
+body.neos-previewmode .neos #neos-menu-button {
   display: none;
 }
-body.neos-full-screen .neos-full-screen-close {
+body.neos-previewmode .neos-preview-close {
   display: block !important;
   position: fixed;
   top: 16px;
@@ -9438,17 +9391,27 @@ body.neos-full-screen .neos-full-screen-close {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
   z-index: 9999;
 }
-body.neos-full-screen .neos-full-screen-close .neos-button {
+body.neos-previewmode .neos-preview-close .neos-button {
   width: 40px;
   line-height: 44px;
   padding: 0;
 }
-body.neos-previewmode .neos-contentelement {
-  outline: none !important;
+body.neos-previewmode .aloha-block-TYPO3Block {
+  margin: 0;
 }
-body.neos-previewmode div.neos-inline-editable {
+body.neos-previewmode div.aloha-block:hover > .aloha-block-inner {
+  cursor: default;
+}
+body.neos-previewmode div.aloha-block-inner {
   outline: none !important;
   background: none !important;
+}
+body.neos-previewmode .aloha-block-TYPO3Block.aloha-block:hover,
+body.neos-previewmode .aloha-block-TYPO3Block.aloha-block.aloha-block-active,
+body.neos-previewmode .aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 body.neos-previewmode .neos-handle,
 body.neos-previewmode .neos-status-indicator {
@@ -9473,12 +9436,6 @@ body.neos-previewmode .neos-contentelement-active {
 }
 body.neos-previewmode .neos-contentelement-active > .neos-contentelement-handle-container {
   visibility: hidden;
-}
-body.neos-previewmode .neos.neos-empty-contentcollection-overlay,
-body.neos-previewmode .neos .neos-overlay-component,
-body.neos-previewmode .neos .neos-handle-container,
-body.neos-previewmode .neos .neos-modal-backdrop {
-  display: none;
 }
 #neos-page-metainformation {
   display: none;
