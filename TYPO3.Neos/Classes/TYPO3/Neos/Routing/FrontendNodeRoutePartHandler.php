@@ -181,7 +181,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		if (!$node instanceof NodeInterface) {
 			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $nodeContextPath), 1346949857);
 		}
-		$node->setWorkspace($workspace);
+
 		return $node;
 	}
 
