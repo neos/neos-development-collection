@@ -1096,4 +1096,32 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertNull($nodeA->getProperty('property2'));
 		$this->assertSame(array($nodeC), $nodeA->getProperty('property3'));
 	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyReturnsReferencedNodesInCorrectWorkspace() {
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+
+		$identifier = '81c848ed-abb5-7608-a5db-7eea0331ccfa';
+		$rootNode = $this->context->getNode('/');
+		$referencedNode = $rootNode->createNode('referencedNode', $nodeType, $identifier);
+		$node = $rootNode->createNode('node', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+		$node->setProperty('property2', $identifier);
+
+		$testContext = $this->contextFactory->create(array('workspaceName' => 'test'));
+
+		$testRootNode = $testContext->getNode('/');
+		$testReferencedNode = $testRootNode->createNode('testReferencedNode', $nodeType, $identifier);
+		$testNode = $testRootNode->getNode('node');
+
+		$referencedNodeProperty = $node->getProperty('property2');
+		$this->assertNotSame($referencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
+		$this->assertSame($referencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
+
+		$testReferencedNodeProperty = $testNode->getProperty('property2');
+		$this->assertNotSame($testReferencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
+		$this->assertSame($testReferencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
+	}
 }

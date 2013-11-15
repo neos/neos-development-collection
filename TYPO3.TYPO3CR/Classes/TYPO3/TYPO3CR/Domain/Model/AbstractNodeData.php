@@ -187,10 +187,11 @@ abstract class AbstractNodeData {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
+	 * @param Workspace $workspace
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
 	 */
-	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
+	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE, Workspace $workspace = NULL) {
 		if (!is_object($this->contentObjectProxy)) {
 			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
 			if (!empty($value)) {
@@ -208,7 +209,7 @@ abstract class AbstractNodeData {
 								$valueNeedsToBeFixed = TRUE;
 							}
 							if ($returnNodesAsIdentifiers === FALSE) {
-								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace());
+								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $workspace ?: $this->getWorkspace());
 								if ($nodeData instanceof NodeData) {
 									$nodeDatas[] = $nodeData;
 								}
@@ -238,7 +239,7 @@ abstract class AbstractNodeData {
 							$this->update();
 						}
 						if ($returnNodesAsIdentifiers === FALSE) {
-							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
+							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $workspace ?: $this->getWorkspace());
 							if ($nodeData instanceof NodeData) {
 								$value = $nodeData;
 							} else {

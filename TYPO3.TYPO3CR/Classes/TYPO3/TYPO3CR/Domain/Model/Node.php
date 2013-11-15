@@ -483,7 +483,7 @@ class Node implements NodeInterface {
 	 * @api
 	 */
 	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
-		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers);
+		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers, $this->context->getWorkspace());
 		if (!empty($value) && $returnNodesAsIdentifiers === FALSE) {
 			switch($this->getNodeType()->getPropertyType($propertyName)) {
 				case 'references' :
