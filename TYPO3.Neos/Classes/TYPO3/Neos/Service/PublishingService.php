@@ -128,6 +128,18 @@ class PublishingService {
 		}
 		$sourceWorkspace = $node->getWorkspace();
 		$sourceWorkspace->publishNodes($nodes, $targetWorkspace);
+
+		$this->emitNodePublished($node, $targetWorkspace);
 	}
 
+	/**
+	 * Signals that a node has been published
+	 *
+	 * @param NodeInterface $node
+	 * @param Workspace $targetWorkspace
+	 * @return void
+	 * @Flow\Signal
+	 */
+	public function emitNodePublished(NodeInterface $node, Workspace $targetWorkspace = NULL) {
+	}
 }

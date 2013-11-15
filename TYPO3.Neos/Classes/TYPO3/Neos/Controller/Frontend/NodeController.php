@@ -122,8 +122,6 @@ class NodeController extends ActionController {
 
 		$this->view->assign('value', $node);
 
-		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
-
 		if ($this->securityContext->isInitialized() && $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User') !== NULL) {
 			$lastVisitedUri = $this->request->getHttpRequest()->getUri();
 			$this->session->putData('lastVisitedUri', (string)$lastVisitedUri);
@@ -158,7 +156,6 @@ class NodeController extends ActionController {
 
 		$this->view->setTypoScriptPath('wireframeMode');
 
-		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
 	}
 
 	/**
