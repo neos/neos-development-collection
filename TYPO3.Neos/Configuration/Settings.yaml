@@ -83,6 +83,17 @@ TYPO3:
         renderByDefault: FALSE
 
   Neos:
+
+    typoScript:
+      # if set to TRUE, TypoScript is cached on a per-site basis.
+      # Depending on the size of your TypoScript, will improve rendering times 20-100+ ms.
+      # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
+      # you enable this setting only:
+      #
+      # - if you do not change TypoScript in production context, but instead use e.g. TYPO3.Surf for automatic deployment
+      # - in Production context
+      enableObjectTreeCache: FALSE
+
     nodeTypes:
       groups:
         general:
