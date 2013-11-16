@@ -28,7 +28,6 @@ use TYPO3\Flow\Validation\Validator\UuidValidator;
  */
 abstract class AbstractNodeData {
 
-
 	/**
 	 * Properties of this Node
 	 *
@@ -133,7 +132,7 @@ abstract class AbstractNodeData {
 					$nodeIdentifiers = array();
 					if (is_array($value)) {
 						foreach ($value as $nodeIdentifier) {
-							if ($nodeIdentifier instanceof NodeInterface) {
+							if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
 								$nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
 							} elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodeIdentifier) !== 0) {
 								$nodeIdentifiers[] = $nodeIdentifier;
@@ -144,7 +143,7 @@ abstract class AbstractNodeData {
 					break;
 				case 'reference':
 					$nodeIdentifier = NULL;
-					if ($value instanceof NodeInterface) {
+					if ($value instanceof NodeInterface || $value instanceof AbstractNodeData) {
 						$nodeIdentifier = $value->getIdentifier();
 					} elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
 						$nodeIdentifier = $value;
@@ -201,7 +200,13 @@ abstract class AbstractNodeData {
 						if (!is_array($value)) {
 							$value = array();
 						}
+						$valueNeedsToBeFixed = FALSE;
 						foreach ($value as $nodeIdentifier) {
+							// in cases where a reference is a NodeData instance, fix this
+							if ($nodeIdentifier instanceof NodeData) {
+								$nodeIdentifier = $nodeIdentifier->getIdentifier();
+								$valueNeedsToBeFixed = TRUE;
+							}
 							if ($returnNodesAsIdentifiers === FALSE) {
 								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace());
 								if ($nodeData instanceof NodeData) {
@@ -211,9 +216,27 @@ abstract class AbstractNodeData {
 								$nodeDatas[] = $nodeIdentifier;
 							}
 						}
+						if ($valueNeedsToBeFixed === TRUE) {
+							$fixedValue = array();
+							foreach ($value as $nodeIdentifier) {
+								if ($nodeIdentifier instanceof NodeData) {
+									$fixedValue[] = $nodeIdentifier->getIdentifier();
+								} else {
+									$fixedValue[] = $nodeIdentifier;
+								}
+							}
+							$this->properties[$propertyName] = $fixedValue;
+							$this->update();
+						}
 						$value = $nodeDatas;
 						break;
 					case 'reference' :
+						// in cases where a reference is a NodeData instance, fix this
+						if ($value instanceof NodeData) {
+							$value = $value->getIdentifier();
+							$this->properties[$propertyName] = $value;
+							$this->update();
+						}
 						if ($returnNodesAsIdentifiers === FALSE) {
 							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
 							if ($nodeData instanceof NodeData) {
