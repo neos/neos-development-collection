@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Command;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * The Site Command Controller Service
+ * The Site Command Controller
  *
  * @Flow\Scope("singleton")
  */
