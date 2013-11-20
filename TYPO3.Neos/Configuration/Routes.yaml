@@ -188,6 +188,7 @@
   routeParts:
     node:
       handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+  appendExceedingArguments: true
 
 -
   name:          'Frontend content with some format'
@@ -199,6 +200,7 @@
   routeParts:
     node:
       handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+  appendExceedingArguments: true
 
 # This route is just a dummy, it should always be last as it should never be used to actually match a incoming request.
 -
