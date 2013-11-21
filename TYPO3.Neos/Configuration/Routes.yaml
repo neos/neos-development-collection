@@ -1,217 +1,68 @@
 #                                                                        #
-# Default subroutes configuration for the TYPO3 package                  #
+# Default subroutes configuration for the TYPO3.Neos package             #
 #                                                                        #
+
+##
+# Authentication
+
+-
+  name:  'Authentication'
+  uriPattern: 'neos/<AuthenticationSubRoutes>'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Login'
+    '@action':     'index'
+    '@format':     'html'
+  subRoutes:
+    'AuthenticationSubRoutes':
+      package: 'TYPO3.Neos'
+      suffix:  'Authentication'
 
 ##
 # Backend
 
 -
-  name: 'Authentication'
-  uriPattern: 'neos/login(/{@action}.{@format})'
+  name:  'Backend'
+  uriPattern: 'neos/<BackendSubRoutes>'
   defaults:
     '@package':    'TYPO3.Neos'
-    '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
-  appendExceedingArguments: true
-
--
-  name:  'Logout'
-  uriPattern: 'neos/logout'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Login'
-    '@action':     'logout'
-    '@format':     'html'
-
--
-  name:          'Backend Overview'
-  uriPattern:    'neos'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Backend'
-    '@action':     'index'
-    '@format':     'html'
-
--
-  name: 'Backend - Content Module - Media Browser'
-  uriPattern: 'neos/content/assets(/{@action})'
-  defaults:
-    '@package': 'TYPO3.Media'
-    '@controller': 'Asset'
-    '@action': 'index'
-  appendExceedingArguments: true
-
--
-  name:          'Backend - Content Module - Images'
-  uriPattern:    'neos/content/imageWithMetadata/{image}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Content'
-    '@action':     'imageWithMetadata'
-
--
-  name:          'Backend - Content Module - Plugin Views'
-  uriPattern:    'neos/content/pluginViews'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Content'
-    '@action':     'pluginViews'
-
--
-  name:          'Backend - Content Module - Master Plugins'
-  uriPattern:    'neos/content/masterPlugins'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Content'
-    '@action':     'masterPlugins'
-
--
-  name:          'Backend - Content Module'
-  uriPattern:    'neos/content/{@action}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Content'
-    '@action':     'index'
-    '@format':     'html'
-  appendExceedingArguments: true
-
--
-  name:          'Backend - Schema'
-  uriPattern:    'neos/schema/{@action}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Schema'
-    '@action':     'index'
-    '@format':     'html'
-  appendExceedingArguments: true
-
--
-  name:          'Backend - Menu'
-  uriPattern:    'neos/menu'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Menu'
-    '@action':     'index'
-    '@format':     'html'
-  appendExceedingArguments: true
-
--
-  name: 'Backend - Modules'
-  uriPattern: 'neos/{module}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Module'
-    '@action':     'index'
-    '@format':     'html'
-  routeParts:
-    module:
-      handler: TYPO3\Neos\Routing\BackendModuleRoutePartHandler
-
--
-  name: 'Backend - Modules & arguments'
-  uriPattern: 'neos/{module}/{moduleArguments}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Backend\Module'
-    '@action':     'index'
-    '@format':     'html'
-  routeParts:
-    module:
-      handler: TYPO3\Neos\Routing\BackendModuleRoutePartHandler
-    moduleArguments:
-      handler: TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler
-  toLowerCase: false
-  appendExceedingArguments: true
+  subRoutes:
+    'BackendSubRoutes':
+      package: 'TYPO3.Neos'
+      suffix:  'Backend'
 
 ##
-# Services
+# Service
 
 -
-  name: 'Services - Node index'
-  uriPattern: 'neos/service/node'
+  name:  'Service'
+  uriPattern: 'neos/service/<ServiceSubRoutes>'
   defaults:
     '@package':    'TYPO3.Neos'
-    '@controller': 'Service\Node'
     '@action':     'index'
     '@format':     'html'
-  appendExceedingArguments: true
-
--
-  name: 'Services - Node actions'
-  uriPattern: 'neos/service/node/{identifier}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Service\Node'
-    '@action':     'show'
-    '@format':     'html'
-  appendExceedingArguments: true
+  subRoutes:
+    'ServiceSubRoutes':
+      package: 'TYPO3.Neos'
+      suffix:  'Service'
 
 ##
 # Frontend
 
 -
-  name:          'Homepage'
-  uriPattern:    '{node}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Frontend\Node'
-    '@format':     'html'
-    '@action':     'show'
-  routeParts:
-    node:
-      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-      options:
-        onlyMatchSiteNodes: true
-  appendExceedingArguments: true
-
--
-  name:          'Frontend content with format and type'
-  uriPattern:    '{node}.html/{type}'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Frontend\Node'
-    '@format':     'html'
-    '@action':     'show'
-  routeParts:
-    node:
-      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-
--
-  name:          'Frontend content with (HTML) format'
-  uriPattern:    '{node}.html'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Frontend\Node'
-    '@format':     'html'
-    '@action':     'show'
-  routeParts:
-    node:
-      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-  appendExceedingArguments: true
-
--
-  name:          'Frontend content with some format'
-  uriPattern:    '{node}.{@format}'
+  name:  'Frontend'
+  uriPattern: '<FrontendSubRoutes>'
   defaults:
     '@package':    'TYPO3.Neos'
     '@controller': 'Frontend\Node'
     '@action':     'show'
-  routeParts:
-    node:
-      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-  appendExceedingArguments: true
-
-# This route is just a dummy, it should always be last as it should never be used to actually match a incoming request.
--
-  name:          'Dummy wireframe route to enable uri resolution while in wireframe mode.'
-  uriPattern:    '{node}.html'
-  defaults:
-    '@package':    'TYPO3.Neos'
-    '@controller': 'Frontend\Node'
     '@format':     'html'
-    '@action':     'showWireframe'
   routeParts:
-    node:
-      handler:    TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
-  appendExceedingArguments: true
+    'node':
+      handler:     'TYPO3\Neos\Routing\FrontendNodeRoutePartHandler'
+  subRoutes:
+    'FrontendSubRoutes':
+      package: 'TYPO3.Neos'
+      suffix:  'Frontend'
