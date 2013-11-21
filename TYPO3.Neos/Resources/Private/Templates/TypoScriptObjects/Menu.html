@@ -1,9 +1,7 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<neos:contentElement node="{node}">
-	<ul>
-		<f:render section="itemsList" arguments="{items: items}" />
-	</ul>
-</neos:contentElement>
+<ul>
+	<f:render section="itemsList" arguments="{items: items}" />
+</ul>
 
 <f:section name="itemsList">
 	<f:for each="{items}" as="item">
