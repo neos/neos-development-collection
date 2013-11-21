@@ -129,8 +129,8 @@ class FeatureContext extends MinkContext {
 	 * @Then /^I should not be logged in$/
 	 */
 	public function iShouldNotBeLoggedIn() {
-		if ($this->getSession()->getPage()->findLink('Logout')) {
-			Assert::fail('"Logout" link not expected');
+		if ($this->getSession()->getPage()->findButton('logout')) {
+			Assert::fail('"Logout" Button not expected');
 		}
 	}
 

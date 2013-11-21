@@ -6751,7 +6751,9 @@
   border-color: #323232;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a {
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button {
   height: 40px;
   color: white;
   font-size: 14px;
@@ -6762,12 +6764,26 @@
   box-sizing: border-box;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a:hover,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a:hover {
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a:hover,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button:hover {
   background: #00b5ff;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a i,
-.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a i {
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button i,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li a i,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button i {
   line-height: 22px;
+}
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button {
+  width: 100%;
+  text-align: left;
+  background-color: #323232;
+}
+.neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button:hover,
+.neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li button:hover {
+  background-color: #00b5ff;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li label,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li label {

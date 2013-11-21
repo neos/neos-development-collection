@@ -40,7 +40,8 @@
 					border-color: $grayMedium;
 				}
 
-				a {
+				a,
+				button {
 					height: $unit;
 					color: white;
 					font-size: $generalFontSize;
@@ -54,6 +55,16 @@
 
 					i {
 						line-height: 22px;
+					}
+				}
+
+				button {
+					width: 100%;
+					text-align: left;
+					background-color: $grayMedium;
+
+					&:hover {
+						background-color: $blue;
 					}
 				}
 
