@@ -242,6 +242,12 @@ class SiteExportService {
 		$nodeType = $node->getNodeType();
 		$propertyType = $nodeType->getPropertyType($propertyName);
 		switch ($propertyType) {
+			case 'boolean':
+				$this->xmlWriter->startElement($propertyName);
+				$this->xmlWriter->writeAttribute('__type', 'boolean');
+				$this->xmlWriter->writeRaw($propertyValue ? 1 : 0);
+				$this->xmlWriter->endElement();
+				break;
 			case 'reference':
 				$this->xmlWriter->startElement($propertyName);
 				$this->xmlWriter->writeAttribute('__type', 'reference');
