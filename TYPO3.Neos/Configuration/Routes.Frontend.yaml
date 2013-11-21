@@ -12,12 +12,12 @@
   appendExceedingArguments: true
 
 -
-  name: 'content with (HTML) format and type'
-  uriPattern: '{node}.html/{type}'
+  name: 'content with URI suffix and type'
+  uriPattern: '{node}<defaultUriSuffix>/{type}'
 
 -
-  name: 'content with (HTML) format'
-  uriPattern: '{node}.html'
+  name: 'content with URI suffix format'
+  uriPattern: '{node}<defaultUriSuffix>'
   appendExceedingArguments: true
 
 -
@@ -29,7 +29,7 @@
 # This route is just a dummy, it should always be last as it should never be used to actually match a incoming request.
 -
   name:          'Dummy wireframe route to enable uri resolution while in wireframe mode.'
-  uriPattern:    '{node}.html'
+  uriPattern:    '{node}<defaultUriSuffix>'
   defaults:
     '@action':     'showWireframe'
   appendExceedingArguments: true
