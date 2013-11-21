@@ -16,6 +16,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -59,6 +60,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	 */
 	protected $mockSiteNode;
 
+	/**
+	 * @var NodeType
+	 */
+	protected $mockNodeType;
+
 	public function setUp() {
 		$this->frontendNodeRoutePartHandler = $this->getAccessibleMock('TYPO3\Neos\Routing\FrontendNodeRoutePartHandler', array('dummy'));
 
@@ -75,6 +81,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
 		$this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 		$this->mockSiteNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+
+		$this->mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+		$this->mockNodeType->expects($this->any())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(TRUE));
+		$this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
+		$this->mockSiteNode->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
 	}
 
 	/**
@@ -186,6 +197,30 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue(NULL));
+		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
+
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function matchValueReturnsFalseIfNodeIsNoDocument() {
+		$mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+
+		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+		$mockNodeType->expects($this->any())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(FALSE));
+		$mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
+
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+
+		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+
+		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
+
+		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue($mockNode));
 		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
 
 		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
@@ -366,6 +401,21 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->mockContext->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue(NULL));
 
 		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@context'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueReturnsFalseIfNodeIsNoDocument() {
+		$mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+
+		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+		$mockNodeType->expects($this->any())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(FALSE));
+		$mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
+
+		$mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
+
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $mockNode));
 	}
 
 	/**

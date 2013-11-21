@@ -68,6 +68,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		if ($this->onlyMatchSiteNodes() && $node !== $node->getContext()->getCurrentSiteNode()) {
 			return FALSE;
 		}
+		if (!$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			return FALSE;
+		}
 
 		$this->value = $node->getContextPath();
 		return TRUE;
@@ -131,6 +134,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			}
 		} else {
 			$contentContext = $node->getContext();
+		}
+
+		if (!$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			return FALSE;
 		}
 
 		$nodeContextPath = $node->getContextPath();
