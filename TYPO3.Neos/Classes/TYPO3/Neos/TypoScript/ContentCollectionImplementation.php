@@ -110,7 +110,7 @@ class ContentCollectionImplementation extends CollectionImplementation {
 			}
 		}
 
-		if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
+		if ($node->getContext()->getWorkspaceName() === 'live' || $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
 			return $tagBuilder->render();
 		}
 
