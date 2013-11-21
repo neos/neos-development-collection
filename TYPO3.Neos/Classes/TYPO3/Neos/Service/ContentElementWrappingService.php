@@ -91,7 +91,7 @@ class ContentElementWrappingService {
 			$cssClasses = array();
 		}
 
-		if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
+		if ($contentContext->getWorkspaceName() === 'live' || $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
 			return $tagBuilder;
 		}
 
