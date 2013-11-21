@@ -33,4 +33,20 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals(array($node2), $q->getContext());
 	}
 
+	/**
+	 * @test
+	 */
+	public function filterWithNodeInstanceIsSupported() {
+		$node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$context = array($node1, $node2);
+		$q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
+
+		$operation = new \TYPO3\Neos\TypoScript\FlowQueryOperations\FilterOperation();
+		$operation->evaluate($q, array($node2));
+
+		$this->assertEquals(array($node2), $q->getContext());
+	}
+
 }

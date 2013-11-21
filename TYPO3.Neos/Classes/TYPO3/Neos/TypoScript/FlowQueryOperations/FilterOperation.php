@@ -25,7 +25,8 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * 	[instanceof TYPO3.Neos:Page]
  *
  * will in fact use `isOfType()` on the `NodeType` of context elements to
- * filter. Anything else remains unchanged.
+ * filter. This filter allow also to filter the current context by a given
+ * node. Anything else remains unchanged.
  */
 class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation {
 
@@ -44,6 +45,33 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	 */
 	public function canEvaluate($context) {
 		return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery
+	 * @param array $arguments
+	 * @return void
+	 */
+	public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments) {
+		if (!isset($arguments[0]) || empty($arguments[0])) {
+			return;
+		}
+
+		if ($arguments[0] instanceof NodeInterface) {
+			$filteredContext = array();
+			$context = $flowQuery->getContext();
+			foreach ($context as $element) {
+				if ($element === $arguments[0]) {
+					$filteredContext[] = $element;
+					break;
+				}
+			}
+			$flowQuery->setContext($filteredContext);
+		} else {
+			parent::evaluate($flowQuery, $arguments);
+		}
 	}
 
 	/**
