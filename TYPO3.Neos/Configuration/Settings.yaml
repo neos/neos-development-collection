@@ -23,7 +23,11 @@ TYPO3:
               controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
-              uri: neos/login
+              routeValues:
+                '@package':    'TYPO3.Neos'
+                '@controller': 'Login'
+                '@action':     'index'
+                '@format':     'html'
         authenticationStrategy: oneToken
 
     persistence:
