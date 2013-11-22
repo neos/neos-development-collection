@@ -56,7 +56,6 @@ markup::
 			More information and contribution opportunities at http://neos.typo3.org and http://flow.typo3.org
 		-->
 		<head>
-			<base href="http://your.doma.in/" />
 			<meta charset="UTF-8" />
 		</head>
 		<body>
@@ -70,8 +69,8 @@ markup::
 
 It becomes clear that Neos gives as much control over the markup as possible to the
 integrator: No body markup, no styles, only little Javascript to record the last visited
-page (to redirect back to it after logging in). Except for the base URI and the charset
-nothing related to the content is output by default.
+page (to redirect back to it after logging in). Except for the charset meta tag nothing
+related to the content is output by default.
 
 If the template is filled with the following content::
 
