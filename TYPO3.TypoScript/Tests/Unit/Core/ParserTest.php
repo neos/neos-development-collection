@@ -690,12 +690,23 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$sourceCode = file_get_contents($fixture, FILE_TEXT);
 
 		$expectedParseTree = $this->getExpectedParseTreeForFixture16();
+
+		// Check that values were overridden by fixture #17:
 		$expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
 		$expectedParseTree['__prototypes']['TYPO3.Foo:Bar3']['baz'] = 'New Value';
 
+		// Set the default namespace to TYPO3.Neos - that's what Neos does as well in Domain\Service\TypoScriptService:
+		$this->parser->setObjectTypeNamespace('default', 'TYPO3.Neos');
+
+		// Make sure that the namespace declaration for "default" is also available when fixture #17b is parsed:
+		$expectedParseTree['object'] = array(
+			'__objectType' => 'TYPO3.Neos:Text',
+			'__value' => NULL,
+			'__eelExpression' => NULL
+		);
+
 		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
 		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
-
 	}
 
 	/**
