@@ -15,3 +15,4 @@ TYPO3:
       String: 'TYPO3\Eel\Helper\StringHelper'
       Array: 'TYPO3\Eel\Helper\ArrayHelper'
       Date: 'TYPO3\Eel\Helper\DateHelper'
+      Configuration: 'TYPO3\Eel\Helper\ConfigurationHelper'
