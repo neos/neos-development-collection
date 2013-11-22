@@ -523,7 +523,7 @@ class Parser implements ParserInterface {
 	 */
 	protected function parseInclude($include) {
 		$include = trim($include);
-		$parser = new Parser();
+		$parser = clone $this;
 		if (strpos($include, 'resource://') === 0) {
 			if (!file_exists($include)) {
 				throw new Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
