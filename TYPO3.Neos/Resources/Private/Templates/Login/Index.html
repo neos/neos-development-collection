@@ -15,7 +15,7 @@
 			</div>
 			<div class="neos-login-body neos">
 				<f:form name="login" action="authenticate">
-					<f:form.hidden name="lastVisitedUri" />
+					<f:form.hidden name="lastVisitedNode" />
 					<fieldset>
 						<div class="neos-controls">
 							<f:form.textfield id="username" type="text" placeholder="Username" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
@@ -67,11 +67,13 @@
 			</p>
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
-		<script>
-			$('#{f:if(condition: username, then: 'password', else: 'username')}').focus();
+		<[!CDATA[<script>
+			if ($('#username').val()) {
+				$('#password').focus();
+			}
 			try {
-				$('form[name="login"] input[name="lastVisitedUri"]').val(sessionStorage.getItem('TYPO3.Neos.lastVisitedUri'));
+				$('form[name="login"] input[name="lastVisitedNode"]').val(sessionStorage.getItem('TYPO3.Neos.lastVisitedNode'));
 			} catch(e) {}
-		</script>
+		</script>]]>
 	</body>
 </f:section>

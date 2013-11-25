@@ -122,9 +122,8 @@ class NodeController extends ActionController {
 
 		$this->view->assign('value', $node);
 
-		if ($this->securityContext->isInitialized() && $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User') !== NULL) {
-			$lastVisitedUri = $this->request->getHttpRequest()->getUri();
-			$this->session->putData('lastVisitedUri', (string)$lastVisitedUri);
+		if ($this->securityContext->isInitialized() && $this->hasAccessToBackend()) {
+			$this->session->putData('lastVisitedNode', $node->getIdentifier());
 		}
 	}
 

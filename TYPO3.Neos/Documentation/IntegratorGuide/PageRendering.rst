@@ -58,24 +58,19 @@ markup::
 		<head>
 			<base href="http://your.doma.in/" />
 			<meta charset="UTF-8" />
-			<script>
-		try {
-			with (window.location) {
-				sessionStorage.setItem(
-					'TYPO3.Neos.lastVisitedUri',
-					[protocol, '//', host, pathname, (pathname.charAt(pathname.length - 1) === '/' ? 'home.html' : '')].join('')
-				);
-			}
-		} catch(e) {}
-	</script>
 		</head>
 		<body>
+		<script>
+			try {
+				sessionStorage.setItem('TYPO3.Neos.lastVisitedNode', 'a319a653-ef38-448d-9d19-0894299068aa');
+			} catch(e) {}
+		</script>
 		</body>
 	</html>
 
 It becomes clear that Neos gives as much control over the markup as possible to the
 integrator: No body markup, no styles, only little Javascript to record the last visited
-URI (to redirect back to it after logging in). Except for the base URI and the charset
+page (to redirect back to it after logging in). Except for the base URI and the charset
 nothing related to the content is output by default.
 
 If the template is filled with the following content::

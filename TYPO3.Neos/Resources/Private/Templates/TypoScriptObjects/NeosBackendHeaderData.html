@@ -1,11 +1,6 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 {namespace ext=TYPO3\ExtJS\ViewHelpers}
 <f:base />
-<script>
-	try {
-		sessionStorage.setItem('TYPO3.Neos.lastVisitedUri', '{neos:uri.node(absolute: 1)}');
-	} catch(e) {}
-</script>
 
 <f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">

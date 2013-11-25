@@ -11,24 +11,30 @@ namespace TYPO3\Neos\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\ExtJS\ExtDirect\Request as ExtDirectRequest;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
+use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
+use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Neos\Service\BackendRedirectionService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A controller which allows for logging into the backend
- *
- * @Flow\Scope("singleton")
  */
-class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController {
+class LoginController extends AbstractAuthenticationController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Session\SessionInterface
+	 * @var SessionInterface
 	 */
 	protected $session;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\BackendRedirectionService
+	 * @var BackendRedirectionService
 	 */
 	protected $backendRedirectionService;
 
@@ -40,7 +46,7 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	/**
 	 * Default action, displays the login screen
 	 *
-	 * @param string $username Optional: A username to prefill into the username field
+	 * @param string $username Optional: A username to pre-fill into the username field
 	 * @return void
 	 */
 	public function indexAction($username = NULL) {
@@ -50,25 +56,24 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	/**
 	 * Is called if authentication failed.
 	 *
-	 * @param \TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception The exception thrown while the authentication process
+	 * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
 	 * @return void
 	 */
-	protected function onAuthenticationFailure(\TYPO3\Flow\Security\Exception\AuthenticationRequiredException $exception = NULL) {
-		$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Error('The entered username or password was wrong', ($exception === NULL ? 1347016771 : $exception->getCode())));
-		$this->redirect('index');
+	protected function onAuthenticationFailure(AuthenticationRequiredException $exception = NULL) {
+		$this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === NULL ? 1347016771 : $exception->getCode()));
 	}
 
 	/**
 	 * Is called if authentication was successful.
 	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+	 * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
 	 * @return void
 	 */
-	public function onAuthenticationSuccess(\TYPO3\Flow\Mvc\ActionRequest $originalRequest = NULL) {
-		if ($this->request->hasArgument('lastVisitedUri') && strlen($this->request->getArgument('lastVisitedUri')) > 0) {
-			$this->session->putData('lastVisitedUri', $this->request->getArgument('lastVisitedUri'));
+	public function onAuthenticationSuccess(ActionRequest $originalRequest = NULL) {
+		if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
+			$this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
 		}
-		if ($originalRequest !== NULL && !$originalRequest instanceof \TYPO3\ExtJS\ExtDirect\Request) {
+		if ($originalRequest !== NULL && !$originalRequest instanceof ExtDirectRequest) {
 			$this->redirectToRequest($originalRequest);
 		}
 		$this->redirect('index', 'Backend\Backend');
@@ -82,19 +87,27 @@ class LoginController extends \TYPO3\Flow\Security\Authentication\Controller\Abs
 	 * @return void
 	 */
 	public function logoutAction() {
-		$possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri($this->request->getHttpRequest());
+		$possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri($this->request);
 		parent::logoutAction();
 		switch ($this->request->getFormat()) {
 			case 'json':
 				$this->view->assign('value', array('success' => TRUE));
 			break;
 			default:
-				$this->flashMessageContainer->addMessage(new \TYPO3\Flow\Error\Notice('Successfully logged out', 1318421560));
-				if ($possibleRedirectionUri !== '') {
+				if ($possibleRedirectionUri !== NULL) {
 					$this->redirectToUri($possibleRedirectionUri);
-				} else {
-					$this->redirect('index');
 				}
+				$this->addFlashMessage('Successfully logged out', 'Logged out', Message::SEVERITY_NOTICE, array(), 1318421560);
+				$this->redirect('index');
 		}
+	}
+
+	/**
+	 * Disable the default error flash message
+	 *
+	 * @return boolean
+	 */
+	protected function getErrorFlashMessage() {
+		return FALSE;
 	}
 }

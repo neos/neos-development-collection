@@ -77,6 +77,12 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
 	}
 
+	# This enables redirecting to the last visited page after login
+	lastVisitedNode = TYPO3.Neos:Template {
+		@position = 'before closingBodyTag'
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/LastVisitedNode.html'
+	}
+
 	closingBodyTag = '</body>'
 	closingBodyTag.@position = 'end 100'
 

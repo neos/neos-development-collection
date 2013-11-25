@@ -12,7 +12,16 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * @Flow\Scope("singleton")
@@ -21,136 +30,125 @@ class BackendRedirectionService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Session\SessionInterface
+	 * @var SessionInterface
 	 */
 	protected $session;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+	 * @var DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var NodeFactory
+	 */
+	protected $nodeFactory;
+
+	/**
 	 * Returns a specific URI string to redirect to after the login; or NULL if there is none.
 	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
+	 * @param ActionRequest $actionRequest
 	 * @return string
 	 */
-	public function getAfterLoginRedirectionUri(\TYPO3\Flow\Http\Request $httpRequest) {
+	public function getAfterLoginRedirectionUri(ActionRequest $actionRequest) {
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
 		if ($user === NULL) {
-			return '';
+			return NULL;
 		}
 
 		$workspaceName = $user->getPreferences()->get('context.workspace');
+		if ($workspaceName === NULL) {
+			return NULL;
+		}
 
 		$contentContext = $this->createContext($workspaceName);
-
+		// create workspace if it does not exist
 		$contentContext->getWorkspace();
 		$this->nodeDataRepository->persistEntities();
 
-		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
-			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'), $httpRequest);
-			if ($adjustRedirectionUri !== FALSE) {
-				return $adjustRedirectionUri;
-			}
+		$uriBuilder = new UriBuilder();
+		$uriBuilder->setRequest($actionRequest);
+		$uriBuilder->setFormat('html');
+		$uriBuilder->setCreateAbsoluteUri(TRUE);
+
+		$lastVisitedNode = $this->getLastVisitedNode($contentContext);
+		if ($lastVisitedNode !== NULL) {
+			return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
 		}
 
-		return $httpRequest->getBaseUri()->getPath() . '@' . $workspaceName . '.html';
+		return $uriBuilder->uriFor('show', array('node' => $contentContext->getCurrentSiteNode()), 'Frontend\\Node', 'TYPO3.Neos');
 	}
 
 	/**
 	 * Returns a specific URI string to redirect to after the logout; or NULL if there is none.
 	 * In case of NULL, it's the responsibility of the AuthenticationController where to redirect,
-	 * most likely to the authentication's index action.
+	 * most likely to the LoginController's index action.
 	 *
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
+	 * @param ActionRequest $actionRequest
 	 * @return string A possible redirection URI, if any
 	 */
-	public function getAfterLogoutRedirectionUri(\TYPO3\Flow\Http\Request $httpRequest) {
-		if ($this->session->isStarted() && $this->session->hasKey('lastVisitedUri')) {
-			$contentContext = $this->createContext('live');
-
-			$adjustRedirectionUri = $this->adjustRedirectionUriForContentContext($contentContext, $this->session->getData('lastVisitedUri'), $httpRequest);
-			if ($adjustRedirectionUri !== FALSE) {
-				return $adjustRedirectionUri;
-			}
+	public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest) {
+		$contentContext = $this->createContext('live');
+		$lastVisitedNode = $this->getLastVisitedNode($contentContext);
+		if ($lastVisitedNode === NULL) {
+			return NULL;
 		}
-
-		return '';
+		$uriBuilder = new UriBuilder();
+		$uriBuilder->setRequest($actionRequest);
+		$uriBuilder->setFormat('html');
+		$uriBuilder->setCreateAbsoluteUri(TRUE);
+		return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
 	}
 
 	/**
-	 * This adjusts a given URI for the use of an intended ContentContext.
-	 * Basically, it, depending on the context's workspace name, either strips
-	 * or adds the @.... part, which defines a workspace, from the URI.
-	 *
-	 * @param \TYPO3\Neos\Domain\Service\ContentContext $contentContext
-	 * @param string $redirectionUri
-	 * @param \TYPO3\Flow\Http\Request $httpRequest
-	 * @return string|boolean
+	 * @param ContentContext $contentContext
+	 * @return NodeInterface
 	 */
-	protected function adjustRedirectionUriForContentContext(ContentContext $contentContext, $redirectionUri, \TYPO3\Flow\Http\Request $httpRequest) {
-		$adjustedUri = $redirectionUri;
-
-		$appendHtml = !strpos($adjustedUri, '.html') ? FALSE : TRUE;
-		if (!strpos($adjustedUri, '@')) {
-			$adjustedUri = str_replace('.html', '', $adjustedUri);
-		} else {
-			$adjustedUri = substr($adjustedUri, 0, strpos($adjustedUri, '@'));
+	protected function getLastVisitedNode(ContentContext $contentContext) {
+		if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
+			return NULL;
 		}
-
-		$urlParts = parse_url($adjustedUri);
-		$baseUri = $httpRequest->getBaseUri()->getPath();
-		$targetNodePath = substr($urlParts['path'], strlen($baseUri));
-
-		if ((string)$targetNodePath === '') {
-			$targetNodePath = '/';
+		$lastVisitedNodeData = $this->nodeDataRepository->findOneByIdentifier($this->session->getData('lastVisitedNode'), $contentContext->getWorkspace());
+		if ($lastVisitedNodeData === NULL) {
+			return NULL;
 		}
-
-		if ($urlParts['path'] && is_object($contentContext->getCurrentSiteNode()->getNode($targetNodePath))) {
-			if ($contentContext->getWorkspaceName() !== 'live') {
-				$adjustedUri .= '@' . $contentContext->getWorkspaceName();
-			}
-			if ($appendHtml === TRUE && $targetNodePath !== '/') {
-				$adjustedUri .= '.html';
-			}
-			return $adjustedUri;
+		$lastVisitedNode = $this->nodeFactory->createFromNodeData($lastVisitedNodeData, $contentContext);
+		if ($lastVisitedNode === NULL) {
 		}
-
-		return FALSE;
+		return $lastVisitedNode;
 	}
 
 	/**
 	 * Create a ContentContext to be used for the backend redirects.
 	 *
 	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return ContentContext
 	 */
 	protected function createContext($workspaceName) {
 		$contextProperties = array(
