@@ -79,6 +79,9 @@ class ConvertNodeUrisImplementation extends AbstractTypoScriptObject {
 		if (!$node instanceof NodeInterface) {
 			throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
 		}
+		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
+			return $text;
+		}
 		$self = $this;
 		return preg_replace_callback(self::PATTERN_NODE_URIS, function(array $matches) use ($self, $node) {
 			return $self->convertNodeIdentifierToUri($matches[1], $node);

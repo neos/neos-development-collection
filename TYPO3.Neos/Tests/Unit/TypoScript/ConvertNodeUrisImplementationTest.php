@@ -137,6 +137,21 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 		$value = ' this Is some string with line' . chr(10) . ' breaks, special chärß and leading/trailing space  ';
 		$this->convertNodeUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
 
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+
+		$actualResult = $this->convertNodeUrisImplementation->evaluate();
+		$this->assertSame($value, $actualResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function evaluateDoesNotModifyTheValueIfNotExecutedInLiveWorkspace() {
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
+
+		$value = 'This string contains a node URI: node://aeabe76a-551a-495f-a324-ad9a86b2aff7 and two <a href="node://cb2d0e4a-7d2f-4601-981a-f9a01530f53f">node</a> <a href="node://aeabe76a-551a-495f-a324-ad9a86b2aff7">links</a>.';
+		$this->convertNodeUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+
 		$actualResult = $this->convertNodeUrisImplementation->evaluate();
 		$this->assertSame($value, $actualResult);
 	}
@@ -149,6 +164,8 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 		$nodeIdentifier2 = 'cb2d0e4a-7d2f-4601-981a-f9a01530f53f';
 		$value = 'This string contains a node URI: node://' . $nodeIdentifier1 . ' and two <a href="node://' . $nodeIdentifier2 . '">node</a> <a href="node://' . $nodeIdentifier1 .'">links</a>.';
 		$this->convertNodeUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
 		$mockTargetNodeData1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockTargetNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
@@ -212,6 +229,8 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 		$unknownNodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
 		$value = 'This string contains an unresolvable node URI: node://' . $unknownNodeIdentifier . ' and a <a href="node://' . $unknownNodeIdentifier . '">link</a>.';
 		$this->convertNodeUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
 		$this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findOneByIdentifier')->with($unknownNodeIdentifier)->will($this->returnValue(NULL));
 
