@@ -89,4 +89,3 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 	}
 
 }
-?>

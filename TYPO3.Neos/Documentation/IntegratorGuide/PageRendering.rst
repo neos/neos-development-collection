@@ -59,11 +59,7 @@ markup::
 			<meta charset="UTF-8" />
 		</head>
 		<body>
-		<script>
-			try {
-				sessionStorage.setItem('TYPO3.Neos.lastVisitedNode', 'a319a653-ef38-448d-9d19-0894299068aa');
-			} catch(e) {}
-		</script>
+			<script src="/_Resources/Static/Packages/TYPO3.Neos/JavaScript/LastVisitedNode.js" data-neos-node="a319a653-ef38-448d-9d19-0894299068aa"></script>
 		</body>
 	</html>
 
