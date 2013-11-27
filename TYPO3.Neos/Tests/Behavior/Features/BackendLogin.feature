@@ -35,6 +35,6 @@ Feature: Backend Login
       | jdoe     | password | John      | Doe      | Editor |
     And I am authenticated with "jdoe" and "password" for the backend
     When I follow "Features" in the main menu
-    And I follow "Log out"
+    And I press "logout"
     Then I should not be logged in
     And I should see the page title "Features"
