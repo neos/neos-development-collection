@@ -1,8 +1,4 @@
-# TYPO3.Neos:Template makes the current node available in addition to the default
-# TYPO3.TypoScript:Template properties
+# This TypoScript object is deprecated!
+# Use TYPO3.TypoScript:Template instead or TYPO3.Neos:Content if you're creating a content element
 #
-prototype(TYPO3.Neos:Template) < prototype(TYPO3.TypoScript:Template) {
-	node = ${node}
-
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
-}
+prototype(TYPO3.Neos:Template) < prototype(TYPO3.Neos:Content)

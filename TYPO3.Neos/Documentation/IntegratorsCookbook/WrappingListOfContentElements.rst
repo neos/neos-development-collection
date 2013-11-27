@@ -18,8 +18,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         type: 'TYPO3.Neos:ContentCollection'
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
-	prototype(Vendor:Box) < prototype(TYPO3.Neos:Template)
-	prototype(Vendor:Box) {
+	prototype(Vendor:Box) < prototype(TYPO3.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
 		columnContent = TYPO3.Neos:ContentCollection
 		columnContent {
@@ -72,8 +71,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         type: 'TYPO3.Neos:ContentCollection'
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
-	prototype(Vendor:Box) < prototype(TYPO3.Neos:Template)
-	prototype(Vendor:Box) {
+	prototype(Vendor:Box) < prototype(TYPO3.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
 		columnContent = TYPO3.Neos:ContentCollection
 		columnContent {

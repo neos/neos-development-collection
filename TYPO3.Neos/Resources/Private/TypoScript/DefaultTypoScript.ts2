@@ -1,4 +1,6 @@
 include: Prototypes/ContentCase.ts2
+include: Prototypes/Content.ts2
+# Note: The TYPO3.Neos:Template prototype is deprecated in favor of TYPO3.TypoScript:Template or TYPO3.Neos:Content
 include: Prototypes/Template.ts2
 include: Prototypes/PrimaryContent.ts2
 include: Prototypes/ContentCollection.ts2
@@ -8,7 +10,6 @@ include: Prototypes/Breadcrumb.ts2
 include: Prototypes/Menu.ts2
 include: Prototypes/Plugin.ts2
 include: Prototypes/PluginView.ts2
-
 
 # ConvertNodeUri implementation
 #

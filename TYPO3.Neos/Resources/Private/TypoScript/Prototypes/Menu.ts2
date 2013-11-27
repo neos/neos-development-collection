@@ -1,7 +1,10 @@
 # TYPO3.Neos:Menu provides basic menu rendering
 #
-prototype(TYPO3.Neos:Menu) < prototype(TYPO3.Neos:Template) {
+prototype(TYPO3.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Menu.html'
+	node = ${node}
 	items = ${this.items}
+
+	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }

@@ -49,8 +49,7 @@ object needs to have the same name as the Node Type:
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2)::
 
-	prototype(Vendor:YourContentElementName) < prototype(TYPO3.Neos:Template)
-	prototype(Vendor:YourContentElementName) {
+	prototype(Vendor:YourContentElementName) < prototype(TYPO3.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
 
 		headline = ${q(node).property('headline')}

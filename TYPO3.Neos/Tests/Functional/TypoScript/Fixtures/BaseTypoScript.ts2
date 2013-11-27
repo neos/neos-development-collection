@@ -3,7 +3,7 @@
 ####################################
 
 # Definition of custom TypoScript types
-prototype(Acme.Demo:ThreeColumn) < prototype(TYPO3.Neos:Template) {
+prototype(Acme.Demo:ThreeColumn) < prototype(TYPO3.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ThreeColumnTemplate.html'}
 	left = TYPO3.Neos:ContentCollection
 	left.nodePath = 'column0'
@@ -13,7 +13,7 @@ prototype(Acme.Demo:ThreeColumn) < prototype(TYPO3.Neos:Template) {
 	right.nodePath = 'column2'
 }
 
-prototype(Acme.Demo:List) < prototype(TYPO3.Neos:Template) {
+prototype(Acme.Demo:List) < prototype(TYPO3.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ListTemplate.html'}
 
 	items = TYPO3.Neos:ContentCollection {
@@ -23,7 +23,7 @@ prototype(Acme.Demo:List) < prototype(TYPO3.Neos:Template) {
 	}
 }
 
-prototype(Acme.Demo:ListItem) < prototype(TYPO3.Neos:Template) {
+prototype(Acme.Demo:ListItem) < prototype(TYPO3.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ListItemTemplate.html'}
 	text = ${node.properties.text}
 }

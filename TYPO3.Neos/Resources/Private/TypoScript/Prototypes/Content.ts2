@@ -1,0 +1,12 @@
+# This is the base Content TypoScript object
+# It must be extended by all elements that are selectable in the backend
+#
+# Note: This object inherits from TYPO3.TypoScript:Template because most Content Elements are expected to contain a
+# Fluid template. If a Content Element does not render a template (like it is the case for the Plugin Content Elements)
+# you should still extend this prototype and override the @class property (see TYPO3.Neos:Plugin).
+#
+prototype(TYPO3.Neos:Content) < prototype(TYPO3.TypoScript:Template) {
+	node = ${node}
+
+	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+}

@@ -139,7 +139,7 @@ class TypoScriptService {
 	/**
 	 * Generate a TypoScript prototype definition for a given node type
 	 *
-	 * A node will be rendered by a TYPO3.Neos:Template by default with a template in
+	 * A node will be rendered by TYPO3.Neos:Content by default with a template in
 	 * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
 	 * node properties to the template TypoScript object.
 	 *
@@ -151,7 +151,7 @@ class TypoScriptService {
 		list($packageKey, $relativeName) = explode(':', $nodeTypeName, 2);
 		$templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
 
-		$output = 'prototype(' . $nodeTypeName . ') < prototype(TYPO3.Neos:Template) {' . chr(10);
+		$output = 'prototype(' . $nodeTypeName . ') < prototype(TYPO3.Neos:Content) {' . chr(10);
 		$output .= "\t" . 'templatePath = \'' . $templatePath . '\'' . chr(10);
 		if (isset($nodeTypeConfiguration['properties'])) {
 			foreach ($nodeTypeConfiguration['properties'] as $propertyName => $propertyConfiguration) {

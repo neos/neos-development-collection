@@ -1,6 +1,6 @@
 wireframeMode = TYPO3.Neos:Page {
 	head {
-		stylesheets = TYPO3.Neos:Template {
+		stylesheets = TYPO3.TypoScript:Template {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/WireframeMode/Page/Default.html'
 			sectionName = 'headerIncludes'
 		}

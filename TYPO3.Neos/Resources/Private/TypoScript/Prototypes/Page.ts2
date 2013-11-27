@@ -45,9 +45,10 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 			}
 		}
 
-		neosBackendHeader = TYPO3.Neos:Template {
+		neosBackendHeader = TYPO3.TypoScript:Template {
 			@position = 'end 10000'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
+			node = ${node}
 		}
 	}
 
@@ -62,9 +63,10 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# Required for the backend to work.
-	neosBackendDocumentNodeData = TYPO3.Neos:Template {
+	neosBackendDocumentNodeData = TYPO3.TypoScript:Template {
 		@position = 'before body'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendDocumentNodeData.html'
+		node = ${node}
 	}
 
 	# Content of the body tag. To be defined by the integrator.
@@ -72,9 +74,10 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	body.@position = 'after bodyTag'
 
 	# Required for the backend to work.
-	neosBackendContainer = TYPO3.Neos:Template {
+	neosBackendContainer = TYPO3.TypoScript:Template {
 		@position = 'before closingBodyTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
+		node = ${node}
 	}
 
 	# This enables redirecting to the last visited page after login
