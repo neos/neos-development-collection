@@ -19,6 +19,7 @@ use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 use TYPO3\TYPO3CR\Exception;
@@ -296,11 +297,11 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param NodeData $node The node to set the new index for
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
+	 * @param NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
 	 * @throws \InvalidArgumentException
 	 * @return void
 	 */
-	public function setNewIndex(NodeData $node, $position, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode = NULL) {
+	public function setNewIndex(NodeData $node, $position, NodeInterface $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
 
 		switch ($position) {
