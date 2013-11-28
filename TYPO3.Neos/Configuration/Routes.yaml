@@ -66,5 +66,3 @@
     'FrontendSubRoutes':
       package: 'TYPO3.Neos'
       suffix:  'Frontend'
-      variables:
-        'defaultUrlSuffix': '<defaultUrlSuffix>'
