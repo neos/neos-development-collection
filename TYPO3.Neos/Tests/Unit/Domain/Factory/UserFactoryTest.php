@@ -48,20 +48,4 @@ class UserFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$user = $factory->create('username', 'password', 'John', 'Doe');
 	}
 
-	/**
-	 * @test
-	 */
-	public function createSetsWorkspaceNamePreference() {
-		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
-		$mockAccountFactory = $this->getMock('TYPO3\Flow\Security\AccountFactory');
-		$mockAccountFactory->expects($this->any())->method('createAccountWithPassword')->will($this->returnValue($mockAccount));
-
-		$factory = new \TYPO3\Neos\Domain\Factory\UserFactory();
-		$this->inject($factory, 'accountFactory', $mockAccountFactory);
-
-		$user = $factory->create('user_name', 'password', 'John', 'Doe');
-
-		$this->assertEquals('user-username', $user->getPreferences()->get('context.workspace'));
-	}
-
 }

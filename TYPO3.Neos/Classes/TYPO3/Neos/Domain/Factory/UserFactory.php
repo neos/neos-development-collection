@@ -45,9 +45,6 @@ class UserFactory {
 		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $username);
 		$user->setName($name);
 
-		$workspaceName = 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
-		$user->getPreferences()->set('context.workspace', $workspaceName);
-
 		if ($roleIdentifiers === NULL || $roleIdentifiers === array()) {
 			$roleIdentifiers = array('TYPO3.Neos:Editor');
 		}

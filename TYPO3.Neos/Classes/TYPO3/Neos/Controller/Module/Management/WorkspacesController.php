@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Module\Management;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
@@ -66,6 +67,12 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	protected $propertyMappingConfigurationBuilder;
 
 	/**
+	 * @Flow\Inject
+	 * @var UserService
+	 */
+	protected $userService;
+
+	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
@@ -85,9 +92,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 */
 	public function indexAction(Workspace $workspace = NULL) {
 		if ($workspace === NULL) {
-			$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-			$userWorkspaceName = $user->getPreferences()->get('context.workspace');
-			$workspace = $this->workspaceRepository->findOneByName($userWorkspaceName);
+			$workspace = $this->userService->getCurrentWorkspace();
 		}
 
 		$sites = array();

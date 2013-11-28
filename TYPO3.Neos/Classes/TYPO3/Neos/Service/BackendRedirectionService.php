@@ -71,6 +71,12 @@ class BackendRedirectionService {
 	protected $nodeFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var UserService
+	 */
+	protected $userService;
+
+	/**
 	 * Returns a specific URI string to redirect to after the login; or NULL if there is none.
 	 *
 	 * @param ActionRequest $actionRequest
@@ -81,12 +87,7 @@ class BackendRedirectionService {
 		if ($user === NULL) {
 			return NULL;
 		}
-
-		$workspaceName = $user->getPreferences()->get('context.workspace');
-		if ($workspaceName === NULL) {
-			return NULL;
-		}
-
+		$workspaceName = $this->userService->getCurrentWorkspaceName();
 		$contentContext = $this->createContext($workspaceName);
 		// create workspace if it does not exist
 		$contentContext->getWorkspace();

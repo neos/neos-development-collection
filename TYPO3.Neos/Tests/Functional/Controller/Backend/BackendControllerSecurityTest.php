@@ -30,9 +30,9 @@ class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 	 */
 	public function indexActionIsGrantedForAdministrator() {
 		$user = new User();
-		$user->getPreferences()->set('context.workspace', 'user-admin');
 
 		$account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
+		$account->setAccountIdentifier('admin');
 		$account->setParty($user);
 		$this->browser->request('http://localhost/neos/login');
 

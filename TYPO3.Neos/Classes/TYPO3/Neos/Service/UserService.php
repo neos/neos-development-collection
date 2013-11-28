@@ -12,6 +12,10 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Neos\Domain\Model\User;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * The user service provides general context information about the currently
@@ -22,13 +26,19 @@ use TYPO3\Flow\Annotations as Flow;
 class UserService {
 
 	/**
-	 * @var \TYPO3\Flow\Security\Context
 	 * @Flow\Inject
+	 * @var Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @return \TYPO3\Neos\Domain\Model\User
+	 * @Flow\Inject
+	 * @var WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @return User
 	 */
 	public function getBackendUser() {
 		if ($this->securityContext->isInitialized() === TRUE) {
@@ -38,15 +48,29 @@ class UserService {
 	}
 
 	/**
-	 * @return string
+	 * Returns the Workspace of the currently logged in user or NULL if no matching workspace was found.
+	 * If no user is logged in this returns the live workspace
+	 *
+	 * @return Workspace
 	 */
 	public function getCurrentWorkspace() {
-		$user = $this->getBackendUser();
+		return $this->workspaceRepository->findOneByName($this->getCurrentWorkspaceName());
+	}
 
-		if ($user === NULL) {
+	/**
+	 * Returns the Workspace name of the currently logged in user (even if that might not exist at that time)
+	 * If no user is logged in this returns "live"
+	 *
+	 * Note: This currently always constructs the workspace name from the logged in users account identifier (username)
+	 * In the future a user can have access to more than one workspace
+	 *
+	 * @return string
+	 */
+	public function getCurrentWorkspaceName() {
+		$account = $this->securityContext->getAccount();
+		if ($account === NULL) {
 			return 'live';
 		}
-
-		return $user->getPreferences()->get('context.workspace');
+		return 'user-' . preg_replace('/[^a-z0-9]/i', '', $account->getAccountIdentifier());
 	}
 }
