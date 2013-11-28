@@ -549,8 +549,7 @@ define('util/json2', [], function () {
 			modules: {},
 			config: {
 				alertOnWarn: false,
-				// Note: this was set to true, see issue https://github.com/alohaeditor/Aloha-Editor/issues/474
-				preferTextRange: true
+				preferTextRange: false
 			}
 		};
 
@@ -4291,10 +4290,10 @@ define('aloha/ecma5shims',[], function () {
 
 /* dom.js is part of Aloha Editor project http://aloha-editor.org
  *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
  * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
+ * Contributors http://aloha-editor.org/contribution.php
+ *
  * Aloha Editor is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -4308,13 +4307,14 @@ define('aloha/ecma5shims',[], function () {
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * As an additional permission to the GNU GPL version 2, you may distribute
  * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
  * source code without the copy of the GNU GPL normally required,
  * provided you include this license notice and a URL through which
  * recipients can access the Corresponding Source.
  */
+/*jslint eqeq: true */
 // Ensure GENTICS Namespace
 window.GENTICS = window.GENTICS || {};
 window.GENTICS.Utils = window.GENTICS.Utils || {};
@@ -4363,11 +4363,190 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		};
 
 	/**
+	 * Can't use elem.childNodes.length because
+	 * http://www.quirksmode.org/dom/w3c_core.html
+	 * "IE up to 8 does not count empty text nodes."
+	 *
+	 * Taken from Dom2.js
+	 */
+	function numChildren(elem) {
+		var count = 0;
+		var child = elem.firstChild;
+		while (child) {
+			count += 1;
+			child = child.nextSibling;
+		}
+		return count;
+	}
+
+	/**
+	 * Gets the index of the given node within its parent element.
+	 * @param {Element} node
+	 * @return {number}
+	 *         Index in the parent node or -1 if no node given or node has no
+	 *         parent.
+	 */
+	function getIndexInParent(node) {
+		if (!node) {
+			return -1;
+		}
+
+		var i,
+		    childNodes = node.parentNode.childNodes,
+			len = childNodes.length;
+		for (i = 0; i < len; i++) {
+			if (childNodes[i] === node) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	/**
+	 * Taken from Dom2.js
+	 */
+	function nodeLength(node) {
+		if (1 === node.nodeType) {
+			return numChildren(node);
+		}
+		if (3 === node.nodeType) {
+			return node.length;
+		}
+		return 0;
+	}
+
+	/**
+	 * Checks if the element given is an aloha-editing-p helper, added by split.
+	 *
+	 * @param {HTMLElement} node
+	 * @return {Boolean} True if the given element is an
+	 *                   aloha-editing-paragraph.
+	 */
+	function isAlohaEditingP(node) {
+		return (
+			node.className === 'aloha-editing-p'
+				&& nodeLength(node) === 1
+					&& node.children[0].nodeName === 'BR'
+						&& node.children[0].className === 'aloha-end-br'
+		);
+	}
+
+	/**
+	 * Starting from the given node, will walk forward (right-ward) through the
+	 * node until an element is found that matches the predicate `match` or we
+	 * reach the last element in the tree inside the editing host.
+	 *
+	 * @param {HTMLElement} node An element that must be inside an editable.
+	 * @param {function(HTMLElement):Boolean} match A prediate function to
+	 *                                              determine wether or not the
+	 *                                              node matches one we are
+	 *                                              looking for.
+	 * @return {HTMLElement} The matched node that is forward in the DOM tree
+	 *                       from `node`; null if nothing can be found that
+	 *                       matches `match`.
+	 */
+	function findNodeForward(node, match) {
+		if (!node) {
+			return null;
+		}
+		if (match(node)) {
+			return node;
+		}
+		var next = node.firstChild
+		        || node.nextSibling
+		        || (
+		            node.parentNode
+		            && !GENTICS.Utils.Dom.isEditingHost(node.parentNode)
+		            && node.parentNode.nextSibling
+		        );
+		return next ? findNodeForward(next, match) : null;
+	}
+
+	function isVisiblyEmpty(node) {
+		if (!node) {
+			return true;
+		}
+		// TODO: use isChildlessElement()
+		if ('BR' === node.nodeName) {
+			return false;
+		}
+		if (node.nodeType === Node.TEXT_NODE) {
+			// TODO: would prefer to use
+			// (Html.isWhitespaces(node) || Html.isZeroWidthCharacters(node))
+			// but cannot because of circular dependency
+			if (node.data.search(/\S/) === -1) {
+				return true;
+			}
+			// Fix for IE with zero-width characters
+			if (1 === node.data.length && node.data.charCodeAt(0) >= 0x2000) {
+				return true;
+			}
+			return false;
+		}
+		var numChildren = nodeLength(node);
+		if (0 === numChildren) {
+			return true;
+		}
+		var children = node.childNodes;
+		var i;
+		for (i = 0; i < numChildren; i++) {
+			if (!isVisiblyEmpty(children[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks for the opposite condition of isVisiblyEmpty().
+	 *
+	 * @param {HTMLElement} node
+	 * @return {Boolean} True if the given node is visible not empty.
+	 */
+	function isNotVisiblyEmpty(node) {
+		return !isVisiblyEmpty(node);
+	}
+
+	/**
+	 * Checks whether the given element is a "phantom" element-- ie: an element
+	 * that is either invisible or an aloha-editing-paragraph element.
+	 *
+	 * @param {HTMLElement} node
+	 * @return {Boolean} True if the element is a "phantom" element.
+	 */
+	function isPhantomNode(node) {
+		return isVisiblyEmpty(node) || isAlohaEditingP(node);
+	}
+
+	/**
+	 * Inserts the DOM node `element` appropriately during a split operation.
+	 *
+	 * The element `head` is used to reference where the element should be
+	 * inserted.  Depending on the structure of this `head` node, the `element`
+	 * will either replace/overwrite `head` or be appending immediately after
+	 * `head`.
+	 *
+	 * @param {HTMLElement} head The "head" element of the "head and tail"
+	 *                           nodes resulting from splitting a DOM element.
+	 * @param {HTMLElement} element The element to be inserted between the head
+	 *                              and tail split parts.
+	 */
+	function insertAfterSplit(head, element) {
+		if (head.nodeType !== Node.TEXT_NODE && isPhantomNode(head)) {
+			jQuery(head).replaceWith(element);
+		} else {
+			jQuery(head).after(element);
+		}
+	}
+
+	/**
 	 * @namespace GENTICS.Utils
 	 * @class Dom provides methods to get information about the DOM and to manipulate it
 	 * @singleton
 	 */
 	var Dom = Class.extend({
+		getIndexInParent: getIndexInParent,
 		/**
 		 * Regex to find word characters.
 		 */
@@ -4617,12 +4796,19 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 						// text node
 						secondPart = document.createTextNode(element.data.substring(splitPosition, element.data.length));
 						element.data = element.data.substring(0, splitPosition);
+						if (this.isEmpty(secondPart) && jQuery('br', newDom).length === 0) {
+							secondPart = jQuery('<br/>').addClass('aloha-end-br');
+						}
 					} else {
 						// other nodes
 						jqelement = jQuery(element);
 						children = jqelement.contents();
 						newElement = jqelement.clone(false).empty();
 						secondPart = newElement.append(children.slice(splitPosition, children.length)).get(0);
+						jQuery(secondPart).addClass('aloha-editing-p');
+						if (secondPart.childNodes.length === 1 && secondPart.childNodes.item(0).nodeName.toLowerCase() === 'br') {
+							jQuery(secondPart.childNodes.item(0)).addClass('aloha-end-br');
+						}
 					}
 
 					// update the range if necessary
@@ -4728,14 +4914,6 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * @method
 		 */
 		addMarkup: function (rangeObject, markup, nesting) {
-			// Because addMarkup can't handle a selection like
-			// <p>{xx</p> but it can handle <p>[xx</p>.
-			var sc = rangeObject.startContainer;
-			var so = rangeObject.startOffset;
-			if (1 === sc.nodeType && sc.childNodes[so] && 3 === sc.childNodes[so].nodeType) {
-				rangeObject.correctRange();
-			}
-
 			// split partially contained text nodes at the start and end of the range
 			if (rangeObject.startContainer.nodeType === 3
 				    && rangeObject.startOffset > 0
@@ -4984,33 +5162,32 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 
 			// iterate through all sub nodes
 			startObject.contents().each(function () {
-				var index;
+				var nodeType;
 
 				// Try to read the nodeType property and return if we do not have permission
 				// ie.: frame document to an external URL
-				var nodeType;
 				try {
 					nodeType = this.nodeType;
-					index = that.getIndexInParent(this);
 				} catch (e) {
 					return;
 				}
 
 				// decide further actions by node type
 				switch (nodeType) {
-					// found a non-text node
+				// found a non-text node
 				case 1:
-					if (prevNode && prevNode.nodeName == this.nodeName) {
+					var thisNodeName = this.nodeName;
+					if (prevNode && prevNode.nodeName === thisNodeName) {
 						// found a successive node of same type
 
 						// now we check whether the selection starts or ends in the mother node after the current node
-						if (rangeObject.startContainer === startObject && startOffset > index) {
+						if (rangeObject.startContainer === startObject && startOffset > getIndexInParent(this)) {
 							// there will be one less object, so reduce the startOffset by one
 							rangeObject.startOffset -= 1;
 							// set the flag for range modification
 							modifiedRange = true;
 						}
-						if (rangeObject.endContainer === startObject && endOffset > index) {
+						if (rangeObject.endContainer === startObject && endOffset > getIndexInParent(this)) {
 							// there will be one less object, so reduce the endOffset by one
 							rangeObject.endOffset -= 1;
 							// set the flag for range modification
@@ -5027,7 +5204,6 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 						jQuery(this).remove();
 
 					} else {
-
 						// do the recursion step here
 						modifiedRange |= that.doCleanup(cleanup, rangeObject, this);
 
@@ -5038,7 +5214,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 								//							jQuery(this).remove();
 								removed = true;
 							}
-							if (jQuery.inArray(this.nodeName.toLowerCase(), that.mergeableTags) >= 0 && jQuery(this).text().length === 0 && this.childNodes.length === 0) {
+							if (jQuery.inArray(thisNodeName.toLowerCase(), that.mergeableTags) >= 0 && jQuery(this).text().length === 0 && this.childNodes.length === 0) {
 								//							jQuery(this).remove();
 								removed = true;
 							}
@@ -5046,22 +5222,20 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 
 						// when the current node was not removed, we eventually store it as previous (mergeable) tag
 						if (!removed) {
-							if (cleanup.mergeable
-									? cleanup.mergeable(this)
-									: jQuery.inArray(this.nodeName.toLowerCase(), that.mergeableTags) >= 0) {
+							if (cleanup.mergeable ? cleanup.mergeable(this) : jQuery.inArray(thisNodeName.toLowerCase(), that.mergeableTags) >= 0) {
 								prevNode = this;
 							} else {
 								prevNode = false;
 							}
 						} else {
 							// now we check whether the selection starts or ends in the mother node of this
-							if (rangeObject.startContainer === this.parentNode && startOffset > index) {
+							if (rangeObject.startContainer === this.parentNode && startOffset > getIndexInParent(this)) {
 								// there will be one less object, so reduce the startOffset by one
 								rangeObject.startOffset = rangeObject.startOffset - 1;
 								// set the flag for range modification
 								modifiedRange = true;
 							}
-							if (rangeObject.endContainer === this.parentNode && endOffset > index) {
+							if (rangeObject.endContainer === this.parentNode && endOffset > getIndexInParent(this)) {
 								// there will be one less object, so reduce the endOffset by one
 								rangeObject.endOffset = rangeObject.endOffset - 1;
 								// set the flag for range modification
@@ -5075,13 +5249,16 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					}
 
 					break;
-					// found a text node
+				// found a text node
 				case 3:
 					// found a text node
 					if (prevNode && prevNode.nodeType === 3 && cleanup.merge) {
 						// the current text node will be merged into the last one, so
 						// check whether the selection starts or ends in the current
 						// text node
+						var prevNodeValue = prevNode.nodeValue,
+							prevNodeValueLength = prevNodeValue.length;
+
 						if (rangeObject.startContainer === this) {
 							// selection starts in the current text node
 
@@ -5089,19 +5266,19 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 							rangeObject.startContainer = prevNode;
 
 							// update the start offset
-							rangeObject.startOffset += prevNode.nodeValue.length;
+							rangeObject.startOffset += prevNodeValueLength;
 
 							// set the flag for range modification
 							modifiedRange = true;
 
-						} else if (rangeObject.startContainer === prevNode.parentNode && rangeObject.startOffset === that.getIndexInParent(prevNode) + 1) {
+						} else if (rangeObject.startContainer === prevNode.parentNode && rangeObject.startOffset === getIndexInParent(prevNode) + 1) {
 							// selection starts right between the previous and current text nodes (which will be merged)
 
 							// update the start container to the previous node
 							rangeObject.startContainer = prevNode;
 
 							// set the start offset
-							rangeObject.startOffset = prevNode.nodeValue.length;
+							rangeObject.startOffset = prevNodeValueLength;
 
 							// set the flag for range modification
 							modifiedRange = true;
@@ -5114,19 +5291,19 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 							rangeObject.endContainer = prevNode;
 
 							// update the end offset
-							rangeObject.endOffset += prevNode.nodeValue.length;
+							rangeObject.endOffset += prevNodeValueLength;
 
 							// set the flag for range modification
 							modifiedRange = true;
 
-						} else if (rangeObject.endContainer === prevNode.parentNode && rangeObject.endOffset === that.getIndexInParent(prevNode) + 1) {
+						} else if (rangeObject.endContainer === prevNode.parentNode && rangeObject.endOffset === getIndexInParent(prevNode) + 1) {
 							// selection ends right between the previous and current text nodes (which will be merged)
 
 							// update the end container to the previous node
 							rangeObject.endContainer = prevNode;
 
 							// set the end offset
-							rangeObject.endOffset = prevNode.nodeValue.length;
+							rangeObject.endOffset = prevNodeValueLength;
 
 							// set the flag for range modification
 							modifiedRange = true;
@@ -5135,7 +5312,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 						// now append the contents of the current text node into the previous
 						prevNode.data += this.data;
 
-						// remove empty text nodes	
+						// remove empty text nodes
 					} else if (!(this.nodeValue === '' && cleanup.removeempty)) {
 						prevNode = this;
 						// we are finish here don't delete this node
@@ -5143,13 +5320,13 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					}
 
 					// now we check whether the selection starts or ends in the mother node of this
-					if (rangeObject.startContainer === this.parentNode && rangeObject.startOffset > index) {
+					if (rangeObject.startContainer === this.parentNode && rangeObject.startOffset > getIndexInParent(this)) {
 						// there will be one less object, so reduce the startOffset by one
 						rangeObject.startOffset = rangeObject.startOffset - 1;
 						// set the flag for range modification
 						modifiedRange = true;
 					}
-					if (rangeObject.endContainer === this.parentNode && rangeObject.endOffset > index) {
+					if (rangeObject.endContainer === this.parentNode && rangeObject.endOffset > getIndexInParent(this)) {
 						// there will be one less object, so reduce the endOffset by one
 						rangeObject.endOffset = rangeObject.endOffset - 1;
 						// set the flag for range modification
@@ -5161,10 +5338,13 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 
 					// if this is the last text node in a sequence, we remove any zero-width spaces in the text node,
 					// unless it is the only character
-					if (prevNode && 3 === prevNode.nodeType && (!prevNode.nextSibling || prevNode.nextSibling.nodeType !== 3)) {
+					var prevNodeNextSibling = prevNode.nextSibling;
+					if (prevNode && (!prevNodeNextSibling || prevNodeNextSibling.nodeType !== 3)) {
 						var pos;
-						for (pos = prevNode.data.length - 1; pos >= 0 && prevNode.data.length > 1; pos--) {
-							if (prevNode.data.charAt(pos) === '\u200b') {
+						var prevNodeData = prevNode.data;
+						var prevNodeDataLength = prevNodeData.length;
+						for (pos = prevNodeDataLength - 1; pos >= 0 && prevNodeDataLength > 1; pos--) {
+							if (prevNodeData.charAt(pos) === '\u200b') {
 								prevNode.deleteData(pos, 1);
 								if (rangeObject.startContainer === prevNode && rangeObject.startOffset > pos) {
 									rangeObject.startOffset--;
@@ -5203,28 +5383,6 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 			}
 
 			return modifiedRange;
-		},
-
-		/**
-		 * Get the index of the given node within its parent node
-		 * @param {DOMObject} node node to check
-		 * @return {Integer} index in the parent node or false if no node given or node has no parent
-		 * @method
-		 */
-		getIndexInParent: function (node) {
-			if (!node) {
-				return false;
-			}
-
-			var index = 0,
-				check = node.previousSibling;
-
-			while (check) {
-				index++;
-				check = check.previousSibling;
-			}
-
-			return index;
 		},
 
 		/**
@@ -5465,8 +5623,21 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					return true;
 				}
 				if (splitParts) {
-					// if the DOM could be split, we insert the new object in between the split parts
-					splitParts.eq(0).after(object);
+					// ASSERT(splitParts.length === 2)
+					var head = splitParts[0];
+					var tail = splitParts[1];
+					insertAfterSplit(head, object);
+					if (isPhantomNode(tail)) {
+						var afterTail = tail.nextSibling
+						             || (tail.parentNode && tail.parentNode.nextSibling);
+						if (findNodeForward(afterTail, isNotVisiblyEmpty)) {
+							// Because the tail element that is generated from
+							// the splitting is superfluous since there is
+							// already a visible element in which to place the
+							// selection.
+							jQuery(tail).remove();
+						}
+					}
 					return true;
 				}
 				// could not split, so could not insert
@@ -5488,7 +5659,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		removeFromDOM: function (object, range, preserveContent) {
 			if (preserveContent) {
 				// check whether the range will need modification
-				var indexInParent = this.getIndexInParent(object),
+				var indexInParent = getIndexInParent(object),
 					numChildren = jQuery(object).contents().length,
 					parent = object.parentNode;
 
@@ -5572,7 +5743,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 					// if the domobj is the startcontainer, or the startcontainer is inside the domobj, we need to update the rangeObject
 					if (jQuery(rangeObject.startContainer).parents().andSelf().filter(rangeTree[i].domobj).length > 0) {
 						rangeObject.startContainer = rangeObject.endContainer = rangeTree[i].domobj.parentNode;
-						rangeObject.startOffset = rangeObject.endOffset = this.getIndexInParent(rangeTree[i].domobj);
+						rangeObject.startOffset = rangeObject.endOffset = getIndexInParent(rangeTree[i].domobj);
 					}
 
 					// remove the object from the DOM
@@ -5650,6 +5821,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 			    textNode;
 			while (!boundaryFound) {
 				// check the node type
+				var containerIndex = getIndexInParent(container);
 				if (container.nodeType === 3) {
 					// we are currently in a text node
 
@@ -5663,7 +5835,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 							boundaryFound = true;
 						} else {
 							// found no word boundary, so we set the position after the container
-							offset = this.getIndexInParent(container) + 1;
+							offset = containerIndex + 1;
 							container = container.parentNode;
 						}
 					} else {
@@ -5684,7 +5856,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 							boundaryFound = true;
 						} else {
 							// found no word boundary, so we set the position before the container
-							offset = this.getIndexInParent(container);
+							offset = containerIndex;
 							container = container.parentNode;
 						}
 					}
@@ -5710,7 +5882,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 								boundaryFound = true;
 							} else {
 								// element itself is no boundary element, so go to parent
-								offset = this.getIndexInParent(container) + 1;
+								offset = containerIndex + 1;
 								container = container.parentNode;
 							}
 						}
@@ -5733,7 +5905,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 								boundaryFound = true;
 							} else {
 								// element itself is no boundary element, so go to parent
-								offset = this.getIndexInParent(container);
+								offset = containerIndex;
 								container = container.parentNode;
 							}
 						}
@@ -5774,7 +5946,14 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 
 			// text nodes are not empty, if they contain non-whitespace characters
 			if (domObject.nodeType === 3) {
-				return domObject.data.search(/\S/) == -1;
+				if (domObject.data.search(/\S/) == -1) {
+					return true;
+				} else if (domObject.data.length === 1 // Fix FOR IE no width chars
+						&& domObject.data.charCodeAt(0) >= 0x2000) {
+					return true;
+				}
+
+				return false;
 			}
 
 			// all other nodes are not empty if they contain at least one child which is not empty
@@ -5796,7 +5975,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 */
 		setCursorAfter: function (domObject) {
 			var newRange = new GENTICS.Utils.RangeObject(),
-				index = this.getIndexInParent(domObject),
+				index = getIndexInParent(domObject),
 				targetNode,
 				offset;
 
@@ -5812,7 +5991,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 				offset = 0;
 			} else {
 				targetNode = domObject.parentNode;
-				offset = this.getIndexInParent(domObject) + 1;
+				offset = getIndexInParent(domObject) + 1;
 			}
 
 			newRange.startContainer = newRange.endContainer = targetNode;
@@ -5833,7 +6012,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		selectDomNode: function (domObject) {
 			var newRange = new GENTICS.Utils.RangeObject();
 			newRange.startContainer = newRange.endContainer = domObject.parentNode;
-			newRange.startOffset = this.getIndexInParent(domObject);
+			newRange.startOffset = getIndexInParent(domObject);
 			newRange.endOffset = newRange.startOffset + 1;
 			newRange.select();
 		},
@@ -5906,7 +6085,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		},
 
 		/**
-		 * 
+		 *
 		 * "Two nodes are in the same editing host if the editing host of the first is
 		 * non-null and the same as the editing host of the second."
 		 * @param node1 DOM object
@@ -6255,12 +6434,7 @@ define('aloha/core',[
 		var version = browser.version;
 		return !(
 			// Chrome/Safari 4
-			// Because, even though the specific number 532.5 always
-			// worked for Chrome until now, since jQuery 1.8.x the way
-			// version numbers are reported for Chrome has changed, so
-			// we don't know any more. Because we don't know, we'll just
-			// exclude it.
-			(browser.webkit && !browser.chrome && parseFloat(version) < 532.5) ||
+			(browser.webkit && parseFloat(version) < 532.5 && !browser.chrome) ||
 			// FF 3.5
 			(browser.mozilla && parseFloat(version) < 1.9) ||
 			// IE 7
@@ -7248,6 +7422,32 @@ define('util/range',[
 	}
 
 	/**
+	 * Find tag with tag name 'TagName' by recursion in the RangeTree
+	 * of a Range Selection
+	 *
+	 * @param {RangeTree []} array Range Tree class
+	 * @param {String} tagName Element Tag Name
+	 * @param {DOMObject []} objs arrays containing the elements whidh Tag Name
+	 * is 'tagName'
+	 */
+	function findTagInRangeTreeRecursion(array, tagName, objs) {
+		var element,
+			i,
+			len = array.length;
+		for (i = 0; i < len; i++) {
+			element = array[i];
+			if (element.type !== 'none' && element.type !== 'collapsed') {
+				if (element.domobj.nodeName === tagName) {
+					objs.push(element.domobj);
+				}
+				if (element.children.length > 0) {
+					findTagInRangeTreeRecursion(element.children, tagName, objs);
+				}
+			}
+		}
+	}
+
+	/**
 	 * @namespace GENTICS.Utils
 	 * @class RangeObject
 	 * Represents a selection range in the browser that
@@ -8026,6 +8226,23 @@ define('util/range',[
 		},
 
 		/**
+		 * Find all markups by Tag name
+		 *
+		 * @param {String} tagName Tag name
+		 * @param {Range Object} range Selection Range
+		 * @returns {DOMObject[]} All DOM objects matching the tag Name
+		 */
+		findAllMarkupByTagName: function (tagName, range) {
+			var rangeTree = range.getRangeTree(),
+				objs = [];
+			tagName = tagName.toUpperCase();
+
+			findTagInRangeTreeRecursion(rangeTree, tagName, objs);
+			return objs;
+		},
+
+
+		/**
 		 * Get the text enclosed by this range
 		 * @return {String} the text of the range
 		 * @method
@@ -8157,20 +8374,12 @@ define('util/functions',[], function () {
 		};
 	}
 
-	function bind(fn, thisArg) {
-		var args = Array.prototype.slice.call(arguments, 2);
-		return function () {
-			return fn.apply(thisArg, args.concat(Array.prototype.slice.call(arguments, 0)));
-		};
-	}
-
 	return {
 		identity: identity,
 		noop: noop,
 		returnTrue: returnTrue,
 		returnFalse: returnFalse,
-		complement: complement,
-		bind: bind
+		complement: complement
 	};
 });
 
@@ -8431,6 +8640,15 @@ define('util/arrays',['util/functions'], function (Fn) {
 	}
 
 	/**
+	 * Returns all items in xs that are not contained in zs.
+	 */
+	function subtract(xs, zs) {
+		return filter(xs, function (x) {
+			return !contains(zs, x);
+		});
+	}
+
+	/**
 	 * Returns the last item in xs or null.
 	 */
 	function last(xs) {
@@ -8457,6 +8675,7 @@ define('util/arrays',['util/functions'], function (Fn) {
 		applyNotNull: applyNotNull,
 		sortUnique: sortUnique,
 		intersect: intersect,
+		subtract: subtract,
 		second: second,
 		last: last
 	};
@@ -8904,1248 +9123,6 @@ define('util/maps',[], function () {
 	};
 });
 
-/* ephemera.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('util/browser',['jquery'], function ($) {
-	
-	var testElem = document.createElement('div');
-	return {
-		ie7: $.browser.msie && parseInt($.browser.version, 10) < 8,
-		ie: $.browser.msie,
-		hasRemoveProperty: !!testElem.style.removeProperty
-	};
-});
-
-/* dom2.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('util/dom2',[
-	'aloha/core',
-	'jquery',
-	'util/functions',
-	'util/maps',
-	'util/arrays',
-	'util/strings',
-	'util/browser',
-	'util/dom',
-	'util/range'
-], function (
-	Aloha,
-	$,
-	Fn,
-	Maps,
-	Arrays,
-	Strings,
-	Browser,
-	Dom1,
-	RangeObject
-) {
-	
-
-	var spacesRx = /\s+/;
-	var attrRegex = /\s([^\/<>\s=]+)(?:=(?:"[^"]*"|'[^']*'|[^>\/\s]+))?/g;
-
-	/**
-	 * Like insertBefore, inserts firstChild into parent before
-	 * refChild, except also inserts all the following siblings of
-	 * firstChild.
-	 */
-	function moveNextAll(parent, firstChild, refChild) {
-		while (firstChild) {
-			var nextChild = firstChild.nextSibling;
-			parent.insertBefore(firstChild, refChild);
-			firstChild = nextChild;
-		}
-	}
-
-	/**
-	 * Used to serialize outerHTML of DOM elements in older (pre-HTML5) Gecko,
-	 * Safari, and Opera browsers.
-	 *
-	 * Beware that XMLSerializer generates an XHTML string (<div class="team" />
-	 * instead of <div class="team"></div>).  It is noted here:
-	 * http://stackoverflow.com/questions/1700870/how-do-i-do-outerhtml-in-firefox
-	 * that some browsers (like older versions of Firefox) have problems with
-	 * XMLSerializer, and an alternative, albeit more expensive option, is
-	 * described.
-	 *
-	 * @type {XMLSerializer|null}
-	 */
-	var Serializer = window.XMLSerializer && new window.XMLSerializer();
-
-	/**
-	 * Gets the serialized HTML that describes the given DOM element and its
-	 * innerHTML.
-	 *
-	 * Polyfill for older versions of Gecko, Safari, and Opera browsers.
-	 * @see https://bugzilla.mozilla.org/show_bug.cgi?id=92264 for background.
-	 *
-	 * @param {HTMLElement} node DOM Element.
-	 * @return {String}
-	 */
-	function outerHtml(node) {
-		var html = node.outerHTML;
-		if (typeof html !== 'undefined') {
-			return html;
-		}
-		try {
-			return Serializer ? Serializer.serializeToString(node) : node.xml;
-		} catch (e) {
-			return node.xml;
-		}
-	}
-
-	/**
-	 * Retrieves the names of all attributes from the given elmenet.
-	 *
-	 * Correctly handles the case that IE7 and IE8 have approx 70-90
-	 * default attributes on each and every element.
-	 *
-	 * This implementation does not iterate over the elem.attributes
-	 * property since that is much slower on IE7 (even when
-	 * checking the attrNode.specified property). Instead it parses the
-	 * HTML of the element. For elements with few attributes the
-	 * performance on IE7 is improved by an order of magnitued.
-	 *
-	 * On IE7, when you clone a <button disabled="disabled"/> or an
-	 * <input checked="checked"/> element the boolean properties will
-	 * not be set on the cloned node. We choose the speed optimization
-	 * over correctness in this case. The dom-to-xhtml plugin has a
-	 * workaround for this case.
-	 */
-	function attrNames(elem) {
-		var names = [];
-		var html = outerHtml(elem.cloneNode(false));
-		var match;
-		while (null != (match = attrRegex.exec(html))) {
-			names.push(match[1]);
-		}
-		return names;
-	}
-
-	/**
-	 * Gets the attributes of the given element.
-	 *
-	 * See attrNames() for an edge case on IE7.
-	 *
-	 * @param elem
-	 *        An element to get the attributes for.
-	 * @return
-	 *        An array containing [name, value] tuples for each attribute.
-	 *        Attribute values will always be strings, but possibly empty strings.
-	 */
-	function attrs(elem) {
-		var as = [];
-		var names = attrNames(elem);
-		var i;
-		var len;
-		for (i = 0, len = names.length; i < len; i++) {
-			var name = names[i];
-			var value = $.attr(elem, name);
-			if (null == value) {
-				value = "";
-			} else {
-				value = value.toString();
-			}
-			as.push([name, value]);
-		}
-		return as;
-	}
-
-	/**
-	 * Like indexByClass() but operates on a list of elements instead.
-	 * The given list may be a NodeList, HTMLCollection, or an array.
-	 */
-	function indexByClassHaveList(elems, classMap) {
-		var index = {},
-		    indexed,
-		    classes,
-		    elem,
-		    cls,
-		    len,
-		    i,
-		    j;
-		for (i = 0, len = elems.length; i < len; i++) {
-			elem = elems[i];
-			if (elem.className) {
-				classes = Strings.words(elem.className);
-				for (j = 0; j < classes.length; j++) {
-					cls = classes[j];
-					if (classMap[cls]) {
-						indexed = index[cls];
-						if (indexed) {
-							indexed.push(elem);
-						} else {
-							index[cls] = [elem];
-						}
-					}
-				}
-			}
-		}
-		return index;
-	}
-
-	/**
-	 * Indexes descendant elements based on the individual classes in
-	 * the class attribute.
-	 *
-	 * Based on these observations;
-	 * 
-	 * * $('.class1, .class2') takes twice as long as $('.class1') on IE7.
-	 *
-	 * * $('.class1, .class2') is fast on IE8 (approx the same as
-	 *   $('.class'), no matter how many classes), but if the individual
-	 *   elements in the result set should be handled differently, the
-	 *   subsequent hasClass('.class1') and hasClass('.class2') calls
-	 *   slow things down again.
-	 *
-	 * * DOM traversal with elem.firstChild elem.nextSibling is very
-	 *   slow on IE7 compared to just iterating over
-	 *   root.getElementsByTagName('*').
-	 *
-	 * * $('name.class') is much faster than just $('.class'), but as
-	 *   soon as you need a single class in classMap that may be present
-	 *   on any element, that optimization doesn't gain anything since
-	 *   then you have to examine every element.
-	 *
-	 * This function will always take approx. the same amount of time
-	 * (on IE7 approx. equivalent to a single call to $('.class')) no
-	 * matter how many entries there are in classMap to index.
-	 *
-	 * This function only makes sense for multiple entries in
-	 * classMap. For a single class lookup, $('.class') or
-	 * $('name.class') is fine (even better in the latter case).
-	 *
-	 * @param root
-	 *        The root element to search for elements to index
-	 *        (will not be included in search).
-	 * @param classMap
-	 *        A map from class name to boolean true.
-	 * @return
-	 *        A map from class name to an array of elements with that class.
-	 *        Every entry in classMap for which elements have been found
-	 *        will have a corresponding entry in the returned
-	 *        map. Entries for which no elements have been found, may or
-	 *        may not have an entry in the returned map.
-	 */
-	function indexByClass(root, classMap) {
-		var elems;
-		if (Browser.ie7) {
-			elems = root.getElementsByTagName('*');
-		} else {
-			// Optimize for browsers that support querySelectorAll/getElementsByClassName.
-			// On IE8 for example, if there is a relatively high
-			// elems/resultSet ratio, performance can improve by a factor of 2.
-			elems = $(root).find('.' + Maps.keys(classMap).join(',.'));
-		}
-		return indexByClassHaveList(elems, classMap);
-	}
-
-	/**
-	 * Indexes descendant elements based on elem.nodeName.
-	 *
-	 * Based on these observations:
-	 *
-	 * * On IE8, for moderate values of names.length, individual calls to
-	 *   getElementsByTagName is just as fast as $root.find('name, name,
-	 *   name, name').
-	 *
-	 * * On IE7, $root.find('name, name, name, name') is extemely slow
-	 *   (can be an order of magnitude slower than individual calls to
-	 *    getElementsByTagName, why is that?).
-	 *
-	 * * Although getElementsByTagName is very fast even on IE7, when
-	 *   names.length > 7 an alternative implementation that iterates
-	 *   over all tags and checks names from a hashmap (similar to how
-	 *   indexByClass does it) may become interesting, but
-	 *   names.length > 7 is unlikely.
-	 *
-	 * This function only makes sense if the given names array has many
-	 * entries. For only one or two different names, calling $('name')
-	 * or context.getElementsByTagName(name) directly is fine (but
-	 * beware of $('name, name, ...') as explained above).
-	 *
-	 * The signature of this function differs from indexByClass by not
-	 * taking a map but instead an array of names.
-	 *
-	 * @param root
-	 *        The root element to search for elements to index
-	 *        (will not be included in search).
-	 * @param names
-	 *        An array of element names to look for.
-	 *        Names must be in all-uppercase (the same as elem.nodeName).
-	 * @return
-	 *        A map from element name to an array of elements with that name.
-	 *        Names will be all-uppercase.
-	 *        Arrays will be proper arrays, not NodeLists.
-	 *        Every entry in classMap for which elements have been found
-	 *        will have a corresponding entry in the returned
-	 *        map. Entries for which no elements have been found, may or
-	 *        may not have an entry in the returned map.
-	 */
-	function indexByName(root, names) {
-		var i,
-		    index = {},
-		    len;
-		for (i = 0, len = names.length; i < len; i++) {
-			var name = names[i];
-			index[name] = $.makeArray(root.getElementsByTagName(name));
-		}
-		return index;
-	}
-
-	function nodeIndex(node) {
-		var ret = 0;
-		while (node.previousSibling) {
-			ret++;
-			node = node.previousSibling;
-		}
-		return ret;
-	}
-
-	function nodeLength(node) {
-		if (1 === node.nodeType) {
-			// Can't use elem.childNodes.length because
-			// http://www.quirksmode.org/dom/w3c_core.html
-			// "IE up to 8 does not count empty text nodes."
-			var lastChild = node.lastChild;
-			return !lastChild ? 0 : nodeIndex(lastChild) + 1;
-		}
-		if (3 === node.nodeType) {
-			return node.length;
-		}
-		return 0;
-	}
-
-	function isAtEnd(node, offset) {
-		return (1 === node.nodeType
-				&& offset >= nodeLength(node))
-			|| (3 === node.nodeType
-				&& offset === node.length
-				&& !node.nextSibling);
-	}
-
-	/**
-	 * @param node if a text node, should have a parent node.
-	 */
-	function nodeAtOffset(node, offset) {
-		if (1 === node.nodeType && offset < nodeLength(node)) {
-			node = node.childNodes[offset];
-		} else if (3 === node.nodeType && offset === node.length) {
-			node = node.nextSibling || node.parentNode;
-		}
-		return node;
-	}
-
-	function remove(node) {
-		node.parentNode.removeChild(node);
-	}
-
-	function removeShallow(node) {
-		var parent = node.parentNode;
-		moveNextAll(parent, node.firstChild, node);
-		parent.removeChild(node);
-	}
-
-	function wrap(node, wrapper) {
-		node.parentNode.replaceChild(wrapper, node);
-		wrapper.appendChild(node);
-	}
-
-	function insert(node, ref, atEnd) {
-		if (atEnd) {
-			ref.appendChild(node);
-		} else {
-			ref.parentNode.insertBefore(node, ref);
-		}
-	}
-
-	function replaceShallow(node, withNode) {
-		moveNextAll(withNode, node.firstChild, null);
-		insert(withNode, node);
-		remove(node);
-	}
-
-	function Cursor(node, atEnd) {
-		this.node = node;
-		this.atEnd = atEnd;
-	}
-
-	/**
-	 * A cursor has the added utility over other iteration methods of
-	 * iterating over the end position of an element. The start and end
-	 * positions of an element are immediately before the element and
-	 * immediately after the last child respectively. All node positions
-	 * except end positions can be identified just by a node. To
-	 * distinguish between element start and end positions, the
-	 * additional atEnd boolean is necessary.
-	 */
-	function cursor(node, atEnd) {
-		return new Cursor(node, atEnd);
-	}
-
-	Cursor.prototype.next = function () {
-		var node = this.node;
-		var next;
-		if (this.atEnd || 1 !== node.nodeType) {
-			next = node.nextSibling;
-			if (next) {
-				this.atEnd = false;
-			} else {
-				next = node.parentNode;
-				if (!next) {
-					return false;
-				}
-				this.atEnd = true;
-			}
-			this.node = next;
-		} else {
-			next = node.firstChild;
-			if (next) {
-				this.node = next;
-			} else {
-				this.atEnd = true;
-			}
-		}
-		return true;
-	};
-
-	Cursor.prototype.prev = function () {
-		var node = this.node;
-		var prev;
-		if (this.atEnd) {
-			prev = node.lastChild;
-			if (prev) {
-				this.node = prev;
-			} else {
-				this.atEnd = false;
-			}
-		} else {
-			prev = node.previousSibling;
-			if (prev) {
-				if (1 === node.nodeType) {
-					this.atEnd = true;
-				}
-			} else {
-				prev = node.parentNode;
-				if (!prev) {
-					return false;
-				}
-			}
-			this.node = prev;
-		}
-		return true;
-	};
-
-	Cursor.prototype.skipPrev = function (cursor) {
-		var prev = this.prevSibling();
-		if (prev) {
-			this.node = prev;
-			this.atEnd = false;
-			return true;
-		}
-		return this.prev();
-	};
-
-	Cursor.prototype.skipNext = function (cursor) {
-		if (this.atEnd) {
-			return this.next();
-		}
-		this.atEnd = true;
-		return this.next();
-	};
-
-	Cursor.prototype.nextWhile = function (cond) {
-		while (cond(this)) {
-			if (!this.next()) {
-				return false;
-			}
-		}
-		return true;
-	};
-
-	Cursor.prototype.prevWhile = function (cond) {
-		while (cond(this)) {
-			if (!this.prev()) {
-				return false;
-			}
-		}
-		return true;
-	};
-
-	Cursor.prototype.parent = function () {
-		return this.atEnd ? this.node : this.node.parentNode;
-	};
-
-	Cursor.prototype.prevSibling = function () {
-		return this.atEnd ? this.node.lastChild : this.node.previousSibling;
-	};
-
-	Cursor.prototype.nextSibling = function () {
-		return this.atEnd ? null : this.node.nextSibling;
-	};
-
-	Cursor.prototype.equals = function (cursor) {
-		return cursor.node === this.node && cursor.atEnd === this.atEnd;
-	};
-
-	Cursor.prototype.setFrom = function (cursor) {
-		this.node = cursor.node;
-		this.atEnd = cursor.atEnd;
-	};
-
-	Cursor.prototype.clone = function () {
-		return cursor(this.node, this.atEnd);
-	};
-
-	Cursor.prototype.insert = function (node) {
-		return insert(node, this.node, this.atEnd);
-	};
-
-	/**
-	 * Ensures that the given startPoint is not in a start position and
-	 * the given endPoint is not in an end position by moving the points
-	 * to the left and right respectively - the opposite of
-	 * trimBoundaries().
-	 *
-	 * If until returns true for either point, they may remain in start
-	 * and end positions respectively.
-	 */
-	function expandBoundaries(startPoint, endPoint, until, ignore) {
-		until = until || Fn.returnFalse;
-		ignore = ignore || Fn.returnFalse;
-		startPoint.prevWhile(function (startPoint) {
-			var prevSibling = startPoint.prevSibling();
-			return prevSibling ? ignore(prevSibling) : !until(startPoint.parent());
-		});
-		endPoint.nextWhile(function (endPoint) {
-			return !endPoint.atEnd ? ignore(endPoint.node) : !until(endPoint.parent());
-		});
-	}
-
-	/**
-	 * Ensures that the given startPoint is not in an end position and
-	 * the given endPoint is not in a start position by moving the
-	 * points to the right and left respectively - the opposite of
-	 * expandBoundaries().
-	 *
-	 * If the boundaries are equal (collapsed), or become equal during
-	 * this operation, or if until returns true for either point, they
-	 * may remain in start and end position respectively.
-	 */
-	function trimBoundaries(startPoint, endPoint, until, ignore) {
-		until = until || Fn.returnFalse;
-		ignore = ignore || Fn.returnFalse;
-		startPoint.nextWhile(function (startPoint) {
-			return (!startPoint.equals(endPoint)
-					&& (!startPoint.atEnd ? ignore(startPoint.node) : !until(startPoint.parent())));
-		});
-		endPoint.prevWhile(function (endPoint) {
-			var prevSibling = endPoint.prevSibling();
-			return (!startPoint.equals(endPoint)
-					&& (prevSibling ? ignore(prevSibling) : !until(endPoint.parent())));
-		});
-	}
-
-	/**
-	 * @param offset if node is a text node, the offset will be ignored.
-	 * @param node if a text node, should have a parent node.
-	 */
-	function cursorFromBoundaryPoint(node, offset) {
-		return cursor(nodeAtOffset(node, offset), isAtEnd(node, offset));
-	}
-
-	function parentsUntil(node, pred) {
-		var parents = [];
-		var parent = node.parentNode;
-		while (parent && !pred(parent)) {
-			parents.push(parent);
-			parent = parent.parentNode;
-		}
-		return parents;
-	}
-
-	function parentsUntilIncl(node, pred) {
-		var parents = parentsUntil(node, pred);
-		var topmost = parents.length ? parents[parents.length - 1] : node;
-		if (topmost.parentNode) {
-			parents.push(topmost.parentNode);
-		}
-		return parents;
-	}
-
-	function childAndParentsUntil(node, pred) {
-		if (pred(node)) {
-			return [];
-		}
-		var parents = parentsUntil(node, pred);
-		parents.unshift(node);
-		return parents;
-	}
-
-	function childAndParentsUntilIncl(node, pred) {
-		if (pred(node)) {
-			return [node];
-		}
-		var parents = parentsUntilIncl(node, pred);
-		parents.unshift(node);
-		return parents;
-	}
-
-	function childAndParentsUntilNode(node, untilNode) {
-		return childAndParentsUntil(node, function (nextNode) {
-			return nextNode === untilNode;
-		});
-	}
-
-	function childAndParentsUntilInclNode(node, untilInclNode) {
-		return childAndParentsUntilIncl(node, function (nextNode) {
-			return nextNode === untilInclNode;
-		});
-	}
-
-	function nextWhile(node, cond, arg) {
-		while (node && cond(node, arg)) {
-			node = node.nextSibling;
-		}
-		return node;
-	}
-
-	function prevWhile(node, cond, arg) {
-		while (node && cond(node, arg)) {
-			node = node.prevSibling;
-		}
-		return node;
-	}
-
-	// http://ejohn.org/blog/comparing-document-position/
-	// http://www.quirksmode.org/blog/archives/2006/01/contains_for_mo.html
-	function contains(a, b) {
-		return (1 === a.nodeType
-				? (a.contains
-				   ? a != b && a.contains(b)
-				   : !!(a.compareDocumentPosition(b) & 16))
-				: false);
-	}
-
-	function isTextNode(node) {
-		return 3 === node.nodeType;
-	}
-
-	function splitTextNode(node, offset) {
-		// Because node.splitText() is buggy on IE, split it manually.
-		// http://www.quirksmode.org/dom/w3c_core.html
-		var parent = node.parentNode;
-		var text = node.nodeValue;
-		if (0 === offset || offset >= text.length) {
-			return node;
-		}
-		var before = document.createTextNode(text.substring(0, offset));
-		var after = document.createTextNode(text.substring(offset, text.length));
-		parent.insertBefore(before, node);
-		parent.insertBefore(after, node);
-		parent.removeChild(node);
-		return before;
-	}
-
-	/**
-	 * Normalizes the boundary point represented by container and offset
-	 * such that it will not point to the start or end of a text node
-	 * which reduces the number of different states the range can be in,
-	 * and thereby increases the the robusteness of the code written
-	 * against it slightly.
-	 */
-	function normalizeSetRange(setRange, range, container, offset) {
-		if (3 === container.nodeType && container.parentNode) {
-			if (!offset) {
-				offset = nodeIndex(container);
-				container = container.parentNode;
-			} else if (offset === container.length) {
-				offset = nodeIndex(container) + 1;
-				container = container.parentNode;
-			}
-		}
-		setRange.call(range, container, offset);
-	}
-
-	function setRangeStart(range, container, offset) {
-		normalizeSetRange(range.setStart, range, container, offset);
-	}
-
-	function setRangeEnd(range, container, offset) {
-		normalizeSetRange(range.setEnd, range, container, offset);
-	}
-
-	function walkUntil(node, fn, until, arg) {
-		while (node && !until(node, arg)) {
-			var next = node.nextSibling;
-			fn(node, arg);
-			node = next;
-		}
-	}
-
-	function walk(node, fn, arg) {
-		walkUntil(node, fn, Fn.returnFalse, arg);
-	}
-
-	/**
-	 * Depth-first postwalk of the given DOM node.
-	 */
-	function walkRec(node, fn, arg) {
-		if (1 === node.nodeType) {
-			walk(node.firstChild, function (node) {
-				walkRec(node, fn, arg);
-			});
-		}
-		fn(node, arg);
-	}
-
-	function walkUntilNode(node, fn, untilNode, arg) {
-		walkUntil(node, fn, function (nextNode) {
-			return nextNode === untilNode;
-		}, arg);
-	}
-
-	function StableRange(range) {
-		if (!range) {
-			return;
-		}
-		this.startContainer = range.startContainer;
-		this.startOffset = range.startOffset;
-		this.endContainer = range.endContainer;
-		this.endOffset = range.endOffset;
-		this.commonAncestorContainer = range.commonAncestorContainer;
-		this.collapsed = range.collapsed;
-	}
-
-	StableRange.prototype.update = function () {
-		if (!this.startContainer || !this.endContainer) {
-			return;
-		}
-		this.collapsed = (this.startContainer === this.endContainer
-						  && this.startOffset === this.endOffset);
-		var start = childAndParentsUntil(this.startContainer, Fn.returnFalse);
-		var end   = childAndParentsUntil(this.endContainer, Fn.returnFalse);
-		this.commonAncestorContainer = Arrays.intersect(start, end)[0];
-	};
-
-	StableRange.prototype.setStart = function (sc, so) {
-		this.startContainer = sc;
-		this.startOffset = so;
-		this.update();
-	};
-
-	StableRange.prototype.setEnd = function (ec, eo) {
-		this.endContainer = ec;
-		this.endOffset = eo;
-		this.update();
-	};
-
-	function setRangeStartFromCursor(range, cursor) {
-		if (cursor.atEnd) {
-			range.setStart(cursor.node, nodeLength(cursor.node));
-		} else {
-			range.setStart(cursor.node.parentNode, nodeIndex(cursor.node));
-		}
-	}
-
-	function setRangeEndFromCursor(range, cursor) {
-		if (cursor.atEnd) {
-			range.setEnd(cursor.node, nodeLength(cursor.node));
-		} else {
-			range.setEnd(cursor.node.parentNode, nodeIndex(cursor.node));
-		}
-	}
-
-	function setRangeFromBoundaries(range, startPoint, endPoint) {
-		setRangeStartFromCursor(range, startPoint);
-		setRangeEndFromCursor(range, endPoint);
-	}
-
-	function setRangeFromRef(range, ref) {
-		range.setStart(ref.startContainer, ref.startOffset);
-		range.setEnd(ref.endContainer, ref.endOffset);
-	}
-
-	/**
-	 * A native range is live, which means that modifying the DOM may
-	 * mutate the range. Also, using setStart/setEnd may not set the
-	 * properties correctly (the browser may perform its own
-	 * normalization of boundary points). The behaviour of a native
-	 * range is very erratic and should be converted to a stable range
-	 * as the first thing in any algorithm.
-	 */
-	function stableRange(range) {
-		return new StableRange(range);
-	}
-
-	function adjustRangeAfterSplit(container, offset, range, setRange, splitNode, splitOffset, newNodeBeforeSplit) {
-		if (container === splitNode) {
-			if (offset <= splitOffset || !splitOffset) {
-				container = newNodeBeforeSplit;
-			} else {
-				container = newNodeBeforeSplit.nextSibling;
-				offset -= splitOffset;
-			}
-		} else if (container === newNodeBeforeSplit.parentNode) {
-			var nidx = nodeIndex(newNodeBeforeSplit);
-			if (offset > nidx) {
-				offset += 1;
-			}
-		}
-		setRange(range, container, offset);
-	}
-
-	function adjustBoundaryPointAfterJoin(container, offset, range, setRange, node, nodeLen, sibling, siblingLen, parentNode, nidx, prev) {
-		if (container === node) {
-			container = sibling;
-			offset += prev ? siblingLen : 0;
-		} else if (container === sibling) {
-			offset += prev ? 0 : nodeLen;
-		} else if (container === parentNode) {
-			if (offset === nidx) {
-				container = sibling;
-				offset = prev ? siblingLen : 0;
-			} else if (!prev && offset === nidx + 1) {
-				container = sibling;
-				offset = nodeLen;
-			} else if (offset > nidx) {
-				offset -= 1;
-			}
-		}
-		setRange(range, container, offset);
-	}
-
-	function adjustBoundaryPointAfterRemove(container, offset, range, setRange, node, parentNode, nidx) {
-		if (container === node || contains(node, container)) {
-			container = parentNode;
-			offset = nidx;
-		} else if (container === parentNode) {
-			if (offset > nidx) {
-				offset -= 1;
-			}
-		}
-		setRange(range, container, offset);
-	}
-
-	/**
-	 * Splits the given text node at the given offset and, if the given
-	 * range happens to have start or end containers equal to the given
-	 * text node, adjusts it such that start and end position will point
-	 * at the same position in the new text nodes.
-	 */
-	function splitTextNodeAdjustRange(splitNode, splitOffset, range) {
-		if (3 !== splitNode.nodeType) {
-			return;
-		}
-		// Because the range may change due to the DOM modification
-		// (automatically by the browser).
-		var sc = range.startContainer;
-		var so = range.startOffset;
-		var ec = range.endContainer;
-		var eo = range.endOffset;
-		var newNodeBeforeSplit = splitTextNode(splitNode, splitOffset);
-		adjustRangeAfterSplit(sc, so, range, setRangeStart, splitNode, splitOffset, newNodeBeforeSplit);
-		adjustRangeAfterSplit(ec, eo, range, setRangeEnd, splitNode, splitOffset, newNodeBeforeSplit);
-	}
-
-	function splitTextContainers(range) {
-		var sc = range.startContainer;
-		var so = range.startOffset;
-		splitTextNodeAdjustRange(sc, so, range);
-		// Because the range may have been adjusted.
-		var ec = range.endContainer;
-		var eo = range.endOffset;
-		splitTextNodeAdjustRange(ec, eo, range);
-	}
-
-	function joinTextNodeOneWay(node, sibling, range, prev) {
-		if (!sibling || 3 !== sibling.nodeType) {
-			return node;
-		}
-		// Because the range may change due to the DOM modication
-		// (automatically by the browser).
-		var sc = range.startContainer;
-		var so = range.startOffset;
-		var ec = range.endContainer;
-		var eo = range.endOffset;
-		var parentNode = node.parentNode;
-		var nidx = nodeIndex(node);
-		var nodeLen = node.length;
-		var siblingLen = sibling.length;
-		sibling.insertData(prev ? siblingLen : 0, node.data);
-		parentNode.removeChild(node);
-		adjustBoundaryPointAfterJoin(sc, so, range, setRangeStart, node, nodeLen, sibling, siblingLen, parentNode, nidx, prev);
-		adjustBoundaryPointAfterJoin(ec, eo, range, setRangeEnd, node, nodeLen, sibling, siblingLen, parentNode, nidx, prev);
-		return sibling;
-	}
-
-	function joinTextNodeAdjustRange(node, range) {
-		if (3 !== node.nodeType) {
-			return;
-		}
-		node = joinTextNodeOneWay(node, node.previousSibling, range, true);
-		joinTextNodeOneWay(node, node.nextSibling, range, false);
-	}
-
-	function removePreservingRanges(node, ranges) {
-		var range;
-		// Because the range may change due to the DOM modification
-		// (automatically by the browser).
-		var boundaries = [];
-		var i;
-		for (i = 0; i < ranges.length; i++) {
-			range = ranges[i];
-			boundaries.push(range);
-			boundaries.push(range.startContainer);
-			boundaries.push(range.startOffset);
-			boundaries.push(range.endContainer);
-			boundaries.push(range.endOffset);
-		}
-		var parentNode = node.parentNode;
-		var nidx = nodeIndex(node);
-		parentNode.removeChild(node);
-		for (i = 0; i < boundaries.length; i += 5) {
-			adjustBoundaryPointAfterRemove(boundaries[i + 1], boundaries[i + 2], boundaries[i], setRangeStart, node, parentNode, nidx);
-			adjustBoundaryPointAfterRemove(boundaries[i + 3], boundaries[i + 4], boundaries[i], setRangeEnd, node, parentNode, nidx);
-		}
-	}
-
-	function removePreservingRange(node, range) {
-		removePreservingRanges(node, [range]);
-	}
-
-	function preservePointForShallowRemove(node, point) {
-		if (point.node === node) {
-			if (point.node.firstChild) {
-				point.next();
-			} else {
-				point.skipNext();
-			}
-		}
-	}
-
-	function preserveBoundaries(node, points, preserveFn) {
-		var i;
-		for (i = 0; i < points.length; i++) {
-			preserveFn(node, points[i]);
-		}
-	}
-
-	function removeShallowPreservingBoundaries(node, points) {
-		preserveBoundaries(node, points, preservePointForShallowRemove);
-		removeShallow(node);
-	}
-
-	function seekBoundaryPoint(range, container, offset, oppositeContainer, oppositeOffset, setFn, ignore, backwards) {
-		var cursor = cursorFromBoundaryPoint(container, offset);
-		// Because when seeking backwards, if the boundary point is
-		// inside a text node, trimming starts after it. When seeking
-		// forwards, the cursor starts before the node, which is what
-		// cursorFromBoundaryPoint() does automatically.
-		if (backwards && 3 === container.nodeType && offset > 0 && offset < container.length) {
-			if (backwards ? cursor.next() : cursor.prev()) {
-				if (!ignore(cursor)) {
-					return;
-				}
-				// Bacause the text node can be ignored, we go back
-				// to the initial position.
-				if (backwards) {
-					cursor.prev();
-				} else {
-					cursor.next();
-				}
-			}
-		}
-		var opposite = cursorFromBoundaryPoint(oppositeContainer, oppositeOffset);
-		var changed = false;
-		while (!cursor.equals(opposite)
-			       && ignore(cursor)
-			       && (backwards ? cursor.prev() : cursor.next())) {
-			changed = true;
-		}
-		if (changed) {
-			setFn(range, cursor);
-		}
-	}
-
-	/**
-	 * Starting with the given range's start and end boundary points,
-	 * seek inward using a cursor, passing the cursor to ignoreLeft and
-	 * ignoreRight, stopping when either of these returns true,
-	 * adjusting the given range to the end positions of both cursors.
-	 *
-	 * The dom cursor passed to ignoreLeft and ignoreRight does not
-	 * traverse positions inside text nodes. The exact rules for when
-	 * text node containers are passed are as follows: If the left
-	 * boundary point is inside a text node, trimming will start before
-	 * it. If the right boundary point is inside a text node, trimming
-	 * will start after it (ignoreRight() is invoked with the cursor
-	 * after the text node that contains the boundary point).
-	 */
-	function trimRange(range, ignoreLeft, ignoreRight) {
-		ignoreLeft = ignoreLeft || Fn.returnFalse;
-		ignoreRight = ignoreRight || Fn.returnFalse;
-		if (range.collapsed) {
-			return;
-		}
-		// Because range may be mutated, we must store its properties
-		// before doing anything else.
-		var sc = range.startContainer;
-		var so = range.startOffset;
-		var ec = range.endContainer;
-		var eo = range.endOffset;
-		seekBoundaryPoint(range, sc, so, ec, eo, setRangeStartFromCursor, ignoreLeft, false);
-		seekBoundaryPoint(range, ec, eo, sc, so, setRangeEndFromCursor, ignoreRight, true);
-	}
-
-	/**
-	 * Like trimRange() but ignores closing (to the left) and opening
-	 * tags (to the right).
-	 */
-	function trimRangeClosingOpening(range, ignoreLeft, ignoreRight) {
-		ignoreLeft = ignoreLeft || Fn.returnFalse;
-		ignoreRight = ignoreRight || Fn.returnFalse;
-		trimRange(range, function (cursor) {
-			return cursor.atEnd || ignoreLeft(cursor.node);
-		}, function (cursor) {
-			return !cursor.prevSibling() || ignoreRight(cursor.prevSibling());
-		});
-	}
-
-	function areRangesEq(a, b) {
-		return a.startContainer === b.startContainer
-			&& a.startOffset    === b.startOffset
-			&& a.endContainer   === b.endContainer
-			&& a.endOffset      === b.endOffset;
-	}
-
-	function insertSelectText(text, range) {
-		// Because empty text nodes are generally not nice and even
-		// cause problems with IE8 (elem.childNodes).
-		if (!text.length) {
-			return;
-		}
-		var node = nodeAtOffset(range.startContainer, range.startOffset);
-		var atEnd = isAtEnd(range.startContainer, range.startOffset);
-		// Because if the node following the insert position is already
-		// a text node we can just reuse it.
-		if (!atEnd && 3 === node.nodeType) {
-			var offset = (3 === range.startContainer.nodeType ? range.startOffset : 0);
-			node.insertData(offset, text);
-			range.setStart(node, offset);
-			range.setEnd(node, offset + text.length);
-			return;
-		}
-		// Because if the node preceding the insert position is already
-		// a text node we can just reuse it.
-		var prev;
-		if (!atEnd) {
-			prev = node.previousSibling;
-		} else {
-			prev = node.lastChild;
-		}
-		if (prev && 3 === prev.nodeType) {
-			prev.insertData(prev.length, text);
-			range.setStart(prev, prev.length - text.length);
-			range.setEnd(prev, prev.length);
-			return;
-		}
-		// Because if we can't reuse any text nodes, we have to insert a
-		// new one.
-		var textNode = document.createTextNode(text);
-		insert(textNode, node, atEnd);
-		range.setStart(textNode, 0);
-		range.setEnd(textNode, textNode.length);
-	}
-
-	function collapseToEnd(range) {
-		range.setStart(range.endContainer, range.endOffset);
-	}
-
-	function rangeFromRangeObject(alohaRange) {
-		var range = Aloha.createRange();
-		range.setStart(alohaRange.startContainer, alohaRange.startOffset);
-		range.setEnd(alohaRange.endContainer, alohaRange.endOffset);
-		return range;
-	}
-
-	function extendToWord(range) {
-		var rangeObject = new RangeObject(range);
-		Dom1.extendToWord(rangeObject);
-		setRangeFromRef(range, rangeObject);
-	}
-
-	function cloneShallow(node) {
-		return node.cloneNode(false);
-	}
-
-	/**
-	 * Sets a style on the given element by modifying its style attribute.
-	 */
-	function setStyle(node, name, value) {
-		// Because only the empty string removes a style.
-		$(node).css(name, value);
-	}
-
-	/**
-	 * Gets a style from the given element's style attribute.
-	 * Note that this is different from the computed/inherited style.
-	 */
-	function getStyle(node, name) {
-		// Because IE7 needs dashesToCamelCase().
-		name = Strings.dashesToCamelCase(name);
-		return node.nodeType === 1 ? node.style[name] : null;
-	}
-
-	/**
-	 * Gets the computed/inherited style of the given node.
-	 * @param node may be a text node.
-	 */
-	function getComputedStyle(node, name) {
-		if (node.currentStyle) {
-			// Because IE7 needs dashesToCamelCase().
-			name = Strings.dashesToCamelCase(name);
-			return node.currentStyle[name];
-		}
-		var doc = node.ownerDocument;
-		if (doc.defaultView && doc.defaultView.getComputedStyle) {
-			var styles = doc.defaultView.getComputedStyle(node, null);
-			if (styles) {
-				return styles[name] || styles.getPropertyValue(name);
-			}
-		}
-		return null;
-	}
-
-	function removeStyle(elem, styleName) {
-		if (Browser.hasRemoveProperty) {
-			elem.style.removeProperty(styleName);
-		} else {
-			// TODO: this is a hack for browsers that don't support
-			//       removeProperty (ie < 9)and will not work correctly
-			//       for all valid inputs, but it's the simplest thing I
-			//       can come up with without implementing a full css
-			//       parser.
-			var $elem = $(elem);
-			var style = $elem.attr('style');
-			// Because concatenating just any input into the regex might
-			// be dangerous.
-			if ((/[^\w\-]/).test(styleName)) {
-				throw "unrecognized style name " + styleName;
-			}
-			var stripRegex = new RegExp('(:?^|;)\\s*' + styleName + '\\s*:.*?(?=;|$)', 'i');
-			style = style.replace(stripRegex, '');
-			$elem.attr('style', style);
-		}
-	}
-
-	return {
-		removeStyle: removeStyle,
-		moveNextAll: moveNextAll,
-		attrNames: attrNames,
-		attrs: attrs,
-		indexByClass: indexByClass,
-		indexByName: indexByName,
-		indexByClassHaveList: indexByClassHaveList,
-		outerHtml: outerHtml,
-		removeShallow: removeShallow,
-		removeShallowPreservingBoundaries: removeShallowPreservingBoundaries,
-		removePreservingRange: removePreservingRange,
-		removePreservingRanges: removePreservingRanges,
-		wrap: wrap,
-		insert: insert,
-		replaceShallow: replaceShallow,
-		cursor: cursor,
-		cursorFromBoundaryPoint: cursorFromBoundaryPoint,
-		trimBoundaries: trimBoundaries,
-		expandBoundaries: expandBoundaries,
-		nodeAtOffset: nodeAtOffset,
-		isAtEnd: isAtEnd,
-		parentsUntil: parentsUntil,
-		parentsUntilIncl: parentsUntilIncl,
-		childAndParentsUntil: childAndParentsUntil,
-		childAndParentsUntilIncl: childAndParentsUntilIncl,
-		childAndParentsUntilNode: childAndParentsUntilNode,
-		childAndParentsUntilInclNode: childAndParentsUntilInclNode,
-		isTextNode: isTextNode,
-		nodeIndex: nodeIndex,
-		splitTextNode: splitTextNode,
-		splitTextContainers: splitTextContainers,
-		joinTextNodeAdjustRange: joinTextNodeAdjustRange,
-		nextWhile: nextWhile,
-		contains: contains,
-		walk: walk,
-		walkRec: walkRec,
-		walkUntil: walkUntil,
-		walkUntilNode: walkUntilNode,
-		stableRange: stableRange,
-		trimRange: trimRange,
-		trimRangeClosingOpening: trimRangeClosingOpening,
-		setRangeFromRef: setRangeFromRef,
-		setRangeStartFromCursor: setRangeStartFromCursor,
-		setRangeEndFromCursor: setRangeEndFromCursor,
-		setRangeFromBoundaries: setRangeFromBoundaries,
-		splitTextNodeAdjustRange: splitTextNodeAdjustRange,
-		insertSelectText: insertSelectText,
-		areRangesEq: areRangesEq,
-		collapseToEnd: collapseToEnd,
-		extendToWord: extendToWord,
-		rangeFromRangeObject: rangeFromRangeObject,
-		cloneShallow: cloneShallow,
-		setStyle: setStyle,
-		getStyle: getStyle,
-		getComputedStyle: getComputedStyle
-	};
-});
-
 /* html.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
@@ -10173,101 +9150,17 @@ define('util/dom2',[
  * recipients can access the Corresponding Source.
  */
 define('util/html',[
-	'util/dom2',
+	'jquery',
+	'util/dom',
 	'util/maps',
 	'util/arrays'
 ], function (
+	jQuery,
 	Dom,
 	Maps,
 	Arrays
 ) {
 	
-
-	// White space characters as defined by HTML 4 (http://www.w3.org/TR/html401/struct/text.html)
-	var nonWhitespaceRx = /[^\r\n\t\f \u200B]/;
-
-	var nonBlockDisplayValuesMap = {
-		"inline": true,
-		"inline-block": true,
-		"inline-table": true,
-		"none": true
-	};
-
-	var blockTypeNodes = {
-		'P': true,
-		'H1': true,
-		'H2': true,
-		'H3': true,
-		'H4': true,
-		'H5': true,
-		'H6': true,
-		'OL': true,
-		'UL': true,
-		'PRE': true,
-		'ADDRESS': true,
-		'BLOCKQUOTE': true,
-		'DL': true,
-		'DIV': true,
-		'fieldset': true,
-		'FORM': true,
-		'HR': true,
-		'NOSCRIPT': true,
-		'TABLE': true
-	};
-
-	/**
-	 * From engine.js
-	 * "A block node is either an Element whose "display" property does not have
-	 * resolved value "inline" or "inline-block" or "inline-table" or "none", or a
-	 * Document, or a DocumentFragment."
-	 * Note that this function depends on style inheritance which only
-	 * works if the given node is attached to the document.
-	 */
-	function hasBlockStyle(node) {
-		return node && ((node.nodeType == 1 && !nonBlockDisplayValuesMap[Dom.getComputedStyle(node, 'display')])
-						|| node.nodeType == 9
-						|| node.nodeType == 11);
-	}
-
-	/**
-	 * From engine.js:
-	 * "An inline node is a node that is not a block node."
-	 * Note that this function depends on style inheritance which only
-	 * works if the given node is attached to the document.
-	 */
-	function hasInlineStyle(node) {
-		return !hasBlockStyle(node);
-	}
-
-	/**
-	 * From engine.js:
-	 * "An editing host is a node that is either an Element with a contenteditable
-	 * attribute set to the true state, or the Element child of a Document whose
-	 * designMode is enabled."
-	 * The check for design mode was removed because we only care about
-	 * contenteditable in Aloha.
-	 */
-	function isEditingHost(node) {
-		return 1 === node.nodeType && "true" === node.contentEditable;
-	}
-
-	/**
-	 * Similar to hasBlockStyle() except relies on the nodeName of the
-	 * given node which works for attached as well as and detached
-	 * nodes.
-	 */
-	function isBlockType(node) {
-		return blockTypeNodes[node.nodeName];
-	}
-
-	/**
-	 * isInlineType() is similar to hasInlineStyle()
-	 * in the same sense as
-	 * isBlockType() is similar to hasBlockStyle()
-	 */
-	function isInlineType(node) {
-		return !isBlockType(node);
-	}
 
 	var inlineFormattableMap = {
 		'A': true,
@@ -10318,6 +9211,154 @@ define('util/html',[
 	];
 
 	/**
+	 * Void elements are elements which are not permitted to contain content.
+	 * https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+	 *
+	 * @type {Object}
+	 */
+	var VOID_ELEMENTS = [
+		'area',
+		'base',
+		'br',
+		'col',
+		'command',
+		'embed',
+		'hr',
+		'img',
+		'input',
+		'keygen',
+		'link',
+		'meta',
+		'param',
+		'source',
+		'track',
+		'wbr'
+	];
+
+	/**
+	 * Text-level semantic and edit elements to be remove during
+	 * copying or pasting.
+	 *
+	 * See:
+	 * http://dev.w3.org/html5/spec/text-level-semantics.html#usage-summary
+	 *
+	 * Configurable.
+	 *
+	 * @type {Array.<string>}
+	 */
+	var TEXT_LEVEL_SEMANTIC_ELEMENTS = [
+		'a',
+		'abbr',
+		'b',
+		'bdi',
+		'bdo',
+		'cite',
+		'code',
+		'del',
+		'dfn',
+		'em',
+		'i',
+		'ins',
+		'kbd',
+		'mark',
+		'q',
+		'rp',
+		'rt',
+		'ruby',
+		's',
+		'samp',
+		'small',
+		'strong',
+		'sub',
+		'sup',
+		'time',
+		'u',
+		'var'
+	];
+
+	/**
+	 * Unicode zero width space characters:
+	 * http://www.unicode.org/Public/UNIDATA/Scripts.txt
+	 *
+	 * @const
+	 * @type {Array.<string>}
+	 */
+	var ZERO_WIDTH_CHARACTERS = [
+		'\\u200B', // ZWSP
+		'\\u200C',
+		'\\u200D',
+		'\\uFEFF'  // ZERO WIDTH NO-BREAK SPACE
+	];
+
+	/**
+	 * Unicode White_Space characters are those that have the Unicode property
+	 * "White_Space" in the Unicode PropList.txt data file.
+	 *
+	 * http://www.unicode.org/Public/UNIDATA/PropList.txt
+	 *
+	 * @const
+	 * @type {Array.<string>}
+	 */
+	var WHITE_SPACE_CHARACTERS_UNICODES = [
+		'\\u0009',
+		'\\u000A',
+		'\\u000B',
+		'\\u000C',
+		'\\u000D',
+		'\\u0020',
+		'\\u0085',
+		'\\u00A0', // NON BREAKING SPACE ("&nbsp;")
+		'\\u1680',
+		'\\u180E',
+		'\\u2000',
+		'\\u2001',
+		'\\u2002',
+		'\\u2003',
+		'\\u2004',
+		'\\u2005',
+		'\\u2006',
+		'\\u2007',
+		'\\u2008',
+		'\\u2009',
+		'\\u200A',
+		'\\u2028',
+		'\\u2029',
+		'\\u202F',
+		'\\u205F',
+		'\\u3000'
+	];
+
+	var wspChars = WHITE_SPACE_CHARACTERS_UNICODES.join('');
+
+	/**
+	 * Regular expression that checks whether a string consists only of one or
+	 * more white space characters.
+	 *
+	 * @type {RegExp}
+	 */
+	var WSP_CHARACTERS = new RegExp('^[' + wspChars + ']+$');
+	var WSP_CHARACTERS_LEFT = new RegExp('^[' + wspChars + ']+');
+	var WSP_CHARACTERS_RIGHT = new RegExp('[' + wspChars + ']+$');
+
+	/**
+	 * Regular expression that matches one or more sequences of zero width
+	 * characters.
+	 *
+	 * @type {RegExp}
+	 */
+	var ZWSP_CHARACTERS = new RegExp('[' + ZERO_WIDTH_CHARACTERS.join('') + ']+');
+	var ZWSP_CHARACTERS_LEFT = new RegExp('^[' + ZERO_WIDTH_CHARACTERS.join('') + ']+');
+	var ZWSP_CHARACTERS_RIGHT = new RegExp('[' + ZERO_WIDTH_CHARACTERS.join('') + ']+$');
+
+	function isWSPorZWSPText(text) {
+		return WSP_CHARACTERS.test(text) || ZWSP_CHARACTERS.test(text);
+	}
+
+	function isWSPorZWSPNode(node) {
+		return 3 === node.nodeType && isWSPorZWSPText(node.data);
+	}
+
+	/**
 	 * Map containing lowercase and uppercase tagnames of block element as keys
 	 * mapped against true.
 	 *
@@ -10341,163 +9382,8 @@ define('util/html',[
 		return 3 === node.nodeType && !node.length;
 	}
 
-	function isWhiteSpacePreserveStyle(cssWhiteSpaceValue) {
-		return (cssWhiteSpaceValue === 'pre'
-				|| cssWhiteSpaceValue === 'pre-wrap'
-				|| cssWhiteSpaceValue === '-moz-pre-wrap');
-	}
-
-	/**
-	 * Returns true if the given node is unrendered whitespace, with the
-	 * caveat that it only examines the given node and not any siblings.
-	 * An additional check is necessary to determine whether the
-	 * whitespace occurrs after/before a linebreaking node.
-	 *
-	 * Taken from
-	 * http://code.google.com/p/rangy/source/browse/trunk/src/js/modules/rangy-cssclassapplier.js
-	 * under the MIT license.
-	 */
-	function isUnrenderedWhitespaceNoBlockCheck(node) {
-		if (3 !== node.nodeType) {
-			return false;
-		}
-		if (!node.length) {
-			return true;
-		}
-		if (nonWhitespaceRx.test(node.nodeValue)) {
-			return false;
-		}
-        var cssWhiteSpace = Dom.getComputedStyle(node.parentNode, 'white-space');
-		if (isWhiteSpacePreserveStyle(cssWhiteSpace)) {
-			return false;
-		}
-		if ('pre-line' === cssWhiteSpace) {
-            if (/[\r\n]/.test(node.data)) {
-                return false;
-            }
-        }
-		return true;
-	}
-
-	/**
-	 * Empty inline elements are unrendered, with the exception of img
-	 * and br elements. Idea from engine.js.
-	 */
-	function isRenderedEmptyInlineNode(node) {
-		return 'IMG' === node.nodeName || 'BR' === node.nodeName;
-	}
-
-	/**
-	 * Returns true for nodes that introduce linebreaks.
-	 */
-	function isLinebreakingNode(node) {
-		return 'BR' === node.nodeName || hasBlockStyle(node);
-	}
-
-	/**
-	 * Returns true if the node at point is unrendered, with the caveat
-	 * that it only examines the node at point and not any siblings.
-	 * An additional check is necessary to determine whether the
-	 * whitespace occurrs after/before a linebreaking node.
-	 */
-	function isUnrenderedAtPoint(point) {
-		return (isUnrenderedWhitespaceNoBlockCheck(point.node)
-				|| (1 === point.node.nodeType
-					&& hasInlineStyle(point.node)
-					&& !isRenderedEmptyInlineNode(point.node)));
-	}
-
-	/**
-	 * Tries to move the given point to the end of the line, stopping to
-	 * the left of a br or block node, ignoring any unrendered
-	 * nodes. Returns true if the point was moved, false if not.
-	 */
-	function skipUnrenderedToEndOfLine(point) {
-		var cursor = point.clone();
-		cursor.nextWhile(isUnrenderedAtPoint);
-		if (!isLinebreakingNode(cursor.node)) {
-			return false;
-		}
-		point.setFrom(cursor);
-		return true;
-	}
-
-	/**
-	 * Tries to move the given point to the start of the line, stopping
-	 * to the right of a br or block node, ignoring any unrendered
-	 * nodes. Returns true if the point was moved, false if not.
-	 */
-	function skipUnrenderedToStartOfLine(point) {
-		var cursor = point.clone();
-		cursor.prev();
-		cursor.prevWhile(isUnrenderedAtPoint);
-		if (!isLinebreakingNode(cursor.node)) {
-			return false;
-		}
-		var isBr = ('BR' === cursor.node.nodeName);
-		cursor.next(); // after/out of the linebreaking node
-		// Because point may be to the right of a br at the end of a
-		// block, in which case the line starts before the br.
-		if (isBr) {
-			var endOfBlock = point.clone();
-			if (skipUnrenderedToEndOfLine(endOfBlock) && endOfBlock.atEnd) {
-				cursor.skipPrev(); // before the br
-				cursor.prevWhile(isUnrenderedAtPoint);
-				if (!isLinebreakingNode(cursor.node)) {
-					return false;
-				}
-				cursor.next(); // after/out of the linebreaking node
-			}
-		}
-		point.setFrom(cursor);
-		return true;
-	}
-
-	/**
-	 * Tries to move the given boundary to the start of line, skipping
-	 * over any unrendered nodes, or if that fails to the end of line
-	 * (after a br element if present), and for the last line in a
-	 * block, to the very end of the block.
-	 *
-	 * If the selection is inside a block with only a single empty line
-	 * (empty except for unrendered nodes), and both boundary points are
-	 * normalized, the selection will be collapsed to the start of the
-	 * block.
-	 *
-	 * For some operations it's useful to think of a block as a number
-	 * of lines, each including its respective br and any preceding and
-	 * following unrendered whitespace.
-	 */
-	function normalizeBoundary(point) {
-		if (skipUnrenderedToStartOfLine(point)) {
-			return true;
-		}
-		if (!skipUnrenderedToEndOfLine(point)) {
-			return false;
-		}
-		if ('BR' === point.node.nodeName) {
-			point.skipNext();
-			// Because, if this is the last line in a block, any
-			// unrendered whitespace after the last br will not
-			// constitute an independent line, and as such we must
-			// include it in the last line.
-			var endOfBlock = point.clone();
-			if (skipUnrenderedToEndOfLine(endOfBlock) && endOfBlock.atEnd) {
-				point.setFrom(endOfBlock);
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Returns true if the given node is unrendered whitespace.
-	 */
-	function isUnrenderedWhitespace(node) {
-		if (!isUnrenderedWhitespaceNoBlockCheck(node)) {
-			return false;
-		}
-		// Algorithm like engine.js isCollapsedWhitespaceNode().
-		return skipUnrenderedToEndOfLine(Dom.cursor(node, false)) || skipUnrenderedToStartOfLine(Dom.cursor(node, false));
+	function isInlineFormattable(node) {
+		return inlineFormattableMap[node.nodeName];
 	}
 
 	/**
@@ -10528,6 +9414,10 @@ define('util/html',[
 		return found;
 	}
 
+	function isEditingHost(node) {
+		return 1 === node.nodeType && "true" === node.contentEditable;
+	}
+
 	/**
 	 * Starting from the given node, and working backwards through the siblings,
 	 * find the node that satisfies the given condition.
@@ -10545,16 +9435,11 @@ define('util/html',[
 		return node;
 	}
 
-	function isEmpty(elem) {
-		var child = elem.firstChild;
-		while (child) {
-			if (!isUnrenderedWhitespace(child)
-				    && (1 === child.nodeType || 3 === child.nodeType)) {
-				return true;
-			}
-			child = child.nextSibling;
+	function findNodeLeft(node, condition) {
+		while (node && !condition(node)) {
+			node = node.nextSibling;
 		}
-		return true;
+		return node;
 	}
 
 	/**
@@ -10565,72 +9450,124 @@ define('util/html',[
 	 * @return {boolean} False if the editable may not contain paragraphs
 	 */
 	function allowNestedParagraph(editable) {
-		if (editable.obj.prop("tagName") === "SPAN" ||
-				editable.obj.prop("tagName") === "P") {
-			return false;
+		if (editable.obj[0] && Dom.allowsNesting(editable.obj[0], jQuery("<p>")[0])) {
+			return true;
 		}
-		return true;
-	}
-
-	// TODO currently this function only knows about 'background-color'
-	// not being inherited, while 'color', 'font-size', 'font-family'
-	// are inherited. Any other relevant styles should be added when
-	// needed.
-	function isStyleInherited(styleName) {
-		return 'background-color' !== styleName;
+		return false;
 	}
 
 	/**
-	 * Returns true if the given character is a control
-	 * character. Control characters are usually not rendered if they
-	 * are inserted into the DOM. Returns false for whitespace 0x20
-	 * (which may or may not be rendered see isUnrenderedWhitespace())
-	 * and non-breaking whitespace 0xa0 but returns true for tab 0x09
-	 * and linebreak 0x0a and 0x0d.
+	 * Removes a strange characters from at the beginning and end of the string
+	 * 
+	 * @param {String} str A string to be trimmed
+	 * 
+	 * @return {String}
 	 */
-	function isControlCharacter(chr) {
-		// Regex matches C0 and C1 control codes, which seems to be good enough.
-		// "The C0 set defines codes in the range 00HEX–1FHEX and the C1
-		// set defines codes in the range 80HEX–9FHEX."
-		// In addition, we include \x007f which is "delete", which just
-		// seems like a good idea.
-		// http://en.wikipedia.org/wiki/List_of_Unicode_characters
-		// http://en.wikipedia.org/wiki/C0_and_C1_control_codes
-		return (/[\x00-\x1f\x7f-\x9f]/).test(chr);
+	function trimWhitespaceCharacters(str) {
+		return str
+			.replace(WSP_CHARACTERS_LEFT, '')
+			.replace(WSP_CHARACTERS_RIGHT, '')
+			.replace(ZWSP_CHARACTERS_LEFT, '')
+			.replace(ZWSP_CHARACTERS_RIGHT, '');
+	}
+
+	function isUnrenderedNode(node) {
+		if (3 === node.nodeType && 0 === node.data.length) {
+			return true;
+		}
+		if ((node === node.parentNode.lastChild)
+				&& isBlock(node.parentNode)
+					&& 'BR' === node.nodeName) {
+			return true;
+		}
+		return isWSPorZWSPNode(node);
 	}
 
 	return {
-		isControlCharacter: isControlCharacter,
-		isStyleInherited: isStyleInherited,
 		BLOCKLEVEL_ELEMENTS: BLOCKLEVEL_ELEMENTS,
-		isBlockType: isBlockType,
-		isInlineType: isInlineType,
-		hasBlockStyle: hasBlockStyle,
-		hasInlineStyle: hasInlineStyle,
+		VOID_ELEMENTS: VOID_ELEMENTS,
+		TEXT_LEVEL_SEMANTIC_ELEMENTS: TEXT_LEVEL_SEMANTIC_ELEMENTS,
 		isBlock: isBlock,
-		isUnrenderedWhitespace: isUnrenderedWhitespace,
-		isWhiteSpacePreserveStyle: isWhiteSpacePreserveStyle,
-		skipUnrenderedToStartOfLine: skipUnrenderedToStartOfLine,
-		skipUnrenderedToEndOfLine: skipUnrenderedToEndOfLine,
-		normalizeBoundary: normalizeBoundary,
 		isIgnorableWhitespace: isIgnorableWhitespace,
-		isEmpty: isEmpty,
+		isInlineFormattable: isInlineFormattable,
 		isProppedBlock: isProppedBlock,
 		isEditingHost: isEditingHost,
+		findNodeLeft: findNodeLeft,
 		findNodeRight: findNodeRight,
-		allowNestedParagraph: allowNestedParagraph
+		allowNestedParagraph: allowNestedParagraph,
+		trimWhitespaceCharacters: trimWhitespaceCharacters,
+		isWSPorZWSPNode: isWSPorZWSPNode,
+		isWSPorZWSPText: isWSPorZWSPText,
+		isUnrenderedNode: isUnrenderedNode
 	};
 });
 
-define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2', 'util/html', 'jquery'], function (Aloha, $_, Maps, Dom, Html, jQuery) {
+define('aloha/engine',[
+	'aloha/core',
+	'aloha/ecma5shims',
+	'util/maps',
+	'util/html',
+	'util/dom',
+	'jquery'
+], function (
+	Aloha,
+	$_,
+	Maps,
+	Html,
+	Dom,
+	jQuery
+) {
 	
 
+	/**
+	 *
+	 * @param obj
+	 * @param attr
+	 * @returns {Boolean} true
+	 */
 	function hasAttribute(obj, attr) {
 		var native_method = obj.hasAttribute;
 		if (native_method) {
 			return obj.hasAttribute(attr);
 		}
-		return (typeof obj.attributes[attr] != "undefined");
+		return (typeof obj.attributes[attr] !== 'undefined');
+	}
+
+	/**
+	 * Insert the node `node` after `preceding`.
+	 *
+	 * @param {Element} node
+	 * @param {Element} preceding
+	 * @return {Element}
+	 */
+	function insertAfter(node, preceding) {
+		var next = preceding.nextSibling,
+		    parent = preceding.parentNode;
+		if (next) {
+			parent.insertBefore(node, next);
+		} else {
+			parent.appendChild(node);
+		}
+		return node;
+	}
+
+	/**
+	 * Splits text node `node` at the given text index.
+	 *
+	 * Note that we cannot use splitText() because it is bugridden in IE 9.
+	 *
+	 * Borrowed from rangy.
+	 *
+	 * @param {Element} node
+	 * @param {number} index
+	 * @return {Element}
+	 */
+	function splitText(node, index) {
+		var newNode = node.cloneNode(false);
+		newNode.deleteData(0, index);
+		node.deleteData(index, node.length - index);
+		insertAfter(newNode, node);
+		return newNode;
 	}
 
 	var htmlNamespace = "http://www.w3.org/1999/xhtml";
@@ -10928,15 +9865,6 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 	///////////////////////////////////////////////////////////////////////////////
 	//@{
 
-	function getNodeIndex(node) {
-		var ret = 0;
-		while (node.previousSibling) {
-			ret++;
-			node = node.previousSibling;
-		}
-		return ret;
-	}
-
 	// "The length of a Node node is the following, depending on node:
 	//
 	// ProcessingInstruction
@@ -10958,9 +9886,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			return node.length;
 
 		default:
-			// node.childNodes.length doesn't include zero-length text nodes.
-			// http://www.quirksmode.org/dom/w3c_core.html
-			return !node.lastChild ? 0 : getNodeIndex(node.lastChild) + 1;
+			return node.childNodes.length;
 		}
 	}
 
@@ -11009,7 +9935,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			}
 
 			// "If the index of child is less than offset A, return after."
-			if (getNodeIndex(child) < offsetA) {
+			if (Dom.getIndexInParent(child) < offsetA) {
 				return "after";
 			}
 		}
@@ -11345,10 +10271,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		var ret;
 
 		// Set up our global range magic, but only if we're the outermost function
-		if (executionStackDepth == 0 && typeof range != "undefined") {
-			globalRange = range;
-		} else if (executionStackDepth == 0) {
-			globalRange = null;
+		if (executionStackDepth === 0) {
 			globalRange = range;
 		}
 
@@ -11781,7 +10704,26 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 	// (0x0009), carriage returns (0x000D), and/or spaces (0x0020), and whose
 	// parent is an Element whose resolved value for "white-space" is "pre-line"."
 	function isWhitespaceNode(node) {
-		return node && node.nodeType == $_.Node.TEXT_NODE && (node.data == "" || (/^[\t\n\r ]+$/.test(node.data) && node.parentNode && node.parentNode.nodeType == $_.Node.ELEMENT_NODE && jQuery.inArray($_.getComputedStyle(node.parentNode).whiteSpace, ["normal", "nowrap"]) != -1) || (/^[\t\r ]+$/.test(node.data) && node.parentNode && node.parentNode.nodeType == $_.Node.ELEMENT_NODE && $_.getComputedStyle(node.parentNode).whiteSpace == "pre-line") || (/^[\t\n\r ]+$/.test(node.data) && node.parentNode && node.parentNode.nodeType == $_.Node.DOCUMENT_FRAGMENT_NODE));
+		var nodeTypes = $_.Node;
+		if (node && node.nodeType === nodeTypes.TEXT_NODE) {
+			var parentNode = node.parentNode;
+
+			var nodeData = node.data;
+			if (jQuery.trim(nodeData).length === 0) {
+				return true;
+			} else if (parentNode && /^[\t\n\r ]+$/.test(nodeData)) {
+				if (parentNode.nodeType === nodeTypes.ELEMENT_NODE) {
+					if (jQuery.inArray($_.getComputedStyle(parentNode).whiteSpace, ["normal", "nowrap"]) !== -1) {
+						return true;
+					} else if ($_.getComputedStyle(parentNode).whiteSpace === "pre-line") {
+						return true;
+					}
+				} else if (parentNode.nodeType === nodeTypes.DOCUMENT_FRAGMENT_NODE) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -11925,10 +10867,21 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		return false;
 	}
 
-	function isVisibleRec(node) {
+	// "Something is visible if it is a node that either is a block node, or a Text
+	// node that is not a collapsed whitespace node, or an img, or a br that is not
+	// an extraneous line break, or any node with a visible descendant; excluding
+	// any node with an ancestor container Element whose "display" property has
+	// resolved value "none"."
+	function isVisible(node) {
 		var i;
 
-		if (1 === node.nodeType && 'none' === $_.getComputedStyle(node).display) {
+		if (!node) {
+			return false;
+		}
+
+		if ($_(getAncestors(node).concat(node))
+			    .filter(function (node) { return node.nodeType == $_.Node.ELEMENT_NODE; }, true)
+			    .some(function (node) { return $_.getComputedStyle(node).display == "none"; })) {
 			return false;
 		}
 
@@ -11937,36 +10890,12 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		}
 
 		for (i = 0; i < node.childNodes.length; i++) {
-			if (isVisibleRec(node.childNodes[i])) {
+			if (isVisible(node.childNodes[i])) {
 				return true;
 			}
 		}
 
 		return false;
-	}
-
-	// "Something is visible if it is a node that either is a block node, or a Text
-	// node that is not a collapsed whitespace node, or an img, or a br that is not
-	// an extraneous line break, or any node with a visible descendant; excluding
-	// any node with an ancestor container Element whose "display" property has
-	// resolved value "none"."
-	function isVisible(node) {
-
-		if (!node) {
-			return false;
-		}
-
-		var ancestors = getAncestors(node);
-		var len;
-		var i;
-		for (i = 0, len = ancestors.length; i < len; i++) {
-			var ancestor = ancestors[i];
-			if (1 === ancestor.nodeType && 'none' === $_.getComputedStyle(ancestor).display) {
-				return false;
-			}
-		}
-
-		return isVisibleRec(node);
 	}
 
 	// "Something is invisible if it is a node that is not visible."
@@ -12093,7 +11022,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 	 */
 	function removeNode(node) {
 		var ancestor = node.parentNode;
-		var offset = getNodeIndex(node);
+		var offset = Dom.getIndexInParent(node);
 		ancestor.removeChild(node);
 		return {
 			node: ancestor,
@@ -12236,7 +11165,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// (which may be null) and index, and new parent and new index be the new
 		// parent and index."
 		var oldParent = node.parentNode;
-		var oldIndex = getNodeIndex(node);
+		var oldIndex = Dom.getIndexInParent(node);
 		var i;
 
 		// We only even attempt to preserve the global range object and the ranges
@@ -12291,10 +11220,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// attempt to fix this by restoring the range to the first index of
 		// the node that has been moved
 		var newRange = null;
-		if (1 === boundaryPoints[0][0].nodeType
-			    && 1 === boundaryPoints[1][0].nodeType
-			    && boundaryPoints[0][1] > boundaryPoints[0][0].childNodes.length
-			    && boundaryPoints[1][1] > boundaryPoints[1][0].childNodes.length) {
+		if (boundaryPoints[0][1] > boundaryPoints[0][0].childNodes.length && boundaryPoints[1][1] > boundaryPoints[1][0].childNodes.length) {
 			range.setStart(node, 0);
 			range.setEnd(node, 0);
 		} else {
@@ -12307,6 +11233,9 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				newRange.setStart(boundaryPoints[2 * i][0], boundaryPoints[2 * i][1]);
 				newRange.setEnd(boundaryPoints[2 * i + 1][0], boundaryPoints[2 * i + 1][1]);
 				Aloha.getSelection().addRange(newRange);
+			}
+			if (newRange) {
+				range = newRange;
 			}
 		}
 	}
@@ -12393,7 +11322,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		return replacementElement;
 	}
 
-	function removeExtraneousLineBreaksBefore(node, range) {
+	function removeExtraneousLineBreaksBefore(node) {
 		// "Let ref be the previousSibling of node."
 		var ref = node.previousSibling;
 
@@ -12416,11 +11345,11 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "If ref is an editable extraneous line break, remove it from its
 		// parent."
 		if (isEditable(ref) && isExtraneousLineBreak(ref)) {
-			Dom.removePreservingRange(ref, range);
+			ref.parentNode.removeChild(ref);
 		}
 	}
 
-	function removeExtraneousLineBreaksAtTheEndOf(node, range) {
+	function removeExtraneousLineBreaksAtTheEndOf(node) {
 		// "Let ref be node."
 		var ref = node;
 
@@ -12438,15 +11367,15 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "If ref is an editable extraneous line break, remove it from its
 		// parent."
 		if (isEditable(ref) && isExtraneousLineBreak(ref)) {
-			Dom.removePreservingRange(ref, range);
+			ref.parentNode.removeChild(ref);
 		}
 	}
 
 	// "To remove extraneous line breaks from a node, first remove extraneous line
 	// breaks before it, then remove extraneous line breaks at the end of it."
-	function removeExtraneousLineBreaksFrom(node, range) {
-		removeExtraneousLineBreaksBefore(node, range);
-		removeExtraneousLineBreaksAtTheEndOf(node, range);
+	function removeExtraneousLineBreaksFrom(node) {
+		removeExtraneousLineBreaksBefore(node);
+		removeExtraneousLineBreaksAtTheEndOf(node);
 	}
 
 	//@}
@@ -12506,7 +11435,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		}
 
 		// "If new parent's parent is null:"
-		if (!newParent.parentNode) {
+		var newParentParentNode = newParent.parentNode;
+		if (!newParentParentNode) {
 			// "Insert new parent into the parent of the first member of node list
 			// immediately before the first member of node list."
 			nodeList[0].parentNode.insertBefore(newParent, nodeList[0]);
@@ -12519,14 +11449,14 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			var startContainer = range.startContainer,
 				startOffset = range.startOffset,
 				endContainer = range.endContainer,
-				endOffset = range.endOffset;
-			if (startContainer == newParent.parentNode && startOffset >= getNodeIndex(newParent)) {
+				endOffset = range.endOffset,
+			    newParentIndex = Dom.getIndexInParent(newParent);
+
+			if (startOffset >= newParentIndex && startContainer == newParentParentNode) {
 				range.setStart(startContainer, startOffset + 1);
 			}
-			if (endContainer == newParent.parentNode && endOffset >= getNodeIndex(newParent)) {
-				if (endOffset + 1 <= endContainer.childNodes.length) {
-					range.setEnd(endContainer, endOffset + 1);
-				}
+			if (endOffset >= newParentIndex && endContainer == newParentParentNode) {
+				range.setEnd(endContainer, endOffset + 1);
 			}
 
 			// Only try to fix the global range. TODO remove globalRange here
@@ -12535,10 +11465,10 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				startOffset = globalRange.startOffset;
 				endContainer = globalRange.endContainer;
 				endOffset = globalRange.endOffset;
-				if (startContainer == newParent.parentNode && startOffset >= getNodeIndex(newParent)) {
+				if (startContainer == newParentParentNode && startOffset >= newParentIndex) {
 					globalRange.setStart(startContainer, startOffset + 1);
 				}
-				if (endContainer == newParent.parentNode && endOffset >= getNodeIndex(newParent)) {
+				if (endContainer == newParentParentNode && endOffset >= newParentIndex) {
 					globalRange.setEnd(endContainer, endOffset + 1);
 				}
 			}
@@ -12607,11 +11537,11 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			}
 
 			// "Remove new parent's nextSibling from its parent."
-			newParent.parentNode.removeChild(newParent.nextSibling);
+			newParentParentNode.removeChild(newParent.nextSibling);
 		}
 
 		// "Remove extraneous line breaks from new parent."
-		removeExtraneousLineBreaksFrom(newParent, range);
+		removeExtraneousLineBreaksFrom(newParent);
 
 		// "Return new parent."
 		return newParent;
@@ -13476,7 +12406,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "While candidate has children, insert the first child of candidate into
 		// candidate's parent immediately before candidate, preserving ranges."
 		while (candidate.hasChildNodes()) {
-			movePreservingRanges(candidate.firstChild, candidate.parentNode, getNodeIndex(candidate), range);
+			movePreservingRanges(candidate.firstChild, candidate.parentNode, Dom.getIndexInParent(candidate), range);
 		}
 
 		// "Insert candidate into node's parent immediately after node."
@@ -13561,7 +12491,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// immediately before element, preserving ranges."
 			var i;
 			for (i = 0; i < children.length; i++) {
-				movePreservingRanges(children[i], element.parentNode, getNodeIndex(element), range);
+				movePreservingRanges(children[i], element.parentNode, Dom.getIndexInParent(element), range);
 			}
 
 			// "Remove element from its parent."
@@ -13876,7 +12806,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		if (node.nodeType == $_.Node.ELEMENT_NODE && !areEquivalentValues(command, getEffectiveCommandValue(node, command), newValue)) {
 			// "Insert node into the parent of new parent before new parent,
 			// preserving ranges."
-			movePreservingRanges(node, newParent.parentNode, getNodeIndex(newParent), range);
+			movePreservingRanges(node, newParent.parentNode, Dom.getIndexInParent(newParent), range);
 
 			// "Remove new parent from its parent."
 			newParent.parentNode.removeChild(newParent);
@@ -14099,7 +13029,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// the result, and its start offset to zero."
 		if (isEditable(range.startContainer) && range.startContainer.nodeType == $_.Node.TEXT_NODE && range.startOffset != 0 && range.startOffset != getNodeLength(range.startContainer)) {
 			// Account for browsers not following range mutation rules
-			var newNode = range.startContainer.splitText(range.startOffset);
+			var newNode = splitText(range.startContainer, range.startOffset);
 			var newActiveRange = Aloha.createRange();
 			if (range.startContainer == range.endContainer) {
 				var newEndOffset = range.endOffset - range.startOffset;
@@ -14126,7 +13056,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			var activeRange = range;
 			var newStart = [activeRange.startContainer, activeRange.startOffset];
 			var newEnd = [activeRange.endContainer, activeRange.endOffset];
-			activeRange.endContainer.splitText(activeRange.endOffset);
+			splitText(activeRange.endContainer, activeRange.endOffset);
 			activeRange.setStart(newStart[0], newStart[1]);
 			activeRange.setEnd(newEnd[0], newEnd[1]);
 
@@ -14289,7 +13219,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If offset is zero or node has no children, set offset to node's
 			// index, then set node to its parent."
 			if (offset == 0 || !node.hasChildNodes()) {
-				offset = getNodeIndex(node);
+				offset = Dom.getIndexInParent(node);
 				node = node.parentNode;
 
 				// "Otherwise, set node to its child with index offset minus one, then
@@ -14318,7 +13248,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If offset is node's length or node has no children, set offset to
 			// one plus node's index, then set node to its parent."
 			if (offset == getNodeLength(node) || !node.hasChildNodes()) {
-				offset = 1 + getNodeIndex(node);
+				offset = 1 + Dom.getIndexInParent(node);
 				node = node.parentNode;
 
 				// "Otherwise, set node to its child with index offset and set offset
@@ -14352,7 +13282,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "If the first child of original parent is in node list, remove
 		// extraneous line breaks before original parent."
 		if (jQuery.inArray(originalParent.firstChild, nodeList) != -1) {
-			removeExtraneousLineBreaksBefore(originalParent, range);
+			removeExtraneousLineBreaksBefore(originalParent);
 		}
 
 		var firstChildInNodeList = jQuery.inArray(originalParent.firstChild, nodeList) != -1;
@@ -14375,7 +13305,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// parent of original parent immediately after original parent,
 			// preserving ranges."
 			for (i = nodeList.length - 1; i >= 0; i--) {
-				movePreservingRanges(nodeList[i], originalParent.parentNode, 1 + getNodeIndex(originalParent), range);
+				movePreservingRanges(nodeList[i], originalParent.parentNode, 1 + Dom.getIndexInParent(originalParent), range);
 			}
 
 			// "If precedes line break is true, and the last member of node list
@@ -14387,7 +13317,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			}
 
 			// "Remove extraneous line breaks at the end of original parent."
-			removeExtraneousLineBreaksAtTheEndOf(originalParent, range);
+			removeExtraneousLineBreaksAtTheEndOf(originalParent);
 
 			// "Abort these steps."
 			return;
@@ -14417,7 +13347,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "For each node in node list, insert node into the parent of original
 		// parent immediately before original parent, preserving ranges."
 		for (i = 0; i < nodeList.length; i++) {
-			movePreservingRanges(nodeList[i], originalParent.parentNode, getNodeIndex(originalParent), range);
+			movePreservingRanges(nodeList[i], originalParent.parentNode, Dom.getIndexInParent(originalParent), range);
 		}
 
 		// "If follows line break is true, and the first member of node list does
@@ -14432,7 +13362,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// an inline node, remove the first child of original parent from original
 		// parent."
 		if (isInlineNode(nodeList[nodeList.length - 1]) && !isNamedHtmlElement(nodeList[nodeList.length - 1], "br") && isNamedHtmlElement(originalParent.firstChild, "br") && !isInlineNode(originalParent)) {
-			Dom.removePreservingRange(originalParent.firstChild, range);
+			originalParent.removeChild(originalParent.firstChild);
 		}
 
 		// "If original parent has no children:"
@@ -14440,17 +13370,13 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// if the current range is collapsed and at the end of the originalParent.parentNode
 			// the offset will not be available anymore after the next step (remove child)
 			// that's why we need to fix the range to prevent a bogus offset
-			if (originalParent.parentNode === range.startContainer
-				    && originalParent.parentNode === range.endContainer
-				    && range.startContainer === range.endContainer
-				    && range.startOffset === range.endOffset
-				    && originalParent.parentNode.childNodes.length === range.startOffset) {
+			if (originalParent.parentNode === range.startContainer && originalParent.parentNode === range.endContainer && range.startContainer === range.endContainer && range.startOffset === range.endOffset && originalParent.parentNode.childNodes.length === range.startOffset) {
 				range.startOffset = originalParent.parentNode.childNodes.length - 1;
 				range.endOffset = range.startOffset;
 			}
 
 			// "Remove original parent from its parent."
-			Dom.removePreservingRange(originalParent, range);
+			originalParent.parentNode.removeChild(originalParent);
 
 			// "If precedes line break is true, and the last member of node list
 			// does not precede a line break, call createElement("br") on the
@@ -14462,14 +13388,14 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 			// "Otherwise, remove extraneous line breaks before original parent."
 		} else {
-			removeExtraneousLineBreaksBefore(originalParent, range);
+			removeExtraneousLineBreaksBefore(originalParent);
 		}
 
 		// "If node list's last member's nextSibling is null, but its parent is not
 		// null, remove extraneous line breaks at the end of node list's last
 		// member's parent."
 		if (!nodeList[nodeList.length - 1].nextSibling && nodeList[nodeList.length - 1].parentNode) {
-			removeExtraneousLineBreaksAtTheEndOf(nodeList[nodeList.length - 1].parentNode, range);
+			removeExtraneousLineBreaksAtTheEndOf(nodeList[nodeList.length - 1].parentNode);
 		}
 	}
 
@@ -14750,7 +13676,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// into the parent of element immediately before element,
 				// preserving ranges."
 				while (element.hasChildNodes()) {
-					movePreservingRanges(element.firstChild, element.parentNode, getNodeIndex(element), getActiveRange());
+					movePreservingRanges(element.firstChild, element.parentNode, Dom.getIndexInParent(element), getActiveRange());
 				}
 
 				// "Remove element from its parent."
@@ -14766,11 +13692,11 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// Account for browsers not following range mutation rules
 				if (getActiveRange().startContainer == getActiveRange().endContainer) {
 					newEnd = getActiveRange().endOffset - getActiveRange().startOffset;
-					newNode = getActiveRange().startContainer.splitText(getActiveRange().startOffset);
+					newNode = splitText(getActiveRange().startContainer, getActiveRange().startOffset);
 					getActiveRange().setStart(newNode, 0);
 					getActiveRange().setEnd(newNode, newEnd);
 				} else {
-					getActiveRange().setStart(getActiveRange().startContainer.splitText(getActiveRange().startOffset), 0);
+					getActiveRange().setStart(splitText(getActiveRange().startContainer, getActiveRange().startOffset), 0);
 				}
 			}
 
@@ -14787,7 +13713,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				newStart = [getActiveRange().startContainer, getActiveRange().startOffset];
 				newEnd = [getActiveRange().endContainer, getActiveRange().endOffset];
 				getActiveRange().setEnd(document.documentElement, 0);
-				newEnd[0].splitText(newEnd[1]);
+				splitText(newEnd[0], newEnd[1]);
 				getActiveRange().setStart(newStart[0], newStart[1]);
 				getActiveRange().setEnd(newEnd[0], newEnd[1]);
 			}
@@ -14961,37 +13887,9 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 	// "An indentation element is either a blockquote, or a div that has a style
 	// attribute that sets "margin" or some subproperty of it."
 	function isIndentationElement(node) {
-		if (!isAnyHtmlElement(node)) {
-			return false;
-		}
-
-		if (node.tagName == "BLOCKQUOTE") {
-			return true;
-		}
-
-		if (node.tagName != "DIV") {
-			return false;
-		}
-
-		if (typeof node.style.length !== 'undefined') {
-			var i;
-			for (i = 0; i < node.style.length; i++) {
-				// Approximate check
-				if (/^(-[a-z]+-)?margin/.test(node.style[i])) {
-					return true;
-				}
-			}
-		} else {
-			var s;
-			/*jslint forin: true*/ //not sure whether node.style.hasOwnProperty is valid
-			for (s in node.style) {
-				if (/^(-[a-z]+-)?margin/.test(s) && node.style[s] && node.style[s] !== 0) {
-					return true;
-				}
-			}
-			/*jslint forin: false*/
-		}
-
+		// Handling of indentation elements while deleting is somehow broken (pressing backspace
+		// in blockquotes wraps the blockquote into a div, ...)
+		// therefore for now, we pretend that indentation elements do not exist at all.
 		return false;
 	}
 
@@ -15210,11 +14108,11 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				newStartOffset = range.startOffset;
 				newEndOffset = range.endOffset;
 
-				if (range.startContainer === node.parentNode && range.startOffset > getNodeIndex(node)) {
+				if (range.startContainer === node.parentNode && range.startOffset > Dom.getIndexInParent(node)) {
 					// the node (1 element) will be replaced by its contents (contents().length elements)
 					newStartOffset = range.startOffset + (jQuery(node).contents().length - 1);
 				}
-				if (range.endContainer === node.parentNode && range.endOffset > getNodeIndex(node)) {
+				if (range.endContainer === node.parentNode && range.endOffset > Dom.getIndexInParent(node)) {
 					// the node (1 element) will be replaced by its contents (contents().length elements)
 					newEndOffset = range.endOffset + (jQuery(node).contents().length - 1);
 				}
@@ -15236,11 +14134,11 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 					newStartOffset = range.startOffset;
 					newEndOffset = range.endOffset;
 
-					if (range.startContainer === node.parentNode && range.startOffset > getNodeIndex(node)) {
+					if (range.startContainer === node.parentNode && range.startOffset > Dom.getIndexInParent(node)) {
 						// the node (1 element) will be replaced by its contents (contents().length elements)
 						newStartOffset = range.startOffset + (jQuery(node).contents().length - 1);
 					}
-					if (range.endContainer === node.parentNode && range.endOffset > getNodeIndex(node)) {
+					if (range.endContainer === node.parentNode && range.endOffset > Dom.getIndexInParent(node)) {
 						// the node (1 element) will be replaced by its contents (contents().length elements)
 						newEndOffset = range.endOffset + (jQuery(node).contents().length - 1);
 					}
@@ -15290,7 +14188,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 				// "Insert child into the parent of item immediately following
 				// item, preserving ranges."
-				movePreservingRanges(child, item.parentNode, 1 + getNodeIndex(item), range);
+				movePreservingRanges(child, item.parentNode, 1 + Dom.getIndexInParent(item), range);
 
 				// "Otherwise:"
 			} else {
@@ -15348,7 +14246,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// li's parent."
 		var liAncestors = $_(getAncestors(startNode).concat(startNode)).filter(function (ancestor) { return isNamedHtmlElement(ancestor, 'li'); }).slice(-1);
 		if (liAncestors.length) {
-			startOffset = getNodeIndex(liAncestors[0]);
+			startOffset = Dom.getIndexInParent(liAncestors[0]);
 			startNode = liAncestors[0].parentNode;
 		}
 
@@ -15359,7 +14257,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// "If start offset is zero, set it to start node's index, then set
 				// start node to its parent."
 				if (startOffset == 0) {
-					startOffset = getNodeIndex(startNode);
+					startOffset = Dom.getIndexInParent(startNode);
 					startNode = startNode.parentNode;
 
 					// "Otherwise, subtract one from start offset."
@@ -15375,7 +14273,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "While start offset is zero and start node's parent is not null, set
 		// start offset to start node's index, then set start node to its parent."
 		while (startOffset == 0 && startNode.parentNode) {
-			startOffset = getNodeIndex(startNode);
+			startOffset = Dom.getIndexInParent(startNode);
 			startNode = startNode.parentNode;
 		}
 
@@ -15384,7 +14282,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// that li's parent."
 		liAncestors = $_(getAncestors(endNode).concat(endNode)).filter(function (ancestor) { return isNamedHtmlElement(ancestor, 'li'); }).slice(-1);
 		if (liAncestors.length) {
-			endOffset = 1 + getNodeIndex(liAncestors[0]);
+			endOffset = 1 + Dom.getIndexInParent(liAncestors[0]);
 			endNode = liAncestors[0].parentNode;
 		}
 
@@ -15395,7 +14293,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// "If end offset is end node's length, set it to one plus end node's
 				// index, then set end node to its parent."
 				if (endOffset == getNodeLength(endNode)) {
-					endOffset = 1 + getNodeIndex(endNode);
+					endOffset = 1 + Dom.getIndexInParent(endNode);
 					endNode = endNode.parentNode;
 
 					// "Otherwise, add one to end offset.
@@ -15412,7 +14310,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// null, set end offset to one plus end node's index, then set end node to
 		// its parent."
 		while (endOffset == getNodeLength(endNode) && endNode.parentNode) {
-			endOffset = 1 + getNodeIndex(endNode);
+			endOffset = 1 + Dom.getIndexInParent(endNode);
 			endNode = endNode.parentNode;
 		}
 
@@ -15788,7 +14686,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// start offset to start node's index, then set start node to its
 				// parent."
 			} else if (startOffset == 0 && !followsLineBreak(startNode) && inSameEditingHost(startNode, startNode.parentNode)) {
-				startOffset = getNodeIndex(startNode);
+				startOffset = Dom.getIndexInParent(startNode);
 				startNode = startNode.parentNode;
 
 				// "Otherwise, if start node is a Text node and its parent's resolved
@@ -15828,7 +14726,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// host, set end offset to one plus end node's index, then set end node
 				// to its parent."
 			} else if (endOffset == getNodeLength(endNode) && !precedesLineBreak(endNode) && inSameEditingHost(endNode, endNode.parentNode)) {
-				endOffset = 1 + getNodeIndex(endNode);
+				endOffset = 1 + Dom.getIndexInParent(endNode);
 				endNode = endNode.parentNode;
 
 				// "Otherwise, if end node is a Text node and its parent's resolved
@@ -15879,7 +14777,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// start node's length, set start offset to one plus start node's
 				// index, then set start node to its parent."
 			} else if (startNode.nodeType != $_.Node.TEXT_NODE || startOffset == getNodeLength(startNode)) {
-				startOffset = 1 + getNodeIndex(startNode);
+				startOffset = 1 + Dom.getIndexInParent(startNode);
 				startNode = startNode.parentNode;
 
 				// "Otherwise:"
@@ -15909,7 +14807,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 	///// Deleting the contents of a range /////
 	//@{
 
-	function deleteContents(arg1, arg2, arg3, arg4, arg5, preserveRange) {
+	function deleteContents(arg1, arg2, arg3, arg4, arg5) {
 		// We accept several different calling conventions:
 		//
 		// 1) A single argument, which is a range.
@@ -15927,10 +14825,6 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		var flags = {};
 		var i;
 
-		if ('array' !== jQuery.type(preserveRange)) {
-			preserveRange = preserveRange ? [preserveRange] : [];
-		}
-
 		if (arguments.length < 3) {
 			range = arg1;
 		} else {
@@ -15938,12 +14832,11 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			range.setStart(arg1, arg2);
 			range.setEnd(arg3, arg4);
 		}
-		preserveRange = preserveRange.concat([range]);
 		if (arguments.length == 2) {
-			flags = arg2 || flags;
+			flags = arg2;
 		}
 		if (arguments.length == 5) {
-			flags = arg5 || flags;
+			flags = arg5;
 		}
 
 		var blockMerging = null != flags.blockMerging ? !!flags.blockMerging : true;
@@ -15969,7 +14862,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// start offset to one plus the index of start node, then set start
 			// node to its parent and continue this loop from the beginning."
 			if (startOffset == getNodeLength(startNode) && inSameEditingHost(startNode, startNode.parentNode) && isInlineNode(startNode)) {
-				startOffset = 1 + getNodeIndex(startNode);
+				startOffset = 1 + Dom.getIndexInParent(startNode);
 				startNode = startNode.parentNode;
 				continue;
 			}
@@ -16001,7 +14894,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// end node, then set end node to its parent and continue this loop
 			// from the beginning."
 			if (endOffset == 0 && inSameEditingHost(endNode, endNode.parentNode) && isInlineNode(endNode)) {
-				endOffset = getNodeIndex(endNode);
+				endOffset = Dom.getIndexInParent(endNode);
 				endNode = endNode.parentNode;
 				continue;
 			}
@@ -16036,15 +14929,16 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 		// "If start node is a Text node and start offset is 0, set start offset to
 		// the index of start node, then set start node to its parent."
-		if (startNode.nodeType == $_.Node.TEXT_NODE && startOffset == 0) {
-			startOffset = getNodeIndex(startNode);
-			startNode = startNode.parentNode;
-		}
+		// Commented out for unknown reason
+		//if (startNode.nodeType == $_.Node.TEXT_NODE && startOffset == 0 && startNode != endNode) {
+		//		startOffset = Dom.getIndexInParent(startNode);
+		//		startNode = startNode.parentNode;
+		//}
 
 		// "If end node is a Text node and end offset is its length, set end offset
 		// to one plus the index of end node, then set end node to its parent."
-		if (endNode.nodeType == $_.Node.TEXT_NODE && endOffset == getNodeLength(endNode)) {
-			endOffset = 1 + getNodeIndex(endNode);
+		if (endNode.nodeType == $_.Node.TEXT_NODE && endOffset == getNodeLength(endNode) && startNode != endNode) {
+			endOffset = 1 + Dom.getIndexInParent(endNode);
 			endNode = endNode.parentNode;
 		}
 
@@ -16155,7 +15049,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			parent_ = node.parentNode;
 
 			// "Remove node from parent."
-			Dom.removePreservingRanges(node, preserveRange);
+			parent_.removeChild(node);
 
 			// "If strip wrappers is true or parent is not an ancestor container of
 			// start node, while parent is an editable inline node with length 0,
@@ -16164,7 +15058,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			if (stripWrappers || (!isAncestor(parent_, startNode) && parent_ != startNode)) {
 				while (isEditable(parent_) && isInlineNode(parent_) && getNodeLength(parent_) == 0) {
 					var grandparent = parent_.parentNode;
-					Dom.removePreservingRanges(parent_, preserveRange);
+					grandparent.removeChild(parent_);
 					parent_ = grandparent;
 				}
 			}
@@ -16221,13 +15115,13 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		// "If start block has one child, which is a collapsed block prop, remove
 		// its child from it."
 		if (startBlock.children.length == 1 && isCollapsedBlockProp(startBlock.firstChild)) {
-			Dom.removePreservingRanges(startBlock.firstChild, preserveRange);
+			startBlock.removeChild(startBlock.firstChild);
 		}
 
 		// "If end block has one child, which is a collapsed block prop, remove its
 		// child from it."
 		if (endBlock.children.length == 1 && isCollapsedBlockProp(endBlock.firstChild)) {
-			Dom.removePreservingRanges(endBlock.firstChild, preserveRange);
+			endBlock.removeChild(endBlock.firstChild);
 		}
 
 		var values;
@@ -16244,8 +15138,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 			// "Set the start and end of range to (start block, index of reference
 			// node)."
-			range.setStart(startBlock, getNodeIndex(referenceNode));
-			range.setEnd(startBlock, getNodeIndex(referenceNode));
+			range.setStart(startBlock, Dom.getIndexInParent(referenceNode));
+			range.setEnd(startBlock, Dom.getIndexInParent(referenceNode));
 
 			// "If end block has no children:"
 			if (!endBlock.hasChildNodes()) {
@@ -16255,7 +15149,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// parent."
 				while (isEditable(endBlock) && endBlock.parentNode.childNodes.length == 1 && endBlock.parentNode != startBlock) {
 					parent_ = endBlock;
-					Dom.removePreservingRanges(endBlock, preserveRange);
+					parent_.removeChild(endBlock);
 					endBlock = parent_;
 				}
 
@@ -16270,7 +15164,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 				// "If end block is editable, remove it from its parent."
 				if (isEditable(endBlock)) {
-					Dom.removePreservingRanges(endBlock, preserveRange);
+					endBlock.parentNode.removeChild(endBlock);
 				}
 
 				// "Restore states and values from overrides."
@@ -16312,7 +15206,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If children's first member's previousSibling is an editable br,
 			// remove that br from its parent."
 			if (isEditable(children[0].previousSibling) && isNamedHtmlElement(children[0].previousSibling, "br")) {
-				Dom.removePreservingRanges(children[0].previousSibling, preserveRange);
+				children[0].parentNode.removeChild(children[0].previousSibling);
 			}
 
 			// "Otherwise, if start block is a descendant of end block:"
@@ -16334,7 +15228,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If reference node's nextSibling is an inline node and start block's
 			// lastChild is a br, remove start block's lastChild from it."
 			if (isInlineNode(referenceNode.nextSibling) && isNamedHtmlElement(startBlock.lastChild, "br")) {
-				Dom.removePreservingRanges(startBlock.lastChild, preserveRange);
+				startBlock.removeChild(startBlock.lastChild);
 			}
 
 			// "Let nodes to move be a list of nodes, initially empty."
@@ -16365,7 +15259,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If the nextSibling of reference node is a br, remove it from its
 			// parent."
 			if (isNamedHtmlElement(referenceNode.nextSibling, "br")) {
-				Dom.removePreservingRanges(referenceNode.nextSibling, preserveRange);
+				referenceNode.parentNode.removeChild(referenceNode.nextSibling);
 			}
 
 			// "Otherwise:"
@@ -16378,7 +15272,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If end block's firstChild is an inline node and start block's
 			// lastChild is a br, remove start block's lastChild from it."
 			if (isInlineNode(endBlock.firstChild) && isNamedHtmlElement(startBlock.lastChild, "br")) {
-				Dom.removePreservingRanges(startBlock.lastChild, preserveRange);
+				startBlock.removeChild(startBlock.lastChild);
 			}
 
 			// "Record the values of end block's children, and let values be the
@@ -16396,7 +15290,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// parent."
 			while (!endBlock.hasChildNodes()) {
 				parent_ = endBlock.parentNode;
-				Dom.removePreservingRanges(endBlock, preserveRange);
+				parent_.removeChild(endBlock);
 				endBlock = parent_;
 			}
 		}
@@ -16446,9 +15340,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		if (node.hasChildNodes()) {
 			splitParent([].slice.call(toArray(node.childNodes)), range);
 		} else {
-			if (node.parentNode) {
-				node.parentNode.removeChild(node);
-			}
+			node.parentNode.removeChild(node);
 		}
 	}
 
@@ -16462,7 +15354,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			jQuery(node).find('ul,ol,li').each(function () {
 				jQuery(this).contents().each(function () {
 					if (isWhitespaceNode(this)) {
-						var index = getNodeIndex(this);
+						var index = Dom.getIndexInParent(this);
 
 						// if the range points to somewhere behind the removed text node, we reduce the offset
 						if (range.startContainer === this.parentNode && range.startOffset > index) {
@@ -16680,8 +15572,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 			// "Let preceding siblings be the preceding siblings of target, and let
 			// following siblings be the following siblings of target."
-			var precedingSiblings = [].slice.call(toArray(currentAncestor.childNodes), 0, getNodeIndex(target));
-			var followingSiblings = [].slice.call(toArray(currentAncestor.childNodes), 1 + getNodeIndex(target));
+			var precedingSiblings = [].slice.call(toArray(currentAncestor.childNodes), 0, Dom.getIndexInParent(target));
+			var followingSiblings = [].slice.call(toArray(currentAncestor.childNodes), 1 + Dom.getIndexInParent(target));
 
 			// "Indent preceding siblings."
 			indentNodes(precedingSiblings, range);
@@ -17224,7 +16116,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// node is an invisible node, set offset to the index of node, then
 				// set node to its parent."
 				if ((offset == 0 && isInlineNode(node)) || isInvisible(node)) {
-					offset = getNodeIndex(node);
+					offset = Dom.getIndexInParent(node);
 					node = node.parentNode;
 					continue;
 				}
@@ -17266,7 +16158,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			if (node.nodeType == $_.Node.TEXT_NODE && offset != 0) {
 				range.setStart(node, offset - 1);
 				range.setEnd(node, offset - 1);
-				deleteContents(node, offset - 1, node, offset, null, range);
+				deleteContents(node, offset - 1, node, offset);
 				return;
 			}
 
@@ -17357,7 +16249,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// "If start offset is zero, set start offset to the index of start
 				// node and then set start node to its parent."
 				if (startOffset == 0) {
-					startOffset = getNodeIndex(startNode);
+					startOffset = Dom.getIndexInParent(startNode);
 					startNode = startNode.parentNode;
 
 					// "Otherwise, if start node has an editable invisible child with
@@ -17437,7 +16329,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 				// "Delete the contents of the range with start (start node, start
 				// offset − 1) and end (start node, start offset)."
-				deleteContents(startNode, startOffset - 1, startNode, startOffset, null, range);
+				deleteContents(startNode, startOffset - 1, startNode, startOffset);
 
 				// "Abort these steps."
 				return;
@@ -17512,8 +16404,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 					range.setStart(delRange.startContainer, delRange.startOffset);
 					range.setEnd(delRange.startContainer, delRange.startOffset);
 				} else {
-					range.setStart(delRange.startContainer.parentNode, getNodeIndex(delRange.startContainer));
-					range.setEnd(delRange.startContainer.parentNode, getNodeIndex(delRange.startContainer));
+					range.setStart(delRange.startContainer.parentNode, Dom.getIndexInParent(delRange.startContainer));
+					range.setEnd(delRange.startContainer.parentNode, Dom.getIndexInParent(delRange.startContainer));
 				}
 			}
 		}
@@ -17541,20 +16433,12 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 
 			// "If value is not a formattable block name, abort these steps and do
 			// nothing."
-			//
-			// Because we want the possibility to allow blockquote to
-			// act much like h1, h2, etc. as regards to
-			// block-formatting, we allow it here, even though in other
-			// commands (insertparagraph) it behaves differently from
-			// other block types and the spec originally didn't allow it
-			// here.
-			if ($_(formattableBlockNames).indexOf(value) == -1 && value != 'blockquote') {
+			if ($_(formattableBlockNames).indexOf(value) == -1) {
 				return;
 			}
 
 			// "Block-extend the active range, and let new range be the result."
-			var range = getActiveRange();
-			var newRange = blockExtend(range);
+			var newRange = blockExtend(getActiveRange());
 
 			// "Let node list be an empty list of nodes."
 			//
@@ -17668,8 +16552,6 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 					newRange
 				), newRange);
 			}
-			range.setStart(newRange.startContainer, newRange.startOffset);
-			range.setEnd(newRange.endContainer, newRange.endOffset);
 		},
 		indeterm: function () {
 			// "Block-extend the active range, and let new range be the result."
@@ -17822,7 +16704,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 					// inline node, or if node is invisible, set offset to one plus the
 					// index of node, then set node to its parent."
 				} else if ((offset == getNodeLength(node) && isInlineNode(node)) || isInvisible(node)) {
-					offset = 1 + getNodeIndex(node);
+					offset = 1 + Dom.getIndexInParent(node);
 					node = node.parentNode;
 
 					// "Otherwise, if node has a child with index offset and that child
@@ -17903,7 +16785,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// "If end offset is the length of end node, set end offset to one
 				// plus the index of end node and then set end node to its parent."
 				if (endOffset == getNodeLength(endNode)) {
-					endOffset = 1 + getNodeIndex(endNode);
+					endOffset = 1 + Dom.getIndexInParent(endNode);
 					endNode = endNode.parentNode;
 
 					// "Otherwise, if end node has a an editable invisible child with
@@ -18059,14 +16941,14 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// null, set range's start to (parent of start node, index of start
 			// node)."
 			while (range.startOffset == 0 && range.startContainer.parentNode) {
-				range.setStart(range.startContainer.parentNode, getNodeIndex(range.startContainer));
+				range.setStart(range.startContainer.parentNode, Dom.getIndexInParent(range.startContainer));
 			}
 
 			// "While range's end offset is the length of its end node, and its end
 			// node's parent is not null, set range's end to (parent of end node, 1
 			// + index of start node)."
 			while (range.endOffset == getNodeLength(range.endContainer) && range.endContainer.parentNode) {
-				range.setEnd(range.endContainer.parentNode, 1 + getNodeIndex(range.endContainer));
+				range.setEnd(range.endContainer.parentNode, 1 + Dom.getIndexInParent(range.endContainer));
 			}
 
 			// "Delete the contents of range, with block merging false."
@@ -18084,7 +16966,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// offset is zero, set the active range's start and end to (parent of
 			// start node, index of start node)."
 			if (getActiveRange().startContainer.nodeType == $_.Node.TEXT_NODE && getActiveRange().startOffset == 0) {
-				getActiveRange().setStart(getActiveRange().startContainer.parentNode, getNodeIndex(getActiveRange().startContainer));
+				getActiveRange().setStart(getActiveRange().startContainer.parentNode, Dom.getIndexInParent(getActiveRange().startContainer));
 				getActiveRange().collapse(true);
 			}
 
@@ -18092,7 +16974,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// offset is the length of its start node, set the active range's start
 			// and end to (parent of start node, 1 + index of start node)."
 			if (getActiveRange().startContainer.nodeType == $_.Node.TEXT_NODE && getActiveRange().startOffset == getNodeLength(getActiveRange().startContainer)) {
-				getActiveRange().setStart(getActiveRange().startContainer.parentNode, 1 + getNodeIndex(getActiveRange().startContainer));
+				getActiveRange().setStart(getActiveRange().startContainer.parentNode, 1 + Dom.getIndexInParent(getActiveRange().startContainer));
 				getActiveRange().collapse(true);
 			}
 
@@ -18113,8 +16995,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// Not everyone actually supports collapse(), so we do it manually
 			// instead.  Also, we need to modify the actual range we're given as
 			// well, for the sake of autoimplementation.html's range-filling-in.
-			range.setStart(hr.parentNode, 1 + getNodeIndex(hr));
-			range.setEnd(hr.parentNode, 1 + getNodeIndex(hr));
+			range.setStart(hr.parentNode, 1 + Dom.getIndexInParent(hr));
+			range.setEnd(hr.parentNode, 1 + Dom.getIndexInParent(hr));
 			Aloha.getSelection().removeAllRanges();
 			Aloha.getSelection().addRange(range);
 		}
@@ -18160,7 +17042,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				// "For each node in collapsed block props, remove node from its
 				// parent."
 				$_(range.startContainer.childNodes).filter(function (node, range) {
-					return isEditable(node) && isCollapsedBlockProp(node) && getNodeIndex(node) >= range.startOffset;
+					return isEditable(node) && isCollapsedBlockProp(node) && Dom.getIndexInParent(node) >= range.startOffset;
 				}, true).forEach(function (node) {
 					node.parentNode.removeChild(node);
 				});
@@ -18179,8 +17061,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "Call collapse() on the context object's Selection, with last
 			// child's parent as the first argument and one plus its index as the
 			// second."
-			range.setStart(lastChild.parentNode, 1 + getNodeIndex(lastChild));
-			range.setEnd(lastChild.parentNode, 1 + getNodeIndex(lastChild));
+			range.setStart(lastChild.parentNode, 1 + Dom.getIndexInParent(lastChild));
+			range.setEnd(lastChild.parentNode, 1 + Dom.getIndexInParent(lastChild));
 
 			// "Fix disallowed ancestors of each member of descendants."
 			var i;
@@ -18239,8 +17121,8 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// Not everyone actually supports collapse(), so we do it manually
 			// instead.  Also, we need to modify the actual range we're given as
 			// well, for the sake of autoimplementation.html's range-filling-in.
-			range.setStart(img.parentNode, 1 + getNodeIndex(img));
-			range.setEnd(img.parentNode, 1 + getNodeIndex(img));
+			range.setStart(img.parentNode, 1 + Dom.getIndexInParent(img));
+			range.setEnd(img.parentNode, 1 + Dom.getIndexInParent(img));
 			Aloha.getSelection().removeAllRanges();
 			Aloha.getSelection().addRange(range);
 
@@ -18287,7 +17169,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			var newNode, newOffset;
 			if (range.startContainer.nodeType == $_.Node.TEXT_NODE && range.startOffset == 0) {
 				newNode = range.startContainer.parentNode;
-				newOffset = getNodeIndex(range.startContainer);
+				newOffset = Dom.getIndexInParent(range.startContainer);
 				Aloha.getSelection().collapse(newNode, newOffset);
 				range.setStart(newNode, newOffset);
 				range.setEnd(newNode, newOffset);
@@ -18300,7 +17182,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// the active range's start node's index."
 			if (range.startContainer.nodeType == $_.Node.TEXT_NODE && range.startOffset == getNodeLength(range.startContainer)) {
 				newNode = range.startContainer.parentNode;
-				newOffset = 1 + getNodeIndex(range.startContainer);
+				newOffset = 1 + Dom.getIndexInParent(range.startContainer);
 				Aloha.getSelection().collapse(newNode, newOffset);
 				range.setStart(newNode, newOffset);
 				range.setEnd(newNode, newOffset);
@@ -18316,9 +17198,9 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "Call collapse() on the context object's Selection, with br's parent
 			// as the first argument and one plus br's index as the second
 			// argument."
-			Aloha.getSelection().collapse(br.parentNode, 1 + getNodeIndex(br));
-			range.setStart(br.parentNode, 1 + getNodeIndex(br));
-			range.setEnd(br.parentNode, 1 + getNodeIndex(br));
+			Aloha.getSelection().collapse(br.parentNode, 1 + Dom.getIndexInParent(br));
+			range.setStart(br.parentNode, 1 + Dom.getIndexInParent(br));
+			range.setEnd(br.parentNode, 1 + Dom.getIndexInParent(br));
 
 			// "If br is a collapsed line break, call createElement("br") on the
 			// context object and let extra br be the result, then call
@@ -18328,9 +17210,9 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				range.insertNode(createEndBreak());
 
 				// Compensate for nonstandard implementations of insertNode
-				Aloha.getSelection().collapse(br.parentNode, 1 + getNodeIndex(br));
-				range.setStart(br.parentNode, 1 + getNodeIndex(br));
-				range.setEnd(br.parentNode, 1 + getNodeIndex(br));
+				Aloha.getSelection().collapse(br.parentNode, 1 + Dom.getIndexInParent(br));
+				range.setStart(br.parentNode, 1 + Dom.getIndexInParent(br));
+				range.setEnd(br.parentNode, 1 + Dom.getIndexInParent(br));
 			}
 
 			// IE7 is adding this styles: height: auto; min-height: 0px; max-height: none;
@@ -18393,20 +17275,20 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// "If node is a Text node, and offset is neither 0 nor the length of
 			// node, call splitText(offset) on node."
 			if (node.nodeType == $_.Node.TEXT_NODE && offset != 0 && offset != getNodeLength(node)) {
-				node.splitText(offset);
+				splitText(node, offset);
 			}
 
 			// "If node is a Text node and offset is its length, set offset to one
 			// plus the index of node, then set node to its parent."
 			if (node.nodeType == $_.Node.TEXT_NODE && offset == getNodeLength(node)) {
-				offset = 1 + getNodeIndex(node);
+				offset = 1 + Dom.getIndexInParent(node);
 				node = node.parentNode;
 			}
 
 			// "If node is a Text or Comment node, set offset to the index of node,
 			// then set node to its parent."
 			if (node.nodeType == $_.Node.TEXT_NODE || node.nodeType == $_.Node.COMMENT_NODE) {
-				offset = getNodeIndex(node);
+				offset = Dom.getIndexInParent(node);
 				node = node.parentNode;
 			}
 
@@ -18586,6 +17468,17 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 				return;
 			}
 
+			// special behaviour when pressing enter in the last empty paragraph, that is nested in a blockquote
+			if (isNamedHtmlElement(container, "p")
+					&& isNamedHtmlElement(container.parentNode, "blockquote")
+						&& !container.nextSibling
+							&& (!container.hasChildNodes()
+									|| (container.childNodes.length === 1
+											&& isNamedHtmlElement(container.firstChild, "br")))) {
+				jQuery(container.parentNode).after(container);
+				return;
+			}
+
 			// "Let new line range be a new range whose start is the same as
 			// the active range's, and whose end is (container, length of
 			// container)."
@@ -18597,14 +17490,14 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 			// not container, set its start to (parent of start node, index of
 			// start node)."
 			while (newLineRange.startOffset == 0 && newLineRange.startContainer != container) {
-				newLineRange.setStart(newLineRange.startContainer.parentNode, getNodeIndex(newLineRange.startContainer));
+				newLineRange.setStart(newLineRange.startContainer.parentNode, Dom.getIndexInParent(newLineRange.startContainer));
 			}
 
 			// "While new line range's start offset is the length of its start node
 			// and its start node is not container, set its start to (parent of
 			// start node, 1 + index of start node)."
 			while (newLineRange.startOffset == getNodeLength(newLineRange.startContainer) && newLineRange.startContainer != container) {
-				newLineRange.setStart(newLineRange.startContainer.parentNode, 1 + getNodeIndex(newLineRange.startContainer));
+				newLineRange.setStart(newLineRange.startContainer.parentNode, 1 + Dom.getIndexInParent(newLineRange.startContainer));
 			}
 
 			// "Let end of line be true if new line range contains either nothing
@@ -19301,8 +18194,7 @@ define('aloha/engine',['aloha/core', 'aloha/ecma5shims', 'util/maps', 'util/dom2
 		getStateOverride: getStateOverride,
 		setStateOverride: setStateOverride,
 		resetOverrides: resetOverrides,
-		unsetStateOverride: unsetStateOverride,
-		deleteContents: deleteContents
+		unsetStateOverride: unsetStateOverride
 	};
 }); // end define
 // vim: foldmarker=@{,@} foldmethod=marker
@@ -19840,6 +18732,15 @@ define('aloha/selection',[
 
 			this.rangeObject = range =
 					range || new Aloha.Selection.SelectionRange(true);
+
+			// workaround for FF selection bug, where it is possible to move the selection INTO a hr
+			if (range && range.startContainer
+					&& 'HR' === range.startContainer.nodeName
+					&& range.endContainer
+					&& 'HR' === range.endContainer.nodeName) {
+				Aloha.getSelection().removeAllRanges();
+				return true;
+			}
 
 			// Determine the common ancestor container and update the selection
 			// tree.
@@ -22133,6 +21034,106 @@ define('aloha/markup',[
 	}
 
 	/**
+	 * recursively search through parent nodes to find if
+	 * node is child of a specific node.
+	 *
+	 * @param {DOMNode} starting node
+	 * @param {Array[String]} Array of UPPERCASE (!) node names to search for, eg. ["TD"] or ["TD", "TH"].
+	 * @return true if node is child of a node of nodeName, false otherwise
+	 */
+	function isChildOf(node, nodeNames) {
+		var i;
+		if (node.parentNode) {
+			for (i = 0; i < nodeNames.length; i++) {
+				if (nodeNames[i] === node.parentNode.nodeName) {
+					return true;
+				}
+			}
+			return isChildOf(node.parentNode, nodeNames);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Will recursively check if the current node is the first node in
+	 * it's hierarchy up it's ancestor tree until the stopNode is reached.
+	 * Useful to find eg. if you're in the first td within a table.
+	 * Will stop if stopNodeName is encountered or the root node is reached.
+	 *
+	 * @param {DOMnode} node to start from
+	 * @param {String} UPPERCASE node name to stop search at
+	 * @return true if node is the first node, false otherwise
+	 */
+	function isFirstNode(node, stopNodeName) {
+		if (!node.parentNode) {
+			return true;
+		}
+
+		// firstChild will also find textNodes while children[0] will only return non-text nodes
+		var isTextNode = ((node.nodeType === 3 && node.parentNode.firstChild === node) || (node.parentNode.children[0] === node));
+
+		// unfortunately we need to take care of the aloha-table-selectrow and aloha-table-selectcolumn
+		var isTableSelectRow = node.nodeName === 'TR' && node.parentNode.children[0].className.indexOf('aloha-table-selectcolumn') !== -1;
+		var isTableSelectColumn = node.nodeName === 'TD' && node.parentNode.children[0].className.indexOf('aloha-table-selectrow') !== -1;
+		var isFirstNodeOfTable = ((isTableSelectColumn || isTableSelectRow) && node.parentNode.children[1] === node);
+
+		if (isTextNode || isFirstNodeOfTable) {
+			if (node.parentNode.nodeName === stopNodeName) {
+				return true;
+			} else {
+				return isFirstNode(node.parentNode, stopNodeName);
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Will recurseively check if the current node is the last node in
+	 * it's hierarchy up it's ancestor tree until the stopNode is reached.
+	 * Useful to find eg. if you're in the last td within a table.
+	 * Will stop if stopNodeName is encountered or the root node is reached.
+	 * Will ignore whitespace text nodes and caption nodes
+	 *
+	 * @param {DOMnode} node to start from
+	 * @param {String} UPPERCASE node name to stop search at
+	 * @return true if node is the last node, false otherwise
+	 */
+	// implemented as an IIFE because the local helper getLast() should only be defined once
+	var isLastNode = (function () {
+		// get the last node that is not empty text or a table caption
+		function getLast(node) {
+			var last, i;
+
+			for (i = node.childNodes.length - 1; i > -1; i--) {
+				last = node.childNodes[i];
+				if (last.nodeName !== 'CAPTION' && !(last.nodeType === 3 && /^[\t\n\r ]+$/.test(last.data))) {
+					return last;
+				}
+			}
+
+			return node.lastChild;
+		}
+
+		return function (node, stopNodeName) {
+			if (!node.parentNode) {
+				return true;
+			}
+
+			if (getLast(node.parentNode) === node) {
+				if (node.parentNode.nodeName === stopNodeName) {
+					return true;
+				} else {
+					return isLastNode(node.parentNode, stopNodeName);
+				}
+			} else {
+				return false;
+			}
+		};
+	}());
+
+	/**
 	 * Markup object
 	 */
 	Aloha.Markup = Class.extend({
@@ -22237,6 +21238,17 @@ define('aloha/markup',[
 				return false;
 			}
 
+			// UP (38), DOWN (40) keys for table navigation
+			if (event.keyCode === 38 || event.keyCode === 40) {
+				if (Aloha.getSelection().getRangeCount()) {
+					rangeObject = Aloha.getSelection().getRangeAt(0);
+					if (this.processCursorUpDown(rangeObject, event.keyCode)) {
+						return false;
+					}
+				}
+				return true;
+			}
+
 			// BACKSPACE
 			if (event.keyCode === 8) {
 				event.preventDefault(); // prevent history.back() even on exception
@@ -22252,14 +21264,135 @@ define('aloha/markup',[
 
 			// ENTER
 			if (event.keyCode === 13) {
-				if (event.shiftKey || !Html.allowNestedParagraph(Aloha.activeEditable)) {
+				if (!event.shiftKey && Html.allowNestedParagraph(Aloha.activeEditable)) {
+					Aloha.execCommand('insertparagraph', false);
+					return false;
+				// if the shift key is pressed, or if the active editable is not allowed
+				// to contain paragraphs, a linebreak is inserted instead
+				} else {
 					Aloha.execCommand('insertlinebreak', false);
 					return false;
 				}
-				Aloha.execCommand('insertparagraph', false);
-				return false;
 			}
 			return true;
+		},
+
+		/**
+		 * processing up and down cursor keys inside tables
+		 * will only try to figure out if cursor is at first
+		 * or last position in table and exit to the next
+		 * editable node from there
+		 *
+		 * won't do anything if range is not collapsed
+		 * 
+		 * @param {RangyRange} range A range object for the current selection.
+		 * @param {number} keyCode Code of the currently pressed key.
+		 * @return {boolean} true if something was done, false if browser should 
+		 * continue handling the event
+		 */
+		processCursorUpDown: function (range, keyCode) {
+			if (!range.collapsed) {
+				return false;
+			}
+
+			var node = range.startContainer,
+				tableWrapper,
+				cursorNode;
+
+			// UP
+			if (keyCode === 38 &&
+					isFrontPosition(node, range.startOffset) &&
+					isChildOf(node, ['TD', 'TH']) &&
+					isFirstNode(node, 'TABLE')) {
+
+				// we want to position the cursor now in the first 
+				// element before the table, so we need to find the
+				// table wrapper first ...
+				tableWrapper = jQuery(node).parents('div.aloha-table-wrapper').get(0);
+				if (!tableWrapper) {
+					return false;
+				}
+
+				// ... and then find it's previousSibling
+				// which we will descend down to its deepest
+				// nested child node, where we will put the
+				// cursor
+				// prefer previousElemntSibling because Firefox will land you in a
+				// whitespace text node between a preceding <p> and the table otherwise
+				if (tableWrapper.previousElementSibling) {
+					cursorNode = tableWrapper.previousElementSibling;
+				} else {
+					cursorNode = tableWrapper.previousSibling;
+				}
+				while (cursorNode.nodeType !== 3) {
+					cursorNode = cursorNode.lastChild;
+					if (cursorNode === null) {
+						// stop if there is no element to be entered before the table
+						return false;
+					}
+				}
+
+				Aloha.Selection.rangeObject.startContainer = cursorNode;
+				Aloha.Selection.rangeObject.endContainer = cursorNode;
+				Aloha.Selection.rangeObject.startOffset = cursorNode.length;
+				Aloha.Selection.rangeObject.endOffset = cursorNode.length;
+				Aloha.Selection.rangeObject.select();
+
+				// Mozilla needs this fix or else the selection will not work
+				if (Aloha.activeEditable && jQuery.browser.mozilla) {
+					Aloha.activeEditable.obj.focus();
+				}
+
+				return true;
+
+			// DOWN
+			} else if (keyCode === 40 &&
+					isEndPosition(node, range.startOffset) &&
+					isChildOf(node, ['TD', 'TH']) &&
+					isLastNode(node, 'TABLE')) {
+
+				// we want to put the cursor in the first element right 
+				// after the table so we need to find the table wrapper first
+				tableWrapper = jQuery(node).parents('div.aloha-table-wrapper').get(0);
+				if (!tableWrapper) {
+					return false;
+				}
+
+				// and now find its following sibling where we will put
+				// the cursor in the first position
+				// the next elementSibling is preffered over the nextSibling
+				// because Mozilla will sometimes have an empty text node
+				// right next to the table - but we most likely want to put 
+				// the cursor into the next paragraph
+				if (tableWrapper.nextElementSibling) {
+					cursorNode = tableWrapper.nextElementSibling;
+				} else {
+					cursorNode = tableWrapper.nextSibling;
+				}
+
+				while (cursorNode.nodeType !== 3) {
+					cursorNode = cursorNode.firstChild;
+					if (cursorNode === null) {
+						return false;
+					}
+				}
+
+				Aloha.Selection.rangeObject.startContainer = cursorNode;
+				Aloha.Selection.rangeObject.endContainer = cursorNode;
+				Aloha.Selection.rangeObject.startOffset = 0;
+				Aloha.Selection.rangeObject.endOffset = 0;
+				Aloha.Selection.rangeObject.select();
+
+				// Mozilla needs this fix or else the selection will not work
+				if (Aloha.activeEditable && jQuery.browser.mozilla) {
+					Aloha.activeEditable.obj.focus();
+				}
+
+				return true;
+
+			} else {
+				return false;
+			}
 		},
 
 		/**
@@ -23832,6 +22965,1066 @@ define('util/trees',['jquery'], function ($) {
 	};
 });
 
+/* ephemera.js is part of Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php 
+ * 
+ * Aloha Editor is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * Aloha Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * 
+ * As an additional permission to the GNU GPL version 2, you may distribute
+ * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
+ * source code without the copy of the GNU GPL normally required,
+ * provided you include this license notice and a URL through which
+ * recipients can access the Corresponding Source.
+ */
+define('util/browser',['jquery'], function ($) {
+	
+	return {
+		ie7: $.browser.msie && parseInt($.browser.version, 10) < 8,
+		ie : $.browser.msie
+	};
+});
+
+/* dom2.js is part of Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php 
+ * 
+ * Aloha Editor is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * Aloha Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * 
+ * As an additional permission to the GNU GPL version 2, you may distribute
+ * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
+ * source code without the copy of the GNU GPL normally required,
+ * provided you include this license notice and a URL through which
+ * recipients can access the Corresponding Source.
+ */
+define('util/dom2',[
+	'aloha/core',
+	'jquery',
+	'util/functions',
+	'util/maps',
+	'util/arrays',
+	'util/strings',
+	'util/browser',
+	'util/dom',
+	'util/range'
+], function (
+	Aloha,
+	$,
+	Fn,
+	Maps,
+	Arrays,
+	Strings,
+	Browser,
+	Dom1,
+	RangeObject
+) {
+	
+
+	var spacesRx = /\s+/;
+	var attrRegex = /\s([^\/<>\s=]+)(?:=(?:"[^"]*"|'[^']*'|[^>\/\s]+))?/g;
+
+	/**
+	 * Like insertBefore, inserts firstChild into parent before
+	 * refChild, except also inserts all the following siblings of
+	 * firstChild.
+	 */
+	function moveNextAll(parent, firstChild, refChild) {
+		while (firstChild) {
+			var nextChild = firstChild.nextSibling;
+			parent.insertBefore(firstChild, refChild);
+			firstChild = nextChild;
+		}
+	}
+
+	/**
+	 * Used to serialize outerHTML of DOM elements in older (pre-HTML5) Gecko,
+	 * Safari, and Opera browsers.
+	 *
+	 * Beware that XMLSerializer generates an XHTML string (<div class="team" />
+	 * instead of <div class="team"></div>).  It is noted here:
+	 * http://stackoverflow.com/questions/1700870/how-do-i-do-outerhtml-in-firefox
+	 * that some browsers (like older versions of Firefox) have problems with
+	 * XMLSerializer, and an alternative, albeit more expensive option, is
+	 * described.
+	 *
+	 * @type {XMLSerializer|null}
+	 */
+	var Serializer = window.XMLSerializer && new window.XMLSerializer();
+
+	/**
+	 * Gets the serialized HTML that describes the given DOM element and its
+	 * innerHTML.
+	 *
+	 * Polyfill for older versions of Gecko, Safari, and Opera browsers.
+	 * @see https://bugzilla.mozilla.org/show_bug.cgi?id=92264 for background.
+	 *
+	 * @param {HTMLElement} node DOM Element.
+	 * @return {String}
+	 */
+	function outerHtml(node) {
+		var html = node.outerHTML;
+		if (typeof html !== 'undefined') {
+			return html;
+		}
+		try {
+			return Serializer ? Serializer.serializeToString(node) : node.xml;
+		} catch (e) {
+			return node.xml;
+		}
+	}
+
+	/**
+	 * Retrieves the names of all attributes from the given elmenet.
+	 *
+	 * Correctly handles the case that IE7 and IE8 have approx 70-90
+	 * default attributes on each and every element.
+	 *
+	 * This implementation does not iterate over the elem.attributes
+	 * property since that is much slower on IE7 (even when
+	 * checking the attrNode.specified property). Instead it parses the
+	 * HTML of the element. For elements with few attributes the
+	 * performance on IE7 is improved by an order of magnitued.
+	 *
+	 * On IE7, when you clone a <button disabled="disabled"/> or an
+	 * <input checked="checked"/> element the boolean properties will
+	 * not be set on the cloned node. We choose the speed optimization
+	 * over correctness in this case. The dom-to-xhtml plugin has a
+	 * workaround for this case.
+	 */
+	function attrNames(elem) {
+		var names = [];
+		var html = outerHtml(elem.cloneNode(false));
+		var match;
+		while (null != (match = attrRegex.exec(html))) {
+			names.push(match[1]);
+		}
+		return names;
+	}
+
+	/**
+	 * Gets the attributes of the given element.
+	 *
+	 * See attrNames() for an edge case on IE7.
+	 *
+	 * @param elem
+	 *        An element to get the attributes for.
+	 * @return
+	 *        An array containing [name, value] tuples for each attribute.
+	 *        Attribute values will always be strings, but possibly empty strings.
+	 */
+	function attrs(elem) {
+		var as = [];
+		var names = attrNames(elem);
+		var i;
+		var len;
+		for (i = 0, len = names.length; i < len; i++) {
+			var name = names[i];
+			var value = $.attr(elem, name);
+			if (null == value) {
+				value = "";
+			} else {
+				value = value.toString();
+			}
+			as.push([name, value]);
+		}
+		return as;
+	}
+
+	/**
+	 * Like indexByClass() but operates on a list of elements instead.
+	 * The given list may be a NodeList, HTMLCollection, or an array.
+	 */
+	function indexByClassHaveList(elems, classMap) {
+		var index = {},
+		    indexed,
+		    classes,
+		    elem,
+		    cls,
+		    len,
+		    i,
+		    j;
+		for (i = 0, len = elems.length; i < len; i++) {
+			elem = elems[i];
+			if (elem.className) {
+				classes = Strings.words(elem.className);
+				for (j = 0; j < classes.length; j++) {
+					cls = classes[j];
+					if (classMap[cls]) {
+						indexed = index[cls];
+						if (indexed) {
+							indexed.push(elem);
+						} else {
+							index[cls] = [elem];
+						}
+					}
+				}
+			}
+		}
+		return index;
+	}
+
+	/**
+	 * Indexes descendant elements based on the individual classes in
+	 * the class attribute.
+	 *
+	 * Based on these observations;
+	 * 
+	 * * $('.class1, .class2') takes twice as long as $('.class1') on IE7.
+	 *
+	 * * $('.class1, .class2') is fast on IE8 (approx the same as
+	 *   $('.class'), no matter how many classes), but if the individual
+	 *   elements in the result set should be handled differently, the
+	 *   subsequent hasClass('.class1') and hasClass('.class2') calls
+	 *   slow things down again.
+	 *
+	 * * DOM traversal with elem.firstChild elem.nextSibling is very
+	 *   slow on IE7 compared to just iterating over
+	 *   root.getElementsByTagName('*').
+	 *
+	 * * $('name.class') is much faster than just $('.class'), but as
+	 *   soon as you need a single class in classMap that may be present
+	 *   on any element, that optimization doesn't gain anything since
+	 *   then you have to examine every element.
+	 *
+	 * This function will always take approx. the same amount of time
+	 * (on IE7 approx. equivalent to a single call to $('.class')) no
+	 * matter how many entries there are in classMap to index.
+	 *
+	 * This function only makes sense for multiple entries in
+	 * classMap. For a single class lookup, $('.class') or
+	 * $('name.class') is fine (even better in the latter case).
+	 *
+	 * @param root
+	 *        The root element to search for elements to index
+	 *        (will not be included in search).
+	 * @param classMap
+	 *        A map from class name to boolean true.
+	 * @return
+	 *        A map from class name to an array of elements with that class.
+	 *        Every entry in classMap for which elements have been found
+	 *        will have a corresponding entry in the returned
+	 *        map. Entries for which no elements have been found, may or
+	 *        may not have an entry in the returned map.
+	 */
+	function indexByClass(root, classMap) {
+		var elems;
+		if (Browser.ie7) {
+			elems = root.getElementsByTagName('*');
+		} else {
+			// Optimize for browsers that support querySelectorAll/getElementsByClassName.
+			// On IE8 for example, if there is a relatively high
+			// elems/resultSet ratio, performance can improve by a factor of 2.
+			elems = $(root).find('.' + Maps.keys(classMap).join(',.'));
+		}
+		return indexByClassHaveList(elems, classMap);
+	}
+
+	/**
+	 * Indexes descendant elements based on elem.nodeName.
+	 *
+	 * Based on these observations:
+	 *
+	 * * On IE8, for moderate values of names.length, individual calls to
+	 *   getElementsByTagName is just as fast as $root.find('name, name,
+	 *   name, name').
+	 *
+	 * * On IE7, $root.find('name, name, name, name') is extemely slow
+	 *   (can be an order of magnitude slower than individual calls to
+	 *    getElementsByTagName, why is that?).
+	 *
+	 * * Although getElementsByTagName is very fast even on IE7, when
+	 *   names.length > 7 an alternative implementation that iterates
+	 *   over all tags and checks names from a hashmap (similar to how
+	 *   indexByClass does it) may become interesting, but
+	 *   names.length > 7 is unlikely.
+	 *
+	 * This function only makes sense if the given names array has many
+	 * entries. For only one or two different names, calling $('name')
+	 * or context.getElementsByTagName(name) directly is fine (but
+	 * beware of $('name, name, ...') as explained above).
+	 *
+	 * The signature of this function differs from indexByClass by not
+	 * taking a map but instead an array of names.
+	 *
+	 * @param root
+	 *        The root element to search for elements to index
+	 *        (will not be included in search).
+	 * @param names
+	 *        An array of element names to look for.
+	 *        Names must be in all-uppercase (the same as elem.nodeName).
+	 * @return
+	 *        A map from element name to an array of elements with that name.
+	 *        Names will be all-uppercase.
+	 *        Arrays will be proper arrays, not NodeLists.
+	 *        Every entry in classMap for which elements have been found
+	 *        will have a corresponding entry in the returned
+	 *        map. Entries for which no elements have been found, may or
+	 *        may not have an entry in the returned map.
+	 */
+	function indexByName(root, names) {
+		var i,
+		    index = {},
+		    len;
+		for (i = 0, len = names.length; i < len; i++) {
+			var name = names[i];
+			index[name] = $.makeArray(root.getElementsByTagName(name));
+		}
+		return index;
+	}
+
+	function nodeIndex(node) {
+		var ret = 0;
+		while (node.previousSibling) {
+			ret++;
+			node = node.previousSibling;
+		}
+		return ret;
+	}
+
+	/**
+	 * Can't use elem.childNodes.length because
+	 * http://www.quirksmode.org/dom/w3c_core.html
+	 * "IE up to 8 does not count empty text nodes."
+	 */
+	function numChildren(elem) {
+		var count = 0;
+		var child = elem.firstChild;
+		while (child) {
+			count += 1;
+			child = child.nextSibling;
+		}
+		return count;
+	}
+
+	function nodeLength(node) {
+		if (1 === node.nodeType) {
+			return numChildren(node);
+		}
+		if (3 === node.nodeType) {
+			return node.length;
+		}
+		return 0;
+	}
+
+	function isAtEnd(node, offset) {
+		return (1 === node.nodeType
+				&& offset >= numChildren(node))
+			|| (3 === node.nodeType
+				&& offset === node.length
+				&& !node.nextSibling);
+	}
+
+	/**
+	 * @param node if a text node, should have a parent node.
+	 */
+	function nodeAtOffset(node, offset) {
+		if (1 === node.nodeType && offset < numChildren(node)) {
+			node = node.childNodes[offset];
+		} else if (3 === node.nodeType && offset === node.length) {
+			node = node.nextSibling || node.parentNode;
+		}
+		return node;
+	}
+
+	function removeShallow(node) {
+		var parent = node.parentNode;
+		moveNextAll(parent, node.firstChild, node);
+		parent.removeChild(node);
+	}
+
+	function wrap(node, wrapper) {
+		node.parentNode.replaceChild(wrapper, node);
+		wrapper.appendChild(node);
+	}
+
+	function insert(node, ref, atEnd) {
+		if (atEnd) {
+			ref.appendChild(node);
+		} else {
+			ref.parentNode.insertBefore(node, ref);
+		}
+	}
+
+	function Cursor(node, atEnd) {
+		this.node = node;
+		this.atEnd = atEnd;
+	}
+
+	/**
+	 * A cursor has the added utility over other iteration methods of
+	 * iterating over the end position of an element. The start and end
+	 * positions of an element are immediately before the element and
+	 * immediately after the last child respectively. All node positions
+	 * except end positions can be identified just by a node. To
+	 * distinguish between element start and end positions, the
+	 * additional atEnd boolean is necessary.
+	 */
+	function cursor(node, atEnd) {
+		return new Cursor(node, atEnd);
+	}
+
+	Cursor.prototype.next = function () {
+		var node = this.node;
+		var next;
+		if (this.atEnd || 1 !== node.nodeType) {
+			next = node.nextSibling;
+			if (next) {
+				this.atEnd = false;
+			} else {
+				next = node.parentNode;
+				if (!next) {
+					return false;
+				}
+				this.atEnd = true;
+			}
+			this.node = next;
+		} else {
+			next = node.firstChild;
+			if (next) {
+				this.node = next;
+			} else {
+				this.atEnd = true;
+			}
+		}
+		return true;
+	};
+
+	Cursor.prototype.prev = function () {
+		var node = this.node;
+		var prev;
+		if (this.atEnd) {
+			prev = node.lastChild;
+			if (prev) {
+				this.node = prev;
+			} else {
+				this.atEnd = false;
+			}
+		} else {
+			prev = node.previousSibling;
+			if (prev) {
+				if (1 === node.nodeType) {
+					this.atEnd = true;
+				}
+			} else {
+				prev = node.parentNode;
+				if (!prev) {
+					return false;
+				}
+			}
+			this.node = prev;
+		}
+		return true;
+	};
+
+	Cursor.prototype.equals = function (cursor) {
+		return cursor.node === this.node && cursor.atEnd === this.atEnd;
+	};
+
+	Cursor.prototype.clone = function (cursor) {
+		return cursor(cursor.node, cursor.atEnd);
+	};
+
+	Cursor.prototype.insert = function (node) {
+		return insert(node, this.node, this.atEnd);
+	};
+
+	/**
+	 * @param offset if node is a text node, the offset will be ignored.
+	 * @param node if a text node, should have a parent node.
+	 */
+	function cursorFromBoundaryPoint(node, offset) {
+		return cursor(nodeAtOffset(node, offset), isAtEnd(node, offset));
+	}
+
+	function parentsUntil(node, pred) {
+		var parents = [];
+		var parent = node.parentNode;
+		while (parent && !pred(parent)) {
+			parents.push(parent);
+			parent = parent.parentNode;
+		}
+		return parents;
+	}
+
+	function parentsUntilIncl(node, pred) {
+		var parents = parentsUntil(node, pred);
+		var topmost = parents.length ? parents[parents.length - 1] : node;
+		if (topmost.parentNode) {
+			parents.push(topmost.parentNode);
+		}
+		return parents;
+	}
+
+	function childAndParentsUntil(node, pred) {
+		if (pred(node)) {
+			return [];
+		}
+		var parents = parentsUntil(node, pred);
+		parents.unshift(node);
+		return parents;
+	}
+
+	function childAndParentsUntilIncl(node, pred) {
+		if (pred(node)) {
+			return [node];
+		}
+		var parents = parentsUntilIncl(node, pred);
+		parents.unshift(node);
+		return parents;
+	}
+
+	function childAndParentsUntilNode(node, untilNode) {
+		return childAndParentsUntil(node, function (nextNode) {
+			return nextNode === untilNode;
+		});
+	}
+
+	function childAndParentsUntilInclNode(node, untilInclNode) {
+		return childAndParentsUntilIncl(node, function (nextNode) {
+			return nextNode === untilInclNode;
+		});
+	}
+
+	function next(node, until, arg) {
+		while (node && !until(node, arg)) {
+			node = node.nextSibling;
+		}
+		return node;
+	}
+
+	function parent(node, until, arg) {
+		while (node && !until(node, arg)) {
+			node = node.parentNode;
+		}
+		return node;
+	}
+
+	function isTextNode(node) {
+		return 3 === node.nodeType;
+	}
+
+	function splitTextNode(node, offset) {
+		// Because node.splitText() is buggy on IE, split it manually.
+		// http://www.quirksmode.org/dom/w3c_core.html
+		var parent = node.parentNode;
+		var text = node.nodeValue;
+		if (0 === offset || offset >= text.length) {
+			return node;
+		}
+		var before = document.createTextNode(text.substring(0, offset));
+		var after = document.createTextNode(text.substring(offset, text.length));
+		parent.insertBefore(before, node);
+		parent.insertBefore(after, node);
+		parent.removeChild(node);
+		return before;
+	}
+
+	function adjustRangeAfterSplit(range, container, offset, setProp, splitNode, newNodeBeforeSplit) {
+		if (container !== splitNode) {
+			return;
+		}
+		var newNodeLength = newNodeBeforeSplit.length;
+		if (offset === 0) {
+			container = newNodeBeforeSplit.parentNode;
+			offset = nodeIndex(newNodeBeforeSplit);
+		} else if (offset < newNodeLength) {
+			container = newNodeBeforeSplit;
+		} else if (offset === newNodeLength) {
+			container = newNodeBeforeSplit.parentNode;
+			offset = nodeIndex(newNodeBeforeSplit) + 1;
+		} else {// offset > newNodeLength
+			var newNodeAfterSplit = newNodeBeforeSplit.nextSibling;
+			container = newNodeAfterSplit;
+			offset -= newNodeLength;
+		}
+		range[setProp].call(range, container, offset);
+	}
+
+	/**
+	 * Splits the given text node at the given offset and, if the given
+	 * range happens to have start or end containers equal to the given
+	 * text node, adjusts it such that start and end position will point
+	 * at the same position in the new text nodes.
+	 *
+	 * It is guaranteed that an adjusted boundary point will not point
+	 * to the end of a text node. Instead, it will point to the next
+	 * node. This guarantee often happens to be useful.
+	 *
+	 * If splitNode is not a text node, does nothing.
+	 */
+	function splitTextNodeAdjustRange(splitNode, splitOffset, range) {
+		if (3 !== splitNode.nodeType) {
+			return;
+		}
+		var sc = range.startContainer;
+		var so = range.startOffset;
+		var ec = range.endContainer;
+		var eo = range.endOffset;
+		var newNodeBeforeSplit = splitTextNode(splitNode, splitOffset);
+		adjustRangeAfterSplit(range, sc, so, 'setStart', splitNode, newNodeBeforeSplit);
+		adjustRangeAfterSplit(range, ec, eo, 'setEnd', splitNode, newNodeBeforeSplit);
+	}
+
+	function splitTextContainers(range) {
+		var sc = range.startContainer;
+		var so = range.startOffset;
+		splitTextNodeAdjustRange(sc, so, range);
+		// Because the range may have been adjusted.
+		var ec = range.endContainer;
+		var eo = range.endOffset;
+		splitTextNodeAdjustRange(ec, eo, range);
+	}
+
+	function walkUntil(node, fn, until, arg) {
+		while (node && !until(node, arg)) {
+			var next = node.nextSibling;
+			fn(node, arg);
+			node = next;
+		}
+	}
+
+	function walk(node, fn, arg) {
+		walkUntil(node, fn, Fn.returnFalse, arg);
+	}
+
+	/**
+	 * Depth-first postwalk of the given DOM node.
+	 */
+	function walkRec(node, fn, arg) {
+		if (1 === node.nodeType) {
+			walk(node.firstChild, function (node) {
+				walkRec(node, fn, arg);
+			});
+		}
+		fn(node, arg);
+	}
+
+	function walkUntilNode(node, fn, untilNode, arg) {
+		walkUntil(node, fn, function (nextNode) {
+			return nextNode === untilNode;
+		}, arg);
+	}
+
+	function StableRange(range) {
+		if (!range) {
+			return;
+		}
+		this.startContainer = range.startContainer;
+		this.startOffset = range.startOffset;
+		this.endContainer = range.endContainer;
+		this.endOffset = range.endOffset;
+		this.commonAncestorContainer = range.commonAncestorContainer;
+		this.collapsed = range.collapsed;
+	}
+
+	StableRange.prototype.update = function () {
+		if (!this.startContainer || !this.endContainer) {
+			return;
+		}
+		this.collapsed = (this.startContainer === this.endContainer
+						  && this.startOffset === this.endOffset);
+		var start = childAndParentsUntil(this.startContainer, Fn.returnFalse);
+		var end   = childAndParentsUntil(this.endContainer, Fn.returnFalse);
+		this.commonAncestorContainer = Arrays.intersect(start, end)[0];
+	};
+
+	StableRange.prototype.setStart = function (sc, so) {
+		this.startContainer = sc;
+		this.startOffset = so;
+		this.update();
+	};
+
+	StableRange.prototype.setEnd = function (ec, eo) {
+		this.endContainer = ec;
+		this.endOffset = eo;
+		this.update();
+	};
+
+	function setRangeStartFromCursor(range, cursor) {
+		if (cursor.atEnd) {
+			range.setStart(cursor.node, numChildren(cursor.node));
+		} else {
+			range.setStart(cursor.node.parentNode, nodeIndex(cursor.node));
+		}
+	}
+
+	function setRangeEndFromCursor(range, cursor) {
+		if (cursor.atEnd) {
+			range.setEnd(cursor.node, numChildren(cursor.node));
+		} else {
+			range.setEnd(cursor.node.parentNode, nodeIndex(cursor.node));
+		}
+	}
+
+	function setRangeFromRef(range, ref) {
+		range.setStart(ref.startContainer, ref.startOffset);
+		range.setEnd(ref.endContainer, ref.endOffset);
+	}
+
+	/**
+	 * A native range is live, which means that modifying the DOM may
+	 * mutate the range. Also, using setStart/setEnd may not set the
+	 * properties correctly (the browser may perform its own
+	 * normalization of boundary points). The behaviour of a native
+	 * range is very erratic and should be converted to a stable range
+	 * as the first thing in any algorithm.
+	 */
+	function stableRange(range) {
+		return new StableRange(range);
+	}
+
+	/**
+	 * The dom cursor passed to ignoreLeft and ignoreRight does not
+	 * traverse positions inside text nodes. The exact rules for when
+	 * text node containers are passed are as follows: If the left
+	 * boundary point is inside a text node, trimming will start before
+	 * it. If the right boundary point is inside a text node, trimming
+	 * will start after it.
+	 */
+	function trimRange(range, ignoreLeft, ignoreRight) {
+		if (range.collapsed) {
+			return;
+		}
+		var start = cursorFromBoundaryPoint(range.startContainer, range.startOffset);
+		var end = cursorFromBoundaryPoint(range.endContainer, range.endOffset);
+		var setStart = false;
+		while (!start.equals(end) && ignoreLeft(start) && start.next()) {
+			setStart = true;
+		}
+		ignoreRight = ignoreRight || ignoreLeft;
+		var setEnd = false;
+		// Because if the right boundary points is inside a text node,
+		// trimming starts after it.
+		if (3 === range.endContainer.nodeType
+			    && range.endOffset > 0
+			    // Because the cursor already normalizes
+			    // endOffset == endContainer.length to the node next after it.
+			    && range.endOffset < range.endContainer.length
+			    && end.next()) {
+			if (ignoreRight(end)) {
+				end.prev();
+			}
+		}
+		while (!end.equals(start) && ignoreRight(end) && end.prev()) {
+			setEnd = true;
+		}
+		if (setStart) {
+			setRangeStartFromCursor(range, start);
+		}
+		if (setEnd) {
+			setRangeEndFromCursor(range, end);
+		}
+	}
+
+	function trimRangeClosingOpening(range, ignoreLeft, ignoreRight) {
+		ignoreRight = ignoreRight || ignoreLeft;
+		trimRange(range, function (cursor) {
+			return cursor.atEnd || ignoreLeft(cursor.node);
+		}, function (cursor) {
+			var prev = cursor.atEnd ? cursor.node.lastChild : cursor.node.previousSibling;
+			return !prev || ignoreRight(prev);
+		});
+	}
+
+	function areRangesEq(a, b) {
+		return a.startContainer === b.startContainer
+			&& a.startOffset    === b.startOffset
+			&& a.endContainer   === b.endContainer
+			&& a.endOffset      === b.endOffset;
+	}
+
+	function insertSelectText(text, range) {
+		// Because empty text nodes are generally not nice and even
+		// cause problems with IE8 (elem.childNodes).
+		if (!text.length) {
+			return;
+		}
+		splitTextNodeAdjustRange(range.startContainer, range.startOffset, range);
+		var node = nodeAtOffset(range.startContainer, range.startOffset);
+		var atEnd = isAtEnd(range.startContainer, range.startOffset);
+		// Because if the node following the insert position is already
+		// a text node we can just reuse it.
+		if (!atEnd && 3 === node.nodeType) {
+			node.insertData(0, text);
+			range.setStart(node, 0);
+			range.setEnd(node, text.length);
+			return;
+		}
+		// Because if the node preceding the insert position is already
+		// a text node we can just reuse it.
+		var prev;
+		if (!atEnd) {
+			prev = node.previousSibling;
+		} else {
+			prev = node.lastChild;
+		}
+		if (prev && 3 === prev.nodeType) {
+			prev.insertData(prev.length, text);
+			range.setStart(prev, prev.length - text.length);
+			range.setEnd(prev, prev.length);
+			return;
+		}
+		// Because if we can't reuse any text nodes, we have to insert a
+		// new one.
+		var textNode = document.createTextNode(text);
+		insert(textNode, node, atEnd);
+		range.setStart(textNode, 0);
+		range.setEnd(textNode, textNode.length);
+	}
+
+	function collapseToEnd(range) {
+		range.setStart(range.endContainer, range.endOffset);
+	}
+
+	function rangeFromRangeObject(alohaRange) {
+		var range = Aloha.createRange();
+		range.setStart(alohaRange.startContainer, alohaRange.startOffset);
+		range.setEnd(alohaRange.endContainer, alohaRange.endOffset);
+		return range;
+	}
+
+	function extendToWord(range) {
+		var rangeObject = new RangeObject(range);
+		Dom1.extendToWord(rangeObject);
+		setRangeFromRef(range, rangeObject);
+	}
+
+	function cloneShallow(node) {
+		return node.cloneNode(false);
+	}
+
+	/**
+	 * Sets a style on the given element by modifying it's style attribute.
+	 */
+	function setStyle(node, name, value) {
+		// Because only the empty string removes a style.
+		$(node).css(name, null == value ? '' : value);
+	}
+
+	/**
+	 * Gets a style from the given element's style attribute.
+	 * Note that this is different from the computed/inherited style.
+	 */
+	function getStyle(node, name) {
+		// Because IE7 needs dashesToCamelCase().
+		name = Strings.dashesToCamelCase(name);
+		return node.nodeType === 1 ? node.style[name] : null;
+	}
+
+	/**
+	 * Gets the computed/inherited style of the given node.
+	 * @param node may be a text node.
+	 */
+	function getComputedStyle(node, name) {
+		if (node.currentStyle) {
+			return node.currentStyle[name];
+		}
+		var doc = node.ownerDocument;
+		if (doc.defaultView && doc.defaultView.getComputedStyle) {
+			var styles = doc.defaultView.getComputedStyle(node, null);
+			if (styles) {
+				return styles[name] || styles.getPropertyValue(name);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Given a node, will return node that succeeds it in the document order.
+	 *
+	 * For example, if this function is called recursively, starting from the
+	 * text node "one" in the below DOM tree:
+	 *
+	 *	"one"
+	 *	<b>
+	 *		"two"
+	 *		<u>
+	 *			<i>
+	 *				"three"
+	 *			</i>
+	 *		</u>
+	 *		"four"
+	 *	</b>
+	 *	"five"
+	 *
+	 * forward() will return nodes in the following order:
+	 *
+	 * <b>...</b>, "two", <u>...</u>, <i>...</i>, "three", "four", "five"
+	 *
+	 * @param {DOMObject} node
+	 * @return {DOMObject}
+	 *         The succeeding node or null if the given node has no previous
+	 *         siblings and no parent.
+	 */
+	function forward(node) {
+		if (node.firstChild) {
+			return node.firstChild;
+		}
+		var next = node;
+		while (next && !next.nextSibling) {
+			next = next.parentNode;
+		}
+		return next && next.nextSibling;
+	}
+
+	/**
+	 * Given a node, will return node that preceeds it in the document order.
+	 *
+	 * For example, if this function is called recursively, starting from the
+	 * text node "five" in the below DOM tree:
+	 *
+	 *	"one"
+	 *	<b>
+	 *		"two"
+	 *		<u>
+	 *			<i>
+	 *				"three"
+	 *			</i>
+	 *		</u>
+	 *		"four"
+	 *	</b>
+	 *	"five"
+	 *
+	 * backward() will return nodes in the following order:
+	 *
+	 * "four", "three", <i>...</i>, <u>...</u>, "two", <b>...</b>, "one"
+	 *
+	 * @param {DOMObject} node
+	 * @return {DOMObject}
+	 *         The preceeding node or null if the given node has no previous
+	 *         siblings and no parent.
+	 */
+	function backward(node) {
+		var prev = node.previousSibling;
+		while (prev && prev.lastChild) {
+			prev = prev.lastChild;
+		}
+		return prev || node.parentNode;
+	}
+
+	/**
+	 * Starting from the given node, and moving forwards through the DOM tree,
+	 * searches for a node which returns `true` when applied to the predicate
+	 * `match()`.
+	 *
+	 * @param {DOMObject} node
+	 * @param {Function(DOMObject):Boolean} match
+	 * @param {Function(DOMObject):Boolean} until
+	 * @return {DOMObject}
+	 */
+	function findForward(node, match, until) {
+		while (node && !until(node)) {
+			if (match(node)) {
+				return node;
+			}
+			node = forward(node);
+		}
+		return null;
+	}
+
+	/**
+	 * Starting from the given node, and moving backwards through the DOM tree,
+	 * searches for a node which returns `true` when applied to the predicate
+	 * `match()`.
+	 *
+	 * @param {DOMObject} node
+	 * @param {Function(DOMObject):Boolean} match
+	 * @param {Function(DOMObject):Boolean} until
+	 * @return {DOMObject}
+	 */
+	function findBackward(node, match, until) {
+		while (node && !until(node)) {
+			if (match(node)) {
+				return node;
+			}
+			node = backward(node);
+		}
+		return null;
+	}
+
+	return {
+		backward: backward,
+		forward: forward,
+		findForward: findForward,
+		findBackward: findBackward,
+		moveNextAll: moveNextAll,
+		attrNames: attrNames,
+		attrs: attrs,
+		indexByClass: indexByClass,
+		indexByName: indexByName,
+		indexByClassHaveList: indexByClassHaveList,
+		outerHtml: outerHtml,
+		removeShallow: removeShallow,
+		wrap: wrap,
+		insert: insert,
+		cursor: cursor,
+		cursorFromBoundaryPoint: cursorFromBoundaryPoint,
+		nodeAtOffset: nodeAtOffset,
+		isAtEnd: isAtEnd,
+		parentsUntil: parentsUntil,
+		parentsUntilIncl: parentsUntilIncl,
+		childAndParentsUntil: childAndParentsUntil,
+		childAndParentsUntilIncl: childAndParentsUntilIncl,
+		childAndParentsUntilNode: childAndParentsUntilNode,
+		childAndParentsUntilInclNode: childAndParentsUntilInclNode,
+		next: next,
+		parent: parent,
+		isTextNode: isTextNode,
+		nodeIndex: nodeIndex,
+		splitTextNode: splitTextNode,
+		splitTextContainers: splitTextContainers,
+		walk: walk,
+		walkRec: walkRec,
+		walkUntil: walkUntil,
+		walkUntilNode: walkUntilNode,
+		stableRange: stableRange,
+		trimRange: trimRange,
+		trimRangeClosingOpening: trimRangeClosingOpening,
+		setRangeFromRef: setRangeFromRef,
+		setRangeStartFromCursor: setRangeStartFromCursor,
+		setRangeEndFromCursor: setRangeEndFromCursor,
+		splitTextNodeAdjustRange: splitTextNodeAdjustRange,
+		insertSelectText: insertSelectText,
+		areRangesEq: areRangesEq,
+		collapseToEnd: collapseToEnd,
+		extendToWord: extendToWord,
+		rangeFromRangeObject: rangeFromRangeObject,
+		cloneShallow: cloneShallow,
+		setStyle: setStyle,
+		getStyle: getStyle,
+		getComputedStyle: getComputedStyle,
+		nodeLength: nodeLength
+	};
+});
+
 /* misc.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
@@ -24571,56 +24764,58 @@ define('aloha/command',[
 	var CommandManager = {
 
 		execCommand: function (commandId, showUi, value, range) {
-			var evtObj = {
+			var eventData = {
 				commandId: commandId,
 				preventDefault: false
 			};
-			Aloha.trigger('aloha-command-will-execute', evtObj);
 
-			if (evtObj.preventDefault === true) {
+			Aloha.trigger('aloha-command-will-execute', eventData);
+
+			if (eventData.preventDefault === true) {
 				return;
 			}
-			// Read current selection if not passed
+
+			var selection = Aloha.getSelection();
 			if (!range) {
-				if (!Aloha.getSelection().getRangeCount()) {
+				if (!selection.getRangeCount()) {
 					return;
 				}
-				range = Aloha.getSelection().getRangeAt(0);
+				range = selection.getRangeAt(0);
 			}
 
-			// For the insertHTML command we provide contenthandler API
 			if (commandId.toLowerCase() === 'inserthtml') {
-				//if (typeof Aloha.settings.contentHandler.insertHtml === 'undefined') {
-				//	use all registered content handler; used for copy & paste atm (or write log message)
-				//	Aloha.settings.contentHandler.insertHtml = Aloha.defaults.contentHandler.insertHtml;
-				//}
 				value = ContentHandlerManager.handleContent(value, {
 					contenthandler: Aloha.settings.contentHandler.insertHtml,
-					command: 'insertHtml',
-					range: range
+					command: 'insertHtml'
 				});
 			}
 
 			Engine.execCommand(commandId, showUi, value, range);
 
-			if (Aloha.getSelection().getRangeCount()) {
-				// Read range after engine modification
-				range = Aloha.getSelection().getRangeAt(0);
+			// Because there is never a situation where it will be necessary to
+			// do any further cleanup (merging of similar adjacent nodes)
+			if ('insertparagraph' !== commandId.toLowerCase()
+					&& selection.getRangeCount()) {
+
+				range = selection.getRangeAt(0);
 
 				// FIX: doCleanup should work with W3C range
-				var startnode = range.commonAncestorContainer;
-				if (startnode.parentNode) {
-					startnode = startnode.parentNode;
+				var start = range.commonAncestorContainer;
+				if (start.parentNode) {
+					start = start.parentNode;
 				}
+
 				var rangeObject = new window.GENTICS.Utils.RangeObject();
 				rangeObject.startContainer = range.startContainer;
 				rangeObject.startOffset = range.startOffset;
 				rangeObject.endContainer = range.endContainer;
 				rangeObject.endOffset = range.endOffset;
+
 				Dom.doCleanup({
 					merge: true,
 					removeempty: false
-				}, rangeObject, startnode);
+				}, rangeObject, start);
+
 				rangeObject.select();
 			}
 
@@ -24807,8 +25002,6 @@ define('aloha/state-override',[
 	'aloha/command',
 	'util/dom2',
 	'util/maps',
-	'util/html',
-	'util/functions',
 	'util/range',
 	'PubSub'
 ], function (
@@ -24817,8 +25010,6 @@ define('aloha/state-override',[
 	Command,
 	Dom,
 	Maps,
-	Html,
-	Fn,
 	RangeObject,
 	PubSub
 ) {
@@ -24827,148 +25018,61 @@ define('aloha/state-override',[
 	// Because we want to provide an easy way to disable the state-override feature.
 	var enabled = Aloha.settings.stateOverride !== false;
 	var overrides = null;
-	var overridesForLinebreak = null;
 	var overrideRange = null;
-	var linebreakOverridesActive = false;
 
 	function rangeObjectFromRange(range) {
 		return new RangeObject(range);
 	}
 
-	function clearOverrides() {
+	function clear() {
+		overrideRange = null;
 		overrides = null;
-		linebreakOverridesActive = false;
-		if (!overridesForLinebreak) {
-			overrideRange = null;
-		}
-	}
-
-	function clearOverridesForLinebreak() {
-		overridesForLinebreak = null;
-		if (!overrides) {
-			overrideRange = null;
-		}
-	}
-
-	function clearAll() {
-		clearOverrides();
-		clearOverridesForLinebreak();
-	}
-
-	function isLinebreakEvent(event) {
-		return 13 === event.which;
-	}
-
-	function activateLinebreakOverrides(range) {
-		if (overridesForLinebreak) {
-			overrideRange = range;
-			overrides = overridesForLinebreak;
-			overridesForLinebreak = null;
-			linebreakOverridesActive = true;
-		}
-	}
-
-	function keyDownHandler(event) {
-		if (overridesForLinebreak && isLinebreakEvent(event)) {
-			var selection = Aloha.getSelection();
-			if (!selection.getRangeCount()) {
-				return;
-			}
-			activateLinebreakOverrides(selection.getRangeAt(0));
-		}
 	}
 
 	function keyPressHandler(event) {
 		if (!overrides) {
 			return;
 		}
-		if (event.altKey || event.ctrlKey || !event.which || isLinebreakEvent(event)) {
-			return;
-		}
-		var text = String.fromCharCode(event.which);
-		if (Html.isControlCharacter(text)) {
+		if (event.altKey || event.ctrlKey || !event.which) {
 			return;
 		}
 		var selection = Aloha.getSelection();
 		if (!selection.getRangeCount()) {
 			return;
 		}
+		var text = String.fromCharCode(event.which);
 		var range = selection.getRangeAt(0);
-		if (' ' === text) {
-			var elem = Dom.nodeAtOffset(range.startContainer, range.startOffset);
-			elem = elem.parentNode;
-			var whiteSpace = Dom.getComputedStyle(elem, 'white-space');
-			if (!Html.isWhiteSpacePreserveStyle(whiteSpace)) {
-				text = '\xa0';
-			}
-		}
-
 		Dom.insertSelectText(text, range);
 		Maps.forEach(overrides, function (formatFn, command) {
 			formatFn(command, range);
 		});
-
-		// Because, if formattings were applied to the selected text, we
-		// want to continue writing with those formattings applied.
-		Dom.trimRangeClosingOpening(range, Fn.returnFalse, Html.isUnrenderedWhitespace);
-		Dom.trimRange(range, Fn.returnFalse, function (cursor) {
-			var prevNode = cursor.prevSibling();
-			return prevNode && (3 !== prevNode.nodeType || Html.isUnrenderedWhitespace(prevNode));
-		});
 		Dom.collapseToEnd(range);
-
 		selection.removeAllRanges();
 		selection.addRange(range);
-
 		// Because we handled the character insert ourselves via
 		// insertText we must not let the browser's default action
 		// insert the character a second time.
 		event.preventDefault();
-
-		clearOverrides();
-	}
-
-	function setWithMap(overrideMap, clear, command, range, formatFn) {
-		if (!enabled) {
-			return overrideMap;
-		}
-		if (overrideRange && !Dom.areRangesEq(overrideRange, range)) {
-			clear();
-		}
-		overrideRange = range;
-		overrideMap = overrideMap || {};
-		overrideMap[command] = formatFn;
-		return overrideMap;
 	}
 
 	function set(command, range, formatFn) {
-		overrides = setWithMap(overrides, clearOverrides, command, range, formatFn);
-	}
-
-	function setForLinebreak(command, range, formatFn) {
-		if (linebreakOverridesActive) {
-			overrides[command] = formatFn;
-		} else {
-			overridesForLinebreak = setWithMap(overridesForLinebreak, clearOverridesForLinebreak, command, range, formatFn);
-		}
-	}
-
-	function setWithFnAndRangeObject(setFn, command, rangeObject, formatFn) {
 		if (!enabled) {
 			return;
 		}
-		setFn(command, Dom.rangeFromRangeObject(rangeObject), function (command, range) {
-			var rangeObject = rangeObjectFromRange(range);
-			formatFn(command, rangeObject);
-			Dom.setRangeFromRef(range, rangeObject);
-		});
+		overrideRange = range;
+		overrides = overrides || {};
+		overrides[command] = formatFn;
 	}
 
 	function setWithRangeObject(command, rangeObject, formatFn) {
 		if (!enabled) {
 			return;
 		}
-		setWithFnAndRangeObject(set, command, rangeObject, formatFn);
+		set(command, Dom.rangeFromRangeObject(rangeObject), function (command, range) {
+			var rangeObject = rangeObjectFromRange(range);
+			formatFn(command, rangeObject);
+			Dom.setRangeFromRef(range, rangeObject);
+		});
 		// Because without doing rangeObject.select(), the
 		// next insertText command (see editable.js) will
 		// not be reached and instead the browsers default
@@ -24979,19 +25083,11 @@ define('aloha/state-override',[
 		rangeObject.select();
 	}
 
-	function setForLinebreakWithRangeObject(command, rangeObject, formatFn) {
-		setWithFnAndRangeObject(setForLinebreak, command, rangeObject, formatFn);
-	}
-
 	function enabledAccessor(trueFalse) {
 		if (null != trueFalse) {
 			enabled = trueFalse;
 		}
 		return enabled;
-	}
-
-	function isSet(command) {
-		return overrides && overrides.hasOwnProperty(command);
 	}
 
 	// https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html#state-override
@@ -25000,23 +25096,12 @@ define('aloha/state-override',[
 	// at a given index in the selection changes to something different,
 	// the state override and value override must be unset for every
 	// command."
-	Aloha.bind('aloha-selection-changed', function (event, range, causeEvent) {
-		// Because we have to fix an edge case that occurs when pressing
-		// shift+enter which causes the selection changed event to occur
-		// one too many times (but not always, try shift enter twice at
-		// the end of the x in <p><b><i>x</i><b><br/></p>).
-		var isShiftEvent = (causeEvent
-							&& 16/*shift*/ === causeEvent.which
-							&& 'keyup' === causeEvent.type);
-		if (overrideRange && !Dom.areRangesEq(overrideRange, range) && !isShiftEvent) {
-			if (causeEvent && isLinebreakEvent(causeEvent)) {
-				activateLinebreakOverrides(range);
-			} else {
-				clearOverrides();
-			}
-			// Because the UI may reflect state overrides that are now
-			// no longer in effect, we must redraw the UI according to
-			// the current selection.
+	Aloha.bind('aloha-selection-changed', function (event, range) {
+		if (overrideRange && !Dom.areRangesEq(overrideRange, range)) {
+			clear();
+			// Because the UI may reflect the any potentially state
+			// overrides that are now no longer in effect, we must
+			// redraw the UI according to the current selection.
 			PubSub.pub('aloha.selection.context-change', {
 				range: range,
 				event: event
@@ -25024,22 +25109,12 @@ define('aloha/state-override',[
 		}
 	});
 
-	PubSub.sub('aloha.selection.context-change', function (message) {
-		if (message.event && overrideRange && !isLinebreakEvent(message.event)) {
-			clearOverridesForLinebreak();
-		}
-	});
-
 	return {
 		enabled: enabledAccessor,
 		keyPressHandler: keyPressHandler,
-		keyDownHandler: keyDownHandler,
-		isSet: isSet,
-		set: set,
 		setWithRangeObject: setWithRangeObject,
-		setForLinebreak: setForLinebreak,
-		setForLinebreakWithRangeObject: setForLinebreakWithRangeObject,
-		clear: clearAll
+		set: set,
+		clear: clear
 	};
 });
 
@@ -25081,11 +25156,9 @@ define('aloha/editable',[
 	'aloha/block-jump',
 	'aloha/ephemera',
 	'util/dom2',
-	'util/html',
 	'PubSub',
 	'aloha/copypaste',
 	'aloha/command',
-	'aloha/engine',
 	'aloha/state-override'
 ], function (
 	Aloha,
@@ -25099,11 +25172,9 @@ define('aloha/editable',[
 	BlockJump,
 	Ephemera,
 	Dom,
-	Html,
 	PubSub,
 	CopyPaste,
 	Command,
-	Engine,
 	StateOverride
 ) {
 	
@@ -25216,40 +25287,61 @@ define('aloha/editable',[
 		}
 	}
 
-	$(document).keydown(onKeydown);
-
 	/**
-	 * When selecting some content and pressing backspace or delete, the
-	 * delete is handled by engine.js which provides a correct
-	 * cross-browser implementation. When selecting some content and
-	 * pressing a non-control key (not backspace or delete), the
-	 * selected text must be deleted before inserting the character
-	 * corresponding to the key. The latter must also be handled by
-	 * engine.js.
+	 * Registers events on the given editable's corresponding DOM element.
+	 *
+	 * @param {Editable} editable
 	 */
-	function keypressDeleteHandler(event) {
-		if (event.altKey || event.ctrlKey || !event.which) {
-			return;
-		}
-		var selection = Aloha.getSelection();
-		if (!selection.getRangeCount()) {
-			return;
-		}
-		var range = selection.getRangeAt(0);
-		if (range.collapsed) {
-			return;
-		}
-		var chr = String.fromCharCode(event.which);
-		if (Html.isControlCharacter(chr)) {
-			return;
-		}
-		Aloha.trigger('aloha-command-will-execute', {commandId: 'delete'});
-		// Because that is what the inserttext does, we call
-		// deleteContents directly with stripWrappers false instead of
-		// commands.delete.
-		Engine.deleteContents(range, {stripWrappers: false});
-		Aloha.trigger('aloha-command-executed', 'delete');
+	function registerEvents(editable) {
+		var $editable = editable.obj;
+
+		$editable.mousedown(function (event) {
+			if (!Aloha.eventHandled) {
+				Aloha.eventHandled = true;
+				return editable.activate(event);
+			}
+		});
+
+		$editable.mouseup(function (event) {
+			Aloha.eventHandled = false;
+		});
+
+		$editable.focus(function (event) {
+			return editable.activate(event);
+		});
+
+		$editable.keydown(function (event) {
+			var letEventPass = Markup.preProcessKeyStrokes(event);
+			editable.keyCode = event.which;
+			if (!letEventPass) {
+				// the event will not proceed to key press, therefore trigger
+				// smartContentChange
+				editable.smartContentChange(event);
+			}
+			return letEventPass;
+		});
+
+		$editable.keypress(StateOverride.keyPressHandler);
+		$editable.keypress(function (event) {
+			// triggers a smartContentChange to get the right charcode
+			// To test try http://www.w3.org/2002/09/tests/keys.html
+			Aloha.activeEditable.smartContentChange(event);
+		});
+
+		$editable.keyup(function (event) {
+			if (event.keyCode === 27) {
+				Aloha.deactivateEditable();
+				return false;
+			}
+		});
+
+		$editable.contentEditableSelectionChange(function (event) {
+			Selection.onChange($editable, event);
+			return $editable;
+		});
 	}
+
+	$(document).keydown(onKeydown);
 
 	/**
 	 * Editable object
@@ -25383,56 +25475,7 @@ define('aloha/editable',[
 			Aloha.bind('aloha-plugins-loaded', function () {
 				me.obj.addClass('aloha-editable').contentEditable(true);
 
-				me.obj.mousedown(function (e) {
-					if (!Aloha.eventHandled) {
-						Aloha.eventHandled = true;
-						return me.activate(e);
-					}
-				});
-
-				me.obj.mouseup(function (e) {
-					Aloha.eventHandled = false;
-				});
-
-				me.obj.focus(function (e) {
-					return me.activate(e);
-				});
-
-				var keyInputElements = me.obj.add('.aloha-block', me.obj)
-					.keydown(function (event) {
-						var letEventPass = Markup.preProcessKeyStrokes(event);
-						me.keyCode = event.which;
-
-						if (!letEventPass) {
-							// the event will not proceed to key press, therefore trigger smartContentChange
-							me.smartContentChange(event);
-						}
-						return letEventPass;
-					})
-					.keypress(keypressDeleteHandler)
-					.keypress(StateOverride.keyPressHandler)
-					.keydown(StateOverride.keyDownHandler);
-
-				// handle keypress
-				me.obj.keypress(function (event) {
-					// triggers a smartContentChange to get the right charcode
-					// To test try http://www.w3.org/2002/09/tests/keys.html
-					Aloha.activeEditable.smartContentChange(event);
-				});
-
-				// handle shortcut keys
-				me.obj.keyup(function (event) {
-					if (event.keyCode === 27) {
-						Aloha.deactivateEditable();
-						return false;
-					}
-				});
-
-				// register the onSelectionChange Event with the Editable field
-				me.obj.contentEditableSelectionChange(function (event) {
-					Selection.onChange(me.obj, event);
-					return me.obj;
-				});
+				registerEvents(me);
 
 				// mark the editable as unmodified
 				me.setUnmodified();
@@ -25451,10 +25494,6 @@ define('aloha/editable',[
 
 				me.snapshotContent = me.getContents();
 
-				// FF bug: check for empty editable contents ( no <br>; no whitespace )
-				if (jQuery.browser.mozilla) {
-					me.initEmptyEditable();
-				}
 
 				me.initPlaceholder();
 
@@ -25591,19 +25630,6 @@ define('aloha/editable',[
 			var editableTrimedContent = jQuery.trim(this.getContents()),
 				onlyBrTag = (editableTrimedContent === '<br>') ? true : false;
 			return (editableTrimedContent.length === 0 || onlyBrTag);
-		},
-
-		/**
-		 * Check if the editable div is not empty. Fixes a FF browser bug
-		 * see issue: https://github.com/alohaeditor/Aloha-Editor/issues/269
-		 *
-		 * @return {undefined}
-		 */
-		initEmptyEditable: function () {
-			var obj = this.obj;
-			if (this.empty(this.getContents())) {
-				jQuery(obj).prepend('<br class="aloha-cleanme" />');
-			}
 		},
 
 		/**
@@ -25859,6 +25885,11 @@ define('aloha/editable',[
 			 */
 			Aloha.trigger('aloha-editable-deactivated', {
 				editable: this
+			});
+			PubSub.pub('aloha.editable.deactivated', {
+				data: {
+					editable: this
+				}
 			});
 
 			/**
@@ -26118,6 +26149,9 @@ define('aloha/editable',[
 	Aloha.Editable.getContentSerializer = function () {
 		return contentSerializer;
 	};
+
+	Aloha.Editable.registerEvents = registerEvents;
+
 });
 
 /* plugin.js is part of Aloha Editor project http://aloha-editor.org
@@ -28360,19 +28394,47 @@ define('aloha/repositoryobjects',[
 define('aloha/repositorymanager',[
 	'jquery',
 	'util/class',
-	'util/arrays',
 	'aloha/core',
 	'aloha/console',
 	'aloha/repositoryobjects' // Provides Aloha.RepositoryFolder
 ], function (
 	$,
 	Class,
-	Arrays,
 	Aloha,
 	Console,
 	__unused__
 ) {
 	
+
+	/**
+	 * Given an input set, returns a new set which is a range of the input set
+	 * that maps to the given predicate.
+	 *
+	 * Prefers native Array.prototype.filter() where available (after JavaScript
+	 * 1.6).
+	 *
+	 * @param {function:boolean} predicate
+	 * @return {Array} Sub set of domain
+	 */
+	var filter = (function (predicate) {
+		if (predicate) {
+			return function (domain, predicate) {
+				return domain.filter(predicate);
+			};
+		}
+
+		return function (domain, predicate) {
+			var codomain = [],
+				i,
+				len = domain.length;
+			for (i = 0; i < len; i++) {
+				if (predicate(domain[i])) {
+					codomain.push(domain[i]);
+				}
+			}
+			return codomain;
+		};
+	}(Array.prototype.hasOwnProperty('filter')));
 
 	/**
 	 * Bundles results, and meta information in preparation for the JSON Reader.
@@ -28717,7 +28779,7 @@ define('aloha/repositorymanager',[
 			                 ? [manager.getRepository(params.repositoryId)]
 			                 : manager.repositories;
 
-			var queue = Arrays.filter(repositories, repositoryFilters.query);
+			var queue = filter(repositories, repositoryFilters.query);
 
 			// If none of the repositories implemented the query method, then
 			// don't wait for the timeout, simply report to the client.
@@ -28816,7 +28878,7 @@ define('aloha/repositorymanager',[
 			                 : manager.repositories;
 
 			if (params.repositoryFilter && params.repositoryFilter.length) {
-				repositories = Arrays.filter(repositories, function (repository) {
+				repositories = filter(repositories, function (repository) {
 					return -1 < $.inArray(repository.repositoryId,
 						params.repositoryFilter);
 				});
@@ -28843,7 +28905,7 @@ define('aloha/repositorymanager',[
 				return;
 			}
 
-			var queue = Arrays.filter(repositories, repositoryFilters.getChildren);
+			var queue = filter(repositories, repositoryFilters.getChildren);
 
 			if (0 === queue.length) {
 				clearTimeout(timer);
@@ -29018,7 +29080,7 @@ define('aloha/repositorymanager',[
 		 * @return {Folder} Selected folder or null if it cannot be found.
 		 */
 		getSelectedFolder: function () {
-			var repositories = Arrays.filter(this.repositories,
+			var repositories = filter(this.repositories,
 					repositoryFilters.getSelectedFolder);
 			var i;
 			var selected;
@@ -29666,7 +29728,7 @@ define('aloha/repository',[
 		
 		var DependencyManagement = global.__DEPS__ || (global.__DEPS__ = {});
 		
-		DependencyManagement.lang = defaultConfig.locale;
+		DependencyManagement.lang = defaultConfig.config.i18n.locale;
 
 		var defaultPaths = {
 			jquery: 'vendor/jquery-1.7.2',
@@ -30597,6 +30659,38 @@ define('ui/tab',[
 	var idCounter = 0;
 	var slottedComponents = {};
 
+	function hasVisibleComponents(tab){
+		var i, slot, component, hasVisible = false;
+
+		// the problem is, a container component had a button to expand the options
+		if( $(
+				'button:not(.aloha-multisplit-toggle)',
+				tab.panel
+			).length !== 0
+		){
+			hasVisible = true;
+		}
+
+		/*
+		// @todo this algorithm must be enhanced, asking each component if is visible
+		// this is the longest aproach, I iterate the components registered in
+		// this tab
+		for(i = 0; i < tab._slotsList.length; i++){
+			if(undefined !== slottedComponents[slotName]){
+				if($(
+						'button:not(.aloha-multisplit-toggle)',
+						slottedComponents[slotName].element
+					).length !== 0
+				){
+					hasVisible = true;
+					break;
+				}
+			}
+		}
+		*/
+		return hasVisible;
+	}
+
 	/**
 	 * Defines a Container object that represents a collection of related
 	 * component groups to be rendered together on the toolbar.  Tabs are
@@ -30647,6 +30741,7 @@ define('ui/tab',[
 			this._elemBySlot = {};
 			this._groupBySlot = {};
 			this._groupByComponent = {};
+			this._slotsList = [];
 			this._super(context, settings);
 
 			this.container = settings.container;
@@ -30710,6 +30805,7 @@ define('ui/tab',[
 			component.adoptParent(this);
 			elem.append(component.element);
 			group = this._groupBySlot[slot];
+			this._slotsList.push(slot);
 			if (group) {
 				this._groupByComponent[component.id] = group;
 				if (component.isVisible()) {
@@ -30770,12 +30866,13 @@ define('ui/tab',[
 		 * @override
 		 */
 		show: function() {
-			if (!this.list.children().length) {
+			if (!this.list.children().length || !hasVisibleComponents(this)) {
 				return;
 			}
+
 			this.handle.show();
 			this.visible = true;
-			
+
 			// Hiding all tabs may hide the toolbar, so showing the
 			// first tab again must also show the toolbar.
 			this.container.show();
@@ -32038,6 +32135,12 @@ define('ui/toolbar',[
 ) {
 	
 
+	function isFloatingEnabled() {
+		return !Aloha.settings
+			|| !Aloha.settings.toolbar
+			|| Aloha.settings.toolbar.floating !== false;
+	}
+
 	/**
 	 * The toolbar is configured via `settings.toolbar` and is defined as an
 	 * array of tabs with component groups, where the groups are arrays of
@@ -32097,7 +32200,9 @@ define('ui/toolbar',[
 
 			// Pinning behaviour is global in that if one toolbar is pinned,
 			// then all other toolbars will be pinned to that position.
-			floating.makeFloating(this, Toolbar);
+			if (isFloatingEnabled()) {
+				floating.makeFloating(this, Toolbar);
+			}
 		},
 
 		adoptInto: function (slot, component) {
@@ -32186,12 +32291,14 @@ define('ui/toolbar',[
 			Toolbar.$surfaceContainer.children().detach();
 			Toolbar.$surfaceContainer.append(this.$element);
 			Toolbar.$surfaceContainer.stop().fadeTo(200, 1);
-			var position = Toolbar.getFloatingPosition();
-			this.$element.stop().css({
-				top: position.top,
-				left: position.left
-			});
-			this._move();
+			if (isFloatingEnabled()) {
+				var position = Toolbar.getFloatingPosition();
+				this.$element.stop().css({
+					top: position.top,
+					left: position.left
+				});
+				this._move();
+			}
 		},
 
 		/**
@@ -32340,7 +32447,7 @@ define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], funct
 				showOn: { scope: 'table.cell' },
 				components: [
 					[ "mergecells", "splitcells", "tableCaption",
-					  "tableSummary", "naturalFit" ],
+					  "naturalFit", "tableSummary" ],
 					[ "formatTable" ]
 				]
 			},
@@ -33050,7 +33157,8 @@ define('ui/port-helper-attribute-field',[
 			resourceValue,
 			targetObject,
 			targetAttribute,
-			lastAttributeValue;
+			lastAttributeValue,
+			additionalTargetObjects = [];
 
 		if (props.cls) {
 			element.addClass(props.cls);
@@ -33191,10 +33299,30 @@ define('ui/port-helper-attribute-field',[
 			}
 		}
 
+		/**
+		 * Execute a function for every targets this attribute
+		 *
+		 * fields is pointing to.
+		 * @param {Function} fn Function to execute for each target
+		 */
+		function executeForTargets(fn) {
+			var target = $(targetObject);
+			fn(target);
+			for (var i = 0, len = additionalTargetObjects.length; i < len ; i++) {
+				fn($(additionalTargetObjects[i]));
+			}
+		}
+
+		/**
+		 * Change target background so the targets are
+		 * highlighted
+		 */
 		function changeTargetBackground() {
 			var target = $(targetObject);
 			if (targetHighlightClass) {
-				target.addClass(targetHighlightClass);
+				executeForTargets(function (target) {
+					target.addClass(targetHighlightClass)
+				});
 			}
 
 			if (noTargetHighlight) {
@@ -33209,27 +33337,39 @@ define('ui/port-helper-attribute-field',[
 			// set background color to give visual feedback which link is modified
 			if (target.context && target.context.style &&
 				target.context.style['background-color']) {
-				target.attr('data-original-background-color',
-							target.context.style['background-color']);
+				executeForTargets(function (target) {
+					target.attr('data-original-background-color',
+					            target.context.style['background-color']);
+				});
 			}
-			target.css('background-color', '#80B5F2');
+			executeForTargets(function (target) {
+				target.css('background-color', '#80B5F2');
+			});
 		}
 
 		function restoreTargetBackground() {
 			var target = $(targetObject);
 			if (targetHighlightClass) {
-				target.removeClass(targetHighlightClass);
+				executeForTargets(function (target) {
+					target.removeClass(targetHighlightClass);
+				});
 			}
 			if (noTargetHighlight) {
 				return;
 			}
 			// Remove the highlighting and restore original color if was set before
 			var color = target.attr('data-original-background-color');
-			target.css('background-color', color || '');
+			executeForTargets(function (target) {
+				target.css('background-color', color || '');
+			});
 			if (!target.attr('style')) {
-				target.removeAttr('style');
+				executeForTargets(function (target) {
+					target.removeAttr('style');
+				});
 			}
-			target.removeAttr('data-original-background-color');
+			executeForTargets(function (target) {
+				target.removeAttr('data-original-background-color');
+			});
 		}
 
 		function parse(template, item) {
@@ -33308,20 +33448,12 @@ define('ui/port-helper-attribute-field',[
 		function setAttribute(attr, value, regex, reference) {
 			if (targetObject) {
 				// check if a reference value is submitted to check against with a regex
-				var setAttr = true;
-				if (typeof reference != 'undefined') {
-					var regxp = new RegExp(regex);
-					if ( ! reference.match(regxp) ) {
-						setAttr = false;
-					}
-				}
-
-				// if no regex was successful or no reference value
-				// was submitted remove the attribute
-				if ( setAttr ) {
-					$(targetObject).attr(attr, value);
-				} else {
+				if (typeof reference !== 'undefined' && !reference.match(new RegExp(regex))) {
 					$(targetObject).removeAttr(attr);
+				} else {
+					executeForTargets(function (target) {
+						target.attr(attr, value);
+					});
 				}
 			}
 		}
@@ -33335,6 +33467,7 @@ define('ui/port-helper-attribute-field',[
 		function setTargetObject(obj, attr) {
 			targetObject = obj;
 			targetAttribute = attr;
+			additionalTargetObjects = [];
 
 			setItem(null);
 			
@@ -33352,6 +33485,10 @@ define('ui/port-helper-attribute-field',[
 					setItem(items[0]);
 				}
 			} );
+		}
+
+		function addAdditionalTargetObject(targetObj) {
+			additionalTargetObjects.push(targetObj);
 		}
 
 		function getTargetObject() {
@@ -33387,6 +33524,10 @@ define('ui/port-helper-attribute-field',[
 			return element[0];
 		}
 
+		function getInputJQuery() {
+			return element;
+		}
+
 		var attrField = {
 			getInputElem: getInputElem,
 			hasInputElem: hasInputElem,
@@ -33397,6 +33538,7 @@ define('ui/port-helper-attribute-field',[
 			focus: focus,
 			getTargetObject: getTargetObject,
 			setTargetObject: setTargetObject,
+			addAdditionalTargetObject: addAdditionalTargetObject,
 			setAttribute: setAttribute,
 			getItem: getItem,
 			setItem: setItem,
@@ -33405,7 +33547,8 @@ define('ui/port-helper-attribute-field',[
 			addListener: addListener,
 			setObjectTypeFilter: setObjectTypeFilter,
 			setTemplate: setTemplate,
-			setPlaceholder: setPlaceholder
+			setPlaceholder: setPlaceholder,
+			getInputJQuery: getInputJQuery
 		};
 
 		return attrField;
@@ -33467,6 +33610,7 @@ function (jQuery, Component, Utils) {
 						at: 'right bottom'
 					}
 				})
+				.zIndex(0)    // fix for IE7,8 so the icon shown disabled
 				.click(jQuery.proxy(function () {
 
 					// Ensure tooltips are always hidden after a button
@@ -33838,7 +33982,25 @@ define('link/link-plugin', [
 		 * Default configuration allows links everywhere
 		 */
 		config: [ 'a' ],
-		
+
+		/**
+		 * The value that will automatically be set to an anchor tag's title
+		 * attribute if its href field matches the titleregex, and the editor
+		 * has not manually defined the title attribute.
+		 *
+		 * @type {string}
+		 */
+		title: null,
+
+		/**
+		 * Regular Expression string which the field's href value will be tested
+		 * against in order to determine whether or not to set the configured
+		 * title attribute value.
+		 *
+		 * @type {string}
+		 */
+		titleregex: null,
+
 		/**
 		 * all links that match the targetregex will get set the target
 		 * e.g. ^(?!.*aloha-editor.com).* matches all href except aloha-editor.com
@@ -33901,7 +34063,13 @@ define('link/link-plugin', [
 		 */
 		init: function () {
 			var plugin = this;
-			
+
+			if ('undefined' !== typeof this.settings.title) {
+				this.title = this.settings.title;
+			}
+			if ('undefined' !== typeof this.settings.titleregex) {
+				this.titleregex = this.settings.titleregex;
+			}
 			if ( typeof this.settings.targetregex != 'undefined' ) {
 				this.targetregex = this.settings.targetregex;
 			}
@@ -34235,7 +34403,7 @@ define('link/link-plugin', [
 				valueField: 'url',
 				cls: 'aloha-link-href-field',
 				scope: 'Aloha.continuoustext',
-				noTargetHighlight: true,
+				noTargetHighlight: false,
 				targetHighlightClass: 'aloha-focus'
 			});
 			this.hrefField.setTemplate('<span><b>{name}</b><br/>{url}</span>');
@@ -34495,10 +34663,37 @@ define('link/link-plugin', [
 		},
 
 		/**
+		 * Automatically sets (or unsets) the title attribute value of the given
+		 * AttributeField's target anchor element based on the link's href
+		 * value.
+		 *
+		 * @param {AttributeField} field The AttributeField that is to be used.
+		 * @param {string} value The value to which the title attribute is to be
+		 *                       set to.
+		 * @param {string} regex A string representing a regular expression
+		 *                       against which to test the href value of the
+		 *                       AttributeField `field`, to predicate whether
+		 *                       the title field should be update or not.
+		 */
+		automaticallySetTitle: function (field, value, regex) {
+			var currentValue = jQuery(field.getTargetObject()).attr('title');
+			var canOverwriteTitle = !currentValue || value === currentValue;
+			if (value && canOverwriteTitle) {
+				field.setAttribute('title', value, regex, field.getValue());
+			}
+		},
+
+		/**
 		 * Updates the link object depending on the src field
 		 */
 		hrefChange: function () {
 			var that = this;
+
+			this.automaticallySetTitle(
+				this.hrefField,
+				this.title,
+				this.titleregex
+			);
 
 			// For now hard coded attribute handling with regex.
 			// Avoid creating the target attribute, if it's unnecessary, so
@@ -34547,6 +34742,28 @@ define('link/link-plugin', [
 		}
 	});
 
+	/**
+	 * Add additional target objects, in case the selection includes
+	 * several links tag
+	 *
+	 * @param {RangeObject} rangeObject Selection Range
+	 * @param {LinkPlugin} that Link Plugin object
+	 */
+	function addAdditionalTargetObject(rangeObject, field) {
+		var links = rangeObject.findAllMarkupByTagName('A', rangeObject);
+		for (var i = 0, len = links.length; i < len; i++) {
+			field.addAdditionalTargetObject(links[i]);
+		}
+	}
+
+	/**
+	 * Selection change handler.
+	 *
+	 * @param {LinkPlugin} that This Link Plugin object
+	 * @param {RangeObject} rangeObject Selection Range
+	 * @returns {boolean} True if the link Scope was activated,
+	 *                    False otherwise
+	 */
 	function selectionChangeHandler(that, rangeObject) {
 		var foundMarkup,
 		    enteredLinkScope = false;
@@ -34554,18 +34771,18 @@ define('link/link-plugin', [
 		// Check if we need to ignore this selection changed event for
 		// now and check whether the selection was placed within a
 		// editable area.
-		if (   !that.ignoreNextSelectionChangedEvent
-			&& Aloha.Selection.isSelectionEditable()
-			&& Aloha.activeEditable != null ) {
+		if (!that.ignoreNextSelectionChangedEvent &&
+			Aloha.Selection.isSelectionEditable() &&
+			Aloha.activeEditable != null ) {
 			
 			foundMarkup = that.findLinkMarkup(rangeObject);
-			
+
 			if (foundMarkup) {
 				that.toggleLinkScope(true);
 
 				// now we are ready to set the target object
 				that.hrefField.setTargetObject(foundMarkup, 'href');
-
+				addAdditionalTargetObject(rangeObject, that.hrefField);
 				// if the selection-changed event was raised by the first click interaction on this page
 				// the hrefField component might not be initialized. When the user switches to the link
 				// tab to edit the link the field would be empty. We check for that situation and add a
@@ -35385,8 +35602,44 @@ function (jQuery) {
 	return CreateLayer;
 });
 
-define('table/table-plugin-utils',['jquery'], function ($) {
+define('table/table-plugin-utils',[
+	'jquery',
+	'aloha/copypaste',
+	'util/browser',
+	'aloha/console'
+], function (
+	$,
+	CopyPaste,
+	Browser,
+    Console
+) {
 	
+
+	function getAnchorCell(cells) {
+		if (0 === cells.length) {
+			return null;
+		}
+
+		var i;
+		var editable;
+		var range = CopyPaste.getRange();
+
+		if (range) {
+			editable = $(
+				range.commonAncestorContainer
+			).closest('.aloha-table-cell-editable')[0];
+		}
+
+		if (editable) {
+			for (i = 0; i < cells.length; i++) {
+				if ($(cells[i]).find(editable).length) {
+					return cells[i];
+				}
+			}
+		}
+
+		return cells[0];
+	}
 
 	var Utils = {
 		/**
@@ -35609,10 +35862,12 @@ define('table/table-plugin-utils',['jquery'], function ($) {
 		 *        If the callback returns a value identical to false,
 		 *        the walk will be aborted early.
 		 */
-		'walkGrid': function (grid, callback) {
-			for ( var i = 0; i < grid.length; i++ ) {
-				for ( var j = 0; j < grid[i].length; j++ ) {
-					if ( false === callback( grid[ i ][ j ], j, i ) ) {
+		'walkGrid': function(grid, callback) {
+			var	row;
+			for (var i = 0, gridLength = grid.length; i < gridLength; i++ ) {
+				row = grid[i];
+				for (var j = 0, rowLength = row.length; j < rowLength; j++ ) {
+					if ( false === callback( row[ j ], j, i ) ) {
 						return;
 					}
 				}
@@ -35742,14 +35997,14 @@ define('table/table-plugin-utils',['jquery'], function ($) {
 		/**
 		 * resizes the width of the given cell
 		 *
-		 * @param cell
+		 * @param {DOM element} cell
 		 *        the DOM node for a table cell (td/th)
-		 * @param
+		 * @param {number | string} width
 		 *        an integer value indicating the desired width
 		 */
 
 		'resizeCellWidth': function(cell, width) {
-			$( cell ).css( 'width', width );
+			$( cell ).css('width', width);
 			$( cell ).find('.aloha-table-cell-editable').eq(0).css({
 				'width': width,
 				'word-wrap': 'break-word'
@@ -35873,6 +36128,22 @@ define('table/table-plugin-utils',['jquery'], function ($) {
 		 */
 		'getCellPadding': function(cell) {
 			return ( cell.innerWidth() - cell.width() );
+		},
+
+		selectAnchorContents: function(selection) {
+			var anchor = getAnchorCell(selection);
+			if (anchor) {
+				var element = $('>.aloha-table-cell-editable', anchor)[0];
+				if (Browser.ie7) {
+					try {
+						CopyPaste.selectAllOf(element)
+					} catch (e) {
+						Console.error ('Table', e.message);
+					}
+				} else {
+					CopyPaste.selectAllOf(element);
+				}
+			}
 		}
 
 	};
@@ -35880,10 +36151,17 @@ define('table/table-plugin-utils',['jquery'], function ($) {
 	return Utils;
 });
 
-define('table/table-cell',
-['jquery', 'table/table-plugin-utils'],
-
-function (jQuery, Utils) {
+define('table/table-cell',[
+	'aloha',
+	'aloha/jquery',
+	'aloha/ephemera',
+	'table/table-plugin-utils'
+], function (
+	Aloha,
+	jQuery,
+	Ephemera,
+	Utils
+) {
 	/**
 	 * Constructs a TableCell.
 	 *
@@ -35940,7 +36218,10 @@ function (jQuery, Utils) {
 		// create the editable wrapper for the cells
 		var $wrapper = $elem.children('div').eq(0);
 		$wrapper.contentEditable(true);
-		$wrapper.addClass('aloha-table-cell-editable aloha-ephemera-filler');
+		$wrapper.addClass('aloha-table-cell-editable');
+
+		// mark the editable wrapper as ephemeral
+		Ephemera.markWrapper($wrapper);
 
 		// attach events to the editable div-object
 		$wrapper.bind('focus', function ($event) {
@@ -36192,13 +36473,12 @@ function (jQuery, Utils) {
 
 			//bind a global mouseup event handler to stop cell selection
 			var that = this;
-			jQuery('body').bind('mouseup.cellselection', function () {
+			jQuery('body').bind('mouseup.cellselection', function(event) {
 				that._endCellSelection();
-
+				event.stopPropagation();
 			});
 
 			this.tableObj.selection.baseCellPosition = [this._virtualY(), this._virtualX()];
-
 		}
 	};
 
@@ -36206,7 +36486,9 @@ function (jQuery, Utils) {
 	 * Ends the cell selection mode
 	 */
 	TableCell.prototype._endCellSelection = function() {
-		if(this.tableObj.selection.cellSelectionMode) {
+		if (this.tableObj.selection.cellSelectionMode) {
+			Utils.selectAnchorContents(this.tableObj.selection.selectedCells);
+
 			this.tableObj.selection.cellSelectionMode = false;
 			this.tableObj.selection.baseCellPosition = null;
 			this.tableObj.selection.lastSelectionRange = null;
@@ -36329,7 +36611,11 @@ function (jQuery, Utils) {
 		this.tableObj.selection.unselectCells();
 
 		if (this.tableObj.hasFocus) {
-			jqEvent.stopPropagation();
+			if (typeof jqEvent.stopPropagation === 'function') {
+				jqEvent.stopPropagation();
+			} else if (typeof jqEvent.cancelBubble !== 'undefined') {
+				jqEvent.cancelBubble = true;
+			}
 		}
 	};
 
@@ -36357,23 +36643,12 @@ function (jQuery, Utils) {
 	 */
 	TableCell.prototype._editableKeyDown = function (jqEvent) {
 		var KEYCODE_TAB = 9;
-
 		this._checkForEmptyEvent(jqEvent);
-
-		if ( this.obj[0] === this.tableObj.obj.find('tr:last td:last')[0] ) {
-			// only add a row on a single key-press of tab (so check
-			// that alt-, shift- or ctrl-key are NOT pressed)
+		if (this.obj[0] === this.tableObj.obj.find('tr:last td:last')[0]) {
+			// only add a row on a single key-press of tab (so check that alt-,
+			// shift- or ctrl-key are NOT pressed)
 			if (KEYCODE_TAB == jqEvent.keyCode && !jqEvent.altKey && !jqEvent.shiftKey && !jqEvent.ctrlKey) {
-				// add a row after the current row
 				this.tableObj.addRow(this.obj.parent().index() + 1);
-
-				// firefox needs this for the first cell of the new row
-				// to be selected (.focus() doesn't work reliably in
-				// IE7)
-				this.tableObj.cells[this.tableObj.cells.length - 1]._selectAll(this.wrapper.get(0));
-
-				jqEvent.stopPropagation();
-				return;
 			}
 		}
 	};
@@ -36423,14 +36698,21 @@ function (jQuery, Utils) {
 	return TableCell;
 });
 
-define('table/table-selection',
-['aloha',
- 'jquery',
- 'table/table-plugin-utils',
- 'table/table-cell',
- 'ui/dialog',
- 'i18n!table/nls/i18n'],
-function (Aloha, $, Utils, TableCell, Dialog, i18n) {
+define('table/table-selection',[
+	'aloha',
+	'aloha/jquery',
+	'table/table-plugin-utils',
+	'table/table-cell',
+	'ui/dialog',
+	'i18n!table/nls/i18n'
+], function (
+	Aloha,
+	$,
+	Utils,
+	TableCell,
+	Dialog,
+	i18n
+) {
 	/**
 	 * The TableSelection object is a helper-object
 	 */
@@ -36439,9 +36721,33 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
 	};
 
 	/**
+	 * Returns if a content parameter is a content that be added in a 
+	 * merge cell from the cells selecteds.
+	 * 
+	 * @param {String|TextNodeElement|HTMLElement} content - A content 
+	 * from the cell, might be a TextNode, HTMLElement or a String
+	 * 
+	 * @return {Boolean}
+	 */
+	function isMergeableContent(content) {
+		return ((
+				'string' === typeof(content) && '' !== $.trim(content)
+			) || (
+				content.nodeType
+				&& (
+					3 === content.nodeType
+					&&
+					'' !== $.trim(content.data)
+				) || (
+					1 === content.nodeType
+				)
+			));
+	}
+
+	/**
 	 * Gives the type of the cell-selection
-	 * possible values are "row" or "col" 
-	 * also possible value is 'cell', which defines custom cell selections
+	 * possible values are "cell", "row", "column" or "all".
+	 * If the value is 'cell' means custom cell selections
 	 */
 	TableSelection.prototype.selectionType = undefined;
 
@@ -36511,7 +36817,7 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
 	 *
 	 * @return void
 	 */
-	TableSelection.prototype.selectRows = function ( rowsToSelect ) {
+	TableSelection.prototype.selectRows = function( rowsToSelect ) {
 		this.unselectCells();
 
 		var rows = this.table.getRows();
@@ -36535,7 +36841,7 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
 			    }
 			}
 		}
-		
+
 	    this.selectionType = 'row';
 	};
 
@@ -36548,6 +36854,8 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
 		rowIndices.shift();
 
 		this.selectRows( rowIndices );
+
+		this.selectionType = 'all';
 	};
 	
 	/**
@@ -36601,22 +36909,18 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
 	 * @return void
 	 */
 	TableSelection.prototype.unselectCells = function(){
-		var rows;
-
 		//don't unselect cells if cellSelectionMode is active
 		if ( this.cellSelectionMode ) {
     		return;
 		}
 
 		if (this.selectedCells.length > 0) {
-			
-			rows = this.table.getRows();
-			
-			for (var i = 0; i < rows.length; i++) {
-			    for ( var j = 1; j < rows[i].cells.length; j++ ) {  
-					// TODO make proper cell selection method
-					$( rows[i].cells[j] ).removeClass( this.table.get('classCellSelected') );
-			    }
+			var
+				cells = this.selectedCells,
+				classCellSelected = this.table.get('classCellSelected');
+
+			for (var i = 0, len = cells.length; i < len; i++) {
+				$(cells[i]).removeClass(classCellSelected);
 			}
 
 			this.selectedCells = new Array();
@@ -36750,12 +37054,18 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
 			var contents = $( TableCell.getContainer( cell ) ).contents();
 			// only append the delimiting space if there is some non-whitespace
 			for ( var i = 0; i < contents.length; i++ ) {
-				if (   "string" !== typeof contents[i]
-				    || "" !== $.trim( contents[i] ) ) {
+				if(isMergeableContent(contents[i])){
 					$firstContainer.append( " " );
 					$firstContainer.append( contents );
 					break;
 				}
+//
+//				if (   "string" !== typeof contents[i]
+//					|| "" !== $.trim( contents[i].data ) ) {
+//					$firstContainer.append( " " );
+//					$firstContainer.append( contents );
+//					break;
+//				}
 			}
 			$( cell ).remove();
 		});
@@ -36878,27 +37188,94 @@ function (Aloha, $, Utils, TableCell, Dialog, i18n) {
  */
 define('table/table',[
 	'aloha',
-	'aloha/ephemera',
 	'jquery',
 	'ui/scopes',
 	'ui/dialog',
 	'i18n!table/nls/i18n',
 	'table/table-cell',
 	'table/table-selection',
-	'table/table-plugin-utils'
+	'table/table-plugin-utils',
+	'aloha/ephemera',
+	'util/html',
+	'util/dom2',
+	'aloha/console'
 ], function (
 	Aloha,
-	Ephemera,
 	jQuery,
 	Scopes,
 	Dialog,
 	i18n,
 	TableCell,
 	TableSelection,
-	Utils
+	Utils,
+	Ephemera,
+	Html,
+	Dom,
+    Console
 ) {
 	var undefined = void 0;
 	var GENTICS = window.GENTICS;
+
+	/**
+	 * Returns an Array with all elements and textnodes included in the 
+	 * hierarchy of the element received. Is Similar to do 
+	 * jQuery('*', element).contents(), the diference it's this function returns the 
+	 * array in the correct order of apparition
+	 * @example
+	 * <pre>
+	 *		&gt;p&lt;
+	 *			textnode
+	 *			<b>b textnode</b>
+	 *			another text node
+	 *		&gt;/p&lt;
+	 *		
+	 *		jQuery('*', lt).contents();
+	 *			// returns ["textnode", "<b>", "another textnode", "b textnode"]
+	 *		getPlainHierarchy(lt)
+	 *			// returns ["textnode", "<b>", "b textnode", "another textnode"]
+	 * </pre>
+	 * 
+	 * @return {Array.<HTMLElement|TextNode>}
+	 */
+	function getPlainHierarchy(element) {
+		if (element.jquery) {
+			element = element[0];
+		}
+		var i, result = [], child;
+		for (i = 0; i < element.childNodes.length; i++) {
+			child = element.childNodes[i];
+			result.push(child);
+			if (child.nodeType === 1) {
+				result = result.concat(getPlainHierarchy(child));
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Find the first or the last element inside a table, even if in a td
+	 * 
+	 * @param {String} type Accepts two values: 'first' or 'last'
+	 * @param {HTMLElement|jQuery} parent the parent element to search
+	 * 
+	 * @return {jQuery}
+	 */
+	function getNewSelectedElement(type, parent) {
+		var toSelectElement;
+		if ('first' === type) {
+			toSelectElement = jQuery('[contenteditable]', parent).first()[0]
+				.firstChild;
+			if (undefined === toSelectElement) {
+				toSelectElement = jQuery('*', parent).first()[0].firstChild;
+			}
+		} else if ('last' === type) {
+			toSelectElement = getPlainHierarchy(jQuery('td:last', parent))
+				.reverse()[0];
+		}
+
+		return toSelectElement;
+	}
 
 	/**
 	 * Constructor of the table object
@@ -36916,6 +37293,9 @@ define('table/table',[
 		if ( !this.obj.attr( 'id' ) ) {
 			this.obj.attr( 'id', GENTICS.Utils.guid() );
 		}
+
+		// mark table id as ephemeral
+		Ephemera.markAttr(this.obj, 'id');
 
 		this.tablePlugin = tablePlugin;
 		this.selection = new TableSelection( this );
@@ -37204,10 +37584,6 @@ define('table/table',[
 			this.obj.attr( 'id', GENTICS.Utils.guid() );
 		}
 
-		Ephemera.markAttr(this.obj, 'id');
-		Ephemera.markAttr(this.obj, 'contenteditable');
-		Ephemera.markAttr(this.obj, 'contentEditable');
-		
 		// unset the selection type
 		this.selection.selectionType = undefined;
 
@@ -37226,12 +37602,162 @@ define('table/table',[
 			}
 		} );
 
+		function isNotUnrenderedNode(node) {
+			return !Html.isUnrenderedNode(node);
+		}
+
+		/**
+		 * @param {WrappedRange} range
+		 */
+		function isRangeVisiblyAtLeftBoundary(range) {
+			var offset = range.startOffset;
+			var node = range.startContainer;
+			if (0 === offset) {
+				return true;
+			}
+			if (1 === node.nodeType) {
+				return !Html.findNodeRight(
+					node.childNodes[offset - 1],
+					isNotUnrenderedNode
+				);
+			}
+			if (3 === node.nodeType) {
+				return Html.isWSPorZWSPText(node.data.substr(0, offset));
+			}
+			return false;
+		}
+
+		/**
+		 * @param {WrappedRange} range
+		 */
+		function isRangeVisiblyAtRightBoundary(range) {
+			var offset = range.startOffset;
+			var node = range.startContainer;
+			if (Dom.nodeLength(node) === offset) {
+				return true;
+			}
+			if (1 === node.nodeType) {
+				return !Html.findNodeLeft(
+					node.childNodes[offset - 1],
+					isNotUnrenderedNode
+				);
+			}
+			if (3 === node.nodeType) {
+				return Html.isWSPorZWSPText(node.data.substr(offset));
+			}
+			return false;
+		}
+
+		Aloha.bind('aloha-command-will-execute', function (_, event){
+			var range = Aloha.getSelection().getRangeAt(0);
+			var adjacent;
+			if ('forwarddelete' === event.commandId) {
+				if (!range.collapsed || !isRangeVisiblyAtRightBoundary(range)) {
+					return;
+				}
+				var node = range.commonAncestorContainer;
+				if (3 === node.nodeType) {
+					adjacent = node.parentNode
+					        && Html.findNodeLeft(
+								node.parentNode.nextSibling,
+								isNotUnrenderedNode
+							);
+				} else if (1 === node.nodeType) {
+					adjacent = Html.findNodeLeft(
+						node.nextSibling,
+						isNotUnrenderedNode
+					);
+				}
+				if (adjacent === that.tableWrapper) {
+					event.preventDefault = true;
+					Aloha.getSelection().collapse(
+						getNewSelectedElement('first', that.obj),
+						0
+					);
+				}
+			} else if ('delete' === event.commandId) {
+				if (!range.collapsed || !isRangeVisiblyAtLeftBoundary(range)) {
+					return;
+				}
+				var node = range.commonAncestorContainer;
+				if (3 === node.nodeType) {
+					adjacent = node.parentNode
+					        && Html.findNodeRight(
+								node.parentNode.previousSibling,
+								isNotUnrenderedNode
+							);
+				} else if (1 === node.nodeType) {
+					adjacent = Html.findNodeRight(
+						node.previousSibling,
+						isNotUnrenderedNode
+					);
+				}
+				if (adjacent === that.tableWrapper) {
+					var nodeToSelect = getNewSelectedElement('last', that.obj);
+					event.preventDefault = true;
+					Aloha.getSelection().collapse(
+						nodeToSelect,
+						Dom.nodeLength(nodeToSelect)
+					);
+				}
+			}
+		});
+
+
+		this.obj.on('keydown', function (jqEvent) {
+			// Delete button
+			if (jqEvent.keyCode === 46) {
+				if (that.selection.selectionType === 'row') {
+					that.deleteRows();
+				} else if (that.selection.selectionType === 'column') {
+					that.deleteColumns();
+				}
+
+				// jqEvent.stopPropagation doesn't support cancelBubble
+				// in the last jQuery versions. (query/jquery@97fa97f#diff-031bb62d959e7e4949d1847c82507f33L676)
+				if (typeof jqEvent.stopPropagation === 'function') {
+					jqEvent.stopPropagation();
+				} else {
+					// Workaround for IE
+					jqEvent.cancelBubble = true;
+				}
+			}
+		});
+
+		/*
+		We need to make sure that when the user has selected text inside a
+		table cell we do not delete the entire row, before we activate this
+
+		this.obj.bind( 'keyup', function ( $event ) {
+			if ( $event.keyCode == 46 ) {
+				if ( that.selection.selectedColumnIdxs.length ) {
+					that.deleteColumns();
+					$event.stopPropagation();
+				} else if ( that.selection.selectedRowIdxs.length ) {
+					that.deleteRows();
+					$event.stopPropagation();
+				} else {
+					// Nothing to delete
+				}
+			}
+		} );
+		*/
+
+		// handle click event of the table
+	//	this.obj.bind('click', function(e){
+	//		// stop bubbling the event to the outer divs, a click in the table
+	//		// should only be handled in the table
+	//		e.stopPropagation();
+	//		return false;
+	//	});
+	//
+
 	 // handle column/row resize
-			eventContainer.delegate( 'td', 'mousemove', function( e ) {
+			eventContainer.delegate( 'th, td', 'mousemove', function( e ) {
 
 				var jqObj = jQuery( this );
 				// offset to be used for activating the resize cursor near a table border
-				var mouseOffset = 3; 
+				var mouseOffset = 3;
 
 				// filter out the control cells
 				if ( jQuery( this ).hasClass( 'aloha-table-selectrow' ) || jQuery( this ).closest( 'tr' ).hasClass( 'aloha-table-selectcolumn' ))
@@ -37296,6 +37822,18 @@ define('table/table',[
 			if ( !that.hasFocus ) {
 				that.focus();
 			}
+
+			// DEACTIVATED by Haymo prevents selecting rows
+			//		// if a mousedown is done on the table, just focus the first cell of the table
+			//		setTimeout(function() {
+			//			var firstCell = that.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
+			//			TableSelection.unselectCells();
+			//			jQuery(firstCell).get(0).focus();
+			//			// move focus in first cell
+			//			that.obj.cells[0].wrapper.get(0).focus();
+			//		}, 0);
+
+			// stop bubbling and default-behaviour
 			jqEvent.stopPropagation();
 			jqEvent.preventDefault();
 			return false;
@@ -37307,9 +37845,12 @@ define('table/table',[
 		// tha data-block-skip-scope attribute will keep the block plugin from setting the
 		// FloatingMenu's scope when the block is clicked
 		tableWrapper = jQuery(
-			'<div class="' + this.get( 'classTableWrapper' ) + ' aloha-ephemera-wrapper" data-block-skip-scope="true"></div>'
+			'<div class="' + this.get( 'classTableWrapper' ) + '" data-block-skip-scope="true"></div>'
 		);
-		//tableWrapper.contentEditable( false );
+		tableWrapper.contentEditable( false );
+
+		// mark the wrapper as ephemeral
+		Ephemera.markWrapper(tableWrapper);
 
 		// wrap the tableWrapper around the table
 		this.obj.wrap( tableWrapper );
@@ -37364,25 +37905,31 @@ define('table/table',[
 	};
 
 	/**
-	 * check the WAI conformity of the table and sets the attribute.
+	 * Check the WAI conformity of the table and sets the attribute.
+	 *
+	 * @returns {boolean} True is WAI is activated, False otherwise.
 	 */
 	Table.prototype.checkWai = function () {
-		var w = this.wai;
-		if (!w) {
-			return;
+		var thisWai = this.wai;
+		if (!thisWai) {
+			return false;
 		}
 
-		w.removeClass(this.get('waiGreen'));
-		w.removeClass(this.get('waiRed'));
+		var waiGreen = this.get('waiGreen'),
+			waiRed = this.get('waiRed');
+
+		thisWai.removeClass(waiGreen + ' ' + waiRed);
 
 		// Y U NO explain why we must check that summary is longer than 5 characters?
 		// http://cdn3.knowyourmeme.com/i/000/089/665/original/tumblr_l96b01l36p1qdhmifo1_500.jpg
 
-		if (jQuery.trim(this.obj[0].summary) != '') {
-			w.addClass(this.get('waiGreen'));
-		} else {
-			w.addClass(this.get('waiRed'));
+		if (jQuery.trim(this.obj[0].summary) !== '') {
+			thisWai.addClass(waiGreen);
+			return true;
 		}
+
+		thisWai.addClass(waiRed);
+		return false;
 	};
 
 	/**
@@ -37407,7 +37954,6 @@ define('table/table',[
 			rowObj = jQuery(rows[i]);
 			columnToInsert = emptyCell.clone();
 			columnToInsert.addClass(this.get('classSelectionColumn'));
-			columnToInsert.addClass('aloha-ephemera');
 			columnToInsert.css('width', this.get('selectionArea') + 'px');
 			//rowObj.find('td:first').before(columnToInsert);
 			rowObj.prepend(columnToInsert);
@@ -37428,6 +37974,9 @@ define('table/table',[
 	 */
 	Table.prototype.attachRowSelectionEventsToCell = function(cell){
 		var that = this;
+
+		// mark cell as ephemeral
+		Ephemera.markElement(cell);
 
 		// unbind eventually existing events of this cell
 		cell.unbind('mousedown');
@@ -37506,8 +38055,6 @@ define('table/table',[
 
 		// stop bubble, otherwise the mousedown of the table is called ...
 		jqEvent.stopPropagation();
-
-		this.tablePlugin.summary.focus();
 
 		// prevent ff/chrome/safare from selecting the contents of the table
 		return false;
@@ -37590,8 +38137,10 @@ define('table/table',[
 
 		var selectionRow = jQuery('<tr>');
 		selectionRow.addClass(this.get('classSelectionRow'));
-		selectionRow.addClass('aloha-ephemera');
 		selectionRow.css('height', this.get('selectionArea') + 'px');
+
+		// mark selection row as ephemeral
+		Ephemera.markElement(selectionRow);
 
 		for (var i = 0; i < numColumns; i++) {
 
@@ -37641,6 +38190,7 @@ define('table/table',[
 						e.stopPropagation();
 						e.preventDefault();
 					} catch (e) {
+						Console.error ('Table', e.message);
 					}
 
 					return false;
@@ -38063,7 +38613,6 @@ define('table/table',[
 			// create the first column, the "select row" column
 			var selectionColumn = jQuery('<td>');
 			selectionColumn.addClass(this.get('classSelectionColumn'));
-			selectionColumn.addClass('aloha-ephemera');
 			this.attachRowSelectionEventsToCell(selectionColumn);
 			insertionRow.append(selectionColumn);
 
@@ -38311,7 +38860,6 @@ define('table/table',[
 			columnsToSelect = this.columnsToSelect;
 		}
 
-		Scopes.setScope(this.tablePlugin.name + '.column');
 		this.selection.selectColumns(columnsToSelect);
 		this.tablePlugin._columnheaderButton.setState(this.selection.isHeader());
 
@@ -38325,8 +38873,12 @@ define('table/table',[
 		// blur all editables within the table
 		this.obj.find('div.aloha-ui-table-cell-editable').blur();
 
+		Utils.selectAnchorContents(this.selection.selectedCells);
+
 		this.selection.notifyCellsSelected();
 		this._removeCursorSelection();
+
+		Scopes.setScope(this.tablePlugin.name + '.column');
 	};
 
 	/**
@@ -38336,7 +38888,6 @@ define('table/table',[
 	 */
 	Table.prototype.selectRows = function () {
 
-		Scopes.setScope(this.tablePlugin.name + '.row');
 		this.selection.selectRows(this.rowsToSelect);
 		this.tablePlugin._rowheaderButton.setState(this.selection.isHeader());
 
@@ -38350,8 +38901,12 @@ define('table/table',[
 		// blur all editables within the table
 		this.obj.find('div.aloha-ui-table-cell-editable').blur();
 
+		Utils.selectAnchorContents(this.selection.selectedCells);
+
 		this.selection.notifyCellsSelected();
 		this._removeCursorSelection();
+
+		Scopes.setScope(this.tablePlugin.name + '.row');
 	};
 
 	/**
@@ -38427,10 +38982,10 @@ define('table/table',[
 
 		var rows = cell.closest( 'tbody' ).children( 'tr' );
 		var cellRow = cell.closest( 'tr' );
-		var gridId = Utils.cellIndexToGridColumn( rows,
-																							rows.index( cellRow ),
-																							cellRow.children().index( cell )
-																						);
+		var gridId = Utils.cellIndexToGridColumn(rows,
+			rows.index(cellRow),
+			cellRow.children().index(cell)
+		);
 
 		var resizeColumns = function(pixelsMoved) {
 			var expandToWidth, reduceToWidth;
@@ -38463,19 +39018,22 @@ define('table/table',[
 			});
 		};
 
-		cell.bind( 'mousedown.resize', function() {
+		cell.bind('mousedown.resize', function() {
 
 			// create a guide
 			var guide = jQuery( '<div></div>' );
+			var $cell = jQuery(cell);
+			var width = $cell.outerWidth() - $cell.innerWidth();
+			var height = $cell.closest( 'tbody' ).innerHeight();
 			guide.css({
-				'height': jQuery( cell ).closest( 'tbody' ).innerHeight(),
-				'width': jQuery( cell ).outerWidth() - jQuery( cell ).innerWidth(),
-				'top': jQuery( cell ).closest( 'tbody' ).offset().top,
-				'left': jQuery( cell ).offset().left,
+				'height': (height < 1) ? 1 : height,
+				'width': (width < 1) ? 1 : width,
+				'top': $cell.closest( 'tbody' ).offset().top,
+				'left': $cell.offset().left,
 				'position': 'absolute',
 				'background-color': '#80B5F2'
 			});
-			jQuery( 'body' ).append( guide );
+			jQuery('body').append(guide);
 
 			Utils.getCellResizeBoundaries(gridId, rows, function(maxPageX, minPageX) {
 
@@ -38567,9 +39125,12 @@ define('table/table',[
 				}
 			};
 
+			var width = cell.closest( 'tbody' ).innerWidth();
+			var height = cell.outerHeight() - cell.innerHeight();
+
 			guide.css({
-				'width': cell.closest( 'tbody' ).innerWidth(),
-				'height': cell.outerHeight() - cell.innerHeight(),
+				'width': (width < 1) ? 1 : width,
+				'height': (height < 1) ? 1: height,
 				'top': guideTop(),
 				'left': cell.closest( 'tbody' ).offset().left,
 				'position': 'absolute',
@@ -38631,8 +39192,10 @@ define('table/table',[
 	Table.prototype.attachTableResizeWidth = function(table) {
 
 		var that = this;
-		var tableContainer = table.closest('.aloha-table-wrapper')
-		var lastColumn = table.find("tr:not(.aloha-table-selectcolumn) td:last-child")
+		var tableContainer = table.closest('.aloha-table-wrapper');
+		var trSelector = "tr:not(.aloha-table-selectcolumn)";
+		var lastColumn = table.find(trSelector + " th:last-child, " +
+			                        trSelector + " td:last-child");
 		var lastCell;
 
 		jQuery.each( lastColumn, function() {
@@ -38649,10 +39212,11 @@ define('table/table',[
 		var resizeColumns = function(pixelsMoved) {
 			var rows = table.find( 'tr' );
 			var lastCellRow = lastCell.closest( 'tr' );
-			var gridId = Utils.cellIndexToGridColumn( rows,
-																								rows.index( lastCellRow ),
-																								lastCellRow.children().index( lastCell )
-																							);
+			var gridId = Utils.cellIndexToGridColumn(
+				                   rows,
+			                      rows.index( lastCellRow ),
+			                      lastCellRow.children().index( lastCell )
+			                   );
 			var expandToWidth = pixelsMoved - Utils.getCellBorder(lastCell) - Utils.getCellPadding(lastCell);
 
 			Utils.walkCells(rows, function(ri, ci, gridCi, colspan, rowspan) {
@@ -38677,15 +39241,19 @@ define('table/table',[
 
 			// create a guide
 			var guide = jQuery( '<div></div>' );
+
+			var height = table.children( 'tbody' ).innerHeight();
+			var width = lastCell.outerWidth() - lastCell.innerWidth();
+
 			guide.css({
-				'height': table.children( 'tbody' ).innerHeight(),
-				'width': lastCell.outerWidth() - lastCell.innerWidth(),
+				'height': (height < 1) ? 1 : height,
+				'width': (width < 1) ? 1 : width,
 				'top': table.find('tbody').offset().top,
 				'left': table.offset().left + table.outerWidth(),
 				'position': 'absolute',
 				'background-color': '#80B5F2'
 			});
-			jQuery( 'body' ).append( guide );
+			jQuery('body').append( guide );
 
 			// set the maximum and minimum resize
 			var maxPageX = tableContainer.offset().left + tableContainer.width();
@@ -38806,7 +39374,6 @@ define('table/table-plugin',[
 	'jquery',
 	'aloha/plugin',
 	'aloha/pluginmanager',
-	'aloha/ephemera',
 	'ui/ui',
 	'ui/scopes',
 	'ui/button',
@@ -38820,13 +39387,13 @@ define('table/table-plugin',[
 	'table/table',
 	'table/table-plugin-utils',
 	'util/dom',
+	'aloha/ephemera',
 	'aloha/console'
 ], function(
 	Aloha,
 	jQuery,
 	Plugin,
 	PluginManager,
-	Ephemera,
 	Ui,
 	Scopes,
 	Button,
@@ -38840,6 +39407,7 @@ define('table/table-plugin',[
 	Table,
 	Utils,
 	Dom,
+	Ephemera,
 	Console
 ) {
 	var $ = jQuery;
@@ -38918,6 +39486,25 @@ define('table/table-plugin',[
 
 		return c;
 	};
+
+	/**
+	 * Update the WAI image
+	 *
+	 * @param {TablePlugin} tablePlugin tablePlugin
+	 */
+	function updateWaiImage(tablePlugin) {
+		var $element = $(tablePlugin.summary.getInputElem()),
+			waiRed = tablePlugin.activeTable.get('waiRed'),
+			waiGreen = tablePlugin.activeTable.get('waiGreen');
+
+		$element.removeClass(waiRed + ' ' + waiGreen);
+		if (tablePlugin.activeTable.checkWai()) {
+			$element.addClass(waiGreen);
+		}
+		else {
+			$element.addClass(waiRed);
+		}
+	}
 
 	/**
 	 * Checks whether the given DOM element is nested within a table.
@@ -39106,6 +39693,9 @@ define('table/table-plugin',[
 	TablePlugin.init = function() {
 		var that = this,
 		    isEnabled = {};
+
+		// register ephemeral classes
+		Ephemera.classes(this.get('className'), this.get('classCellSelected'));
 
 		// apply settings
 		this.tableConfig = this.checkConfig(this.tableConfig||this.settings.tableConfig);
@@ -39561,7 +40151,7 @@ define('table/table-plugin',[
 				if (that.activeTable) {
 					that.activeTable.refresh();
 
-					toggleHeaderStatus(that.activeTable, 'column');
+					toggleHeaderStatus(that.activeTable, 'col');
 
 					that.activeTable.selection.unselectCells();
 					that.activeTable.selection.selectRows(that.activeTable.selection.selectedRowIdxs);
@@ -39890,16 +40480,24 @@ define('table/table-plugin',[
 			click: function() {
 				if (that.activeTable) {
 					// look if table object has a child caption
-					if ( that.activeTable.obj.children("caption").is('caption') ) {
-						that.activeTable.obj.children("caption").remove();
+					var $caption = that.activeTable.obj.children("caption");
+
+					if ( $caption.is('caption') && $caption.is(':visible') ) {
+						$caption.hide();
 					} else {
-						var captionText = i18n.t('empty.caption');
-						var c = jQuery('<caption></caption>');
-						that.activeTable.obj.prepend(c);
-						that.makeCaptionEditable(c, captionText);
+						if (!$caption.is('caption')) {
+							$caption = jQuery('<caption></caption>');
+							that.activeTable.obj.prepend($caption);
+						}
+						$caption.show();
+						if (jQuery.trim($caption.text()).length === 0) {
+							$caption.text(i18n.t('empty.caption'));
+						}
+
+						that.makeCaptionEditable($caption, $caption.text());
 
 						// get the editable span within the caption and select it
-						var cDiv = c.find('div').eq(0);
+						var cDiv = $caption.find('div').eq(0);
 						var captionContent = cDiv.contents().eq(0);
 						if (captionContent.length > 0) {
 							var newRange = new GENTICS.Utils.RangeObject();
@@ -39923,14 +40521,15 @@ define('table/table-plugin',[
 			width : 275,
 			name  : 'tableSummary',
 			noTargetHighlight: true,
-			scope: this.name + '.cell'
+			scope: this.name + '.cell',
+			element: jQuery('<input id="aloha-attribute-field-tableSummary" class="aloha-wai-red" style="color: black; padding-left: 32px; background-color: white"/>')
 		} );
 
-		this.summary.addListener( 'keyup', function( event ) {
+		this.summary.addListener('keyup', function() {
 			if (that.activeTable) {
-				that.activeTable.checkWai();
+				updateWaiImage(that);
 			}
-		} );
+		});
 	};
 
 	/**
@@ -39944,8 +40543,11 @@ define('table/table-plugin',[
 		if (cSpan.length === 0) {
 			// generate a new div
 			cSpan = jQuery('<div></div>');
-			jQuery(cSpan).addClass('aloha-ui');
-			jQuery(cSpan).addClass('aloha-editable-caption');
+			cSpan.addClass('aloha-ui aloha-editable-caption aloha-block');
+
+			// mark the editable wrapper as ephemeral
+			Ephemera.markWrapper(cSpan);
+
 			if (caption.contents().length > 0) {
 				// when the caption has content, we wrap it with the new div
 				cSpan.append(caption.contents());
@@ -40067,7 +40669,7 @@ define('table/table-plugin',[
 		var that = this;
 
 		// clicking outside the table unselects the cells of the table
-		if ( null == focusTable && null != this.activeTable ) {
+		if (null != this.activeTable ) {
 			this.activeTable.selection.unselectCells();
 		}
 
@@ -40085,6 +40687,9 @@ define('table/table-plugin',[
 			focusTable.hasFocus = true;
 		}
 		TablePlugin.activeTable = focusTable;
+		if (TablePlugin.activeTable) {
+			updateWaiImage(TablePlugin);
+		}
 
 		// show configured formatting classes
 		for (var i = 0; i < this.tableMSItems.length; i++) {
@@ -40193,16 +40798,10 @@ define('table/table-plugin',[
 	 * @return void
 	 */
 	TablePlugin.makeClean = function ( obj ) {
-		var that = this;
-		obj.find( 'table' ).each( function () {
-			// Make sure that we only deactivate tables in obj which have the
-			// same id as tables which have been activated and registered
-			if ( that.getTableFromRegistry( this ) ) {
-				( new Table( this, that ) ).deactivate();
-				// remove the id attribute
-				jQuery(this).attr('id', null);
-			}
-		} );
+		// it is generally not necessary to do anything here, because everything is handled by Ephemera.
+		// the only exception is removing the cursor styles, because as of this moment, Ephemera is not capable
+		// of removing css
+		obj.find('td, th').css('cursor', '');
 	};
 
 	/**
@@ -40370,12 +40969,6 @@ define('table/table-plugin',[
 			}
 		}
 	};
-
-	Ephemera.classes('aloha-table',
-	                 'aloha-table-selectcolumn',
-	                 'aloha-table-selectrow',
-	                 'aloha-cell-selected',
-	                 'aloha-table-cell_active');
 
 	return TablePlugin;
 });
@@ -40651,27 +41244,21 @@ define('format/format-plugin', [
 		onSelectionChanged(formatPlugin, Aloha.Selection.getRangeObject());
 	}
 
-	function format(formatPlugin, rangeObject, markup, remove, limit) {
-		if (remove) {
-			GENTICS.Utils.Dom.removeMarkup(rangeObject, markup, limit);
-		} else {
-			GENTICS.Utils.Dom.addMarkup(rangeObject, markup);
-		}
+	function format(formatPlugin, rangeObject, markup) {
+		GENTICS.Utils.Dom.addMarkup(rangeObject, markup);
 		updateUiAfterMutation(formatPlugin, rangeObject);
 	}
 
-	function makeFormattingFn(formatPlugin, markup, remove, limit) {
-		return function (command, rangeObject) {
-			format(formatPlugin, rangeObject, markup, remove, limit);
-		};
+	function isFormatAllowed(tagname, plugin, editable) {
+		var config = plugin.getEditableConfig(editable.obj);
+		return jQuery.inArray(tagname, config) > -1;
 	}
 
 	function addMarkup(button) {
 		var formatPlugin = this;
 		var markup = jQuery('<'+button+'>');
 		var rangeObject = Aloha.Selection.rangeObject;
-		var limit = Aloha.activeEditable.obj;
-
+		
 		if ( typeof button === "undefined" || button == "" ) {
 			return;
 		}
@@ -40680,24 +41267,37 @@ define('format/format-plugin', [
 		var nodeNames = interchangeableNodeNames[markup[0].nodeName] || [markup[0].nodeName];
 		var foundMarkup = rangeObject.findMarkup(function() {
 			return -1 !== Arrays.indexOf(nodeNames, this.nodeName);
-		}, limit);
-		if (foundMarkup) {
-			markup = jQuery(foundMarkup);
-		}
+		}, Aloha.activeEditable.obj);
 
-		if (rangeObject.isCollapsed()) {
-			GENTICS.Utils.Dom.extendToWord(rangeObject);
+		if (foundMarkup) {
+			// remove the markup
 			if (rangeObject.isCollapsed()) {
-				if (StateOverride.enabled()) {
-					var formatter = makeFormattingFn(formatPlugin, markup, foundMarkup, limit);
-					StateOverride.setWithRangeObject(commandsByElement[button], rangeObject, formatter);
-					StateOverride.setForLinebreakWithRangeObject(commandsByElement[button], rangeObject, formatter);
-					return;
+				// when the range is collapsed, we remove exactly the one DOM element
+				GENTICS.Utils.Dom.removeFromDOM(foundMarkup, rangeObject, true);
+			} else {
+				// the range is not collapsed, so we remove the markup from the range
+				GENTICS.Utils.Dom.removeMarkup(rangeObject, jQuery(foundMarkup), Aloha.activeEditable.obj);
+			}
+			updateUiAfterMutation(formatPlugin, rangeObject);
+		} else {
+			// when the range is collapsed, extend it to a word
+			if (rangeObject.isCollapsed()) {
+				GENTICS.Utils.Dom.extendToWord(rangeObject);
+				if (rangeObject.isCollapsed()) {
+					if (StateOverride.enabled()) {
+						StateOverride.setWithRangeObject(
+							commandsByElement[button],
+							rangeObject,
+							function (command, rangeObject) {
+								format(formatPlugin, rangeObject, markup);
+							}
+						);
+						return;
+					}
 				}
 			}
+			format(formatPlugin, rangeObject, markup);
 		}
-
-		format(formatPlugin, rangeObject, markup, foundMarkup, limit);
 	}
 
 	function onSelectionChanged(formatPlugin, rangeObject) {
@@ -40710,17 +41310,9 @@ define('format/format-plugin', [
 			for (i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
 				effectiveMarkup = rangeObject.markupEffectiveAtStart[i];
 				for (j = 0; j < nodeNames.length; j++) {
-					var markup = jQuery('<' + nodeNames[j] + '>');
-					if (Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup, markup)) {
+					if (Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup, jQuery('<' + nodeNames[j] + '>'))) {
 						button.handle.setState(true);
 						statusWasSet = true;
-						if (StateOverride.enabled()) {
-							StateOverride.setForLinebreakWithRangeObject(
-								commandsByElement[nodeNames[j].toLowerCase()],
-								rangeObject,
-								makeFormattingFn(formatPlugin, markup, null, Aloha.activeEditable.obj)
-							);
-						}
 					}
 				}
 			}
@@ -40814,20 +41406,37 @@ define('format/format-plugin', [
 			Aloha.bind('aloha-editable-activated',function (e, params) {
 				me.applyButtonConfig(params.editable.obj);
 
-				// handle hotKeys
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatBold, function() { me.addMarkup( 'b' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatItalic, function() { me.addMarkup( 'i' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatParagraph, function() { me.changeMarkup( 'p' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatH1, function() { me.changeMarkup( 'h1' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatH2, function() { me.changeMarkup( 'h2' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatH3, function() { me.changeMarkup( 'h3' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatH4, function() { me.changeMarkup( 'h4' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatH5, function() { me.changeMarkup( 'h5' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatH6, function() { me.changeMarkup( 'h6' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatPre, function() { me.changeMarkup( 'pre' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatDel, function() { me.addMarkup( 'del' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatSub, function() { me.addMarkup( 'sub' ); return false; });
-				params.editable.obj.bind( 'keydown.aloha.format', me.hotKey.formatSup, function() { me.addMarkup( 'sup' ); return false; });
+				var createAdder = function (tagname) {
+					return function () {
+						if (isFormatAllowed(tagname, me, params.editable)) {
+							me.addMarkup(tagname);
+						}
+						return false;
+					};
+				};
+
+				var createChanger = function (tagname) {
+					return function () {
+						if (isFormatAllowed(tagname, me, params.editable)) {
+							me.changeMarkup(tagname);
+						}
+						return false;
+					};
+				};
+
+				params.editable.obj.bind('keydown.aloha.format',  me.hotKey.formatBold,     createAdder('b'));
+				params.editable.obj.bind('keydown.aloha.format',  me.hotKey.formatItalic,   createAdder('i'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatDel,       createAdder('del'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatSub,       createAdder('sub'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatSup,       createAdder('sup'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatParagraph, createChanger('p'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH1,        createChanger('h1'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH2,        createChanger('h2'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH3,        createChanger('h3'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH4,        createChanger('h4'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH5,        createChanger('h5'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH6,        createChanger('h6'));
+				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatPre,       createChanger('pre'));
 			});
 
 			Aloha.bind('aloha-editable-deactivated',function (e, params) {
@@ -42520,19 +43129,13 @@ define('contenthandler/wordcontenthandler',[
 	'aloha',
 	'aloha/contenthandlermanager',
 	'contenthandler/contenthandler-utils',
-	'util/dom',
-	'util/dom2',
-	'util/arrays',
-	'util/strings'
+	'util/dom'
 ], function (
 	$,
 	Aloha,
 	Manager,
 	Utils,
-	Dom,
-	Dom2,
-	Arrays,
-	Strings
+	Dom
 ) {
 	
 
@@ -42553,12 +43156,6 @@ define('contenthandler/wordcontenthandler',[
 	 * @const
 	 */
 	var HASH_HREF = /^#(.*)/;
-
-	/**
-	 * CSS styles we want to preserve.
-	 * Can be overridden with Aloha.settings.contentHandler.word.preserveStyles.
-	 */
-	var preserveStylesDefault = ['font-family', 'font-size', 'color', 'background-color'];
 
 	/**
 	 * Checks whether the given node is empty, ignoring white spaces.
@@ -42613,31 +43210,6 @@ define('contenthandler/wordcontenthandler',[
 	}
 
 	/**
-	 * Return a new span element, copying some preservable properties
-	 * over from the given span element. If there are no preservable
-	 * properties, return null.
-	 */
-	function cleanSpan(elem) {
-		var clean = null;
-		var preserveStyles = ((Aloha.settings
-							   && Aloha.settings.contentHandler
-							   && Aloha.settings.contentHandler.word
-							   && Aloha.settings.contentHandler.word.preserveStyles)
-							  || preserveStylesDefault);
-		Arrays.forEach(preserveStyles, function (styleName) {
-			var styleValue = Dom2.getStyle(elem, styleName);
-			if (Strings.empty(styleValue)) {
-				return;
-			}
-			if (!clean) {
-				clean = elem.ownerDocument.createElement('SPAN');
-			}
-			Dom2.setStyle(clean, styleName, styleValue);
-		});
-		return clean;
-	}
-
-	/**
 	 * Cleanup MS Word HTML.
 	 *
 	 * @param {jQuery.<HTMLElement>} $content
@@ -42660,18 +43232,11 @@ define('contenthandler/wordcontenthandler',[
 				if (href && HASH_HREF.test($.trim(href))) {
 					$node.contents().unwrap();
 				}
-			} else if ('div' === nodeName) {
+			} else if ('div' === nodeName || 'span' === nodeName) {
 
 				// Because footnotes for example are wrapped in divs and should
-				// be unwrapped.
+				// be unwrap.
 				$node.contents().unwrap();
-			} else if ('span' === nodeName) {
-				var cleanElem = cleanSpan($node[0]);
-				if (cleanElem) {
-					Dom2.replaceShallow($node[0], cleanElem);
-				} else {
-					Dom2.removeShallow($node[0]);
-				}
 			} else if ('td' !== nodeName && isEmpty($node)) {
 
 				// Because any empty element (like spaces wrapped in spans) are
@@ -43035,6 +43600,13 @@ define('contenthandler/genericcontenthandler',[
 	
 
 	/**
+	 * Tags used for semantic formatting
+	 * @type {Array.<String>}
+	 * @see GenericContentHandler#transformFormattings
+	 */
+	var formattingTags = ['strong', 'em', 's', 'u', 'strike'];
+
+	/**
 	 * Checks whether the markup describes a paragraph that is propped by
 	 * a <br> tag but is otherwise empty.
 	 * 
@@ -43109,7 +43681,7 @@ define('contenthandler/genericcontenthandler',[
 
 		// Because Aloha does not provide a means for editors to manipulate
 		// these properties.
-		$content.find('td,tr')
+		$content.find('table,th,td,tr')
 			.removeAttr('width')
 			.removeAttr('height')
 			.removeAttr('valign');
@@ -43117,6 +43689,27 @@ define('contenthandler/genericcontenthandler',[
 		// Because Aloha table handling simply does not regard colgroups.
 		// @TODO Use sanitize.js?
 		$content.find('colgroup').remove();
+	}
+
+	/**
+	 * Return true if the nodeType is allowed in the settings,
+	 * Aloha.settings.contentHandler.allows.elements
+	 * 
+	 * @param {String} nodeType	The tag name of the element to evaluate
+	 * 
+	 * @return {Boolean}
+	 */
+	function isAllowedNodeName(nodeType){
+		return !!(
+			Aloha.settings.contentHandler
+			&& Aloha.settings.contentHandler.allows
+			&& Aloha.settings.contentHandler.allows.elements
+			&& ($.inArray(
+		              nodeType.toLowerCase(), 
+				      Aloha.settings.contentHandler.allows.elements
+				         ) !== -1
+			   )
+		);
 	}
 
 	var GenericContentHandler = Manager.createHandler({
@@ -43143,7 +43736,6 @@ define('contenthandler/genericcontenthandler',[
 			}
 
 			prepareTables($content);
-
 			this.cleanLists($content);
 			this.removeComments($content);
 			this.unwrapTags($content);
@@ -43190,7 +43782,18 @@ define('contenthandler/genericcontenthandler',[
 		transformFormattings: function ( content ) {
 			// find all formattings we will transform
 			// @todo this makes troubles -- don't change semantics! at least in this way...
-			content.find('strong,em,s,u,strike').each(function () {
+
+			var selectors = [],
+				i
+			;
+
+			for (i = 0; i < formattingTags.length; i++) {
+				if (!isAllowedNodeName(formattingTags[i])) {
+					selectors.push(formattingTags[i]);
+				}
+			}
+
+			content.find(selectors.join(',')).each(function () {
 				if (this.nodeName === 'STRONG') {
 					// transform strong to b
 					Aloha.Markup.transformDomObject($(this), 'b');
@@ -43339,7 +43942,7 @@ define('contenthandler/genericcontenthandler',[
  */
 
 function Sanitize(){
-  var i, e, options;
+  var options;
   options = arguments[0] || {};
   this.jQuery = arguments[1] || {};
   this.config = {}
@@ -43351,21 +43954,22 @@ function Sanitize(){
   this.config.protocols = options.protocols ? options.protocols : {};
   this.config.add_attributes = options.add_attributes ? options.add_attributes  : {};
   this.dom = options.dom ? options.dom : document;
-  for(i=0;i<this.config.elements.length;i++) {
-    this.allowed_elements[this.config.elements[i]] = true;
-  }
+	for (var i = 0, len = this.config.elements.length; i < len; i++) {
+		this.allowed_elements[this.config.elements[i]] = true;
+	}
   this.config.remove_element_contents = {};
   this.config.remove_all_contents = false;
   if(options.remove_contents) {
-    
-    if(options.remove_contents instanceof Array) {
-      for(i=0;i<options.remove_contents.length;i++) {
-        this.config.remove_element_contents[options.remove_contents[i]] = true;
-      }
-    }
-    else {
-      this.config.remove_all_contents = true;
-    }
+
+     if (options.remove_contents instanceof Array) {
+		  var elementContents = this.config.remove_element_contents;
+		  for (var i = 0, len = options.remove_contents.length; i < len; i++) {
+			  elementContents[options.remove_contents[i]] = true;
+		  }
+	  }
+	  else {
+		  this.config.remove_all_contents = true;
+	  }
   }
   this.transformers = options.transformers ? options.transformers : [];
 
@@ -43387,46 +43991,52 @@ Sanitize.prototype.clean_node = function(container) {
    * Utility function to check if an element exists in an array
    */
   function _array_index(needle, haystack) {
-    var i;
-    for(i=0; i < haystack.length; i++) {
-      if(haystack[i] == needle) 
-        return i;
-    }
-    return -1;
+	  var i,
+	      len = haystack.length
+	  for (i = 0; i < len; i++) {
+		  if (haystack[i] === needle)
+			  return i;
+	  }
+	  return -1;
   }
-  
-  function _merge_arrays_uniq() {
-    var result = [];
-    var uniq_hash = {}
-    var i,j;
-    for(i=0;i<arguments.length;i++) {
-      if(!arguments[i] || !arguments[i].length)
-        continue;
-      for(j=0;j<arguments[i].length;j++) {
-        if(uniq_hash[arguments[i][j]])
-          continue;
-        uniq_hash[arguments[i][j]] = true;
-        result.push(arguments[i][j]);
-      }
-    }
-    return result;
-  }
+
+	function _merge_arrays_uniq() {
+		var result = [],
+		    uniq_hash = {},
+			i,
+		    len = arguments.length,
+		    arg;
+		for (i = 0; i < len; i++) {
+			arg = arguments[i];
+			if (!arg || !arg.length)
+				continue;
+			for (var j = 0, argLen = arg.length; j < argLen; j++) {
+				if (uniq_hash[arg[j]])
+					continue;
+				uniq_hash[arg[j]] = true;
+				result.push(arg[j]);
+			}
+		}
+		return result;
+	}
   
   /**
    * Clean function that checks the different node types and cleans them up accordingly
    * @param elem DOM Node to clean
    */
   function _clean(elem) {
-    var clone;
+    var clone,
+	    i,
+	    len = this.filters.length;
 
     // check whether the elem passes all of the filters
-    for ( var i=0; i < this.filters.length; i++ ) {
-    	if (!this.filters[i](elem)) {
-    		clone = elem.cloneNode(true);
-            this.current_element.appendChild(clone);
-    		return;
-    	}
-    }
+	  for (i = 0; i < len; i++) {
+		  if (!this.filters[i](elem)) {
+			  clone = elem.cloneNode(true);
+			  this.current_element.appendChild(clone);
+			  return;
+		  }
+	  }
 
     switch(elem.nodeType) {
       // Element
@@ -43450,13 +44060,13 @@ Sanitize.prototype.clean_node = function(container) {
           this.current_element.appendChild(clone);
         }
       default:
-        //console.log("unknown node type", elem.nodeType) 
+        //console.log("unknown node type", elem.nodeType)
     }
  
   }
   
   function _clean_element(elem) {
-    var i, j, clone, parent_element, name, allowed_attributes, attr, attr_name, attr_node, protocols, del, attr_ok;
+    var i, len, parent_element, name, allowed_attributes, attr, attr_name, attr_node, protocols, del, attr_ok;
     var transform = _transform_element.call(this, elem);
     var jQuery = this.jQuery;
     var isIE7 = jQuery.browser.msie && jQuery.browser.version === "7.0";
@@ -43466,53 +44076,50 @@ Sanitize.prototype.clean_node = function(container) {
     
     // check if element itself is allowed
     parent_element = this.current_element;
-    if(this.allowed_elements[name] || transform.whitelist) {
+    if (this.allowed_elements[name] || transform.whitelist) {
         this.current_element = this.dom.createElement(elem.nodeName);
         parent_element.appendChild(this.current_element);
-        
+
       // clean attributes
       allowed_attributes = _merge_arrays_uniq(
         this.config.attributes[name],
         this.config.attributes['__ALL__'],
         transform.attr_whitelist
       );
-      for(i=0;i<allowed_attributes.length;i++) {
-        attr_name = allowed_attributes[i];
-        attr = elem.attributes[attr_name];
-        if(attr) {
-            attr_ok = true;
-            // Check protocol attributes for valid protocol
-            if(this.config.protocols[name] && this.config.protocols[name][attr_name]) {
-              protocols = this.config.protocols[name][attr_name];
-              del = attr.nodeValue.toLowerCase().match(Sanitize.REGEX_PROTOCOL);
-              if(del) {
-                attr_ok = (_array_index(del[1], protocols) != -1);
-              }
-              else {
-                attr_ok = (_array_index(Sanitize.RELATIVE, protocols) != -1);
-              }
-            }
-            if(attr_ok) {
-            	// sanitize does not work in IE7. It tries to set the style attribute via setAttributeNode() and this is know to not work in IE7
-    			// (see http://www.it-blogger.com/2007-06-22/microsofts-internetexplorer-und-mitglied-nicht-gefunden/ as a reference)	
-              if(!isIE7 || (isIE7 && "style" !== attr_name)) {
-	              attr_node = document.createAttribute(attr_name);
-	              attr_node.value = attr.nodeValue;              
-            	  this.current_element.setAttributeNode(attr_node);
-              }
-            }
-        }
+	    len = allowed_attributes.length;
+	    for (i = 0; i < len; i++) {
+		    attr_name = allowed_attributes[i];
+		    attr = elem.attributes[attr_name];
+		    if (attr) {
+			    attr_ok = true;
+			    // Check protocol attributes for valid protocol
+			    if (this.config.protocols[name] && this.config.protocols[name][attr_name]) {
+				    protocols = this.config.protocols[name][attr_name];
+				    del = attr.nodeValue.toLowerCase().match(Sanitize.REGEX_PROTOCOL);
+				    if (del) {
+					    attr_ok = (_array_index(del[1], protocols) != -1);
+				    }
+				    else {
+					    attr_ok = (_array_index(Sanitize.RELATIVE, protocols) != -1);
+				    }
+			    }
+			    if (attr_ok) {
+				    // sanitize does not work in IE7. It tries to set the style attribute via setAttributeNode() and this is know to not work in IE7
+				    // (see http://www.it-blogger.com/2007-06-22/microsofts-internetexplorer-und-mitglied-nicht-gefunden/ as a reference)
+				    if (!isIE7 || (isIE7 && "style" !== attr_name)) {
+					    this.current_element.setAttribute(attr_name, attr.nodeValue)
+				    }
+			    }
+		    }
       }
-      
+
       // Add attributes
       if(this.config.add_attributes[name]) {
         for(attr_name in this.config.add_attributes[name]) {
         	// sanitize does not work in IE7. It tries to set the style attribute via setAttributeNode() and this is know to not work in IE7
 			// (see http://www.it-blogger.com/2007-06-22/microsofts-internetexplorer-und-mitglied-nicht-gefunden/ as a reference)
         	if(!isIE7 || (isIE7 && "style" !== attr_name)) {
-	          attr_node = document.createAttribute(attr_name);
-	          attr_node.value = this.config.add_attributes[name][attr_name];
-	          this.current_element.setAttributeNode(attr_node);
+	          this.current_element.setAttribute(attr_name, this.config.add_attributes[name][attr_name]);
         	}
         }
       }
@@ -43522,19 +44129,22 @@ Sanitize.prototype.clean_node = function(container) {
     else if(_array_index(elem, this.whitelist_nodes) != -1) {
       this.current_element = elem.cloneNode(true);
       // Remove child nodes, they will be sanitiazied and added by other code
-      while(this.current_element.childNodes.length > 0) {
-        this.current_element.removeChild(this.current_element.firstChild);
+	    var childNodesLength = this.current_element.childNodes.length;
+	    while(childNodesLength > 0) {
+            this.current_element.removeChild(this.current_element.firstChild);
       }
       parent_element.appendChild(this.current_element);
     }
 
     // iterate over child nodes
     if(!this.config.remove_all_contents && !this.config.remove_element_contents[name]) {
-      for(i=0;i<elem.childNodes.length;i++) {
-        _clean.call(this, elem.childNodes[i]);
-      }
+	    var childNodes = elem.childNodes,
+		    len = childNodes.length;
+	    for (i = 0; i < len; i++) {
+		    _clean.call(this, childNodes[i]);
+	    }
     }
-    
+
     // some versions of IE don't support normalize.
     if(this.current_element.normalize) {
       this.current_element.normalize();
@@ -43547,9 +44157,13 @@ Sanitize.prototype.clean_node = function(container) {
       attr_whitelist:[],
       node: node,
       whitelist: false
-    }
-    var i, j, transform;
-    for(i=0;i<this.transformers.length;i++) {
+    };
+    var transform,
+	    i,
+	    j,
+	    transLength = this.transformers.length,
+	    len;
+	for (i = 0; i < transLength; i++) {
       transform = this.transformers[i]({
         allowed_elements: this.allowed_elements,
         config: this.config,
@@ -43562,7 +44176,8 @@ Sanitize.prototype.clean_node = function(container) {
         continue;
       else if(typeof transform == 'object') {
         if(transform.whitelist_nodes && transform.whitelist_nodes instanceof Array) {
-          for(j=0;j<transform.whitelist_nodes.length;j++) {
+	      len = transform.whitelist_nodes.length
+	      for (j = 0; j < len; j++) {
             if(_array_index(transform.whitelist_nodes[j], this.whitelist_nodes) == -1) {
               this.whitelist_nodes.push(transform.whitelist_nodes[j]);
             }
@@ -43580,11 +44195,12 @@ Sanitize.prototype.clean_node = function(container) {
     }
     return output;
   }
-  
-  
-  
-  for(i=0;i<container.childNodes.length;i++) {
-    _clean.call(this, container.childNodes[i]);
+
+
+  var childNodes = container.childNodes,
+      i;
+  for (i = 0, len = childNodes.length; i < len; i++) {
+    _clean.call(this, childNodes[i]);
   }
   
   if(fragment.normalize) {
@@ -43635,12 +44251,6 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 	
 	var sanitize;
 	
-	// Because by default the contents of stripped elements is left in
-	// place, but in the case of style and script elements, which don't
-	// represent any "real" content, we want to remove the contents as
-	// well.
-	var remove_contents = ['style', 'script'];
-
 	// predefined set of sanitize options if no dynamic or custom config is used
 	if( !Aloha.defaults.sanitize ) {
 		Aloha.defaults.sanitize = {}
@@ -43648,8 +44258,7 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 
 	// very restricted sanitize config
 	Aloha.defaults.sanitize.restricted = {
-		elements: [ 'b', 'em', 'i', 'strong', 'u', 'del', 'p', 'span', 'div', 'br' ],
-		remove_contents: remove_contents
+		elements: [ 'b', 'em', 'i', 'strong', 'u', 'del', 'p', 'span', 'div', 'br' ]
 	}
 
 	// sanitize  config allowing a bit more (no tables)
@@ -43674,9 +44283,7 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 			'a' : {'href': ['ftp', 'http', 'https', 'mailto', '__relative__']},
 			'blockquote' : {'cite': ['http', 'https', '__relative__']},
 			'q' : {'cite': ['http', 'https', '__relative__']}
-		},
-
-		remove_contents: remove_contents
+		}
 	}
 
 	// relaxed sanitize config allows also tables
@@ -43702,8 +44309,9 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 			'p': ['class', 'style', 'id'],
 			'q': ['cite'],
 			'table': ['summary', 'width'],
-			'td': ['abbr', 'axis', 'colspan', 'rowspan', 'width'],
-			'th': ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
+									// For IE7 it matters the uppercase 'S' in rowSpan, colSpan
+			'td': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'width'],
+			'th': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'scope', 'width'],
 			'ul': ['type'],
 			'span': ['class','style','lang','xml:lang','role']
 		},
@@ -43713,9 +44321,7 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 			'blockquote': {'cite': ['http', 'https', '__relative__']},
 			'img': {'src' : ['http', 'https', '__relative__']},
 			'q': {'cite': ['http', 'https', '__relative__']}
-		},
-
-		remove_contents: remove_contents
+		}
 	}
 
 	function initSanitize (configAllows) {
@@ -43753,23 +44359,27 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 		 * Handle the content from eg. paste action and sanitize the html
 		 * @param content
 		 */
-		handleContent: function( content )  {
-			var sanitizeConfig,
-				contentHandlerConfig;
+		handleContent: function (content, options, editable)  {
+			if (!editable) {
+				return content;
+			}
 
-			if (Aloha.activeEditable &&
-				Aloha.settings.contentHandler &&
-				Aloha.settings.contentHandler.handler && Aloha.settings.contentHandler.handler.sanitize) {
+			var sanitizeConfig;
+			var contentHandlerConfig;
+
+			if (Aloha.settings.contentHandler &&
+			    Aloha.settings.contentHandler.handler &&
+			    Aloha.settings.contentHandler.handler.sanitize) {
 				// individual sanitize config per editable -- should support merging of configs from other plugins ...
-				if ( Aloha.settings.contentHandler.handler.sanitize ) {
+				if (Aloha.settings.contentHandler.handler.sanitize) {
 					contentHandlerConfig = Aloha.settings.contentHandler.handler.sanitize;
 				}
-				var containerId = contentHandlerConfig['#' + Aloha.activeEditable.getId()];
+				var containerId = contentHandlerConfig['#' + editable.getId()];
 				if (typeof containerId !== 'undefined') {
 					sanitizeConfig = contentHandlerConfig;
 				} else {
-					var containerClasses = Aloha.activeEditable.obj.attr('class').split(' ');
-					for ( var i=0; i < containerClasses.length; i++) {
+					var containerClasses = editable.obj.attr('class').split(' ');
+					for (var i = 0; i < containerClasses.length; i++) {
 						if (typeof contentHandlerConfig['.' + containerClasses[i]] !== 'undefined') {
 							sanitizeConfig = contentHandlerConfig['.' + containerClasses[i]];
 						}
@@ -43778,13 +44388,13 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 			}
 
 			if ( typeof sanitize === 'undefined' || typeof sanitizeConfig !== 'undefined') {
-				initSanitize( sanitizeConfig );
+				initSanitize(sanitizeConfig);
 			}
 
-			if ( typeof content === 'string' ){
-				content = jQuery( '<div>' + content + '</div>' ).get(0);
-			} else if ( content instanceof jQuery ) {
-				content = jQuery( '<div>' ).append(content).get(0);
+			if (typeof content === 'string'){
+				content = jQuery('<div>' + content + '</div>').get(0);
+			} else if (content instanceof jQuery) {
+				content = jQuery('<div>').append(content).get(0);
 			}
 
 			return jQuery('<div>').append(sanitize.clean_node(content)).html();
@@ -43793,6 +44403,7 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 
 	return SanitizeContentHandler;
 });
+
 /*!
  * Aloha Editor
  * Author & Copyright (c) 2010-2013 Gentics Software GmbH
@@ -43810,20 +44421,26 @@ define('contenthandler/blockelementcontenthandler',[
 	'aloha/contenthandlermanager',
 	'contenthandler/contenthandler-utils',
 	'util/functions',
-	'util/html'
+	'util/html',
+	'util/arrays'
+
 ], function (
 	$,
 	Aloha,
 	ContentHandlerManager,
 	Utils,
 	Functions,
-	Html
+	Html,
+	Arrays
 ) {
 	
 
 	var blocksSelector = Html.BLOCKLEVEL_ELEMENTS.join();
-	var emptyBlocksSelector = Html.BLOCKLEVEL_ELEMENTS.join(':empty,')
-	                        + ':empty';
+	var nonVoidBlocksSelector = Arrays.subtract(
+			Html.BLOCKLEVEL_ELEMENTS,
+			Html.VOID_ELEMENTS
+		);
+
 	var NOT_ALOHA_BLOCK_FILTER = ':not(.aloha-block)';
 
 	var isNotIgnorableWhitespace =
@@ -43855,7 +44472,7 @@ define('contenthandler/blockelementcontenthandler',[
 	function prepareForEditing(i, element) {
 		var $element = $(element);
 
-		$element.filter(emptyBlocksSelector).remove();
+		$element.filter(nonVoidBlocksSelector).remove();
 
 		if ($.browser.msie) {
 			// Because even though content edited by Aloha Editor is no longer
@@ -43889,7 +44506,7 @@ define('contenthandler/blockelementcontenthandler',[
 	 */
 	function prepareEditingInOldIE(i, element) {
 		var $element = $(element);
-		$element.filter(emptyBlocksSelector).append('\u200b');
+		$element.filter(nonVoidBlocksSelector).append('\u200b');
 		$element.children(NOT_ALOHA_BLOCK_FILTER).each(prepareEditingInOldIE);
 	}
 
@@ -43905,7 +44522,7 @@ define('contenthandler/blockelementcontenthandler',[
 	 */
 	function propBlockElements(i, element) {
 		var $element = $(element);
-		$element.filter(emptyBlocksSelector).append('<br/>');
+		$element.filter(nonVoidBlocksSelector).filter(':empty').append('<br/>');
 		$element.children(NOT_ALOHA_BLOCK_FILTER).each(propBlockElements);
 	}
 
@@ -44645,6 +45262,153 @@ function( command, commands ) {
 		
 });
 
+define('block/block-utils',[
+	'util/dom',
+	'util/dom2',
+	'util/html'
+], function (
+	DomLegacy,
+	Dom,
+	Html
+) {
+	
+
+	/**
+	 * Check if a white space span should be removed
+	 *
+	 * @param {DOMElement} node where the white space span has been inserted
+	 * @returns {Boolean}
+	 */
+	function isObsoleteLandingNode(node) {
+		return 'SPAN' === node.nodeName
+		    && (node.childNodes.length === 0 || node.innerHTML === '&nbsp;');
+	}
+
+	function createLandingElement() {
+		var node = document.createElement('span');
+		node.appendChild(document.createTextNode('\u00A0'));
+		return node;
+	}
+
+	function isVisibleNode(node) {
+		return (Html.isBlock(node) || Dom.isTextNode(node))
+		    && !Html.isUnrenderedNode(node);
+	}
+
+	function skipNodeForward(node) {
+		return Dom.forward(node.lastChild || node);
+	}
+
+	/**
+	 * Pads the given block element with landing areas at the beginning and end
+	 * of the block. This allows the editor to place the caret next to an inline
+	 * block elements.
+	 *
+	 * @param {jQuery<DOMElement>} $block
+	 */
+	function pad($block) {
+		var previous = Dom.findBackward(
+			Dom.backward($block[0]),
+			isVisibleNode,
+			function(node) {
+				return Html.isBlock(node) || DomLegacy.isEditingHost(node);
+			}
+		);
+		if (!previous) {
+			$block.before(createLandingElement());
+		}
+		var next = Dom.findForward(
+			skipNodeForward($block[0]),
+			isVisibleNode,
+			function (node) {
+				return Html.isBlock(node) || DomLegacy.isEditingHost(node) || (
+					node.previousSibling
+					&&
+					DomLegacy.isEditingHost(node.previousSibling)
+				);
+			}
+		);
+		if (!next) {
+			$block.after(createLandingElement());
+		}
+	}
+
+	/**
+	 * Removes the landing nodes inserted by the pad() function.
+	 *
+	 * @param {jQuery<DOMElement>} $block
+	 */
+	function unpad($block) {
+		var previous = $block[0].previousSibling;
+		var next = $block[0].nextSibling;
+		if (previous && isObsoleteLandingNode(previous)) {
+			previous.parentNode.removeChild(previous);
+		}
+		if (next && isObsoleteLandingNode(next)) {
+			next.parentNode.removeChild(next);
+		}
+	}
+
+	/**
+	 * Tests whether the given element is contained in an editable for
+	 * which the block dragdrop feature is enabled.
+	 *
+	 * @param {!jQuery} $element
+	 *        The element that may or may not be contained in an editable.
+	 * @return {Boolean}
+	 *        True, unless the given $element is contained in an
+	 *        editable for which the dragdrop feature has been disabled.
+	 */
+	function isDragdropEnabledForElement($element) {
+		var $editable = $element.closest('.aloha-editable');
+		if ($editable.length) {
+			return !!$editable.data('block-dragdrop');
+		}
+		// no editable specified, let's make drag & drop enabled by default.
+		return true;
+	}
+
+    /**
+     * Get the parent editable of the block $block
+     *
+     * @param {jQuery Element} $block
+     * @returns {jQuery Element}
+     */
+    function getEditableByBlock($block) {
+        return $block.parents('.aloha-editable').filter(':first');
+    }
+
+    /**
+     * Get table inside the block or null if this block is not for a table
+     *
+     * @param $block
+     * @returns {jQuery Element} jQuery table or null if this block
+     * is not for a Table
+     */
+    function getTableByBlock($block) {
+        return isTable($block)? $block.find('table').filter(':first') : null;
+    }
+
+    /**
+     * Check if a block element is a table.
+     *
+     * @param {jQuery Element} $blockElement
+     * @returns {Boolean} true if it is a table, false otherwise
+     */
+    function isTable($blockElement) {
+        return $blockElement.hasClass('aloha-table-wrapper');
+    }
+
+	return {
+		pad: pad,
+		unpad: unpad,
+		isDragdropEnabledForElement: isDragdropEnabledForElement,
+        isTable: isTable,
+        getEditableByBlock: getEditableByBlock,
+        getTableByBlock: getTableByBlock
+	};
+});
+
 /*global window:true, define:true, document:true */
 /* blockmanager.js is part of Aloha Editor project http://aloha-editor.org
  *
@@ -44680,7 +45444,9 @@ define('block/blockmanager',[
 	'aloha/registry',
 	'util/class',
 	'util/strings',
-	'util/maps'
+	'util/maps',
+    'block/block-utils',
+    'table/table-plugin'
 ], function (
 	Aloha,
 	$,
@@ -44689,7 +45455,9 @@ define('block/blockmanager',[
 	Registry,
 	Class,
 	Strings,
-	Maps
+	Maps,
+    BlockUitls,
+    Table
 ) {
 	
 
@@ -44850,9 +45618,15 @@ define('block/blockmanager',[
 				var commandId = data.commandId;
 
 				// Internet Explorer *magically* sets the range to the "Body" object after deselecting everything. yeah :-D
-				var onlyBlockSelected = (Aloha.getSelection().getRangeCount() === 0) || // Firefox / Chrome
-					(Aloha.getSelection().getRangeCount() === 1 && Aloha.getSelection().getRangeAt(0).endContainer === Aloha.getSelection().getRangeAt(0).startContainer && Aloha.getSelection().getRangeAt(0).endContainer === jQuery('body')[0]) || // Internet explorer: Inline Elements
-					(Aloha.getSelection().getRangeCount() === 1 && Aloha.getSelection().getRangeAt(0).endContainer === Aloha.getSelection().getRangeAt(0).startContainer && Aloha.getSelection().getRangeAt(0).startOffset + 1 === Aloha.getSelection().getRangeAt(0).endOffset); // Internet explorer: Block level elements
+				var selection = Aloha.getSelection(),
+				    rangeCount = selection.getRangeCount(),
+				    range = selection.getRangeAt(0),
+				    rangeEndContainer = range.endContainer,
+				    rangeStartContainer = range.startContainer,
+
+				    onlyBlockSelected = (rangeCount === 0) || // Firefox / Chrome
+					       (rangeCount === 1 && rangeEndContainer === rangeStartContainer && rangeEndContainer === jQuery('body')[0]) || // Internet explorer: Inline Elements
+					       (rangeCount === 1 && rangeEndContainer === rangeStartContainer && range.startOffset + 1 === range.endOffset); // Internet explorer: Block level elements
 
 				if (that._activeBlock && (commandId === 'delete' || commandId === 'forwarddelete') && onlyBlockSelected) {
 					// Deletion when a block is currently selected
@@ -44860,7 +45634,7 @@ define('block/blockmanager',[
 					// In this case, the default command shall not be executed.
 					data.preventDefault = true;
 					that._activeBlock.destroy();
-				} else if (!that._activeBlock && (commandId === 'delete' || commandId === 'forwarddelete') && Aloha.getSelection().getRangeCount() === 1 && Aloha.getSelection().getRangeAt(0).collapsed === false) {
+				} else if (!that._activeBlock && (commandId === 'delete' || commandId === 'forwarddelete') && rangeCount === 1 && range.collapsed === false) {
 					// Deletion when a block is inside a bigger selection currently
 					// In this case, we check if we find an aloha-block. If yes, we delete it right away as the browser does not delete it correctly by default
 					var traverseSelectionTree;
@@ -45032,11 +45806,21 @@ define('block/blockmanager',[
 					change: function (event, ui) {
 						ui.item.data("block-sort-allowed", (ui.placeholder.parents(".aloha-block-dropzone").length > 0));
 					},
-					stop: function (event, ui) { 
-						if (!ui.item.data("block-sort-allowed")) {
+					stop: function (event, ui) {
+						var $blockItem = ui.item;
+						if (!$blockItem.data("block-sort-allowed")) {
 							jQuery(this).sortable("cancel");
-						} 
-						ui.item.removeData("block-sort-allowed");
+						}
+						$blockItem.removeData("block-sort-allowed");
+
+						var $table = BlockUitls.getTableByBlock($blockItem);
+						if ($table !== null) {
+							var actualParentEditable = Aloha.getEditableById(
+								BlockUitls.getEditableByBlock($blockItem)
+								          .attr('id'));
+							Table.getTableFromRegistry($table.get(0))
+							     .parentEditable = actualParentEditable;
+						}
 					}
 				});
 
@@ -45148,26 +45932,41 @@ define('block/blockmanager',[
 		/**
 		 * Merges the config from different places, and return the merged config.
 		 *
+		 * @param {Object} jQuery Object
+		 * @param {Object} default configuration
+		 *
 		 * @private
 		 */
 		getConfig: function (blockElement, instanceDefaults) {
-			// Clone the element before getting the data to fix an IE7 crash.
-			// We use jQuery.clone(true) because the sortableItem attribute isn't returned
-			// if we do a normal cloneNode(...).
-			var clone = blockElement.clone(true);
-			var dataCamelCase = clone.data();
-			var data = {};
-			clone.removeData();
-			// jQuery.data() returns data attributes with names like
-			// data-some-attr as dataSomeAttr which has to be reversed
-			// so that they can be merged with this.defaults and
-			// instanceDefaults which are expected to be in
-			// data-some-attr form.
-			for (var key in dataCamelCase) {
-				if (dataCamelCase.hasOwnProperty(key)) {
-					data[Strings.camelCaseToDashes(key)] = dataCamelCase[key];
+			var
+				data          = {},
+				dataCamelCase = null,
+				$clone        = null;
+
+			if (blockElement.length > 0) {
+				// Clone the element before getting the data to fix an IE7 crash.
+				// We use the native cloneNode function, because jQuerys clone()
+				// executes scripts also, what we don't want.
+				// But since that one doesn't copy the the abritary jQuery data, we
+				// manually merge both datas together into a new object.
+				$clone = $(blockElement[0].cloneNode(false));
+				// Merge the "data-" attributes from the clone and take the
+				// arbitrary data from the original jQuery object
+				dataCamelCase = $.extend({}, $.data(blockElement[0]), $clone.data());
+				$clone.removeData();
+
+				// jQuery.data() returns data attributes with names like
+				// data-some-attr as dataSomeAttr which has to be reversed
+				// so that they can be merged with this.defaults and
+				// instanceDefaults which are expected to be in
+				// data-some-attr form.
+				for (var key in dataCamelCase) {
+					if (dataCamelCase.hasOwnProperty(key)) {
+						data[Strings.camelCaseToDashes(key)] = dataCamelCase[key];
+					}
 				}
 			}
+
 			return jQuery.extend(
 				{},
 				this.defaults,
@@ -45488,7 +46287,9 @@ define('block/block',[
 	'aloha/observable',
 	'ui/scopes',
 	'util/class',
-	'PubSub'
+	'PubSub',
+	'block/block-utils',
+	'util/html'
 ], function(
 	Aloha,
 	jQuery,
@@ -45496,7 +46297,9 @@ define('block/block',[
 	Observable,
 	Scopes,
 	Class,
-	PubSub
+	PubSub,
+	BlockUtils,
+    Html
 ){
 	
 
@@ -45599,7 +46402,20 @@ define('block/block',[
 			if (this.isDraggable()) {
 				// Remove default drag/drop behavior of the browser
 				$element.find('img').attr('draggable', 'false');
-				$element.find('a').attr('draggable', 'false');
+
+				try {
+					$element.find('a').attr('draggable', 'false');
+				} catch(e) {
+					// If we get in here, it is most likely an issue with IE 10 in documentmode 7
+					// and IE10 compatibility mode. It maybe happens in older versions too.
+					// Error: Member not found
+					// https://connect.microsoft.com/IE/feedback/details/774078
+					// http://bugs.jquery.com/ticket/12577
+					// Our fallback solution:
+					$element.find('a').each(function() {
+						this.setAttribute('draggable', 'false');
+					});
+				}
 			}
 
 			// set the attributes
@@ -45630,6 +46446,33 @@ define('block/block',[
 			//		that.activate();
 			//	}
 			//});
+
+			// Only for inline element.
+			// It is not possible to insert text after or before a Block span
+			// when after or before the Block there is not elements
+			if (Html.isInlineFormattable($element[0])) {
+				if ($element.closest('.aloha-editable-active').length > 0) {
+					BlockUtils.pad(that.$element);
+				}
+
+				Aloha.bind('aloha-editable-activated', function ($event, data) {
+					if (data.editable) {
+						var $block = data.editable.obj.find('#' + that.id);
+						if ($block.length !== 0) {
+							BlockUtils.pad(that.$element);
+						}
+					}
+				});
+
+				Aloha.bind('aloha-editable-deactivated', function ($event, data) {
+					if (data.editable) {
+						var $block = data.editable.obj.find('#' + that.id);
+						if ($block.length !== 0) {
+							BlockUtils.unpad(that.$element);
+						}
+					}
+				});
+			}
 
 			this._initialized = true;
 		},
@@ -45876,11 +46719,12 @@ define('block/block',[
 		 * @return Boolean
 		 */
 		isDraggable: function() {
-			if (this.$element[0].tagName.toLowerCase() === 'div' && this.$element.parents('.aloha-editable,.aloha-block,.aloha-block-collection').first().hasClass('aloha-block-collection')) {
+			if (this.$element[0].nodeName === 'DIV' &&
+				this.$element.parents('.aloha-editable,.aloha-block:not(.aloha-table-wrapper),.aloha-block-collection').first().hasClass('aloha-block-collection')) {
 				// Here, we are inside an aloha-block-collection, and thus also need to be draggable.
 				return true;
 			}
-			return this.$element.parents('.aloha-editable,.aloha-block').first().hasClass('aloha-editable');
+			return this.$element.parents('.aloha-block:not(.aloha-table-wrapper),.aloha-editable').first().hasClass('aloha-editable');
 		},
 
 		/**************************
@@ -46035,12 +46879,15 @@ define('block/block',[
 			this._makeNestedBlockCollectionsSortable();
 
 			this.renderBlockHandlesIfNeeded();
-			if (this.isDraggable() && this.$element[0].tagName.toLowerCase() === 'span') {
-				this._setupDragDropForInlineElements();
-				this._disableUglyInternetExplorerDragHandles();
-			} else if (this.isDraggable() && this.$element[0].tagName.toLowerCase() === 'div') {
-				this._setupDragDropForBlockElements();
-				this._disableUglyInternetExplorerDragHandles();
+			if (this.isDraggable()) {
+				var nodeName = this.$element[0].nodeName;
+				if (nodeName === 'SPAN') {
+					this._setupDragDropForInlineElements();
+					this._disableUglyInternetExplorerDragHandles();
+				} else if (nodeName === 'DIV') {
+					this._setupDragDropForBlockElements();
+					this._disableUglyInternetExplorerDragHandles();
+				}
 			}
 			this._hideDragHandlesIfDragDropDisabled();
 			this._attachDropzoneHighlightEvents();
@@ -46102,7 +46949,7 @@ define('block/block',[
 			if ( !this._dd_isDragdropEnabled() ){
 				this.$element.find('.aloha-block-draghandle').each(function () {
 					var $draghandle = jQuery(this);
-					if (!isDragdropEnabledForElement($draghandle)) {
+					if (!BlockUtils.isDragdropEnabledForElement($draghandle)) {
 						$draghandle.removeClass('aloha-block-draghandle');
 					}
 				});
@@ -46508,7 +47355,7 @@ define('block/block',[
          * for the editable, which this block belongs to.
          */
         _dd_isDragdropEnabled: function () {
-			return isDragdropEnabledForElement(this.$element.parent());
+			return BlockUtils.isDragdropEnabledForElement(this.$element.parent());
         },
 
 		/**************************
@@ -46696,28 +47543,9 @@ define('block/block',[
 		init: function() {},
 		activate: function () {},
 		deactivate: function () {},
-		renderBlockHandlesIfNeeded: function () {}
+		renderBlockHandlesIfNeeded: function () {},
+		_preventSelectionChangedEventHandler: function () {}
 	});
-
-	/**
-	 * Tests whether the given element is contained in an editable for
-	 * which the block dragdrop feature is enabled.
-	 * 
-	 * @param {!jQuery} $element
-	 *        The element that may or may not be contained in an editable.
-	 * @return {boolean}
-	 *        True, unless the given $element is contained in an
-	 *        editable for which the dragdrop feature has been disabled.
-	 */
-	function isDragdropEnabledForElement($element) {
-		var editable = $element.closest(".aloha-editable");
-		if (editable.length) {
-			return !!editable.data("block-dragdrop");
-		} else {
-			// no editable specified, let's make drag & drop enabled by default.    
-			return true;
-		}
-	}
 
 	return {
 		AbstractBlock: AbstractBlock,
@@ -47178,6 +48006,485 @@ function(jQuery, Observable, Class) {
 	}
 });
 
+/*global window:true, define:true, document:true */
+/* dragbehavior.js is part of Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php 
+ * 
+ * Aloha Editor is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * Aloha Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * 
+ * As an additional permission to the GNU GPL version 2, you may distribute
+ * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
+ * source code without the copy of the GNU GPL normally required,
+ * provided you include this license notice and a URL through which
+ * recipients can access the Corresponding Source.
+ */
+define('block/dragbehavior',[
+	'aloha/jquery',
+	'aloha',
+	'PubSub',
+	'aloha/copypaste'
+], function (
+	$,
+	Aloha,
+	PubSub,
+	CopyPaste
+) {
+	
+
+	/**
+	 * Tags that is not allowed to wrap BlockElements. For this elements the
+	 * mouseover event is not listened
+	 * @type {Array.<String>}
+	 */
+	var notAllowedOverTags = ['TABLE', 'TR',
+		'HR', 'TBODY', 'UL', 'OL', 'DL', 'B', 'STRONG', 'A', 'EM', 'I', 'PRE',
+		'CODE', 'SUP', 'SUB'],
+	/**
+	 * This element are suitable to listen the mouseover event, but can´t wrap
+	 * a BlockElement
+	 * @type {Array.<String>}
+	 */
+		notAllowedDropSelector = ['.aloha-block', '.aloha-block-handle',
+			'.aloha-table-selectrow', 'p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5',
+			'h6', 'br'],
+	/**
+	 * Parents of element that can´t wrap BlockElements
+	 * @type {Array.<String>}
+	 */
+		notAllowedDropParentsSelector = [
+			'.aloha-table-selectcolumn',
+			'.aloha-ui',
+			'.ui-draggable-dragging'
+		];
+
+	/**
+	 * Checks whether or not the element over which we are hovering should allow
+	 * drop a region, in or around it?
+	 *
+	 * @param {jQuery.<HTMLElement> $hovering
+	 * @param {jQuery.<HTMLElement> $dragging
+	 * @return {boolean}
+	 */
+	function allowDropRegions($hovering, $dragging) {
+		return !$hovering || !(
+			$hovering.is('.ui-draggable-dragging')
+			||
+			$hovering.closest($dragging).length > 0
+		);
+	}
+
+	/**
+	 * @private
+	 * @class Aloha.plugins.extra.DragBehavior
+	 * @param {block.block.AbstractBlock} blockObject An AbstractBlock child
+	 *                                    instance
+	 */
+	function DragBehavior(blockObject) {
+		this.blockObject = blockObject;
+		this.$element = blockObject.$element;
+		this.insertBeforeOrAfterMode = false;
+		this.setDraggable();
+	}
+
+	PubSub.sub('aloha.block.initialized', function (data) {
+		DragBehavior.follow(data.block);
+	});
+
+	/**
+	 * Because the Dom.isEditable don't work well I need to rewrite it.
+	 * checks if a HTMLElement is editable, if the element have inherited
+	 * behavior check the parents behaivor until get a true or false behavior.
+	 *
+	 * @param {HTMLElement} domElm
+	 * @return {Boolean}
+	 */
+	function isEditable(domElm) {
+		if (domElm.nodeType === 1) {
+			if (domElm.contentEditable === 'inherit') {
+				while (domElm.contentEditable === 'inherit') {
+					domElm = domElm.parentNode;
+				}
+			}
+
+			return (domElm.contentEditable === 'true');
+		}
+		return false;
+	}
+
+	/**
+	 * Creates an instance of DragBehavior following a BlockElement
+	 * only if the BlockElement given is suitable to be draggable.
+	 *
+	 * @static
+	 * @param {block.block.AbstractBlock} blockObject An AbstractBlock child
+	 *                                    instance
+	 */
+	DragBehavior.follow = function (blockObject) {
+		if ($('>.aloha-block-draghandle', blockObject.$element).length > 0) {
+			var jsLintMustBeHappyNotMe = new DragBehavior(blockObject);
+		}
+	};
+
+	/**
+	 * Internet Explorer loses the selection and scroll position between
+	 * dragging and dropping.
+	 *
+	 * So we need to save the selection and scroll position before, and restore
+	 * it after each drag and drop cycle.
+	 */
+	var IESelectionState = (function () {
+		var range = null;
+		var x = 0;
+		var y = 0;
+		return $.browser.msie
+			? {
+
+				/**
+				 * Remember the selection state.
+				 */
+				save: function saveSelection() {
+					x = window.scrollX || document.documentElement.scrollLeft;
+					y = window.scrollY || document.documentElement.scrollTop;
+					range = CopyPaste.getRange();
+				},
+
+				/**
+				 * Set the selection to the given range and focus on the editable
+				 * inwhich the selection is in (if any).
+				 *
+				 * This function is used to restore the selection to what it was
+				 * before dragging is started.
+				 */
+				restore: function restoreSelection() {
+					var editable = CopyPaste.getEditableAt(range);
+					if (editable) {
+						editable.obj.focus();
+					}
+					CopyPaste.setSelectionAt(range);
+					window.scrollTo(x, y);
+				}
+			}
+			: {
+				save: function () {},
+				restore: function () {}
+			};
+	}());
+
+	/**
+	 * Setup the draggable behavior to the BlockElement
+	 */
+	DragBehavior.prototype.setDraggable = function () {
+		var dragBehavior = this;
+		var $handle = $('>.aloha-block-draghandle', this.$element);
+		var element = this.$element.get(0);
+
+		element.onselectstart = function () {
+			window.event.cancelBubble = true;
+		};
+
+		// Prevent the prevention of drag inside a cell
+		element.ondragstart = function (e) {
+			e.stopPropagation();
+		};
+
+		$handle
+			.on('mousedown', function () {
+				IESelectionState.save();
+			})
+			.on('mouseup', function () {
+				dragBehavior._getHiglightElement().hide();
+				dragBehavior.stopListenMouseOver();
+			});
+
+		this.$element.draggable({
+			handle: '>.aloha-block-draghandle',
+			helper: 'clone',
+			cursorAt: {
+				left: -10,
+				top: -10
+			},
+			start: function (event, ui) {
+				ui.helper.css('zIndex', 100000);
+				dragBehavior.listenMouseOver();
+				event.stopImmediatePropagation();
+			},
+			drag: function (event) {
+				event.stopImmediatePropagation();
+			},
+			stop: function (event, ui) {
+				dragBehavior._getHiglightElement().hide();
+				dragBehavior.stopListenMouseOver();
+				dragBehavior.onDragStop();
+				ui.helper.remove();
+				IESelectionState.restore();
+				return true;
+			}
+		});
+	};
+
+	/**
+	 * Returns all the childs in all editables registered in Aloha
+	 *
+	 * @return jQuery.<HTMLElement>
+	 */
+	DragBehavior.prototype._getEditableChilds = function () {
+		var i, editable, elms = [];
+		for (i = 0; i < Aloha.editables.length; i++) {
+			editable = Aloha.editables[i];
+			elms = elms.concat(
+				$('*:not(' + notAllowedOverTags.join(',') + ')', editable.obj).toArray()
+			);
+		}
+		return $(elms);
+	};
+
+
+	/**
+	 * Listen the mouseOver events over all elements in the editables, since the
+	 * drag action start until the drag action stop, to know in which element
+	 * the user may drop the block element
+	 */
+	DragBehavior.prototype.listenMouseOver = function () {
+		var dragBehavior = this,
+			$elms = this._getEditableChilds();
+		// @todo use the DOM Events for this, jQuery is very slow
+
+		$elms.bind('mouseover.blockbehavior', function (e) {
+			return dragBehavior.onMouseover(this, e);
+		});
+	};
+
+	/**
+	 * Stop listen the mouseover event, this method is called when the drag
+	 * operation is ended (droped)
+	 */
+	DragBehavior.prototype.stopListenMouseOver = function () {
+		var $elms = this._getEditableChilds();
+		$elms.unbind('.blockbehavior');
+	};
+
+	/**
+	 * Check the element that is below of the draggable element in a drag
+	 * operation, if is a valid element, this method call to highlight methods
+	 *
+	 * @param {HTMLElement} elm
+	 * @param {jqEvent} event
+	 *
+	 * @return {Boolean}
+	 */
+	DragBehavior.prototype.onMouseover = function (elm, event) {
+		if (this.$overElement) {
+			this.disableInsertBeforeOrAfter(this.$overElement);
+		}
+		this.$overElement = $(elm);
+		if (!this._isAllowedOverElement(elm)) {
+			this.enableInsertBeforeOrAfter(elm);
+
+			return true; // to continue bubbleing to find a element where can insert the block
+		} else {
+			this.highlightElement(elm);
+			event.stopImmediatePropagation();
+			return false;
+		}
+
+	};
+
+	/**
+	 * Highlight an entirely element to be a container of the BlockElement
+	 *
+	 * @param {HTMLElement} elm
+	 */
+	DragBehavior.prototype.highlightElement = function (elm) {
+
+		if (elm.nodeName === 'DIV'
+				&& elm.parentNode.nodeName === 'TD'
+				&& elm.parentNode.firstChild === elm
+				&& elm.parentNode.lastChild === elm) {
+
+			elm = elm.parentNode;
+		}
+
+		var $elm = $(elm),
+			$hElm = this._getHiglightElement().show();
+
+
+		$hElm
+			.css('zIndex', parseInt($elm.zIndex(), 10) + 1)
+			.offset($elm.offset())
+			.width($elm.outerWidth())
+			.height($elm.outerHeight());
+
+	};
+
+	/**
+	 * Activate the functionality to highlight the top or bottom border of an
+	 * element to inform to the user that the block must be inserted before or
+	 * after
+	 *
+	 * @param {HTMLElement} elm
+	 */
+	DragBehavior.prototype.enableInsertBeforeOrAfter = function (elm) {
+		var $elm = $(elm),
+			dragBehavior = this,
+			elmTop = $elm.offset().top,
+			halfHeight = $elm.outerHeight() / 2;
+
+		if (!allowDropRegions($elm, this.$element)) {
+			return;
+		}
+
+		$elm.bind('mousemove.brIBOA', function (event) {
+			var top = event.pageY - elmTop;
+			if (top >= halfHeight) {
+				dragBehavior.insertBeforeOrAfterMode = 'AFTER';
+			} else {
+				dragBehavior.insertBeforeOrAfterMode = 'BEFORE';
+			}
+			dragBehavior.highlightEdge(this);
+		});
+
+	};
+
+	/**
+	 * Disables the InsertBeforeOrAfter functionality.
+	 *
+	 * @param {jQuery.<HTMLElement>} $elm
+	 */
+	DragBehavior.prototype.disableInsertBeforeOrAfter = function ($elm) {
+		this.insertBeforeOrAfterMode = false;
+		$elm.unbind('.brIBOA');
+	};
+
+	/**
+	 * Highlites only a edge of the element recived, depending the value of
+	 * this.insertBeforeOrAfterMode
+	 *
+	 * @param {HTMLElement} elm
+	 */
+	DragBehavior.prototype.highlightEdge = function (elm) {
+		var $elm = $(elm),
+			$hElm = this._getHiglightElement().show(),
+			offset;
+
+		if (this.insertBeforeOrAfterMode === 'BEFORE') {
+			$hElm
+				.css('zIndex', parseInt($elm.zIndex(), 10) + 1)
+				.offset($elm.offset())
+				.width($elm.outerWidth())
+				.height(10);
+		} else {
+			offset = $elm.offset();
+			offset.top = (offset.top + $elm.outerHeight()) - 10;
+			$hElm
+				.css('zIndex', parseInt($elm.zIndex(), 10) + 1)
+				.offset(offset)
+				.width($elm.outerWidth())
+				.height(10);
+		}
+	};
+
+	/**
+	 * Returns true or false depending if the element given is allowed to
+	 * contain BlockElements
+	 *
+	 * @param {HTMLElement} elm
+	 * 
+	 * @return {Boolean}
+	 */
+	DragBehavior.prototype._isAllowedOverElement = function (elm) {
+		if ($.inArray(elm.nodeName, notAllowedOverTags) < 0) {
+			if (!isEditable(elm)) {
+				return false;
+			}
+
+			var $elm = $(elm);
+			if ($elm.parents(notAllowedDropParentsSelector.join(',')).length > 0) {
+				return false;
+			}
+
+			if ($elm.is(notAllowedDropSelector.join(','))) {
+				return false;
+			}
+
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	/**
+	 * Check if the element in the user want to drop the block elements is
+	 * suitable to contain the BlockElement or is suitable to insert the
+	 * element before or after this
+	 */
+	DragBehavior.prototype.onDragStop = function () {
+		// @todo check if the $overElement is a Valid element to drop the block
+		if (allowDropRegions(this.$overElement, this.$element)) {
+			if (this.$overElement
+					&& !this._isAllowedOverElement(this.$overElement[0])) {
+				this.enableInsertBeforeOrAfter(this.$overElement[0]);
+			}
+
+			if (this.insertBeforeOrAfterMode !== false) {
+				if (this.insertBeforeOrAfterMode === 'BEFORE') {
+					this.$overElement.before(this.$element);
+				} else {
+					this.$overElement.after(this.$element);
+				}
+			} else {
+				this.$element.appendTo(this.$overElement);
+			}
+		}
+
+		this.disableInsertBeforeOrAfter(this.$overElement);
+
+	};
+
+	/**
+	 * Returns a reference to the element used to highlight over elements,
+	 * if not exist is created, this element is shared for all instances of
+	 * DragBehavior
+	 * 
+	 * @return {jQuery.<HTMLElement>}
+	 */
+	DragBehavior.prototype._getHiglightElement = function () {
+		if (undefined === this.$hElm) {
+			if ($('#aloha-highlight-element').length === 0) {
+
+				this.$hElm = $('<div>')
+					.attr('id', 'aloha-highlight-element')
+					.appendTo('body')
+					.css({
+						position: 'absolute',
+						opacity: 0.5,
+						background: 'blue'
+					})
+					.hide();
+			} else {
+				this.$hElm = $('#aloha-highlight-element');
+			}
+		}
+
+		return this.$hElm;
+	};
+
+});
+
 define('block/nls/i18n',{
 	"root":  {
 		"button.toggledragdrop.tooltip": "Toggle Drag & Drop"
@@ -47232,6 +48539,7 @@ define('block/block-plugin',[
 	'block/editormanager',
 	'block/blockcontenthandler',
 	'block/editor',
+	'block/dragbehavior',
 	'ui/ui',
 	'ui/toggleButton',
 	'i18n!block/nls/i18n',
@@ -47248,6 +48556,7 @@ define('block/block-plugin',[
  	EditorManager,
  	BlockContentHandler,
  	editor,
+ 	dragBehavior,
  	Ui,
  	ToggleButton, 
 	i18n,
@@ -48093,6 +49402,19 @@ define('abbr/abbr-plugin',[
 	var GENTICS = window.GENTICS;
 
 	/**
+	 * Add additional target objects, in case the selection includes
+	 * several abbrs tag
+	 *
+	 * @param {RangeObject} rangeObject Selection Range
+	 * @param {LinkPlugin} that Link Plugin object
+	 */
+	function addAdditionalTargetObject(rangeObject, field) {
+		var abbrs = rangeObject.findAllMarkupByTagName('ABBR', rangeObject);
+		for (var i = 0, len = abbrs.length; i < len; i++) {
+			field.addAdditionalTargetObject(abbrs[i]);
+		}
+	}
+	/**
 	 * register the plugin with unique name
 	 */
 	return Plugin.create( 'abbr', {
@@ -48134,18 +49456,16 @@ define('abbr/abbr-plugin',[
 				}
 			});
 
-		    Scopes.createScope('abbr', 'Aloha.continuoustext');
-
 		    this.abbrField = AttributeField({
 		    	width: 320,
 		    	name: 'abbrText',
-		        scope: 'abbr'
+		        scope: 'Aloha.continuoustext'
 		    });
 		    
 		    this.remAbbrButton = Ui.adopt("removeAbbr", Button, {
 				tooltip: i18n.t('button.remabbr.tooltip'),
 				icon: 'aloha-icon aloha-icon-abbr-rem',
-				scope: 'abbr',
+				scope: 'Aloha.continuoustext',
 				click: function () {
 					me.removeAbbr();
 				}
@@ -48226,9 +49546,21 @@ define('abbr/abbr-plugin',[
 				if (foundMarkup) {
 					me._insertAbbrButton.hide();
 					me._formatAbbrButton.setState(true);
-					Scopes.setScope('abbr');
+					// show the field and button for abbreviation
+					me.abbrField.show();
+					me.remAbbrButton.show();
+
+					Scopes.enterScope(me.name, 'abbr');
+
 					me.abbrField.setTargetObject(foundMarkup, 'title');
+					addAdditionalTargetObject(range, me.abbrField);
 				} else {
+					// hide the field and button for abbreviation
+					me.abbrField.hide();
+					me.remAbbrButton.hide();
+
+					Scopes.leaveScope(me.name, 'abbr', true);
+
 					me._formatAbbrButton.setState(false);
 					me.abbrField.setTargetObject(null);
 				}
@@ -48457,7 +49789,7 @@ define('horizontalruler/horizontalruler-plugin',[
 /* paste-plugin.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Copyright (c) 2010-2013 Gentics Software GmbH, Vienna, Austria.
  * Contributors http://aloha-editor.org/contribution.php
  *
  * Aloha Editor is free software; you can redistribute it and/or
@@ -48493,7 +49825,8 @@ define('paste/paste-plugin',[
 	'aloha/command',
 	'contenthandler/contenthandler-utils',
 	'aloha/console',
-	'aloha/copypaste'
+	'aloha/copypaste',
+	'aloha/contenthandlermanager'
 ], function (
 	$,
 	Aloha,
@@ -48501,7 +49834,8 @@ define('paste/paste-plugin',[
 	Commands,
 	ContentHandlerUtils,
 	Console,
-	CopyPaste
+	CopyPaste,
+	ContentHandlerManager
 ) {
 	
 
@@ -48554,7 +49888,20 @@ define('paste/paste-plugin',[
 	var ieRangeBeforePaste = null;
 
 	/**
-	 * Set the selection to the given range and focus on the editable inwhich
+	 * The window's scroll position at the moment just before pasting is done
+	 * (beforepaste and paste events).
+	 *
+	 * @type {object}
+	 * @property {Number} x
+	 * @property {Number} y
+	 **/
+	var scrollPositionBeforePaste = {
+		x: 0,
+		y: 0
+	};
+
+	/**
+	 * Set the selection to the given range and focus on the editable in which
 	 * the selection is in (if any).
 	 *
 	 * This function is used to restore the selection to what it was before
@@ -48568,6 +49915,10 @@ define('paste/paste-plugin',[
 			editable.obj.focus();
 		}
 		CopyPaste.setSelectionAt(range);
+		window.scrollTo(
+			scrollPositionBeforePaste.x,
+			scrollPositionBeforePaste.y
+		);
 	}
 
 	/**
@@ -48586,12 +49937,15 @@ define('paste/paste-plugin',[
 	 *                                       is to be directed to.
 	 */
 	function redirect(range, $target) {
+		var width = 200;
 		// Because moving the target element to the current scroll position
 		// avoids jittering the viewport when the pasted content moves between
 		// where the range is and target.
 		$target.css({
 			top: $WINDOW.scrollTop(),
-			left: $WINDOW.scrollLeft() - 200 // Why 200?
+			left: $WINDOW.scrollLeft() - width,
+			width: width,
+			overflow: 'hidden'
 		}).contents().remove();
 
 		var from = CopyPaste.getEditableAt(range);
@@ -48654,7 +50008,7 @@ define('paste/paste-plugin',[
 
 	/**
 	 * Prepare the nodes around where pasted content is to land.
-	 * 
+	 *
 	 * @param {WrappedRange} range
 	 */
 	function prepRangeForPaste(range) {
@@ -48674,6 +50028,41 @@ define('paste/paste-plugin',[
 	}
 
 	/**
+	 * Delete the first match in a string
+	 *
+	 * @param {String} string String to modify
+	 * @param {String} match Match string must be replaced
+	 * @returns {string} Original string with the first match replaced.
+	 */
+	function deleteFirstMatch(string, match) {
+		return string.replace(match, '');
+	}
+
+	/**
+	 * Delete the first Header tag if exists.
+	 *
+	 * @param htmlString
+	 * @returns {XML|string}
+	 */
+	function deleteFirstHeaderTag(htmlString) {
+		var matchFirstHeaderTag = /^<h\d+.*?>/i.exec(htmlString),
+		    startHeaderTag,
+		    endHeaderTag;
+
+		if (matchFirstHeaderTag === null) {
+			return htmlString;
+		}
+
+		startHeaderTag = matchFirstHeaderTag[0];
+		endHeaderTag = '</' + startHeaderTag.substr(1);
+
+		return deleteFirstMatch(
+			deleteFirstMatch(htmlString, startHeaderTag),
+			endHeaderTag
+		);
+	}
+
+	/**
 	 * Gets the pasted content and inserts them into the current active
 	 * editable.
 	 *
@@ -48688,27 +50077,33 @@ define('paste/paste-plugin',[
 	 *                             pasting is completed.
 	 */
 	function paste($clipboard, range, callback) {
-		if (range) {
-			var content = $clipboard.html();
+		if (!range) {
+			return;
+		}
 
-			// Because IE inserts an insidious nbsp into the content during
-			// pasting that needs to be removed.  Leaving it would otherwise
-			// result in an empty paragraph being created right before the
-			// pasted content when the pasted content is a paragraph.
-			if (IS_IE && /^&nbsp;/.test(content)) {
-				content = content.substring(6);
-			}
+		var content = deleteFirstHeaderTag($clipboard.html());
+		var handler = ContentHandlerManager.get('formatless');
 
-			restoreSelection(range);
-			prepRangeForPaste(range);
+		content = handler ? handler.handleContent(content) : content;
 
-			if (Aloha.queryCommandSupported('insertHTML')) {
-				Aloha.execCommand('insertHTML', false, content);
-			} else {
-				Console.error('Common.Paste', 'Command "insertHTML" not ' +
-				                              'available. Enable the plugin ' +
-				                              '"common/commands".');
-			}
+		// Because IE inserts an insidious nbsp into the content during pasting
+		// that needs to be removed.  Leaving it would otherwise result in an
+		// empty paragraph being created right before the pasted content when
+		// the pasted content is a paragraph.
+		if (IS_IE && /^&nbsp;/.test(content)) {
+			content = content.substring(6);
+		}
+
+		restoreSelection(range);
+		prepRangeForPaste(range);
+
+		if (Aloha.queryCommandSupported('insertHTML')) {
+			Aloha.execCommand('insertHTML', false, content);
+		} else {
+			Console.error(
+				'Common.Paste',
+				'Command "insertHTML" not available. Enable the plugin "common/commands".'
+			);
 		}
 
 		$clipboard.contents().remove();
@@ -48724,7 +50119,7 @@ define('paste/paste-plugin',[
 	 * @param {jQuery.Event} $event Event at paste.
 	 * @param {WrappedRange} range The range to where to direct the contents
 	 *                             of the $CLIPBOARD element.
-	 * @param {function=} onInset Optional callback to be invoked after pasting
+	 * @param {function=} onInsert Optional callback to be invoked after pasting
 	 *                            is completed.
 	 */
 	function onPaste($event, range, onInsert) {
@@ -48763,12 +50158,22 @@ define('paste/paste-plugin',[
 		// if (IS_IE && !hasClipboardAccess) {
 		if (IS_IE) {
 			$editable.bind('beforepaste', function ($event) {
+				scrollPositionBeforePaste.x = window.scrollX ||
+					document.documentElement.scrollLeft;
+				scrollPositionBeforePaste.y = window.scrollY ||
+					document.documentElement.scrollTop;
+
 				ieRangeBeforePaste = CopyPaste.getRange();
 				redirect(ieRangeBeforePaste, $CLIPBOARD);
 				$event.stopPropagation();
 			});
 		} else {
 			$editable.bind('paste', function ($event) {
+				scrollPositionBeforePaste.x = window.scrollX ||
+					document.documentElement.scrollLeft;
+				scrollPositionBeforePaste.y = window.scrollY ||
+					document.documentElement.scrollTop;
+
 				var range = CopyPaste.getRange();
 				redirect(range, $CLIPBOARD);
 				if (IS_IE) {
@@ -48780,7 +50185,7 @@ define('paste/paste-plugin',[
 		}
 	}
 
-	var plugin = Plugin.create('paste', {
+	return Plugin.create('paste', {
 
 		settings: {},
 
@@ -48817,8 +50222,6 @@ define('paste/paste-plugin',[
 			                                    'instead.');
 		}
 	});
-
-	return plugin;
 });
 
 define('cite/nls/i18n',{
@@ -48835,7 +50238,7 @@ define('cite/nls/i18n',{
 		"zh-hans": true
 });
 
-/*global window: true define: true*/
+/*global window: true define: true */
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -48865,7 +50268,7 @@ define('cite/cite-plugin',[
 	PubSub,
     i18n,
 	i18nCore
-){
+) {
 	
 
 	var $ = jQuery,
@@ -49024,7 +50427,7 @@ define('cite/cite-plugin',[
 				tooltip: i18n.t('cite.button.add.quote'),
 				icon: nsClass('button', 'inline-button'),
 				scope: 'Aloha.continuoustext',
-				click: function() {
+				click: function () {
 					that.addInlineQuote();
 				}
 			});
@@ -49036,7 +50439,7 @@ define('cite/cite-plugin',[
 				name: 'blockquote',
 				tooltip: i18n.t('cite.button.add.blockquote'),
 				icon: nsClass('button', 'block-button'),
-				click: function(){
+				click: function () {
 					that.addBlockQuote();
 				}
 			});
@@ -49145,41 +50548,31 @@ define('cite/cite-plugin',[
 
 			PubSub.sub('aloha.selection.context-change', function (message) {
 				var rangeObject = message.range;
-				var buttons = jQuery('button.aloha-cite-button');
 
 				// Set to false to prevent multiple buttons being active
 				// when they should not.
-				var statusWasSet = false;
+				var quoteFound = false, blockquoteFound = false;
 				var nodeName;
 				var effective = rangeObject.markupEffectiveAtStart;
 				var i = effective.length;
 
 				// Check whether any of the effective items are citation
 				// tags.
-				while ( i ) {
+				while (i) {
 					nodeName = effective[--i].nodeName;
-					if (nodeName === 'Q' || nodeName === 'BLOCKQUOTE') {
-						statusWasSet = true;
-						break;
+					if (nodeName === 'Q') {
+						quoteFound = true;
+					} else if (nodeName === 'BLOCKQUOTE') {
+						blockquoteFound = true;
 					}
 				}
 
-				buttons.filter('.aloha-cite-block-button')
-					.removeClass('aloha-cite-pressed');
+				// set the toggle status for the quote button
+				that._quoteButton.setState(quoteFound);
 
-				that._quoteButton.setState(false);
-
-				if ( statusWasSet ) {
-					if('Q' === nodeName) {
-						that._quoteButton.setState(true);
-					} else {
-						buttons.filter('.aloha-cite-block-button')
-							.addClass('aloha-cite-pressed');
-					}
-
-					// We've got what we came for, so return false to break
-					// the each loop.
-					return false;
+				// activate the blockquote multisplit item
+				if (blockquoteFound) {
+					Format.multiSplitButton.setActiveItem('blockquote');
 				}
 				
 				// switch item visibility according to config
@@ -49189,18 +50582,18 @@ define('cite/cite-plugin',[
 				}
 
 				// quote
-				if ( jQuery.inArray( 'quote', config ) != -1 ) {
+				if (jQuery.inArray('quote', config) !== -1) {
 					that._quoteButton.show(true);
-	        	} else {
+				} else {
 					that._quoteButton.show(false);
-	        	}
-				
+				}
+
 				// blockquote
-				if ( jQuery.inArray( 'blockquote', config ) != -1 ) {
-					Format.multiSplitButton.showItem( 'blockquote' );
-	        	} else {
-	        		Format.multiSplitButton.hideItem( 'blockquote' );
-	        	}
+				if (jQuery.inArray('blockquote', config) !== -1) {
+					Format.multiSplitButton.showItem('blockquote');
+				} else {
+					Format.multiSplitButton.hideItem('blockquote');
+				}
 			});
 		},
 
@@ -49595,7 +50988,8 @@ define('formatlesspaste/formatlesspaste-plugin',[
 	'ui/toggleButton',
 	'formatlesspaste/formatlesshandler',
 	'aloha/contenthandlermanager',
-	'i18n!formatlesspaste/nls/i18n'
+	'i18n!formatlesspaste/nls/i18n',
+	'util/html'
 ], function (
 	Aloha,
 	Plugin,
@@ -49604,7 +50998,8 @@ define('formatlesspaste/formatlesspaste-plugin',[
 	ToggleButton,
 	FormatlessPasteHandler,
 	ContentHandlerManager,
-	i18n
+	i18n,
+    Html
 ) {
 	
 
@@ -49646,7 +51041,7 @@ define('formatlesspaste/formatlesspaste-plugin',[
 
 	function registerFormatlessPasteHandler(plugin) {
 		ContentHandlerManager.register('formatless', FormatlessPasteHandler);
-		FormatlessPasteHandler.strippedElements = plugin.strippedElements;
+		FormatlessPasteHandler.strippedElements = Html.TEXT_LEVEL_SEMANTIC_ELEMENTS;
 
 		plugin._toggleFormatlessPasteButton =
 			Ui.adopt('toggleFormatlessPaste', ToggleButton, {
@@ -49719,45 +51114,6 @@ define('formatlesspaste/formatlesspaste-plugin',[
 		 * @type {boolean}
 		 */
 		button: true,
-
-		/**
-		 * Text-level semantic and edit elements to be remove during
-		 * copying or pasting.
-		 *
-		 * See:
-		 * http://dev.w3.org/html5/spec/text-level-semantics.html#usage-summary
-		 *
-		 * Configurable.
-		 *
-		 * @type {Array.<string>}
-		 */
-		strippedElements: ['a',
-		                   'abbr',
-		                   'b',
-		                   'bdi',
-		                   'bdo',
-		                   'cite',
-		                   'code',
-		                   'del',
-		                   'dfn',
-		                   'em',
-		                   'i',
-		                   'ins',
-		                   'kbd',
-		                   'mark',
-		                   'q',
-		                   'rp',
-		                   'rt',
-		                   'ruby',
-		                   's',
-		                   'samp',
-		                   'small',
-		                   'strong',
-		                   'sub',
-		                   'sup',
-		                   'time',
-		                   'u',
-		                   'var'],
 
 		/**
 		 * Initializes formatless copying and pasting.
@@ -50385,15 +51741,18 @@ define('wai-lang/wai-lang-plugin',[
 	/**
 	 * Ui Attribute Field singleton.
 	 *
+	 * Needs to be defined in prepareUi(), because of a problem with the
+	 * stateful initialization of jQuery UI autocomplete implementation for
+	 * Aloha Editor.
+	 *
 	 * @type {AttributeField}
 	 */
-	var FIELD = attributeField({
-		name: 'wailangfield',
-		width: 320,
-		valueField: 'id',
-		minChars: 1,
-		scope: 'wai-lang'
-	});
+	var FIELD = null;
+
+	/**
+	 * UI Button to remove wai-lang
+	 */
+	var removeButton = null;
 
 	/**
 	 * Sets focus on the given field.
@@ -50401,9 +51760,13 @@ define('wai-lang/wai-lang-plugin',[
 	 * @param {AttributeField} field
 	 */
 	function focusOn(field) {
-		field.foreground();
-		field.focus();
-		Scopes.setScope('wai-lang');
+		if (field) {
+			field.foreground();
+			field.focus();
+		}
+		// show the field and remove button
+		FIELD.show();
+		removeButton.show();
 	}
 
 	/**
@@ -50526,9 +51889,19 @@ define('wai-lang/wai-lang-plugin',[
 	 * Initialize the buttons:
 	 * Places the Wai-Lang UI buttons into the floating menu.
 	 *
+	 * Initializes `FIELD`.
+	 *
 	 * @param {Plugin} plugin Wai-lang plugin instance
 	 */
 	function prepareUi(plugin) {
+		FIELD = attributeField({
+			name: 'wailangfield',
+			width: 320,
+			valueField: 'id',
+			minChars: 1,
+			scope: 'Aloha.continuoustext'
+		});
+
 		plugin._wailangButton = Ui.adopt('wailang', ToggleButton, {
 			tooltip: i18n.t('button.add-wai-lang.tooltip'),
 			icon: 'aloha-icon aloha-icon-wai-lang',
@@ -50536,16 +51909,14 @@ define('wai-lang/wai-lang-plugin',[
 			click: toggleAnnotation
 		});
 
-		Ui.adopt('removewailang', Button, {
+		removeButton = Ui.adopt('removewailang', Button, {
 			tooltip: i18n.t('button.add-wai-lang-remove.tooltip'),
 			icon: 'aloha-icon aloha-icon-wai-lang-remove',
-			scope: 'wai-lang',
+			scope: 'Aloha.continuoustext',
 			click: function onButtonClick() {
 				removeMarkup(Selection.getRangeObject());
 			}
 		});
-
-		Scopes.createScope('wai-lang', 'Aloha.continuoustext');
 
 		FIELD.setTemplate(plugin.flags
 				? '<div class="aloha-wai-lang-img-item">' +
@@ -50614,6 +51985,8 @@ define('wai-lang/wai-lang-plugin',[
 	/**
 	 * Registers event handlers for the given plugin instance.
 	 *
+	 * Assumes `FIELD` is initialized.
+	 *
 	 * @param {Plugin} plugin Instance of wai-lang plugin.
 	 */
 	function subscribeEvents(plugin) {
@@ -50633,10 +52006,21 @@ define('wai-lang/wai-lang-plugin',[
 				if (markup) {
 					plugin._wailangButton.setState(true);
 					FIELD.setTargetObject(markup, 'lang');
-					Scopes.setScope('wai-lang');
+
+					// show the field and remove button
+					FIELD.show();
+					removeButton.show();
+
+					Scopes.enterScope(plugin.name, 'wai-lang');
 				} else {
 					plugin._wailangButton.setState(false);
 					FIELD.setTargetObject(null);
+
+					// hide the field and remove button
+					FIELD.hide();
+					removeButton.hide();
+
+					Scopes.leaveScope(plugin.name, 'wai-lang', true);
 				}
 			});
 
@@ -50797,12 +52181,16 @@ define('headerids/nls/i18n',{
 define('headerids/headerids-plugin',[
 	'aloha',
 	'jquery',
+	'PubSub',
 	'aloha/plugin',
+	'util/html',
 	'i18n!headerids/nls/i18n'
 ], function (
 	Aloha,
 	jQuery,
+	PubSub,
 	Plugin,
+	html,
 	i18n
 ) {
 	
@@ -50822,14 +52210,14 @@ define('headerids/headerids-plugin',[
         var strBldr = [], prx = ns;
         $.each(arguments, function () { strBldr.push('.' + (this == '' ? prx : prx + '-' + this)); });
         return jQuery.trim(strBldr.join(' '));
-    };
+    }
     
     // Creates string with this component's namepsace prefixed the each classname
     function nsClass () {
         var strBldr = [], prx = ns;
         $.each(arguments, function () { strBldr.push(this == '' ? prx : prx + '-' + this); });
         return jQuery.trim(strBldr.join(' '));
-    };
+    }
 
 	/**
 	 * Returns a jQuery collection of all heading elements in the given editable
@@ -50847,13 +52235,32 @@ define('headerids/headerids-plugin',[
 	 *                                       collection of zero or more heading
 	 *                                       elements.
 	 */
-	function getHeadingElements($element) {
+	function getHeadingElements($editable) {
 		return (
-			$element.find('h1,h2,h3,h4,h5,h6')
+			$editable.find('h1,h2,h3,h4,h5,h6')
 			        .not('.aloha-customized,.aloha-editable,.aloha-block')
 		);
 	}
-
+	
+	/**
+	 * Check in the entire document if has a element with the same ID, and try 
+	 * to get an unique ID
+	 * 
+	 * @param {String} proposedID ID to check, uses this as base and concatenate
+	 *                 a dangling with a number
+	 * 
+	 * @return {String}
+	 */
+	function checkDuplicatedID(proposedID){
+		var baseID = proposedID, i = 1;
+		
+		while($('#' + proposedID).length > 0){
+			proposedID = baseID + '_' + ( ++i ).toString();
+		}
+		
+		return proposedID;
+	}
+	
 	return Plugin.create('headerids', {
 		_constructor: function(){
 			this._super('headerids');
@@ -50865,17 +52272,23 @@ define('headerids/headerids-plugin',[
 		 * Initialize the plugin
 		 */
 		init: function () {
-			var that = this;
+			var plugin = this,
+				invokeCheck = function(msg){
+					var $editable = msg.data.obj || msg.data.editable.obj;
+					plugin.check($editable);
+				}
+			;
+			
+			
+			
+			PubSub.sub('aloha.editable.created', invokeCheck);
 
 			// mark active Editable with a css class
-			Aloha.bind("aloha-editable-activated", function(jEvent, params) {
-				that.check(params.editable.obj);
-			});
-			Aloha.bind("aloha-editable-deactivated", function(jEvent, params) {
-				that.check(params.editable.obj);
-			});
+			PubSub.sub('aloha.editable.activated', invokeCheck);
+			PubSub.sub('aloha.editable.deactivated', invokeCheck);
+
 			Aloha.bind('aloha-plugins-loaded', function (ev) {
-				that.initSidebar(Aloha.Sidebar.right);
+				plugin.initSidebar(Aloha.Sidebar.right);
 			});
 		},
 
@@ -50901,7 +52314,8 @@ define('headerids/headerids-plugin',[
 
 		/**
 		 * Automatically sets the id of the given heading element to a sanitized
-		 * version of the element's content text string.
+		 * version of the element's content text string, only if the heading has
+		 * not a ID already set.
 		 *
 		 * @TODO: Rename to setHeadingId()
 		 *
@@ -50910,10 +52324,22 @@ define('headerids/headerids-plugin',[
 		 *
 		 * @param {HTMLHeadingElement} heading One of the six HTML heading
 		 *                                     elements.
+		 * @returns {String} ID attribute of the Heading element
 		 */
 		processH: function (heading) {
-			var $heading = $(heading);
-			$heading.attr('id', this.sanitize($heading.text()));
+			var headingId = heading.id;
+			if (!headingId) {
+				// We prefix the Id with "heading_" to not run accross
+				// problems with the Id starting with a number which
+				// would be disallowedÜ in HTML.
+				var $heading = $(heading);
+				headingId = "heading_" + this.sanitize($heading.text());
+
+				headingId = checkDuplicatedID(headingId);
+
+				$heading.attr('id', headingId);
+			}
+			return headingId;
 		},
 
 		/**
@@ -50929,47 +52355,48 @@ define('headerids/headerids-plugin',[
 		 * @param {String} str
 		 * @return {String} Santized copy of `str`.
 		 */
-		sanitize: function (str) {
-			return str.replace(/[^a-z0-9]+/gi, '_');
+		sanitize: function(str) {
+			return html.trimWhitespaceCharacters(str)
+				.replace(/[^a-z0-9]+/gi, '_');
 		},
 
 		//ns = headerids
 		initSidebar: function(sidebar) {
-			var pl = this;
-			pl.sidebar = sidebar;
+			var thisPlugin = this;
+			thisPlugin.sidebar = sidebar;
 			sidebar.addPanel({
-                    
-                    id         : nsClass('sidebar-panel'),
-                    title     : i18n.t('internal_hyperlink'),
-                    content     : '',
-                    expanded : true,
-                    activeOn : 'h1, h2, h3, h4, h5, h6',
-                    
-                    onInit     : function () {
-                        var that = this,
-                            content = this.setContent('<label class="'+nsClass('label')+'" for="'+nsClass('input')+'">'+i18n.t('headerids.label.target')+'</label><input id="'+nsClass('input')+'" class="'+nsClass('input')+'" type="text" name="value"/> <button class="'+nsClass('reset-button')+'">'+i18n.t('headerids.button.reset')+'</button><button class="'+nsClass('set-button')+'">'+i18n.t('headerids.button.set')+'</button>').content;
-                        
-                        content.find(nsSel('set-button')).click(function () {
-                            var content = that.content;
-							jQuery(that.effective).attr('id',jQuery(nsSel('input')).val());
-							jQuery(that.effective).addClass('aloha-customized');
-                        });
-						
-						content.find(nsSel('reset-button')).click(function () {
-                            var content = that.content;
-                            pl.processH(that.effective);
-							jQuery(that.effective).removeClass('aloha-customized');
-							that.content.find(nsSel('input')).val(that.effective.attr('id'));
-                        });
-                    },
-                    
-                    onActivate: function (effective) {
-						var that = this;
-						that.effective = effective;
-						that.content.find(nsSel('input')).val(effective.attr('id'));
-                    }
-                    
-                });
+				id: nsClass('sidebar-panel'),
+				title: i18n.t('internal_hyperlink'),
+				content: '',
+				expanded: true,
+				activeOn: 'h1, h2, h3, h4, h5, h6',
+
+				onInit: function () {
+					var thisSidebarPanel = this,
+					    content = this.setContent('<label class="' + nsClass('label') + '" for="' + nsClass('input') + '">' + i18n.t('headerids.label.target') + '</label><input id="' + nsClass('input') + '" class="' + nsClass('input') + '" type="text" name="value"/> <button class="' + nsClass('reset-button') + '">' + i18n.t('headerids.button.reset') + '</button><button class="' + nsClass('set-button') + '">' + i18n.t('headerids.button.set') + '</button>').content;
+
+					content.find(nsSel('set-button')).click(function () {
+						var content = thisSidebarPanel.content;
+						jQuery(thisSidebarPanel.effective)
+							.attr('id', jQuery(nsSel('input')).val())
+							.addClass('aloha-customized');
+					});
+
+					content.find(nsSel('reset-button')).click(function () {
+						var content = thisSidebarPanel.content;
+						thisPlugin.processH(thisSidebarPanel.effective);
+						jQuery(thisSidebarPanel.effective)
+							.removeClass('aloha-customized');
+						thisSidebarPanel.content.find(nsSel('input')).val(thisSidebarPanel.effective.attr('id'));
+					});
+				},
+
+				onActivate: function (effective) {
+					this.effective = effective;
+					this.content.find(nsSel('input')).val(thisPlugin.processH(effective[0]));
+				}
+			});
+
 			sidebar.show();
 		},
 		
