@@ -109,6 +109,7 @@ class Node implements NodeInterface {
 		}
 
 		$this->setPath($this->getParentPath() . ($this->getParentPath() === '/' ? '' : '/') . $newName);
+		$this->nodeDataRepository->persistEntities();
 	}
 
 	/**
@@ -120,7 +121,6 @@ class Node implements NodeInterface {
 	 * @param string $path
 	 * @param boolean $recursive
 	 * @return void
-	 * @throws \InvalidArgumentException
 	 */
 	public function setPath($path, $recursive = TRUE) {
 		if ($this->nodeData->getPath() === $path) {
@@ -136,7 +136,6 @@ class Node implements NodeInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setPath($path, FALSE);
-		$this->nodeDataRepository->persistEntities();
 	}
 
 	/**
@@ -300,6 +299,7 @@ class Node implements NodeInterface {
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+			$this->nodeDataRepository->persistEntities();
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
@@ -333,6 +333,7 @@ class Node implements NodeInterface {
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+			$this->nodeDataRepository->persistEntities();
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
@@ -365,6 +366,7 @@ class Node implements NodeInterface {
 		}
 		$parentPath = $referenceNode->getPath();
 		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		$this->nodeDataRepository->persistEntities();
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
 	}
