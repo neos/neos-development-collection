@@ -77,19 +77,6 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 		init: function() {
 			if (LocalStorage.getItem('wireframeMode') === true) {
 				this.toggleWireframeMode();
-				$('#neos-createcontentcollection-input').keypress(function(e) {
-					if ((e.keyCode || e.which) === 13) {
-						$('#neos-createcontentcollection-button').click();
-					}
-				});
-				$('#neos-createcontentcollection-button').click(function() {
-					var newContentCollectionName = $('#neos-createcontentcollection-input').val();
-					if (newContentCollectionName === '') {
-						Notification.error('You need to give a name for the new content collection.');
-					} else {
-						T3.Content.Controller.Wireframe.createContentCollection(newContentCollectionName);
-					}
-				});
 			}
 		},
 
@@ -107,22 +94,7 @@ function(ContentModule, $, _, Backbone, CreateJS, Ember, LocalStorage, Notificat
 					window.location.reload(false);
 				});
 			}
-		}.observes('wireframeMode'),
-
-		createContentCollection: function(contentCollectionName) {
-			var pageNodePath = $('#neos-page-metainformation').attr('about');
-			ContentModule.showPageLoader();
-			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
-				nodeType: 'TYPO3.Neos:ContentCollection',
-				nodeName: contentCollectionName
-			}, 'into',
-			function (result) {
-				if (result.success == true) {
-					$('#neos-createcontentcollection-input').val('');
-					ContentModule.reloadPage();
-				}
-			});
-		}
+		}.observes('wireframeMode')
 	}).create();
 
 	var ServerConnection = Ember.Object.extend({
