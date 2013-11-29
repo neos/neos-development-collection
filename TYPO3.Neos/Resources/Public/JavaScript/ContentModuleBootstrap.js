@@ -33,6 +33,10 @@ require(
 
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri'));
+		// We have to preload the Document and ContentCollection children for the ContentElementHandles which
+		// need them in early stage.
+		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri') + '&superType=TYPO3.Neos:Document');
+		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri') + '&superType=TYPO3.Neos:ContentCollection');
 
 		Ember.$(document).ready(function() {
 			ContentModule.bootstrap();

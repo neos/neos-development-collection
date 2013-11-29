@@ -16,7 +16,7 @@ function(
 	SectionHandle
 ) {
 	return Ember.View.extend({
-		classNameBindings: ['isPage:neos-hide'],
+		classNameBindings: ['isDocument:neos-hide'],
 		classNames: ['neos-handle-container'],
 		template: Ember.Handlebars.compile(
 			'{{view view.ContentElementHandle isVisibleBinding="view.isContentElementBar"}}' +
@@ -34,8 +34,8 @@ function(
 		 *
 		 * @return {boolean}
 		 */
-		isPage: function() {
-			return this.get('_selectedNode') && ContentCommands.isPage(this.get('_selectedNode'));
+		isDocument: function() {
+			return this.get('_selectedNode') && ContentCommands.isDocument(this.get('_selectedNode'));
 		}.property('_selectedNode'),
 
 		/**
@@ -45,7 +45,7 @@ function(
 		 * @return {boolean}
 		 */
 		isContentElementBar: function() {
-			return this.get('_selectedNode') && this.get('_selectedNode').get('nodeType') !== 'TYPO3.Neos:ContentCollection';
+			return this.get('_selectedNode') && ContentCommands.isCollection(this.get('_selectedNode')) === false;
 		}.property('_selectedNode'),
 
 		/**

@@ -12,6 +12,7 @@ define(
 	'Shared/Configuration',
 	'Shared/Notification',
 	'Shared/EventDispatcher',
+	'Shared/NodeTypeService',
 	'../Model/NodeSelection',
 	'./NavigatePanelController',
 	'./InsertNodePanel',
@@ -26,6 +27,7 @@ define(
 	Configuration,
 	Notification,
 	EventDispatcher,
+	NodeTypeService,
 	NodeSelection,
 	NavigatePanelController,
 	InsertNodePanel,
@@ -62,14 +64,14 @@ define(
 		}.observes('pageNodePath'),
 
 		pasteIsActive: function() {
-			if (this.get('activeNode') && this.get('activeNode').data.nodeType === 'TYPO3.Neos:Page') {
+			if (this.get('activeNode') && NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:Document')) {
 				return false;
 			}
 			return this.get('cutNode') !== null || this.get('copiedNode') !== null;
 		}.property('activeNode', 'cutNode', 'copiedNode'),
 
 		currentFocusedNodeDoesNotAllowChildren: function() {
-			return this.get('activeNode') && this.get('activeNode').data.nodeType === 'TYPO3.Neos:Page';
+			return this.get('activeNode') && NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:Document');
 		}.property('activeNode'),
 
 		isExpanded: function() {
@@ -129,7 +131,7 @@ define(
 					 */
 					onDragEnter: function(node, sourceNode) {
 						// It is only possible to move nodes into nodes of the nodeType ContentCollection
-						if (node.data.nodeType === 'TYPO3.Neos:ContentCollection') {
+						if (NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection')) {
 							return ['before', 'after', 'over'];
 						}
 						else{

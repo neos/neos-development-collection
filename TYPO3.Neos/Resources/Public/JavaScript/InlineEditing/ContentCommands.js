@@ -5,9 +5,10 @@ define(
 	'vie/instance',
 	'Content/Model/NodeActions',
 	'Content/Model/NodeSelection',
-	'Shared/Notification'
+	'Shared/Notification',
+	'Shared/NodeTypeService'
 ],
-function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification) {
+function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeTypeService) {
 	return Ember.Object.create({
 
 		_entity: null,
@@ -15,13 +16,13 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification) {
 		_selectedNode: null,
 
 		/**
-		 * Returns true if the selected node is page
+		 * Returns true if the selected node is a document
 		 *
 		 * @param {object} node
 		 * @return {boolean}
 		 */
-		isPage: function(node) {
-			return node.get('nodeType') === 'TYPO3.Neos:Page';
+		isDocument: function(node) {
+			return NodeTypeService.isOfType(node, 'TYPO3.Neos:Document');
 		},
 
 		/**
@@ -31,7 +32,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification) {
 		 * @return {boolean}
 		 */
 		isCollection: function(node) {
-			return node.get('nodeType') === 'TYPO3.Neos:ContentCollection';
+			return NodeTypeService.isOfType(node, 'TYPO3.Neos:ContentCollection');
 		},
 
 		/**
@@ -51,7 +52,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification) {
 				referenceNode = this._getSelectedNode();
 			}
 
-			if (this.isPage(referenceNode)) {
+			if (this.isDocument(referenceNode)) {
 				Notification.notice('Select a content element or section for adding content');
 				return;
 			}
