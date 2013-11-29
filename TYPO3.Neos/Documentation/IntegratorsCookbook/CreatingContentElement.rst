@@ -68,11 +68,11 @@ HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.htm
 	<neos:contentElement node="{node}">
 		<article>
 			<header>
-				<h2><neos:contentElement.editable property="headline">{headline -> f:format.raw()}</neos:contentElement></h2>
-				<h3><neos:contentElement.editable property="subheadline">{subheadline -> f:format.raw()}</neos:contentElement></h3>
+				{neos:contentElement.editable(property: 'headline', tag: 'h2')}
+				{neos:contentElement.editable(property: 'subheadline', tag: 'h3')}
 			</header>
 			<div>
-				<neos:contentElement.editable property="text">{text -> f:format.raw()}</neos:contentElement.editable>
+				{neos:contentElement.editable(property: 'text')}
 				<media:image image="{image}" maximumWidth="300" alt="{headline}" />
 			</div>
 		</article>

@@ -163,7 +163,7 @@ properties might be used, this still is needed.
 	{namespace neos=TYPO3\Neos\ViewHelpers}
 	<neos:contentElement node="{node}">
 		<blockquote>
-			<neos:contentElement.editable property="quote">{quote -> f:format.raw()}</neos:contentElement.editable>
+			{neos:contentElement.editable(property: 'quote')}
 		</blockquote>
 	</neos:contentElement>
 
@@ -175,7 +175,7 @@ avoids the nesting in an additional container `div` and thus cleans up the gener
 
 	{namespace neos=TYPO3\Neos\ViewHelpers}
 	<neos:contentElement node="{node}">
-		<neos:contentElement.editable property="quote" tag="blockquote">{quote -> f:format.raw()}</neos:contentElement.editable>
+		{neos:contentElement.editable(property: 'quote', tag: 'blockquote')}
 	</neos:contentElement>
 
 A property can be inline editable *and* appear in the property inspector if configured accordingly. In
