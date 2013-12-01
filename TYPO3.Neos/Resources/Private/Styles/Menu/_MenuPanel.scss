@@ -123,6 +123,10 @@
 			&:hover {
 				background-color: $blue;
 				color: #fff;
+
+				.neos-menu-panel-sticky & {
+					background-color: transparent;
+				}
 			}
 
 			&::before {

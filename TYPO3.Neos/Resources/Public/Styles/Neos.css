@@ -4,7 +4,7 @@
 /* Color palette */
 /* Sizes & margins */
 /* Components */
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -7376,6 +7376,9 @@
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
   background-color: #00b5ff;
   color: #fff;
+}
+.neos-menu-panel-sticky .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse:hover {
+  background-color: transparent;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse::before {
   content: "›";
