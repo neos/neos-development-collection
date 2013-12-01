@@ -22,7 +22,7 @@ define(
 			 * The returned repository items must be an array of Aloha.Repository.Object
 			 *
 			 * @param {object} params object with properties
-			 * @param {function} cajQueryllback this method must be called with all resulting repository items
+			 * @param {function} callback this method must be called with all resulting repository items
 			 */
 			query: function (p, callback) {
 				$.ajax({
