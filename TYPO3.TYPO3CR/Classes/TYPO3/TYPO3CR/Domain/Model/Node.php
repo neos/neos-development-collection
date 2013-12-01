@@ -294,7 +294,9 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
 		}
 
-		$this->materializeNodeData();
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -325,7 +327,9 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
 		}
 
-		$this->materializeNodeData();
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -356,7 +360,9 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
 		}
 
-		$this->materializeNodeData();
+		if (!$this->nodeDataIsMatchingContext) {
+			$this->materializeNodeData();
+		}
 		$parentPath = $referenceNode->getPath();
 		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 
