@@ -42,8 +42,8 @@ body {
 		@include font;
 
 		&:focus {
-			background-color: $lightest;
-			border: 2px solid $lightest;
+			background-color: #fff;
+			border: 2px solid #fff;
 			color: $textOnWhite;
 			@include box-shadow(none);
 		}
@@ -53,7 +53,7 @@ body {
 			-webkit-text-fill-color: $textOnGray;
 
 			&:focus {
-				-webkit-box-shadow: 0 0 0 50px $lightest inset;
+				-webkit-box-shadow: 0 0 0 50px #fff inset;
 				-webkit-text-fill-color: $textOnWhite;
 			}
 		}
@@ -90,7 +90,7 @@ body {
 
 			button {
 				height: $unit;
-				color: $lightest;
+				color: #fff;
 				border: none;
 				background-image: none;
 				font-size: 14px;
@@ -141,7 +141,7 @@ body {
 			.neos-tooltip-inner {
 				max-width: $loginBoxWidth;
 				font-size: 13px;
-				color: $lightest;
+				color: #fff;
 				@include border-radius(0);
 				@include box-sizing(border-box);
 			}

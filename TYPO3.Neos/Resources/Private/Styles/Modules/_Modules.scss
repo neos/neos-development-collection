@@ -2,7 +2,7 @@
 	@import "Administration/Packages";
 	@import "Management/Workspaces";
 
-	background: $light-grey3;
+	background: $grayLight;
 	background: url(../Images/module-bg.jpg) left top repeat;
 	color: #fff;
 	margin: 95px 0px 0px 0px;
@@ -61,14 +61,14 @@
 	.neos-nav-pills > li > a {
 		padding: 0 20px 0 20px;
 		margin: 0px;
-		color: darken($light-grey2, 20%);
+		color: darken($grayLight, 20%);
 		background: transparent;
 		line-height: $unit;
 
 		&:hover,
 		&:active,
 		&:focus {
-			color: $lightest;
+			color: #fff;
 			background: transparent;
 		}
 	}
@@ -79,7 +79,7 @@
 		li {
 			&.neos-active a {
 				background: transparent;
-				color: $lightest;
+				color: #fff;
 			}
 		}
 	}
@@ -89,7 +89,7 @@
 		&.neos-well {
 			background-color: #777;
 			border-color: #666;
-			@include box-shadow(0 0 5px rgba($darkest, 0.2) inset);
+			@include box-shadow(0 0 5px rgba(#000, 0.2) inset);
 			@include border-radius(0);
 			padding: 0px;
 
@@ -98,7 +98,7 @@
 			}
 
 			p {
-				color: $light-grey;
+				color: $grayLight;
 			}
 			.neos-alert p {
 				color: inherit;
@@ -108,24 +108,20 @@
 				@include border-top-radius(4px);
 				@include border-bottom-radius(0px);
 				background-color: #666;
-				border-bottom: 1px solid $light-grey3;
-				@include box-shadow(0px 1px 5px rgba($darkest, 0.2), 0px 1px 0px #666);
+				@include box-shadow(0px 1px 5px rgba(#000, 0.2), 0px 1px 0px #666);
 
 				li {
 					@include text-shadow(0 0 0 transparent);
-					color: darken($lightest, 10%);
-
-					&.neos-active {
-					}
+					color: #fff;
 				}
 
 				a {
-					color: darken($light-grey2, 10%);
+					color: #fff;
 
 					&:hover,
 					&:active,
 					&:focus {
-						color: darken($lightest, 10%);
+						color: #fff;
 						text-decoration: none;
 					}
 				}
@@ -139,6 +135,12 @@
 				}
 			}
 		}
+
+		.neos-form-actions {
+			background-color: $grayLight;
+			border-top: none;
+		}
+
 		.widget {
 			@include border-radius(0);
 		}

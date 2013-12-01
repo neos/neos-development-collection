@@ -1,9 +1,8 @@
 @charset "UTF-8";
-/* Variables */
 /* Color palette */
 /* Sizes & margins */
 /* Components */
-/*
+/*!
  *
 .||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||.
 
@@ -270,7 +269,7 @@ p + .drop-cap {
   counter-increment: definitions;
 }
 .dictionary-style dd:before {
-  content: counter(definitions, decimal) ". ";
+  content: counter(definitions,decimal) ". ";
 }
 
 /**

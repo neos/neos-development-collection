@@ -1,7 +1,7 @@
 .widget {
 	overflow: auto;
 	margin-bottom: 20px;
-	background-color: $light-grey;
+	background-color: $grayLight;
 	border: 1px solid #777;
 	@include border-radius(6px);
 	@include box-shadow(0px 0px 5px rgba($black, 0.2));
@@ -22,17 +22,17 @@
 			font-size: 20px;
 			line-height: 40px;
 			font-weight: normal;
-			color: $dark-grey2;
-			border-bottom: 1px solid $dark-grey2;
+			color: #fff;
+			border-bottom: 1px solid #fff;
 
 			a {
-				color: $dark-grey;
+				color: #fff;
 			}
 		}
 
 		// Icon styles
 		i {
-			color: $black;
+			color: #fff;
 			font-size: 24px;
 			width: auto;
 			height: auto;
@@ -48,7 +48,7 @@
 		overflow-y: auto;
 
 		p {
-			color: lighten($dark-grey2, 10%);
+			color: $textSubtleLight;
 		}
 	}
 
@@ -60,7 +60,7 @@
 		border-top: 1px solid #ddd;
 		@include border-bottom-radius(6px);
 		*zoom: 1;
-		@include box-shadow(0 1px 0 $lightest inset);
+		@include box-shadow(0 1px 0 #fff inset);
 		position: absolute;
 		bottom: 0px;
 		left: 0px;

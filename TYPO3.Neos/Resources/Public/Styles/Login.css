@@ -1,9 +1,8 @@
 @import url("http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic");
-/* Variables */
 /* Color palette */
 /* Sizes & margins */
 /* Components */
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -2802,8 +2801,8 @@ body {
 }
 .neos input[type="text"]:focus,
 .neos input[type="password"]:focus {
-  background-color: white;
-  border: 2px solid white;
+  background-color: #fff;
+  border: 2px solid #fff;
   color: #252525;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -2816,7 +2815,7 @@ body {
 }
 .neos input[type="text"]:-webkit-autofill:focus,
 .neos input[type="password"]:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 50px white inset;
+  -webkit-box-shadow: 0 0 0 50px #fff inset;
   -webkit-text-fill-color: #252525;
 }
 .neos #neos-login-box {
@@ -2852,7 +2851,7 @@ body {
 }
 .neos #neos-login-box .neos-actions button {
   height: 40px;
-  color: white;
+  color: #fff;
   border: none;
   background-image: none;
   font-size: 14px;
@@ -2901,7 +2900,7 @@ body {
 .neos #neos-login-box .neos-tooltip .neos-tooltip-inner {
   max-width: 320px;
   font-size: 13px;
-  color: white;
+  color: #fff;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;

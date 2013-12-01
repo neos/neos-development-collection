@@ -1,32 +1,11 @@
-/* Variables */
-$green: #69A550;
-$light-green: #54974A;
-
-// light-orange is the "TYPO3 orange":
-$orange: #F18F0B;
-$light-orange: #FF8700;
-$dark-orange: #ff460d;
-
-$red: #DB4F4A;
-
-$lightest: #FFFFFF;
-
-$light-grey: #E8E8E8;
-$light-grey2: #CCCCCC;
-$light-grey3: #888888;
-$light-grey4: #666666;
-$dark-grey2: #444444;
-$dark-grey3: #373737;
-$dark-grey: #2D2D2D;
-$darkest: #000000;
 $baseFontSize: 100%;
-$default-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 /* Color palette */
 $grayDarker: #141414;
 $grayDark: #222;
 $grayMedium: #323232;
 $grayLight: #3f3f3f;
+$grayLighter: #eee;
 $textOnWhite: #252525;
 $textOnGray: #fff;
 $textSubtle: #5b5b5b;
@@ -36,7 +15,7 @@ $blueLight: #39c6ff;
 $blueDark: #007fb2;
 $green: #00a338;
 $warning: #ff460d;
-$orange: #ff8700;
+$orange: #ff8700; // "TYPO3 orange"
 
 /* Sizes & margins */
 $unit: 40px;
@@ -51,6 +30,3 @@ $navigatePanelWidth: $unit * 8;
 $menuWidth: $unit * 8;
 $menuButtonWidth: 54px;
 $generalFontSize: 14px;
-
-// Mixins //
-// Use Compass for CSS3 Mixins!

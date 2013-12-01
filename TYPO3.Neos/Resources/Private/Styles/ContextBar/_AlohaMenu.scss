@@ -6,7 +6,7 @@
 		position: absolute;
 		top: $unit;
 		left: 0px;
-		border: 5px solid $dark-grey2;
+		border: 5px solid $grayMedium;
 		border-top: none;
 		@include transition-property('margin-left');
 		@include transition-duration(.2s);

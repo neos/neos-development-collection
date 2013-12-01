@@ -8,16 +8,6 @@
 		display: none;
 	}
 
-	&.neos-contentelement-selected {
-		.neos-aloha-block-over > .neos-handle {
-			display: none;
-		}
-		.aloha-block-active-top > .neos-handle,
-		.aloha-block-active-top:hover > .neos-handle {
-			display: block;
-		}
-	}
-
 	&.neos-contentelement-hover {
 		outline: 2px solid rgba(0, 0, 0, .2);
 		outline-offset: 6px;
@@ -39,13 +29,6 @@
 		outline: none !important;
 	}
 
-	.aloha-block.aloha-block-active, .aloha-block.aloha-block-active:hover {
-		box-shadow: none;
-	}
-	.aloha-editable-active .aloha-block, .aloha-block.aloha-block-highlighted {
-		box-shadow: none;
-	}
-
 	> .neos-contentelement-overlay {
 		position: absolute;
 		display: none;
@@ -57,29 +40,6 @@
 	&.neos-contentelement-active {
 		outline: 2px solid $blue !important;
 		outline-offset: 6px;
-	}
-}
-
-// Aloha Blocks
-.aloha-block-TYPO3Block.neos-contentelement.aloha-block:hover {
-	@include box-shadow(0 0 0 1px $dark-grey3);
-}
-
-.aloha-block-active-top > .neos-handle,
-.neos-aloha-block-over > .neos-handle {
-	display:block;
-	z-index: 10000;
-	span {
-		display:block;
-		z-index: 10000;
-	}
-}
-
-.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
-.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
-	@include box-shadow(0 0 0 1px rgba($dark-grey3, 0.7));
-	.neos-handle {
-		border-color: rgba($dark-grey3, 0.7);
 	}
 }
 
@@ -100,7 +60,7 @@ button.neos-create-new-content {
  * its format is defined here
  */
 .neos-rendering-exception {
-	background-color: $light-grey2;
+	background-color: $grayLighter;
 	padding-top: $defaultMargin / 2;
 	padding-left: $defaultMargin;
 	padding-right: $defaultMargin;
@@ -109,12 +69,13 @@ button.neos-create-new-content {
 	margin-bottom: $defaultMargin;
 
 	.neos-rendering-exception-title, .neos-exception-message {
-		color: $dark-orange;
+		color: $warning;
 		font-weight: bold;
 	}
 
 	.neos-typoscript-path {
-		color: $blueDark;
+		color: #000;
+
 		.neos-typoscript-subpath {
 			padding-left: 2em;
 		}

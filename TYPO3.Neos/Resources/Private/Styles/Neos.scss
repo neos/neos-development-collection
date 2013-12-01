@@ -58,14 +58,13 @@
 	font-size: 14px;
 	line-height: 1em;
 	text-align: left;
-	font-family: $default-font;
 	color: $textOnGray;
+	@include font;
 
 	@import "General";
 	@import "Shared/Scrollbar";
 	@import "ContentProperties";
 	@import "StyleWorkInProgress";
-	@import "ManagementBase";
 	@import "Inspector/Inspector";
 	@import "Inspector/SecondaryInspector";
 	@import "TopBar/TopBar";
@@ -74,7 +73,6 @@
 	@import "ContextBar/ContextBar";
 	@import "Menu/MenuPanel";
 	@import "Navigate/NavigatePanel";
-	@import "Modules/Modules";
 	@import "ContextBar/AlohaMenu";
 	@import "InlineEditing";
 	@import "Modules/Modules";

@@ -1,14 +1,10 @@
 // Neos variable Include
 // also overriding bootstrap variables
 
-// Neos standard HTML element styles Include
-@import "StandardHtmlStyles";
-
 // **** CSS start ****/
 // *******************/
 
 form {
-	font-family: $default-font;
 	text-align: left;
 	margin: 0px;
 	padding: 0px;
@@ -50,112 +46,11 @@ a {
 }
 
 .neos-clear {
-	clear:both;
-}
-
-body.neos-inspect-active {
-
-	// Show status indicator when in inspect mode
-	.neos-status-indicator {
-		display: block;
-		position: absolute;
-		left: -1px;
-		bottom: -17px;
-		width: 50px;
-		height: 16px;
-		overflow: hidden;
-		font-size: 9px;
-		border-width: 0 1px 1px 1px;
-		border-style: none solid solid solid;
-		display:block;
-		background: white;
-		z-index: 10000;
-		text-align:center;
-		border-color: $dark-grey3;
-	}
-
-	.aloha-block:hover > .neos-status-indicator {
-		@include single-box-shadow($light-grey3, 0, 1px, 3px);
-		border-color: $dark-grey3;
-	}
-
-	div.aloha-block > div.aloha-block-inner {
-		outline: 1px solid $dark-grey3;
-	}
-}
-
-div.aloha-block:hover > div.aloha-block-inner {
-	outline: 1px solid $dark-grey3;
-	background: lighten($light-grey, 20%);
-}
-div.aloha-block-active > div.aloha-block-inner,
-div.aloha-block-active:hover > div.aloha-block-inner {
-	outline: 1px solid $dark-grey3;
-	background: lighten($light-grey, 10%);
+	clear: both;
 }
 
 .neos-controls #neos-neos-top {
 	@include single-box-shadow(transparent, 0, 0, 0);
-}
-
-// Reset Z-Index so that the Floating Menu does not overlap the UI elements.
-.aloha-floatingmenu {
-	z-index:10000 !important;
-}
-
-// Quick fix to remove floating menu & pin - here since Aloha.css isn't included anymore
-.aloha-floatingmenu:hover .aloha-floatingmenu-pin {
-	display: none;
-}
-.aloha-floatingmenu:hover {
-	background: none;
-}
-.aloha-floatingmenu .x-tab-strip-wrap,
-.aloha-floatingmenu .x-tab-panel-header {
-	cursor: default !important;
-}
-
-.ui-dialog a.neos-content-new {
-	@include background-image(linear-gradient($light-grey2, lighten($dark-grey, 5%)));
-	@include border-radius(3px);
-	display: block;
-	font-size: 22px;
-	height: 35px;
-	padding-top: 10px;
-	text-align: center;
-	width: 51px;
-	&:hover {
-		text-decoration:none;
-	}
-}
-
-// Error output
-#neos-neos-error-container {
-	width: 600px;
-	padding: 10px;
-	background: #ffffff;
-	border: 5px solid $light-orange;
-	@include border-radius(3px);
-	@include single-box-shadow($light-grey3, 0, 1px, 3px);
-	position: absolute;
-	top: 10px;
-	left: 50%;
-	margin-left: -305px;
-	z-index: 10016;
-
-	h2 {
-		font-size: 25px;
-		color: $light-orange;
-		font-weight: bold;
-	}
-
-	.neos-neos-error-info {
-		font-weight: bold;
-	}
-
-	p {
-		margin: 15px 0;
-	}
 }
 
 .neos-pageloader-wrapper {
@@ -163,9 +58,10 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: $lightest;
+	background-color: #fff;
 	@include opacity(0);
 	z-index: 10001;
+
 	.neos-pageloader {
 		position: relative;
 		top: 50% !important;
