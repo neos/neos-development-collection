@@ -9,3 +9,11 @@ prototype(TYPO3.TypoScript:Tag) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
 	attributes = RawArray
 }
+prototype(TYPO3.TypoScript:UriBuilder) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
+	additionalParams = RawArray
+	arguments = RawArray
+	argumentsToBeExcludedFromQueryString = RawArray
+
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
