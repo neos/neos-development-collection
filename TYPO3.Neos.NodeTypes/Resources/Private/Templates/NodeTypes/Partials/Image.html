@@ -21,6 +21,8 @@
 		</f:else>
 	</f:if>
 	<f:if condition="{hasCaption}">
-		<figcaption><neos:contentElement.editable property="caption">{caption -> f:format.raw()}</neos:contentElement.editable></figcaption>
+		<figcaption>
+			{neos:contentElement.editable(property: 'caption', node: node)}
+		</figcaption>
 	</f:if>
 </figure>

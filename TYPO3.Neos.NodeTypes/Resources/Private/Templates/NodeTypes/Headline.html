@@ -1,4 +1,4 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<neos:contentElement node="{node}">
-	<neos:contentElement.editable property="title">{title -> f:format.raw()}</neos:contentElement.editable>
-</neos:contentElement>
+<div>
+	{neos:contentElement.editable(property: 'title')}
+</div>

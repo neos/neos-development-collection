@@ -1,5 +1,5 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<neos:contentElement node="{node}">
+<div>
 	<div class="typo3-image{f:if(condition: alignment, then: ' typo3-image-alignment-{alignment}')}">
 		<f:render partial="Image" arguments="{
 			node: node,
@@ -11,9 +11,8 @@
 			caption: caption,
 			maximumWidth: maximumWidth,
 			maximumHeight: maximumHeight,
-			imageClassName: imageClassName,
-			fluidTemplateTsObject: fluidTemplateTsObject
+			imageClassName: imageClassName
 		}" />
 	</div>
-	<neos:contentElement.editable property="text">{text -> f:format.raw()}</neos:contentElement.editable>
-</neos:contentElement>
+	{neos:contentElement.editable(property: 'text')}
+</div>
