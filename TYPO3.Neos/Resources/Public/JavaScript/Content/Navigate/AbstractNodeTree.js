@@ -719,7 +719,7 @@ define(
 						function(result) {
 							if (result !== null && result.success === true) {
 								// after we finished moving, update the node path/url
-								sourceNode.data.href = result.data.nodeUri;
+								sourceNode.data.href = result.data.nextUri;
 								sourceNode.data.key = result.data.newNodePath;
 								sourceNode.render();
 								sourceNode.setLazyNodeStatus(that.statusCodes.ok);
