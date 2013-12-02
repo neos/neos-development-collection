@@ -27,16 +27,13 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts
 	}
 
 Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
-	{namespace neos=TYPO3\Neos\ViewHelpers}
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
 
-	<neos:contentElement node="{node}">
-		<div class="container box">
-			<div class="column">
-				<ts:render path="columnContent" />
-			</div>
+	<div class="container box">
+		<div class="column">
+			<ts:render path="columnContent" />
 		</div>
-	</neos:contentElement>
+	</div>
 
 
 Extending it to use an option
@@ -81,16 +78,13 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts
 	}
 
 Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
-	{namespace neos=TYPO3\Neos\ViewHelpers}
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
 
-	<neos:contentElement node="{node}">
-		<f:if condition="{collapsed}">
-			<button>open the collapsed box via js</button>
-		</f:if>
-		<div class="container box {f:if(condition: collapsed, then: 'collapsed', else: '')}>
-			<div class="column">
-				<ts:render path="columnContent" />
-			</div>
+	<f:if condition="{collapsed}">
+		<button>open the collapsed box via js</button>
+	</f:if>
+	<div class="container box {f:if(condition: collapsed, then: 'collapsed', else: '')}>
+		<div class="column">
+			<ts:render path="columnContent" />
 		</div>
-	</neos:contentElement>
+	</div>

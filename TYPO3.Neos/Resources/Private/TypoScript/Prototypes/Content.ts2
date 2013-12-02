@@ -8,5 +8,8 @@
 prototype(TYPO3.Neos:Content) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 
+	# The following line must not be removed as it adds required meta data to all content elements in backend
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }

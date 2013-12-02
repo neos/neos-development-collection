@@ -64,17 +64,15 @@ HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.htm
 
 	{namespace neos=TYPO3\Neos\ViewHelpers}
 	{namespace media=TYPO3\Media\ViewHelpers}
-	<neos:contentElement node="{node}">
-		<article>
-			<header>
-				{neos:contentElement.editable(property: 'headline', tag: 'h2')}
-				{neos:contentElement.editable(property: 'subheadline', tag: 'h3')}
-			</header>
-			<div>
-				{neos:contentElement.editable(property: 'text')}
-				<media:image image="{image}" maximumWidth="300" alt="{headline}" />
-			</div>
-		</article>
-	</neos:contentElement>
+	<article>
+		<header>
+			{neos:contentElement.editable(property: 'headline', tag: 'h2')}
+			{neos:contentElement.editable(property: 'subheadline', tag: 'h3')}
+		</header>
+		<div>
+			{neos:contentElement.editable(property: 'text')}
+			<media:image image="{image}" maximumWidth="300" alt="{headline}" />
+		</div>
+	</article>
 
 Now, if you try to add a new Node in your page, you should see your new Node Type. Enjoy editing with Neos.

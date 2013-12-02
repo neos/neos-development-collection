@@ -63,10 +63,8 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# Required for the backend to work.
-	neosBackendDocumentNodeData = TYPO3.TypoScript:Template {
+	neosBackendDocumentNodeData = TYPO3.Neos:DocumentMetadata {
 		@position = 'before body'
-		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendDocumentNodeData.html'
-		node = ${node}
 	}
 
 	# Content of the body tag. To be defined by the integrator.

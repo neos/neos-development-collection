@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -39,206 +40,184 @@ class ContentElementWrappingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @var AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
-	 * Wrap the $content identified by $node with the needed markup for
-	 * the backend.
-	 * $parameters can be used to further pass parameters to the content element.
+	 * @Flow\Inject
+	 * @var HtmlAugmenter
+	 */
+	protected $htmlAugmenter;
+
+	/**
+	 * Wrap the $content identified by $node with the needed markup for the backend.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
-	 * @param string $typoscriptPath
+	 * @param NodeInterface $node
+	 * @param string $typoScriptPath
 	 * @param string $content
-	 * @param boolean $isPage
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\Node $node, $typoscriptPath, $content, $isPage = FALSE) {
-		$tagBuilder = $this->wrapContentObjectAndReturnTagBuilder($node, $typoscriptPath, $content, $isPage);
-		return $tagBuilder->render();
+	public function wrapContentObject(NodeInterface $node, $typoScriptPath, $content) {
+		/** @var $contentContext ContentContext */
+		$contentContext = $node->getContext();
+		$nodeType = $node->getNodeType();
+		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
+			$attributes = array(
+				'class' => 'neos-contentelement ' . str_replace(array(':', '.'), '-', strtolower($nodeType->getName())),
+				'id' => 'c' . $node->getIdentifier(),
+			);
+		} else {
+			$attributes = array();
+		}
+
+		if ($contentContext->getWorkspaceName() === 'live' || !$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+			return $this->htmlAugmenter->addAttributes($content, $attributes);
+		}
+
+		$attributes['typeof'] = 'typo3:' . $nodeType->getName();
+		$attributes['about'] = $node->getContextPath();
+
+		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
+			if ($node->isHidden()) {
+				$attributes['class'] .= ' neos-contentelement-hidden';
+			}
+			if ($node->isRemoved()) {
+				$attributes['class'] .= ' neos-contentelement-removed';
+			}
+
+			$uiConfiguration = $nodeType->hasConfiguration('ui') ? $nodeType->getConfiguration('ui') : array();
+			if ((isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE) || (!isset($uiConfiguration['inlineEditable']) && !$this->hasInlineEditableProperties($node))) {
+				$attributes['class'] .= ' neos-not-inline-editable';
+			}
+
+			$attributes['tabindex'] = 0;
+		} else {
+			$attributes['data-__sitename'] = $contentContext->getCurrentSite()->getName();
+			$attributes['data-__siteroot'] = sprintf('/sites/%s@%s', $contentContext->getCurrentSite()->getNodeName(), $contentContext->getWorkspace()->getName());
+		}
+		$attributes['data-neos-__workspacename'] = $node->getWorkspace()->getName();
+		$attributes['data-neos-_typoscript-path'] = $typoScriptPath;
+
+		$attributes = $this->addNodePropertyAttributes($node, $attributes);
+
+		$attributes['data-neos-__nodetype'] = $nodeType->getName();
+		return $this->htmlAugmenter->addAttributes($content, $attributes);
 	}
 
 	/**
-	 * Wrap the $content identified by $node with the needed markup for
-	 * the backend, and return the tag builder instance for further modification.
+	 * Adds node properties to the given $attributes collection and returns the extended array
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param string $typoscriptPath
-	 * @param string $content
-	 * @param boolean $isPage
-	 * @return \TYPO3\Fluid\Core\ViewHelper\TagBuilder
+	 * @param NodeInterface $node
+	 * @param array $attributes
+	 * @return array the merged attributes
 	 */
-	public function wrapContentObjectAndReturnTagBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE) {
-		$nodeType = $node->getNodeType();
-		/** @var $contentContext ContentContext */
-		$contentContext = $node->getContext();
-
-		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
-		$tagBuilder->forceClosingTag(TRUE);
-		if (!$node->isRemoved()) {
-			$tagBuilder->setContent($content);
-		}
-
-		if (!$isPage) {
-			$cssClasses = array(
-				'neos-contentelement',
-				str_replace(array(':', '.'), '-', strtolower($nodeType->getName()))
-			);
-			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
-			$tagBuilder->addAttribute('id', 'c' . $node->getIdentifier());
-		} else {
-			$cssClasses = array();
-		}
-
-		if ($contentContext->getWorkspaceName() === 'live' || $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
-			return $tagBuilder;
-		}
-
-		$tagBuilder->addAttribute('typeof', 'typo3:' . $nodeType->getName());
-		$tagBuilder->addAttribute('about', $node->getContextPath());
-		$tagBuilder->addAttribute('tabindex', '0');
-
-		$this->addDataAttribute($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
-		$this->addDataAttribute($tagBuilder, '_typoscriptPath', $typoscriptPath);
-		$hasInlineEditableProperties = FALSE;
-		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
+	public function addNodePropertyAttributes(NodeInterface $node, array $attributes) {
+		foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {
 			if (substr($propertyName, 0, 2) === '__') {
 				// skip fully-private properties
 				continue;
 			}
-			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
+			/** @var $contentContext ContentContext */
+			$contentContext = $node->getContext();
 			if ($propertyName === '_name' && $node === $contentContext->getCurrentSiteNode()) {
 				// skip the node name of the site node
 				continue;
 			}
-			if (substr($propertyName, 0, 1) === '_') {
-				$propertyValue = ObjectAccess::getProperty($node, substr($propertyName, 1));
-			} else {
-				$propertyValue = $node->getProperty($propertyName);
-			}
-			// Serialize boolean values to String
-			if ($dataType === 'boolean') {
-				$propertyValue = ($propertyValue ? 'true' : 'false');
-			}
-
-			// Serialize date values to String
-			if ($propertyValue instanceof \DateTime && $dataType === 'date') {
-				$propertyValue = $propertyValue->format('Y-m-d');
-			}
-
-			// Serialize node references to node identifiers
-			if ($dataType === 'references') {
-				$nodeIdentifiers = array();
-				if (is_array($propertyValue)) {
-					foreach ($propertyValue as $subNode) {
-						$nodeIdentifiers[] = $subNode->getIdentifier();
-					}
-				}
-				$propertyValue = json_encode($nodeIdentifiers);
-			}
-
-			// Serialize node reference to node identifier
-			if ($dataType === 'reference') {
-				if ($propertyValue instanceof NodeInterface) {
-					$propertyValue = $propertyValue->getIdentifier();
-				} else {
-					$propertyValue = '';
-				}
-			}
-
-			// Serialize objects to JSON strings
-			if (is_object($propertyValue) && $propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
-				$gettableProperties = ObjectAccess::getGettableProperties($propertyValue);
-				$convertedProperties = array();
-				foreach ($gettableProperties as $key => $value) {
-					if (is_object($value)) {
-						$entityIdentifier = $this->persistenceManager->getIdentifierByObject($value);
-						if ($entityIdentifier !== NULL) {
-							$value = $entityIdentifier;
-						}
-					}
-					$convertedProperties[$key] = $value;
-				}
-				$propertyValue = json_encode($convertedProperties);
-				$dataType = 'jsonEncoded';
-			}
-
-			$this->addDataAttribute($tagBuilder, $propertyName, $propertyValue, $dataType);
-
-			if (isset($propertyConfiguration['ui']) && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === TRUE) {
-				$hasInlineEditableProperties = TRUE;
+			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
+			$dasherizedPropertyName = $this->dasherize($propertyName);
+			$attributes['data-neos-' . $dasherizedPropertyName] = $this->getNodeProperty($node, $propertyName, $dataType);
+			if ($dataType !== 'string') {
+				$prefixedDataType = $dataType === 'jsonEncoded' ? 'typo3:jsonEncoded' : 'xsd:' . $dataType;
+				$attributes['data-neosdatatype-' . $dasherizedPropertyName] = $prefixedDataType;
 			}
 		}
-
-		if (!$isPage) {
-			if ($node->isHidden()) {
-				$cssClasses[] = 'neos-contentelement-hidden';
-			}
-			if ($node->isRemoved()) {
-				$cssClasses[] = 'neos-contentelement-removed';
-			}
-
-			$uiConfiguration = $nodeType->hasConfiguration('ui') ? $nodeType->getConfiguration('ui') : array();
-			if ((!isset($uiConfiguration['inlineEditable']) && !$hasInlineEditableProperties) || (isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE)) {
-				$cssClasses[] = 'neos-not-inline-editable';
-			}
-			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
-
-			$this->addDataAttribute($tagBuilder, '__nodetype', $nodeType->getName());
-		} else {
-			$tagBuilder->addAttribute('id', 'neos-page-metainformation');
-			$tagBuilder->addAttribute('data-__sitename', $contentContext->getCurrentSite()->getName());
-			$tagBuilder->addAttribute('data-__siteroot', sprintf(
-				'/sites/%s@%s',
-				$contentContext->getCurrentSite()->getNodeName(),
-				$contentContext->getWorkspace()->getName()
-			));
-		}
-
-		return $tagBuilder;
+		return $attributes;
 	}
 
 	/**
-	 * Add a data attribute with the property metadata to the content.
-	 *
-	 * We are converting the lowerCamelCased versions of properties to dash-er-ized versions,
-	 * because properties are case-insensitive, but the UI needs to be able to work with the
-	 * proper lowerCamelCased versions.
-	 *
-	 * @param \TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder
+	 * @param NodeInterface $node
 	 * @param string $propertyName
-	 * @param string $propertyValue
-	 * @param string $dataType
-	 * @return void
-	 */
-	protected function addDataAttribute(\TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder, $propertyName, $propertyValue, $dataType = 'string') {
-
-		$dasherizedPropertyName = preg_replace_callback('/([A-Z])/', function($character) {
-			return '-' . strtolower($character[1]);
-		}, $propertyName);
-		$tagBuilder->addAttribute('data-neos-' . $dasherizedPropertyName, $propertyValue);
-
-		$dataType = $this->getDataTypeCurie($dataType);
-		if ($dataType !== 'xsd:string') {
-			$tagBuilder->addAttribute('data-neosdatatype-' . $dasherizedPropertyName, $dataType);
-		}
-	}
-
-	/**
-	 * Map a data type from the node type definition to a correct
-	 * CURIE.
-	 *
 	 * @param string $dataType
 	 * @return string
 	 */
-	protected function getDataTypeCurie($dataType) {
-		switch ($dataType) {
-			case 'jsonEncoded':
-				return 'typo3:jsonEncoded';
-			default:
-				return 'xsd:' . $dataType;
+	protected function getNodeProperty(NodeInterface $node, $propertyName, &$dataType) {
+		if (substr($propertyName, 0, 1) === '_') {
+			$propertyValue = ObjectAccess::getProperty($node, substr($propertyName, 1));
+		} else {
+			$propertyValue = $node->getProperty($propertyName);
 		}
+		// Serialize boolean values to String
+		if ($dataType === 'boolean') {
+			return $propertyValue ? 'true' : 'false';
+		}
+
+		// Serialize date values to String
+		if ($dataType === 'date' && $propertyValue instanceof \DateTime) {
+			return $propertyValue->format('Y-m-d');
+		}
+
+		// Serialize node references to node identifiers
+		if ($dataType === 'references') {
+			$nodeIdentifiers = array();
+			if (is_array($propertyValue)) {
+				/** @var $subNode NodeInterface */
+				foreach ($propertyValue as $subNode) {
+					$nodeIdentifiers[] = $subNode->getIdentifier();
+				}
+			}
+			return json_encode($nodeIdentifiers);
+		}
+
+		// Serialize node reference to node identifier
+		if ($dataType === 'reference') {
+			if ($propertyValue instanceof NodeInterface) {
+				return $propertyValue->getIdentifier();
+			} else {
+				return '';
+			}
+		}
+
+		// Serialize objects to JSON strings
+		if (is_object($propertyValue) && $this->objectManager->isRegistered($dataType)) {
+			$dataType = 'jsonEncoded';
+			$gettableProperties = ObjectAccess::getGettableProperties($propertyValue);
+			$convertedProperties = array();
+			foreach ($gettableProperties as $key => $value) {
+				if (is_object($value)) {
+					$entityIdentifier = $this->persistenceManager->getIdentifierByObject($value);
+					if ($entityIdentifier !== NULL) {
+						$value = $entityIdentifier;
+					}
+				}
+				$convertedProperties[$key] = $value;
+			}
+			return json_encode($convertedProperties);
+		}
+		return $propertyValue === NULL ? '' : $propertyValue;
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @return boolean
+	 */
+	protected function hasInlineEditableProperties(NodeInterface $node) {
+		foreach (array_values($node->getNodeType()->getProperties()) as $propertyConfiguration) {
+			if (isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === TRUE) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Converts camelCased strings to lower cased and non-camel-cased strings
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	protected function dasherize($value) {
+		return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value), '-'));
 	}
 
 }

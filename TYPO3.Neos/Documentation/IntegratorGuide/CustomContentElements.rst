@@ -85,16 +85,9 @@ FlowQuery is called to return the property `videoUrl` of the current node.
 The final step in creating the YouTube content element is defining the `YouTube.html` Fluid
 template, f.e. with the following content::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
-	<neos:contentElement node="{node}">
-		<iframe width="{width}" height="{height}" src="{videoUrl}" frameborder="0" allowfullscreen></iframe>
-	</neos:contentElement>
+	<iframe width="{width}" height="{height}" src="{videoUrl}" frameborder="0" allowfullscreen></iframe>
 
 In the template the `{videoUrl}` variable which has been defined in TypoScript is used as we need it.
-
-The only required Neos specific markup in the template is the wrapping of the whole content element
-with the `<neos:contentElement>` ViewHelper, which is needed to make the content element selectable
-inside the Neos backend.
 
 What are the benefits of indirection through TypoScript?
 --------------------------------------------------------
@@ -161,11 +154,9 @@ properties might be used, this still is needed.
 ::
 
 	{namespace neos=TYPO3\Neos\ViewHelpers}
-	<neos:contentElement node="{node}">
-		<blockquote>
-			{neos:contentElement.editable(property: 'quote')}
-		</blockquote>
-	</neos:contentElement>
+	<blockquote>
+		{neos:contentElement.editable(property: 'quote')}
+	</blockquote>
 
 The ``blockquote`` is wrapped around the `contentElement.editable` and not the other way because that would
 mean the blockquote becomes a part of the editable content, which is not desired in this case.
@@ -174,9 +165,7 @@ Using the `tag` attribute to make the ViewHelper use the ``blockquote`` tag need
 avoids the nesting in an additional container `div` and thus cleans up the generated markup::
 
 	{namespace neos=TYPO3\Neos\ViewHelpers}
-	<neos:contentElement node="{node}">
-		{neos:contentElement.editable(property: 'quote', tag: 'blockquote')}
-	</neos:contentElement>
+	{neos:contentElement.editable(property: 'quote', tag: 'blockquote')}
 
 A property can be inline editable *and* appear in the property inspector if configured accordingly. In
 such a case `reloadIfChanged` should be enabled to make changes in the property editor visible in the
@@ -231,17 +220,12 @@ can contain two texts and two videos.
    on the passed nodes, the `<ts:render>` ViewHelper is used to defer rendering to
    TypoScript again. The needed TYPO3CR Node is passed as context to TypoScript::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
-	<neos:contentElement node="{node}">
-		<ts:render path="videoRenderer" context="{node: video0}" />
-		<ts:render path="textRenderer" context="{node: text0}" />
-
-		<br />
-
-		<ts:render path="videoRenderer" context="{node: video1}" />
-		<ts:render path="textRenderer" context="{node: text1}" />
-	</neos:contentElement>
+	<ts:render path="videoRenderer" context="{node: video0}" />
+	<ts:render path="textRenderer" context="{node: text0}" />
+	<br />
+	<ts:render path="videoRenderer" context="{node: video1}" />
+	<ts:render path="textRenderer" context="{node: text1}" />
 
 Instead of referencing specific content types directly the use of the generic `ContentCollection` content
 element allows to insert *arbitrary content* inside other elements. An example can be found in the
