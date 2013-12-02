@@ -122,6 +122,7 @@ define(
 					nodeType = pageMetaInformation.attr('typeof').substr(6),
 					workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
+					autoFocus: true,
 					parent: this,
 					children: [
 						{
