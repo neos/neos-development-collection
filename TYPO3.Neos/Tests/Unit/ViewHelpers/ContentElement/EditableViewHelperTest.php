@@ -207,4 +207,19 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		$this->editableViewHelper->render('someProperty');
 	}
 
+	/**
+	 * @test
+	 */
+	public function renderUsesTheNodeArgumentIfSet() {
+		$this->templateVariables = array(
+			'someProperty' => 'somePropertyValue',
+			'fluidTemplateTsObject' => NULL,
+		);
+
+		$this->tagBuilder->expects($this->once())->method('render');
+
+		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->editableViewHelper->render('someProperty', 'div', $this->mockNode);
+	}
+
 }

@@ -16,6 +16,7 @@ use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
@@ -45,30 +46,29 @@ class EditableViewHelper extends AbstractTagBasedViewHelper {
 	 *
 	 * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
 	 * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
+	 * @param NodeInterface $node The node of the content element. Optional, will be resolved from the TypoScript context by default.
 	 * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
 	 * @throws ViewHelperException
 	 */
-	public function render($property, $tag = 'div') {
+	public function render($property, $tag = 'div', NodeInterface $node = NULL) {
 		$this->tag->setTagName($tag);
 		$this->tag->forceClosingTag(TRUE);
 		$content = $this->renderChildren();
+
+		if ($node === NULL) {
+			$node = $this->getNodeFromTypoScriptContext();
+		}
+
 		if ($content === NULL) {
 			if (!$this->templateVariableContainer->exists($property)) {
-				throw new ViewHelperException(sprintf('The property "%s" is not accessible', $property), 1384507046);
+				throw new ViewHelperException(sprintf('The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial, make sure to pass the node property "%1$s" as an argument.', $property), 1384507046);
 			}
 			$content = $this->templateVariableContainer->get($property);
 		}
 		$this->tag->setContent($content);
 
-		if (!$this->templateVariableContainer->exists('fluidTemplateTsObject')) {
-			throw new ViewHelperException('This ViewHelper can only be used in a TypoScript Content Element', 1385737102);
-		}
-		/** @var $fluidTemplateTsObject TemplateImplementation */
-		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
-		$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
-
 		/** @var $contentContext ContentContext */
-		$contentContext = $currentContext['node']->getContext();
+		$contentContext = $node->getContext();
 		if ($contentContext->getWorkspaceName() === 'live' || !$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
 			return $this->tag->render();
 		}
@@ -76,5 +76,20 @@ class EditableViewHelper extends AbstractTagBasedViewHelper {
 		$this->tag->addAttribute('property', 'typo3:' . $property);
 		$this->tag->addAttribute('class', $this->tag->hasAttribute('class') ? 'neos-inline-editable ' . $this->tag->getAttribute('class') : 'neos-inline-editable');
 		return $this->tag->render();
+	}
+
+	/**
+	 * @return NodeInterface
+	 * @throws ViewHelperException
+	 */
+	protected function getNodeFromTypoScriptContext() {
+		if (!$this->templateVariableContainer->exists('fluidTemplateTsObject')) {
+			throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
+		}
+		/** @var $fluidTemplateTsObject TemplateImplementation */
+		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
+		$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
+
+		return $currentContext['node'];
 	}
 }
