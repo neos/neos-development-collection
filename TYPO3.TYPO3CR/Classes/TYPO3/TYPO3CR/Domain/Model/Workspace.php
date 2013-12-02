@@ -27,6 +27,7 @@ class Workspace {
 	/**
 	 * @var string
 	 * @Flow\Identity
+	 * @ORM\Id
 	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
 	 */
 	protected $name;
