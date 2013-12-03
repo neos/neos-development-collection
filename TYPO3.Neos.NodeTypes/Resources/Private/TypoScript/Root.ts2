@@ -1,8 +1,17 @@
 # Menu TS Object - extends TYPO3.Neos:Menu and is rendering menus inserted as content elements
-prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu) {
+prototype(TYPO3.Neos.NodeTypes:Menu) {
+	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+
+	startingPoint = ${documentNode}
+
 	entryLevel = ${q(node).property('startLevel')}
 	entryLevel.@process.1 = ${String.toInteger(value)}
+
+	maximumLevels = ${q(node).property('maximumLevels')}
 	maximumLevels.@process.1 = ${String.toInteger(value)}
+
+	node = ${node}
+	items = ${this.items}
 }
 
 # Headline TS Object
