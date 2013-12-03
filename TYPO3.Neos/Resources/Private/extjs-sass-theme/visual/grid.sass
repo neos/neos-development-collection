@@ -1,0 +1,207 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-grid3
+  background-color: adjust_hue(#fff, $hue)
+
+.x-grid-panel .x-panel-mc .x-panel-body
+  border-color: adjust_hue(#99bbe8, $hue)
+
+.x-grid3-row td, .x-grid3-summary-row td
+  font: normal 11px / 13px arial, tahoma, helvetica, sans-serif
+
+.x-grid3-hd-row td
+  font: normal 11px / 15px arial, tahoma, helvetica, sans-serif
+  border-left-color: adjust_hue(#eee, $hue)
+  border-right-color: adjust_hue(#d0d0d0, $hue)
+
+.x-grid-row-loading
+  background-color: adjust_hue(#fff, $hue)
+  background-image: url (#{$img_path+"/shared/loading-balls.gif"})
+
+.x-grid3-row
+  border-color: adjust_hue(#ededed, $hue)
+  border-top-color: adjust_hue(#fff, $hue)
+
+.x-grid3-row-alt
+  background-color: adjust_hue(#fafafa, $hue)
+
+.x-grid3-row-over
+  border-color: adjust_hue(#ddd, $hue)
+  background-color: adjust_hue(#efefef, $hue)
+  background-image: url (#{$img_path+"/grid/row-over.gif"})
+
+.x-grid3-resize-proxy, .x-grid3-resize-marker
+  background-color: adjust_hue(#777, $hue)
+
+.x-grid3-header
+  background-color: adjust_hue(#f9f9f9, $hue)
+  background-image: url (#{$img_path+"/grid/grid3-hrow.gif"})
+
+.x-grid3-header-pop
+  border-left-color: adjust_hue(#d0d0d0, $hue)
+
+.x-grid3-header-pop-inner
+  border-left-color: adjust_hue(#eee, $hue)
+  background-image: url (#{$img_path+"/grid/hd-pop.gif"})
+
+td
+  &.x-grid3-hd-over, &.sort-desc, &.sort-asc, &.x-grid3-hd-menu-open
+    border-left-color: adjust_hue(#aaccf6, $hue)
+    border-right-color: adjust_hue(#aaccf6, $hue)
+  &.x-grid3-hd-over .x-grid3-hd-inner, &.sort-desc .x-grid3-hd-inner, &.sort-asc .x-grid3-hd-inner, &.x-grid3-hd-menu-open .x-grid3-hd-inner
+    background-color: adjust_hue(#ebf3fd, $hue)
+    background-image: url (#{$img_path+"/grid/grid3-hrow-over.gif"})
+
+.sort-asc .x-grid3-sort-icon
+  background-image: url (#{$img_path+"/grid/sort_asc.gif"})
+
+.sort-desc .x-grid3-sort-icon
+  background-image: url (#{$img_path+"/grid/sort_desc.gif"})
+
+.x-grid3-cell-text, .x-grid3-hd-text
+  color: adjust_hue(#000, $hue)
+
+.x-grid3-split
+  background-image: url (#{$img_path+"/grid/grid-split.gif"})
+
+.x-grid3-hd-text
+  color: adjust_hue(#15428b, $hue)
+
+.x-dd-drag-proxy .x-grid3-hd-inner
+  background-color: adjust_hue(#ebf3fd, $hue)
+  background-image: url (#{$img_path+"/grid/grid3-hrow-over.gif"})
+  border-color: adjust_hue(#aaccf6, $hue)
+
+.col-move-top
+  background-image: url (#{$img_path+"/grid/col-move-top.gif"})
+
+.col-move-bottom
+  background-image: url (#{$img_path+"/grid/col-move-bottom.gif"})
+
+td.grid-hd-group-cell
+  background: url(../images/default/grid/grid3-hrow.gif) repeat-x bottom
+
+.x-grid3-row-selected
+  background-color: adjust_hue(#dfe8f6, $hue) !important
+  background-image: none
+  border-color: adjust_hue(#a3bae9, $hue)
+
+.x-grid3-cell-selected
+  background-color: adjust_hue(#b8cfee, $hue) !important
+  color: adjust_hue(#000, $hue)
+  span
+    color: adjust_hue(#000, $hue) !important
+  .x-grid3-cell-text
+    color: adjust_hue(#000, $hue)
+
+.x-grid3-locked
+  td.x-grid3-row-marker, .x-grid3-row-selected td.x-grid3-row-marker
+    background-color: adjust_hue(#ebeadb, $hue) !important
+    background-image: url (#{$img_path+"/grid/grid-hrow.gif"}) !important
+    color: adjust_hue(#000, $hue)
+    border-top-color: adjust_hue(#fff, $hue)
+    border-right-color: adjust_hue(#6fa0df, $hue) !important
+  td.x-grid3-row-marker div, .x-grid3-row-selected td.x-grid3-row-marker div
+    color: adjust_hue(#15428b, $hue) !important
+
+.x-grid3-dirty-cell
+  background-image: url (#{$img_path+"/grid/dirty.gif"})
+
+.x-grid3-topbar
+  font: normal 11px arial, tahoma, helvetica, sans-serif
+
+.x-grid3-bottombar
+  font: normal 11px arial, tahoma, helvetica, sans-serif
+  .x-toolbar
+    border-top-color: adjust_hue(#a9bfd3, $hue)
+
+.x-props-grid
+  .x-grid3-td-name .x-grid3-cell-inner
+    background-image: url (#{$img_path+"/grid/grid3-special-col-bg.gif"}) !important
+    color: adjust_hue(#000, $hue) !important
+  .x-grid3-body .x-grid3-td-name
+    background-color: adjust_hue(#fff, $hue) !important
+    border-right-color: adjust_hue(#eee, $hue)
+
+.xg-hmenu-sort-asc .x-menu-item-icon
+  background-image: url (#{$img_path+"/grid/hmenu-asc.gif"})
+
+.xg-hmenu-sort-desc .x-menu-item-icon
+  background-image: url (#{$img_path+"/grid/hmenu-desc.gif"})
+
+.xg-hmenu-lock .x-menu-item-icon
+  background-image: url (#{$img_path+"/grid/hmenu-lock.gif"})
+
+.xg-hmenu-unlock .x-menu-item-icon
+  background-image: url (#{$img_path+"/grid/hmenu-unlock.gif"})
+
+.x-grid3-hd-btn
+  background-color: adjust_hue(#c3daf9, $hue)
+  background-image: url (#{$img_path+"/grid/grid3-hd-btn.gif"})
+
+.x-grid3-body .x-grid3-td-expander
+  background-image: url (#{$img_path+"/grid/grid3-special-col-bg.gif"})
+
+.x-grid3-row-expander
+  background-image: url (#{$img_path+"/grid/row-expand-sprite.gif"})
+
+.x-grid3-body .x-grid3-td-checker
+  background-image: url (#{$img_path+"/grid/grid3-special-col-bg.gif"})
+
+.x-grid3-row-checker, .x-grid3-hd-checker
+  background-image: url (#{$img_path+"/grid/row-check-sprite.gif"})
+
+.x-grid3-body
+  .x-grid3-td-numberer
+    background-image: url (#{$img_path+"/grid/grid3-special-col-bg.gif"})
+    .x-grid3-cell-inner
+      color: adjust_hue(#444, $hue)
+  .x-grid3-td-row-icon
+    background-image: url (#{$img_path+"/grid/grid3-special-col-bg.gif"})
+  .x-grid3-row-selected
+    .x-grid3-td-numberer, .x-grid3-td-checker, .x-grid3-td-expander
+      background-image: url (#{$img_path+"/grid/grid3-special-col-sel-bg.gif"})
+
+.x-grid3-check-col
+  background-image: url (#{$img_path+"/menu/unchecked.gif"})
+
+.x-grid3-check-col-on
+  background-image: url (#{$img_path+"/menu/checked.gif"})
+
+.x-grid-group, .x-grid-group-body
+  zoom: 1
+
+.x-grid-group-hd
+  zoom: 1
+  border-bottom-color: adjust_hue(#99bbe8, $hue)
+  div.x-grid-group-title
+    background-image: url (#{$img_path+"/grid/group-collapse.gif"})
+    color: adjust_hue(#3764a0, $hue)
+    font: bold 11px tahoma, arial, helvetica, sans-serif
+
+.x-grid-group-collapsed .x-grid-group-hd div.x-grid-group-title
+  background-image: url (#{$img_path+"/grid/group-expand.gif"})
+
+.x-group-by-icon
+  background-image: url (#{$img_path+"/grid/group-by.gif"})
+
+.x-cols-icon
+  background-image: url (#{$img_path+"/grid/columns.gif"})
+
+.x-show-groups-icon
+  background-image: url (#{$img_path+"/grid/group-by.gif"})
+
+.x-grid-empty
+  color: gray
+  font: normal 11px tahoma, arial, helvetica, sans-serif
+
+.x-grid-with-col-lines
+  .x-grid3-row td.x-grid3-cell
+    border-right-color: adjust_hue(#ededed, $hue)
+  .x-grid3-row-selected
+    border-top-color: adjust_hue(#a3bae9, $hue)

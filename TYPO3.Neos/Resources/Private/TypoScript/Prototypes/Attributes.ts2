@@ -1,0 +1,9 @@
+# Renders attributes of a HTML tag
+#
+# Usage:
+# attributes = TYPO3.Neos:Attributes
+# attributes.foo = 'bar'
+#
+prototype(TYPO3.Neos:Attributes) {
+	@class = 'TYPO3\\Neos\\TypoScript\\AttributesImplementation'
+}

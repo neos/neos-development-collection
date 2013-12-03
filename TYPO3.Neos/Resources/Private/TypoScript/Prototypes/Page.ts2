@@ -1,0 +1,92 @@
+# TYPO3.Neos:Page is the default object used for rendering in most sites
+#
+prototype(TYPO3.Neos:Page) >
+prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
+
+	doctype = '<!DOCTYPE html>'
+	doctype.@position = 'start 100'
+
+	# Only the opening html tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
+	htmlTag = TYPO3.TypoScript:Tag {
+		@position = 'start'
+		tagName = 'html'
+		omitClosingTag = TRUE
+
+		attributes {
+			version = 'HTML+RDFa 1.1'
+			xmlns = 'http://www.w3.org/1999/xhtml'
+			xmlns:typo3 = 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/'
+			xmlns:xsd = 'http://www.w3.org/2001/XMLSchema#'
+		}
+	}
+
+	headerComment = Template {
+		@position = 'before headTag'
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
+	}
+
+	# The opening head tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
+	headTag = TYPO3.TypoScript:Tag {
+		@position = 'after htmlTag'
+		tagName = 'head'
+		omitClosingTag = TRUE
+	}
+
+	# The content of the head tag, integrators can add their own head content in this array.
+	head = TYPO3.TypoScript:Array
+	head {
+		@position = 'after headTag'
+
+		characterSetMetaTag = TYPO3.TypoScript:Tag {
+			@position = 'start 10'
+			tagName = 'meta'
+			attributes {
+				charset = 'UTF-8'
+			}
+		}
+
+		neosBackendHeader = TYPO3.TypoScript:Template {
+			@position = 'end 10000'
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
+			node = ${node}
+		}
+	}
+
+	closingHeadTag = '</head>'
+	closingHeadTag.@position = 'after head'
+
+	# The opening body tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
+	bodyTag = TYPO3.TypoScript:Tag {
+		@position = '20'
+		tagName = 'body'
+		omitClosingTag = TRUE
+	}
+
+	# Required for the backend to work.
+	neosBackendDocumentNodeData = TYPO3.Neos:DocumentMetadata {
+		@position = 'before body'
+	}
+
+	# Content of the body tag. To be defined by the integrator.
+	body = Template
+	body.@position = 'after bodyTag'
+
+	# Required for the backend to work.
+	neosBackendContainer = TYPO3.TypoScript:Template {
+		@position = 'before closingBodyTag'
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
+		node = ${node}
+	}
+
+	# This enables redirecting to the last visited page after login
+	lastVisitedNode = TYPO3.Neos:Template {
+		@position = 'before closingBodyTag'
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/LastVisitedNode.html'
+	}
+
+	closingBodyTag = '</body>'
+	closingBodyTag.@position = 'end 100'
+
+	closingHtmlTag = '</html>'
+	closingHtmlTag.@position = 'end 200'
+}

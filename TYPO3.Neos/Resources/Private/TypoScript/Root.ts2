@@ -1,0 +1,6 @@
+include: resource://TYPO3.TypoScript/Private/TypoScript/Root.ts2
+
+include: resource://TYPO3.Neos/Private/TypoScript/DefaultTypoScript.ts2
+include: resource://TYPO3.Neos/Private/TypoScript/WireframeMode.ts2
+
+include: resource://TYPO3.Neos.NodeTypes/Private/TypoScript/Root.ts2

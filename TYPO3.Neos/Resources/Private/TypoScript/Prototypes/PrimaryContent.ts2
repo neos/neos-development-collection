@@ -1,0 +1,19 @@
+# Primary content should be used to render the main content of a site and
+# provides an extension point for other packages
+#
+prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
+	nodePath = 'to-be-defined-by-user'
+
+	@override.nodePath = ${this.nodePath}
+	@ignoreProperties = ${['nodePath']}
+
+	default {
+		prototype(TYPO3.Neos:ContentCollection) {
+			nodePath = ${nodePath}
+		}
+
+		condition = TRUE
+		type = 'TYPO3.Neos:ContentCollection'
+		@position = 'end'
+	}
+}

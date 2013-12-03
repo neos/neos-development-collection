@@ -1,0 +1,11 @@
+# DocumentMetadata implementation
+#
+# Renders a meta tag with attributes about the current document node
+#
+prototype(TYPO3.Neos:DocumentMetadata) {
+	@class = 'TYPO3\\Neos\\TypoScript\\DocumentMetadataImplementation'
+	documentNode = ${documentNode}
+	tagName = 'div'
+	id = 'neos-page-metainformation'
+	forceClosingTag = true
+}

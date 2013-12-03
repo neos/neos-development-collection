@@ -1,0 +1,201 @@
+&.neos-module {
+	@import "Administration/Packages";
+	@import "Management/Workspaces";
+
+	background: $light-grey3;
+	background: url(../Images/module-bg.jpg) left top repeat;
+	color: #fff;
+	margin: 95px 0px 0px 0px;
+
+	h1, h2, h3, h4, h5, h6 {
+		text-rendering: optimizelegibility;
+	}
+
+	p {
+		line-height: 1.6em;
+	}
+
+	label {
+		font-size: 14px;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	}
+
+	.neos-alert {
+		font-size: 13px;
+		line-height: 18px;
+	}
+
+	form.neos-inline {
+		display: inline-block;
+	}
+
+	.neos-help-block em {
+		padding: 2px 4px;
+		color: #d14;
+		background-color: #f7f7f9;
+		border: 1px solid #e1e1e8;
+		white-space: nowrap;
+	}
+
+	&.neos-module-user-usersettings,
+	&.neos-module-administration-users {
+		.neos-content {
+			#electronicAddresses {
+				select {
+					width: auto;
+				}
+				input[type="text"] {
+					width: 140px;
+				}
+				input[type="radio"] {
+					margin: 0;
+				}
+			}
+			i.icon-user {
+					margin-right: 11px;
+			}
+		}
+	}
+
+	// Navigation elements
+	.neos-nav-pills > li > a {
+		padding: 0 20px 0 20px;
+		margin: 0px;
+		color: darken($light-grey2, 20%);
+		background: transparent;
+		line-height: $unit;
+
+		&:hover,
+		&:active,
+		&:focus {
+			color: $lightest;
+			background: transparent;
+		}
+	}
+	.neos-nav-pills > li:first-child a {
+		padding-left: 15px;
+	}
+	.neos-nav-pills {
+		li {
+			&.neos-active a {
+				background: transparent;
+				color: $lightest;
+			}
+		}
+	}
+	.neos-content {
+		padding: 0 30px;
+
+		&.neos-well {
+			background-color: #777;
+			border-color: #666;
+			@include box-shadow(0 0 5px rgba($darkest, 0.2) inset);
+			@include border-radius(0);
+			padding: 0px;
+
+			h1 {
+				padding: 10px 50px 0px 50px;
+			}
+
+			p {
+				color: $light-grey;
+			}
+			.neos-alert p {
+				color: inherit;
+			}
+
+			.neos-breadcrumb {
+				@include border-top-radius(4px);
+				@include border-bottom-radius(0px);
+				background-color: #666;
+				border-bottom: 1px solid $light-grey3;
+				@include box-shadow(0px 1px 5px rgba($darkest, 0.2), 0px 1px 0px #666);
+
+				li {
+					@include text-shadow(0 0 0 transparent);
+					color: darken($lightest, 10%);
+
+					&.neos-active {
+					}
+				}
+
+				a {
+					color: darken($light-grey2, 10%);
+
+					&:hover,
+					&:active,
+					&:focus {
+						color: darken($lightest, 10%);
+						text-decoration: none;
+					}
+				}
+			}
+
+			.neos-module-container {
+				padding: 0px 50px 0px 50px;
+
+				&.neos-indented {
+					margin-left: 0px;
+				}
+			}
+		}
+		.widget {
+			@include border-radius(0);
+		}
+	}
+
+	// Styles with Fluid Grids
+	.neos-content.fluid-container {
+		h1 {
+			margin-left: 20px;
+		}
+	}
+
+	// Tables within Modules
+	table {
+		td > .neos-button,
+		td > div.neos-pull-right > .neos-button {
+			&.neos-button-success {
+				background-color: $grayLight;
+
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $green;
+					}
+				}
+			}
+
+			&.neos-button-warning {
+				background-color: $grayLight;
+
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $orange;
+					}
+				}
+			}
+
+			&.neos-button-danger {
+				background-color: $grayLight;
+
+				&:not([disabled]),
+				&:not(.neos-disabled) {
+					&:hover,
+					&:active,
+					&.neos-active,
+					&.neos-pressed {
+						background-color: $warning;
+					}
+				}
+			}
+		}
+	}
+}
