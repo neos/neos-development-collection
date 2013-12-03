@@ -1,14 +1,14 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
 {namespace media=TYPO3\Media\ViewHelpers}
-<figure>
+<figure{f:if(condition: imageClassName, then: ' class="{imageClassName}"')}>
 	<f:if condition="{image}">
 		<f:then>
 			<f:if condition="{link}">
 				<f:then>
-					<a href="{link}"><media:image image="{image}" class="{imageClassName}" alt="{alternativeText}" title="{title}" maximumWidth="{maximumWidth}" maximumHeight="{maximumHeight}" /></a>
+					<a href="{link}"><media:image image="{image}" alt="{alternativeText}" title="{title}" maximumWidth="{maximumWidth}" maximumHeight="{maximumHeight}" /></a>
 				</f:then>
 				<f:else>
-					<media:image image="{image}" alt="{alternativeText}" class="{imageClassName}" title="{title}" maximumWidth="{maximumWidth}" maximumHeight="{maximumHeight}" />
+					<media:image image="{image}" alt="{alternativeText}" title="{title}" maximumWidth="{maximumWidth}" maximumHeight="{maximumHeight}" />
 				</f:else>
 			</f:if>
 		</f:then>

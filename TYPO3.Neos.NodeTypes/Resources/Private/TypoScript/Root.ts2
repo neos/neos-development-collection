@@ -23,7 +23,7 @@ prototype(TYPO3.Neos.NodeTypes:Headline) {
 prototype(TYPO3.Neos.NodeTypes:Image) {
 	maximumWidth = 2560
 	maximumHeight = 2560
-	imageClassName = ''
+	imageClassName = ${q(node).property('alignment') ? ('typo3-neos-alignment-' + q(node).property('alignment')) : ''}
 }
 
 # Text TS Object
