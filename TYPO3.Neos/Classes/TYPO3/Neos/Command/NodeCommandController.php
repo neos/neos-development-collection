@@ -59,10 +59,10 @@ class NodeCommandController extends CommandController {
 	 * This command automatically creates missing child nodes for a node type
 	 * based on the structure defined in the NodeTypes configuration.
 	 *
-	 * Example for creating child nodes for the TYPO3.Neos:Page node type in the
+	 * Example for creating child nodes for the TYPO3.Neos.NodeTypes:Page node type in the
 	 * live workspace:
 	 *
-	 * ./flow node:autocreatechildnodes --node-type TYPO3.Neos:Page
+	 * ./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
 	 *
 	 * @param string $nodeType Node type name
 	 * @param string $workspace Workspace name, default is 'live'

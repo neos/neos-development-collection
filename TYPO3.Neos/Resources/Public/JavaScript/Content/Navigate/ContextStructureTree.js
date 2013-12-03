@@ -133,7 +133,7 @@ define(
 						select: false,
 						active: false,
 						unselectable: true,
-						nodeType: 'TYPO3.Neos:Page',
+						nodeType: 'TYPO3.Neos.NodeTypes:Page',
 						addClass: 'typo3-neos-page',
 						iconClass: 'icon-sitemap'
 					}

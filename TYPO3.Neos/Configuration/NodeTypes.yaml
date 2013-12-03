@@ -1,9 +1,11 @@
+# Base node, which just configures the "removed" property of the node.
 'TYPO3.Neos:Node':
   abstract: TRUE
   properties:
     _removed:
       type: boolean
 
+# Hidable Mixin
 'TYPO3.Neos:Hidable':
   abstract: TRUE
   ui:
@@ -21,6 +23,7 @@
           group: 'visibility'
           position: 30
 
+# Timable Mixin
 'TYPO3.Neos:Timable':
   abstract: TRUE
   ui:
@@ -49,6 +52,11 @@
       validation:
         'TYPO3.Neos/Validation/DateTimeValidator': []
 
+
+# Abstract Document type.
+# "Documents" always have a publicly-visible URL.
+# The most prominent subclass of Document is "TYPO3.Neos.ContentTypes:Page", but
+# anything page-like (like a blog post) should subclass "TYPO3.Neos:Document".
 'TYPO3.Neos:Document':
   superTypes:
     - 'TYPO3.Neos:Node'
@@ -103,48 +111,9 @@
           group: 'visibility'
           position: 40
 
-'TYPO3.Neos:Page':
-  superTypes: ['TYPO3.Neos:Document']
-  childNodes:
-    main:
-      type: 'TYPO3.Neos:ContentCollection'
-  properties:
-    layout:
-     type: string
-     ui:
-       label: 'Layout for this page only'
-       reloadIfChanged: TRUE
-       inspector:
-         group: 'layout'
-         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
-         editorOptions:
-           placeholder: 'Inherit from parent'
-           values:
-             '':
-               label: ''
-    subpageLayout:
-     type: string
-     ui:
-       label: 'Layout for subpages of this page'
-       inspector:
-         group: 'layout'
-         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
-         editorOptions:
-           placeholder: 'Inherit from parent'
-           values:
-             '':
-               label: ''
-  ui:
-    label: 'Page'
-    icon: 'icon-file'
-    inspector:
-      groups:
-        document:
-          label: 'Title'
-        layout:
-          label: 'Layout'
-          position: 150
 
+# A shortcut.
+# "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
 'TYPO3.Neos:Shortcut':
   superTypes: ['TYPO3.Neos:Document']
   ui:
@@ -179,6 +148,7 @@
         inspector:
           group: 'document'
 
+# Base class for all "Plugins"; that are PHP controllers being called during the rendering.
 'TYPO3.Neos:Plugin':
   superTypes: ['TYPO3.Neos:Content']
   abstract: TRUE
@@ -269,6 +239,7 @@
           position: 20
           editor: 'TYPO3.Neos/Inspector/Editors/PluginViewEditor'
 
+
 'TYPO3.Neos:Content':
   superTypes:
     - 'TYPO3.Neos:Node'
@@ -282,6 +253,10 @@
     search:
       searchCategory: 'Content'
 
+# A content collection is a collection of "TYPO3.Neos:Content" (and its subclasses),
+# i.e. contains variable number of children.
+#
+# Cannot be subclassed.
 'TYPO3.Neos:ContentCollection':
   superTypes: ['TYPO3.Neos:Node']
   ui:
