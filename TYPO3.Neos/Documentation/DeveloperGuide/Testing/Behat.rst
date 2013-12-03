@@ -38,7 +38,7 @@ since all the data will be removed after each scenario.
 	  Flow:
 	    persistence:
 	      backendOptions:
-	      dbname: 'neos_testing_behat'
+	        dbname: 'neos_testing_behat'
 
 `FLOW_ROOT/Configuration/Testing/Behat/Settings.yaml`::
 
@@ -101,6 +101,11 @@ Behat tests can be run from the Flow root folder with the `bin/behat` command by
 file::
 
 	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml
+
+.. tip::
+
+	You might want to warmup the cache before you start the test. Otherwise the tests might fail due to a timeout.
+	You can do that with `FLOW_CONTEXT=Development/Behat ./flow flow:cache:warmup`.
 
 Debugging
 ---------
