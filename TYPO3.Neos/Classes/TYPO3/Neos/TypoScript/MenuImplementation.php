@@ -192,11 +192,11 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 		if ($givenSiteLevel > 0 && isset($breadcrumbNodes[$givenSiteLevel - 1])) {
 			$parentNode = $breadcrumbNodes[$givenSiteLevel - 1];
 		} elseif ($givenSiteLevel <= 0) {
-			$currentSiteLevel = count($breadcrumbNodes) - 1;
+			$currentSiteLevel = $startingPoint->getDepth() - $currentSiteNode->getDepth();
 			if ($currentSiteLevel + $givenSiteLevel < 1) {
 				$parentNode = $breadcrumbNodes[0];
 			} else {
-				$parentNode = $breadcrumbNodes[$currentSiteLevel + $givenSiteLevel - 1];
+				$parentNode = $breadcrumbNodes[$currentSiteLevel + $givenSiteLevel];
 			}
 		}
 		return $parentNode;
