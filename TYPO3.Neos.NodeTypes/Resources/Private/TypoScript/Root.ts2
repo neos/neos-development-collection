@@ -40,7 +40,7 @@ prototype(TYPO3.Neos.NodeTypes:TextWithImage) < prototype(TYPO3.Neos.NodeTypes:I
 prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Template) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/NodeTypes/MultiColumn.html'
 	layout = ${q(node).property('layout')}
-	className = ${'container columns-' + this.layout}
+	attributes.class = ${'container columns-' + q(node).property('layout')}
 	columns = TYPO3.TypoScript:Collection {
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
 		itemRenderer = TYPO3.Neos.NodeTypes:MultiColumnItem
@@ -51,7 +51,7 @@ prototype(TYPO3.Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Template) {
 # Abstract render definition for a single content column in a multi column element
 prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.Neos:Template) {
 	templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/NodeTypes/MultiColumnItem.html'
-	className = 'column'
+	attributes.class = 'column'
 	columnContent = TYPO3.Neos:ContentCollection {
 		nodePath = '.'
 	}

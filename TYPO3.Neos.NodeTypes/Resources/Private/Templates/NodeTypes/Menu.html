@@ -1,5 +1,5 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<div>
+<div{attributes -> f:format.raw()}>
 	<ul>
 		<f:render section="itemsList" arguments="{items: items}" />
 	</ul>
