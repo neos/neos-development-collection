@@ -60,6 +60,19 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
+	 * NodeType filter for nodes displayed in menu
+	 *
+	 * @return string
+	 */
+	public function getFilter() {
+		$filter = $this->tsValue('filter');
+		if ($filter !== NULL) {
+			return $filter;
+		}
+		return 'TYPO3.Neos:Document';
+	}
+
+	/**
 	 * Maximum number of levels which should be rendered in this menu.
 	 *
 	 * @return integer
@@ -143,7 +156,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	private function buildRecursiveItemsArray(NodeInterface $entryParentNode, NodeInterface $lastParentNode = NULL, $currentLevel = 1) {
 		$items = array();
 		/** @var $currentNode NodeInterface */
-		foreach ($entryParentNode->getChildNodes('TYPO3.Neos:Document') as $currentNode) {
+		foreach ($entryParentNode->getChildNodes($this->getFilter()) as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
 				continue;
 			}
