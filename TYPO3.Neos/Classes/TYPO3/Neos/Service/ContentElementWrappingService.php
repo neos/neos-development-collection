@@ -12,6 +12,8 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
@@ -28,13 +30,13 @@ class ContentElementWrappingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @var PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -61,22 +63,14 @@ class ContentElementWrappingService {
 	public function wrapContentObject(NodeInterface $node, $typoScriptPath, $content) {
 		/** @var $contentContext ContentContext */
 		$contentContext = $node->getContext();
-		$nodeType = $node->getNodeType();
-		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
-			$attributes = array(
-				'class' => 'neos-contentelement ' . str_replace(array(':', '.'), '-', strtolower($nodeType->getName())),
-				'id' => 'c' . $node->getIdentifier(),
-			);
-		} else {
-			$attributes = array();
-		}
-
 		if ($contentContext->getWorkspaceName() === 'live' || !$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
-			return $this->htmlAugmenter->addAttributes($content, $attributes);
+			return $content;
 		}
-
+		$nodeType = $node->getNodeType();
+		$attributes = array();
 		$attributes['typeof'] = 'typo3:' . $nodeType->getName();
 		$attributes['about'] = $node->getContextPath();
+		$attributes['class'] = 'neos-contentelement';
 
 		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
 			if ($node->isHidden()) {
