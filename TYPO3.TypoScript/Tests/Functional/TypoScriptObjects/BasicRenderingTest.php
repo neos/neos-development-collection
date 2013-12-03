@@ -79,4 +79,14 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('Static string post', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function contentIsNotTrimmed() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('basicRendering/contentIsNotTrimmed');
+		$this->assertEquals('X I want to have some space after me ', $view->render());
+
+	}
+
 }

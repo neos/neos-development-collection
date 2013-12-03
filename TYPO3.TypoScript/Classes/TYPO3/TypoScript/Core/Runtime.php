@@ -198,9 +198,6 @@ class Runtime {
 					$output
 				);
 			}
-			if (is_string($output)) {
-				$output = trim($output);
-			}
 		} catch (\Exception $exception) {
 			$output = $this->handleRenderingException($typoScriptPath, $exception);
 		}

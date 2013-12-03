@@ -46,3 +46,7 @@ basicRendering.complexExample2 {
 		value.@process.1 = ${value + ' post'}
 	}
 }
+
+basicRendering.contentIsNotTrimmed = TYPO3.TypoScript:TestRenderer {
+	test = ' I want to have some space after me '
+}
