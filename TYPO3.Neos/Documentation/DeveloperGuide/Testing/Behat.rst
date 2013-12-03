@@ -96,6 +96,8 @@ Selenium Server can be downloaded at http://docs.seleniumhq.org/download/ and st
 
 	java -jar selenium-server-standalone-2.x.0.jar
 
+If using Saucelabs, you do not need your own Selenium setup.
+
 Running Behat tests
 -------------------
 
@@ -119,3 +121,66 @@ Debugging
 * Make sure to use a new database and configure the same databse for `Development/Behat` and `Testing/Behat`
 * Run Behat with the `-v` option to get more information about errors and failed tests
 * A failed step can be inspected by inserting "Then show last response" in the `.feature` definition
+
+Run Behat tests on several browsers using Saucelabs
+===================================================
+
+.. note::
+
+	Make sure that your Behat version is uptodate. Otherwise the saucelabs connection won't work. The
+	`behat/mink-extension` need to be at least version 1.3.
+
+Saucelabs (http://saucelabs.com) provides a VM infrastructure you can use to run your selenium tests on.
+
+Using this infrastructure you can run the @javascript tagged tests on several Browsers and OSs autmatically without
+setting up your own selenium infrastructure.
+
+To run Neos Behat tests with saucelabs you need to do the following steps.
+
+Configure Behat
+---------------
+
+To talk to saucelabs you need to uncomment the following lines in the `behat.yml` and add your saucelabs username
+and access_key::
+
+	javascript_session: saucelabs
+	  saucelabs:
+	    username: <username>
+	    access_key: <access_key>
+
+.. tip::
+
+	Saucelabs provides unlimited video time for TYPO3 core development. If you want to contribute to Neos by writing
+	tests ask Christian Müller.
+
+To make tests with more browsers than the default browser you need to tell saucelabs which browser, version and OS you
+want to test on. You can add several browsers, each in its own profile. There are a lot of browsers configured already
+in the `saucelabsBrowsers.yml` file. You can include that into your behat configuration::
+
+	imports:
+	  - saucelabsBrowsers.yml
+
+Open a tunnel to saucelabs
+--------------------------
+
+If you want to run the tests on your local machine you need to open a tunnel to saucelabs. This can be easily done by
+downloading Sauce Connect at https://docs.saucelabs.com/reference/sauce-connect/ and follow the instructions to setup
+and start it.
+
+Run Behat tests
+---------------
+
+A test with Internet Explorer 10 on Windows8 would look like this then::
+
+	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml --profile windows8-ie-10
+
+You might just want to run the tests that need javascript on different browsers (all other tests won't use a browser
+anyways). Limit the tests to the @javascript tagged to do so::
+
+	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml --tags javascript --profile windows8-ie-10
+
+.. note::
+
+	The possible configuration settings for browsers can be found at https://saucelabs.com/docs/platforms. Choose
+	"WebDriver" and "php" and click on the platform/browser combination you are interested in.
+

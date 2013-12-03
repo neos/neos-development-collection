@@ -19,3 +19,17 @@ default:
       # runtime.
       #
       # base_url: http://localhost/
+
+      # Saucelabs configuration
+      #
+      # Use this configuration, if you want to use saucelabs for your @javascript-tests
+      #
+      #javascript_session: saucelabs
+      #saucelabs:
+        #username: <username>
+        #access_key: <access_key>
+
+# Import a bunch of browser configurations for saucelab tests
+#
+#imports:
+  #- saucelabsBrowsers.yml
