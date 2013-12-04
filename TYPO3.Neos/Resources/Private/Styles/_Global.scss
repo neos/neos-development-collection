@@ -101,6 +101,10 @@ body {
 				width: $unit;
 				line-height: $unit + 4px;
 				padding: 0;
+
+				i {
+					margin-top: 1px;
+				}
 			}
 		}
 
