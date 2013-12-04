@@ -657,6 +657,11 @@ class Parser implements ParserInterface {
 				unset($objectTree[$currentKey]);
 			} elseif (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey]) && is_array($value)) {
 				$objectTree[$currentKey] = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
+			} elseif (isset($objectTree[$currentKey]['__meta'])) {
+				// if metadata is already defined, e.g. there already exists a @process annotation, we need to keep it.
+				$objectTree[$currentKey]['__value'] = $value;
+				$objectTree[$currentKey]['__eelExpression'] = NULL;
+				$objectTree[$currentKey]['__objectType'] = NULL;
 			} else {
 				$objectTree[$currentKey] = $value;
 			}

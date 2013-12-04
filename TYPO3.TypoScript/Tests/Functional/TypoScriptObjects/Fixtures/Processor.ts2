@@ -23,6 +23,30 @@ processors.newSyntax.basicProcessor {
 	}
 }
 
+processors.newSyntax.processorBeforeValue {
+	valueWithNestedPlainValue = Value {
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+		value = 'Hello'
+	}
+
+	valueWithNestedEel = Value {
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+		value = ${'Hello'}
+	}
+
+	valueWithNestedTypoScript = Value {
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+		value = Value {
+			value = 'Hello'
+		}
+	}
+}
+
+
+
 processors.newSyntax.extendedSyntaxProcessor {
 	valueWithNestedPlainValue = Value {
 		value = 'Hello'

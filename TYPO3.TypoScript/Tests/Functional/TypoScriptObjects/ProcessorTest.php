@@ -27,6 +27,13 @@ class ProcessorTest extends AbstractTypoScriptObjectTest {
 	/**
 	 * @test
 	 */
+	public function basicProcessorsBeforeValueWork() {
+		$this->assertMultipleTypoScriptPaths('Hello World foo', 'processors/newSyntax/processorBeforeValue/valueWithNested');
+	}
+
+	/**
+	 * @test
+	 */
 	public function extendedSyntaxProcessorsWork() {
 		$this->assertMultipleTypoScriptPaths('Hello World foo', 'processors/newSyntax/extendedSyntaxProcessor/valueWithNested');
 	}
