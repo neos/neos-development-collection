@@ -5,6 +5,7 @@ Wrapping a List of Content Elements
 Create a simple Wrapper that can contain multiple content Elements.
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+
   'Vendor:Box':
     superTypes:
       - 'TYPO3.Neos:Content'
@@ -18,6 +19,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         type: 'TYPO3.Neos:ContentCollection'
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
+
 	prototype(Vendor:Box) < prototype(TYPO3.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
 		columnContent = TYPO3.Neos:ContentCollection
@@ -27,6 +29,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts
 	}
 
 Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
+
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
 
 	<div class="container box">
@@ -42,6 +45,7 @@ Extending it to use an option
 You can even simply extend the box to provide a checkbox for different properties.
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+
   'Vendor:Box':
     superTypes:
       - 'TYPO3.Neos:Content'
@@ -68,6 +72,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         type: 'TYPO3.Neos:ContentCollection'
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
+
 	prototype(Vendor:Box) < prototype(TYPO3.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
 		columnContent = TYPO3.Neos:ContentCollection
@@ -78,6 +83,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts
 	}
 
 Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
+
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
 
 	<f:if condition="{collapsed}">

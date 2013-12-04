@@ -6,12 +6,14 @@ Using the TYPO3.Form package you can easily create and adopt simple to very comp
 For it to work properly you just have to define where it should find its form configurations.
 
 Yaml (Sites/Vendor.Site/Configuration/Settings.yaml) ::
+
     TYPO3:
         Form:
             yamlPersistenceManager:
                 savePath: 'resource://Vendor.Site/Private/Form/'
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+
     'TYPO3.Neos.NodeTypes:Form':
       properties:
         formIdentifier:
@@ -27,6 +29,7 @@ Now place a valid TYPO3.Form Yaml configuration the Private/Form folder. Then ad
 you wish the form to be displayed and select it from the dropdown in the Inspector.
 
 Yaml (Sites/Vendor.Site/Private/Form/contact-form.yaml) ::
+
     type: 'TYPO3.Form:Form'
     identifier: contact-form
     label: Contact
@@ -91,6 +94,7 @@ It sends an E-Mail using the defined template and settings.
 By the second Finisher a confirmation is displayed.
 
 Html (Sites/Vendor.Site/Private/Templates/Email/Message.txt) ::
+
     Hello,
 
     <f:for each="{form.formState.formValues}" as="value" key="label">
