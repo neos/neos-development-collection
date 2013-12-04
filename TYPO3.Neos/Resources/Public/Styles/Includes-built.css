@@ -1,7 +1,6 @@
 
-@charset "UTF-8";
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
-/*!
+/*
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -103,7 +102,7 @@
 }
 .neos .icon-border {
   border: solid 1px #eeeeee;
-  padding: .2em .25em .15em;
+  padding: 0.2em 0.25em 0.15em;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1421,7 +1420,7 @@
   -ms-text-size-adjust: 100%;
 }
 .neos a:focus {
-  outline: thin dotted #333;
+  outline: thin dotted #333333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -1515,7 +1514,7 @@
   }
   .neos * {
     text-shadow: none !important;
-    color: #000 !important;
+    color: black !important;
     background: transparent !important;
     box-shadow: none !important;
   }
@@ -1536,7 +1535,7 @@
   }
   .neos pre,
   .neos blockquote {
-    border: 1px solid #999;
+    border: 1px solid #999999;
     page-break-inside: avoid;
   }
   .neos thead {
@@ -2030,7 +2029,7 @@
 .neos input[type="file"]:focus,
 .neos input[type="radio"]:focus,
 .neos input[type="checkbox"]:focus {
-  outline: thin dotted #333;
+  outline: thin dotted #333333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -2469,7 +2468,7 @@
   text-align: center;
   text-shadow: 0 1px 0 white;
   background-color: #eeeeee;
-  border: 1px solid #ccc;
+  border: 1px solid #cccccc;
 }
 .neos .neos-input-append .neos-add-on,
 .neos .neos-input-append .neos-button,
@@ -2973,7 +2972,7 @@
   margin: 2px 0 0;
   list-style: none;
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid #cccccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   *border-right-width: 2px;
   *border-bottom-width: 2px;
@@ -3235,7 +3234,7 @@
   display: block;
   padding: 4px;
   line-height: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -3269,7 +3268,7 @@
   display: inline-block;
   padding: 0 16px;
   margin: 0;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #fff;
   font-size: 14px;
@@ -3313,7 +3312,7 @@
 }
 .neos button:focus,
 .neos .neos-button:focus {
-  outline: thin dotted #333;
+  outline: thin dotted #333333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
   outline: none;
@@ -3669,7 +3668,7 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   outline: none;
 }
@@ -4780,7 +4779,7 @@
   }
   .neos input[type="checkbox"],
   .neos input[type="radio"] {
-    border: 1px solid #ccc;
+    border: 1px solid #cccccc;
   }
   .neos .neos-form-horizontal .neos-control-label {
     float: none;
@@ -5388,7 +5387,7 @@
   margin: 2px 0 0;
   list-style: none;
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid #cccccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   *border-right-width: 2px;
   *border-bottom-width: 2px;
@@ -5407,7 +5406,7 @@
   display: inline-block;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-bottom: 7px solid #ccc;
+  border-bottom: 7px solid #cccccc;
   border-bottom-color: rgba(0, 0, 0, 0.2);
   position: absolute;
   top: -7px;
@@ -5516,7 +5515,7 @@
   list-style: none;
   background-color: white;
   background-image: none;
-  border: 1px solid #ccc;
+  border: 1px solid #cccccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   *border-right-width: 2px;
   *border-bottom-width: 2px;
@@ -5613,7 +5612,7 @@
 .neos #neos-inspector-button:before {
   position: relative;
   top: 1px;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 26px;
   line-height: 26px;
@@ -5646,7 +5645,7 @@
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .neos-inspector-panel-open .neos #neos-inspector {
@@ -6038,7 +6037,7 @@
   height: 40px;
   border: none;
   color: white;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   margin: 0;
@@ -6301,7 +6300,7 @@
   padding-bottom: 16px;
 }
 .neos #neos-inspector .neos-inspector-form label {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   cursor: pointer;
@@ -6344,7 +6343,7 @@
   border: 2px solid #323232;
   background-color: #323232;
   color: white;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   padding: 0 14px;
@@ -6379,7 +6378,7 @@
 .neos #neos-inspector .neos-inspector-form input[type="number"]:focus,
 .neos #neos-inspector .neos-inspector-form .neos-uneditable-input:focus {
   background-color: #fff;
-  border: 2px solid #fff;
+  border: 2px solid white;
   color: #252525;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -6479,7 +6478,7 @@
   border: 1px solid #00b5ff;
 }
 .neos #neos-inspector .neos-inspector-form input[type=checkbox]:checked + span:before {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: #00b5ff;
   border: 1px solid #00b5ff;
@@ -6654,7 +6653,7 @@
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   display: none;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .neos #neos-top-bar #neos-top-bar-right {
@@ -6706,7 +6705,7 @@
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu input[type=checkbox]:checked + span:before,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu input[type=checkbox]:checked + span:before {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   background-color: #00b5ff;
   border: 1px solid #00b5ff;
@@ -6796,7 +6795,7 @@
   right: 9px;
   display: inline-block;
   border-right: 7px solid transparent;
-  border-bottom: 7px solid #ccc;
+  border-bottom: 7px solid #cccccc;
   border-left: 7px solid transparent;
   border-bottom-color: rgba(0, 0, 0, 0.2);
   content: '';
@@ -6807,7 +6806,7 @@
   right: 10px;
   display: inline-block;
   border-right: 6px solid transparent;
-  border-bottom: 6px solid #ffffff;
+  border-bottom: 6px solid white;
   border-left: 6px solid transparent;
   content: '';
 }
@@ -6858,7 +6857,7 @@
   color: white !important;
 }
 .neos #neos-publish-menu.neos-button-group {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   float: right;
 }
@@ -7154,7 +7153,7 @@
   height: 40px;
   border: none;
   color: white;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   margin: 0;
@@ -7257,8 +7256,8 @@
   top: 12px;
   width: 22px;
   height: 3px;
-  border-top: 3px solid #fff;
-  border-bottom: 3px solid #fff;
+  border-top: 3px solid white;
+  border-bottom: 3px solid white;
   content: "";
 }
 .neos #neos-menu-button:after {
@@ -7292,7 +7291,7 @@
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .neos-menu-panel-open .neos #neos-menu-panel {
@@ -7313,7 +7312,7 @@
   border: none;
 }
 .neos #neos-menu-panel a {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #fff;
 }
@@ -7382,7 +7381,7 @@
 .neos #neos-menu-panel .neos-menu-section a,
 .neos #neos-menu-panel .neos-menu-section span.neos-menu-item {
   display: block;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   font-weight: bold;
@@ -7445,7 +7444,7 @@
 .neos #neos-menu-panel #neos-menu-sticky-button::before {
   position: relative;
   top: 1px;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 26px;
   line-height: 26px;
@@ -7505,7 +7504,7 @@
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .neos-navigate-panel-open .neos #neos-navigate-panel {
@@ -7958,7 +7957,7 @@
   height: 40px;
   border: none;
   color: white;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   margin: 0;
@@ -8140,7 +8139,7 @@
   float: left;
   background-color: #222222;
   color: white;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   padding-left: 14px;
@@ -8225,7 +8224,7 @@
   outline: none;
   border: none;
   background-color: #fff;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .neos #neos-navigate-panel #neos-context-structure {
@@ -9038,7 +9037,7 @@
   overflow: auto;
   margin-bottom: 20px;
   background-color: #e8e8e8;
-  border: 1px solid #777;
+  border: 1px solid #777777;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
@@ -9086,7 +9085,7 @@
   margin-bottom: 0;
   text-align: right;
   background-color: transparent;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #dddddd;
   -webkit-border-bottom-right-radius: 6px;
   -moz-border-radius-bottomright: 6px;
   border-bottom-right-radius: 6px;
@@ -9415,6 +9414,9 @@ body.neos-previewmode .neos-preview-close .neos-button {
   line-height: 44px;
   padding: 0;
 }
+body.neos-previewmode .neos-preview-close .neos-button i {
+  margin-top: 0px;
+}
 body.neos-previewmode .aloha-block-TYPO3Block {
   margin: 0;
 }
@@ -9470,7 +9472,7 @@ body.neos-previewmode .neos-contentelement-active > .neos-contentelement-handle-
   height: 100%;
   background-color: #323232;
   z-index: 9999;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 #neos-shortcut p {
@@ -9551,7 +9553,7 @@ td.aloha-table-selectrow {
   z-index: 99999;
   position: absolute;
   background-color: white;
-  border: 1px solid #444;
+  border: 1px solid #444444;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
@@ -9564,7 +9566,7 @@ td.aloha-table-selectrow {
 .aloha-table-createdialog table td {
   margin: 0;
   padding: 0;
-  border: 1px solid #444;
+  border: 1px solid #444444;
   font-size: 8px;
   width: 15px;
   height: 15px;
@@ -9658,7 +9660,7 @@ td.aloha-table-selectrow {
   display: none;
 }
 .aloha-table-wrapper .aloha-table-leftuppercorner:hover {
-  background: #444 !important;
+  background: #444444 !important;
   cursor: pointer !important;
 }
 .aloha-block.ui-draggable-dragging .aloha-block-draghandle {
@@ -9701,7 +9703,7 @@ td.aloha-table-selectrow {
   padding: 0 0 0 8px;
   overflow: hidden;
   position: relative;
-  border: 1px solid #aaa;
+  border: 1px solid #aaaaaa;
   white-space: nowrap;
   line-height: 26px;
   color: #444;
@@ -9785,14 +9787,14 @@ td.aloha-table-selectrow {
   top: 100%;
   background: #fff;
   color: #000;
-  border: 1px solid #aaa;
+  border: 1px solid #aaaaaa;
   border-top: 0;
   border-radius: 0 0 4px 4px;
   -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
 }
 .neos-select2-drop-auto-width {
-  border-top: 1px solid #aaa;
+  border-top: 1px solid #aaaaaa;
   width: auto;
 }
 .neos-select2-drop-auto-width .neos-select2-search {
@@ -9800,7 +9802,7 @@ td.aloha-table-selectrow {
 }
 .neos-select2-drop.neos-select2-drop-above {
   margin-top: 1px;
-  border-top: 1px solid #aaa;
+  border-top: 1px solid #aaaaaa;
   border-bottom: 0;
   border-radius: 4px 4px 0 0;
   -webkit-box-shadow: 0 -4px 5px rgba(0, 0, 0, 0.15);
@@ -9820,7 +9822,7 @@ td.aloha-table-selectrow {
   position: absolute;
   right: 0;
   top: 0;
-  border-left: 1px solid #aaa;
+  border-left: 1px solid #aaaaaa;
   border-radius: 0 4px 4px 0;
   background-clip: padding-box;
   background: #ccc;
@@ -9856,7 +9858,7 @@ td.aloha-table-selectrow {
   outline: 0;
   font-family: sans-serif;
   font-size: 1em;
-  border: 1px solid #aaa;
+  border: 1px solid #aaaaaa;
   border-radius: 0;
   -webkit-box-shadow: none;
   box-shadow: none;
@@ -9885,8 +9887,8 @@ td.aloha-table-selectrow {
 }
 .neos-select2-dropdown-open .neos-select2-choice {
   border-bottom-color: transparent;
-  -webkit-box-shadow: 0 1px 0 #fff inset;
-  box-shadow: 0 1px 0 #fff inset;
+  -webkit-box-shadow: 0 1px 0 white inset;
+  box-shadow: 0 1px 0 white inset;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   background-color: #eee;
@@ -10012,7 +10014,7 @@ td.aloha-table-selectrow {
 .neos-select2-container.neos-select2-container-disabled .neos-select2-choice {
   background-color: #f4f4f4;
   background-image: none;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   cursor: default;
 }
 .neos-select2-container.neos-select2-container-disabled .neos-select2-choice .neos-select2-arrow {
@@ -10029,7 +10031,7 @@ td.aloha-table-selectrow {
   margin: 0;
   padding: 0;
   position: relative;
-  border: 1px solid #aaa;
+  border: 1px solid #aaaaaa;
   cursor: text;
   overflow: hidden;
   background-color: #fff;
@@ -10075,7 +10077,7 @@ td.aloha-table-selectrow {
   background: white url(select2-spinner.gif) no-repeat 100% !important;
 }
 .neos-select2-default {
-  color: #999 !important;
+  color: #999999 !important;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice {
   padding: 3px 5px 3px 18px;
@@ -10130,12 +10132,12 @@ td.aloha-table-selectrow {
 .neos-select2-container-multi.neos-select2-container-disabled .neos-select2-choices {
   background-color: #f4f4f4;
   background-image: none;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   cursor: default;
 }
 .neos-select2-container-multi.neos-select2-container-disabled .neos-select2-choices .neos-select2-search-choice {
   padding: 3px 5px 3px 5px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   background-image: none;
   background-color: #f4f4f4;
 }
