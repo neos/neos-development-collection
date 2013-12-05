@@ -1892,6 +1892,9 @@ body {
   margin-left: 112px;
   margin-top: 0;
 }
+.neos .neos-error-screen a {
+  color: #00b5ff;
+}
 
 @media (min-width: 320px) and (max-width: 480px) {
   .neos .neos-error-screen {

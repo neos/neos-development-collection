@@ -13,6 +13,10 @@
 			</div>
 			<h1>{errorTitle}</h1>
 			<p>{errorDescription -> f:format.raw()}</p>
+			<f:if condition="{setupMessage -> f:format.raw()}">
+				<p><strong>{setupMessage}</strong></p>
+				<p><a href="/setup" class="neos-button neos-button-primary">Go to setup</a></p>
+			</f:if>
 		</div>
 	</body>
 </f:section>
