@@ -39,6 +39,20 @@ class HtmlAugmenterTest extends UnitTestCase {
 
 	public function addAttributesDataProvider() {
 		return array(
+			// empty source
+			array(
+				'html' => '',
+				'attributes' => array('class' => 'new-class'),
+				'fallbackTagName' => NULL,
+				'expectedResult' => '<div class="new-class"></div>',
+			),
+			array(
+				'html' => '   	' . chr(10) . '  ',
+				'attributes' => array('class' => 'new-class'),
+				'fallbackTagName' => NULL,
+				'expectedResult' => '<div class="new-class">   	' . chr(10) . '  </div>',
+			),
+
 			// root element detection
 			array(
 				'html' => '<p>Simple HTML with unique root element</p>',

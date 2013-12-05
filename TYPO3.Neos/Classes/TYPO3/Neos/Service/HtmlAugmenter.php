@@ -51,6 +51,9 @@ class HtmlAugmenter {
 	 * @return \DOMNode
 	 */
 	protected function getHtmlRootElement($html) {
+		if (trim($html) === '') {
+			return NULL;
+		}
 		$domDocument = new \DOMDocument('1.0', 'UTF-8');
 		// ignore parsing errors
 		$useInternalErrorsBackup = libxml_use_internal_errors(TRUE);
