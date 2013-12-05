@@ -162,3 +162,16 @@ Apache 2.0 license
 Select2 - http://ivaynberg.github.io/select2/
 Version 3.4.5
 Apache 2.0 or GPL 2.0 License
+
+
+Requirejs - https://github.com/jrburke/requirejs
+new BSD, and MIT
+Version 2.1.9
+
+Requirejs i18n - https://github.com/requirejs/i18n
+new BSD, and MIT
+Version 2.0.4
+
+Requirejs text - https://github.com/requirejs/text
+new BSD, and MIT
+Version 2.0.10
