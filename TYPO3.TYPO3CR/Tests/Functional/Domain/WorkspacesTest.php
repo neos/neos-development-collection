@@ -76,7 +76,6 @@ class WorkspacesTest extends FunctionalTestCase {
 	public function tearDown() {
 		$this->saveNodesAndTearDownRootNodeAndRepository();
 		parent::tearDown();
-
 	}
 
 	protected function setUpRootNodeAndRepository() {
@@ -89,7 +88,9 @@ class WorkspacesTest extends FunctionalTestCase {
 	}
 
 	public function saveNodesAndTearDownRootNodeAndRepository() {
-		$this->nodeDataRepository->flushNodeRegistry();
+		if ($this->nodeDataRepository !== NULL) {
+			$this->nodeDataRepository->flushNodeRegistry();
+		}
 		$nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
 		ObjectAccess::setProperty($nodeFactory, 'nodes', array(), TRUE);
 		$this->inject($this->contextFactory, 'contextInstances', array());
@@ -250,5 +251,33 @@ class WorkspacesTest extends FunctionalTestCase {
 		$childNodeA3 = $this->rootNode->getNode('parentNode/childNodeA');
 		$childNodeC3 = $childNodeA3->getPrimaryChildNode();
 		$this->assertNotNull($childNodeC3);
+	}
+
+	/**
+	 * @test
+	 */
+	public function changedNodeCanBePublishedFromPersonalToLiveWorkspace() {
+		$liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$liveContext->getRootNode()->createNode('homepage')->createNode('teaser')->createNode('node52697bdfee199');
+
+		$teaserNode = $this->rootNode->getNode('/homepage/teaser/node52697bdfee199');
+		$teaserNode->setProperty('text', 'Updated text!');
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$this->liveWorkspace = $this->workspaceRepository->findOneByName('live');
+		$teaserNode = $this->rootNode->getNode('/homepage/teaser/node52697bdfee199');
+		$this->rootNode->getWorkspace()->publishNode($teaserNode, $this->liveWorkspace);
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$liveContext = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$liveRootNode = $liveContext->getRootNode();
+
+		$teaserNode = $liveRootNode->getNode('/homepage/teaser/node52697bdfee199');
+
+		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $teaserNode);
 	}
 }

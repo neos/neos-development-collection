@@ -11,10 +11,12 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
  * The node data inside the content repository. This is only a data
@@ -23,6 +25,7 @@ use TYPO3\Flow\Annotations as Flow;
  * NOTE: This is internal only and should not be used or extended by userland code.
  *
  * @Flow\Entity
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="path_workspace",columns={"pathhash", "workspace"})})
  */
 class NodeData extends AbstractNodeData {
 
@@ -33,6 +36,16 @@ class NodeData extends AbstractNodeData {
 	 * @var integer
 	 */
 	protected $version;
+
+	/**
+	 * MD5 hash of the path
+	 * This property is needed for the unique index over path & workspace (for which the path property is too large).
+	 * The hash is generated in calculatePathHash().
+	 *
+	 * @var string
+	 * @ORM\Column(length=32)
+	 */
+	protected $pathHash;
 
 	/**
 	 * Absolute path of this node
@@ -154,7 +167,7 @@ class NodeData extends AbstractNodeData {
 	public function __construct($path, Workspace $workspace, $identifier = NULL) {
 		$this->setPath($path, FALSE);
 		$this->workspace = $workspace;
-		$this->identifier = ($identifier === NULL) ? \TYPO3\Flow\Utility\Algorithms::generateUUID() : $identifier;
+		$this->identifier = ($identifier === NULL) ? Algorithms::generateUUID() : $identifier;
 	}
 
 	/**
@@ -193,6 +206,7 @@ class NodeData extends AbstractNodeData {
 		$pathBeforeChange = $this->path;
 
 		$this->path = $path;
+		$this->calculatePathHash();
 		if ($path === '/') {
 			$this->parentPath = '';
 			$this->depth = 0;
@@ -257,7 +271,7 @@ class NodeData extends AbstractNodeData {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
 	 */
-	public function setWorkspace(Workspace $workspace) {
+	public function setWorkspace(Workspace $workspace = NULL) {
 		if ($this->workspace !== $workspace) {
 			$this->workspace = $workspace;
 			$this->nodeDataRepository->update($this);
@@ -366,7 +380,7 @@ class NodeData extends AbstractNodeData {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+	 * @throws NodeExistsException if a node with this path already exists.
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
@@ -377,7 +391,7 @@ class NodeData extends AbstractNodeData {
 
 		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
 		if ($this->getNode($newPath) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503471);
+			throw new NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503471);
 		}
 
 		$newNode = new NodeData($newPath, ($workspace ?: $this->workspace), $identifier);
@@ -587,7 +601,7 @@ class NodeData extends AbstractNodeData {
 			$propertyNames[] = 'index';
 		}
 		foreach ($propertyNames as $propertyName) {
-			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($this, $propertyName, \TYPO3\Flow\Reflection\ObjectAccess::getProperty($sourceNode, $propertyName));
+			ObjectAccess::setProperty($this, $propertyName, ObjectAccess::getProperty($sourceNode, $propertyName));
 		}
 
 		$contentObject = $sourceNode->getContentObject();
@@ -655,6 +669,13 @@ class NodeData extends AbstractNodeData {
 	 */
 	protected function updateContentObject($contentObject) {
 		$this->persistenceManager->update($contentObject);
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function calculatePathHash() {
+		$this->pathHash = md5($this->path);
 	}
 
 	/**

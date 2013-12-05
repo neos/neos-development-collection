@@ -178,6 +178,9 @@ class Workspace {
 		}
 		$targetNode = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
 		if ($targetNode !== NULL) {
+				// We have to set the workspace to NULL to resolve duplicate key issues when updating the published node
+			$targetNode->setWorkspace(NULL);
+
 			$this->nodeDataRepository->remove($targetNode);
 		}
 		if ($node->isRemoved() === FALSE) {
