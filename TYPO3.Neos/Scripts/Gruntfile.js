@@ -196,14 +196,9 @@ module.exports = function(grunt) {
 
 		mousetrap: {
 			src: [
-				baseUri + 'createjs/deps/mousetrap.min.js'
+				baseUri + 'mousetrap/mousetrap.js'
 			],
-			dest: baseUri + 'mousetrap.js',
-			options: {
-				banner: 'define([], function() {',
-				footer: 'return window.Mousetrap;' +
-						'});'
-			}
+			dest: baseUri + 'mousetrap.js'
 		},
 
 		create: {

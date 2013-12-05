@@ -118,6 +118,10 @@ Hallo editor - https://github.com/bergie/hallo
 * Update using Scripts/update-hallo-to-master.sh
 
 
+Mousetrap - http://craig.is/killing/mice
+Version 1.4.5
+Apache 2.0 license
+
 To execute the update scripts method you'll need:
 * NodeJS v0.6.9 or lower
 * CoffeeScript (http://jashkenas.github.com/coffee-script/)
