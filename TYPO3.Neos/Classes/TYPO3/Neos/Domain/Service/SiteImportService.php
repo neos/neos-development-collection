@@ -320,7 +320,7 @@ class SiteImportService {
 		}
 		switch ($nodePropertyXml['__type']) {
 			case 'boolean':
-				$node->setProperty($nodePropertyXml->getName(), (boolean)$nodePropertyXml);
+				$node->setProperty($nodePropertyXml->getName(), (string)$nodePropertyXml === '1');
 				break;
 			case 'reference':
 				$targetIdentifier = ((string)$nodePropertyXml->node['identifier'] === '' ? NULL : (string)$nodePropertyXml->node['identifier']);
