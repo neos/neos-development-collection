@@ -114,21 +114,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		if ($this->splitString !== '') {
 			$splitStringPosition = strpos($requestPath, $this->splitString);
 			if ($splitStringPosition !== FALSE) {
-				$requestPath = substr($requestPath, 0, $splitStringPosition);
+				return substr($requestPath, 0, $splitStringPosition);
 			}
 		}
-		if (strpos($requestPath, '.') === FALSE) {
-			return $requestPath;
-		} else {
-			$splitRequestPath = explode('/', $requestPath);
-			$lastPart = array_pop($splitRequestPath);
-			$dotPosition = strpos($lastPart, '.');
-			if ($dotPosition !== FALSE) {
-				$lastPart = substr($lastPart, 0, $dotPosition);
-			}
-			array_push($splitRequestPath, $lastPart);
-			return implode('/', $splitRequestPath);
-		}
+		return $requestPath;
 	}
 
 	/**
@@ -230,6 +219,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 */
 	protected function convertNodeContextPathToNode($nodeContextPath) {
 		$relativeNodePath = $this->convertNodeContextPathToNodePath($nodeContextPath);
+		if ($relativeNodePath === NULL) {
+			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $nodeContextPath), 1392726936);
+		}
 		$contentContext = $this->buildContextFromNodeContextPath($nodeContextPath);
 		$workspace = $contentContext->getWorkspace(FALSE);
 		if ($workspace === NULL) {

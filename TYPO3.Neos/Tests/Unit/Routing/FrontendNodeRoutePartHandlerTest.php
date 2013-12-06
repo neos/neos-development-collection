@@ -228,6 +228,29 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	}
 
 	/**
+	 * Note: In this case the ".html" suffix is not stripped of the context path because no split string is set
+	 *
+	 * @test
+	 */
+	public function matchValueReturnsFalseIfContextPathIsInvalid() {
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+
+		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
+		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
+
+		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+		$this->mockContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
+
+		$this->mockSiteNode->expects($this->any())->method('getNode')->with('some/path')->will($this->returnValue($this->mockNode));
+		$this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
+
+		$this->mockNode->expects($this->any())->method('getContextPath')->will($this->returnValue('some/path@not-live'));
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path@not-live.html'));
+	}
+
+	/**
 	 * @test
 	 */
 	public function matchValueSetsValueToTheNodeContextPathAndReturnsTrueIfNodePathCouldBeResolvedAndWorkspaceIsNotLive() {
@@ -315,33 +338,71 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	}
 
 	/**
-	 * Data provider for ... see below
+	 * Data provider for findValueToMatchRespectsSplitString() see below
 	 */
-	public function requestPaths() {
+	public function findValueToMatchRespectsSplitStringDataProvider() {
 		return array(
-			array('homepage', 'homepage'),
-			array('homepage.html', 'homepage'),
-			array('homepage/subpage.html', 'homepage/subpage'),
-			array('homepage/subpage.rss.xml', 'homepage/subpage')
+			array(
+				'requestPath' => 'homepage',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage'
+			),
+			array(
+				'requestPath' => 'homepage.html',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage.html'
+			),
+			array(
+				'requestPath' => 'homepage.html',
+				'splitString' => '.html',
+				'expectedResult' => 'homepage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage/subpage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.html',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage/subpage.html'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.html',
+				'splitString' => '.html',
+				'expectedResult' => 'homepage/subpage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.rss.xml',
+				'splitString' => '.html',
+				'expectedResult' => 'homepage/subpage.rss.xml'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.rss.xml',
+				'splitString' => '.rss.xml',
+				'expectedResult' => 'homepage/subpage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage/suffix',
+				'splitString' => '/suffix',
+				'expectedResult' => 'homepage/subpage'
+			),
 		);
 	}
 
 	/**
+	 * @param string $requestPath
+	 * @param string $splitString
+	 * @param string $expectedResult
 	 * @test
-	 * @dataProvider requestPaths
+	 * @dataProvider findValueToMatchRespectsSplitStringDataProvider
 	 */
-	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
-		$this->assertSame($valueToMatch, $this->frontendNodeRoutePartHandler->_call('findValueToMatch', $requestPath));
-	}
+	public function findValueToMatchRespectsSplitString($requestPath, $splitString, $expectedResult) {
+		if ($splitString !== NULL) {
+			$this->frontendNodeRoutePartHandler->setSplitString($splitString);
+		}
 
-	/**
-	 * @test
-	 */
-	public function findValueToMatchRespectsSplitString() {
-		$this->frontendNodeRoutePartHandler->setSplitString('baz');
-
-		$expectedResult = 'foo/bar/';
-		$actualResult = $this->frontendNodeRoutePartHandler->_call('findValueToMatch', 'foo/bar/baz');
+		$actualResult = $this->frontendNodeRoutePartHandler->_call('findValueToMatch', $requestPath);
 		$this->assertSame($expectedResult, $actualResult);
 	}
 
