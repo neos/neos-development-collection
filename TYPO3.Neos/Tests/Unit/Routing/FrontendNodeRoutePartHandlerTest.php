@@ -315,33 +315,71 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	}
 
 	/**
-	 * Data provider for ... see below
+	 * Data provider for findValueToMatchRespectsSplitString() see below
 	 */
-	public function requestPaths() {
+	public function findValueToMatchRespectsSplitStringDataProvider() {
 		return array(
-			array('homepage', 'homepage'),
-			array('homepage.html', 'homepage'),
-			array('homepage/subpage.html', 'homepage/subpage'),
-			array('homepage/subpage.rss.xml', 'homepage/subpage')
+			array(
+				'requestPath' => 'homepage',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage'
+			),
+			array(
+				'requestPath' => 'homepage.html',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage.html'
+			),
+			array(
+				'requestPath' => 'homepage.html',
+				'splitString' => '.html',
+				'expectedResult' => 'homepage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage/subpage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.html',
+				'splitString' => NULL,
+				'expectedResult' => 'homepage/subpage.html'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.html',
+				'splitString' => '.html',
+				'expectedResult' => 'homepage/subpage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.rss.xml',
+				'splitString' => '.html',
+				'expectedResult' => 'homepage/subpage.rss.xml'
+			),
+			array(
+				'requestPath' => 'homepage/subpage.rss.xml',
+				'splitString' => '.rss.xml',
+				'expectedResult' => 'homepage/subpage'
+			),
+			array(
+				'requestPath' => 'homepage/subpage/suffix',
+				'splitString' => '/suffix',
+				'expectedResult' => 'homepage/subpage'
+			),
 		);
 	}
 
 	/**
+	 * @param string $requestPath
+	 * @param string $splitString
+	 * @param string $expectedResult
 	 * @test
-	 * @dataProvider requestPaths
+	 * @dataProvider findValueToMatchRespectsSplitStringDataProvider
 	 */
-	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
-		$this->assertSame($valueToMatch, $this->frontendNodeRoutePartHandler->_call('findValueToMatch', $requestPath));
-	}
+	public function findValueToMatchRespectsSplitString($requestPath, $splitString, $expectedResult) {
+		if ($splitString !== NULL) {
+			$this->frontendNodeRoutePartHandler->setSplitString($splitString);
+		}
 
-	/**
-	 * @test
-	 */
-	public function findValueToMatchRespectsSplitString() {
-		$this->frontendNodeRoutePartHandler->setSplitString('baz');
-
-		$expectedResult = 'foo/bar/';
-		$actualResult = $this->frontendNodeRoutePartHandler->_call('findValueToMatch', 'foo/bar/baz');
+		$actualResult = $this->frontendNodeRoutePartHandler->_call('findValueToMatch', $requestPath);
 		$this->assertSame($expectedResult, $actualResult);
 	}
 

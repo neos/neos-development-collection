@@ -114,21 +114,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		if ($this->splitString !== '') {
 			$splitStringPosition = strpos($requestPath, $this->splitString);
 			if ($splitStringPosition !== FALSE) {
-				$requestPath = substr($requestPath, 0, $splitStringPosition);
+				return substr($requestPath, 0, $splitStringPosition);
 			}
 		}
-		if (strpos($requestPath, '.') === FALSE) {
-			return $requestPath;
-		} else {
-			$splitRequestPath = explode('/', $requestPath);
-			$lastPart = array_pop($splitRequestPath);
-			$dotPosition = strpos($lastPart, '.');
-			if ($dotPosition !== FALSE) {
-				$lastPart = substr($lastPart, 0, $dotPosition);
-			}
-			array_push($splitRequestPath, $lastPart);
-			return implode('/', $splitRequestPath);
-		}
+		return $requestPath;
 	}
 
 	/**

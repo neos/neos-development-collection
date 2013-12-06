@@ -12,15 +12,9 @@
   appendExceedingArguments: true
 
 -
-  name: 'content with URI suffix format'
+  name: 'content with URI suffix'
   uriPattern: '{node}<defaultUriSuffix>'
   appendExceedingArguments: true
-
--
-  name: 'Content with some format'
-  uriPattern: '{node}.{@format}'
-  appendExceedingArguments: true
-
 
 # This route is just a dummy, it should always be last as it should never be used to actually match a incoming request.
 -
