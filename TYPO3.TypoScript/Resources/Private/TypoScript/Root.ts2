@@ -17,3 +17,9 @@ prototype(TYPO3.TypoScript:UriBuilder) {
 
 	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
+prototype(TYPO3.TypoScript:ResourceUri) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ResourceUriImplementation'
+	localize = TRUE
+
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
