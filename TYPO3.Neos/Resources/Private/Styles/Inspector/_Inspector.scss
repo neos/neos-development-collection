@@ -53,7 +53,7 @@
 
 	@import "Editors/DateTimePicker";
 	@import "Editors/ImageEditor";
-	@import "Shared/Chosen";
+	@import "../Shared/Chosen";
 
 	.chosen-container {
 		width: 100% !important;
