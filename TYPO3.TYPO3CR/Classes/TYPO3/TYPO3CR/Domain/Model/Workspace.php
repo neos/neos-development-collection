@@ -171,6 +171,9 @@ class Workspace {
 		if ($this->baseWorkspace === NULL) {
 			return;
 		}
+		if ($node->getWorkspace() !== $this) {
+			return;
+		}
 		$this->verifyPublishingTargetWorkspace($targetWorkspace);
 		$this->emitBeforeNodePublishing($node, $targetWorkspace);
 		if ($node->getPath() === '/') {
