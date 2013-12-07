@@ -25,7 +25,18 @@
 										<td colspan="6" class="folder">
 											<div class="neos-pull-left">
 												<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
-												<strong>Path: <neos:link.node node="{document.documentNode}" absolute="1">/{documentPath}</neos:link.node></strong>
+												<strong>Path:
+													<f:if condition="{document.documentNode.removed}">
+														<f:then>
+															/{documentPath}
+														</f:then>
+														<f:else>
+															<neos:link.node node="{document.documentNode}" absolute="1">
+																/{documentPath}
+															</neos:link.node>
+														</f:else>
+													</f:if>
+												</strong>
 											</div>
 											<f:if condition="{sites -> f:count()} > 1">
 												<div class="neos-pull-right">

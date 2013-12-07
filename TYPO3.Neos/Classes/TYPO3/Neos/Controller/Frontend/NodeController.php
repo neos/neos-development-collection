@@ -70,7 +70,7 @@ class NodeController extends ActionController {
 			if ($this->hasAccessToBackend()) {
 				$contextProperties = $node->getContext()->getProperties();
 				$contextProperties['invisibleContentShown'] = TRUE;
-				$contextProperties['removedContentShown'] = TRUE;
+				$contextProperties['removedContentShown'] = FALSE;
 				$contextProperties['invisibleContentShown'] = TRUE;
 				$context = $this->contextFactory->create($contextProperties);
 				$node = $context->getNode($node->getPath());
