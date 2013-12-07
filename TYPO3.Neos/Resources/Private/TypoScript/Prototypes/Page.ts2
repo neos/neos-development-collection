@@ -33,8 +33,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# The content of the head tag, integrators can add their own head content in this array.
-	head = TYPO3.TypoScript:Array
-	head {
+	head = TYPO3.TypoScript:Array {
 		@position = 'after headTag'
 
 		characterSetMetaTag = TYPO3.TypoScript:Tag {
@@ -50,6 +49,12 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 			node = ${node}
 		}
+
+		# Script includes in the head should go here
+		javascripts = TYPO3.TypoScript:Array
+
+		# Link tags for stylesheets in the head should go here
+		stylesheets = TYPO3.TypoScript:Array
 	}
 
 	closingHeadTag = '</head>'
@@ -71,6 +76,11 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	body = Template {
 		@position = 'after bodyTag'
 		node = ${node}
+
+		# Script includes before the closing body tag should go here
+		javascripts = TYPO3.TypoScript:Array
+		# This processor appends the rendered javascripts Array to the rendered template
+		@process.appendJavaScripts = ${value + this.javascripts}
 	}
 
 	# Required for the backend to work.

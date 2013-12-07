@@ -91,7 +91,7 @@ Apart from the meta tag declaring the character set it is empty::
 	</head>
 
 To fill this with life, it is recommended to add sections to the head of your HTML template that
-group the needed parts. Additional typoScript `Template` objects are then used to include them
+group the needed parts. Additional TypoScript `Template` objects are then used to include them
 into the generated page. Here is an example:
 
 *Page/Default.html*
@@ -117,26 +117,27 @@ into the generated page. Here is an example:
 ::
 
 	page.head {
-		meta = TYPO3.TypoScript:Template
-		meta {
+		meta = TYPO3.TypoScript:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'meta'
 
 			title = ${q(node).property('title')}
 		}
-		stylesheets = TYPO3.TypoScript:Template
-		stylesheets {
+		stylesheets.site = TYPO3.TypoScript:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'stylesheets'
 		}
-		scripts = TYPO3.TypoScript:Template {
-		scripts {
+		javascripts.site = TYPO3.TypoScript:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'scripts'
 		}
 	}
 
-The TypoScript fills the `page.head` instance of ``TYPO3.TypoScript:Array`` with content.
+The TypoScript fills the `page.head` instance of ``TYPO3.TypoScript:Array`` with content. The predefined paths for
+`page.head.stylesheets`, `page.head.javascripts` or `page.body.javascripts` should be used to add custom includes. They
+are implemented by a TypoScript `Array` and allow arbitrary items to specify JavaScript or CSS includes without any
+restriction on the content.
+
 This will render some more head content::
 
 		<head>
@@ -239,12 +240,69 @@ the existing TypoScript and adjust as needed using TypoScript.
 The available properties and settings that the TypoScript objects in Neos provide are
 described in :ref:`neos-typoscript-reference`.
 
-Using CSS and JavaScript in a Neos Site
-=======================================
 
-Including CSS and scripts has been explained in `The Head`_ and very little constraints are
-imposed through Neos. But since the Neos user interface itself is built with HTML, CSS and
-JavaScript itself, some caveats exist.
+Including CSS and JavaScript in a Neos Site
+===========================================
+
+Including CSS and JavaScript should happen through one of the predefined places of the `Page` object. Depending on
+the desired position one of the `page.head.javascripts`, `page.head.stylesheets` or `page.body.javascripts` Arrays
+should be extended with an item that renders script or stylesheet includes::
+
+	page.head {
+
+		stylesheets {
+			bootstrap = '<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">'
+		}
+
+		javascripts {
+			jquery = '<script src="//code.jquery.com/jquery-1.10.1.min.js"></script>'
+		}
+
+	}
+
+	page.body {
+
+		javascripts {
+			bootstrap = '<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>'
+		}
+
+	}
+
+The `page.body.javascripts` content will be appended to the rendered page template so the included scripts should be
+placed before the closing body tag. As always in TypoScript the elements can be a simple string value, a TypoScript
+object like `Template` or an expression::
+
+	page.head {
+		# Add a simple value as an item to the javascripts Array
+		javascripts.jquery = '<script src="//code.jquery.com/jquery-1.10.1.min.js"></script>'
+
+		# Use an expression to render a CSS include (this is just an example, bootstrapVersion is not defined by Neos)
+		stylesheets.bootstrap = ${'<link href="//netdna.bootstrapcdn.com/bootstrap/' + bootstrapVersion + '/css/bootstrap.min.css" rel="stylesheet">'}
+	}
+
+	page.body {
+		# Use a Template object to access a special section of the site template
+		javascripts.site = TYPO3.TypoScript:Template {
+			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
+			sectionName = 'bodyScripts'
+		}
+	}
+
+The order of the includes can be specified with the `@position` property inside the `Array` object. This is especially
+handy for including JavaScript libraries and plugins in the correct order::
+
+	page.head {
+		jquery = '<script src="//code.jquery.com/jquery-1.10.1.min.js"></script>'
+
+		javascripts.jquery-ui = '<script src="path-to-jquery-ui"></script>'
+		javascripts.jquery-ui.@position = 'after jquery'
+	}
+
+CSS and JavaScript restrictions in a Neos Site
+==============================================
+
+Very little constraints are imposed through Neos for including JavaScripts or stylesheets.
+But since the Neos user interface itself is built with HTML, CSS and JavaScript itself, some caveats exist.
 
 Since the generated markup contains no stylesheets by default and the generated JS is minimal,
 those restrictions affect only the display of the page to the editor when logged in to the Neos
