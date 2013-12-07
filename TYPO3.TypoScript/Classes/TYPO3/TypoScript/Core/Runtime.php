@@ -349,7 +349,7 @@ class Runtime {
 				}
 
 				$this->pushContext('value', $output);
-				$output = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
+				$output = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $tsObject);
 				$this->popContext();
 			}
 		}

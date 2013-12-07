@@ -62,4 +62,11 @@ class ProcessorTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('Foobaz', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function usingThisInProcessorWorks() {
+		$this->assertTyposcriptPath('my value append', 'processors/newSyntax/usingThisInProcessor');
+	}
+
 }

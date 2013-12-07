@@ -108,3 +108,9 @@ processors.newSyntax.unset {
 
 
 }
+
+processors.newSyntax.usingThisInProcessor = Value {
+	value = "my value"
+	@process.1 = ${value + this.append}
+	append = " append"
+}
