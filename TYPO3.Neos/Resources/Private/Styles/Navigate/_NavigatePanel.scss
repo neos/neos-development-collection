@@ -75,7 +75,11 @@
 		}
 
 		#neos-context-structure {
-			height: 40px;
+			height: $unit + 1;
+
+			#neos-context-structure-toolbar {
+				border-bottom: none;
+			}
 
 			#neos-context-structure-tree-container {
 				display: none;
