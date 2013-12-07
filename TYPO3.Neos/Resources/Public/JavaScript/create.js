@@ -6,8 +6,6 @@ define(
 		'Content/InputEvents/EntitySelection',
 		'Content/Model/NodeSelection',
 		'Library/create',
-		'Library/hallo',
-		'halloplugins/linkplugin',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
 		'aloha'
 	],
