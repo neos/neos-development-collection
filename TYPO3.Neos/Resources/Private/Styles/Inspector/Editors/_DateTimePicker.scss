@@ -63,6 +63,8 @@
 
 .neos-inspector-datetime-editor {
 	color: #fff;
+	width: $inspectorWidth - $defaultMargin * 2;
+	display: table;
 
 	.neos-add-on {
 		cursor: pointer;
@@ -71,75 +73,144 @@
 	input {
 		cursor: pointer;
 	}
+}
 
-	.neos-datetimepicker {
-		direction: ltr;
+.neos-datetimepicker {
+	direction: ltr;
 
-		* {
-			@include user-select(none);
+	* {
+		@include user-select(none);
+	}
+
+	&.neos-datetimepicker-rtl {
+		direction: rtl;
+
+		table tr td span {
+			float: right;
+		}
+	}
+
+	& > div {
+		display: none;
+	}
+
+	&.neos-minutes div.neos-datetimepicker-minutes,
+	&.neos-hours div.neos-datetimepicker-hours,
+	&.neos-days div.neos-datetimepicker-days,
+	&.neos-months div.neos-datetimepicker-months,
+	&.neos-years div.neos-datetimepicker-years {
+		display: block;
+	}
+
+	div.neos-datetimepicker-minutes,
+	div.neos-datetimepicker-hours,
+	div.neos-datetimepicker-months,
+	div.neos-datetimepicker-years {
+		table tbody tr td {
+			border-bottom: none;
 		}
 
-		&.neos-datetimepicker-rtl {
-			direction: rtl;
+		table tfoot tr th {
+			border-top: none;
+		}
+	}
 
-			table tr td span {
-				float: right;
-			}
+	table {
+		margin: 0;
+		width: $inspectorWidth - $defaultMargin * 2;;
+
+		td,
+		th {
+			text-align: center;
+			width: $unit;
+			height: $unit;
+			line-height: $unit;
+			border: 1px solid $grayMedium;
+			padding: 0;
+			background-color: $grayDark;
 		}
 
-		& > div {
-			display: none;
-		}
+		tr {
+			td {
+				&.neos-minute:hover,
+				&.neos-hour:hover,
+				&.neos-day:hover {
+					background-color: $blue;
+					color: #fff;
+					cursor: pointer;
+				}
 
-		&.neos-minutes div.neos-datetimepicker-minutes,
-		&.neos-hours div.neos-datetimepicker-hours,
-		&.neos-days div.neos-datetimepicker-days,
-		&.neos-months div.neos-datetimepicker-months,
-		&.neos-years div.neos-datetimepicker-years {
-			display: block;
-		}
+				&.neos-old,
+				&.neos-new {
+					color: $textSubtle;
+				}
 
-		div.neos-datetimepicker-minutes,
-		div.neos-datetimepicker-hours,
-		div.neos-datetimepicker-months,
-		div.neos-datetimepicker-years {
-			table tbody tr td {
-				border-bottom: none;
-			}
+				&.neos-disabled,
+				&.neos-disabled:hover {
+					background-color: transparent;
+					color: $textSubtle;
+					cursor: default;
+				}
 
-			table tfoot tr th {
-				border-top: none;
-			}
-		}
+				&.neos-today,
+				&.neos-today.neos-disabled {
+					background-color: $grayMedium;
+				}
 
-		table {
-			margin: 0;
-			width: $unit * 7;
+				&.neos-active,
+				&.neos-active:hover,
+				&.neos-active.neos-disabled,
+				&.neos-active.neos-disabled:hover {
+					background-color: $blue;
+					color: $white;
+				}
 
-			td,
-			th {
-				text-align: center;
-				width: $unit;
-				height: $unit;
-				line-height: $unit;
-				border: 1px solid $grayMedium;
-				padding: 0;
-				background-color: $grayDark;
-			}
+				&.neos-active:hover,
+				&.neos-active.neos-disabled:hover,
+				&.neos-active:active,
+				&.neos-active:hover:active,
+				&.neos-active.neos-disabled:active,
+				&.neos-active.neos-disabled:hover:active,
+				&.neos-active.neos-active,
+				&.neos-active:hover.neos-active,
+				&.neos-active.neos-disabled.neos-active,
+				&.neos-active.neos-disabled:hover.neos-active,
+				&.neos-active.neos-disabled,
+				&.neos-active:hover.neos-disabled,
+				&.neos-active.neos-disabled.neos-disabled,
+				&.neos-active.neos-disabled:hover.neos-disabled,
+				&.neos-active[disabled],
+				&.neos-active:hover[disabled],
+				&.neos-active.neos-disabled[disabled],
+				&.neos-active.neos-disabled:hover[disabled] {
+					background-color: $blue;
+				}
 
-			tr {
-				td {
-					&.neos-minute:hover,
-					&.neos-hour:hover,
-					&.neos-day:hover {
+				&.neos-active:active,
+				&.neos-active:hover:active,
+				&.neos-active.neos-disabled:active,
+				&.neos-active.neos-disabled:hover:active,
+				&.neos-active.neos-active,
+				&.neos-active:hover.neos-active,
+				&.neos-active.neos-disabled.neos-active,
+				&.neos-active.neos-disabled:hover.neos-active {
+					background-color: $blue;
+				}
+
+				span {
+					display: block;
+					width: 25%;
+					height: $unit;
+					line-height: $unit;
+					float: left;
+					cursor: pointer;
+					border-right: 1px solid $grayMedium;
+					border-bottom: 1px solid $grayMedium;
+					margin-right: -1px;
+
+					&:hover {
 						background-color: $blue;
 						color: #fff;
-						cursor: pointer;
-					}
-
-					&.neos-old,
-					&.neos-new {
-						color: $textSubtle;
 					}
 
 					&.neos-disabled,
@@ -149,17 +220,12 @@
 						cursor: default;
 					}
 
-					&.neos-today,
-					&.neos-today.neos-disabled {
-						background-color: $grayMedium;
-					}
-
 					&.neos-active,
 					&.neos-active:hover,
 					&.neos-active.neos-disabled,
 					&.neos-active.neos-disabled:hover {
 						background-color: $blue;
-						color: $white;
+						color: $textOnGray;
 					}
 
 					&.neos-active:hover,
@@ -194,119 +260,55 @@
 						background-color: $blue;
 					}
 
-					span {
-						display: block;
-						width: 25%;
-						height: $unit;
-						line-height: $unit;
-						float: left;
-						cursor: pointer;
-						border-right: 1px solid $grayMedium;
-						border-bottom: 1px solid $grayMedium;
-						margin-right: -1px;
-
-						&:hover {
-							background-color: $blue;
-							color: #fff;
-						}
-
-						&.neos-disabled,
-						&.neos-disabled:hover {
-							background-color: transparent;
-							color: $textSubtle;
-							cursor: default;
-						}
-
-						&.neos-active,
-						&.neos-active:hover,
-						&.neos-active.neos-disabled,
-						&.neos-active.neos-disabled:hover {
-							background-color: $blue;
-							color: $textOnGray;
-						}
-
-						&.neos-active:hover,
-						&.neos-active.neos-disabled:hover,
-						&.neos-active:active,
-						&.neos-active:hover:active,
-						&.neos-active.neos-disabled:active,
-						&.neos-active.neos-disabled:hover:active,
-						&.neos-active.neos-active,
-						&.neos-active:hover.neos-active,
-						&.neos-active.neos-disabled.neos-active,
-						&.neos-active.neos-disabled:hover.neos-active,
-						&.neos-active.neos-disabled,
-						&.neos-active:hover.neos-disabled,
-						&.neos-active.neos-disabled.neos-disabled,
-						&.neos-active.neos-disabled:hover.neos-disabled,
-						&.neos-active[disabled],
-						&.neos-active:hover[disabled],
-						&.neos-active.neos-disabled[disabled],
-						&.neos-active.neos-disabled:hover[disabled] {
-							background-color: $blue;
-						}
-
-						&.neos-active:active,
-						&.neos-active:hover:active,
-						&.neos-active.neos-disabled:active,
-						&.neos-active.neos-disabled:hover:active,
-						&.neos-active.neos-active,
-						&.neos-active:hover.neos-active,
-						&.neos-active.neos-disabled.neos-active,
-						&.neos-active.neos-disabled:hover.neos-active {
-							background-color: $blue;
-						}
-
-						&.neos-old {
-							color: $textSubtle;
-						}
+					&.neos-old {
+						color: $textSubtle;
 					}
 				}
 			}
 		}
-
-		.neos-datetimepicker-hours span {
-			height: 26px;
-			line-height: 26px;
-		}
-
-		.neos-datetimepicker-hours table tr td span.neos-hour_am,
-		.neos-datetimepicker-hours table tr td span.neos-hour_pm {
-			width: 14.6%;
-		}
-
-		.neos-datetimepicker-hours fieldset legend,
-		.neos-datetimepicker-minutes fieldset legend {
-			margin-bottom: inherit;
-			line-height: 30px;
-		}
-
-		.neos-datetimepicker-minutes span {
-			height: 26px;
-			line-height: 26px;
-		}
-
-		th.neos-switch {
-			width: 145px;
-		}
-
-		thead tr:first-child th,
-		tfoot tr:first-child th {
-			cursor: pointer;
-			border-top: none;
-		}
-
-		thead tr:first-child th:hover,
-		tfoot tr:first-child th:hover {
-			background-color: $blue;
-		}
-
-		thead tr + tr th {
-			background-color: $grayMedium;
-		}
 	}
 
-	.neos-datetimepicker-inline {
-		width: 280px;
+	.neos-datetimepicker-hours span {
+		height: 26px;
+		line-height: 26px;
 	}
+
+	.neos-datetimepicker-hours table tr td span.neos-hour_am,
+	.neos-datetimepicker-hours table tr td span.neos-hour_pm {
+		width: 14.6%;
+	}
+
+	.neos-datetimepicker-hours fieldset legend,
+	.neos-datetimepicker-minutes fieldset legend {
+		margin-bottom: inherit;
+		line-height: 30px;
+	}
+
+	.neos-datetimepicker-minutes span {
+		height: 26px;
+		line-height: 26px;
+	}
+
+	th.neos-switch {
+		width: 145px;
+	}
+
+	thead tr:first-child th,
+	tfoot tr:first-child th {
+		cursor: pointer;
+		border-top: none;
+	}
+
+	thead tr:first-child th:hover,
+	tfoot tr:first-child th:hover {
+		background-color: $blue;
+	}
+
+	thead tr + tr th {
+		background-color: $grayMedium;
+	}
+}
+
+.neos-datetimepicker-inline {
+	width: $inspectorWidth - $defaultMargin * 2;;
 }

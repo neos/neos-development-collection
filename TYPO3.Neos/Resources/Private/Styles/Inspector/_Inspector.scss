@@ -56,7 +56,7 @@
 	@import "../Shared/Chosen";
 
 	.chosen-container {
-		width: 100% !important;
+		width: ($inspectorWidth - $defaultMargin * 2) !important;
 	}
 
 	.neos-toolbar {
