@@ -12,27 +12,16 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TypoScript\TypoScriptObjects\CollectionImplementation;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractCollectionImplementation;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 /**
- * TypoScript object for specific content collections, which also renders a
- * "create-new-content" button when not being in live workspace.
+ * TypoScript implementation to render ContentCollections. Will render needed
+ * metadata for removed nodes.
  */
-class ContentCollectionImplementation extends CollectionImplementation {
-
-	/**
-	 * The name of the content collection node which shall be rendered.
-	 *
-	 * @var string
-	 */
-	protected $nodePath;
-
-	/**
-	 * Tag name of the tag around the content collection, defaults to "div"
-	 *
-	 * @var string
-	 */
-	protected $tagName;
+class ContentCollectionImplementation extends AbstractCollectionImplementation {
 
 	/**
 	 * @Flow\Inject
@@ -41,29 +30,30 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	protected $accessDecisionManager;
 
 	/**
-	 * Sets the identifier of the content collection node which shall be rendered
-	 *
-	 * @param string $nodePath
-	 * @return void
+	 * @Flow\Inject
+	 * @var NodeDataRepository
 	 */
-	public function setNodePath($nodePath) {
-		$this->nodePath = $nodePath;
-	}
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+	 */
+	protected $nodeFactory;
 
 	/**
 	 * Returns the identifier of the content collection node which shall be rendered
 	 *
 	 * @return string
 	 */
-	public function getNodePath() {
+	protected function getNodePath() {
 		return $this->tsValue('nodePath');
-	}
-
-	/**
-	 * @param string $tagName
-	 */
-	public function setTagName($tagName) {
-		$this->tagName = $tagName;
 	}
 
 	/**
@@ -79,6 +69,40 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	}
 
 	/**
+	 * @return NodeInterface
+	 */
+	public function getContentCollectionNode() {
+		$node = $this->getCurrentContextNode();
+		if ($node !== NULL) {
+			if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+				$contentCollectionNode = $node;
+			} else {
+				$contentCollectionNode = $node->getNode($this->getNodePath());
+			}
+
+			return $contentCollectionNode;
+		}
+
+		return NULL;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCollection() {
+		$contentCollectionNode = $this->getContentCollectionNode();
+		if ($contentCollectionNode === NULL) {
+			return array();
+		}
+
+		if ($contentCollectionNode->getContext()->getWorkspaceName() === 'live') {
+			return $contentCollectionNode->getChildNodes();
+		}
+
+		return array_merge($contentCollectionNode->getChildNodes(), $this->getRemovedChildNodes());
+	}
+
+	/**
 	 * Render the list of nodes, and if there are none and we are not inside the live
 	 * workspace, render a button to create new content.
 	 *
@@ -86,8 +110,7 @@ class ContentCollectionImplementation extends CollectionImplementation {
 	 * @throws \TYPO3\Neos\Exception
 	 */
 	public function evaluate() {
-		$currentContext = $this->tsRuntime->getCurrentContext();
-		$node = $currentContext['node'];
+		$node = $this->getCurrentContextNode();
 		$output = parent::evaluate();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder($this->getTagName());
@@ -114,11 +137,7 @@ class ContentCollectionImplementation extends CollectionImplementation {
 			return $tagBuilder->render();
 		}
 
-		if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
-			$contentCollectionNode = $node;
-		} else {
-			$contentCollectionNode = $node->getNode($this->getNodePath());
-		}
+		$contentCollectionNode = $this->getContentCollectionNode();
 
 		if ($contentCollectionNode === NULL) {
 				// It might still happen that there is no content collection node on the page,
@@ -135,5 +154,41 @@ class ContentCollectionImplementation extends CollectionImplementation {
 		$tagBuilder->addAttribute('data-neos-__workspacename', $contentCollectionNode->getWorkspace()->getName());
 
 		return $tagBuilder->render();
+	}
+
+	/**
+	 * @return NodeInterface
+	 */
+	protected function getCurrentContextNode() {
+		$currentContext = $this->tsRuntime->getCurrentContext();
+		return $currentContext['node'];
+	}
+
+	/**
+	 * Retrieves the removed nodes for this content collection so the user interface can publish removed nodes as well.
+	 *
+	 * @return array
+	 */
+	protected function getRemovedChildNodes() {
+		$contentCollectionNode = $this->getContentCollectionNode();
+		if ($contentCollectionNode === NULL) {
+			return array();
+		}
+
+		$contextProperties = $contentCollectionNode->getContext()->getProperties();
+		$contextProperties['removedContentShown'] = TRUE;
+
+		$removedNodesContext = $this->contextFactory->create($contextProperties);
+
+		$nodeDataElements = $this->nodeDataRepository->findByParentAndNodeType($contentCollectionNode->getPath(), '', $contentCollectionNode->getContext()->getWorkspace(), NULL, NULL, TRUE);
+		$finalNodes = array();
+		foreach ($nodeDataElements as $nodeData) {
+			$node = $this->nodeFactory->createFromNodeData($nodeData, $removedNodesContext);
+			if ($node !== NULL) {
+				$finalNodes[] = $node;
+			}
+		}
+
+		return $finalNodes;
 	}
 }
