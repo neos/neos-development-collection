@@ -23,6 +23,12 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Neos\Service\PublishingService
 	 */
 	protected $publishingService;
@@ -81,6 +87,19 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Discards the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		$this->nodeDataRepository->remove($node);
+
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
 	 * Publish everything in the workspace with the given workspace name
 	 *
 	 * @param string $workspaceName
@@ -105,6 +124,24 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		$nodes = $this->publishingService->getUnpublishedNodes($workspace);
 
 		$this->view->assignNodes($nodes);
+	}
+
+	/**
+	 * Discard everything in the workspace with the given workspace name
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function discardAllAction($workspace) {
+		/** @var \TYPO3\TYPO3CR\Domain\Model\Node $node  */
+		foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
+			if ($node->getPath() !== '/') {
+				$this->nodeDataRepository->remove($node);
+			}
+		}
+
+		$this->view->assign('value', array('success' => TRUE));
 	}
 
 	/**

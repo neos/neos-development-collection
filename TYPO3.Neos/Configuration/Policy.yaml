@@ -17,6 +17,7 @@ resources:
     TYPO3_Neos_Backend_AccessContentInOwnOrLiveWorkspace: 'method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName == "live"))'
     TYPO3_Neos_Backend_AccessContentInOthersWorkspace: 'method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName != current.userInformation.currentWorkspaceName)) && method(TYPO3\Neos\TypeConverter\NodeConverter->createNode(workspaceName != "live"))'
     TYPO3_Neos_Backend_PublishOwnWorkspaceContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(publishNode|extError)Action()) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.currentWorkspaceName))'
+    TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: 'method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->(discardNode|extError)Action()) || method(TYPO3\Neos\Service\ExtDirect\V1\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.currentWorkspaceName))'
 
     TYPO3_Neos_Backend_Module_User: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
     TYPO3_Neos_Backend_Module_User_UserSettings: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress)Action())'
@@ -52,6 +53,7 @@ acls:
       TYPO3_Neos_Backend_Module_Content: GRANT
       TYPO3_Neos_Backend_EditContent: GRANT
       TYPO3_Neos_Backend_PublishOwnWorkspaceContent: GRANT
+      TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: GRANT
 
       TYPO3_Media_ManageAssets: GRANT
 

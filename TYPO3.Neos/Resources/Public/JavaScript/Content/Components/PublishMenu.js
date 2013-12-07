@@ -5,9 +5,10 @@ define(
 		'./Button',
 		'Content/Model/PublishableNodes',
 		'./PublishAllDialog',
+		'./DiscardAllDialog',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, LocalStorage, Button, PublishableNodes, PublishAllDialog, template) {
+	function (Ember, LocalStorage, Button, PublishableNodes, PublishAllDialog, DiscardAllDialog, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -95,6 +96,39 @@ define(
 				}.property('_connectionFailed')
 			}),
 
+			DiscardButton: Button.extend({
+				classNameBindings: ['connectionStatusClass'],
+				classNames: ['neos-discard-button'],
+				controller: PublishableNodes,
+
+				target: 'controller',
+				action: 'discardChanges',
+
+				_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
+				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+
+				_noChangesBinding: 'controller.noChanges',
+				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
+
+				label: function() {
+					return ('<i class="icon-ban-circle"></i> ' + this.get('title')).htmlSafe();
+				}.property('title'),
+
+				title: function() {
+					return this.get('_noChanges') ? 'Discard' : 'Discard' + ' ('  + this.get('_numberOfChanges') + ')';
+				}.property('_noChanges', '_numberOfChanges'),
+
+				disabled: function() {
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning');
+				}.property('_noChanges', 'autoPublish', '_saveRunning'),
+
+				connectionStatusClass: function() {
+					var className = 'neos-connection-status-';
+					className += this.get('_connectionFailed') ? 'down' : 'up';
+					return className;
+				}.property('_connectionFailed')
+			}),
+
 			PublishAllButton: Button.extend({
 				classNameBindings: ['disabledClass'],
 				classNames: ['neos-publish-all-button'],
@@ -121,6 +155,39 @@ define(
 
 				didInsertElement: function() {
 					PublishableNodes.getWorkspaceWideUnpublishedNodes();
+				},
+
+				disabled: function() {
+					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning');
+				}.property('_noWorkspaceWideChanges', '_saveRunning'),
+
+				disabledClass: function() {
+					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
+				}.property('_noWorkspaceWideChanges', '_saveRunning')
+			}),
+
+			DiscardAllButton: Button.extend({
+				classNameBindings: ['disabledClass'],
+				classNames: ['neos-publish-all-button'],
+				attributeBindings: ['title'],
+				title: 'Discard all',
+				labelIcon: '<i class="icon-ban-circle"></i> ',
+				label: function() {
+					if (this.get('_noWorkspaceWideChanges')) {
+						return (this.get('labelIcon') + ' Discard all').htmlSafe();
+					} else {
+						return (this.get('labelIcon') + ' Discard all (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
+					}
+				}.property('_numberOfWorkspaceWideChanges'),
+				controller: PublishableNodes,
+				confirmationDialog: DiscardAllDialog.create(),
+
+				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
+				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
+				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
+
+				click: function() {
+					this.confirmationDialog.createElement();
 				},
 
 				disabled: function() {

@@ -112,6 +112,46 @@ define(
 		},
 
 		/**
+		 * Discard all blocks which are unsaved *and* on current page.
+		 */
+		discardChanges: function() {
+			var that = this;
+			T3.Content.Controller.ServerConnection.sendAllToServer(
+				this.get('publishableEntitySubjects'),
+				function(subject) {
+					var entity = vie.entities.get(subject);
+					return [entity.fromReference(subject)];
+				},
+				TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.discardNode,
+				function() {
+					require(
+						[
+							'Content/Application'
+						],
+						function(ContentModule) {
+							ContentModule.reloadPage();
+							ContentModule.one('pageLoaded', function() {
+								Ember.run.next(function() {
+									EventDispatcher.trigger('nodesInvalidated');
+									EventDispatcher.trigger('contentChanged');
+								});
+							});
+						}
+					);
+				},
+				function(subject) {
+					var entity = vie.entities.get(subject);
+
+					var nodePath = entity.id.substr(1, entity.id.lastIndexOf('@') - 1),
+						node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodePath', nodePath);
+					if (node) {
+						that.get('workspaceWidePublishableEntitySubjects').removeObject(node);
+					}
+				}
+			);
+		},
+
+		/**
 		 * Publishes everything inside the current workspace.
 		 */
 		publishAll: function() {
@@ -133,6 +173,36 @@ define(
 		},
 
 		/**
+		 * Discards everything inside the current workspace.
+		 */
+		discardAll: function() {
+			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
+				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
+				that = this;
+			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.discardAll(workspaceName, function(result) {
+				if (typeof result !== 'undefined' && result !== null && result.success === true) {
+					require(
+						[
+							'Content/Application'
+						],
+						function(ContentModule) {
+							ContentModule.reloadPage();
+							ContentModule.one('pageLoaded', function() {
+								Ember.run.next(function() {
+									EventDispatcher.trigger('nodesInvalidated');
+									EventDispatcher.trigger('contentChanged');
+								});
+							});
+						}
+					);
+					that.getWorkspaceWideUnpublishedNodes();
+				} else {
+					Notification.error('Unexpected error while discarding all changes: ' + JSON.stringify(result));
+				}
+			});
+		},
+
+		/**
 		 * Get all unpublished nodes inside the current workspace.
 		 */
 		getWorkspaceWideUnpublishedNodes: function() {
@@ -145,5 +215,6 @@ define(
 				});
 			}
 		}
+
 	}).create();
 });
