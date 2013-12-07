@@ -16,63 +16,121 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * A TypoScript UriBuilder object
  *
+ * The following TS properties are evaluated:
+ *  * package
+ *  * subpackage
+ *  * controller
+ *  * action
+ *  * arguments
+ *  * format
+ *  * section
+ *  * additionalParams
+ *  * addQueryString
+ *  * argumentsToBeExcludedFromQueryString
+ *  * absolute
+ *
+ * See respective getters for descriptions
  */
 class UriBuilderImplementation extends TemplateImplementation {
 
 	/**
-	 * @var string
+	 * Key of the target package
+	 *
+	 * @return string
 	 */
-	protected $package;
+	public function getPackage() {
+		return $this->tsValue('package');
+	}
 
 	/**
-	 * @var string
+	 * Key of the target sub package
+	 *
+	 * @return string
 	 */
-	protected $subpackage;
+	public function getSubpackage() {
+		return $this->tsValue('subpackage');
+	}
 
 	/**
-	 * @var string
+	 * Target controller name
+	 *
+	 * @return string
 	 */
-	protected $controller;
+	public function getController() {
+		return $this->tsValue('controller');
+	}
 
 	/**
-	 * @var string
+	 * Target controller action name
+	 *
+	 * @return string
 	 */
-	protected $action;
+	public function getAction() {
+		return $this->tsValue('action');
+	}
 
 	/**
-	 * @var array
+	 * Controller arguments
+	 *
+	 * @return array
 	 */
-	protected $arguments;
+	public function getArguments() {
+		return $this->tsValue('arguments');
+	}
 
 	/**
-	 * @var string
+	 * The requested format, for example "html"
+	 *
+	 * @return string
 	 */
-	protected $format;
+	public function getFormat() {
+		return $this->tsValue('format');
+	}
 
 	/**
-	 * @var string
+	 * The anchor to be appended to the URL
+	 *
+	 * @return string
 	 */
-	protected $section;
+	public function getSection() {
+		return $this->tsValue('section');
+	}
 
 	/**
-	 * @var array
+	 * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+	 *
+	 * @return array
 	 */
-	protected $additionalParams;
+	public function getAdditionalParams() {
+		return $this->tsValue('additionalParams');
+	}
 
 	/**
-	 * @var boolean
+	 * Arguments to be removed from the URI. Only active if addQueryString = TRUE
+	 *
+	 * @return array
 	 */
-	protected $addQueryString;
+	public function getArgumentsToBeExcludedFromQueryString() {
+		return $this->tsValue('argumentsToBeExcludedFromQueryString');
+	}
 
 	/**
-	 * @var array
+	 * If TRUE, the current query parameters will be kept in the URI
+	 *
+	 * @return boolean
 	 */
-	protected $argumentsToBeExcludedFromQueryString;
+	public function isAddQueryString() {
+		return (boolean)$this->tsValue('addQueryString');
+	}
 
 	/**
-	 * @var boolean
+	 * If TRUE, an absolute URI is rendered
+	 *
+	 * @return boolean
 	 */
-	protected $absolute;
+	public function isAbsolute() {
+		return (boolean)$this->tsValue('absolute');
+	}
 
 	/**
 	 * @return string
@@ -81,27 +139,33 @@ class UriBuilderImplementation extends TemplateImplementation {
 		$controllerContext = $this->getTsRuntime()->getControllerContext();
 		$uriBuilder = $controllerContext->getUriBuilder()->reset();
 
-		if ($this->getFormat() !== NULL) {
-			$uriBuilder->setFormat($this->getFormat());
+		$format = $this->getFormat();
+		if ($format !== NULL) {
+			$uriBuilder->setFormat($format);
 		}
 
-		if ($this->getAdditionalParams() !== NULL) {
-			$uriBuilder->setArguments($this->getAdditionalParams());
+		$additionalParams = $this->getAdditionalParams();
+		if ($additionalParams !== NULL) {
+			$uriBuilder->setArguments($additionalParams);
 		}
 
-		if ($this->getArgumentsToBeExcludedFromQueryString() !== NULL) {
-			$uriBuilder->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString());
+		$argumentsToBeExcludedFromQueryString = $this->getArgumentsToBeExcludedFromQueryString();
+		if ($argumentsToBeExcludedFromQueryString !== NULL) {
+			$uriBuilder->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
 		}
 
-		if ($this->isAbsolute() === TRUE) {
-			$uriBuilder->setCreateAbsoluteUri($this->isAbsolute());
+		$absolute = $this->isAbsolute();
+		if ($absolute === TRUE) {
+			$uriBuilder->setCreateAbsoluteUri(TRUE);
 		}
 
-		if ($this->getSection() !== NULL) {
-			$uriBuilder->setSection($this->getSection());
+		$section = $this->getSection();
+		if ($section !== NULL) {
+			$uriBuilder->setSection($section);
 		}
 
-		if ($this->isAddQueryString() === TRUE) {
+		$addQueryString = $this->isAddQueryString();
+		if ($addQueryString === TRUE) {
 			$uriBuilder->setAddQueryString(TRUE);
 		}
 
@@ -117,170 +181,4 @@ class UriBuilderImplementation extends TemplateImplementation {
 			return $this->tsRuntime->handleRenderingException($this->path, $exception);
 		}
 	}
-
-	/**
-	 * @param boolean $absolute
-	 * @return void
-	 */
-	public function setAbsolute($absolute) {
-		$this->absolute = $absolute;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isAbsolute() {
-		return $this->tsValue('absolute');
-	}
-
-	/**
-	 * @param string $action
-	 * @return void
-	 */
-	public function setAction($action) {
-		$this->action = $action;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAction() {
-		return $this->tsValue('action');
-	}
-
-	/**
-	 * @param boolean $addQueryString
-	 * @return void
-	 */
-	public function setAddQueryString($addQueryString) {
-		$this->addQueryString = $addQueryString;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isAddQueryString() {
-		return $this->tsValue('addQueryString');
-	}
-
-	/**
-	 * @param array $additionalParams
-	 * @return void
-	 */
-	public function setAdditionalParams(array $additionalParams) {
-		$this->additionalParams = $additionalParams;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getAdditionalParams() {
-		return $this->tsValue('additionalParams');
-	}
-
-	/**
-	 * @param array $arguments
-	 * @return void
-	 */
-	public function setArguments(array $arguments) {
-		$this->arguments = $arguments;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getArguments() {
-		return $this->tsValue('arguments');
-	}
-
-	/**
-	 * @param array $argumentsToBeExcludedFromQueryString
-	 * @return void
-	 */
-	public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString) {
-		$this->argumentsToBeExcludedFromQueryString = $argumentsToBeExcludedFromQueryString;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getArgumentsToBeExcludedFromQueryString() {
-		return $this->tsValue('argumentsToBeExcludedFromQueryString');
-	}
-
-	/**
-	 * @param string $controller
-	 * @return void
-	 */
-	public function setController($controller) {
-		$this->controller = $controller;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getController() {
-		return $this->tsValue('controller');
-	}
-
-	/**
-	 * @param string $format
-	 * @return void
-	 */
-	public function setFormat($format) {
-		$this->format = $format;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormat() {
-		return $this->tsValue('format');
-	}
-
-	/**
-	 * @param string $package
-	 * @return void
-	 */
-	public function setPackage($package) {
-		$this->package = $package;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getPackage() {
-		return $this->tsValue('package');
-	}
-
-	/**
-	 * @param string $section
-	 * @return void
-	 */
-	public function setSection($section) {
-		$this->section = $section;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSection() {
-		return $this->tsValue('section');
-	}
-
-	/**
-	 * @param string $subpackage
-	 * @return void
-	 */
-	public function setSubpackage($subpackage) {
-		$this->subpackage = $subpackage;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSubpackage() {
-		return $this->tsValue('subpackage');
-	}
-
 }
