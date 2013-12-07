@@ -56,7 +56,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
-          editor: Content/Inspector/Editors/SelectBoxEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: 'Default'
             values:
@@ -129,7 +129,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'html'
-          editor: Content/Inspector/Editors/HtmlEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/HtmlEditor'
       defaultValue: '<p>Enter HTML here</p>'
 
 'TYPO3.Neos.NodeTypes:Menu':
@@ -152,7 +152,7 @@
         label: 'Starting Level'
         inspector:
           group: 'options'
-          editor: Content/Inspector/Editors/SelectBoxEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               '-4':
@@ -185,7 +185,7 @@
         label: 'Maximum Levels'
         inspector:
           group: 'options'
-          editor: Content/Inspector/Editors/SelectBoxEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               '1':
@@ -230,7 +230,7 @@
         label: 'Layout'
         inspector:
           group: 'column'
-          editor: Content/Inspector/Editors/SelectBoxEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
 
 'TYPO3.Neos.NodeTypes:TwoColumn':
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
@@ -331,7 +331,7 @@
         reloadIfChanged: true
         inspector:
           group: form
-          editor: Content/Inspector/Editors/SelectBoxEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: 'Select the Form identifier'
             values:
