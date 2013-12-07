@@ -5082,6 +5082,7 @@
   height: 2px;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:after,
 .neos #neos-inspector .neos-error .neos-inspector-datetime-editor:after {
@@ -5091,6 +5092,7 @@
   height: 2px;
   top: 38px;
   left: 0;
+  z-index: 1;
 }
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:before,
 .neos #neos-inspector .neos-error .neos-inspector-datetime-editor .neos-add-on + span:before {
@@ -5100,6 +5102,7 @@
   height: 40px;
   top: 0;
   left: 0;
+  z-index: 1;
 }
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:after,
 .neos #neos-inspector .neos-error .neos-inspector-datetime-editor .neos-add-on + span:after {
@@ -5109,6 +5112,7 @@
   height: 40px;
   top: 0;
   right: 0;
+  z-index: 1;
 }
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:before, .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor:after,
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor .neos-add-on + span:before,

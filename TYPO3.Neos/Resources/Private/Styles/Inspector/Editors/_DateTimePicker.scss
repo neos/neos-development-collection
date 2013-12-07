@@ -10,6 +10,7 @@
 			height: 2px;
 			top: 0;
 			left: 0;
+			z-index: 1;
 		}
 
 		&:after {
@@ -19,6 +20,7 @@
 			height: 2px;
 			top: $unit - 2;
 			left: 0;
+			z-index: 1;
 		}
 
 		.neos-add-on + span {
@@ -29,6 +31,7 @@
 				height: $unit;
 				top: 0;
 				left: 0;
+				z-index: 1;
 			}
 
 			&:after {
@@ -38,6 +41,7 @@
 				height: $unit;
 				top: 0;
 				right: 0;
+				z-index: 1;
 			}
 		}
 	}
