@@ -375,11 +375,11 @@ class NodeDataRepository extends Repository {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
-	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
 	 */
-	public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE) {
-		return $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $limit, $offset, $includeRemovedNodes, TRUE);
+	public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $removedNodes = FALSE) {
+		return $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $limit, $offset, $removedNodes, TRUE);
 	}
 
 	/**
@@ -396,16 +396,16 @@ class NodeDataRepository extends Repository {
 	 * @param Workspace $workspace The containing workspace
 	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
 	 * @param integer $offset An optional offset for the query
-	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
 	 * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
-	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $limit = NULL, $offset = NULL, $includeRemovedNodes = FALSE, $recursive = FALSE) {
+	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $limit = NULL, $offset = NULL, $removedNodes = FALSE, $recursive = FALSE) {
 		$baseWorkspace = $workspace;
 		$foundNodes = array();
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, TRUE, $recursive);
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, ($removedNodes === TRUE ? TRUE : NULL), $recursive);
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			/** @var $node NodeData */
 			foreach ($nodesFoundInThisWorkspace as $node) {
@@ -448,7 +448,7 @@ class NodeDataRepository extends Repository {
 		}
 
 		$foundNodes = $this->sortNodesByIndex($foundNodes);
-		if (!$includeRemovedNodes) {
+		if ($removedNodes === FALSE) {
 			$foundNodes = $this->filterRemovedNodes($foundNodes);
 		}
 		$foundNodes = $this->filterNodesOverlaidInBaseWorkspace($foundNodes, $baseWorkspace);
@@ -517,7 +517,7 @@ class NodeDataRepository extends Repository {
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 */
 	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context, $limit = NULL, $offset = NULL) {
-		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $limit, $offset, $context->isRemovedContentShown());
+		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $limit, $offset, ($context->isRemovedContentShown() ? NULL : FALSE));
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
 			$node =$this->nodeFactory->createFromNodeData($nodeData, $context);
@@ -694,14 +694,14 @@ class NodeDataRepository extends Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param Workspace $workspace The containing workspace
-	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
 	 * @return NodeData The node found or NULL
 	 * @todo Check for workspace compliance
 	 */
-	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $includeRemovedNodes = FALSE) {
+	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, $removedNodes = FALSE) {
 		$baseWorkspace = $workspace;
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $includeRemovedNodes);
+			$query = $this->createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $removedNodes);
 			$firstNodeFoundInThisWorkspace = $query->execute()->getFirst();
 			if ($firstNodeFoundInThisWorkspace !== NULL) {
 				$resultingNodeArray = $this->filterNodesOverlaidInBaseWorkspace(array($firstNodeFoundInThisWorkspace), $baseWorkspace);
@@ -725,7 +725,7 @@ class NodeDataRepository extends Repository {
 	 * @return NodeData The node found or NULL
 	 */
 	public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context) {
-		$firstNode = $this->findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->isRemovedContentShown());
+		$firstNode = $this->findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), ($context->isRemovedContentShown() ? NULL : FALSE));
 
 		if ($firstNode !== NULL) {
 			$firstNode = $this->nodeFactory->createFromNodeData($firstNode, $context);
@@ -845,12 +845,12 @@ class NodeDataRepository extends Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param Workspace $workspace The containing workspace
-	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
 	 * @param boolean $recursive Switch to make the Query recursive
 	 * @throws \InvalidArgumentException
 	 * @return QueryInterface The query
 	 */
-	protected function createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $includeRemovedNodes = FALSE, $recursive = FALSE) {
+	protected function createQueryForFindByParentAndNodeType($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $removedNodes = FALSE, $recursive = FALSE) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $parentPath . '" is not a valid path: must start but not end with a slash.', 1284985610);
 		}
@@ -865,8 +865,8 @@ class NodeDataRepository extends Repository {
 			$constraints[] = $query->like('parentPath', $parentPath . '%');
 		}
 
-		if ($includeRemovedNodes === FALSE) {
-			$constraints[] = $query->equals('removed', (integer)$includeRemovedNodes);
+		if ($removedNodes !== NULL) {
+			$constraints[] = $query->equals('removed', (integer)$removedNodes);
 		}
 
 		if ($nodeTypeFilter !== NULL) {
