@@ -143,13 +143,6 @@ function (Ember, $, template) {
 				that.close();
 			});
 
-			$(document).on('mousedown', function(e) {
-				// Clicked outside the datetimepicker, hide it
-				if ($(e.target).parents('.neos-inspector-datetime-editor').length === 0) {
-					that.close();
-				}
-			});
-
 			// Hide datetimepicker by default
 			$datetimepicker.hide();
 
@@ -164,6 +157,7 @@ function (Ember, $, template) {
 		open: function() {
 			if (this.get('isOpen') === false) {
 				this.toggle();
+				this._registerEventHandler();
 			}
 		},
 
@@ -243,6 +237,21 @@ function (Ember, $, template) {
 			}
 
 			return {minView: minView, maxView: maxView, startView: startView};
+		},
+
+		/**
+		 * @return {void}
+		 */
+		_registerEventHandler: function() {
+			var that = this;
+			$(document).on('mousedown.neos-datetimepicker', function(e) {
+				// Clicked outside the datetimepicker, hide it
+				if ($(e.target).parents('.neos-editor-datetimepicker').length === 0) {
+					that.close();
+					// Remove event handler if the datepicker is not open
+					$(document).off('mousedown.neos-datetimepicker')
+				}
+			});
 		}
 	});
 });
