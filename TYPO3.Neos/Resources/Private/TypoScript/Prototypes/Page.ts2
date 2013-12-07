@@ -68,8 +68,10 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# Content of the body tag. To be defined by the integrator.
-	body = Template
-	body.@position = 'after bodyTag'
+	body = Template {
+		@position = 'after bodyTag'
+		node = ${node}
+	}
 
 	# Required for the backend to work.
 	neosBackendContainer = TYPO3.TypoScript:Template {
