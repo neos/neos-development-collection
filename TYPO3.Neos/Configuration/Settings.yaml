@@ -113,6 +113,10 @@ TYPO3:
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
 
+      requireJsPathMapping:
+        'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
+        'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
+
       navigateComponent:
         nodeTree:
           # number of levels inside the node tree which shall be loaded eagerly, at start.
@@ -120,21 +124,21 @@ TYPO3:
           loadingDepth: 4
 
       inspector:
-        editors:
-          string:
-            editor: Content/Inspector/Editors/TextFieldEditor
-          integer:
-            editor: Content/Inspector/Editors/TextFieldEditor
-          boolean:
-            editor: Content/Inspector/Editors/BooleanEditor
+        dataTypes:
+          'string':
+            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+          'integer':
+            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+          'boolean':
+            editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
           'TYPO3\Media\Domain\Model\ImageVariant':
-            editor: Content/Inspector/Editors/ImageEditor
-          date:
-            editor: Content/Inspector/Editors/DateTimeEditor
-          reference:
-            editor: Content/Inspector/Editors/ReferenceEditor
-          references:
-            editor: Content/Inspector/Editors/ReferencesEditor
+            editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
+          'date':
+            editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
+          'reference':
+            editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
+          'references':
+            editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
 
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'

@@ -264,3 +264,234 @@ Registering 2 new groups could look like::
 	          label: 'Special elements'
 
 The groups are ordered by the position argument.
+
+Extending The Inspector
+=======================
+
+.. warning:: Adding editors and validators is no fixed API yet, keep an eye on the changelogs if you use this.
+
+It is possible to extend the inspector for adding new editors and validators to edit the properties
+of your nodetypes.
+
+Editors
+-------
+
+By default the following list of editors is available in Neos:
+
+* `TYPO3.Neos/Inspector/Editors/BooleanEditor`
+
+  A checkbox, by default configured for properties of type `boolean`.
+
+* `TYPO3.Neos/Inspector/Editors/DateTimeEditor`
+
+  A datepicker with support for time selection too. By default configured for properties
+  of type `date`.
+
+* `TYPO3.Neos/Inspector/Editors/HtmlEditor`
+
+  An HTML editor with syntax highlighting.
+
+* `TYPO3.Neos/Inspector/Editors/ImageEditor`
+
+  An image editor with cropping and size support. By default configured for properties
+  of type `TYPO3\Media\Domain\Model\ImageVariant`.
+
+* `TYPO3.Neos/Inspector/Editors/ReferenceEditor`
+
+  A selector with autocomplete to reference to another node. By default configured for
+  properties of type `reference`.
+
+* `TYPO3.Neos/Inspector/Editors/ReferencesEditor`
+
+  A selector with autocomplete to reference to multiple nodes. By default configured for
+  properties of type `references`.
+
+* `TYPO3.Neos/Inspector/Editors/SelectBoxEditor`
+
+  A selectbox.
+
+* `TYPO3.Neos/Inspector/Editors/TextFieldEditor`
+
+  A simple textfield. By default configured for properties of type `string` and `integer`
+
+The following editors are also available, but will most likely only be used internally in Neos:
+
+* `TYPO3.Neos/Inspector/Editors/MasterPluginEditor`
+* `TYPO3.Neos/Inspector/Editors/PluginViewEditor`
+* `TYPO3.Neos/Inspector/Editors/PluginViewsEditor`
+
+Register Custom Editors
+~~~~~~~~~~~~~~~~~~~~~~~
+
+There are 2 ways to register custom editors. Either by registering a namespace for a group
+of editors, or by selecting the direct path to an editor specifically.
+
+Registering a namespace pointing to a folder containing editors works as follows:
+
+* Create a folder containing the JavaScript sources for the editors
+* Name your files `PropertyTypeEditor`
+* Configure the path as a requirejs path mapping using the following Settings.yaml
+
+  ::
+
+    TYPO3:
+      Neos:
+        userInterface:
+          requireJsPathMapping:
+            'My.Package/Inspector/Editors': 'resource://My.Package/Public/Scripts/Path/To/Folder'
+
+* Now configure the editor for your property in the NodeTypes.yaml:
+
+  ::
+
+    'My.Package:NodeType':
+      properties:
+        myProperty:
+          type: 'string'
+          ui:
+            inspector:
+              editor: 'My.Package/Inspector/Editors/PropertyTypeEditor'
+              editorOptions:
+                optionName: 'optionValue'
+
+To set global options for your editor you can set a set of defaults in Settings.yaml:
+
+::
+
+    TYPO3:
+      Neos:
+        userInterface:
+          inspector:
+            editors:
+              'My.Package/Inspector/Editors/PropertyTypeEditor':
+                editorOptions:
+                  optionName: 'optionValue'
+
+The editor options set on a property level will override the global editor options.
+
+To register just one specific path as an editor use the following code:
+
+::
+
+  TYPO3:
+    Neos:
+      userInterface:
+        inspector:
+          editors:
+            'My.Package/Inspector/Editors/CustomEditor':
+              path: 'resource://My.Package/Public/Scripts/Path/To/File/Without/Js/Extension'
+
+
+Validators
+----------
+
+By default the following validators are available in Neos:
+
+* `TYPO3.Neos/Validation/AbstractValidator`
+
+  This *abstract* validator should be used to base custom validators on.
+
+* `TYPO3.Neos/Validation/AlphanumericValidator`
+
+  Supported options:
+
+  * regularExpression
+
+* `TYPO3.Neos/Validation/CountValidator`
+
+  Supported options:
+
+  * minimum
+  * maximum
+
+* `TYPO3.Neos/Validation/DateTimeRangeValidator`
+
+  Supported options:
+
+  * latestDate
+  * earliestDate
+
+* `TYPO3.Neos/Validation/DateTimeValidator`
+* `TYPO3.Neos/Validation/EmailAddressValidator`
+
+  Supported options:
+
+  * regularExpression
+
+* `TYPO3.Neos/Validation/FloatValidator`
+* `TYPO3.Neos/Validation/IntegerValidator`
+* `TYPO3.Neos/Validation/LabelValidator`
+
+  Supported options:
+
+  * regularExpression
+
+* `TYPO3.Neos/Validation/NumberRangeValidator`
+
+  Supported options:
+
+  * minimum
+  * maximum
+
+* `TYPO3.Neos/Validation/RegularExpressionValidator`
+
+  Supported options:
+
+  * regularExpression
+
+* `TYPO3.Neos/Validation/StringLengthValidator`
+
+  Supported options:
+
+  * minimum
+  * maximum
+
+* `TYPO3.Neos/Validation/StringValidator`
+* `TYPO3.Neos/Validation/TextValidator`
+* `TYPO3.Neos/Validation/UuidValidator`
+
+  Supported options:
+
+  * regularExpression
+
+Register Custom Validators
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are 2 ways to register custom validators. Either by registering a namespace for a group
+of validators, or by selecting the direct path to an validator specifically.
+
+Registering a namespace pointing to a folder containing validators works as follows:
+
+* Create a folder containing the JavaScript sources for the validators
+* Name your files `DataTypeValidator`
+* Configure the path as a requirejs path mapping using the following Settings.yaml
+
+  ::
+
+    TYPO3:
+      Neos:
+        userInterface:
+          requireJsPathMapping:
+            'My.Package/Validation': 'resource://My.Package/Public/Scripts/Path/To/Folder'
+
+* Now configure the validator for your property in the NodeTypes.yaml:
+
+  ::
+
+    'My.Package:NodeType':
+      properties:
+        myProperty:
+          type: 'string'
+          validation:
+            'My.Package/Validation/DataTypeValidator': []
+
+To register just one specific path as a validator use the following code:
+
+::
+
+  TYPO3:
+    Neos:
+      userInterface:
+        validators:
+          'My.Package/Validation/CustomValidator':
+            path: 'resource://My.Package/Public/Scripts/Path/To/File/Without/Js/Extension'

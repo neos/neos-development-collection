@@ -1,6 +1,12 @@
 window.T3 = {
 	isContentModule: location.pathname.match(/@user-/)
 } || window.T3;
+
+requirePaths = window.T3Configuration.requirejs.paths || {};
+requirePaths['Library'] = '../Library';
+requirePaths['text'] = '../Library/requirejs/text';
+requirePaths['i18n'] = '../Library/requirejs/i18n';
+
 /**
  * WARNING: if changing any of the require() statements below, make sure to also
  * update them inside build.js!
@@ -9,12 +15,7 @@ require(
 	{
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
-
-		paths: {
-			'Library': '../Library',
-			'text': '../Library/requirejs/text',
-			'i18n': '../Library/requirejs/i18n'
-		},
+		paths: requirePaths,
 		locale: 'en'
 	},
 	[

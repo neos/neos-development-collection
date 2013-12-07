@@ -58,7 +58,7 @@ class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface {
 				'inspector' => array(
 					'group' => 'pluginViews',
 					'position' => '20',
-					'editor' => 'Content/Inspector/Editors/PluginViewsEditor'
+					'editor' => 'TYPO3.Neos/PluginViewsEditor'
 				)
 			)
 		);

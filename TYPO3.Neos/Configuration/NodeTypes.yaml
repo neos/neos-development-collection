@@ -38,7 +38,7 @@
           group: 'visibility'
           position: 10
       validation:
-        dateTime: []
+        'TYPO3.Neos/Validation/DateTimeValidator': []
     _hiddenAfterDateTime:
       type: date
       ui:
@@ -47,7 +47,7 @@
           group: 'visibility'
           position: 20
       validation:
-        dateTime: []
+        'TYPO3.Neos/Validation/DateTimeValidator': []
 
 'TYPO3.Neos:Document':
   superTypes:
@@ -73,8 +73,8 @@
         inspector:
           group: 'document'
       validation:
-        notEmpty: []
-        stringLength:
+        'TYPO3.Neos/Validation/NotEmptyValidator': []
+        'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
     _name:
@@ -85,8 +85,8 @@
         inspector:
           group: 'document'
       validation:
-        notEmpty: []
-        stringLength:
+        'TYPO3.Neos/Validation/NotEmptyValidator': []
+        'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
         regularExpression:
@@ -116,7 +116,7 @@
        reloadIfChanged: TRUE
        inspector:
          group: 'layout'
-         editor: Content/Inspector/Editors/SelectBoxEditor
+         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
          editorOptions:
            placeholder: 'Inherit from parent'
            values:
@@ -128,7 +128,7 @@
        label: 'Layout for subpages of this page'
        inspector:
          group: 'layout'
-         editor: Content/Inspector/Editors/SelectBoxEditor
+         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
          editorOptions:
            placeholder: 'Inherit from parent'
            values:
@@ -163,7 +163,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
-          editor: Content/Inspector/Editors/SelectBoxEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               firstChildNode:
@@ -202,7 +202,7 @@
         inspector:
           group: 'pluginSettings'
       validation:
-        regularExpression:
+        'TYPO3.Neos/Validation/RegularExpressionValidator':
           regularExpression: '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i'
     subpackage:
       type: string
@@ -212,7 +212,7 @@
         inspector:
           group: 'pluginSettings'
       validation:
-        stringLength:
+        'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
     controller:
@@ -223,7 +223,7 @@
         inspector:
           group: 'pluginSettings'
       validation:
-        stringLength:
+        'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
     action:
@@ -234,7 +234,7 @@
         inspector:
           group: 'pluginSettings'
       validation:
-        stringLength:
+        'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
 
@@ -258,7 +258,7 @@
         inspector:
           group: 'pluginViews'
           position: 20
-          editor: Content/Inspector/Editors/MasterPluginEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/MasterPluginEditor'
     view:
       type: string
       ui:
@@ -267,7 +267,7 @@
         inspector:
           group: 'pluginViews'
           position: 20
-          editor: Content/Inspector/Editors/PluginViewEditor
+          editor: 'TYPO3.Neos/Inspector/Editors/PluginViewEditor'
 
 'TYPO3.Neos:Content':
   superTypes:

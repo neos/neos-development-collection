@@ -55,14 +55,14 @@ define(
 
 		_loadView: function() {
 			var that = this,
-				propertyDefinition = this.get('propertyDefinition');
+				propertyDefinition = this.get('propertyDefinition'),
+				typeDefinition = Configuration.get('UserInterface.inspector.dataTypes.' + propertyDefinition.type),
+				editorDefinition,
+				globalEditorOptions,
+				editor;
+
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
-
-			var typeDefinition = Configuration.get('UserInterface.inspector.editors.' + propertyDefinition.type);
 			Ember.assert('Type defaults for "' + propertyDefinition.type + '" not found!', !!typeDefinition);
-
-			var editorClassName = Ember.get(propertyDefinition, 'ui.inspector.editor') || typeDefinition.editor;
-			Ember.assert('Editor class name for property "' + propertyDefinition.key + '" not found.', editorClassName);
 
 			var editorOptions = $.extend(
 				{
@@ -70,11 +70,22 @@ define(
 					inspectorBinding: this.inspectorBinding,
 					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
 				},
+				Configuration.get('UserInterface.inspector.editors.' + typeDefinition.editor + '.editorOptions') || {},
 				typeDefinition.editorOptions || {},
 				Ember.get(propertyDefinition, 'ui.inspector.editorOptions') || {}
 			);
 
-			require([editorClassName], function(editorClass) {
+			editor = Ember.get(propertyDefinition, 'ui.inspector.editor');
+			if (!editor) {
+				editor = typeDefinition.editor;
+			}
+
+			if (editor.indexOf('Content/Inspector/Editors/') === 0) {
+				// Rename old editor names for backwards compatibility
+				editor = editor.replace('Content/Inspector/Editors/', 'TYPO3.Neos/Inspector/');
+			}
+
+			require([editor], function(editorClass) {
 				Ember.run(function() {
 					if (!that.isDestroyed) {
 						// It might happen that the editor was deselected before the require() call completed; so we

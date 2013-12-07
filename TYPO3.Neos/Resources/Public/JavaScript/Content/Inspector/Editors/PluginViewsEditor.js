@@ -2,7 +2,7 @@ define(
 [
 	'Library/jquery-with-dependencies',
 	'text!./PluginViewsEditor.html',
-	'../InspectorController'
+	'Content/Inspector/InspectorController'
 ],
 function(
 	$,
@@ -10,9 +10,9 @@ function(
 	InspectorController
 ) {
 	return Ember.CollectionView.extend({
-        tagName: 'ul',
-        classNames: ['neos-inspector-list-stacked'],
-        content: null,
+		tagName: 'ul',
+		classNames: ['neos-inspector-list-stacked'],
+		content: null,
 		init: function() {
 			var nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath');
 			var that = this;
@@ -28,9 +28,9 @@ function(
 			});
 			return this._super();
 		},
-        emptyView: Ember.View.extend({
-            template: Ember.Handlebars.compile("Loading ...")
-        }),
+		emptyView: Ember.View.extend({
+			template: Ember.Handlebars.compile("Loading ...")
+		}),
 		itemViewClass: Ember.View.extend({
 			template: Ember.Handlebars.compile(template)
 		})

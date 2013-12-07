@@ -75,7 +75,7 @@ define(
 							ui: {
 								inspector: {
 									group: 'group' + nodeTypeGroupCount,
-									editor: 'Content/Inspector/Editors/Aloha/' + editorClass,
+									editor: 'TYPO3.Neos/Inspector/Editors/Aloha/' + editorClass,
 									editorOptions: {
 										alohaComponent: componentObject
 									}
@@ -192,7 +192,11 @@ define(
 						if (typeof propertyDefinition.validation !== 'undefined') {
 							var validators = [];
 							_.each(propertyDefinition.validation, function(validatorOptions, validator) {
-								var validatorClassName = validator.indexOf('/') !== -1 ? validator : 'Content/Components/Validator/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
+								var validatorClassName = validator;
+								if (validatorClassName.indexOf('/') === -1) {
+									validatorClassName = 'TYPO3.Neos/Validation/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
+								}
+
 								require([validatorClassName], function(validatorClass) {
 									Ember.run(function() {
 										validators.push(validatorClass.create({options: validatorOptions}));

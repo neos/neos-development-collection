@@ -12,6 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -85,17 +86,12 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 			'window.T3Configuration.MenuDataUri = ' . json_encode($menuDataUri) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.nodeTypes = {};',
-			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';'
+			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
+			'window.T3Configuration.requirejs = {};',
+			'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';'
 		);
 
-		$resourcePath = 'resource://TYPO3.Neos/Public/JavaScript';
-		$localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
-		$matches = array();
-		if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
-			$package = $matches[1];
-			$path = $matches[2];
-		}
-		$neosJavaScriptBasePath = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+		$neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://TYPO3.Neos/Public/JavaScript');
 
 		$configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
 
@@ -104,6 +100,54 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 		}
 
 		return (implode("\n", $configuration));
+	}
+
+	/**
+	 * @param string $resourcePath
+	 * @return string
+	 */
+	protected function getStaticResourceWebBaseUri($resourcePath) {
+		$localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
+		$matches = array();
+		if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+			$package = $matches[1];
+			$path = $matches[2];
+		}
+		return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getRequireJsPathMapping() {
+		$pathMappings = array();
+
+		$validatorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.validators');
+		if (is_array($validatorSettings)) {
+			foreach ($validatorSettings as $validatorName => $validatorConfiguration) {
+				if (isset($validatorConfiguration['path'])) {
+					$pathMappings[$validatorName] = $this->getStaticResourceWebBaseUri($validatorConfiguration['path']);
+				}
+			}
+		}
+
+		$editorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.inspector.editors');
+		if (is_array($editorSettings)) {
+			foreach ($editorSettings as $editorName => $editorConfiguration) {
+				if (isset($editorConfiguration['path'])) {
+					$pathMappings[$editorName] = $this->getStaticResourceWebBaseUri($editorConfiguration['path']);
+				}
+			}
+		}
+
+		$requireJsPathMappingSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.requireJsPathMapping');
+		if (is_array($requireJsPathMappingSettings)) {
+			foreach ($requireJsPathMappingSettings as $namespace => $path) {
+				$pathMappings[$namespace] = $this->getStaticResourceWebBaseUri($path);
+			}
+		}
+
+		return $pathMappings;
 	}
 
 	/**

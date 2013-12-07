@@ -81,7 +81,7 @@ A node type definition can look as follows::
 	      ui:
 	        inlineEditable: TRUE
 	      validation:
-	        stringLength:
+	        'TYPO3.Neos/Validation/StringLengthValidator':
 	          minimum: 1
 	          maximum: 255
 
@@ -212,7 +212,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        reloadIfChanged: TRUE
 	        inspector:
 	          group: 'image'
-	          editor: T3.Content.UI.Editor.Selectbox
+	          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
 	          editorOptions:
 	            placeholder: 'Default'
 	            values:

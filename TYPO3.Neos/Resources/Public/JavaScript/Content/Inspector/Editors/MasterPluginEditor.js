@@ -1,8 +1,8 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'./SelectBoxEditor',
-	'../InspectorController'
+	'Content/Inspector/Editors/SelectBoxEditor',
+	'Content/Inspector/InspectorController'
 ],
 function(
 	$,

@@ -1,21 +1,21 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'./SelectBoxEditor',
-    '../InspectorController'
+	'Content/Inspector/Editors/SelectBoxEditor',
+	'Content/Inspector/InspectorController'
 ],
 function(
-    $,
-    SelectBoxEditor,
-    InspectorController
+	$,
+	SelectBoxEditor,
+	InspectorController
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
 			this.set('placeholder', 'Loading ...');
 			this._loadOptionsOnChange();
-            InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange')
+			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange')
 
-		    this._super();
+			this._super();
 		},
 		_loadOptionsOnChange: function() {
 			var nodePath = InspectorController.get('nodeProperties.plugin');

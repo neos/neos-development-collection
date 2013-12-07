@@ -2,30 +2,62 @@
  * WARNING: if changing any of the statements below, make sure to also
  * update them inside ContentModuleBootstrap.js!
  *
- * To start a build, run "r.js -o build.js" from within the current directory.
+ * To start a build, run 'r.js -o build.js' from within the current directory.
  */
 ({
-	baseUrl: ".",
+	baseUrl: '.',
 	paths: {
 		'Library': '../Library/',
 		'text': '../Library/requirejs/text',
-		'i18n': '../Library/requirejs/i18n'
+		'i18n': '../Library/requirejs/i18n',
+		'xregexp': '../Library/XRegExp/xregexp.min'
 	},
 	locale: 'en',
 
-	name: "ContentModuleBootstrap",
+	name: 'ContentModuleBootstrap',
 	include: [
 		// The editors below are lazily loaded through Require.js, so we need to include them in the build manually.
-		"Content/Inspector/Editors/TextFieldEditor",
-		"Content/Inspector/Editors/BooleanEditor",
-		"Content/Inspector/Editors/DateTimeEditor",
-		"Content/Inspector/Editors/ImageEditor",
-		"Content/Inspector/Editors/SelectBoxEditor",
-		"Content/Inspector/Editors/ReferenceEditor",
-		"Content/Inspector/Editors/ReferencesEditor"
-	],
-	out: "ContentModule-built.js"
+		'Content/Inspector/Editors/TextFieldEditor',
+		'Content/Inspector/Editors/BooleanEditor',
+		'Content/Inspector/Editors/DateTimeEditor',
+		'Content/Inspector/Editors/FileUpload',
+		'Content/Inspector/Editors/HtmlEditor',
+		'Content/Inspector/Editors/ImageEditor',
+		'Content/Inspector/Editors/MasterPluginEditor',
+		'Content/Inspector/Editors/PluginViewEditor',
+		'Content/Inspector/Editors/PluginViewsEditor',
+		'Content/Inspector/Editors/ReferenceEditor',
+		'Content/Inspector/Editors/ReferencesEditor',
+		'Content/Inspector/Editors/SelectBoxEditor',
+		'Content/Inspector/Editors/Aloha/AlohaButtonEditor',
+		'Content/Inspector/Editors/Aloha/AlohaNonDefinedEditor',
+		'Content/Inspector/Editors/Aloha/AlohaToggleButtonEditor',
 
-	// if you un-comment the line below, you get an un-optimized version.
-	//optimize: "none"
+		// The validators below are lazily loaded through Require.js, so we need to include them in the build manually.
+		'Shared/Validation/AbstractValidator',
+		'Shared/Validation/AlphanumericValidator',
+		'Shared/Validation/CountValidator',
+		'Shared/Validation/DateTimeRangeValidator',
+		'Shared/Validation/DateTimeValidator',
+		'Shared/Validation/EmailAddressValidator',
+		'Shared/Validation/FloatValidator',
+		'Shared/Validation/IntegerValidator',
+		'Shared/Validation/LabelValidator',
+		'Shared/Validation/NotEmptyValidator',
+		'Shared/Validation/NumberRangeValidator',
+		'Shared/Validation/RegularExpressionValidator',
+		'Shared/Validation/StringLengthValidator',
+		'Shared/Validation/StringValidator',
+		'Shared/Validation/TextValidator',
+		'Shared/Validation/UuidValidator'
+	],
+	out: 'ContentModule-built.js'
+
+	/**
+	 * To generate a source map in development context, uncomment the lines below
+	 */
+//	,
+//	generateSourceMaps: true,
+//	preserveLicenseComments: false,
+//	optimize: 'uglify2'
 })
