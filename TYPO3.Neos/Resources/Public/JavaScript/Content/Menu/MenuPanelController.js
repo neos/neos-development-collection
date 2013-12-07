@@ -15,6 +15,7 @@ define(
 		configuration: null,
 		menuPanelMode: false,
 		menuPanelStickyMode: false,
+		isMenuPanelStickyModeShown: false,
 
 		items: [],
 
@@ -51,12 +52,18 @@ define(
 
 		toggleMenuPanelStickyMode: function() {
 			this.set('menuPanelStickyMode', !this.get('menuPanelStickyMode'));
+			this.set('isMenuPanelStickyModeShown', this.get('menuPanelStickyMode'));
 		},
 
 		menuPanelStickyModeChanged: function() {
 			this.toggleProperty('configuration.menuPanelStickyMode');
 			this.propertyDidChange('configuration');
 		}.observes('menuPanelStickyMode'),
+
+		isMenuPanelStickyModeShownChanged: function() {
+			this.toggleProperty('configuration.isMenuPanelStickyModeShown');
+			this.propertyDidChange('configuration');
+		}.observes('isMenuPanelStickyModeShown'),
 
 		activeItem: function() {
 			var that = this;

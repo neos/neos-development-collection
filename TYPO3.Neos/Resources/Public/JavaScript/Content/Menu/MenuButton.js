@@ -14,13 +14,16 @@ define(
 			controller: MenuPanelController,
 
 			init: function() {
-				if (this.get('controller.configuration.menuPanelStickyMode')) {
+				if (this.get('controller.configuration.menuPanelStickyMode') && this.get('controller.configuration.isMenuPanelStickyModeShown')) {
 					this.toggleProperty('controller.menuPanelMode');
 				}
 			},
 
 			triggerAction: function() {
 				this.toggleProperty('controller.menuPanelMode');
+				if (this.get('controller.configuration.menuPanelStickyMode')) {
+					this.toggleProperty('controller.isMenuPanelStickyModeShown');
+				}
 			},
 
 			mouseEnter: function() {
