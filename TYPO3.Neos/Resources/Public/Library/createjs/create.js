@@ -103,8 +103,11 @@ See http://createjs.org for more information
       if (!this.options.language) {
         this.options.language = jQuery('html').attr('lang');
       }
-
-      this._enableToolbar();
+      
+      if(this.options.toolbar) {
+        this._enableToolbar();
+      }
+      
       this._enableMetadata();
       this._saveButton();
       this._editButton();
@@ -2190,12 +2193,12 @@ window.midgardCreate.localize = function (id, language) {
         }
         self.options.deactivated();
       });
-      var before = this.element.html();
+      var before = this.element.text();
       this.element.on('keyup paste', function (event) {
         if (self.options.disabled) {
           return;
         }
-        var current = jQuery(this).html();
+        var current = jQuery(this).text();
         if (before !== current) {
           before = current;
           self.options.changed(current);
@@ -2239,17 +2242,28 @@ window.midgardCreate.localize = function (id, language) {
       }
       editable.vieEntity = options.entity;
 
+      var checkEditableChanged;
+
+      function activeEditableChanged() {
+        if (Aloha.activeEditable.isModified()) {
+          options.changed(Aloha.activeEditable.getContents());
+          Aloha.activeEditable.setUnmodified();
+        }
+      }
+
       // Subscribe to activation and deactivation events
       Aloha.bind('aloha-editable-activated', function (event, data) {
         if (data.editable !== editable) {
           return;
         }
+        checkEditableChanged = window.setInterval(activeEditableChanged, 500);
         options.activated();
       });
       Aloha.bind('aloha-editable-deactivated', function (event, data) {
         if (data.editable !== editable) {
           return;
         }
+        window.clearInterval(checkEditableChanged);
         options.deactivated();
       });
 
@@ -2282,6 +2296,11 @@ window.midgardCreate.localize = function (id, language) {
   // This widget allows editing textual content areas with the
   // [CKEditor](http://ckeditor.com/) rich text editor.
   jQuery.widget('Midgard.ckeditorWidget', jQuery.Midgard.editWidget, {
+    options: {
+      editorOptions: {},
+      disabled: true,
+      vie: null
+    },
     enable: function () {
       this.element.attr('contentEditable', 'true');
       this.editor = CKEDITOR.inline(this.element.get(0));
@@ -2295,13 +2314,7 @@ window.midgardCreate.localize = function (id, language) {
         widget.options.activated();
         widget.options.changed(widget.editor.getData());
       });
-      this.editor.on('key', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('paste', function () {
-        widget.options.changed(widget.editor.getData());
-      });
-      this.editor.on('afterCommandExec', function () {
+      this.editor.on('change', function () {
         widget.options.changed(widget.editor.getData());
       });
       this.editor.on('configLoaded', function() {
@@ -2419,6 +2432,94 @@ window.midgardCreate.localize = function (id, language) {
         defaults.toolbar = 'halloToolbarContextual';
       }
       return _.extend(defaults, this.options.editorOptions);
+    }
+  });
+})(jQuery);
+
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false */
+  'use strict';
+
+  // # Medium Editor editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [Medium Editor](https://github.com/daviferreira/medium-editor) rich text editor.
+  jQuery.widget('Midgard.mediumWidget', jQuery.Midgard.editWidget, {
+    editor: null,
+    listener: null,
+
+    options: {
+      editorOptions: {},
+      disabled: true
+    },
+
+    enable: function () {
+      this.editor = new MediumEditor(this._buildSelector(), this.editorOptions);
+      this.listener = function () {
+        this.options.changed(jQuery(this.element).text());
+      }.bind(this);
+
+      jQuery(this.element).on('keyup', this.listener);
+      // TODO: Change events, see https://github.com/daviferreira/medium-editor/issues/17
+    },
+
+    disable: function () {
+      jQuery(this.element).off('keyup', this.listener);
+      // TODO: Close the editor, see https://github.com/daviferreira/medium-editor/issues/19
+    },
+
+    _buildSelector: function () {
+      var aboutSelector = '[about="' + this.options.entity.getSubjectUri() + '"]';
+      var propertySelector = '[property="' + this.options.property + '"]';
+      return aboutSelector + ' ' + propertySelector;
+    }
+  });
+})(jQuery);
+
+(function (jQuery, undefined) {
+  // Run JavaScript in strict mode
+  /*global jQuery:false _:false document:false tinymce:false */
+  'use strict';
+
+  // # TinyMCE editing widget
+  //
+  // This widget allows editing textual content areas with the
+  // [TinyMCE](http://www.tinymce.com/) rich text editor.
+  jQuery.widget('Midgard.tinymceWidget', jQuery.Midgard.editWidget, {
+    enable: function () {
+      this.element.attr('contentEditable', 'true');
+      var id = this.element.attr('id');
+
+      if (!id || tinymce.get(id)) {
+        id = tinymce.DOM.uniqueId();
+      }
+
+      this.element.attr('id', id);
+      this.editor = new tinymce.Editor(id, {inline: true}, tinymce.EditorManager);
+      this.editor.render(true);
+      this.options.disabled = false;
+
+      var widget = this;
+      this.editor.on('focus', function () {
+        widget.options.activated();
+      });
+      this.editor.on('blur', function () {
+        widget.options.activated();
+        widget.options.changed(widget.editor.getContent());
+      });
+      this.editor.on('change', function () {
+        widget.options.changed(widget.editor.getContent());
+      });
+    },
+
+    disable: function () {
+      if (!this.editor) {
+        return;
+      }
+      this.element.attr('contentEditable', 'false');
+      this.editor.remove();
+      this.editor = null;
     }
   });
 })(jQuery);

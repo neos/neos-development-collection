@@ -2239,19 +2239,29 @@ window.midgardCreate.localize = function (id, language) {
       }
       editable.vieEntity = options.entity;
 
-      // Subscribe to activation and deactivation events
-      Aloha.bind('aloha-editable-activated', function (event, data) {
-        if (data.editable !== editable) {
-          return;
+      function editableChanged() {
+        if (Aloha.activeEditable.isModified()) {
+          options.changed(Aloha.activeEditable.getContents());
+          Aloha.activeEditable.setUnmodified();
         }
-        options.activated();
-      });
-      Aloha.bind('aloha-editable-deactivated', function (event, data) {
-        if (data.editable !== editable) {
-          return;
-        }
-        options.deactivated();
-      });
+      }
+
+        var checkEditableChanged;
+        // Subscribe to activation and deactivation events
+        Aloha.bind('aloha-editable-activated', function(event, data) {
+            if (data.editable !== editable) {
+                return;
+            }
+            checkEditableChanged = window.setInterval(editableChanged, 500);
+            options.activated();
+        });
+        Aloha.bind('aloha-editable-deactivated', function(event, data) {
+            if (data.editable !== editable) {
+                return;
+            }
+            window.clearInterval(checkEditableChanged);
+            options.deactivated();
+        });
 
       Aloha.bind('aloha-smart-content-changed', function (event, data) {
         if (data.editable !== editable) {
@@ -2269,6 +2279,8 @@ window.midgardCreate.localize = function (id, language) {
       Aloha.jQuery(this.options.element.get(0)).mahalo();
       this.options.disabled = true;
     }
+
+
   });
 })(jQuery);
 
@@ -2668,7 +2680,7 @@ window.midgardCreate.localize = function (id, language) {
       if (this.vie.entities.isReference(subject)) {
         return subject;
       }
-        
+
       if (subject.substr(0, 7) !== 'http://') {
         subject = 'urn:tag:' + subject;
       }
@@ -2737,7 +2749,7 @@ window.midgardCreate.localize = function (id, language) {
       tags.remove(subject);
     },
 
-    // Listen for accepted annotations from Annotate.js if that 
+    // Listen for accepted annotations from Annotate.js if that
     // is in use and register them as tags
     _listenAnnotate: function (entity, entityElement) {
       var widget = this;
