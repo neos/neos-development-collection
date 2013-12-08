@@ -10,6 +10,16 @@ prototype(TYPO3.Neos.NodeTypes:Menu) {
 	maximumLevels = ${q(node).property('maximumLevels')}
 	maximumLevels.@process.1 = ${String.toInteger(value)}
 
+	active.attributes = TYPO3.TypoScript:Attributes {
+		class = 'active'
+	}
+	current.attributes = TYPO3.TypoScript:Attributes {
+		class = 'current'
+	}
+	normal.attributes = TYPO3.TypoScript:Attributes {
+		class = 'normal'
+	}
+
 	node = ${node}
 	items = ${this.items}
 }
