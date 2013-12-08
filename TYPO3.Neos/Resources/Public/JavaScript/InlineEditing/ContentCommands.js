@@ -53,7 +53,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			}
 
 			if (this.isDocument(referenceNode)) {
-				Notification.notice('Select a content element or section for adding content');
+				Notification.info('Select a content element or section for adding content');
 				return;
 			}
 

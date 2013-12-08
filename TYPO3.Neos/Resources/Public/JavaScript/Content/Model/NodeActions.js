@@ -92,11 +92,11 @@ define(
 				clipboard = this.get('_clipboard');
 
 			if (!clipboard.nodePath) {
-				Notification.notice('No node found on the clipboard');
+				Notification.info('No node found on the clipboard');
 				return false;
 			}
 			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
-				Notification.notice('It is not possible to paste a node ' + position + ' itself.');
+				Notification.info('It is not possible to paste a node ' + position + ' itself.');
 				return false;
 			}
 

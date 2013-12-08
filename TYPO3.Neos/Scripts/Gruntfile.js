@@ -12,7 +12,6 @@ module.exports = function(grunt) {
 				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',
 				baseUri + 'twitter-bootstrap/js/bootstrap-dropdown.js',
 				baseUri + 'twitter-bootstrap/js/bootstrap-tooltip.js',
-				baseUri + 'bootstrap-notify/js/bootstrap-notify.js',
 				baseUri + 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.js'
 			],
 			dest: baseUri + 'bootstrap-components.js',
@@ -98,6 +97,7 @@ module.exports = function(grunt) {
 			src: [
 				baseUri + 'jquery/jquery-1.10.2.js',
 				baseUri + 'jquery/jquery-migrate-1.2.1.js',
+				baseUri + 'jquery-easing/jquery.easing.1.3.js',
 				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
 				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
 				baseUri + 'chosen/chosen/chosen.jquery.js',
@@ -267,6 +267,20 @@ module.exports = function(grunt) {
 						'});',
 				process: function(src, filepath) {
 					return src.replace('window.nezasa=window.nezasa||{}', 'iso8601JsPeriod');
+				}
+			}
+		},
+
+		toastr: {
+			src: [
+				baseUri + 'toastr/toastr.js'
+			],
+			dest: baseUri + 'toastr.js',
+			options: {
+				process: function(src, filepath) {
+					src = src.replace('toast-close-button', 'neos-close-button');
+					src = src.replace("define(['jquery']", "define(['Library/jquery-with-dependencies']");
+					return src;
 				}
 			}
 		}

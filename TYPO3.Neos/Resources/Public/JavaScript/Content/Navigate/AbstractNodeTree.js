@@ -433,7 +433,7 @@ define(
 			create: function() {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 					return;
 				}
 				var nodeType = this.get('nodeType');
@@ -471,11 +471,11 @@ define(
 			showDeleteNodeDialog: function() {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 					return;
 				}
 				if (activeNode.getLevel() === 1) {
-					Notification.notice('The Root node cannot be deleted.');
+					Notification.info('The Root node cannot be deleted.');
 					return;
 				}
 
@@ -566,7 +566,7 @@ define(
 			toggleHidden: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 				}
 				var value = !node.data.isHidden;
 				this.set('currentFocusedNodeIsHidden', value);
@@ -611,11 +611,11 @@ define(
 			copy: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.notice('You cannot copy this node');
+					Notification.info('You cannot copy this node');
 					return;
 				}
 				if (this.get('copiedNode') === node) {
@@ -629,11 +629,11 @@ define(
 			cut: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.notice('You cannot cut this node');
+					Notification.info('You cannot cut this node');
 					return;
 				}
 				if (this.get('cutNode') === node) {
@@ -649,7 +649,7 @@ define(
 					cutNode = this.get('cutNode'),
 					copiedNode = this.get('copiedNode');
 				if (!targetNode) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 				}
 				var pastePosition = this.get('pastePosition');
 				if (targetNode.getLevel() < this.minimumCreateAndPasteLevel) {

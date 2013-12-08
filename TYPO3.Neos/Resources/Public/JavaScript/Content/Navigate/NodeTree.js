@@ -245,12 +245,12 @@ define(
 				}
 
 				if (!node) {
-					Notification.notice('You have to select a node');
+					Notification.info('You have to select a node');
 				}
 
 				// Skip editing site nodes
 				if (node.getLevel() < 2) {
-					Notification.notice('The Root node cannot be deleted.');
+					Notification.info('The Root node cannot be deleted.');
 					return;
 				}
 

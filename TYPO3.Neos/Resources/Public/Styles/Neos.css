@@ -368,7 +368,7 @@
 .neos .icon-th-list:before {
   content: "\f00b";
 }
-.neos .icon-ok:before {
+.neos .icon-ok:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .icon-success:before {
   content: "\f00c";
 }
 .neos .icon-remove:before {
@@ -583,7 +583,7 @@
 .neos .icon-minus-sign:before {
   content: "\f056";
 }
-.neos .icon-remove-sign:before {
+.neos .icon-remove-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:before {
   content: "\f057";
 }
 .neos .icon-ok-sign:before {
@@ -592,7 +592,7 @@
 .neos .icon-question-sign:before {
   content: "\f059";
 }
-.neos .icon-info-sign:before {
+.neos .icon-info-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .icon-info-circle:before {
   content: "\f05a";
 }
 .neos .icon-screenshot:before {
@@ -604,7 +604,7 @@
 .neos .icon-ok-circle:before {
   content: "\f05d";
 }
-.neos .icon-ban-circle:before {
+.neos .icon-ban-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .icon-error:before {
   content: "\f05e";
 }
 .neos .icon-arrow-left:before {
@@ -656,7 +656,7 @@
 .neos .icon-eye-close:before {
   content: "\f070";
 }
-.neos .icon-warning-sign:before {
+.neos .icon-warning-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .icon-warning:before {
   content: "\f071";
 }
 .neos .icon-plane:before {
@@ -3608,66 +3608,6 @@
   -webkit-border-radius: 0 0 6px 6px;
   -moz-border-radius: 0 0 6px 6px;
   border-radius: 0 0 6px 6px;
-}
-.neos .neos-alert {
-  padding: 8px 35px 8px 14px;
-  margin-bottom: 20px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-  background-color: #fcf8e3;
-  border: 1px solid #fbeed5;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-}
-.neos .neos-alert,
-.neos .neos-alert h4 {
-  color: #c09853;
-}
-.neos .neos-alert h4 {
-  margin: 0;
-}
-.neos .neos-alert .neos-close {
-  position: relative;
-  top: -2px;
-  right: -21px;
-  line-height: 20px;
-}
-.neos .neos-alert-success {
-  background-color: #dff0d8;
-  border-color: #d6e9c6;
-  color: #468847;
-}
-.neos .neos-alert-success h4 {
-  color: #468847;
-}
-.neos .neos-alert-danger,
-.neos .neos-alert-error {
-  background-color: #f2dede;
-  border-color: #eed3d7;
-  color: #b94a48;
-}
-.neos .neos-alert-danger h4,
-.neos .neos-alert-error h4 {
-  color: #b94a48;
-}
-.neos .neos-alert-info {
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-  color: #3a87ad;
-}
-.neos .neos-alert-info h4 {
-  color: #3a87ad;
-}
-.neos .neos-alert-block {
-  padding-top: 14px;
-  padding-bottom: 14px;
-}
-.neos .neos-alert-block > p,
-.neos .neos-alert-block > ul {
-  margin-bottom: 0;
-}
-.neos .neos-alert-block p + p {
-  margin-top: 5px;
 }
 .neos .neos-breadcrumb {
   padding: 8px 15px;
@@ -8263,59 +8203,138 @@
 .neos .neos-button-group + .neos-button-group {
   margin-left: 8px;
 }
-.neos .neos-notification-container {
-  top: 103px;
-  right: 207px;
+.neos #neos-notification-container.neos-notification-top {
   position: fixed;
-  color: white;
-  z-index: 10100;
+  z-index: 999999;
+  top: 0;
+  left: 50%;
+  width: 512px;
+  padding-top: 8px;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transform: translate(-50%, 0);
+  -moz-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
+  -o-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
 }
-.neos .neos-notification-container .neos-alert {
-  background-color: #323232;
+.neos #neos-notification-container.neos-notification-top > .neos-notification {
   color: white;
-  text-shadow: none;
-  border-top: 1px solid;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
+  font-size: 14px;
   position: relative;
-  width: 280px;
-  outline: 3px solid #222222;
-  line-height: 1.4em;
-  padding: 10px 35px 10px 10px;
-  margin-bottom: 10px;
+  width: 512px;
+  margin: 0 auto 4px;
   word-wrap: break-word;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
 }
-.neos .neos-notification-container .neos-alert.neos-alert-error {
-  border-top-color: #9d261d;
+.neos #neos-notification-container.neos-notification-top > .neos-notification::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 40px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.25);
 }
-.neos .neos-notification-container .neos-alert.neos-alert-success {
-  border-top-color: #00a338;
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error {
+  background-color: #ff460d;
 }
-.neos .neos-notification-container .neos-alert.neos-alert-warning {
-  border-top-color: #ff460d;
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success {
+  background-color: #00a338;
 }
-.neos .neos-notification-container .neos-alert.neos-alert-info {
-  border-top-color: #00b5ff;
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning {
+  background-color: #ff8700;
 }
-.neos .neos-notification-container .neos-alert i {
-  padding-right: 5px;
-  vertical-align: text-bottom;
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info {
+  background-color: #00b5ff;
 }
-.neos .neos-notification-container .neos-alert .neos-close {
-  top: -6px !important;
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-title {
+  display: none;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification i {
+  height: 40px;
+  line-height: 40px;
+  width: 40px;
+  text-align: center;
   font-size: 16px;
-  color: black;
-  text-shadow: 0 1px 0 white;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
-  opacity: 0.2;
+  padding: 0;
+  margin: 0;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
-.neos .neos-notification-container .neos-alert.fade {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
+  color: white;
+  height: 40px;
+  line-height: 40px;
+  width: 40px;
+  text-align: center;
+  left: auto;
+  right: 0;
+  cursor: pointer;
+  font-size: 18px;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-expand-content {
+  display: none;
+  padding: 16px 49px;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-expand-content pre {
+  padding: 16px 0;
+  font-family: "Lucida Console", Monaco, monospace;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  border-radius: 0;
+  white-space: pre-wrap;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable .neos-notification-heading {
+  cursor: pointer;
+  color: #fff;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable .neos-notification-heading::after {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  top: 5px;
+  left: 13px;
+  line-height: 0;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable.expanded .neos-notification-heading::after {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 19px;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-notification-heading {
+  padding: 12px 49px 12px;
+  margin-bottom: 0;
+  color: white;
+  font-weight: 400;
+  font-size: 14px;
 }
 .neos .neos-content-new-selecttype-button {
   float: left;
