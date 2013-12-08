@@ -10,6 +10,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Testcase for the "NodeTypeManager"
@@ -103,7 +104,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function nodeTypeConfigurationIsMergedTogether() {
-		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$nodeType = $nodeTypeManager->getNodeType('TYPO3.Neos:Text');
@@ -133,7 +134,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
 	 */
 	public function getNodeTypeThrowsExceptionForUnknownNodeType() {
-		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$nodeTypeManager->getNodeType('TYPO3.Neos:TextFooBarNotHere');
@@ -142,8 +143,24 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function getNodeTypesReturnsRegisteredNodeTypes() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$expectedNodeTypes = array(
+			'TYPO3.Neos:ContentObject',
+			'TYPO3.Neos:MyFinalType',
+			'TYPO3.Neos:Text',
+			'TYPO3.Neos:TextWithImage'
+		);
+		$this->assertEquals($expectedNodeTypes, array_keys($nodeTypeManager->getNodeTypes()));
+	}
+
+	/**
+	 * @test
+	 */
 	public function getSubNodeTypesDoesNotContainAbstractNodeTypes() {
-		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$fullConfiguration = $nodeTypeManager->getFullConfiguration();
@@ -154,7 +171,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getNodeTypeAllowsToRetrieveFinalNodeTypes() {
-		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.Neos:MyFinalType')->isFinal());
 	}
@@ -164,7 +181,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException
 	 */
 	public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed() {
-		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
+		$nodeTypeManager = new NodeTypeManager();
 		$this->setUp(array(
 			'TYPO3.Neos:Base' => array(
 				'final' => TRUE

@@ -35,11 +35,24 @@ class NodeTypeManager {
 	protected $configurationManager;
 
 	/**
+	 * Return all registered node types.
+	 *
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> all node types registered in the system
+	 * @api
+	 */
+	public function getNodeTypes() {
+		if ($this->cachedNodeTypes === array()) {
+			$this->loadNodeTypes();
+		}
+		return $this->cachedNodeTypes;
+	}
+
+	/**
 	 * Return all non-abstract node types which have a certain $superType, without
 	 * the $superType itself.
 	 *
 	 * @param string $superTypeName
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> all node types registered in the system
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> sub node types of the given super type
 	 */
 	public function getSubNodeTypes($superTypeName) {
 		if ($this->cachedNodeTypes === array()) {
