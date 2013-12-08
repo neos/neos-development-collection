@@ -282,8 +282,11 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				$node->moveAfter($targetNode);
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri, 'newNodePath' => $node->getContextPath()), 'success' => TRUE));
+		$data = array('newNodePath' => $node->getContextPath());
+		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			$data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+		}
+		$this->view->assign('value', array('data' => $data, 'success' => TRUE));
 	}
 
 	/**
