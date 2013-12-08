@@ -49,7 +49,7 @@ class TagImplementationTest extends UnitTestCase {
 	 */
 	public function evaluateTests($properties, $attributes, $content, $expectedOutput) {
 		$path = 'tag/test';
-		$this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($evaluatePath, $that) use ($path, $attributes, $content) {
+		$this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
 			$relativePath = str_replace($path . '/', '', $evaluatePath);
 			switch ($relativePath) {
 				case 'attributes':
@@ -57,15 +57,11 @@ class TagImplementationTest extends UnitTestCase {
 				case 'content':
 					return $content;
 			}
-			return ObjectAccess::getProperty($that, $relativePath, TRUE);
+			return isset($properties[$relativePath]) ? $properties[$relativePath] : NULL;
 		}));
 
 		$typoScriptObjectName = 'TYPO3.TypoScript:Tag';
 		$renderer = new TagImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
-
-		foreach ($properties as $name => $value) {
-			ObjectAccess::setProperty($renderer, $name, $value);
-		}
 
 		$result = $renderer->evaluate();
 		$this->assertEquals($expectedOutput, $result);

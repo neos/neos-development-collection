@@ -19,43 +19,28 @@ use TYPO3\Flow\Annotations as Flow;
 class MatcherImplementation extends AbstractTypoScriptObject {
 
 	/**
-	 * @var boolean
+	 * @return boolean
 	 */
-	protected $condition;
+	public function getCondition() {
+		return (boolean)$this->tsValue('condition');
+	}
 
 	/**
-	 * The type to render if $condition is TRUE
+	 * The type to render if condition is TRUE
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $type;
+	public function getType() {
+		return $this->tsValue('type');
+	}
 
 	/**
 	 * A path to a TypoScript configuration
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $renderPath;
-
-	/**
-	 * @param boolean $condition
-	 */
-	public function setCondition($condition) {
-		$this->condition = $condition;
-	}
-
-	/**
-	 * @param string $type
-	 */
-	public function setType($type) {
-		$this->type = $type;
-	}
-
-	/**
-	 * @param string $renderPath
-	 */
-	public function setRenderPath($renderPath) {
-		$this->renderPath = $renderPath;
+	public function getRenderPath() {
+		return $this->tsValue('renderPath');
 	}
 
 	/**
@@ -64,8 +49,8 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 	 * @return mixed
 	 */
 	public function evaluate() {
-		if ($this->tsValue('condition')) {
-			$renderPath = $this->tsValue('renderPath');
+		if ($this->getCondition()) {
+			$renderPath = $this->getRenderPath();
 			if ($renderPath !== NULL) {
 				if (substr($renderPath, 0, 1) === '/') {
 					$renderedElement = $this->tsRuntime->render(substr($renderPath, 1));
@@ -73,9 +58,8 @@ class MatcherImplementation extends AbstractTypoScriptObject {
 					$renderedElement = $this->tsRuntime->render($this->path . '/' . str_replace('.', '/', $renderPath));
 				}
 			} else {
-				$type = $this->tsValue('type');
 				$renderedElement = $this->tsRuntime->render(
-					sprintf('%s/element<%s>', $this->path, $type)
+					sprintf('%s/element<%s>', $this->path, $this->getType())
 				);
 			}
 			return $renderedElement;

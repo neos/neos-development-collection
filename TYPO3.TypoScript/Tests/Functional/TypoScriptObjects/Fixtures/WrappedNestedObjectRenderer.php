@@ -12,36 +12,31 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * Renderer which wraps the nested TS object found at "value" with "prepend" and "append".
  *
  * Needed for more complex prototype inheritance chain testing.
  */
-class WrappedNestedObjectRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
+class WrappedNestedObjectRenderer extends AbstractTypoScriptObject {
 
 	/**
-	 * @var string
+	 * The string the current value should be prepended with
+	 *
+	 * @return string
 	 */
-	protected $prepend;
-
-	/**
-	 * @var string
-	 */
-	protected $append;
-
-	/**
-	 * @param string $prepend
-	 */
-	public function setPrepend($prepend) {
-		$this->prepend = $prepend;
+	public function getPrepend() {
+		return $this->tsValue('prepend');
 	}
 
 	/**
-	 * @param string $append
+	 * The string the current value should be suffixed with
+	 *
+	 * @return string
 	 */
-	public function setAppend($append) {
-		$this->append = $append;
+	public function getAppend() {
+		return $this->tsValue('append');
 	}
 
 	/**
@@ -50,6 +45,6 @@ class WrappedNestedObjectRenderer extends \TYPO3\TypoScript\TypoScriptObjects\Ab
 	 * @return string
 	 */
 	public function evaluate() {
-		return $this->tsValue('prepend') . $this->tsRuntime->evaluate($this->path . '/value') . $this->tsValue('append');
+		return $this->getPrepend() . $this->tsRuntime->evaluate($this->path . '/value') . $this->getAppend();
 	}
 }

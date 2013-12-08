@@ -22,15 +22,10 @@ use TYPO3\Flow\Annotations as Flow;
 class ValueImplementation extends AbstractTypoScriptObject {
 
 	/**
-	 * @var mixed
+	 * @return mixed
 	 */
-	protected $value;
-
-	/**
-	 * @param mixed $value
-	 */
-	public function setValue($value) {
-		$this->value = $value;
+	public function getValue() {
+		return $this->tsValue('value');
 	}
 
 	/**
@@ -39,6 +34,6 @@ class ValueImplementation extends AbstractTypoScriptObject {
 	 * @return mixed
 	 */
 	public function evaluate() {
-		return $this->tsValue('value');
+		return $this->getValue();
 	}
 }

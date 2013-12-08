@@ -25,7 +25,6 @@ class CollectionImplementation extends AbstractCollectionImplementation {
 	 * Evaluate the collection nodes
 	 *
 	 * @return string
-	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function evaluate() {
 		return parent::evaluate();

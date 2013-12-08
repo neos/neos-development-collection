@@ -12,16 +12,18 @@ namespace TYPO3\TypoScript\Tests\Functional\View\Fixtures;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * Test renderer
  */
-class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
+class TestRenderer extends AbstractTypoScriptObject {
 
-	protected $test;
-
-	public function setTest($test) {
-		$this->test = $test;
+	/**
+	 * @return mixed
+	 */
+	public function getTest() {
+		return $this->tsValue('test');
 	}
 
 	/**
@@ -30,6 +32,6 @@ class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScrip
 	 * @return string
 	 */
 	public function evaluate() {
-		return 'X' . $this->tsValue('test');
+		return 'X' . $this->getTest();
 	}
 }

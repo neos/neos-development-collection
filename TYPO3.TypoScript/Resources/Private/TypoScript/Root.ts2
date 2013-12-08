@@ -34,6 +34,8 @@ prototype(TYPO3.TypoScript:Attributes) {
 prototype(TYPO3.TypoScript:Tag) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
 	attributes = TYPO3.TypoScript:Attributes
+	omitClosingTag = FALSE
+	selfClosingTag = FALSE
 }
 
 # Renders an URI pointing to a controller/action

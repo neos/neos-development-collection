@@ -24,69 +24,37 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 	/**
 	 * Path to the template which should be rendered
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $templatePath = NULL;
+	public function getTemplatePath() {
+		return $this->tsValue('templatePath');
+	}
 
 	/**
 	 * Path to the partial root
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $partialRootPath = NULL;
+	public function getPartialRootPath() {
+		return $this->tsValue('partialRootPath');
+	}
 
 	/**
 	 * Path to the layout root
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $layoutRootPath = NULL;
-
+	public function getLayoutRootPath() {
+		return $this->tsValue('layoutRootPath');
+	}
 
 	/**
 	 * Name of a specific section, if only this section should be rendered.
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $sectionName = NULL;
-
-	/**
-	 * Allows to set the template path.
-	 *
-	 * @param string $templatePath
-	 * @return void
-	 */
-	public function setTemplatePath($templatePath) {
-		$this->templatePath = $templatePath;
-	}
-
-	/**
-	 * Allows to set the partial root path.
-	 *
-	 * @param string $partialRootPath
-	 * @return void
-	 */
-	public function setPartialRootPath($partialRootPath) {
-		$this->partialRootPath = $partialRootPath;
-	}
-
-	/**
-	 * Allows to set the layout root path.
-	 *
-	 * @param string $layoutRootPath
-	 * @return void
-	 */
-	public function setLayoutRootPath($layoutRootPath) {
-		$this->layoutRootPath = $layoutRootPath;
-	}
-
-
-	/**
-	 * @param string $sectionName
-	 * @return void
-	 */
-	public function setSectionName($sectionName) {
-		$this->sectionName = $sectionName;
+	public function getSectionName() {
+		return $this->tsValue('sectionName');
 	}
 
 	/**
@@ -111,20 +79,20 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 	 * @return string
 	 */
 	public function evaluate() {
-		$fluidTemplate = new \TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\Flow\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
+		$fluidTemplate = new Helpers\FluidView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\Flow\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
 
-		$templatePath = $this->tsValue('templatePath');
+		$templatePath = $this->getTemplatePath();
 		if ($templatePath === NULL) {
-			throw new \Exception('Template path "' . $templatePath . '" at path "' . $this->path . '"  not found');
+			throw new \Exception(sprintf('Template path "%s" at path "%s"  not found', $templatePath, $this->path));
 		}
 		$fluidTemplate->setTemplatePathAndFilename($templatePath);
 
-		$partialRootPath = $this->tsValue('partialRootPath');
+		$partialRootPath = $this->getPartialRootPath();
 		if ($partialRootPath !== NULL) {
 			$fluidTemplate->setPartialRootPath($partialRootPath);
 		}
 
-		$layoutRootPath = $this->tsValue('layoutRootPath');
+		$layoutRootPath = $this->getLayoutRootPath();
 		if ($layoutRootPath !== NULL) {
 			$fluidTemplate->setLayoutRootPath($layoutRootPath);
 		}
@@ -153,7 +121,7 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 			// TODO this should be done differently lateron
 		$fluidTemplate->assign('fluidTemplateTsObject', $this);
 
-		$sectionName = $this->tsValue('sectionName');
+		$sectionName = $this->getSectionName();
 
 		if ($sectionName !== NULL) {
 			return $fluidTemplate->renderSection($sectionName);
@@ -169,7 +137,7 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 	 * @param Helpers\FluidView $view
 	 * @return void
 	 */
-	protected function initializeView(\TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView $view) {
+	protected function initializeView(Helpers\FluidView $view) {
 		// template method
 	}
 }

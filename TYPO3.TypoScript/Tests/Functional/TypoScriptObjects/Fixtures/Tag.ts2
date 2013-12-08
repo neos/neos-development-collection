@@ -3,6 +3,8 @@ prototype(TYPO3.TypoScript:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptOb
 prototype(TYPO3.TypoScript:Tag) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
 	attributes = Attributes
+	omitClosingTag = FALSE
+	selfClosingTag = FALSE
 }
 
 tag.plainAttributes = Tag {

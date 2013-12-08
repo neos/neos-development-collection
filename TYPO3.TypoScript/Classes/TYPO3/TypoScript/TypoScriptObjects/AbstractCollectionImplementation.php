@@ -12,18 +12,12 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\Exception as TypoScriptException;
 
 /**
  * Abstract implementation of a collection renderer for TypoScript.
  */
 abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject {
-
-	/**
-	 * Render the array collection by triggering the itemRenderer for every element
-	 *
-	 * @var array or array-like
-	 */
-	protected $collection;
 
 	/**
 	 * The number of rendered nodes, filled only after evaluate() was called.
@@ -33,54 +27,35 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
 	protected $numberOfRenderedNodes;
 
 	/**
-	 * @var string
-	 */
-	protected $itemName;
-
-	/**
-	 * If set iteration data (index, cycle, isFirst, isLast) is available in context with the name given.
+	 * Render the array collection by triggering the itemRenderer for every element
 	 *
-	 * @var string
-	 */
-	protected $iterationName;
-
-	/**
-	 * @param array $collection
-	 * @return void
-	 */
-	public function setCollection($collection) {
-		$this->collection = $collection;
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getCollection() {
 		return $this->tsValue('collection');
 	}
 
-
 	/**
-	 * @param string $itemName
-	 * @return void
+	 * @return string
 	 */
-	public function setItemName($itemName) {
-		$this->itemName = $itemName;
+	public function getItemName() {
+		return $this->tsValue('itemName');
 	}
 
 	/**
-	 * @param string $iterationName
-	 * @return void
+	 * If set iteration data (index, cycle, isFirst, isLast) is available in context with the name given.
+	 *
+	 * @return string
 	 */
-	public function setIterationName($iterationName) {
-		$this->iterationName = $iterationName;
+	public function getIterationName() {
+		return $this->tsValue('iterationName');
 	}
 
 	/**
 	 * Evaluate the collection nodes
 	 *
 	 * @return string
-	 * @throws \TYPO3\TypoScript\Exception
+	 * @throws TypoScriptException
 	 */
 	public function evaluate() {
 		$collection = $this->getCollection();
@@ -90,11 +65,11 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
 			return '';
 		}
 		$this->numberOfRenderedNodes = 0;
-		$itemName = $this->tsValue('itemName');
+		$itemName = $this->getItemName();
 		if ($itemName === NULL) {
 			throw new \TYPO3\TypoScript\Exception('The Collection needs an itemName to be set.', 1344325771);
 		}
-		$iterationName = $this->tsValue('iterationName');
+		$iterationName = $this->getIterationName();
 		$collectionTotalCount = count($collection);
 		foreach ($collection as $collectionElement) {
 			$context = $this->tsRuntime->getCurrentContext();
