@@ -10,8 +10,16 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          format: ['sub', 'sup', 'p', 'h1', 'h2', 'h3', 'removeFormat']
-          link: ['a']
+          'format':
+            'sub': TRUE
+            'sup': TRUE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'removeFormat': TRUE
+          'link':
+            'a': TRUE
 
 'TYPO3.Neos.NodeTypes:Text':
   superTypes: ['TYPO3.Neos:Content']
@@ -25,10 +33,25 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          format: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat']
-          table: ['table']
-          list: ['ol', 'ul']
-          link: ['a']
+          'format':
+            'b': TRUE
+            'i': TRUE
+            'u': TRUE
+            'sub': TRUE
+            'sup': TRUE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'pre': TRUE
+            'removeFormat': TRUE
+          'table':
+            'table': TRUE
+          'list':
+            'ol': TRUE
+            'ul': TRUE
+          'link':
+            'a': TRUE
 
 'TYPO3.Neos.NodeTypes:Image':
   superTypes: ['TYPO3.Neos:Content']
