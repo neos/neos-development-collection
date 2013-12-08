@@ -7035,6 +7035,9 @@
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active a {
   color: white;
 }
+.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-dirty {
+  border-left: 3px solid #ff8700;
+}
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-empty,
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-vline,
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-connector,
@@ -7227,6 +7230,66 @@
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 228px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: -3px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 9px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 21px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 33px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 45px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 57px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 69px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 81px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 93px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 105px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 117px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 129px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 141px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 153px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 165px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 177px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 189px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 201px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 213px;
+}
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+  padding-left: 225px;
 }
 .neos #neos-navigate-panel .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node {
   cursor: move;
