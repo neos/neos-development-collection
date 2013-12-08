@@ -4,7 +4,7 @@
     "description": "A simple generator for sites.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
+        "typo3/neos": "*",
         "typo3/kickstart": "*"
     },
     "autoload": {
