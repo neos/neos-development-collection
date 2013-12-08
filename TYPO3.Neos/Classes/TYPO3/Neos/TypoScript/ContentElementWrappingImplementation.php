@@ -54,9 +54,9 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 		if (!$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
 			return $content;
 		}
-		$currentContext = $this->tsRuntime->getCurrentContext();
+
 		/** @var $node NodeInterface */
-		$node = $currentContext['node'];
+		$node = $this->tsValue('node');
 		/** @var $contentContext ContentContext */
 		$contentContext = $node->getContext();
 		if ($contentContext->getWorkspaceName() === 'live') {

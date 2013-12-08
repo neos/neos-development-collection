@@ -52,7 +52,7 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 	 *
 	 * @return string
 	 */
-	protected function getNodePath() {
+	public function getNodePath() {
 		return $this->tsValue('nodePath');
 	}
 
@@ -107,53 +107,12 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 	 * workspace, render a button to create new content.
 	 *
 	 * @return string
-	 * @throws \TYPO3\Neos\Exception
 	 */
 	public function evaluate() {
-		$node = $this->getCurrentContextNode();
-		$output = parent::evaluate();
-
-		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder($this->getTagName());
-		$tagBuilder->forceClosingTag(TRUE);
-		$tagBuilder->setContent($output);
-
-		$className = 'neos-contentcollection';
-		$tagBuilder->addAttribute('class', $className);
-
-		$attributes = $this->tsValue('attributes');
-		if (is_array($attributes)) {
-			foreach ($attributes as $attributeName => $attributeValue) {
-				if (is_array($attributeValue)) {
-					$attributeValue = implode(' ', $attributeValue);
-				}
-				if ($attributeName === 'class') {
-					$attributeValue = $tagBuilder->getAttribute('class') . ' ' . $attributeValue;
-				}
-				$tagBuilder->addAttribute($attributeName, $attributeValue);
-			}
-		}
-
-		if ($node->getContext()->getWorkspaceName() === 'live' || $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') === FALSE) {
-			return $tagBuilder->render();
-		}
-
-		$contentCollectionNode = $this->getContentCollectionNode();
-
-		if ($contentCollectionNode === NULL) {
-				// It might still happen that there is no content collection node on the page,
-				// f.e. when we are in live workspace. In this case, we just silently
-				// return what we have so far.
-			return $tagBuilder->render();
-		}
-
-		$tagBuilder->addAttribute('about', $contentCollectionNode->getContextPath());
-		$tagBuilder->addAttribute('typeof', 'typo3:TYPO3.Neos:ContentCollection');
-		$tagBuilder->addAttribute('rel', 'typo3:content-collection');
-
-		$tagBuilder->addAttribute('data-neos-_typoscript-path', $this->path);
-		$tagBuilder->addAttribute('data-neos-__workspacename', $contentCollectionNode->getWorkspace()->getName());
-
-		return $tagBuilder->render();
+		$output = '<' . $this->getTagName() . $this->tsValue('attributes') . '>';
+		$output .= parent::evaluate();
+		$output .= '</' . $this->getTagName() . '>';
+		return $output;
 	}
 
 	/**
@@ -179,7 +138,7 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 		$contextProperties['removedContentShown'] = TRUE;
 
 		$removedNodesContext = $this->contextFactory->create($contextProperties);
-
+		// FIXME: Cleanly capsulate this and not use nodeDataRepository. childNodes() won't help as we wan't ONLY removed nodes here.
 		$nodeDataElements = $this->nodeDataRepository->findByParentAndNodeType($contentCollectionNode->getPath(), '', $contentCollectionNode->getContext()->getWorkspace(), NULL, NULL, TRUE);
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
