@@ -104,6 +104,10 @@ ul.neos-dynatree-container {
 			}
 		}
 
+		&.neos-dynatree-dirty {
+			border-left: 3px solid $orange;
+		}
+
 		.neos-dynatree-empty,
 		.neos-dynatree-vline,
 		.neos-dynatree-connector,
@@ -270,6 +274,17 @@ ul.neos-dynatree-container {
 	@while $level < $levels {
 		#{$selector} .neos-dynatree-node {
 			padding-left: ($defaultMargin - $tightMargin) * $level;
+		}
+		$selector: #{nest(#{$selector}, 'ul')};
+		$level: $level + 1;
+	}
+
+	$selector: 'ul';
+	$level: 0;
+	$levels: 20;
+	@while $level < $levels {
+		#{$selector} .neos-dynatree-node.neos-dynatree-dirty {
+			padding-left: ($defaultMargin - $tightMargin) * $level - 3;
 		}
 		$selector: #{nest(#{$selector}, 'ul')};
 		$level: $level + 1;

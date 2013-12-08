@@ -12,6 +12,7 @@ define(
 		'Shared/Notification',
 		'vie/instance',
 		'../Model/NodeSelection',
+		'../Model/PublishableNodes',
 		'./NavigatePanelController',
 		'../Inspector/InspectorController',
 		'text!./NodeTree.html'
@@ -25,6 +26,7 @@ define(
 		Notification,
 		vieInstance,
 		NodeSelection,
+		PublishableNodes,
 		NavigatePanelController,
 		InspectorController,
 		template
@@ -39,11 +41,25 @@ define(
 
 			controller: NavigatePanelController,
 
+			publishableNodes: PublishableNodes,
+
 			editNodeTitleMode: false,
 			searchTerm: '',
 			nodeType: '',
 			filtering: false,
 			latestFilterQuery: null,
+
+			markDirtyPages: function() {
+				var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
+					workspaceSuffix = siteRoot.substr(siteRoot.lastIndexOf('@')),
+					that = this;
+
+				$('.neos-dynatree-dirty').removeClass('neos-dynatree-dirty');
+				PublishableNodes.get('workspaceWidePublishableEntitySubjects').forEach(function(node) {
+					var treeNode = that.$nodeTree.dynatree("getTree").getNodeByKey(node.pageNodePath + workspaceSuffix);
+					$(treeNode.span).addClass('neos-dynatree-dirty');
+				});
+			}.observes('publishableNodes.numberOfWorkspaceWidePublishableNodes'),
 
 			searchTermIsEmpty: function() {
 				return this.get('searchTerm') === '';
@@ -135,6 +151,7 @@ define(
 							isLazy: true,
 							select: false,
 							active: false,
+							changed: false,
 							unselectable: false,
 							nodeType: nodeType,
 							addClass: 'neos-matched',
@@ -181,6 +198,13 @@ define(
 							case 69: // [e]
 								this.options.parent.editNode(node);
 								return false;
+						}
+					},
+
+					onRender: function(node, nodeSpan) {
+						var nodePath = node.data.key.substr(0, node.data.key.lastIndexOf('@'));
+						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('pageNodePath', nodePath)) {
+							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
 					}
 				}));
