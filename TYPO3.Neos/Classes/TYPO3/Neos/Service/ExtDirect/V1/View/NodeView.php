@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -52,6 +53,26 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			)
 		);
 		$this->assign('value', array('data' => $node, 'success' => TRUE));
+	}
+
+	/**
+	 * @param array $nodes
+	 * @param array $propertyNames
+	 */
+	public function assignNodes(array $nodes) {
+		$data = array();
+		foreach ($nodes as $node) {
+			if ($node->getPath() !== '/') {
+				$q = new FlowQuery(array($node));
+				$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+				$data[] = array(
+					'nodePath' => $node->getPath(),
+					'pageNodePath' => $closestDocumentNode->getPath(),
+				);
+			}
+		}
+
+		$this->assign('value', array('data' => $data, 'success' => TRUE));
 	}
 
 	/**

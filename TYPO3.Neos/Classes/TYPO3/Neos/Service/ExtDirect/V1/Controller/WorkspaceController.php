@@ -95,6 +95,19 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Get every unpublished node in the workspace with the given workspace name
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function getWorkspaceWideUnpublishedNodesAction($workspace) {
+		$nodes = $this->publishingService->getUnpublishedNodes($workspace);
+
+		$this->view->assignNodes($nodes);
+	}
+
+	/**
 	 * A preliminary error action for handling validation errors
 	 * by assigning them to the ExtDirect View that takes care of
 	 * converting them.

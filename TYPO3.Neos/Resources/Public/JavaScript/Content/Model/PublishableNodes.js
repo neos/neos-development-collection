@@ -9,16 +9,20 @@ define(
 	'Library/jquery-with-dependencies',
 	'vie/instance',
 	'vie/entity',
+	'Shared/EventDispatcher',
 	'Shared/Notification'
 ], function(
 	Ember,
 	$,
 	vie,
 	EntityWrapper,
+	EventDispatcher,
 	Notification
 ) {
 	return Ember.Object.extend({
 		publishableEntitySubjects: [],
+
+		workspaceWidePublishableEntitySubjects: [],
 
 		noChanges: function() {
 			return this.get('publishableEntitySubjects').length === 0;
@@ -27,6 +31,14 @@ define(
 		numberOfPublishableNodes: function() {
 			return this.get('publishableEntitySubjects').length;
 		}.property('publishableEntitySubjects.length'),
+
+		noWorkspaceWideChanges: function() {
+			return this.get('workspaceWidePublishableEntitySubjects').length === 0;
+		}.property('workspaceWidePublishableEntitySubjects.length'),
+
+		numberOfWorkspaceWidePublishableNodes: function() {
+			return this.get('workspaceWidePublishableEntitySubject').length;
+		}.property('workspaceWidePublishableEntitySubjects.length'),
 
 		initialize: function() {
 			vie.entities.on('change', this._updatePublishableEntities, this);
@@ -42,6 +54,7 @@ define(
 			}, this);
 
 			this.set('publishableEntitySubjects', publishableEntitySubjects);
+			this.getWorkspaceWideUnpublishedNodes();
 		},
 
 		/**
@@ -88,6 +101,20 @@ define(
 					Notification.error('Unexpected error while publishing all changes: ' + JSON.stringify(result));
 				}
 			});
+		},
+
+		/**
+		 * Get all unpublished nodes inside the current workspace.
+		 */
+		getWorkspaceWideUnpublishedNodes: function() {
+			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
+				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
+				that = this;
+			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController !== 'undefined') {
+				TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.getWorkspaceWideUnpublishedNodes(workspaceName, function(result) {
+					that.set('workspaceWidePublishableEntitySubjects', result.data);
+				});
+			}
 		}
 	}).create();
 });

@@ -104,10 +104,14 @@ define(
 				confirmationDialog: PublishAllDialog.create(),
 
 				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
-				_noChangesBinding: 'controller.noChanges',
+				_noChangesBinding: 'controller.noWorkspaceWideChanges',
 
 				click: function() {
 					this.confirmationDialog.createElement();
+				},
+
+				didInsertElement: function() {
+					PublishableNodes.getWorkspaceWideUnpublishedNodes();
 				},
 
 				disabled: function() {
