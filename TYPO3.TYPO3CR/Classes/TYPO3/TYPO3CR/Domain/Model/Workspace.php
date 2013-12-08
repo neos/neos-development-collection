@@ -181,16 +181,17 @@ class Workspace {
 		}
 		$targetNode = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
 		if ($targetNode !== NULL) {
-				// We have to set the workspace to NULL to resolve duplicate key issues when updating the published node
-			$targetNode->setWorkspace(NULL);
-
-			$this->nodeDataRepository->remove($targetNode);
-		}
-		if ($node->isRemoved() === FALSE) {
-			$node->setWorkspace($targetWorkspace);
-		} else {
+			if ($node->isRemoved() === TRUE) {
+				$this->nodeDataRepository->remove($targetNode);
+			} else {
+				$targetNode->similarize($node->getNodeData());
+				$targetNode->setPath($node->getPath());
+			}
 			$this->nodeDataRepository->remove($node);
+		} else {
+			$node->setWorkspace($targetWorkspace);
 		}
+
 		$this->emitAfterNodePublishing($node, $targetWorkspace);
 	}
 

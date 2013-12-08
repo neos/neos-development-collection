@@ -66,17 +66,20 @@ class WorkspaceTest extends UnitTestCase {
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
 		$mockNode1->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 
+		$nodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 		$mockNode2->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/sites/foo/homepage'));
 		$mockNode2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
 		$mockNode2->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
-		$mockNode2->expects($this->once())->method('setWorkspace')->with($liveWorkspace);
+		$existingNodeData->expects($this->once())->method('similarize')->with($nodeData2);
+		$existingNodeData->expects($this->once())->method('setPath')->with('/sites/foo/homepage');
 		$mockNode2->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
+		$mockNode2->expects($this->any())->method('getNodeData')->will($this->returnValue($nodeData2));
 		$nodesInCurrentWorkspace = array($mockNode1, $mockNode2);
 
 		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid', $liveWorkspace)->will($this->returnValue($existingNodeData));
-		$mockNodeDataRepository->expects($this->once())->method('remove')->with($existingNodeData);
+		$mockNodeDataRepository->expects($this->once())->method('remove');
 
 		$currentWorkspace->publish($liveWorkspace);
 	}
