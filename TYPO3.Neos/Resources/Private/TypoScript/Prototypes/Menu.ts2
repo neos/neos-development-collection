@@ -6,5 +6,15 @@ prototype(TYPO3.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 	items = ${this.items}
 
+	active.attributes = TYPO3.TypoScript:Attributes {
+		class = 'active'
+	}
+	current.attributes = TYPO3.TypoScript:Attributes {
+		class = 'current'
+	}
+	normal.attributes = TYPO3.TypoScript:Attributes {
+		class = 'normal'
+	}
+
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }
