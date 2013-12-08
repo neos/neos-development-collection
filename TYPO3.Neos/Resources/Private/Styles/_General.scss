@@ -71,3 +71,7 @@ a {
 &.neos-full-screen .neos-pageloader-wrapper .neos-pageloader {
 	margin-top: $unit / 2;
 }
+
+iframe {
+	border: 0;
+}
