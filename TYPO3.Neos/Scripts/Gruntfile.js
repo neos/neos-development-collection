@@ -212,20 +212,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		hallo: {
-			src: [
-				baseUri + 'hallo/hallo.js'
-			],
-			dest: baseUri + 'hallo.js',
-			options: {
-				banner: 'define(["Library/jquery-with-dependencies"], function(jQuery) {' +
-						'  var root = {jQuery: jQuery};' +
-						'  (function() {',
-				footer: '  }).apply(root);' +
-						'});'
-			}
-		},
-
 		plupload: {
 			src: [
 				baseUri + 'plupload/js/plupload.js',
