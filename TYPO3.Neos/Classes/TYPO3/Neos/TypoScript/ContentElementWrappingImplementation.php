@@ -38,19 +38,6 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 	/**
 	 * The string to be processed
 	 *
-	 * @var string
-	 */
-	protected $value;
-
-	/**
-	 * @param string $value
-	 * @return void
-	 */
-	public function setValue($value) {
-		$this->value = $value;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getValue() {

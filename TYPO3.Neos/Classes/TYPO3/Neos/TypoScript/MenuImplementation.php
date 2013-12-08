@@ -12,14 +12,15 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\Exception as TypoScriptException;
+use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A TypoScript Menu object
- *
- * @Flow\Scope("prototype")
  */
-class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation {
+class MenuImplementation extends TemplateImplementation {
 
 	/**
 	 * Hard limit for the maximum number of levels supported by this menu
@@ -31,24 +32,16 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	const STATE_ACTIVE = 'active';
 
 	/**
-	 * @var string
+	 * An internal cache for the built menu items array.
+	 *
+	 * @var array
 	 */
-	protected $templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Menu.html';
+	protected $items;
 
 	/**
-	 * The first navigation level which should be rendered.
-	 *
-	 * 1 = first level of the site
-	 * 2 = second level of the site
-	 * ...
-	 * 0  = same level as the current page
-	 * -1 = one level above the current page
-	 * -2 = two levels above the current page
-	 * ...
-	 *
-	 * @var integer
+	 * @var NodeInterface
 	 */
-	protected $entryLevel = 1;
+	protected $currentNode;
 
 	/**
 	 * The last navigation level which should be rendered.
@@ -61,45 +54,6 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * -2 = two levels above the current page
 	 * ...
 	 *
-	 * @var integer
-	 */
-	protected $lastLevel;
-
-	/**
-	 * Maximum number of levels which should be rendered in this menu.
-	 *
-	 * @var integer
-	 */
-	protected $maximumLevels = 1;
-
-	/**
-	 * An internal cache for the built menu items array.
-	 *
-	 * @var array
-	 */
-	protected $items;
-
-	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 */
-	protected $startingPoint;
-
-	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
-	 */
-	protected $currentNode;
-
-	/**
-	 * @param integer $entryLevel
-	 * @return void
-	 */
-	public function setEntryLevel($entryLevel) {
-		$this->entryLevel = $entryLevel;
-	}
-
-	/**
-	 * Return evaluated entryLevel value.
-	 *
 	 * @return integer
 	 */
 	public function getEntryLevel() {
@@ -107,14 +61,8 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
-	 * @param integer $maximumLevels
-	 * @return void
-	 */
-	public function setMaximumLevels($maximumLevels) {
-		$this->maximumLevels = $maximumLevels;
-	}
-
-	/**
+	 * Maximum number of levels which should be rendered in this menu.
+	 *
 	 * @return integer
 	 */
 	public function getMaximumLevels() {
@@ -126,35 +74,20 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
-	 * @param integer $lastLevel
-	 * @return void
-	 */
-	public function setLastLevel($lastLevel) {
-		if ($lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
-			$lastLevel = self::MAXIMUM_LEVELS_LIMIT;
-		}
-		$this->lastLevel = $lastLevel;
-	}
-
-	/**
 	 * Return evaluated lastLevel value.
 	 *
 	 * @return integer
 	 */
 	public function getLastLevel() {
-		return $this->tsValue('lastLevel');
+		$lastLevel = $this->tsValue('lastLevel');
+		if ($lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
+			$lastLevel = self::MAXIMUM_LEVELS_LIMIT;
+		}
+		return $lastLevel;
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startingPoint
-	 * @return void
-	 */
-	public function setStartingPoint($startingPoint) {
-		$this->startingPoint = $startingPoint;
-	}
-
-	/**
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 */
 	public function getStartingPoint() {
 		return $this->tsValue('startingPoint');
@@ -176,18 +109,19 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * Builds the array of menu items containing those items which match the
 	 * configuration set for this Menu object.
 	 *
-	 * @throws \TYPO3\Neos\Domain\Exception
+	 * @throws TypoScriptException
 	 * @return array An array of menu items and further information
 	 */
 	protected function buildItems() {
 		$currentContext = $this->tsRuntime->getCurrentContext();
-		if (!isset($currentContext['node']) && !$this->getStartingPoint()) {
-			throw new \TYPO3\Neos\Domain\Exception('You must either set a "startingPoint" for the menu or "node" must be set in the TypoScript context.', 1369596980);
-		} else {
-			$this->currentNode = $currentContext['node'];
-			$contentContext = $currentContext['node']->getContext();
+		$startingPoint = $this->getStartingPoint();
+		if (!isset($currentContext['node']) && !$startingPoint) {
+			throw new TypoScriptException('You must either set a "startingPoint" for the menu or "node" must be set in the TypoScript context.', 1369596980);
 		}
-		$startingPoint = $this->getStartingPoint() ?: $currentContext['node'];
+		$this->currentNode = $currentContext['node'];
+		/** @var $contentContext ContentContext */
+		$contentContext = $this->currentNode->getContext();
+		$startingPoint = $startingPoint ?: $currentContext['node'];
 
 		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $contentContext->getCurrentSiteNode(), $startingPoint);
 		if ($entryParentNode === NULL) {
@@ -209,6 +143,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 */
 	private function buildRecursiveItemsArray(NodeInterface $entryParentNode, NodeInterface $lastParentNode = NULL, $currentLevel = 1) {
 		$items = array();
+		/** @var $currentNode NodeInterface */
 		foreach ($entryParentNode->getChildNodes('TYPO3.Neos:Document') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
 				continue;

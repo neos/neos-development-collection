@@ -27,12 +27,20 @@ class DocumentMetadataImplementation extends AbstractTypoScriptObject {
 	 */
 	protected $accessDecisionManager;
 
-
 	/**
 	 * @Flow\Inject
 	 * @var ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;
+
+	/**
+	 * The string to be processed
+	 *
+	 * @return string
+	 */
+	public function getValue() {
+		return $this->tsValue('value');
+	}
 
 	/**
 	 * @return string

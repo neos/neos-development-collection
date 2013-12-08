@@ -14,6 +14,8 @@ namespace TYPO3\Neos\TypoScript;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\Exception\RequiredArgumentMissingException;
+use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Neos\Domain\Model\PluginViewDefinition;
 use TYPO3\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -39,9 +41,10 @@ class PluginViewImplementation extends PluginImplementation {
 	 * Build the proper pluginRequest to render the PluginView
 	 * of some configured Master Plugin
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @return ActionRequest
 	 */
 	protected function buildPluginRequest() {
+		/** @var $parentRequest ActionRequest */
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
 		$pluginRequest = new ActionRequest($parentRequest);
 
@@ -90,12 +93,13 @@ class PluginViewImplementation extends PluginImplementation {
 	 * Returns the rendered content of this plugin
 	 *
 	 * @return string The rendered content as a string
-	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws StopActionException
 	 */
 	public function evaluate() {
 
 		$currentContext = $this->tsRuntime->getCurrentContext();
 		$this->node = $currentContext['node'];
+		/** @var $parentResponse Response */
 		$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
 		$pluginResponse = new Response($parentResponse);
 
@@ -112,9 +116,9 @@ class PluginViewImplementation extends PluginImplementation {
 			} else {
 				return $pluginResponse->getContent();
 			}
-		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
+		} catch (StopActionException $stopActionException) {
 			throw $stopActionException;
-		} catch (\TYPO3\Flow\Mvc\Exception\RequiredArgumentMissingException $exception) {
+		} catch (RequiredArgumentMissingException $exception) {
 			$content = $exception->getMessage();
 			return $this->contentElementWrappingService->wrapContentObject($currentContext['node'], $this->path, $content);
 		} catch (\Exception $exception) {

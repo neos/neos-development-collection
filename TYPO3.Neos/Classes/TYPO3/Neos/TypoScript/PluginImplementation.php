@@ -45,31 +45,6 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	protected $contentElementWrappingService;
 
 	/**
-	 * @var string
-	 */
-	protected $package = NULL;
-
-	/**
-	 * @var string
-	 */
-	protected $subpackage = NULL;
-
-	/**
-	 * @var string
-	 */
-	protected $controller = NULL;
-
-	/**
-	 * @var string
-	 */
-	protected $action = NULL;
-
-	/**
-	 * @var string
-	 */
-	protected $argumentNamespace = NULL;
-
-	/**
 	 * @var NodeInterface
 	 */
 	protected $node;
@@ -86,26 +61,10 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	protected $systemLogger;
 
 	/**
-	 * @param string $package
-	 * @return void
-	 */
-	public function setPackage($package) {
-		$this->package = $package;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getPackage() {
 		return $this->tsValue('package');
-	}
-
-	/**
-	 * @param string $subpackage
-	 * @return void
-	 */
-	public function setSubpackage($subpackage) {
-		$this->subpackage = $subpackage;
 	}
 
 	/**
@@ -116,14 +75,6 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	}
 
 	/**
-	 * @param string $controller
-	 * @return void
-	 */
-	public function setController($controller) {
-		$this->controller = $controller;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getController() {
@@ -131,26 +82,10 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	}
 
 	/**
-	 * @param string $action
-	 * @return void
-	 */
-	public function setAction($action) {
-		$this->action = $action;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getAction() {
 		return $this->tsValue('action');
-	}
-
-	/**
-	 * @param string $argumentNamespace
-	 * @return void
-	 */
-	public function setArgumentNamespace($argumentNamespace) {
-		$this->argumentNamespace = $argumentNamespace;
 	}
 
 	/**
@@ -163,9 +98,10 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	/**
 	 * Build the pluginRequest object
 	 *
-	 * @return \TYPO3\Flow\Mvc\ActionRequest
+	 * @return ActionRequest
 	 */
 	protected function buildPluginRequest() {
+		/** @var $parentRequest ActionRequest */
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
 		$pluginRequest = new ActionRequest($parentRequest);
 		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
@@ -209,13 +145,13 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	 * Returns the rendered content of this plugin
 	 *
 	 * @return string The rendered content as a string
-	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 */
 	public function evaluate() {
 		try {
 			$currentContext = $this->tsRuntime->getCurrentContext();
 			$this->node = $currentContext['node'];
 			$this->documentNode = $currentContext['documentNode'];
+			/** @var $parentResponse Response */
 			$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
 			$pluginResponse = new Response($parentResponse);
 
@@ -264,7 +200,7 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	/**
 	 * Pass the arguments which were addressed to the plugin to its own request
 	 *
-	 * @param \TYPO3\Flow\Mvc\ActionRequest $pluginRequest The plugin request
+	 * @param ActionRequest $pluginRequest The plugin request
 	 * @return void
 	 */
 	protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest) {
