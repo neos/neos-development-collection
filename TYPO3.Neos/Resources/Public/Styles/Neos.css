@@ -1,5 +1,4 @@
 @charset "UTF-8";
-/* Variables */
 /* Color palette */
 /* Sizes & margins */
 /* Components */
@@ -920,7 +919,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -4862,16 +4861,24 @@
   text-decoration: underline;
 }
 .neos [class^="icon-"], .neos [class*=" icon-"] {
+  font-family: FontAwesome;
   display: inline-block;
   width: 14px;
   height: 14px;
-  *margin-right: .3em;
   line-height: 14px;
-  -webkit-font-smoothing: antialiased;
   font-size: 14px;
   vertical-align: text-top;
+  *margin-right: .3em;
   margin: 1px 0 0 0;
   background-image: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -ms-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+}
+.neos [class^="icon-"]:before, .neos [class^="icon-"]:after, .neos [class*=" icon-"]:before, .neos [class*=" icon-"]:after {
+  font-family: FontAwesome;
 }
 .neos .neos-clear {
   clear: both;
