@@ -33,7 +33,9 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 * @return array
 	 */
 	public function generateSitePackage($packageKey, $siteName) {
-		$this->packageManager->createPackage($packageKey, NULL, NULL, 'typo3-flow-site');
+		$packageMetaData = new \TYPO3\Flow\Package\MetaData($packageKey);
+		$packageMetaData->addConstraint(new \TYPO3\Flow\Package\MetaData\PackageConstraint(\TYPO3\Flow\Package\MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, 'TYPO3.Neos'));
+		$this->packageManager->createPackage($packageKey, $packageMetaData, NULL, 'typo3-flow-site');
 		$this->generateSitesXml($packageKey, $siteName);
 		$this->generateSitesTypoScript($packageKey, $siteName);
 		$this->generateSitesTemplate($packageKey, $siteName);
