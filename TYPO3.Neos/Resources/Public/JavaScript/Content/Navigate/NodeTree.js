@@ -246,14 +246,14 @@ define(
 			},
 
 			afterDeleteNode: function(node) {
-				var isCurrentNode = node.data.key === NodeSelection.get('selectedNode').$element.attr('about');
+				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.getParent().data.href);
 				}
 			},
 
 			afterMove: function(node) {
-				var isCurrentNode = node.data.key === NodeSelection.get('selectedNode').$element.attr('about');
+				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.data.href);
 				}
