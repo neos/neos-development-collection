@@ -163,11 +163,16 @@ class SiteImportService {
 			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
 			$rootNode = $contentContext->getRootNode();
-
-			if ($rootNode->getNode('/sites') === NULL) {
-				$rootNode->createSingleNode('sites');
+			$sitesNode = $rootNode->getNode('/sites');
+			if ($sitesNode === NULL) {
+				$sitesNode = $rootNode->createSingleNode('sites');
 			}
-			$this->importNode($siteXml, $rootNode->getNode('/sites'), 'TYPO3.Neos:Shortcut');
+
+			if ($siteXml['type'] === NULL) {
+				$this->upgradeLegacySiteXml($siteXml, $site);
+			}
+
+			$this->importNode($siteXml, $sitesNode);
 		}
 	}
 
@@ -222,12 +227,11 @@ class SiteImportService {
 	 *
 	 * @param \SimpleXMLElement $nodeXml
 	 * @param NodeInterface $parentNode
-	 * @param string $defaultNodeTypeName the node type to use when no type is specified in the $nodeXml
 	 * @return void
 	 */
-	protected function importNode(\SimpleXMLElement $nodeXml, NodeInterface $parentNode, $defaultNodeTypeName = NULL) {
+	protected function importNode(\SimpleXMLElement $nodeXml, NodeInterface $parentNode) {
 		$nodeName = (string)$nodeXml['nodeName'];
-		$nodeType = $this->parseNodeType($nodeXml, $defaultNodeTypeName);
+		$nodeType = $this->parseNodeType($nodeXml);
 		$node = $parentNode->getNode($nodeName);
 
 		if ($node === NULL) {
@@ -252,14 +256,10 @@ class SiteImportService {
 	 * Detects and retrieves the NodeType of the given $nodeXml
 	 *
 	 * @param \SimpleXMLElement $nodeXml
-	 * @param string $defaultNodeTypeName the node type to use when no type is specified in the $nodeXml
 	 * @return NodeType
 	 */
-	protected function parseNodeType(\SimpleXMLElement $nodeXml, $defaultNodeTypeName) {
+	protected function parseNodeType(\SimpleXMLElement $nodeXml) {
 		$nodeTypeName = (string)$nodeXml['type'];
-		if ($nodeTypeName === '') {
-			$nodeTypeName = $defaultNodeTypeName;
-		}
 		if ($this->nodeTypeManager->hasNodeType($nodeTypeName)) {
 			return $this->nodeTypeManager->getNodeType($nodeTypeName);
 		}
@@ -410,5 +410,23 @@ class SiteImportService {
 		$this->imageRepository->add($image);
 
 		return $this->objectManager->get($className, $image, $processingInstructions);
+	}
+
+	/**
+	 * If the imported site is of a legacy schema where the near-root <site> element wasn't
+	 * an actual node, the respective site xml is "upgraded" to become of type Shortcut,
+	 * get a `title` property being the site's name, and being set to hidden in index.
+	 *
+	 * @param \SimpleXMLElement $siteXml
+	 * @param \TYPO3\Neos\Domain\Model\Site $site
+	 * @return void
+	 */
+	protected function upgradeLegacySiteXml(\SimpleXMLElement $siteXml, Site $site) {
+		$siteXml->addAttribute('type', 'TYPO3.Neos:Shortcut');
+		$siteXml->addAttribute('hiddenInIndex', 'true');
+
+		if (property_exists($siteXml->properties, 'title') === FALSE) {
+			$siteXml->properties->addChild('title', $site->getName());
+		}
 	}
 }
