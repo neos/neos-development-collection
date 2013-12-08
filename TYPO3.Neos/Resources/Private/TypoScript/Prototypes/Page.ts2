@@ -44,6 +44,11 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 			}
 		}
 
+		titleTag = TYPO3.TypoScript:Tag {
+			tagName = 'title'
+			content = ${q(node).property('title')}
+		}
+
 		neosBackendHeader = TYPO3.TypoScript:Template {
 			@position = 'end 10000'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
