@@ -4,8 +4,7 @@
     "description": "Node type configuration for TYPO3 Neos",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
-        "typo3/typoscript": "*"
+        "typo3/neos": "*"
     },
     "autoload": {
         "psr-0": {
