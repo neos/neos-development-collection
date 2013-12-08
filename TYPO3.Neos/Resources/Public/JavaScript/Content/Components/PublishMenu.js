@@ -12,7 +12,6 @@ define(
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
 			classNames: ['neos-button-group'],
-			classNameBindings: ['_hasChanges:neos-publish-menu-active'],
 			autoPublish: function(key, value) {
 				if (arguments.length > 1) {
 					LocalStorage.setItem('isAutoPublishEnabled', value);
@@ -22,11 +21,11 @@ define(
 
 			controller: PublishableNodes,
 
-			_hasChanges: function() {
-				return !this.get('_noChanges') && !this.get('autoPublish');
-			}.property('_noChanges', 'autoPublish'),
+			_hasWorkspaceWideChanges: function() {
+				return !this.get('_noWorkspaceWideChanges');
+			}.property('_noWorkspaceWideChanges'),
 
-			_noChangesBinding: 'controller.noChanges',
+			_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 
 			didInsertElement: function() {
 				this.$().find('.neos-dropdown-toggle').dropdown();
@@ -34,7 +33,7 @@ define(
 
 			PublishButton: Button.extend({
 				autoPublish: false,
-				classNameBindings: ['connectionStatusClass'],
+				classNameBindings: ['connectionStatusClass', '_hasChanges:neos-publish-menu-active'],
 				classNames: ['neos-publish-button'],
 				controller: PublishableNodes,
 
@@ -84,6 +83,10 @@ define(
 				disabled: function() {
 					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning');
 				}.property('_noChanges', 'autoPublish', '_saveRunning'),
+
+				_hasChanges: function() {
+					return !this.get('_noChanges') && !this.get('autoPublish');
+				}.property('_noChanges', 'autoPublish'),
 
 				connectionStatusClass: function() {
 					var className = 'neos-connection-status-';

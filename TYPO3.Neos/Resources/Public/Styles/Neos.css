@@ -30,7 +30,7 @@
   src: url('../Fonts/NotoSans/NotoSans-Italic.ttf') format('truetype');
 }
 
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -919,7 +919,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -6207,8 +6207,8 @@
   -webkit-font-smoothing: antialiased;
   float: right;
 }
-.neos #neos-publish-menu.neos-button-group.neos-publish-menu-active .neos-publish-button,
-.neos #neos-publish-menu.neos-button-group.neos-publish-menu-active .neos-dropdown-toggle {
+.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
   background-color: #ff8700;
   cursor: pointer;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);

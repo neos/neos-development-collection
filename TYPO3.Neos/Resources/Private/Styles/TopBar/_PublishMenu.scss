@@ -2,14 +2,12 @@
 	@include font;
 	float: right;
 
-	&.neos-publish-menu-active {
-		.neos-publish-button,
-		.neos-dropdown-toggle {
-			background-color: $orange;
-			cursor: pointer;
-			@include opacity(1);
-			@include box-shadow(none);
-		}
+	.neos-publish-button.neos-publish-menu-active,
+	.neos-dropdown-toggle.neos-publish-menu-active {
+		background-color: $orange;
+		cursor: pointer;
+		@include opacity(1);
+		@include box-shadow(none);
 	}
 
 	&.neos-open {
