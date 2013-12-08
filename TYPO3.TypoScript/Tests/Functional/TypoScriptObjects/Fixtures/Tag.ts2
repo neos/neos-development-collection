@@ -1,9 +1,8 @@
-prototype(TYPO3.TypoScript:RawArray) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-}
+prototype(TYPO3.TypoScript:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(TYPO3.TypoScript:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
 prototype(TYPO3.TypoScript:Tag) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
-	attributes = RawArray
+	attributes = Attributes
 }
 
 tag.plainAttributes = Tag {

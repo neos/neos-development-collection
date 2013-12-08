@@ -63,17 +63,7 @@ class TagImplementation extends AbstractTypoScriptObject {
 		if (!$omitClosingTag && !$selfClosingTag) {
 			$content = $this->tsValue('content');
 		}
-		$attributes = $this->tsValue('attributes');
-		$joinedAttributes = '';
-		if (is_array($attributes)) {
-			foreach ($attributes as $attributeName => $attributeValue) {
-				if (is_array($attributeValue)) {
-					$attributeValue = implode(' ', $attributeValue);
-				}
-				$joinedAttributes .= ' ' . $attributeName . '="' . htmlspecialchars($attributeValue, ENT_QUOTES) . '"';
-			}
-		}
-		return '<' . $tagName . $joinedAttributes . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+		return '<' . $tagName . $this->tsValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
 	}
 
 	/**

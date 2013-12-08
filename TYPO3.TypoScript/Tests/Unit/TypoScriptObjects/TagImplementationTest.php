@@ -10,22 +10,36 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\TypoScriptObjects\TagImplementation;
 
 /**
  * Testcase for the TypoScript Tag object
  */
-class TagImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class TagImplementationTest extends UnitTestCase {
+
+	/**
+	 * @var Runtime
+	 */
+	protected $mockTsRuntime;
+
+	public function setUp() {
+		parent::setUp();
+		$this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+	}
 
 	public function tagExamples() {
 		return array(
 			'default properties' => array(array(), NULL, NULL, '<div></div>'),
 			'omit closing tag' => array(array('omitClosingTag' => TRUE), NULL, NULL, '<div>'),
 			'force self closing tag' => array(array('selfClosingTag' => TRUE), NULL, NULL, '<div />'),
-			'auto self closing tag' => array(array('tagName' => 'input'), array('type' => 'text'), NULL, '<input type="text" />'),
+			'auto self closing tag' => array(array('tagName' => 'input'), ' type="text"', NULL, '<input type="text" />'),
 			'tag name with content' => array(array('tagName' => 'h1'), NULL, 'Foo', '<h1>Foo</h1>'),
-			'tag with attribute' => array(array('tagName' => 'link'), array('type' => 'text/css', 'rel' => 'stylesheet'), NULL, '<link type="text/css" rel="stylesheet" />'),
-			'tag with array of classes' => array(array('tagName' => 'div'), array('class' => array('icon', 'icon-neos')), NULL, '<div class="icon icon-neos"></div>')
+			'tag with attribute' => array(array('tagName' => 'link'), ' type="text/css" rel="stylesheet"', NULL, '<link type="text/css" rel="stylesheet" />'),
+			'tag with array of classes' => array(array('tagName' => 'div'), ' class="icon icon-neos"', NULL, '<div class="icon icon-neos"></div>')
 		);
 	}
 
@@ -33,10 +47,9 @@ class TagImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider tagExamples
 	 */
-	public function evaluateWithEmptyArrayRendersNull($properties, $attributes, $content, $expectedOutput) {
+	public function evaluateTests($properties, $attributes, $content, $expectedOutput) {
 		$path = 'tag/test';
-		$mockTsRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', FALSE);
-		$mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($evaluatePath, $that) use ($path, $attributes, $content) {
+		$this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($evaluatePath, $that) use ($path, $attributes, $content) {
 			$relativePath = str_replace($path . '/', '', $evaluatePath);
 			switch ($relativePath) {
 				case 'attributes':
@@ -48,7 +61,7 @@ class TagImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		}));
 
 		$typoScriptObjectName = 'TYPO3.TypoScript:Tag';
-		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\TagImplementation($mockTsRuntime, $path, $typoScriptObjectName);
+		$renderer = new TagImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
 
 		foreach ($properties as $name => $value) {
 			ObjectAccess::setProperty($renderer, $name, $value);
