@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
  * The TypoScript Service
@@ -125,13 +126,12 @@ class TypoScriptService {
 	 * @return string
 	 */
 	protected function generateNodeTypeDefinitions() {
-		$nodeTypesConfiguration = $this->nodeTypeManager->getFullConfiguration();
 		$code = '';
-		foreach ($nodeTypesConfiguration as $nodeTypeName => $nodeTypeConfiguration) {
-			if (strpos($nodeTypeName, ':') === FALSE) {
-				continue;
+		foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
+			/** @var NodeType $nodeType */
+			if(!$nodeType->isAbstract()) {
+				$code .= $this->generateTypoScriptForNodeType($nodeType);
 			}
-			$code .= $this->generateTypoScriptForNodeType($nodeTypeName, $nodeTypeConfiguration);
 		}
 		return $code;
 	}
@@ -143,23 +143,34 @@ class TypoScriptService {
 	 * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
 	 * node properties to the template TypoScript object.
 	 *
-	 * @param string $nodeTypeName
-	 * @param array $nodeTypeConfiguration
+	 * @param NodeType $nodeType
 	 * @return string
 	 */
-	protected function generateTypoScriptForNodeType($nodeTypeName, array $nodeTypeConfiguration) {
-		list($packageKey, $relativeName) = explode(':', $nodeTypeName, 2);
-		$templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
+	protected function generateTypoScriptForNodeType(NodeType $nodeType) {
+		if (strpos($nodeType->getName(), ':') === FALSE) {
+			return '';
+		}
 
-		$output = 'prototype(' . $nodeTypeName . ') < prototype(TYPO3.Neos:Content) {' . chr(10);
+		if ($nodeType->isOfType('TYPO3.Neos:Content')) {
+			$basePrototypeName = 'TYPO3.Neos:Content';
+		} elseif ($nodeType->isOfType('TYPO3.Neos:Document')) {
+			$basePrototypeName = 'TYPO3.Neos:Document';
+		} else {
+			$basePrototypeName = 'TYPO3.TypoScript:Template';
+		}
+
+		$output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $basePrototypeName . ') {' . chr(10);
+
+		list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
+		$templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
 		$output .= "\t" . 'templatePath = \'' . $templatePath . '\'' . chr(10);
-		if (isset($nodeTypeConfiguration['properties'])) {
-			foreach ($nodeTypeConfiguration['properties'] as $propertyName => $propertyConfiguration) {
-				if (isset($propertyName[0]) && $propertyName[0] !== '_') {
-					$output .= "\t" . $propertyName . ' = ${node.properties.' . $propertyName . '}' . chr(10);
-				}
+
+		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
+			if (isset($propertyName[0]) && $propertyName[0] !== '_') {
+				$output .= "\t" . $propertyName . ' = ${node.properties.' . $propertyName . '}' . chr(10);
 			}
 		}
+
 		$output .= '}' . chr(10);
 		return $output;
 	}
