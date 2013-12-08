@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
@@ -19,7 +20,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
  *
  * @Flow\Scope("singleton")
  */
-class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+class SchemaController extends ActionController {
 
 	/**
 	 * @var \TYPO3\Neos\Service\NodeTypeSchemaBuilder
@@ -62,7 +63,9 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		}
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			/** @var NodeType $nodeType */
-			$schema[$nodeTypeName] = $nodeType->getFullConfiguration();
+			$configuration = $nodeType->getFullConfiguration();
+			$this->flattenAlohaFormatOptions($configuration);
+			$schema[$nodeTypeName] = $configuration;
 		}
 
 		return json_encode($schema);
@@ -79,5 +82,34 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				return !$nodeType->isAbstract();
 			}
 		);
+	}
+
+	/**
+	 * In order to allow unsetting options via the YAML settings merging, the
+	 * formatting options can be set via 'option': TRUE, however, the frontend
+	 * schema expects a flattened plain numeric array. This methods adjust the setting
+	 * accordingly.
+	 *
+	 * @param array $options The options array, passed by reference
+	 * @return void
+	 */
+	protected function flattenAlohaFormatOptions(array &$options) {
+		if (isset($options['properties'])) {
+			foreach (array_keys($options['properties']) as $propertyName) {
+				if (isset($options['properties'][$propertyName]['ui']['aloha'])) {
+					foreach ($options['properties'][$propertyName]['ui']['aloha'] as $formatGroup => $settings) {
+						$flattenedSettings = array();
+						foreach ($settings as $key => $option) {
+							if (is_numeric($key) && is_string($option)) {
+								$flattenedSettings[] = $option;
+							} elseif ($option === TRUE) {
+								$flattenedSettings[] = $key;
+							}
+						}
+						$options['properties'][$propertyName]['ui']['aloha'][$formatGroup] = $flattenedSettings;
+					}
+				}
+			}
+		}
 	}
 }

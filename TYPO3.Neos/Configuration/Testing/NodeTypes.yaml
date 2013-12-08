@@ -25,3 +25,14 @@
   properties:
     text:
       type: 'string'
+
+'TYPO3.Neos:BackendSchemaControllerTest':
+  properties:
+    text:
+      ui:
+        aloha:
+          fallbackCase: ['defined', 'as', 'plain', 'array']
+          sampleCase:
+            'h3': TRUE
+            'sup': TRUE
+            'shouldBeExcluded': FALSE
