@@ -58,8 +58,12 @@ class SiblingsOperation extends AbstractOperation {
 		$output = array();
 		$outputNodePaths = array();
 		foreach ($flowQuery->getContext() as $contextNode) {
+			$outputNodePaths[$contextNode->getPath()] = TRUE;
+		}
+
+		foreach ($flowQuery->getContext() as $contextNode) {
 			foreach ($contextNode->getParent()->getChildNodes() as $childNode) {
-				if (!in_array($childNode, $flowQuery->getContext()) && !isset($outputNodePaths[$childNode->getPath()])) {
+				if (!isset($outputNodePaths[$childNode->getPath()])) {
 					$output[] = $childNode;
 					$outputNodePaths[$childNode->getPath()] = TRUE;
 				}
