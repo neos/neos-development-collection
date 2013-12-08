@@ -76,9 +76,6 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 			return $content;
 		}
 
-		if (!$node->getNodeType()->isOfType('TYPO3.Neos:Content')) {
-			return $content;
-		}
 		if ($node->isRemoved()) {
 			$content = '';
 		}
