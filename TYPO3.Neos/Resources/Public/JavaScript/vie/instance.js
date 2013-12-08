@@ -19,7 +19,7 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 		var entityPredicates = originalRdfaServiceReadEntityPredicatesFn.apply(this, arguments);
 
 		$.each(element.get(0).attributes, function(i, attribute) {
-			if (attribute.name.substr(0, 10) === 'data-neos-') {
+			if (attribute.name.substr(0, 10) === 'data-neos-' && element.attr('typeof') !== undefined) {
 				var value = attribute.value;
 				var propertyName = attribute.name.substr(10);
 				var dataType = element.attr('data-neosdatatype-' + propertyName);
