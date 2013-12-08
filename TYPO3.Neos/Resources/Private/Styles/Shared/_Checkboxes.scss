@@ -10,7 +10,13 @@
 	padding: 0 !important;
 
 	&.neos-inline {
+		margin-bottom: $relatedMargin;
 		margin-right: $wideMargin;
+
+		& + .neos-inline {
+			margin-left: 0;
+			margin-right: $wideMargin;
+		}
 	}
 
 	input {

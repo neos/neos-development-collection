@@ -11,7 +11,7 @@
 	> .neos-module-wrap {
 		position: relative;
 		background: $grayDark;
-		padding: ($unit * 2) $menuButtonWidth 0 $menuButtonWidth;
+		padding: ($unit * 2) $menuButtonWidth $unit $menuButtonWidth;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -27,6 +27,7 @@
 
 		&,
 		&:hover {
+			color: #fff;
 			text-decoration: none;
 		}
 	}
@@ -97,6 +98,7 @@
 			&:hover,
 			&:active,
 			&:focus {
+				color: #fff;
 				text-decoration: none;
 			}
 
@@ -194,6 +196,33 @@
 		}
 	}
 
+	textarea {
+		border: 2px solid $grayLight;
+		background-color: $grayLight;
+		color: $textOnGray;
+		@include font;
+		font-size: 14px;
+		padding: 0 ($defaultMargin - 2px);
+		margin: 0;
+		@include box-sizing(border-box);
+		@include box-shadow(none);
+		@include transition(none);
+		@include border-radius(0px);
+
+		&:focus {
+			background-color: #fff;
+			border: 2px solid #fff;
+			color: $textOnWhite;
+			outline: none;
+			@include box-shadow(none);
+		}
+
+		// Highlight changed elements in the Property Panel
+		&.neos-modified {
+			border: 2px solid $green;
+		}
+	}
+
 	.neos-select {
 		position: relative;
 		background-color: $grayLight;
@@ -255,7 +284,7 @@
 		position: sticky;
 		height: $unit;
 		background-color: $grayDarker;
-		margin: $unit -1 * $menuButtonWidth 0;
+		margin: $unit (-$menuButtonWidth) (-$unit);
 		border-top: 1px solid $grayLight;
 		padding: $defaultMargin;
 		font-size: 0;
@@ -269,6 +298,7 @@
 			position: -ms-sticky;
 			position: -o-sticky;
 			position: sticky;
+			margin-bottom: 0;
 
 			.fixedsticky-withoutfixedfixed &,
 			.fixed-supported & {
@@ -329,9 +359,11 @@
 				&:first-child {
 					padding-left: $defaultMargin !important;
 				}
+
 				&:last-child {
 					padding-right: $defaultMargin !important;
 				}
+
 				&.neos-action {
 					padding-left: 0 !important;
 					padding-right: 0 !important;
@@ -440,6 +472,7 @@
 		}
 
 		td > .neos-button,
+		td > form > .neos-button,
 		td > div.neos-pull-right > .neos-button,
 		td > div.neos-pull-right > form .neos-button {
 			background-color: $grayMedium;
