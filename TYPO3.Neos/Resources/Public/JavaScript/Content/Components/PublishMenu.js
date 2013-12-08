@@ -97,14 +97,20 @@ define(
 				classNames: ['neos-publish-all-button'],
 				attributeBindings: ['title'],
 				title: 'Publish all',
+				labelIcon: '<i class="icon-upload"></i> ',
 				label: function() {
-					return ('<i class="icon-upload"></i> ' + this.get('title')).htmlSafe();
-				}.property('title'),
+					if (this.get('noWorkspaceWideChanges')) {
+						return (this.get('labelIcon') + ' Published').htmlSafe();
+					} else {
+						return (this.get('labelIcon') + ' Publish all (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
+					}
+				}.property('_numberOfWorkspaceWideChanges'),
 				controller: PublishableNodes,
 				confirmationDialog: PublishAllDialog.create(),
 
 				_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
-				_noChangesBinding: 'controller.noWorkspaceWideChanges',
+				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
+				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
 
 				click: function() {
 					this.confirmationDialog.createElement();

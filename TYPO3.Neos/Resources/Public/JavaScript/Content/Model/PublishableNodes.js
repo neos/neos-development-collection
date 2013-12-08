@@ -37,7 +37,7 @@ define(
 		}.property('workspaceWidePublishableEntitySubjects.length'),
 
 		numberOfWorkspaceWidePublishableNodes: function() {
-			return this.get('workspaceWidePublishableEntitySubject').length;
+			return this.get('workspaceWidePublishableEntitySubjects').length;
 		}.property('workspaceWidePublishableEntitySubjects.length'),
 
 		initialize: function() {
