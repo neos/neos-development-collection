@@ -47,14 +47,24 @@ define(
 
 		_updatePublishableEntities: function() {
 			var publishableEntitySubjects = [];
+			var pageNodeContextPath = $('#neos-page-metainformation').attr('about'),
+				pageNodePath = pageNodeContextPath.substr(0, pageNodeContextPath.lastIndexOf('@'));
+
 			vie.entities.forEach(function(entity) {
 				if (this._isEntityPublishable(entity)) {
+					var nodePath = entity.id.substr(1, entity.id.lastIndexOf('@') - 1);
+
+					if (!this.get('workspaceWidePublishableEntitySubjects').findBy('nodePath', nodePath)) {
+						this.get('workspaceWidePublishableEntitySubjects').addObject({
+							nodePath: nodePath,
+							pageNodePath: pageNodePath
+						});
+					}
 					publishableEntitySubjects.push(entity.id);
 				}
 			}, this);
 
 			this.set('publishableEntitySubjects', publishableEntitySubjects);
-			this.getWorkspaceWideUnpublishedNodes();
 		},
 
 		/**
@@ -70,6 +80,7 @@ define(
 		 * Publish all blocks which are unsaved *and* on current page.
 		 */
 		publishChanges: function() {
+			var that = this;
 			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this.get('publishableEntitySubjects'),
 				function(subject) {
@@ -81,6 +92,12 @@ define(
 				function(subject) {
 					var entity = vie.entities.get(subject);
 					entity.set('typo3:__workspacename', 'live');
+
+					var nodePath = entity.id.substr(1, entity.id.lastIndexOf('@') - 1),
+						node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodePath', nodePath);
+					if (node) {
+						that.get('workspaceWidePublishableEntitySubjects').removeObject(node);
+					}
 				}
 			);
 		},
@@ -91,12 +108,15 @@ define(
 		publishAll: function() {
 			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
 				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
-				publishableEntities = this.get('publishableEntitySubjects');
+				publishableEntities = this.get('publishableEntitySubjects'),
+				that = this;
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAll(workspaceName, function(result) {
 				if (typeof result !== 'undefined' && result !== null && result.success === true) {
 					$.each(publishableEntities, function(index, element) {
 						vie.entities.get(element).set('typo3:__workspacename', 'live');
 					});
+
+					that.getWorkspaceWideUnpublishedNodes();
 				} else {
 					Notification.error('Unexpected error while publishing all changes: ' + JSON.stringify(result));
 				}

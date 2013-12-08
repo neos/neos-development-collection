@@ -102,7 +102,7 @@ define(
 				title: 'Publish all',
 				labelIcon: '<i class="icon-upload"></i> ',
 				label: function() {
-					if (this.get('noWorkspaceWideChanges')) {
+					if (this.get('_noWorkspaceWideChanges')) {
 						return (this.get('labelIcon') + ' Published').htmlSafe();
 					} else {
 						return (this.get('labelIcon') + ' Publish all (' + this.get('_numberOfWorkspaceWideChanges') + ')').htmlSafe();
@@ -124,12 +124,12 @@ define(
 				},
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('_saveRunning');
-				}.property('_noChanges', '_saveRunning'),
+					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning');
+				}.property('_noWorkspaceWideChanges', '_saveRunning'),
 
 				disabledClass: function() {
-					return this.get('_noChanges') || this.get('_saveRunning') ? 'disabled' : '';
-				}.property('_noChanges', '_saveRunning')
+					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
+				}.property('_noWorkspaceWideChanges', '_saveRunning')
 			})
 		});
 	}
