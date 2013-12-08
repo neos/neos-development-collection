@@ -1,22 +1,9 @@
 <f:flashMessages as="flashMessages">
-	<f:for each="{flashMessages}" as="flashMessage">
-		<f:if condition="{0: flashMessage.severity} == {0: 'OK'}">
-			<div class="neos-alert neos-alert-success">
-		</f:if>
-		<f:if condition="{0: flashMessage.severity} == {0: 'Notice'}">
-			<div class="neos-alert neos-alert-notice">
-		</f:if>
-		<f:if condition="{0: flashMessage.severity} == {0: 'Warning'}">
-			<div class="neos-alert neos-alert-warning">
-		</f:if>
-		<f:if condition="{0: flashMessage.severity} == {0: 'Error'}">
-			<div class="neos-alert neos-alert-error">
-		</f:if>
-			<a class="neos-close" data-dismiss="alert" href="#">×</a>
-			<f:if condition="{flashMessage.title}">
-				<h4 class="neos-alert-heading">{flashMessage.title}</h4>
-			</f:if>
-			{flashMessage}
-		</div>
-	</f:for>
+	<f:if condition="{flashMessages -> f:count()} > 0">
+		<ul id="neos-notifications-inline">
+			<f:for each="{flashMessages}" as="flashMessage">
+				<li data-type="{flashMessage.severity -> f:format.case(mode: 'lower')}">{flashMessage}</li>
+			</f:for>
+		</ul>
+	</f:if>
 </f:flashMessages>

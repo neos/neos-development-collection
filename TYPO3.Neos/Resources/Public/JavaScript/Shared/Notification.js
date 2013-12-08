@@ -49,6 +49,15 @@ function(
 				timeOut: 5000,
 				target: '#neos-application'
 			};
+			var notifications = $('#neos-notifications-inline');
+			if (notifications.length > 0) {
+				var that = this;
+				setTimeout(function() {
+					$('li', notifications).each(function(index, notification) {
+						that[$(notification).attr('data-type')]($(notification).html());
+					});
+				}, 250);
+			}
 		},
 
 		/**
@@ -59,7 +68,7 @@ function(
 		 * @param {string} message
 		 * @return {string}
 		 */
-		render: function(type, title, message) {
+		_render: function(type, title, message) {
 			var template = this.get('template');
 			return template({type: type, title: title, message: message ? message.htmlSafe() : ''});
 		},
@@ -71,7 +80,7 @@ function(
 		 * @return {void}
 		 */
 		ok: function(title) {
-			toastr.success(this.render('success', title, ''), title);
+			toastr.success(this._render('success', title, ''), title);
 		},
 
 		/**
@@ -81,7 +90,17 @@ function(
 		 * @return {void}
 		 */
 		info: function(title) {
-			toastr.info(this.render('info', title, ''), title);
+			toastr.info(this._render('info', title, ''), title);
+		},
+
+		/**
+		 * Show notice notification
+		 *
+		 * @param {string} title
+		 * @return {void}
+		 */
+		notice: function(title) {
+			this.info(title);
 		},
 
 		/**
@@ -92,7 +111,7 @@ function(
 		 * @return {void}
 		 */
 		warning: function(title, message) {
-			toastr.warning(this.render('warning', title, message), title, {timeOut: 0, extendedTimeOut: 0, closeButton: true});
+			toastr.warning(this._render('warning', title, message), title, {timeOut: 0, extendedTimeOut: 0, closeButton: true});
 			this._registerExpandHandler();
 		},
 
@@ -104,7 +123,7 @@ function(
 		 * @return {void}
 		 */
 		error: function(title, message) {
-			toastr.error(this.render('error', title, message), title, {timeOut: 0, extendedTimeOut: 0, closeButton: true});
+			toastr.error(this._render('error', title, message), title, {timeOut: 0, extendedTimeOut: 0, closeButton: true});
 			this._registerExpandHandler();
 		},
 

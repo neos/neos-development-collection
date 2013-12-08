@@ -7978,9 +7978,8 @@
   font-size: 14px;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
-.neos.neos-module .neos-alert {
-  font-size: 13px;
-  line-height: 18px;
+.neos.neos-module #neos-notifications-inline {
+  display: none;
 }
 .neos.neos-module form.neos-inline {
   display: inline-block;
@@ -8041,9 +8040,6 @@
 }
 .neos.neos-module .neos-content.neos-well p {
   color: #3f3f3f;
-}
-.neos.neos-module .neos-content.neos-well .neos-alert p {
-  color: inherit;
 }
 .neos.neos-module .neos-content.neos-well .neos-breadcrumb {
   -webkit-border-top-right-radius: 4px;
