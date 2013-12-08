@@ -21,11 +21,10 @@ fieldset {
 legend {
   display: block;
   width: 100%;
-  padding: 0;
-  margin-bottom: $baseLineHeight;
+  padding: $relatedMargin 0 0;
+  margin-bottom: $defaultMargin;
   font-size: $baseFontSize * 1.5;
   line-height: $baseLineHeight * 2;
-  color: $grayDark;
   border: 0;
   border-bottom: 1px solid #e5e5e5;
 
@@ -85,7 +84,6 @@ input[type="color"],
   font-size: $baseFontSize;
   line-height: $baseLineHeight;
   color: $gray;
-  @include border-radius($inputBorderRadius);
   vertical-align: middle;
 }
 
@@ -225,6 +223,7 @@ textarea {
 .neos-checkbox {
   min-height: $baseLineHeight; // clear the floating input if there is no label text
   padding-left: 20px;
+  position: relative;
 }
 .neos-radio input[type="radio"],
 .neos-checkbox input[type="checkbox"] {
@@ -328,9 +327,11 @@ select[disabled],
 textarea[disabled],
 input[readonly],
 select[readonly],
-textarea[readonly] {
-  cursor: not-allowed;
-  background-color: $inputDisabledBackground;
+textarea[readonly],
+.neos-uneditable-input {
+	opacity: .65;
+	cursor: not-allowed;
+	background-color: $inputDisabledBackground;
 }
 // Explicitly reset the colors here
 input[type="radio"][disabled],

@@ -1,34 +1,34 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<div class="neos-row neos-module-container neos-indented">
+	<div class="neos-module-container">
 		<h2>Edit user "{account.accountIdentifier}"</h2>
 	</div>
 </f:section>
 <f:section name="content">
-	<f:form action="update" name="person" object="{person}" arguments="{account: account}">
-		<div class="neos-row neos-module-container">
+	<f:form action="update" name="person" object="{person}" arguments="{account: account}" class="user user-edit">
+		<div class="neos-row-fluid neos-module-container">
 			<fieldset class="neos-span5">
-				<legend>User</legend>
+				<legend>User Data</legend>
 
 				<div class="neos-control-group">
 					<label class="neos-control-label">Username</label>
 					<div class="neos-controls">
-						<span class="neos-span3 neos-uneditable-input">{account.accountIdentifier}</span>
+						<span class="neos-span12 neos-uneditable-input">{account.accountIdentifier}</span>
 					</div>
 				</div>
 
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="password[0]">Password</label>
 					<div class="neos-controls">
-						<f:form.password name="password[0]" id="password[0]" class="neos-span3" />
+						<f:form.password name="password[0]" id="password[0]" class="neos-span12" />
 					</div>
 				</div>
 
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="password[1]">Repeat password</label>
 					<div class="neos-controls">
-						<f:form.password name="password[1]" id="password[1]" class="neos-span3" />
+						<f:form.password name="password[1]" id="password[1]" class="neos-span12" />
 					</div>
 				</div>
 
@@ -37,7 +37,7 @@
 					<div class="neos-controls">
 						<f:for each="{neosRoles}" as="role">
 							<label class="neos-radio neos-inline">
-								<f:form.radio name="roleIdentifier" value="{role.identifier}" checked="{0: currentRole} == {0: role}" />
+								<f:form.radio name="roleIdentifier" value="{role.identifier}" checked="{0: currentRole} == {0: role}" /><span></span>
 								{role.name}
 							</label>
 						</f:for>
@@ -45,47 +45,67 @@
 				</div>
 			</fieldset>
 
-			<fieldset class="neos-span5">
+			<fieldset class="neos-span5 neos-offset1">
 				<legend>Personal Data</legend>
 
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="title">Title</label>
 					<div class="neos-controls neos-controls-row">
-						<f:form.textfield property="name.title" id="title" class="neos-span3" />
+						<f:form.textfield property="name.title" id="title" class="neos-span12" />
 					</div>
 				</div>
+				<div class="row">
+					<div class="neos-control-group neos-span7">
+						<label class="neos-control-label" for="firstName">First Name</label>
+						<div class="neos-controls neos-controls-row">
+							<f:form.textfield property="name.firstName" id="firstName" placeholder="First Name" class="neos-span12" />
+						</div>
+					</div>
 
-				<div class="neos-control-group">
-					<label class="neos-control-label" for="firstName">First Name</label>
-					<div class="neos-controls neos-controls-row">
-						<f:form.textfield property="name.firstName" id="firstName" placeholder="First Name" class="neos-span3" />
-						<f:form.textfield property="name.middleName" id="middleName" placeholder="Middle Name" class="neos-span2" />
+					<div class="neos-control-group neos-span5">
+						<label class="neos-control-label" for="middleName">&nbsp;</label>
+						<div class="neos-controls neos-controls-row">
+							<f:form.textfield property="name.middleName" id="middleName" placeholder="Middle Name" class="neos-span12" />
+						</div>
 					</div>
 				</div>
-				<div class="neos-control-group">
-					<label class="neos-control-label" for="lastName">Last Name</label>
-					<div class="neos-controls neos-controls-row">
-						<f:form.textfield property="name.lastName" id="lastName" placeholder="Last Name" class="neos-span3" />
-						<f:form.textfield property="name.otherName" id="otherName" placeholder="Other Name" class="neos-span2" />
+				<div class="row">
+					<div class="neos-control-group neos-span7">
+						<label class="neos-control-label" for="lastName">Last Name</label>
+						<div class="neos-controls neos-controls-row">
+							<f:form.textfield property="name.lastName" id="lastName" placeholder="Last Name" class="neos-span12" />
+						</div>
 					</div>
-				</div>
 
+					<div class="neos-control-group neos-span5">
+						<label class="neos-control-label" for="otherName">&nbsp;</label>
+						<div class="neos-controls neos-controls-row">
+							<f:form.textfield property="name.otherName" id="otherName" placeholder="Other Name" class="neos-span12" />
+						</div>
+					</div>
+				</div>
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="alias">Alias</label>
 					<div class="neos-controls">
-						<f:form.textfield property="name.alias" id="alias" class="neos-span3" />
+						<f:form.textfield property="name.alias" id="alias" class="neos-span12" />
 					</div>
 				</div>
 
+
+			</fieldset>
+		</div>
+		<div class="neos-row-fluid">
+			<fieldset class="neos-span11">
+				<legend>Electronic addresses</legend>
 				<div class="neos-control-group">
-					<label class="neos-control-label" for="electronicAddresses">Electronic addresses</label>
 					<table class="neos-table" id="electronicAddresses">
 						<thead>
 						<tr>
 							<th>Type</th>
 							<th>Usage</th>
 							<th>Identifier</th>
-							<th>Primary</th>
+							<th class="neos-aCenter">Primary</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -93,14 +113,22 @@
 							<tr>
 								<td>
 									<f:form.hidden name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][__identity]" value="{electronicAddress -> f:format.identifier()}" />
-									<f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][type]" options="{electronicAddressTypes}" value="{electronicAddress.type}" />
+									<div class="neos-select">
+										<f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][type]" options="{electronicAddressTypes}" value="{electronicAddress.type}" />
+									</div>
 								</td>
-								<td><f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][usage]" options="{electronicAddressUsageTypes}" value="{electronicAddress.usage}" /></td>
+								<td>
+									<div class="neos-select">
+										<f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][usage]" options="{electronicAddressUsageTypes}" value="{electronicAddress.usage}" />
+									</div>
+								</td>
 								<td><f:form.textfield name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][identifier]" value="{electronicAddress.identifier}" class="neos-input-medium" /></td>
-								<td>
-									<f:form.radio property="primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{person.primaryElectronicAddress} == {electronicAddress}', then: 'checked')}" />
+								<td class="neos-aCenter check">
+									<label class="neos-radio">
+										<f:form.radio property="primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{person.primaryElectronicAddress} == {electronicAddress}', then: 'checked')}" /><span></span>
+									</label>
 								</td>
-								<td>
+								<td class="neos-action">
 									<div class="neos-pull-right">
 										<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{electronicAddress.type}">
 											<i class="icon-trash icon-white"></i>
@@ -113,9 +141,7 @@
 												</div>
 												<div class="neos-modal-footer">
 													<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
-													<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="neos-button neos-button-danger" title="Delete">
-														Yes, delete electronic address
-													</button>
+													<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: '{account: account, electronicAddress: electronicAddress}')}" type="submit" class="neos-button neos-button-danger" title="Delete">Yes, delete electronic address</button>
 												</div>
 											</div>
 											<div class="neos-modal-backdrop neos-in"></div>
@@ -127,19 +153,16 @@
 						</tbody>
 					</table>
 					<div class="neos-pull-right">
-						<f:link.action action="newElectronicAddress" arguments="{account: account}" class="neos-button neos-button-primary" title="Click to add a new Electronic address">
-							Add electronic address
-						</f:link.action>
+						<f:link.action action="newElectronicAddress" arguments="{account: account}" class="neos-button" title="Click to add a new Electronic address">Add electronic address</f:link.action>
 					</div>
 				</div>
+
 			</fieldset>
 		</div>
 
-		<div class="neos-form-actions neos-form-footer">
+		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">Cancel</f:link.action>
-			<div class="neos-pull-right">
-				<f:form.submit value="Save user" class="neos-button neos-button-primary" />
-			</div>
+			<f:form.submit value="Save user" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>

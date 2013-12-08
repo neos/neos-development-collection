@@ -66,11 +66,10 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		foreach ($modules as $moduleIdentifier) {
 			array_push($path, $moduleIdentifier);
 			$config = \TYPO3\Flow\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
-			$moduleBreadcrumb[implode('/', $path)] = $config['label'];
+			$moduleBreadcrumb[implode('/', $path)] = $config;
 		}
 
 		$moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
-		$moduleRequest->setArgument('__moduleBreadcrumb', $moduleBreadcrumb);
 
 		$moduleResponse = new Response($this->response);
 
@@ -90,6 +89,7 @@ class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 				'rootModule' => array_shift($modules),
 				'submodule' => array_shift($modules),
 				'moduleConfiguration' => $moduleConfiguration,
+				'moduleBreadcrumb' => $moduleBreadcrumb,
 				'user' => $user,
 				'modules' => $this->menuHelper->buildModuleList($this->controllerContext),
 				'sites' => $sites

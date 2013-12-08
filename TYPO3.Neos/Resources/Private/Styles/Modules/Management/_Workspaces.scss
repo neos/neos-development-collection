@@ -1,15 +1,19 @@
 &.neos-module-management-workspaces {
 	td {
+		white-space: nowrap;
+
 		&.node-type {
 			white-space: nowrap;
 			img {
-				vertical-align: text-bottom;
+				vertical-align: baseline;
 			}
 		}
+
 		label {
-			padding: 5px 0;
+			padding: 0;
 			margin-bottom: 0;
 			font-size: inherit;
+			line-height: $unit;
 			-webkit-touch-callout: none;
 			-webkit-user-select: none;
 			-khtml-user-select: none;
@@ -24,8 +28,14 @@
 		white-space: nowrap;
 	}
 
+	td.node-type,
+	td.relpath {
+		color: $textSubtle;
+	}
+
+	i[class*="icon-"],
 	i.legend {
-		vertical-align: text-top;
+		vertical-align: baseline;
 	}
 
 	.fold-toggle {
@@ -34,25 +44,26 @@
 		margin-right: 11px;
 	}
 
-	td.check,
-	th.check {
-		width: 12px;
-		input {
-			margin: 0;
-		}
-	}
-
 	td.legend,
 	th.legend {
 		width: 14px;
-		padding: 8px 10px;
+		padding: 0 10px;
 	}
 
 	td.actions {
-		width: 76px;
+		width: 144px;
+
+		button {
+			display: inline-block;
+		}
 	}
 
-	tfoot .legend {
-		margin-left: 15px;
+	tfoot {
+		font-size: $fontSizeSmall;
+		color: $textSubtle;
+
+		.legend {
+			margin-left: 15px;
+		}
 	}
 }

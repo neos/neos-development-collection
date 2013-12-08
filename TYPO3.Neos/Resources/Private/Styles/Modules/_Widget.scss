@@ -1,10 +1,7 @@
 .widget {
 	overflow: auto;
 	margin-bottom: 20px;
-	background-color: $grayLight;
-	border: 1px solid #777;
-	@include border-radius(6px);
-	@include box-shadow(0px 0px 5px rgba($black, 0.2));
+	background-color: $grayMedium;
 	height: 300px;
 	position: relative;
 
@@ -15,15 +12,14 @@
 	}
 
 	.widget-header {
-		padding: 9px 15px;
-
 		h3 {
 			margin: 0;
-			font-size: 20px;
+			padding: 0 $defaultMargin;
+			font-size: $baseFontSize;
 			line-height: 40px;
 			font-weight: normal;
 			color: #fff;
-			border-bottom: 1px solid #fff;
+			border-bottom: 1px solid $grayDark;
 
 			a {
 				color: #fff;
@@ -33,11 +29,16 @@
 		// Icon styles
 		i {
 			color: #fff;
-			font-size: 24px;
-			width: auto;
-			height: auto;
+			font-size: 12px;
+			width: $unit;
+			height: $unit;
+			border-right: 1px solid $grayDark;
+			margin-right: $defaultMargin;
 
 			&:before {
+				width: inherit;
+				height: inherit;
+				text-align: center;
 				line-height: $unit;
 			}
 		}
@@ -48,6 +49,8 @@
 		overflow-y: auto;
 
 		p {
+			font-size: $baseFontSize * 0.95;
+			line-height: 1.4;
 			color: $textSubtleLight;
 		}
 	}
@@ -57,10 +60,7 @@
 		margin-bottom: 0;
 		text-align: right;
 		background-color: transparent;
-		border-top: 1px solid #ddd;
-		@include border-bottom-radius(6px);
 		*zoom: 1;
-		@include box-shadow(0 1px 0 #fff inset);
 		position: absolute;
 		bottom: 0px;
 		left: 0px;

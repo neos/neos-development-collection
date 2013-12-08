@@ -1,20 +1,16 @@
 &.neos-module-administration-packages {
+
 	.neos-button.neos-button-freeze {
 		background-color: $blue;
 	}
 
 	table {
-		td.check,
-		th.check {
-			width: 12px;
-			input {
-				margin: 0;
-			}
-		}
+		table-layout: auto;
 
 		label {
-			padding: 5px 0;
+			padding: 0;
 			margin-bottom: 0;
+			line-height: $unit;
 			font-size: inherit;
 			-webkit-touch-callout: none;
 			-webkit-user-select: none;
@@ -30,11 +26,44 @@
 			margin-right: 11px;
 		}
 
+		// define widths of cols
+		td {
+			max-width: 20%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			&.check {
+				width: 22px;
+			}
+
+			&.package-name {
+				width: 200px;
+			}
+
+			&.package-version {
+				width: 5%;
+			}
+
+			&.package-key {
+				width: 8%;
+			}
+
+			&.package-type {
+				width: 15%;
+			}
+
+			&.neos-action {
+				width: 20%;
+				text-align: right;
+			}
+		}
+
 		td > .neos-button,
 		td > div.neos-pull-right > .neos-button {
 			// Freeze Button
 			&.neos-button-freeze {
-				background-color: $grayLight;
+				background-color: $grayMedium;
 
 				&:not([disabled]),
 				&:not(.neos-disabled) {
@@ -46,6 +75,10 @@
 					}
 				}
 			}
+		}
+
+		td.neos-action {
+			width: auto;
 		}
 	}
 }

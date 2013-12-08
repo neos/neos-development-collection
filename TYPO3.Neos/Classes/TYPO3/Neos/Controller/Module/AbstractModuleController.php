@@ -26,16 +26,10 @@ abstract class AbstractModuleController extends \TYPO3\Flow\Mvc\Controller\Actio
 	protected $moduleConfiguration;
 
 	/**
-	 * @var array
-	 */
-	protected $moduleBreadcrumb;
-
-	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
 		$this->moduleConfiguration = $this->request->getInternalArgument('__moduleConfiguration');
-		$this->moduleBreadcrumb = $this->request->getInternalArgument('__moduleBreadcrumb');
 	}
 
 	/**
@@ -43,10 +37,7 @@ abstract class AbstractModuleController extends \TYPO3\Flow\Mvc\Controller\Actio
 	 * @return void
 	 */
 	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
-		$view->assignMultiple(array(
-			'moduleConfiguration' => $this->moduleConfiguration,
-			'moduleBreadcrumb' => $this->moduleBreadcrumb
-		));
+		$view->assign('moduleConfiguration', $this->moduleConfiguration);
 	}
 
 	/**

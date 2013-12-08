@@ -1,7 +1,7 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<div class="neos-row neos-module-container neos-indented">
+	<div class="neos-row-fluid">
 		<table class="neos-table">
 			<thead>
 				<tr>
@@ -13,20 +13,17 @@
 			</thead>
 			<f:for each="{accounts}" key="flowidentifier" as="account">
 				<tr>
-					<td>
-						<i class="icon-user icon-white"></i>
-						{account.accountIdentifier}
-					</td>
+					<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
 					<td title="{account.party.alias}">{account.party.name}</td>
 					<td>
 						<f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 					</td>
-					<td>
+					<td class="neos-action">
 						<div class="neos-pull-right">
-							<f:link.action action="show" arguments="{account: account}" class="neos-button" title="View user">
+							<f:link.action action="show" arguments="{account: account}" class="neos-button neos-button-primary" title="View user">
 								<i class="icon-info-sign icon-white"></i>
 							</f:link.action>
-							<f:link.action action="edit" arguments="{account: account}" class="neos-button" title="Edit user">
+							<f:link.action action="edit" arguments="{account: account}" class="neos-button neos-button-primary" title="Edit user">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
@@ -45,8 +42,7 @@
 												<div class="neos-header">Do you really want to delete user "{account.accountIdentifier}"?</div>
 												<div>
 													<div class="neos-subheader">
-														This will delete the user and his personal workspace, including all unpublished content.
-														This operation cannot be undone.
+														<p>This will delete the user and his personal workspace, including all unpublished content.<br />This operation cannot be undone.</p>
 													</div>
 												</div>
 											</div>
@@ -69,11 +65,7 @@
 			</f:for>
 		</table>
 	</div>
-	<div class="neos-form-actions neos-form-footer">
-		<div class="neos-pull-right">
-			<f:link.action action="new" class="neos-button neos-button-primary" title="Create new user">
-				Create new user
-			</f:link.action>
-		</div>
+	<div class="neos-footer">
+		<f:link.action action="new" class="neos-button neos-button-primary" title="Create new user">Create new user</f:link.action>
 	</div>
 </f:section>

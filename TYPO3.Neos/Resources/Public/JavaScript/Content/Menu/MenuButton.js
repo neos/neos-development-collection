@@ -38,10 +38,12 @@ define(
 				if (this.get('controller.menuPanelStickyMode') === false) {
 						// Defer the check of the hover state as some browser will not update the hover status synchronously
 					setTimeout(function() {
-						if (that.get('controller.menuPanelMode') === true && $('#neos-menu-panel:hover').length === 0) {
+						// Check if one of the child elements have the hover state.
+						// This fix a opera problem with the :hover on the container only
+						if (that.get('controller.menuPanelMode') === true && $('#neos-menu-panel *:hover').length === 0) {
 							that.set('controller.menuPanelMode', false);
 						}
-					}, 1);
+					}, 0);
 				}
 			}
 		});

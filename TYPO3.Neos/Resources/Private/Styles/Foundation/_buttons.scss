@@ -36,15 +36,18 @@ button,
 		padding: 0 $relatedMargin;
 	}
 
-	// Hover/focus state
-	&:hover,
-	&:active,
-	&.neos-active,
-	&.neos-pressed {
-		color: #fff;
-		background-color: $blue;
-		text-decoration: none;
-		outline: none;
+	&:not([disabled]),
+	&:not(.neos-disabled) {
+		// Hover/focus state
+		&:hover,
+		&:active,
+		&.neos-active,
+		&.neos-pressed {
+			color: #fff;
+			background-color: $blue;
+			text-decoration: none;
+			outline: none;
+		}
 	}
 
 	// Focus state for keyboard and accessibility

@@ -674,8 +674,7 @@
 @mixin grid-input-span-x($gridColumns, $gridColumnWidth, $gridGutterWidth) {
   @for $i from 1 through $gridColumns {
     input.neos-span#{$i},
-    textarea.neos-span#{$i},
-    .neos-uneditable-input.neos-span#{$i} {
+    textarea.neos-span#{$i} {
       @include grid-input-span($i, $gridColumnWidth, $gridGutterWidth);
     }
   }

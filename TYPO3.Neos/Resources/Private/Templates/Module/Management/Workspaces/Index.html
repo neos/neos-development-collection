@@ -2,55 +2,67 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-
 	<f:if condition="{sites}">
 		<f:then>
 			<f:form action="publishOrDiscardNodes">
-				<div class="neos-row neos-module-container neos-indented">
+				<legend>Unpublished changes</legend>
+				<br />
+				<div class="neos-row-fluid">
 					<table class="neos-table">
 						<thead>
 							<tr>
-								<th class="check"><input type="checkbox" id="check-all" /></th>
-								<th class="legend"></th>
-								<th>Label</th>
-								<th>Node type</th>
-								<th>Relative path</th>
-								<th class="actions"></th>
+								<th class="check neos-priority1">
+									<label for="check-all" class="neos-checkbox">
+										<input type="checkbox" id="check-all" /><span></span>
+									</label>
+								</th>
+								<th class="legend neos-priority1"></th>
+								<th class="label neos-priority1">Label</th>
+								<th class="nodetype neos-priority3">Node type</th>
+								<th class="relpath neos-priority4">Relative path</th>
+								<th class="neos-action neos-priority1"></th>
 							</tr>
 						</thead>
 						<tbody>
 							<f:for each="{sites}" as="site">
 								<f:for each="{site.documents}" key="documentPath" as="document">
-									<tr>
-										<td colspan="6" class="folder">
-											<div class="neos-pull-left">
-												<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
-												<strong>Path:
-													<f:if condition="{document.documentNode.removed}">
-														<f:then>
+									<tr class="neos-folder">
+										<td colspan="2" class="neos-priority1">
+											<strong>Path:
+												<f:if condition="{document.documentNode.removed}">
+													<f:then>
+														/{documentPath}
+													</f:then>
+													<f:else>
+														<neos:link.node node="{document.documentNode}" absolute="1">
 															/{documentPath}
-														</f:then>
-														<f:else>
-															<neos:link.node node="{document.documentNode}" absolute="1">
-																/{documentPath}
-															</neos:link.node>
-														</f:else>
-													</f:if>
-												</strong>
-											</div>
+														</neos:link.node>
+													</f:else>
+												</f:if>
+											</strong>
 											<f:if condition="{sites -> f:count()} > 1">
 												<div class="neos-pull-right">
 													<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
 												</div>
 											</f:if>
 										</td>
+										<td class="neos-priority1">
+											<f:if condition="{sites -> f:count()} > 1">
+												<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
+											</f:if>
+										</td>
+										<td class="neos-priority3">&nbsp;</td>
+										<td class="neos-priority4">&nbsp;</td>
+										<td class="neos-priority1 neos-aRight">
+											<i class="fold-toggle icon-chevron-down icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
+										</td>
 									</tr>
 									<f:for each="{document.changes}" key="relativePath" as="change">
 										<tr class="fold-{document.documentNode.identifier}">
-											<td class="check">
-												<f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" />
+											<td class="check neos-priority1">
+												<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
 											</td>
-											<td class="legend">
+											<td class="legend neos-priority1">
 												<label for="{change.node.identifier}">
 													<f:if condition="{change.node.removed}">
 														<f:then><i class="legend icon-trash icon-white" title="deleted"></i></f:then>
@@ -77,8 +89,8 @@
 													</f:if>
 												</label>
 											</td>
-											<td><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>[No title]</em>')}</label></td>
-											<td class="node-type" title="{change.node.nodeType.name}">
+											<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>[No title]</em>')}</label></td>
+											<td class="node-type neos-priority3" title="{change.node.nodeType.name}">
 												<label for="{change.node.identifier}">
 													<f:if condition="{change.configuration.ui.icon}">
 														<i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}"></i>
@@ -86,8 +98,8 @@
 													{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.nodeType.name)}
 												</label>
 											</td>
-											<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
-											<td class="actions">
+											<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
+											<td class="neos-action neos-aRight neos-priority1">
 												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: '{node: change.node.contextPath}')}" type="submit" class="neos-button neos-button-success" title="Publish">
 													<i class="icon-check icon-white"></i>
 												</button>
@@ -116,7 +128,7 @@
 			</f:form>
 		</f:then>
 		<f:else>
-			<div class="neos-row neos-module-container neos-indented"><p>There are no unpublished changes in this workspace.</p></div>
+			<p>There are no unpublished changes in this workspace.</p>
 		</f:else>
 	</f:if>
 
@@ -159,7 +171,7 @@
 				}
 			});
 			$('.fold-toggle').click(function() {
-				$(this).toggleClass('icon-chevron-down icon-chevron-right');
+				$(this).toggleClass('icon-chevron-down icon-chevron-up');
 				$('tr.' + $(this).data('toggle')).toggle();
 			});
 		})(jQuery);
@@ -167,22 +179,10 @@
 </f:section>
 
 <f:section name="actions">
-	<div class="neos-form-actions neos-form-footer">
-		<div class="neos-pull-left">
-			<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-success neos-disabled batch-action" disabled="disabled">
-				Publish <strong>selected</strong> changes
-			</button>
-			<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-button-warning neos-disabled batch-action" disabled="disabled">
-				Discard <strong>selected</strong> changes
-			</button>
-		</div>
-		<div class="neos-pull-right">
-			<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspace: workspace}')}" type="submit" class="neos-button neos-button-primary">
-				Publish <strong>all</strong> changes
-			</button>
-			<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">
-				Discard <strong>all</strong> changes
-			</button>
-		</div>
+	<div class="neos-footer">
+		<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-disabled batch-action" disabled="disabled">Publish <strong>selected</strong> changes</button>
+		<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-disabled batch-action" disabled="disabled">Discard <strong>selected</strong> changes</button>
+		<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">Discard <strong>all</strong> changes</button>
+		<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: '{workspace: workspace}')}" type="submit" class="neos-button neos-button-primary">Publish <strong>all</strong> changes</button>
 	</div>
 </f:section>

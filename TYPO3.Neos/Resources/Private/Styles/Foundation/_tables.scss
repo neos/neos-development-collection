@@ -7,52 +7,71 @@
 // -----------------
 
 table {
-  max-width: 100%;
-  background-color: $tableBackground;
-  border-collapse: collapse;
-  border-spacing: 0;
+	max-width: 100%;
+	background-color: $tableBackground;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
 // BASELINE STYLES
 // ---------------
 
 .neos-table {
-  width: 100%;
-  margin-bottom: $baseLineHeight;
-  // Cells
-  th,
-  td {
-    padding: 8px;
-    line-height: $baseLineHeight;
-    text-align: left;
-    vertical-align: top;
-    border-top: 1px solid $tableBorder;
-  }
-  th {
-    font-weight: bold;
-  }
-  // Bottom align for column headings
-  thead th {
-    vertical-align: bottom;
-  }
-  // Remove top border from thead by default
-  caption + thead tr:first-child th,
-  caption + thead tr:first-child td,
-  colgroup + thead tr:first-child th,
-  colgroup + thead tr:first-child td,
-  thead:first-child tr:first-child th,
-  thead:first-child tr:first-child td {
-    border-top: 0;
-  }
-  // Account for multiple tbody instances
-  tbody + tbody {
-    border-top: 2px solid $tableBorder;
-  }
+	width: 100%;
+	margin-bottom: $baseLineHeight;
+	// Cells
+	th,
+	td {
+		padding: 8px;
+		line-height: $baseLineHeight;
+		text-align: left;
+		vertical-align: top;
+		border-top: 1px solid $tableBorder;
+	}
+	th {
+		font-weight: bold;
+	}
+	// Bottom align for column headings
+	thead th {
+		vertical-align: bottom;
+	}
+	// Remove top border from thead by default
+	caption + thead tr:first-child th,
+	caption + thead tr:first-child td,
+	colgroup + thead tr:first-child th,
+	colgroup + thead tr:first-child td,
+	thead:first-child tr:first-child th,
+	thead:first-child tr:first-child td {
+		border-top: 0;
+	}
 
-  // Nesting
-  .neos-table {
-    background-color: $bodyBackground;
-  }
+	// grey bg for tablerows
+	tbody td {
+		background: $grayMedium;
+	}
+
+	// buttons in tables
+	.neos-action {
+		white-space: nowrap;
+		padding: 0!important;
+		.neos-modal {
+			white-space: normal;
+		}
+	}
+	.neos-button {
+		margin-top: 0;
+		vertical-align: top;
+	}
+
+	// Account for multiple tbody instances
+	tbody + tbody {
+		border-top: 2px solid $tableBorder;
+	}
+
+	// Nesting
+	.neos-table {
+		background-color: $bodyBackground;
+	}
 }
 
 
@@ -232,4 +251,47 @@ table th[class*="neos-span"],
   &.neos-info:hover > td {
     background-color: darken($infoBackground, 5%);
   }
+}
+
+// TABLE UTILITY CLASSES
+// ---------------------
+// Used for text-alignment and responsive priority
+table {
+	.neos-aCenter {
+		text-align: center;
+	}
+
+	.neos-aLeft {
+		text-align: left;
+	}
+
+	.neos-aRight {
+		text-align: right;
+	}
+
+	// insert these into responsive
+	.neos-priority1,
+	.neos-priority2,
+	.neos-priority3,
+	.neos-priority4 {
+
+	}
+
+	@media screen and (max-width: 1024px) {
+		.neos-priority4 {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 864px) {
+		.neos-priority3 {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		.neos-priority2 {
+			display: none;
+		}
+	}
 }

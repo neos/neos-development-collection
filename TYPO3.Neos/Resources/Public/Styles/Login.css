@@ -1869,11 +1869,10 @@ body {
 .neos legend {
   display: block;
   width: 100%;
-  padding: 0;
-  margin-bottom: 20px;
+  padding: 8px 0 0;
+  margin-bottom: 16px;
   font-size: 150%;
   line-height: 40px;
-  color: #222222;
   border: 0;
   border-bottom: 1px solid #e5e5e5;
 }
@@ -1924,9 +1923,6 @@ body {
   font-size: 100%;
   line-height: 20px;
   color: #555555;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
   vertical-align: middle;
 }
 .neos input,
@@ -2064,6 +2060,7 @@ body {
 .neos .neos-checkbox {
   min-height: 20px;
   padding-left: 20px;
+  position: relative;
 }
 .neos .neos-radio input[type="radio"],
 .neos .neos-checkbox input[type="checkbox"] {
@@ -2135,63 +2132,51 @@ body {
   margin-left: 20px;
 }
 .neos input.neos-span1,
-.neos textarea.neos-span1,
-.neos .neos-uneditable-input.neos-span1 {
+.neos textarea.neos-span1 {
   width: 46px;
 }
 .neos input.neos-span2,
-.neos textarea.neos-span2,
-.neos .neos-uneditable-input.neos-span2 {
+.neos textarea.neos-span2 {
   width: 126px;
 }
 .neos input.neos-span3,
-.neos textarea.neos-span3,
-.neos .neos-uneditable-input.neos-span3 {
+.neos textarea.neos-span3 {
   width: 206px;
 }
 .neos input.neos-span4,
-.neos textarea.neos-span4,
-.neos .neos-uneditable-input.neos-span4 {
+.neos textarea.neos-span4 {
   width: 286px;
 }
 .neos input.neos-span5,
-.neos textarea.neos-span5,
-.neos .neos-uneditable-input.neos-span5 {
+.neos textarea.neos-span5 {
   width: 366px;
 }
 .neos input.neos-span6,
-.neos textarea.neos-span6,
-.neos .neos-uneditable-input.neos-span6 {
+.neos textarea.neos-span6 {
   width: 446px;
 }
 .neos input.neos-span7,
-.neos textarea.neos-span7,
-.neos .neos-uneditable-input.neos-span7 {
+.neos textarea.neos-span7 {
   width: 526px;
 }
 .neos input.neos-span8,
-.neos textarea.neos-span8,
-.neos .neos-uneditable-input.neos-span8 {
+.neos textarea.neos-span8 {
   width: 606px;
 }
 .neos input.neos-span9,
-.neos textarea.neos-span9,
-.neos .neos-uneditable-input.neos-span9 {
+.neos textarea.neos-span9 {
   width: 686px;
 }
 .neos input.neos-span10,
-.neos textarea.neos-span10,
-.neos .neos-uneditable-input.neos-span10 {
+.neos textarea.neos-span10 {
   width: 766px;
 }
 .neos input.neos-span11,
-.neos textarea.neos-span11,
-.neos .neos-uneditable-input.neos-span11 {
+.neos textarea.neos-span11 {
   width: 846px;
 }
 .neos input.neos-span12,
-.neos textarea.neos-span12,
-.neos .neos-uneditable-input.neos-span12 {
+.neos textarea.neos-span12 {
   width: 926px;
 }
 .neos .neos-controls-row {
@@ -2218,7 +2203,9 @@ body {
 .neos textarea[disabled],
 .neos input[readonly],
 .neos select[readonly],
-.neos textarea[readonly] {
+.neos textarea[readonly],
+.neos .neos-uneditable-input {
+  opacity: .65;
   cursor: not-allowed;
   background-color: #eeeeee;
 }

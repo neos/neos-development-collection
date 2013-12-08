@@ -3,15 +3,13 @@
 
 <f:section name="content">
 	<f:form action="update" name="person" object="{person}" arguments="{account: account}">
-		<div class="neos-row neos-module-container">
+		<div class="neos-row-fluid neos-module-container">
 			<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
 		</div>
 
-		<div class="neos-form-actions neos-form-footer">
+		<div class="neos-footer">
 			<neos:link.module path="management" class="neos-button">Cancel</neos:link.module>
-			<div class="neos-pull-right">
-				<f:form.submit value="Save" class="neos-button neos-button-primary" />
-			</div>
+			<f:form.submit value="Save" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
