@@ -26,7 +26,7 @@ rawContent = TYPO3.Neos:Page {
 		}
 	}
 
-	bodyAttributes.class = 'neos-raw-content-mode'
+	bodyTag.attributes.class = 'neos-raw-content-mode'
 
 	body {
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/Page/Default.html'
