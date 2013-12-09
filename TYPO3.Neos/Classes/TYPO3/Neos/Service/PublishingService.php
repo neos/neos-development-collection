@@ -76,7 +76,7 @@ class PublishingService {
 			$contextProperties['currentSite'] = $currentDomain->getSite();
 			$contextProperties['currentDomain'] = $currentDomain;
 		} else {
-			$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+			$contextProperties['currentSite'] = $this->siteRepository->findOnline()->getFirst();
 		}
 		$contentContext = $this->contextFactory->create($contextProperties);
 

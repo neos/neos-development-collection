@@ -68,7 +68,7 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 			$contextProperties['currentSite'] = $currentDomain->getSite();
 			$contextProperties['currentDomain'] = $currentDomain;
 		} else {
-			$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+			$contextProperties['currentSite'] = $this->siteRepository->findOnline()->getFirst();
 		}
 
 		return $this->contextFactory->create($contextProperties);
