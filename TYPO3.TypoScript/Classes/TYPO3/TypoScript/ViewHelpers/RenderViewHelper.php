@@ -11,6 +11,10 @@ namespace TYPO3\TypoScript\ViewHelpers;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use TYPO3\TypoScript\View\TypoScriptView;
+
 /**
  * Render a TypoScript object with a relative TypoScript path, optionally
  * pushing new variables onto the TypoScript context.
@@ -37,10 +41,10 @@ namespace TYPO3\TypoScript\ViewHelpers;
  * (the evaluated TypoScript, depending on the given path)
  * </output>
  */
-class RenderViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class RenderViewHelper extends AbstractViewHelper {
 
 	/**
-	 * @var \TYPO3\TypoScript\View\TypoScriptView
+	 * @var TypoScriptView
 	 */
 	protected $typoScriptView;
 
@@ -73,20 +77,21 @@ class RenderViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 		$slashSeparatedPath = str_replace('.', '/', $path);
 
 		if ($typoScriptPackageKey === NULL) {
-			$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject'); // TODO: should be retrieved differently lateron
+			/** @var $typoScriptObject AbstractTypoScriptObject */
+			$typoScriptObject = $this->viewHelperVariableContainer->getView()->getTypoScriptObject();
 			if ($context !== NULL) {
-				$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
+				$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
 				foreach ($context as $key => $value) {
 					$currentContext[$key] = $value;
 				}
-				$fluidTemplateTsObject->getTsRuntime()->pushContextArray($currentContext);
+				$typoScriptObject->getTsRuntime()->pushContextArray($currentContext);
 			}
-			$absolutePath = $fluidTemplateTsObject->getPath() . '/' . $slashSeparatedPath;
+			$absolutePath = $typoScriptObject->getPath() . '/' . $slashSeparatedPath;
 
-			$output = $fluidTemplateTsObject->getTsRuntime()->render($absolutePath);
+			$output = $typoScriptObject->getTsRuntime()->render($absolutePath);
 
 			if ($context !== NULL) {
-				$fluidTemplateTsObject->getTsRuntime()->popContext();
+				$typoScriptObject->getTsRuntime()->popContext();
 			}
 		} else {
 			$this->initializeTypoScriptView();
@@ -108,7 +113,7 @@ class RenderViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 	 * @return void
 	 */
 	protected function initializeTypoScriptView() {
-		$this->typoScriptView = new \TYPO3\TypoScript\View\TypoScriptView();
+		$this->typoScriptView = new TypoScriptView();
 		$this->typoScriptView->setControllerContext($this->controllerContext);
 		$this->typoScriptView->disableFallbackView();
 		if ($this->hasArgument('typoScriptFilePathPattern')) {

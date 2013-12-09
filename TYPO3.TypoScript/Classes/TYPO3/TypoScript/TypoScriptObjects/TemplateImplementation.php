@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
 
 /**
  * TypoScript object rendering a fluid template
@@ -79,7 +80,11 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 	 * @return string
 	 */
 	public function evaluate() {
-		$fluidTemplate = new Helpers\FluidView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\Flow\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
+		$actionRequest =  $this->tsRuntime->getControllerContext()->getRequest();
+		if (!$actionRequest instanceof ActionRequest) {
+			$actionRequest = NULL;
+		}
+		$fluidTemplate = new Helpers\FluidView($this, $actionRequest);
 
 		$templatePath = $this->getTemplatePath();
 		if ($templatePath === NULL) {
@@ -117,9 +122,6 @@ class TemplateImplementation extends AbstractTypoScriptObject {
 		}
 
 		$this->initializeView($fluidTemplate);
-
-			// TODO this should be done differently lateron
-		$fluidTemplate->assign('fluidTemplateTsObject', $this);
 
 		$sectionName = $this->getSectionName();
 

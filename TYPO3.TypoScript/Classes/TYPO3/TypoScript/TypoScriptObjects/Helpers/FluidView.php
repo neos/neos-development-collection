@@ -11,16 +11,34 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Fluid\Core\Parser\Configuration;
+use TYPO3\Fluid\View\StandaloneView;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+
 /**
  * Extended Fluid Template View for use in TypoScript.
- *
  */
-class FluidView extends \TYPO3\Fluid\View\StandaloneView {
+class FluidView extends StandaloneView implements TypoScriptAwareViewInterface {
 
 	/**
 	 * @var string
 	 */
 	protected $resourcePackage;
+
+	/**
+	 * @var AbstractTypoScriptObject
+	 */
+	protected $typoScriptObject;
+
+	/**
+	 * @param AbstractTypoScriptObject $typoScriptObject
+	 * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
+	 */
+	public function __construct(AbstractTypoScriptObject $typoScriptObject, ActionRequest $request = NULL) {
+		parent::__construct($request);
+		$this->typoScriptObject = $typoScriptObject;
+	}
 
 	/**
 	 * @param string $resourcePackage
@@ -37,9 +55,16 @@ class FluidView extends \TYPO3\Fluid\View\StandaloneView {
 	}
 
 	/**
+	 * @return AbstractTypoScriptObject
+	 */
+	public function getTypoScriptObject() {
+		return $this->typoScriptObject;
+	}
+
+	/**
 	 * Build parser configuration
 	 *
-	 * @return \TYPO3\Fluid\Core\Parser\Configuration
+	 * @return Configuration
 	 */
 	protected function buildParserConfiguration() {
 		$parserConfiguration = $this->objectManager->get('TYPO3\Fluid\Core\Parser\Configuration');
