@@ -894,7 +894,7 @@ class NodeDataRepository extends Repository {
 			} else {
 				$negate = FALSE;
 			}
-			$nodeTypeFilterPartSubTypes = array_merge(array($nodeTypeFilterPart), $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
+			$nodeTypeFilterPartSubTypes = array_merge(array($nodeTypeFilterPart), $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, FALSE));
 
 			foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
 				if ($negate === TRUE) {

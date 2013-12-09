@@ -48,6 +48,13 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			'superTypes' => array('TYPO3.Neos:ContentObject'),
 			'final' => TRUE
 		),
+		'TYPO3.Neos:AbstractType' => array(
+			'superTypes' => array('TYPO3.Neos:ContentObject'),
+			'ui' => array(
+				'label' => 'Abstract type',
+			),
+			'abstract' => TRUE
+		),
 		'TYPO3.Neos:Text' => array(
 			'superTypes' => array('TYPO3.Neos:ContentObject'),
 			'ui' => array(
@@ -150,6 +157,7 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expectedNodeTypes = array(
 			'TYPO3.Neos:ContentObject',
 			'TYPO3.Neos:MyFinalType',
+			'TYPO3.Neos:AbstractType',
 			'TYPO3.Neos:Text',
 			'TYPO3.Neos:TextWithImage'
 		);
@@ -159,12 +167,45 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getSubNodeTypesDoesNotContainAbstractNodeTypes() {
+	public function getNodeTypesContainsAbstractNodeTypes() {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$fullConfiguration = $nodeTypeManager->getFullConfiguration();
-		$this->assertArrayNotHasKey('TYPO3.Neos:ContentObject', $fullConfiguration);
+		$nodeTypes = $nodeTypeManager->getNodeTypes();
+		$this->assertArrayHasKey('TYPO3.Neos:ContentObject', $nodeTypes);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getSubNodeTypesReturnsInheritedNodeTypes() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.Neos:ContentObject');
+		$this->assertArrayHasKey('TYPO3.Neos:TextWithImage', $nodeTypes);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getSubNodeTypesContainsAbstractNodeTypes() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.Neos:ContentObject');
+		$this->assertArrayHasKey('TYPO3.Neos:AbstractType', $nodeTypes);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getSubNodeTypesWithoutIncludeAbstractContainsNoAbstractNodeTypes() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.Neos:ContentObject', FALSE);
+		$this->assertArrayNotHasKey('TYPO3.Neos:AbstractType', $nodeTypes);
 	}
 
 	/**

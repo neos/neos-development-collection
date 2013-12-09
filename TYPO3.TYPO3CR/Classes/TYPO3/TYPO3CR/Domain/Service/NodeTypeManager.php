@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
  * Manager for node types
@@ -37,14 +38,23 @@ class NodeTypeManager {
 	/**
 	 * Return all registered node types.
 	 *
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> all node types registered in the system
+	 * @param boolean $includAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> All node types registered in the system, indexed by node type name
 	 * @api
 	 */
-	public function getNodeTypes() {
+	public function getNodeTypes($includAbstractNodeTypes = TRUE) {
 		if ($this->cachedNodeTypes === array()) {
 			$this->loadNodeTypes();
 		}
-		return $this->cachedNodeTypes;
+		if ($includAbstractNodeTypes) {
+			return $this->cachedNodeTypes;
+		} else {
+			$nonAbstractNodeTypes = array();
+			foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
+				$nonAbstractNodeTypes[$nodeTypeName] = $nodeType;
+			}
+			return $nonAbstractNodeTypes;
+		}
 	}
 
 	/**
@@ -52,16 +62,22 @@ class NodeTypeManager {
 	 * the $superType itself.
 	 *
 	 * @param string $superTypeName
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> sub node types of the given super type
+	 * @param boolean $includAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> Sub node types of the given super type, indexed by node type name
+	 * @api
 	 */
-	public function getSubNodeTypes($superTypeName) {
+	public function getSubNodeTypes($superTypeName, $includAbstractNodeTypes = TRUE) {
 		if ($this->cachedNodeTypes === array()) {
 			$this->loadNodeTypes();
 		}
 
 		$filteredNodeTypes = array();
+		/** @var NodeType $nodeType */
 		foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-			if (!$nodeType->isAbstract() && $nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
+			if ($includAbstractNodeTypes === FALSE && $nodeType->isAbstract()) {
+				continue;
+			}
+			if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
 				$filteredNodeTypes[$nodeTypeName] = $nodeType;
 			}
 		}
@@ -69,12 +85,11 @@ class NodeTypeManager {
 	}
 
 	/**
-	 * Returns the specified node type, if it is not abstract.
+	 * Returns the specified node type (which could be abstract)
 	 *
 	 * @param string $nodeTypeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType or NULL
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeIsAbstractException
 	 * @api
 	 */
 	public function getNodeType($nodeTypeName) {
@@ -84,14 +99,11 @@ class NodeTypeManager {
 		if (!isset($this->cachedNodeTypes[$nodeTypeName])) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException('The node type "' . $nodeTypeName . '" is not available.', 1316598370);
 		}
-		if ($this->cachedNodeTypes[$nodeTypeName]->isAbstract()) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsAbstractException('The node type "' . $nodeTypeName . '" is marked abstract and cannot be fetched.', 1316598370);
-		}
 		return $this->cachedNodeTypes[$nodeTypeName];
 	}
 
 	/**
-	 * Checks if the specified node type exists and is not abstract.
+	 * Checks if the specified node type exists
 	 *
 	 * @param string $nodeTypeName Name of the node type
 	 * @return boolean TRUE if it exists, otherwise FALSE
@@ -101,7 +113,7 @@ class NodeTypeManager {
 		if ($this->cachedNodeTypes === array()) {
 			$this->loadNodeTypes();
 		}
-		return isset($this->cachedNodeTypes[$nodeTypeName]) && !$this->cachedNodeTypes[$nodeTypeName]->isAbstract();
+		return isset($this->cachedNodeTypes[$nodeTypeName]);
 	}
 
 	/**
@@ -113,25 +125,6 @@ class NodeTypeManager {
 	 */
 	public function createNodeType($nodeTypeName) {
 		throw new \TYPO3\TYPO3CR\Exception('Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".', 1316449432);
-	}
-
-	/**
-	 * Return the full configuration of all non-abstract node types. This is just an internal
-	 * method we need for exporting the schema to JavaScript for example.
-	 *
-	 * @return array
-	 */
-	public function getFullConfiguration() {
-		if ($this->cachedNodeTypes === array()) {
-			$this->loadNodeTypes();
-		}
-		$fullConfiguration = array();
-		foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-			if (!$nodeType->isAbstract()) {
-				$fullConfiguration[$nodeTypeName] = $nodeType->getFullConfiguration();
-			}
-		}
-		return $fullConfiguration;
 	}
 
 	/**

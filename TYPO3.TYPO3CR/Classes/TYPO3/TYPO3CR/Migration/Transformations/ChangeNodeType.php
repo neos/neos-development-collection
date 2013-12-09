@@ -41,13 +41,13 @@ class ChangeNodeType extends AbstractTransformation {
 
 	/**
 	 * If the given node has the property this transformation should work on, this
-	 * returns TRUE if the given NodeType is registered with the NodeTypeManager
+	 * returns TRUE if the given NodeType is registered with the NodeTypeManager and is not abstract.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
 	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		return $this->nodeTypeManager->hasNodeType($this->newType);
+		return $this->nodeTypeManager->hasNodeType($this->newType) && !$this->nodeTypeManager->getNodeType($this->newType)->isAbstract();
 	}
 
 	/**
