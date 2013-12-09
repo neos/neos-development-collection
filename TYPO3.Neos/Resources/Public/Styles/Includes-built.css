@@ -7551,6 +7551,63 @@
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar [class^="icon-"].neos-pressed, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar [class^="icon-"]:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar [class*=" icon-"].neos-pressed, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar [class*=" icon-"]:hover {
   color: #00b5ff;
 }
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node {
+  position: relative;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled {
+  color: #5b5b5b;
+  cursor: not-allowed;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled:after {
+  color: #5b5b5b;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before:after {
+  content: "\f148";
+  left: 24px;
+  top: 6px;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after:after {
+  content: "\f149";
+  left: 24px;
+  top: 7px;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node:after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "\f178";
+  position: absolute;
+  left: 18px;
+  top: 9px;
+  font-size: 14px;
+  color: #00b5ff;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-expanded .neos-node-tree-new-node-position {
+  display: block;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 1;
+  background-color: #222222;
+  border-right: 1px solid #3f3f3f;
+  border-bottom: 1px solid #3f3f3f;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button {
+  color: #fff;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button.neos-active {
+  color: #00b5ff;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button:hover {
+  background-color: #00b5ff;
+  color: #fff;
+}
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node {
   position: relative;
 }
@@ -7597,15 +7654,15 @@
   background-color: #222222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
-}
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position div {
   border-bottom: 1px solid #3f3f3f;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button {
   color: #fff;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position div.neos-active {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button.neos-active {
   color: #00b5ff;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position div:hover {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button:hover {
   background-color: #00b5ff;
   color: #fff;
 }
@@ -7752,6 +7809,63 @@
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"].neos-pressed, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class^="icon-"]:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"].neos-pressed, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar [class*=" icon-"]:hover {
   color: #00b5ff;
 }
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node {
+  position: relative;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled {
+  color: #5b5b5b;
+  cursor: not-allowed;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:after {
+  color: #5b5b5b;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before:after {
+  content: "\f148";
+  left: 24px;
+  top: 6px;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after:after {
+  content: "\f149";
+  left: 24px;
+  top: 7px;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node:after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "\f178";
+  position: absolute;
+  left: 18px;
+  top: 9px;
+  font-size: 14px;
+  color: #00b5ff;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-expanded .neos-node-tree-new-node-position {
+  display: block;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 1;
+  background-color: #222222;
+  border-right: 1px solid #3f3f3f;
+  border-bottom: 1px solid #3f3f3f;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button {
+  color: #fff;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button.neos-active {
+  color: #00b5ff;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position button:hover {
+  background-color: #00b5ff;
+  color: #fff;
+}
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node {
   position: relative;
 }
@@ -7798,15 +7912,15 @@
   background-color: #222222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
-}
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position div {
   border-bottom: 1px solid #3f3f3f;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button {
   color: #fff;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position div.neos-active {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button.neos-active {
   color: #00b5ff;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position div:hover {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position button:hover {
   background-color: #00b5ff;
   color: #fff;
 }
