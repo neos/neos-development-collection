@@ -170,12 +170,6 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 */
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
-		if ($position !== 'into') {
-				// We are creating a node *inside* another section; so the client side
-				// currently expects the whole parent TypoScript path to be rendered.
-				// Thus, we split off the last segment of the TypoScript path.
-			$typoScriptPath = substr($typoScriptPath, 0, strrpos($typoScriptPath, '/'));
-		}
 
 		$view = new \TYPO3\Neos\View\TypoScriptView();
 		$this->controllerContext->getRequest()->setFormat('html');

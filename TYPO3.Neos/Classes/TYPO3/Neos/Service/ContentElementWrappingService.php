@@ -72,6 +72,11 @@ class ContentElementWrappingService {
 		$attributes['about'] = $node->getContextPath();
 		$attributes['class'] = 'neos-contentelement';
 
+		if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
+			$attributes['class'] = '';
+			$attributes['rel'] = 'typo3:content-collection';
+		}
+
 		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
 			if ($node->isHidden()) {
 				$attributes['class'] .= ' neos-contentelement-hidden';

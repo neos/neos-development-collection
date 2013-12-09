@@ -14,14 +14,16 @@ define(
 	'Shared/LocalStorage',
 	'Shared/Notification',
 	'Shared/EventDispatcher',
-	'Content/Model/NodeSelection'
+	'Content/Model/NodeSelection',
+	'vie/instance'
 ], function(
 	Ember,
 	$,
 	LocalStorage,
 	Notification,
 	EventDispatcher,
-	NodeSelection
+	NodeSelection,
+	vieInstance
 ) {
 	return Ember.Object.extend({
 		// TODO: Move this to a separate controller
@@ -161,9 +163,14 @@ define(
 		 */
 		_add: function(nodeType, referenceEntity, position, callBack) {
 			var that = this;
+			var nodePath = referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1);
+			var $entityElement = vieInstance.service('rdfa').getElementBySubject(referenceEntity.getSubject(), $(document)),
+				$closestCollection = $entityElement.closest('[rel="typo3:content-collection"]'),
+				closestCollectionEntity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject($closestCollection));
+			var typoScriptPath = position === 'into' ? referenceEntity.get('typo3:_typoscriptPath') : closestCollectionEntity.get('typo3:_typoscriptPath');
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
-				referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
-				referenceEntity.get('typo3:_typoscriptPath'),
+				nodePath,
+				typoScriptPath,
 				{
 					nodeType: nodeType,
 					properties: {}
