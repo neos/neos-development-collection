@@ -260,11 +260,14 @@ class RenderingTest extends AbstractNodeTest {
 		$request = $httpRequest->createActionRequest();
 		$response = new \TYPO3\Flow\Http\Response();
 
+		$mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->any())->method('reset')->will($this->returnValue($mockUriBuilder));
+
 		$controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
 			$request,
 			$response,
 			$this->getMock('TYPO3\Flow\Mvc\Controller\Arguments', array(), array(), '', FALSE),
-			$this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder'),
+			$mockUriBuilder,
 			$this->getMock('TYPO3\Flow\Mvc\FlashMessageContainer')
 		);
 		return $controllerContext;
