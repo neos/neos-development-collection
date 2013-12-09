@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service\ExtDirect\V1\View;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Flow\Utility\Arrays;
 
@@ -33,6 +34,12 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @var integer
 	 */
 	protected $outputStyle;
+
+	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Assigns a node to the NodeView.
@@ -57,7 +64,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 	/**
 	 * @param array $nodes
-	 * @param array $propertyNames
 	 */
 	public function assignNodes(array $nodes) {
 		$data = array();
@@ -65,10 +71,14 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			if ($node->getPath() !== '/') {
 				$q = new FlowQuery(array($node));
 				$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-				$data[] = array(
-					'nodePath' => $node->getPath(),
-					'pageNodePath' => $closestDocumentNode->getPath(),
-				);
+				if ($closestDocumentNode !== NULL) {
+					$data[] = array(
+						'nodePath' => $node->getPath(),
+						'pageNodePath' => $closestDocumentNode->getPath(),
+					);
+				} else {
+					$this->systemLogger->log('You have a node that is no longer connected to a parent. Path: ' . $node->getPath() . ' (Identifier: ' . $node->getIdentifier() . ')');
+				}
 			}
 		}
 
