@@ -64,7 +64,9 @@ function(
 		 */
 		showDevelopmentFeatures: false,
 
-		currentUri: window.location.href,
+		getCurrentUri: function() {
+			return window.location.href;
+		},
 
 		_isLoadingPage : null,
 
@@ -291,7 +293,7 @@ function(
 		},
 
 		reloadPage: function() {
-			this.loadPage(ContentModule.currentUri);
+			this.loadPage(this.getCurrentUri());
 		},
 
 		_linkInterceptionHandler: function(selector, constant) {
