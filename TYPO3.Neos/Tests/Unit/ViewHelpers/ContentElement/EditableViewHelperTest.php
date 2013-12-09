@@ -20,6 +20,7 @@ use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
@@ -63,6 +64,11 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	protected $mockContentContext;
 
 	/**
+	 * @var FluidView
+	 */
+	protected $mockView;
+
+	/**
 	 * @var array
 	 */
 	protected $templateVariables = array();
@@ -86,6 +92,8 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		$this->mockTsContext = array('node' => $this->mockNode);
 		$this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
 		$this->mockTemplateImplementation->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->mockTsRuntime));
+		$this->mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
+		$this->mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($this->mockTemplateImplementation));
 
 		$this->editableViewHelper->initializeArguments();
 	}
@@ -106,14 +114,19 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	}
 
 	/**
+	 * Mocks access to the TypoScriptObject
+	 */
+	protected function injectTypoScriptObject() {
+		$this->viewHelperVariableContainer->expects($this->any())->method('getView')->will($this->returnValue($this->mockView));
+	}
+
+	/**
 	 * @test
 	 * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
 	 */
 	public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible() {
-		$this->templateVariables = array(
-			'fluidTemplateTsObject' => $this->mockTemplateImplementation,
-		);
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
 		$this->editableViewHelper->render('someProperty');
 	}
 
@@ -134,11 +147,11 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderSetsThePropertyValueAsTagContentIfItExists() {
 		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-			'fluidTemplateTsObject' => $this->mockTemplateImplementation,
+			'someProperty' => 'somePropertyValue'
 		);
 		$this->tagBuilder->expects($this->once())->method('setContent')->with('somePropertyValue');
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
 		$this->editableViewHelper->render('someProperty');
 	}
 
@@ -147,13 +160,13 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderSetsTheChildNodesAsTagContentIfTheyAreSet() {
 		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-			'fluidTemplateTsObject' => $this->mockTemplateImplementation,
+			'someProperty' => 'somePropertyValue'
 		);
 
 		$this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('overriddenPropertyValue'));
 		$this->tagBuilder->expects($this->once())->method('setContent')->with('overriddenPropertyValue');
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
 		$this->editableViewHelper->render('someProperty');
 	}
 
@@ -162,14 +175,14 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderDoesNotAddEditingMetaDataAttributesIfInLiveWorkspace() {
 		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-			'fluidTemplateTsObject' => $this->mockTemplateImplementation,
+			'someProperty' => 'somePropertyValue'
 		);
 
 		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('live'));
 		$this->tagBuilder->expects($this->never())->method('addAttribute');
 
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
 		$this->editableViewHelper->render('someProperty');
 	}
 
@@ -178,8 +191,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderDoesNotAddEditingMetaDataAttributesIfUserHasNoAccessToBackend() {
 		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-			'fluidTemplateTsObject' => $this->mockTemplateImplementation,
+			'someProperty' => 'somePropertyValue'
 		);
 
 		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
@@ -187,6 +199,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		$this->tagBuilder->expects($this->never())->method('addAttribute');
 
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
 		$this->editableViewHelper->render('someProperty');
 	}
 
@@ -195,8 +208,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasNoAccessToBackend() {
 		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-			'fluidTemplateTsObject' => $this->mockTemplateImplementation,
+			'someProperty' => 'somePropertyValue'
 		);
 
 		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
@@ -204,6 +216,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		$this->tagBuilder->expects($this->atLeastOnce())->method('addAttribute');
 
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
+		$this->injectTypoScriptObject();
 		$this->editableViewHelper->render('someProperty');
 	}
 
@@ -212,8 +225,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	 */
 	public function renderUsesTheNodeArgumentIfSet() {
 		$this->templateVariables = array(
-			'someProperty' => 'somePropertyValue',
-			'fluidTemplateTsObject' => NULL,
+			'someProperty' => 'somePropertyValue'
 		);
 
 		$this->tagBuilder->expects($this->once())->method('render');

@@ -77,10 +77,13 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockLiveContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockLiveWorkspace));
 
 		$this->tsRuntime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('getCurrentContext'), array(), '', FALSE);
-		$fluidTsObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('getTsRuntime'), array(), '', FALSE);
-		$fluidTsObject->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->tsRuntime));
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array('fluidTemplateTsObject' => $fluidTsObject));
-		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
+		$typoScriptObject = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('getTsRuntime'), array(), '', FALSE);
+		$typoScriptObject->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->tsRuntime));
+		$mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
+		$mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($typoScriptObject));
+		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+		$viewHelperVariableContainer->setView($mockView);
+		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
 	}
 
 	/**

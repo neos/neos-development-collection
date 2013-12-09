@@ -92,12 +92,15 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
 		$this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
-		$fluidTsObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', FALSE);
+		$typoScriptObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', FALSE);
 		$this->tsRuntime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('dummy'), array(), '', FALSE);
 		$this->tsRuntime->pushContextArray(array('documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home')));
-		$this->inject($fluidTsObject, 'tsRuntime', $this->tsRuntime);
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array('fluidTemplateTsObject' => $fluidTsObject));
-		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
+		$this->inject($typoScriptObject, 'tsRuntime', $this->tsRuntime);
+		$mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
+		$mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($typoScriptObject));
+		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+		$viewHelperVariableContainer->setView($mockView);
+		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
 	}
 
 	public function tearDown() {

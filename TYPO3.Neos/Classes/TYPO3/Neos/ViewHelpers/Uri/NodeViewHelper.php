@@ -12,8 +12,12 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
+use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -71,7 +75,7 @@ class NodeViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
@@ -82,9 +86,10 @@ class NodeViewHelper extends AbstractViewHelper {
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
-	 * @return string|NULL The rendered URI or NULL if no URI could be resolved for the given node
-	 * @throws \TYPO3\Neos\Exception
+	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
+	 * @throws NeosException
 	 * @throws \InvalidArgumentException
+	 * @throws ViewHelperException
 	 */
 	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
 		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
@@ -99,12 +104,16 @@ class NodeViewHelper extends AbstractViewHelper {
 		}
 
 		if ($node === NULL || is_string($node)) {
-			$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
-			$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
+			$view = $this->viewHelperVariableContainer->getView();
+			if (!$view instanceof TypoScriptAwareViewInterface) {
+				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
+			}
+			$typoScriptObject = $view->getTypoScriptObject();
+			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
 			if (isset($currentContext[$baseNodeName])) {
 				$baseNode = $currentContext[$baseNodeName];
 			} else {
-				throw new \TYPO3\Neos\Exception(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+				throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
 			}
 
 			if (is_string($node)) {

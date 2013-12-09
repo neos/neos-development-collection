@@ -17,6 +17,7 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
@@ -83,12 +84,12 @@ class EditableViewHelper extends AbstractTagBasedViewHelper {
 	 * @throws ViewHelperException
 	 */
 	protected function getNodeFromTypoScriptContext() {
-		if (!$this->templateVariableContainer->exists('fluidTemplateTsObject')) {
+		$view = $this->viewHelperVariableContainer->getView();
+		if (!$view instanceof TypoScriptAwareViewInterface) {
 			throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
 		}
-		/** @var $fluidTemplateTsObject TemplateImplementation */
-		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject');
-		$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
+		$typoScriptObject = $view->getTypoScriptObject();
+		$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
 
 		return $currentContext['node'];
 	}
