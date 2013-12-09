@@ -6,6 +6,7 @@ define(
 	'Content/Application',
 	'Shared/Configuration',
 	'Content/Model/NodeActions',
+	'LibraryExtensions/Mousetrap',
 	'text!./InsertNodePanel.html'
 ],
 function(
@@ -15,6 +16,7 @@ function(
 	ContentModule,
 	Configuration,
 	NodeActions,
+	Mousetrap,
 	template
 ) {
 	return Ember.View.extend({
@@ -57,6 +59,18 @@ function(
 
 			return data;
 		}.property(),
+
+		didInsertElement: function() {
+			var that = this;
+			Mousetrap.bind('esc', function() {
+				that.cancel();
+			});
+		},
+
+		destroyElement: function() {
+			Mousetrap.unbind('esc');
+			this._super();
+		},
 
 		insertNode: function(nodeType) {
 			NodeActions.set('_elementIsAddingNewContent', this.get('_entity').getSubjectUri());

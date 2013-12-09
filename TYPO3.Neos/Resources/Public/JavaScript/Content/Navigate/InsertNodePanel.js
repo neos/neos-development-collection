@@ -4,9 +4,17 @@ define(
 		'Library/jquery-with-dependencies',
 		'Shared/Configuration',
 		'Shared/ResourceCache',
+		'LibraryExtensions/Mousetrap',
 		'text!./InsertNodePanel.html'
 	],
-	function(Ember, $, Configuration, ResourceCache, template) {
+	function(
+		Ember,
+		$,
+		Configuration,
+		ResourceCache,
+		Mousetrap,
+		template
+	) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-overlay-component'],
@@ -53,6 +61,15 @@ define(
 			createElement: function() {
 				this._super();
 				this.$().appendTo($('#neos-application'));
+				var that = this;
+				Mousetrap.bind('esc', function() {
+					that.cancel();
+				});
+			},
+
+			destroyElement: function() {
+				Mousetrap.unbind('esc');
+				this._super();
 			},
 
 			cancel: function() {
