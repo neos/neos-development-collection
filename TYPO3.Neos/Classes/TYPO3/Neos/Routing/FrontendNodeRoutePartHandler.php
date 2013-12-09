@@ -280,12 +280,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 		);
 
 		$currentDomain = $this->domainRepository->findOneByActiveRequest();
+
 		if ($currentDomain !== NULL) {
 			$contextProperties['currentSite'] = $currentDomain->getSite();
 			$contextProperties['currentDomain'] = $currentDomain;
 		} else {
-			$contextProperties['currentSite'] = $this->siteRepository->findFirst();
+			$contextProperties['currentSite'] = $this->siteRepository->findOnline()->getFirst();
 		}
+
 		return $this->contextFactory->create($contextProperties);
 	}
 
