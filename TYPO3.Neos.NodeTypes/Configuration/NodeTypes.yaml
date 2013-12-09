@@ -11,7 +11,7 @@
        reloadIfChanged: TRUE
        inspector:
          group: 'layout'
-         editor: Content/Inspector/Editors/SelectBoxEditor
+         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
          editorOptions:
            placeholder: 'Inherit from parent'
            values:
@@ -23,7 +23,7 @@
        label: 'Layout for subpages of this page'
        inspector:
          group: 'layout'
-         editor: Content/Inspector/Editors/SelectBoxEditor
+         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
          editorOptions:
            placeholder: 'Inherit from parent'
            values:
