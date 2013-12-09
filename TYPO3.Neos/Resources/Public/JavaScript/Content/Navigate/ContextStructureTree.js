@@ -44,6 +44,7 @@ define(
 		treeSelector: '#neos-context-structure-tree',
 		loadingDepth: 0,
 		unmodifiableLevels: 2,
+		refreshOnPageNodePathChanged: true,
 
 		init: function() {
 			this._super();
@@ -52,9 +53,17 @@ define(
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
 			});
+			ContentModule.on('pageLoaded', function(){
+				Ember.run.next(function(){
+					that.set('refreshOnPageNodePathChanged', false);
+				});
+			});
 		},
 
 		_onPageNodePathChanged: function() {
+			if (this.get('refreshOnPageNodePathChanged') === false) {
+				return;
+			}
 			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-page-metainformation'))),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.get('pageNodePath'),

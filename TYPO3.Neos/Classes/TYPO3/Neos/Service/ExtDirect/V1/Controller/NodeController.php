@@ -455,8 +455,11 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function deleteAction(Node $node) {
+		$q = new FlowQuery(array($node));
 		$node->remove();
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3.Neos');
+		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
+
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
