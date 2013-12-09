@@ -10,6 +10,7 @@ define(
 	'vie/instance',
 	'vie/entity',
 	'Shared/EventDispatcher',
+	'Shared/NodeTypeService',
 	'Shared/Notification'
 ], function(
 	Ember,
@@ -17,6 +18,7 @@ define(
 	vie,
 	EntityWrapper,
 	EventDispatcher,
+	NodeTypeService,
 	Notification
 ) {
 	return Ember.Object.extend({
@@ -88,7 +90,7 @@ define(
 		/**
 		 * Publish all blocks which are unsaved *and* on current page.
 		 */
-		publishChanges: function() {
+		publishChanges: function(autoPublish) {
 			var that = this;
 			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this.get('publishableEntitySubjects'),
@@ -97,7 +99,13 @@ define(
 					return [entity.fromReference(subject), 'live'];
 				},
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
-				null,
+				function() {
+					if (autoPublish != true) {
+						var nodeTypeSchema = NodeTypeService.getCurrentNodeTypeSchema(),
+							title = $('#neos-page-metainformation').attr('data-neos-title')
+						Notification.ok('Published changes for ' + nodeTypeSchema.ui.label + ' "' + title + '".');
+					}
+				},
 				function(subject) {
 					var entity = vie.entities.get(subject);
 					entity.set('typo3:__workspacename', 'live');
@@ -138,6 +146,9 @@ define(
 							});
 						}
 					);
+					var nodeTypeSchema = NodeTypeService.getCurrentNodeTypeSchema(),
+						title = $('#neos-page-metainformation').attr('data-neos-title')
+					Notification.ok('Discarded changes for ' + nodeTypeSchema.ui.label + ' "' + title + '".');
 				},
 				function(subject) {
 					var entity = vie.entities.get(subject);
@@ -166,6 +177,8 @@ define(
 					});
 
 					that.getWorkspaceWideUnpublishedNodes();
+
+					Notification.ok('Published all changes.');
 				} else {
 					Notification.error('Unexpected error while publishing all changes: ' + JSON.stringify(result));
 				}
@@ -196,6 +209,7 @@ define(
 						}
 					);
 					that.getWorkspaceWideUnpublishedNodes();
+					Notification.ok('Discarded all changes.');
 				} else {
 					Notification.error('Unexpected error while discarding all changes: ' + JSON.stringify(result));
 				}

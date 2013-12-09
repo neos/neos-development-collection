@@ -72,7 +72,7 @@ define(
 					if (this.get('autoPublish') && !this._autoPublishTimer) {
 						this._autoPublishTimer = window.setInterval(function() {
 							if (!that.get('_saveRunning') && !that.get('noChanges')) {
-								that.triggerAction();
+								PublishableNodes.publishChanges(true);
 							}
 						}, 10000);
 					} else if (this._autoPublishTimer) {
