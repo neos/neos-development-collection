@@ -82,7 +82,7 @@ define(
 
 			if (editor.indexOf('Content/Inspector/Editors/') === 0) {
 				// Rename old editor names for backwards compatibility
-				editor = editor.replace('Content/Inspector/Editors/', 'TYPO3.Neos/Inspector/');
+				editor = editor.replace('Content/Inspector/Editors/', 'TYPO3.Neos/Inspector/Editors/');
 			}
 
 			require([editor], function(editorClass) {
