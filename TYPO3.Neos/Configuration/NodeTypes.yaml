@@ -163,50 +163,6 @@
   postprocessors:
     'PluginPostprocessor':
       postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
-  properties:
-    package:
-      type: string
-      ui:
-        label: 'Package'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        'TYPO3.Neos/Validation/RegularExpressionValidator':
-          regularExpression: '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i'
-    subpackage:
-      type: string
-      ui:
-        label: 'Subpackage'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        'TYPO3.Neos/Validation/StringLengthValidator':
-          minimum: 1
-          maximum: 255
-    controller:
-      type: string
-      ui:
-        label: 'Controller Name'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        'TYPO3.Neos/Validation/StringLengthValidator':
-          minimum: 1
-          maximum: 255
-    action:
-      type: string
-      ui:
-        label: 'Action'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'pluginSettings'
-      validation:
-        'TYPO3.Neos/Validation/StringLengthValidator':
-          minimum: 1
-          maximum: 255
 
 'TYPO3.Neos:PluginView':
   superTypes: ['TYPO3.Neos:Content']
