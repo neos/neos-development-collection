@@ -43,6 +43,15 @@ define(
 		initialize: function() {
 			vie.entities.on('change', this._updatePublishableEntities, this);
 			this._updatePublishableEntities();
+
+			var that = this;
+			EventDispatcher.on('nodeDeleted', function(parentNode) {
+				that.getWorkspaceWideUnpublishedNodes();
+			});
+
+			EventDispatcher.on('nodeMoved', function(node) {
+				that.getWorkspaceWideUnpublishedNodes();
+			});
 		},
 
 		_updatePublishableEntities: function() {

@@ -9,6 +9,7 @@ define(
 		'../Application',
 		'Shared/Configuration',
 		'Shared/ResourceCache',
+		'Shared/EventDispatcher',
 		'Shared/Notification',
 		'vie/instance',
 		'../Model/NodeSelection',
@@ -23,6 +24,7 @@ define(
 		ContentModule,
 		Configuration,
 		ResourceCache,
+		EventDispatcher,
 		Notification,
 		vieInstance,
 		NodeSelection,
@@ -57,7 +59,9 @@ define(
 				$('.neos-dynatree-dirty').removeClass('neos-dynatree-dirty');
 				PublishableNodes.get('workspaceWidePublishableEntitySubjects').forEach(function(node) {
 					var treeNode = that.$nodeTree.dynatree("getTree").getNodeByKey(node.pageNodePath + workspaceSuffix);
-					$(treeNode.span).addClass('neos-dynatree-dirty');
+					if (treeNode) {
+						$(treeNode.span).addClass('neos-dynatree-dirty');
+					}
 				});
 			}.observes('publishableNodes.numberOfWorkspaceWidePublishableNodes'),
 
@@ -249,6 +253,7 @@ define(
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.getParent().data.href);
+					EventDispatcher.trigger('nodeDeleted', node.getParent());
 				}
 			},
 
@@ -256,6 +261,7 @@ define(
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.data.href);
+					EventDispatcher.trigger('nodeMoved', node);
 				}
 			},
 
