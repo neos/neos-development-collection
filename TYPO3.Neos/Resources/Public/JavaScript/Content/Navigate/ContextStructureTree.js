@@ -83,6 +83,15 @@ define(
 			return this.get('activeNode') && NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:Document');
 		}.property('activeNode'),
 
+		/**
+		 * The condition on NodeType is to prevent modification of ContentCollections as the Workspaces module / publishing are not
+		 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
+		 * is inside a moved Collection.
+		 */
+		currentFocusedNodeCanBeModified: function() {
+			return (this.get('activeNode') && (this.get('activeNode').getLevel() <= this.unmodifiableLevels || NodeTypeService.isOfType(this.get('activeNode').data.nodeType, 'TYPO3.Neos:ContentCollection')));
+		}.property('activeNode'),
+
 		isExpanded: function() {
 			return NavigatePanelController.get('contextStructureMode');
 		}.property('controller.contextStructureMode'),
@@ -146,6 +155,19 @@ define(
 						else{
 							return ['before', 'after'];
 						}
+					},
+
+					onDragStart: function(node) {
+						/**
+						 * This is to prevent changing of ContentCollections as the Workspaces module / publishing are not
+						 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
+						 * is inside a moved Collection.
+						 */
+						if (NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection')) {
+							return false;
+						}
+
+						return true;
 					}
 				},
 
