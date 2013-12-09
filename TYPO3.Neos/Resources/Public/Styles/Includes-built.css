@@ -4862,7 +4862,7 @@
 .neos.neos-navigate-panel-open .neos-pageloader-wrapper .neos-pageloader {
   margin-left: -350px;
 }
-.neos.neos-previewmode .neos-pageloader-wrapper .neos-pageloader {
+.neos.neos-full-screen .neos-pageloader-wrapper .neos-pageloader {
   margin-top: 20px;
 }
 .neos ::-webkit-scrollbar {
@@ -4980,6 +4980,14 @@
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+  -webkit-transition-property: top;
+  -moz-transition-property: top;
+  -o-transition-property: top;
+  transition-property: top;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
 }
 .neos #neos-inspector-button:before {
   position: relative;
@@ -6085,6 +6093,15 @@
   display: none;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
+  font-size: 0;
+  -webkit-transition-property: top;
+  -moz-transition-property: top;
+  -o-transition-property: top;
+  transition-property: top;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
 }
 .neos #neos-top-bar #neos-top-bar-right {
   float: right;
@@ -6223,7 +6240,7 @@
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li:first-child,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li:first-child {
-  border-color: #323232;
+  border-color: #3f3f3f;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li a,
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li button,
@@ -6392,17 +6409,118 @@
   left: 8px;
   vertical-align: middle;
 }
+.neos #neos-edit-preview-button {
+  position: relative;
+  background-color: #222222;
+  border-right: 1px solid #3f3f3f;
+}
+.neos #neos-edit-preview-button:hover, .neos #neos-edit-preview-button.neos-pressed {
+  color: #00b5ff;
+}
+.neos #neos-edit-preview-button .neos-active {
+  font-weight: bold;
+}
+.neos-navigate-panel-open .neos #neos-edit-preview-button.neos-pressed:after, .neos-menu-panel-open:not(.neos-menu-panel-sticky) .neos #neos-edit-preview-button.neos-pressed:after {
+  display: none;
+}
+.neos #neos-edit-preview-button.neos-pressed {
+  background-color: #141414;
+}
+.neos #neos-edit-preview-button.neos-pressed:after {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 1px;
+  left: 0;
+  bottom: -1px;
+  position: absolute;
+  background-color: #141414;
+}
+.neos #neos-edit-preview-panel {
+  position: fixed;
+  top: -60px;
+  left: 0;
+  right: -1px;
+  height: 100px;
+  background-color: #141414;
+  z-index: 10013;
+  border-bottom: 1px solid #3f3f3f;
+  -webkit-transition-property: top, left, right;
+  -moz-transition-property: top, left, right;
+  -o-transition-property: top, left, right;
+  transition-property: top, left, right;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+}
+.neos-edit-preview-panel-open .neos #neos-edit-preview-panel {
+  top: 41px;
+}
+.neos-navigate-panel-open .neos #neos-edit-preview-panel {
+  left: 320px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-edit-preview-panel {
+  left: 54px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos #neos-edit-preview-panel {
+  left: 373px;
+}
+.neos-inspector-panel-open .neos #neos-edit-preview-panel {
+  right: 320px;
+}
+.neos #neos-edit-preview-panel .neos-preview {
+  border-left: 1px solid #3f3f3f;
+  box-sizing: border-box;
+}
+.neos #neos-edit-preview-panel .neos-edit,
+.neos #neos-edit-preview-panel .neos-preview {
+  width: 49%;
+  height: 100px;
+  float: left;
+}
+.neos #neos-edit-preview-panel .neos-edit .neos-edit-preview-panel-title,
+.neos #neos-edit-preview-panel .neos-preview .neos-edit-preview-panel-title {
+  padding-left: 40px;
+  padding-top: 20px;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.neos #neos-edit-preview-panel .neos-edit ul.neos-edit-preview-modes,
+.neos #neos-edit-preview-panel .neos-preview ul.neos-edit-preview-modes {
+  padding-left: 40px;
+  padding-top: 10px;
+}
+.neos #neos-edit-preview-panel .neos-edit ul.neos-edit-preview-modes li,
+.neos #neos-edit-preview-panel .neos-preview ul.neos-edit-preview-modes li {
+  float: left;
+  padding-right: 8px;
+}
 .neos #neos-context-bar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 10012;
-  margin-top: 41px;
+  top: 41px;
   background-color: #323232;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   padding-right: 40px;
+  -webkit-transition-property: top, padding;
+  -moz-transition-property: top, padding;
+  -o-transition-property: top, padding;
+  transition-property: top, padding;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+}
+.neos-edit-preview-panel-open .neos #neos-context-bar {
+  top: 141px;
+}
+.neos-edit-preview-panel-open:not(.neos-inspector-panel-open) .neos #neos-context-bar {
+  padding-right: 0;
 }
 .neos-navigate-panel-open .neos #neos-context-bar {
   padding-left: 320px;
@@ -6437,6 +6555,10 @@
 }
 .neos #neos-context-bar .neos-button + .neos-button {
   margin-left: 16px;
+}
+.neos #neos-context-bar .neos-button.neos-full-screen-open {
+  width: 40px;
+  padding: 0;
 }
 .neos #neos-context-bar .neos-context-bar-save-indicator {
   display: inline-block;
@@ -6654,6 +6776,14 @@
   height: 40px;
   background-color: #222222;
   border-right: 1px solid #3f3f3f;
+  -webkit-transition-property: top;
+  -moz-transition-property: top;
+  -o-transition-property: top;
+  transition-property: top;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
 }
 .neos #neos-menu-button:hover:before, .neos #neos-menu-button.neos-pressed:before {
   border-top: 3px solid #00b5ff;
@@ -9181,74 +9311,59 @@ body.neos-controls {
 body.neos-controls #neos-top-bar {
   display: block;
 }
+body.neos-edit-preview-panel-open {
+  margin-top: 182px;
+}
 body.neos-menu-panel-open.neos-menu-panel-sticky {
   margin-left: 54px;
 }
 body.neos-navigate-panel-open {
-  margin-left: 320px;
+  margin-left: 321px;
 }
 body.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open {
-  margin-left: 373px;
+  margin-left: 375px;
 }
 body.neos-inspector-panel-open {
-  margin-right: 320px;
+  margin-right: 321px;
 }
-body #neos-top-bar {
-  -webkit-transition-property: height;
-  -moz-transition-property: height;
-  -o-transition-property: height;
-  transition-property: height;
-  -webkit-transition-duration: 0.2s;
-  -moz-transition-duration: 0.2s;
-  -o-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-}
-body #neos-context-bar {
-  -webkit-transition-property: margin-top, padding-left, padding-right;
-  -moz-transition-property: margin-top, padding-left, padding-right;
-  -o-transition-property: margin-top, padding-left, padding-right;
-  transition-property: margin-top, padding-left, padding-right;
-  -webkit-transition-duration: 0.2s;
-  -moz-transition-duration: 0.2s;
-  -o-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-}
-body.neos-previewmode {
+body.neos-full-screen {
+  margin-top: 0 !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
 }
-body.neos-previewmode .neos #neos-top-bar,
-body.neos-previewmode .neos #neos-context-bar,
-body.neos-previewmode .neos #neos-inspector {
+body.neos-full-screen .neos #neos-top-bar,
+body.neos-full-screen .neos #neos-context-bar,
+body.neos-full-screen .neos #neos-inspector {
   display: block !important;
 }
-body.neos-previewmode .neos #neos-top-bar {
-  top: -1px;
-  height: 0;
-  overflow: hidden;
+body.neos-full-screen .neos #neos-top-bar {
+  top: -41px;
 }
-body.neos-previewmode .neos #neos-context-bar {
-  margin-top: -41px;
+body.neos-full-screen .neos #neos-inspector-button {
+  top: -42px;
+}
+body.neos-full-screen .neos #neos-menu-button {
+  top: -40px;
+}
+body.neos-full-screen .neos #neos-context-bar {
+  top: -41px;
   box-shadow: none;
   display: block;
   padding-left: 0;
   padding-right: 0;
 }
-body.neos-previewmode .neos #neos-inspector {
+body.neos-full-screen .neos #neos-edit-preview-panel {
+  top: -101px;
+}
+body.neos-full-screen .neos #neos-inspector {
   right: -321px;
   overflow: hidden;
 }
-body.neos-previewmode .neos #neos-menu-panel,
-body.neos-previewmode .neos #neos-navigate-panel {
+body.neos-full-screen .neos #neos-menu-panel,
+body.neos-full-screen .neos #neos-navigate-panel {
   left: -321px !important;
 }
-body.neos-previewmode .neos .neos-overlay-component,
-body.neos-previewmode .neos .neos-handle-container,
-body.neos-previewmode .neos .neos-modal-backdrop,
-body.neos-previewmode .neos #neos-menu-button {
-  display: none;
-}
-body.neos-previewmode .neos-preview-close {
+body.neos-full-screen .neos-full-screen-close {
   display: block !important;
   position: fixed;
   top: 16px;
@@ -9258,33 +9373,45 @@ body.neos-previewmode .neos-preview-close {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
   z-index: 9999;
 }
-body.neos-previewmode .neos-preview-close .neos-button {
+body.neos-full-screen .neos-full-screen-close .neos-button {
   width: 40px;
   line-height: 44px;
   padding: 0;
 }
-body.neos-previewmode .neos-preview-close .neos-button i {
+body.neos-full-screen .neos-full-screen-close .neos-button i {
   margin-top: 1px;
 }
-body.neos-previewmode .neos-handle,
-body.neos-previewmode .neos-status-indicator {
+body.neos-preview-mode .neos-contentelement {
+  outline: none !important;
+}
+body.neos-preview-mode div.neos-inline-editable {
+  outline: none !important;
+  background: none !important;
+}
+body.neos-preview-mode .neos-handle,
+body.neos-preview-mode .neos-status-indicator {
   display: none !important;
 }
-body.neos-previewmode #aloha-floatingmenu-shadow,
-body.neos-previewmode .aloha-floatingmenu,
-body.neos-previewmode .x-shadow,
-body.neos-previewmode .neos-contentelement-overlay,
-body.neos-previewmode button.neos-create-new-content,
-body.neos-previewmode .neos-contentelement-hidden,
-body.neos-previewmode #neos-inspector-button {
+body.neos-preview-mode #aloha-floatingmenu-shadow,
+body.neos-preview-mode .aloha-floatingmenu,
+body.neos-preview-mode .x-shadow,
+body.neos-preview-mode .neos-contentelement-overlay,
+body.neos-preview-mode button.neos-create-new-content,
+body.neos-preview-mode .neos-contentelement-hidden {
   display: none !important;
 }
-body.neos-previewmode .neos-contentelement-active {
+body.neos-preview-mode .neos-contentelement-active {
   outline: none !important;
   outline-offset: 0px;
 }
-body.neos-previewmode .neos-contentelement-active > .neos-contentelement-handle-container {
+body.neos-preview-mode .neos-contentelement-active > .neos-contentelement-handle-container {
   visibility: hidden;
+}
+body.neos-preview-mode .neos.neos-empty-contentcollection-overlay,
+body.neos-preview-mode .neos .neos-overlay-component,
+body.neos-preview-mode .neos .neos-handle-container,
+body.neos-preview-mode .neos .neos-modal-backdrop {
+  display: none;
 }
 #neos-page-metainformation {
   display: none;
