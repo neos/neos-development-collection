@@ -17,7 +17,6 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
@@ -37,12 +36,6 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 	 * @var Dispatcher
 	 */
 	protected $dispatcher;
-
-	/**
-	 * @Flow\Inject
-	 * @var ContentElementWrappingService
-	 */
-	protected $contentElementWrappingService;
 
 	/**
 	 * @var NodeInterface
@@ -160,11 +153,7 @@ class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAcc
 		} catch (\Exception $exception) {
 			$content = $this->tsRuntime->handleRenderingException($this->path, $exception);
 		}
-		if ($this->node instanceof NodeInterface) {
-			return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $content);
-		} else {
-			return $content;
-		}
+		return $content;
 	}
 
 	/**

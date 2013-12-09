@@ -106,27 +106,19 @@ class PluginViewImplementation extends PluginImplementation {
 		try {
 			$pluginRequest = $this->buildPluginRequest();
 			if ($pluginRequest->getControllerObjectName() === '') {
-				$content = 'No PluginView Configured';
-				return $this->contentElementWrappingService->wrapContentObject($currentContext['node'], $this->path, $content);
+				return '<p>No PluginView Configured</p>';
 			}
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-
-			if ($this->node instanceof NodeInterface) {
-				return $this->contentElementWrappingService->wrapContentObject($currentContext['node'], $this->path, $pluginResponse->getContent());
-			} else {
-				return $pluginResponse->getContent();
-			}
+			return $pluginResponse->getContent();
 		} catch (StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (RequiredArgumentMissingException $exception) {
-			$content = $exception->getMessage();
-			return $this->contentElementWrappingService->wrapContentObject($currentContext['node'], $this->path, $content);
+			return $exception->getMessage();
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
 			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
 
-			$content = ($this->objectManager->getContext()->isDevelopment()) ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
-			return $this->contentElementWrappingService->wrapContentObject($currentContext['node'], $this->path, $content);
+			return ($this->objectManager->getContext()->isDevelopment()) ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
 		}
 	}
 }
