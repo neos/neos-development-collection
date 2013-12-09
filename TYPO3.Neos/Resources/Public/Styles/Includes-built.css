@@ -7883,7 +7883,10 @@
   box-sizing: border-box;
 }
 .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure {
-  height: 40px;
+  height: 41px;
+}
+.neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure #neos-context-structure-toolbar {
+  border-bottom: none;
 }
 .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure #neos-context-structure-tree-container {
   display: none;
