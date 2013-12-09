@@ -86,14 +86,22 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		foreach ($this->tagRepository->findAll() as $tag) {
 			$tags[] = array('tag' => $tag, 'count' => $this->assetRepository->countByTag($tag));
 		}
-		$this->view->assign('tags', $tags);
+
 		if ($this->browserState->get('tagMode') === self::TAG_NONE) {
-			$this->view->assign('assets', $this->assetRepository->findUntagged());
+			$assets = $this->assetRepository->findUntagged();
 		} elseif ($this->browserState->get('activeTag') !== NULL) {
-			$this->view->assign('assets', $this->assetRepository->findByTag($this->browserState->get('activeTag')));
+			$assets = $this->assetRepository->findByTag($this->browserState->get('activeTag'));
 		} else {
-			$this->view->assign('assets', $this->assetRepository->findAll());
+			$assets = $this->assetRepository->findAll();
 		}
+
+		$this->view->assignMultiple(array(
+			'assets' => $assets,
+			'tags' => $tags,
+			'allCount' => $this->assetRepository->countAll(),
+			'untaggedCount' => $this->assetRepository->countUntagged(),
+			'tagMode' => $tagMode
+		));
 	}
 
 	/**
@@ -174,7 +182,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * Upload a new asset. No redirection and no response body, no flash message, for use by plupload (or similar).
+	 * Upload a new asset. No redirection and no response body, for use by plupload (or similar).
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Asset $asset
 	 * @return string
@@ -186,6 +194,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$asset->addTag($tag);
 		}
 		$this->assetRepository->add($asset);
+		$this->addFlashMessage('Asset has been added.');
 		$this->response->setStatus(201);
 		return '';
 	}
@@ -258,6 +267,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		if ($title === '') {
 			$title = $asset->getResource()->getFilename();
 		}
+		$caption = $asset->getCaption();
+		$tags = $asset->getTags();
 
 		list($contentType, $subType) = explode('/', $asset->getResource()->getMediaType());
 		switch ($contentType) {
@@ -280,6 +291,8 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			break;
 		}
 		$asset->setTitle($title);
+		$asset->setCaption($caption);
+		$asset->setTags($tags);
 
 		return $asset;
 	}

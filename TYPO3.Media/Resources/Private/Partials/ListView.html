@@ -1,27 +1,32 @@
 {namespace m=TYPO3\Media\ViewHelpers}
-<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 25, maximumNumberOfLinks: 5}">
-	<table class="neos-table neos-table-striped neos-table-condensed asset-list">
+<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
+	<table class="neos-table asset-list">
 		<thead>
 			<tr>
+				<th></th>
 				<th>Title</th>
 				<th>Type</th>
 				<th>Tags</th>
-				<th></th>
+				<th class="neos-action"></th>
 			</tr>
 		</thead>
-		<tbody>
 		<f:for each="{paginatedAssets}" as="asset">
-			<tr class="draggable-asset" data-asset-identifier="{asset -> f:format.identifier()}">
-				<td>{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</td>
+			<tr class="asset draggable-asset" data-asset-identifier="{asset -> f:format.identifier()}">
+				<td>
+					<div class="neos-list-thumbnail">
+						<m:image image="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
+					</div>
+				</td>
+				<td><f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop></td>
 				<td>{asset.resource.mediatype}</td>
 				<td class="tags"><f:for each="{asset.tags}" as="tag">
 					<span class="neos-label">{tag.label}</span>
 				</f:for>
 				</td>
-				<td>
+				<td class="neos-action">
 					<f:form action="delete" method="post" object="{asset}" objectName="asset">
-						<f:link.action action="edit" title="Edit asset" class="neos-btn neos-btn-mini" arguments="{asset: asset}"><i class="icon-pencil"></i></f:link.action>
-						<button type="submit" title="Delete asset" class="neos-btn neos-btn-mini neos-btn-danger"><i class="icon-trash icon-white"></i></button>
+						<f:link.action action="edit" title="Edit asset" class="neos-button neos-button-mini" arguments="{asset: asset}"><i class="icon-pencil"></i></f:link.action>
+						<button type="submit" title="Delete asset" class="neos-button neos-button-mini neos-button-danger"><i class="icon-trash icon-white"></i></button>
 					</f:form>
 				</td>
 			</tr>

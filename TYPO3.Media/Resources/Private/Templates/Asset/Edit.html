@@ -1,40 +1,59 @@
 {namespace m=TYPO3\Media\ViewHelpers}
-<f:layout name="Default"/>
+<f:layout name="EditImage"/>
 
 <f:section name="Title">Edit view of AssetController</f:section>
 
-<f:section name="Sidebar"></f:section>
-
 <f:section name="Content">
 	<f:form method="post" action="update" object="{asset}" objectName="asset">
-		<fieldset>
-			<legend>Basics</legend>
-			<m:image image="{asset}" style="float:right" maximumWidth="400" maximumHeight="600" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="img-polaroid"/>
-			<label for="filename">Filename</label>
-			<f:form.textfield value="{asset.resource.filename}" disabled="disabled"/>
-			<label for="lastmodified">Last modified</label>
-			<f:form.textfield value="{asset.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}" disabled="disabled"/>
-			<label for="title">Title</label>
-			<f:form.textfield property="title" placeholder="Title"/>
-			<label for="caption">Caption</label>
-			<f:form.textarea property="caption" rows="3" placeholder="Caption"/>
-			<br/>
-			<f:if condition="{tags}">
-				<label for="tags">Tags</label>
-				<f:form.select property="tags" options="{tags}" optionLabelField="label" value="{asset.tags}" multiple="true" />
-				<br/>
-			</f:if>
-			<f:form.submit id="save" class="neos-btn neos-btn-primary" value="Save"/>
-			<f:link.action action="index" title="Cancel editing" class="neos-btn">Cancel</f:link.action>
-			<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: '{asset: asset}')}" class="neos-btn neos-btn-danger" title="Delete asset"><i class="icon-trash icon-white"></i> Delete</button>
-		</fieldset>
-		<fieldset>
-			<legend>Metadata</legend>
-			<label for="lastmodified-resource">Last modified (resource)</label>
-			<f:form.textfield value="{asset.resource.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}" disabled="disabled"/>
-			<label for="filesize">Filesize</label>
-			<f:form.textfield value="{asset.resource.filesize -> f:format.bytes()} ({asset.resource.filesize} bytes)" disabled="disabled"/>
-		</fieldset>
+		<div class="neos-row-fluid">
+			<div class="neos-span6 neos-image-inputs">
+				<fieldset>
+					<legend>Basics</legend>
+					<label for="title">Title</label>
+					<f:form.textfield property="title" placeholder="Title"/>
+					<label for="caption">Caption</label>
+					<f:form.textarea property="caption" id="caption" rows="3" placeholder="Caption"/>
+					<f:if condition="{tags}">
+						<label>Tags</label>
+						<f:for each="{tags}" as="tag">
+							<label class="neos-checkbox neos-inline">
+								<m:form.checkbox property="tags" multiple="TRUE" value="{tag}" /><span></span> {tag.label}
+							</label>
+						</f:for>
+					</f:if>
+				</fieldset>
+				<fieldset>
+					<legend>Metadata</legend>
+					<table class="neos-info-table">
+						<tbody>
+							<tr>
+								<th>Filename</th>
+								<td>{asset.resource.filename}</td>
+							</tr>
+							<tr>
+								<th>Last modified (resource)</th>
+								<td>{asset.lastModified -> f:format.date(format: 'Y-m-d H:i:s')}</td>
+							</tr>
+						</tbody>
+					</table>
+				</fieldset>
+			</div>
+			<div class="neos-span6 neos-image-example">
+				<f:render section="ContentImage" arguments="{_all}" />
+			</div>
+		</div>
+		<div class="neos-footer">
+			<f:link.action action="index" title="Cancel editing" class="neos-button">Cancel</f:link.action>
+			<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: '{asset: asset}')}" class="neos-button neos-button-danger" title="Delete asset">Delete</button>
+			<f:form.submit id="save" class="neos-button neos-button-primary" value="Save" />
+		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
+</f:section>
+
+<f:section name="ContentImage">
+	<label>Preview</label>
+	<div class="neos-preview-image">
+		<m:image image="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="img-polaroid" />
+	</div>
 </f:section>

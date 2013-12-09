@@ -15,8 +15,8 @@
 	$('.droppable-tag').each(function() {
 		$(this).droppable({
 			addClasses: false,
-			activeClass: 'neos-label-success',
-			hoverClass: 'neos-label-info',
+			activeClass: 'neos-drag-active',
+			hoverClass: 'neos-drag-hover',
 			tolerance: 'pointer',
 			drop: function (event, ui) {
 				var tag = $(this),
@@ -28,11 +28,18 @@
 					$('#tag-asset-form').serialize()
 				).done(function() {
 					tag.effect('highlight');
-					$('[data-asset-identifier="' + assetIdentifier + '"]').children('.tags').append('<span class="neos-label">' + tag.html() + '</span>');
+					var text = tag.clone();
+					text.children().remove();
+					$('[data-asset-identifier="' + assetIdentifier + '"]').children('.tags').append('<span class="neos-label">' + text.text() + '</span>');
 				}).fail(function() {
 					alert('Tagging the asset failed.');
 				});
 			}
 		});
+	});
+
+	$('#neos-tags-list-edit-toggle').click(function() {
+		$(this).toggleClass('neos-active');
+		$('.neos-tags-list').toggleClass('neos-tags-list-editing-active');
 	});
 })(jQuery);

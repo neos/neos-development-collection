@@ -1,12 +1,15 @@
 {namespace m=TYPO3\Media\ViewHelpers}
-<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 25, maximumNumberOfLinks: 5}">
-<ul class="neos-thumbnails asset-list">
-<f:for each="{assets}" as="asset">
-	<li class="asset" data-asset-identifier="{asset -> f:format.identifier()}">
-		<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail" arguments="{asset: asset}">
-			<m:image image="{asset}" allowCropping="true" maximumWidth="100" maximumHeight="100" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="draggable-asset" additionalAttributes="{data-asset-identifier: '{asset->f:format.identifier()}'}"/>
-		</f:link.action>
-	</li>
-</f:for>
-</ul>
+<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
+	<ul class="neos-thumbnails asset-list">
+		<f:for each="{paginatedAssets}" as="asset">
+			<li class="asset">
+				<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail draggable-asset" additionalAttributes="{data-asset-identifier: '{asset->f:format.identifier()}'}" arguments="{asset: asset}">
+					<div class="neos-img-container">
+						<m:image image="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
+					</div>
+					<span class="neos-caption"><f:format.crop maxCharacters="100">{f:if(condition: asset.caption, then: asset.caption, else: asset.resource.filename)}</f:format.crop></span>
+				</f:link.action>
+			</li>
+		</f:for>
+	</ul>
 </f:widget.paginate>
