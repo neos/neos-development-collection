@@ -10,13 +10,14 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Testcase for the "NodeTypeManager"
- *
  */
-class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class NodeTypeManagerTest extends UnitTestCase {
 
 	/**
 	 * example node types
@@ -173,6 +174,17 @@ class NodeTypeManagerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$nodeTypes = $nodeTypeManager->getNodeTypes();
 		$this->assertArrayHasKey('TYPO3.Neos:ContentObject', $nodeTypes);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getNodeTypesWithoutIncludeAbstractContainsNoAbstractNodeTypes() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$nodeTypes = $nodeTypeManager->getNodeTypes(FALSE);
+		$this->assertArrayNotHasKey('TYPO3.Neos:ContentObject', $nodeTypes);
 	}
 
 	/**

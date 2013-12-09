@@ -12,7 +12,9 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
  * Manager for node types
@@ -31,27 +33,29 @@ class NodeTypeManager {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Configuration\ConfigurationManager
+	 * @var ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
 	 * Return all registered node types.
 	 *
-	 * @param boolean $includAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> All node types registered in the system, indexed by node type name
+	 * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+	 * @return array<NodeType> All node types registered in the system, indexed by node type name
 	 * @api
 	 */
-	public function getNodeTypes($includAbstractNodeTypes = TRUE) {
+	public function getNodeTypes($includeAbstractNodeTypes = TRUE) {
 		if ($this->cachedNodeTypes === array()) {
 			$this->loadNodeTypes();
 		}
-		if ($includAbstractNodeTypes) {
+		if ($includeAbstractNodeTypes) {
 			return $this->cachedNodeTypes;
 		} else {
 			$nonAbstractNodeTypes = array();
 			foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-				$nonAbstractNodeTypes[$nodeTypeName] = $nodeType;
+				if (!$nodeType->isAbstract()) {
+					$nonAbstractNodeTypes[$nodeTypeName] = $nodeType;
+				}
 			}
 			return $nonAbstractNodeTypes;
 		}
@@ -62,11 +66,11 @@ class NodeTypeManager {
 	 * the $superType itself.
 	 *
 	 * @param string $superTypeName
-	 * @param boolean $includAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType> Sub node types of the given super type, indexed by node type name
+	 * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
+	 * @return array<NodeType> Sub node types of the given super type, indexed by node type name
 	 * @api
 	 */
-	public function getSubNodeTypes($superTypeName, $includAbstractNodeTypes = TRUE) {
+	public function getSubNodeTypes($superTypeName, $includeAbstractNodeTypes = TRUE) {
 		if ($this->cachedNodeTypes === array()) {
 			$this->loadNodeTypes();
 		}
@@ -74,7 +78,7 @@ class NodeTypeManager {
 		$filteredNodeTypes = array();
 		/** @var NodeType $nodeType */
 		foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-			if ($includAbstractNodeTypes === FALSE && $nodeType->isAbstract()) {
+			if ($includeAbstractNodeTypes === FALSE && $nodeType->isAbstract()) {
 				continue;
 			}
 			if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
@@ -88,8 +92,8 @@ class NodeTypeManager {
 	 * Returns the specified node type (which could be abstract)
 	 *
 	 * @param string $nodeTypeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType or NULL
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+	 * @return NodeType or NULL
+	 * @throws NodeTypeNotFoundException
 	 * @api
 	 */
 	public function getNodeType($nodeTypeName) {
@@ -97,7 +101,7 @@ class NodeTypeManager {
 			$this->loadNodeTypes();
 		}
 		if (!isset($this->cachedNodeTypes[$nodeTypeName])) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException('The node type "' . $nodeTypeName . '" is not available.', 1316598370);
+			throw new NodeTypeNotFoundException('The node type "' . $nodeTypeName . '" is not available.', 1316598370);
 		}
 		return $this->cachedNodeTypes[$nodeTypeName];
 	}
@@ -120,8 +124,8 @@ class NodeTypeManager {
 	 * Creates a new node type
 	 *
 	 * @param string $nodeTypeName Unique name of the new node type. Example: "TYPO3.Neos:Page"
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
-	 * @throws \TYPO3\TYPO3CR\Exception
+	 * @return NodeType
+	 * @throws Exception
 	 */
 	public function createNodeType($nodeTypeName) {
 		throw new \TYPO3\TYPO3CR\Exception('Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".', 1316449432);
@@ -144,7 +148,7 @@ class NodeTypeManager {
 	 *
 	 * @param string $nodeTypeName
 	 * @param array $completeNodeTypeConfiguration the full node type configuration for all node types
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
+	 * @return NodeType
 	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
 	protected function loadNodeType($nodeTypeName, array $completeNodeTypeConfiguration) {
@@ -173,7 +177,7 @@ class NodeTypeManager {
 		}
 		$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $nodeTypeConfiguration);
 
-		$nodeType = new \TYPO3\TYPO3CR\Domain\Model\NodeType($nodeTypeName, $superTypes, $mergedConfiguration);
+		$nodeType = new NodeType($nodeTypeName, $superTypes, $mergedConfiguration);
 
 		$this->cachedNodeTypes[$nodeTypeName] = $nodeType;
 		return $nodeType;
