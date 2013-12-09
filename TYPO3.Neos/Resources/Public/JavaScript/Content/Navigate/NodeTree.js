@@ -137,10 +137,9 @@ define(
 					return;
 				}
 
-				var siteRoot = pageMetaInformation.data('__siteroot'),
-					siteName = pageMetaInformation.data('__sitename'),
+				var siteName = pageMetaInformation.data('__sitename'),
 					nodeType = pageMetaInformation.attr('typeof').substr(6),
-					workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
+					siteHref = pageMetaInformation.data('neosCurrentSiteHref');
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					autoFocus: true,
 					parent: this,
@@ -148,7 +147,7 @@ define(
 						{
 							title: siteName,
 							tooltip: siteName + ' (' + nodeType + ')',
-							href: '@' + workspaceName,
+							href: siteHref,
 							key: this.get('siteRootNodePath'),
 							isFolder: true,
 							expand: false,

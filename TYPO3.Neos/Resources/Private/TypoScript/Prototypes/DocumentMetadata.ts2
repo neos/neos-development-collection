@@ -2,10 +2,23 @@
 #
 # Renders a meta tag with attributes about the current document node
 #
-prototype(TYPO3.Neos:DocumentMetadata) {
-	@class = 'TYPO3\\Neos\\TypoScript\\DocumentMetadataImplementation'
-	documentNode = ${documentNode}
+prototype(TYPO3.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
 	tagName = 'div'
-	id = 'neos-page-metainformation'
-	forceClosingTag = true
+	forceClosingTag = TRUE
+	attributes {
+		id = 'neos-page-metainformation'
+		data-neos-current-site-href = TYPO3.TypoScript:UriBuilder {
+			package = 'TYPO3.Neos'
+			controller = 'Frontend\\Node'
+			action = 'show'
+			format = 'html'
+			arguments.node = ${node.context.currentSiteNode}
+			absolute = TRUE
+		}
+	}
+
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+
+	@process.onlyRenderMetadataWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live' ? value : ''}
+	@process.onlyRenderMetadataWhenNotInLiveWorkspace.@position = 'end 9999'
 }
