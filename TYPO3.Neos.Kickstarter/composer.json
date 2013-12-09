@@ -5,7 +5,8 @@
     "license": "GPL-3.0+",
     "require": {
         "typo3/neos": "*",
-        "typo3/kickstart": "*"
+        "typo3/kickstart": "*",
+        "typo3/neos-nodetypes": "*"
     },
     "autoload": {
         "psr-0": {

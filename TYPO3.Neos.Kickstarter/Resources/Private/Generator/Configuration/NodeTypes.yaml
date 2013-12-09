@@ -4,7 +4,7 @@
 # only those that are rendered in your TypoScript and Template
 # are visible on your page.
 
-#'TYPO3.Neos:Page':
+#'TYPO3.Neos.NodeTypes:Page':
 #  childNodes:
 #    sidebar:
 #      type: 'TYPO3.Neos:ContentCollection'
