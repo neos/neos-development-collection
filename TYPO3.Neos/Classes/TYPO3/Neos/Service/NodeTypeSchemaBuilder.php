@@ -63,7 +63,7 @@ class NodeTypeSchemaBuilder {
 			return $this->configuration;
 		}
 
-		$nodeTypes = $this->nodeTypeManager->getNodeTypes(FALSE);
+		$nodeTypes = $this->nodeTypeManager->getNodeTypes();
 
 		/** @var \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {

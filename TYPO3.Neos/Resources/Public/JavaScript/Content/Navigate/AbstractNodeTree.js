@@ -158,9 +158,9 @@ define(
 				this._super();
 				this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: this.baseNodeType}).create());
 
-				var that = this;
 				ContentModule.on('pageLoaded', this, function() {
-					that.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
+					this.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
+					this.trigger('afterPageLoaded');
 				});
 			},
 
@@ -339,7 +339,7 @@ define(
 					}
 
 					var vieEntity = entityWrapper._vieEntity;
-					if (vieEntity.type === 'TYPO3.Neos:Document') {
+					if (vieEntity.isof('typo3:TYPO3.Neos:Document')) {
 						entityWrapper.addObserver('typo3:title', function() {
 							that.synchronizeNodeTitle(vieEntity);
 						});
@@ -402,16 +402,26 @@ define(
 				var node = this.getNodeByEntity(vieEntity);
 				if (node) {
 					var attributes = EntityWrapper.extractAttributesFromVieEntity(vieEntity);
-					node.data.key = node.data.key.replace(node.data.name + '@', attributes._name + '@');
-					node.data.href = node.data.href.replace(node.data.name + '@', attributes._name + '@');
-					node.data.name = attributes._name;
+					var previousNodeName = vieEntity.previousAttributes()['<' + Configuration.get('TYPO3_NAMESPACE') + '_name' + '>'];
+					var newNodeName = attributes._name;
+					if (node.data.key) {
+						node.data.key = node.data.key.replace(previousNodeName + '@', newNodeName + '@');
+					}
+					if (node.data.href) {
+						node.data.href = node.data.href.replace(previousNodeName + '@', newNodeName + '@');
+					}
+					node.data.name = newNodeName;
 					node.render();
 					if (node.hasChildren() === true) {
 						node.data.isLazy = true;
 						// Remove children so they can't be clicked until they are reloaded
 						node.removeChildren();
 						node.setLazyNodeStatus(this.statusCodes.loading);
-						ContentModule.one('pageLoaded', this, 'reloadPageNodeChildren');
+
+						this.one('afterPageLoaded', function() {
+							node.data.isLazy = true;
+							node.reloadChildren();
+						});
 					}
 				}
 			},
@@ -421,13 +431,6 @@ define(
 					return this.$nodeTree.dynatree('getTree').getNodeByKey(vieEntity.getSubjectUri());
 				}
 				return null;
-			},
-
-			reloadPageNodeChildren: function() {
-				var node = this.getNodeForEntity();
-				if (node) {
-					node.reloadChildren();
-				}
 			},
 
 			create: function() {
