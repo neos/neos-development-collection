@@ -60,4 +60,15 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 		return $query->matching($query->isEmpty('tags'))->execute();
 	}
 
+	/**
+	 * Counts Assets without any tag
+	 *
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 */
+	public function countUntagged() {
+		$query = $this->createQuery();
+
+		return $query->matching($query->isEmpty('tags'))->count();
+	}
+
 }
