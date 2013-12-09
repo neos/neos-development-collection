@@ -261,7 +261,11 @@ class SiteImportService {
 	protected function parseNodeType(\SimpleXMLElement $nodeXml) {
 		$nodeTypeName = (string)$nodeXml['type'];
 		if ($this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-			return $this->nodeTypeManager->getNodeType($nodeTypeName);
+			$nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+			if ($nodeType->isAbstract()) {
+				throw new DomainException(sprintf('The node type "%s" is marked as abstract and cannot be assigned to nodes.', $nodeTypeName), 1386590052);
+			}
+			return $nodeType;
 		}
 
 		return $this->nodeTypeManager->createNodeType($nodeTypeName);

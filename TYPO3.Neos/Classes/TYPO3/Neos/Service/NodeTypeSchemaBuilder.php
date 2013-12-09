@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
  * Generate a schema in JSON format for the VIE dataTypes validation, necessary
@@ -53,6 +54,8 @@ class NodeTypeSchemaBuilder {
 	 * Converts the nodes types to a fully structured array
 	 * in the same structure as the schema to be created.
 	 *
+	 * The schema also includes abstract node types for the full inheritance information in VIE.
+	 *
 	 * @return object
 	 */
 	public function generateVieSchema() {
@@ -60,11 +63,15 @@ class NodeTypeSchemaBuilder {
 			return $this->configuration;
 		}
 
-		foreach ($this->nodeTypeManager->getFullConfiguration() as $nodeType => $nodeTypeConfiguration) {
-			$this->superTypeConfiguration['typo3:' . $nodeType] = array();
+		$nodeTypes = $this->nodeTypeManager->getNodeTypes(FALSE);
+
+		/** @var \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType */
+		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+			$nodeTypeConfiguration = $nodeType->getFullConfiguration();
+			$this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
 			if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
 				foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
-					$this->superTypeConfiguration['typo3:' . $nodeType][] = 'typo3:' . $superType;
+					$this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType;
 				}
 			}
 
@@ -74,7 +81,7 @@ class NodeTypeSchemaBuilder {
 				foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
 
 						// TODO Make sure we can configure the range for all multi column elements to define what types a column may contain
-					$this->addProperty('typo3:' . $nodeType, 'typo3:' . $property, $propertyConfiguration);
+					$this->addProperty('typo3:' . $nodeTypeName, 'typo3:' . $property, $propertyConfiguration);
 					$nodeTypeProperties[] = 'typo3:' . $property;
 				}
 			}
@@ -87,14 +94,14 @@ class NodeTypeSchemaBuilder {
 				}
 			}
 
-			$this->types['typo3:' . $nodeType] = (object) array(
-				'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeType,
-				'id' => 'typo3:' . $nodeType,
+			$this->types['typo3:' . $nodeTypeName] = (object) array(
+				'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeTypeName,
+				'id' => 'typo3:' . $nodeTypeName,
 				'properties' => array(),
 				'specific_properties' => $nodeTypeProperties,
 				'subtypes' => array(),
 				'metadata' => (object) $metadata,
-				'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeType],
+				'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeTypeName],
 				'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
 				'ancestors' => array(),
 				'comment' => '',
@@ -104,12 +111,12 @@ class NodeTypeSchemaBuilder {
 
 		unset($this->types['typo3:unstructured']);
 
-		foreach ($this->types as $nodeType => $nodeTypeDefinition) {
-			$this->types[$nodeType]->subtypes = $this->getAllSubtypes($nodeType);
-			$this->types[$nodeType]->ancestors = $this->getAllAncestors($nodeType);
+		foreach ($this->types as $nodeTypeName => $nodeTypeDefinition) {
+			$this->types[$nodeTypeName]->subtypes = $this->getAllSubtypes($nodeTypeName);
+			$this->types[$nodeTypeName]->ancestors = $this->getAllAncestors($nodeTypeName);
 
-			$this->removeUndeclaredTypes($this->types[$nodeType]->supertypes);
-			$this->removeUndeclaredTypes($this->types[$nodeType]->ancestors);
+			$this->removeUndeclaredTypes($this->types[$nodeTypeName]->supertypes);
+			$this->removeUndeclaredTypes($this->types[$nodeTypeName]->ancestors);
 		}
 
 		foreach ($this->properties as $property => $propertyConfiguration) {

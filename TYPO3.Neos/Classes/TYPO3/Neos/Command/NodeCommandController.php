@@ -74,20 +74,20 @@ class NodeCommandController extends CommandController {
 			$this->outputLine('Workspace "%s" does not exist', array($workspace));
 			$this->quit(1);
 		}
-
-		$createdNodesCount = 0;
-		$nodeCreationExceptions = 0;
-		$nodeTypeNames = $this->nodeTypeManager->getSubNodeTypes($nodeTypeName);
-
-		if ($this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-			$nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-			$nodeTypeNames[$nodeType->getName()] = $nodeType;
-		} else {
+		if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
 			$this->outputLine('Node type "%s" does not exist', array($nodeTypeName));
 			$this->quit(1);
 		}
 
-		foreach ($nodeTypeNames as $nodeTypeName => $nodeType) {
+		$createdNodesCount = 0;
+		$nodeCreationExceptions = 0;
+
+		$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeTypeName, FALSE);
+		$nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+		$nodeTypes[$nodeType->getName()] = $nodeType;
+
+		/** @var NodeType $nodeType */
+		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
 			$context = $this->createContext($workspace);
 			foreach ($this->nodeDataRepository->findByNodeType($nodeTypeName) as $nodeData) {

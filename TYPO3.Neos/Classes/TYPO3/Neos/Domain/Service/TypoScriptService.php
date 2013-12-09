@@ -127,11 +127,9 @@ class TypoScriptService {
 	 */
 	protected function generateNodeTypeDefinitions() {
 		$code = '';
-		foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
-			/** @var NodeType $nodeType */
-			if(!$nodeType->isAbstract()) {
-				$code .= $this->generateTypoScriptForNodeType($nodeType);
-			}
+		/** @var NodeType $nodeType */
+		foreach ($this->nodeTypeManager->getNodeTypes(FALSE) as $nodeType) {
+			$code .= $this->generateTypoScriptForNodeType($nodeType);
 		}
 		return $code;
 	}

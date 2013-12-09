@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Controller\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
  * Controller for displaying nodes in the frontend
@@ -72,20 +73,21 @@ class NodeController extends ActionController {
 	 * @return string
 	 */
 	public function indexAction($searchTerm, $workspaceName = 'live', array $nodeTypes = array('TYPO3.Neos:Document')) {
-		$searchableNodeTypes = array();
-		foreach ($nodeTypes as $nodeType) {
-			if (!$this->nodeTypeManager->hasNodeType($nodeType)) {
-				$subNodeTypes = array_keys($this->nodeTypeManager->getSubNodeTypes($nodeType));
-				if (count($subNodeTypes) === 0) {
-					$this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeType));
-				}
-				$searchableNodeTypes = array_merge($searchableNodeTypes, $subNodeTypes);
+		$searchableNodeTypeNames = array();
+		foreach ($nodeTypes as $nodeTypeName) {
+			if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+				$this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeTypeName));
 			}
-			$searchableNodeTypes[] = $nodeType;
+
+			$searchableNodeTypeNames[$nodeTypeName] = $nodeTypeName;
+			/** @var NodeType $subNodeType */
+			foreach ($this->nodeTypeManager->getSubNodeTypes($nodeTypeName, FALSE) as $subNodeTypeName => $subNodeType) {
+				$searchableNodeTypeNames[$subNodeTypeName] = $subNodeTypeName;
+			}
 		}
 
 		$contentContext = $this->createContentContext($workspaceName);
-		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypes, $contentContext);
+		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext);
 		$this->view->assign('nodes', $nodes);
 	}
 

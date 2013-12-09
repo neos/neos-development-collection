@@ -73,7 +73,7 @@ class PluginService {
 	 * @return array<NodeInterface> all plugin nodes in the current $context
 	 */
 	public function getPluginNodes(ContentContext $context) {
-		$pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin');
+		$pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin', FALSE);
 		$pluginNodes = array();
 		foreach (array_keys($pluginNodeTypes) as $pluginNodeType) {
 			$pluginNodes = array_merge($pluginNodes, $this->getNodes($pluginNodeType, $context));
@@ -177,7 +177,7 @@ class PluginService {
 	 * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
 	 */
 	public function getPluginViewDefinitionByAction($controllerObjectName, $actionName) {
-		$pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin');
+		$pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin', FALSE);
 
 		$matchingPluginViewDefinitions = array();
 		foreach ($pluginNodeTypes as $pluginNodeType) {

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
  * The TYPO3 Module
@@ -53,17 +54,30 @@ class SchemaController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function nodeTypeSchemaAction($superType = NULL) {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		$nodeTypes = array();
+		$schema = array();
 		if ($superType !== NULL) {
-			foreach ($this->nodeTypeManager->getSubNodeTypes($superType) as $nodeTypeName => $nodeType) {
-				/** @var \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType */
-				$nodeTypes[$nodeTypeName] = $nodeType->getFullConfiguration();
-			}
+			$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($superType, FALSE);
 		} else {
-			$nodeTypes = $this->nodeTypeManager->getFullConfiguration();
+			$nodeTypes = $this->nodeTypeManager->getNodeTypes(FALSE);
+		}
+		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+			/** @var NodeType $nodeType */
+			$schema[$nodeTypeName] = $nodeType->getFullConfiguration();
 		}
 
-		return json_encode($nodeTypes);
+		return json_encode($schema);
 	}
 
+	/**
+	 * @param array $nodeTypes
+	 * @return array
+	 */
+	protected function getNonAbstractNodeTypes(array $nodeTypes) {
+		return array_filter(
+			$nodeTypes,
+			function (NodeType $nodeType) {
+				return !$nodeType->isAbstract();
+			}
+		);
+	}
 }
