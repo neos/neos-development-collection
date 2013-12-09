@@ -37,7 +37,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $nodeType;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
 	protected $node;
 
@@ -564,4 +564,26 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->node->createNode('foo', NULL, NULL, $this->mockWorkspace);
 	}
 
+	/**
+	 * @test
+	 */
+	public function similarizeClearsPropertiesBeforeAddingNewOnes() {
+		/** @var $sourceNode \TYPO3\TYPO3CR\Domain\Model\NodeData */
+		$sourceNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/bar', $this->mockWorkspace));
+		$sourceNode->_set('nodeTypeManager', $this->mockNodeTypeManager);
+		$sourceNode->_set('nodeDataRepository', $this->getMock('TYPO3\Flow\Persistence\RepositoryInterface'));
+
+		$this->node->setProperty('someProperty', 'somePropertyValue');
+		$this->node->setProperty('someOtherProperty', 'someOtherPropertyValue');
+
+		$sourceNode->setProperty('newProperty', 'newPropertyValue');
+		$sourceNode->setProperty('someProperty', 'someOverriddenPropertyValue');
+		$this->node->similarize($sourceNode);
+
+		$expectedProperties = array(
+			'newProperty' => 'newPropertyValue',
+			'someProperty' => 'someOverriddenPropertyValue'
+		);
+		$this->assertEquals($expectedProperties, $this->node->getProperties());
+	}
 }
