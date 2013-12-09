@@ -43,6 +43,72 @@
 			}
 		}
 
+		.neos-node-tree-new-node {
+			position: relative;
+
+			&.neos-disabled {
+				color: $textSubtle;
+				cursor: not-allowed;
+
+				&:hover,
+				&:after {
+					color: $textSubtle;
+				}
+			}
+
+			&.node-node-tree-new-node-before:after {
+				content: $level-up;
+				left: 24px;
+				top: 6px;
+			}
+
+			&.node-node-tree-new-node-after:after {
+				content: $level-down;
+				left: 24px;
+				top: 7px;
+			}
+
+			&:after {
+				@include icon-FontAwesome();
+				content: $long-arrow-right;
+				position: absolute;
+				left: 18px;
+				top: 9px;
+				font-size: 14px;
+				color: $blue;
+			}
+
+			&.neos-expanded {
+				.neos-node-tree-new-node-position {
+					display: block;
+				}
+			}
+
+			.neos-node-tree-new-node-position {
+				display: none;
+				position: absolute;
+				top: $unit;
+				left: 0;
+				z-index: 1;
+				background-color: $grayDark;
+				border-right: 1px solid $grayLight;
+				border-bottom: 1px solid $grayLight;
+
+				button {
+					color: #fff;
+
+					&.neos-active {
+						color: $blue;
+					}
+
+					&:hover {
+						background-color: $blue;
+						color: #fff;
+					}
+				}
+			}
+		}
+
 		.neos-node-tree-paste-node {
 			position: relative;
 
@@ -93,9 +159,9 @@
 				background-color: $grayDark;
 				border-left: 1px solid $grayLight;
 				border-right: 1px solid $grayLight;
+				border-bottom: 1px solid $grayLight;
 
-				div {
-					border-bottom: 1px solid $grayLight;
+				button {
 					color: #fff;
 
 					&.neos-active {

@@ -61,6 +61,7 @@ define(
 				ok: 0
 			},
 
+			newPosition: 'after',
 			pastePosition: 'into',
 			minimumCreateAndPasteLevel: 1,
 
@@ -72,11 +73,86 @@ define(
 				return this.get('searchTerm') === '';
 			}.property('searchTerm'),
 
+			newButton: Ember.View.extend({
+				active: true,
+				inactive: false,
+				expand: false,
+				classNameBindings: [
+					':neos-node-tree-new-node',
+					':icon-plus',
+					'active::neos-disabled',
+					'inactive:neos-disabled',
+					'expand:neos-expanded',
+					'newBefore:node-node-tree-new-node-before',
+					'newInto:node-node-tree-new-node-into',
+					'newAfter:node-node-tree-new-node-after',
+					'insertNodePanelShown:neos-pressed'
+				],
+				downTimer: null,
+
+				newBefore: function() {
+					return this.get('newPosition') === 'before';
+				}.property('newPosition'),
+
+				newInto: function() {
+					return this.get('newPosition') === 'into';
+				}.property('newPosition'),
+
+				newAfter: function() {
+					return this.get('newPosition') === 'after';
+				}.property('newPosition'),
+
+				mouseDown: function() {
+					if (this.get('expand') === true) {
+						if ($(event.target).closest('.neos-node-tree-new-node-position').length === 0) {
+							this.set('expand', false);
+						}
+					} else {
+						var that = this;
+						clearTimeout(this.get('downTimer'));
+						this.set('downTimer', setTimeout(function() {
+							that.set('expand', true);
+						}, 300));
+					}
+				},
+
+				mouseUp: function(event) {
+					clearTimeout(this.get('downTimer'));
+					this.set('downTimer', null);
+					if ((this.get('active') || !this.get('inactive')) && this.get('expand') === false) {
+						this.get('parentView').create();
+					}
+				},
+
+				mouseLeave: function() {
+					this.set('expand', false);
+				},
+
+				toggleNewBefore: function() {
+					this.set('newPosition', 'before');
+					this.set('expand', false);
+				},
+
+				toggleNewInto: function() {
+					this.set('newPosition', 'into');
+					this.set('expand', false);
+				},
+
+				toggleNewAfter: function() {
+					this.set('newPosition', 'after');
+					this.set('expand', false);
+				}
+			}),
+
 			pasteButton: Ember.View.extend({
+				active: true,
+				inactive: false,
+				expand: false,
 				classNameBindings: [
 					':neos-node-tree-paste-node',
 					':icon-paste',
 					'active::neos-disabled',
+					'inactive:neos-disabled',
 					'expand:neos-expanded',
 					'pastingBefore:node-node-tree-paste-node-before',
 					'pastingInto:node-node-tree-paste-node-into',
@@ -113,7 +189,7 @@ define(
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
 					this.set('downTimer', null);
-					if (this.get('active') && this.get('expand') === false) {
+					if ((this.get('active') || !this.get('inactive')) && this.get('expand') === false) {
 						this.get('parentView').paste();
 					}
 				},
@@ -151,7 +227,7 @@ define(
 			}.property('activeNode', 'copiedNode'),
 
 			currentFocusedNodeCanBeModified: function() {
-				return this.get('activeNode') && this.get('activeNode').getLevel() <= this.unmodifiableLevels;
+				return this.get('activeNode') && this.get('activeNode').getLevel() <= this.get('unmodifiableLevels');
 			}.property('activeNode'),
 
 			init: function() {
@@ -493,14 +569,29 @@ define(
 			},
 
 			createNode: function(activeNode, title, nodeType, iconClass) {
-				var node = activeNode.addChild({
-					title: title,
-					nodeType: nodeType,
-					addClass: 'neos-matched',
-					iconClass: iconClass,
-					expand: true
-				});
-				this.persistNode(activeNode, node, nodeType, 'into');
+				var newPosition = this.get('newPosition'),
+					data = {
+						title: title,
+						nodeType: nodeType,
+						addClass: 'neos-matched',
+						iconClass: iconClass,
+						expand: true
+					};
+				if (activeNode.getLevel() <= this.get('unmodifiableLevels')) {
+					newPosition = 'into';
+				}
+				var newNode;
+				switch (newPosition) {
+					case 'before':
+						newNode = activeNode.getParent().addChild(data, activeNode);
+					break;
+					case 'after':
+						newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
+					break;
+					case 'into':
+						newNode = activeNode.addChild(data);
+				}
+				this.persistNode(activeNode, newNode, nodeType, newPosition);
 			},
 
 			persistNode: function(activeNode, node, nodeType, position) {

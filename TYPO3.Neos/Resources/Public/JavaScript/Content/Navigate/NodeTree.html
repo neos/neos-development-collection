@@ -13,7 +13,13 @@
 		<button id="neos-node-tree-copy-node" title="Copy" {{bindAttr class=":icon-copy view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "copy" target="view"}}></button>
 		<button id="neos-node-tree-toggle-hidden" title="Hide/unhide" {{bindAttr class=":icon-eye-close view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "toggleHidden" target="view"}}></button>
 		<button id="neos-node-tree-edit-node" title="Edit title" {{bindAttr class=":icon-pencil view.editNodeTitleMode:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "editNode" target="view"}}></button>
-		<button id="neos-node-tree-new-node" title="Create new" {{bindAttr class=":icon-plus view.insertNodePanelShown:neos-pressed"}} {{action "create" target="view"}}></button>
+		{{#view view.newButton newPositionBinding="view.newPosition" insertNodePanelShownBinding="view.insertNodePanelShown" titleBinding="Create new"}}
+			<div class="neos-node-tree-new-node-position">
+				<button {{bindAttr class=":icon-level-up view.pastingBefore:neos-active"}} title="New before" {{action "toggleNewBefore" target="view"}}></button>
+				<button {{bindAttr class=":icon-long-arrow-right view.pastingInto:neos-active"}} title="New into" {{action "toggleNewInto" target="view"}}></button>
+				<button {{bindAttr class=":icon-level-down view.pastingAfter:neos-active"}} title="New after" {{action "toggleNewAfter" target="view"}}></button>
+			</div>
+		{{/view}}
 	</div>
 	<div class="neos-node-tree-toolbar-bottom">
 		<div id="neos-node-tree-filter">

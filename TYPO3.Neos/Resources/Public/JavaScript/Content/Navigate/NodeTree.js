@@ -358,26 +358,39 @@ define(
 
 			createNode: function(activeNode, title, nodeType, iconClass) {
 				var that = this,
-					position = 'into';
-
-				var node = activeNode.addChild({
+					newPosition = this.get('newPosition'),
+					data = {
 						title: title,
 						nodeType: nodeType,
 						addClass: 'typo3_neos-page neos-matched',
 						iconClass: iconClass,
 						expand: false
-					}),
-					prevTitle = node.data.tooltip,
-					tree = node.tree;
+					};
+				if (activeNode.getLevel() <= this.get('unmodifiableLevels')) {
+					newPosition = 'into';
+				}
+				var newNode;
+				switch (newPosition) {
+					case 'before':
+						newNode = activeNode.getParent().addChild(data, activeNode);
+						break;
+					case 'after':
+						newNode = activeNode.getParent().addChild(data, activeNode.getNextSibling());
+						break;
+					case 'into':
+						newNode = activeNode.addChild(data);
+				}
+				var prevTitle = newNode.data.tooltip,
+					tree = newNode.tree;
 
-				if (position === 'into') {
+				if (newPosition === 'into') {
 					activeNode.expand(true);
 				}
 
 				that.set('editNodeTitleMode', true);
 				tree.$widget.unbind();
 
-				$('> .neos-dynatree-title', node.span).html($('<input />').attr({id: 'editCreatedNode', value: prevTitle}));
+				$('> .neos-dynatree-title', newNode.span).html($('<input />').attr({id: 'editCreatedNode', value: prevTitle}));
 				// Focus <input> and bind keyboard handler
 				$('input#editCreatedNode').focus().select().keydown(function(event) {
 					switch (event.which) {
@@ -405,9 +418,9 @@ define(
 					// Hack for Chrome and Safari, otherwise two pages will be created, because .blur fires one request with two datasets
 					if (that.get('editNodeTitleMode') === true) {
 						that.set('editNodeTitleMode', false);
-						node.activate();
-						node.setTitle(title);
-						that.persistNode(activeNode, node, nodeType, position);
+						newNode.activate();
+						newNode.setTitle(title);
+						that.persistNode(activeNode, newNode, nodeType, newPosition);
 					}
 				});
 			},
