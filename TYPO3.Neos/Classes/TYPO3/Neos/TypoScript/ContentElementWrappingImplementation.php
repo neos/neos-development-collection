@@ -17,6 +17,7 @@ use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use TYPO3\Neos\Domain\Exception;
 
 /**
  * Adds meta data attributes to the processed Content Element
@@ -57,6 +58,10 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 
 		/** @var $node NodeInterface */
 		$node = $this->tsValue('node');
+		if (!$node instanceof NodeInterface) {
+			throw new Exception(sprintf('The "node" property did not resolve to a NodeInterface, %s given', gettype($node)), 1386601777);
+		}
+
 		/** @var $contentContext ContentContext */
 		$contentContext = $node->getContext();
 		if ($contentContext->getWorkspaceName() === 'live') {
