@@ -98,9 +98,9 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
-	 * Remove a user
+	 * Remove a user which has access to the backend user interface.
 	 *
-	 * @param string $username
+	 * @param string $username The username of the user to be removed.
 	 * @param boolean $confirmation
 	 * @return void
 	 */
@@ -149,7 +149,7 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * This command allows for adding a specific role to an existing user.
 	 * Currently supported roles: "TYPO3.Neos:Editor", "TYPO3.Neos:Administrator"
 	 *
-	 * @param string $username The username
+	 * @param string $username The username of the user
 	 * @param string $role Role ot be added to the user
 	 * @return void
 	 */
@@ -182,7 +182,7 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	/**
 	 * Remove a role from a user
 	 *
-	 * @param string $username Email address of the user
+	 * @param string $username The username of the user
 	 * @param string $role Role ot be removed from the user
 	 * @return void
 	 */
