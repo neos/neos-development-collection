@@ -10,7 +10,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 
 	attributes.class = 'neos-contentcollection'
 
-	@override.contentCollectionNode = ${q(node).find(this.nodePath).get(0)}
+	@override.contentCollectionNode = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? node :  q(node).find(this.nodePath).get(0)}
 
 	@process.contentElementWrapping {
 		node = ${contentCollectionNode}
