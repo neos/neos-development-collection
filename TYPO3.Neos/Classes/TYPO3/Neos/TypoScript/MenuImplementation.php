@@ -15,12 +15,11 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Exception as TypoScriptException;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A TypoScript Menu object
  */
-class MenuImplementation extends TemplateImplementation {
+class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation {
 
 	/**
 	 * Hard limit for the maximum number of levels supported by this menu
