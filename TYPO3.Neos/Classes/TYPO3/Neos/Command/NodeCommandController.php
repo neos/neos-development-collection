@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Node command controller for the TYPO3.Neos package
@@ -54,7 +55,7 @@ class NodeCommandController extends CommandController {
 	protected $nodeFactory;
 
 	/**
-	 * Create missing childNodes for a node type
+	 * Create missing child nodes
 	 *
 	 * This command automatically creates missing child nodes for a node type
 	 * based on the structure defined in the NodeTypes configuration.
@@ -64,41 +65,83 @@ class NodeCommandController extends CommandController {
 	 *
 	 * ./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
 	 *
-	 * @param string $nodeType Node type name
+	 * @param string $nodeType Node type name, if empty update all declared node types
 	 * @param string $workspace Workspace name, default is 'live'
+	 * @param boolean $dryRun Don't do anything, but report missing child nodes
 	 * @return void
 	 */
-	public function autoCreateChildNodesCommand($nodeType, $workspace = 'live') {
-		$nodeTypeName = $nodeType;
+	public function autoCreateChildNodesCommand($nodeType = NULL, $workspace = 'live', $dryRun = FALSE) {
 		if ($this->workspaceRepository->findByName($workspace)->count() === 0) {
 			$this->outputLine('Workspace "%s" does not exist', array($workspace));
 			$this->quit(1);
 		}
-		if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-			$this->outputLine('Node type "%s" does not exist', array($nodeTypeName));
-			$this->quit(1);
-		}
 
+		if ($nodeType !== NULL) {
+			if ($this->nodeTypeManager->hasNodeType($nodeType)) {
+				$nodeType = $this->nodeTypeManager->getNodeType($nodeType);
+			} else {
+				$this->outputLine('Node type "%s" does not exist', array($nodeType));
+				$this->quit(1);
+			}
+			$this->createChildNodesByNodeType($nodeType, $workspace, $dryRun);
+		} else {
+			foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
+				/** @var NodeType $nodeType */
+				if ($nodeType->isAbstract()) {
+					continue;
+				}
+				$this->createChildNodesByNodeType($nodeType, $workspace, $dryRun);
+			}
+		}
+	}
+
+	/**
+	 * Create missing child nodes for the given node type
+	 *
+	 * @param NodeType $nodeType
+	 * @param string $workspace
+	 * @param boolean $dryRun
+	 * @return void
+	 */
+	protected function createChildNodesByNodeType(NodeType $nodeType, $workspace, $dryRun) {
 		$createdNodesCount = 0;
 		$nodeCreationExceptions = 0;
 
-		$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeTypeName, FALSE);
-		$nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+		$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), FALSE);
 		$nodeTypes[$nodeType->getName()] = $nodeType;
 
-		/** @var NodeType $nodeType */
+		if ($this->nodeTypeManager->hasNodeType((string)$nodeType)) {
+			$nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
+			$nodeTypeNames[$nodeType->getName()] = $nodeType;
+		} else {
+			$this->outputLine('Node type "%s" does not exist', array((string)$nodeType));
+			$this->quit(1);
+		}
+
+		$this->outputLine();
+		$this->outputLine('Working on node type "%s" ...', array((string)$nodeType));
+
+		/** @var $nodeType NodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
 			$context = $this->createContext($workspace);
 			foreach ($this->nodeDataRepository->findByNodeType($nodeTypeName) as $nodeData) {
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+				if (!$node instanceof NodeInterface || $node->isRemoved() === TRUE) {
+					continue;
+				}
 				foreach ($childNodes as $childNodeName => $childNodeType) {
 					try {
-						$node->createNode($childNodeName, $childNodeType);
-						$this->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
-						$createdNodesCount++;
-					} catch (\TYPO3\TYPO3CR\Exception\NodeExistsException $exception) {
-						// Silently ignore this exception as we expect this to happen if the node already exists
+						$childNodeMissing = $node->getNode($childNodeName) ? FALSE : TRUE;
+						if ($childNodeMissing) {
+							if ($dryRun === FALSE) {
+								$node->createNode($childNodeName, $childNodeType);
+								$this->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
+							} else {
+								$this->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
+							}
+							$createdNodesCount++;
+						}
 					} catch (\Exception $exception) {
 						$this->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
 						$nodeCreationExceptions++;
@@ -108,14 +151,19 @@ class NodeCommandController extends CommandController {
 		};
 
 		if ($createdNodesCount === 0 && $nodeCreationExceptions === 0) {
-			$this->outputLine('Node structure for workspace "%s" already up to date', array($workspace));
+			$this->outputLine('All "%s" nodes in workspace "%s" have an up-to-date structure', array((string)$nodeType, $workspace));
 		} else {
-			$this->outputLine('Created %s new child nodes', array($createdNodesCount));
+			if ($dryRun === FALSE) {
+				$this->outputLine('Created %s new child nodes', array($createdNodesCount));
 
-			if ($nodeCreationExceptions > 0) {
-				$this->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
+				if ($nodeCreationExceptions > 0) {
+					$this->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
+				}
+			} else {
+				$this->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
 			}
 		}
+		$this->outputLine();
 	}
 
 	/**
