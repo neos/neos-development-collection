@@ -103,17 +103,20 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 					$siteNodeName = $pathParts[2];
 					$q = new FlowQuery(array($node));
 					$document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-					$documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
-					$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
-					if (!isset($sites[$siteNodeName]['siteNode'])) {
-						$sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
+					// FIXME: $document will be NULL if we have a broken rootline for this node. This actually should never happen, but currently can in some scenarios.
+					if ($document !== NULL) {
+						$documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
+						$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
+						if (!isset($sites[$siteNodeName]['siteNode'])) {
+							$sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
+						}
+						$sites[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
+						$change = array('node' => $node);
+						if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
+							$change['configuration'] = $node->getNodeType()->getFullConfiguration();
+						}
+						$sites[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
 					}
-					$sites[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
-					$change = array('node' => $node);
-					if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
-						$change['configuration'] = $node->getNodeType()->getFullConfiguration();
-					}
-					$sites[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
 				}
 			}
 		}
