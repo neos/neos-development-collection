@@ -15,9 +15,11 @@
 			<label for="caption">Caption</label>
 			<f:form.textarea property="caption" rows="3" placeholder="Caption"/>
 			<br/>
-			<label for="tags">Tags</label>
-			<f:form.select property="tags" options="{tags}" optionLabelField="label" value="{asset.tags}" multiple="true"/>
-			<br/>
+			<f:if condition="{tags}">
+				<label for="tags">Tags</label>
+				<f:form.select property="tags" options="{tags}" optionLabelField="label" value="{asset.tags}" multiple="true"/>
+				<br/>
+			</f:if>
 			<f:form.submit id="import" class="neos-btn" value="Upload"/>
 			<f:link.action action="index" title="Cancel editing" class="neos-btn neos-btn-danger">Cancel</f:link.action>
 		</fieldset>

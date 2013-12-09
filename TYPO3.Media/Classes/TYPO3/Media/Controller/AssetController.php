@@ -113,6 +113,15 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * @return void
+	 */
+	protected function initializeUpdateAction() {
+		$assetMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
+		$assetMappingConfiguration->allowProperties('title', 'resource', 'tags');
+		$assetMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, TRUE);
+	}
+
+	/**
 	 * Update an asset
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Asset $asset
