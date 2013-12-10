@@ -34,6 +34,9 @@ function(
 
 			_.each(this.get('_entity._enclosingCollectionWidget').options.definition.range, function(nodeType) {
 				var type = this.get('_entity._enclosingCollectionWidget').options.vie.types.get(nodeType);
+				if (type.metadata.abstract === true) {
+					return;
+				}
 				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
 
 				if (type.metadata.ui && type.metadata.ui.group) {
