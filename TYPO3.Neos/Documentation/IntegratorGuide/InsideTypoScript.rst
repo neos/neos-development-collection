@@ -59,7 +59,8 @@ nested TypoScript objects: This way, a big task (like rendering a whole web page
 many smaller tasks (render a single image, render some text, ...): The results of the small tasks are
 then put together again, forming the final end result.
 
-TypoScript object nesting is a fundamental principle of TypoScript. As TypoScript objects call nested TypoScript objects, the rendering process forms a *tree* of TypoScript objects.
+TypoScript object nesting is a fundamental principle of TypoScript. As TypoScript objects call nested
+TypoScript objects, the rendering process forms a *tree* of TypoScript objects.
 
 TypoScript objects are implemented by a PHP class, which is instantiated at runtime. A single PHP class
 is the basis for many TypoScript objects. We will highlight the exact connection between TypoScript
@@ -75,8 +76,8 @@ A TypoScript object can be instantiated by assigning it to a TypoScript path, su
 
 The name of the to-be-instantiated TypoScript prototype is listed without quotes.
 
-By convention, TypoScript paths (such as `my.object`) are written in `lowerCamelCase`, while
-TypoScript prototypes (such as `TYPO3.Neos.ContentTypes:Image`) are written in `UpperCamelCase`.
+By convention, TypoScript paths (such as ``my.object``) are written in ``lowerCamelCase``, while
+TypoScript prototypes (such as ``TYPO3.Neos.ContentTypes:Image``) are written in ``UpperCamelCase``.
 
 It is possible to set *properties* on the newly created TypoScript objects::
 
@@ -145,7 +146,7 @@ website.
 TypoScript Prototypes
 =====================
 
-When a TypoScript object is instantiated (i.e. when you type `someImage = Image`) the
+When a TypoScript object is instantiated (i.e. when you type ``someImage = Image``) the
 *TypoScript Prototype* for this object is *copied* and is used as a basis for the new object.
 The prototype is defined using the following syntax::
 
@@ -193,28 +194,28 @@ Prototypes in TypoScript are *mutable*, which means that they can easily be modi
 Defining and instantiating a prototype from scratch is not the only way to define and
 instantiate them. You can also use an *existing TypoScript prototype* as basis
 for a new one when needed. This can be done by *inheriting* from a TypoScript prototype
-using the `<` operator::
+using the ``<`` operator::
 
-	prototype(MyImage) < prototype(TYPO3.TypoScript:Template)
+	prototype(MyImage) < prototype(TYPO3.Neos:Content)
 
 	# now, the MyImage prototype contains all properties of the Template
 	# prototype, and can be further customized.
 
-This implements *prototype inheritance*, meaning that the "subclass" (`MyImage` in the example
-above) and the "parent class (`Template`) are still attached to each other: If a property
+This implements *prototype inheritance*, meaning that the "subclass" (``MyImage`` in the example
+above) and the "parent class (``Content``) are still attached to each other: If a property
 is added to the parent class, this also applies to the subclass, as in the following example::
 
-	prototype(TYPO3.TypoScript:Template).fruit = 'apple'
-	prototype(TYPO3.TypoScript:Template).meal = 'dinner'
+	prototype(TYPO3.Neos:Content).fruit = 'apple'
+	prototype(TYPO3.Neos:Content).meal = 'dinner'
 
-	prototype(MyImage) < prototype(TYPO3.TypoScript:Template)
+	prototype(MyImage) < prototype(TYPO3.Neos:Content)
 	# now, MyImage also has the properties "fruit = apple" and "meal = dinner"
 
-	prototype(TYPO3.TypoScript:Template).fruit = 'Banana'
-	# because MyImage *extends* Template, MyImage.fruit equals 'Banana' as well.
+	prototype(TYPO3.Neos:Content).fruit = 'Banana'
+	# because MyImage *extends* Content, MyImage.fruit equals 'Banana' as well.
 
 	prototype(MyImage).meal = 'breakfast'
-	prototype(TYPO3.TypoScript:Template).meal = 'supper'
+	prototype(TYPO3.TypoScript:Content).meal = 'supper'
 	# because MyImage now has an *overridden* property "meal", the change of
 	# the parent class' property is not reflected in the MyImage class
 
@@ -240,7 +241,7 @@ Hierarchical TypoScript Prototypes
 
 One way to flexibly adjust the rendering of a TypoScript object is done through
 modifying its *Prototype* in certain parts of the rendering tree. This is possible
-because TypoScript prototypes are *hierarchical*, meaning that `prototype(...)`
+because TypoScript prototypes are *hierarchical*, meaning that ``prototype(...)``
 can be part of any TypoScript path in an assignment; even multiple times::
 
 	prototype(Foo).bar = 'baz'
@@ -251,19 +252,19 @@ can be part of any TypoScript path in an assignment; even multiple times::
 	prototype(Foo).prototype(Bar).some = 'baz2'
 	prototype(Foo).left.prototype(Bar).some = 'baz2'
 
-* `prototype(Foo).bar` is a simple, top-level prototype property assignment. It means:
+* ``prototype(Foo).bar`` is a simple, top-level prototype property assignment. It means:
   *For all objects of type Foo, set property bar*. The second example is another variant
   of this pattern, just with more nesting levels inside the property assignment.
 
-* `some.path.prototype(Foo).some` is a prototype property assignment *inside some.path*.
+* ``some.path.prototype(Foo).some`` is a prototype property assignment *inside some.path*.
   It means: *For all objects of type Foo which occur inside the TypoScript path some.path,
   the property some is set.*
 
-* `prototype(Foo).prototype(Bar).some` is a prototype property assignment *inside another
+* ``prototype(Foo).prototype(Bar).some`` is a prototype property assignment *inside another
   prototype*. It means: *For all objects of type Bar which occur somewhere inside an
   object of type Foo, the property some is set.*
 
-* This can both be combined, as in the last example inside `prototype(Foo).left.prototype(Bar).some`.
+* This can both be combined, as in the last example inside ``prototype(Foo).left.prototype(Bar).some``.
 
 .. admonition:: Internals of hierarchical prototypes
 
@@ -274,7 +275,7 @@ can be part of any TypoScript path in an assignment; even multiple times::
 
 		a1/a2<Foo>/a3/a4<Bar>
 
-	When this path is rendered, `a1/a2` is rendered as a TypoScript object of type `Foo` -- which is needed
+	When this path is rendered, ``a1/a2`` is rendered as a TypoScript object of type ``Foo`` -- which is needed
 	to apply the prototype inheritance rules correctly.
 
 	Those paths are rarely visible on the "outside" of the rendering process, but might at times
@@ -291,7 +292,7 @@ The benefits of namespacing apply just as well to TypoScript objects as they app
 Namespacing helps to organize the code and avoid name clashes.
 
 In TypoScript the namespace of a prototype is given when the prototype is declared. The
-following declares a `YouTube` prototype in the `Acme.Demo` namespace::
+following declares a ``YouTube`` prototype in the ``Acme.Demo`` namespace::
 
 	prototype(Acme.Demo:YouTube) {
 		width = '100px'
@@ -305,8 +306,8 @@ Fully qualified identifiers can be used everywhere an identifier is used::
 
 	prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Collection)
 
-In Neos a `default` namespace of `TYPO3.Neos` is set. So whenever `Page` is used in
-TypoScript within Neos, it is a shortcut for `TYPO3.Neos:Page`.
+In Neos TypoScript a ``default`` namespace of ``TYPO3.Neos`` is set. So whenever ``Page`` is used in
+TypoScript within Neos, it is a shortcut for ``TYPO3.Neos:Page``.
 
 Custom namespace aliases can be defined for the scope of the current TypoScript file using the
 following syntax::
@@ -317,7 +318,7 @@ following syntax::
 	video = Acme.Demo:YouTube
 	video = Foo:YouTube
 
-.. warning:: These declarations are not scoped to the file they are in.
+.. warning:: These declarations are not scoped to the file they are in, but apply globally (at least currently, we plan to change that in the future). So you should be careful there!
 
 Setting Properties On a TypoScript Object
 =========================================
@@ -332,7 +333,7 @@ instead use *properties* for configuration::
 	# property of myObject. This way, the flow of data is more visible.
 	myObject.foo = ${foo}
 
-While `myObject` could rely on the assumption that there is a "foo" variable inside the TypoScript
+While ``myObject`` could rely on the assumption that there is a ``foo`` variable inside the TypoScript
 context, it has no way (besides written documentation) to communicate this to the outside world.
 
 Therefore, a TypoScript object's implementation should *only use properties* of itself to determine
@@ -352,14 +353,14 @@ between a context variable and the prototype can be set up.
 Manipulating the TypoScript Context
 -----------------------------------
 
-The TypoScript context can be manipulated directly through the use of the `@override`
+The TypoScript context can be manipulated directly through the use of the ``@override``
 meta-property::
 
 	myObject = MyObject
 	myObject.@override.bar = ${foo * 2}
 
-In the above example, there is now an additional context variable `bar` with twice the value
-of `foo`.
+In the above example, there is now an additional context variable ``bar`` with twice the value
+of ``foo``.
 
 This functionality is especially helpful if there are strong conventions regarding the TypoScript
 context variables. This is often the case in standalone TypoScript applications, but for Neos, this
@@ -369,7 +370,7 @@ Processors
 ==========
 
 Processors allow the manipulation of values in TypoScript properties. A processor is applied to
-a property using the `@process` meta-property::
+a property using the ``@process`` meta-property::
 
 	myObject = MyObject {
 		property = 'some value'
@@ -378,7 +379,7 @@ a property using the `@process` meta-property::
 	# results in 'before some value after'
 
 Multiple processors can be used, their execution order is defined by the numeric position given
-in the TypoScript after `@process`. In the example above a `@process.2` would run on the results of `@process.1`.
+in the TypoScript after ``@process``. In the example above a ``@process.2`` would run on the results of ``@process.1``.
 
 Additionally, an extended syntax can be used as well::
 
@@ -390,25 +391,23 @@ Additionally, an extended syntax can be used as well::
 		}
 	}
 
-This allows to use string keys for the processor name, and support `@position` arguments as explained for Arrays.
+This allows to use string keys for the processor name, and support ``@position`` arguments as explained for Arrays.
+
+Processors are Eel Expressions or TypoScript objects operating on the ``value`` property of the context. Additionally,
+they can access the current TypoScript object they are operating on as ``this``.
 
 
-Processors are Eel Expressions or TypoScript objects operating on the `value` property of the context.
+.. Important TypoScript objects and patterns
+.. =========================================
+.. - page, template, content collection, menu, value (TODO ChristianM)
 
-Important TypoScript objects and patterns
-=========================================
+.. Planned Extension Points using Case and Collection
+.. --------------------------------------------------
+.. TBD
 
-- page, template, content collection, menu, value (TODO ChristianM)
-
-
-Planned Extension Points using Case and Collection
---------------------------------------------------
-
-TBD
-
-TypoScript Internals
-====================
-
-- @class, backed by PHP class
-- DOs and DONT's when implementing custom TypoScript objects
-- implementing custom FlowQuery operations
+.. TypoScript Internals
+.. ====================
+..
+.. - @class, backed by PHP class
+.. - DOs and DONT's when implementing custom TypoScript objects
+.. - implementing custom FlowQuery operations
