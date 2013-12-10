@@ -19,7 +19,7 @@ Fundamental Installation
 
    .. code-block:: bash
 
-     curl -sS https://getcomposer.org/installer | php
+	curl -sS https://getcomposer.org/installer | php
 
   By issuing this command Composer will get downloaded as *composer.phar* to your working directory.
   If you like to have composer installed globally, you can simply move it to a directory within your $PATH environment.
@@ -37,11 +37,14 @@ Fundamental Installation
 
    .. code-block:: bash
 
-     cd /your/htdocs/
-     php /path/to/composer.phar create-project -s alpha --dev typo3/neos-base-distribution TYPO3-Neos
+	cd /your/htdocs/
+	php /path/to/composer.phar create-project typo3/neos-base-distribution TYPO3-Neos
 
    Composer will take care of downloading all dependencies for running your TYPO3 Neos installation to the
    directory ``TYPO3-Neos``.
+   You can safely delete the vcs files by answering 'Y' to the question 'Do you want to remove the existing VCS (.git,
+   .svn..) history? [Y,n]?'.
+
 
 #. Next set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
    the TYPO3 Neos installation.
@@ -54,9 +57,7 @@ Fundamental Installation
        DocumentRoot "/your/htdocs/TYPO3-Neos/Web/"
        # enable the following line for production context
        #SetEnv FLOW_CONTEXT Production
-
        ServerName neos.demo
-       AllowOverride FileInfo Options=MultiViews
      </VirtualHost>
 
    Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
@@ -98,7 +99,9 @@ The TYPO3 Neos Setup Tool
    fix what needs to be fixed. Then just reload the page, until all requirements are met.
 
 #. The login screen will tell you the location of a file with a generated password. Keep that password
-   in some secure place, the generated file will be removed upon login!
+   in some secure place, the generated file will be removed upon login! It is possible to have a new password
+   rendered if you lost it, so don't worry too much.
+
 	.. figure:: Images/Setup-Step-1.png
 		:alt: TYPO3 Neos login page
 		:class: screenshot-fullsize
@@ -114,17 +117,19 @@ The TYPO3 Neos Setup Tool
 		:class: screenshot-fullsize
 
 #. In the next step a user with administrator privileges for editing with TYPO3 Neos is created.
+
 	.. figure:: Images/Setup-Step-3.png
 		:alt: Create admin user
 		:class: screenshot-fullsize
 
 #. The following step allows you to import an existing site or kickstart a new site. To import the
-   demo site, just select it in the selector box and go to the next step.
+   demo site, just make sure it is selected in the selector box and go to the next step.
 
    To kickstart a new site, enter a package and site name in the form before going to the next step.
 
    If you are new to Neos, we recommend to import the existing demo site so you can follow the next
    section giving you a basic tour of the user interface.
+
 	.. figure:: Images/Setup-Step-4.png
 		:alt: Create new site or import an existing
 		:class: screenshot-fullsize
