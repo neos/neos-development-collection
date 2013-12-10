@@ -199,15 +199,19 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
 
-		$idealNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($newNode->hasProperty('title') ? $newNode->getProperty('title') : uniqid('node'));
-		$possibleNodeName = $idealNodeName;
-		$counter = 1;
-		while ($referenceNode->getNode($possibleNodeName) !== NULL) {
-			$possibleNodeName = $idealNodeName . '-' . $counter;
-			$counter++;
+		if (!isset($nodeData['nodeName']) && $newNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+			// TODO: we should actually give preference to $nodeData['nodeName'] here if it is set.
+			$idealNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($newNode->hasProperty('title') ? $newNode->getProperty('title') : uniqid('node'));
+			$possibleNodeName = $idealNodeName;
+			$counter = 1;
+			while ($referenceNode->getNode($possibleNodeName) !== NULL) {
+				$possibleNodeName = $idealNodeName . '-' . $counter;
+				$counter++;
+			}
+
+			$newNode->setName($possibleNodeName);
 		}
 
-		$newNode->setName($possibleNodeName);
 		$this->view->assign('value', array('data' => $this->view->collectTreeNodeData($newNode), 'success' => TRUE));
 	}
 
