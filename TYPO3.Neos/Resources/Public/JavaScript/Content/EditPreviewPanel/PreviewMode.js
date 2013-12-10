@@ -21,7 +21,9 @@ define(
 				],
 				function(CreateJS) {
 					CreateJS.disableEdit();
-					NodeSelection.updateSelection();
+					if (NodeSelection.get('selectedNode')) {
+						NodeSelection.updateSelection();
+					}
 				}
 			);
 			EventDispatcher.triggerExternalEvent('Neos.PreviewModeDeactivated', 'Neos preview mode was deactivated.');
