@@ -44,6 +44,7 @@
 # make this change less breaking and have an easier upgrading period.
 'TYPO3.Neos:Page':
   superTypes: ['TYPO3.Neos.NodeTypes:Page']
+  abstract: TRUE
 
 'TYPO3.Neos.NodeTypes:Headline':
   superTypes: ['TYPO3.Neos:Content']
