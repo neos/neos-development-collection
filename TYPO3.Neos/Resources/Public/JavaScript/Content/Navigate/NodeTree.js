@@ -107,12 +107,13 @@ define(
 
 				var that = this,
 					$neosNodeTypeSelect = that.$().find('#neos-node-tree-filter select');
+				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
 				$.when(ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType)).done(function(dataString) {
 					var data = JSON.parse(dataString);
 					$.each(data, function(key) {
 						$neosNodeTypeSelect.append('<option value="' + key + '">' + this.ui.label + '</option>');
 					});
-					$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
+					$neosNodeTypeSelect.trigger('chosen:updated.chosen');
 				}).fail(function(xhr, status, error) {
 					console.error('Error loading node types.', xhr, status, error);
 				});
