@@ -17,6 +17,9 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	EelFlowQuery
 	AdjustingOutput
 	CustomContentElements
-	TypoScriptCookbook
 	CreatingAPlugin
 	InteractionWithTheNeosBackend
+
+
+.. currently unused:
+..	TypoScriptCookbook
