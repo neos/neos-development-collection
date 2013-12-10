@@ -49,9 +49,10 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 	 */
 	protected function buildForm(\TYPO3\Form\Core\Model\FormDefinition $formDefinition) {
 		$page1 = $formDefinition->createPage('page1');
+		$page1->setRenderingOption('header', 'Create administrator account');
 
 		$introduction = $page1->createElement('introduction', 'TYPO3.Form:StaticText');
-		$introduction->setProperty('text', 'Create an administrator account:');
+		$introduction->setProperty('text', 'Enter the personal data and credentials for your backend account:');
 
 		$personalSection = $page1->createElement('personalSection', 'TYPO3.Form:Section');
 		$personalSection->setLabel('Personal Data');
