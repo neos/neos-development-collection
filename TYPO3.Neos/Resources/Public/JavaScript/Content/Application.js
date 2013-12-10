@@ -15,6 +15,7 @@ define(
 	'Content/Model/NodeSelection',
 	'Content/Model/PublishableNodes',
 	'Content/Model/NodeActions',
+	'Content/EditPreviewPanel/EditPreviewPanelController',
 	'vie/instance',
 	'emberjs',
 	'Content/InputEvents/KeyboardEvents',
@@ -32,6 +33,7 @@ function(
 	NodeSelection,
 	PublishableNodes,
 	NodeActions,
+	EditPreviewPanelController,
 	vie,
 	Ember,
 	KeyboardEvents,
@@ -192,10 +194,12 @@ function(
 							vie.load({element: template}).from('rdfa').execute();
 							callBack(template);
 
-								// When adding nested content elements (like the two-column-element),
-								// we need to refresh CreateJS to render the content element handles
-								// for the nested content collections.
-							CreateJS.enableEdit();
+							if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
+									// When adding nested content elements (like the two-column-element),
+									// we need to refresh CreateJS to render the content element handles
+									// for the nested content collections.
+								CreateJS.enableEdit();
+							}
 						};
 
 						_.each(collectionView.collection.models, function(matchEntity) {
@@ -368,8 +372,10 @@ function(
 						// Send external event so site JS can act on it
 					EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
 
-						// Refresh CreateJS, renders the button bars f.e.
-					CreateJS.enableEdit();
+					if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
+							// Refresh CreateJS, renders the button bars f.e.
+						CreateJS.enableEdit();
+					}
 
 						// If doing a reload, we highlight the currently active content element again
 					var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
