@@ -37,10 +37,10 @@ If we imagine a classical website with a hierarchical menu structure, then each
 of the pages is represented by a TYPO3CR Node of type ``Document``. However, not only
 the pages themselves are represented as tree: Imagine a page has two columns,
 with different content elements inside each of them. The columns are stored as
-Nodes of type `ContentCollection`, and they contain nodes of type `Text`, `Image`, or
+Nodes of type ``ContentCollection``, and they contain nodes of type ``Text``, ``Image``, or
 whatever structure is needed. This nesting can be done indefinitely: Inside
-a `ContentCollection`, there could be another three-column element which again contains
-`ContentCollection` elements with arbitrary content inside.
+a ``ContentCollection``, there could be another three-column element which again contains
+``ContentCollection`` elements with arbitrary content inside.
 
 .. admonition:: Comparison to TYPO3 CMS
 
@@ -62,7 +62,7 @@ Node Type Definition
 
 Each TYPO3CR Node (we'll just call it Node in the remaining text) has a specific
 *node type*. Node Types can be defined in any package by declaring them in
-`Configuration/NodeTypes.yaml`.
+``Configuration/NodeTypes.yaml``.
 
 Each node type can have *one or multiple parent types*. If these are specified,
 all properties and settings of the parent types are inherited.
@@ -87,101 +87,120 @@ A node type definition can look as follows::
 
 The following options are allowed:
 
-`superTypes`
+``superTypes``
   An array of parent node types inherited from
 
-`childNodes`
+``childNodes``
   A list of child nodes that are automatically created if a node of this type is created.
-  For each child the `type` has to be given. Here is an example::
+  For each child the ``type`` has to be given. Here is an example::
 
     childNodes:
       someChild:
         type: 'TYPO3.Neos:ContentCollection'
 
-`ui`
+``ui``
   Configuration options related to the user interface representation of the node type
 
-  `label`
+  ``label``
     The human-readable label of the node type
 
-  `group`
+  ``group``
     Name of the group this content element is grouped into for the 'New Content Element' dialog.
-    It can only be created through the user interface if `group` is defined and it is valid.
+    It can only be created through the user interface if ``group`` is defined and it is valid.
 
-    All valid groups are given in the`TYPO3.Neos.nodeTypes.groups` setting
+    All valid groups are given in the ``TYPO3.Neos.nodeTypes.groups`` setting
 
-  `icon`
+  ``icon``
     This setting define the icon to use in the Neos UI for the node type
 
     Currently it's only possible to use a predefined selection of icons, which
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/icons/.
 
-  `inlineEditable`
+  ``inlineEditable``
     If TRUE, it is possible to interact with this Node directly in the content view.
     If FALSE, an overlay is shown preventing any interaction with the node.
+    If not given, checks if any property is marked as ``ui.inlineEditable``.
 
-  `inspector`
+  ``inspector``
     These settings configure the inspector in the Neos UI for the node type
 
-    `groups`
+    ``groups``
       Defines an inspector group that can be used to group properties of the node later.
 
-      `label`
+      ``label``
         The human-readable label for this Inspector Group.
 
-      `position`
+      ``position``
         Position of the inspector group, small numbers are sorted on top
 
 
-`properties`
+``properties``
   A list of named properties for this node type. For each property the following settings are available.
 
-  `type`
+  ``type``
     Data type of this property. This may be a simple type (like in PHP), a fully qualified PHP class name, or one of
-    these three special types: `date`, `references`, or `reference`. Use `date` to store dates / time as a DateTime object.
-    Use `reference` and `references` to store references that point to other nodes. `reference` only accepts a single node
-    or node identifier, while `references` accepts an array of nodes or node identifiers.
+    these three special types: ``date``, ``references``, or ``reference``. Use ``date`` to store dates / time as a DateTime object.
+    Use ``reference`` and ``references`` to store references that point to other nodes. ``reference`` only accepts a single node
+    or node identifier, while ``references`` accepts an array of nodes or node identifiers.
 
-  `defaultValue`
+  ``defaultValue``
     Default value of this property. Used at node creation time. Type must match specified 'type'.
 
-  `ui`
+  ``ui``
     Configuration options related to the user interface representation of the property
 
-    `label`
+    ``label``
       The human-readable label of the property
 
-    `reloadIfChanged`
+    ``reloadIfChanged``
       If TRUE, the whole content element needs to be re-rendered on the server side if the value
       changes. This only works for properties which are displayed inside the property inspector,
-      i.e. for properties which have a `group` set.
+      i.e. for properties which have a ``group`` set.
 
-    `inlineEditable`
-      Is this property inline editable, i.e. edited directly on the page through Aloha/Hallo?
+    ``inlineEditable``
+      If TRUE, this property is inline editable, i.e. edited directly on the page through Aloha.
 
-    `inspector`
-      These settings configure the inspector in the Neos UI for the property
+    ``aloha``
+      This section controls the text formatting options the user has available for this property.
+      Example::
 
-      `group`
+        aloha:
+          'format':
+            'sub': TRUE
+            'sup': TRUE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'removeFormat': TRUE
+          'link':
+            'a': TRUE
+
+
+
+    ``inspector``
+      These settings configure the inspector in the Neos UI for the property.
+
+      ``group``
         Identifier of the *inspector group* this property is categorized into in the content editing
         user interface. If none is given, the property is not editable through the property inspector
         of the user interface.
 
-        The value here must reference a groups configured in the `ui.inspector.groups` element of the
+        The value here must reference a groups configured in the ``ui.inspector.groups`` element of the
         node type this property belongs to.
 
-      `position`
+      ``position``
         Position inside the inspector group, small numbers are sorted on top.
 
-      `editor`
+      ``editor``
         Name of the JavaScript Editor Class which is instantiated to edit this element in the inspector.
 
-      `editorOptions`
+      ``editorOptions``
         A set of options for the given editor
 
-    `validation`
-      A list of validators to use on the property. Below each validator type any options for the validator
-      can be given.
+  ``validation``
+    A list of validators to use on the property. Below each validator type any options for the validator
+    can be given.
 
 Here is one of the standard Neos node types (slightly shortened)::
 
@@ -189,7 +208,6 @@ Here is one of the standard Neos node types (slightly shortened)::
 	  superTypes: ['TYPO3.Neos:Content']
 	  ui:
 	    label: 'Image'
-	    group: 'general'
 	    icon: 'icon-picture'
 	    inspector:
 	      groups:
@@ -231,6 +249,18 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        reloadIfChanged: TRUE
 	        inspector:
 	          group: 'image'
+	    hasCaption:
+	      type: boolean
+	      ui:
+	        label: 'Enable caption'
+	        reloadIfChanged: TRUE
+	        inspector:
+	          group: 'image'
+	    caption:
+	      type: string
+	      defaultValue: '<p>Enter caption here</p>'
+	      ui:
+	        inlineEditable: TRUE
 
 
 Predefined Node Types
@@ -240,48 +270,42 @@ TYPO3 Neos is shipped with a number of node types. It is helpful to know some of
 them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
-All default node types in a Neos installation are defined inside the
-`TYPO3.Neos.NodeTypes` package.
+There are a few core node types which are needed by Neos; these are shipped in ``TYPO3.Neos``
+directly. All other node types such as Text, Image, ... are shipped inside the ``TYPO3.Neos.NodeTypes``
+package.
 
-In this section, we will spell out node types by their abbreviated name if they
-are located inside the package `TYPO3.Neos.NodeTypes` to increase readability:
-Instead of writing `TYPO3.Neos.NodeTypes:Image` we will write `Image`. However,
-we will spell out `TYPO3.Neos:Document`.
+TYPO3.Neos:Node
+~~~~~~~~~~~~~~~
 
-AbstractNode
-~~~~~~~~~~~~
-
-`AbstractNode` is a (more or less internal) base type which should be extended by
+``TYPO3.Neos:Node`` is a (more or less internal) base type which should be extended by
 all content types which are used in the context of TYPO3 Neos.
 
-It defines a title property, the visibility settings (hidden, hidden before/after date)
-and makes sure the user interface is able to delete nodes. In most cases, you will not
-extend this type directly.
+It does not define any properties.
 
-Folder
-~~~~~~
+
+TYPO3.Neos:Document
+~~~~~~~~~~~~~~~~~~~
 
 An important distinction is between nodes which look and behave like pages
 and "normal content" such as text, which is rendered inside a page. Nodes which
 behave like pages are called *Document Nodes* in Neos. This means they have a unique,
 externally visible URL by which they can be rendered.
 
-The standard *page* in Neos is implemented by `Page` which directly extends from
-`TYPO3.Neos:Document`.
+The standard *page* in Neos is implemented by ``TYPO3.Neos.NodeTypes:Page`` which directly extends from
+``TYPO3.Neos:Document``.
 
-ContentCollection and Content
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TYPO3.Neos:ContentCollection and TYPO3.Neos:Content
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All content which does not behave like pages, but which lives inside them, is
 implemented by two different node types:
 
-First, there is the `ContentCollection` type: A `ContentCollection` has a structural purpose.
+First, there is the ``TYPO3.Neos:ContentCollection`` type: A ``TYPO3.Neos:ContentCollection`` has a structural purpose.
 It usually does not contain any properties itself, but it contains an ordered list of child
 nodes which are rendered inside.
 
-Currently, `ContentCollection` should not be extended by custom types.
+Currently, ``TYPO3.Neos:ContentCollection`` should not be extended by custom types.
 
 Second, the node type for all standard elements (such as text, image, youtube,
-...) is `Content`. This is–by far–the most often extended node
-type. It extends `AbstractNode`, thus title and visibility properties are
-inherited.
+...) is ``TYPO3.Neos:Content``. This is–by far–the most often extended node type.
