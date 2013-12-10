@@ -72,18 +72,8 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 	 * @return NodeInterface
 	 */
 	public function getContentCollectionNode() {
-		$node = $this->getCurrentContextNode();
-		if ($node !== NULL) {
-			if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
-				$contentCollectionNode = $node;
-			} else {
-				$contentCollectionNode = $node->getNode($this->getNodePath());
-			}
-
-			return $contentCollectionNode;
-		}
-
-		return NULL;
+		$currentContext = $this->tsRuntime->getCurrentContext();
+		return $currentContext['contentCollectionNode'];
 	}
 
 	/**
@@ -113,14 +103,6 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 		$output .= parent::evaluate();
 		$output .= '</' . $this->getTagName() . '>';
 		return $output;
-	}
-
-	/**
-	 * @return NodeInterface
-	 */
-	protected function getCurrentContextNode() {
-		$currentContext = $this->tsRuntime->getCurrentContext();
-		return $currentContext['node'];
 	}
 
 	/**
