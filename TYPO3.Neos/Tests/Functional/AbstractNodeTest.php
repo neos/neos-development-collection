@@ -39,6 +39,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	public function setUp() {
 		parent::setUp();
+		$this->markSkippedIfNodeTypesPackageIsNotInstalled();
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
@@ -65,5 +66,12 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		parent::tearDown();
 
 		$this->inject($this->contextFactory, 'contextInstances', array());
+	}
+
+	protected function markSkippedIfNodeTypesPackageIsNotInstalled() {
+		$packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
+		if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
+			$this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
+		}
 	}
 }

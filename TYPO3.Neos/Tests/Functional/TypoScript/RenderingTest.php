@@ -247,7 +247,7 @@ class RenderingTest extends AbstractNodeTest {
 
 		$controllerContext = $this->buildMockControllerContext();
 
-		$runtime = $typoScriptService->createRuntime($this->node->getParent(), $this->node, $controllerContext);
+		$runtime = $typoScriptService->createRuntime($this->node->getParent(), $controllerContext);
 
 		return $runtime;
 	}

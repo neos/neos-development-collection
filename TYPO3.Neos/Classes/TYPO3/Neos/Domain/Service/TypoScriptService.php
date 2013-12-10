@@ -38,24 +38,43 @@ class TypoScriptService {
 	protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScripts/Library/Root.ts2';
 
 	/**
+	 * Pattern used for determining the TypoScript root file for autoIncludes
+	 *
+	 * @var string
+	 */
+	protected $autoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
+
+	/**
 	 * Array of TypoScript files to include before the site TypoScript
 	 *
-	 * @var array
+	 * @var array in the format array('resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2', 'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2')
 	 */
-	protected $prependTypoScriptIncludes = array('resource://TYPO3.Neos/Private/TypoScript/Root.ts2');
+	protected $prependTypoScriptIncludes = array();
 
 	/**
 	 * Array of TypoScript files to include after the site TypoScript
 	 *
-	 * @var array
+	 * @var array in the format array('resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2', 'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2')
 	 */
 	protected $appendTypoScriptIncludes = array();
+
+	/**
+	 * @Flow\Inject(setting="typoScript.autoInclude")
+	 * @var array
+	 */
+	protected $autoIncludeConfiguration = array();
 
 	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
 	protected $nodeTypeManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
 
 	/**
 	 * Initializes the parser
@@ -70,12 +89,11 @@ class TypoScriptService {
 	 * Create a runtime for the given site node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $closestDocumentNode
 	 * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
 	 * @return \TYPO3\TypoScript\Core\Runtime
 	 */
-	public function createRuntime(NodeInterface $currentSiteNode, NodeInterface $closestDocumentNode, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
-		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode, $closestDocumentNode);
+	public function createRuntime(NodeInterface $currentSiteNode, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
+		$typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode);
 		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptObjectTree, $controllerContext);
 		return $typoScriptRuntime;
 	}
@@ -84,11 +102,10 @@ class TypoScriptService {
 	 * Returns a merged TypoScript object tree in the context of the given nodes
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode Node marking the end point
 	 * @return array The merged object tree as of the given node
 	 * @throws \TYPO3\Neos\Domain\Exception
 	 */
-	public function getMergedTypoScriptObjectTree(NodeInterface $startNode, NodeInterface $endNode) {
+	public function getMergedTypoScriptObjectTree(NodeInterface $startNode) {
 		$contentContext = $startNode->getContext();
 		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
 		$siteRootTypoScriptPathAndFilename = sprintf($this->siteRootTypoScriptPattern, $siteResourcesPackageKey);
@@ -100,6 +117,7 @@ class TypoScriptService {
 
 		$mergedTypoScriptCode = '';
 		$mergedTypoScriptCode .= $this->generateNodeTypeDefinitions();
+		$mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->prepareAutoIncludeTypoScript());
 		$mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->prependTypoScriptIncludes);
 		$mergedTypoScriptCode .= $siteRootTypoScriptCode;
 		$mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->appendTypoScriptIncludes);
@@ -189,6 +207,22 @@ class TypoScriptService {
 	}
 
 	/**
+	 * Prepares an array with TypoScript paths to auto include before the Site TypoScript.
+	 *
+	 * @return array
+	 */
+	protected function prepareAutoIncludeTypoScript() {
+		$autoIncludeTypoScript = array();
+		foreach(array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+			if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === TRUE) {
+				$autoIncludeTypoScript[] = sprintf($this->autoIncludeTypoScriptPattern, $packageKey);
+			}
+		}
+
+		return $autoIncludeTypoScript;
+	}
+
+	/**
 	 * Set the pattern for including the site root TypoScript
 	 *
 	 * @param string $siteRootTypoScriptPattern A string for the sprintf format that takes the site package key as a single placeholder
@@ -196,6 +230,15 @@ class TypoScriptService {
 	 */
 	public function setSiteRootTypoScriptPattern($siteRootTypoScriptPattern) {
 		$this->siteRootTypoScriptPattern = $siteRootTypoScriptPattern;
+	}
+
+	/**
+	 * Get the TypoScript resources that are included before the site TypoScript.
+	 *
+	 * @return array
+	 */
+	public function getPrependTypoScriptIncludes() {
+		return $this->prependTypoScriptIncludes;
 	}
 
 	/**
@@ -207,6 +250,15 @@ class TypoScriptService {
 	 */
 	public function setPrependTypoScriptIncludes(array $prependTypoScriptIncludes) {
 		$this->prependTypoScriptIncludes = $prependTypoScriptIncludes;
+	}
+
+	/**
+	 * Get TypoScript resources that will be appended after the site TypoScript.
+	 *
+	 * @return array
+	 */
+	public function getAppendTypoScriptIncludes() {
+		return $this->appendTypoScriptIncludes;
 	}
 
 	/**

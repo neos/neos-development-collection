@@ -96,6 +96,16 @@ TYPO3:
       # - in Production context
       enableObjectTreeCache: FALSE
 
+      # Packages can now register with this setting to get their TypoScript in the path:
+      # resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2
+      # included automatically.
+      # The order of inclusions is set by the package loading order
+      # (and thus the composer dependencies of your packages).
+      # This also allows disabling of autoIncludes if needed.
+      autoInclude:
+        'TYPO3.TypoScript': TRUE
+        'TYPO3.Neos': TRUE
+
     nodeTypes:
       groups:
         general:

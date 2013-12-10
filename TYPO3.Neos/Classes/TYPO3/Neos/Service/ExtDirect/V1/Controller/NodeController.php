@@ -467,8 +467,8 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	public function searchPageAction($query) {
 		$searchResult = array();
 
-		// TODO: the "findByProperties" does not take parent node types into account...
-		foreach ($this->nodeSearchService->findByProperties($query, array('TYPO3.Neos:Document', 'TYPO3.Neos.NodeTypes:Page'), $this->createContext('live')) as $node) {
+		$documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document');
+		foreach ($this->nodeSearchService->findByProperties($query, $documentNodeTypes, $this->createContext('live')) as $node) {
 			$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
 		}
 
