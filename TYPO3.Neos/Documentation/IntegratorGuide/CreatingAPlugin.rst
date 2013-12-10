@@ -167,12 +167,14 @@ If you check the HTML of a page that includes your plugin, you will clearly see 
 are not as they should be. The plugin is included using it's complete HTML, including head
 and body tags. This of course results in an invalid document.
 
-Neos-Aware Plugin Development
-=============================
+.. warning:: The documentation is incomplete at this point. Please ask on irc.freenode.net in #typo3-neos for further details.
 
-TBD
+.. Neos-Aware Plugin Development
+.. =============================
 
-Using TYPO3 CR Nodes in a Plugin
-================================
+.. TBD
 
-TBD
+.. Using TYPO3 CR Nodes in a Plugin
+.. ================================
+
+.. TBD
