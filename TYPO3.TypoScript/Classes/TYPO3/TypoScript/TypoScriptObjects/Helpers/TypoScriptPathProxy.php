@@ -11,6 +11,8 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Annotations as Flow;
+
 /**
  * A proxy object representing a TypoScript path inside a Fluid Template. It allows
  * to render arbitrary TypoScript objects or Eel expressions using the already-known
@@ -49,6 +51,18 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 	 * @var array
 	 */
 	protected $partialTypoScriptTree;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\Environment
+	 */
+	protected $applicationEnvironment;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Constructor.
@@ -165,6 +179,17 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 	 * @return string
 	 */
 	public function __toString() {
-		return (string)$this->tsRuntime->evaluate($this->path);
+		try {
+			$result = $this->tsRuntime->evaluate($this->path);
+		} catch (\Exception $exception) {
+			$this->systemLogger->logException($exception);
+			if ($this->applicationEnvironment->getContext()->isProduction()) {
+				$result = '';
+			} else {
+				$result = $exception->getMessage();
+			}
+		}
+
+		return (string)$result;
 	}
 }
