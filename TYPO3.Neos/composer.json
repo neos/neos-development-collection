@@ -10,8 +10,8 @@
         "typo3/setup": "1.0.*",
         "typo3/extjs": "*",
         "typo3/twitter-bootstrap": "*",
-        "typo3/typo3cr": "1.0.*@dev",
-        "typo3/typoscript": "1.0.*@dev"
+        "typo3/typo3cr": "1.0.*",
+        "typo3/typoscript": "1.0.*"
     },
     "suggest": {
         "typo3/neos-kickstarter": "Helps with creating new packages for TYPO3 Neos."
