@@ -7,8 +7,8 @@ Eel, FlowQuery and Fizzle
 Eel - Embedded Expression Language
 ==================================
 
-Besides simple TypoScript assignments such as `myObject.foo = 'bar'`, it is possible to write
-*expressions* using the *Eel* language such as `myObject.foo = ${q(node).property('bar')}`.
+Besides simple TypoScript assignments such as ``myObject.foo = 'bar'``, it is possible to write
+*expressions* using the *Eel* language such as ``myObject.foo = ${q(node).property('bar')}``.
 
 The *Embedded Expression Language* (Eel) is a building block for creating Domain Specific Languages.
 It provides a rich *syntax* for arbitrary expressions, such that the author of the DSL can focus
@@ -19,30 +19,32 @@ In this section, the focus lies on the use of Eel inside TypoScript.
 Syntax
 ------
 
-Every Eel expression in TypoScript is surrounded by `${...}`, which is the delimiter for Eel
+Every Eel expression in TypoScript is surrounded by ``${...}``, which is the delimiter for Eel
 expressions. Basically, the Eel syntax and semantics is like a condensed version of JavaScript:
 
-* Most things you can write as a single JavaScript expression (that is, without a `;`) can also
+* Most things you can write as a single JavaScript expression (that is, without a ``;``) can also
   be written as Eel expression.
 
-* Eel does not throw an error if `null` values are dereferenced, i.e. inside `${foo.bar}`
-  with `foo` being `null`. Instead, `null` is returned. This also works for calling undefined
+* Eel does not throw an error if ``null`` values are dereferenced, i.e. inside ``${foo.bar}``
+  with ``foo`` being ``null``. Instead, ``null`` is returned. This also works for calling undefined
   functions.
 
 * Eel does not support control structures or variable declarations.
 
-* Eel supports the common JavaScript arithmetic and comparison operators, such as `+-*/%` for
-  arithmetic and `== != > >= < <=` for comparison operators. Operator precedence is as expected,
+* Eel supports the common JavaScript arithmetic and comparison operators, such as ``+-*/%`` for
+  arithmetic and ``== != > >= < <=`` for comparison operators. Operator precedence is as expected,
   with multiplication binding higher than addition. This can be adjusted by using brackets. Boolean
-  operators `&&` and `||` are supported.
+  operators ``&&`` and ``||`` are supported.
 
-* Eel supports the ternary operator to allow for conditions `<condition> ? <ifTrue> : <ifFalse>`.
+* Eel supports the ternary operator to allow for conditions ``<condition> ? <ifTrue> : <ifFalse>``.
 
-* When object access is done (such as `foo.bar.baz`) on PHP objects, getters are called automatically.
+* When object access is done (such as ``foo.bar.baz``) on PHP objects, getters are called automatically.
 
-* Object access with the offset notation is supported: `foo['bar']`
+* Object access with the offset notation is supported as well: ``foo['bar']``
 
-This means the following expressions are all valid Eel expressions::
+This means the following expressions are all valid Eel expressions:
+
+.. code-block:: text
 
 	${foo.bar}         // Traversal
 	${foo.bar()}       // Method call
@@ -71,9 +73,9 @@ For Eel inside TypoScript, the semantics are as follows:
 
 * All variables of the TypoScript context are made available inside the Eel context.
 
-* The special variable `this` always points to the current TypoScript object implementation.
+* The special variable ``this`` always points to the current TypoScript object implementation.
 
-* The function `q()` is available, which wraps its argument into a FlowQuery
+* The function ``q()`` is available, which wraps its argument into a FlowQuery
   object. `FlowQuery`_ is explained below.
 
 
@@ -91,22 +93,22 @@ of the TYPO3.Eel package itself.
 
 In TYPO3.Neos, the following FlowQuery operations are defined:
 
-property
+``property``
   Adjusted to access properties of a TYPO3CR node. If property names are prefixed with an
   underscore, internal node properties like start time, end time, and hidden are accessed.
 
-filter
+``filter``
   Used to check a value against a given constraint. The filters expressions are
   given in `Fizzle`_, a language inspired by CSS selectors. The Neos-specific
-  filter changes `instanceof` to work on node types instead of PHP classes.
+  filter changes ``instanceof`` to work on node types instead of PHP classes.
 
-children
+``children``
   Returns the children of a TYPO3CR node. They are optionally filtered with a
-  `filter` operation to limit the returned result set.
+  ``filter`` operation to limit the returned result set.
 
-parents
+``parents``
   Returns the parents of a TYPO3CR node. They are optionally filtered with a
-  `filter` operation to limit the returned result set.
+  ``filter`` operation to limit the returned result set.
 
 A reference of all FlowQuery operations defined in TYPO3.Eel and TYPO3.Neos can be
 found in the :ref:`FlowQuery Operation Reference`.
@@ -118,60 +120,76 @@ When multiple packages define an operation with the same short name, they are
 resolved using the priority each implementation defines, higher priorities have
 higher precedence when operations are resolved.
 
-The `OperationResolver` loops over the implementations sorted by order and asks
+The ``OperationResolver`` loops over the implementations sorted by order and asks
 them if they can evaluate the current context. The first operation that answers this
 check positively is used.
 
 FlowQuery by Example
 --------------------
 
-Any context variable can be accessed directly::
+Any context variable can be accessed directly:
+
+.. code-block:: text
 
 	${myContextVariable}
 
-and the current node is available as well::
+and the current node is available as well:
+
+.. code-block:: text
 
 	${node}
 
 There are various ways to access its properties. Direct access is possible, but should
-be avoided. It is better to use FlowQuery instead::
+be avoided. It is better to use FlowQuery instead:
+
+.. code-block:: text
 
 	${q(node).getProperty('foo')} // Possible, but discouraged
 	${q(node).property('foo')} // Better: use FlowQuery instead
 
-Through this a node property can be fetched and assigned to a variable::
+Through this a node property can be fetched and assigned to a variable:
+
+.. code-block:: text
 
 	text = ${q(node).property('text')}
 
-Fetching all parent nodes of the current node::
+Fetching all parent nodes of the current node:
+
+.. code-block:: text
 
 	${q(node).parents()}
 
-Here are two equivalent ways to fetch the first node below the 'left' child node::
+Here are two equivalent ways to fetch the first node below the ``left`` child node:
+
+.. code-block:: text
 
 	${q(node).children('left').first()}
 	${q(node).children().filter('left').first()}
 
-Fetch all parent nodes and add the current node to the selected set::
+Fetch all parent nodes and add the current node to the selected set:
+
+.. code-block:: text
 
 	${node.parents().add(node)}
 
 The next example combines multiple operations. First it fetches all children of the
-current node that have the name 'comments'. Then it fetches all children of those
-nodes that have a property 'spam' with a value of false. The result of that is then
-passed to the `count()` method and the count of found nodes is assigned to the
-variable 'numberOfComments'::
+current node that have the name ``comments``. Then it fetches all children of those
+nodes that have a property ``spam`` with a value of false. The result of that is then
+passed to the ``count()`` method and the count of found nodes is assigned to the
+variable 'numberOfComments':
+
+.. code-block:: text
 
 	numberOfComments = ${q(node).children('comments').children("[spam = false]").count()}
 
-The following expands a little more on that. It assigns a set of nodes to the `collection`
+The following expands a little more on that. It assigns a set of nodes to the ``collection``
 property of the comments object. This set of nodes is either fetched from different places,
-depending on whether the current node is a `ContentCollection` node or not. If it is, the
-children of the current node are used directly. If not, the result of `this.getNodePath()`
+depending on whether the current node is a ``ContentCollection`` node or not. If it is, the
+children of the current node are used directly. If not, the result of ``this.getNodePath()``
 is used to fetch a node below the current node and those children are used. In both cases
-the nodes are again filtered by a check for their property `spam` being false.
+the nodes are again filtered by a check for their property ``spam`` being false.
 
-::
+.. code-block:: text
 
 	comments.collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ?
 		q(node).children("[spam = false]") : q(node).children(this.getNodePath()).children("[spam = false]")}
@@ -185,7 +203,7 @@ the selector syntax known from CSS.
 Property Name Filters
 ---------------------
 
-The first component of a filter query can be a `Property Name` filter. It is given
+The first component of a filter query can be a ``Property Name`` filter. It is given
 as a simple string. Checks against property paths are not currently possible::
 
 	foo          //works
@@ -193,15 +211,17 @@ as a simple string. Checks against property paths are not currently possible::
 	foo.bar.baz  //does not work
 
 In the context of Neos the property name is rarely used, as FlowQuery operates on
-TYPO3CR nodes and the `children` operation has a clear scope. If generic PHP objects are
+TYPO3CR nodes and the ``children`` operation has a clear scope. If generic PHP objects are
 used, the property name filter is essential to define which property actually contains
-the 'children'.
+the ``children``.
 
 Attribute Filters
 -----------------
 
-The next component are `Attribute` filters. They can check for the presence and against
-the values of attributes of context elements::
+The next component are ``Attribute`` filters. They can check for the presence and against
+the values of attributes of context elements:
+
+.. code-block:: text
 
 	baz[foo]
 	baz[answer = 42]
@@ -218,15 +238,15 @@ Available Operators
 
 The operators for checking against attribute are as follows:
 
-=
+``=``
   Strict equality of value and operand
-$=
+``$=``
   Value ends with operand (string-based)
-^=
+``^=``
   Value starts with operand (string-based)
-\*=
+``\*=``
   Value contains operand (string-based)
-instanceof
+``instanceof``
   Checks if the value is an instance of the operand
 
 For the latter the behavior is as follows: if the operand is one of the strings
