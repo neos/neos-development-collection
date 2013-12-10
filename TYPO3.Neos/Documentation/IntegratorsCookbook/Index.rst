@@ -23,6 +23,7 @@ Integrators Cookbook
 	SelectingPageTemplate
 	ChangingBodyClassWithCondition
 	RenderingMenu
+	IntegratingJavaScriptSlider
 	RenderingMetaNavigation
 	EditableSharedFooter
 	ExtendingPages
