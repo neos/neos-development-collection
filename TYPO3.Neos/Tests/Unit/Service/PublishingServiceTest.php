@@ -67,6 +67,11 @@ class PublishingServiceTest extends UnitTestCase {
 	 */
 	protected $mockWorkspace;
 
+	/**
+	 * @var \TYPO3\Flow\Persistence\QueryResultInterface
+	 */
+	protected $mockQueryResult;
+
 	public function setUp() {
 		$this->publishingService = new PublishingService();
 
@@ -86,6 +91,8 @@ class PublishingServiceTest extends UnitTestCase {
 		$this->inject($this->publishingService, 'domainRepository', $this->mockDomainRepository);
 
 		$this->mockSiteRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\SiteRepository')->disableOriginalConstructor()->getMock();
+		$this->mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
+		$this->mockSiteRepository->expects($this->any())->method('findOnline')->will($this->returnValue($this->mockQueryResult));
 		$this->inject($this->publishingService, 'siteRepository', $this->mockSiteRepository);
 
 		$this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
@@ -107,7 +114,7 @@ class PublishingServiceTest extends UnitTestCase {
 	 */
 	public function getUnpublishedNodesReturnsANodeInstanceForEveryNodeInTheGivenWorkspace() {
 		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockSiteRepository->expects($this->atLeastOnce())->method('findFirst')->will($this->returnValue($mockSite));
+		$this->mockQueryResult->expects($this->atLeastOnce())->method('getFirst')->will($this->returnValue($mockSite));
 
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->getMock();
 
@@ -140,7 +147,7 @@ class PublishingServiceTest extends UnitTestCase {
 	 */
 	public function getUnpublishedNodesDoesNotReturnInvalidNodes() {
 		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockSiteRepository->expects($this->atLeastOnce())->method('findFirst')->will($this->returnValue($mockSite));
+		$this->mockQueryResult->expects($this->atLeastOnce())->method('getFirst')->will($this->returnValue($mockSite));
 
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->getMock();
 

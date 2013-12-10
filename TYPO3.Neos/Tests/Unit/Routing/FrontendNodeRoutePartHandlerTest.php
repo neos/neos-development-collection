@@ -74,6 +74,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->inject($this->frontendNodeRoutePartHandler, 'domainRepository', $this->mockDomainRepository);
 
 		$this->mockSiteRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\SiteRepository')->disableOriginalConstructor()->getMock();
+		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
+		$this->mockSiteRepository->expects($this->any())->method('findOnline')->will($this->returnValue($mockQueryResult));
 		$this->inject($this->frontendNodeRoutePartHandler, 'siteRepository', $this->mockSiteRepository);
 
 		$this->mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
