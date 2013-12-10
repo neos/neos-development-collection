@@ -20,51 +20,13 @@ Integrators Cookbook
 
 	WrappingListOfContentElements
 	CreatingContentElement
-	CustomizingInspector
 	SelectingPageTemplate
 	ChangingBodyClassWithCondition
-	WorkingWithConditions
-	IntegratingJavaScriptSlider
-	WellBehavedJavaScriptForContentEditing
 	RenderingMenu
 	RenderingMetaNavigation
 	EditableSharedFooter
-	NavigatingNodesEelFlowQuery
-	RenderingBreadcrumb
-	StructuringSitePackage
 	ExtendingPages
 	AddingSimpleContactForm
 	CreatingPlugin
+	ChangingDefaultsDependingOnContentPlacement
 
-
-Setting up a new Project
-========================
-
-* "disconnecting" the main repository
-* site package in distribution, no extra git repository
-
-How to create a Teaser
-======================
-
-(Robert)
-(show the beginning of a sub-page)
-
-
-
-Creating a new Page Type
-========================
-
-* "==Document Type"
-* not for template selection, but instead a different model
-
-
-
-Adjusting the image width for a sidebar
-=======================================
-
-
-
-Creating your own multi-column element
-======================================
-
--> move from existing integrator guide
