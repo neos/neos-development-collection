@@ -30,11 +30,11 @@ Each element in this tree is called a *Node*, and is structured as follows:
   it as the type of a file in your file system.
 * Furthermore, it has *properties* which store the actual data of the node.
   The *node type* determines which properties exist for a node. As an example,
-  a `text` node might have a `headline` and a `text` property.
+  a ``Text`` node might have a ``headline`` and a ``text`` property.
 * Of course, nodes may have *sub nodes* underneath them.
 
 If we imagine a classical website with a hierarchical menu structure, then each
-of the pages is represented by a TYPO3CR Node of type `Folder`. However, not only
+of the pages is represented by a TYPO3CR Node of type ``Document``. However, not only
 the pages themselves are represented as tree: Imagine a page has two columns,
 with different content elements inside each of them. The columns are stored as
 Nodes of type `ContentCollection`, and they contain nodes of type `Text`, `Image`, or
