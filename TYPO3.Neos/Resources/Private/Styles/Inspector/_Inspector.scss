@@ -449,6 +449,7 @@
 			position: relative;
 			@include border-radius(0);
 			@include box-sizing(border-box);
+			font-size: 14px;
 
 			[class^="icon-"],
 			[class*=" icon-"] {
@@ -459,8 +460,13 @@
 				margin: 0;
 			}
 
-			input[type=checkbox] + span:before {
-				top: $relatedMargin + 1px;
+			label {
+				width: auto;
+				margin: 0;
+
+				span {
+					margin-right: 0;
+				}
 			}
 		}
 
