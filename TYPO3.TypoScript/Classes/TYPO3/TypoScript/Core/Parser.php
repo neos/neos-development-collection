@@ -18,7 +18,6 @@ use TYPO3\TypoScript\Exception;
 /**
  * The TypoScript Parser
  *
- * @Flow\Scope("singleton")
  * @api
  */
 class Parser implements ParserInterface {
