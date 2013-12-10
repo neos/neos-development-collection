@@ -5957,6 +5957,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  font-size: 14px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on [class^="icon-"],
 .neos #neos-inspector .neos-inspector-form .neos-add-on [class*=" icon-"] {
@@ -5965,8 +5966,12 @@
 .neos #neos-inspector .neos-inspector-form .neos-add-on input {
   margin: 0;
 }
-.neos #neos-inspector .neos-inspector-form .neos-add-on input[type=checkbox] + span:before {
-  top: 9px;
+.neos #neos-inspector .neos-inspector-form .neos-add-on label {
+  width: auto;
+  margin: 0;
+}
+.neos #neos-inspector .neos-inspector-form .neos-add-on label span {
+  margin-right: 0;
 }
 .neos #neos-inspector .neos-inspector-form .neos-add-on + span {
   display: table-cell;
