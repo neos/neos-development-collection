@@ -20,9 +20,11 @@ Integrators Cookbook
 
 	WrappingListOfContentElements
 	CreatingContentElement
+	CustomizingInspector
 	SelectingPageTemplate
 	ChangingBodyClassWithCondition
 	RenderingMenu
+	IntegratingJavaScriptSlider
 	RenderingMetaNavigation
 	EditableSharedFooter
 	ExtendingPages

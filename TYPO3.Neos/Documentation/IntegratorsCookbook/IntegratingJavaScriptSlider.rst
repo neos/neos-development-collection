@@ -5,9 +5,10 @@ Integrating a JavaScript-based slider
 If you want to integrate a Slider into your page as content element or as part of your template and
 want edit it in the backend you have do some simple steps.
 
-First you have to use a slider javscript plugin which initializes itself when added to the page after page load.
-Or you write your own initialization code into a javascript function which add you then as
-callback for the neos backend events.
+First you have to use a slider javscript plugin which initializes itself when added to the
+page after page load. Or you write your own initialization code into a javascript function
+which you then add as callback for the neos backend events.
+
 For this example the carousel plugin and styling from bootstrap 3.0 has been used:
 http://getbootstrap.com/javascript/#carousel
 
@@ -16,15 +17,15 @@ To create the basic content element you have to add it to your node types.
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 	'Vendor.Site:Carousel':
-		superTypes: ['TYPO3.Neos:Content']
-		childNodes:
-			carouselItems:
-				type: 'TYPO3.Neos:ContentCollection'
-		ui:
-			label: 'Carousel'
-			group: 'plugins'
-			icon: 'icon-picture'
-			inlineEditable: TRUE
+	  superTypes: ['TYPO3.Neos:Content']
+	  childNodes:
+	    carouselItems:
+	      type: 'TYPO3.Neos:ContentCollection'
+	  ui:
+	    label: 'Carousel'
+	    group: 'plugins'
+	    icon: 'icon-picture'
+	    inlineEditable: TRUE
 
 Next you need to define the prototype for the slider in typoscript.
 
@@ -107,15 +108,15 @@ For styling you can simply include the styles provided in bootstrap into your pa
 
 Html ::
 
-  <link rel="stylesheet" href="{f:uri.resource(path: '3/css/bootstrap.min.css', package: 'TYPO3.Twitter.Bootstrap')}" media="all" />
+	<link rel="stylesheet" href="{f:uri.resource(path: '3/css/bootstrap.min.css', package: 'TYPO3.Twitter.Bootstrap')}" media="all" />
 
 If you want to hide specific parts of a plugin while in backend you can use the provided neos-backend class.
 
 Css ::
 
-  .neos-backend .carousel-control {
-    display: none;
-  }
+	.neos-backend .carousel-control {
+		display: none;
+	}
 
 Don't forget to include the javascript for the plugin from the bootstrap package into your page template.
 
