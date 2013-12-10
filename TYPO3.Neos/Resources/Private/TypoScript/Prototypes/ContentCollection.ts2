@@ -1,0 +1,19 @@
+# Default case for ContentCollection TS Object
+#
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
+
+	nodePath = 'to-be-set-by-user'
+
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
+
+	attributes.class = 'neos-contentcollection'
+
+	# You may override this to get your content collection from a different place than the current node.
+	@override.contentCollectionNode = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? node :  q(node).find(this.nodePath).get(0)}
+
+	@process.contentElementWrapping {
+		node = ${contentCollectionNode}
+	}
+}

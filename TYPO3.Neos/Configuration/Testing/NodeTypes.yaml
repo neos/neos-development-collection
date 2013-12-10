@@ -1,0 +1,38 @@
+'Acme.Demo:ThreeColumn':
+  superTypes: ['TYPO3.Neos.NodeTypes:Column']
+  ui:
+    label: 'Three column content'
+    group: 'structure'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos:ContentCollection'
+    column1:
+      type: 'TYPO3.Neos:ContentCollection'
+    column2:
+      type: 'TYPO3.Neos:ContentCollection'
+
+'Acme.Demo:List':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'List content'
+    group: 'structure'
+  childNodes:
+    items:
+      type: 'TYPO3.Neos:ContentCollection'
+
+'Acme.Demo:ListItem':
+  superTypes: ['TYPO3.Neos:Content']
+  properties:
+    text:
+      type: 'string'
+
+'TYPO3.Neos:BackendSchemaControllerTest':
+  properties:
+    text:
+      ui:
+        aloha:
+          fallbackCase: ['defined', 'as', 'plain', 'array']
+          sampleCase:
+            'h3': TRUE
+            'sup': TRUE
+            'shouldBeExcluded': FALSE

@@ -1,0 +1,30 @@
+<div class="neos-row-fluid neos-module-container">
+	<fieldset class="neos-span5">
+		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
+		<legend>Domain data</legend>
+
+		<div class="neos-control-group">
+			<label class="neos-control-label" for="host-pattern">Host pattern</label>
+			<div class="neos-controls">
+				<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host-pattern" class="neos-span12" placeholder="e.g. www.typo3.org" />
+			</div>
+		</div>
+		<div class="neos-control-group">
+			<label class="neos-control-label" for="active">State</label>
+			<div class="neos-controls">
+				<label class="neos-radio neos-inline">
+					<f:form.radio property="active" value="1" id="active" /><span></span>
+					Active
+				</label>
+				<label class="neos-radio neos-inline">
+					<f:form.radio property="active" value="0" checked="{f:if(condition: domain.active, else: 'checked')}" /><span></span>
+					Inactive
+				</label>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<div class="neos-footer">
+	<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="neos-button">Cancel</f:link.action>
+	<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save Domain')}" class="neos-button neos-button-primary" />
+</div>

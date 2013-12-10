@@ -1,0 +1,96 @@
+.neos-checkbox,
+.neos-radio {
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+	min-height: 22px;
+	min-width: 22px;
+	line-height: 22px;
+	vertical-align: middle;
+	padding: 0 !important;
+
+	&.neos-inline {
+		margin-bottom: $relatedMargin;
+		margin-right: $wideMargin;
+
+		& + .neos-inline {
+			margin-left: 0;
+			margin-right: $wideMargin;
+		}
+	}
+
+	input {
+		position: absolute;
+		left: -9999px;
+		vertical-align: top;
+
+		& + span {
+			width: 22px;
+			height: 22px;
+			margin-right: $relatedMargin;
+			overflow: hidden;
+			float: left;
+			position: relative;
+
+			&::before {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 20px;
+				height: 20px;
+				line-height: 20px;
+				background-color: $grayLight;
+				border: 1px solid $textSubtleLight;
+				color: #fff;
+				cursor: pointer;
+				content: '';
+			}
+		}
+
+		&:checked {
+			& + span::before {
+				@include font;
+				background-color: $blueLight;
+				border: 1px solid $blueLight;
+				content: '\2713';
+				font-size: 16px;
+				text-align: center;
+				font-weight: bold;
+			}
+		}
+
+		&[type='radio'] {
+			& + span::before {
+				content: "";
+				border-radius: 50%;
+			}
+
+			&:checked + span::after {
+				content: "";
+				position: absolute;
+				width: 8px;
+				height: 8px;
+				left: 7px;
+				top: 7px;
+				background: #fff;
+				border-radius: 50%;
+			}
+		}
+
+		&:hover + span::before,
+		&:focus + span::before {
+			border-color: $blueLight;
+		}
+
+		&[disabled] {
+			& + span {
+				opacity: .35;
+				cursor: not-allowed;
+
+				&::before {
+					border-color: $textSubtleLight;
+				}
+			}
+		}
+	}
+}

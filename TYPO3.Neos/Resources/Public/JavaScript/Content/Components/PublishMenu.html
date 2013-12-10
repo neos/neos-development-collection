@@ -1,0 +1,23 @@
+{{view view.PublishButton autoPublishBinding="view.autoPublish"}}
+<button {{bindAttr class=":neos-button :neos-dropdown-toggle view._hasWorkspaceWideChanges:neos-publish-menu-active"}} data-toggle="dropdown"></button>
+<ul class="neos-dropdown-menu">
+	<li>
+		{{view view.PublishAllButton}}
+	</li>
+	<li>
+		{{view view.DiscardButton}}
+	</li>
+	<li>
+		{{view view.DiscardAllButton}}
+	</li>
+	<li>
+		<label class="neos-checkbox">
+			{{view Ember.Checkbox checkedBinding="view.autoPublish"}}<span></span> Auto-Publish
+		</label>
+	</li>
+	<li>
+		<a href="/neos/management/workspaces">
+			<i class="icon-th-large"></i> Workspaces
+		</a>
+	</li>
+</ul>

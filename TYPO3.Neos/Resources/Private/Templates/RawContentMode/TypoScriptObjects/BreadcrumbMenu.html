@@ -1,0 +1,14 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<f:if condition="{items}">
+	<f:for each="{items}" as="item" reverse="1" iteration="iterator">
+		<f:if condition="{iterator.index} > 0">/</f:if>
+		<f:if condition="{iterator.isLast}">
+			<f:then>
+				{item.label}
+			</f:then>
+			<f:else>
+				<neos:link.node node="{item}">{item.label}</neos:link.node>
+			</f:else>
+		</f:if>
+	</f:for>
+</f:if>

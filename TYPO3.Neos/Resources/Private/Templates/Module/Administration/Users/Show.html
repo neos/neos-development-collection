@@ -1,0 +1,139 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<h2>Details for user: {account.accountIdentifier}</h2>
+</f:section>
+<f:section name="content">
+	<div class="neos-row-fluid neos-module-container">
+		<div class="neos-span5">
+			<legend>User Data</legend>
+
+			<table class="neos-info-table">
+				<tbody>
+					<tr>
+						<th>Username</th>
+						<td>{account.accountIdentifier}</td>
+					</tr>
+					<tr>
+						<th>Alias</th>
+						<td>{account.party.name.alias}</td>
+					</tr>
+					<tr>
+						<th>Creation date</th>
+						<td><f:format.date format="d.m.Y - H:i:s">{account.creationDate}</f:format.date></td>
+					</tr>
+					<f:if condition="{account.roles}">
+						<tr>
+							<th>Roles</th>
+							<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
+						</tr>
+					</f:if>
+				</tbody>
+			</table>
+		</div>
+		<div class="neos-span5 neos-offset1">
+			<legend>Personal Data</legend>
+
+			<table class="neos-info-table">
+				<tbody>
+					<f:if condition="{account.party.name.title}">
+						<tr>
+							<th>Title</th>
+							<td>{account.party.name.title}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{account.party.name.firstName}">
+						<tr>
+							<th>First Name</th>
+							<td>{account.party.name.firstName}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{account.party.name.MiddleName}">
+						<tr>
+							<th>Middle Name</th>
+							<td>{account.party.name.middleName}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{account.party.name.lastName}">
+						<tr>
+							<th>Last Name</th>
+							<td>{account.party.name.lastName}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{account.party.name.otherName}">
+						<tr>
+							<th>Other Name</th>
+							<td>{account.party.name.otherName}</td>
+						</tr>
+					</f:if>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="neos-row-fluid neos-module-container">
+		<div class="neos-span5">
+			<legend>Electronic Addresses</legend>
+			<f:if condition="{account.party.electronicAddresses}">
+				<f:then>
+
+					<table class="neos-info-table">
+						<tbody>
+							<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
+								<tr>
+									<th>{electronicAddress.type} <f:if condition="{account.party.primaryElectronicAddress} == {electronicAddress}"><span>(Primary)</span></f:if></th>
+									<td>{electronicAddress.identifier}</td>
+								</tr>
+							</f:for>
+						</tbody>
+					</table>
+				</f:then>
+				<f:else>
+					<em>N/A</em>
+				</f:else>
+			</f:if>
+		</div>
+	</div>
+
+	<div class="neos-footer">
+		<f:link.action action="index" class="neos-button">Back</f:link.action>
+		<f:if condition="{currentAccount} == {account}">
+			<f:then>
+				<button class="neos-button neos-button-danger neos-disabled" title="You are logged in as this user and you cannot delete yourself.">
+					<i class="icon-trash icon-white"></i> Delete User
+				</button>
+			</f:then>
+			<f:else>
+				<button class="neos-button neos-button-danger" title="Click here to delete this user" data-toggle="modal" href="#delete">
+					<i class="icon-trash icon-white"></i> Delete User
+				</button>
+			</f:else>
+		</f:if>
+		<f:link.action action="edit" arguments="{account: account}" class="neos-button">
+			<i class="icon-pencil icon-white"></i> Edit User
+		</f:link.action>
+		<div class="neos-hide" id="delete">
+			<div class="neos-modal">
+				<div class="neos-modal-header">
+					<button type="button" class="neos-close" data-dismiss="modal"></button>
+					<div class="neos-header">Do you really want to delete user "{account.accountIdentifier}"?</div>
+					<div>
+						<div class="neos-subheader">
+							This will delete the user and his personal workspace, including all unpublished content.
+							This operation cannot be undone.
+						</div>
+					</div>
+				</div>
+				<div class="neos-modal-footer">
+					<a href="#" class="neos-button" data-dismiss="modal">Cancel</a>
+					<f:form action="delete" arguments="{account: account}" class="neos-inline">
+						<button type="submit" class="neos-button neos-button-danger" title="Delete User">
+							Yes, delete the user
+						</button>
+					</f:form>
+				</div>
+			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
+		</div>
+	</div>
+</f:section>

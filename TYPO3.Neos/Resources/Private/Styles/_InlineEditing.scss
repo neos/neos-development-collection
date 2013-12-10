@@ -1,0 +1,60 @@
+/** Inline editing handles **/
+.neos-handle-container {
+	position: absolute;
+	z-index: 10001;
+
+	.neos-button-toolbar {
+		text-align: right !important;
+		margin-top: 0;
+		position: relative;
+
+		.neos-button-group {
+			position: absolute;
+			right: -8px;
+			top: -43px;
+			border: 2px solid $blue;
+			border-bottom: 0px;
+			background-color: $grayLighter;
+
+			.neos-button {
+				background-color: transparent;
+				width: 32px;
+				height: 32px;
+
+				&:hover {
+					background-color: #e6e6e6;
+				}
+
+				&.neos-active {
+					background-color: $blue;
+					@include box-shadow(inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05));
+
+					i {
+						color: #fff;
+					}
+				}
+
+				[class^="icon-"],
+				[class*=" icon-"] {
+					margin-left: -6px;
+					margin-top: -10px;
+				}
+
+				i {
+					color: #000;
+					@include text-shadow(none);
+				}
+			}
+
+			.neos-button:last-child {
+				//@include border-radius(0);
+			}
+		}
+	}
+}
+
+&.neos-empty-contentcollection-overlay {
+	height: 20px;
+	outline: 2px solid rgba(0, 0, 0, .2);
+	inline-offset: 2px;
+}

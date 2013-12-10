@@ -1,0 +1,410 @@
+'TYPO3.Neos.NodeTypes:Page':
+  superTypes: ['TYPO3.Neos:Document']
+  childNodes:
+    main:
+      type: 'TYPO3.Neos:ContentCollection'
+  properties:
+    layout:
+     type: string
+     ui:
+       label: 'Layout for this page only'
+       reloadIfChanged: TRUE
+       inspector:
+         group: 'layout'
+         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+         editorOptions:
+           placeholder: 'Inherit from parent'
+           values:
+             '':
+               label: ''
+    subpageLayout:
+     type: string
+     ui:
+       label: 'Layout for subpages of this page'
+       inspector:
+         group: 'layout'
+         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+         editorOptions:
+           placeholder: 'Inherit from parent'
+           values:
+             '':
+               label: ''
+  ui:
+    label: 'Page'
+    icon: 'icon-file'
+    inspector:
+      groups:
+        document:
+          label: 'Title'
+        layout:
+          label: 'Layout'
+          position: 150
+
+# DEPRECATED with Neos 1.0: for ease of upgrading, we add the "old" TYPO3.Neos:Page again in order to
+# make this change less breaking and have an easier upgrading period.
+'TYPO3.Neos:Page':
+  superTypes: ['TYPO3.Neos.NodeTypes:Page']
+  abstract: TRUE
+
+'TYPO3.Neos.NodeTypes:Headline':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Headline'
+    icon: 'icon-file-text'
+  properties:
+    title:
+      type: string
+      defaultValue: '<h1>Enter headline here</h1>'
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          'format':
+            'sub': TRUE
+            'sup': TRUE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'removeFormat': TRUE
+          'link':
+            'a': TRUE
+
+'TYPO3.Neos.NodeTypes:Text':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Text'
+    icon: 'icon-file-text'
+  properties:
+    text:
+      type: string
+      defaultValue: '<p>Enter text here</p>'
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          'format':
+            'b': TRUE
+            'i': TRUE
+            'u': TRUE
+            'sub': TRUE
+            'sup': TRUE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'pre': TRUE
+            'removeFormat': TRUE
+          'table':
+            'table': TRUE
+          'list':
+            'ol': TRUE
+            'ul': TRUE
+          'link':
+            'a': TRUE
+
+'TYPO3.Neos.NodeTypes:Image':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Image'
+    icon: 'icon-picture'
+    inspector:
+      groups:
+        image:
+          label: 'Image'
+          position: 5
+  properties:
+    image:
+      type: TYPO3\Media\Domain\Model\ImageVariant
+      ui:
+        label: 'Image'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    alignment:
+      type: string
+      defaultValue: ''
+      ui:
+        label: 'Alignment'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: 'Default'
+            values:
+              '':
+                label: ''
+              center:
+                label: 'Center'
+              left:
+                label: 'Left'
+              right:
+                label: 'Right'
+    alternativeText:
+      type: string
+      ui:
+        label: 'Alternative text'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    title:
+      type: string
+      ui:
+        label: 'Title'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    link:
+      type: string
+      ui:
+        label: 'Link'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    hasCaption:
+      type: boolean
+      ui:
+        label: 'Enable caption'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    caption:
+      type: string
+      defaultValue: '<p>Enter caption here</p>'
+      ui:
+        inlineEditable: TRUE
+
+'TYPO3.Neos.NodeTypes:TextWithImage':
+  superTypes:
+    - 'TYPO3.Neos.NodeTypes:Image'
+    - 'TYPO3.Neos.NodeTypes:Text'
+  ui:
+    label: 'Text with Image'
+
+    icon: 'icon-picture'
+
+'TYPO3.Neos.NodeTypes:Html':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'HTML'
+    icon: 'icon-code'
+    inspector:
+      groups:
+        html:
+          label: 'HTML'
+          position: 10
+  properties:
+    source:
+      type: string
+      ui:
+        label: 'HTML Content'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'html'
+          editor: 'TYPO3.Neos/Inspector/Editors/HtmlEditor'
+      defaultValue: '<p>Enter HTML here</p>'
+
+'TYPO3.Neos.NodeTypes:Menu':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Menu'
+    group: 'structure'
+    icon: 'icon-sitemap'
+    inspector:
+      groups:
+        options:
+          label: 'Options'
+          position: 30
+  properties:
+    startLevel:
+      type: string
+      defaultValue: '0'
+      ui:
+        reloadIfChanged: TRUE
+        label: 'Starting Level'
+        inspector:
+          group: 'options'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              '-4':
+                label: 'Four Levels Above Current Page'
+              '-3':
+                label: 'Three Levels Above Current Page'
+              '-2':
+                label: 'Two Levels Above Current Page'
+              '-1':
+                label: 'One Level Above Current Page'
+              '0':
+                label: 'Same Level As Current Page'
+              '1':
+                label: 'First Level Of Website'
+              '2':
+                label: 'Second Level Of Website'
+              '3':
+                label: 'Third Level Of Website'
+              '4':
+                label: 'Forth Level Of Website'
+              '5':
+                label: 'Fifth Level Of Website'
+              '6':
+                label: 'Sixth Level Of Website'
+    maximumLevels:
+      type: string
+      defaultValue: '1'
+      ui:
+        reloadIfChanged: TRUE
+        label: 'Maximum Levels'
+        inspector:
+          group: 'options'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              '1':
+                label: '1'
+              '2':
+                label: '2'
+              '3':
+                label: '3'
+              '4':
+                label: '4'
+              '5':
+                label: '5'
+              '6':
+                label: '6'
+              '7':
+                label: '7'
+              '8':
+                label: '8'
+              '9':
+                label: '9'
+              '10':
+                label: '10'
+
+
+'TYPO3.Neos.NodeTypes:Column':
+  superTypes: ['TYPO3.Neos:Content']
+  abstract: TRUE
+  ui:
+    group: 'structure'
+    label: 'Column'
+    icon: 'icon-columns'
+    inlineEditable: TRUE
+    inspector:
+      groups:
+        column:
+          label: 'Columns'
+          position: 10
+  properties:
+    layout:
+      type: string
+      ui:
+        label: 'Layout'
+        inspector:
+          group: 'column'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+
+'TYPO3.Neos.NodeTypes:TwoColumn':
+  superTypes: ['TYPO3.Neos.NodeTypes:Column']
+  ui:
+    label: 'Two column content'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos:ContentCollection'
+    column1:
+      type: 'TYPO3.Neos:ContentCollection'
+  properties:
+    layout:
+      defaultValue: '50-50'
+      ui:
+        reloadIfChanged: TRUE
+        inspector:
+          editorOptions:
+            values:
+              '50-50':
+                label: '50% / 50%'
+              '75-25':
+                label: '75% / 25%'
+              '25-75':
+                label: '25% / 75%'
+              '66-33':
+                label: '66% / 33%'
+              '33-66':
+                label: '33% / 66%'
+
+'TYPO3.Neos.NodeTypes:ThreeColumn':
+  superTypes: ['TYPO3.Neos.NodeTypes:Column']
+  ui:
+    label: 'Three column content'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos:ContentCollection'
+    column1:
+      type: 'TYPO3.Neos:ContentCollection'
+    column2:
+      type: 'TYPO3.Neos:ContentCollection'
+  properties:
+    layout:
+      defaultValue: '33-33-33'
+      ui:
+        reloadIfChanged: TRUE
+        inspector:
+          editorOptions:
+            values:
+              '33-33-33':
+                label: '33% / 33% / 33%'
+              '50-25-25':
+                label: '50% / 25% / 25%'
+              '25-50-25':
+                label: '25% / 50% / 25%'
+              '25-25-50':
+                label: '25% / 25% / 50%'
+
+'TYPO3.Neos.NodeTypes:FourColumn':
+  superTypes: ['TYPO3.Neos.NodeTypes:Column']
+  ui:
+    label: 'Four column content'
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos:ContentCollection'
+    column1:
+      type: 'TYPO3.Neos:ContentCollection'
+    column2:
+      type: 'TYPO3.Neos:ContentCollection'
+    column3:
+      type: 'TYPO3.Neos:ContentCollection'
+  properties:
+    layout:
+      defaultValue: '25-25-25-25'
+      ui:
+        reloadIfChanged: TRUE
+        inspector:
+          editorOptions:
+            values:
+              '25-25-25-25':
+                label: '25% / 25% / 25% / 25%'
+
+'TYPO3.Neos.NodeTypes:Form':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Form'
+    group: 'general'
+    icon: 'icon-envelope-alt'
+    inspector:
+      groups:
+        form:
+          label: 'Form'
+          priority: 30
+  properties:
+    formIdentifier:
+      type: string
+      ui:
+        label: 'Form identifier'
+        reloadIfChanged: true
+        inspector:
+          group: form
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: 'Select the Form identifier'
+            values:
+              '':
+                label: ''

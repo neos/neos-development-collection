@@ -1,0 +1,54 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<h2>New site</h2>
+	<f:form action="createSite">
+
+		<div class="neos-row-fluid">
+
+			<fieldset class="neos-span5">
+				<legend>Import a site</legend>
+				<f:if condition="{sitePackages -> f:count()} > 0">
+					<f:then>
+						<div class="neos-control-group">
+							<label class="neos-control-label" for="site">Select a site</label>
+							<div class="neos-controls neos-select">
+								<f:form.select name="site" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
+							</div>
+						</div>
+					</f:then>
+					<f:else>
+						<p>No site packages are available. Make sure you have an active site package.</p>
+					</f:else>
+				</f:if>
+			</fieldset>
+			<fieldset class="neos-span5 neos-offset1">
+				<legend>Create a blank site</legend>
+				<f:if condition="{generatorServiceIsAvailable}">
+					<f:then>
+						<div class="neos-control-group">
+							<label class="neos-control-label" for="package-key">Package Key</label>
+							<div class="neos-controls">
+								<f:form.textfield name="packageKey" value="{packageKey}" id="package-key" class="neos-span12" />
+								<span class="neos-help-block">A valid package key should be in the form <em>VendorName.MyPackageKey</em>.</span>
+							</div>
+						</div>
+						<div class="neos-control-group">
+							<label class="neos-control-label" for="site-name">Site Name</label>
+							<div class="neos-controls">
+								<f:form.textfield name="siteName" value="{siteName}" id="site-name" />
+							</div>
+						</div>
+					</f:then>
+					<f:else>
+						<p>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</p>
+					</f:else>
+				</f:if>
+			</fieldset>
+		</div>
+		<div class="neos-footer">
+			<f:link.action action="index" class="neos-button">Cancel</f:link.action>
+			<f:form.submit value="Create site" class="neos-button neos-button-primary" />
+		</div>
+	</f:form>
+</f:section>

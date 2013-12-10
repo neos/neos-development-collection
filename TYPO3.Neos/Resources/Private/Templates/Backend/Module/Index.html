@@ -1,0 +1,83 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace ext=TYPO3\ExtJS\ViewHelpers}
+<f:layout name="Default" />
+
+<f:section name="head">
+	<title>{title}</title>
+
+	<f:if condition="{moduleConfiguration.additionalResources.styleSheets}">
+		<f:for each="{moduleConfiguration.additionalResources.styleSheets}" as="additionalResource">
+			<link rel="stylesheet" href="{f:uri.resource(path: additionalResource)}" />
+		</f:for>
+	</f:if>
+
+	<script src="{f:uri.resource(path: 'Library/jquery/jquery-1.10.2.js')}"></script>
+	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
+		<f:for each="{moduleConfiguration.additionalResources.javaScripts}" as="additionalResource">
+			<script src="{f:uri.resource(path: additionalResource)}"></script>
+		</f:for>
+	</f:if>
+
+	<script type="text/javascript">
+		// TODO Get rid of those global variables
+		var ExtDirectInitialization = function() {
+			<ext:extDirect.provider />;
+		};
+		{neos:backend.javascriptConfiguration()}
+	</script>
+
+	<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
+
+	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+		<f:then>
+			<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
+		</f:then>
+		<f:else>
+			<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}" data-main="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
+		</f:else>
+	</f:if>
+</f:section>
+
+<f:section name="body">
+	<body class="neos neos-module neos-controls neos-module-{moduleClass}">
+		<div class="neos-module-wrap">
+			<ul class="neos-breadcrumb">
+				<f:for each="{moduleBreadcrumb}" key="path" as="configuration" iteration="iterator">
+					<f:if condition="{configuration.hideInMenu}">
+						<f:else>
+							<li>
+								<neos:link.module path="{path}" class="{f:if(condition: iterator.isLast, then: 'active')}"><i class="{configuration.icon}"></i> {configuration.label}</neos:link.module>
+								<f:if condition="{iterator.isLast}"><f:else><span class="neos-divider">/</span></f:else></f:if>
+							</li>
+						</f:else>
+					</f:if>
+				</f:for>
+			</ul>
+			<f:if condition="{moduleContents}">
+				{moduleContents -> f:format.raw()}
+			</f:if>
+			<div id="neos-application" class="neos">
+				<div id="neos-top-bar">
+					<div id="neos-top-bar-right">
+						<div id="neos-user-actions">
+							<f:render partial="Backend/UserMenu" arguments="{_all}" />
+						</div>
+					</div>
+				</div>
+				<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />
+			</div>
+		</div>
+		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
+		<script src="{f:uri.resource(path: 'JavaScript/Module/fixed-sticky.js', package: 'TYPO3.Neos')}"></script>
+
+		<script type="text/javascript">
+			(function($) {
+				$(function() {
+					$('.neos-footer').fixedsticky();
+				});
+			})(jQuery);
+		</script>
+	</body>
+</f:section>

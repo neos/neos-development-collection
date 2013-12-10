@@ -1,0 +1,157 @@
+#neos-aloha-topmenu {
+	display: inline-block;
+
+	// Aloha Link editor (for entering the link target URL) is displayed as some "flyout"
+	#aloha-attribute-field-editLink {
+		position: absolute;
+		top: $unit;
+		left: 0px;
+		border: $relatedMargin solid $grayDark;
+		padding: $relatedMargin $defaultMargin;
+		color: white !important;
+		background: $grayLight;
+		@include transition-property('margin-left');
+		@include transition-duration(.2s);
+		@include font();
+		@include box-sizing(border-box);
+		font-weight: 400;
+		width: $unit * 12 !important;
+
+		&:focus {
+			outline: none;
+		}
+
+		&.ui-autocomplete-loading {
+			background-image: url('../Images/ajax-preloader-3f3f3f.gif');
+			background-position: ($unit * 11) center;
+			background-repeat: no-repeat;
+		}
+
+		.neos-navigate-panel-open & {
+			margin-left: $navigatePanelWidth;
+		}
+
+		.neos-menu-panel-open.neos-menu-panel-sticky & {
+			margin-left: $menuButtonWidth;
+		}
+
+		.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open & {
+			margin-left: $menuButtonWidth + $navigatePanelWidth - 1px;
+		}
+	}
+
+	// Icons
+	.aloha {
+		.ui-state-default {
+			background: none;
+			border: 0px;
+
+			.ui-button-icon-only {
+				width: $wideMargin;
+			}
+
+			.aloha-icon {
+				background: none;
+				-webkit-font-smoothing: antialiased;
+				font-size: 14px;
+				color: white;
+				display: inline;
+				position: relative;
+				left: auto;
+				top: auto;
+				margin: 0px;
+				padding: 0px;
+				text-indent: 0px;
+			}
+
+			&.ui-state-hover,
+			&.aloha-button-active {
+				.aloha-icon {
+					color: $blue;
+				}
+			}
+
+			.ui-button-text {
+				display: none;
+			}
+
+			.aloha-icon-createTable {
+				@extend .icon-table;
+			}
+
+			.aloha-icon-toggledragdrop {
+				@extend .icon-move;
+			}
+
+			.aloha-icon-bold,
+			.aloha-icon-strong {
+				@extend .icon-bold;
+			}
+
+			.aloha-icon-italic,
+			.aloha-icon-emphasis {
+				@extend .icon-italic;
+			}
+
+			.aloha-icon-underline {
+				@extend .icon-underline;
+			}
+
+			.aloha-icon-subscript {
+				@extend .icon-subscript;
+			}
+
+			.aloha-icon-superscript {
+				@extend .icon-superscript;
+			}
+
+			.aloha-icon-strikethrough {
+				@extend .icon-strikethrough;
+			}
+
+			.aloha-icon-link {
+				@extend .icon-link;
+			}
+
+			.aloha-icon-formatless-paste {
+				@extend .icon-paste;
+			}
+
+			.aloha-icon-align-left {
+				@extend .icon-align-left;
+			}
+
+			.aloha-icon-align-left {
+				@extend .icon-align-left;
+			}
+
+			.aloha-icon-align-center {
+				@extend .icon-align-center;
+			}
+
+			.aloha-icon-align-justify {
+				@extend .icon-align-justify;
+			}
+
+			.aloha-icon-align-right {
+				@extend .icon-align-right;
+			}
+
+			.aloha-icon-orderedlist {
+				@extend .icon-list-ol;
+			}
+
+			.aloha-icon-unorderedlist {
+				@extend .icon-list-ul;
+			}
+
+			.aloha-icon-indent {
+				@extend .icon-indent-right;
+			}
+
+			.aloha-icon-outdent {
+				@extend .icon-indent-left;
+			}
+		}
+	}
+}
