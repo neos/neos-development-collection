@@ -79,7 +79,7 @@ define(
 						window.clearInterval(this._autoPublishTimer);
 						this._autoPublishTimer = null;
 					}
-				}.observes('autoPublish'),
+				}.observes('autoPublish').on('init'),
 
 				disabled: function() {
 					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning');
