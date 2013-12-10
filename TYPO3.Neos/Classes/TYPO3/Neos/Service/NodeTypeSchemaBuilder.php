@@ -93,6 +93,9 @@ class NodeTypeSchemaBuilder {
 					$metadata[$propertyName] = $nodeTypeConfiguration[$propertyName];
 				}
 			}
+			if ($nodeType->isAbstract()) {
+				$metadata['abstract'] = TRUE;
+			}
 
 			$this->types['typo3:' . $nodeTypeName] = (object) array(
 				'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeTypeName,
