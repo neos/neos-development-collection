@@ -36,6 +36,11 @@ class TypoScriptView extends AbstractView {
 	protected $typoScriptPath = 'root';
 
 	/**
+	 * @var \TYPO3\TypoScript\Core\Runtime
+	 */
+	protected $typoScriptRuntime;
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
@@ -43,19 +48,13 @@ class TypoScriptView extends AbstractView {
 	 * @api
 	 */
 	public function render() {
-		$currentNode = isset($this->variables['value']) ? $this->variables['value'] : NULL;
-		if (!$currentNode instanceof Node) {
-			throw new \TYPO3\Neos\Exception('TypoScriptView needs a node as argument.', 1329736456);
-		}
-
-		$closestDocumentNode = $this->getClosestDocumentNode($currentNode);
+		$currentNode = $this->getCurrentNode();
 		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
-
-		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
+		$typoScriptRuntime = $this->getTypoScriptRuntime($currentSiteNode);
 
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $currentNode,
-			'documentNode' => $closestDocumentNode,
+			'documentNode' => $this->getClosestDocumentNode($currentNode),
 			'request' => $this->controllerContext->getRequest(),
 			'site' => $currentSiteNode,
 			'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : NULL
@@ -67,19 +66,18 @@ class TypoScriptView extends AbstractView {
 	}
 
 	/**
-	 * Is it possible to render $node with $typoScriptPath?
+	 * Is it possible to render $node with $his->typoScriptPath?
 	 *
-	 * @param Node $node
-	 * @param string $typoScriptPath
 	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
+	 *
+	 * @throws \TYPO3\Neos\Exception
 	 */
-	public function canRenderWithNodeAndPath(Node $node, $typoScriptPath) {
-			// TODO: find closest document node from this node...
-		$closestDocumentNode = $node;
-		$currentSiteNode = $node->getContext()->getCurrentSiteNode();
+	public function canRenderWithNodeAndPath() {
+		$currentNode = $this->getCurrentNode();
+		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
+		$typoScriptRuntime = $this->getTypoScriptRuntime($currentSiteNode);
 
-		$typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $closestDocumentNode, $this->controllerContext);
-		return $typoScriptRuntime->canRender($typoScriptPath);
+		return $typoScriptRuntime->canRender($this->typoScriptPath);
 	}
 
 	/**
@@ -109,4 +107,40 @@ class TypoScriptView extends AbstractView {
 		}
 		return $node;
 	}
+
+	/**
+	 * @return NodeInterface
+	 * @throws \TYPO3\Neos\Exception
+	 */
+	protected function getCurrentNode() {
+		$currentNode = isset($this->variables['value']) ? $this->variables['value'] : NULL;
+		if (!$currentNode instanceof Node) {
+			throw new \TYPO3\Neos\Exception('TypoScriptView needs a variable \'value\' set with a Node object.', 1329736456);
+		}
+		return $currentNode;
+	}
+
+	/**
+	 * @param NodeInterface $currentSiteNode
+	 * @return \TYPO3\TypoScript\Core\Runtime
+	 */
+	protected function getTypoScriptRuntime(NodeInterface $currentSiteNode) {
+		if ($this->typoScriptRuntime === NULL) {
+			$this->typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $this->controllerContext);
+		}
+		return $this->typoScriptRuntime;
+	}
+
+	/**
+	 * Clear the cached runtime instance on assignment of variables
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return TypoScriptView
+	 */
+	public function assign($key, $value) {
+		$this->typoScriptRuntime = NULL;
+		return parent::assign($key, $value);
+	}
+
 }

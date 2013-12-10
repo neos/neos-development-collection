@@ -124,18 +124,19 @@ class NodeController extends ActionController {
 			}
 		}
 
+		$this->view->assign('value', $node);
+
 		if ($this->hasAccessToBackend() && $node->getContext()->getWorkspace()->getName() !== 'live') {
 			$editPreviewMode = $this->getEditPreviewModeTypoScriptRenderingPath($node);
 			if ($editPreviewMode !== NULL) {
 				$this->view->assign('editPreviewMode', $editPreviewMode);
 			} else {
-				if (!$this->view->canRenderWithNodeAndPath($node, $this->view->getTypoScriptPath())) {
+				if (!$this->view->canRenderWithNodeAndPath()) {
 					$this->view->setTypoScriptPath('rawContent');
 				}
 			}
 		}
 
-		$this->view->assign('value', $node);
 
 		if ($this->securityContext->isInitialized() && $this->hasAccessToBackend()) {
 			$this->session->putData('lastVisitedNode', $node->getIdentifier());
@@ -159,7 +160,7 @@ class NodeController extends ActionController {
 		}
 
 		$editPreviewModeTypoScriptRenderingPath = Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes.' . $editPreviewMode . '.typoScriptRenderingPath');
-		return $editPreviewModeTypoScriptRenderingPath ?: NULL;
+		return strlen($editPreviewModeTypoScriptRenderingPath) > 0 ? $editPreviewModeTypoScriptRenderingPath : NULL;
 	}
 
 	/**

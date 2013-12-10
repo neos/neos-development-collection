@@ -1,10 +1,19 @@
-prototype(TYPO3.Neos:RawContent) < prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
+prototype(TYPO3.Neos:RawContent) >
+prototype(TYPO3.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
-	layout = ''
-	columns {
+	columns = TYPO3.TypoScript:Collection {
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
-		itemRenderer {
+		itemName = 'node'
+		itemRenderer = TYPO3.TypoScript:Template {
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/ContentCollectionTemplate.html'
+			node = ${node}
+			attributes = TYPO3.TypoScript:Attributes {
+				class = 'column'
+			}
+			columnContent = TYPO3.Neos:ContentCollection {
+				nodePath = '.'
+			}
+
 		}
 	}
 }
