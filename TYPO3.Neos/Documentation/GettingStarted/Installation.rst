@@ -19,26 +19,26 @@ Fundamental Installation
 
    .. code-block:: bash
 
-	curl -sS https://getcomposer.org/installer | php
+      curl -sS https://getcomposer.org/installer | php
 
-  By issuing this command Composer will get downloaded as *composer.phar* to your working directory.
-  If you like to have composer installed globally, you can simply move it to a directory within your $PATH environment.
+   By issuing this command Composer will get downloaded as *composer.phar* to your working directory.
+   If you like to have composer installed globally, you can simply move it to a directory within your $PATH environment.
 
-  .. code-block:: bash
+   .. code-block:: bash
 
-	mv composer.phar /usr/local/bin/composer
+      mv composer.phar /usr/local/bin/composer
 
-  .. note::
+   .. note::
 
-	If you are on Windows please refer to the `offical documentation
-	<http://getcomposer.org/doc/00-intro.md#installation-windows>`_ on how to install Composer on Windows
+      If you are on Windows please refer to the `offical documentation
+      <http://getcomposer.org/doc/00-intro.md#installation-windows>`_ on how to install Composer on Windows
 
 #. Go to your htdocs directory and create a new project based on the TYPO3 Neos base distribution:
 
    .. code-block:: bash
 
-	cd /your/htdocs/
-	php /path/to/composer.phar create-project typo3/neos-base-distribution TYPO3-Neos
+      cd /your/htdocs/
+      php /path/to/composer.phar create-project typo3/neos-base-distribution TYPO3-Neos
 
    Composer will take care of downloading all dependencies for running your TYPO3 Neos installation to the
    directory ``TYPO3-Neos``.
@@ -51,14 +51,14 @@ Fundamental Installation
 
    .. code-block:: apache
 
-     NameVirtualHost *:80 # if needed
+      NameVirtualHost *:80 # if needed
 
-     <VirtualHost *:80>
-       DocumentRoot "/your/htdocs/TYPO3-Neos/Web/"
-       # enable the following line for production context
-       #SetEnv FLOW_CONTEXT Production
-       ServerName neos.demo
-     </VirtualHost>
+      <VirtualHost *:80>
+         DocumentRoot "/your/htdocs/TYPO3-Neos/Web/"
+         # enable the following line for production context
+         #SetEnv FLOW_CONTEXT Production
+         ServerName neos.demo
+      </VirtualHost>
 
    Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
    virtual host with apache please refer to the `Apache Virtual Host documentation
@@ -69,7 +69,7 @@ Fundamental Installation
 
    .. code-block:: text
 
-     127.0.0.1 neos.demo
+      127.0.0.1 neos.demo
 
    Make sure to use the same name you defined in ``ServerName`` in the virtual host configuration above.
 
@@ -102,25 +102,25 @@ The TYPO3 Neos Setup Tool
    in some secure place, the generated file will be removed upon login! It is possible to have a new password
    rendered if you lost it, so don't worry too much.
 
-	.. figure:: Images/Setup-Step-1.png
-		:alt: TYPO3 Neos login page
-		:class: screenshot-fullsize
+   .. figure:: Images/Setup-Step-1.png
+      :alt: TYPO3 Neos login page
+      :class: screenshot-fullsize
 
 #. Fill in the database credentials in the first step. The selector box will be updated with
    accessible databases to choose from, or you can create a new one.
 
-	.. tip::
-		Configure your MySQL server to use the ``utf8_unicode_ci`` collation by default if possible!
+   .. tip::
+      Configure your MySQL server to use the ``utf8_unicode_ci`` collation by default if possible!
 
-	.. figure:: Images/Setup-Step-2.png
-		:alt: Setup database credentials
-		:class: screenshot-fullsize
+   .. figure:: Images/Setup-Step-2.png
+      :alt: Setup database credentials
+      :class: screenshot-fullsize
 
 #. In the next step a user with administrator privileges for editing with TYPO3 Neos is created.
 
-	.. figure:: Images/Setup-Step-3.png
-		:alt: Create admin user
-		:class: screenshot-fullsize
+   .. figure:: Images/Setup-Step-3.png
+      :alt: Create admin user
+      :class: screenshot-fullsize
 
 #. The following step allows you to import an existing site or kickstart a new site. To import the
    demo site, just make sure it is selected in the selector box and go to the next step.
@@ -130,16 +130,16 @@ The TYPO3 Neos Setup Tool
    If you are new to Neos, we recommend to import the existing demo site so you can follow the next
    section giving you a basic tour of the user interface.
 
-	.. figure:: Images/Setup-Step-4.png
-		:alt: Create new site or import an existing
-		:class: screenshot-fullsize
+   .. figure:: Images/Setup-Step-4.png
+      :alt: Create new site or import an existing
+      :class: screenshot-fullsize
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
 
-	.. figure:: Images/StartPage.png
-		:alt: The TYPO3 Neos start page
-		:class: screenshot-fullsize
+   .. figure:: Images/StartPage.png
+      :alt: The TYPO3 Neos start page
+      :class: screenshot-fullsize
 
 	The TYPO3 Neos start page
 

@@ -9,4 +9,6 @@ Getting Started
 
 	Installation
 	UserInterfaceBasics
-	YourFirstSite
+
+.. This page has been deactivated as it contains outdated content so far.
+..	YourFirstSite
