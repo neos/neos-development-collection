@@ -336,6 +336,7 @@ define(
 										InspectorController.set('nodeProperties.title', title);
 										InspectorController.apply();
 									}
+									node.data.tooltip = title;
 									node.setLazyNodeStatus(that.statusCodes.ok);
 								} else {
 									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
