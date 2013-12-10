@@ -57,3 +57,40 @@ TYPO3.Neos/Resources/Private/TypoScript/DefaultTypoScript.ts2
 
 The element `root.layout` is the one responsible for handling the layout. So when trying to
 change the layout handling this is the TypoScript object to manipulate.
+
+Select Template based on NodeType
+=================================
+
+It is also possible to select the page rendering configuration based on the node type of the
+page. Let's say you have a node type named `VendorName.VendorSite:Employee` which has `TYPO3.Neos.NodeTypes:Page`
+as a supertype. This node type is used for displaying a personal page of employees working in
+your company. This page will have a different structure compared to your basic page.
+
+The right approach would be to create a TypoScript prototype for your default page and employee page like::
+
+	prototype('VendorName.VendorSite:Page') < prototype('TYPO3.Neos:Page') {
+		body.templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Default.html'
+		# Your further page configuration here
+	}
+
+	prototype('VendorName.VendorSite:EmployeePage') < prototype('VendorName.VendorSite:Page') {
+		body.templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Employee.html'
+		# Your further employee page configuration here
+	}
+
+But now how to link this TypoScript path to your node type? For this we can have a look at the
+TypoScript `root` path. This `root` path is a `TYPO3.TypoScript:Case` object, which will render
+the `page` path by default. But you can add your own conditions to render a different path.
+
+In our case we will add a condition on the first position of the condition::
+
+	root.employeePage {
+		condition = ${q(node).is('[instanceof VendorName.VendorSite:Employee]')}
+		renderPath = '/employeePage'
+	}
+
+	page = VendorName.VendorSite:Page
+	employeePage = VendorName.VendorSite:EmployeePage
+
+This will now render the `employeePage` TypoScript path if a page of type `VendorName.VendorSite:Employee`
+is rendered on your website.
