@@ -170,14 +170,20 @@ function(
 				sanitize: 'relaxed', // relaxed, restricted, basic
 				allows: {
 					elements: [
-						'strong', 'em', 'i', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'div', 'dl', 'dt', 'em',
-						'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'sub',
-						'sup', 'u', 'ul', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+						'a', 'abbr', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'col',
+						'colgroup', 'dd', 'del', 'dl', 'dt', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+						'i', 'img', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong',
+						'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'u',
+						'ul', 'span', 'hr', 'object', 'div'
 					],
 					attributes: {
 						'a': ['href', 'data-gentics-aloha-repository', 'data-gentics-aloha-object-id', 'data-ajax-repository-temporary-data'],
 						'blockquote': ['cite'],
-						'q': ['cite']
+						'q': ['cite'],
+						'div': ['id','class','style'],
+						'p': ['class', 'style', 'id'],
+						'td': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'style'],
+						'th': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'scope']
 					},
 
 					protocols: {
