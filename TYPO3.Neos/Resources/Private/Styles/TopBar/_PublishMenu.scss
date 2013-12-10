@@ -79,5 +79,10 @@
 				}
 			}
 		}
+
+		.neos-checkbox {
+			margin-top: $relatedMargin;
+			margin-left: $defaultMargin + $tightMargin;
+		}
 	}
 }
