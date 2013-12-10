@@ -6,7 +6,7 @@
 			<state>1</state>
 			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
 		</properties>
-		<node type="TYPO3.Neos:Page" nodeName="home" locale="">
+		<node type="TYPO3.Neos.NodeTypes:Page" nodeName="home" locale="">
 			<properties>
 				<title><![CDATA[<h1>Home</h1>]]></title>
 				<someSpecialProperty><![CDATA[<h1>SomeValue</h1>]]></someSpecialProperty>
@@ -112,16 +112,16 @@
 					</properties>
 				</node>
 			</node>
-			<node type="TYPO3.Neos:Page" nodeName="about-us" locale="">
+			<node type="TYPO3.Neos.NodeTypes:Page" nodeName="about-us" locale="">
 				<properties>
 					<title><![CDATA[<h1>About Us</h1>]]></title>
 				</properties>
-				<node type="TYPO3.Neos:Page" nodeName="history" locale="">
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="history" locale="">
 					<properties>
 						<title><![CDATA[<h1>History</h1>]]></title>
 					</properties>
 				</node>
-				<node type="TYPO3.Neos:Page" nodeName="mission" locale="">
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="mission" locale="">
 					<properties>
 						<title><![CDATA[<h1>Our mission</h1>]]></title>
 					</properties>
