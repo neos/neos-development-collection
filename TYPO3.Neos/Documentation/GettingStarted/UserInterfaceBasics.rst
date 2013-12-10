@@ -2,9 +2,9 @@
 User Interface Basics
 =====================
 
-	.. figure:: Images/UserInterface.png
-		:alt: TYPO3 Neos User Interface
-		:class: screenshot-fullsize
+.. figure:: Images/UserInterface.png
+   :alt: TYPO3 Neos User Interface
+   :class: screenshot-fullsize
 
 #. Toggle button for the Menu
 #. The Navigate component
