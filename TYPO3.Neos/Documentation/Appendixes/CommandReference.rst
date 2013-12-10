@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-05-15
+The following reference was automatically generated from code on 2013-12-10
 
 
 Package *TYPO3.NEOS*
@@ -85,20 +85,62 @@ Options
 
 
 
-``typo3.neos:site:export``
-**************************
+``typo3.neos:node:autocreatechildnodes``
+****************************************
 
-**Export sites content**
+**Create missing childNodes for a node type**
 
-Export one or multiple sites and their content into an XML format.
+This command automatically creates missing child nodes for a node type
+based on the structure defined in the NodeTypes configuration.
+
+Example for creating child nodes for the TYPO3.Neos.NodeTypes:Page node type in the
+live workspace:
+
+./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
+
+Arguments
+^^^^^^^^^
+
+``--node-type``
+  Node type name
 
 
 
 Options
 ^^^^^^^
 
-``--site-name``
-  the site name to be exported; if none given will export all sites.
+``--workspace``
+  Workspace name, default is 'live'
+
+
+
+
+
+``typo3.neos:site:export``
+**************************
+
+**Export sites content**
+
+This command exports all or one specific site with all its content into an XML
+format.
+
+If the filename option is given, any resources will be exported
+to files in a folder named "Resources" alongside the XML file.
+
+If not given, the XML will be printed to standard output and assets will be embedded
+into the XML in base64 encoded form.
+
+
+
+Options
+^^^^^^^
+
+``--site-node``
+  the node name of the site to be exported; if none given will export all sites
+``--tidy``
+  Whether to export formatted XML
+``--filename``
+  relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources". If omitted the export will be printed to standard output
 
 
 
@@ -176,7 +218,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  The username
+  The username of the user
 ``--role``
   Role ot be added to the user
 
@@ -218,6 +260,31 @@ Options
 
 
 
+``typo3.neos:user:remove``
+**************************
+
+**Remove a user which has access to the backend user interface.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--username``
+  The username of the user to be removed.
+
+
+
+Options
+^^^^^^^
+
+``--confirmation``
+  
+
+
+
+
+
 ``typo3.neos:user:removerole``
 ******************************
 
@@ -229,7 +296,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  Email address of the user
+  The username of the user
 ``--role``
   Role ot be removed from the user
 
@@ -255,6 +322,56 @@ Arguments
   The new password
 
 
+
+
+
+
+
+``typo3.neos:workspace:discardall``
+***********************************
+
+**Discard everything in the workspace with the given workspace name.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace-name``
+  
+
+
+
+Options
+^^^^^^^
+
+``--verbose``
+  
+
+
+
+
+
+``typo3.neos:workspace:publishall``
+***********************************
+
+**Publish everything in the workspace with the given workspace name.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--workspace-name``
+  
+
+
+
+Options
+^^^^^^^
+
+``--verbose``
+  
 
 
 
