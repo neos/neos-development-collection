@@ -138,8 +138,7 @@ define(
 				}
 
 				var siteName = pageMetaInformation.data('__sitename'),
-					nodeType = pageMetaInformation.attr('typeof').substr(6),
-					siteHref = pageMetaInformation.data('neosCurrentSiteHref');
+					nodeType = pageMetaInformation.attr('typeof').substr(6);
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					autoFocus: true,
 					parent: this,
@@ -147,7 +146,7 @@ define(
 						{
 							title: siteName,
 							tooltip: siteName + ' (' + nodeType + ')',
-							href: siteHref,
+							href: $('link[rel="neos-site"]').attr('href'),
 							key: this.get('siteRootNodePath'),
 							isFolder: true,
 							expand: false,
