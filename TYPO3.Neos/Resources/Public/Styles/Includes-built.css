@@ -6391,6 +6391,10 @@
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.disabled:hover {
   background-color: #323232;
 }
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-checkbox {
+  margin-top: 8px;
+  margin-left: 20px;
+}
 .neos .neos-user-menu.neos-button-group {
   font-size: 14px;
 }
