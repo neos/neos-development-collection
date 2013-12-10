@@ -8,8 +8,6 @@ TYPO3 Neos is a free enterprise web content management system licensed under the
 .. toctree::
 	:maxdepth: 2
 
-	Introduction/Index
-	GettingStarted/Index
 	IntegratorGuide/Index
 	IntegratorsCookbook/Index
 	DeveloperGuide/Index
