@@ -102,6 +102,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	 */
 	protected function buildForm(\TYPO3\Form\Core\Model\FormDefinition $formDefinition) {
 		$page1 = $formDefinition->createPage('page1');
+		$page1->setRenderingOption('header', 'Import or create a site');
 
 		$title = $page1->createElement('connectionSection', 'TYPO3.Form:Section');
 		$title->setLabel('Import a site');
@@ -129,6 +130,9 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		}
 
 		if ($this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
+			$separator = $page1->createElement('separator', 'TYPO3.Form:StaticText');
+			$separator->setProperty('elementClassAttribute', 'section-separator');
+
 			$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
 			$newPackageSection->setLabel('Create a new site');
 			$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
