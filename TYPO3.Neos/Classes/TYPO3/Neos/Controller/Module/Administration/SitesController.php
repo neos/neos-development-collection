@@ -11,55 +11,62 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow,
-	TYPO3\Flow\Utility\Files as Files;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Neos\Controller\Module\AbstractModuleController;
+use TYPO3\Neos\Domain\Model\Domain;use TYPO3\Neos\Domain\Model\Site;use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
- * The TYPO3 Sites Management module controller
- *
- * @Flow\Scope("singleton")
+ * The TYPO3 Neos Sites Management module controller
  */
-class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
+class SitesController extends AbstractModuleController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+	 * @var DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Package\PackageManagerInterface
+	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Service\SiteImportService
+	 * @var SiteImportService
 	 */
 	protected $siteImportService;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * @var SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
@@ -73,12 +80,13 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	/**
 	 * A edit view for a site and its settings.
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site Site to view
+	 * @param Site $site Site to view
 	 * @Flow\IgnoreValidation("$site")
 	 * @return void
 	 */
-	public function editAction(\TYPO3\Neos\Domain\Model\Site $site) {
+	public function editAction(Site $site) {
 		$sitePackage = $this->packageManager->getPackage($site->getSiteResourcesPackageKey());
+
 		$this->view->assignMultiple(array(
 			'site' => $site,
 			'sitePackageMetaData' => $sitePackage->getPackageMetaData(),
@@ -89,16 +97,25 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	/**
 	 * Update a site
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site A site to update
-	 * @param string $originalNodeName The site's original node name
-	 * @Flow\Validate(argumentName="site", type="UniqueEntity")
-	 * @Flow\Validate(argumentName="originalNodeName", type="NotEmpty")
+	 * @param Site $site A site to update
+	 * @param string $newSiteNodeName A new site node name
 	 * @return void
+	 * @Flow\Validate(argumentName="$site", type="UniqueEntity")
+	 * @Flow\Validate(argumentName="$newSiteNodeName", type="NotEmpty")
+	 * @Flow\Validate(argumentName="$newSiteNodeName", type="StringLength", options={ "minimum"=1, "maximum"=250 })
+	 * @Flow\Validate(argumentName="$newSiteNodeName", type="TYPO3.Neos:NodeName")
 	 */
-	public function updateSiteAction(\TYPO3\Neos\Domain\Model\Site $site, $originalNodeName) {
-		if ($site->getNodeName() !== $originalNodeName) {
-			$siteNode = $this->propertyMapper->convert('/sites/' . $originalNodeName, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-			$siteNode->setName($site->getName());
+	public function updateSiteAction(Site $site, $newSiteNodeName) {
+		if ($site->getNodeName() !== $newSiteNodeName) {
+			/** @var $contentContext ContentContext */
+			$contentContext = $this->contextFactory->create(array(
+				'workspaceName' => 'live',
+				'invisibleContentShown' => TRUE,
+				'inaccessibleContentShown' => TRUE,
+				'currentSite' => $site
+			));
+			$contentContext->getCurrentSiteNode()->setName($newSiteNodeName);
+			$site->setNodeName($newSiteNodeName);
 		}
 		$this->siteRepository->update($site);
 		$this->addFlashMessage(sprintf('The site "%s" has been updated.', $site->getName()));
@@ -108,11 +125,11 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	/**
 	 * Create a new site form.
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site Site to create
+	 * @param Site $site Site to create
 	 * @Flow\IgnoreValidation("$site")
 	 * @return void
 	 */
-	public function newSiteAction(\TYPO3\Neos\Domain\Model\Site $site = NULL) {
+	public function newSiteAction(Site $site = NULL) {
 		$sitePackages = $this->packageManager->getFilteredPackages('available', NULL, 'typo3-flow-site');
 		$this->view->assignMultiple(array(
 			'sitePackages' => $sitePackages,
@@ -127,17 +144,13 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 * @param string $site Site to import
 	 * @param string $packageKey Package Name to create
 	 * @param string $siteName Site Name to create
-	 * @Flow\Validate(argumentName="packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
+	 * @Flow\Validate(argumentName="$packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
 	 * @return void
 	 */
 	public function createSiteAction($site, $packageKey, $siteName) {
 		if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
 			if ($this->packageManager->isPackageAvailable($packageKey)) {
-				$this->addFlashMessage(
-					sprintf('The package key "%s" already exists.', $packageKey),
-					'',
-					\TYPO3\Flow\Error\Message::SEVERITY_ERROR
-				);
+				$this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, array($packageKey));
 				$this->redirect('index');
 			}
 
@@ -150,6 +163,7 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 
 		if ($packageKey !== '') {
 			try {
+				/** @var $contentContext ContentContext */
 				$contentContext = $this->contextFactory->create(array(
 					'workspaceName' => 'live',
 					'invisibleContentShown' => TRUE,
@@ -159,18 +173,10 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 				$this->addFlashMessage('The site has been created.');
 			} catch (\Exception $exception) {
 				$this->systemLogger->logException($exception);
-				$this->addFlashMessage(
-					sprintf('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', $packageKey, $exception->getMessage()),
-					'',
-					\TYPO3\Flow\Error\Message::SEVERITY_ERROR
-				);
+				$this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array($packageKey, $exception->getMessage()));
 			}
 		} else {
-			$this->addFlashMessage(
-				'No site selected for import and no package name provided.',
-				'',
-				\TYPO3\Flow\Error\Message::SEVERITY_ERROR
-			);
+			$this->addFlashMessage('No site selected for import and no package name provided.', 'No site selected', Message::SEVERITY_ERROR);
 			$this->redirect('newSite');
 		}
 
@@ -180,11 +186,11 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	/**
 	 * Delete a site.
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site Site to create
+	 * @param Site $site Site to create
 	 * @Flow\IgnoreValidation("$site")
 	 * @return void
 	 */
-	public function deleteSiteAction(\TYPO3\Neos\Domain\Model\Site $site) {
+	public function deleteSiteAction(Site $site) {
 		$domains = $this->domainRepository->findBySite($site);
 		if (count($domains) > 0) {
 			foreach ($domains as $domain) {
@@ -194,69 +200,69 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		$this->siteRepository->remove($site);
 		$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$siteNode->remove();
-		$this->addFlashMessage(sprintf('The site "%s" has been deleted.', $site->getName()));
+		$this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array($site->getName()));
 		$this->redirect('index');
 	}
 
 	/**
 	 * Activates a site
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site Site to update
+	 * @param Site $site Site to update
 	 * @return void
 	 */
-	public function activateSiteAction(\TYPO3\Neos\Domain\Model\Site $site) {
+	public function activateSiteAction(Site $site) {
 		$site->setState($site::STATE_ONLINE);
 		$this->siteRepository->update($site);
-		$this->addFlashMessage(sprintf('The site "%s" has been activated.', $site->getName()));
+		$this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, array($site->getName()));
 		$this->redirect('index');
 	}
 
 	/**
 	 * Deactivates a site
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site Site to deactivate
+	 * @param Site $site Site to deactivate
 	 * @return void
 	 */
-	public function deactivateSiteAction(\TYPO3\Neos\Domain\Model\Site $site) {
+	public function deactivateSiteAction(Site $site) {
 		$site->setState($site::STATE_OFFLINE);
 		$this->siteRepository->update($site);
-		$this->addFlashMessage(sprintf('The site "%s" has been deactivated.', $site->getName()));
+		$this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, array($site->getName()));
 		$this->redirect('index');
 	}
 
 	/**
 	 * Edit a domain
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to edit
+	 * @param Domain $domain Domain to edit
 	 * @Flow\IgnoreValidation("$domain")
 	 * @return void
 	 */
-	public function editDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
+	public function editDomainAction(Domain $domain) {
 		$this->view->assign('domain', $domain);
 	}
 
 	/**
 	 * Update a domain
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to update
-	 * @Flow\Validate(argumentName="domain", type="UniqueEntity")
+	 * @param Domain $domain Domain to update
+	 * @Flow\Validate(argumentName="$domain", type="UniqueEntity")
 	 * @return void
 	 */
-	public function updateDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
+	public function updateDomainAction(Domain $domain) {
 		$this->domainRepository->update($domain);
-		$this->addFlashMessage(sprintf('The domain "%s" has been updated.', $domain->getHostPattern()));
+		$this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array($domain->getHostPattern()));
 		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
 	 * The create a new domain action.
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain
-	 * @param \TYPO3\Neos\Domain\Model\Site $site
+	 * @param Domain $domain
+	 * @param Site $site
 	 * @Flow\IgnoreValidation("$domain")
 	 * @return void
 	 */
-	public function newDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain = NULL, \TYPO3\Neos\Domain\Model\Site $site = NULL) {
+	public function newDomainAction(Domain $domain = NULL, Site $site = NULL) {
 		$this->view->assignMultiple(array(
 			'domain' => $domain,
 			'site' => $site
@@ -266,52 +272,52 @@ class SitesController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	/**
 	 * Create a domain
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to create
-	 * @Flow\Validate(argumentName="domain", type="UniqueEntity")
+	 * @param Domain $domain Domain to create
+	 * @Flow\Validate(argumentName="$domain", type="UniqueEntity")
 	 * @return void
 	 */
-	public function createDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
+	public function createDomainAction(Domain $domain) {
 		$this->domainRepository->add($domain);
-		$this->addFlashMessage(sprintf('The domain "%s" has been created.', $domain->getHostPattern()));
+		$this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array($domain->getHostPattern()));
 		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
 	 * Deletes a domain attached to a site
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain A domain to delete
+	 * @param Domain $domain A domain to delete
 	 * @Flow\IgnoreValidation("$domain")
 	 * @return void
 	 */
-	public function deleteDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
+	public function deleteDomainAction(Domain $domain) {
 		$this->domainRepository->remove($domain);
-		$this->addFlashMessage(sprintf('The domain "%s" has been deleted.', $domain->getHostPattern()));
+		$this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array($domain->getHostPattern()));
 		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
 	 * Activates a domain
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to activate
+	 * @param Domain $domain Domain to activate
 	 * @return void
 	 */
-	public function activateDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
+	public function activateDomainAction(Domain $domain) {
 		$domain->setActive(TRUE);
 		$this->domainRepository->update($domain);
-		$this->addFlashMessage(sprintf('The domain "%s" has been activated.', $domain->getHostPattern()));
+		$this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array($domain->getHostPattern()));
 		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
 	 * Deactivates a domain
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Domain $domain Domain to deactivate
+	 * @param Domain $domain Domain to deactivate
 	 * @return void
 	 */
-	public function deactivateDomainAction(\TYPO3\Neos\Domain\Model\Domain $domain) {
+	public function deactivateDomainAction(Domain $domain) {
 		$domain->setActive(FALSE);
 		$this->domainRepository->update($domain);
-		$this->addFlashMessage(sprintf('The domain "%s" has been deactivated.', $domain->getHostPattern()));
+		$this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array($domain->getHostPattern()));
 		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
