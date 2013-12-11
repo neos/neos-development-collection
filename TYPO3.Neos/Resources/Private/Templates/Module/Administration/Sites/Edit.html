@@ -13,14 +13,13 @@
 					<div class="neos-control-group">
 						<label class="neos-control-label" for="name">Name</label>
 						<div class="neos-controls">
-							<f:form.textfield property="name" id="name" class="neos-span12" />
+							<f:form.textfield property="name" id="name" class="neos-span12" required="true" />
 						</div>
 					</div>
 					<div class="neos-control-group">
 						<label class="neos-control-label" for="node-name">Root node name</label>
 						<div class="neos-controls">
-							<f:form.textfield property="nodeName" id="node-name" value="{site.nodeName}" class="neos-span12" />
-							<f:form.hidden name="originalNodeName" value="{site.nodeName}" />
+							<f:form.textfield name="newSiteNodeName" id="node-name" value="{site.nodeName}" additionalAttributes="{pattern: '^[a-z0-9\-]+$'}" class="neos-span12" />
 						</div>
 					</div>
 					<p>

@@ -11,13 +11,13 @@ namespace TYPO3\Neos\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Domain model of a site
  *
- * @Flow\Scope("prototype")
  * @Flow\Entity
  * @api
  */
@@ -81,7 +81,7 @@ class Site {
 	 */
 	public function __construct($nodeName) {
 		$this->nodeName = $nodeName;
-		$this->domains = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->domains = new ArrayCollection();
 	}
 
 	/**
