@@ -96,13 +96,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	}
 
 	# This enables redirecting to the last visited page after login
-	lastVisitedNodeScript = Tag {
+	lastVisitedNodeScript = TYPO3.TypoScript:Tag {
 		@position = 'before closingBodyTag'
 
 		tagName = 'script'
 		attributes {
 			data-neos-node = ${q(node).property('_identifier')}
-			src = ResourceUri {
+			src = TYPO3.TypoScript:ResourceUri {
 				path = 'resource://TYPO3.Neos/Public/JavaScript/LastVisitedNode.js'
 			}
 		}
