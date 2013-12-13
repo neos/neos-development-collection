@@ -145,7 +145,12 @@ class SiteImportService {
 	public function importSitesFromFile($pathAndFilename, ContentContext $contentContext) {
 		$sitesXmlString = $this->loadSitesXml($pathAndFilename);
 
-		$sitesXml = new \SimpleXMLElement($sitesXmlString, LIBXML_PARSEHUGE);
+		if (defined('LIBXML_PARSEHUGE')) {
+			$options = LIBXML_PARSEHUGE;
+		} else {
+			$options = 0;
+		}
+		$sitesXml = new \SimpleXMLElement($sitesXmlString, $options);
 		foreach ($sitesXml->site as $siteXml) {
 			$site = $this->getSiteByNodeName((string)$siteXml['nodeName']);
 			if ((string)$siteXml->properties->name !== '') {
