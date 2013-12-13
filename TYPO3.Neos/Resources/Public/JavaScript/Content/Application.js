@@ -21,7 +21,8 @@ define(
 	'Content/InputEvents/KeyboardEvents',
 	'create',
 	'Library/vie',
-	'Library/spinjs/spin'
+	'Library/spinjs/spin',
+	'Shared/Notification'
 ],
 function(
 	$,
@@ -39,7 +40,8 @@ function(
 	KeyboardEvents,
 	CreateJS,
 	VIE,
-	Spinner
+	Spinner,
+	Notification
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
@@ -335,8 +337,10 @@ function(
 			this.showPageLoader();
 			this.set('_isLoadingPage', true);
 
-			if (window.history && !ignorePushToHistory && _.isFunction(window.history.pushState)) {
-				window.history.pushState({uri: uri}, document.title, uri);
+			function pushUriToHistory() {
+				if (window.history && !ignorePushToHistory && _.isFunction(window.history.pushState)) {
+					window.history.pushState({uri: uri}, document.title, uri);
+				}
 			}
 
 			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
@@ -344,8 +348,18 @@ function(
 				if (status === 'success') {
 					var $htmlDom = $(htmlString);
 
+					var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
+					if ($pageMetadata.length === 0) {
+						Notification.error('Could not read page metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
+						that.set('_isLoadingPage', false);
+						that.hidePageLoader();
+						return;
+					}
+
+					pushUriToHistory();
+
 					// Extract the HTML from the page, starting at (including) #neos-page-metainformation until #neos-application.
-					var $newContent = $($.parseHTML(htmlString, null)).filter('#neos-page-metainformation').nextUntil('#neos-application').andSelf();
+					var $newContent = $htmlDom.filter('#neos-page-metainformation').nextUntil('#neos-application').andSelf();
 
 					// remove the current HTML content
 					var $neosApplication = $('#neos-application');
