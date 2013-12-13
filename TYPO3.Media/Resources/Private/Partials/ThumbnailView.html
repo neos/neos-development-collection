@@ -2,8 +2,8 @@
 <f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
 	<ul class="neos-thumbnails asset-list">
 		<f:for each="{paginatedAssets}" as="asset">
-			<li class="asset">
-				<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail draggable-asset" additionalAttributes="{data-asset-identifier: '{asset->f:format.identifier()}'}" arguments="{asset: asset}">
+			<li class="asset" data-asset-identifier="{asset->f:format.identifier()}">
+				<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail draggable-asset" arguments="{asset: asset}">
 					<div class="neos-img-container">
 						<m:image image="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
 					</div>
