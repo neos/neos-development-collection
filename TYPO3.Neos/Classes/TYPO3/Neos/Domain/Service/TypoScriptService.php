@@ -47,14 +47,28 @@ class TypoScriptService {
 	/**
 	 * Array of TypoScript files to include before the site TypoScript
 	 *
-	 * @var array in the format array('resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2', 'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2')
+	 * Example:
+	 *
+	 *     array(
+	 *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2',
+	 *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2'
+	 *     )
+	 *
+	 * @var array
 	 */
 	protected $prependTypoScriptIncludes = array();
 
 	/**
 	 * Array of TypoScript files to include after the site TypoScript
 	 *
-	 * @var array in the format array('resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2', 'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2')
+	 * Example:
+	 *
+	 *     array(
+	 *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2',
+	 *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2'
+	 *     )
+	 *
+	 * @var array
 	 */
 	protected $appendTypoScriptIncludes = array();
 
