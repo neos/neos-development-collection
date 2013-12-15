@@ -367,7 +367,7 @@
 .neos .icon-th-list:before {
   content: "\f00b";
 }
-.neos .icon-ok:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .icon-success:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .neos .icon-success:before {
+.neos .icon-ok:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .icon-success:before {
   content: "\f00c";
 }
 .neos .icon-remove:before {
@@ -582,7 +582,7 @@
 .neos .icon-minus-sign:before {
   content: "\f056";
 }
-.neos .icon-remove-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:before, #neos-notification-container.neos-notification-top > .neos-notification .neos i.neos-close-button:before {
+.neos .icon-remove-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:before {
   content: "\f057";
 }
 .neos .icon-ok-sign:before {
@@ -591,7 +591,7 @@
 .neos .icon-question-sign:before {
   content: "\f059";
 }
-.neos .icon-info-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .icon-info-circle:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .neos .icon-info-circle:before {
+.neos .icon-info-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .icon-info-circle:before {
   content: "\f05a";
 }
 .neos .icon-screenshot:before {
@@ -603,7 +603,7 @@
 .neos .icon-ok-circle:before {
   content: "\f05d";
 }
-.neos .icon-ban-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .icon-error:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .neos .icon-error:before {
+.neos .icon-ban-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .icon-error:before {
   content: "\f05e";
 }
 .neos .icon-arrow-left:before {
@@ -655,7 +655,7 @@
 .neos .icon-eye-close:before {
   content: "\f070";
 }
-.neos .icon-warning-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .icon-warning:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .neos .icon-warning:before {
+.neos .icon-warning-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .icon-warning:before {
   content: "\f071";
 }
 .neos .icon-plane:before {
@@ -6612,10 +6612,6 @@
 .neos #neos-context-bar .neos-button + .neos-button {
   margin-left: 16px;
 }
-.neos #neos-context-bar .neos-button.neos-full-screen-open {
-  width: 40px;
-  padding: 0;
-}
 .neos #neos-context-bar .neos-context-bar-save-indicator {
   display: inline-block;
   float: left;
@@ -9236,6 +9232,66 @@
   padding-right: 8px;
   color: #00b5ff;
 }
+.neos #neos-nprogress {
+  background-color: #323232;
+  position: fixed;
+  z-index: 10014;
+  top: 82px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-bottom: 1px solid #3f3f3f;
+  /* Make clicks pass-through */
+  pointer-events: none;
+}
+.neos-edit-preview-panel-open .neos #neos-nprogress {
+  top: 182px;
+}
+.neos-edit-preview-panel-open:not(.neos-inspector-panel-open) .neos #neos-nprogress {
+  right: 0;
+}
+.neos-navigate-panel-open .neos #neos-nprogress {
+  left: 320px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-nprogress {
+  left: 54px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos #neos-nprogress {
+  left: 373px;
+}
+.neos-inspector-panel-open .neos #neos-nprogress {
+  right: 320px;
+}
+.neos-full-screen .neos #neos-nprogress {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.neos #neos-nprogress .neos-bar {
+  background-color: #ff8700;
+  height: 100%;
+  position: relative;
+}
+.neos #neos-nprogress .neos-bar .neos-peg,
+.neos #neos-nprogress .neos-bar .neos-peg-end {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  box-shadow: #ff8700 1px 0 6px 1px;
+  border-radius: 100%;
+}
+.neos #neos-nprogress .neos-bar .neos-peg {
+  opacity: 0.6;
+  width: 80px;
+  right: -40px;
+  clip: rect(-6px, 40px, 14px, -6px);
+}
+.neos #neos-nprogress .neos-bar .neos-peg-end {
+  opacity: 0.6;
+  width: 10px;
+  right: 0;
+  clip: rect(-6px, 22px, 14px, 10px);
+}
 .neos.media-browser {
   background-color: transparent;
 }
@@ -9689,6 +9745,139 @@
   position: absolute;
   left: -9999px;
 }
+.neos #neos-notification-container.neos-notification-top {
+  position: fixed;
+  z-index: 999999;
+  top: 0;
+  left: 50%;
+  width: 512px;
+  padding-top: 8px;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transform: translate(-50%, 0);
+  -moz-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
+  -o-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification {
+  color: white;
+  font-size: 14px;
+  position: relative;
+  width: 512px;
+  margin: 0 auto 4px;
+  word-wrap: break-word;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 40px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.25);
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error {
+  background-color: #ff460d;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success {
+  background-color: #00a338;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning {
+  background-color: #ff8700;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info {
+  background-color: #00b5ff;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-title {
+  display: none;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification i {
+  height: 40px;
+  line-height: 40px;
+  width: 40px;
+  text-align: center;
+  font-size: 16px;
+  padding: 0;
+  margin: 0;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
+  color: white;
+  height: 40px;
+  line-height: 40px;
+  width: 40px;
+  text-align: center;
+  left: auto;
+  right: 0;
+  cursor: pointer;
+  font-size: 18px;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-expand-content {
+  display: none;
+  padding: 16px 49px;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-expand-content pre {
+  padding: 16px 0;
+  font-family: "Lucida Console", Monaco, monospace;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  border-radius: 0;
+  white-space: pre-wrap;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable .neos-notification-heading {
+  cursor: pointer;
+  color: #fff;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable .neos-notification-heading::after {
+  content: "›";
+  font-size: 26px;
+  font-weight: normal;
+  display: inline-block;
+  position: relative;
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  top: 5px;
+  left: 13px;
+  line-height: 0;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable.expanded .neos-notification-heading::after {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  left: 19px;
+}
+.neos #neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-notification-heading {
+  padding: 12px 49px 12px;
+  margin-bottom: 0;
+  color: white;
+  font-weight: 400;
+  font-size: 14px;
+}
 
 .neos-contentelement.neos-contentelement-hidden > * {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
@@ -9881,6 +10070,9 @@ body.neos-preview-mode .neos .neos-overlay-component,
 body.neos-preview-mode .neos .neos-handle-container,
 body.neos-preview-mode .neos .neos-modal-backdrop {
   display: none;
+}
+.neos-nprogress-busy body {
+  cursor: wait !important;
 }
 
 #neos-page-metainformation {
@@ -10924,138 +11116,4 @@ disabled look for disabled choices in the results dropdown
   position: absolute;
   left: 14px;
   top: 13px;
-}
-
-#neos-notification-container.neos-notification-top {
-  position: fixed;
-  z-index: 999999;
-  top: 0;
-  left: 50%;
-  width: 512px;
-  padding-top: 8px;
-  font-family: 'Noto Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -webkit-transform: translate(-50%, 0);
-  -moz-transform: translate(-50%, 0);
-  -ms-transform: translate(-50%, 0);
-  -o-transform: translate(-50%, 0);
-  transform: translate(-50%, 0);
-}
-#neos-notification-container.neos-notification-top > .neos-notification {
-  color: white;
-  font-size: 14px;
-  position: relative;
-  width: 512px;
-  margin: 0 auto 4px;
-  word-wrap: break-word;
-  overflow: hidden;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
-  box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
-}
-#neos-notification-container.neos-notification-top > .neos-notification::before {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 40px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(255, 255, 255, 0.25);
-}
-#neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error {
-  background-color: #ff460d;
-}
-#neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success {
-  background-color: #00a338;
-}
-#neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning {
-  background-color: #ff8700;
-}
-#neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info {
-  background-color: #00b5ff;
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-title {
-  display: none;
-}
-#neos-notification-container.neos-notification-top > .neos-notification i {
-  height: 40px;
-  line-height: 40px;
-  width: 40px;
-  text-align: center;
-  font-size: 16px;
-  padding: 0;
-  margin: 0;
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-#neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button {
-  color: white;
-  height: 40px;
-  line-height: 40px;
-  width: 40px;
-  text-align: center;
-  left: auto;
-  right: 0;
-  cursor: pointer;
-  font-size: 18px;
-}
-#neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-expand-content {
-  display: none;
-  padding: 16px 49px;
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-expand-content pre {
-  padding: 16px 0;
-  font-family: "Lucida Console", Monaco, monospace;
-  background-color: transparent;
-  border: none;
-  color: #fff;
-  border-radius: 0;
-  white-space: pre-wrap;
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable .neos-notification-heading {
-  cursor: pointer;
-  color: #fff;
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable .neos-notification-heading::after {
-  content: "›";
-  font-size: 26px;
-  font-weight: normal;
-  display: inline-block;
-  position: relative;
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  top: 5px;
-  left: 13px;
-  line-height: 0;
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content.expandable.expanded .neos-notification-heading::after {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  transform: rotate(90deg);
-  left: 19px;
-}
-#neos-notification-container.neos-notification-top > .neos-notification .neos-notification-content .neos-notification-heading {
-  padding: 12px 49px 12px;
-  margin-bottom: 0;
-  color: white;
-  font-weight: 400;
-  font-size: 14px;
 }

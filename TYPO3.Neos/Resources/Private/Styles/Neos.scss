@@ -79,9 +79,10 @@
 	@import "Modules/Widget";
 	@import "ButtonGroups";
 	@import "Content/InsertNodePanel";
+	@import "Content/LoadingIndicator";
 	@import "Media/Media";
+	@import "Notifications";
 }
 
 @import "Content";
 @import "Global";
-@import "Notifications";

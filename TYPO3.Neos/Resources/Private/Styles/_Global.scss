@@ -146,6 +146,10 @@ body {
 			}
 		}
 	}
+
+	.neos-nprogress-busy & {
+		cursor: wait !important;
+	}
 }
 
 #neos-page-metainformation {

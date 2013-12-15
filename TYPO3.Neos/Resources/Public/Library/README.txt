@@ -180,3 +180,7 @@ Version 2.0.10
 Fixed-sticky - https://github.com/filamentgroup/fixed-sticky
 MIT license
 Version 0.1.3
+
+
+NProgress - https://github.com/rstacruz/nprogress
+Version 0.1.2

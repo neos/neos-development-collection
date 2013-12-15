@@ -284,6 +284,23 @@ module.exports = function(grunt) {
 					return src;
 				}
 			}
+		},
+
+		nprogress: {
+			src: [
+				baseUri + 'nprogress/nprogress.js'
+			],
+				dest: baseUri + 'nprogress.js',
+				options: {
+				process: function(src, filepath) {
+					src = src.replace("id='nprogress'", "id='neos-nprogress'");
+					src = src.replace(/\#nprogress/g, '#neos-nprogress');
+					src = src.replace('appendTo(document.body)', "appendTo('#neos-application')");
+					src = src.replace(/\.(add|remove)Class\('/g, ".$1Class('neos-");
+					src = src.replace("define(['jquery']", "define(['Library/jquery-with-dependencies']");
+					return src;
+				}
+			}
 		}
 	};
 

@@ -26,10 +26,20 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
+		'Content/LoadingIndicator',
 		'InlineEditing/PositioningHelper',
 		'storage'
 	],
-	function(Ember, ContentModule, ApplicationView, PublishMenu, ResourceCache, Notification, Configuration) {
+	function(
+		Ember,
+		ContentModule,
+		ApplicationView,
+		PublishMenu,
+		ResourceCache,
+		Notification,
+		Configuration,
+		LoadingIndicator
+	) {
 		var T3 = window.T3;
 
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
@@ -45,7 +55,7 @@ require(
 			Ext.Direct.on('exception', function(error) {
 				T3.Content.Controller.ServerConnection.set('_failedRequest', true);
 				Notification.error('ExtDirect error: ' + error.message);
-				ContentModule.hidePageLoaderSpinner();
+				LoadingIndicator.stop();
 			});
 
 			ExtDirectInitialization();

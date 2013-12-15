@@ -11,6 +11,7 @@ define(
 	'Shared/Configuration',
 	'Shared/ResourceCache',
 	'Shared/Notification',
+	'Content/LoadingIndicator',
 	'./EditingMode',
 	'./PreviewMode'
 ], function(
@@ -20,6 +21,7 @@ define(
 	Configuration,
 	ResourceCache,
 	Notification,
+	LoadingIndicator,
 	EditingMode,
 	PreviewMode
 ) {
@@ -65,14 +67,7 @@ define(
 				reloadRequired = true;
 			}
 			if (reloadRequired) {
-				require(
-					[
-						'Content/Application'
-					],
-					function(ContentModule) {
-						ContentModule.showPageLoader();
-					}
-				);
+				LoadingIndicator.start();
 			}
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.editPreviewMode': identifier}, function() {
 				if (reloadRequired) {

@@ -10,7 +10,8 @@ define(
 	'Library/backbone',
 	'Shared/LocalStorage',
 	'Content/Model/NodeSelection',
-	'Content/Application'
+	'Content/Application',
+	'Content/LoadingIndicator'
 ], function(
 	Ember,
 	$,
@@ -19,7 +20,8 @@ define(
 	Backbone,
 	LocalStorage,
 	NodeSelection,
-	ContentModule
+	ContentModule,
+	LoadingIndicator
 ) {
 	/**
 	 * The Inspector is displayed on the right side of the page.
@@ -225,7 +227,7 @@ define(
 			}
 
 			if (reloadPage === true) {
-				ContentModule.showPageLoader();
+				LoadingIndicator.start();
 			}
 
 			Backbone.sync('update', entity, {

@@ -12,6 +12,7 @@ define(
 	'Shared/LocalStorage',
 	'Shared/Configuration',
 	'Shared/EventDispatcher',
+	'Content/LoadingIndicator',
 	'Content/Model/NodeSelection',
 	'Content/Model/PublishableNodes',
 	'Content/Model/NodeActions',
@@ -21,7 +22,6 @@ define(
 	'Content/InputEvents/KeyboardEvents',
 	'create',
 	'Library/vie',
-	'Library/spinjs/spin',
 	'Shared/Notification'
 ],
 function(
@@ -31,6 +31,7 @@ function(
 	LocalStorage,
 	Configuration,
 	EventDispatcher,
+	LoadingIndicator,
 	NodeSelection,
 	PublishableNodes,
 	NodeActions,
@@ -40,7 +41,6 @@ function(
 	KeyboardEvents,
 	CreateJS,
 	VIE,
-	Spinner,
 	Notification
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
@@ -354,7 +354,7 @@ function(
 				uri = '@' + workspaceName;
 			}
 
-			this.showPageLoader();
+			LoadingIndicator.start();
 			this.set('_isLoadingPage', true);
 
 			function pushUriToHistory() {
@@ -364,114 +364,83 @@ function(
 			}
 
 			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
-			$.get(uri, function(htmlString, status) {
-				if (status === 'success') {
-					var $htmlDom = $(htmlString);
+			$.ajax(uri, {
+				success: function(htmlString, status) {
+					if (status === 'success') {
+						var $htmlDom = $(htmlString);
 
-					var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
-					if ($pageMetadata.length === 0) {
-						Notification.error('Could not read page metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
+						var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
+						if ($pageMetadata.length === 0) {
+							Notification.error('Could not read page metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
+							that.set('_isLoadingPage', false);
+							LoadingIndicator.stop();
+							return;
+						}
+
+						pushUriToHistory();
+
+						// Extract the HTML from the page, starting at (including) #neos-page-metainformation until #neos-application.
+						var $newContent = $htmlDom.filter('#neos-page-metainformation').nextUntil('#neos-application').andSelf();
+
+						// remove the current HTML content
+						var $neosApplication = $('#neos-application');
+						$neosApplication.prevAll().remove();
+						$('body').prepend($newContent);
 						that.set('_isLoadingPage', false);
-						that.hidePageLoader();
-						return;
+
+						var $insertedContent = $neosApplication.prevAll();
+						var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
+						that._linkInterceptionHandler($links);
+						LoadingIndicator.done();
+
+						$('title').html($htmlDom.filter('title').html());
+
+						// TODO: transfer body classes
+
+						that._setPagePosition();
+
+							// Update node selection (will update VIE)
+						NodeSelection.initialize();
+						PublishableNodes.initialize();
+						that.trigger('pageLoaded');
+
+							// Send external event so site JS can act on it
+						EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
+
+						if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
+								// Refresh CreateJS, renders the button bars f.e.
+							CreateJS.enableEdit();
+						}
+
+							// If doing a reload, we highlight the currently active content element again
+						var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
+						if ($currentlyActiveContentElement.length === 1) {
+							NodeSelection.updateSelection($currentlyActiveContentElement);
+						}
+					} else {
+							// FALLBACK: AJAX error occurred,
+							// so we reload the whole backend.
+						window.location.href = uri;
 					}
-
-					pushUriToHistory();
-
-					// Extract the HTML from the page, starting at (including) #neos-page-metainformation until #neos-application.
-					var $newContent = $htmlDom.filter('#neos-page-metainformation').nextUntil('#neos-application').andSelf();
-
-					// remove the current HTML content
-					var $neosApplication = $('#neos-application');
-					$neosApplication.prevAll().remove();
-					$('body').prepend($newContent);
 					that.set('_isLoadingPage', false);
-
-					var $insertedContent = $('#neos-application').prevAll();
-					var $links = $insertedContent.find('a').add($insertedContent.filter('a'));
-					that._linkInterceptionHandler($links);
-					that.hidePageLoader();
-
-					$('title').html($htmlDom.filter('title').html());
-
-					// TODO: transfer body classes
-
-					that._setPagePosition();
-
-						// Update node selection (will update VIE)
-					NodeSelection.initialize();
-					PublishableNodes.initialize();
-					that.trigger('pageLoaded');
-
-						// Send external event so site JS can act on it
-					EventDispatcher.triggerExternalEvent('Neos.PageLoaded', 'Page is refreshed.');
-
-					if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
-							// Refresh CreateJS, renders the button bars f.e.
-						CreateJS.enableEdit();
-					}
-
-						// If doing a reload, we highlight the currently active content element again
-					var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
-					if ($currentlyActiveContentElement.length === 1) {
-						NodeSelection.updateSelection($currentlyActiveContentElement);
-					}
-				} else {
-						// FALLBACK: AJAX error occurred,
-						// so we reload the whole backend.
-					window.location.href = uri;
+					LoadingIndicator.done();
+				},
+				xhr: function() {
+					var xhr = $.ajaxSettings.xhr();
+					xhr.onreadystatechange = function() {
+						if (xhr.readyState === 1) {
+							LoadingIndicator.set(0.1, 200);
+						}
+						if (xhr.readyState === 2) {
+							LoadingIndicator.set(0.9, 100);
+						}
+						if (xhr.readyState === 3) {
+							LoadingIndicator.set(0.99, 50);
+						}
+					};
+					return xhr;
 				}
-				that.set('_isLoadingPage', false);
-				that.hidePageLoader();
 			});
-		},
-
-		/**
-		 * Display an overlay over the full frontend page with a loading indicator.
-		 *
-		 * This method is automatically called during an in-page reload. Furthermore,
-		 * this method should be called by other part of the content module if
-		 * they need to do some work (like saving changes to the server), but
-		 * already know that this will be followed by a reload of the current page.
-		 */
-		showPageLoader: function() {
-			if (this.$loader !== null) {
-				this.$loader.fadeTo('fast', .8);
-				this.spinner.spin(this.$loader.get(0));
-				return;
-			}
-
-			this.$loader = $('<div />').addClass('neos-pageloader-wrapper').fadeTo(0, .8).appendTo($(this.rootElement));
-			this.spinner = new Spinner({
-				lines: 13, // The number of lines to draw
-				length: 15, // The length of each line
-				width: 4, // The line thickness
-				radius: 10, // The radius of the inner circle
-				corners: 1, // Corner roundness (0..1)
-				rotate: 0, // The rotation offset
-				color: '#000', // #rgb or #rrggbb
-				speed: 1, // Rounds per second
-				trail: 64, // Afterglow percentage
-				shadow: false, // Whether to render a shadow
-				hwaccel: false, // Whether to use hardware acceleration
-				className: 'neos-pageloader', // The CSS class to assign to the spinner
-				zIndex: 2e9, // The z-index (defaults to 2000000000)
-				top: 'auto', // Top position relative to parent in px
-				left: 'auto' // Left position relative to parent in px
-			}).spin(this.$loader.get(0));
-		},
-
-		hidePageLoader: function() {
-			var that = this;
-			this.$loader.fadeOut('fast', function() {
-				that.spinner.stop();
-			});
-		},
-
-		hidePageLoaderSpinner: function() {
-			if (this.spinner !== null) {
-				this.spinner.stop();
-			}
 		}
 	}).create();
 	ContentModule.deferReadiness();
