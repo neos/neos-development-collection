@@ -367,7 +367,7 @@ function(
 			$.ajax(uri, {
 				success: function(htmlString, status) {
 					if (status === 'success') {
-						var $htmlDom = $(htmlString);
+						var $htmlDom = $($.parseHTML(htmlString));
 
 						var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
 						if ($pageMetadata.length === 0) {
