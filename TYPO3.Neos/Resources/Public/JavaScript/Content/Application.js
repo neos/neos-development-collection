@@ -366,7 +366,7 @@ function(
 			var currentlyActiveContentElementNodePath = $('.neos-contentelement-active').attr('about');
 			$.get(uri, function(htmlString, status) {
 				if (status === 'success') {
-					var $htmlDom = $(htmlString);
+					var $htmlDom = $($.parseHTML(htmlString));
 
 					var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
 					if ($pageMetadata.length === 0) {
