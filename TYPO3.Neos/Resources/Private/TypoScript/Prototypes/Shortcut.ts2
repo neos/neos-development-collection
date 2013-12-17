@@ -6,12 +6,7 @@ prototype(TYPO3.Neos:Shortcut) < prototype(TYPO3.TypoScript:Template) {
 	targetMode = ${q(node).property('targetMode')}
 	targetNode = ${q(node).property('targetNode')}
 	firstChildNode = ${q(node).children('[instanceof TYPO3.Neos:Document]').get(0)}
-	parentNode = ${q(node).parents().get(0)}
 	node = ${node}
 
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
-}
-prototype(TYPO3.Neos:PrimaryContent).shortcut {
-	condition = ${q(node).is('[instanceof TYPO3.Neos:Shortcut]')}
-	type = 'TYPO3.Neos:Shortcut'
 }

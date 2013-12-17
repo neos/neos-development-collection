@@ -22,6 +22,16 @@ include: Prototypes/ContentElementWrapping.ts2
 #
 root = TYPO3.TypoScript:Case
 root {
+	shortcut {
+		prototype(TYPO3.Neos:Page) {
+			body = TYPO3.Neos:Shortcut
+		}
+
+		@position = 'start'
+		condition = ${q(node).is('[instanceof TYPO3.Neos:Shortcut]')}
+		type = 'TYPO3.Neos:Page'
+	}
+
 	editPreviewMode {
 		@position = 'end 9996'
 		condition = ${editPreviewMode != null}
