@@ -40,6 +40,11 @@
 										<div class="neos-tooltip neos-bottom neos-in neos-tooltip-warning">
 									</f:if>
 									<f:if condition="{0: flashMessage.severity} == {0: 'Error'}">
+										<script>
+											$(function() {
+												$('fieldset').effect('shake', {times: 1}, 60);
+											});
+										</script>
 										<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
 									</f:if>
 										<div class="neos-tooltip-arrow"></div>
