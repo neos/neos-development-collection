@@ -96,7 +96,7 @@ module.exports = function(grunt) {
 
 		jQueryWithDependencies: {
 			src: [
-				baseUri + 'jquery/jquery-1.10.2.js',
+				baseUri + 'jquery/jquery-2.0.3.js',
 				baseUri + 'jquery/jquery-migrate-1.2.1.js',
 				baseUri + 'jquery-easing/jquery.easing.1.3.js',
 				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
