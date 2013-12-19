@@ -73,7 +73,7 @@ class Workspace {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\PublishingService
+	 * @var \TYPO3\TYPO3CR\Service\PublishingServiceInterface
 	 */
 	protected $publishingService;
 
