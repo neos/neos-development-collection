@@ -19,33 +19,10 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
  * The workspaces service adds some basic helper methods for getting workspaces,
  * unpublished nodes and methods for publishing nodes or whole workspaces.
  *
+ * @api
  * @Flow\Scope("singleton")
  */
-class PublishingService {
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
-	 */
-	protected $workspaceRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
-	 */
-	protected $nodeFactory;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
-	 */
-	protected $contextFactory;
+class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 
 	/**
 	 * @Flow\Inject
@@ -60,8 +37,11 @@ class PublishingService {
 	protected $siteRepository;
 
 	/**
+	 * Returns a list of nodes contained in the given workspace which are not yet published
+	 *
 	 * @param Workspace $workspace
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+	 * @api
 	 */
 	public function getUnpublishedNodes(Workspace $workspace) {
 		$contextProperties = array(
@@ -92,30 +72,14 @@ class PublishingService {
 	}
 
 	/**
-	 * @param Workspace $targetWorkspace
-	 * @return integer
-	 */
-	public function getUnpublishedNodesCount(Workspace $targetWorkspace) {
-		return $targetWorkspace->getNodeCount() - 1;
-	}
-
-	/**
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
-	 * @param Workspace $targetWorkspace
-	 * @return void
-	 */
-	public function publishNodes(array $nodes, Workspace $targetWorkspace = NULL) {
-		foreach ($nodes as $node) {
-			$this->publishNode($node, $targetWorkspace);
-		}
-	}
-
-	/**
+	 * Publishes the given node to the specified target workspace. If no workspace is specified, "live" is assumed.
+	 *
 	 * @param NodeInterface $node
 	 * @param Workspace $targetWorkspace If not set the "live" Workspace is assumed to be the publishing target
 	 * @return void
+	 * @api
 	 */
-	public function publishNode(NodeInterface $node, $targetWorkspace = NULL) {
+	public function publishNode(NodeInterface $node, Workspace $targetWorkspace = NULL) {
 		if ($targetWorkspace === NULL) {
 			$targetWorkspace = $this->workspaceRepository->findOneByName('live');
 		}
@@ -130,16 +94,5 @@ class PublishingService {
 		$sourceWorkspace->publishNodes($nodes, $targetWorkspace);
 
 		$this->emitNodePublished($node, $targetWorkspace);
-	}
-
-	/**
-	 * Signals that a node has been published
-	 *
-	 * @param NodeInterface $node
-	 * @param Workspace $targetWorkspace
-	 * @return void
-	 * @Flow\Signal
-	 */
-	public function emitNodePublished(NodeInterface $node, Workspace $targetWorkspace = NULL) {
 	}
 }
