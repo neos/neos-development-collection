@@ -2,3 +2,5 @@
   properties:
     dimensionsConfiguration:
       setting: 'TYPO3.TYPO3CR.contentDimensions'
+'TYPO3\TYPO3CR\Service\PublishingServiceInterface':
+  className: TYPO3\TYPO3CR\Service\PublishingService
