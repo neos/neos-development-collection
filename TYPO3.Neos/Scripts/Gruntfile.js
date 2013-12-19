@@ -7,6 +7,16 @@ module.exports = function(grunt) {
 	var baseUri = '../Resources/Public/Library/';
 
 	gruntConfig.concat = {
+		requirejs: {
+			src: [
+				baseUri + 'requirejs/src/require.js'
+			],
+			dest: baseUri + 'requirejs/require.js',
+			options: {
+				banner: 'if (!requirejs) {',
+				footer: '}'
+			}
+		},
 		bootstrap: {
 			src: [
 				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',

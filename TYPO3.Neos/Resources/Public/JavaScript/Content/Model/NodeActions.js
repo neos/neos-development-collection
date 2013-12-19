@@ -113,6 +113,7 @@ define(
 					if (result.success) {
 						that.set('_clipboard', null);
 						require(
+							{context: 'neos'},
 							[
 								'Content/Application'
 							],

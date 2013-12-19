@@ -197,7 +197,7 @@ define(
 									validatorClassName = 'TYPO3.Neos/Validation/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
 								}
 
-								require([validatorClassName], function(validatorClass) {
+								require({context: 'neos'}, [validatorClassName], function(validatorClass) {
 									Ember.run(function() {
 										validators.push(validatorClass.create({options: validatorOptions}));
 									});

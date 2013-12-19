@@ -66,7 +66,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 				index = this._collectionIndex(entity);
 			}
 
-			require(['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
+			require({context: 'neos'}, ['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
 				if($('.neos-modal:visible').length > 0) {
 					$('.neos-modal .neos-close').trigger('click');
 				}
@@ -157,7 +157,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 				return;
 			}
 
-			require(['InlineEditing/Dialogs/DeleteNodeDialog'], function(DeleteNodeDialog) {
+			require({context: 'neos'}, ['InlineEditing/Dialogs/DeleteNodeDialog'], function(DeleteNodeDialog) {
 				if ($('.neos-modal:visible').length > 0) {
 					$('.neos-modal .neos-close').trigger('click');
 				}

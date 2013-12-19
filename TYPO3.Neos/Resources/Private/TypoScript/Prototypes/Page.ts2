@@ -122,6 +122,12 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		}
 	}
 
+	neosBackendFooter = TYPO3.TypoScript:Template {
+		@position = 'after lastVisitedNodeScript 10000'
+		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
+		node = ${node}
+	}
+
 	closingBodyTag = '</body>'
 	closingBodyTag.@position = 'end 100'
 

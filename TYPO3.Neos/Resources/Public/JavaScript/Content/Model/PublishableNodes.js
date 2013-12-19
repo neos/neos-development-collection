@@ -133,6 +133,7 @@ define(
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.discardNode,
 				function() {
 					require(
+						{context: 'neos'},
 						[
 							'Content/Application'
 						],
@@ -195,6 +196,7 @@ define(
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.discardAll(workspaceName, function(result) {
 				if (typeof result !== 'undefined' && result !== null && result.success === true) {
 					require(
+						{context: 'neos'},
 						[
 							'Content/Application'
 						],

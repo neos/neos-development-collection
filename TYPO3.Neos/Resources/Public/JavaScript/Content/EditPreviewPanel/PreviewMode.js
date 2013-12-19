@@ -16,6 +16,7 @@ define(
 		_hideControlsWhileInPreviewMode: function() {
 			$('body').addClass('neos-preview-mode');
 			require(
+				{context: 'neos'},
 				[
 					'create'
 				],
@@ -32,6 +33,7 @@ define(
 		_showControlsWhileLeavingPreviewMode: function() {
 			$('body').removeClass('neos-preview-mode');
 			require(
+				{context: 'neos'},
 				[
 					'create'
 				],

@@ -85,7 +85,7 @@ define(
 				editor = editor.replace('Content/Inspector/Editors/', 'TYPO3.Neos/Inspector/Editors/');
 			}
 
-			require([editor], function(editorClass) {
+			require({context: 'neos'}, [editor], function(editorClass) {
 				Ember.run(function() {
 					if (!that.isDestroyed) {
 						// It might happen that the editor was deselected before the require() call completed; so we

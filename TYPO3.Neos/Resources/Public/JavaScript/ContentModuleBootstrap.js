@@ -16,6 +16,7 @@ require(
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 		paths: requirePaths,
+		context: 'neos',
 		locale: 'en'
 	},
 	[
