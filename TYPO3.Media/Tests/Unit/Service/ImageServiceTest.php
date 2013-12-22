@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\Tests\Unit\ViewHelpers\Uri;
+namespace TYPO3\Media\Tests\Unit\Service;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -12,19 +12,14 @@ namespace TYPO3\Media\Tests\Unit\ViewHelpers\Uri;
  *                                                                        */
 
 /**
- * Testcase for the uri.image ViewHelper
+ * Testcase for the ImageService
  */
-class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ImageServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Media\ViewHelpers\Uri\ImageViewHelper
+	 * @var \TYPO3\Media\Service\ImageService
 	 */
-	protected $viewHelper;
-
-	/**
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
-	 */
-	protected $mockResourcePublisher;
+	protected $service;
 
 	/**
 	 * @var \TYPO3\Media\Domain\Model\Image
@@ -40,9 +35,8 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->viewHelper = $this->getAccessibleMock('TYPO3\Media\ViewHelpers\Uri\ImageViewHelper', array('dummy'));
-		$this->mockResourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher');
-		$this->viewHelper->_set('resourcePublisher', $this->mockResourcePublisher);
+		$this->service = new \TYPO3\Media\Service\ImageService();
+
 		$this->mockImage = $this->getMock('TYPO3\Media\Domain\Model\ImageInterface');
 		$this->mockImage->expects($this->any())->method('getWidth')->will($this->returnValue(100));
 		$this->mockImage->expects($this->any())->method('getHeight')->will($this->returnValue(100));
@@ -54,7 +48,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function ratioModeDefaultsToInset() {
 		$this->mockImage->expects($this->once())->method('getThumbnail')->with(50, 100, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
-		$this->viewHelper->render($this->mockImage, 50);
+		$this->service->getImageThumbnailImage($this->mockImage, 50);
 	}
 
 	/**
@@ -62,7 +56,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function ratioModeIsOutboundIfAllowCroppingIsTrue() {
 		$this->mockImage->expects($this->once())->method('getThumbnail')->with(50, 100, \TYPO3\Media\Domain\Model\Image::RATIOMODE_OUTBOUND)->will($this->returnValue($this->mockThumbnail));
-		$this->viewHelper->render($this->mockImage, 50, NULL, TRUE);
+		$this->service->getImageThumbnailImage($this->mockImage, 50, NULL, TRUE);
 	}
 
 	/**
@@ -70,7 +64,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function thumbnailWidthDoesNotExceedImageWithByDefault() {
 		$this->mockImage->expects($this->never())->method('getThumbnail');
-		$this->viewHelper->render($this->mockImage, 456, NULL);
+		$this->service->getImageThumbnailImage($this->mockImage, 456, NULL);
 	}
 
 	/**
@@ -78,7 +72,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function thumbnailHeightDoesNotExceedImageHeightByDefault() {
 		$this->mockImage->expects($this->never())->method('getThumbnail');
-		$this->viewHelper->render($this->mockImage, NULL, 123);
+		$this->service->getImageThumbnailImage($this->mockImage, NULL, 123);
 	}
 
 	/**
@@ -86,7 +80,7 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function thumbnailWidthMightExceedImageWithIfAllowUpScalingIsTrue() {
 		$this->mockImage->expects($this->once())->method('getThumbnail')->with(456, 100, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
-		$this->viewHelper->render($this->mockImage, 456, NULL, FALSE, TRUE);
+		$this->service->getImageThumbnailImage($this->mockImage, 456, NULL, FALSE, TRUE);
 	}
 
 	/**
@@ -94,6 +88,6 @@ class ImageViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function thumbnailHeightMightExceedImageHeightIfAllowUpScalingIsTrue() {
 		$this->mockImage->expects($this->once())->method('getThumbnail')->with(100, 456, \TYPO3\Media\Domain\Model\Image::RATIOMODE_INSET)->will($this->returnValue($this->mockThumbnail));
-		$this->viewHelper->render($this->mockImage, NULL, 456, FALSE, TRUE);
+		$this->service->getImageThumbnailImage($this->mockImage, NULL, 456, FALSE, TRUE);
 	}
 }

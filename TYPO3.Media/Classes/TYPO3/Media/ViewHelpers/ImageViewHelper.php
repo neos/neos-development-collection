@@ -75,6 +75,12 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 	protected $resourcePublisher;
 
 	/**
+	 * @var \TYPO3\Media\Service\ImageService
+	 * @Flow\Inject
+	 */
+	protected $imageService;
+
+	/**
 	 * name of the tag to be created by this view helper
 	 *
 	 * @var string
@@ -112,14 +118,14 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 			throw new ViewHelperException('No asset given for rendering.', 1415797903);
 		}
 		if ($asset instanceof ImageInterface) {
-			$thumbnailImage = $this->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+			$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
 			$this->tag->addAttributes(array(
 				'width' => $thumbnailImage->getWidth(),
 				'height' => $thumbnailImage->getHeight(),
 				'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource()),
 			));
 		} else {
-			$thumbnailImage = $this->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+			$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
 			$this->tag->addAttributes(array(
 				'width' => $thumbnailImage['width'],
 				'height' => $thumbnailImage['height'],
@@ -128,73 +134,6 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 		}
 
 		return $this->tag->render();
-	}
-
-	/**
-	 * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail image if the new dimensions
-	 * differ from the specified image dimensions, otherwise the original image is returned.
-	 *
-	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image
-	 * @param integer $maximumWidth
-	 * @param integer $maximumHeight
-	 * @param boolean $allowCropping
-	 * @param boolean $allowUpScaling
-	 * @return \TYPO3\Media\Domain\Model\ImageInterface
-	 *
-	 * @TODO move code to trait in order to avoid duplication with uri.image ViewHelper
-	 */
-	protected function getImageThumbnailImage(ImageInterface $image, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling) {
-		$ratioMode = ($allowCropping ? ImageInterface::RATIOMODE_OUTBOUND : ImageInterface::RATIOMODE_INSET);
-		if ($maximumWidth === NULL || ($allowUpScaling !== TRUE && $maximumWidth > $image->getWidth())) {
-			$maximumWidth = $image->getWidth();
-		}
-		if ($maximumHeight === NULL || ($allowUpScaling !== TRUE && $maximumHeight > $image->getHeight())) {
-			$maximumHeight = $image->getHeight();
-		}
-		if ($maximumWidth === $image->getWidth() && $maximumHeight === $image->getHeight()) {
-			return $image;
-		}
-		return $image->getThumbnail($maximumWidth, $maximumHeight, $ratioMode);
-	}
-
-	/**
-	 * @param AssetInterface $asset
-	 * @param integer $maximumWidth
-	 * @param integer $maximumHeight
-	 * @return array
-	 */
-	protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight) {
-		$iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-		if (is_file('resource://TYPO3.Media/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-			$icon = sprintf('TYPO3.Media/Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-		} else {
-			$icon =  sprintf('TYPO3.Media/Icons/%spx/_blank.png', $iconSize);
-		}
-
-		return array(
-			'width' => $iconSize,
-			'height' => $iconSize,
-			'src' => $icon
-		);
-	}
-
-	/**
-	 * @param integer $maximumWidth
-	 * @param integer $maximumHeight
-	 * @return integer
-	 */
-	protected function getDocumentIconSize($maximumWidth, $maximumHeight) {
-		$size = max($maximumWidth, $maximumHeight);
-		if ($size <= 16) {
-			return 16;
-		} elseif ($size <= 32) {
-			return 32;
-		} elseif ($size <= 48) {
-			return 48;
-		} else {
-			return 512;
-		}
 	}
 
 }
