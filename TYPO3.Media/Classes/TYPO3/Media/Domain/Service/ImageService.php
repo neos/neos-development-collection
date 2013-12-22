@@ -48,7 +48,7 @@ class ImageService {
 	/**
 	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image
 	 * @param array $processingInstructions
-	 * @return \TYPO3\Media\Domain\Model\ImageVariant
+	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	public function transformImage(\TYPO3\Media\Domain\Model\ImageInterface $image, array $processingInstructions) {
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . serialize($processingInstructions));
