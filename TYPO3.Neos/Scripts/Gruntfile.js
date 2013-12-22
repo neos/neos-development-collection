@@ -239,11 +239,11 @@ module.exports = function(grunt) {
 
 		codemirror: {
 			src: [
-				baseUri + 'codemirror2/lib/codemirror.js',
-				baseUri + 'codemirror2/mode/xml/xml.js',
-				baseUri + 'codemirror2/mode/css/css.js',
-				baseUri + 'codemirror2/mode/javascript/javascript.js',
-				baseUri + 'codemirror2/mode/htmlmixed/htmlmixed.js'
+				baseUri + 'codemirror/lib/codemirror.js',
+				baseUri + 'codemirror/mode/xml/xml.js',
+				baseUri + 'codemirror/mode/css/css.js',
+				baseUri + 'codemirror/mode/javascript/javascript.js',
+				baseUri + 'codemirror/mode/htmlmixed/htmlmixed.js'
 			],
 			dest: baseUri + 'codemirror.js',
 			options: {
