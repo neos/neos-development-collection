@@ -39,6 +39,7 @@ module.exports = function(grunt) {
 
 					// Datetimepicker
 					src = src.replace(/case '(switch|prev|next|today)'/g, "case 'neos-$1'");
+					src = src.replace(/'prev'/g, "'neos-prev'");
 					src = src.replace(/= ' (old|new|disabled|active|today)'/g, "= ' neos-$1'");
 					src = src.replace(/th\.today/g, 'th.neos-today');
 

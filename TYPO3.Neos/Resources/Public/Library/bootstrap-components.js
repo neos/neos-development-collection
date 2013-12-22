@@ -1411,7 +1411,7 @@
 								break;
 							case 'neos-prev':
 							case 'neos-next':
-								var dir = DPGlobal.modes[this.viewMode].navStep * (target[0].className == 'prev' ? -1 : 1);
+								var dir = DPGlobal.modes[this.viewMode].navStep * (target[0].className == 'neos-prev' ? -1 : 1);
 								switch(this.viewMode){
 									case 0:
 										this.viewDate = this.moveHour(this.viewDate, dir);
