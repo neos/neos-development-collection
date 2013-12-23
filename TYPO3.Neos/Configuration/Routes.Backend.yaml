@@ -12,8 +12,8 @@
   name: 'Content Module - Media Browser'
   uriPattern: 'content/assets(/{@action})'
   defaults:
-    '@package':    'TYPO3.Media'
-    '@controller': 'Asset'
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Backend\MediaBrowser'
   appendExceedingArguments: true
 
 -

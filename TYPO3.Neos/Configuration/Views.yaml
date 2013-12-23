@@ -7,3 +7,16 @@
     partialRootPaths:
       'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials/Media'
       'TYPO3.Media': 'resource://TYPO3.Media/Private/Partials'
+
+-
+  requestFilter: 'isPackage("TYPO3.Neos") && isController("Backend\MediaBrowser")'
+  options:
+    layoutRootPaths:
+      'TYPO3.Media': 'resource://TYPO3.Media/Private/Layouts'
+      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Layouts/Media'
+    partialRootPaths:
+      'TYPO3.Media': 'resource://TYPO3.Media/Private/Partials'
+      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials/Media'
+
+    templateRootPathPattern: 'resource://TYPO3.Media/Private/Templates'
+    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Asset/@action.@format'
