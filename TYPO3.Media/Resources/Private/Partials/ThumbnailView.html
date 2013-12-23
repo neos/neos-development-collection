@@ -5,7 +5,7 @@
 			<li class="asset" data-asset-identifier="{asset->f:format.identifier()}">
 				<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail draggable-asset" arguments="{asset: asset}">
 					<div class="neos-img-container">
-						<m:image image="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
+						<m:image asset="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
 					</div>
 					<span class="neos-caption"><f:format.crop maxCharacters="100">{f:if(condition: asset.caption, then: asset.caption, else: asset.resource.filename)}</f:format.crop></span>
 				</f:link.action>

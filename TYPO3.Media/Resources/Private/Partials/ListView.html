@@ -14,7 +14,7 @@
 			<tr class="asset draggable-asset" data-asset-identifier="{asset -> f:format.identifier()}">
 				<td>
 					<div class="neos-list-thumbnail">
-						<m:image image="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
+						<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
 					</div>
 				</td>
 				<td><f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop></td>
