@@ -4,7 +4,7 @@
 
 resources:
   methods:
-    TYPO3_Neos_AllControllerActions: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->.*Action())'
+    TYPO3_Neos_AllControllerActions: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
     TYPO3_Neos_WidgetControllers: 'method(TYPO3\Fluid\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(TYPO3\Fluid\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     TYPO3_Neos_PublicFrontendAccess: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction())'
