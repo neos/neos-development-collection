@@ -6933,7 +6933,6 @@
   position: relative;
   top: 0;
   line-height: 40px;
-  font-family: FontAwesome;
 }
 .neos #neos-menu-panel .neos-menu-section .neos-menu-collapse.neos-collapsed::before {
   -webkit-transform: rotate(-90deg);
