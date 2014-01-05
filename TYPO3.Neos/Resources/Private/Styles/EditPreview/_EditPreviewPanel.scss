@@ -68,30 +68,106 @@
 		right: $inspectorWidth;
 	}
 
-	.neos-preview {
-		border-left: 1px solid $grayLight;
-		@include box-sizing(border-box);
-	}
-
 	.neos-edit,
 	.neos-preview {
-		width: 49%;
+		position: relative;
+		width: 50%;
 		height: $editPreviewPanelHeight;
 		float: left;
+		@include box-sizing(border-box);
 
 		.neos-edit-preview-panel-title {
-			padding-left: $unit;
+			padding: 0 $unit;
 			padding-top: $unit / 2;
 			@include font();
 		}
 
-		ul.neos-edit-preview-modes {
-			padding-left: $unit;
+		.neos-scroll-container {
+			overflow: hidden;
+			height: $unit + $unit / 2;
+			padding: 0 $unit;
 			padding-top: $unit / 4;
+			padding-bottom: $unit / 4;
+			@include box-sizing(border-box);
+			position: relative;
+
+			.neos-frame {
+				height: 100%;
+			}
+		}
+
+		ul.neos-edit-preview-modes {
+			padding: 0px;
+			overflow: hidden;
+			min-width: 100%;
+			@include box-sizing(border-box);
+			height: 100%;
 
 			li {
 				float: left;
 				padding-right: 8px;
+			}
+		}
+
+		.neos-scroll-previous,
+		.neos-scroll-next {
+			width: $unit * 2 - $unit / 4;
+			height: $unit + $unit / 4;
+			background: transparent;
+			display: block;
+			position: absolute;
+			top: ($unit / 4) - 5px;
+			cursor: pointer;
+
+			&::after {
+				position: absolute;
+				top: 8px;
+				@include font;
+				font-size: 26px;
+				line-height: 26px;
+				font-weight: normal;
+				color: $grayLight;
+			}
+
+			&::before {
+				content: "";
+				height: 100%;
+				width: 1px;
+				@include background-image(linear-gradient(rgba($grayLight, 0) 0%, rgba($grayLight, 0.7) 16px, rgba($grayLight, 0.7) 37px, rgba($grayLight, 0) 100%));
+				position: absolute;
+				top: 0px;
+			}
+
+			&.neos-disabled {
+				display: none;
+			}
+		}
+
+		.neos-scroll-previous {
+			left: 0px;
+			@include background-image(linear-gradient(right, rgba($black, 0) 0%, rgba($grayDarker, 0.4) 13px, $grayDarker 27px));
+
+			&::after {
+				content: "‹";
+				left: 15px;
+			}
+
+			&::before {
+				left: $unit;
+			}
+		}
+
+		.neos-scroll-next {
+			right: 0px;
+			@include background-image(linear-gradient(left, rgba($black, 0) 0%, rgba($grayDarker, 0.4) 13px, $grayDarker 27px));
+
+			&::after {
+				content: "›";
+				right: 15px;
+			}
+
+			&::before {
+				right: $unit;
 			}
 		}
 	}

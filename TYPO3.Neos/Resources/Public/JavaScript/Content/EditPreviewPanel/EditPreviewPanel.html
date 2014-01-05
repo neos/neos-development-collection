@@ -1,25 +1,37 @@
 <div class="neos-edit">
 	<div class="neos-edit-preview-panel-title">Editing Modes</div>
-	<ul class="neos-edit-preview-modes">
-		{{#each editingMode in editingModes}}
-			<li>
-				<button {{bindAttr class=":neos-button editingMode.active:neos-pressed"}} {{action activateMode editingMode}}>
-					{{editingMode.title}}
-				</button>
-			</li>
-		{{/each}}
-	</ul>
+	<div class="neos-scroll-container">
+		<div class="neos-frame">
+			<ul class="neos-edit-preview-modes">
+				{{#each editingMode in editingModes}}
+					<li>
+						<button {{bindAttr class=":neos-button editingMode.active:neos-pressed"}} {{action activateMode editingMode}}>
+							{{editingMode.title}}
+						</button>
+					</li>
+				{{/each}}
+			</ul>
+			<span class="neos-scroll-previous"></span>
+			<span class="neos-scroll-next"></span>
+		</div>
+	</div>
 </div>
 
 <div class="neos-preview">
 	<div class="neos-edit-preview-panel-title">Preview Central</div>
-	<ul class="neos-edit-preview-modes">
-		{{#each previewMode in previewModes}}
-		<li>
-			<button {{bindAttr class=":neos-button previewMode.active:neos-pressed"}} {{action activateMode previewMode}}>
-				{{previewMode.title}}
-			</button>
-		</li>
-		{{/each}}
-	</ul>
+	<div class="neos-scroll-container">
+		<div class="neos-frame">
+			<ul class="neos-edit-preview-modes">
+				{{#each previewMode in previewModes}}
+					<li>
+						<button {{bindAttr class=":neos-button previewMode.active:neos-pressed"}} {{action activateMode previewMode}}>
+							{{previewMode.title}}
+						</button>
+					</li>
+				{{/each}}
+			</ul>
+			<span class="neos-scroll-previous"></span>
+			<span class="neos-scroll-next"></span>
+		</div>
+	</div>
 </div>

@@ -127,6 +127,7 @@ module.exports = function(grunt) {
 				baseUri + 'chosen/chosen/chosen.jquery.js',
 				baseUri + 'jcrop/js/jquery.Jcrop.js',
 				baseUri + 'select2.js',
+				baseUri + 'sly.js',
 				baseUri + 'bootstrap-components.js'
 			],
 			dest: baseUri + 'jquery-with-dependencies.js',
@@ -321,6 +322,19 @@ module.exports = function(grunt) {
 					src = src.replace('appendTo(document.body)', "appendTo('#neos-application')");
 					src = src.replace(/\.(add|remove)Class\('/g, ".$1Class('neos-");
 					src = src.replace("define(['jquery']", "define(['Library/jquery-with-dependencies']");
+					return src;
+				}
+			}
+		},
+
+		sly: {
+			src: [
+				baseUri + 'sly/sly.js'
+			],
+			dest: baseUri + 'sly.js',
+			options: {
+				process: function(src, filepath) {
+					src = src.replace('jQuery.', '$.');
 					return src;
 				}
 			}
