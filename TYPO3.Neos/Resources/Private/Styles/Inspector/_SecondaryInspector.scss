@@ -5,23 +5,36 @@
 	z-index: 10014;
 	// this is set to 150% instead to 100% because Firefox still shows the
 	// secondary inspector with the width of $inspectorWidth
-	right: -150%;
-	box-sizing: border-box;
+	left: 150%;
+	@include box-sizing(border-box);
 	width: 100%;
-	padding-right: $inspectorWidth;
 	background-color: $grayDark;
 
-	@include transition-property('right, padding-left');
+	@include transition-property('top, left, padding-left, padding-right');
 	@include transition-duration(.2s);
 
+	&.neos-secondary-inspector-open {
+		left: 0;
+	}
+
 	.neos-inspector-panel-open & {
-		&.neos-secondary-inspector-open {
-			right: 0;
-		}
+		padding-right: $inspectorWidth;
+	}
+
+	.neos-edit-preview-panel-open & {
+		top: $editPreviewPanelHeight + $unit + 2;
 	}
 
 	.neos-navigate-panel-open & {
-		padding-left: $menuWidth;
+		padding-left: $navigatePanelWidth;
+	}
+
+	.neos-menu-panel-open.neos-menu-panel-sticky & {
+		padding-left: $menuButtonWidth;
+	}
+
+	.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open & {
+		padding-left: $menuButtonWidth + $navigatePanelWidth - 1px;
 	}
 
 	> div {

@@ -6075,25 +6075,38 @@
   top: 40px;
   bottom: 0;
   z-index: 10014;
-  right: -150%;
+  left: 150%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
-  padding-right: 320px;
   background-color: #222222;
-  -webkit-transition-property: right, padding-left;
-  -moz-transition-property: right, padding-left;
-  -o-transition-property: right, padding-left;
-  transition-property: right, padding-left;
+  -webkit-transition-property: top, left, padding-left, padding-right;
+  -moz-transition-property: top, left, padding-left, padding-right;
+  -o-transition-property: top, left, padding-left, padding-right;
+  transition-property: top, left, padding-left, padding-right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   -o-transition-duration: 0.2s;
   transition-duration: 0.2s;
 }
-.neos-inspector-panel-open .neos .neos-secondary-inspector.neos-secondary-inspector-open {
-  right: 0;
+.neos .neos-secondary-inspector.neos-secondary-inspector-open {
+  left: 0;
+}
+.neos-inspector-panel-open .neos .neos-secondary-inspector {
+  padding-right: 320px;
+}
+.neos-edit-preview-panel-open .neos .neos-secondary-inspector {
+  top: 142px;
 }
 .neos-navigate-panel-open .neos .neos-secondary-inspector {
   padding-left: 320px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky .neos .neos-secondary-inspector {
+  padding-left: 54px;
+}
+.neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos .neos-secondary-inspector {
+  padding-left: 373px;
 }
 .neos .neos-secondary-inspector > div {
   height: 100%;
@@ -6527,6 +6540,8 @@
 }
 .neos #neos-edit-preview-panel .neos-preview {
   border-left: 1px solid #3f3f3f;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .neos #neos-edit-preview-panel .neos-edit,
