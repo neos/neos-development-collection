@@ -327,29 +327,29 @@ class Runtime {
 				return NULL;
 			}
 		}
-		if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
-			$finallyClosure();
-			return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
-		}
-
-		$tsObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
-
-			// modify context if @override is specified
-		if (isset($typoScriptConfiguration['__meta']['override'])) {
-			$contextArray = $this->getCurrentContext();
-			foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
-				$contextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
-			}
-			$this->pushContextArray($contextArray);
-		}
-
-		list($cacheHit, $cachedResult) = $runtimeContentCache->preEvaluate($cacheCtx, $tsObject);
-		if ($cacheHit) {
-			$finallyClosure();
-			return $cachedResult;
-		}
 
 		try {
+			if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
+				return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
+			}
+
+			$tsObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
+
+				// modify context if @override is specified
+			if (isset($typoScriptConfiguration['__meta']['override'])) {
+				$contextArray = $this->getCurrentContext();
+				foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
+					$contextArray[$overrideKey] = $this->evaluateInternal($typoScriptPath . '/__meta/override/' . $overrideKey, self::BEHAVIOR_EXCEPTION, $tsObject);
+				}
+				$this->pushContextArray($contextArray);
+			}
+
+			list($cacheHit, $cachedResult) = $runtimeContentCache->preEvaluate($cacheCtx, $tsObject);
+			if ($cacheHit) {
+				$finallyClosure();
+				return $cachedResult;
+			}
+
 			$output = $tsObject->evaluate();
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
 			$finallyClosure();
