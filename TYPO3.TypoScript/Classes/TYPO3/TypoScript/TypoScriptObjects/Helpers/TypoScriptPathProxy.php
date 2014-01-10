@@ -53,18 +53,6 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 	protected $partialTypoScriptTree;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Utility\Environment
-	 */
-	protected $applicationEnvironment;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation $templateImplementation
@@ -139,7 +127,11 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 	 */
 	public function objectAccess() {
 		if (isset($this->partialTypoScriptTree['__objectType'])) {
-			return $this->tsRuntime->evaluate($this->path);
+			try {
+				return $this->tsRuntime->evaluate($this->path);
+			} catch(\Exception $exception) {
+				return $this->tsRuntime->handleRenderingException($this->path, $exception);
+			}
 		} elseif (isset($this->partialTypoScriptTree['__eelExpression'])) {
 			return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
 		}
@@ -180,16 +172,10 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
 	 */
 	public function __toString() {
 		try {
-			$result = $this->tsRuntime->evaluate($this->path);
-		} catch (\Exception $exception) {
-			$this->systemLogger->logException($exception);
-			if ($this->applicationEnvironment->getContext()->isProduction()) {
-				$result = '';
-			} else {
-				$result = $exception->getMessage();
-			}
+			return (string)$this->tsRuntime->evaluate($this->path);
+		} catch(\Exception $exception) {
+			return $this->tsRuntime->handleRenderingException($this->path, $exception);
 		}
-
-		return (string)$result;
 	}
+
 }

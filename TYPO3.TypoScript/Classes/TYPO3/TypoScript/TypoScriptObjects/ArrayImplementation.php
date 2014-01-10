@@ -35,7 +35,11 @@ class ArrayImplementation extends AbstractArrayTypoScriptObject {
 
 		$output = '';
 		foreach ($sortedChildTypoScriptKeys as $key) {
-			$output .= $this->tsValue($key);
+			try {
+				$output .= $this->tsValue($key);
+			} catch (\Exception $e) {
+				$output .= $this->tsRuntime->handleRenderingException($this->path . '/' . $key, $e);
+			}
 		}
 
 		return $output;

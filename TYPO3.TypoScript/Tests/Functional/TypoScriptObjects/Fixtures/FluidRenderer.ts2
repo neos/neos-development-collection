@@ -20,3 +20,14 @@ template.layout = TYPO3.TypoScript:Template {
 	templatePath = ${fixtureDirectory + 'LayoutTemplate.html'}
 	layoutPath = ${fixtureDirectory + 'Layouts'}
 }
+
+# This fixture sets up a TypoScript object that will throw an exception during rendering
+# (a Collection needs an itemName property to be set)
+template.offsetAccessException = TYPO3.TypoScript:Template {
+	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
+
+	myVariable = TYPO3.TypoScript:Collection {
+		collection = ${['foo', 'bar']}
+		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+	}
+}

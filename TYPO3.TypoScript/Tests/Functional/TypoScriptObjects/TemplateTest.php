@@ -53,4 +53,13 @@ class TemplateTest extends AbstractTypoScriptObjectTest {
 		$this->assertEquals('layout start -- Test Template -- layout end', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function typoScriptExceptionInObjectAccessIsHandledCorrectly() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('template/offsetAccessException');
+		$this->assertStringStartsWith('Test TemplateException while rendering template', $view->render());
+	}
+
 }
