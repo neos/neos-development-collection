@@ -11,11 +11,13 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Collections\Collection;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -25,7 +27,7 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  * NOTE: This is internal only and should not be used or extended by userland code.
  *
  * @Flow\Entity
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="path_workspace",columns={"pathhash", "workspace"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"})})
  */
 class NodeData extends AbstractNodeData {
 
@@ -69,6 +71,8 @@ class NodeData extends AbstractNodeData {
 	 * Workspace this node is contained in
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 *
+	 * Note: Since we compare workspace instances for various purposes it's unsafe to have a lazy relation
 	 * @ORM\ManyToOne
 	 * @ORM\JoinColumn(onDelete="SET NULL")
 	 */
@@ -123,6 +127,21 @@ class NodeData extends AbstractNodeData {
 	protected $removed = FALSE;
 
 	/**
+	 * @ORM\OneToMany(mappedBy="nodeData")
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\TYPO3CR\Domain\Model\NodeDimension>
+	 */
+	protected $dimensions;
+
+	/**
+	 * MD5 hash of the content dimensions
+	 * The hash is generated in calculateDimensionsHash().
+	 *
+	 * @var string
+	 * @ORM\Column(length=32)
+	 */
+	protected $dimensionsHash;
+
+	/**
 	 * @var \DateTime
 	 * @ORM\Column(nullable=true)
 	 */
@@ -133,6 +152,12 @@ class NodeData extends AbstractNodeData {
 	 * @ORM\Column(nullable=true)
 	 */
 	protected $hiddenAfterDateTime;
+
+	/**
+	 * @ORM\Column(type="objectarray")
+	 * @var array
+	 */
+	protected $dimensionValues;
 
 	/**
 	 * @Flow\Inject
@@ -163,11 +188,23 @@ class NodeData extends AbstractNodeData {
 	 * @param string $path Absolute path of this node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
 	 * @param string $identifier The node identifier (not the persistence object identifier!). Specifying this only makes sense while creating corresponding nodes
+	 * @param array $dimensions An array of dimension name to dimension values
 	 */
-	public function __construct($path, Workspace $workspace, $identifier = NULL) {
+	public function __construct($path, Workspace $workspace, $identifier = NULL, array $dimensions = NULL) {
 		$this->setPath($path, FALSE);
 		$this->workspace = $workspace;
 		$this->identifier = ($identifier === NULL) ? Algorithms::generateUUID() : $identifier;
+
+		$this->dimensions = new \Doctrine\Common\Collections\ArrayCollection();
+		if ($dimensions !== NULL) {
+			foreach ($dimensions as $dimensionName => $dimensionValues) {
+				foreach ($dimensionValues as $dimensionValue) {
+					$this->dimensions->add(new NodeDimension($this, $dimensionName, $dimensionValue));
+				}
+			}
+		}
+		$this->calculateDimensionsHash();
+		$this->buildDimensionValues();
 	}
 
 	/**
@@ -197,9 +234,9 @@ class NodeData extends AbstractNodeData {
 		}
 
 		if ($recursive === TRUE) {
-			/** @var $childNode NodeData */
-			foreach ($this->getChildNodes() as $childNode) {
-				$childNode->setPath($path . '/' . $childNode->getName());
+			/** @var $childNodeData NodeData */
+			foreach ($this->getChildNodeData() as $childNodeData) {
+				$childNodeData->setPath($path . '/' . $childNodeData->getName());
 			}
 		}
 
@@ -356,17 +393,18 @@ class NodeData extends AbstractNodeData {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param array $dimensions
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL) {
-		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $workspace);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
+		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $workspace, $dimensions);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
 				$newNode->setProperty($propertyName, $propertyValue);
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-				$newNode->createNode($childNodeName, $childNodeType, NULL, $workspace);
+				$newNode->createNode($childNodeName, $childNodeType, NULL, $workspace, $dimensions);
 			}
 		}
 		return $newNode;
@@ -380,21 +418,23 @@ class NodeData extends AbstractNodeData {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param array $dimensions An array of dimension name to dimension values
 	 * @throws NodeExistsException if a node with this path already exists.
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL) {
+	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
 		if (!is_string($name) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) !== 1) {
 			throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1292428697);
 		}
 
+		$nodeWorkspace = $workspace ? : $this->workspace;
 		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
-		if ($this->getNode($newPath) !== NULL) {
-			throw new NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503471);
+		if ($this->nodeDataRepository->findOneByPath($newPath, $nodeWorkspace, $dimensions) !== NULL) {
+			throw new NodeExistsException(sprintf('Node with path "' . $newPath . '" already exists in workspace %s and given dimensions %s.', $nodeWorkspace->getName(), var_export($dimensions, TRUE)), 1292503471);
 		}
 
-		$newNode = new NodeData($newPath, ($workspace ?: $this->workspace), $identifier);
+		$newNode = new NodeData($newPath, $nodeWorkspace, $identifier, $dimensions);
 		$this->nodeDataRepository->add($newNode);
 		$this->nodeDataRepository->setNewIndex($newNode, NodeDataRepository::POSITION_LAST);
 		if ($nodeType !== NULL) {
@@ -411,9 +451,10 @@ class NodeData extends AbstractNodeData {
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param array $dimensions
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData the freshly generated node
 	 */
-	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL, Workspace $workspace = NULL) {
+	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
 		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
 
 		$possibleNodeName = $newNodeName;
@@ -422,7 +463,7 @@ class NodeData extends AbstractNodeData {
 			$possibleNodeName = $newNodeName . '-' . $counter++;
 		}
 
-		$newNode = $this->createNode($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace);
+		$newNode = $this->createNode($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace, $dimensions);
 		$newNode->similarize($nodeTemplate);
 		return $newNode;
 	}
@@ -432,57 +473,32 @@ class NodeData extends AbstractNodeData {
 	 *
 	 * @param string $path Path specifying the node, relative to this node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The specified node or NULL if no such node exists
+	 *
+	 * TODO This method should be removed, since it doesn't take the context into account correctly
 	 */
 	public function getNode($path) {
 		return $this->nodeDataRepository->findOneByPath($this->normalizePath($path), $this->workspace);
 	}
 
 	/**
-	 * Returns the primary child node of this node.
+	 * Returns all direct child node data of this node data without reducing the result (multiple variants can be returned)
 	 *
-	 * Which node acts as a primary child node will in the future depend on the
-	 * node type. For now it is just the first child node.
-	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The primary child node or NULL if no such node exists
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
-	public function getPrimaryChildNode() {
-		$node = $this->nodeDataRepository->findFirstByParentAndNodeType($this->path, NULL, $this->workspace);
-
-		return $node;
-	}
-
-	/**
-	 * Returns all direct child nodes of this node.
-	 * If a node type is specified, only nodes of that type are returned.
-	 *
-	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
-	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
-	 * @param integer $offset An optional offset for the query
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> An array of nodes or an empty array if no child nodes matched
-	 */
-	public function getChildNodes($nodeTypeFilter = NULL, $limit = NULL, $offset = NULL) {
-		return $this->nodeDataRepository->findByParentAndNodeType($this->path, $nodeTypeFilter, $this->workspace, $limit, $offset);
+	protected function getChildNodeData() {
+		return $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace);
 	}
 
 	/**
 	 * Returns the number of child nodes a similar getChildNodes() call would return.
 	 *
 	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
+	 * @param Workspace $workspace
+	 * @param array $dimensions
 	 * @return integer The number of child nodes
 	 */
-	public function getNumberOfChildNodes($nodeTypeFilter = NULL) {
-		return $this->nodeDataRepository->countByParentAndNodeType($this->path, $nodeTypeFilter, $this->workspace);
-	}
-
-	/**
-	 * Checks if this node has any child nodes.
-	 *
-	 * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
-	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
-	 * @todo Needs proper implementation in NodeDataRepository which only counts nodes (considering workspaces, removed nodes etc.)
-	 */
-	public function hasChildNodes($nodeTypeFilter = NULL) {
-		return ($this->getNumberOfChildNodes($nodeTypeFilter) > 0);
+	public function getNumberOfChildNodes($nodeTypeFilter = NULL, Workspace $workspace, array $dimensions) {
+		return $this->nodeDataRepository->countByParentAndNodeType($this->path, $nodeTypeFilter, $workspace, $dimensions);
 	}
 
 	/**
@@ -492,7 +508,7 @@ class NodeData extends AbstractNodeData {
 	 */
 	public function remove() {
 		/** @var $childNode NodeData */
-		foreach ($this->getChildNodes() as $childNode) {
+		foreach ($this->getChildNodeData() as $childNode) {
 			$childNode->remove();
 		}
 
@@ -578,6 +594,26 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
+	 * Internal use, do not manipulate collection directly
+	 *
+	 * @param Collection $dimensions
+	 */
+	public function setDimensions(Collection $dimensions) {
+		$this->dimensions = $dimensions;
+		$this->calculateDimensionsHash();
+		$this->buildDimensionValues();
+	}
+
+	/**
+	 * Internal use, do not manipulate collection directly
+	 *
+	 * @return Collection
+	 */
+	public function getDimensions() {
+		return $this->dimensions;
+	}
+
+	/**
 	 * Make the node "similar" to the given source node. That means,
 	 *  - all properties
 	 *  - index
@@ -590,7 +626,7 @@ class NodeData extends AbstractNodeData {
 	 */
 	public function similarize(AbstractNodeData $sourceNode) {
 		$this->properties = array();
-		foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
+		foreach ($sourceNode->getProperties(TRUE) as $propertyName => $propertyValue) {
 			$this->setProperty($propertyName, $propertyValue);
 		}
 
@@ -654,6 +690,77 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
+	 * Returns the dimensions and their values.
+	 *
+	 * @return array
+	 */
+	public function getDimensionValues() {
+		return $this->dimensionValues;
+	}
+
+	/**
+	 * Build a cached array of dimension values
+	 *
+	 * @return void
+	 */
+	protected function buildDimensionValues() {
+		$dimensionValues = array();
+		foreach ($this->dimensions as $dimension) {
+			/** @var NodeDimension $dimension */
+			$dimensionValues[$dimension->getName()][] = $dimension->getValue();
+		}
+		foreach ($dimensionValues as &$values) {
+			sort($values);
+		}
+		$this->dimensionValues = $dimensionValues;
+	}
+
+	/**
+	 * Adjust this instance to the given context.
+	 *
+	 * Internal use only!
+	 *
+	 * @param ContextInterface $context
+	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
+	 */
+	public function adjustToContext(ContextInterface $context) {
+		$this->setWorkspace($context->getWorkspace());
+
+		$nodeDimensions = new \Doctrine\Common\Collections\ArrayCollection();
+		$targetDimensionValues = $context->getTargetDimensions();
+		foreach ($context->getDimensions() as $dimensionName => $dimensionValues) {
+			if (!isset($targetDimensionValues[$dimensionName])) {
+				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException(sprintf('Missing target value for dimension "%"', $dimensionName), 1391686089);
+			}
+			$dimensionValueToSet = $targetDimensionValues[$dimensionName];
+			$nodeDimensions->add(new NodeDimension($this, $dimensionName, $dimensionValueToSet));
+		}
+		$this->setDimensions($nodeDimensions);
+	}
+
+	/**
+	 * Checks if this instance matches the given workspace and dimensions.
+	 *
+	 * @param Workspace $workspace
+	 * @param array $dimensions
+	 * @return boolean
+	 */
+	public function matchesWorkspaceAndDimensions($workspace, array $dimensions = NULL) {
+		if ($this->workspace->getName() !== $workspace->getName()) {
+			return FALSE;
+		}
+		if ($dimensions !== NULL) {
+			$nodeDimensionValues = $this->getDimensionValues();
+			foreach ($dimensions as $dimensionName => $dimensionValues) {
+				if (!isset($nodeDimensionValues[$dimensionName]) || array_intersect($nodeDimensionValues[$dimensionName], $dimensionValues) === array()) {
+					return FALSE;
+				}
+			}
+		}
+		return TRUE;
+	}
+
+	/**
 	 * Updates this node in the Node Repository
 	 *
 	 * @return void
@@ -677,6 +784,24 @@ class NodeData extends AbstractNodeData {
 	 */
 	protected function calculatePathHash() {
 		$this->pathHash = md5($this->path);
+	}
+
+	/**
+	 * Calculates the hash corresponding to the dimensions and their values for this instance.
+	 *
+	 * @return void
+	 */
+	protected function calculateDimensionsHash() {
+		$dimensionValues = array();
+		foreach ($this->dimensions as $dimension) {
+			/** @var NodeDimension $dimension */
+			$dimensionValues[$dimension->getName()][] = $dimension->getValue();
+		}
+		// Use a stable ordering
+		foreach ($dimensionValues as &$values) {
+			sort($values);
+		}
+		$this->dimensionsHash = md5(json_encode($dimensionValues));
 	}
 
 	/**

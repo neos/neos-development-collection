@@ -91,9 +91,11 @@ class WorkspacesTest extends FunctionalTestCase {
 		if ($this->nodeDataRepository !== NULL) {
 			$this->nodeDataRepository->flushNodeRegistry();
 		}
+		/** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
 		$nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
-		ObjectAccess::setProperty($nodeFactory, 'nodes', array(), TRUE);
-		$this->inject($this->contextFactory, 'contextInstances', array());
+		$nodeFactory->reset();
+		$this->contextFactory->reset();
+
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
 		$this->nodeDataRepository = NULL;

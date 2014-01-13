@@ -30,8 +30,8 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function aContextualizedNodeIsRelatedToNodeData() {
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
-		$nodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
+		$context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$node = new \TYPO3\TYPO3CR\Domain\Model\Node($nodeData, $context);
 		$this->assertSame($nodeData, $node->getNodeData());
 	}
@@ -284,13 +284,16 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function setUpNodeWithNonMatchingContext() {
 		$userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$userWorkspace->expects($this->any())->method('getName')->will($this->returnValue('user'));
 		$liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$userWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
 		$nodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$nodeData->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
 
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
+		$context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
 
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('materializeNodeData'), array($nodeData, $context));
 		$node->expects($this->once())->method('materializeNodeData');

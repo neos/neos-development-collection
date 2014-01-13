@@ -21,12 +21,7 @@ use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Exception\NodeException;
@@ -70,27 +65,9 @@ class NodeConverter extends AbstractTypeConverter {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var WorkspaceRepository
-	 */
-	protected $workspaceRepository;
-
-	/**
-	 * @Flow\Inject
 	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
 
 	/**
 	 * @var string
@@ -130,24 +107,23 @@ class NodeConverter extends AbstractTypeConverter {
 	 * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
 	 * @param string $targetType not used
 	 * @param array $subProperties not used
-	 * @param PropertyMappingConfigurationInterface $configuration not used
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @throws \Exception
 	 */
 	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
 			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $source) !== 0) {
-				/** @var $liveWorkspace Workspace */
-				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
-				if ($liveWorkspace === NULL) {
-					return new Error('Could not fetch "live" workspace.', 1382616458);
+				$liveContext = $this->createContext('live', $configuration);
+				$workspace = $liveContext->getWorkspace(FALSE);
+				if (!$workspace) {
+					return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', 'live'), 1383577859);
 				}
-				/** @var $nodeData NodeData */
-				$nodeData = $this->nodeDataRepository->findOneByIdentifier($source, $liveWorkspace);
-				if ($nodeData === NULL) {
+				$node = $liveContext->getNodeByIdentifier($source);
+				if ($node === NULL) {
 					return new Error(sprintf('Could not convert the given UUID "%s" to a Node object, no node with this identifier exists in live workspace.', $source), 1382608594);
 				}
-				return $this->nodeFactory->createFromNodeData($nodeData, $this->createContext('live', $configuration));
+				return $node;
 			}
 			$source = array('__contextNodePath' => $source);
 		}
@@ -163,10 +139,10 @@ class NodeConverter extends AbstractTypeConverter {
 		$nodePath = $matches['NodePath'];
 
 		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-		$context = $this->createContext($workspaceName);
+		$context = $this->createContext($workspaceName, $configuration);
 		$workspace = $context->getWorkspace(FALSE);
 		if (!$workspace) {
-			throw new NodeException(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $nodePath, $workspaceName), 1383577859);
+			return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $workspaceName), 1383577859);
 		}
 
 		try {
@@ -197,21 +173,16 @@ class NodeConverter extends AbstractTypeConverter {
 			$nodePropertyType = isset($nodeTypeProperties[$nodePropertyName]['type']) ? $nodeTypeProperties[$nodePropertyName]['type'] : NULL;
 			switch ($nodePropertyType) {
 				case 'reference':
-					$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodePropertyValue, $context->getWorkspace(FALSE));
-					if ($nodeData === NULL) {
-						$nodePropertyValue = NULL;
-					} else {
-						$nodePropertyValue = $this->nodeFactory->createFromNodeData($nodeData, $context);
-					}
+					$nodePropertyValue = $context->getNodeByIdentifier($nodePropertyValue);
 				break;
 				case 'references':
 					$nodeIdentifiers = json_decode($nodePropertyValue);
 					$nodePropertyValue = array();
 					if (is_array($nodeIdentifiers)) {
 						foreach ($nodeIdentifiers as $nodeIdentifier) {
-							$foundReferencedNodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $context->getWorkspace(FALSE));
-							if ($foundReferencedNodeData !== NULL) {
-								$nodePropertyValue[] = $this->nodeFactory->createFromNodeData($foundReferencedNodeData, $context);
+							$referencedNode = $context->getNodeByIdentifier($nodeIdentifier);
+							if ($referencedNode !== NULL) {
+								$nodePropertyValue[] = $referencedNode;
 							}
 						}
 					} else {

@@ -72,4 +72,13 @@ class NodeFactory {
 		return $node;
 	}
 
+	/**
+	 * Reset the node instances (for testing)
+	 *
+	 * @return void
+	 */
+	public function reset() {
+		$this->nodes = array();
+	}
+
 }

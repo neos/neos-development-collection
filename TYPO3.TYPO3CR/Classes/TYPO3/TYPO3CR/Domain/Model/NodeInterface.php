@@ -27,7 +27,7 @@ interface NodeInterface {
 	 * Regex pattern which matches a "context path", ie. a node path possibly containing context information such as the
 	 * workspace name. This pattern is used at least in the route part handler.
 	 */
-	const MATCH_PATTERN_CONTEXTPATH = '/^(?P<NodePath>(?:\/?[a-z0-9\-]+)(?:\/[a-z0-9\-]+)*)?(?:@(?P<WorkspaceName>[a-z0-9\-]+))?$/i';
+	const MATCH_PATTERN_CONTEXTPATH = '/^(?P<NodePath>(?:\/?[a-z0-9\-]+)(?:\/[a-z0-9\-]+)*)?(?:@(?P<WorkspaceName>[a-z0-9\-]+))?(;(?P<Dimensions>[a-zA-Z_]+=[^=]*)+)?$/i';
 
 	/**
 	 * Maximum number of characters to allow / use for a "label" of a Node
@@ -388,12 +388,13 @@ interface NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 * @api
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL);
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
@@ -404,11 +405,12 @@ interface NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 */
-	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL);
+	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL);
 
 	/**
 	 * Creates and persists a node from the given $nodeTemplate as child node
@@ -587,5 +589,21 @@ interface NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
 	 */
 	public function getContext();
+
+	/**
+	 * Return the assigned content dimensions of the node.
+	 *
+	 * @return array An array of dimensions to array of dimension values
+	 */
+	public function getDimensions();
+
+	/**
+	 * Given a context a new node is returned that is like this node, but
+	 * lives in the new context.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @return NodeInterface
+	 */
+	public function createVariantForContext($context);
 
 }

@@ -202,7 +202,10 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
+
 		$retrievedNode = $rootNode->getNode('/firstlevel/secondlevel/thirdlevel');
+
+		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $retrievedNode);
 
 		$this->assertEquals('/firstlevel/secondlevel/thirdlevel', $retrievedNode->getPath());
 		$this->assertEquals('thirdlevel', $retrievedNode->getName());

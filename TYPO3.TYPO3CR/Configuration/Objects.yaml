@@ -1,0 +1,4 @@
+'TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository':
+  properties:
+    dimensionsConfiguration:
+      setting: 'TYPO3.TYPO3CR.contentDimensions'

@@ -10,6 +10,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * Testcase for the Context
@@ -24,6 +25,10 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	public function setUp() {
 		$this->contextFactory = new \TYPO3\TYPO3CR\Domain\Service\ContextFactory();
+
+		$mockContentDimensionRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
+		$this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
 	}
 
 	/**
@@ -49,31 +54,6 @@ class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$context = $this->contextFactory->create(array('currentDateTime' => $simulatedCurrentTime));
 
 		$this->assertEquals($simulatedCurrentTime, $context->getCurrentDateTime());
-	}
-
-	/**
-	 * @test
-	 */
-	public function getLocaleReturnsByDefaultAnInternationalMultilingualLocale() {
-		$context = $this->contextFactory->create(array());
-
-		$this->assertEquals('mul_ZZ', (string)$context->getLocale());
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
-	 */
-	public function providingAnEmptyWorkspaceNameWillThrowAnException() {
-		$context = $this->contextFactory->create(array('workspaceName' => ''));
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
-	 */
-	public function providingALocaleStringInsteadOfALocaleObjectWillThrowAnException() {
-		$context = $this->contextFactory->create(array('locale' => 'de_DE'));
 	}
 
 }

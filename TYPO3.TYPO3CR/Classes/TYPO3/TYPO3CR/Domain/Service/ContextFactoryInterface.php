@@ -27,7 +27,7 @@ interface ContextFactoryInterface {
 	 * array(
 	 *        'workspaceName' => 'live',
 	 *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
-	 *        'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+	 *        'dimensions' => array(),
 	 *        'invisibleContentShown' => FALSE,
 	 *        'removedContentShown' => FALSE,
 	 *        'inaccessibleContentShown' => FALSE

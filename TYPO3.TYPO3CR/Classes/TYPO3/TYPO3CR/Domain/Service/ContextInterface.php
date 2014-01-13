@@ -22,10 +22,11 @@ interface ContextInterface {
 	/**
 	 * Returns the current workspace.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
 	 * @api
 	 */
-	public function getWorkspace();
+	public function getWorkspace($createWorkspaceIfNecessary = TRUE);
 
 	/**
 	 * Returns the current date and time in form of a \DateTime
@@ -57,6 +58,14 @@ interface ContextInterface {
 	 * @api
 	 */
 	public function getNode($path);
+
+	/**
+	 * Get a node by identifier and this context
+	 *
+	 * @param string $identifier The identifier of a node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node with the given identifier in this context, NULL if none was found
+	 */
+	public function getNodeByIdentifier($identifier);
 
 	/**
 	 * Finds all nodes lying on the path specified by (and including) the given
@@ -96,5 +105,37 @@ interface ContextInterface {
 	 * @api
 	 */
 	public function isInaccessibleContentShown();
+
+	/**
+	 * An array of dimensions with ordered list of values to take into account when querying nodes
+	 *
+	 * @return array
+	 */
+	public function getDimensions();
+
+	/**
+	 * An array of dimensions with target values to set when updating nodes or creating new nodes
+	 *
+	 * This allows to have flexible translation modes where we can copy nodes from the dimensions in the context where
+	 * it was fetched to other dimension values.
+	 *
+	 * @return array
+	 */
+	public function getTargetDimensions();
+
+	/**
+	 * Adopts a node from a (possibly) different context to this context by creating a compatible node variant that matches this context (if needed).
+	 *
+	 * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
+	 * @return NodeInterface A new or existing node that matches this context
+	 */
+	public function adoptNode(NodeInterface $node);
+
+	/**
+	 * Returns the properties of the context
+	 *
+	 * @return array
+	 */
+	public function getProperties();
 
 }

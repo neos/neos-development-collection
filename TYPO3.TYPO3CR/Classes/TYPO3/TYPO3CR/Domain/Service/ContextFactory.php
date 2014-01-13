@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
+use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 
 /**
  * The ContextFactory makes sure you don't create context instances with
@@ -37,6 +39,12 @@ class ContextFactory implements ContextFactoryInterface {
 	protected $contextImplementation = 'TYPO3\TYPO3CR\Domain\Service\Context';
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository
+	 */
+	protected $contentDimensionRepository;
+
+	/**
 	 * Create the context from the given properties. If a context with those properties was already
 	 * created before then the existing one is returned.
 	 *
@@ -44,12 +52,13 @@ class ContextFactory implements ContextFactoryInterface {
 	 * TYPO3\TYPO3CR\Domain\Service\Context it should look like this:
 	 *
 	 * array(
-	 * 		'workspaceName' => 'live',
-	 * 		'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
-	 * 		'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
-	 * 		'invisibleContentShown' => FALSE,
-	 * 		'removedContentShown' => FALSE,
-	 * 		'inaccessibleContentShown' => FALSE
+	 *        'workspaceName' => 'live',
+	 *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
+	 *        'dimensions' => array(...),
+	 *        'targetDimensions' => array(...),
+	 *        'invisibleContentShown' => FALSE,
+	 *        'removedContentShown' => FALSE,
+	 *        'inaccessibleContentShown' => FALSE
 	 * )
 	 *
 	 * This array also shows the defaults that get used if you don't provide a certain property.
@@ -78,7 +87,8 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function buildContextInstance(array $contextProperties) {
-		return new \TYPO3\TYPO3CR\Domain\Service\Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['locale'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
+		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+		return new \TYPO3\TYPO3CR\Domain\Service\Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
 	}
 
 	/**
@@ -88,16 +98,24 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @return array
 	 */
 	protected function mergeContextPropertiesWithDefaults(array $contextProperties) {
-		$defaultContextProperties = array (
+		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+
+		$defaultContextProperties = array(
 			'workspaceName' => 'live',
 			'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
-			'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+			'dimensions' => array(),
+			'targetDimensions' => array(),
 			'invisibleContentShown' => FALSE,
 			'removedContentShown' => FALSE,
 			'inaccessibleContentShown' => FALSE
 		);
 
-		return \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
+		$mergedProperties = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
+
+		$this->mergeDimensionValues($contextProperties, $mergedProperties);
+		$this->mergeTargetDimensionContextProperties($contextProperties, $mergedProperties, $defaultContextProperties);
+
+		return $mergedProperties;
 	}
 
 	/**
@@ -119,8 +137,22 @@ class ContextFactory implements ContextFactoryInterface {
 	protected function getIdentifierSource(array $contextProperties) {
 		ksort($contextProperties);
 		$identifierSource = $this->contextImplementation;
-		foreach ($contextProperties as $propertyValue) {
-			$stringValue = $propertyValue instanceof \DateTime ? $propertyValue->getTimestamp() : (string)$propertyValue;
+		foreach ($contextProperties as $propertyName => $propertyValue) {
+			if ($propertyName === 'dimensions') {
+				$stringParts = array();
+				foreach ($propertyValue as $dimensionName => $dimensionValues) {
+					$stringParts[] = $dimensionName . '=' . implode(',', $dimensionValues);
+				}
+				$stringValue = implode('&', $stringParts);
+			} elseif ($propertyName === 'targetDimensions') {
+				$stringParts = array();
+				foreach ($propertyValue as $dimensionName => $dimensionValue) {
+					$stringParts[] = $dimensionName . '=' . $dimensionValue;
+				}
+				$stringValue = implode('&', $stringParts);
+			} else {
+				$stringValue = $propertyValue instanceof \DateTime ? $propertyValue->getTimestamp() : (string)$propertyValue;
+			}
 			$identifierSource .= ':' . $stringValue;
 		}
 
@@ -130,38 +162,118 @@ class ContextFactory implements ContextFactoryInterface {
 	/**
 	 * @param array $contextProperties
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
+	 * @throws InvalidNodeContextException
 	 */
 	protected function validateContextProperties($contextProperties) {
 		if (isset($contextProperties['workspaceName'])) {
 			if (!is_string($contextProperties['workspaceName']) || $contextProperties['workspaceName'] === '') {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set a workspaceName in the context that was either no string or an empty string.', 1373144966);
+				throw new InvalidNodeContextException('You tried to set a workspaceName in the context that was either no string or an empty string.', 1373144966);
 			}
 		}
 		if (isset($contextProperties['invisibleContentShown'])) {
 			if (!is_bool($contextProperties['invisibleContentShown'])) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set invisibleContentShown in the context and did not provide a boolean value.', 1373145239);
+				throw new InvalidNodeContextException('You tried to set invisibleContentShown in the context and did not provide a boolean value.', 1373145239);
 			}
 		}
 		if (isset($contextProperties['removedContentShown'])) {
 			if (!is_bool($contextProperties['removedContentShown'])) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set removedContentShown in the context and did not provide a boolean value.', 1373145239);
+				throw new InvalidNodeContextException('You tried to set removedContentShown in the context and did not provide a boolean value.', 1373145239);
 			}
 		}
 		if (isset($contextProperties['inaccessibleContentShown'])) {
 			if (!is_bool($contextProperties['inaccessibleContentShown'])) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set inaccessibleContentShown in the context and did not provide a boolean value.', 1373145239);
+				throw new InvalidNodeContextException('You tried to set inaccessibleContentShown in the context and did not provide a boolean value.', 1373145239);
 			}
 		}
 		if (isset($contextProperties['currentDateTime'])) {
 			if (!$contextProperties['currentDateTime'] instanceof \DateTime) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set currentDateTime in the context and did not provide a DateTime object as value.', 1373145297);
+				throw new InvalidNodeContextException('You tried to set currentDateTime in the context and did not provide a DateTime object as value.', 1373145297);
 			}
 		}
-		if (isset($contextProperties['locale'])) {
-			if (!$contextProperties['locale'] instanceof \TYPO3\Flow\I18n\Locale) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set locale in the context and did not provide a \\TYPO3\\Flow\\I18n\\Locale object as value.', 1373145384);
+
+		$dimensions = $this->getAvailableDimensions();
+		/** @var ContentDimension $dimension */
+		foreach ($dimensions as $dimension) {
+			if (!isset($contextProperties['dimensions'][$dimension->getIdentifier()])
+				|| !is_array($contextProperties['dimensions'][$dimension->getIdentifier()])
+				|| $contextProperties['dimensions'][$dimension->getIdentifier()] === array()
+			) {
+				throw new InvalidNodeContextException(sprintf('You have to set a non-empty array with one or more values for content dimension "%s" in the context', $dimension->getIdentifier()), 1390300646);
 			}
+		}
+
+		foreach ($contextProperties['targetDimensions'] as $dimensionName => $dimensionValue) {
+			if (!isset($contextProperties['dimensions'][$dimensionName]) || !in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
+				throw new InvalidNodeContextException(sprintf('Target dimension value %s for dimension %s is not in the list of dimension values (%s)', $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
+			}
+		}
+	}
+
+	/**
+	 * Set the "locales" context property from a "locale" property if given
+	 *
+	 * @param array $contextProperties
+	 * @return array
+	 * @throws \InvalidArgumentException
+	 */
+	protected function setBackwardCompatibleLocales(array $contextProperties) {
+		if (isset($contextProperties['locale'])) {
+			if (!isset($contextProperties['dimensions']['locales'])) {
+				$contextProperties['dimensions']['locales'] = array($contextProperties['locale']);
+				unset($contextProperties['locale']);
+				return $contextProperties;
+			} else {
+				throw new \InvalidArgumentException('Context properties "locale" and dimension "locales" cannot be mixed.', 1389613179);
+			}
+		}
+		return $contextProperties;
+	}
+
+	/**
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentDimension>
+	 */
+	protected function getAvailableDimensions() {
+		return $this->contentDimensionRepository->findAll();
+	}
+
+	/**
+	 * Reset instances (internal)
+	 */
+	public function reset() {
+		$this->contextInstances = array();
+	}
+
+	/**
+	 * @param array $contextProperties
+	 * @param array $mergedProperties
+	 * @param array $defaultContextProperties
+	 * @return mixed
+	 */
+	protected function mergeTargetDimensionContextProperties(array $contextProperties, &$mergedProperties, $defaultContextProperties) {
+			// Use first value of each dimension as default target dimension value
+		$defaultContextProperties['targetDimensions'] = array_map(function ($values) {
+			return reset($values);
+		}, $mergedProperties['dimensions']);
+		if (!isset($contextProperties['targetDimensions'])) {
+			$contextProperties['targetDimensions'] = array();
+		}
+		$mergedProperties['targetDimensions'] = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties['targetDimensions'], $contextProperties['targetDimensions']);
+	}
+
+	/**
+	 * @param array $contextProperties
+	 * @param array $mergedProperties
+	 */
+	protected function mergeDimensionValues(array $contextProperties, array &$mergedProperties) {
+		$dimensions = $this->getAvailableDimensions();
+		foreach ($dimensions as $dimension) {
+			/** @var ContentDimension $dimension */
+			$identifier = $dimension->getIdentifier();
+			$values = array($dimension->getDefault());
+			if (isset($contextProperties['dimensions'][$identifier])) {
+				$values = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($values, $contextProperties['dimensions'][$identifier]);
+			}
+			$mergedProperties['dimensions'][$identifier] = $values;
 		}
 	}
 }

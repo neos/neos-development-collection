@@ -61,6 +61,12 @@ class Workspace {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
 	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -179,8 +185,11 @@ class Workspace {
 		if ($node->getPath() === '/') {
 			return;
 		}
-		$targetNode = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
-		if ($targetNode !== NULL) {
+
+		$targetNode = $this->findNodeDataInTargetWorkspace($node, $targetWorkspace);
+
+			// Only remove the node in the target workspace if it has the same dimensions, otherwise we want to keep it, since it's another node variant
+		if ($targetNode !== NULL && $targetNode->getDimensionValues() === $node->getDimensions()) {
 			if ($node->isRemoved() === TRUE) {
 				$this->nodeDataRepository->remove($targetNode);
 			} else {
@@ -228,6 +237,24 @@ class Workspace {
 			}
 			$baseWorkspace = $baseWorkspace->getBaseWorkspace();
 		}
+	}
+
+	/**
+	 * Returns the NodeData instance with the given identifier from the target workspace.
+	 * If no NodeData instance is found, NULL is returned.
+	 *
+	 * @param NodeInterface $node
+	 * @param Workspace $targetWorkspace
+	 * @return NodeData
+	 */
+	protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace) {
+		$properties = $node->getContext()->getProperties();
+		$properties['workspaceName'] = $targetWorkspace->getName();
+		$targetWorkspaceContext = $this->contextFactory->create($properties);
+
+		$targetNodeInstance = $targetWorkspaceContext->getNodeByIdentifier($node->getIdentifier());
+		$targetNode = $targetNodeInstance !== NULL ? $targetNodeInstance->getNodeData() : NULL;
+		return $targetNode;
 	}
 
 	/**

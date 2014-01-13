@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Context
@@ -54,11 +55,6 @@ class Context implements ContextInterface {
 	protected $currentDateTime;
 
 	/**
-	 * @var \TYPO3\Flow\I18n\Locale
-	 */
-	protected $locale;
-
-	/**
 	 * If TRUE, invisible content elements will be shown.
 	 *
 	 * @var boolean
@@ -80,26 +76,38 @@ class Context implements ContextInterface {
 	protected $inaccessibleContentShown = FALSE;
 
 	/**
+	 * @var array
+	 */
+	protected $dimensions = array();
+
+	/**
+	 * @var array
+	 */
+	protected $targetDimensions = array();
+
+	/**
 	 * Creates a new Context object.
 	 *
 	 * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
 	 *
 	 * @param string $workspaceName
 	 * @param \DateTime $currentDateTime
-	 * @param \TYPO3\Flow\I18n\Locale $locale
+	 * @param array $dimensions Array of dimensions with array of ordered values
+	 * @param array $targetDimensions
 	 * @param boolean $invisibleContentShown
 	 * @param boolean $removedContentShown
 	 * @param boolean $inaccessibleContentShown
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @see ContextFactoryInterface
 	 */
-	public function __construct($workspaceName, \DateTime $currentDateTime, \TYPO3\Flow\I18n\Locale $locale, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown) {
+	public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown) {
 		$this->workspaceName = $workspaceName;
 		$this->currentDateTime = $currentDateTime;
-		$this->locale = $locale;
+		$this->dimensions = $dimensions;
 		$this->invisibleContentShown = $invisibleContentShown;
 		$this->removedContentShown = $removedContentShown;
 		$this->inaccessibleContentShown = $inaccessibleContentShown;
+		$this->targetDimensions = $targetDimensions;
 	}
 
 	/**
@@ -158,16 +166,6 @@ class Context implements ContextInterface {
 	}
 
 	/**
-	 * Returns the locale of this context.
-	 *
-	 * @return \TYPO3\Flow\I18n\Locale
-	 * @api
-	 */
-	public function getLocale() {
-		return $this->locale;
-	}
-
-	/**
 	 * Convenience method returns the root node for
 	 * this context workspace.
 	 *
@@ -196,6 +194,22 @@ class Context implements ContextInterface {
 	}
 
 	/**
+	 * Get a node by identifier and this context
+	 *
+	 * @param string $identifier The identifier of a node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node with the given identifier or NULL if no such node exists
+	 */
+	public function getNodeByIdentifier($identifier) {
+		$nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(FALSE), $this->dimensions);
+		if ($nodeData !== NULL) {
+			$node = $this->nodeFactory->createFromNodeData($nodeData, $this);
+		} else {
+			$node = NULL;
+		}
+		return $node;
+	}
+
+	/**
 	 * Finds all nodes lying on the path specified by (and including) the given
 	 * starting point and end point.
 	 *
@@ -210,6 +224,28 @@ class Context implements ContextInterface {
 
 		$nodes = $this->nodeDataRepository->findOnPathInContext($startingPointPath, $endPointPath, $this);
 		return $nodes;
+	}
+
+	/**
+	 * Adopts a node from a (possibly) different context to this context
+	 *
+	 * Check if a node variant already exists for this context and return it if found. Otherwise a new node variant for
+	 * this context is created.
+	 *
+	 * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
+	 * @return NodeInterface A new or existing node that matches this context
+	 */
+	public function adoptNode(NodeInterface $node) {
+		if ($node->getContext() === $this) {
+			return $node;
+		}
+
+		$existingNode = $this->getNodeByIdentifier($node->getIdentifier());
+		if ($existingNode !== NULL) {
+			return $existingNode;
+		}
+
+		return $node->createVariantForContext($this);
 	}
 
 	/**
@@ -247,6 +283,24 @@ class Context implements ContextInterface {
 	}
 
 	/**
+	 * An indexed array of dimensions with ordered list of values for matching nodes by content dimensions
+	 *
+	 * @return array
+	 */
+	public function getDimensions() {
+		return $this->dimensions;
+	}
+
+	/**
+	 * An indexed array of dimensions with a set of values that should be applied when updating or creating
+	 *
+	 * @return array
+	 */
+	public function getTargetDimensions() {
+		return $this->targetDimensions;
+	}
+
+	/**
 	 * Returns the properties of this context.
 	 *
 	 * @return array
@@ -255,7 +309,8 @@ class Context implements ContextInterface {
 		return array(
 			'workspaceName' => $this->workspaceName,
 			'currentDateTime' => $this->currentDateTime,
-			'locale' => $this->locale,
+			'dimensions' => $this->dimensions,
+			'targetDimensions' => $this->targetDimensions,
 			'invisibleContentShown' => $this->invisibleContentShown,
 			'removedContentShown' => $this->removedContentShown,
 			'inaccessibleContentShown' => $this->inaccessibleContentShown

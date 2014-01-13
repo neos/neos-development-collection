@@ -187,13 +187,15 @@ abstract class AbstractNodeData {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context An optional Context if $returnNodesAsIdentifiers === TRUE
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
 	 */
-	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
+	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context = NULL) {
 		if (!is_object($this->contentObjectProxy)) {
 			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
 			if (!empty($value)) {
+				$dimensions = $context !== NULL ? $context->getDimensions() : array();
 				switch($this->getNodeType()->getPropertyType($propertyName)) {
 					case 'references' :
 						$nodeDatas = array();
@@ -208,7 +210,9 @@ abstract class AbstractNodeData {
 								$valueNeedsToBeFixed = TRUE;
 							}
 							if ($returnNodesAsIdentifiers === FALSE) {
-								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace());
+								// TODO Check how to use $context to get the node by identifier
+								// TODO Check if the workspace in the context should be used instead of the node data workspace
+								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace(), $dimensions);
 								if ($nodeData instanceof NodeData) {
 									$nodeDatas[] = $nodeData;
 								}
@@ -238,7 +242,9 @@ abstract class AbstractNodeData {
 							$this->update();
 						}
 						if ($returnNodesAsIdentifiers === FALSE) {
-							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace());
+							// TODO Check how to use $context to get the node by identifier
+							// TODO Check if the workspace in the context should be used instead of the node data workspace
+							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace(), $dimensions);
 							if ($nodeData instanceof NodeData) {
 								$value = $nodeData;
 							} else {
@@ -283,16 +289,17 @@ abstract class AbstractNodeData {
 	 * there.
 	 *
 	 * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context An optional Context if $returnNodesAsIdentifiers === TRUE
 	 * @return array Property values, indexed by their name
 	 */
-	public function getProperties($returnNodesAsIdentifiers = FALSE) {
+	public function getProperties($returnNodesAsIdentifiers = FALSE, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context = NULL) {
 		if (is_object($this->contentObjectProxy)) {
 			return ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		}
 
 		$properties = array();
 		foreach (array_keys($this->properties) as $propertyName) {
-			$properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers);
+			$properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers, $context);
 		}
 		return $properties;
 	}

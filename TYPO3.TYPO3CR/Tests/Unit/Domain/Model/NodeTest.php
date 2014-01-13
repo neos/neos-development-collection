@@ -41,4 +41,27 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$parentNode->createNodeFromTemplate($nodeTemplate, 'bar');
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function getPrimaryChildNodeReturnsTheFirstChildNode() {
+		$mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+		$mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
+		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+
+
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node($mockNodeData, $mockContext);
+
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
+		$this->inject($node, 'nodeDataRepository', $mockNodeDataRepository);
+
+		$expectedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$mockNodeDataRepository->expects($this->once())->method('findFirstByParentAndNodeTypeInContext')->with('/foo/bar', NULL, $mockContext)->will($this->returnValue($expectedNode));
+
+		$primaryChildNode = $node->getPrimaryChildNode();
+
+		$this->assertSame($expectedNode, $primaryChildNode);
+	}
+
 }

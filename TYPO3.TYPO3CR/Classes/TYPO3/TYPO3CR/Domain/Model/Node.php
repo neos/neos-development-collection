@@ -43,7 +43,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 *
 	 * @var boolean
 	 */
-	protected $nodeDataIsMatchingContext;
+	protected $nodeDataIsMatchingContext = NULL;
 
 	/**
 	 * @Flow\Inject
@@ -66,8 +66,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function __construct(NodeData $nodeData, ContextInterface $context) {
 		$this->nodeData = $nodeData;
 		$this->context = $context;
-
-		$this->nodeDataIsMatchingContext = $this->isNodeDataMatchingContext();
 	}
 
 	/**
@@ -83,6 +81,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$workspaceName = $this->context->getWorkspace()->getName();
 		if ($workspaceName !== 'live') {
 			$contextPath .= '@' . $workspaceName;
+		}
+		if ($this->context->getDimensions() !== array()) {
+			$contextPath .= ';';
+			foreach ($this->context->getDimensions() as $dimensionName => $dimensionValues) {
+				$contextPath .= $dimensionName . '=' . implode(',', $dimensionValues) . '&';
+			}
+			$contextPath = substr($contextPath, 0, -1);
 		}
 		return $contextPath;
 	}
@@ -134,7 +139,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 				$childNode->setPath($path . '/' . $childNode->getNodeData()->getName(), TRUE);
 			}
 		}
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setPath($path, FALSE);
@@ -199,7 +204,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return void
 	 */
 	public function setWorkspace(Workspace $workspace) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setWorkspace($workspace);
@@ -235,7 +240,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return void
 	 */
 	public function setIndex($index) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setIndex($index);
@@ -297,7 +302,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
 		}
 
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
@@ -332,7 +337,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
 		}
 
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
@@ -367,7 +372,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
 		}
 
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$parentPath = $referenceNode->getPath();
@@ -391,7 +396,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
 		}
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 
@@ -415,7 +420,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503466);
 		}
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 
@@ -439,7 +444,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if ($referenceNode->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getPath() . '/' . $nodeName . '" already exists.', 1292503467);
 		}
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 
@@ -461,7 +466,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setProperty($propertyName, $value) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setProperty($propertyName, $value);
@@ -494,7 +499,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
-		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers);
+		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers, $this->context);
 		if (!empty($value) && $returnNodesAsIdentifiers === FALSE) {
 			switch($this->getNodeType()->getPropertyType($propertyName)) {
 				case 'references' :
@@ -527,7 +532,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
 	 */
 	public function removeProperty($propertyName) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->removeProperty($propertyName);
@@ -570,7 +575,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setContentObject($contentObject) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setContentObject($contentObject);
@@ -594,7 +599,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function unsetContentObject() {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->unsetContentObject();
@@ -609,7 +614,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setNodeType(NodeType $nodeType) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setNodeType($nodeType);
@@ -633,18 +638,19 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @api
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
-		$newNode = $this->createSingleNode($name, $nodeType, $identifier);
+	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
+		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $dimensions);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
 				$newNode->setProperty($propertyName, $propertyValue);
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-				$newNode->createNode($childNodeName, $childNodeType);
+				$newNode->createNode($childNodeName, $childNodeType, NULL, $dimensions);
 			}
 		}
 		$this->emitNodeAdded($newNode);
@@ -661,10 +667,16 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
-	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL) {
-		$nodeData = $this->nodeData->createSingleNode($name, $nodeType, $identifier, $this->context->getWorkspace());
+	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
+		if ($dimensions === NULL || $dimensions === array()) {
+			$targetDimensions = $this->context->getTargetDimensions();
+			$dimensions = array_map(function ($value) { return array ($value); }, $targetDimensions);
+		}
+
+		$nodeData = $this->nodeData->createSingleNode($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 
 		return $node;
@@ -679,7 +691,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
-		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace());
+		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace(), $this->context->getDimensions());
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 		$this->emitNodeAdded($node);
 
@@ -733,10 +745,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getNumberOfChildNodes($nodeTypeFilter = NULL) {
-		if ($this->nodeDataIsMatchingContext) {
-			return $this->nodeData->getNumberOfChildNodes($nodeTypeFilter);
-		}
-		return $this->nodeDataRepository->countByParentAndNodeType($this->getPath(), $nodeTypeFilter, $this->context->getWorkspace());
+		return $this->nodeData->getNumberOfChildNodes($nodeTypeFilter, $this->context->getWorkspace(), $this->context->getDimensions());
 	}
 
 	/**
@@ -747,7 +756,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function hasChildNodes($nodeTypeFilter = NULL) {
-		return ($this->getNumberOfChildNodes($nodeTypeFilter) > 0);
+		return ($this->getNumberOfChildNodes($nodeTypeFilter, $this->context->getWorkspace(), $this->context->getDimensions()) > 0);
 	}
 
 	/**
@@ -757,7 +766,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function remove() {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->remove();
@@ -795,7 +804,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setHidden($hidden) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHidden($hidden);
@@ -820,7 +829,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenBeforeDateTime($dateTime);
@@ -845,7 +854,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenAfterDateTime($dateTime);
@@ -870,7 +879,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setHiddenInIndex($hidden) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenInIndex($hidden);
@@ -895,7 +904,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function setAccessRoles(array $accessRoles) {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setAccessRoles($accessRoles);
@@ -973,10 +982,12 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return void
 	 */
 	protected function materializeNodeData() {
-		$newNode = $this->createNodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $this->nodeData->getIdentifier());
+		$dimensions = array_map(function($value) { return array($value); }, $this->context->getTargetDimensions());
+		$newNode = $this->createNodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $dimensions, $this->nodeData->getIdentifier());
 		$this->nodeDataRepository->add($newNode);
 
 		$newNode->similarize($this->nodeData);
+
 		$this->nodeData = $newNode;
 		$this->nodeDataIsMatchingContext = TRUE;
 	}
@@ -1009,7 +1020,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	protected function update() {
-		if (!$this->nodeDataIsMatchingContext) {
+		if (!$this->isNodeDataMatchingContext()) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('You are trying to update a non materialized node, which is not allowed. Materialize the node first by calling materializeNodeData on the Node', 1369591753);
 		}
 		$this->nodeDataRepository->update($this->nodeData);
@@ -1022,7 +1033,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return boolean
 	 */
 	protected function isNodeDataMatchingContext() {
-		return ($this->nodeData->getWorkspace() === $this->context->getWorkspace());
+		if ($this->nodeDataIsMatchingContext === NULL) {
+			$workspacesMatch = $this->nodeData->getWorkspace() !== NULL && $this->context->getWorkspace() !== NULL && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
+			$this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
+		}
+		return $this->nodeDataIsMatchingContext;
 	}
 
 	/**
@@ -1050,6 +1065,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * Return the assigned content dimensions of the node.
+	 *
+	 * @return array
+	 */
+	public function getDimensions() {
+		return $this->nodeData->getDimensionValues();
+	}
+
+	/**
 	 * For debugging purposes, the node can be converted to a string.
 	 *
 	 * @return string
@@ -1064,11 +1088,56 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 *
 	 * @param string $path
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param array $dimensions
 	 * @param string $identifier
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	protected function createNodeData($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
-		return new NodeData($path, $workspace, $identifier);
+	protected function createNodeData($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, array $dimensions, $identifier = NULL) {
+		return new NodeData($path, $workspace, $identifier, $dimensions);
+	}
+
+	/**
+	 * Given a context a new node is returned that is like this node, but
+	 * lives in the new context.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @return NodeInterface
+	 */
+	public function createVariantForContext($context) {
+		$nodeData = clone $this->nodeData;
+		$nodeData->adjustToContext($context);
+
+		$this->nodeDataRepository->add($nodeData);
+		$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+
+		$this->emitNodeAdded($node);
+
+		return $node;
+	}
+
+	/**
+	 * The dimension value of this node has to match the current target dimension value (must be higher in priority or equal)
+	 *
+	 * @return boolean
+	 */
+	protected function dimensionsAreMatchingTargetDimensionValues() {
+		$dimensions = $this->getDimensions();
+		$contextDimensions = $this->context->getDimensions();
+		foreach ($this->context->getTargetDimensions() as $dimensionName => $targetDimensionValue) {
+			if (!isset($dimensions[$dimensionName])) {
+				return FALSE;
+			} elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], TRUE)) {
+				$contextDimensionValues = $contextDimensions[$dimensionName];
+				$targetPositionInContext = array_search($targetDimensionValue, $contextDimensionValues, TRUE);
+				$nodePositionInContext = min(array_map(function ($value) use ($contextDimensionValues) { return array_search($value, $contextDimensionValues, TRUE); }, $dimensions[$dimensionName]));
+
+				$val = $targetPositionInContext !== FALSE && $nodePositionInContext !== FALSE && $targetPositionInContext >= $nodePositionInContext;
+				if ($val === FALSE) {
+					return FALSE;
+				}
+			}
+		}
+		return TRUE;
 	}
 
 	/**
