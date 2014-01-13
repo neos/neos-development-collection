@@ -11,7 +11,8 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 	attributes.class = 'neos-contentcollection'
 
 	# You may override this to get your content collection from a different place than the current node.
-	@override.contentCollectionNode = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? node : (this.nodePath ? q(node).find(this.nodePath).get(0) : null)}
+	# The Eel helper is used to provide a better error message if no content collection could be found.
+	@override.contentCollectionNode = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
 	@process.contentElementWrapping {
 		node = ${contentCollectionNode}

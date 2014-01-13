@@ -302,3 +302,5 @@ TYPO3:
   TypoScript:
     rendering:
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
+    defaultContext:
+      'Neos.Node': 'TYPO3\Neos\TypoScript\Helper\NodeHelper'
