@@ -81,8 +81,10 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		foreach ($this->accountRepository->findAll() as $account) {
 			$accounts[$this->persistenceManager->getIdentifierByObject($account)] = $account;
 		}
-		$this->view->assign('currentAccount', $this->securityContext->getAccount());
-		$this->view->assign('accounts', $accounts);
+		$this->view->assignMultiple(array(
+			'currentAccount' => $this->securityContext->getAccount(),
+			'accounts' => $accounts
+		));
 	}
 
 	/**
@@ -108,7 +110,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 * @param string $lastName
 	 * @Flow\Validate(argumentName="lastName", type="NotEmpty")
 	 * @Flow\Validate(argumentName="lastName", type="StringLength", options={ "minimum"=1, "maximum"=255 })
-	 * @param string $roleIdentifier The role indentifier of the role this user should have
+	 * @param string $roleIdentifier The role identifier of the role this user should have
 	 * @return void
 	 * @todo Security
 	 */
