@@ -167,7 +167,7 @@ Example::
 		someDataAvailableInsideFluid = 'my data'
 	}
 
-
+.. _TYPO3_TypoScript__Value:
 
 TYPO3.TypoScript:Value
 ----------------------
@@ -182,8 +182,66 @@ Example::
 		myValue.value = 'Hello World'
 	}
 
-.. note:: This TypoScript object will not be available after the TypoScript refactoring of #48359
+.. note:: Most of the time this can be simplified by directly assigning the value instead of using the ``Value`` object.
 
+.. _TYPO3_TypoScript__Tag:
+
+TYPO3.TypoScript:Tag
+--------------------
+
+A TypoScript object to render an HTML tag with attributes and optional content.
+
+:tagName: (String) The tag name of the HTML element, defaults to ``div``
+:omitClosingTag: (boolean) Whether to render the element ``content`` and the closing tag, defaults to ``FALSE``
+:selfClosingTag: (boolean) Whether the tag is a self-closing tag with no closing tag. Will be resolved from ``tagName`` by default, so default HTML tags are treated correctly.
+:content: (String) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
+:attributes: (:ref:`TYPO3__TypoScript__Attributes`) Tag attributes
+
+Example:
+^^^^^^^^
+
+::
+
+	htmlTag = TYPO3.TypoScript:Tag {
+		tagName = 'html'
+		omitClosingTag = TRUE
+
+		attributes {
+			version = 'HTML+RDFa 1.1'
+			xmlns = 'http://www.w3.org/1999/xhtml'
+		}
+	}
+
+Evaluates to::
+
+	<html version="HTML+RDFa 1.1" xmlns="http://www.w3.org/1999/xhtml">
+
+.. TYPO3__TypoScript__Attributes:
+
+TYPO3.TypoScript:Attributes
+---------------------------
+
+A TypoScript object to render HTML tag attributes. This object is used by the :ref:`TYPO3_TypoScript__Tag` object to
+render the attributes of a tag. But it's also useful standalone to render extensible attributes in a Fluid template.
+
+:*: (String) A single attribute, array values are joined with whitespace
+
+Example:
+^^^^^^^^
+
+::
+
+	attributes = TYPO3.TypoScript:Attributes {
+		foo = 'bar'
+		class = TYPO3.TypoScript:RawArray {
+			class1 = 'class1'
+			class2 = 'class2'
+		}
+	}
+
+Evaluates to::
+
+	foo="bar" class="class1 class2"
 
 TYPO3.Neos TypoScript Objects
 =============================
@@ -219,45 +277,78 @@ Example::
 Page
 ----
 
-Subclass of :ref:`TYPO3_Neos__Template`. Main entry point into rendering a page;
+Subclass of :ref:`TYPO3_TypoScript__Array`. Main entry point into rendering a page;
 responsible for rendering the ``<html>`` tag and everything inside.
 
-.. note:: The following properties are public API. There are more properties because
-	``Page`` inherits from :ref:`TYPO3_Neos__Template`, which are, however, not public.
-
-:headerData: (:ref:`TYPO3_TypoScript__Array`) HTML markup to be added to the ``<head>`` of the website
-:htmlAttributes: (String) attributes to be added to the outermost ``<html>`` tag
+:doctype: (String) Defaults to ``<!DOCTYPE html>``
+:htmlTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<html>`` tag
+:htmlTag.attributes.*: (array of String) attributes to be added to the outermost ``<html>`` tag
+:headTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<head>`` tag
+:head: (:ref:`TYPO3_TypoScript__Array`) HTML markup to be added to the ``<head>`` of the website
+:head.titleTag: (:ref:`TYPO3_TypoScript__Tag`) The ``<title>`` tag of the website
+:head.javascripts: (:ref:`TYPO3_TypoScript__Array`) Script includes in the head should go here
+:head.stylesheets: (:ref:`TYPO3_TypoScript__Array`) Link tags for stylesheets in the head should go here
 :body.templatePath: (String) path to a fluid template to be used in the page body
-:body.bodyAttributes.*: (array of String) attributes to be added to be ``<body>`` tag of the website.
-:body.*: ``body`` is a :ref:`TYPO3_Neos__Template`, so you can set all properties on it as well (like ``sectionName``)
+:bodyTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<body>`` tag
+:bodyTag.attributes.*: (array of String) attributes to be added to be ``<body>`` tag of the website.
+:body: (:ref:`TYPO3_TypoScript__Template`) HTML markup of the ``<body>`` of the website
+:body.javascripts: (:ref:`TYPO3_TypoScript__Array`) Script includes before the closing body tag should go here
+:body.*: ``body`` defaults to a :ref:`TYPO3_TypoScript__Template`, so you can set all properties on it as well (like ``sectionName``)
 
-Small Example::
+Examples
+^^^^^^^^^
+
+Rendering a simple page:
+""""""""""""""""""""""""
+
+::
 
 	page = Page
 	page.body.templatePath = 'resource://My.Package/Private/MyTemplate.html'
 	// the following line is optional, but recommended for base CSS inclusions etc
 	page.body.sectionName = 'main'
 
-Example with content rendering::
+Rendering content in the body:
+""""""""""""""""""""""""""""""
 
-	page.body.content.main = PrimaryContentCollection {
-		nodePath = 'main'
+TypoScript::
+
+	page.body {
+		sectionName = 'body'
+		content.main = PrimaryContent {
+			nodePath = 'main'
+		}
 	}
 
-Example for HeaderData::
+Fluid::
 
-	page.headerData.stylesheets = Template {
+	<html>
+		<body>
+			<f:section name="body">
+				<div class="container">
+					{content.main -> f:format.raw()}
+				</div>
+			</f:section>
+		</body>
+	</html
+
+Including stylesheets from a template section in the head:
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+::
+
+	page.head.stylesheets.mySite = TYPO3.TypoScript:Template {
 		templatePath = 'resource://My.Package/Private/MyTemplate.html'
 		sectionName = 'stylesheets'
 	}
 
-Example for htmlAttributes::
 
-	page.htmlAttributes = 'data-myProperty="42"'
+Adding body attributes with ``bodyTag.attributes``:
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Example for bodyAttributes::
+::
 
-	page.bodyAttributes.class = 'body-css-class1 body-css-class2'
+	page.bodyTag.attributes.class = 'body-css-class1 body-css-class2'
 
 .. TODO: continue here
 
