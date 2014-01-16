@@ -6,7 +6,7 @@ The implementation of a menu is done in TypoScript and HTML, this gives an
 flexibility in what can be rendered.
 
 First of all you have to add a new element (with a name) in TypoScript that is
-of type Menu. Then inside the TypoScript object you can to set what kind of
+of type Menu. Then inside the TypoScript object you can set what kind of
 rendering (templatePath) to use, an entryLevel and a maximumLevels properties.
 
 TypoScript code::
