@@ -87,7 +87,7 @@ class Site {
 	/**
 	 * @return string
 	 */
-	function __toString() {
+	public function __toString() {
 		return $this->getNodeName();
 	}
 

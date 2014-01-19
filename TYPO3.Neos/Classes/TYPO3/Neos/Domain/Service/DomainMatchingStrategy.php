@@ -47,7 +47,7 @@ class DomainMatchingStrategy {
 				$hostPatternPartsReverse = array_reverse(explode('.', $hostPattern));
 				foreach ($hostPatternPartsReverse as $index => $hostPatternPart) {
 					if ($hostPatternPart === '*' || (isset($hostPartsReverse[$index]) && $hostPatternPart === $hostPartsReverse[$index])) {
-						$matchQuality ++;
+						$matchQuality++;
 					} else {
 						$matchQuality = self::NOMATCH;
 						break;
@@ -64,4 +64,5 @@ class DomainMatchingStrategy {
 		array_multisort($matchQualities, SORT_DESC, $matchingDomains);
 		return $matchingDomains;
 	}
+
 }

@@ -61,7 +61,7 @@ class PrevOperation extends AbstractOperation {
 			$prevNode = $this->getPrevForNode($contextNode);
 			if ($prevNode !== NULL && !isset($outputNodePaths[$prevNode->getPath()])) {
 				$outputNodePaths[$prevNode->getPath()] = TRUE;
-				$output[]= $prevNode;
+				$output[] = $prevNode;
 			}
 		}
 		$flowQuery->setContext($output);
