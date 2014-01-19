@@ -5127,6 +5127,7 @@
 }
 .neos #neos-inspector .neos-inspector-datetime-editor input {
   cursor: pointer;
+  opacity: 1;
 }
 .neos #neos-inspector .neos-datetimepicker {
   direction: ltr;
