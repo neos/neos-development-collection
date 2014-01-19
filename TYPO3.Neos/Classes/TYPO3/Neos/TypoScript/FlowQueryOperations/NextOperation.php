@@ -61,7 +61,7 @@ class NextOperation extends AbstractOperation {
 			$nextNode = $this->getNextForNode($contextNode);
 			if ($nextNode !== NULL && !isset($outputNodePaths[$nextNode->getPath()])) {
 				$outputNodePaths[$nextNode->getPath()] = TRUE;
-				$output[]= $nextNode;
+				$output[] = $nextNode;
 			}
 		}
 		$flowQuery->setContext($output);
