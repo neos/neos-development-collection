@@ -123,6 +123,7 @@ define(
 					if ((this.get('active') || !this.get('inactive')) && this.get('expand') === false) {
 						this.get('parentView').create();
 					}
+					$(event.target).filter('button').click();
 				},
 
 				mouseLeave: function() {
@@ -194,6 +195,7 @@ define(
 					if ((this.get('active') || !this.get('inactive')) && this.get('expand') === false) {
 						this.get('parentView').paste();
 					}
+					$(event.target).filter('button').click();
 				},
 
 				mouseLeave: function() {
