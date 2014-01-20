@@ -89,7 +89,7 @@ Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/Box.html) ::
 	<f:if condition="{collapsed}">
 		<button>open the collapsed box via js</button>
 	</f:if>
-	<div class="container box {f:if(condition: collapsed, then: 'collapsed', else: '')}>
+	<div class="container box {f:if(condition: collapsed, then: 'collapsed', else: '')}">
 		<div class="column">
 			<ts:render path="columnContent" />
 		</div>
