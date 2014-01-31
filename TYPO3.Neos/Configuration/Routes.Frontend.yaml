@@ -12,10 +12,6 @@
   appendExceedingArguments: true
 
 -
-  name: 'content with URI suffix and type'
-  uriPattern: '{node}<defaultUriSuffix>/{type}'
-
--
   name: 'content with URI suffix format'
   uriPattern: '{node}<defaultUriSuffix>'
   appendExceedingArguments: true
