@@ -2757,6 +2757,7 @@
   text-align: left;
   vertical-align: top;
   border-top: 1px solid #dddddd;
+  color: white;
 }
 .neos .neos-table th {
   font-weight: bold;
@@ -2795,6 +2796,7 @@
 .neos .neos-table-condensed th,
 .neos .neos-table-condensed td {
   padding: 4px 5px;
+  color: white;
 }
 .neos .neos-table-bordered {
   border: 1px solid #dddddd;
@@ -5179,7 +5181,6 @@
 }
 .neos #neos-inspector .neos-datetimepicker table tr td.neos-minute:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-hour:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-day:hover {
   background-color: #00b5ff;
-  color: #fff;
   cursor: pointer;
 }
 .neos #neos-inspector .neos-datetimepicker table tr td.neos-old, .neos #neos-inspector .neos-datetimepicker table tr td.neos-new {
@@ -5195,7 +5196,6 @@
 }
 .neos #neos-inspector .neos-datetimepicker table tr td.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:hover {
   background-color: #00b5ff;
-  color: white;
 }
 .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:hover:active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:hover.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:hover.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:hover.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:hover.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td.neos-active[disabled], .neos #neos-inspector .neos-datetimepicker table tr td.neos-active:hover[disabled], .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled[disabled], .neos #neos-inspector .neos-datetimepicker table tr td.neos-active.neos-disabled:hover[disabled] {
   background-color: #00b5ff;

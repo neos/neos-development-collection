@@ -27,6 +27,7 @@ table {
 		text-align: left;
 		vertical-align: top;
 		border-top: 1px solid $tableBorder;
+		color: $white;
 	}
 	th {
 		font-weight: bold;
@@ -80,10 +81,11 @@ table {
 // -------------------------------
 
 .neos-table-condensed {
-  th,
-  td {
-    padding: 4px 5px;
-  }
+	th,
+	td {
+		padding: 4px 5px;
+		color: $white;
+	}
 }
 
 
