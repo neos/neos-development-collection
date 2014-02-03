@@ -141,7 +141,6 @@
 				&.neos-hour:hover,
 				&.neos-day:hover {
 					background-color: $blue;
-					color: #fff;
 					cursor: pointer;
 				}
 
@@ -167,7 +166,6 @@
 				&.neos-active.neos-disabled,
 				&.neos-active.neos-disabled:hover {
 					background-color: $blue;
-					color: $white;
 				}
 
 				&.neos-active:hover,
