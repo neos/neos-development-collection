@@ -398,14 +398,20 @@ function(
 					}
 				}).then(
 					function(htmlString) {
-						var $htmlDom = $($.parseHTML(htmlString));
-
-						var $pageMetadata = $htmlDom.filter('#neos-page-metainformation');
+						var $htmlDom = $($.parseHTML(htmlString)),
+							$currentPageMetaData = $('#neos-page-metainformation'),
+							$pageMetadata = $htmlDom.filter('#neos-page-metainformation');
 						if ($pageMetadata.length === 0) {
 							Notification.error('Could not read page metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
 							that.set('_isLoadingPage', false);
 							LoadingIndicator.done();
 							return;
+						}
+
+						var currentContentDimensions = $currentPageMetaData.attr('about').substr($currentPageMetaData.attr('about').lastIndexOf(';') + 1),
+							newContentDimensions = $pageMetadata.attr('about').substr($pageMetadata.attr('about').lastIndexOf(';') + 1);
+						if (currentContentDimensions !== newContentDimensions) {
+							EventDispatcher.trigger('contentDimensionsChanged');
 						}
 
 						pushUriToHistory();

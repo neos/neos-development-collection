@@ -131,6 +131,8 @@ define(
 					that.set('nodeType', $neosNodeTypeSelect.val());
 					that.filterTree();
 				});
+
+				EventDispatcher.on('contentDimensionsChanged', this, 'refresh');
 			},
 
 			onContextStructureModeChanged: function() {
