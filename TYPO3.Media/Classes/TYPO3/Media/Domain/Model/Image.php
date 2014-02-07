@@ -239,7 +239,7 @@ class Image extends Asset implements ImageInterface {
 	public function createImageVariant(array $processingInstructions, $alias = NULL) {
 		$imageVariant = new ImageVariant($this, $processingInstructions, $alias);
 		// FIXME we currently need a unique hash because $this->imageVariants has to be an array in order to be serialized by Doctrine
-		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($alias ?: serialize($processingInstructions)));
+		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($alias ?: json_encode($processingInstructions)));
 		$this->imageVariants[$uniqueHash] = $imageVariant;
 		return $imageVariant;
 	}
@@ -254,7 +254,7 @@ class Image extends Asset implements ImageInterface {
 	 */
 	public function removeImageVariant(ImageVariant $imageVariant) {
 		// FIXME we currently need a unique hash because $this->imageVariants has to be an array in order to be serialized by Doctrine
-		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($imageVariant->getAlias() ?: serialize($imageVariant->getProcessingInstructions())));
+		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($imageVariant->getAlias() ?: json_encode($imageVariant->getProcessingInstructions())));
 		if (isset($this->imageVariants[$uniqueHash])) {
 			unset($this->imageVariants[$uniqueHash]);
 		}

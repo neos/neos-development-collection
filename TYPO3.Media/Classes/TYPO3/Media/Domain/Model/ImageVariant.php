@@ -74,6 +74,11 @@ class ImageVariant implements ImageInterface {
 	protected $alias;
 
 	/**
+	 * @var boolean
+	 */
+	protected $initialized = FALSE;
+
+	/**
 	 * @param \TYPO3\Media\Domain\Model\ImageInterface $originalImage
 	 * @param array $processingInstructions
 	 * @param string $alias An alias for this variant which makes its identification easier for reuse.
@@ -91,12 +96,16 @@ class ImageVariant implements ImageInterface {
 	/**
 	 * @return void
 	 */
-	public function initializeObject() {
+	public function initialize() {
+		if ($this->initialized === TRUE) {
+			return;
+		}
 		$this->resource = $this->imageService->transformImage($this->originalImage, $this->processingInstructions);
 		$imageSize = getimagesize($this->resource->getUri());
 		$this->width = (integer)$imageSize[0];
 		$this->height = (integer)$imageSize[1];
 		$this->type = (integer)$imageSize[2];
+		$this->initialized = TRUE;
 	}
 
 	/**
@@ -112,6 +121,7 @@ class ImageVariant implements ImageInterface {
 	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	public function getResource() {
+		$this->initialize();
 		return $this->resource;
 	}
 
@@ -121,6 +131,7 @@ class ImageVariant implements ImageInterface {
 	 * @return integer
 	 */
 	public function getWidth() {
+		$this->initialize();
 		return $this->width;
 	}
 
@@ -130,6 +141,7 @@ class ImageVariant implements ImageInterface {
 	 * @return integer
 	 */
 	public function getHeight() {
+		$this->initialize();
 		return $this->height;
 	}
 
@@ -201,6 +213,7 @@ class ImageVariant implements ImageInterface {
 	 * @return integer
 	 */
 	public function getType() {
+		$this->initialize();
 		return $this->originalImage->getType();
 	}
 
@@ -275,7 +288,6 @@ class ImageVariant implements ImageInterface {
 			// hack for working around a bug that is caused by serialization under some (unknown) circumstances
 			$this->originalImage = $this->persistenceManager->getObjectByIdentifier(\TYPO3\Flow\Reflection\ObjectAccess::getProperty($this->originalImage, 'Persistence_Object_Identifier', TRUE), 'TYPO3\Media\Domain\Model\Image');
 		}
-		$this->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED);
 	}
 
 	/**

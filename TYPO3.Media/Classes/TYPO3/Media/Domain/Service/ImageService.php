@@ -51,7 +51,7 @@ class ImageService {
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 */
 	public function transformImage(\TYPO3\Media\Domain\Model\ImageInterface $image, array $processingInstructions) {
-		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . serialize($processingInstructions));
+		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . json_encode($processingInstructions));
 		if (!file_exists('resource://' . $uniqueHash)) {
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
 			$imagineImage = $imagine->open('resource://' . $image->getResource()->getResourcePointer()->getHash());
