@@ -1,0 +1,152 @@
+prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
+
+contentCache.cachedSegment = TYPO3.TypoScript:Array {
+	5 = 'Cached segment|'
+
+	10 = ${object.value}
+
+	@cache {
+		mode = 'cached'
+	}
+}
+
+contentCache.nestedCacheSegments = TYPO3.TypoScript:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'site=' + site}
+
+	15 = '|'
+
+	20 = TYPO3.TypoScript:Array {
+
+		5 = 'Inner segment|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End inner'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+		}
+	}
+
+	25 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			site = ${site}
+		}
+	}
+}
+
+contentCache.uncachedSegmentOnTopLevel = TYPO3.TypoScript:Array {
+	5 = 'Uncached segment|'
+
+	10 = ${'counter=' + object.counter}
+
+	15 = '|End uncached'
+
+	@cache {
+		mode = 'uncached'
+	}
+}
+
+contentCache.uncachedSegmentInCachedSegment = TYPO3.TypoScript:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|'
+
+	20 =  TYPO3.TypoScript:Array {
+		5 = 'Uncached segment|'
+
+		10 = ${'counter=' + object.counter}
+
+		15 = '|End uncached'
+
+		@cache {
+			mode = 'uncached'
+		}
+	}
+
+	25 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+}
+
+contentCache.cacheSegmentsWithTags = TYPO3.TypoScript:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'counter=' + object.counter}
+
+	15 = '|'
+
+	20 = TYPO3.TypoScript:Array {
+
+		5 = 'Inner segment 1|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End inner'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+
+			entryTags {
+				1 = ${'Object_' + object.id}
+			}
+		}
+	}
+
+	25 = TYPO3.TypoScript:Array {
+
+		5 = 'Inner segment 2|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End inner'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+
+			entryTags {
+				1 = 'Never'
+			}
+		}
+	}
+
+	30 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+
+		entryTags {
+			1 = 'Outer'
+		}
+	}
+}

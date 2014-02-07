@@ -20,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * It wraps a part of the TypoScript tree which does not contain TypoScript objects or Eel expressions.
  *
- * This class is instanciated inside TemplateImplementation and is never used outside.
+ * This class is instantiated inside TemplateImplementation and is never used outside.
  */
 class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\TemplateObjectAccessInterface, \ArrayAccess, \IteratorAggregate, \Countable {
 

@@ -3,6 +3,7 @@ TYPO3:
     rendering:
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\XmlCommentHandler'
     debugMode: FALSE
+    enableContentCache: TRUE
 
     # Default context objects that are available in Eel expressions
     #
