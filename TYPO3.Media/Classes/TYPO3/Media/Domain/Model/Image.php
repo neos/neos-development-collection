@@ -13,6 +13,10 @@ namespace TYPO3\Media\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Exception;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Media\Domain\Service\ImageService;
+use TYPO3\Media\Exception\ImageFileException;
 
 /**
  * An image
@@ -21,6 +25,12 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  */
 class Image extends Asset implements ImageInterface {
+
+	/**
+	 * @Flow\Inject
+	 * @var ImageService
+	 */
+	protected $imageService;
 
 	/**
 	 * @var integer
@@ -49,28 +59,43 @@ class Image extends Asset implements ImageInterface {
 	protected $imageVariants = array();
 
 	/**
+	 * @var boolean
+	 * @Flow\Transient
+	 */
+	protected $imageSizeAndTypeInitialized = FALSE;
+
+	/**
+	 * If the object is recreated (that is, hydrated from persistence) the size and type is set to be intialized.
+	 *
+	 * @param integer $cause Why this object is initialized
+	 */
+	public function initializeObject($cause) {
+		if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
+			$this->imageSizeAndTypeInitialized = TRUE;
+		}
+	}
+
+	/**
 	 * Calculates image width, height and type from the image resource
 	 * The getimagesize() method may either return FALSE; or throw a Warning
 	 * which is translated to a \TYPO3\Flow\Error\Exception by Flow. In both
 	 * cases \TYPO3\Media\Exception\ImageFileException should be thrown.
 	 *
-	 * @throws \TYPO3\Media\Exception\ImageFileException
+	 * @throws ImageFileException
 	 * @return void
 	 */
-	protected function initialize() {
+	public function initializeImageSizeAndType() {
 		try {
-			$imageSize = getimagesize('resource://' . $this->resource->getResourcePointer()->getHash());
-			if ($imageSize === FALSE) {
-				throw new \TYPO3\Media\Exception\ImageFileException('The given resource was not a valid image file', 1336662898);
+			if ($this->imageSizeAndTypeInitialized === TRUE) {
+				return;
 			}
-			$this->width = (integer)$imageSize[0];
-			$this->height = (integer)$imageSize[1];
-			$this->type = (integer)$imageSize[2];
-		} catch(\TYPO3\Media\Exception\ImageFileException $exception) {
+			list($this->width, $this->height, $this->type) = $this->imageService->getImageSize($this->resource);
+			$this->imageSizeAndTypeInitialized = TRUE;
+		} catch(ImageFileException $exception) {
 			throw $exception;
-		} catch(\TYPO3\Flow\Error\Exception $exception) {
+		} catch(Exception $exception) {
 			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
-			throw new \TYPO3\Media\Exception\ImageFileException($exceptionMessage, 1336663970);
+			throw new ImageFileException($exceptionMessage, 1336663970);
 		}
 	}
 
@@ -80,6 +105,7 @@ class Image extends Asset implements ImageInterface {
 	 * @return integer
 	 */
 	public function getWidth() {
+		$this->initializeImageSizeAndType();
 		return $this->width;
 	}
 
@@ -89,6 +115,7 @@ class Image extends Asset implements ImageInterface {
 	 * @return integer
 	 */
 	public function getHeight() {
+		$this->initializeImageSizeAndType();
 		return $this->height;
 	}
 
@@ -159,6 +186,7 @@ class Image extends Asset implements ImageInterface {
 	 * @return integer
 	 */
 	public function getType() {
+		$this->initializeImageSizeAndType();
 		return $this->type;
 	}
 
@@ -169,7 +197,7 @@ class Image extends Asset implements ImageInterface {
 	 * @return string
 	 */
 	public function getFileExtension() {
-		return image_type_to_extension($this->type, FALSE);
+		return image_type_to_extension($this->getType(), FALSE);
 	}
 
 	/**

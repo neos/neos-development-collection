@@ -12,7 +12,9 @@ namespace TYPO3\Media\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Exception;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Media\Exception\ImageFileException;
 
 /**
  * An image variant that has a relation to the original image
@@ -76,7 +78,7 @@ class ImageVariant implements ImageInterface {
 	/**
 	 * @var boolean
 	 */
-	protected $initialized = FALSE;
+	protected $imageSizeAndTypeInitialized = FALSE;
 
 	/**
 	 * @param \TYPO3\Media\Domain\Model\ImageInterface $originalImage
@@ -95,17 +97,22 @@ class ImageVariant implements ImageInterface {
 
 	/**
 	 * @return void
+	 * @throws ImageFileException
 	 */
-	public function initialize() {
-		if ($this->initialized === TRUE) {
-			return;
+	protected function initializeImageSizeAndType() {
+		try {
+			if ($this->imageSizeAndTypeInitialized === TRUE) {
+				return;
+			}
+			$this->resource = $this->imageService->transformImage($this->originalImage, $this->processingInstructions);
+			list($this->width, $this->height, $this->type) = $this->imageService->getImageSize($this->resource);
+			$this->imageSizeAndTypeInitialized = TRUE;
+		} catch(ImageFileException $exception) {
+			throw $exception;
+		} catch(Exception $exception) {
+			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
+			throw new ImageFileException($exceptionMessage, 1391806394);
 		}
-		$this->resource = $this->imageService->transformImage($this->originalImage, $this->processingInstructions);
-		$imageSize = getimagesize($this->resource->getUri());
-		$this->width = (integer)$imageSize[0];
-		$this->height = (integer)$imageSize[1];
-		$this->type = (integer)$imageSize[2];
-		$this->initialized = TRUE;
 	}
 
 	/**
@@ -121,7 +128,7 @@ class ImageVariant implements ImageInterface {
 	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	public function getResource() {
-		$this->initialize();
+		$this->initializeImageSizeAndType();
 		return $this->resource;
 	}
 
@@ -131,7 +138,7 @@ class ImageVariant implements ImageInterface {
 	 * @return integer
 	 */
 	public function getWidth() {
-		$this->initialize();
+		$this->initializeImageSizeAndType();
 		return $this->width;
 	}
 
@@ -141,7 +148,7 @@ class ImageVariant implements ImageInterface {
 	 * @return integer
 	 */
 	public function getHeight() {
-		$this->initialize();
+		$this->initializeImageSizeAndType();
 		return $this->height;
 	}
 
@@ -213,7 +220,7 @@ class ImageVariant implements ImageInterface {
 	 * @return integer
 	 */
 	public function getType() {
-		$this->initialize();
+		$this->initializeImageSizeAndType();
 		return $this->originalImage->getType();
 	}
 

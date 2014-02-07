@@ -1,0 +1,9 @@
+TYPO3\Media\Domain\Service\ImageService:
+  properties:
+    imageSizeCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_Media_ImageSize
