@@ -51,12 +51,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * @return \TYPO3\Neos\Domain\Service\ContentContext
 	 */
 	public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain) {
-		$this->workspaceName = $workspaceName;
-		$this->currentDateTime = $currentDateTime;
-		$this->dimensions = $dimensions;
-		$this->invisibleContentShown = $invisibleContentShown;
-		$this->removedContentShown = $removedContentShown;
-		$this->inaccessibleContentShown = $inaccessibleContentShown;
+		parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
 		$this->currentSite = $currentSite;
 		$this->currentDomain = $currentDomain;
 		$this->targetDimensions = $targetDimensions;
