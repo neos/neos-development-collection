@@ -12,7 +12,7 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Exception as TypoScriptException;
 
@@ -31,6 +31,40 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	const STATE_ACTIVE = 'active';
 
 	/**
+	 * @Flow\Inject
+	 * @var NodeShortcutResolver
+	 */
+	protected $nodeShortcutResolver;
+
+	/**
+	 * Internal cache for the startingPoint tsValue.
+	 *
+	 * @var NodeInterface
+	 */
+	protected $startingPoint;
+
+	/**
+	 * Internal cache for the currentLevel tsValue.
+	 *
+	 * @var integer
+	 */
+	protected $currentLevel;
+
+	/**
+	 * Internal cache for the lastLevel value.
+	 *
+	 * @var integer
+	 */
+	protected $lastLevel;
+
+	/**
+	 * Internal cache for the maximumLevels tsValue.
+	 *
+	 * @var integer
+	 */
+	protected $maximumLevels;
+
+	/**
 	 * An internal cache for the built menu items array.
 	 *
 	 * @var array
@@ -41,6 +75,20 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * @var NodeInterface
 	 */
 	protected $currentNode;
+
+	/**
+	 * Rootline of all nodes from the current node to the site root node, keys are depth of nodes.
+	 *
+	 * @var array<NodeInterface>
+	 */
+	protected $currentNodeRootline;
+
+	/**
+	 * Internal cache for the renderHiddenInIndex property.
+	 *
+	 * @var boolean
+	 */
+	protected $renderHiddenInIndex;
 
 	/**
 	 * The last navigation level which should be rendered.
@@ -66,10 +114,10 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 */
 	public function getFilter() {
 		$filter = $this->tsValue('filter');
-		if ($filter !== NULL) {
-			return $filter;
+		if ($filter === NULL) {
+			$filter = 'TYPO3.Neos:Document';
 		}
-		return 'TYPO3.Neos:Document';
+		return $filter;
 	}
 
 	/**
@@ -78,11 +126,14 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * @return integer
 	 */
 	public function getMaximumLevels() {
-		$maximumLevels = $this->tsValue('maximumLevels');
-		if ($maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
-			$maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
+		if ($this->maximumLevels === NULL) {
+			$this->maximumLevels = $this->tsValue('maximumLevels');
+			if ($this->maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
+				$this->maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
+			}
 		}
-		return $maximumLevels;
+
+		return $this->maximumLevels;
 	}
 
 	/**
@@ -91,29 +142,58 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * @return integer
 	 */
 	public function getLastLevel() {
-		$lastLevel = $this->tsValue('lastLevel');
-		if ($lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
-			$lastLevel = self::MAXIMUM_LEVELS_LIMIT;
+		if ($this->lastLevel === NULL) {
+			$this->lastLevel = $this->tsValue('lastLevel');
+			if ($this->lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
+				$this->lastLevel = self::MAXIMUM_LEVELS_LIMIT;
+			}
 		}
-		return $lastLevel;
+
+		return $this->lastLevel;
 	}
 
 	/**
 	 * @return NodeInterface
 	 */
 	public function getStartingPoint() {
-		return $this->tsValue('startingPoint');
+		if ($this->startingPoint === NULL) {
+			$this->startingPoint = $this->tsValue('startingPoint');
+		}
+
+		return $this->startingPoint;
 	}
 
 	/**
-	 * Returns the menu items according to the defined settings.
+	 * Should nodes that have "hiddenInIndex" set still be visible in this menu.
 	 *
+	 * @return boolean
+	 */
+	public function getRenderHiddenInIndex() {
+		if ($this->renderHiddenInIndex === NULL) {
+			$this->renderHiddenInIndex = (boolean)$this->tsValue('renderHiddenInIndex');
+		}
+
+		return $this->renderHiddenInIndex;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getItemCollection() {
+		return $this->tsValue('itemCollection');
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getItems() {
 		if ($this->items === NULL) {
+			$typoScriptContext = $this->tsRuntime->getCurrentContext();
+			$this->currentNode = isset($typoScriptContext['activeNode']) ? $typoScriptContext['activeNode'] : $typoScriptContext['documentNode'];
+			$this->currentLevel = 1;
 			$this->items = $this->buildItems();
 		}
+
 		return $this->items;
 	}
 
@@ -125,68 +205,161 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * @return array An array of menu items and further information
 	 */
 	protected function buildItems() {
-		$currentContext = $this->tsRuntime->getCurrentContext();
-		$startingPoint = $this->getStartingPoint();
-		if (!isset($currentContext['node']) && !$startingPoint) {
-			throw new TypoScriptException('You must either set a "startingPoint" for the menu or "node" must be set in the TypoScript context.', 1369596980);
-		}
-		$this->currentNode = $currentContext['node'];
-		/** @var $contentContext ContentContext */
-		$contentContext = $this->currentNode->getContext();
-		$startingPoint = $startingPoint ?: $currentContext['node'];
+		$items = array();
 
-		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $contentContext->getCurrentSiteNode(), $startingPoint);
-		if ($entryParentNode === NULL) {
-			return array();
+		if ($this->getItemCollection() !== NULL) {
+			$menuLevelCollection = $this->getItemCollection();
+		} else {
+			$entryParentNode = $this->findMenuStartingPoint();
+			if ($entryParentNode === NULL) {
+				return $items;
+			}
+			$menuLevelCollection = $entryParentNode->getChildNodes($this->getFilter());
 		}
-		$lastParentNode = ($this->getLastLevel() !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->getLastLevel(), $contentContext->getCurrentSiteNode(), $startingPoint) : NULL;
 
-		return $this->buildRecursiveItemsArray($entryParentNode, $lastParentNode);
+		$items = $this->buildMenuLevelRecursive($menuLevelCollection);
+
+		return $items;
 	}
 
 	/**
-	 * Recursively called method which builds the actual items array.
-	 *
-	 * @param NodeInterface $entryParentNode The parent node whose children should be listed as items
-	 * @param NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
-	 * @param integer $currentLevel Level count for the recursion – don't use.
-	 * @return array A nested array of menu item information
-	 * @see buildItems()
+	 * @param array $menuLevelCollection
+	 * @return array
 	 */
-	private function buildRecursiveItemsArray(NodeInterface $entryParentNode, NodeInterface $lastParentNode = NULL, $currentLevel = 1) {
+	protected function buildMenuLevelRecursive(array $menuLevelCollection) {
 		$items = array();
-		/** @var $currentNode NodeInterface */
-		foreach ($entryParentNode->getChildNodes($this->getFilter()) as $currentNode) {
-			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE || $currentNode->isAccessible() === FALSE) {
+		foreach ($menuLevelCollection as $currentNode) {
+			$item = $this->buildMenuItemRecursive($currentNode);
+			if ($item === NULL) {
 				continue;
 			}
 
-			$item = array(
-				'label' => $currentNode->getProperty('title'),
-				'node' => $currentNode,
-				'state' => self::STATE_NORMAL
-			);
-			if ($currentNode === $this->currentNode) {
-				$item['state'] = self::STATE_CURRENT;
-			}
-
-			if ($currentLevel < $this->getMaximumLevels() && $entryParentNode !== $lastParentNode) {
-				$subItems = $this->buildRecursiveItemsArray($currentNode, $lastParentNode, $currentLevel + 1);
-				if ($subItems !== array()) {
-					$item['subItems'] = $subItems;
-					if ($item['state'] !== self::STATE_CURRENT) {
-						foreach ($subItems as $subItem) {
-							if ($subItem['state'] === self::STATE_CURRENT || $subItem['state'] === self::STATE_ACTIVE) {
-								$item['state'] = self::STATE_ACTIVE;
-								break;
-							}
-						}
-					}
-				}
-			}
 			$items[] = $item;
 		}
+
 		return $items;
+	}
+
+	/**
+	 * Prepare the menu item with state and sub items if this isn't the last menu level.
+	 *
+	 * @param NodeInterface $currentNode
+	 * @return array
+	 */
+	protected function buildMenuItemRecursive(NodeInterface $currentNode) {
+		if ($currentNode->isVisible() === FALSE || ($this->getRenderHiddenInIndex() === FALSE && $currentNode->isHiddenInIndex() === TRUE) || $currentNode->isAccessible() === FALSE) {
+			return NULL;
+		}
+
+		$possibleFinalNode = $this->resolveShortcuts($currentNode);
+		if ($possibleFinalNode === NULL || $possibleFinalNode->isAccessible() === FALSE || $possibleFinalNode->isVisible() === FALSE) {
+			return NULL;
+		}
+
+		$item = array(
+			'node' => $possibleFinalNode,
+			'originalNode' => $currentNode,
+			'state' => self::STATE_NORMAL,
+			'label' => $currentNode->getLabel()
+		);
+
+		$item['state'] = $this->calculateItemState($possibleFinalNode);
+		if (!$this->isOnLastLevelOfMenu($currentNode)) {
+			$this->currentLevel++;
+			$item['subItems'] = $this->buildMenuLevelRecursive($currentNode->getChildNodes($this->getFilter()));
+			$this->currentLevel--;
+		}
+
+		return $item;
+	}
+
+	/**
+	 * Calculates the state of the given menu item (node) depending on the currentNode.
+	 *
+	 * @param NodeInterface $node
+	 * @return string
+	 */
+	protected function calculateItemState(NodeInterface $node) {
+		$siteNode = $node->getContext()->getCurrentSiteNode();
+		if ($siteNode === $this->currentNode) {
+			return self::STATE_NORMAL;
+		}
+
+		if ($node === $this->currentNode) {
+			return self::STATE_CURRENT;
+		}
+
+		if (in_array($node, $this->getCurrentNodeRootline())) {
+			return self::STATE_ACTIVE;
+		}
+
+		return self::STATE_NORMAL;
+	}
+
+	/**
+	 * Get the rootline from the current node up to the site node.
+	 *
+	 * @return array
+	 */
+	protected function getCurrentNodeRootline() {
+		if ($this->currentNodeRootline === NULL) {
+			$siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
+			$this->currentNodeRootline = array(
+				$this->getNodeLevelInSite($this->currentNode) => $this->currentNode
+			);
+			$parentNode = $this->currentNode;
+			while ($parentNode !== $siteNode && $parentNode->getParent() !== NULL) {
+				$parentNode = $parentNode->getParent();
+				$this->currentNodeRootline[$this->getNodeLevelInSite($parentNode)] = $parentNode;
+			}
+
+			krsort($this->currentNodeRootline);
+		}
+
+		return $this->currentNodeRootline;
+	}
+
+	/**
+	 * Find the starting point for this menu. depending on given startingPoint
+	 * If startingPoint is given, this is taken as starting point for this menu level,
+	 * as a fallback the TypoScript context variable node is used.
+	 *
+	 * If entryLevel is configured this will be taken into account as well.
+	 *
+	 * @return NodeInterface
+	 * @throws \TYPO3\TypoScript\Exception
+	 */
+	protected function findMenuStartingPoint() {
+		$typoScriptContext = $this->tsRuntime->getCurrentContext();
+		$startingPoint = $this->getStartingPoint();
+
+		if (!isset($typoScriptContext['node']) && !$startingPoint) {
+			throw new TypoScriptException('You must either set a "startingPoint" for the menu or "node" must be set in the TypoScript context.', 1369596980);
+		}
+		$startingPoint = $startingPoint ? : $typoScriptContext['node'];
+		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $startingPoint);
+
+		return $entryParentNode;
+	}
+
+	/**
+	 * Checks if the given menuItem is on the last level for this menu, either defined by maximumLevels or lastLevels.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $menuItemNode
+	 * @return boolean
+	 */
+	protected function isOnLastLevelOfMenu(NodeInterface $menuItemNode) {
+		if ($this->currentLevel >= $this->getMaximumLevels()) {
+			return TRUE;
+		}
+
+		if (($this->getLastLevel() !== NULL)) {
+			if ($this->getNodeLevelInSite($menuItemNode) >= $this->calculateNodeDepthFromRelativeLevel($this->getLastLevel(), $this->currentNode)) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
 	}
 
 	/**
@@ -194,24 +367,71 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * current node whose level matches the specified entry level.
 	 *
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
-	 * @param NodeInterface $currentSiteNode
 	 * @param NodeInterface $startingPoint
 	 * @return NodeInterface The parent node of the node at the specified level or NULL if none was found
 	 */
-	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, NodeInterface $currentSiteNode, NodeInterface $startingPoint) {
+	protected function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, NodeInterface $startingPoint) {
 		$parentNode = NULL;
+		if ($givenSiteLevel === 0) {
+			return $startingPoint;
+		}
+
+		$absoluteDepth = $this->calculateNodeDepthFromRelativeLevel($givenSiteLevel, $startingPoint);
+		if (($absoluteDepth - 1) > $this->getNodeLevelInSite($startingPoint)) {
+			return NULL;
+		}
+
+		$currentSiteNode = $this->currentNode->getContext()->getCurrentSiteNode();
 		$breadcrumbNodes = $currentSiteNode->getContext()->getNodesOnPath($currentSiteNode, $startingPoint);
 
-		if ($givenSiteLevel > 0 && isset($breadcrumbNodes[$givenSiteLevel - 1])) {
-			$parentNode = $breadcrumbNodes[$givenSiteLevel - 1];
-		} elseif ($givenSiteLevel <= 0) {
-			$currentSiteLevel = $startingPoint->getDepth() - $currentSiteNode->getDepth();
-			if ($currentSiteLevel + $givenSiteLevel < 1) {
-				$parentNode = $breadcrumbNodes[0];
+		if (isset($breadcrumbNodes[$absoluteDepth - 1])) {
+			$parentNode = $breadcrumbNodes[$absoluteDepth - 1];
+		}
+
+		return $parentNode;
+	}
+
+	/**
+	 * Calculates a absolute depth value for a relative level given.
+	 *
+	 * @param integer $relativeLevel
+	 * @param NodeInterface $referenceNode
+	 * @return integer
+	 */
+	protected function calculateNodeDepthFromRelativeLevel($relativeLevel, NodeInterface $referenceNode) {
+		if ($relativeLevel > 0) {
+			$depth = $relativeLevel;
+		} else {
+			$currentSiteDepth = $this->getNodeLevelInSite($referenceNode);
+			if ($currentSiteDepth + $relativeLevel < 1) {
+				$depth = 1;
 			} else {
-				$parentNode = $breadcrumbNodes[$currentSiteLevel + $givenSiteLevel];
+				$depth = $currentSiteDepth + $relativeLevel;
 			}
 		}
-		return $parentNode;
+
+		return $depth;
+	}
+
+	/**
+	 * Node Level relative to site root node.
+	 * 0 = Site root node
+	 *
+	 * @param NodeInterface $node
+	 * @return integer
+	 */
+	protected function getNodeLevelInSite(NodeInterface $node) {
+		$siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
+		return $node->getDepth() - $siteNode->getDepth();
+	}
+
+	/**
+	 * If the given Node is a shortcut it will be resolved and the target returned, otherwise just the given Node is returned.
+	 *
+	 * @param NodeInterface $node
+	 * @return NodeInterface
+	 */
+	protected function resolveShortcuts(NodeInterface $node) {
+		return $this->nodeShortcutResolver->resolveShortcutTarget($node);
 	}
 }
