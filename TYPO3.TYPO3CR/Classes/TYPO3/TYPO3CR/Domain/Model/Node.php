@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
@@ -22,7 +23,7 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  * @Flow\Scope("prototype")
  * @api
  */
-class Node implements NodeInterface {
+class Node implements NodeInterface, CacheAwareInterface {
 
 	/**
 	 * The NodeData entity this version is for.
@@ -1015,6 +1016,16 @@ class Node implements NodeInterface {
 	 */
 	public function getNodeData() {
 		return $this->nodeData;
+	}
+
+	/**
+	 * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
+	 * related to this object.
+	 *
+	 * @return string
+	 */
+	public function getCacheEntryIdentifier() {
+		return $this->getContextPath();
 	}
 
 	/**
