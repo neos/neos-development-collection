@@ -12,6 +12,12 @@ namespace TYPO3\Media\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Exception\ImageFileException;
 
 /**
  * An image service that acts as abstraction for the Imagine library
@@ -21,16 +27,22 @@ use TYPO3\Flow\Annotations as Flow;
 class ImageService {
 
 	/**
-	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 * @Flow\Inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \TYPO3\Flow\Resource\ResourceManager
+	 * @var ResourceManager
 	 * @Flow\Inject
 	 */
 	protected $resourceManager;
+
+	/**
+	 * @var VariableFrontend
+	 * @Flow\Inject
+	 */
+	protected $imageSizeCache;
 
 	/**
 	 * @var array
@@ -46,11 +58,11 @@ class ImageService {
 	}
 
 	/**
-	 * @param \TYPO3\Media\Domain\Model\ImageInterface $image
+	 * @param ImageInterface $image
 	 * @param array $processingInstructions
 	 * @return \TYPO3\Flow\Resource\Resource
 	 */
-	public function transformImage(\TYPO3\Media\Domain\Model\ImageInterface $image, array $processingInstructions) {
+	public function transformImage(ImageInterface $image, array $processingInstructions) {
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . json_encode($processingInstructions));
 		if (!file_exists('resource://' . $uniqueHash)) {
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
@@ -63,6 +75,29 @@ class ImageService {
 		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($uniqueHash));
 
 		return $resource;
+	}
+
+	/**
+	 * @param Resource $resource
+	 * @return array width, height and image type
+	 * @throws ImageFileException
+	 */
+	public function getImageSize(Resource $resource) {
+		$cacheIdentifier = $resource->getResourcePointer()->getHash();
+		if ($this->imageSizeCache->has($cacheIdentifier)) {
+			return $this->imageSizeCache->get($cacheIdentifier);
+		}
+		$imageSize = getimagesize($resource->getUri());
+		if ($imageSize === FALSE) {
+			throw new ImageFileException('The given resource was not a valid image file', 1336662898);
+		}
+		$imageSize = array(
+			(integer)$imageSize[0],
+			(integer)$imageSize[1],
+			(integer)$imageSize[2]
+		);
+		$this->imageSizeCache->set($cacheIdentifier, $imageSize);
+		return $imageSize;
 	}
 
 	/**
@@ -93,7 +128,7 @@ class ImageService {
 			throw new \InvalidArgumentException('The thumbnailCommand needs a "size" option.', 1393510202);
 		}
 		$dimensions = $this->parseBox($commandOptions['size']);
-		if (isset($commandOptions['mode']) && $commandOptions['mode'] === \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_OUTBOUND) {
+		if (isset($commandOptions['mode']) && $commandOptions['mode'] === ImageInterface::RATIOMODE_OUTBOUND) {
 			$mode = \Imagine\Image\ManipulatorInterface::THUMBNAIL_OUTBOUND;
 		} else {
 			$mode = \Imagine\Image\ManipulatorInterface::THUMBNAIL_INSET;

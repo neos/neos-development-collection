@@ -1,4 +1,12 @@
 TYPO3:
+  Flow:
+    persistence:
+      doctrine:
+        eventListeners:
+          'TYPO3\Media\Domain\EventListener\ImageEventListener':
+            events: ['prePersist', 'preUpdate', 'postRemove']
+            listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
+
   Media:
     image:
       defaultOptions:
