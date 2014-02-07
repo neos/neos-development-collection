@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Frontend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -53,6 +54,12 @@ class NodeController extends ActionController {
 	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeShortcutResolver
+	 */
+	protected $nodeShortcutResolver;
 
 	/**
 	 * @var string
@@ -99,28 +106,12 @@ class NodeController extends ActionController {
 
 		if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
 			if (!$this->hasAccessToBackend() || $node->getContext()->getWorkspace()->getName() === 'live') {
-				while ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut')) {
-					switch ($node->getProperty('targetMode')) {
-						case 'selectedNode':
-							$node = $node->getProperty('targetNode');
-							if (!$node instanceof NodeInterface) {
-								$this->throwStatus(404);
-							}
-						break;
-						case 'parentNode':
-							$node = $node->getParent();
-						break;
-						case 'firstChildNode':
-						default:
-							$childNodes = $node->getChildNodes('TYPO3.Neos:Document');
-							if ($childNodes !== array()) {
-								$node = current($childNodes);
-							} else {
-								$this->throwStatus(404);
-							}
-					}
+				$node = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+				if ($node === NULL) {
+					$this->throwStatus(404);
+				} else {
+					$this->redirect('show', NULL, NULL, array('node' => $node));
 				}
-				$this->redirect('show', NULL, NULL, array('node' => $node));
 			}
 		}
 
