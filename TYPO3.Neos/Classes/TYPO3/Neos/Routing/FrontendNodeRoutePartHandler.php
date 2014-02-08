@@ -18,17 +18,13 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\Neos\Routing\Exception\NoSuchLocaleException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
  */
-class FrontendNodeRoutePartHandler extends DynamicRoutePart {
+class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface {
 
 	/**
 	 * @Flow\Inject
@@ -49,24 +45,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	protected $siteRepository;
 
 	/**
-	 * @Flow\Inject
-	 * @var WorkspaceRepository
-	 */
-	protected $workspaceRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
-
-	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
 
 	 * This function tries to find a matching node by the given relative context node path. If one was found, its
@@ -82,7 +60,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 */
 	protected function matchValue($requestPath) {
 		try {
-			$node = $this->convertNodeContextPathToNode($requestPath);
+			$node = $this->convertRequestPathToNode($requestPath);
+		} catch (NoSuchLocaleException $exception) {
+			throw $exception;
 		} catch (Exception $exception) {
 			if ($requestPath === '') {
 				throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
@@ -96,11 +76,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			return FALSE;
 		}
 
-		if ($node->getContext()->getWorkspace(FALSE)->getName() === 'live') {
-			$this->value = $node->getIdentifier();
-		} else {
-			$this->value = $node->getContextPath();
-		}
+		$this->value = $node->getContextPath();
+
 		return TRUE;
 	}
 
@@ -142,18 +119,20 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 
 		if (is_string($node)) {
 			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $node) === 1) {
+				$nodeIdentifier = $node;
 				$contentContext = $this->buildContextFromWorkspaceName('live');
 				try {
-					$node = $this->convertNodeIdentifierToNode($node);
+					$node = $this->convertNodeIdentifierToNode($nodeIdentifier);
 				} catch (Exception $exception) {
 					return FALSE;
 				}
 			} else {
-				$contentContext = $this->buildContextFromNodeContextPath($node);
+				$nodeContextPath = $node;
+				$contentContext = $this->buildContextFromContextPath($nodeContextPath);
 				if ($contentContext->getWorkspace(FALSE) === NULL) {
 					return FALSE;
 				}
-				$node = $contentContext->getNode($this->convertNodeContextPathToNodePath($node));
+				$node = $contentContext->getNode($this->removeContextFromContextPath($nodeContextPath));
 			}
 			if ($node === NULL) {
 				return FALSE;
@@ -166,18 +145,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 			return FALSE;
 		}
 
-		$nodeContextPath = $node->getContextPath();
 		$siteNode = $contentContext->getCurrentSiteNode();
-		$siteNodePath = $siteNode->getPath();
 		if ($this->onlyMatchSiteNodes() && $node !== $siteNode) {
 			return FALSE;
 		}
 
-		if ($nodeContextPath === $siteNodePath) {
-			$this->value = '';
-		} else {
-			$this->value = ltrim(substr($nodeContextPath, strlen($siteNodePath)), '/');
-		}
+		$routePath = $this->resolveRoutePathForNode($siteNode, $node);
+		$this->value = $routePath;
 		return TRUE;
 	}
 
@@ -189,27 +163,15 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 * @throws Exception
 	 */
 	protected function convertNodeIdentifierToNode($nodeIdentifier) {
-		/** @var $liveWorkspace Workspace */
-		$liveWorkspace = $this->workspaceRepository->findOneByName('live');
-		if ($liveWorkspace === NULL) {
-			throw new Exception\NoWorkspaceException('"live" workspace could not be fetched.', 1382617454);
-		}
-		/** @var $nodeData NodeData */
-		$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $liveWorkspace);
-		if ($nodeData === NULL) {
-			throw new Exception\NoSuchNodeException(sprintf('No node found in live workspace with identifier "%s".', $nodeIdentifier), 1382114820);
-		}
-		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->buildContextFromWorkspaceName('live'));
-		if ($node === NULL) {
-			throw new Exception\NoSuchNodeException(sprintf('Node "%s" could not be created from node data.', $nodeIdentifier), 1382114825);
-		}
+		$context = $this->buildContextFromWorkspaceName('live');
+		$node = $context->getNodeByIdentifier($nodeIdentifier);
 		return $node;
 	}
 
 	/**
 	 * Returns the initialized node that is referenced by $relativeNodeContextPath
 	 *
-	 * @param string $nodeContextPath The node context path, for example the/node/path@some-workspace
+	 * @param string $requestPath The node context path, for example /sites/foo/the/node/path@some-workspace
 	 * @return NodeInterface
 	 * @throws \TYPO3\Neos\Routing\Exception\NoWorkspaceException
 	 * @throws \TYPO3\Neos\Routing\Exception\NoSiteException
@@ -217,46 +179,62 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 * @throws \TYPO3\Neos\Routing\Exception\NoSiteNodeException
 	 * @throws \TYPO3\Neos\Routing\Exception\InvalidRequestPathException
 	 */
-	protected function convertNodeContextPathToNode($nodeContextPath) {
-		$relativeNodePath = $this->convertNodeContextPathToNodePath($nodeContextPath);
+	protected function convertRequestPathToNode($requestPath) {
+		$relativeNodePath = $this->removeContextFromRequestPath($requestPath);
 		if ($relativeNodePath === NULL) {
-			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $nodeContextPath), 1392726936);
+			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1392726936);
 		}
-		$contentContext = $this->buildContextFromNodeContextPath($nodeContextPath);
+		$contentContext = $this->buildContextFromRequestPath($requestPath);
 		$workspace = $contentContext->getWorkspace(FALSE);
 		if ($workspace === NULL) {
-			throw new Exception\NoWorkspaceException(sprintf('No workspace found for request path "%s"', $nodeContextPath), 1346949318);
+			throw new Exception\NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
 		}
 
 		$site = $contentContext->getCurrentSite();
 		if ($site === NULL) {
-			throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $nodeContextPath), 1346949693);
+			throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
 		}
 
 		$siteNode = $contentContext->getCurrentSiteNode();
 		if ($siteNode === NULL) {
-			throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s"', $nodeContextPath), 1346949728);
+			throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s"', $requestPath), 1346949728);
 		}
 
 		$node = ($relativeNodePath === '') ? $siteNode : $siteNode->getNode($relativeNodePath);
 		if (!$node instanceof NodeInterface) {
-			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $nodeContextPath), 1346949857);
+			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
 		}
 
 		return $node;
 	}
 
 	/**
-	 * @param string $nodeContextPath
+	 * @param $contextPath
 	 * @return ContentContext
+	 */
+	protected function buildContextFromContextPath($contextPath) {
+		return $this->buildContextFromPath($contextPath);
+	}
+
+	/**
+	 * @param $requestPath
+	 * @return ContentContext
+	 */
+	protected function buildContextFromRequestPath($requestPath) {
+		return $this->buildContextFromPath($requestPath);
+	}
+
+	/**
+	 * @param string $path a path containing the context, such as foo/bar/@user-blubb
+	 * @return ContentContext adhering to the path; only evaluating the context information (e.g. everything after "@")
 	 * @throws Exception\InvalidRequestPathException
 	 */
-	protected function buildContextFromNodeContextPath($nodeContextPath) {
+	protected function buildContextFromPath($path) {
 		$contextPathParts = array();
-		if ($nodeContextPath !== '' && strpos($nodeContextPath, '@') !== FALSE) {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeContextPath, $contextPathParts);
+		if ($path !== '' && strpos($path, '@') !== FALSE) {
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $contextPathParts);
 		}
-		$workspaceName = isset($contextPathParts['WorkspaceName']) ? $contextPathParts['WorkspaceName'] : 'live';
+		$workspaceName = isset($contextPathParts['WorkspaceName']) && $contextPathParts['WorkspaceName'] !== '' ? $contextPathParts['WorkspaceName'] : 'live';
 		return $this->buildContextFromWorkspaceName($workspaceName);
 	}
 
@@ -284,17 +262,30 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	}
 
 	/**
-	 * Returns the node path for a given $nodeContextPath, for example "/sites/somesite/the/node/path"
-	 * This could also be a relative path like "the/node/path"
-	 *
-	 * @param string $nodeContextPath the node context path, for example "/sites/somesite/the/node/path@some-workspace"
+	 * @param string $nodeContextPath
 	 * @return string
 	 */
-	protected function convertNodeContextPathToNodePath($nodeContextPath) {
-		if ($nodeContextPath === '' || strpos($nodeContextPath, '@') === FALSE) {
-			return $nodeContextPath;
+	protected function removeContextFromContextPath($nodeContextPath) {
+		return $this->removeContextFromPath($nodeContextPath);
+	}
+
+	/**
+	 * @param string $requestPath
+	 * @return string
+	 */
+	protected function removeContextFromRequestPath($requestPath) {
+		return $this->removeContextFromPath($requestPath);
+	}
+
+	/**
+	 * @param string $path an absolute or relative node path which possibly contains context information, for example "/sites/somesite/the/node/path@some-workspace"
+	 * @return string the same path without context information
+	 */
+	protected function removeContextFromPath($path) {
+		if ($path === '' || strpos($path, '@') === FALSE) {
+			return $path;
 		}
-		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeContextPath, $contextPathParts);
+		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $contextPathParts);
 		if (isset($contextPathParts['NodePath'])) {
 			return $contextPathParts['NodePath'];
 		}
@@ -308,5 +299,26 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 */
 	protected function onlyMatchSiteNodes() {
 		return isset($this->options['onlyMatchSiteNodes']) && $this->options['onlyMatchSiteNodes'] === TRUE;
+	}
+
+	/**
+	 * @param NodeInterface $siteNode
+	 * @param NodeInterface $node
+	 * @return string the route path (URI part) for the passed $node
+	 */
+	protected function resolveRoutePathForNode($siteNode, $node) {
+		$nodeContextPath = $node->getPath();
+		$workspaceName = $node->getContext()->getWorkspaceName();
+		if ($workspaceName !== 'live') {
+			$nodeContextPath .= '@' . $workspaceName;
+		}
+
+		$siteNodePath = $siteNode->getPath();
+
+		if ($nodeContextPath === $siteNodePath) {
+			return '';
+		} else {
+			return ltrim(substr($nodeContextPath, strlen($siteNodePath)), '/');
+		}
 	}
 }

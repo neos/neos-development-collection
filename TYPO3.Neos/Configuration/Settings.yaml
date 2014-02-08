@@ -170,6 +170,29 @@ TYPO3:
           title: 'Desktop'
           position: 100
 
+    contentDimensions:
+      dimensions:
+        'locales':
+          # The default preset to use if no URI segment was given when resolving locales in the routing
+          defaultPreset: 'all'
+          label: 'Locales'
+          icon: 'icon-language'
+          presets:
+            'all':
+              label: 'All languages'
+              values: ['mul_ZZ']
+              uriSegment: 'all'
+            # Example for additional locales:
+            #
+            #  'en_GB':
+            #    label: 'English (Great Britain)'
+            #    values: ['en_GB', 'en_ZZ', 'mul_ZZ']
+            #    uriSegment: 'gb'
+            #  'de':
+            #    label: 'German (Germany)'
+            #    values: ['de_DE', 'de_ZZ', 'mul_ZZ']
+            #    uriSegment: 'de'
+
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
     modules:

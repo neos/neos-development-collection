@@ -93,13 +93,6 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 		$this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue(array('node' => $this->mockNode)));
 		$this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 		$this->convertNodeUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
-
-		$this->mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
-		$this->convertNodeUrisImplementation->_set('nodeDataRepository', $this->mockNodeDataRepository);
-
-		$this->mockNodeFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Factory\NodeFactory')->disableOriginalConstructor()->getMock();
-		$this->convertNodeUrisImplementation->_set('nodeFactory', $this->mockNodeFactory);
-
 	}
 
 	/**
@@ -167,39 +160,23 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-		$mockTargetNodeData1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockTargetNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-
-		$mockTargetNodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockTargetNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
 		$self = $this;
-		$expectedWorkspace = $this->mockWorkspace;
-		$this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findOneByIdentifier')->will($this->returnCallback(function($nodeIdentifier, $workspace) use ($self, $expectedWorkspace, $nodeIdentifier1, $nodeIdentifier2, $mockTargetNodeData1, $mockTargetNodeData2) {
-			$self->assertSame($expectedWorkspace, $workspace);
+
+		$this->mockContext->expects($this->atLeastOnce())->method('getNodeByIdentifier')->will($this->returnCallback(function($nodeIdentifier) use ($self, $nodeIdentifier1, $nodeIdentifier2, $mockTargetNode1, $mockTargetNode2) {
 			if ($nodeIdentifier === $nodeIdentifier1) {
-				return $mockTargetNodeData1;
+				return $mockTargetNode1;
 			} elseif ($nodeIdentifier === $nodeIdentifier2) {
-				return $mockTargetNodeData2;
+				return $mockTargetNode2;
 			} else {
 				$self->fail('Unexpected node identifier "' . $nodeIdentifier . '"');
 			}
 		}));
 
-		$expectedContext = $this->mockContext;
-		$this->mockNodeFactory->expects($this->atLeastOnce())->method('createFromNodeData')->will($this->returnCallback(function($targetNodeData, $context) use ($self, $expectedContext, $mockTargetNodeData1, $mockTargetNodeData2, $mockTargetNode1, $mockTargetNode2) {
-			$self->assertSame($expectedContext, $context);
-			if ($targetNodeData === $mockTargetNodeData1) {
-				return $mockTargetNode1;
-			} elseif ($targetNodeData === $mockTargetNodeData2) {
-				return $mockTargetNode2;
-			} else {
-				static::fail('Unexpected target NodeData');
-			}
-		}));
-
 		$this->mockUriBuilder->expects($this->atLeastOnce())->method('setFormat')->with('html')->will($this->returnValue($this->mockUriBuilder));
-		$this->mockUriBuilder->expects($this->atLeastOnce())->method('uriFor')->will($this->returnCallback(function($action, $arguments, $controller, $package) use ($self, $mockTargetNodeData1, $mockTargetNode1, $mockTargetNode2) {
+		$this->mockUriBuilder->expects($this->atLeastOnce())->method('uriFor')->will($this->returnCallback(function($action, $arguments, $controller, $package) use ($self, $mockTargetNode1, $mockTargetNode2) {
 			$self->assertSame('show', $action);
 			$self->assertSame('Frontend\\Node', $controller);
 			$self->assertSame('TYPO3.Neos', $package);
@@ -231,8 +208,6 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 		$this->convertNodeUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
-
-		$this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findOneByIdentifier')->with($unknownNodeIdentifier)->will($this->returnValue(NULL));
 
 		$expectedResult = 'This string contains an unresolvable node URI:  and a <a href="">link</a>.';
 		$actualResult = $this->convertNodeUrisImplementation->evaluate();

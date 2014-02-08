@@ -61,7 +61,7 @@
     '@format':     'html'
   routeParts:
     'node':
-      handler:     'TYPO3\Neos\Routing\FrontendNodeRoutePartHandler'
+      handler:     'TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
   subRoutes:
     'FrontendSubRoutes':
       package: 'TYPO3.Neos'

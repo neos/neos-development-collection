@@ -102,7 +102,7 @@ class NodeViewHelper extends AbstractViewHelper {
 
 		if (is_string($node)) {
 			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $node, $matches);
-			if (isset($matches['WorkspaceName'])) {
+			if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
 				$node = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 			}
 		}
@@ -155,21 +155,7 @@ class NodeViewHelper extends AbstractViewHelper {
 			->setAddQueryString($addQueryString)
 			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
 			->setFormat($format)
-			->uriFor('show', array('node' => $this->convertNode($node)), 'Frontend\Node', 'TYPO3.Neos');
+			->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 	}
 
-	/**
-	 * Converts the given $node to a string being:
-	 * - in "live" workspace: The node identifier (not the technical identifier)
-	 * - otherwise: The node context path ("some/path@workspace-name")
-	 *
-	 * @param NodeInterface $node
-	 * @return string
-	 */
-	protected function convertNode(NodeInterface $node) {
-		if ($node->getContext()->getWorkspace(FALSE)->getName() === 'live') {
-			return $node->getIdentifier();
-		}
-		return $node->getContextPath();
-	}
 }

@@ -93,8 +93,11 @@ class ContentElementWrappingService {
 			$attributes['tabindex'] = 0;
 		} else {
 			$attributes['data-__sitename'] = $contentContext->getCurrentSite()->getName();
-			$attributes['data-__siteroot'] = sprintf('/sites/%s@%s', $contentContext->getCurrentSite()->getNodeName(), $contentContext->getWorkspace()->getName());
+			$attributes['data-__siteroot'] = $contentContext->getCurrentSiteNode()->getContextPath();
+			// Add the workspace of the TYPO3CR context to the attributes
+			$attributes['data-context-__workspacename'] = $contentContext->getWorkspaceName();
 		}
+		// Add the actual workspace of the node to the attributes
 		$attributes['data-neos-__workspacename'] = $node->getWorkspace()->getName();
 		$attributes['data-neos-_typoscript-path'] = $typoScriptPath;
 

@@ -34,34 +34,17 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 	protected $siteRepository;
 
 	/**
-	 * @var string
-	 */
-	protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\NodeInterface';
-
-	/**
 	 * @var integer
 	 */
 	protected $priority = 3;
 
 	/**
-	 * Creates the context for the nodes based on the given workspace.
+	 * Additionally add the current site and domain to the Context properties.
 	 *
-	 * @param string $workspaceName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * {@inheritdoc}
 	 */
-	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		$contextProperties = array(
-			'workspaceName' => $workspaceName,
-			'invisibleContentShown' => FALSE,
-			'removedContentShown' => FALSE
-		);
-		if ($workspaceName !== 'live') {
-			$contextProperties['invisibleContentShown'] = TRUE;
-			if ($configuration !== NULL && $configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
-				$contextProperties['removedContentShown'] = TRUE;
-			}
-		}
+	protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL, array $dimensions = NULL) {
+		$contextProperties = parent::prepareContextProperties($workspaceName, $configuration, $dimensions);
 
 		$currentDomain = $this->domainRepository->findOneByActiveRequest();
 		if ($currentDomain !== NULL) {
@@ -71,6 +54,6 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 			$contextProperties['currentSite'] = $this->siteRepository->findOnline()->getFirst();
 		}
 
-		return $this->contextFactory->create($contextProperties);
+		return $contextProperties;
 	}
 }

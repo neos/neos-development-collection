@@ -19,7 +19,6 @@ use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
@@ -63,12 +62,6 @@ class BackendRedirectionService {
 	 * @var SiteRepository
 	 */
 	protected $siteRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
 
 	/**
 	 * @Flow\Inject
@@ -135,13 +128,7 @@ class BackendRedirectionService {
 		if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
 			return NULL;
 		}
-		$lastVisitedNodeData = $this->nodeDataRepository->findOneByIdentifier($this->session->getData('lastVisitedNode'), $contentContext->getWorkspace());
-		if ($lastVisitedNodeData === NULL) {
-			return NULL;
-		}
-		$lastVisitedNode = $this->nodeFactory->createFromNodeData($lastVisitedNodeData, $contentContext);
-		if ($lastVisitedNode === NULL) {
-		}
+		$lastVisitedNode = $contentContext->getNodeByIdentifier($this->session->getData('lastVisitedNode'));
 		return $lastVisitedNode;
 	}
 

@@ -20,3 +20,11 @@ TYPO3\Neos\Aspects\TypoScriptCachingAspect:
         arguments:
           1:
             value: TYPO3_Neos_TypoScript
+
+TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
+  properties:
+    configuration:
+      setting: TYPO3.Neos.contentDimensions.dimensions
+
+TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
+  className: TYPO3\Neos\Routing\FrontendNodeRoutePartHandler

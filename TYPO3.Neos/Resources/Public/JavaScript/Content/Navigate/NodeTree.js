@@ -52,13 +52,12 @@ define(
 			latestFilterQuery: null,
 
 			markDirtyPages: function() {
-				var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
-					workspaceSuffix = siteRoot.substr(siteRoot.lastIndexOf('@')),
+				var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
 					that = this;
 
 				$('.neos-dynatree-dirty').removeClass('neos-dynatree-dirty');
 				PublishableNodes.get('workspaceWidePublishableEntitySubjects').forEach(function(node) {
-					var treeNode = that.$nodeTree.dynatree("getTree").getNodeByKey(node.pageNodePath + workspaceSuffix);
+					var treeNode = that.$nodeTree.dynatree("getTree").getNodeByKey(node.pageNodePath + workspaceName);
 					if (treeNode) {
 						$(treeNode.span).addClass('neos-dynatree-dirty');
 					}

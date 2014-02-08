@@ -13,9 +13,7 @@ namespace TYPO3\Neos\TypoScript;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Exception;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
@@ -28,18 +26,6 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 class ConvertNodeUrisImplementation extends AbstractTypoScriptObject {
 
 	const PATTERN_NODE_URIS = '/node:\/\/(([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeFactory
-	 */
-	protected $nodeFactory;
 
 	/**
 	 * The string to be processed
@@ -83,11 +69,10 @@ class ConvertNodeUrisImplementation extends AbstractTypoScriptObject {
 	 * @return string
 	 */
 	public function convertNodeIdentifierToUri($nodeIdentifier, NodeInterface $contextNode) {
-		$targetNodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $contextNode->getContext()->getWorkspace());
-		if ($targetNodeData === NULL) {
+		$targetNode = $contextNode->getContext()->getNodeByIdentifier($nodeIdentifier);
+		if ($targetNode === NULL) {
 			return '';
 		}
-		$targetNode = $this->nodeFactory->createFromNodeData($targetNodeData, $contextNode->getContext());
 		$uriBuilder = $this->tsRuntime->getControllerContext()->getUriBuilder();
 		return $uriBuilder->setFormat('html')->uriFor('show', array('node' => $targetNode), 'Frontend\\Node', 'TYPO3.Neos');
 	}

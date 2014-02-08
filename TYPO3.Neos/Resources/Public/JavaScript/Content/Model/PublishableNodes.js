@@ -167,8 +167,7 @@ define(
 		 * Publishes everything inside the current workspace.
 		 */
 		publishAll: function() {
-			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
-				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
+			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
 				publishableEntities = this.get('publishableEntitySubjects'),
 				that = this;
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.publishAll(workspaceName, function(result) {
@@ -190,8 +189,7 @@ define(
 		 * Discards everything inside the current workspace.
 		 */
 		discardAll: function() {
-			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
-				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
+			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
 				that = this;
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.discardAll(workspaceName, function(result) {
 				if (typeof result !== 'undefined' && result !== null && result.success === true) {
@@ -222,8 +220,7 @@ define(
 		 * Get all unpublished nodes inside the current workspace.
 		 */
 		getWorkspaceWideUnpublishedNodes: function() {
-			var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot'),
-				workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1),
+			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
 				that = this;
 			if (typeof TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController !== 'undefined') {
 				TYPO3_Neos_Service_ExtDirect_V1_Controller_WorkspaceController.getWorkspaceWideUnpublishedNodes(workspaceName, function(result) {
