@@ -637,8 +637,8 @@ class NodeDataRepository extends Repository {
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
 
 		/** @var \Doctrine\ORM\Query $query */
-		$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath ORDER BY n.index ASC');
-		$query->setParameter('parentPath', $parentPath);
+		$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
+		$query->setParameter('parentPathHash', md5($parentPath));
 
 		$nodesOnLevel = array();
 		/** @var $node NodeData */
@@ -681,8 +681,8 @@ class NodeDataRepository extends Repository {
 	protected function findHighestIndexInLevel($parentPath) {
 		$this->persistEntities();
 		/** @var \Doctrine\ORM\Query $query */
-		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath');
-		$query->setParameter('parentPath', $parentPath);
+		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
+		$query->setParameter('parentPathHash', md5($parentPath));
 		return $query->getSingleScalarResult() ?: 0;
 	}
 
@@ -700,8 +700,8 @@ class NodeDataRepository extends Repository {
 	protected function findNextLowerIndex($parentPath, $referenceIndex) {
 		$this->persistEntities();
 		/** @var \Doctrine\ORM\Query $query */
-		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath AND n.index < :referenceIndex');
-		$query->setParameter('parentPath', $parentPath);
+		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
+		$query->setParameter('parentPathHash', md5($parentPath));
 		$query->setParameter('referenceIndex', $referenceIndex);
 		return $query->getSingleScalarResult() ?: 0;
 	}
@@ -720,8 +720,8 @@ class NodeDataRepository extends Repository {
 	protected function findNextHigherIndex($parentPath, $referenceIndex) {
 		$this->persistEntities();
 		/** @var \Doctrine\ORM\Query $query */
-		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath AND n.index > :referenceIndex');
-		$query->setParameter('parentPath', $parentPath);
+		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index > :referenceIndex');
+		$query->setParameter('parentPathHash', md5($parentPath));
 		$query->setParameter('referenceIndex', $referenceIndex);
 		return $query->getSingleScalarResult() ?: NULL;
 	}
@@ -940,8 +940,8 @@ class NodeDataRepository extends Repository {
 
 
 		if ($recursive !== TRUE) {
-			$queryBuilder->andWhere('n.parentPath = :parentPath')
-				->setParameter('parentPath', $parentPath);
+			$queryBuilder->andWhere('n.parentPathHash = :parentPathHash')
+				->setParameter('parentPathHash', md5($parentPath));
 		} else {
 			$queryBuilder->andWhere('n.parentPath LIKE :parentPath')
 				->setParameter('parentPath', $parentPath . '%');

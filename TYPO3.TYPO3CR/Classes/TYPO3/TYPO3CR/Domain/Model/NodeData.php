@@ -27,7 +27,14 @@ use TYPO3\TYPO3CR\Exception\NodeExistsException;
  * NOTE: This is internal only and should not be used or extended by userland code.
  *
  * @Flow\Entity
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"})})
+ * @ORM\Table(
+ * 	uniqueConstraints={@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"})},
+ * 	indexes={
+ * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
+ * 		@ORM\Index(name="identifierindex",columns={"identifier"}),
+ * 		@ORM\Index(name="nodetypeindex",columns={"nodetype"})
+ * 	}
+ * )
  */
 class NodeData extends AbstractNodeData {
 
@@ -57,6 +64,16 @@ class NodeData extends AbstractNodeData {
 	 * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=4000 })
 	 */
 	protected $path;
+
+	/**
+	 * MD5 hash of the parent path
+	 * This property is needed to speed up lookup by parent path.
+	 * The hash is generated in calculateParentPathHash().
+	 *
+	 * @var string
+	 * @ORM\Column(length=32)
+	 */
+	protected $parentPathHash;
 
 	/**
 	 * Absolute path of the parent path
@@ -252,6 +269,7 @@ class NodeData extends AbstractNodeData {
 		} else {
 			$this->parentPath = substr($path, 0, strrpos($path, '/'));
 		}
+		$this->calculateParentPathHash();
 
 		if ($pathBeforeChange !== NULL) {
 			// this method is called both for changing the path AND in the constructor of Node; so we only want to do
@@ -790,6 +808,13 @@ class NodeData extends AbstractNodeData {
 	/**
 	 * Calculates the hash corresponding to the dimensions and their values for this instance.
 	 *
+	 * @return void
+	 */
+	protected function calculateParentPathHash() {
+		$this->parentPathHash = md5($this->parentPath);
+	}
+
+	/**
 	 * @return void
 	 */
 	protected function calculateDimensionsHash() {
