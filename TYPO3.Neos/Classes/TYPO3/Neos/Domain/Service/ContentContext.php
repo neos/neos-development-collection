@@ -41,7 +41,8 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * @param string $workspaceName
 	 * @param \DateTime $currentDateTime
-	 * @param \TYPO3\Flow\I18n\Locale $locale
+	 * @param array $dimensions
+	 * @param array $targetDimensions
 	 * @param boolean $invisibleContentShown
 	 * @param boolean $removedContentShown
 	 * @param boolean $inaccessibleContentShown
@@ -49,15 +50,16 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * @param \TYPO3\Neos\Domain\Model\Domain $currentDomain
 	 * @return \TYPO3\Neos\Domain\Service\ContentContext
 	 */
-	public function __construct($workspaceName, \DateTime $currentDateTime, \TYPO3\Flow\I18n\Locale $locale, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain) {
+	public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain) {
 		$this->workspaceName = $workspaceName;
 		$this->currentDateTime = $currentDateTime;
-		$this->locale = $locale;
+		$this->dimensions = $dimensions;
 		$this->invisibleContentShown = $invisibleContentShown;
 		$this->removedContentShown = $removedContentShown;
 		$this->inaccessibleContentShown = $inaccessibleContentShown;
 		$this->currentSite = $currentSite;
 		$this->currentDomain = $currentDomain;
+		$this->targetDimensions = $targetDimensions;
 	}
 
 	/**
@@ -100,7 +102,8 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 		return array(
 			'workspaceName' => $this->workspaceName,
 			'currentDateTime' => $this->currentDateTime,
-			'locale' => $this->locale,
+			'dimensions' => $this->dimensions,
+			'targetDimensions' => $this->targetDimensions,
 			'invisibleContentShown' => $this->invisibleContentShown,
 			'removedContentShown' => $this->removedContentShown,
 			'inaccessibleContentShown' => $this->inaccessibleContentShown,

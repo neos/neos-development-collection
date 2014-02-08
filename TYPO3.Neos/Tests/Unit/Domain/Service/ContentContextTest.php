@@ -35,7 +35,8 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$contextProperties = array(
 			'workspaceName' => NULL,
 			'currentDateTime' => new \DateTime(),
-			'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+			'dimensions' => array(),
+			'targetDimensions' => array(),
 			'invisibleContentShown' => NULL,
 			'removedContentShown' => NULL,
 			'inaccessibleContentShown' => NULL,
@@ -57,7 +58,8 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$contextProperties = array(
 			'workspaceName' => NULL,
 			'currentDateTime' => new \DateTime(),
-			'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+			'dimensions' => array(),
+			'targetDimensions' => array(),
 			'invisibleContentShown' => NULL,
 			'removedContentShown' => NULL,
 			'inaccessibleContentShown' => NULL,

@@ -39,7 +39,9 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	 * @return \TYPO3\Neos\Domain\Service\ContentContext
 	 */
 	protected function buildContextInstance(array $contextProperties) {
-		return new \TYPO3\Neos\Domain\Service\ContentContext($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['locale'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown'], $contextProperties['currentSite'], $contextProperties['currentDomain']);
+		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+
+		return new \TYPO3\Neos\Domain\Service\ContentContext($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown'], $contextProperties['currentSite'], $contextProperties['currentDomain']);
 	}
 
 	/**
@@ -49,10 +51,13 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	 * @return array
 	 */
 	protected function mergeContextPropertiesWithDefaults(array $contextProperties) {
+		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+
 		$defaultContextProperties = array (
 			'workspaceName' => 'live',
 			'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
-			'locale' => new \TYPO3\Flow\I18n\Locale('mul_ZZ'),
+			'dimensions' => array(),
+			'targetDimensions' => array(),
 			'invisibleContentShown' => FALSE,
 			'removedContentShown' => FALSE,
 			'inaccessibleContentShown' => FALSE,
@@ -60,7 +65,12 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 			'currentDomain' => NULL
 		);
 
-		return \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
+		$mergedProperties = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
+
+		$this->mergeDimensionValues($contextProperties, $mergedProperties);
+		$this->mergeTargetDimensionContextProperties($contextProperties, $mergedProperties, $defaultContextProperties);
+
+		return $mergedProperties;
 	}
 
 	/**
@@ -72,8 +82,20 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	protected function getIdentifierSource(array $contextProperties) {
 		ksort($contextProperties);
 		$identifierSource = $this->contextImplementation;
-		foreach ($contextProperties as $propertyValue) {
-			if ($propertyValue instanceof \DateTime) {
+		foreach ($contextProperties as $propertyName => $propertyValue) {
+			if ($propertyName === 'dimensions') {
+				$stringParts = array();
+				foreach ($propertyValue as $dimensionName => $dimensionValues) {
+					$stringParts[] = $dimensionName . '=' . implode(',', $dimensionValues);
+				}
+				$stringValue = implode('&', $stringParts);
+			} elseif ($propertyName === 'targetDimensions') {
+				$stringParts = array();
+				foreach ($propertyValue as $dimensionName => $dimensionValue) {
+					$stringParts[] = $dimensionName . '=' . $dimensionValue;
+				}
+				$stringValue = implode('&', $stringParts);
+			} elseif ($propertyValue instanceof \DateTime) {
 				$stringValue = $propertyValue->getTimestamp();
 			} elseif ($propertyValue instanceof \TYPO3\Neos\Domain\Model\Site) {
 				$stringValue = $propertyValue->getNodeName();
@@ -103,7 +125,7 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 		}
 		if (isset($contextProperties['currentDomain'])) {
 			if (!$contextProperties['currentDomain'] instanceof \TYPO3\Neos\Domain\Model\Domain) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set locale in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Domain object as value.', 1373145384);
+				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set currentDomain in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Domain object as value.', 1373145384);
 			}
 		}
 	}
