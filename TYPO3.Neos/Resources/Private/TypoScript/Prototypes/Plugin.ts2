@@ -4,4 +4,12 @@
 prototype(TYPO3.Neos:Plugin) >
 prototype(TYPO3.Neos:Plugin) < prototype(TYPO3.Neos:Content) {
 	@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementation'
+
+	@cache {
+		mode = 'uncached'
+		context {
+			1 = 'node'
+			2 = 'documentNode'
+		}
+	}
 }

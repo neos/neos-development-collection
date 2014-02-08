@@ -53,6 +53,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 			@position = 'end 10000'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 			node = ${node}
+
+			@cache {
+				mode = 'uncached'
+				context {
+					1 = 'node'
+				}
+			}
 		}
 
 		# Script includes in the head should go here
@@ -93,6 +100,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		@position = 'before closingBodyTag'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
 		node = ${node}
+
+		@cache {
+			mode = 'uncached'
+			context {
+				1 = 'node'
+			}
+		}
 	}
 
 	# This enables redirecting to the last visited page after login
@@ -113,4 +127,16 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 
 	closingHtmlTag = '</html>'
 	closingHtmlTag.@position = 'end 200'
+
+
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			documentNode = ${node}
+		}
+		entryTags {
+			1 = ${'Node_' + node.identifier}
+		}
+	}
+
 }

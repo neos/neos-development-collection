@@ -16,4 +16,16 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 	@process.contentElementWrapping {
 		node = ${contentCollectionNode}
 	}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			collection = ${contentCollectionNode}
+		}
+
+		entryTags {
+			1 = ${'DescendantOf_' + contentCollectionNode.identifier}
+		}
+	}
 }

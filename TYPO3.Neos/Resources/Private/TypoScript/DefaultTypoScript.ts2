@@ -56,4 +56,22 @@ root {
 		condition = TRUE
 		renderPath = '/page'
 	}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			node = ${node}
+			editPreviewMode = ${editPreviewMode}
+			format = ${request.format}
+		}
+
+		entryTags {
+			# Whenever the node changes the matched condition could change
+			1 = ${'Node_' + documentNode.identifier}
+			# Whenever one of the parent nodes changes the layout could change
+			2 = ${'DescendantOf_' + documentNode.identifier}
+		}
+	}
+
 }

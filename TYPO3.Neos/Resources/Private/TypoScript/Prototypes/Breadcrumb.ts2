@@ -6,4 +6,15 @@ prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template) {
 	items = ${q(node).add(q(node).parents('[instanceof TYPO3.Neos:Document]'))}
 
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			documentNode = ${documentNode}
+		}
+		entryTags {
+			1 = 'NodeType_TYPO3.Neos:Document'
+		}
+	}
+
 }
