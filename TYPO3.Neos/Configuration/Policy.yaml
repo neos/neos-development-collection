@@ -34,8 +34,8 @@ resources:
     TYPO3_Neos_Backend_Module_Administration_Sites: 'method(TYPO3\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'
 
 roles:
-  Editor: [ TYPO3.TYPO3CR:Administrator ]
-  Administrator: [ Editor ]
+  Editor: ['TYPO3.TYPO3CR:Administrator']
+  Administrator: ['Editor']
 
 acls:
   Everybody:

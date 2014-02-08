@@ -78,9 +78,9 @@ TYPO3:
   DocTools:
     bundles:
       Neos:
-        documentationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/
-        configurationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
-        renderedDocumentationRootPath: %FLOW_PATH_DATA%Temporary/Documentation/TYPO3.Neos/
+        documentationRootPath: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/'
+        configurationRootPath: '%FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/'
+        renderedDocumentationRootPath: '%FLOW_PATH_DATA%Temporary/Documentation/TYPO3.Neos/'
         renderingOutputFormat: 'html'
         renderByDefault: FALSE
 
