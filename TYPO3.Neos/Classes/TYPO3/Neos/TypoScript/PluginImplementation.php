@@ -18,12 +18,12 @@ use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Dispatcher;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
  * A TypoScript Plugin object.
  */
-class PluginImplementation extends AbstractTypoScriptObject implements \ArrayAccess {
+class PluginImplementation extends AbstractArrayTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
