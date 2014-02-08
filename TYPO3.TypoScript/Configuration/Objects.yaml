@@ -7,3 +7,13 @@ TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView:
   properties:
     renderingContext:
       object: TYPO3\Fluid\Core\Rendering\RenderingContext
+
+TYPO3\TypoScript\Core\Runtime:
+  properties:
+    runtimeTypoScriptCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_TypoScript_Runtime_TypoScript

@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Core;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -93,12 +94,23 @@ class Runtime {
 	/**
 	 * @var array
 	 */
-	protected $configurationOnPathRuntimeCache = array();
+	protected $cachedConfigurationOnPath = array();
 
 	/**
 	 * @var boolean
 	 */
 	protected $debugMode = FALSE;
+
+	/**
+	 * @Flow\Inject
+	 * @var VariableFrontend
+	 */
+	protected $runtimeTypoScriptCache;
+
+	/**
+	 * @var string
+	 */
+	protected $cacheIdentifier;
 
 	/**
 	 * Constructor for the TypoScript Runtime
@@ -108,6 +120,17 @@ class Runtime {
 	public function __construct(array $typoScriptConfiguration, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		$this->typoScriptConfiguration = $typoScriptConfiguration;
 		$this->controllerContext = $controllerContext;
+	}
+
+	/**
+	 * Initialize the cache for merged TypoScript path information.
+	 */
+	public function initializeObject() {
+		$this->cacheIdentifier = md5(json_encode($this->typoScriptConfiguration));
+		$this->cachedConfigurationOnPath = $this->runtimeTypoScriptCache->get($this->cacheIdentifier);
+		if ($this->cachedConfigurationOnPath === FALSE) {
+			$this->cachedConfigurationOnPath = array();
+		}
 	}
 
 	/**
@@ -384,9 +407,9 @@ class Runtime {
 
 		foreach ($pathParts as $pathPart) {
 			$pathUntilNow .= '/' . $pathPart;
-			if (isset($this->configurationOnPathRuntimeCache[$pathUntilNow])) {
-				$configuration = $this->configurationOnPathRuntimeCache[$pathUntilNow]['c'];
-				$currentPrototypeDefinitions = $this->configurationOnPathRuntimeCache[$pathUntilNow]['p'];
+			if (isset($this->cachedConfigurationOnPath[$pathUntilNow])) {
+				$configuration = $this->cachedConfigurationOnPath[$pathUntilNow]['c'];
+				$currentPrototypeDefinitions = $this->cachedConfigurationOnPath[$pathUntilNow]['p'];
 				continue;
 			}
 			if (preg_match('#^([^<]*)(<(.*?)>)?$#', $pathPart, $matches)) {
@@ -435,8 +458,8 @@ class Runtime {
 					$configuration['__objectType'] = $currentPathSegmentType;
 				}
 
-				$this->configurationOnPathRuntimeCache[$pathUntilNow]['c'] = $configuration;
-				$this->configurationOnPathRuntimeCache[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
+				$this->cachedConfigurationOnPath[$pathUntilNow]['c'] = $configuration;
+				$this->cachedConfigurationOnPath[$pathUntilNow]['p'] = $currentPrototypeDefinitions;
 			} else {
 				throw new Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
 			}
@@ -608,4 +631,11 @@ class Runtime {
 		return $this->debugMode;
 	}
 
+
+	/**
+	 * Shutdown the TypoScript Runtime and save the configuration cache.
+	 */
+	public function shutdownObject() {
+		$this->runtimeTypoScriptCache->set($this->cacheIdentifier, $this->cachedConfigurationOnPath, array(), 0);
+	}
 }
