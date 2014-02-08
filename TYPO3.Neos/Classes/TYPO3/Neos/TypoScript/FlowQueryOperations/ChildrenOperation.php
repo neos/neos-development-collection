@@ -57,6 +57,13 @@ class ChildrenOperation extends AbstractOperation {
 	public function evaluate(FlowQuery $flowQuery, array $arguments) {
 		$output = array();
 		$outputNodePaths = array();
+		if (isset($arguments[0]) && !empty($arguments[0])) {
+			$parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($arguments[0]);
+			if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
+				return;
+			}
+		}
+
 		foreach ($flowQuery->getContext() as $contextNode) {
 			foreach ($contextNode->getChildNodes() as $childNode) {
 				if (!isset($outputNodePaths[$childNode->getPath()])) {
@@ -70,5 +77,35 @@ class ChildrenOperation extends AbstractOperation {
 		if (isset($arguments[0]) && !empty($arguments[0])) {
 			$flowQuery->pushOperation('filter', $arguments);
 		}
+	}
+
+	/**
+	 * @param FlowQuery $flowQuery
+	 * @param array $parsedFilter
+	 * @return boolean
+	 */
+	protected function earlyOptimizationOfFilters(FlowQuery $flowQuery, array $parsedFilter) {
+		$output = array();
+		$outputNodePaths = array();
+
+		if (isset($parsedFilter['Filters'][0]['PropertyNameFilter']) && count($parsedFilter['Filters']) === 1) {
+			$flowQuery->pushOperation('find', array($parsedFilter['Filters'][0]['PropertyNameFilter']));
+			return TRUE;
+		}
+
+		if (isset($parsedFilter['Filters'][0]['AttributeFilters']) && count($parsedFilter['Filters']) === 1 && count($parsedFilter['Filters'][0]['AttributeFilters']) === 1 && $parsedFilter['Filters'][0]['AttributeFilters'][0]['Operator'] === 'instanceof') {
+			foreach ($flowQuery->getContext() as $contextNode) {
+				foreach ($contextNode->getChildNodes($parsedFilter['Filters'][0]['AttributeFilters'][0]['Operand']) as $childNode) {
+					if (!isset($outputNodePaths[$childNode->getPath()])) {
+						$output[] = $childNode;
+						$outputNodePaths[$childNode->getPath()] = TRUE;
+					}
+				}
+			}
+			$flowQuery->setContext($output);
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 }
