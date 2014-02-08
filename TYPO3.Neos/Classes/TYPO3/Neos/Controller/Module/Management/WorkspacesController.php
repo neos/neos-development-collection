@@ -62,6 +62,12 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
+	 */
+	protected $contextFactory;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
 	 */
 	protected $propertyMappingConfigurationBuilder;
@@ -121,13 +127,15 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 			}
 		}
 
-		$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+		$liveContext = $this->contextFactory->create(array(
+			'workspaceName' => 'live'
+		));
 
 		ksort($sites);
 		foreach ($sites as $siteKey => $site) {
 			foreach ($site['documents'] as $documentKey => $document) {
 				foreach ($document['changes'] as $changeKey => $change) {
-					$liveNode = $this->nodeDataRepository->findOneByIdentifier($change['node']->getIdentifier(), $liveWorkspace);
+					$liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
 					$sites[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
 					$sites[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
 				}
@@ -165,6 +173,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 * @return void
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
 		$this->nodeDataRepository->remove($node);
 		$this->addFlashMessage('Node has been discarded', 'Node discarded');
 		$this->redirect('index');
@@ -190,6 +199,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 			break;
 			case 'discard':
 				foreach ($nodes as $node) {
+					// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
 					$this->nodeDataRepository->remove($node);
 				}
 				$message = 'Selected changes have been discarded';
@@ -220,6 +230,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	public function discardWorkspaceAction(Workspace $workspace) {
 		foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
 			if ($node->getPath() !== '/') {
+				// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
 				$this->nodeDataRepository->remove($node);
 			}
 		}

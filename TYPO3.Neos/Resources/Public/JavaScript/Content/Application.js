@@ -347,9 +347,8 @@ function(
 			var that = this;
 			if (uri === '#') {
 					// Often, pages use an URI of "#" to go to the homepage. In this case,
-					// we extract the current workspace name and redirect to this workspace instead.
-				var siteRoot = $('#neos-page-metainformation').attr('data-__siteroot');
-				var workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
+					// we get the current workspace name and redirect to this workspace instead.
+				var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
 				uri = '@' + workspaceName;
 			}
 

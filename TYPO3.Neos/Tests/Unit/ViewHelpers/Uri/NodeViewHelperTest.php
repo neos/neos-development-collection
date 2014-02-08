@@ -92,61 +92,11 @@ class NodeViewHelperTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function viewHelperConvertsANodeToItsIdentifierWhenInLiveWorkspace() {
-		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
-		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
-
-		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $nodeIdentifier,
-			'@action' => 'show',
-			'@controller' => 'frontend\node',
-			'@package' => 'typo3.neos'
-		));
-
-		$this->viewHelper->render($node);
-	}
-
-	/**
-	 * @test
-	 */
-	public function viewHelperConvertsANodeToItsContextPathWhenNotInLiveWorkspace() {
-		$nodeContextPath = 'some/context/path@workspace-name';
-		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$mockWorkspace->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('not-live'));
-
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContext->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-
-		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($mockContext));
-		$node->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue($nodeContextPath));
-
-		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $nodeContextPath,
-			'@action' => 'show',
-			'@controller' => 'frontend\node',
-			'@package' => 'typo3.neos'
-		));
-
-		$this->viewHelper->render($node);
-	}
-
-	/**
-	 * @test
-	 */
 	public function viewHelperUsesNodeInstanceWhenGiven() {
-		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
-
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $nodeIdentifier,
+			'node' => $node,
 			'@action' => 'show',
 			'@controller' => 'frontend\node',
 			'@package' => 'typo3.neos'
@@ -159,16 +109,12 @@ class NodeViewHelperTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperUsesDocumentNodeFromContextIfNoNodeGiven() {
-		$documentNodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$documentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$documentNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$documentNode->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($documentNodeIdentifier));
-
-		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
+		$this->tsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
 
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $documentNodeIdentifier,
+			'node' => $documentNode,
 			'@action' => 'show',
 			'@controller' => 'frontend\node',
 			'@package' => 'typo3.neos'
@@ -181,19 +127,15 @@ class NodeViewHelperTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperFetchesNodeWithRelativePathFromDocumentNodeInContextWhenNodeIsGivenAsRelativePathString() {
-		$relativeNodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$documentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$relativeNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$relativeNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$relativeNode->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($relativeNodeIdentifier));
 
 		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
 
 		$documentNode->expects($this->any())->method('getNode')->with('some/relative/path')->will($this->returnValue($relativeNode));
 
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $relativeNodeIdentifier,
+			'node' => $relativeNode,
 			'@action' => 'show',
 			'@controller' => 'frontend\node',
 			'@package' => 'typo3.neos'
@@ -206,13 +148,9 @@ class NodeViewHelperTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperFetchesNodeWithRelativePathFromDocumentNodeSiteNodeWhenNodeIsGivenAsStringWithTilde() {
-		$relativeNodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$currentSiteNodeMock = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$documentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$relativeNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$relativeNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$relativeNode->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($relativeNodeIdentifier));
 
 		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('documentNode' => $documentNode)));
 
@@ -223,7 +161,7 @@ class NodeViewHelperTest extends UnitTestCase {
 		$documentNode->expects($this->any())->method('getContext')->will($this->returnValue($contentContext));
 
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $relativeNodeIdentifier,
+			'node' => $relativeNode,
 			'@action' => 'show',
 			'@controller' => 'frontend\node',
 			'@package' => 'typo3.neos'
@@ -237,14 +175,10 @@ class NodeViewHelperTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperRespectsFormatParameter() {
-		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
-
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $nodeIdentifier,
+			'node' => $node,
 			'@action' => 'show',
 			'@controller' => 'frontend\node',
 			'@package' => 'typo3.neos',
@@ -258,11 +192,7 @@ class NodeViewHelperTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperRespectsAbsoluteParameter() {
-		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
 
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('setCreateAbsoluteUri')->with(TRUE);
 		$this->viewHelper->render($node, NULL, TRUE);
@@ -272,16 +202,12 @@ class NodeViewHelperTest extends UnitTestCase {
 	 * @test
 	 */
 	public function viewHelperRespectsBaseNodeNameParameter() {
-		$someNodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$someNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$someNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$someNode->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($someNodeIdentifier));
 
 		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('someBaseNode' => $someNode)));
 
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
-			'node' => $someNodeIdentifier,
+			'node' => $someNode,
 			'@action' => 'show',
 			'@controller' => 'frontend\node',
 			'@package' => 'typo3.neos'
@@ -295,11 +221,7 @@ class NodeViewHelperTest extends UnitTestCase {
 	 */
 	public function viewHelperRespectsArgumentsParameter() {
 		$arguments = array('foo' => 'bar', 'baz' => 'Foos');
-		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
-		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
 
 		$this->uriBuilderMock->expects($this->atLeastOnce())->method('setArguments')->with($arguments);
 

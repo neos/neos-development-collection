@@ -42,21 +42,9 @@ class NodeController extends ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
-	 */
-	protected $nodeFactory;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
 	 */
 	protected $nodeTypeManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
 
 	/**
 	 * @Flow\Inject
@@ -100,8 +88,7 @@ class NodeController extends ActionController {
 	 */
 	public function showAction($identifier, $workspaceName = 'live') {
 		$contentContext = $this->createContentContext($workspaceName);
-		$nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $contentContext->getWorkspace());
-		$node = $this->nodeFactory->createFromNodeData($nodeData, $contentContext);
+		$node = $contentContext->getNodeByIdentifier($identifier);
 
 		$this->view->assign('node', $node);
 	}
