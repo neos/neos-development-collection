@@ -20,7 +20,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
  * //tsPath variables TODO The result of this TS object is made available inside the template as "variables"
  * @api
  */
-class TemplateImplementation extends AbstractTypoScriptObject {
+class TemplateImplementation extends AbstractArrayTypoScriptObject {
 
 	/**
 	 * Path to the template which should be rendered

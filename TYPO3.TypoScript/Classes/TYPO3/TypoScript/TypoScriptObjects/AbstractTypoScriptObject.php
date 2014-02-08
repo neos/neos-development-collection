@@ -13,7 +13,6 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
 
 use TYPO3\Flow\Annotations as Flow;
 
-
 /**
  * Base class for all TypoScript objects
  */
@@ -37,19 +36,6 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	 * @var string
 	 */
 	protected $typoScriptObjectName;
-
-	/**
-	 * List of properties which have been set using array access. We store this for *every* TypoScript object
-	 * in order to do things like:
-	 * x = Foo {
-	 *   a = 'foo'
-	 *   b = ${this.a + 'bar'}
-	 * }
-	 *
-	 * @var array
-	 * @internal
-	 */
-	protected $properties = array();
 
 	/**
 	 * @var array
@@ -94,14 +80,18 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	}
 
 	/**
+	 * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
+	 *
 	 * @param mixed $offset
 	 * @return boolean
 	 */
 	public function offsetExists($offset) {
-		return isset($this->properties[$offset]);
+		return ($this->tsValue($offset) !== NULL);
 	}
 
 	/**
+	 * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
+	 *
 	 * @param mixed $offset
 	 * @return mixed
 	 */
@@ -110,19 +100,24 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess {
 	}
 
 	/**
+	 * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
+	 *
 	 * @param mixed $offset
 	 * @param mixed $value
 	 * @return void
 	 */
 	public function offsetSet($offset, $value) {
-		$this->properties[$offset] = $value;
+		// no op
 	}
 
 	/**
+	 * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
+	 *
 	 * @param mixed $offset
 	 * @return void
 	 */
 	public function offsetUnset($offset) {
-		unset($this->properties[$offset]);
+		// no op
 	}
+
 }

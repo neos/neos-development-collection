@@ -19,7 +19,7 @@ use TYPO3\TypoScript;
 /**
  * The old "COA" object
  */
-class ArrayImplementation extends AbstractTypoScriptObject {
+class ArrayImplementation extends AbstractArrayTypoScriptObject {
 
 	/**
 	 * {@inheritdoc}

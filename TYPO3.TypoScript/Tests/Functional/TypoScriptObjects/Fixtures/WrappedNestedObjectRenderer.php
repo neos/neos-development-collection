@@ -12,14 +12,14 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
  * Renderer which wraps the nested TS object found at "value" with "prepend" and "append".
  *
  * Needed for more complex prototype inheritance chain testing.
  */
-class WrappedNestedObjectRenderer extends AbstractTypoScriptObject {
+class WrappedNestedObjectRenderer extends AbstractArrayTypoScriptObject {
 
 	/**
 	 * The string the current value should be prepended with

@@ -31,7 +31,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * See respective getters for descriptions
  */
-class UriBuilderImplementation extends TemplateImplementation {
+class UriBuilderImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * Key of the target package

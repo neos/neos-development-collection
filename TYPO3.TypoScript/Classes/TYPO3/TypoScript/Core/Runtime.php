@@ -584,26 +584,27 @@ class Runtime {
 		 * @var $typoScriptObject \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject
 		 */
 		$typoScriptObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
-		$this->setPropertiesOnTypoScriptObject($typoScriptObject, $typoScriptConfiguration);
-
+		if ($typoScriptObject instanceof \TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject) {
+			$this->setPropertiesOnTypoScriptObject($typoScriptObject, $typoScriptConfiguration);
+		}
 		return $typoScriptObject;
 	}
 
 	/**
-	 * Set options on the given TypoScript object
+	 * Set options on the given (AbstractArray)TypoScript object
 	 *
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $typoScriptObject
 	 * @param array $typoScriptConfiguration
 	 * @return void
 	 */
-	protected function setPropertiesOnTypoScriptObject(AbstractTypoScriptObject $tsObject, array $typoScriptConfiguration) {
+	protected function setPropertiesOnTypoScriptObject(AbstractTypoScriptObject $typoScriptObject, array $typoScriptConfiguration) {
 		foreach ($typoScriptConfiguration as $key => $value) {
-				// skip keys which start with __, as they are purely internal.
+			// skip keys which start with __, as they are purely internal.
 			if ($key[0] === '_' && $key[1] === '_') {
 				continue;
 			}
 
-			ObjectAccess::setProperty($tsObject, $key, $value);
+			ObjectAccess::setProperty($typoScriptObject, $key, $value);
 		}
 	}
 

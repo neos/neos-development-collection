@@ -26,7 +26,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * will result in the string: class="class1 class2" id="my-id"
  */
-class AttributesImplementation extends AbstractTypoScriptObject {
+class AttributesImplementation extends AbstractArrayTypoScriptObject {
 
 	/**
 	 * @return string

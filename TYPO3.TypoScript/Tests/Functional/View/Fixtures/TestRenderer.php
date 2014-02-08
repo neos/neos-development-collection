@@ -12,12 +12,12 @@ namespace TYPO3\TypoScript\Tests\Functional\View\Fixtures;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
  * Test renderer
  */
-class TestRenderer extends AbstractTypoScriptObject {
+class TestRenderer extends AbstractArrayTypoScriptObject {
 
 	/**
 	 * @return mixed

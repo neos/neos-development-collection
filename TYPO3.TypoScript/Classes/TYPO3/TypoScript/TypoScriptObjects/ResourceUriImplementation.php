@@ -28,7 +28,7 @@ use TYPO3\TypoScript\Exception as TypoScriptException;
  *
  * See respective getters for descriptions
  */
-class ResourceUriImplementation extends TemplateImplementation {
+class ResourceUriImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
@@ -107,7 +107,7 @@ class ResourceUriImplementation extends TemplateImplementation {
 		} else {
 			$package = $this->getPackage();
 			if ($package === NULL) {
-				$controllerContext = $this->getTsRuntime()->getControllerContext();
+				$controllerContext = $this->tsRuntime->getControllerContext();
 				/** @var $actionRequest ActionRequest */
 				$actionRequest = $controllerContext->getRequest();
 				$package = $actionRequest->getControllerPackageKey();
