@@ -636,14 +636,17 @@ class NodeDataRepository extends Repository {
 	protected function renumberIndexesInLevel($parentPath) {
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
 
-		/** @var \Doctrine\ORM\Query $query */
-		$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
+		/** @var Query $query */
+		$query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
 		$query->setParameter('parentPathHash', md5($parentPath));
 
 		$nodesOnLevel = array();
 		/** @var $node NodeData */
-		foreach ($query->getResult() as $node) {
-			$nodesOnLevel[$node->getIndex()] = $node;
+		foreach ($query->getArrayResult() as $node) {
+			$nodesOnLevel[$node['index']] = array(
+				'identifier' => $node['identifier'],
+				'path' => $node['path']
+			);
 		}
 
 		/** @var $node NodeData */
@@ -653,7 +656,10 @@ class NodeDataRepository extends Repository {
 				if (isset($nodesOnLevel[$index])) {
 					throw new Exception\NodeException(sprintf('Index conflict for nodes %s and %s: both have index %s', $nodesOnLevel[$index]->getPath(), $node->getPath(), $index), 1317140401);
 				}
-				$nodesOnLevel[$index] = $node;
+				$nodesOnLevel[$index] = array(
+					'addedNode' => $node,
+					'path' => $node->getPath()
+				);
 			}
 		}
 
@@ -662,11 +668,21 @@ class NodeDataRepository extends Repository {
 		ksort($nodesOnLevel);
 
 		$newIndex = 100;
+		$query = $this->entityManager->createQuery('UPDATE TYPO3\TYPO3CR\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
 		foreach ($nodesOnLevel as $node) {
 			if ($newIndex > self::INDEX_MAXIMUM) {
-				throw new Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node->getPath()), 1317140402);
+				throw new Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node['path']), 1317140402);
 			}
-			$node->setIndex($newIndex);
+			if (isset($node['addedNode'])) {
+				$node['addedNode']->setIndex($newIndex);
+			} else {
+				if ($entity = $this->entityManager->getUnitOfWork()->tryGetById($node['identifier'], 'TYPO3\TYPO3CR\Domain\Model\NodeData')) {
+					$entity->setIndex($newIndex);
+				}
+				$query->setParameter('index', $newIndex);
+				$query->setParameter('identifier', $node['identifier']);
+				$query->execute();
+			}
 			$newIndex += 100;
 		}
 	}
