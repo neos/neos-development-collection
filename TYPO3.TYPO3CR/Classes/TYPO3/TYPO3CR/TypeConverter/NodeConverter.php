@@ -79,7 +79,6 @@ class NodeConverter extends AbstractTypeConverter {
 	 */
 	protected $priority = 1;
 
-
 	/**
 	 * Converts the specified $source into a Node.
 	 *
@@ -130,6 +129,14 @@ class NodeConverter extends AbstractTypeConverter {
 
 		if (!is_array($source) || !isset($source['__contextNodePath'])) {
 			return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
+		}
+
+		if (isset($source['_removed']) && is_string($source['_removed'])) {
+			$source['_removed'] = $source['_removed'] === 'true' ? TRUE : FALSE;
+		}
+
+		if (isset($source['_hidden']) && is_string($source['_hidden'])) {
+			$source['_hidden'] = $source['_hidden'] === 'true' ? TRUE : FALSE;
 		}
 
 		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $source['__contextNodePath'], $matches);
