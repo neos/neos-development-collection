@@ -226,7 +226,15 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setRemovedCallsRemoveMethodIfArgumentIsTrue() {
+		$mockFirstLevelNodeCache = $this->getFirstLevelNodeCache();
+
+		$context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
+
 		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array(), '', FALSE);
+
+		$this->inject($node, 'context', $context);
+
 		$node->expects($this->once())->method('remove');
 		$node->setRemoved(TRUE);
 	}
@@ -237,8 +245,11 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getParentReturnsParentNodeInCurrentNodesContext() {
 		$currentNodeWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
+		$mockFirstLevelNodeCache = $this->getFirstLevelNodeCache();
+
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentNodeWorkspace));
+		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
 		$expectedParentNodeData = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/foo', $currentNodeWorkspace);
 		$expectedContextualizedParentNode = new \TYPO3\TYPO3CR\Domain\Model\Node($expectedParentNodeData, $context);
@@ -261,8 +272,11 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getNodeReturnsTheSpecifiedNodeInTheCurrentNodesContext() {
 		$currentNodeWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
+		$mockFirstLevelNodeCache = $this->getFirstLevelNodeCache();
+
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentNodeWorkspace));
+		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
 		$expectedNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo/bar', $currentNodeWorkspace));
 		$expectedContextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($expectedNodeData, $context);
@@ -291,13 +305,26 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$nodeData->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
 
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+
+		$context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
 		$context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
+		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('materializeNodeData'), array($nodeData, $context));
 		$node->expects($this->once())->method('materializeNodeData');
 		return $node;
 	}
 
+	/**
+	 * @return \PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function getFirstLevelNodeCache() {
+		$mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+		$mockFirstLevelNodeCache->expects($this->any())->method('getByPath')->will($this->returnValue(FALSE));
+		$mockFirstLevelNodeCache->expects($this->any())->method('getByIdentifier')->will($this->returnValue(FALSE));
+		$mockFirstLevelNodeCache->expects($this->any())->method('getChildNodesByPathAndNodeTypeFilter')->will($this->returnValue(FALSE));
+		return $mockFirstLevelNodeCache;
+	}
 }

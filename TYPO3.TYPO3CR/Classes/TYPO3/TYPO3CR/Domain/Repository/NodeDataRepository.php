@@ -400,14 +400,12 @@ class NodeDataRepository extends Repository {
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param Workspace $workspace The containing workspace
 	 * @param array $dimensions An array of dimensions to dimension values
-	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
-	 * @param integer $offset An optional offset for the query
 	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
 	 * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 * @todo Improve implementation by using DQL
 	 */
-	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $limit = NULL, $offset = NULL, $removedNodes = FALSE, $recursive = FALSE) {
+	public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE, $recursive = FALSE) {
 		$foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
 		if ($parentPath === '/') {
@@ -446,9 +444,6 @@ class NodeDataRepository extends Repository {
 			$foundNodes = $this->filterRemovedNodes($foundNodes);
 		}
 		$foundNodes = $this->filterNodesOverlaidInBaseWorkspace($foundNodes, $workspace, $dimensions);
-		if ($limit !== NULL || $offset !== NULL) {
-			$foundNodes = $this->applyLimitAndOffset($foundNodes, $limit, ($offset === NULL ? 0 : $offset));
-		}
 
 		return $foundNodes;
 	}
@@ -598,12 +593,10 @@ class NodeDataRepository extends Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param ContextInterface $context The containing workspace
-	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
-	 * @param integer $offset An optional offset for the query
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 */
-	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context, $limit = NULL, $offset = NULL) {
-		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $limit, $offset, ($context->isRemovedContentShown() ? NULL : FALSE));
+	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context) {
+		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), ($context->isRemovedContentShown() ? NULL : FALSE));
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
@@ -628,7 +621,7 @@ class NodeDataRepository extends Repository {
 	 * @return integer The number of nodes a similar call to findByParentAndNodeType() would return without any pending added nodes
 	 */
 	public function countByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $includeRemovedNodes = FALSE) {
-		return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, NULL, NULL, $includeRemovedNodes));
+		return count($this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $includeRemovedNodes));
 	}
 
 	/**
@@ -1113,18 +1106,6 @@ class NodeDataRepository extends Repository {
 		return array_filter($nodes, function(NodeData $node) {
 			return !$node->isRemoved();
 		});
-	}
-
-	/**
-	 * Apply limit and offset to the array of nodes.
-	 *
-	 * @param array $nodes
-	 * @param integer $limit
-	 * @param integer $offset
-	 * @return array
-	 */
-	protected function applyLimitAndOffset(array $nodes, $limit = NULL, $offset = 0) {
-		return array_slice($nodes, $offset, $limit);
 	}
 
 	/**

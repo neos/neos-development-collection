@@ -10,7 +10,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use TYPO3\Flow\I18n\Locale;
 
 /**
  * Testcase for the Context

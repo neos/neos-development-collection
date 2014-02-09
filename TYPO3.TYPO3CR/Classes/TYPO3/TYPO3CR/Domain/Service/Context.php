@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache;
 
 /**
  * Context
@@ -86,6 +87,11 @@ class Context implements ContextInterface {
 	protected $targetDimensions = array();
 
 	/**
+	 * @var FirstLevelNodeCache
+	 */
+	protected $firstLevelNodeCache;
+
+	/**
 	 * Creates a new Context object.
 	 *
 	 * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
@@ -108,6 +114,8 @@ class Context implements ContextInterface {
 		$this->removedContentShown = $removedContentShown;
 		$this->inaccessibleContentShown = $inaccessibleContentShown;
 		$this->targetDimensions = $targetDimensions;
+
+		$this->firstLevelNodeCache = new FirstLevelNodeCache();
 	}
 
 	/**
@@ -189,8 +197,18 @@ class Context implements ContextInterface {
 			throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
 		}
 		$workspaceRootNode = $this->getWorkspace()->getRootNodeData();
-		$node = $this->nodeFactory->createFromNodeData($workspaceRootNode, $this);
-		return ($path === '/') ? $node : $node->getNode(substr($path, 1));
+		$rootNode = $this->nodeFactory->createFromNodeData($workspaceRootNode, $this);
+		if ($path !== '/') {
+			$node = $this->firstLevelNodeCache->getByPath($path);
+			if ($node === FALSE) {
+				$node = $rootNode->getNode(substr($path, 1));
+				$this->firstLevelNodeCache->setByPath($path, $node);
+			}
+		} else {
+			$node = $rootNode;
+		}
+
+		return $node;
 	}
 
 	/**
@@ -200,12 +218,17 @@ class Context implements ContextInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node with the given identifier or NULL if no such node exists
 	 */
 	public function getNodeByIdentifier($identifier) {
+		$node = $this->firstLevelNodeCache->getByIdentifier($identifier);
+		if ($node !== FALSE) {
+			return $node;
+		}
 		$nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(FALSE), $this->dimensions);
 		if ($nodeData !== NULL) {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $this);
 		} else {
 			$node = NULL;
 		}
+		$this->firstLevelNodeCache->setByIdentifier($identifier, $node);
 		return $node;
 	}
 
@@ -315,6 +338,15 @@ class Context implements ContextInterface {
 			'removedContentShown' => $this->removedContentShown,
 			'inaccessibleContentShown' => $this->inaccessibleContentShown
 		);
+	}
+
+	/**
+	 * Not public API!
+	 *
+	 * @return FirstLevelNodeCache
+	 */
+	public function getFirstLevelNodeCache() {
+		return $this->firstLevelNodeCache;
 	}
 
 }

@@ -23,8 +23,11 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$parentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
 		$newNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', FALSE);
+
+		$mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
 		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 		$nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
 
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));

@@ -42,7 +42,7 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	 */
 	public function resetNodeInstances() {
 		$this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->reset();
-		$this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory')->reset();
+		$this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface')->reset();
 		$this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory')->reset();
 	}
 
@@ -304,7 +304,7 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	 */
 	protected function getContextForProperties(array $humanReadableContextProperties, $addDimensionDefaults = FALSE) {
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
-		$contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
+		$contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$contextProperties = array();
 		if (isset($humanReadableContextProperties['Locale'])) {
 			$contextProperties['dimensions']['locales'] = array($humanReadableContextProperties['Locale'], 'mul_ZZ');

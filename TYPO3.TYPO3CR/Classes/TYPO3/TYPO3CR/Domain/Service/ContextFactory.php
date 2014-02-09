@@ -68,9 +68,9 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @api
 	 */
 	public function create(array $contextProperties) {
+		$contextProperties = $this->mergeContextPropertiesWithDefaults($contextProperties);
 		$contextIdentifier = $this->getIdentifier($contextProperties);
 		if (!isset($this->contextInstances[$contextIdentifier])) {
-			$contextProperties = $this->mergeContextPropertiesWithDefaults($contextProperties);
 			$this->validateContextProperties($contextProperties);
 			$context = $this->buildContextInstance($contextProperties);
 			$this->contextInstances[$contextIdentifier] = $context;

@@ -116,6 +116,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->setPath($this->getParentPath() . ($this->getParentPath() === '/' ? '' : '/') . $newName);
 		$this->nodeDataRepository->persistEntities();
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -143,6 +144,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setPath($path, FALSE);
+		$this->context->getFirstLevelNodeCache()->flush();
 	}
 
 	/**
@@ -208,6 +210,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setWorkspace($workspace);
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -244,6 +247,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setIndex($index);
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -267,7 +271,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if ($this->getPath() === '/') {
 			return NULL;
 		}
-		return $this->nodeDataRepository->findOneByPathInContext($this->getParentPath(), $this->context);
+
+		$parentPath = $this->getParentPath();
+		$node = $this->context->getFirstLevelNodeCache()->getByPath($parentPath);
+		if ($node !== FALSE) {
+			return $node;
+		}
+		$node = $this->nodeDataRepository->findOneByPathInContext($parentPath, $this->context);
+		$this->context->getFirstLevelNodeCache()->setByPath($parentPath, $node);
+		return $node;
 	}
 
 	/**
@@ -312,6 +324,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -347,6 +360,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -380,6 +394,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$this->nodeDataRepository->persistEntities();
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -402,6 +417,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
 		$copiedNode->moveBefore($referenceNode);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
@@ -426,6 +443,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
 		$copiedNode->moveAfter($referenceNode);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
@@ -449,6 +468,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
@@ -470,6 +491,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setProperty($propertyName, $value);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -536,6 +559,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->removeProperty($propertyName);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -579,6 +604,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setContentObject($contentObject);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -603,6 +630,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->unsetContentObject();
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -618,6 +647,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setNodeType($nodeType);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -653,7 +684,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 				$newNode->createNode($childNodeName, $childNodeType, NULL, $dimensions);
 			}
 		}
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($newNode);
+
 		return $newNode;
 	}
 
@@ -679,6 +713,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$nodeData = $this->nodeData->createSingleNode($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 
+		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitNodeAdded($node);
+
 		return $node;
 	}
 
@@ -693,6 +730,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
 		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace(), $this->context->getDimensions());
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($node);
 
 		return $node;
@@ -707,7 +746,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	public function getNode($path) {
 		$absolutePath = $this->nodeData->normalizePath($path);
-		return $this->nodeDataRepository->findOneByPathInContext($absolutePath, $this->context);
+		$node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
+		if ($node !== FALSE) {
+			return $node;
+		}
+		$node = $this->nodeDataRepository->findOneByPathInContext($absolutePath, $this->context);
+		$this->context->getFirstLevelNodeCache()->setByPath($absolutePath, $node);
+		return $node;
 	}
 
 	/**
@@ -734,7 +779,18 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function getChildNodes($nodeTypeFilter = NULL, $limit = NULL, $offset = NULL) {
-		return $this->nodeDataRepository->findByParentAndNodeTypeInContext($this->getPath(), $nodeTypeFilter, $this->context, $limit, $offset);
+		$nodes = $this->context->getFirstLevelNodeCache()->getChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter);
+		if ($nodes === FALSE) {
+			$nodes = $this->nodeDataRepository->findByParentAndNodeTypeInContext($this->getPath(), $nodeTypeFilter, $this->context, $limit, $offset);
+			$this->context->getFirstLevelNodeCache()->setChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter, $nodes);
+		}
+
+		if ($offset !== NULL || $limit !== NULL) {
+			$offset = ($offset === NULL) ? 0 : $offset;
+			return array_slice($nodes, $offset, $limit);
+		}
+
+		return $nodes;
 	}
 
 	/**
@@ -770,6 +826,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->remove();
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeRemoved($this);
 	}
 
@@ -808,6 +866,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHidden($hidden);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -833,6 +893,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenBeforeDateTime($dateTime);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -858,6 +920,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenAfterDateTime($dateTime);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -883,6 +947,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setHiddenInIndex($hidden);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -908,6 +974,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$this->nodeData->setAccessRoles($accessRoles);
+
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeUpdated($this);
 	}
 
@@ -1110,6 +1178,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$this->nodeDataRepository->add($nodeData);
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 
+		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($node);
 
 		return $node;
