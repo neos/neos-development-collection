@@ -280,11 +280,6 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	 * @return string
 	 */
 	protected function calculateItemState(NodeInterface $node) {
-		$siteNode = $node->getContext()->getCurrentSiteNode();
-		if ($siteNode === $this->currentNode) {
-			return self::STATE_NORMAL;
-		}
-
 		if ($node === $this->currentNode) {
 			return self::STATE_CURRENT;
 		}
