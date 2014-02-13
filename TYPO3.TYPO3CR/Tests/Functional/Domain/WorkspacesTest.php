@@ -79,7 +79,7 @@ class WorkspacesTest extends FunctionalTestCase {
 	}
 
 	protected function setUpRootNodeAndRepository() {
-		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
 		$personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
 		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
 		$this->rootNode = $personalContext->getNode('/');

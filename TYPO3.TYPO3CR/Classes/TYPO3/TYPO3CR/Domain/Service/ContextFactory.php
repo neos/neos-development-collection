@@ -81,7 +81,7 @@ class ContextFactory implements ContextFactoryInterface {
 
 	/**
 	 * Creates the actual Context instance.
-	 * This needs to be overriden if the Builder is extended.
+	 * This needs to be overridden if the Builder is extended.
 	 *
 	 * @param array $contextProperties
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
@@ -129,7 +129,7 @@ class ContextFactory implements ContextFactoryInterface {
 	}
 
 	/**
-	 * This creates the actual identifier and needs to be overriden by builders extending this.
+	 * This creates the actual identifier and needs to be overridden by builders extending this.
 	 *
 	 * @param array $contextProperties
 	 * @return string

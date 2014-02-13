@@ -102,6 +102,7 @@ class PaginateController extends AbstractWidgetController {
 	/**
 	 * @param integer $currentPage
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\PageNotFoundException
 	 */
 	public function indexAction($currentPage = 1) {
 		$this->currentPage = (integer)$currentPage;

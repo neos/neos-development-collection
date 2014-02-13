@@ -396,18 +396,18 @@ class NodeData extends AbstractNodeData {
 	 * @param array $dimensions
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
-		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $workspace, $dimensions);
+	public function createNodeData($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
+		$newNodeData = $this->createSingleNodeData($name, $nodeType, $identifier, $workspace, $dimensions);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-				$newNode->setProperty($propertyName, $propertyValue);
+				$newNodeData->setProperty($propertyName, $propertyValue);
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-				$newNode->createNode($childNodeName, $childNodeType, NULL, $workspace, $dimensions);
+				$newNodeData->createNodeData($childNodeName, $childNodeType, NULL, $workspace, $dimensions);
 			}
 		}
-		return $newNode;
+		return $newNodeData;
 	}
 
 	/**
@@ -423,7 +423,7 @@ class NodeData extends AbstractNodeData {
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
-	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
+	public function createSingleNodeData($name, NodeType $nodeType = NULL, $identifier = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
 		if (!is_string($name) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) !== 1) {
 			throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1292428697);
 		}
@@ -434,14 +434,14 @@ class NodeData extends AbstractNodeData {
 			throw new NodeExistsException(sprintf('Node with path "' . $newPath . '" already exists in workspace %s and given dimensions %s.', $nodeWorkspace->getName(), var_export($dimensions, TRUE)), 1292503471);
 		}
 
-		$newNode = new NodeData($newPath, $nodeWorkspace, $identifier, $dimensions);
-		$this->nodeDataRepository->add($newNode);
-		$this->nodeDataRepository->setNewIndex($newNode, NodeDataRepository::POSITION_LAST);
+		$newNodeData = new NodeData($newPath, $nodeWorkspace, $identifier, $dimensions);
+		$this->nodeDataRepository->add($newNodeData);
+		$this->nodeDataRepository->setNewIndex($newNodeData, NodeDataRepository::POSITION_LAST);
 		if ($nodeType !== NULL) {
-			$newNode->setNodeType($nodeType);
+			$newNodeData->setNodeType($nodeType);
 		}
 
-		return $newNode;
+		return $newNodeData;
 	}
 
 	/**
@@ -449,12 +449,11 @@ class NodeData extends AbstractNodeData {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
-	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @param array $dimensions
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData the freshly generated node
 	 */
-	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
+	public function createNodeDataFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL, Workspace $workspace = NULL, array $dimensions = NULL) {
 		$newNodeName = $nodeName !== NULL ? $nodeName : $nodeTemplate->getName();
 
 		$possibleNodeName = $newNodeName;
@@ -463,9 +462,9 @@ class NodeData extends AbstractNodeData {
 			$possibleNodeName = $newNodeName . '-' . $counter++;
 		}
 
-		$newNode = $this->createNode($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace, $dimensions);
-		$newNode->similarize($nodeTemplate);
-		return $newNode;
+		$newNodeData = $this->createNodeData($possibleNodeName, $nodeTemplate->getNodeType(), $nodeTemplate->getIdentifier(), $workspace, $dimensions);
+		$newNodeData->similarize($nodeTemplate);
+		return $newNodeData;
 	}
 
 	/**
@@ -780,6 +779,8 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
+	 * Calculates the hash corresponding to the path of this instance.
+	 *
 	 * @return void
 	 */
 	protected function calculatePathHash() {

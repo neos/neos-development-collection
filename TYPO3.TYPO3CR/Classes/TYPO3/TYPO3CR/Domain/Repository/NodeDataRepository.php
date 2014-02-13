@@ -146,7 +146,6 @@ class NodeDataRepository extends Repository {
 	 * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
 	 * @return NodeData The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
-	 * @throws Exception
 	 */
 	public function findOneByPath($path, Workspace $workspace, array $dimensions = NULL) {
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
@@ -207,7 +206,6 @@ class NodeDataRepository extends Repository {
 	 * @param Context $context The containing context
 	 * @return NodeInterface The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
-	 * @throws Exception
 	 */
 	public function findOneByPathInContext($path, Context $context) {
 		$node = $this->findOneByPath($path, $context->getWorkspace(), $context->getDimensions());
@@ -227,7 +225,6 @@ class NodeDataRepository extends Repository {
 	 * @param string $identifier Identifier of the node
 	 * @param Workspace $workspace The containing workspace
 	 * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
-	 * @throws \TYPO3\TYPO3CR\Exception
 	 * @return NodeData The matching node if found, otherwise NULL
 	 */
 	public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = NULL) {
@@ -301,8 +298,8 @@ class NodeDataRepository extends Repository {
 	 * @param NodeData $node The node to set the new index for
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
 	 * @param NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
-	 * @throws \InvalidArgumentException
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setNewIndex(NodeData $node, $position, NodeInterface $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
@@ -319,7 +316,7 @@ class NodeDataRepository extends Repository {
 						// never executed. We need to check that again!
 					$newIndex = (integer)round($referenceIndex / 2);
 				} elseif ($nextLowerIndex < ($referenceIndex - 1)) {
-						// there is free space left between $referenceNode and preceeding sibling.
+						// there is free space left between $referenceNode and preceding sibling.
 					$newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
 				} else {
 						// there is no free space left between $referenceNode and following sibling -> we need to re-number!
@@ -639,6 +636,7 @@ class NodeDataRepository extends Repository {
 	protected function renumberIndexesInLevel($parentPath) {
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
 
+		/** @var \Doctrine\ORM\Query $query */
 		$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath ORDER BY n.index ASC');
 		$query->setParameter('parentPath', $parentPath);
 
@@ -682,6 +680,7 @@ class NodeDataRepository extends Repository {
 	 */
 	protected function findHighestIndexInLevel($parentPath) {
 		$this->persistEntities();
+		/** @var \Doctrine\ORM\Query $query */
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath');
 		$query->setParameter('parentPath', $parentPath);
 		return $query->getSingleScalarResult() ?: 0;
@@ -700,6 +699,7 @@ class NodeDataRepository extends Repository {
 	 */
 	protected function findNextLowerIndex($parentPath, $referenceIndex) {
 		$this->persistEntities();
+		/** @var \Doctrine\ORM\Query $query */
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath AND n.index < :referenceIndex');
 		$query->setParameter('parentPath', $parentPath);
 		$query->setParameter('referenceIndex', $referenceIndex);
@@ -719,6 +719,7 @@ class NodeDataRepository extends Repository {
 	 */
 	protected function findNextHigherIndex($parentPath, $referenceIndex) {
 		$this->persistEntities();
+		/** @var \Doctrine\ORM\Query $query */
 		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPath = :parentPath AND n.index > :referenceIndex');
 		$query->setParameter('parentPath', $parentPath);
 		$query->setParameter('referenceIndex', $referenceIndex);
@@ -782,8 +783,8 @@ class NodeDataRepository extends Repository {
 	public function findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions, $removedNodes = FALSE) {
 		$baseWorkspace = $workspace;
 		while ($workspace !== NULL) {
-			$queryBulder = $this->createQueryBuilderForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes);
-			$nodes = $queryBulder->getQuery()->getResult();
+			$queryBuilder = $this->createQueryBuilderForFindByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes);
+			$nodes = $queryBuilder->getQuery()->getResult();
 			$nodes = $this->reduceNodeVariantsByDimensions($nodes, $dimensions);
 			if ($nodes !== array()) {
 				$resultingNodeArray = $this->filterNodesOverlaidInBaseWorkspace($nodes, $baseWorkspace, $dimensions);
@@ -861,7 +862,7 @@ class NodeDataRepository extends Repository {
 			}
 
 			if ($nodeTypeFilter !== NULL) {
-				$this->addNodeTypeFilterContraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+				$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 			}
 
 			$pathConstraints = array();
@@ -882,35 +883,12 @@ class NodeDataRepository extends Repository {
 			$workspace = $workspace->getBaseWorkspace();
 		}
 		$nodesByDepth = array();
+		/** @var NodeData $node */
 		foreach ($foundNodes as $node) {
 			$nodesByDepth[$node->getDepth()] = $node;
 		}
 		ksort($nodesByDepth);
 		return array_values($nodesByDepth);
-	}
-
-	/**
-	 * Find node data on a certain path and return them as Node objects in a given context.
-	 *
-	 * @param string $pathStartingPoint
-	 * @param string $pathEndPoint
-	 * @param Context $context
-	 * @param string $nodeTypeFilter Optional filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
-	 * @see findOnPath
-	 * @todo Should not be in NodeDataRepository
-	 */
-	public function findOnPathInContext($pathStartingPoint, $pathEndPoint, Context $context, $nodeTypeFilter = NULL) {
-		$nodeDataElements = $this->findOnPath($pathStartingPoint, $pathEndPoint, $context->getWorkspace(), $context->getDimensions(), $context->isRemovedContentShown(), $nodeTypeFilter);
-		$finalNodes = array();
-		foreach ($nodeDataElements as $nodeData) {
-			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-			if ($node !== NULL) {
-				$finalNodes[] = $node;
-			}
-		}
-
-		return $finalNodes;
 	}
 
 	/**
@@ -979,7 +957,7 @@ class NodeDataRepository extends Repository {
 		}
 
 		if ($nodeTypeFilter !== NULL) {
-			$this->addNodeTypeFilterContraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+			$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 		}
 
 		return $queryBuilder;
@@ -992,8 +970,8 @@ class NodeDataRepository extends Repository {
 	 * @param string $nodeTypeFilter
 	 * @return void
 	 */
-	protected function addNodeTypeFilterContraintsToQueryBuilder(\Doctrine\ORM\QueryBuilder $queryBuilder, $nodeTypeFilter) {
-		$constraints = $this->getNodeTypeFilterContraintsForDql($nodeTypeFilter);
+	protected function addNodeTypeFilterConstraintsToQueryBuilder(\Doctrine\ORM\QueryBuilder $queryBuilder, $nodeTypeFilter) {
+		$constraints = $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter);
 		if (count($constraints['includeNodeTypes']) > 0) {
 			$queryBuilder->andWhere('n.nodeType IN (:includeNodeTypes)')
 				->setParameter('includeNodeTypes', $constraints['includeNodeTypes']);
@@ -1014,7 +992,7 @@ class NodeDataRepository extends Repository {
 	 * @param string $nodeTypeFilter
 	 * @return array
 	 */
-	protected function getNodeTypeFilterContraintsForDql($nodeTypeFilter) {
+	protected function getNodeTypeFilterConstraintsForDql($nodeTypeFilter) {
 		$constraints = array(
 			'excludeNodeTypes' => array(),
 			'includeNodeTypes' => array()
@@ -1174,7 +1152,7 @@ class NodeDataRepository extends Repository {
 
 	/**
 	 * If $dimensions is not empty, adds join constraints to the given $queryBuilder
-	 * limiting the qiuery result to matching hits.
+	 * limiting the query result to matching hits.
 	 *
 	 * @param \Doctrine\ORM\QueryBuilder $queryBuilder
 	 * @param array $dimensions
@@ -1203,6 +1181,7 @@ class NodeDataRepository extends Repository {
 	 */
 	protected function reduceNodeVariantsByDimensions(array $nodes, array $dimensions = NULL) {
 		$foundNodes = array();
+			/** @var NodeData $node */
 		if ($dimensions === NULL) {
 			foreach ($nodes as $node) {
 				if (!isset($foundNodes[$node->getIdentifier()])) {

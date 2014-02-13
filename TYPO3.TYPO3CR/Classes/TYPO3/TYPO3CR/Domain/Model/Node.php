@@ -710,7 +710,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$dimensions = array_map(function ($value) { return array ($value); }, $targetDimensions);
 		}
 
-		$nodeData = $this->nodeData->createSingleNode($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
+		$nodeData = $this->nodeData->createSingleNodeData($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -728,7 +728,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = NULL) {
-		$nodeData = $this->nodeData->createNodeFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace(), $this->context->getDimensions());
+		$nodeData = $this->nodeData->createNodeDataFromTemplate($nodeTemplate, $nodeName, $this->context->getWorkspace(), $this->context->getDimensions());
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -1044,19 +1044,19 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
-	 * Materializes the original node (of a different workspace) into the current
+	 * Materializes the original node data (of a different workspace) into the current
 	 * workspace.
 	 *
 	 * @return void
 	 */
 	protected function materializeNodeData() {
 		$dimensions = array_map(function($value) { return array($value); }, $this->context->getTargetDimensions());
-		$newNode = $this->createNodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $dimensions, $this->nodeData->getIdentifier());
-		$this->nodeDataRepository->add($newNode);
+		$newNodeData = new NodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $this->nodeData->getIdentifier(), $dimensions);
+		$this->nodeDataRepository->add($newNodeData);
 
-		$newNode->similarize($this->nodeData);
+		$newNodeData->similarize($this->nodeData);
 
-		$this->nodeData = $newNode;
+		$this->nodeData = $newNodeData;
 		$this->nodeDataIsMatchingContext = TRUE;
 	}
 
@@ -1082,19 +1082,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
-	 * Updates the represented node in the Node Repository
-	 *
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
-	 */
-	protected function update() {
-		if (!$this->isNodeDataMatchingContext()) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('You are trying to update a non materialized node, which is not allowed. Materialize the node first by calling materializeNodeData on the Node', 1369591753);
-		}
-		$this->nodeDataRepository->update($this->nodeData);
-	}
-
-	/**
 	 * The NodeData matches the context if the workspace matches exactly.
 	 * Needs to be adjusted for further context dimensions.
 	 *
@@ -1109,10 +1096,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * For internal use in createRecursiveCopy.
+	 *
 	 * @param NodeInterface $sourceNode
+	 * @return void
 	 */
 	public function similarize(NodeInterface $sourceNode) {
-		$this->nodeData->similarize($sourceNode->nodeData);
+		$this->nodeData->similarize($sourceNode->getNodeData());
 	}
 
 	/**
@@ -1148,20 +1138,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	public function __toString() {
 		return 'Node ' . $this->getContextPath() . '[' . $this->getNodeType()->getName() . ']';
-	}
-
-	/**
-	 * Creates a new NodeData entity for this Node. This is used for materializing
-	 * NodeData from a different context into the context of this Node.
-	 *
-	 * @param string $path
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @param array $dimensions
-	 * @param string $identifier
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
-	 */
-	protected function createNodeData($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, array $dimensions, $identifier = NULL) {
-		return new NodeData($path, $workspace, $identifier, $dimensions);
 	}
 
 	/**

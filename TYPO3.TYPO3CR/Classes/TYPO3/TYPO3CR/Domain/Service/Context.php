@@ -246,7 +246,15 @@ class Context {
 		$startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $startingPoint->getPath() : $startingPoint;
 		$endPointPath = ($endPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $endPoint->getPath() : $endPoint;
 
-		$nodes = $this->nodeDataRepository->findOnPathInContext($startingPointPath, $endPointPath, $this);
+		$nodeDataElements = $this->nodeDataRepository->findOnPath($startingPointPath, $endPointPath, $this->getWorkspace(), $this->getDimensions(), $this->isRemovedContentShown());
+		$nodes = array();
+		foreach ($nodeDataElements as $nodeData) {
+			$node = $this->nodeFactory->createFromNodeData($nodeData, $this);
+			if ($node !== NULL) {
+				$nodes[] = $node;
+			}
+		}
+
 		return $nodes;
 	}
 

@@ -42,6 +42,7 @@ class NodeTemplate extends AbstractNodeData {
 	 *
 	 * @param string $identifier
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setIdentifier($identifier) {
 		if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $identifier) !== 1) {

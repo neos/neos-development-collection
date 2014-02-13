@@ -65,6 +65,7 @@ class ContentObjectProxy {
 	 * fails, an exception is thrown.
 	 *
 	 * @return void
+	 * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
 	 */
 	protected function initializeObject() {
 		if ($this->contentObject !== NULL) {

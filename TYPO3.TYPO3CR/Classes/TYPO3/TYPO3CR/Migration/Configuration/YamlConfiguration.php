@@ -35,6 +35,7 @@ class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configura
 	 * Loads a list of available versions into an array.
 	 *
 	 * @return array
+	 * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
 	 */
 	protected function registerAvailableVersions() {
 		$this->availableVersions = array();

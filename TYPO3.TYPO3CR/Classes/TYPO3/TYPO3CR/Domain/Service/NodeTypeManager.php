@@ -125,7 +125,7 @@ class NodeTypeManager {
 	 *
 	 * @param string $nodeTypeName Unique name of the new node type. Example: "TYPO3.Neos:Page"
 	 * @return NodeType
-	 * @throws Exception
+	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
 	public function createNodeType($nodeTypeName) {
 		throw new \TYPO3\TYPO3CR\Exception('Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".', 1316449432);
