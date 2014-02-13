@@ -13,6 +13,9 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 
 /**
  * This factory creates nodes based on node data. Its main purpose is to
@@ -26,15 +29,7 @@ class NodeFactory {
 	/**
 	 * @var array<\TYPO3\TYPO3CR\Domain\Model\Node>
 	 */
-	protected $nodes;
-
-	/**
-	 * Constructs this factory.
-	 *
-	 */
-	public function __construct() {
-		$this->nodes = array();
-	}
+	protected $nodes = array();
 
 	/**
 	 * Creates a node from the given NodeData container.
@@ -42,11 +37,11 @@ class NodeFactory {
 	 * If this factory has previously created a Node for the given $node and $context,
 	 * it will return the same Node again.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param NodeData $nodeData
+	 * @param ContextInterface $context
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
-	public function createFromNodeData(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+	public function createFromNodeData(NodeData $nodeData, ContextInterface $context) {
 		$internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			$this->nodes[$internalNodeIdentifier] = new Node($nodeData, $context);
@@ -60,11 +55,11 @@ class NodeFactory {
 	 * Filter a node by the current context.
 	 * Will either return the node or NULL if it is not permitted in current context.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param NodeInterface $node
+	 * @param ContextInterface $context
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node|NULL
 	 */
-	protected function filterNodeByContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context) {
+	protected function filterNodeByContext(NodeInterface $node, ContextInterface $context) {
 		if (!$context->isRemovedContentShown() && $node->isRemoved()) {
 			return NULL;
 		}
