@@ -289,7 +289,7 @@ class Parser implements ParserInterface {
 	protected function getNextTypoScriptLine() {
 		$typoScriptLine = current($this->currentSourceCodeLines);
 		next($this->currentSourceCodeLines);
-		$this->currentLineNumber ++;
+		$this->currentLineNumber++;
 		return $typoScriptLine;
 	}
 
@@ -692,11 +692,15 @@ class Parser implements ParserInterface {
 	 * @return mixed The value
 	 */
 	protected function &getValueFromObjectTree(array $objectPathArray, &$objectTree = NULL) {
-		if (is_null($objectTree)) $objectTree = &$this->objectTree;
+		if (is_null($objectTree)) {
+			$objectTree = &$this->objectTree;
+		}
 
 		if (count($objectPathArray) > 0) {
 			$currentKey = array_shift($objectPathArray);
-			if ((integer)$currentKey > 0) $currentKey = intval($currentKey);
+			if ((integer)$currentKey > 0) {
+				$currentKey = intval($currentKey);
+			}
 			if (!isset($objectTree[$currentKey])) {
 				$objectTree[$currentKey] = array();
 			}
