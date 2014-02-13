@@ -742,7 +742,7 @@ class NodeDataRepository extends Repository {
 		/** @var $node NodeData */
 		foreach ($this->addedNodes as $node) {
 			if ($node->getWorkspace()->getName() === $workspace->getName() ) {
-				$nodesInMemory ++;
+				$nodesInMemory++;
 			}
 		}
 
