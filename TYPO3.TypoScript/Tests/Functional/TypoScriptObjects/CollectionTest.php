@@ -53,8 +53,8 @@ class CollectionTest extends AbstractTypoScriptObjectTest {
 	 */
 	public function iterationInformationIsAddedToCollection() {
 		$view = $this->buildView();
-		$view->assign('collection', array('element1', 'element2', 'element3'));
+		$view->assign('collection', array('element1', 'element2', 'element3', 'element4'));
 		$view->setTypoScriptPath('collection/iteration');
-		$this->assertEquals('Xelement1-0-1-1-Xelement2-1-2--Xelement3-2-3--1', $view->render());
+		$this->assertEquals('Xelement1-0-1-1--1-Xelement2-1-2----1Xelement3-2-3---1-Xelement4-3-4--1--1', $view->render());
 	}
 }

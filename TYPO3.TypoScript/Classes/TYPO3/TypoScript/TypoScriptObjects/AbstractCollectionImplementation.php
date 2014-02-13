@@ -96,13 +96,21 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
 			'index' => $this->numberOfRenderedNodes,
 			'cycle' => ($this->numberOfRenderedNodes + 1),
 			'isFirst' => FALSE,
-			'isLast' => FALSE
+			'isLast' => FALSE,
+			'isEven' => FALSE,
+			'isOdd' => FALSE
 		);
+
 		if ($this->numberOfRenderedNodes === 0) {
 			$iteration['isFirst'] = TRUE;
 		}
 		if (($this->numberOfRenderedNodes + 1) === $collectionCount) {
 			$iteration['isLast'] = TRUE;
+		}
+		if (($this->numberOfRenderedNodes + 1) % 2 === 0) {
+			$iteration['isEven'] = TRUE;
+		} else {
+			$iteration['isOdd'] = TRUE;
 		}
 
 		return $iteration;
