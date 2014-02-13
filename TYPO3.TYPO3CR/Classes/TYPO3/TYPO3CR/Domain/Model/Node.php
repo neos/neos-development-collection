@@ -517,10 +517,9 @@ class Node implements NodeInterface {
 	 */
 	public function removeProperty($propertyName) {
 		if (!$this->nodeDataIsMatchingContext) {
-			$this->nodeData->removeProperty($propertyName);
-		} else {
-			$this->nodeData->removeProperty($propertyName);
+			$this->materializeNodeData();
 		}
+		$this->nodeData->removeProperty($propertyName);
 	}
 
 	/**
