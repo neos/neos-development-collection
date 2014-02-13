@@ -138,6 +138,8 @@ class ContentElementWrappingService {
 	}
 
 	/**
+	 * TODO This implementation is directly linked to the inspector editors, since they need the actual values
+	 *
 	 * @param NodeInterface $node
 	 * @param string $propertyName
 	 * @param string $dataType
@@ -155,8 +157,8 @@ class ContentElementWrappingService {
 		}
 
 		// Serialize date values to String
-		if ($dataType === 'date' && $propertyValue instanceof \DateTime) {
-			return $propertyValue->format('Y-m-d');
+		if ($dataType === 'date') {
+			return $propertyValue instanceof \DateTime ? $propertyValue->format('Y-m-d') : '';
 		}
 
 		// Serialize node references to node identifiers
@@ -180,9 +182,8 @@ class ContentElementWrappingService {
 			}
 		}
 
-		// Serialize objects to JSON strings
-		if (is_object($propertyValue) && $this->objectManager->isRegistered($dataType)) {
-			$dataType = 'jsonEncoded';
+		// Serialize ImageVariant to JSON
+		if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
 			$gettableProperties = ObjectAccess::getGettableProperties($propertyValue);
 			$convertedProperties = array();
 			foreach ($gettableProperties as $key => $value) {
@@ -195,6 +196,27 @@ class ContentElementWrappingService {
 				$convertedProperties[$key] = $value;
 			}
 			return json_encode($convertedProperties);
+		}
+
+		// Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)
+		if ($dataType === ltrim('TYPO3\Media\Domain\Model\Asset', '\\') && $propertyValue !== NULL) {
+			if ($propertyValue instanceof \TYPO3\Media\Domain\Model\Asset) {
+				return json_encode($this->persistenceManager->getIdentifierByObject($propertyValue));
+			}
+		}
+
+		// Serialize an array of Assets to JSON
+		if (is_array($propertyValue)) {
+			$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($dataType);
+			if ($parsedType['elementType'] === ltrim('TYPO3\Media\Domain\Model\Asset', '\\')) {
+				$convertedValues = array();
+				foreach ($propertyValue as $singlePropertyValue) {
+					if ($singlePropertyValue instanceof \TYPO3\Media\Domain\Model\Asset) {
+						$convertedValues[] = $this->persistenceManager->getIdentifierByObject($singlePropertyValue);
+					}
+				}
+				return json_encode($convertedValues);
+			}
 		}
 		return $propertyValue === NULL ? '' : $propertyValue;
 	}

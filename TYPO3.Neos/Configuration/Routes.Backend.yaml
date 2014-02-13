@@ -17,21 +17,28 @@
   appendExceedingArguments: TRUE
 
 -
-  name: 'Content Module - Images upload'
-  uriPattern: 'content/upload-image'
+  name: 'Content Module - Asset upload'
+  uriPattern: 'content/upload-asset'
   defaults:
     '@controller': 'Backend\Content'
-    '@action':     'uploadImage'
+    '@action':     'uploadAsset'
   appendExceedingArguments: TRUE
   httpMethods: ['POST']
 
 -
-  name: 'Content Module - Images metadata'
+  name: 'Content Module - Image metadata'
   uriPattern: 'content/image-with-metadata'
   defaults:
     '@controller': 'Backend\Content'
     '@action':     'imageWithMetadata'
   appendExceedingArguments: TRUE
+
+-
+  name: 'Content Module - Asset metadata'
+  uriPattern: 'content/asset-with-metadata'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'assetsWithMetadata'
 
 -
   name: 'Content Module - Plugin Views'

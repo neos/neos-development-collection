@@ -112,4 +112,3 @@ class NodeController extends ActionController {
 	}
 
 }
-?>
