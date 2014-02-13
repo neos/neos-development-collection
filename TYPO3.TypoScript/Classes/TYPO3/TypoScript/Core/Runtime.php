@@ -640,7 +640,6 @@ class Runtime {
 			}
 		}
 
-
 		return $evaluatedValue;
 	}
 
