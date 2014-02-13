@@ -521,7 +521,6 @@ class Runtime {
 			}
 		}
 
-
 		return $evaluatedValue;
 	}
 
