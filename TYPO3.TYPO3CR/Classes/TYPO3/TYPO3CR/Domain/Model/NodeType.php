@@ -367,7 +367,7 @@ class NodeType {
 	 * @param string $methodName
 	 * @param array $arguments
 	 * @return mixed
-	 * @deprecated Use hasConfigurationForKey() or getConfigurationByKey() instead
+	 * @deprecated Use hasConfiguration() or getConfiguration() instead
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) === 'get') {
