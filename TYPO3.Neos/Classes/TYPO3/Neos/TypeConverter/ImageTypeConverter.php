@@ -28,7 +28,7 @@ class ImageTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractType
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
+	protected $targetType = 'TYPO3\Media\Domain\Model\Asset';
 
 	/**
 	 * @var integer
@@ -68,13 +68,22 @@ class ImageTypeConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractType
 	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		/** @var \TYPO3\Flow\Resource\Resource $resource */
 		$resource = $this->resourceManager->importUploadedResource($_FILES['file']);
 		if ($resource === FALSE) {
 			throw new \TYPO3\Flow\Property\Exception\TypeConverterException('Resource could not be converted.', 1316428994);
 		}
-		$image = new \TYPO3\Media\Domain\Model\Image($resource);
+
+		if (substr($resource->getMediaType(), 0, 5) === 'image') {
+			$image = new \TYPO3\Media\Domain\Model\Image($resource);
 			// TODO: this should maybe be settable
-		$image->setTitle('');
-		return $image;
+			$image->setTitle('');
+			return $image;
+		}
+
+		$asset = new \TYPO3\Media\Domain\Model\Asset($resource);
+		// TODO: this should maybe be settable
+		$asset->setTitle('');
+		return $asset;
 	}
 }

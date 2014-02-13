@@ -31,7 +31,7 @@ class MediaBrowserController extends \TYPO3\Media\Controller\AssetController {
 	protected $configurationManager;
 
 	/**
-	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
+	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
 	 * @Flow\Inject
 	 */
 	protected $assetRepository;

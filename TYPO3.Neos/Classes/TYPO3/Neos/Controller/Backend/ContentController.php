@@ -12,6 +12,9 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\Image;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 
@@ -24,9 +27,9 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
+	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
 	 */
-	protected $imageRepository;
+	protected $assetRepository;
 
 	/**
 	 * @Flow\Inject
@@ -49,32 +52,139 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $pluginService;
 
 	/**
-	 * Upload a new image, and return its metadata.
+	 * Upload a new Asset, and return its metadata
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Image $image
+	 * Depending on the $metadata argument it will return asset metadata for the AssetEditor
+	 * or image metadata for the ImageEditor
+	 *
+	 * @param Asset $asset
+	 * @param string $metadata Type of metadata to return ("Asset" or "Image")
 	 * @return string
 	 */
-	public function uploadImageAction(\TYPO3\Media\Domain\Model\Image $image) {
-		$this->imageRepository->add($image);
-		return $this->imageWithMetadataAction($image);
+	public function uploadAssetAction(Asset $asset, $metadata) {
+		$this->assetRepository->add($asset);
+
+		$this->response->setHeader('Content-Type', 'application/json');
+
+		switch ($metadata) {
+			case 'Asset':
+				$result = $this->getAssetProperties($asset);
+				break;
+			case 'Image':
+				$result = $this->getImageProperties($asset);
+				break;
+			default:
+				$this->response->setStatus(400);
+				$result = array('error' => 'Invalid "metadata" type: ' . $metadata);
+		}
+		return json_encode($result);
 	}
 
 	/**
 	 * Fetch the metadata for a given image
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Image $image
-	 * @return string
+	 * @param Image $image
+	 * @return string JSON encoded response
 	 */
-	public function imageWithMetadataAction(\TYPO3\Media\Domain\Model\Image $image) {
+	public function imageWithMetadataAction(Image $image) {
 		$this->response->setHeader('Content-Type', 'application/json');
-		$thumbnail = $image->getThumbnail(500, 500);
 
-		return json_encode(array(
+		$imageProperties = $this->getImageProperties($image);
+		return json_encode($imageProperties);
+	}
+
+	/**
+	 * @param Image $image
+	 * @return array
+	 */
+	protected function getImageProperties(Image $image) {
+		$thumbnail = $image->getThumbnail(500, 500);
+		$imageProperties = array(
 			'imageUuid' => $this->persistenceManager->getIdentifierByObject($image),
 			'previewImageResourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnail->getResource()),
 			'originalSize' => array('w' => $image->getWidth(), 'h' => $image->getHeight()),
 			'previewSize' => array('w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight())
-		));
+		);
+		return $imageProperties;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function initializeAssetsWithMetadataAction() {
+		$propertyMappingConfiguration = $this->arguments->getArgument('assets')->getPropertyMappingConfiguration();
+		$propertyMappingConfiguration->allowAllProperties();
+	}
+
+	/**
+	 * Fetch the metadata for multiple assets
+	 *
+	 * @param array<TYPO3\Media\Domain\Model\Asset> $assets
+	 * @return string JSON encoded response
+	 */
+	public function assetsWithMetadataAction(array $assets) {
+		$this->response->setHeader('Content-Type', 'application/json');
+
+		$result = array();
+		foreach ($assets as $asset) {
+			$result[] = $this->getAssetProperties($asset);
+		}
+		return json_encode($result);
+	}
+
+	/**
+	 * @param Asset $asset
+	 * @return array
+	 */
+	protected function getAssetProperties(Asset $asset) {
+		$thumbnail = $this->getAssetThumbnailImage($asset, 16, 16);
+		$assetProperties = array(
+			'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
+			'filename' => $asset->getResource()->getFilename(),
+			'previewImageResourceUri' => $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnail['src'],
+			'previewSize' => array('w' => $thumbnail['width'], 'h' => $thumbnail['height'])
+		);
+		return $assetProperties;
+	}
+
+	/**
+	 * @param integer $maximumWidth
+	 * @param integer $maximumHeight
+	 * @return integer
+	 */
+	protected function getDocumentIconSize($maximumWidth, $maximumHeight) {
+		$size = max($maximumWidth, $maximumHeight);
+		if ($size <= 16) {
+			return 16;
+		} elseif ($size <= 32) {
+			return 32;
+		} elseif ($size <= 48) {
+			return 48;
+		} else {
+			return 512;
+		}
+	}
+
+	/**
+	 * @param AssetInterface $asset
+	 * @param integer $maximumWidth
+	 * @param integer $maximumHeight
+	 * @return array
+	 */
+	protected function getAssetThumbnailImage(AssetInterface $asset, $maximumWidth, $maximumHeight) {
+		$iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
+
+		if (is_file('resource://TYPO3.Media/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
+			$icon = sprintf('TYPO3.Media/Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
+		} else {
+			$icon =  sprintf('TYPO3.Media/Icons/%spx/_blank.png', $iconSize);
+		}
+
+		return array(
+			'width' => $iconSize,
+			'height' => $iconSize,
+			'src' => $icon
+		);
 	}
 
 	/**
@@ -146,4 +256,5 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 		}
 		return json_encode((object) $masterPlugins);
 	}
+
 }

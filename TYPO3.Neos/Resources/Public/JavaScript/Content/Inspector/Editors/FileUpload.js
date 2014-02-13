@@ -50,7 +50,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 				browse_button : this._browseButtonId,
 				container : this._containerId,
 				max_file_size : '10mb',
-				url : $('link[rel="neos-images-upload"]').attr('href'),
+				url : $('link[rel="neos-asset-upload"]').attr('href'),
 				multipart_params: {}
 			});
 			if (this.allowedFileTypes) {
@@ -79,8 +79,8 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
-				uploader.settings.multipart_params['image[type]'] = 'plupload';
-				uploader.settings.multipart_params['image[fileName]'] = file.name;
+				uploader.settings.multipart_params['asset[type]'] = 'plupload';
+				uploader.settings.multipart_params['asset[fileName]'] = file.name;
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {

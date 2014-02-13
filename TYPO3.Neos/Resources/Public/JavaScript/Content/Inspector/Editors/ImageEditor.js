@@ -655,6 +655,14 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 				w: parseInt(coordinates.w / (originalImageSize.w / previewImageSize.w), 10),
 				h: parseInt(coordinates.h / (originalImageSize.h / previewImageSize.h), 10)
 			};
+		},
+
+		_initializeUploader: function() {
+			this._super();
+
+			this._uploader.bind('BeforeUpload', function(uploader, file) {
+				uploader.settings.multipart_params['metadata'] = 'Image';
+			});
 		}
 	});
 });
