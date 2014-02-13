@@ -125,7 +125,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 				if (isset($appliedMigrationsDictionary[$version])) {
 					$migrationsInVersion = $appliedMigrationsDictionary[$version];
 					usort($migrationsInVersion, function(MigrationStatus $migrationA, MigrationStatus $migrationB) {
-						return $migrationA->getApplicationTimeStamp() >$migrationB->getApplicationTimeStamp();
+						return $migrationA->getApplicationTimeStamp() > $migrationB->getApplicationTimeStamp();
 					});
 					foreach ($migrationsInVersion as $appliedMigration) {
 						$this->outputFormatted('%s applied on %s to workspace "%s"',
