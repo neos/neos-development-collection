@@ -22,6 +22,6 @@ collection.iteration = TYPO3.TypoScript:Collection {
 	itemName = 'element'
 	iterationName = 'iteration'
 	itemRenderer = TYPO3.TypoScript:TestRenderer {
-		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast}
+		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
 	}
 }
