@@ -6,6 +6,7 @@
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-watch": "~0.4.0",
-    "grunt-bg-shell": "~2.0.1"
+    "grunt-bg-shell": "~2.0.1",
+    "grunt-trimtrailingspaces": "~0.4.0"
   }
 }
