@@ -77,6 +77,8 @@ class NodeController extends ActionController {
 	 *
 	 * @param Node $node
 	 * @return string View output for the specified node
+	 *
+	 * @Flow\IgnoreValidation("node")
 	 */
 	public function showAction(Node $node) {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
@@ -117,7 +119,7 @@ class NodeController extends ActionController {
 
 		$this->view->assign('value', $node);
 
-		if ($this->hasAccessToBackend() && $node->getContext()->getWorkspace()->getName() !== 'live') {
+		if ($node->getContext()->getWorkspaceName() !== 'live' && $this->hasAccessToBackend()) {
 			$editPreviewMode = $this->getEditPreviewModeTypoScriptRenderingPath($node);
 			if ($editPreviewMode !== NULL) {
 				$this->view->assign('editPreviewMode', $editPreviewMode);
