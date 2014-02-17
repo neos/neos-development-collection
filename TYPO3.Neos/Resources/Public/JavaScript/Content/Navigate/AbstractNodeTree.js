@@ -77,6 +77,7 @@ define(
 				active: true,
 				inactive: false,
 				expand: false,
+				attributeBindings: ['title'],
 				classNameBindings: [
 					':neos-node-tree-new-node',
 					':icon-plus',
@@ -148,6 +149,7 @@ define(
 				active: true,
 				inactive: false,
 				expand: false,
+				attributeBindings: ['title'],
 				classNameBindings: [
 					':neos-node-tree-paste-node',
 					':icon-paste',
