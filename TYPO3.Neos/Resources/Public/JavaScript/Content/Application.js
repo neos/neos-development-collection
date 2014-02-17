@@ -305,20 +305,40 @@ function(
 		_linkInterceptionHandler: function(selector, constant) {
 			var that = this;
 			function clickHandler(e, link) {
-				e.preventDefault();
-				var $this = $(link);
-				if (!$this.attr('href').match(/[a-z]*:\/\//) && $this.parents('.neos-contentelement-active').length === 0 && $this.parents('.neos-inline-editable').length === 0) {
-						// We only load the page if the link is a non-external link and the parent contentelement is not selected
-						// as links should not be followed if the element is currently being edited or being editable
-					that.loadPage($this.attr('href'));
+				var $this = $(link),
+					href = $this.attr('href'),
+					protocolAndHost = location.protocol + '//' + location.host;
+				// Check if the link is external by checking for a protocol
+				if (href.match(/[a-z]*:\/\//) && href.substr(0, protocolAndHost.length) !== protocolAndHost) {
+					return;
 				}
+				// Check if the link only points to a hash
+				if (href[0] === '#') {
+					return;
+				}
+				// Check if the link contains a hash and points to the current page
+				if (href.indexOf('#') !== -1 && href.replace(protocolAndHost, '').split('#')[0] === location.pathname + location.search) {
+					return;
+				}
+				// Check if the parent content element is selected if so don't trigger the link
+				if ($this.parents('.neos-contentelement-active').length !== 0) {
+					e.preventDefault();
+					return;
+				}
+				// Check if the the link is inside a inline editable container and not in preview mode if so don't trigger the link
+				if ($this.parents('.neos-inline-editable').length !== 0 && EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
+					e.preventDefault();
+					return;
+				}
+				e.preventDefault();
+				that.loadPage($this.attr('href'));
 			}
 			if (constant === true) {
-				$(document).delegate(selector, 'click', function(e) {
+				$(document).on('click', selector, function(e) {
 					clickHandler(e, this);
 				});
 			} else {
-				$(selector).click(function(e) {
+				$(selector).on('click', function(e) {
 					clickHandler(e, this);
 				});
 			}
