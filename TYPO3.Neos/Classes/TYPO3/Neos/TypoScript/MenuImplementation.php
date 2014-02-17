@@ -14,21 +14,16 @@ namespace TYPO3\Neos\TypoScript;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Exception as TypoScriptException;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A TypoScript Menu object
  */
-class MenuImplementation extends TemplateImplementation {
+class MenuImplementation extends AbstractMenuImplementation {
 
 	/**
 	 * Hard limit for the maximum number of levels supported by this menu
 	 */
 	const MAXIMUM_LEVELS_LIMIT = 100;
-
-	const STATE_NORMAL = 'normal';
-	const STATE_CURRENT = 'current';
-	const STATE_ACTIVE = 'active';
 
 	/**
 	 * Internal cache for the startingPoint tsValue.
@@ -36,13 +31,6 @@ class MenuImplementation extends TemplateImplementation {
 	 * @var NodeInterface
 	 */
 	protected $startingPoint;
-
-	/**
-	 * Internal cache for the currentLevel tsValue.
-	 *
-	 * @var integer
-	 */
-	protected $currentLevel;
 
 	/**
 	 * Internal cache for the lastLevel value.
@@ -57,32 +45,6 @@ class MenuImplementation extends TemplateImplementation {
 	 * @var integer
 	 */
 	protected $maximumLevels;
-
-	/**
-	 * An internal cache for the built menu items array.
-	 *
-	 * @var array
-	 */
-	protected $items;
-
-	/**
-	 * @var NodeInterface
-	 */
-	protected $currentNode;
-
-	/**
-	 * Rootline of all nodes from the current node to the site root node, keys are depth of nodes.
-	 *
-	 * @var array<NodeInterface>
-	 */
-	protected $currentNodeRootline;
-
-	/**
-	 * Internal cache for the renderHiddenInIndex property.
-	 *
-	 * @var boolean
-	 */
-	protected $renderHiddenInIndex;
 
 	/**
 	 * The last navigation level which should be rendered.
@@ -158,37 +120,10 @@ class MenuImplementation extends TemplateImplementation {
 	}
 
 	/**
-	 * Should nodes that have "hiddenInIndex" set still be visible in this menu.
-	 *
-	 * @return boolean
-	 */
-	public function getRenderHiddenInIndex() {
-		if ($this->renderHiddenInIndex === NULL) {
-			$this->renderHiddenInIndex = (boolean)$this->tsValue('renderHiddenInIndex');
-		}
-
-		return $this->renderHiddenInIndex;
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getItemCollection() {
 		return $this->tsValue('itemCollection');
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getItems() {
-		if ($this->items === NULL) {
-			$typoScriptContext = $this->tsRuntime->getCurrentContext();
-			$this->currentNode = isset($typoScriptContext['activeNode']) ? $typoScriptContext['activeNode'] : $typoScriptContext['documentNode'];
-			$this->currentLevel = 1;
-			$this->items = $this->buildItems();
-		}
-
-		return $this->items;
 	}
 
 	/**
@@ -241,7 +176,7 @@ class MenuImplementation extends TemplateImplementation {
 	 * @return array
 	 */
 	protected function buildMenuItemRecursive(NodeInterface $currentNode) {
-		if ($currentNode->isVisible() === FALSE || ($this->getRenderHiddenInIndex() === FALSE && $currentNode->isHiddenInIndex() === TRUE) || $currentNode->isAccessible() === FALSE) {
+		if ($this->isNodeHidden($currentNode)) {
 			return NULL;
 		}
 
@@ -259,47 +194,6 @@ class MenuImplementation extends TemplateImplementation {
 		}
 
 		return $item;
-	}
-
-	/**
-	 * Calculates the state of the given menu item (node) depending on the currentNode.
-	 *
-	 * @param NodeInterface $node
-	 * @return string
-	 */
-	protected function calculateItemState(NodeInterface $node) {
-		if ($node === $this->currentNode) {
-			return self::STATE_CURRENT;
-		}
-
-		if ($node !== $this->currentNode->getContext()->getCurrentSiteNode() && in_array($node, $this->getCurrentNodeRootline())) {
-			return self::STATE_ACTIVE;
-		}
-
-		return self::STATE_NORMAL;
-	}
-
-	/**
-	 * Get the rootline from the current node up to the site node.
-	 *
-	 * @return array
-	 */
-	protected function getCurrentNodeRootline() {
-		if ($this->currentNodeRootline === NULL) {
-			$siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
-			$this->currentNodeRootline = array(
-				$this->getNodeLevelInSite($this->currentNode) => $this->currentNode
-			);
-			$parentNode = $this->currentNode;
-			while ($parentNode !== $siteNode && $parentNode->getParent() !== NULL) {
-				$parentNode = $parentNode->getParent();
-				$this->currentNodeRootline[$this->getNodeLevelInSite($parentNode)] = $parentNode;
-			}
-
-			krsort($this->currentNodeRootline);
-		}
-
-		return $this->currentNodeRootline;
 	}
 
 	/**
@@ -394,18 +288,6 @@ class MenuImplementation extends TemplateImplementation {
 		}
 
 		return $depth;
-	}
-
-	/**
-	 * Node Level relative to site root node.
-	 * 0 = Site root node
-	 *
-	 * @param NodeInterface $node
-	 * @return integer
-	 */
-	protected function getNodeLevelInSite(NodeInterface $node) {
-		$siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
-		return $node->getDepth() - $siteNode->getDepth();
 	}
 
 }
