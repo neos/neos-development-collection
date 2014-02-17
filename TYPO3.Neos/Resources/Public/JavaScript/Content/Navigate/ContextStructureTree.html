@@ -5,7 +5,7 @@
 	{{else}}
 		<button id="neos-context-structure-tree-refresh" class="icon-refresh" title="Refresh" {{action "refresh" target="view"}}></button>
 		<button id="neos-context-structure-tree-delete-node" class="icon-trash" title="Delete" {{bindAttr  disabled="view.currentFocusedNodeCanBeModified"}} {{action "showDeleteNodeDialog" target="view"}}></button>
-		{{#view view.pasteButton activeBinding="view.pasteIsActive" pastePositionBinding="view.pastePosition" titleBinding="Paste"}}
+		{{#view view.pasteButton activeBinding="view.pasteIsActive" pastePositionBinding="view.pastePosition" title="Paste"}}
 			<div class="neos-node-tree-paste-node-position">
 				<button {{bindAttr class=":icon-level-up view.pastingBefore:neos-active"}} title="Paste before" {{action "togglePasteBefore" target="view"}}></button>
 				<button {{bindAttr class=":icon-long-arrow-right view.pastingInto:neos-active"}} title="Paste into" {{action "togglePasteInto" target="view"}}></button>
@@ -15,7 +15,7 @@
 		<button id="neos-context-structure-tree-cut-node" title="Cut" {{bindAttr class=":icon-cut view.currentFocusedNodeIsCut:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "cut" target="view"}}></button>
 		<button id="neos-context-structure-tree-copy-node" title="Copy" {{bindAttr class=":icon-copy view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "copy" target="view"}}></button>
 		<button id="neos-context-structure-tree-toggle-hidden" title="Hide/unhide" {{bindAttr class=":icon-eye-close view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "toggleHidden" target="view"}}></button>
-		{{#view view.newButton inactiveBinding="view.currentFocusedNodeDoesNotAllowChildren" insertNodePanelShownBinding="view.insertNodePanelShown" newPositionBinding="view.newPosition" titleBinding="Create new"}}
+		{{#view view.newButton inactiveBinding="view.currentFocusedNodeDoesNotAllowChildren" insertNodePanelShownBinding="view.insertNodePanelShown" newPositionBinding="view.newPosition" title="Create new"}}
 			<div class="neos-node-tree-new-node-position">
 				<button {{bindAttr class=":icon-level-up view.pastingBefore:neos-active"}} title="New before" {{action "toggleNewBefore" target="view"}}></button>
 				<button {{bindAttr class=":icon-long-arrow-right view.pastingInto:neos-active"}} title="New into" {{action "toggleNewInto" target="view"}}></button>
