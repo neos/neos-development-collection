@@ -219,6 +219,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart {
 	 */
 	protected function convertNodeContextPathToNode($nodeContextPath) {
 		$relativeNodePath = $this->convertNodeContextPathToNodePath($nodeContextPath);
+		if ($relativeNodePath === NULL) {
+			throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $nodeContextPath), 1392726936);
+		}
 		$contentContext = $this->buildContextFromNodeContextPath($nodeContextPath);
 		$workspace = $contentContext->getWorkspace(FALSE);
 		if ($workspace === NULL) {

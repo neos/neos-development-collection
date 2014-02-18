@@ -228,6 +228,29 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	}
 
 	/**
+	 * Note: In this case the ".html" suffix is not stripped of the context path because no split string is set
+	 *
+	 * @test
+	 */
+	public function matchValueReturnsFalseIfContextPathIsInvalid() {
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+
+		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
+		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
+
+		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+		$this->mockContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
+
+		$this->mockSiteNode->expects($this->any())->method('getNode')->with('some/path')->will($this->returnValue($this->mockNode));
+		$this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
+
+		$this->mockNode->expects($this->any())->method('getContextPath')->will($this->returnValue('some/path@not-live'));
+		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path@not-live.html'));
+	}
+
+	/**
 	 * @test
 	 */
 	public function matchValueSetsValueToTheNodeContextPathAndReturnsTrueIfNodePathCouldBeResolvedAndWorkspaceIsNotLive() {
