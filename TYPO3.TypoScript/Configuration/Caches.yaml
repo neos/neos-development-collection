@@ -1,3 +1,0 @@
-TYPO3_TypoScript_Runtime_TypoScript:
-  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
