@@ -650,7 +650,7 @@ class Parser implements ParserInterface {
 			$currentKey = (integer)$currentKey;
 		}
 
-		if (count($objectPathArray) === 0) {
+		if (empty($objectPathArray)) {
 			// last part of the iteration, setting the final value
 			if (isset($objectTree[$currentKey]) && $value === NULL) {
 				unset($objectTree[$currentKey]);
@@ -665,7 +665,7 @@ class Parser implements ParserInterface {
 			} else {
 				$objectTree[$currentKey] = $value;
 			}
-		} elseif (count($objectPathArray) >= 1) {
+		} else {
 			// we still need to traverse further down
 			if (isset($objectTree[$currentKey]) && !is_array($objectTree[$currentKey])) {
 				// the element one-level-down is already defined, but it is NOT an array. So we need to convert the simple type to __value
@@ -714,7 +714,8 @@ class Parser implements ParserInterface {
 	 * @return string A part of an object path, ready to use as a prefix
 	 */
 	protected function getCurrentObjectPathPrefix() {
-		return (count($this->currentObjectPathStack) > 0) ? $this->currentObjectPathStack[count($this->currentObjectPathStack) - 1] . '.' : '';
+		$lastElementOfStack = end($this->currentObjectPathStack);
+		return ($lastElementOfStack !== FALSE) ? $lastElementOfStack . '.' : '';
 	}
 
 	/**
