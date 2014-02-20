@@ -175,3 +175,8 @@ Version 2.0.4
 Requirejs text - https://github.com/requirejs/text
 new BSD, and MIT
 Version 2.0.10
+
+
+Fixed-sticky - https://github.com/filamentgroup/fixed-sticky
+MIT license
+Version 0.1.3
