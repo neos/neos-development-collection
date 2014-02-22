@@ -42,4 +42,12 @@
 		$(this).toggleClass('neos-active');
 		$('.neos-tags-list').toggleClass('neos-tags-list-editing-active');
 	});
+
+	$('#neos-tags-create-form').submit(function(e) {
+		var tag = $('#neos-tags-create-textfield');
+		if ($.trim(tag.val()) === '') {
+			tag.focus();
+			e.preventDefault();
+		}
+	});
 })(jQuery);
