@@ -6,7 +6,7 @@ TYPO3 Neos has a flexible way of choosing a layout, which can be selected in the
 
 First of all, the necessary layouts have to be configured inside `VendorName.VendorSite/Configuration/NodeTypes.yaml`::
 
-    'TYPO3.Neos:Page':
+    'TYPO3.Neos.NodeTypes:Page':
       properties:
         layout:
           ui:
@@ -68,12 +68,12 @@ your company. This page will have a different structure compared to your basic p
 
 The right approach would be to create a TypoScript prototype for your default page and employee page like::
 
-	prototype('VendorName.VendorSite:Page') < prototype('TYPO3.Neos:Page') {
+	prototype(VendorName.VendorSite:Page) < prototype(TYPO3.Neos:Page) {
 		body.templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Default.html'
 		# Your further page configuration here
 	}
 
-	prototype('VendorName.VendorSite:EmployeePage') < prototype('VendorName.VendorSite:Page') {
+	prototype(VendorName.VendorSite:EmployeePage) < prototype(VendorName.VendorSite:Page) {
 		body.templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Employee.html'
 		# Your further employee page configuration here
 	}
