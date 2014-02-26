@@ -300,7 +300,7 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	/**
 	 * @param array $humanReadableContextProperties
 	 * @param boolean $addDimensionDefaults
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function getContextForProperties(array $humanReadableContextProperties, $addDimensionDefaults = FALSE) {
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */

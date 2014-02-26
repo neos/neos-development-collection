@@ -586,7 +586,7 @@ interface NodeInterface {
 	/**
 	 * Return the context of the node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	public function getContext();
 
@@ -601,7 +601,7 @@ interface NodeInterface {
 	 * Given a context a new node is returned that is like this node, but
 	 * lives in the new context.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return NodeInterface
 	 */
 	public function createVariantForContext($context);

@@ -170,7 +170,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * workspace and sets it on the used node repository.
 	 *
 	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function prepareContext($workspaceName) {
 		$contextProperties = array(

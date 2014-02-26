@@ -65,9 +65,9 @@ class WorkspaceTest extends UnitTestCase {
 
 		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
-		$mockTargetWorkspaceContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockTargetWorkspaceContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContextFactory->expects($this->any())->method('create')->with(array('workspaceName' => 'live'))->will($this->returnValue($mockTargetWorkspaceContext));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
@@ -115,9 +115,9 @@ class WorkspaceTest extends UnitTestCase {
 
 		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
-		$mockTargetWorkspaceContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockTargetWorkspaceContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContextFactory->expects($this->any())->method('create')->with(array('workspaceName' => 'live'))->will($this->returnValue($mockTargetWorkspaceContext));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();

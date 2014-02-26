@@ -17,7 +17,7 @@ use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -720,10 +720,10 @@ class NodeData extends AbstractNodeData {
 	 *
 	 * Internal use only!
 	 *
-	 * @param ContextInterface $context
+	 * @param Context $context
 	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
 	 */
-	public function adjustToContext(ContextInterface $context) {
+	public function adjustToContext(Context $context) {
 		$this->setWorkspace($context->getWorkspace());
 
 		$nodeDimensions = new \Doctrine\Common\Collections\ArrayCollection();

@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * This factory creates nodes based on node data. Its main purpose is to
@@ -38,10 +38,10 @@ class NodeFactory {
 	 * it will return the same Node again.
 	 *
 	 * @param NodeData $nodeData
-	 * @param ContextInterface $context
+	 * @param Context $context
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
-	public function createFromNodeData(NodeData $nodeData, ContextInterface $context) {
+	public function createFromNodeData(NodeData $nodeData, Context $context) {
 		$internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			$this->nodes[$internalNodeIdentifier] = new Node($nodeData, $context);
@@ -56,10 +56,10 @@ class NodeFactory {
 	 * Will either return the node or NULL if it is not permitted in current context.
 	 *
 	 * @param NodeInterface $node
-	 * @param ContextInterface $context
+	 * @param Context $context
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node|NULL
 	 */
-	protected function filterNodeByContext(NodeInterface $node, ContextInterface $context) {
+	protected function filterNodeByContext(NodeInterface $node, Context $context) {
 		if (!$context->isRemovedContentShown() && $node->isRemoved()) {
 			return NULL;
 		}

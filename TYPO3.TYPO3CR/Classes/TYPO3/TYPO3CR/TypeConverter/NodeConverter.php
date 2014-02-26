@@ -241,7 +241,7 @@ class NodeConverter extends AbstractTypeConverter {
 	 *
 	 * @param string $workspaceName
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext($workspaceName, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$invisibleContentShown = FALSE;

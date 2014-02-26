@@ -20,7 +20,7 @@ use TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache;
  *
  * @api
  */
-class Context implements ContextInterface {
+class Context {
 
 	/**
 	 * @Flow\Inject
@@ -87,6 +87,7 @@ class Context implements ContextInterface {
 	protected $targetDimensions = array();
 
 	/**
+	 * @Flow\IgnoreValidation
 	 * @var FirstLevelNodeCache
 	 */
 	protected $firstLevelNodeCache;

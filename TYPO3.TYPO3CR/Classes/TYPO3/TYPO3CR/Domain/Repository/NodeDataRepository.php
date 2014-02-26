@@ -20,7 +20,7 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception;
 
 /**
@@ -204,12 +204,12 @@ class NodeDataRepository extends Repository {
 	 * /foo/      first node on second level, below "foo"
 	 *
 	 * @param string $path Absolute path of the node
-	 * @param ContextInterface $context The containing context
-	 * @return NodeData The matching node if found, otherwise NULL
+	 * @param Context $context The containing context
+	 * @return NodeInterface The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
 	 * @throws Exception
 	 */
-	public function findOneByPathInContext($path, ContextInterface $context) {
+	public function findOneByPathInContext($path, Context $context) {
 		$node = $this->findOneByPath($path, $context->getWorkspace(), $context->getDimensions());
 		if ($node !== NULL) {
 			$node = $this->nodeFactory->createFromNodeData($node, $context);
@@ -592,10 +592,10 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param ContextInterface $context The containing workspace
+	 * @param Context $context The containing workspace
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 */
-	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context) {
+	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context) {
 		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), ($context->isRemovedContentShown() ? NULL : FALSE));
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
@@ -803,10 +803,10 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param ContextInterface $context The containing context
+	 * @param Context $context The containing context
 	 * @return NodeData The node found or NULL
 	 */
-	public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, ContextInterface $context) {
+	public function findFirstByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context) {
 		$firstNode = $this->findFirstByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), ($context->isRemovedContentShown() ? NULL : FALSE));
 
 		if ($firstNode !== NULL) {
@@ -894,13 +894,13 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param string $pathStartingPoint
 	 * @param string $pathEndPoint
-	 * @param ContextInterface $context
+	 * @param Context $context
 	 * @param string $nodeTypeFilter Optional filter for the type of the nodes, supports complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 * @see findOnPath
 	 * @todo Should not be in NodeDataRepository
 	 */
-	public function findOnPathInContext($pathStartingPoint, $pathEndPoint, ContextInterface $context, $nodeTypeFilter = NULL) {
+	public function findOnPathInContext($pathStartingPoint, $pathEndPoint, Context $context, $nodeTypeFilter = NULL) {
 		$nodeDataElements = $this->findOnPath($pathStartingPoint, $pathEndPoint, $context->getWorkspace(), $context->getDimensions(), $context->isRemovedContentShown(), $nodeTypeFilter);
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {

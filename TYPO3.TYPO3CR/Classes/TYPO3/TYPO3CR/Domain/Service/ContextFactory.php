@@ -27,7 +27,7 @@ use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 class ContextFactory implements ContextFactoryInterface {
 
 	/**
-	 * @var array<\TYPO3\TYPO3CR\Domain\Service\ContextInterface>
+	 * @var array<\TYPO3\TYPO3CR\Domain\Service\Context>
 	 */
 	protected $contextInstances = array();
 
@@ -64,7 +64,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 * This array also shows the defaults that get used if you don't provide a certain property.
 	 *
 	 * @param array $contextProperties
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @api
 	 */
 	public function create(array $contextProperties) {

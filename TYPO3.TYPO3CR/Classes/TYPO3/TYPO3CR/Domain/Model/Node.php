@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -33,7 +33,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	protected $nodeData;
 
 	/**
-	 * @var ContextInterface
+	 * @var Context
 	 */
 	protected $context;
 
@@ -59,11 +59,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
-	 * @param ContextInterface $context
+	 * @param Context $context
 	 * @throws \InvalidArgumentException if you give a Node as originalNode.
 	 * @Flow\Autowiring(false)
 	 */
-	public function __construct(NodeData $nodeData, ContextInterface $context) {
+	public function __construct(NodeData $nodeData, Context $context) {
 		$this->nodeData = $nodeData;
 		$this->context = $context;
 	}
@@ -1168,7 +1168,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * Given a context a new node is returned that is like this node, but
 	 * lives in the new context.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $context
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return NodeInterface
 	 */
 	public function createVariantForContext($context) {

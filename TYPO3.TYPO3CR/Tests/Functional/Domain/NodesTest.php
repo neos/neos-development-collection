@@ -20,7 +20,7 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
 class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected $context;
 

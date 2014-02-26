@@ -70,7 +70,7 @@ class NodeConverterTest extends UnitTestCase {
 	public function convertFromReturnsAnErrorWhenSourceIsAUuidButNoLiveWorkspaceCanBeFound() {
 		$someUuid = 'b52c1d78-6c1d-48a9-a71c-8984eddf9dde';
 
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($mockContext));
 
 		$actualResult = $this->nodeConverter->convertFrom($someUuid);
@@ -87,7 +87,7 @@ class NodeConverterTest extends UnitTestCase {
 
 		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
 		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($mockContext));
 
@@ -107,7 +107,7 @@ class NodeConverterTest extends UnitTestCase {
 
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
 		$mockContext->expects($this->any())->method('getNodeByIdentifier')->with($someUuid)->will($this->returnValue($mockNode));
 		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($mockContext));
@@ -126,7 +126,7 @@ class NodeConverterTest extends UnitTestCase {
 
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
 		$mockContext->expects($this->any())->method('getNodeByIdentifier')->with($contextPath)->will($this->returnValue($mockNode));
 

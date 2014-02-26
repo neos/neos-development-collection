@@ -51,7 +51,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function getPrimaryChildNodeReturnsTheFirstChildNode() {
 		$mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
-		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 
 
 		$node = new \TYPO3\TYPO3CR\Domain\Model\Node($mockNodeData, $mockContext);
