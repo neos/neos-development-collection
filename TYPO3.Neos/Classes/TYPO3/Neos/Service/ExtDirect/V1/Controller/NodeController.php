@@ -525,7 +525,7 @@ class NodeController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * controller.
 	 *
 	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext($workspaceName) {
 		$contextProperties = array(

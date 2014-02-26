@@ -110,7 +110,7 @@ class NodeController extends ActionController {
 	 * Create a Content Context based on the given workspace name
 	 *
 	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContentContext($workspaceName) {
 		$contextProperties = array('workspaceName' => $workspaceName);

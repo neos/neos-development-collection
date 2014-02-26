@@ -48,7 +48,7 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter {
 	 *
 	 * @param string $workspaceName
 	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$contextProperties = array(

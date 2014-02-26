@@ -170,7 +170,7 @@ class NodeCommandController extends CommandController {
 	 * Creates a content context for given workspace
 	 *
 	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext($workspaceName) {
 		return $this->contextFactory->create(array(

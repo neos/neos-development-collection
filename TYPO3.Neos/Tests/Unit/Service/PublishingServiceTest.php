@@ -116,7 +116,7 @@ class PublishingServiceTest extends UnitTestCase {
 		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 		$this->mockQueryResult->expects($this->atLeastOnce())->method('getFirst')->will($this->returnValue($mockSite));
 
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->getMock();
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 
 		$expectedContextProperties = array(
 			'workspaceName' => $this->mockWorkspace->getName(),
@@ -149,7 +149,7 @@ class PublishingServiceTest extends UnitTestCase {
 		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 		$this->mockQueryResult->expects($this->atLeastOnce())->method('getFirst')->will($this->returnValue($mockSite));
 
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->getMock();
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 
 		$expectedContextProperties = array(
 			'workspaceName' => $this->mockWorkspace->getName(),

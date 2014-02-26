@@ -19,7 +19,7 @@ use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**
@@ -43,7 +43,7 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 	protected $mockNodeDataRepository;
 
 	/**
-	 * @var ContextInterface
+	 * @var Context
 	 */
 	protected $mockContext;
 
@@ -78,7 +78,7 @@ class ConvertNodeUrisImplementationTest extends UnitTestCase {
 
 		$this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
-		$this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->disableOriginalConstructor()->getMock();
+		$this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$this->mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
 		$this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();

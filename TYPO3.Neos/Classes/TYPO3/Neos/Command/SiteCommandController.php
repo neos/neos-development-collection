@@ -211,7 +211,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
-	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext() {
 		return $this->contextFactory->create(array(

@@ -50,7 +50,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	protected $mockLiveWorkspace;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected $mockLiveContext;
 
@@ -73,7 +73,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 		$this->mockLiveWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-		$this->mockLiveContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->getMock();
+		$this->mockLiveContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$this->mockLiveContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockLiveWorkspace));
 
 		$this->tsRuntime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('getCurrentContext'), array(), '', FALSE);
@@ -116,7 +116,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 		$mockWorkspace->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('not-live'));
 
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextInterface')->getMock();
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 
 		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($mockContext));

@@ -16,7 +16,7 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * Find nodes based on a fulltext search
@@ -50,10 +50,10 @@ class NodeSearchService {
 	 *
 	 * @param string $term
 	 * @param array $searchNodeTypes
-	 * @param ContextInterface $context
+	 * @param Context $context
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
 	 */
-	public function findByProperties($term, array $searchNodeTypes, ContextInterface $context) {
+	public function findByProperties($term, array $searchNodeTypes, Context $context) {
 		$searchResult = array();
 		$nodeDataRecords = $this->getNodeDataRecordsByWorkspace($term, $searchNodeTypes, $context->getWorkspace());
 		foreach ($nodeDataRecords as $nodeData) {
