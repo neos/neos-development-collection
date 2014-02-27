@@ -90,7 +90,7 @@ class ImageService {
 	 */
 	protected function thumbnailCommand(\Imagine\Image\ImageInterface $image, array $commandOptions) {
 		if (!isset($commandOptions['size'])) {
-
+			throw new \InvalidArgumentException('The thumbnailCommand needs a "size" option.', 1393510202);
 		}
 		$dimensions = $this->parseBox($commandOptions['size']);
 		if (isset($commandOptions['mode']) && $commandOptions['mode'] === \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_OUTBOUND) {
@@ -108,7 +108,7 @@ class ImageService {
 	 */
 	protected function resizeCommand(\Imagine\Image\ImageInterface $image, array $commandOptions) {
 		if (!isset($commandOptions['size'])) {
-
+			throw new \InvalidArgumentException('The resizeCommand needs a "size" option.', 1393510215);
 		}
 		$dimensions = $this->parseBox($commandOptions['size']);
 		return $image->resize($dimensions);
@@ -121,10 +121,10 @@ class ImageService {
 	 */
 	protected function cropCommand(\Imagine\Image\ImageInterface $image, array $commandOptions) {
 		if (!isset($commandOptions['start'])) {
-
+			throw new \InvalidArgumentException('The cropCommand needs a "start" option.', 1393510229);
 		}
 		if (!isset($commandOptions['size'])) {
-
+			throw new \InvalidArgumentException('The cropCommand needs a "size" option.', 1393510231);
 		}
 		$startPoint = $this->parsePoint($commandOptions['start']);
 		$dimensions = $this->parseBox($commandOptions['size']);
@@ -206,6 +206,7 @@ class ImageService {
 		}
 		return $this->objectManager->get('Imagine\Image\Color', $color['color'], $alpha);
 	}
+
 	/**
 	 * @param array $options
 	 * @return \Imagine\Image\FontInterface
