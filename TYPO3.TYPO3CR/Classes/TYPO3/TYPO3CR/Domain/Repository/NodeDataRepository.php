@@ -590,10 +590,11 @@ class NodeDataRepository extends Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
 	 * @param Context $context The containing workspace
+	 * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 */
-	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context) {
-		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), ($context->isRemovedContentShown() ? NULL : FALSE));
+	public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context, $recursive = FALSE) {
+		$nodeDataElements = $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), ($context->isRemovedContentShown() ? NULL : FALSE), $recursive);
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
