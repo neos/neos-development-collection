@@ -15,6 +15,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 /**
  * "find" operation working on TYPO3CR nodes. This operation allows for retrieval
@@ -38,6 +39,12 @@ class FindOperation extends AbstractOperation {
 	static protected $priority = 100;
 
 	/**
+	 * @Flow\Inject
+	 * @var NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @param array (or array-like object) $context onto which this operation should be applied
@@ -56,11 +63,32 @@ class FindOperation extends AbstractOperation {
 	 */
 	public function evaluate(FlowQuery $flowQuery, array $arguments) {
 		$context = $flowQuery->getContext();
-		if (!isset($context[0])) {
+		if (!isset($context[0]) || empty($arguments[0])) {
 			return NULL;
 		}
+		/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
 		$contextNode = $context[0];
-		$path = $arguments[0];
-		$flowQuery->setContext(array($contextNode->getNode($path)));
+		$selectorAndFilter = $arguments[0];
+
+		try {
+			$parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($selectorAndFilter);
+		} catch (\Exception $e) {}
+		if ($selectorAndFilter[0] === '#') {
+			if (!preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, substr($selectorAndFilter, 1))) {
+				throw new \TYPO3\Eel\FlowQuery\FlowQueryException('find() requires a valid identifier', 1332492263);
+			}
+			$result = array($contextNode->getContext()->getNodeByIdentifier(substr($selectorAndFilter, 1)));
+		} elseif (isset($parsedFilter['Filters'][0]['AttributeFilters']) && $parsedFilter['Filters'][0]['AttributeFilters'][0]['Operator'] === 'instanceof') {
+			$nodeTypes = array();
+			foreach ($parsedFilter['Filters'] as $filter) {
+				if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
+					$nodeTypes[] = $filter['AttributeFilters'][0]['Operand'];
+				}
+			}
+			$result = $this->nodeDataRepository->findByParentAndNodeTypeInContext($contextNode->getPath(), implode(',', $nodeTypes), $contextNode->getContext(), TRUE);
+		} else {
+			$result = array($contextNode->getNode($selectorAndFilter));
+		}
+		$flowQuery->setContext($result);
 	}
 }
