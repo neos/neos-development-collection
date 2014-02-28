@@ -121,7 +121,7 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 
 		$removedNodesContext = $this->contextFactory->create($contextProperties);
 		// FIXME: Cleanly capsulate this and not use nodeDataRepository. childNodes() won't help as we need ONLY removed nodes here.
-		$nodeDataElements = $this->nodeDataRepository->findByParentAndNodeType($contentCollectionNode->getPath(), '', $contentCollectionNode->getContext()->getWorkspace(), $contentCollectionNode->getContext()->getDimensions(), NULL, NULL, TRUE, FALSE);
+		$nodeDataElements = $this->nodeDataRepository->findByParentAndNodeType($contentCollectionNode->getPath(), '', $contentCollectionNode->getContext()->getWorkspace(), $contentCollectionNode->getContext()->getDimensions(), TRUE, FALSE);
 		$finalNodes = array();
 		foreach ($nodeDataElements as $nodeData) {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $removedNodesContext);
