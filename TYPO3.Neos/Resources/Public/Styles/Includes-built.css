@@ -7895,6 +7895,7 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar #neos-node-tree-filter select {
   width: 100%;
+  padding: 0;
 }
 .neos #neos-navigate-panel #neos-node-tree #neos-node-tree-container {
   position: relative;
