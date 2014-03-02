@@ -210,9 +210,7 @@ abstract class AbstractNodeData {
 								$valueNeedsToBeFixed = TRUE;
 							}
 							if ($returnNodesAsIdentifiers === FALSE) {
-								// TODO Check how to use $context to get the node by identifier
-								// TODO Check if the workspace in the context should be used instead of the node data workspace
-								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $this->getWorkspace(), $dimensions);
+								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $context->getWorkspace(), $dimensions);
 								if ($nodeData instanceof NodeData) {
 									$nodeDatas[] = $nodeData;
 								}
@@ -242,9 +240,7 @@ abstract class AbstractNodeData {
 							$this->update();
 						}
 						if ($returnNodesAsIdentifiers === FALSE) {
-							// TODO Check how to use $context to get the node by identifier
-							// TODO Check if the workspace in the context should be used instead of the node data workspace
-							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $this->getWorkspace(), $dimensions);
+							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $context->getWorkspace(), $dimensions);
 							if ($nodeData instanceof NodeData) {
 								$value = $nodeData;
 							} else {
