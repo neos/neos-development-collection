@@ -30,7 +30,6 @@ class Version20131129110302 extends AbstractMigration {
 
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace ADD CONSTRAINT FK_71DE9CFBE9BFE681 FOREIGN KEY (baseworkspace) REFERENCES typo3_typo3cr_domain_model_workspace (name) ON DELETE SET NULL");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ADD CONSTRAINT FK_60A956B98D940019 FOREIGN KEY (workspace) REFERENCES typo3_typo3cr_domain_model_workspace (name) ON DELETE SET NULL");
-		$this->addSql("CREATE INDEX path_workspace ON typo3_typo3cr_domain_model_nodedata (path, workspace)");
 	}
 
 	/**
@@ -40,7 +39,6 @@ class Version20131129110302 extends AbstractMigration {
 	public function down(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("DROP INDEX path_workspace ON typo3_typo3cr_domain_model_nodedata");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP FOREIGN KEY FK_71DE9CFBE9BFE681");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY FK_60A956B98D940019");
 

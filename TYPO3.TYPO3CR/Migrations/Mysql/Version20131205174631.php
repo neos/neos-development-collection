@@ -17,7 +17,6 @@ class Version20131205174631 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("DROP INDEX path_workspace ON typo3_typo3cr_domain_model_nodedata");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ADD pathhash VARCHAR(32) NOT NULL");
 		$this->addSql("UPDATE typo3_typo3cr_domain_model_nodedata SET pathhash = MD5(path)");
 		$this->addSql("CREATE UNIQUE INDEX UNIQ_60A956B92DBEC7578D940019 ON typo3_typo3cr_domain_model_nodedata (pathhash, workspace)");
@@ -32,6 +31,5 @@ class Version20131205174631 extends AbstractMigration {
 
 		$this->addSql("DROP INDEX UNIQ_60A956B92DBEC7578D940019 ON typo3_typo3cr_domain_model_nodedata");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP pathhash");
-		$this->addSql("CREATE INDEX path_workspace ON typo3_typo3cr_domain_model_nodedata (path, workspace)");
 	}
 }
