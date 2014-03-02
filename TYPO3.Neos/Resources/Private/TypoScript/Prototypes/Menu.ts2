@@ -6,6 +6,7 @@ prototype(TYPO3.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 	items = ${this.items}
 	filter = 'TYPO3.Neos:Document'
+	attributes = TYPO3.TypoScript:Attributes
 
 	active.attributes = TYPO3.TypoScript:Attributes {
 		class = 'active'
