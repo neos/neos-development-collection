@@ -1,0 +1,59 @@
+include: Prototypes/ContentCase.ts2
+include: Prototypes/Document.ts2
+include: Prototypes/Content.ts2
+# Note: The TYPO3.Neos:Template prototype only exists for historical reasons and will be removed in a future version:
+include: Prototypes/Template.ts2
+include: Prototypes/PrimaryContent.ts2
+include: Prototypes/ContentCollection.ts2
+include: Prototypes/Page.ts2
+include: Prototypes/Shortcut.ts2
+include: Prototypes/Breadcrumb.ts2
+include: Prototypes/Menu.ts2
+include: Prototypes/Plugin.ts2
+include: Prototypes/PluginView.ts2
+include: Prototypes/ConvertNodeUris.ts2
+include: Prototypes/DocumentMetadata.ts2
+include: Prototypes/ContentElementWrapping.ts2
+
+# The root matcher used to start rendering in Neos
+#
+# The default is to use a render path of "page", unless the requested format is not "html"
+# in which case the format string will be used as the render path (with dots replaced by slashes)
+#
+root = TYPO3.TypoScript:Case
+root {
+	shortcut {
+		prototype(TYPO3.Neos:Page) {
+			body = TYPO3.Neos:Shortcut
+		}
+
+		@position = 'start'
+		condition = ${q(node).is('[instanceof TYPO3.Neos:Shortcut]')}
+		type = 'TYPO3.Neos:Page'
+	}
+
+	editPreviewMode {
+		@position = 'end 9996'
+		condition = ${editPreviewMode != null}
+		renderPath = ${'/' + editPreviewMode}
+	}
+
+	layout {
+		@position = 'end 9997'
+		layout = ${q(node).property('layout') != null && q(node).property('layout') != '' ? q(node).property('layout') : q(node).parents('[subpageLayout]').first().property('subpageLayout')}
+		condition = ${this.layout != null && this.layout != ''}
+		renderPath = ${'/' + this.layout}
+	}
+
+	format {
+		@position = 'end 9998'
+		condition = ${request.format != 'html'}
+		renderPath = ${'/' + String.replace(request.format, '.', '/')}
+	}
+
+	default {
+		@position = 'end 9999'
+		condition = TRUE
+		renderPath = '/page'
+	}
+}

@@ -1,0 +1,46 @@
+<f:form action="createElectronicAddress" name="electronicAddress" object="{electronicAddress}" arguments="{account: account}">
+	<div class="neos-row-fluid neos-module-container">
+		<fieldset class="neos-span5">
+			<legend>Add new electronic address</legend>
+
+			<div class="neos-control-group">
+				<label class="neos-control-label" for="electronicAddress">Type</label>
+				<div class="neos-controls">
+					<f:form.select name="type" property="type" id="electronicAddress" options="{electronicAddressTypes}" value="Email" class="neos-span12" />
+				</div>
+			</div>
+
+			<div class="neos-control-group">
+				<label class="neos-control-label" for="addressIdentifier">Identifier (example: test@typo3.org)</label>
+				<div class="neos-controls">
+					<f:form.textfield name="identifier" property="identifier" id="addressIdentifier" placeholder="Identifier" class="neos-span12"  />
+				</div>
+			</div>
+
+			<div class="neos-control-group">
+				<label class="neos-control-label">Usage</label>
+				<div class="neos-controls">
+					<f:for each="{electronicAddressUsageTypes}" as="electronicAddressUsageType" iteration="iterator">
+						<f:if condition="{electronicAddressUsageType}">
+							<label class="neos-radio neos-inline">
+								<f:form.radio property="usage" value="{electronicAddressUsageType}" checked="{f:if(condition: '{iterator.index} == 1', then: 'checked')}" /><span></span>
+								{electronicAddressUsageType}
+							</label>
+						</f:if>
+					</f:for>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="neos-footer">
+		<f:if condition="{account}">
+			<f:then>
+				<f:link.action action="edit" arguments="{account: account}" class="neos-button">Cancel</f:link.action>
+			</f:then>
+			<f:else>
+				<f:link.action action="index" class="neos-button">Cancel</f:link.action>
+			</f:else>
+		</f:if>
+		<f:form.submit value="Save" class="neos-button neos-button-primary" />
+	</div>
+</f:form>

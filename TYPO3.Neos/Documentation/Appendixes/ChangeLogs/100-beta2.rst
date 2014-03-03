@@ -1,0 +1,978 @@
+.. _1.0.0-beta2:
+
+1.0.0-beta2
+===========
+
+**This second beta will be the last one before the final release. It contains numerous bugfixes as well
+as a bunch of breaking changes that we wanted to have in a beta before the release.**
+
+Full list of breaking changes
+-----------------------------
+
+**7 Changes are considered breaking.**
+
+*TYPO3.Neos*
+
+
+* **Generate content element class attributes via TypoScript (https://review.typo3.org/#/c/25911/)**
+
+  This is a breaking change because it removes the previously rendered "neos-contentelement" class attribute.
+  It also disables the auto-generated id attribute (id="c<UUID>") for now.
+  If you need this behavior, you could add it to your TypoScript via::
+
+    prototype(TYPO3.Neos:Content) {
+      attributes.id = ${'c' + q(node).property('_identifier')}
+    }
+
+* **Make URI suffix configurable (https://review.typo3.org/#/c/25746/)**
+
+  This is a breaking change because the new variable is *required*. If
+  you don't use the standard Neos distribution you thus need to adjust
+  the Neos route in your global ``Configuration/Routes.yaml``::
+
+    -
+      name: 'TYPO3Neos'
+      uriPattern: '<TYPO3NeosSubroutes>'
+      subRoutes:
+        TYPO3NeosSubroutes:
+          package: 'TYPO3.Neos'
+          variables:
+            'defaultUriSuffix': '.html'
+
+  If you want to disable the suffix, replace ".html" by an empty string.
+
+* **Menu TypoScript object wrapped as content element (https://review.typo3.org/#/c/25567/)**
+
+  This is a breaking change because it removes a wrapping div from menus if you used the default template.
+  If your markup relies on the wrapping div, you can add it to your page template(s) or use a custom menu TS object template.
+
+*TYPO3.Neos.NodeTypes*
+
+* **Improve content element templates (https://review.typo3.org/#/c/25926/)**
+
+  The ``TYPO3.Neos.NodeTypes:Menu`` element is wrapped with a ``nav`` tag instead of a plain ``div``.
+
+  The templates for ``TYPO3.Neos.NodeTypes:Image`` and ``TYPO3.Neos.NodeTypes:TextWithImage`` contain one wrapping ``div`` less.
+  Besides the class "typo3-image typo3-image-alignment-<alignment>" was replaced by a "typo3-neos-alignment-<alignment>" class that is
+  added via TS on the wrapping tag.
+
+* **Adjust to "TypoScript generated class attribute" (https://review.typo3.org/#/c/25912/)**
+
+  This is a breaking change because it removes the property ``className`` from the ``MultiColumn`` and ``MultiColumnItem``
+  TypoScript objects in favor of ``attributes.class``. If you relied on that property, you can add it to the prototypes via::
+
+    prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
+      className = ${'container columns-' + this.layout}
+    }
+    prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) {
+      className = 'column'
+    }
+
+  But be aware that the default templates won't render this property by default.
+
+*TYPO3.TYPO3CR*
+
+* **Use workspace name as identifier (https://review.typo3.org/#/c/25896/)**
+
+  This is only breaking if you have a relation to the Workspace model in your code.
+  In this case you have to create a migration to adjust the database field to hold the
+  Workspace name instead of the (now removed) persistence_object_identifier.
+
+* **Deprecate magic call method in NodeType (https://review.typo3.org/#/c/25173/)**
+
+  The magic __call method in NodeType is now considered deprecated but is still there.
+  You should adjust your code to use ``hasConfiguration()`` and ``getConfiguration()``
+  Additionally it replaces the (non-API) method ``getConfiguration()`` by a new method ``getFullConfiguration()``.
+
+===================
+Detailed change log
+===================
+
+--------------------------------------
+Base Distribution
+--------------------------------------
+
+[WIP][TASK] Add release scripts for Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `669e6e8 <http://git.typo3.org/Neos/Distributions/Base.git?a=commit;h=669e6e837ac5b54f3b637e427c484dd9fcd644b9>`_
+
+[TASK] Adjust to "configurable URI suffix"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Adds the required *defaultUriSuffix* to the Neos Routes.
+See I14c8a98f341fbc312c57fee44cd383271778e57b
+
+* Commit: `f60cfa2 <http://git.typo3.org/Neos/Distributions/Base.git?a=commit;h=f60cfa265d371390dc14a59452ef8959da6b6f6e>`_
+
+[TASK] Remove composer.lock for master
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `d5ba907 <http://git.typo3.org/Neos/Distributions/Base.git?a=commit;h=d5ba907016627b851b140bdec245fb6e73a9e95e>`_
+
+--------------------------------------
+TYPO3.Neos
+--------------------------------------
+
+[!!!][TASK] Generate content element class attributes via TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently classes such as "typo3-neos-nodetypes-text" or
+"typo3-neos-nodetypes-headline" are added automagically added through
+the ``ContentElementWrappingService``.
+
+This change moves the creation of class attributes in the frontend to
+a new property ``attributes`` of the ``TYPO3.Neos:Content``
+TypoScript object so that its behavior can be adjusted.
+
+If you don't need these auto-generated class attributes you can
+disable this behavior in your site's TypoScript with::
+
+  prototype(TYPO3.Neos:Content) {
+    attributes.class.@process.nodeType >
+  }
+
+This is a breaking change because it removes the previously rendered
+"neos-contentelement" class attribute. It also disables the
+auto-generated id attribute (id="c<UUID>") for now.
+If you need this behavior, you could add it to your TypoScript via::
+
+  prototype(TYPO3.Neos:Content) {
+    attributes.id = ${'c' + q(node).property('_identifier')}
+  }
+
+* Related: `#54137 <http://forge.typo3.org/issues/54137>`_
+* Commit: `38698f2 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=38698f29783f6644cbd6292739e7645fdf3f1be2>`_
+
+[TASK] Adjust to "Deprecated base tag"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This adjusts code and documentation to the recent change in Flow,
+namely the deprecation of base tags.
+
+* Related: `#53827 <http://forge.typo3.org/issues/53827>`_
+* Commit: `5490746 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=5490746c5cc6e2799c1d5940ea45bbaa737861f2>`_
+
+[TASK] Adjust Shortcut templates to improved wrapping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This adjusts the Shortcut CE template to the improved
+ContentElementWrappingService introduced with
+I91f05e798229e7d6bd613d14a43e68d79678a8a0
+
+Furthermore this replaces chained if ViewHelpers by
+switch/case ViewHelpers for good measure.
+
+* Related: `#54137 <http://forge.typo3.org/issues/54137>`_
+* Commit: `c7aff58 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=c7aff58b20a4d6c17d354960981beabcef7058b6>`_
+
+[BUGFIX] User workspace must not be configurable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This adjusts all parts of Neos that relied on a user preference
+"context.workspace" to retrieve the current user workspace and moves
+that logic into the already existing ``UserService``.
+
+The reason for this is that logged in users are able to change their
+preferences and we're currently lacking a validation for the configured
+user workspace.
+
+As of now a user only has access to one workspace (in addition to the
+always accessible "live" workspace).
+In the future a user might have access to more than one workspace and
+we'll need to re-introduce some kind of workspace preference.
+
+* Fixes: `#53989 <http://forge.typo3.org/issues/53989>`_
+* Commit: `828e261 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=828e261c2c9d4dc1b31102284f1f911c06b5fcfe>`_
+
+[!!!][FEATURE] Make URI suffix configurable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently all node URLs created by Neos have a suffix ".html". Those
+can only be changed by replacing the neos routes with custom routes.
+
+With this change it's possible to adjust/disable the suffix only by
+configuring the ``defaultUriSuffix`` variable of the main route.
+
+This is a breaking change because the new variable is *required*. If
+you don't use the standard Neos distribution you thus need to adjust
+the Neos route in your global ``Configuration/Routes.yaml``::
+
+  -
+    name: 'TYPO3Neos'
+    uriPattern: '<TYPO3NeosSubroutes>'
+    subRoutes:
+      TYPO3NeosSubroutes:
+        package: 'TYPO3.Neos'
+        variables:
+          'defaultUriSuffix': '.html'
+
+If you want to disable the suffix, replace ".html" by an empty string.
+
+* Commit: `cad29d3 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=cad29d3939d33778a7ee81858b713cbaad2ca0e9>`_
+
+[TASK] Add client side NodeTypeService
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This change introduces a NodeTypeService on the client side to remove
+some hardcoded checks for nodeTypes.
+
+* Commit: `656fdc8 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=656fdc893fa03be623e4254d3487baca7fd080ec>`_
+
+[TASK] Deprecate ContentElement ViewHelper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This change makes the ContentElement ViewHelper obsolete. Required
+meta data attributes are added via a TypoScript processor on all
+TS objects extending ``TYPO3.Neos:Content``.
+
+Old CE template::
+
+  <neos:contentElement node="{node}">
+  {someProperty}
+  </neos:contentElement>
+
+New CE template::
+
+  <div>
+  {someProperty}
+  </div>
+
+Note: It's recommended to always add a unique root element to your CE
+template (the div tag in this example) so that the TypoScript processor
+can use that to add meta data attributes.
+Otherwise a wrapping tag will be added in the backend.
+
+This change has following effects in detail:
+
+* Deprecate ContentElement ViewHelper in a backwards compatible way.
+  If used, the ViewHelper still renders a tag but this has no
+  advantage over hard-coding that tag in the template itself
+* Add ``ContentElementWrappingImplementation`` TypoScript object and
+  register it as processor to all ``TYPO3.Neos:Content`` elements.
+* Remove ``neosBackendDocumentNodeData`` TS object & template and
+  render document node meta data in the NeosBackendHeaderData.html
+  template instead using a new ViewHelper that renders a meta tag in
+  the head of the backend html (instead of a hidden div in the body).
+
+* Resolves: `#54137 <http://forge.typo3.org/issues/54137>`_
+* Commit: `a9a4252 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=a9a42527060798b3a83742cde32a91ca63407040>`_
+
+[TASK] Select moved node after move in node tree
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When moving a node it is not selected in the node tree,
+leading to a confusing state for the user. This changes it
+to automatically selecting the moved node after it has been
+moved to avoid confusion.
+
+* Commit: `7703948 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=77039480356cadbace9f16b494a8cc6b2884794b>`_
+
+[BUGFIX] Nodes not clickable after moving in node tree
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When moving nodes in the node tree it is not possible to
+navigate to it until it is refreshed, because the link href
+is updated to an empty value.
+
+* Commit: `a8da571 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=a8da5719d0508b2bd6516080a1f7464d9e7a5af3>`_
+
+[TASK] Add node argument to contentElement.editable ViewHelper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This change adds a new argument "node" to explicitly set the current
+node to use for checking the content context.
+
+Example::
+
+    {neos:contentElement.editable(node: myNode, property: 'propertyName')}
+
+This should make it easier to split templates for content elements into
+partials and pass on the node explicitly (instead of using the magic
+"fluidTemplateTsObject" variable).
+
+* Commit: `d26061b <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=d26061b039362e755ec8b70fea56a06b8ff688d5>`_
+
+[FEATURE] Caching of compiled TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This change adds a cache for compiled TypoScript,
+increasing rendering performance by 50-100 ms, depending
+on the size of your TypoScript:
+
+https://www.monosnap.com/image/8qc5tZn6gccBMKcNsoVjG54ls.png
+
+By default the cache is only enabled in Production context, because we
+cannot flush it automatically yet on TypoScript file changes.
+
+* Commit: `9feb53f <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=9feb53f8d27c5a399b2855b97600fcec25435b70>`_
+
+[BUGFIX] Cache outgoing routes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+URIs to nodes are not cached currently because they contain an
+argument of type NodeInterface that can't be serialized by the
+UriBuilder.
+
+This change adjust the FrontendNodeRoutePartHandler as well as the
+node ViewHelpers to work with strings rather than Node instances.
+
+* Fixes: `#53448 <http://forge.typo3.org/issues/53448>`_
+* Commit: `18e871f <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=18e871fa9f7898798f16899d6695c26329dce4db>`_
+
+[TASK] Introduce Content TypoScript object
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduces a new TS object ``TYPO3.Neos:Content`` that should be used
+as base for all elements that can be selected in the backend.
+
+This deprecated ``TYPO3.Neos:Template`` in favor of
+``TYPO3.TypoScript:Template`` or the new Content object.
+
+Note: This object inherits from TYPO3.TypoScript:Template because most
+Content Elements are expected to render a Fluid Template. If this is
+not the case, a custom Content Element should still extend from this
+prototype and change the ``@class`` property as it's done for the
+``TYPO3.Neos:Plugin`` object for example.
+
+* Resolves: `#54016 <http://forge.typo3.org/issues/54016>`_
+* Commit: `9829558 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=9829558467394e1d3fc2a1ee28fd043602393249>`_
+
+[TASK] Update Aloha
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Updates Aloha to a more recent version, sselect all and then start
+typing (e.g. for a headline) now works. Also the format detection
+is more stable.
+
+* Commit: `abdfc10 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=abdfc1013f746484a4abffa2d38f98fad69f6bcb>`_
+
+[TASK] Add filter by node for the filter operation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The FlowQuery operation is now able to filter by a given node, this
+filter type always return a context with a maximum of one node.
+
+This FlowQuery return one if the currentNode is a parent node of node::
+
+  ${q(node).parents(currentNode).count()}
+
+This operation can be used in the MenuImplementation to test if the
+current node is a child node of a given node, to set the active and
+current class.
+
+* Commit: `16f3778 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=16f377854c3f2f1213d6d0ca7028c31171d85e35>`_
+
+[BUGFIX] Support for boolean property in Site import/export
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently boolean property are converted to string during and
+export/import process. This patch change this by adding the attribute
+__type="boolean" for each boolean property.
+
+* Commit: `2a5d491 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=2a5d491cc97632caacb0fd34eff2f0f3e122239d>`_
+
+[FEATURE] Improve contentElement.editable ViewHelper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This improves the EditableViewHelper so that it is easier to use and
+less error-prone.
+
+It mainly makes specification of the property value optional.
+Before::
+
+  <neos:contentElement.editable property="propertyName">
+    {propertyName -> f:format.raw()}
+  </neos:contentElement>
+
+Now::
+
+ {neos:contentElement.editable(property: 'propertyName')}
+
+Note: This change is fully backwards compatible because any child nodes
+of this ViewHelper overrule the specified property argument.
+It is however recommended not to set them as that can lead to unexpected
+results. It is also recommended to use Fluid's inline syntax for better
+readability and to make browsers render the placeholder when opening the
+template file directly.
+
+* Related: `#53046 <http://forge.typo3.org/issues/53046>`_
+* Commit: `e9415a1 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=e9415a10ab46009cbf8d9ec9740191b2548f382b>`_
+
+[BUGFIX] Menu in sticky menu shows collapse button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is a subtle detail but when the menu is sticky
+and the lines between main modules are hovered the
+line turns blue because of the collapse button changes
+background color.
+
+* Commit: `03029fc <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=03029fca1249ef8385b4ef664c765ad1e24f6537>`_
+
+[TASK] Remove typo in comment for ajax-repository.js
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `9ba4f3f <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=9ba4f3f53498cdfd5eb03e1389bc278a287b532e>`_
+
+[TASK] Remove unused code in wireframe mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We removed the creation of TYPO3.Neos:ContentCollection elements
+from the wireframe mode, but the code for doing so was still active.
+
+* Commit: `87ce525 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=87ce5258a17c6894b3fac4bc37db06d51006de15>`_
+
+Revert "[!!!][FEATURE] Make URL suffix configurable"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This reverts commit 318a531c2dd550c5df0cf6e93ef8d832a8551009
+
+* Commit: `98dee27 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=98dee276bf4d87422d9670d489a13b4e1cdafa88>`_
+
+[!!!][FEATURE] Make URL suffix configurable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently all node URLs created by Neos have a suffix ".html". Those
+can only be changed by replacing the neos routes with custom routes.
+
+With this change it's possible to adjust/disable the suffix only by
+configuring the ``defaultUrlSuffix`` variable of the main route.
+
+This is a breaking change because the new variable is *required*. If
+you don't use the standard Neos distribution you thus need to adjust
+the Neos route in your global ``Configuration/Routes.yaml``::
+
+  -
+    name: 'TYPO3Neos'
+    uriPattern: '<TYPO3NeosSubroutes>'
+    subRoutes:
+      TYPO3NeosSubroutes:
+        package: 'TYPO3.Neos'
+        variables:
+          'defaultUrlSuffix': '.html'
+
+If you want to disable the suffix, replace ".html" by an empty string.
+
+* Commit: `318a531 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=318a531c2dd550c5df0cf6e93ef8d832a8551009>`_
+
+[TASK] Remove LauncherController
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This removes the ExtDirect LauncherController that is not used any
+longer.
+
+* Commit: `67e3d4b <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=67e3d4bad114181bcf1ebeb238630a84fb00e069>`_
+
+[BUGFIX] URLs must point to document nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently the ``FrontendNodeRoutePartHandler`` matches and resolves any
+node independently from it's type.
+This leads to the situation that one can browse content element nodes
+directly breaking menus and styling.
+
+This change adjusts the RoutePartHandler to only accept NodeTypes
+extending ``TYPO3.Neos:Document`` such as ``TYPO3.Neos:Page`` or custom
+document node types.
+It also adjusts the structure inspector that used to create links for
+every node.
+
+* Related: `#53347 <http://forge.typo3.org/issues/53347>`_
+* Commit: `b1bb2c5 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=b1bb2c5d31fab8542fc92e47af5985cdb49d0048>`_
+
+[FEATURE] Improved redirection upon login/logout
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This improves the ``BackendRedirectionService`` by decoupling it from
+hard-coded URLs.
+
+Neos currently stores the absolute URL in the browsers session storage.
+Upon login a redirect-URL is constructed by appending the user's
+workspace to the stored path.
+This breaks if ``FLOW_REWRITEURLS`` is not set or if one decides to use
+custom Routes (for example skipping the ".html" suffix).
+
+This patch changes this by storing the identifier of the last visited
+document node instead and by only using the ``UriBuilder`` to construct
+URLs.
+
+This also moves the JavaScript snippet from NeosBackendHeaderData.html
+to a separate template that is appended before the closing body tag of
+a page via TypoScript for performance reasons and so that this
+functionality can be disabled without having to adjust the templates.
+
+Besides this introduces some minor tweaks:
+
+* Disable default error FlashMessage for LoginController
+* Only add "logout" FlashMessage when the login Form is displayed
+  afterwards (avoids outdated FlashMessages)
+* One DB lookup less in NodeController::showAction()
+* Related: `#40304 <http://forge.typo3.org/issues/40304>`_
+
+* Commit: `47b301b <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=47b301bbb94150204602e9992d5ca8c56617932c>`_
+
+[TASK] Revise Routes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Make use of new Routing features such as *nested subRoutes* and
+*HTTP method constraints* to make it easier to adjust the routing setup.
+* Related: `#53347 <http://forge.typo3.org/issues/53347>`_
+
+* Commit: `35114d7 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=35114d7a12830ca828f0ac2e68a3ac7adbac608a>`_
+
+[BUGFIX] Fix behat tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since the logout has been changed from a link to a form with
+Ie56f98a1046ff461f5e053bcd4f5e12aad3bf2ae behavior tests were broken.
+
+This change fixes this by adjusting the corresponding behat feature.
+
+* Commit: `f5f7cfe <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=f5f7cfe168d4ddf7fb1faf2a4e0fa0292e57ed13>`_
+
+[BUGFIX] Only replace node URIs in live workspace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With #48366 neos supports proper linking between nodes. URIs in the
+format "node://<uuid>" are replaced by proper http URLs.
+This replacement must only take place in live workspace though in
+order to avoid "http://.." URLs to be stored in the database.
+
+* Related: `#48366 <http://forge.typo3.org/issues/48366>`_
+* Commit: `133a2ea <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=133a2ea8cd70a02253b61e95655d08ba08a2a5d6>`_
+
+[TASK] Add "Changing body class with condition" documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `0bc46b2 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=0bc46b26cc61b6556bdebfbda06aaabf48bc3339>`_
+
+[BUGFIX] Make WebRedirect independant from routes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Replaces the deprecated ``uri`` entrypoint-option by
+``routeValues`` pointing to the login form action.
+
+* Commit: `36007f1 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=36007f1564623b53675679ff577485a405a2d791>`_
+
+[TASK] Compatibility with Ruby < v1.9
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Adds checks to the ``config.rb`` compass configuration file to prevent
+older Ruby versions from stumbling upon the introduced ``Encoding``
+constants.
+
+* Commit: `54cb62c <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=54cb62cec12d4201ea10275e377709ef3d7fa26a>`_
+
+[TASK] Adjust to "Deprecate magic call method in NodeType"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This replaces the two invocations of the magic __call method of
+NodeType, that will be deprecated with #53335 with calls to the new
+methods ``NodeType::hasConfiguration()`` and
+``NodeType::getConfiguration()``.
+Besides this replaces five calls to the internal
+``NodeType::getConfiguration()`` by calls to the renamed method
+``NodeType::getFullConfiguration()``.
+
+Depends: I20abd27b137c1fec9ff351b17a97c5c93c15d287
+* Related: `#53335 <http://forge.typo3.org/issues/53335>`_
+* Commit: `c71fd87 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=c71fd876dbe98971de77e03c14e2b3edb186778a>`_
+
+[!!!][BUGFIX] Menu TypoScript object wrapped as content element
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The menu TypoScript template is currently using the
+contentElement view helper for wrapping the menu.
+This is incorrect since the menu is not a node type,
+but instead a plain TypoScript object.
+
+This is a breaking change because it removes a wrapping div
+from menus if you used the default template.
+If your markup relies on the wrapping div, you can add it to
+your page template(s) or use a custom menu TS object template.
+
+* Commit: `74c8dc1 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=74c8dc144f2cb028eab358a3e3560f3cf870a2cb>`_
+
+[BUGFIX] ContentEditable is wrapped in live workspace when logged in
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since we just check if the session has access to the backend we
+incorrectly also wrap content editables being rendered in the live
+workspace. This means that when visiting the frontend when logged in it's
+being rendered differently than when not logged in. Since we only
+need the wrapping for the backend interface we should skip wrapping
+if in live workspace.
+
+* Commit: `3d32d2c <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=3d32d2c18a4683ca26fa2485f6ad1468c0c22543>`_
+
+[BUGFIX] ContentCollection is wrapped in live workspace when logged in
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since we just check if the session has access to the backend we
+incorrectly also wrap content collections being rendered in the live
+workspace. This means that when visiting the frontend when logged in it's
+being rendered differently than when not logged in. Since we only
+need the wrapping for the backend interface we should skip wrapping
+if in live workspace.
+
+* Commit: `8d876f3 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=8d876f3b4506a4eb6d48f330fc456d39322b2960>`_
+
+[BUGFIX] Content is wrapped in live workspace when logged in
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since we just check if the session has access to the backend
+we incorrectly also wrap content being rendered in the live workspace.
+This means that when visiting the frontend when logged in it's
+being rendered differently than when not logged in. Since we only
+need the wrapping for the backend interface we should skip wrapping
+if in live workspace.
+
+* Commit: `b70b0ab <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=b70b0ab41dc47f3f07b2720cb63fbdc5fad949f9>`_
+
+[BUGFIX] Make "logout" a POST request
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Previously the logout was triggered by a link in the user menu resulting
+in a GET request.
+With this change the link is replaced by a small form creating a POST
+request instead.
+
+* Related: `#53347 <http://forge.typo3.org/issues/53347>`_
+* Commit: `4da306a <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=4da306aeaaa1585d3789e18b2188233ba21b7865>`_
+
+[BUGFIX] Allow frontend routes to append arbitrary arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This re-adds the ``appendExceedingArguments`` flag to the Neos frontend
+routes in order to allow resolving of node URIs with additional
+arguments.
+
+This makes it possible to render links targeting sub requests without
+having to add custom routes. This is especially useful for plugins.
+
+* Commit: `dc75b50 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=dc75b507022c639806e5d62587690bc2ec10cb78>`_
+
+[BUGFIX] Exporting a site sets state to empty string
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The state of a site is an integer, but since the state is exported like
+a node property since Ifa3b6cb89a2b8ed10eaddaf6f450b98b8c96fe98 that
+failed because all properties are expected to be strings.
+
+This change exports any scalar property by typecasting it to string.
+
+* Commit: `e06242e <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=e06242e28c1cae4475dc4ac9d125b72e5fb4275e>`_
+
+[TASK] Simplified shared footer cookbook
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Doesn't need the switch case part anymore.
+
+* Commit: `0497ddb <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=0497ddb73ba34f824d1c75ecad31fee7e72f5406>`_
+
+[FEATURE] Performance improvement in TypoScript View (getClosestDocumentNode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Changing this code improves about 50 milliseconds of runtime in my case:
+
+https://www.monosnap.com/image/5DqfBVP7Y6m1JrGC9RaMyNoV7.png
+
+* Commit: `14ea1e9 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=14ea1e992a167cf4ad941c0425dcfd814a4cbef6>`_
+
+[BUGFIX] links inside plugins should respect the current workspace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `b569314 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=b569314505221033bd44f3cfc55f7641b4a3637a>`_
+
+[TASK] Introduce signal for publication of nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This introduces a new signal which is emitted once a node is published.
+This change also removes the random cache control headers from the
+NodeController.
+
+* Commit: `dbc2d8e <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=dbc2d8e42ee96b16848b13c6e1f33facbf9e4894>`_
+
+[BUGFIX] Fix always-activated Publish button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Currently, if using the Neos Content Module, there is always
+exactly one change even if nothing was modified, always activating
+the "publish" button.
+
+This has been traced down to a regression introduced by
+I26517fd0506cc1074b90e84e5a465001421ae36c, which set the
+workspace of the current node always to the current user
+workspace (which does not make sense). The workspace of
+the *node* must be the "real" workspace this node is in,
+and the workspace of the *node's context* is the one the
+user is currently inside.
+
+* Commit: `98780bb <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=98780bb2ae405bb51bf45271b64936375eab236e>`_
+
+[BUGFIX] Missing variable in ContextStructureTree
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When removing a content element from the page using the
+inline editing handles, an exception is thrown that 'that'
+is undefined.
+
+* Commit: `1d778e6 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=1d778e678b409e728dabef4ee9c90eafe2d1d124>`_
+
+[WIP][FEATURE] Edit/Preview Panel"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This reverts commit 5c4afe70889785a399ae1deda576ce2ebf73be5f.
+
+* Commit: `f6aa8ad <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=f6aa8adf8fb56324ea0b0ef9eb3f8e6158bc92c0>`_
+
+[TASK] Fix beta 1 changelog reStructuredText syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `085b43f <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=085b43f34e5dc07d424ee6bc4bac01725ac207ab>`_
+
+[WIP][FEATURE] Edit/Preview Panel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Still Known Bug: in Firefox, when switching from Desktop preview to Website,
+an error occurs in the console preventing the switch. same with chrome
+(sometimes…) :-/
+
+* Commit: `5c4afe7 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=5c4afe70889785a399ae1deda576ce2ebf73be5f>`_
+
+[BUGFIX] Fix the mouse over handling of the menu panel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In some browsers (Firefox, IE) it was not possible to hover over the
+menu panel. This is fixed by deferring the check of the hover status.
+
+* Fixes: `#53586 <http://forge.typo3.org/issues/53586>`_
+* Commit: `138c85d <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=138c85d7b777796fb7359aa101bc00b3a7819e15>`_
+
+[BUGFIX] Fix image upload in inspector
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Change If957a3cbbf475085b043a9326537a4c75f858cf9 broke image uploading
+while fixing the media browser.
+
+* Commit: `b1cce52 <http://git.typo3.org/Packages/TYPO3.Neos.git?a=commit;h=b1cce520552c392e6a873cfb95d3967971a449c0>`_
+
+--------------------------------------
+TYPO3.Neos.NodeTypes
+--------------------------------------
+
+[!!!][TASK] Improve content element templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This change improves the default markup rendered by some of the
+provided content element templates. Namely:
+
+The ``TYPO3.Neos.NodeTypes:Menu`` element is wrapped with a ``nav``
+tag instead of a plain ``div``.
+
+Before::
+
+  <div><ul>...</ul></div>
+
+Now::
+
+  <nav><ul>...</ul></nav>
+
+The templates for ``TYPO3.Neos.NodeTypes:Image`` and
+``TYPO3.Neos.NodeTypes:TextWithImage`` contain one wrapping ``div``
+less. Besides the class "typo3-image typo3-image-alignment-<alignment>"
+was replaced by a "typo3-neos-alignment-<alignment>" class that is
+added via TS on the wrapping tag.
+
+Before::
+
+  <div class="typo3-neos-nodetypes-image">
+    <div class="typo3-image typo3-image-alignment-right">
+      <figure>
+        <img ...
+      </figure>
+    </div>
+  </div>
+
+Now::
+
+  <div class="typo3-neos-nodetypes-image">
+    <figure class="typo3-neos-alignment-right">
+      <img ...
+    </figure>
+  </div>
+
+* Related: `#54137 <http://forge.typo3.org/issues/54137>`_
+* Commit: `f9c169f <http://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git?a=commit;h=f9c169ff3f2cf141ead192adb20599a34a7c5bfd>`_
+
+[!!!][TASK] Adjust to "TypoScript generated class attribute"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Adjusts the content element templates to the change introduced
+with I54f3b27eaf1f3bb1d353609cb2ea6679ed35fc08.
+
+This is a breaking change because it removes the property ``className``
+from the ``MultiColumn`` and ``MultiColumnItem`` TypoScript objects in
+favor of ``attributes.class``. If you relied on that property, you can
+add it to the prototypes via::
+
+  prototype(TYPO3.Neos.NodeTypes:MultiColumn) {
+    className = ${'container columns-' + this.layout}
+  }
+  prototype(TYPO3.Neos.NodeTypes:MultiColumnItem) {
+    className = 'column'
+  }
+
+But be aware that the default templates won't render this property by
+default.
+
+* Related: `#54137 <http://forge.typo3.org/issues/54137>`_
+* Commit: `81ec6e3 <http://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git?a=commit;h=81ec6e3183584c371753eb5351575c0895bcb52a>`_
+
+[TASK] Adjust Menu Content to recent changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* TYPO3.Neos.NodeTypes:Menu extends TYPO3.Neos:Content
+* ``items`` is again exported to the template
+* startingPoint is set to the documentNode
+* Commit: `b0e87cb <http://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git?a=commit;h=b0e87cb13d7f36c17e3c4b88f4cb6c22be8e36eb>`_
+
+[TASK] Adjust CE templates to improved wrapping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This adjusts the content element templates to the improved
+ContentElementWrappingService introduced with
+I91f05e798229e7d6bd613d14a43e68d79678a8a0
+
+This is a refactoring that does not change the rendered markup
+at all. Improvements might follow in a separate change set.
+
+* Related: `#54137 <http://forge.typo3.org/issues/54137>`_
+* Commit: `17abe57 <http://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git?a=commit;h=17abe57f69b401cf572b59d85ba5d90e92f7ce77>`_
+
+[BUGFIX] Pass missing fluidTemplateTsObject to image partial
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Due to I2f4b3a961b4a007031e590985ea9f9cffac7266e the fluidTemplateTsObject
+is now required in order to use the contentEditable view helper, therefore
+we need to pass fluidTemplateTsObject to the partial since it uses the view
+helper for the caption.
+
+* Commit: `b049610 <http://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git?a=commit;h=b049610a35e95d611315279b49fd2a932b72636b>`_
+
+--------------------------------------
+TYPO3.SiteKickstarter
+--------------------------------------
+
+No changes
+
+--------------------------------------
+TYPO3.TYPO3CR
+--------------------------------------
+
+[!!!][TASK] Use workspace name as identifier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This patch changes the Workspace to use the name as technical
+identifier and removes the ``persistence_object_identifier``.
+
+Additionally it introduces a database index on
+``workspace`` and ``path``.
+
+This is only breaking if you have a relation to the Workspace
+model in your own models. In this case you must add a database
+migration to change your relation to use the name instead.
+
+* Resolves: `#53354 <http://forge.typo3.org/issues/53354>`_
+* Commit: `9ece6b5 <http://git.typo3.org/Packages/TYPO3.TYPO3CR.git?a=commit;h=9ece6b53c52bab6a47370302df27127b8645095a>`_
+
+[BUGFIX] Only materialize nodes if it's not already materialized
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since a previous change nodes are materialized whenever a move*()
+operation is invoked.
+This change adds a check to prevent a node from being materialized
+if it has been materialized before.
+
+* Commit: `255d480 <http://git.typo3.org/Packages/TYPO3.TYPO3CR.git?a=commit;h=255d480fa51323e423abdeec9e70d7b057614222>`_
+
+[BUGFIX] Moved nodes must not be published directly
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Changing the index of a node should not shine through to live
+workspace until published.
+
+The bug can be reproduced as follows:
+
+* move a page in the navigate component behind a different page
+  *on the same level*
+
+Expected: The page should only be moved in the user workspace.
+Actual: The page is moved directly in live workspace
+
+This change fixes this behavior by materializing the node for every
+move*() operation.
+
+See I60313cc764f13c15847b1443dacaa6d365ad67cd for a related change.
+
+* Commit: `58685c8 <http://git.typo3.org/Packages/TYPO3.TYPO3CR.git?a=commit;h=58685c823ab8518b649accf0f9a058c3da8b6d88>`_
+
+[!!!][TASK] Deprecate magic call method in NodeType
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This deprecates the magic __call method in NodeType that was used to
+check and retrieve single configuration options and replaces them
+with two explicit methods ``hasConfiguration()`` and
+``getConfiguration()``.
+
+Background: magic __call methods have some severe drawbacks as they
+are error prone, slow and hidden from IDEs.
+
+This is not a breaking change in the technical sense because the
+magic method still exists for compatibility reasons. But it replaces
+the @api annotation by a @deprecated annotation requiring calling
+code to adjust to the new API.
+However, it replaces the (non-API) method ``getConfiguration()`` by
+a new method ``getFullConfiguration()``.
+
+* Resolves: `#53335 <http://forge.typo3.org/issues/53335>`_
+* Commit: `82a3e84 <http://git.typo3.org/Packages/TYPO3.TYPO3CR.git?a=commit;h=82a3e848c3bbcd68340eaeea13b297ba39027c09>`_
+
+[BUGFIX] Neos: Fatal error if referenced nodes are not visible
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This fixes an issue caused by the Node->getProperty() method which
+returned an array of referenced nodes (for properties of type "reference")
+containing not only nodes but also "NULL" items. The root cause was that
+the method could not handle referenced nodes which were not visible
+according to the current content context.
+
+Original error message:
+
+PHP Fatal error:  Call to a member function getIdentifier() on a
+non-object in TYPO3_Neos_Service_ContentElementWrappingService.php on
+line 135"
+
+* Commit: `c53af0f <http://git.typo3.org/Packages/TYPO3.TYPO3CR.git?a=commit;h=c53af0f8fc34e3eb7cea6bef5bec8b5214591725>`_
+
+--------------------------------------
+TYPO3.TypoScript
+--------------------------------------
+
+[Task] Adjust obsolete inline documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rename the old viewHelper name „ts:renderTypoScript“ to the new one „ts:render“
+
+* Commit: `476ff71 <http://git.typo3.org/Packages/TYPO3.TypoScript.git?a=commit;h=476ff715a3b1043a13bcccb35f70456fd0bb84ed>`_
+
+[TASK] Two docblock fixes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Commit: `eed8a7d <http://git.typo3.org/Packages/TYPO3.TypoScript.git?a=commit;h=eed8a7d20dc71e204c8a3371777ec2949c2d7d75>`_
+
+--------------------------------------
+TYPO3.Media
+--------------------------------------
+
+No changes

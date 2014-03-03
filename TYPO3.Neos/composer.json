@@ -1,0 +1,29 @@
+{
+    "name": "typo3/neos",
+    "type": "typo3-flow-package",
+    "license": "GPL-3.0+",
+    "description": "The next generation of the popular open-source CMS.",
+    "require": {
+        "typo3/flow": "2.1.*",
+
+        "typo3/media": "1.0.*",
+        "typo3/setup": "1.0.*",
+        "typo3/extjs": "*",
+        "typo3/twitter-bootstrap": "*",
+        "typo3/typo3cr": "1.0.*",
+        "typo3/typoscript": "1.0.*"
+    },
+    "suggest": {
+        "typo3/neos-kickstarter": "Helps with creating new packages for TYPO3 Neos."
+    },
+    "autoload": {
+        "psr-0": {
+            "TYPO3\\Neos": "Classes"
+        }
+    },
+    "extra": {
+        "typo3/flow": {
+            "manage-resources" : true
+        }
+    }
+}

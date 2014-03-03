@@ -1,0 +1,265 @@
+#                                                                        #
+# Settings                                                               #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+TYPO3:
+  Flow:
+    aop:
+      globalObjects:
+        userInformation: TYPO3\Neos\Service\UserService
+
+    security:
+      authentication:
+        providers:
+          Typo3BackendProvider:
+            provider: 'PersistedUsernamePasswordProvider'
+            requestPatterns:
+              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
+            entryPoint: 'WebRedirect'
+            entryPointOptions:
+              routeValues:
+                '@package':    'TYPO3.Neos'
+                '@controller': 'Login'
+                '@action':     'index'
+                '@format':     'html'
+        authenticationStrategy: oneToken
+
+    persistence:
+      doctrine:
+        eventListeners:
+          -
+            events: ['postPersist', 'postUpdate', 'postRemove']
+            listener: 'TYPO3\Neos\Domain\EventListener\AccountPostEventListener'
+
+    error:
+      exceptionHandler:
+        renderingGroups:
+          notFoundExceptions:
+            matchingStatusCodes: [ 404 ]
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                errorTitle: 'Page Not Found'
+                errorDescription: 'Sorry, the page you requested was not found.'
+          databaseConnectionExceptions:
+            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                errorTitle: 'Database Error'
+                errorDescription: 'Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.'
+                setupMessage: 'You might want to configure or check your database configuration in the setup.'
+          noHomepageException:
+            matchingExceptionClassNames: ['TYPO3\Neos\Routing\Exception\NoHomepageException']
+            options:
+              templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
+              format: 'html'
+              variables:
+                errorTitle: 'Missing Homepage'
+                errorDescription: 'Either no site has been defined yet or the site does not contain a homepage.'
+                setupMessage: 'You might want to create or import a site in the setup.'
+
+    package:
+      packagesPathByType:
+        'typo3-flow-site': 'Sites'
+        'typo3-flow-plugin': 'Plugins'
+
+  DocTools:
+    bundles:
+      Neos:
+        documentationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/
+        configurationRootPath: %FLOW_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
+        renderedDocumentationRootPath: %FLOW_PATH_DATA%Temporary/Documentation/TYPO3.Neos/
+        renderingOutputFormat: 'html'
+        renderByDefault: FALSE
+
+  Neos:
+
+    typoScript:
+      # if set to TRUE, TypoScript is cached on a per-site basis.
+      # Depending on the size of your TypoScript, will improve rendering times 20-100+ ms.
+      # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
+      # you enable this setting only:
+      #
+      # - if you do not change TypoScript in production context, but instead use e.g. TYPO3.Surf for automatic deployment
+      # - in Production context
+      enableObjectTreeCache: FALSE
+
+      # Packages can now register with this setting to get their TypoScript in the path:
+      # resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2
+      # included automatically.
+      # The order of inclusions is set by the package loading order
+      # (and thus the composer dependencies of your packages).
+      # This also allows disabling of autoIncludes if needed.
+      autoInclude:
+        'TYPO3.TypoScript': TRUE
+        'TYPO3.Neos': TRUE
+
+    nodeTypes:
+      groups:
+        general:
+          position: 'start'
+          label: 'General'
+        structure:
+          position: 100
+          label: 'Structure'
+        plugins:
+          position: 200
+          label: 'Plugins'
+
+    userInterface:
+      # should minified JavaScript be loaded? For developing the TYPO3 Neos
+      # Content Module, this should be set to FALSE.
+      loadMinifiedJavascript: TRUE
+
+      requireJsPathMapping:
+        'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
+        'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
+
+      navigateComponent:
+        nodeTree:
+          # number of levels inside the node tree which shall be loaded eagerly, at start.
+          # if you have lots of nodes you should maybe reduce this number of elements.
+          loadingDepth: 4
+
+      inspector:
+        dataTypes:
+          'string':
+            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+          'integer':
+            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+          'boolean':
+            editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
+          'TYPO3\Media\Domain\Model\ImageVariant':
+            editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
+          'date':
+            editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
+          'reference':
+            editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
+          'references':
+            editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
+
+      editPreviewModes:
+        inPlace:
+          isEditingMode: TRUE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: ''
+          title: 'In-Place'
+          position: 100
+        rawContent:
+          isEditingMode: TRUE
+          isPreviewMode: FALSE
+          typoScriptRenderingPath: 'rawContent'
+          title: 'Raw Content'
+          position: 200
+        desktop:
+          isEditingMode: FALSE
+          isPreviewMode: TRUE
+          typoScriptRenderingPath: ''
+          title: 'Desktop'
+          position: 100
+
+    moduleConfiguration:
+      widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
+    modules:
+      management:
+        label: 'Management'
+        controller: '\TYPO3\Neos\Controller\Module\ManagementController'
+        description: 'Contains multiple modules related to management of content'
+        icon: 'icon-briefcase'
+        resource: 'TYPO3_Neos_Backend_Module_Management'
+        submodules:
+          workspaces:
+            label: 'Workspaces'
+            controller: '\TYPO3\Neos\Controller\Module\Management\WorkspacesController'
+            description: 'This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.'
+            icon: 'icon-th-large'
+            resource: 'TYPO3_Neos_Backend_Module_Management_Workspaces'
+          media:
+            label: 'Media'
+            controller: '\TYPO3\Media\Controller\AssetController'
+            description: 'This module allows managing of media assets including pictures, videos, audio and documents.'
+            icon: 'icon-camera'
+            resource: 'TYPO3_Media_ManageAssets'
+      administration:
+        label: 'Administration'
+        controller: '\TYPO3\Neos\Controller\Module\AdministrationController'
+        description: 'Contains multiple modules related to administration'
+        icon: 'icon-gears'
+        resource: 'TYPO3_Neos_Backend_Module_Administration'
+        submodules:
+          users:
+            label: 'User Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\UsersController'
+            description: 'The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.'
+            icon: 'icon-group'
+            actions:
+              new:
+                label: 'Create user'
+                title: 'Create a new user'
+            resource: 'TYPO3_Neos_Backend_Module_Administration_Users'
+          packages:
+            label: 'Package Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\PackagesController'
+            description: 'The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.'
+            icon: 'icon-archive'
+            resource: 'TYPO3_Neos_Backend_Module_Administration_Packages'
+          sites:
+            label: 'Sites Management'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\SitesController'
+            description: 'The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.'
+            icon: 'icon-globe'
+            actions:
+              newSite:
+                label: 'Create site'
+                title: 'Create a new site'
+            resource: 'TYPO3_Neos_Backend_Module_Administration_Sites'
+      user:
+        label: 'User'
+        controller: '\TYPO3\Neos\Controller\Module\UserController'
+        hideInMenu: TRUE
+        resource: 'TYPO3_Neos_Backend_Module_User'
+        submodules:
+          usersettings:
+            label: 'User Settings'
+            controller: '\TYPO3\Neos\Controller\Module\User\UserSettingsController'
+            description: 'This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.'
+            icon: 'icon-user'
+            resource: 'TYPO3_Neos_Backend_Module_User_UserSettings'
+
+  Setup:
+    stepOrder: ['database', 'administrator', 'siteimport', 'final']
+    steps:
+      administrator:
+        className: 'TYPO3\Neos\Setup\Step\AdministratorStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      siteimport:
+        className: 'TYPO3\Neos\Setup\Step\SiteImportStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      final:
+        className: 'TYPO3\Neos\Setup\Step\FinalStep'
+    view:
+      title: 'TYPO3 Neos Setup'
+
+  Media:
+    bodyClasses: 'neos neos-module media-browser'
+    scripts:
+      - resource://TYPO3.Neos/Public/Library/jquery/jquery-1.10.2.js
+      - resource://TYPO3.Neos/Public/Library/bootstrap-components.js
+    styles:
+      - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
+      - resource://TYPO3.Media/Public/Styles/Main.css
+      - resource://TYPO3.Neos/Public/Styles/Neos.css

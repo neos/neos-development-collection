@@ -1,0 +1,551 @@
+#neos-inspector-button {
+	position: fixed;
+	z-index: 10015;
+	top: $unit;
+	right: 0;
+	width: $unit + 1;
+	height: $unit + 2;
+	border: 1px solid $grayLight;
+	background-color: $grayDark;
+	background-image: none;
+	@include text-shadow(none);
+	@include box-shadow(none);
+
+	@include transition-property(top);
+	@include transition-duration(0.2s);
+
+	&:before {
+		position: relative;
+		top: 1px;
+		@include font;
+		font-size: 26px;
+		line-height: 26px;
+		font-weight: normal;
+		content: "‹";
+	}
+
+	&:hover,
+	&.neos-is-active {
+		background-color: $blue;
+	}
+
+	&.neos-pressed:before {
+		content: "›";
+	}
+}
+
+#neos-inspector {
+	position: fixed;
+	top: $unit;
+	bottom: 0;
+	right: -($inspectorWidth + 1px);
+	width: $inspectorWidth;
+	background-color: $grayDark;
+	z-index: 10014;
+	border-top: 1px solid $grayLight;
+	border-left: 1px solid $grayLight;
+	padding-top: $unit;
+	padding-bottom: $unit + 1px;
+	@include transition-property('right');
+	@include transition-duration(.2s);
+	@include font;
+
+	.neos-inspector-panel-open & {
+		right: 0;
+	}
+
+	@import "Editors/DateTimePicker";
+	@import "Editors/ImageEditor";
+	@import "../Shared/Chosen";
+
+	.chosen-container {
+		width: ($inspectorWidth - $defaultMargin * 2) !important;
+	}
+
+	.neos-toolbar {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: $unit + 1px;
+		border-bottom: 1px solid $grayLight;
+		line-height: $unit;
+		padding-left: $defaultMargin;
+		@include box-sizing(border-box);
+		z-index: 10015;
+	}
+
+	.neos-inspector-form {
+		width: 100%;
+		height: 100%;
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding-top: 11px;
+		@include box-sizing(border-box);
+
+		#neos-content-breadcrumb {
+			max-width: $inspectorWidth - $defaultMargin * 2;
+			margin-right: -$relatedMargin;
+			cursor: pointer;
+			@include user-select(none);
+			position: relative;
+
+			&.neos-open {
+				ul {
+					display: block;
+				}
+			}
+
+			i {
+				margin-top: 3px;
+				margin-right: 5px;
+			}
+
+			div {
+				position: relative;
+				background-color: $grayMedium;
+				height: $unit;
+
+				span {
+					display: block;
+					margin-right: $unit;
+					border-right: 1px solid $grayDark;
+					line-height: $unit;
+					height: $unit;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					padding: 0 $defaultMargin;
+				}
+
+				&:before,
+				&:after {
+					display: block;
+					position: absolute;
+					right: 15px;
+					font-family: Arial;
+					font-size: 17px;
+					line-height: $unit;
+					content: "▾";
+				}
+
+				&:before {
+					top: -4px;
+					@include rotate(180deg);
+				}
+
+				&:after {
+					top: 4px;
+				}
+			}
+
+			ul {
+				display: none;
+				position: absolute;
+				margin: 0;
+				width: 100%;
+				z-index: 10015;
+				@include box-shadow(1px 2px 5px $grayDark);
+
+				li {
+					position: relative;
+					min-height: $unit;
+					background-color: $grayMedium;
+					border-top: 1px solid $grayDark;
+
+					&:first-child {
+						background-color: $blue;
+					}
+
+					&:hover {
+						background-color: $blue;
+					}
+
+					i {
+						display: inline-block;
+					}
+
+					a {
+						display: block;
+						height: 100%;
+						line-height: $unit;
+						color: #fff;
+						padding: 0 $defaultMargin;
+						@include box-sizing(border-box);
+
+						&:hover {
+							text-decoration: none;
+						}
+					}
+				}
+			}
+		}
+
+		.neos-inspector-list-stacked {
+			li {
+				font-size: 12px;
+				line-height: 16px;
+				margin-bottom: $relatedMargin;
+				background-color: #323232;
+				padding: $defaultMargin;
+			}
+		}
+
+		.neos-inspector-section {
+			position: relative;
+		}
+
+		.neos-inspector-collapse {
+			float: right;
+			width: $unit;
+			height: $unit;
+			cursor: pointer;
+
+			&:hover {
+				background-color: $blue;
+				color: #fff;
+			}
+
+			&::before {
+				content: "›";
+				font-size: 26px;
+				font-weight: normal;
+				display: inline-block;
+				margin-right: 18px;
+				position: relative;
+				left: -3px;
+				width: $unit;
+				text-align: center;
+				@include rotate(-90deg);
+			}
+
+			&.neos-open::before {
+				@include rotate(90deg);
+				left: 3px;
+			}
+		}
+
+		.neos-inspector-headline {
+			width: 100%;
+			height: $unit;
+			line-height: $unit;
+			border-top: 1px solid $grayLight;
+			font-weight: bold;
+			@include user-select(none);
+
+			&.neos-validation-error {
+				span {
+					padding-right: $relatedMargin;
+					max-width: $inspectorWidth - $unit - $relatedMargin - $defaultMargin;
+				}
+
+				i {
+					float: left;
+					color: $warning;
+					line-height: $unit;
+				}
+			}
+
+			span {
+				display: block;
+				float: left;
+				padding-left: $defaultMargin;
+				padding-right: $defaultMargin;
+				max-width: $inspectorWidth - $unit - $relatedMargin;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				@include box-sizing(border-box);
+			}
+		}
+
+		.neos-inspector-field {
+			padding: 0 $defaultMargin;
+
+			& > div {
+				padding-bottom: $defaultMargin;
+			}
+		}
+
+		label {
+			@include font;
+			font-size: 14px;
+			cursor: pointer;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			width: $inspectorWidth - $defaultMargin * 2;
+			padding: 0;
+			margin-bottom: $tightMargin;
+			@include user-select(none);
+
+			&.neos-checkbox {
+				margin-top: $relatedMargin;
+			}
+		}
+
+		input[type="text"],
+		input[type="password"],
+		input[type="datetime"],
+		input[type="datetime-local"],
+		input[type="date"],
+		input[type="month"],
+		input[type="time"],
+		input[type="week"],
+		input[type="number"],
+		input[type="range"],
+		input[type="date"],
+		input[type="email"],
+		input[type="url"],
+		input[type="search"],
+		input[type="tel"],
+		input[type="color"],
+		input[type="number"],
+		.neos-uneditable-input {
+			width: 100%;
+			min-width: $inspectorWidth - $defaultMargin * 2;
+			height: $unit;
+			border: 2px solid $grayMedium;
+			background-color: $grayMedium;
+			color: $textOnGray;
+			@include font;
+			font-size: 14px;
+			padding: 0 ($defaultMargin - 2px);
+			margin: 0;
+			@include box-sizing(border-box);
+			@include box-shadow(none);
+			@include transition(none);
+
+			&:focus {
+				background-color: #fff;
+				border: 2px solid #fff;
+				color: $textOnWhite;
+				@include box-shadow(none);
+			}
+
+			// Highlight changed elements in the Property Panel
+			&.neos-modified {
+				border: 2px solid $green;
+			}
+		}
+
+		.neos-modified {
+			& > input[type="text"],
+			& > input[type="password"],
+			& > input[type="datetime"],
+			& > input[type="datetime-local"],
+			& > input[type="date"],
+			& > input[type="month"],
+			& > input[type="time"],
+			& > input[type="week"],
+			& > input[type="number"],
+			& > input[type="range"],
+			& > input[type="date"],
+			& > input[type="email"],
+			& > input[type="url"],
+			& > input[type="search"],
+			& > input[type="tel"],
+			& > input[type="color"],
+			& > input[type="number"],
+			& > .neos-uneditable-input {
+				border: 2px solid $green;
+			}
+
+			input[type=checkbox] {
+				& + span:before {
+					border: 1px solid $green;
+				}
+
+				&:hover + span:before {
+					border: 1px solid $green;
+				}
+
+				&:checked + span:before {
+					background-color: $green;
+					border: 1px solid $green;
+				}
+			}
+
+			.chosen-container .chosen-single {
+				border: 2px solid $green;
+				@include box-sizing(border-box);
+				padding-left: $defaultMargin - 2px;
+
+				span {
+					line-height: $unit - 4px;
+				}
+
+				abbr {
+					top: 9px;
+				}
+
+				div {
+					width: $unit - 2px;
+
+					&:before,
+					&:after {
+						right: 13px;
+						line-height: $unit - 4px;
+					}
+				}
+			}
+		}
+
+		.neos-error {
+			& > input[type="text"],
+			& > input[type="password"],
+			& > input[type="datetime"],
+			& > input[type="datetime-local"],
+			& > input[type="date"],
+			& > input[type="month"],
+			& > input[type="time"],
+			& > input[type="week"],
+			& > input[type="number"],
+			& > input[type="range"],
+			& > input[type="date"],
+			& > input[type="email"],
+			& > input[type="url"],
+			& > input[type="search"],
+			& > input[type="tel"],
+			& > input[type="color"],
+			& > input[type="number"],
+			& > .neos-uneditable-input {
+				color: $warning;
+				border: 2px solid $warning;
+				@include box-shadow(none);
+			}
+		}
+
+		input[placeholder],
+		input::-webkit-input-placeholder,
+		input:-moz-placeholder {
+			color: $textSubtle;
+		}
+
+		select {
+			width: 100%;
+			min-width: $inspectorWidth - $defaultMargin * 2;
+		}
+
+		@import "../Shared/Checkboxes";
+
+		.neos-input-prepend,
+		.neos-input-append {
+			display: table;
+			width: 100%;
+			white-space: normal;
+			margin: 0;
+		}
+
+		.neos-add-on {
+			display: table-cell;
+			background-color: $grayMedium;
+			color: #fff;
+			@include text-shadow(none);
+			border: none;
+			border-right: 1px solid $grayDark;
+			padding: 9px;
+			min-width: $unit + 1px;
+			text-align: center;
+			position: relative;
+			@include border-radius(0);
+			@include box-sizing(border-box);
+			font-size: 14px;
+
+			[class^="icon-"],
+			[class*=" icon-"] {
+				vertical-align: top;
+			}
+
+			input {
+				margin: 0;
+			}
+
+			label {
+				width: auto;
+				margin: 0;
+
+				span {
+					margin-right: 0;
+				}
+			}
+		}
+
+		.neos-add-on + span {
+			display: table-cell;
+			padding-bottom: 0;
+
+			input {
+				min-width: 0;
+			}
+		}
+
+		span + .neos-add-on {
+			border-left: 1px solid $grayDark;
+			border-right: none;
+		}
+
+		.neos-tooltip {
+			&.neos-bottom {
+				padding: $relatedMargin 0 0 0;
+				margin-left: $tightMargin;
+				margin-top: -1px;
+			}
+
+			&.neos-in {
+				@include opacity(1);
+			}
+
+			.neos-tooltip-arrow {
+				margin-left: -$relatedMargin;
+				border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
+				border-bottom-color: $warning;
+			}
+
+			.neos-tooltip-inner {
+				max-width: $inspectorWidth - $defaultMargin * 2;
+				background-color: $warning;
+				font-size: 13px;
+				color: #fff;
+				@include border-radius(0);
+				@include box-sizing(border-box);
+			}
+		}
+	}
+
+	.neos-actions {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		height: $unit;
+		border-top: 1px solid $grayDark;
+		background-color: $grayDark;
+
+		button {
+			&.neos-inspector-cancel {
+				float: left;
+				background-color: $grayLight;
+				width: 144px;
+			}
+
+			&.neos-inspector-apply {
+				float: right;
+				background-color: $green;
+				width: 172px;
+			}
+		}
+	}
+}
+
+#neos-inspector-clickprotection {
+	position: fixed;
+	display: block;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+}
+
+.inspector-dialog {
+	position: fixed;
+	z-index: 11000;
+}

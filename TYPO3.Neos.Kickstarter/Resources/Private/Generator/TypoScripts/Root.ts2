@@ -1,0 +1,36 @@
+namespace: TypoScript=TYPO3.TypoScript
+
+/**
+ * Root TypoScript template for the {siteName} Site
+ */
+page = Page {
+	head {
+		stylesheets = TypoScript:Template
+		stylesheets {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'stylesheets'
+		}
+
+		scripts = TypoScript:Template
+		scripts {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'scripts'
+		}
+	}
+
+	body {
+		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+		sectionName = 'body'
+		parts {
+			menu = Menu
+			breadcrumb = Breadcrumb
+		}
+			// These are your content areas, you can define as many as you want, just name them and the nodePath.
+		content {
+			// Default content section
+			main = PrimaryContent {
+				nodePath = 'main'
+			}
+		}
+	}
+}

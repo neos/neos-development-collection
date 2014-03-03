@@ -1,0 +1,15 @@
+<div class="neos-left">
+	<div id="neos-aloha-topmenu"></div>
+</div>
+
+<div class="neos-right">
+	{{view view.SaveIndicator
+		saveRunningBinding="T3.Content.Controller.ServerConnection._saveRunning"
+		lastSuccessfulTransferBinding="T3.Content.Controller.ServerConnection._lastSuccessfulTransfer"
+		classNames="neos-context-bar-save-indicator"
+	}}
+
+	<button class="neos-button neos-full-screen-open" title="Full Screen" {{action "toggleFullScreen" target="view.fullScreenController"}}>
+		<i class="icon-resize-full"></i>
+	</button>
+</div>

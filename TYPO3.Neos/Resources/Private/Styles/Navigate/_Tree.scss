@@ -1,0 +1,304 @@
+ul.neos-dynatree-container {
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+	border: none;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	white-space: nowrap;
+	display: table;
+
+	&.neos-dynatree-no-connector > li > span {
+		span {
+			display: inline-block;
+			width: 24px;
+			height: 24px;
+			line-height: 20px;
+			vertical-align: middle;
+			text-align: center;
+			cursor: pointer;
+			position: relative;
+		}
+
+		&.neos-dynatree-loading span {
+			vertical-align: middle;
+			background-image: url('../Images/ajax-preloader-222222.gif');
+			background-repeat: no-repeat;
+			background-position: 5px 3px;
+
+			&:before {
+				display: none;
+			}
+		}
+	}
+
+	.neos-dynatree-node {
+		display: block;
+		float: left;
+		position: relative;
+		min-width: 100%;
+		display: table-cell;
+		height: 24px;
+		line-height: 24px;
+		white-space: nowrap;
+		@include box-sizing(border-box);
+
+		&.neos-hidden {
+			span + span:after {
+				@include icon-FontAwesome();
+				content: $remove-sign;
+				position: absolute;
+				left: 12px;
+				top: 0px;
+				font-size: 12px;
+				color: $warning;
+				background: #fff;
+				height: 8px;
+				width: 8px;
+				margin-top: 11px;
+				line-height: 9px;
+				@include border-radius(10px);
+			}
+		}
+
+		&.neos-timedVisibility {
+			span + span:after {
+				@include icon-FontAwesome();
+				content: $time;
+				position: absolute;
+				left: 12px;
+				top: 0px;
+				font-size: 12px;
+				color: $blue;
+				background: #fff;
+				height: 8px;
+				width: 10px;
+				margin-top: 11px;
+				line-height: 9px;
+				@include border-radius(10px);
+			}
+		}
+
+		&.neos-hiddenInIndex {
+			span + span {
+				@include opacity(.5);
+			}
+		}
+
+		&.neos-dynatree-focused {
+			background-color: $grayMedium;
+
+			span + span,
+			a {
+				color: $textSubtleLight;
+			}
+		}
+
+		&.neos-dynatree-active {
+			background-color: $grayMedium;
+
+			span + span,
+			a {
+				color: $textOnGray;
+			}
+		}
+
+		&.neos-dynatree-dirty {
+			border-left: 3px solid $orange;
+		}
+
+		.neos-dynatree-empty,
+		.neos-dynatree-vline,
+		.neos-dynatree-connector,
+		.neos-dynatree-expander,
+		.neos-dynatree-icon,
+		.neos-dynatree-checkbox,
+		.neos-dynatree-radio,
+		.neos-dynatree-drag-helper-img,
+		#neos-dynatree-drop-marker {
+			display: inline-block;
+			width: 24px;
+			height: 24px;
+			vertical-align: top;
+			color: $textSubtleLight;
+		}
+
+		&.neos-dynatree-exp-e,
+		&.neos-dynatree-exp-ed,
+		&.neos-dynatree-exp-el,
+		&.neos-dynatree-exp-edl {
+			.neos-dynatree-expander {
+				@extend .icon-caret-right;
+				@include rotate(45deg);
+
+				&:before {
+					left: 11px;
+				}
+			}
+		}
+
+		&.neos-dynatree-loading {
+			.neos-dynatree-connector,
+			.neos-dynatree-expander {
+				vertical-align: middle;
+				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-repeat: no-repeat;
+				background-position: 5px 4px;
+				@include rotate(0);
+
+				&:before {
+					display: none;
+				}
+			}
+		}
+
+		.neos-dynatree-expander {
+			@include icon-FontAwesome();
+			@extend .icon-caret-right;
+			cursor: pointer;
+			font-size: 16px;
+
+			&:before {
+				position: relative;
+				left: 10px;
+			}
+
+			&:hover {
+				color: $blue;
+			}
+		}
+
+		span + span {
+			display: inline-block;
+			width: 24px;
+			height: 24px;
+			line-height: 20px;
+			vertical-align: middle;
+			text-align: center;
+			cursor: pointer;
+			position: relative;
+		}
+
+		&.neos-dynatree-selected {
+			a {
+				color: $blue;
+			}
+		}
+
+		&.dynatree-drag-source {
+			background-color: $grayMedium;
+			@include opacity(.5);
+		}
+
+		&.dynatree-drop-before,
+		&.dynatree-drop-after {
+			&:after {
+				width: 100%;
+				height: 2px;
+				margin-left: 30px;
+				position: absolute;
+				content: "";
+			}
+		}
+
+		&.dynatree-drop-before:after {
+			top: 0;
+		}
+
+		&.dynatree-drop-after:after {
+			bottom: 0;
+		}
+
+		&.dynatree-drop-accept {
+			&.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) {
+				background-color: $blue;
+
+				span + span,
+				a {
+					color: #fff;
+				}
+			}
+
+			&.dynatree-drop-before:after,
+			&.dynatree-drop-after:after {
+				display: block;
+				background-color: $blue;
+			}
+		}
+
+		&.dynatree-drop-reject {
+			cursor: not-allowed !important;
+
+			.neos-dynatree-expander,
+			span + span,
+			a {
+				cursor: not-allowed !important;
+			}
+
+			&.dynatree-drag-source:hover,
+			&:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) {
+				background-color: $warning;
+
+				span + span,
+				a {
+					color: #fff;
+				}
+			}
+
+			&.dynatree-drop-before:after,
+			&.dynatree-drop-after:after {
+				display: block;
+				background-color: $warning;
+			}
+		}
+
+		a {
+			display: inline-block;
+			color: #fff;
+			vertical-align: top;
+			line-height: 24px;
+			@include box-sizing(border-box);
+
+			&:hover,
+			&:focus {
+				text-decoration: none;
+				outline: none;
+			}
+		}
+	}
+
+	$selector: 'ul';
+	$level: 0;
+	$levels: 20;
+	@while $level < $levels {
+		#{$selector} .neos-dynatree-node {
+			padding-left: ($defaultMargin - $tightMargin) * $level;
+		}
+		$selector: #{nest(#{$selector}, 'ul')};
+		$level: $level + 1;
+	}
+
+	$selector: 'ul';
+	$level: 0;
+	$levels: 20;
+	@while $level < $levels {
+		#{$selector} .neos-dynatree-node.neos-dynatree-dirty {
+			padding-left: ($defaultMargin - $tightMargin) * $level - 3;
+		}
+		$selector: #{nest(#{$selector}, 'ul')};
+		$level: $level + 1;
+	}
+}
+
+.neos-tree-drag-in-progress {
+	ul.neos-dynatree-container .neos-dynatree-node {
+		cursor: move;
+
+		.neos-dynatree-expander,
+		span + span,
+		a {
+			cursor: move;
+		}
+	}
+}

@@ -1,0 +1,5 @@
+conf.py:
+  copyright: '2006-2013, respective authors'
+  project: 'TYPO3 Neos'
+  release: '1.0.0'
+  version: '1.0'

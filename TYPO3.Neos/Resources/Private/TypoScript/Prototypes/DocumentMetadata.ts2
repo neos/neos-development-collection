@@ -1,0 +1,16 @@
+# DocumentMetadata implementation
+#
+# Renders a meta tag with attributes about the current document node
+#
+prototype(TYPO3.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
+	tagName = 'div'
+	forceClosingTag = TRUE
+	attributes {
+		id = 'neos-page-metainformation'
+	}
+
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+
+	@process.onlyRenderMetadataWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live' ? value : ''}
+	@process.onlyRenderMetadataWhenNotInLiveWorkspace.@position = 'end 9999'
+}
