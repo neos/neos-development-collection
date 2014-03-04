@@ -199,4 +199,30 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
 	}
 
+	/**
+	 * @test
+	 */
+	public function entryTagsUseSanitizedTagValue() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/cacheSegmentsWithTags');
+
+		$view->assign('object', $object);
+		$view->assign('site', 'site1');
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Outer segment|counter=1|Inner segment 1|object=Object value 1|End innerInner segment 2|object=Object value 1|End inner|End outer', $firstRenderResult);
+
+		$object->setValue('Object value 2');
+
+			// This should flush "Inner segment 1"
+		$this->contentCache->flushByTag('NodeType_Acme.Demo:SampleNodeType');
+
+			// Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
+		$secondRenderResult = $view->render();
+		$this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
+	}
+
 }

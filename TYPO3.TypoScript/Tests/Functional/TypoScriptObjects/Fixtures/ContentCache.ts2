@@ -111,6 +111,7 @@ contentCache.cacheSegmentsWithTags = TYPO3.TypoScript:Array {
 
 			entryTags {
 				1 = ${'Object_' + object.id}
+				2 = 'NodeType_Acme.Demo:SampleNodeType'
 			}
 		}
 	}

@@ -12,7 +12,6 @@ namespace TYPO3\TypoScript\Core\Cache;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Backend\TaggableBackendInterface;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception;
@@ -154,7 +153,7 @@ class ContentCache {
 		foreach ($segments as $segment) {
 				// FALSE means we do not need to store the cache entry again (because it was previously fetched)
 			if ($segment['tags'] !== FALSE) {
-				$this->cache->set($segment['identifier'], $segment['content'], $segment['tags']);
+				$this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($segment['tags']));
 			}
 		}
 
@@ -283,11 +282,11 @@ class ContentCache {
 	/**
 	 * Flush content cache entries by tag
 	 *
-	 * @param string $tag
+	 * @param string $tag A tag value that was assigned to a cache entry in TypoScript, for example "Everything", "Node_[…]", "NodeType_[…]", "DescendantOf_[…]" whereas "…" is the node identifier or node type respectively
 	 * @return integer The number of cache entries which actually have been flushed
 	 */
 	public function flushByTag($tag) {
-		return $this->cache->flushByTag($tag);
+		return $this->cache->flushByTag($this->sanitizeTag($tag));
 	}
 
 	/**
@@ -299,4 +298,26 @@ class ContentCache {
 		$this->cache->flush();
 	}
 
+	/**
+	 * Sanitizes the given tag for use with the cache framework
+	 *
+	 * @param string $tag A tag which possibly contains non-allowed characters, for example "NodeType_TYPO3.Neos:Page"
+	 * @return string A cleaned up tag, for example "NodeType_TYPO3_Neos-Page"
+	 */
+	protected function sanitizeTag($tag) {
+		return strtr($tag, '.:', '_-');
+	}
+
+	/**
+	 * Sanitizes multiple tags with sanitizeTag()
+	 *
+	 * @param array $tags Multiple tags
+	 * @return array The sanitized tags
+	 */
+	protected function sanitizeTags(array $tags) {
+		foreach ($tags as $key => $value) {
+			$tags[$key] = $this->sanitizeTag($value);
+		}
+		return $tags;
+	}
 }
