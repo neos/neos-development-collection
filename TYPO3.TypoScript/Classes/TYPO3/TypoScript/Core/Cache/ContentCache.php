@@ -239,14 +239,15 @@ class ContentCache {
 	 * @return string The original content, but with uncached segments replaced by the actual content
 	 */
 	protected function replaceUncachedPlaceholders(Runtime $runtime, &$content) {
-		$content = preg_replace_callback(self::EVAL_PLACEHOLDER_REGEX, function($match) use ($runtime) {
+		$propertyMapper = $this->propertyMapper;
+		$content = preg_replace_callback(self::EVAL_PLACEHOLDER_REGEX, function($match) use ($runtime, $propertyMapper) {
 			$command = $match['command'];
 			$contextString = $match['context'];
 
 			$unserializedContext = array();
 			$serializedContextArray = json_decode($contextString, TRUE);
 			foreach ($serializedContextArray as $variableName => $typeAndValue) {
-				$value = $this->propertyMapper->convert($typeAndValue['value'], $typeAndValue['type']);
+				$value = $propertyMapper->convert($typeAndValue['value'], $typeAndValue['type']);
 				$unserializedContext[$variableName] = $value;
 			}
 
