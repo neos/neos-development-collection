@@ -63,6 +63,10 @@ class ContentCacheFlusher {
 
 		while ($node->getDepth() > 1) {
 			$node = $node->getParent();
+			// Workaround for issue #56566 in TYPO3.TYPO3CR
+			if ($node === NULL) {
+				break;
+			}
 			$this->tagsToFlush['DescendantOf_' . $node->getIdentifier()] = sprintf('which were tagged with "DescendantOf_%s" because node "%s" has changed.', $node->getIdentifier(), $node->getPath());
 		}
 	}
