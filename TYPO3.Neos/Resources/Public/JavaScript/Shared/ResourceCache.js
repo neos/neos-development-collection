@@ -29,7 +29,7 @@ function(Ember, $, SessionStorage) {
 			resourceRequests[resourceUri] = new $.Deferred();
 			if (data === null) {
 				xhr = $.ajax(resourceUri, {
-					dataType: 'text',
+					dataType: 'json',
 					success: function(data) {
 						SessionStorage.setItem(resourceUri, data);
 						resourceRequests[resourceUri].resolve(data);
