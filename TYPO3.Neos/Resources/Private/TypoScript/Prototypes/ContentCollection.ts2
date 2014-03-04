@@ -18,7 +18,11 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 	}
 
 	@cache {
-		mode = 'cached'
+		# The default is to not create a cache segment for a content collection, this has to be enabled explicitly with:
+		#
+		#    mode = 'cached'
+		#
+		mode = 'embed'
 
 		entryIdentifier {
 			collection = ${contentCollectionNode}
