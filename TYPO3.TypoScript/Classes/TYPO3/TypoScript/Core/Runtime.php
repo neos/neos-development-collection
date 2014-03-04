@@ -383,25 +383,7 @@ class Runtime {
 		}
 
 		try {
-			$cacheTags = array();
-			if ($this->enableContentCache && $cacheForPathEnabled) {
-				$cacheTags = $this->buildCacheTags($typoScriptPath, $typoScriptConfiguration, $tsObject);
-			}
 			$output = $tsObject->evaluate();
-			if ($this->enableContentCache && $cacheForPathEnabled) {
-				$output = $this->contentCache->createCacheSegment($output, $typoScriptPath, $cacheIdentifierValues, $cacheTags);
-			} elseif ($this->enableContentCache && $cacheForPathDisabled && $this->inCacheEntryPoint) {
-				$contextArray = $this->getCurrentContext();
-				if (isset($typoScriptConfiguration['__meta']['cache']['context'])) {
-					$contextVariables = array();
-					foreach ($typoScriptConfiguration['__meta']['cache']['context'] as $contextVariableName) {
-						$contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
-					}
-				} else {
-					$contextVariables = $contextArray;
-				}
-				$output = $this->contentCache->createUncachedSegment($output, $typoScriptPath, $contextVariables);
-			}
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (Exceptions\RuntimeException $runtimeException) {
@@ -423,6 +405,22 @@ class Runtime {
 				$output = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $tsObject);
 				$this->popContext();
 			}
+		}
+
+		if ($this->enableContentCache && $cacheForPathEnabled) {
+			$cacheTags = $this->buildCacheTags($typoScriptPath, $typoScriptConfiguration, $tsObject);
+			$output = $this->contentCache->createCacheSegment($output, $typoScriptPath, $cacheIdentifierValues, $cacheTags);
+		} elseif ($this->enableContentCache && $cacheForPathDisabled && $this->inCacheEntryPoint) {
+			$contextArray = $this->getCurrentContext();
+			if (isset($typoScriptConfiguration['__meta']['cache']['context'])) {
+				$contextVariables = array();
+				foreach ($typoScriptConfiguration['__meta']['cache']['context'] as $contextVariableName) {
+					$contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
+				}
+			} else {
+				$contextVariables = $contextArray;
+			}
+			$output = $this->contentCache->createUncachedSegment($output, $typoScriptPath, $contextVariables);
 		}
 
 		if (isset($typoScriptConfiguration['__meta']['override'])) {

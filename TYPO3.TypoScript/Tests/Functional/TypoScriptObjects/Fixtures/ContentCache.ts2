@@ -151,3 +151,53 @@ contentCache.cacheSegmentsWithTags = TYPO3.TypoScript:Array {
 		}
 	}
 }
+
+contentCache.cachedSegmentWithProcessor = TYPO3.TypoScript:Array {
+
+	5 = 'Cached segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|End cached'
+
+	@process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.uncachedSegmentWithProcessor = TYPO3.TypoScript:Array {
+
+	5 = 'Cached segment|'
+
+	10 = TYPO3.TypoScript:Array {
+		5 = 'Uncached segment|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End cached'
+
+		@process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
+
+		@cache {
+			mode = 'uncached'
+		}
+	}
+
+	15 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}

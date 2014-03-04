@@ -225,4 +225,42 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
 	}
 
+	/**
+	 * @test
+	 */
+	public function processorsAreAppliedBeforeCachingASegment() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/cachedSegmentWithProcessor');
+
+		$view->assign('object', $object);
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Processor start|counter=1|Cached segment|object=Object value 1|End cached|Processor end', $firstRenderResult);
+
+		$secondRenderResult = $view->render();
+		$this->assertSame($firstRenderResult, $secondRenderResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function processorsAreAppliedAfterUncachedSegments() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/uncachedSegmentWithProcessor');
+
+		$view->assign('object', $object);
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Cached segment|Processor start|counter=1|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $firstRenderResult);
+
+		$secondRenderResult = $view->render();
+		$this->assertSame('Cached segment|Processor start|counter=2|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $secondRenderResult);
+	}
+
 }
