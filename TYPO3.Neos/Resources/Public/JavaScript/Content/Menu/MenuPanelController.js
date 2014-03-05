@@ -21,8 +21,7 @@ define(
 
 		init: function() {
 			var that = this;
-			$.when(ResourceCache.getItem(Configuration.get('MenuDataUri'))).done(function(dataString) {
-				var data = JSON.parse(dataString);
+			$.when(ResourceCache.getItem(Configuration.get('MenuDataUri'))).done(function(data) {
 				that.set('items', data);
 			}).fail(function(xhr, status, error) {
 				console.error('Error loading menu data.', xhr, status, error);
