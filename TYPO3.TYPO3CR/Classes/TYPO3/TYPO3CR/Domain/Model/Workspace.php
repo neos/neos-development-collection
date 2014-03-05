@@ -168,7 +168,7 @@ class Workspace {
 	 *
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
-	 * @param NodeInterface $node
+	 * @param NodeInterface $node The node to publish
 	 * @param Workspace $targetWorkspace The workspace to publish to
 	 * @return void
 	 * @api
@@ -186,22 +186,55 @@ class Workspace {
 			return;
 		}
 
-		$targetNode = $this->findNodeDataInTargetWorkspace($node, $targetWorkspace);
+		$targetNodeData = $this->findNodeDataInTargetWorkspace($node, $targetWorkspace);
+		$matchingNodeVariantExistsInTargetWorkspace = $targetNodeData !== NULL && $targetNodeData->getDimensionValues() === $node->getDimensions();
 
-			// Only remove the node in the target workspace if it has the same dimensions, otherwise we want to keep it, since it's another node variant
-		if ($targetNode !== NULL && $targetNode->getDimensionValues() === $node->getDimensions()) {
-			if ($node->isRemoved() === TRUE) {
-				$this->nodeDataRepository->remove($targetNode);
-			} else {
-				$targetNode->similarize($node->getNodeData());
-				$targetNode->setPath($node->getPath());
-			}
-			$this->nodeDataRepository->remove($node);
+		if ($matchingNodeVariantExistsInTargetWorkspace) {
+			$this->replaceNodeData($node, $targetNodeData);
 		} else {
-			$node->setWorkspace($targetWorkspace);
+			$this->moveNodeVariantToTargetWorkspace($node, $targetWorkspace);
 		}
 
 		$this->emitAfterNodePublishing($node, $targetWorkspace);
+	}
+
+	/**
+	 * Replace the node data of a node instance with a given target node data
+	 *
+	 * The node data of the node that is published will be removed and the existing node data inside the target
+	 * workspace is updated to the changes and will be injected into the node instance. If the node was marked as
+	 * removed, both node data are removed.
+	 *
+	 * @param NodeInterface $node The node instance with node data to be published
+	 * @param NodeData $targetNodeData The existing node data in the target workspace
+	 * @return void
+	 */
+	protected function replaceNodeData(NodeInterface $node, NodeData $targetNodeData) {
+		$sourceNodeData = $node->getNodeData();
+		if ($node->isRemoved() === TRUE) {
+			$this->nodeDataRepository->remove($targetNodeData);
+		} else {
+			$targetNodeData->similarize($node->getNodeData());
+			$targetNodeData->setPath($node->getPath(), FALSE);
+			$node->setNodeData($targetNodeData);
+		}
+		$this->nodeDataRepository->remove($sourceNodeData);
+	}
+
+	/**
+	 * Move the given node instance to the target workspace
+	 *
+	 * If no target node variant (having the same dimension values) exists in the target workspace, the node that
+	 * is published will be used as a new node variant in the target workspace.
+	 *
+	 * @param NodeInterface $node The node to publish
+	 * @param Workspace $targetWorkspace The workspace to publish to
+	 * @return void
+	 */
+	protected function moveNodeVariantToTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace) {
+		$nodeData = $node->getNodeData();
+		$nodeData->setWorkspace($targetWorkspace);
+		$node->setNodeDataIsMatchingContext(NULL);
 	}
 
 	/**

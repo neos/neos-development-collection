@@ -1186,6 +1186,31 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * Set the associated NodeData in regards to the Context.
+	 *
+	 * NOTE: This is internal only and should not be used outside of the TYPO3CR.
+	 *
+	 * @param NodeData $nodeData
+	 * @return void
+	 */
+	public function setNodeData(NodeData $nodeData) {
+		$this->nodeData = $nodeData;
+		$this->nodeDataIsMatchingContext = NULL;
+	}
+
+	/**
+	 * Set the status of the associated NodeData in regards to the Context.
+	 *
+	 * NOTE: This is internal only and should not be used outside of the TYPO3CR.
+	 *
+	 * @param boolean $status
+	 * @return void
+	 */
+	public function setNodeDataIsMatchingContext($status) {
+		$this->nodeDataIsMatchingContext = $status;
+	}
+
+	/**
 	 * Signals that a node was added.
 	 *
 	 * @Flow\Signal

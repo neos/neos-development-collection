@@ -1214,4 +1214,23 @@ class NodeDataRepository extends Repository {
 		return $foundNodes;
 	}
 
+	/**
+	 * Find all NodeData objects inside a given workspace sorted by path to be used
+	 * in publishing. The order makes sure that parent nodes are published first.
+	 *
+	 * @param Workspace $workspace
+	 * @return array<NodeData>
+	 */
+	public function findByWorkspace(Workspace $workspace) {
+		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+		$queryBuilder = $this->entityManager->createQueryBuilder();
+
+		$queryBuilder->select('n')
+			->distinct()
+			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+			->where('n.workspace = :workspace')
+			->orderBy('n.path', 'ASC')
+			->setParameter('workspace', $workspace);
+		return $queryBuilder->getQuery()->getResult();
+	}
 }
