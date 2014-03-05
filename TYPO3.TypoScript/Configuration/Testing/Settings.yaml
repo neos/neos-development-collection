@@ -2,6 +2,7 @@ TYPO3:
   TypoScript:
     rendering:
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
+    enableContentCache: FALSE
 
     # Register an additional prefixed helper for functional tests
     defaultContext:
