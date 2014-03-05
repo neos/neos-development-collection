@@ -87,4 +87,11 @@ prototype(TYPO3.Neos.NodeTypes:FourColumn) < prototype(TYPO3.Neos.NodeTypes:Mult
 # Form TS Object
 prototype(TYPO3.Neos.NodeTypes:Form) {
 	presetName = 'default'
+	@cache {
+		mode = 'uncached'
+		context {
+			1 = 'node'
+			2 = 'documentNode'
+		}
+	}
 }
