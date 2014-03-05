@@ -25,11 +25,11 @@ define(
 				this._super();
 
 				var that = this;
-				$.when(ResourceCache.getItem(Configuration.NodeTypeSchemaUri + '&superType=' + this.get('baseNodeType'))).done(function(dataString) {
+				$.when(ResourceCache.getItem(Configuration.NodeTypeSchemaUri + '&superType=' + this.get('baseNodeType'))).done(function(data) {
 					var groupedNodeTypes = [],
 						nodeTypeGroups = [];
 
-					$.each(JSON.parse(dataString), function(nodeType, nodeTypeInfo) {
+					$.each(data, function(nodeType, nodeTypeInfo) {
 						var groupName = nodeTypeInfo.ui.group ? nodeTypeInfo.ui.group : 'general';
 						if (!groupedNodeTypes[groupName]) {
 							groupedNodeTypes[groupName] = {
