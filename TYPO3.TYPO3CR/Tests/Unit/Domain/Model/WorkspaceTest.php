@@ -60,14 +60,21 @@ class WorkspaceTest extends UnitTestCase {
 		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
 		$this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
 
+		$mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+
 		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$mockTargetWorkspaceContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$mockContextFactory->expects($this->any())->method('create')->with(array('workspaceName' => 'live'))->will($this->returnValue($mockTargetWorkspaceContext));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
 		$mockNode1->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 
 		$nodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 		$mockNode2->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/sites/foo/homepage'));
 		$mockNode2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
 		$mockNode2->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
@@ -75,6 +82,7 @@ class WorkspaceTest extends UnitTestCase {
 		$existingNodeData->expects($this->once())->method('setPath')->with('/sites/foo/homepage');
 		$mockNode2->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 		$mockNode2->expects($this->any())->method('getNodeData')->will($this->returnValue($nodeData2));
+		$mockNode2->expects($this->once())->method('setNodeData')->with($nodeData2);
 		$nodesInCurrentWorkspace = array($mockNode1, $mockNode2);
 
 		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
@@ -97,23 +105,36 @@ class WorkspaceTest extends UnitTestCase {
 		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
 		$this->inject($currentWorkspace, 'publishingService', $mockPublishingService);
 
-		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+		$mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 
-		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+		$mockTargetWorkspaceContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$mockContextFactory->expects($this->any())->method('create')->with(array('workspaceName' => 'live'))->will($this->returnValue($mockTargetWorkspaceContext));
+
+
+		$existingNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+		$mockNode2NodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+
+		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
 		$mockNode1->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 
-		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 		$mockNode2->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/sites/foo/homepage'));
 		$mockNode2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
 		$mockNode2->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
 		$mockNode2->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
+		$mockNode2->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+		$mockNode2->expects($this->once())->method('getNodeData')->will($this->returnValue($mockNode2NodeData));
+
 		$nodesInCurrentWorkspace = array($mockNode1, $mockNode2);
 
 		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockNodeDataRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNodeData));
+
 		$mockNodeDataRepository->expects($this->at(1))->method('remove')->with($existingNodeData);
-		$mockNodeDataRepository->expects($this->at(2))->method('remove')->with($mockNode2);
+		$mockNodeDataRepository->expects($this->at(2))->method('remove')->with($mockNode2NodeData);
 
 		$currentWorkspace->publish($liveWorkspace);
 	}
