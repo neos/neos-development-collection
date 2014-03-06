@@ -195,7 +195,9 @@ abstract class AbstractNodeData {
 		if (!is_object($this->contentObjectProxy)) {
 			$value = isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
 			if (!empty($value)) {
+				// TODO: The next two lines are workarounds, actually a NodeData cannot correctly return references but should always return identifier. Node should then apply the context and return the real Node objects.
 				$dimensions = $context !== NULL ? $context->getDimensions() : array();
+				$workspace = $context !== NULL ? $context->getWorkspace() : $this->getWorkspace();
 				switch($this->getNodeType()->getPropertyType($propertyName)) {
 					case 'references' :
 						$nodeDatas = array();
@@ -210,7 +212,7 @@ abstract class AbstractNodeData {
 								$valueNeedsToBeFixed = TRUE;
 							}
 							if ($returnNodesAsIdentifiers === FALSE) {
-								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $context->getWorkspace(), $dimensions);
+								$nodeData = $this->nodeDataRepository->findOneByIdentifier($nodeIdentifier, $workspace, $dimensions);
 								if ($nodeData instanceof NodeData) {
 									$nodeDatas[] = $nodeData;
 								}
@@ -240,7 +242,7 @@ abstract class AbstractNodeData {
 							$this->update();
 						}
 						if ($returnNodesAsIdentifiers === FALSE) {
-							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $context->getWorkspace(), $dimensions);
+							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $workspace, $dimensions);
 							if ($nodeData instanceof NodeData) {
 								$value = $nodeData;
 							} else {
