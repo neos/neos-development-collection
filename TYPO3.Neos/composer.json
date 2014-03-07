@@ -4,10 +4,10 @@
     "license": "GPL-3.0+",
     "description": "The next generation of the popular open-source CMS.",
     "require": {
-        "typo3/flow": "*",
+        "typo3/flow": "2.2.*",
         "typo3/extjs": "*",
-        "typo3/media": "*",
-        "typo3/setup": "*",
+        "typo3/media": "1.1.*",
+        "typo3/setup": "1.0.*",
         "typo3/twitter-bootstrap": "*",
         "typo3/typo3cr": "1.1.*@dev",
         "typo3/typoscript": "1.1.*@dev"
