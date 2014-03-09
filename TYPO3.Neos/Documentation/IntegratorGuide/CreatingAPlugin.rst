@@ -132,7 +132,21 @@ With the simple plugin you created above all of the actions of that plugin are
 executed on one specific page node. But sometimes you might want to break that
 up onto different pages. For this use case there is a node type called
 ``Plugin View``. A plugin view is basically a view of a specific set of actions
-configured in your Settings.yaml.
+configured in your ``NodeTypes.yaml``.
+
+The steps to have one plugin which is rendered at multiple pages of your website
+is as follows:
+
+1. Create your plugin as usual; e.g. like in the above example.
+2. Insert your plugin at a specific page, just as you would do normally.
+   This is later called the *Master View* of your plugin.
+3. You need to define the parts of your plugin you lateron want to have separated in a
+   different page. This is done in the ``options.pluginViews`` setting inside
+   ``NodeTypes.yaml`` (see below).
+4. Then, in Neos, insert a *Plugin View* instance on the other page where you want
+   a part of the plugin to be rendered. In the inspector, you can then select
+   the Plugin instance inside the *Master View* option, and afterwards choose
+   the specific Plugin View you want to use.
 
 You can update your *Configuration/NodeTypes.yaml* like this to configure which actions
 will be available for the ``Plugin View``:
