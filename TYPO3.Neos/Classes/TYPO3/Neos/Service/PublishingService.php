@@ -133,7 +133,10 @@ class PublishingService {
 	}
 
 	/**
-	 * Signals that a node has been published
+	 * Signals that a node has been published.
+	 *
+	 * The signal emits the source node and target workspace, i.e. the node contains its source
+	 * workspace.
 	 *
 	 * @param NodeInterface $node
 	 * @param Workspace $targetWorkspace
