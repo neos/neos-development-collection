@@ -93,13 +93,14 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 	 * @return string The rendered link
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode', array $arguments = array()) {
 		$uriViewHelper = $this->createUriNodeViewHelper();
 		$uriViewHelper->setRenderingContext($this->renderingContext);
 
-		$uri = $uriViewHelper->render($node, $format, $absolute, $baseNodeName);
+		$uri = $uriViewHelper->render($node, $format, $absolute, $baseNodeName, $arguments);
 
 		if ($uri !== NULL) {
 			$this->tag->addAttribute('href', $uri);

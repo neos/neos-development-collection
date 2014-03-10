@@ -86,12 +86,13 @@ class NodeViewHelper extends AbstractViewHelper {
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
 	 * @throws NeosException
 	 * @throws \InvalidArgumentException
 	 * @throws ViewHelperException
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode') {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode', array $arguments = array()) {
 		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
 			throw new \InvalidArgumentException('Expected NodeInterface, string or NULL for the node argument', 1373101025);
 		}
@@ -146,6 +147,7 @@ class NodeViewHelper extends AbstractViewHelper {
 		return $uriBuilder
 			->reset()
 			->setCreateAbsoluteUri($absolute)
+			->setArguments($arguments)
 			->setFormat($format)
 			->uriFor('show', array('node' => $this->convertNode($node)), 'Frontend\Node', 'TYPO3.Neos');
 	}
