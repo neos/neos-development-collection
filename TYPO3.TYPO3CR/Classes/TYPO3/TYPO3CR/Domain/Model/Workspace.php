@@ -293,6 +293,9 @@ class Workspace {
 	/**
 	 * Emits a signal just before a node is being published
 	 *
+	 * The signal emits the source node and target workspace, i.e. the node contains its source
+	 * workspace.
+	 *
 	 * @param NodeInterface $node The node to be published
 	 * @param Workspace $targetWorkspace The publishing target workspace
 	 * @return void
@@ -301,7 +304,10 @@ class Workspace {
 	protected function emitBeforeNodePublishing(NodeInterface $node, Workspace $targetWorkspace) {}
 
 	/**
-	 * Emits a signal when a node has been published
+	 * Emits a signal when a node has been published.
+	 *
+	 * The signal emits the source node and target workspace, i.e. the node contains its source
+	 * workspace.
 	 *
 	 * @param NodeInterface $node The node that was published
 	 * @param Workspace $targetWorkspace The publishing target workspace
