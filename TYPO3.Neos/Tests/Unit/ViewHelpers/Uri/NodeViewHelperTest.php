@@ -11,13 +11,14 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Uri;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
 /**
  * Testcase for the Link.Node view helper
  *
  */
-class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class NodeViewHelperTest extends UnitTestCase {
 
 	/**
 	 * @var \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper
@@ -58,8 +59,10 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * Set up common mocks and object under test
 	 */
 	public function setUp() {
-		$this->uriBuilderMock = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder', array('build'));
+		$this->uriBuilderMock = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder', array('build', 'setCreateAbsoluteUri', 'setArguments'));
 		$this->uriBuilderMock->expects($this->any())->method('build')->will($this->returnValue('dummy/final/url'));
+		$this->uriBuilderMock->expects($this->any())->method('setCreateAbsoluteUri')->will($this->returnSelf());
+		$this->uriBuilderMock->expects($this->any())->method('setArguments')->will($this->returnSelf());
 		$parentHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
 		$this->request = $this->getMock('TYPO3\Flow\Mvc\ActionRequest', array('dummy'), array($parentHttpRequest));
 		$this->request->expects($this->any())->method('getMainRequest')->will($this->returnValue($this->request));
@@ -81,7 +84,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$typoScriptObject->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->tsRuntime));
 		$mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
 		$mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($typoScriptObject));
-		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+		$viewHelperVariableContainer = new ViewHelperVariableContainer();
 		$viewHelperVariableContainer->setView($mockView);
 		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
 	}
@@ -228,6 +231,79 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 
 		$this->viewHelper->render('~/some/site/path');
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperRespectsFormatParameter() {
+		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
+		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
+			'node' => $nodeIdentifier,
+			'@action' => 'show',
+			'@controller' => 'frontend\node',
+			'@package' => 'typo3.neos',
+			'@format' => 'someformat'
+		));
+
+		$this->viewHelper->render($node, 'someFormat');
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperRespectsAbsoluteParameter() {
+		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
+		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('setCreateAbsoluteUri')->with(TRUE);
+		$this->viewHelper->render($node, NULL, TRUE);
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperRespectsBaseNodeNameParameter() {
+		$someNodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
+		$someNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$someNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
+		$someNode->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($someNodeIdentifier));
+
+		$this->tsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue(array('someBaseNode' => $someNode)));
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('build')->with(array(
+			'node' => $someNodeIdentifier,
+			'@action' => 'show',
+			'@controller' => 'frontend\node',
+			'@package' => 'typo3.neos'
+		));
+
+		$this->viewHelper->render(NULL, NULL, FALSE, 'someBaseNode');
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperRespectsArgumentsParameter() {
+		$arguments = array('foo' => 'bar', 'baz' => 'Foos');
+		$nodeIdentifier = '15079bba-a755-4c86-8770-9a17e5c058bb';
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+
+		$node->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockLiveContext));
+		$node->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
+
+		$this->uriBuilderMock->expects($this->atLeastOnce())->method('setArguments')->with($arguments);
+
+		$this->viewHelper->render($node, NULL, FALSE, 'documentNode', $arguments);
 	}
 
 }
