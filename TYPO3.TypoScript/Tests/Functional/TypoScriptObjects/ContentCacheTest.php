@@ -263,4 +263,23 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertSame('Cached segment|Processor start|counter=2|Uncached segment|object=Object value 1|End cached|Processor end|End segment', $secondRenderResult);
 	}
 
+	/**
+	 * @test
+	 */
+	public function handlingInnerRenderingExceptionsDisablesTheContentCache() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/nestedCacheSegmentsWithInnerException');
+
+		$view->assign('object', $object);
+
+		$firstRenderResult = $view->render();
+		$this->assertStringStartsWith('Cached segment|counter=1|Exception', $firstRenderResult);
+
+		$secondRenderResult = $view->render();
+		$this->assertStringStartsWith('Cached segment|counter=2|Exception', $secondRenderResult);
+	}
+
 }
