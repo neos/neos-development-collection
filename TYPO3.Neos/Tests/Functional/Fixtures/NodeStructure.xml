@@ -127,6 +127,31 @@
 					</properties>
 				</node>
 			</node>
+			<node type="TYPO3.Neos.NodeTypes:Page" nodeName="products" locale="">
+				<properties>
+					<title><![CDATA[<h1>Products</h1>]]></title>
+				</properties>
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="frameworks" locale="">
+					<properties>
+						<title><![CDATA[<h1>Frameworks</h1>]]></title>
+					</properties>
+					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-flow" locale="">
+						<properties>
+							<title><![CDATA[<h1>TYPO3 Flow</h1>]]></title>
+						</properties>
+					</node>
+				</node>
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="cms" locale="">
+					<properties>
+						<title><![CDATA[<h1>CMS</h1>]]></title>
+					</properties>
+					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-neos" locale="">
+						<properties>
+							<title><![CDATA[<h1>TYPO3 Neos</h1>]]></title>
+						</properties>
+					</node>
+				</node>
+			</node>
 		</node>
 	</site>
 </root>

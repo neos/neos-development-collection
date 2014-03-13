@@ -39,6 +39,12 @@ Node Structure:
   - about-us (page) (title: About Us)
     - history (page) (title: History)
 
+  - products (page) (title: Products)
+    - frameworks (page) (title: Frameworks)
+      - typo3-flow (page) (title: TYPO3 Flow)
+    - cms (page) (title: CMS)
+      - typo3-neos (page) (title: TYPO3 Neos)
+
 
 That is, we want to simulate the following layout with it:
 

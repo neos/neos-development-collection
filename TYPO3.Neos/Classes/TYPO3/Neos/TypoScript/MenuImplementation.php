@@ -387,7 +387,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	}
 
 	/**
-	 * Calculates a absolute depth value for a relative level given.
+	 * Calculates an absolute depth value for a relative level given.
 	 *
 	 * @param integer $relativeLevel
 	 * @param NodeInterface $referenceNode
@@ -401,7 +401,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 			if ($currentSiteDepth + $relativeLevel < 1) {
 				$depth = 1;
 			} else {
-				$depth = $currentSiteDepth + $relativeLevel;
+				$depth = $currentSiteDepth + $relativeLevel + 1;
 			}
 		}
 
