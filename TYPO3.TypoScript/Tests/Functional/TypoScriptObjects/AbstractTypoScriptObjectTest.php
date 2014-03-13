@@ -11,6 +11,12 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+
 /**
  * Testcase for the TypoScript View
  *
@@ -25,8 +31,20 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
 	protected function buildView() {
 		$view = new \TYPO3\TypoScript\View\TypoScriptView();
 
-		$mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
-		$view->setControllerContext($mockControllerContext);
+		$httpRequest = Request::createFromEnvironment();
+		$request = $httpRequest->createActionRequest();
+
+		$uriBuilder = new UriBuilder();
+		$uriBuilder->setRequest($request);
+
+		$controllerContext = new ControllerContext(
+			$request,
+			new Response(),
+			new Arguments(array()),
+			$uriBuilder
+		);
+
+		$view->setControllerContext($controllerContext);
 		$view->disableFallbackView();
 		$view->setPackageKey('TYPO3.TypoScript');
 		$view->setTypoScriptPathPattern(__DIR__ . '/Fixtures');
