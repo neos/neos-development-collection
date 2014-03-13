@@ -1,6 +1,9 @@
 {namespace ts=TYPO3\TypoScript\ViewHelpers}
 <h1>{title}</h1>
 
+<div class="navigation">
+	<ts:render path="parts.productCategoryMenu" />
+</div>
 <div class="teaser">
 	<ts:render path="content.teaser" />
 </div>

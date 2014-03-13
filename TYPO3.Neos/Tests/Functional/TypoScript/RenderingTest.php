@@ -153,6 +153,23 @@ class RenderingTest extends AbstractNodeTest {
 	}
 
 	/**
+	 * @test
+	 */
+	public function menuIsRenderedAsExpected() {
+		$output = $this->simulateRendering();
+		$this->assertSelectEquals('.navigation > ul > li.normal > a', 'Frameworks', TRUE, $output);
+	}
+
+	/**
+	 * @test
+	 */
+	public function menuWithNegativeEntryLevelIsRenderedAsExpected() {
+		$output = $this->simulateRendering('Test_MenuNegativeEntryLevel.ts2');
+		$this->assertSelectEquals('.navigation > ul > li.normal > a', 'About Us', TRUE, $output);
+		$this->assertSelectEquals('.navigation > ul > li.active > a', 'Products', TRUE, $output);
+	}
+
+	/**
 	 * Helper function for setting assertions
 	 * @param string $output
 	 */
@@ -194,9 +211,9 @@ class RenderingTest extends AbstractNodeTest {
 	/**
 	 * Helper function for setting assertions
 	 * @static
-	 * @param array $selector
+	 * @param string $selector
 	 * @param string $content
-	 * @param integer $count
+	 * @param integer|bool $count assert specific number of elements, assert any elements exist if true, assert no elements exist if false
 	 * @param mixed $actual
 	 * @param string $message
 	 * @param boolean $isHtml

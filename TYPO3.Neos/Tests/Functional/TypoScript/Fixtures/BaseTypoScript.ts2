@@ -33,6 +33,11 @@ prototype(Acme.Demo:ListItem) < prototype(TYPO3.Neos:Content) {
 page1 = TYPO3.Neos:Page
 page1.body {
 	templatePath = ${fixturesDirectory + '/WebsiteTemplate.html'}
+
+	parts.productCategoryMenu = TYPO3.Neos:Menu {
+		startingPoint = ${q(node).find('products').get(0)}
+	}
+
 	content {
 		teaser = TYPO3.Neos:ContentCollection
 		teaser.nodePath = 'teaser'
