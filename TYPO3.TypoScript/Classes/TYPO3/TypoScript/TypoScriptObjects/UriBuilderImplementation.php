@@ -136,7 +136,7 @@ class UriBuilderImplementation extends AbstractTypoScriptObject {
 	 * @return string
 	 */
 	public function evaluate() {
-		$controllerContext = $this->getTsRuntime()->getControllerContext();
+		$controllerContext = $this->tsRuntime->getControllerContext();
 		$uriBuilder = $controllerContext->getUriBuilder()->reset();
 
 		$format = $this->getFormat();
