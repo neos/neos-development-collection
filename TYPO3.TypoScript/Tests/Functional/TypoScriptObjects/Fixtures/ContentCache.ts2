@@ -201,3 +201,39 @@ contentCache.uncachedSegmentWithProcessor = TYPO3.TypoScript:Array {
 	}
 
 }
+
+contentCache.nestedCacheSegmentsWithInnerException = TYPO3.TypoScript:Array {
+
+	5 = 'Cached segment|'
+
+	10 = ${'counter=' + object.counter + '|'}
+
+	15 = TYPO3.TypoScript:Collection {
+		collection = ${['Foo', 'Bar']}
+		itemName = 'item'
+		itemRenderer = TYPO3.TypoScript:Template {
+			templatePath = 'no.such.file.here.so.crash.please'
+
+			@cache {
+				mode = 'cached'
+
+				entryIdentifier {
+					item = ${item}
+				}
+			}
+
+			@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+		}
+	}
+
+	20 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}

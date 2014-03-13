@@ -223,6 +223,7 @@ class Runtime {
 				);
 			}
 		} catch (\Exception $exception) {
+			$this->enableContentCache = FALSE;
 			$output = $this->handleRenderingException($typoScriptPath, $exception);
 		}
 
