@@ -19,15 +19,29 @@ use TYPO3\Flow\Annotations as Flow;
 class ThrowingHandler extends AbstractRenderingExceptionHandler {
 
 	/**
-	 * Throws the given exception
+	 * Handle an Exception thrown while rendering TypoScript
+	 *
+	 * @param array $typoScriptPath
+	 * @param \Exception $exception
+	 * @return string
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @throws \Exception
+	 */
+	public function handleRenderingException($typoScriptPath, \Exception $exception) {
+		throw $exception;
+	}
+
+	/**
+	 * Handles an Exception thrown while rendering TypoScript
 	 *
 	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
 	 * @param integer $referenceCode
 	 * @return string
-	 * @throws \Exception
 	 */
 	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
-		throw $exception;
+
 	}
+
 }

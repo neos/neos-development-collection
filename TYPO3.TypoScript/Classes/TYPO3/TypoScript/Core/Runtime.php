@@ -88,12 +88,6 @@ class Runtime {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\TypoScript\Core\Cache\ContentCache
 	 */
 	protected $contentCache;
@@ -274,7 +268,6 @@ class Runtime {
 		}
 		$exceptionHandler->setRuntime($this);
 		$output = $exceptionHandler->handleRenderingException($typoScriptPath, $exception);
-		$this->systemLogger->logException($exception);
 		return $output;
 	}
 
