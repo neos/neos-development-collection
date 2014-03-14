@@ -23,6 +23,12 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Neos\Service\ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;
@@ -49,6 +55,8 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler {
 			$path,
 			$message
 		);
+
+		$this->systemLogger->logException($exception);
 
 		$context = $this->getRuntime()->getCurrentContext();
 		if (isset($context['node'])) {

@@ -292,3 +292,7 @@ TYPO3:
       - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
       - resource://TYPO3.Media/Public/Styles/Main.css
       - resource://TYPO3.Neos/Public/Styles/Neos.css
+
+  TypoScript:
+    rendering:
+      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
