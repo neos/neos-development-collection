@@ -19,6 +19,12 @@ use TYPO3\Flow\Annotations as Flow;
 class XmlCommentHandler extends AbstractRenderingExceptionHandler {
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Provides an XML comment containing the exception
 	 *
 	 * @param array $typoScriptPath path causing the exception
@@ -27,6 +33,7 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler {
 	 * @return string
 	 */
 	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
+		$this->systemLogger->logException($exception);
 		if (isset($referenceCode)) {
 			return sprintf(
 				'<!-- Exception while rendering %s: %s (%s) -->',

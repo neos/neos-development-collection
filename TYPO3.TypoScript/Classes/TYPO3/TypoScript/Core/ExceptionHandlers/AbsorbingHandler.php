@@ -19,6 +19,12 @@ use TYPO3\Flow\Annotations as Flow;
 class AbsorbingHandler extends AbstractRenderingExceptionHandler {
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Returns an empty string
 	 *
 	 * @param array $typoScriptPath path causing the exception

@@ -16,6 +16,7 @@ use TYPO3\Flow\Mvc\View\AbstractView;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\Exception\RuntimeException;
 
 /**
  * View for using TypoScript for standard MVC controllers.
@@ -267,7 +268,11 @@ class TypoScriptView extends AbstractView {
 	 */
 	protected function renderTypoScript() {
 		$this->typoScriptRuntime->pushContextArray($this->variables);
-		$output = $this->typoScriptRuntime->render($this->getTypoScriptPathForCurrentRequest());
+		try {
+			$output = $this->typoScriptRuntime->render($this->getTypoScriptPathForCurrentRequest());
+		} catch (RuntimeException $exception) {
+			throw $exception->getPrevious();
+		}
 		$this->typoScriptRuntime->popContext();
 		return $output;
 	}

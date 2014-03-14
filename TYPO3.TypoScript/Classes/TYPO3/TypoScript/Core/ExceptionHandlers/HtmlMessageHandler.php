@@ -19,6 +19,12 @@ use TYPO3\Flow\Annotations as Flow;
 class HtmlMessageHandler extends AbstractRenderingExceptionHandler {
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Renders the exception in HTML for display
 	 *
 	 * @param array $typoScriptPath path causing the exception
@@ -41,6 +47,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler {
 				$exception->getMessage()
 			);
 		}
+		$this->systemLogger->logException($exception);
 		return $message;
 	}
 }
