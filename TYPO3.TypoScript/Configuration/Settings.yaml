@@ -17,3 +17,4 @@ TYPO3:
       Array: 'TYPO3\Eel\Helper\ArrayHelper'
       Date: 'TYPO3\Eel\Helper\DateHelper'
       Configuration: 'TYPO3\Eel\Helper\ConfigurationHelper'
+      Math: 'TYPO3\Eel\Helper\MathHelper'
