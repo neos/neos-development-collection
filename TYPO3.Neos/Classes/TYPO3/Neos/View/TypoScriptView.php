@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\AbstractView;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\Exception\RuntimeException;
 
 /**
  * A TypoScript view for Neos
@@ -67,7 +68,11 @@ class TypoScriptView extends AbstractView {
 			'site' => $currentSiteNode,
 			'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : NULL
 		));
-		$output = $typoScriptRuntime->render($this->typoScriptPath);
+		try {
+			$output = $typoScriptRuntime->render($this->typoScriptPath);
+		} catch (RuntimeException $exception) {
+			throw $exception->getPrevious();
+		}
 		$typoScriptRuntime->popContext();
 
 		return $output;
