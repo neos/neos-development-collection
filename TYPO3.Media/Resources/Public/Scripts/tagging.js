@@ -5,7 +5,17 @@
 			cursorAt: {left: 5, top: 5},
 			helper: 'clone',
 			opacity: 0.3,
-			revert: true
+			revert: true,
+			start: function(event, ui) {
+				$(event.toElement).closest('a').one('click', function(e) {
+					e.preventDefault();
+				});
+			},
+			stop: function(event, ui) {
+				// event.toElement is the element that was responsible
+				// for triggering this event. The handle, in case of a draggable.
+				$(event.toElement).closest('a').off('click');
+			}
 		});
 	});
 
