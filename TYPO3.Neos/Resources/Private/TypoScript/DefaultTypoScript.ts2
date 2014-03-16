@@ -64,6 +64,7 @@ root {
 			node = ${node}
 			editPreviewMode = ${editPreviewMode}
 			format = ${request.format}
+			domain = ${site.context.currentDomain}
 		}
 
 		entryTags {

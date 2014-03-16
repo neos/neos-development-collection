@@ -20,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @Flow\Scope("prototype")
  */
-class Domain  {
+class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface {
 
 	/**
 	 * @var string
@@ -118,6 +118,13 @@ class Domain  {
 	 */
 	public function onPostFlush() {
 		$this->site->emitSiteChanged();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getCacheEntryIdentifier() {
+		return $this->hostPattern;
 	}
 
 }
