@@ -84,7 +84,7 @@ define(
 		 */
 		_isEntityPublishable: function(entity) {
 			var attributes = EntityWrapper.extractAttributesFromVieEntity(entity);
-			return attributes.__workspacename !== 'live';
+			return attributes.__workspacename && attributes.__workspacename !== 'live';
 		},
 
 		/**
