@@ -30,9 +30,9 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler {
 	/**
 	 * renders the exception to nice html content element to display, edit, remove, ...
 	 *
-	 * @param array $typoScriptPath - path causing the exception
+	 * @param string $typoScriptPath - path causing the exception
 	 * @param \Exception $exception - exception to handle
-	 * @param $referenceCode - might be unset
+	 * @param integer $referenceCode - might be unset
 	 * @return string
 	 */
 	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
