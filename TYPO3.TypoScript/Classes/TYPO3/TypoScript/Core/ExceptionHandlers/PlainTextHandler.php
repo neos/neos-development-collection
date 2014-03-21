@@ -21,7 +21,7 @@ class PlainTextHandler extends AbstractRenderingExceptionHandler {
 	/**
 	 * Handles an Exception thrown while rendering TypoScript
 	 *
-	 * @param array $typoScriptPath path causing the exception
+	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
 	 * @param integer $referenceCode
 	 * @return string

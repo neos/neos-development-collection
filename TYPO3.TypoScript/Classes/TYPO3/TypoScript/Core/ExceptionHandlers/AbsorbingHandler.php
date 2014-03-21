@@ -21,7 +21,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler {
 	/**
 	 * Returns an empty string
 	 *
-	 * @param array $typoScriptPath path causing the exception
+	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
 	 * @param integer $referenceCode
 	 * @return string

@@ -63,9 +63,9 @@ class AbstractRenderingExceptionHandler extends \TYPO3\TypoScript\Core\Exception
 	/**
 	 * dummy implementation of message-generation-stub
 	 *
-	 * @param array $typoScriptPath path causing the exception
+	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
-	 * @param string $referenceCode reference code for the exception
+	 * @param integer $referenceCode reference code for the exception
 	 * @return string
 	 */
 	protected function handle($typoScriptPath, \Exception $exception, $referenceCode = NULL) {

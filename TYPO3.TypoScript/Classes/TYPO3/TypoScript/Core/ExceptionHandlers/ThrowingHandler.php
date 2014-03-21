@@ -21,7 +21,7 @@ class ThrowingHandler extends AbstractRenderingExceptionHandler {
 	/**
 	 * Throws the given exception
 	 *
-	 * @param array $typoScriptPath path causing the exception
+	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
 	 * @param integer $referenceCode
 	 * @return string

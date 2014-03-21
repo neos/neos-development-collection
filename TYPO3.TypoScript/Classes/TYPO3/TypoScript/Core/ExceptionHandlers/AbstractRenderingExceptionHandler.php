@@ -50,7 +50,7 @@ abstract class AbstractRenderingExceptionHandler {
 	/**
 	 * Handle an Exception thrown while rendering TypoScript
 	 *
-	 * @param array $typoScriptPath
+	 * @param string $typoScriptPath
 	 * @param \Exception $exception
 	 * @return string
 	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
@@ -72,7 +72,7 @@ abstract class AbstractRenderingExceptionHandler {
 	/**
 	 * Handles an Exception thrown while rendering TypoScript
 	 *
-	 * @param array $typoScriptPath path causing the exception
+	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
 	 * @param integer $referenceCode
 	 * @return string
@@ -92,8 +92,8 @@ abstract class AbstractRenderingExceptionHandler {
 	 *        content/
 	 *        main<ContentCollection>'
 	 *
-	 * @param $typoScriptPath path to format
-	 * @param $delimiter path element delimiter
+	 * @param string $typoScriptPath path to format
+	 * @param string $delimiter path element delimiter
 	 * @param bool $escapeHtml indicates whether to escape html-characters in the given path
 	 * @return string
 	 */
