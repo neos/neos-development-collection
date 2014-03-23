@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\TypeConverter;
+namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,24 +11,23 @@ namespace TYPO3\Media\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\Image objects.
- *
- * @api
- * @Flow\Scope("singleton")
+ * Base interface for any class which is based on a Resource object.
  */
-class ImageConverter extends ImageInterfaceConverter {
+interface ResourceBasedInterface {
 
 	/**
-	 * @var string
+	 * Returns the Resource object
+	 *
+	 * @return \TYPO3\Flow\Resource\Resource
 	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
+	public function getResource();
 
 	/**
-	 * @var integer
+	 * Refreshes this asset after the Resource has been modified
+	 *
+	 * @return void
 	 */
-	protected $priority = 2;
+	public function refresh();
 
 }

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\TypeConverter;
+namespace TYPO3\Media\Exception;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,24 +11,13 @@ namespace TYPO3\Media\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Exception;
 
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\Image objects.
+ * A TYPO3.Media exception for the thumbnail service if the given asset is not able to generate a thumbnail.
  *
  * @api
- * @Flow\Scope("singleton")
  */
-class ImageConverter extends ImageInterfaceConverter {
-
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
-
-	/**
-	 * @var integer
-	 */
-	protected $priority = 2;
+class NoThumbnailAvailableException extends Exception {
 
 }

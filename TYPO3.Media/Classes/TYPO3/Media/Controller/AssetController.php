@@ -227,7 +227,6 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$this->resourceManager->deleteResource($asset->getResource());
 		$this->assetRepository->remove($asset);
 		$this->addFlashMessage('Asset has been deleted.');
 		$this->redirect('index');

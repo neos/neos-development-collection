@@ -49,7 +49,6 @@ class TagRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 		$this->tagRepository->add($tag);
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
-
 		$this->assertCount(1, $this->tagRepository->findAll());
 		$this->assertInstanceOf('TYPO3\Media\Domain\Model\Tag', $this->tagRepository->findAll()->getFirst());
 	}

@@ -32,6 +32,15 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	protected $resourceManager;
 
+	public function tearDown() {
+		$persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		if (is_callable(array($persistenceManager, 'tearDown'))) {
+			$persistenceManager->tearDown();
+		}
+		self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+		parent::tearDown();
+	}
+
 	/**
 	 * Creates an Image object from a file using a mock resource (in order to avoid a database resource pointer entry)
 	 * @param string $imagePathAndFilename
@@ -53,12 +62,10 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @return \TYPO3\Flow\Resource\Resource
 	 */
 	protected function createMockResourceAndPointerFromHash($hash) {
-		$resourcePointer = new \TYPO3\Flow\Resource\ResourcePointer($hash);
-
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array('getResourcePointer', 'getUri'));
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array('getHash', 'getUri'));
 		$mockResource->expects($this->any())
-				->method('getResourcePointer')
-				->will($this->returnValue($resourcePointer));
+				->method('getHash')
+				->will($this->returnValue($hash));
 		$mockResource->expects($this->any())
 			->method('getUri')
 			->will($this->returnValue('resource://' . $hash));
@@ -82,11 +89,6 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	protected function prepareResourceManager() {
 		$this->resourceManager = $this->objectManager->get('TYPO3\Flow\Resource\ResourceManager');
-
-		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
-		$reflectedProperty->setAccessible(TRUE);
-		$this->oldPersistentResourcesStorageBaseUri = $reflectedProperty->getValue($this->resourceManager);
-		$reflectedProperty->setValue($this->resourceManager, $this->temporaryDirectory . '/');
 	}
 
 }

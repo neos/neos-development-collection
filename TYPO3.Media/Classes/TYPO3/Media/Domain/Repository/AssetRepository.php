@@ -12,13 +12,16 @@ namespace TYPO3\Media\Domain\Repository;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\QueryResultInterface;
+use TYPO3\Flow\Persistence\Repository;
 
 /**
  * A repository for Assets
  *
  * @Flow\Scope("singleton")
  */
-class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
+class AssetRepository extends Repository {
 
 	/**
 	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
@@ -32,7 +35,7 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	/**
 	 * @var array
 	 */
-	protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
+	protected $defaultOrderings = array('title' => QueryInterface::ORDER_ASCENDING);
 
 	/**
 	 * Find assets by title or given tags
@@ -52,19 +55,46 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 			$constraints[] = $query->contains('tags', $tag);
 		}
 
-		return $query->matching($query->logicalOr($constraints))->execute();
+		$query->matching($query->logicalOr($constraints));
+		$this->addImageVariantFilterClause($query);
+		return $query->execute();
 	}
 
 	/**
 	 * Find Assets with the given Tag assigned
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Tag $tag
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @return QueryResultInterface
 	 */
 	public function findByTag(\TYPO3\Media\Domain\Model\Tag $tag) {
 		$query = $this->createQuery();
+		$query->matching($query->contains('tags', $tag));
+		$this->addImageVariantFilterClause($query);
+		return $query->execute();
+	}
 
-		return $query->matching($query->contains('tags', $tag))->execute();
+	/**
+	 * Find Assets without any Tag
+	 *
+	 * @return QueryResultInterface
+	 */
+	public function findUntagged() {
+		$query = $this->createQuery();
+		$query->matching($query->isEmpty('tags'));
+		$this->addImageVariantFilterClause($query);
+		return $query->execute();
+	}
+
+	/**
+	 * Find Assets without any Tag
+	 *
+	 * @return QueryResultInterface
+	 */
+	public function countUntagged() {
+		$query = $this->createQuery();
+		$query->matching($query->isEmpty('tags'));
+		$this->addImageVariantFilterClause($query);
+		return $query->count();
 	}
 
 	/**
@@ -82,25 +112,33 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	}
 
 	/**
-	 * Find Assets without any tag
-	 *
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @return QueryResultInterface
 	 */
-	public function findUntagged() {
+	public function findAll() {
 		$query = $this->createQuery();
-
-		return $query->matching($query->isEmpty('tags'))->execute();
+		$this->addImageVariantFilterClause($query);
+		return $query->execute();
 	}
 
 	/**
-	 * Counts Assets without any tag
-	 *
 	 * @return integer
 	 */
-	public function countUntagged() {
+	public function countAll() {
 		$query = $this->createQuery();
-
-		return $query->matching($query->isEmpty('tags'))->count();
+		$this->addImageVariantFilterClause($query);
+		return $query->count();
 	}
 
+	/**
+	 * @var \TYPO3\Flow\Persistence\Doctrine\Query $query
+	 * @return QueryInterface
+	 */
+	protected function addImageVariantFilterClause($query) {
+		/**
+		 * @var $queryBuilder \Doctrine\ORM\QueryBuilder
+		 */
+		$queryBuilder = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($query, 'queryBuilder', TRUE);
+		$queryBuilder->andWhere('e NOT INSTANCE OF TYPO3\Media\Domain\Model\ImageVariant');
+		return $query;
+	}
 }

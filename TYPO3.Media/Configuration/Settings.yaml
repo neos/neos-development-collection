@@ -4,7 +4,7 @@ TYPO3:
       doctrine:
         eventListeners:
           'TYPO3\Media\Domain\EventListener\ImageEventListener':
-            events: ['prePersist', 'preUpdate', 'postRemove']
+            events: ['postRemove']
             listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
   Neos:
     typoScript:

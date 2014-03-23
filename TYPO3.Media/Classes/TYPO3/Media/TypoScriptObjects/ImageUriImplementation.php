@@ -13,7 +13,7 @@ namespace TYPO3\Media\TypoScriptObjects;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
@@ -24,20 +24,12 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 class ImageUriImplementation extends AbstractTypoScriptObject {
 
 	/**
-	 * Image service
-	 *
-	 * @var \TYPO3\Media\Service\ImageService
-	 * @Flow\Inject
-	 */
-	protected $imageService;
-
-	/**
 	 * Resource publisher
 	 *
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
 	 * @Flow\Inject
+	 * @var AssetService
 	 */
-	protected $resourcePublisher;
+	protected $assetService;
 
 	/**
 	 * Asset
@@ -99,14 +91,6 @@ class ImageUriImplementation extends AbstractTypoScriptObject {
 		if (!$asset instanceof AssetInterface) {
 			throw new \Exception('No asset given for rendering.', 1415184217);
 		}
-		if ($asset instanceof ImageInterface) {
-			$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
-
-			return $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource());
-		} else {
-			$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
-
-			return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'];
-		}
+		return $this->assetService->getThumbnailUriForAsset($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling)['src'];
 	}
 }

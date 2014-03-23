@@ -12,10 +12,8 @@ namespace TYPO3\Media\ViewHelpers\Uri;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\Exception;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
-use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 
 /**
  * Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
@@ -44,50 +42,41 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 * @Flow\Inject
 	 */
-	protected $resourcePublisher;
+	protected $resourceManager;
 
 	/**
-	 * @var \TYPO3\Media\Service\ImageService
 	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Service\ThumbnailService
 	 */
-	protected $imageService;
+	protected $thumbnailService;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Service\AssetService
+	 */
+	protected $assetService;
 
 	/**
 	 * @return void
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		// @deprecated since 1.1.0 image argument replaced with asset argument
-		$this->registerArgument('image', 'ImageInterface', 'The image to be rendered', FALSE);
 	}
 
 	/**
 	 * Renders the path to a thumbnail image, created from a given asset.
 	 *
-	 * @param AssetInterface $image The asset to be rendered as an image
+	 * @param AssetInterface $asset
 	 * @param integer $maximumWidth Desired maximum height of the image
 	 * @param integer $maximumHeight Desired maximum width of the image
 	 * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
 	 * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
 	 * @return string the relative image path, to be used as src attribute for <img /> tags
-	 * @throws Exception
 	 */
 	public function render(AssetInterface $asset = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		// Fallback for deprecated image argument
-		$asset = $asset === NULL && $this->hasArgument('image') ? $this->arguments['image'] : $asset;
-		if (!$asset instanceof AssetInterface) {
-			throw new ViewHelperException('No asset given for rendering.', 1415797902);
-		}
-		if ($asset instanceof ImageInterface) {
-			$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
-			return $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource());
-		} else {
-			$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
-			return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'];
-		}
+		return $this->assetService->getThumbnailUriForAsset($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling)['src'];
 	}
-
 }

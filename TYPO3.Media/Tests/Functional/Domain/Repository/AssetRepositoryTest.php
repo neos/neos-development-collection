@@ -53,9 +53,6 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 	 */
 	public function tearDown() {
 		parent::tearDown();
-		$reflectedProperty = new \ReflectionProperty('TYPO3\Flow\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
-		$reflectedProperty->setAccessible(TRUE);
-		$reflectedProperty->setValue($this->resourceManager, $this->oldPersistentResourcesStorageBaseUri);
 
 		\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
 	}
@@ -73,17 +70,23 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 
 		$this->assertCount(1, $this->assetRepository->findAll());
 		$this->assertInstanceOf('TYPO3\Media\Domain\Model\Asset', $this->assetRepository->findAll()->getFirst());
+
+		// This is necessary to initialize all resource instances before the tables are deleted
+		foreach ($this->assetRepository->findAll() as $asset) {
+			$asset->getResource()->getSha1();
+		}
 	}
 
 	/**
 	 * @test
 	 */
 	public function findBySearchTermReturnsFilteredResult() {
-		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
+		$resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
+		$resource2 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
 
-		$asset1 = new \TYPO3\Media\Domain\Model\Asset($resource);
+		$asset1 = new \TYPO3\Media\Domain\Model\Asset($resource1);
 		$asset1->setTitle('foo bar');
-		$asset2 = new \TYPO3\Media\Domain\Model\Asset($resource);
+		$asset2 = new \TYPO3\Media\Domain\Model\Asset($resource2);
 		$asset2->setTitle('foobar');
 
 		$this->assetRepository->add($asset1);
@@ -96,6 +99,11 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 		$this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('foo'));
 		$this->assertCount(1, $this->assetRepository->findBySearchTermOrTags(' bar'));
 		$this->assertCount(0, $this->assetRepository->findBySearchTermOrTags('baz'));
+
+		// This is necessary to initialize all resource instances before the tables are deleted
+		foreach ($this->assetRepository->findAll() as $asset) {
+			$asset->getResource()->getSha1();
+		}
 	}
 
 	/**
@@ -105,10 +113,11 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 		$tag = new Tag('home');
 		$this->tagRepository->add($tag);
 
-		$resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
-		$asset1 = new \TYPO3\Media\Domain\Model\Asset($resource);
+		$resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
+		$resource2 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
+		$asset1 = new \TYPO3\Media\Domain\Model\Asset($resource1);
 		$asset1->setTitle('asset for homepage');
-		$asset2 = new \TYPO3\Media\Domain\Model\Asset($resource);
+		$asset2 = new \TYPO3\Media\Domain\Model\Asset($resource2);
 		$asset2->setTitle('just another asset');
 		$asset2->addTag($tag);
 
@@ -121,5 +130,10 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 		$this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('home', array($tag)));
 		$this->assertCount(2, $this->assetRepository->findBySearchTermOrTags('homepage', array($tag)));
 		$this->assertCount(1, $this->assetRepository->findBySearchTermOrTags('baz', array($tag)));
+
+		// This is necessary to initialize all resource instances before the tables are deleted
+		foreach ($this->assetRepository->findAll() as $asset) {
+			$asset->getResource()->getSha1();
+		}
 	}
 }

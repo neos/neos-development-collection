@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\TypeConverter;
+namespace TYPO3\Media\Domain\Model\Adjustment;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,24 +11,32 @@ namespace TYPO3\Media\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\Image objects.
+ * An abstract image adjustment
  *
- * @api
- * @Flow\Scope("singleton")
+ * @Flow\Entity
+ * @ORM\InheritanceType("SINGLE_TABLE")
  */
-class ImageConverter extends ImageInterfaceConverter {
+abstract class AbstractImageAdjustment extends AbstractAdjustment implements ImageAdjustmentInterface {
 
 	/**
-	 * @var string
+	 * @var \TYPO3\Media\Domain\Model\ImageVariant
+	 * @ORM\ManyToOne(inversedBy="adjustments", cascade={"all"})
 	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
+	protected $imageVariant;
 
 	/**
-	 * @var integer
+	 * Sets the image variant this adjustment belongs to
+	 *
+	 * @param ImageVariant $imageVariant
+	 * @return void
+	 * @api
 	 */
-	protected $priority = 2;
-
+	public function setImageVariant(ImageVariant $imageVariant) {
+		$this->imageVariant = $imageVariant;
+	}
 }

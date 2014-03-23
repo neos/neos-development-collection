@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\TypeConverter;
+namespace TYPO3\Media\Domain\Model\Adjustment;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,24 +11,30 @@ namespace TYPO3\Media\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use Imagine\Image\ImageInterface;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\Image objects.
- *
- * @api
- * @Flow\Scope("singleton")
+ * Interface for an Image Adjustment
  */
-class ImageConverter extends ImageInterfaceConverter {
+interface ImageAdjustmentInterface extends AdjustmentInterface {
 
 	/**
-	 * @var string
+	 * Applies this adjustment to the given Imagine Image object
+	 *
+	 * @param ImageInterface $image
+	 * @return ImageInterface
 	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
+	public function applyToImage(ImageInterface $image);
 
 	/**
-	 * @var integer
+	 * Sets the image variant this adjustment belongs to
+	 *
+	 * @param ImageVariant $imageVariant
+	 * @return void
 	 */
-	protected $priority = 2;
+	public function setImageVariant(ImageVariant $imageVariant);
 
 }

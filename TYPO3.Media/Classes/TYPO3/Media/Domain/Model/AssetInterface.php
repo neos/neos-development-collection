@@ -11,15 +11,20 @@ namespace TYPO3\Media\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Resource\Resource;
+
 /**
- * An asset interface
+ * A user-managed Asset which is stored in the Asset Repository
+ *
+ * @api
  */
-interface AssetInterface {
+interface AssetInterface extends ResourceBasedInterface, ThumbnailSupportInterface {
 
 	/**
 	 * The title of this asset
 	 *
 	 * @return string Title of the asset
+	 * @api
 	 */
 	public function getTitle();
 
@@ -28,38 +33,39 @@ interface AssetInterface {
 	 *
 	 * @param string $title
 	 * @return void
+	 * @api
 	 */
 	public function setTitle($title);
 
 	/**
-	 * Resource of the original image file
+	 * Sets the resource and possibly triggers a refresh of dependent behavior
+	 *
+	 * @param Resource $resource
+	 * @return void
+	 * @api
+	 */
+	public function setResource(Resource $resource);
+
+	/**
+	 * Returns the resource of this asset
 	 *
 	 * @return \TYPO3\Flow\Resource\Resource
+	 * @api
 	 */
 	public function getResource();
 
 	/**
-	 * Sets the asset resource
+	 * Returns the IANA media type of this asset
 	 *
-	 * @param \TYPO3\Flow\Resource\Resource $resource
-	 * @return void
+	 * @return string
 	 */
-	public function setResource(\TYPO3\Flow\Resource\Resource $resource);
+	public function getMediaType();
 
 	/**
-	 * Add a single tag to this asset
+	 * Returns a file extension fitting to the media type of this asset
 	 *
-	 * @param \TYPO3\Media\Domain\Model\Tag $tag
-	 * @return void
+	 * @return string
 	 */
-	public function addTag(Tag $tag);
-
-	/**
-	 * Set the tags assigned to this asset
-	 *
-	 * @param \Doctrine\Common\Collections\Collection $tags
-	 * @return void
-	 */
-	public function setTags(\Doctrine\Common\Collections\Collection $tags);
+	public function getFileExtension();
 
 }

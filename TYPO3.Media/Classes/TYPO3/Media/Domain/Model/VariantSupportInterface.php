@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Media\TypeConverter;
+namespace TYPO3\Media\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
@@ -11,24 +11,17 @@ namespace TYPO3\Media\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow;
-
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\Image objects.
- *
- * @api
- * @Flow\Scope("singleton")
+ * An interface which defines that an asset has support for variants
  */
-class ImageConverter extends ImageInterfaceConverter {
+interface VariantSupportInterface {
 
 	/**
-	 * @var string
+	 * Returns all variants (if any) derived from this asset
+	 *
+	 * @return array
+	 * @api
 	 */
-	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
-
-	/**
-	 * @var integer
-	 */
-	protected $priority = 2;
+	public function getVariants();
 
 }

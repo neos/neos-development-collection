@@ -12,19 +12,15 @@ namespace TYPO3\Media\TypeConverter;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
- * This converter transforms arrays to \TYPO3\Media\Domain\Model\ImageVariant objects.
+ * This converter transforms to \TYPO3\Media\Domain\Model\ImageVariant objects.
  *
  * @api
  * @Flow\Scope("singleton")
  */
-class ImageVariantConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter {
-
-	/**
-	 * @var array
-	 */
-	protected $sourceTypes = array('array');
+class ImageVariantConverter extends ImageInterfaceConverter {
 
 	/**
 	 * @var string
@@ -34,52 +30,18 @@ class ImageVariantConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 	/**
 	 * @var integer
 	 */
-	protected $priority = 1;
+	protected $priority = 2;
 
 	/**
-	 * Convert all properties in the source array
-	 *
-	 * @param mixed $source
-	 * @return array
+	 * @Flow\Inject
+	 * @var ProcessingInstructionsConverter
 	 */
-	public function getSourceChildPropertiesToBeConverted($source) {
-		return array(
-			'originalImage' => $source['originalImage'],
-			'processingInstructions' => $source['processingInstructions']
-		);
-	}
+	protected $processingInstructionsConverter;
 
 	/**
-	 * Define types of to be converted child properties
+	 * If creating a new asset from this converter this defines the default type as fallback.
 	 *
-	 * @param string $targetType
-	 * @param string $propertyName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return string
+	 * @var string
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
-		if ($propertyName === 'originalImage') {
-			return '\TYPO3\Media\Domain\Model\Image';
-		}
-		if ($propertyName === 'processingInstructions') {
-			return 'array';
-		}
-	}
-
-	/**
-	 * Convert an object from $source to an \TYPO3\Media\Domain\Model\ImageVariant
-	 *
-	 * @param array $source
-	 * @param string $targetType must be 'TYPO3\Media\Domain\Model\ImageVariant'
-	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\Media\Domain\Model\ImageVariant|\TYPO3\Flow\Validation\Error The converted Image, a Validation Error or NULL
-	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		if (!isset($convertedChildProperties['originalImage']) || !$convertedChildProperties['originalImage'] instanceof \TYPO3\Media\Domain\Model\Image) {
-			return NULL;
-		}
-
-		return new \TYPO3\Media\Domain\Model\ImageVariant($convertedChildProperties['originalImage'], $convertedChildProperties['processingInstructions']);
-	}
+	protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\ImageVariant';
 }

@@ -11,40 +11,41 @@ namespace TYPO3\Media\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\Flow\Annotations as Flow;
+
 /**
- * Interface of an Image
+ * Trait for methods regarding the dimensions of an asset
  */
-interface ImageInterface extends ResourceBasedInterface {
-
-	const ORIENTATION_SQUARE = 'square';
-	const ORIENTATION_LANDSCAPE = 'landscape';
-	const ORIENTATION_PORTRAIT = 'portrait';
+trait DimensionsTrait {
 
 	/**
-	 * Inset ratio mode: If an image is attempted to get scaled with the size of both edges stated, using this mode will scale it to the lower of both edges.
-	 * Consider an image of 320/480 being scaled to 50/50: because aspect ratio wouldn't get hurt, the target image size will become 33/50.
+	 * @var integer
 	 */
-	const RATIOMODE_INSET = 'inset';
+	protected $width = 0;
 
 	/**
-	 * Outbound ratio mode: If an image is attempted to get scaled with the size of both edges stated, using this mode will scale the image and crop it.
-	 * Consider an image of 320/480 being scaled to 50/50: the image will be scaled to height 50, then centered and cropped so the width will also be 50.
+	 * @var integer
 	 */
-	const RATIOMODE_OUTBOUND = 'outbound';
+	protected $height = 0;
 
 	/**
 	 * Width of the image in pixels
 	 *
 	 * @return integer
 	 */
-	public function getWidth();
+	public function getWidth() {
+		return $this->width;
+	}
 
 	/**
 	 * Height of the image in pixels
 	 *
 	 * @return integer
 	 */
-	public function getHeight();
+	public function getHeight() {
+		return $this->height;
+	}
 
 	/**
 	 * Edge / aspect ratio of the image
@@ -52,35 +53,55 @@ interface ImageInterface extends ResourceBasedInterface {
 	 * @param boolean $respectOrientation If false (the default), orientation is disregarded and always a value >= 1 is returned (like usual in "4 / 3" or "16 / 9")
 	 * @return float
 	 */
-	public function getAspectRatio($respectOrientation = FALSE);
+	public function getAspectRatio($respectOrientation = FALSE) {
+		$aspectRatio = $this->getWidth() / $this->getHeight();
+		if ($respectOrientation === FALSE && $aspectRatio < 1) {
+			$aspectRatio = 1 / $aspectRatio;
+		}
+
+		return $aspectRatio;
+	}
 
 	/**
 	 * Orientation of this image, i.e. portrait, landscape or square
 	 *
 	 * @return string One of this interface's ORIENTATION_* constants.
 	 */
-	public function getOrientation();
+	public function getOrientation() {
+		$aspectRatio = $this->getAspectRatio(TRUE);
+		if ($aspectRatio > 1) {
+			return ImageInterface::ORIENTATION_LANDSCAPE;
+		} elseif ($aspectRatio < 1) {
+			return ImageInterface::ORIENTATION_PORTRAIT;
+		} else {
+			return ImageInterface::ORIENTATION_SQUARE;
+		}
+	}
 
 	/**
 	 * Whether this image is square aspect ratio and therefore has a square orientation
 	 *
 	 * @return boolean
 	 */
-	public function isOrientationSquare();
+	public function isOrientationSquare() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_SQUARE;
+	}
 
 	/**
 	 * Whether this image is in landscape orientation
 	 *
 	 * @return boolean
 	 */
-	public function isOrientationLandscape();
+	public function isOrientationLandscape() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_LANDSCAPE;
+	}
 
 	/**
 	 * Whether this image is in portrait orientation
 	 *
 	 * @return boolean
 	 */
-	public function isOrientationPortrait();
-
-
+	public function isOrientationPortrait() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_PORTRAIT;
+	}
 }
