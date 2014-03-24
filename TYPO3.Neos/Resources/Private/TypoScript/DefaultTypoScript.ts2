@@ -11,6 +11,7 @@ include: Prototypes/Breadcrumb.ts2
 include: Prototypes/Menu.ts2
 include: Prototypes/Plugin.ts2
 include: Prototypes/PluginView.ts2
+include: Prototypes/ConvertUris.ts2
 include: Prototypes/ConvertNodeUris.ts2
 include: Prototypes/DocumentMetadata.ts2
 include: Prototypes/ContentElementWrapping.ts2

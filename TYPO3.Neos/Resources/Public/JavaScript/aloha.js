@@ -46,7 +46,7 @@ function(
 
 		Aloha.settings = {
 			logLevels: {'error': true, 'warn': true, 'info': false, 'debug': false},
-			errorhandling : false,
+			errorhandling: false,
 			sidebar: {
 				disabled: true
 			},
@@ -83,8 +83,9 @@ function(
 					//'extra/listenforcer'
 
 					// 'neosAloha/neosintegration',
-					// 'neosAloha/neos-links'
-					'neosAloha/ajax-repository'
+					'neosAloha/neos-link',
+					'neosAloha/asset-repository',
+					'neosAloha/node-repository'
 				].join(','),
 				block: {
 					sidebarAttributeEditor: false
@@ -159,7 +160,9 @@ function(
 					}
 				},
 				paths: {
-					'ajax-repository': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib'
+					'node-repository': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib',
+					'asset-repository': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib',
+					'neos-link': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib'
 				}
 			},
 			// Basic sanitation of content
@@ -193,7 +196,7 @@ function(
 					},
 
 					protocols: {
-						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node']},
+						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node', 'asset']},
 						'blockquote': {'cite': ['http', 'https', '__relative__']},
 						'q': {'cite': ['http', 'https', '__relative__']}
 					}

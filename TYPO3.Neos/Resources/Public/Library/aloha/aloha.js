@@ -29994,7 +29994,7 @@ define('ui/context',[
 		element = $('<div>', {'class': 'aloha', 'id': id});
 		// In the built aloha.js, init will happend before the body has
 		// finished loading, so we have to defer appending the element.
-		$(function(){ element.appendTo('body'); });
+		$(function(){ element.appendTo('#neos-application'); });
 	}
 
 	var Context =  Class.extend({
@@ -35501,7 +35501,7 @@ function (jQuery) {
 
 		// append layer to body and
 		// hide the create layer if user clicks anywhere in the body
-		jQuery('body').append(layer).bind('click', function(e) {
+		jQuery('#neos-application').append(layer).bind('click', function(e) {
 			// If the layer is visible and the event target is not the
 			// button itself or a descendant of the button, hide the
 			// layer.

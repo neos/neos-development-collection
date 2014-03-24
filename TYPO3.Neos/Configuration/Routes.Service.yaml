@@ -42,6 +42,28 @@
     '@format':     'html'
   httpMethods: ['PUT']
 
+# Asset routes
+-
+  name: 'Services - AssetController->index'
+  uriPattern: 'asset'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Asset'
+    '@action':     'index'
+    '@format':     'html'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - AssetController->show'
+  uriPattern: 'asset/{identifier}'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Asset'
+    '@action':     'show'
+    '@format':     'html'
+  httpMethods: ['GET']
 
 # WorkspaceController routes
 -
