@@ -190,9 +190,9 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
-	 * Finds a node by its path and workspace.
+	 * Finds a node by its path and context.
 	 *
-	 * If the node does not exist in the specified workspace, this function will
+	 * If the node does not exist in the specified context's workspace, this function will
 	 * try to find one with the given path in one of the base workspaces (if any).
 	 *
 	 * Examples for valid paths:
@@ -204,7 +204,7 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param string $path Absolute path of the node
 	 * @param Context $context The containing context
-	 * @return NodeInterface The matching node if found, otherwise NULL
+	 * @return NodeInterface|NULL The matching node if found, otherwise NULL
 	 * @throws \InvalidArgumentException
 	 */
 	public function findOneByPathInContext($path, Context $context) {
