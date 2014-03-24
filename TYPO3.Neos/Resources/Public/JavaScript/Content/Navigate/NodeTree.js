@@ -99,6 +99,10 @@ define(
 			init: function() {
 				this._super();
 				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
+
+				this.on('afterPageLoaded', function(){
+					this._initializePropertyObservers($('#neos-page-metainformation'));
+				});
 			},
 
 			didInsertElement: function() {
@@ -234,8 +238,6 @@ define(
 					pageNode.activate();
 					pageNode.select();
 					this.scrollToCurrentNode();
-					// for in-page reloads we need to re-monitor the current page
-					this._initializePropertyObservers($('#neos-page-metainformation'));
 				}
 			}.observes('pageNodePath'),
 

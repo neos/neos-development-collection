@@ -53,6 +53,10 @@ define(
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
 			});
+
+			this.on('afterPageLoaded', function(){
+				this._initializePropertyObservers($('#neos-page-metainformation'));
+			});
 		},
 
 		_onPageNodePathChanged: function() {
