@@ -24,7 +24,6 @@ use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -112,18 +111,6 @@ class NodeConverter extends AbstractTypeConverter {
 	 */
 	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
-			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $source) !== 0) {
-				$liveContext = $this->createContext('live', $configuration);
-				$workspace = $liveContext->getWorkspace(FALSE);
-				if (!$workspace) {
-					return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', 'live'), 1383577859);
-				}
-				$node = $liveContext->getNodeByIdentifier($source);
-				if ($node === NULL) {
-					return new Error(sprintf('Could not convert the given UUID "%s" to a Node object, no node with this identifier exists in live workspace.', $source), 1382608594);
-				}
-				return $node;
-			}
 			$source = array('__contextNodePath' => $source);
 		}
 
@@ -137,18 +124,25 @@ class NodeConverter extends AbstractTypeConverter {
 		}
 		$nodePath = $matches['NodePath'];
 
-		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-		$context = $this->createContext($workspaceName, $configuration);
+		$workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
+
+		$dimensions = NULL;
+		if (isset($matches['Dimensions'])) {
+			parse_str($matches['Dimensions'], $dimensions);
+			$dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
+		}
+
+		$context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));
 		$workspace = $context->getWorkspace(FALSE);
 		if (!$workspace) {
 			return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $workspaceName), 1383577859);
 		}
 
-		try {
-			$node = $this->createNode($nodePath, $workspaceName, $configuration);
-		} catch (NodeException $exception) {
-			return new Error($exception->getMessage(), $exception->getCode());
+		$node = $context->getNode($nodePath);
+		if (!$node) {
+			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
 		}
+
 		$this->setNodeProperties($node, $node->getNodeType(), $source, $context);
 		return $node;
 	}
@@ -217,50 +211,32 @@ class NodeConverter extends AbstractTypeConverter {
 	}
 
 	/**
-	 * Tries to fetch the Node object based on the given path and workspace.
+	 * Prepares the context properties for the nodes based on the given workspace and dimensions
 	 *
-	 * @param string $nodePath
-	 * @param string $workspaceName
+	 * @param $workspaceName
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @param array $dimensions
+	 * @return array
 	 */
-	protected function createNode($nodePath, $workspaceName, PropertyMappingConfigurationInterface $configuration = NULL) {
-		$nodeContext = $this->createContext($workspaceName, $configuration);
-		$workspace = $nodeContext->getWorkspace(FALSE);
-		if (!$workspace) {
-			throw new NodeException(sprintf('Could not convert %s to Node object because the workspace "%s" as specified in the context node path does not exist.', $nodePath, $workspaceName), 1370502313);
-		}
-
-		$node = $nodeContext->getNode($nodePath);
-		if (!$node) {
-			throw new NodeException(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
-		}
-
-		return $node;
-	}
-
-	/**
-	 * Creates the context for the nodes based on the given workspace.
-	 *
-	 * @param string $workspaceName
-	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	protected function createContext($workspaceName, PropertyMappingConfigurationInterface $configuration = NULL) {
-		$invisibleContentShown = FALSE;
-		$removedContentShown = FALSE;
+	protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL, array $dimensions = NULL) {
+		$contextProperties = array(
+			'workspaceName' => $workspaceName,
+			'invisibleContentShown' => FALSE,
+			'removedContentShown' => FALSE
+		);
 		if ($workspaceName !== 'live') {
-			$invisibleContentShown = TRUE;
+			$contextProperties['invisibleContentShown'] = TRUE;
 			if ($configuration !== NULL && $configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
-				$removedContentShown = TRUE;
+				$contextProperties['removedContentShown'] = TRUE;
 			}
 		}
 
-		return $this->contextFactory->create(array(
-			'workspaceName' => $workspaceName,
-			'invisibleContentShown' => $invisibleContentShown,
-			'removedContentShown' => $removedContentShown
-		));
+		if ($dimensions !== NULL) {
+			$contextProperties['dimensions'] = $dimensions;
+
+			return $contextProperties;
+		}
+
+		return $contextProperties;
 	}
 }
