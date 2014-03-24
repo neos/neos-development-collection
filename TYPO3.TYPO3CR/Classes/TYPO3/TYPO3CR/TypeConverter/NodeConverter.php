@@ -131,14 +131,6 @@ class NodeConverter extends AbstractTypeConverter {
 			return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
 		}
 
-		if (isset($source['_removed']) && is_string($source['_removed'])) {
-			$source['_removed'] = $source['_removed'] === 'true' ? TRUE : FALSE;
-		}
-
-		if (isset($source['_hidden']) && is_string($source['_hidden'])) {
-			$source['_hidden'] = $source['_hidden'] === 'true' ? TRUE : FALSE;
-		}
-
 		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $source['__contextNodePath'], $matches);
 		if (!isset($matches['NodePath'])) {
 			return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
@@ -201,6 +193,11 @@ class NodeConverter extends AbstractTypeConverter {
 						$nodePropertyValue = \DateTime::createFromFormat('!Y-m-d', $nodePropertyValue);
 					} else {
 						$nodePropertyValue = NULL;
+					}
+				break;
+				case 'boolean':
+					if (is_string($nodePropertyValue)) {
+						$nodePropertyValue = $nodePropertyValue === 'true' ? TRUE : FALSE;
 					}
 				break;
 			}
