@@ -79,9 +79,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function getContextPath() {
 		$contextPath = $this->nodeData->getPath();
 		$workspaceName = $this->context->getWorkspace()->getName();
-		if ($workspaceName !== 'live') {
-			$contextPath .= '@' . $workspaceName;
-		}
+
+		$contextPath .= '@' . $workspaceName;
+
 		if ($this->context->getDimensions() !== array()) {
 			$contextPath .= ';';
 			foreach ($this->context->getDimensions() as $dimensionName => $dimensionValues) {
