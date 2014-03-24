@@ -26,7 +26,7 @@ prototype(TYPO3.Neos.NodeTypes:Menu) {
 
 # Headline TS Object
 prototype(TYPO3.Neos.NodeTypes:Headline) {
-	title.@process.convertNodeUris = TYPO3.Neos:ConvertNodeUris
+	title.@process.convertUris = TYPO3.Neos:ConvertUris
 }
 
 # Image TS Object
@@ -40,12 +40,12 @@ prototype(TYPO3.Neos.NodeTypes:Image) {
 
 # Text TS Object
 prototype(TYPO3.Neos.NodeTypes:Text) {
-	text.@process.convertNodeUris = TYPO3.Neos:ConvertNodeUris
+	text.@process.convertUris = TYPO3.Neos:ConvertUris
 }
 
 # TextWithImage TS Object
 prototype(TYPO3.Neos.NodeTypes:TextWithImage) < prototype(TYPO3.Neos.NodeTypes:Image) {
-	text.@process.convertNodeUris = TYPO3.Neos:ConvertNodeUris
+	text.@process.convertUris = TYPO3.Neos:ConvertUris
 }
 
 # Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements
