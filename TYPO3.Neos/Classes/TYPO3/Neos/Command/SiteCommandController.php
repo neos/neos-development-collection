@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * The Site Command Controller
@@ -147,23 +148,63 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
 	 *
 	 * @param boolean $confirmation
+	 * @param string $siteNodeName Name of a site root node to clear only content of this site.
 	 * @return void
 	 */
-	public function pruneCommand($confirmation = FALSE) {
+	public function pruneCommand($confirmation = FALSE, $siteNodeName = NULL) {
 		if ($confirmation === FALSE) {
-			$this->outputLine('Please confirm that you really want to remove all sites and content from the database.');
+			$this->outputLine('Please confirm that you really want to remove all content from the database.');
 			$this->outputLine('');
 			$this->outputLine('Syntax:');
 			$this->outputLine('  ./flow site:prune --confirmation TRUE');
 			$this->quit(1);
 		}
 
+		if ($siteNodeName !== NULL) {
+			$possibleSite = $this->siteRepository->findOneByNodeName($siteNodeName);
+			if ($possibleSite === NULL) {
+				$this->outputLine('The given site site node did not match an existing site.');
+				$this->quit(1);
+			}
+			$this->pruneSite($possibleSite);
+			$this->outputLine('Site with root "' . $siteNodeName . '" has been removed.');
+		} else {
+			$this->pruneAll();
+			$this->outputLine('All sites and content have been removed.');
+		}
+	}
+
+	/**
+	 * Remove given site all nodes for that site and all domains associated.
+	 *
+	 * @param Site $site
+	 * @return void
+	 */
+	protected function pruneSite(Site $site) {
+		$siteNodePath = '/sites/' . $site->getNodeName();
+		$this->nodeDataRepository->removeAllInPath($siteNodePath);
+		$siteNodes = $this->nodeDataRepository->findByPath($siteNodePath);
+		foreach ($siteNodes as $siteNode) {
+			$this->nodeDataRepository->remove($siteNode);
+		}
+
+		$domainsForSite = $this->domainRepository->findBySite($site);
+		foreach ($domainsForSite as $domain) {
+			$this->domainRepository->remove($domain);
+		}
+		$this->siteRepository->remove($site);
+	}
+
+	/**
+	 * Remove all nodes, workspaces, domains and sites.
+	 *
+	 * @return void
+	 */
+	protected function pruneAll() {
 		$this->nodeDataRepository->removeAll();
 		$this->workspaceRepository->removeAll();
 		$this->domainRepository->removeAll();
 		$this->siteRepository->removeAll();
-
-		$this->outputLine('All sites and content have been removed.');
 	}
 
 	/**
