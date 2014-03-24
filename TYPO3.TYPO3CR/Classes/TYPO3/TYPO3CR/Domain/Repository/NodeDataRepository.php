@@ -1252,4 +1252,16 @@ class NodeDataRepository extends Repository {
 			->setParameter('workspace', $workspace);
 		return $queryBuilder->getQuery()->getResult();
 	}
+
+	/**
+	 * Remove all nodes below a given path. Does not care about workspaces and dimensions.
+	 *
+	 * @param string $path Starting point path underneath all nodes are to be removed.
+	 * @return void
+	 */
+	public function removeAllInPath($path) {
+		$query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
+		$query->setParameter('path', $path . '/%');
+		$query->execute();
+	}
 }
