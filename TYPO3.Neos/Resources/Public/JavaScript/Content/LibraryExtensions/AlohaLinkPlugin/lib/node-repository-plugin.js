@@ -2,29 +2,29 @@ define([
 	'aloha',
 	'jquery',
 	'aloha/plugin',
-	'ajax-repository/../extra/ajax-repository'
-], function (
-	Aloha,
-	$,
-	Plugin,
-	Repository
-) {
+	'node-repository/../extra/node-repository'
+], function ( Aloha, $, Plugin, Repository ) {
+
 	/**
 	 * Register the plugin with unique name
 	 */
-	return Plugin.create('ajax-repository-plugin', {
+	return Plugin.create('node-repository-plugin', {
+
 		init: function () {
-			var repository = new Repository(
+			new Repository(
 				$('link[rel="neos-nodes"]').attr('href'),
 				$('meta[name="neos-workspace"]').attr('content')
 			);
 		},
 
 		/**
+		 * toString method
 		 * @return string
 		 */
 		toString: function () {
-			return 'ajax-repository-plugin';
+			return 'node-repository-plugin';
 		}
+
 	});
+
 });

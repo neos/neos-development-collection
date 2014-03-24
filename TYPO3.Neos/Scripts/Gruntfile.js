@@ -17,6 +17,19 @@ module.exports = function(grunt) {
 				footer: '}'
 			}
 		},
+		aloha: {
+			src: [
+				baseUri + 'aloha/aloha.js'
+			],
+			dest: baseUri + 'aloha/aloha.js',
+			options: {
+				process: function(src, filepath) {
+					src = src.replace("$(function(){ element.appendTo('body'); });", "$(function(){ element.appendTo('#neos-application'); });");
+					src = src.replace("jQuery('body').append(layer).bind('click', function(e) {", "jQuery('#neos-application').append(layer).bind('click', function(e) {");
+					return src;
+				}
+			}
+		},
 		bootstrap: {
 			src: [
 				baseUri + 'twitter-bootstrap/js/bootstrap-alert.js',
