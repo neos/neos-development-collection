@@ -8,7 +8,6 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 		vieInstance.namespaces.add('xsd', 'http://www.w3.org/2001/XMLSchema#');
 	}
 
-
 	/**
 	 * We're monkey-patching the VIE RDFa-Service, in order to be able to read and write data-neos-* attributes
 	 * instead of RDFa tags.
@@ -31,7 +30,7 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 					}
 				}
 
-				propertyName = propertyName.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() });
+				propertyName = propertyName.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
 
 				entityPredicates['typo3:' + propertyName] = value;
 			}
@@ -39,7 +38,6 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 
 		return entityPredicates;
 	};
-
 
 	var originalRdfaServiceWriteEntityFn = vieInstance.RdfaService.prototype._writeEntity;
 	vieInstance.RdfaService.prototype._writeEntity = function(entity, element) {
@@ -50,7 +48,7 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 				var propertyName = attribute.name.substr(10);
 				var dataType = $(element).attr('data-neosdatatype-' + propertyName);
 
-				propertyName = propertyName.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() });
+				propertyName = propertyName.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
 
 				var valueFromEntity = entity.get('typo3:' + propertyName);
 
