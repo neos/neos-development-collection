@@ -67,58 +67,6 @@ class NodeConverterTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function convertFromReturnsAnErrorWhenSourceIsAUuidButNoLiveWorkspaceCanBeFound() {
-		$someUuid = 'b52c1d78-6c1d-48a9-a71c-8984eddf9dde';
-
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($mockContext));
-
-		$actualResult = $this->nodeConverter->convertFrom($someUuid);
-
-		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actualResult);
-		$this->assertSame(1383577859, $actualResult->getCode(), 'Error code should match');
-	}
-
-	/**
-	 * @test
-	 */
-	public function convertFromReturnsAnErrorWhenSourceIsAUuidThatDoesNotBelongToAnExistingNodeDataRecord() {
-		$someUuid = 'b52c1d78-6c1d-48a9-a71c-8984eddf9dde';
-
-		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($mockContext));
-
-		$actualResult = $this->nodeConverter->convertFrom($someUuid);
-
-		$this->assertInstanceOf('TYPO3\Flow\Error\Error', $actualResult);
-		$this->assertSame(1382608594, $actualResult->getCode(), 'Error code should match');
-	}
-
-	/**
-	 * @test
-	 */
-	public function convertFromReturnsMatchingNodeFromLiveWorkspaceWhenSourceIsAUuidThatBelongsToAnExistingNodeDataRecord() {
-		$someUuid = 'b52c1d78-6c1d-48a9-a71c-8984eddf9dde';
-
-		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-
-		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
-		$mockContext->expects($this->any())->method('getNodeByIdentifier')->with($someUuid)->will($this->returnValue($mockNode));
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($mockContext));
-
-		$actualResult = $this->nodeConverter->convertFrom($someUuid);
-		$this->assertSame($mockNode, $actualResult);
-	}
-
-	/**
-	 * @test
-	 */
 	public function convertFromSetsRemovedContentShownContextPropertyFromConfigurationForContextPathSource() {
 		$contextPath = '/foo/bar@user-demo';
 
