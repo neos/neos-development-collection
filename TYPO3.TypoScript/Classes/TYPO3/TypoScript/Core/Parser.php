@@ -733,32 +733,17 @@ class Parser implements ParserInterface {
 		}
 
 		foreach ($this->objectTree['__prototypes'] as $prototypeName => $prototypeConfiguration) {
-			$prototypeInheritanceHierarchy = array($prototypeName);
+			$prototypeInheritanceHierarchy = array();
 			$currentPrototypeName = $prototypeName;
 			while (isset($this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'])) {
 				$currentPrototypeName = $this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'];
 				array_unshift($prototypeInheritanceHierarchy, $currentPrototypeName);
 			}
 
-			$flattenedPrototype = $this->flattenPrototypeHierarchy($prototypeInheritanceHierarchy);
-			$this->objectTree['__prototypes'][$prototypeName] = $flattenedPrototype;
-		}
-	}
-
-	/**
-	 * Flattens the prototype inheritance hierarchy into a merged final prototype.
-	 *
-	 * @param array $prototypeInheritanceHierarchy
-	 * @return array
-	 */
-	protected function flattenPrototypeHierarchy($prototypeInheritanceHierarchy) {
-		$flattenedPrototype = array();
-		foreach ($prototypeInheritanceHierarchy as $singlePrototypeName) {
-			if (isset($this->objectTree['__prototypes'][$singlePrototypeName])) {
-				$flattenedPrototype = Arrays::arrayMergeRecursiveOverrule($flattenedPrototype, $this->objectTree['__prototypes'][$singlePrototypeName]);
+			if (count($prototypeInheritanceHierarchy)) {
+				// prototype chain from most *general* to most *specific* WITHOUT the current node type!
+				$this->objectTree['__prototypes'][$prototypeName]['__prototypeChain'] = $prototypeInheritanceHierarchy;
 			}
 		}
-
-		return $flattenedPrototype;
 	}
 }

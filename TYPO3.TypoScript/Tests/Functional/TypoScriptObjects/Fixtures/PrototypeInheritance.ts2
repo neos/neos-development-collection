@@ -64,3 +64,23 @@ prototypeInheritanceAdvanced {
 	// - append_afterOverride
 	subWithOverride = PrototypeInheritance.Advanced.WrappedNested.SubWithOverride
 }
+
+
+
+///////// CONTEXT DEPENDENT PROTOTYPES WITH INHERITANCE
+// Test setup:
+// - have the "Value" prototype and a "SubclassedValue" prototype inheriting from the first one
+// - do a context specific override for the *Value* prototype; setting its value to a different element.
+// - render the "SubclassedValue"; expect that the *overridden* value from the base class applies
+prototype(TYPO3.TypoScript:PrototypeInheritance.ContextDependent.Value) {
+	value = "should never be shown"
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+}
+
+prototype(TYPO3.TypoScript:PrototypeInheritance.ContextDependent.SubclassedValue) < prototype(TYPO3.TypoScript:PrototypeInheritance.ContextDependent.Value)
+
+prototypeInheritanceContentDependent {
+	prototype(TYPO3.TypoScript:PrototypeInheritance.ContextDependent.Value).value = "NEW VALUE in base class"
+
+	element = TYPO3.TypoScript:PrototypeInheritance.ContextDependent.SubclassedValue
+}

@@ -627,9 +627,10 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 					)
 				),
 				'TYPO3.Foo:Bar3' => array(
-					'baz' => 'Foo',
-					'test2' => 42,
-					'__prototypeObjectName' => 'TYPO3.Foo:Bar2'
+					'__prototypeObjectName' => 'TYPO3.Foo:Bar2',
+					'__prototypeChain' => array(
+						'TYPO3.Foo:Bar2'
+					)
 				)
 			),
 			'test' => array(
@@ -679,7 +680,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
 		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
+		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
 	}
 
 	/**
@@ -693,7 +694,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		// Check that values were overridden by fixture #17:
 		$expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
-		$expectedParseTree['__prototypes']['TYPO3.Foo:Bar3']['baz'] = 'New Value';
 
 		// Set the default namespace to TYPO3.Neos - that's what Neos does as well in Domain\Service\TypoScriptService:
 		$this->parser->setObjectTypeNamespace('default', 'TYPO3.Neos');
@@ -706,7 +706,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 
 		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
+		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
 	}
 
 	/**
@@ -763,7 +763,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		);
 
 		$actualParseTree = $this->parser->parse($sourceCode);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
+		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
 	}
 
 
