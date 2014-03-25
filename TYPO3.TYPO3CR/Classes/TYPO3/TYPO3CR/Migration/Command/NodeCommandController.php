@@ -59,14 +59,12 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * By default the up direction is applied, using the direction parameter this can
 	 * be changed.
 	 *
-	 * @param string $workspace The name of the workspace you want to migrate. This workspace must exist.
 	 * @param string $version The version of the migration configuration you want to use.
 	 * @param boolean $confirmation Confirm application of this migration, only needed if the given migration contains any warnings.
 	 * @param string $direction The direction to work in, MigrationStatus::DIRECTION_UP or MigrationStatus::DIRECTION_DOWN
 	 * @return void
 	 */
-	public function migrateCommand($workspace, $version, $confirmation = FALSE, $direction = MigrationStatus::DIRECTION_UP) {
-		$context = $this->prepareContext($workspace);
+	public function migrateCommand($version, $confirmation = FALSE, $direction = MigrationStatus::DIRECTION_UP) {
 		$migrationConfiguration = $direction === MigrationStatus::DIRECTION_UP ?
 			$this->migrationFactory->getMigrationForVersion($version)->getUpConfiguration() :
 			$this->migrationFactory->getMigrationForVersion($version)->getDownConfiguration();
@@ -78,18 +76,9 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->quit(1);
 		}
 
-		$nodeMigrationService = new NodeMigration($context, $migrationConfiguration->getMigration());
-		switch ($direction) {
-			case MigrationStatus::DIRECTION_UP:
-				$nodeMigrationService->migrateUp();
-			break;
-			case MigrationStatus::DIRECTION_DOWN:
-				$nodeMigrationService->migrateDown();
-			break;
-			default:
-
-		}
-		$migrationStatus = new MigrationStatus($version, $workspace, $direction, new \DateTime());
+		$nodeMigrationService = new NodeMigration($migrationConfiguration->getMigration());
+		$nodeMigrationService->execute();
+		$migrationStatus = new MigrationStatus($version, $direction, new \DateTime());
 		$this->migrationStatusRepository->add($migrationStatus);
 		$this->outputLine();
 		$this->outputLine('Successfully applied migration.');
@@ -98,18 +87,15 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 	/**
 	 * List available and applied migrations
 	 *
-	 * @param string $workspace
 	 * @return void
 	 * @see typo3.typo3cr.migration:node:listavailablemigrations
 	 */
-	public function migrationStatusCommand($workspace = NULL) {
+	public function migrationStatusCommand() {
 		/** @var $appliedMigration MigrationStatus */
 		$this->outputLine();
-		if ($workspace !== NULL) {
-			$appliedMigrations = $this->migrationStatusRepository->findByWorkspaceName($workspace);
-		} else {
-			$appliedMigrations = $this->migrationStatusRepository->findAll();
-		}
+
+		$appliedMigrations = $this->migrationStatusRepository->findAll();
+
 		$appliedMigrationsDictionary = array();
 		foreach ($appliedMigrations as $appliedMigration) {
 			$appliedMigrationsDictionary[$appliedMigration->getVersion()][] = $appliedMigration;
@@ -131,8 +117,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 						$this->outputFormatted('%s applied on %s to workspace "%s"',
 							array(
 								str_pad(strtoupper($appliedMigration->getDirection()), 4, ' ', STR_PAD_LEFT),
-								$appliedMigration->getApplicationTimeStamp()->format('d-m-Y H:i:s'),
-								$appliedMigration->getWorkspaceName()
+								$appliedMigration->getApplicationTimeStamp()->format('d-m-Y H:i:s')
 							),
 							2
 						);
@@ -163,20 +148,5 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController {
 			$this->outputLine('<b><u>Warnings</u></b>');
 			$this->outputFormatted($migrationConfiguration->getWarnings(), array(), 2);
 		}
-	}
-
-	/**
-	 * Creates an appropriately configured Context instance for the given
-	 * workspace and sets it on the used node repository.
-	 *
-	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	protected function prepareContext($workspaceName) {
-		$contextProperties = array(
-			'workspaceName' => $workspaceName
-		);
-
-		return $this->contextFactory->create($contextProperties);
 	}
 }

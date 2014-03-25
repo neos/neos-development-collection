@@ -38,10 +38,10 @@ class PropertyNotEmpty implements FilterInterface {
 	/**
 	 * Returns TRUE if the given node has the property and the value is not empty.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return boolean
 	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		if ($node->hasProperty($this->propertyName)) {
 			$propertyValue = $node->getProperty($this->propertyName);
 			return !empty($propertyValue);

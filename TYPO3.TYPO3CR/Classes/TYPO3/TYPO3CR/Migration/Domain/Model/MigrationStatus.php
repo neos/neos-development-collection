@@ -40,13 +40,6 @@ class MigrationStatus {
 	protected $version;
 
 	/**
-	 * Workspace name the migration was applied to.
-	 *
-	 * @var string
-	 */
-	protected $workspaceName;
-
-	/**
 	 * Direction of this migration status, one of the DIRECTION_* constants.
 	 * As TYPO3CR migrations might not be reversible a down migration is just added as new status on top unlike
 	 * persistence migrations.
@@ -63,13 +56,11 @@ class MigrationStatus {
 
 	/**
 	 * @param string $version
-	 * @param string $workspaceName
 	 * @param string $direction, DIRECTION_UP or DIRECTION_DOWN
 	 * @param \DateTime $applicationTimeStamp
 	 */
-	public function __construct($version, $workspaceName, $direction, $applicationTimeStamp) {
+	public function __construct($version, $direction, $applicationTimeStamp) {
 		$this->version = $version;
-		$this->workspaceName = $workspaceName;
 		$this->direction = $direction;
 		$this->applicationTimeStamp = $applicationTimeStamp;
 	}
@@ -99,14 +90,5 @@ class MigrationStatus {
 	 */
 	public function getVersion() {
 		return $this->version;
-	}
-
-	/**
-	 * The workspace the migration was applied to.
-	 *
-	 * @return string
-	 */
-	public function getWorkspaceName() {
-		return $this->workspaceName;
 	}
 }

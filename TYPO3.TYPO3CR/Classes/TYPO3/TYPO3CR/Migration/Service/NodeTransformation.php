@@ -34,15 +34,15 @@ class NodeTransformation {
 	/**
 	 * Executes all configured transformations starting on the given node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
 	 * @param array $transformationConfigurations
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $transformationConfigurations) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, array $transformationConfigurations) {
 		$transformationConjunction = $this->buildTransformationConjunction($transformationConfigurations);
 		foreach ($transformationConjunction as $transformation) {
-			if ($transformation->isTransformable($node)) {
-				$transformation->execute($node);
+			if ($transformation->isTransformable($nodeData)) {
+				$transformation->execute($nodeData);
 			}
 		}
 	}

@@ -38,10 +38,10 @@ class NodeName implements FilterInterface {
 	/**
 	 * Returns TRUE if the given node is of the node type this filter expects.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return boolean
 	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		return $node->getName() === $this->nodeName;
 	}
 

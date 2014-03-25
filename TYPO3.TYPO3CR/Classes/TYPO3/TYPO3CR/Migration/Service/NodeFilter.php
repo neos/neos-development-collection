@@ -32,14 +32,14 @@ class NodeFilter {
 	protected $filterConjunctions = array();
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
 	 * @param array $filterConfiguration
 	 * @return boolean
 	 */
-	public function matchFilters(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $filterConfiguration) {
+	public function matchFilters(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, array $filterConfiguration) {
 		$filterConjunction = $this->buildFilterConjunction($filterConfiguration);
 		foreach ($filterConjunction as $filter) {
-			if (!$filter->matches($node)) {
+			if (!$filter->matches($nodeData)) {
 				return FALSE;
 			}
 		}

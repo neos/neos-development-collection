@@ -65,15 +65,15 @@ class NodeType implements FilterInterface {
 	/**
 	 * Returns TRUE if the given node is of the node type this filter expects.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return boolean
 	 */
-	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		if ($this->withSubTypes === TRUE) {
 			return $this->nodeTypeManager->getNodeType($node->getNodeType())->isOfType($this->nodeTypeName);
 		} else {
-			$nodeData = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeData', TRUE);
-			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($nodeData, 'nodeType', TRUE);
+			// This is needed to get the raw string NodeType to prevent errors for NodeTypes that no longer exist.
+			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', TRUE);
 			return $nodeType === $this->nodeTypeName;
 		}
 	}
