@@ -27,7 +27,33 @@ interface NodeInterface {
 	 * Regex pattern which matches a "context path", ie. a node path possibly containing context information such as the
 	 * workspace name. This pattern is used at least in the route part handler.
 	 */
-	const MATCH_PATTERN_CONTEXTPATH = '/^(?P<NodePath>(?:\/?[a-z0-9\-]+)(?:\/[a-z0-9\-]+)*)?(?:@(?P<WorkspaceName>[a-z0-9\-]+))?(;(?P<Dimensions>[a-zA-Z_]+=[^=]*)+)?$/i';
+	const MATCH_PATTERN_CONTEXTPATH = '/^   # A Context Path consists of...
+		(?P<NodePath>                       # 1) a NODE PATH
+			\/?                             #    A node Path starts with optional slash
+			[a-z0-9\-]+                     #    followed by a path part
+			(?:                             #    and (optionally) more path-parts)
+				\/
+				[a-z0-9\-]+
+			)*
+		)?
+		(?:                                 # 2) a CONTEXT
+			@                               #    which is delimited from the node path by the "@" sign
+			(?P<WorkspaceName>              #    followed by the workspace name (NON-EMPTY)
+				[a-z0-9\-]+
+			)
+			(?:                             #    OPTIONALLY followed by dimension values
+				;                           #    ... which always start with ";"
+				(?P<Dimensions>
+					(?:                     #        A Dimension Value is a key=value structure, delimited by &
+						(?:
+							[a-zA-Z_]+
+							=
+							[^=&]+
+						)
+						&?
+					)+
+				))?
+		)?$/ix';
 
 	/**
 	 * Maximum number of characters to allow / use for a "label" of a Node
