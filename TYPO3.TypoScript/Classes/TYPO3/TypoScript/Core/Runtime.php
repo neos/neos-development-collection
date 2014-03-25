@@ -446,15 +446,28 @@ class Runtime {
 
 				if ($currentPathSegmentType !== NULL) {
 					if (isset($currentPrototypeDefinitions[$currentPathSegmentType])) {
+
+						if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'])) {
+							$prototypeMergingOrder = $currentPrototypeDefinitions[$currentPathSegmentType]['__prototypeChain'];
+							$prototypeMergingOrder[] = $currentPathSegmentType;
+						} else {
+							$prototypeMergingOrder = array($currentPathSegmentType);
+						}
+
+						$currentPrototypeWithInheritanceTakenIntoAccount = array();
+
+						foreach ($prototypeMergingOrder as $prototypeName) {
+							$currentPrototypeWithInheritanceTakenIntoAccount = Arrays::arrayMergeRecursiveOverrule($currentPrototypeWithInheritanceTakenIntoAccount, $currentPrototypeDefinitions[$prototypeName]);
+						}
+
 							// We merge the already flattened prototype with the current configuration (in that order),
 							// to make sure that the current configuration (not being defined in the prototype) wins.
-						$configuration = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions[$currentPathSegmentType], $configuration);
+						$configuration = Arrays::arrayMergeRecursiveOverrule($currentPrototypeWithInheritanceTakenIntoAccount, $configuration);
 
 							// If context-dependent prototypes are set (such as prototype("foo").prototype("baz")),
 							// we update the current prototype definitions.
-							// This also takes care of inheritance, as we use the $flattenedPrototype as basis (TODO TESTCASE)
-						if (isset($currentPrototypeDefinitions[$currentPathSegmentType]['__prototypes'])) {
-							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $currentPrototypeDefinitions[$currentPathSegmentType]['__prototypes']);
+						if (isset($currentPrototypeWithInheritanceTakenIntoAccount['__prototypes'])) {
+							$currentPrototypeDefinitions = Arrays::arrayMergeRecursiveOverrule($currentPrototypeDefinitions, $currentPrototypeWithInheritanceTakenIntoAccount['__prototypes']);
 						}
 					}
 

@@ -69,4 +69,13 @@ class PrototypeInheritanceTest extends AbstractTypoScriptObjectTest {
 		$view->setTypoScriptPath('prototypeInheritanceAdvanced/subWithOverride');
 		$this->assertEquals('prepend_inSub|value_from_nested_prototype|append_afterOverride', $view->render());
 	}
+
+	/**
+	 * @test
+	 */
+	public function contextDependentPrototypesTakeInheritanceIntoAccount() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('prototypeInheritanceContentDependent/element');
+		$this->assertEquals('NEW VALUE in base class', $view->render());
+	}
 }
