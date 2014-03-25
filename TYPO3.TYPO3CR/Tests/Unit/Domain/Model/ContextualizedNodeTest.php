@@ -215,10 +215,30 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function removeCallsOnNodeWithNonMatchingContextMaterializesNodeData() {
-		$node = $this->setUpNodeWithNonMatchingContext();
+		$node = $this->setUpNodeWithNonMatchingContext(array('getChildNodes'));
 
+		$node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array()));
 		$node->getNodeData()->expects($this->once())->method('remove');
 
+		$node->remove();
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeRemovesAllChildNodesAndTheNodeItself() {
+		$node = $this->setUpNodeWithNonMatchingContext(array('getChildNodes'));
+
+		$nodeData = $node->getNodeData();
+		$context = $node->getContext();
+
+		$subNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array($nodeData, $context));
+		$subNode1->expects($this->once())->method('remove');
+
+		$subNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array($nodeData, $context));
+		$subNode2->expects($this->once())->method('remove');
+
+		$node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($subNode1, $subNode2)));
 		$node->remove();
 	}
 
@@ -294,9 +314,10 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @param array $configurableMethods
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
-	public function setUpNodeWithNonMatchingContext() {
+	public function setUpNodeWithNonMatchingContext($configurableMethods = array()) {
 		$userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$userWorkspace->expects($this->any())->method('getName')->will($this->returnValue('user'));
 		$liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
@@ -312,7 +333,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
 		$context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
-		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('materializeNodeData'), array($nodeData, $context));
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array_merge(array('materializeNodeData'), $configurableMethods), array($nodeData, $context));
 		$node->expects($this->once())->method('materializeNodeData');
 		return $node;
 	}

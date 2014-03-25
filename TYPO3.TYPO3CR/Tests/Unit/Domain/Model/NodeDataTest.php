@@ -389,28 +389,6 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame(array(), $nodeData->_call('getChildNodeData', 'notexistingnodetype'));
 	}
 
-	/**
-	 * @test
-	 */
-	public function removeRemovesAllChildNodesAndTheNodeItself() {
-		$this->mockWorkspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(NULL));
-
-		$subNode1 = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('remove'), array('/foo/bar1', $this->mockWorkspace));
-		$subNode1->expects($this->once())->method('remove');
-
-		$subNode2 = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('remove'), array('/foo/bar2', $this->mockWorkspace));
-		$subNode2->expects($this->once())->method('remove');
-
-		$nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove'), array(), '', FALSE);
-
-		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('getChildNodeData'), array('/foo', $this->mockWorkspace));
-		$currentNode->_set('nodeDataRepository', $nodeDataRepository);
-		$currentNode->expects($this->once())->method('getChildNodeData')->will($this->returnValue(array($subNode1, $subNode2)));
-
-		$nodeDataRepository->expects($this->once())->method('remove')->with($currentNode);
-
-		$currentNode->remove();
-	}
 
 	/**
 	 * @test
@@ -427,9 +405,8 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeDataRepository->_set('entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
 		$nodeDataRepository->_set('persistenceManager', $mockPersistenceManager);
 
-		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('getChildNodeData'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', NULL, array('/foo', $workspace));
 		$currentNode->_set('nodeDataRepository', $nodeDataRepository);
-		$currentNode->expects($this->once())->method('getChildNodeData')->will($this->returnValue(array()));
 
 		$nodeDataRepository->expects($this->never())->method('remove');
 		$nodeDataRepository->expects($this->atLeastOnce())->method('update');
@@ -437,6 +414,27 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$currentNode->remove();
 
 		$this->assertTrue($currentNode->isRemoved());
+	}
+
+	/**
+	 * @test
+	 */
+	public function removeRemovesTheNodeFromRepositoryIfItsWorkspaceHasNoOtherBaseWorkspace() {
+		$mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(NULL));
+
+		$nodeDataRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('remove', 'update'), array(), '', FALSE);
+		$nodeDataRepository->_set('entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
+		$nodeDataRepository->_set('persistenceManager', $mockPersistenceManager);
+
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', NULL, array('/foo', $workspace));
+		$currentNode->_set('nodeDataRepository', $nodeDataRepository);
+
+		$nodeDataRepository->expects($this->once())->method('remove');
+
+		$currentNode->remove();
 	}
 
 	/**

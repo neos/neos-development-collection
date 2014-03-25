@@ -524,11 +524,6 @@ class NodeData extends AbstractNodeData {
 	 * @return void
 	 */
 	public function remove() {
-		/** @var $childNode NodeData */
-		foreach ($this->getChildNodeData() as $childNode) {
-			$childNode->remove();
-		}
-
 		if ($this->workspace->getBaseWorkspace() === NULL) {
 			$this->nodeDataRepository->remove($this);
 		} else {
