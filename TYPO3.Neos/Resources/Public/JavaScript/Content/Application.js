@@ -195,6 +195,9 @@ function(
 								// does not work.
 							vie.load({element: template}).from('rdfa').execute();
 							callBack(template);
+								// TODO: VIE fires the 'add' event before the result of the callback is added to the DOM
+								// so we have to call the updatePublishableEntities manually. We should fix this upstream.
+							PublishableNodes._updatePublishableEntities();
 
 							if (EditPreviewPanelController.get('currentlyActiveMode.isPreviewMode') !== true) {
 									// When adding nested content elements (like the two-column-element),
@@ -400,7 +403,6 @@ function(
 
 						// Update node selection (will update VIE)
 					NodeSelection.initialize();
-					PublishableNodes.initialize();
 					that.trigger('pageLoaded');
 
 						// Send external event so site JS can act on it
