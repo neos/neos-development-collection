@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
 
@@ -349,6 +350,73 @@ class NodeType {
 		}
 
 		return $autoCreatedChildNodes;
+	}
+
+	/**
+	 * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
+	 * not taking constraints of auto-created nodes into account. Thus, this method only returns
+	 * the correct result if called on NON-AUTO-CREATED nodes!
+	 *
+	 * Otherwise, allowsGrandchildNodeType() needs to be called on the *parent node type*.
+	 *
+	 * @param NodeType $nodeType
+	 * @return boolean TRUE if the $nodeType is allowed as child node, FALSE otherwise.
+	 */
+	public function allowsChildNodeType(NodeType $nodeType) {
+		$constraints = $this->getConfiguration('constraints.nodeTypes') ?: array();
+		return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
+	}
+
+	/**
+	 * Checks if the given $nodeType is allowed as a childNode of the given $childNodeName
+	 * (which must be auto-created in $this NodeType).
+	 *
+	 * Only allowed to be called if $childNodeName is auto-created.
+	 *
+	 * @param string $childNodeName The name of a configured childNode of this NodeType
+	 * @param NodeType $nodeType The NodeType to check constraints for.
+	 * @return boolean TRUE if the $nodeType is allowed as grandchild node, FALSE otherwise.
+	 * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
+	 */
+	public function allowsGrandchildNodeType($childNodeName, NodeType $nodeType) {
+		$autoCreatedChildNodes = $this->getAutoCreatedChildNodes();
+		if (!isset($autoCreatedChildNodes[$childNodeName])) {
+			throw new \InvalidArgumentException('The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, given $childNodeName "' . $childNodeName . '" is not auto-created.', 1403858395);
+		}
+		$constraints = $autoCreatedChildNodes[$childNodeName]->getConfiguration('constraints.nodeTypes') ?: array();
+
+		$childNodeConstraintConfiguration = $this->getConfiguration('childNodes.' . $childNodeName . '.constraints.nodeTypes') ?: array();
+		$constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
+
+		return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
+	}
+
+	/**
+	 * Internal method to check whether the passed-in $nodeType is allowed by the $constraints array.
+	 *
+	 * $constraints is an associative array where the key is the Node Type Name. If the value is "TRUE",
+	 * the node type is explicitly allowed. If the value is "FALSE", the node type is explicitly denied.
+	 * If nothing is specified, the fallback "*" is used. If that one is also not specified, we DENY by
+	 * default.
+	 *
+	 * @param NodeType $nodeType
+	 * @param array $constraints
+	 * @return boolean TRUE if the passed $nodeType is allowed by the $constraints
+	 */
+	protected function isNodeTypeAllowedByConstraints(NodeType $nodeType, array $constraints) {
+		if (array_key_exists($nodeType->getName(), $constraints) && $constraints[$nodeType->getName()] === TRUE) {
+			return TRUE;
+		}
+
+		if (array_key_exists($nodeType->getName(), $constraints) && $constraints[$nodeType->getName()] === FALSE) {
+			return FALSE;
+		}
+
+		if (array_key_exists('*', $constraints)) {
+			return (boolean)$constraints['*'];
+		}
+
+		return FALSE;
 	}
 
 	/**

@@ -542,6 +542,14 @@ interface NodeInterface {
 	public function hasAccessRestrictions();
 
 	/**
+	 * Checks if the given $nodeType would be allowed as a child node of this node according to the configured constraints.
+	 *
+	 * @param NodeType $nodeType
+	 * @return boolean TRUE if the passed $nodeType is allowed as child node
+	 */
+	public function isNodeTypeAllowedAsChildNode(NodeType $nodeType);
+
+	/**
 	 * Moves this node before the given node
 	 *
 	 * @param NodeInterface $referenceNode
@@ -632,4 +640,11 @@ interface NodeInterface {
 	 */
 	public function createVariantForContext($context);
 
+	/**
+	 * Determine if this node is configured as auto-created childNode of the parent node. If that is the case, it
+	 * should not be deleted.
+	 *
+	 * @return boolean TRUE if this node is auto-created by the parent.
+	 */
+	public function isAutoCreated();
 }

@@ -4,3 +4,6 @@
 
 'unstructured':
   abstract: false
+  constraints:
+    nodeTypes:
+      '*': TRUE

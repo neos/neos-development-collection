@@ -13,6 +13,17 @@ additionalProperties:
       # TODO: add validator which check that these are other Node Types.
       items: { type: string, description: "List of TYPO3CR Node Types which are supertypes of this type" }
 
+    'constraints': &constraints
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+
+        'nodeTypes':
+          type: dictionary
+          # the "key" is the node type
+          additionalProperties:
+            type: boolean
+
     'childNodes':
       type: dictionary
       additionalProperties:
@@ -20,6 +31,7 @@ additionalProperties:
         additionalProperties: FALSE
         properties:
           'type': { type: string, description: "Node Type of this child node." }
+          'constraints': *constraints
 
     'properties':
       type: dictionary

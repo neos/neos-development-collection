@@ -5,7 +5,9 @@ require_once(__DIR__ . '/StepDefinitionsTrait.php');
 use Behat\Behat\Context\ExtendedContextInterface;
 use TYPO3\Flow\Utility\Arrays;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\PyStringNode;
 use PHPUnit_Framework_Assert as Assert;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -18,6 +20,11 @@ trait StepDefinitionsTrait {
 	 * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
 	 */
 	private $currentNodes = array();
+
+	/**
+	 * @var array
+	 */
+	private $nodeTypesConfiguration = array();
 
 	/**
 	 * Make sure that the class using this trait has the getSubcontext() method defined
@@ -317,6 +324,52 @@ trait StepDefinitionsTrait {
 			if (isset($row['Languages'])) {
 				$dimensions = $this->currentNodes[$index]->getDimensions();
 				Assert::assertEquals($row['Languages'], implode(',', $dimensions['languages']), 'Language should match');
+			}
+		}
+	}
+
+	/**
+	 * @AfterScenario @fixtures
+	 */
+	public function resetCustomNodeTypes() {
+		$this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->overrideNodeTypes(array());
+	}
+
+	/**
+	 * @Given /^I have the following (additional |)NodeTypes configuration:$/
+	 */
+	public function iHaveTheFollowingNodetypesConfiguration($additional, PyStringNode $nodeTypesConfiguration) {
+		if (strlen($additional) > 0) {
+			$configuration = Arrays::arrayMergeRecursiveOverrule($this->nodeTypesConfiguration, Yaml::parse($nodeTypesConfiguration->getRaw()));
+		} else {
+			$this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
+			$configuration = $this->nodeTypesConfiguration;
+		}
+		$this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->overrideNodeTypes($configuration);
+	}
+
+	/**
+	 * @Then /^I should (not |)be able to create a child node of type "([^"]*)"$/
+	 */
+	public function iShouldBeAbleToCreateAChildNodeOfType($not, $nodeTypeName) {
+		$currentNode = $this->iShouldHaveOneNode();
+		$nodeType = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->getNodeType($nodeTypeName);
+		if (empty($not)) {
+			// ALLOWED to create node
+			Assert::assertTrue($currentNode->isNodeTypeAllowedAsChildNode($nodeType), 'isNodeTypeAllowed returned the wrong value');
+
+			// thus, the following line should not throw an exception
+			$currentNode->createNode(uniqid('custom-node'), $nodeType);
+		} else {
+			// FORBIDDEN to create node
+			Assert::assertFalse($currentNode->isNodeTypeAllowedAsChildNode($nodeType), 'isNodeTypeAllowed returned the wrong value');
+
+			// thus, the following line should throw an exception
+			try {
+				$currentNode->createNode(uniqid('custom-node'), $nodeType);
+				Assert::fail('It was possible to create a custom node, although it should have been prevented');
+			} catch (\TYPO3\TYPO3CR\Exception\NodeConstraintException $nodeConstraintExceptio) {
+				// Expected exception
 			}
 		}
 	}

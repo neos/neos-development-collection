@@ -144,6 +144,23 @@ class NodeTypeManager {
 	}
 
 	/**
+	 * This method can be used by Functional of Behavioral Tests to completely
+	 * override the node types known in the system.
+	 *
+	 * In order to reset the node type override, an empty array can be passed in.
+	 * In this case, the system-node-types are used again.
+	 *
+	 * @param array $completeNodeTypeConfiguration
+	 * @return void
+	 */
+	public function overrideNodeTypes(array $completeNodeTypeConfiguration) {
+		$this->cachedNodeTypes = array();
+		foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
+			$this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
+		}
+	}
+
+	/**
 	 * Load one node type, if it is not loaded yet.
 	 *
 	 * @param string $nodeTypeName

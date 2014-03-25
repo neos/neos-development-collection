@@ -4,10 +4,18 @@
   properties:
     test1:
       defaultValue: 'default value 1'
+  constraints:
+    nodeTypes:
+      'TYPO3.TYPO3CR:TestingNodeType': TRUE
+      'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes': TRUE
+
 'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes':
   childNodes:
     subnode1:
       type: 'TYPO3.TYPO3CR:TestingNodeType'
+  constraints:
+    nodeTypes:
+      'TYPO3.TYPO3CR:TestingNodeType': TRUE
 
 'TYPO3.TYPO3CR:TestingNodeTypeWithProcessor':
   properties:
@@ -46,3 +54,26 @@
       type: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
     images:
       type: 'array<TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image>'
+
+# Constraint behat test nodetypes
+'TYPO3.TYPO3CR.Testing:Document': []
+
+'TYPO3.TYPO3CR.Testing:Page':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Document']
+
+'TYPO3.TYPO3CR.Testing:Content':
+  superTypes: []
+
+'TYPO3.TYPO3CR.Testing:Text':
+  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+
+'TYPO3.TYPO3CR.Testing:Headline':
+  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+
+'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodesAndConstraints':
+  childNodes:
+    subnode1:
+      type: 'TYPO3.TYPO3CR:TestingNodeType'
+      constraints:
+        nodeTypes:
+          'TYPO3.TYPO3CR.Testing:Headline': TRUE # allowed

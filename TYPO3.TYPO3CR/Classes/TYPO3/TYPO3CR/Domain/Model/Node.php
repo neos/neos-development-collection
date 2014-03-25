@@ -15,6 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Exception\NodeConstraintException;
+use TYPO3\TYPO3CR\Exception\NodeException;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -28,7 +30,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * The NodeData entity this version is for.
 	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
+	 * @var NodeData
 	 */
 	protected $nodeData;
 
@@ -58,7 +60,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	protected $nodeFactory;
 
 	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+	 * @param NodeData $nodeData
 	 * @param Context $context
 	 * @throws \InvalidArgumentException if you give a Node as originalNode.
 	 * @Flow\Autowiring(false)
@@ -97,7 +99,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 *
 	 * @param string $newName
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to set the name of the root node.
+	 * @throws NodeException if you try to set the name of the root node.
 	 * @throws \InvalidArgumentException if $newName is invalid
 	 * @api
 	 */
@@ -107,7 +109,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		if ($this->getPath() === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
+			throw new NodeException('The root node cannot be renamed.', 1346778388);
 		}
 
 		if ($this->getName() === $newName) {
@@ -202,7 +204,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * This method is only for internal use by the content repository. Changing
 	 * the workspace of a node manually may lead to unexpected behavior.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param Workspace $workspace
 	 * @return void
 	 */
 	public function setWorkspace(Workspace $workspace) {
@@ -264,7 +266,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
+	 * @return NodeInterface The parent node or NULL if this is the root node
 	 * @api
 	 */
 	public function getParent() {
@@ -295,10 +297,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 * @throws NodeException if you try to move the root node
+	 * @throws NodeExistsException
+	 * @throws NodeConstraintException if a node constraint prevents moving the node
 	 * @api
 	 */
 	public function moveBefore(NodeInterface $referenceNode) {
@@ -307,11 +310,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		if ($this->getPath() === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+			throw new NodeException('The root node cannot be moved.', 1285005924);
 		}
 
 		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
+			throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
+		}
+
+		if (!$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
 		}
 
 		if (!$this->isNodeDataMatchingContext()) {
@@ -331,10 +338,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @param NodeInterface $referenceNode
 	 * @return void
+	 * @throws NodeExistsException
+	 * @throws NodeException
+	 * @throws NodeConstraintException if a node constraint prevents moving the node
 	 * @api
 	 */
 	public function moveAfter(NodeInterface $referenceNode) {
@@ -343,11 +351,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		if ($this->getPath() === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
+			throw new NodeException('The root node cannot be moved.', 1316361483);
 		}
 
 		if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
+			throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
+		}
+
+		if (!$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
 		}
 
 		if (!$this->isNodeDataMatchingContext()) {
@@ -367,10 +379,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Moves this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @param NodeInterface $referenceNode
 	 * @return void
+	 * @throws NodeExistsException
+	 * @throws NodeException
+	 * @throws NodeConstraintException
 	 * @api
 	 */
 	public function moveInto(NodeInterface $referenceNode) {
@@ -379,11 +392,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		if ($this->getPath() === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1346769001);
+			throw new NodeException('The root node cannot be moved.', 1346769001);
 		}
 
 		if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
+			throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
+		}
+
+		if (!$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
 		}
 
 		if (!$this->isNodeDataMatchingContext()) {
@@ -401,16 +418,22 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Copies this node before the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @throws NodeExistsException
+	 * @throws NodeConstraintException
 	 * @api
 	 */
 	public function copyBefore(NodeInterface $referenceNode, $nodeName) {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503465);
 		}
+
+		if (!$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1402050232);
+		}
+
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
@@ -427,16 +450,22 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Copies this node after the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @throws NodeExistsException
+	 * @throws NodeConstraintException
 	 * @api
 	 */
 	public function copyAfter(NodeInterface $referenceNode, $nodeName) {
 		if ($referenceNode->getParent()->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getParent()->getPath() . '/' . $nodeName . '" already exists.', 1292503466);
 		}
+
+		if (!$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648170);
+		}
+
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
@@ -453,16 +482,22 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Copies this node into the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @throws NodeExistsException
+	 * @throws NodeConstraintException
 	 * @api
 	 */
 	public function copyInto(NodeInterface $referenceNode, $nodeName) {
 		if ($referenceNode->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getPath() . '/' . $nodeName . '" already exists.', 1292503467);
 		}
+
+		if (!$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648177);
+		}
+
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
@@ -552,7 +587,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+	 * @throws NodeException if the node does not contain the specified property
 	 */
 	public function removeProperty($propertyName) {
 		if (!$this->isNodeDataMatchingContext()) {
@@ -638,7 +673,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Sets the node type of this node.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+	 * @param NodeType $nodeType
 	 * @return void
 	 * @api
 	 */
@@ -655,7 +690,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Returns the node type of this node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
+	 * @return NodeType
 	 * @api
 	 */
 	public function getNodeType() {
@@ -667,10 +702,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * properties and creates default subnodes.
 	 *
 	 * @param string $name Name of the new node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
+	 * @param NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 * @api
 	 */
 	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
@@ -715,12 +750,17 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * TODO: Check if we can change the import service to avoid making this public.
 	 *
 	 * @param string $name Name of the new node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
+	 * @param NodeType $nodeType Node type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @param array $dimensions Content dimension values to set on the node (Array of dimension names to array of values)
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @return Node
+	 * @throws NodeConstraintException
 	 */
 	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
+		if ($nodeType !== NULL && !$this->willChildNodeBeAutoCreated($name) && !$this->isNodeTypeAllowedAsChildNode($nodeType)) {
+			throw new NodeConstraintException('Cannot create new node "' . $name . '" of Type "' . $nodeType->getName() . '" in ' . $this->__toString(), 1400782413);
+		}
+
 		if ($dimensions === NULL || $dimensions === array()) {
 			$dimensions = $this->context->getTargetDimensionValues();
 		}
@@ -735,9 +775,20 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * Checks if the given Node $name is configured as auto-created childNode in the NodeType configuration.
+	 *
+	 * @param string $name The node name to check.
+	 * @return boolean TRUE if the given nodeName is configured as auto-created child node.
+	 */
+	protected function willChildNodeBeAutoCreated($name) {
+		$autoCreatedChildNodes = $this->getNodeType()->getAutoCreatedChildNodes();
+		return isset($autoCreatedChildNodes[$name]);
+	}
+
+	/**
 	 * Creates and persists a node from the given $nodeTemplate as child node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
+	 * @param NodeTemplate $nodeTemplate
 	 * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
 	 * @return NodeInterface the freshly generated node
 	 * @api
@@ -756,7 +807,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return NodeInterface The specified node or NULL if no such node exists
 	 * @api
 	 */
 	public function getNode($path) {
@@ -776,7 +827,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * node type. For now it is just the first child node.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node The primary child node or NULL if no such node exists
+	 * @return Node The primary child node or NULL if no such node exists
 	 * @api
 	 */
 	public function getPrimaryChildNode() {
@@ -1056,7 +1107,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Returns the context this node operates in.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @return Context
 	 * @api
 	 */
 	public function getContext() {
@@ -1092,9 +1143,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Create a recursive copy of this node below $referenceNode with $nodeName.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param NodeInterface $referenceNode
 	 * @param string $nodeName
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 */
 	protected function createRecursiveCopy(NodeInterface $referenceNode, $nodeName) {
 		$copiedNode = $referenceNode->createSingleNode($nodeName);
@@ -1173,7 +1224,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * Given a context a new node is returned that is like this node, but
 	 * lives in the new context.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
+	 * @param Context $context
 	 * @return NodeInterface
 	 */
 	public function createVariantForContext($context) {
@@ -1194,6 +1245,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($node);
 
+		/**
+		 * @var $autoCreatedChildNode NodeInterface
+		 */
 		foreach ($autoCreatedChildNodes as $autoCreatedChildNode) {
 			$autoCreatedChildNode->createVariantForContext($context);
 		}
@@ -1239,6 +1293,39 @@ class Node implements NodeInterface, CacheAwareInterface {
 	public function setNodeData(NodeData $nodeData) {
 		$this->nodeData = $nodeData;
 		$this->nodeDataIsMatchingContext = NULL;
+	}
+
+	/**
+	 * Checks if the given $nodeType would be allowed as a child node of this node according to the configured constraints.
+	 *
+	 * @param NodeType $nodeType
+	 * @return boolean TRUE if the passed $nodeType is allowed as child node
+	 */
+	public function isNodeTypeAllowedAsChildNode(NodeType $nodeType) {
+		if ($this->isAutoCreated()) {
+			return $this->getParent()->getNodeType()->allowsGrandchildNodeType($this->getName(), $nodeType);
+		} else {
+			return $this->getNodeType()->allowsChildNodeType($nodeType);
+		}
+	}
+
+	/**
+	 * Determine if this node is configured as auto-created childNode of the parent node. If that is the case, it
+	 * should not be deleted.
+	 *
+	 * @return boolean TRUE if this node is auto-created by the parent.
+	 */
+	public function isAutoCreated() {
+		$parent = $this->getParent();
+		if ($parent === NULL) {
+			return FALSE;
+		}
+
+		if (array_key_exists($this->getName(), $parent->getNodeType()->getAutoCreatedChildNodes())) {
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 
 	/**
