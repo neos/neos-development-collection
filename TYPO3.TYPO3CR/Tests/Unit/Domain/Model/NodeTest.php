@@ -67,4 +67,81 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame($expectedNode, $primaryChildNode);
 	}
 
+	/**
+	 * Data Provider for contextPathPatternShouldWorkWithContexts
+	 *
+	 * @return array
+	 */
+	public function dataSourceForContextPathPattern() {
+		return array(
+			'empty node path' => array(
+				'path' => '',
+				'expected' => array(
+					0 => ''
+				)
+			),
+			'node path starting with /' => array(
+				'path' => '/features',
+				'expected' => array(
+					0 => '/features',
+					'NodePath' => '/features',
+					1 => '/features'
+				)
+			),
+			'simple context with no workspace' => array(
+				'path' => 'features',
+				'expected' => array(
+					0 => 'features',
+					'NodePath' => 'features',
+					1 => 'features'
+				)
+			),
+			'simple context with workspace' => array(
+				'path' => 'features@user-admin',
+				'expected' => array(
+					0 => 'features@user-admin',
+					'NodePath' => 'features',
+					1 => 'features',
+					'WorkspaceName' => 'user-admin',
+					2 => 'user-admin'
+				)
+			),
+			'simple dimension' => array(
+				'path' => 'features@user-admin;locales=de_DE,mul_ZZ',
+				'expected' => array(
+					0 => 'features@user-admin;locales=de_DE,mul_ZZ',
+					'NodePath' => 'features',
+					1 => 'features',
+					'WorkspaceName' => 'user-admin',
+					2 => 'user-admin',
+					'Dimensions' => 'locales=de_DE,mul_ZZ',
+					3 => 'locales=de_DE,mul_ZZ'
+				)
+			),
+			'multiple dimensions' => array(
+				'path' => 'features@user-admin;locales=de_DE,mul_ZZ&original=blah',
+				'expected' => array(
+					0 => 'features@user-admin;locales=de_DE,mul_ZZ&original=blah',
+					'NodePath' => 'features',
+					1 => 'features',
+					'WorkspaceName' => 'user-admin',
+					2 => 'user-admin',
+					'Dimensions' => 'locales=de_DE,mul_ZZ&original=blah',
+					3 => 'locales=de_DE,mul_ZZ&original=blah'
+				)
+			)
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider dataSourceForContextPathPattern
+	 */
+	public function contextPathPatternShouldWorkWithContexts($path, $expected) {
+		$matches = array();
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
+
+		$this->assertSame($expected, $matches);
+	}
+
 }
