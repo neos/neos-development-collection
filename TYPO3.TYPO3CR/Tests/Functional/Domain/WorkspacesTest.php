@@ -268,7 +268,6 @@ class WorkspacesTest extends FunctionalTestCase {
 		$this->setUpRootNodeAndRepository();
 
 		$this->liveWorkspace = $this->workspaceRepository->findOneByName('live');
-		$teaserNode = $this->rootNode->getNode('/homepage/teaser/node52697bdfee199');
 		$this->rootNode->getWorkspace()->publishNode($teaserNode, $this->liveWorkspace);
 
 		$this->saveNodesAndTearDownRootNodeAndRepository();

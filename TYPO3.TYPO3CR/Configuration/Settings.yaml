@@ -33,3 +33,18 @@ TYPO3:
           Configuration: 'TYPO3\Eel\Helper\ConfigurationHelper'
           Math: 'TYPO3\Eel\Helper\MathHelper'
           Json: 'TYPO3\Eel\Helper\JsonHelper'
+
+  Flow:
+     # disable reflection for non psr-0 compliant 3rd party packages
+    object:
+      excludeClasses:
+       'gedmo.doctrineextensions' : ['Gedmo\\.*']
+       'Behat.Transliterator' : ['Behat\\Transliterator\\.*']
+
+     # register soft deletable filter & event listeners
+    persistence:
+      doctrine:
+        eventListeners:
+          'Gedmo\Timestampable\TimestampableListener':
+            events: ['prePersist', 'onFlush', 'loadClassMetadata']
+            listener: 'Gedmo\Timestampable\TimestampableListener'

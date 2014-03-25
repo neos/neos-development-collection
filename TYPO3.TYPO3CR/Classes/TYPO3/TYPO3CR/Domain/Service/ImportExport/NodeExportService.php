@@ -140,6 +140,9 @@ class NodeExportService {
 			. ' n.hidden,'
 			. ' n.hiddenBeforeDateTime AS hiddenBeforeDateTime,'
 			. ' n.hiddenAfterDateTime AS hiddenAfterDateTime,'
+			. ' n.creationDateTime AS creationDateTime,'
+			. ' n.lastModificationDateTime AS lastModificationDateTime,'
+			. ' n.lastPublicationDateTime AS lastPublicationDateTime,'
 			. ' n.hiddenInIndex AS hiddenInIndex,'
 			. ' n.accessRoles AS accessRoles,'
 			. ' n.version AS version,'
@@ -236,7 +239,7 @@ class NodeExportService {
 			$this->xmlWriter->writeAttribute('sortingIndex', $nodeData['sortingIndex']);
 		}
 
-		foreach(
+		foreach (
 			array(
 				'workspace',
 				'nodeType',
@@ -256,11 +259,14 @@ class NodeExportService {
 		}
 		$this->xmlWriter->endElement();
 
-		foreach(
+		foreach (
 			array(
 				'accessRoles',
 				'hiddenBeforeDateTime',
 				'hiddenAfterDateTime',
+				'creationDateTime',
+				'lastModificationDateTime',
+				'lastPublicationDateTime',
 				'contentObjectProxy'
 			) as $propertyName) {
 			$this->writeConvertedElement($nodeData, $propertyName);

@@ -19,6 +19,7 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * The node data inside the content repository. This is only a data
@@ -160,6 +161,23 @@ class NodeData extends AbstractNodeData {
 
 	/**
 	 * @var \DateTime
+	 */
+	protected $creationDateTime;
+
+	/**
+	 * @var \DateTime
+	 * @Gedmo\Timestampable(on="update", field={"pathHash", "parentPathHash", "identifier", "index", "contentObjectProxy", "removed", "dimensionHash", "hidden", "hiddenBeforeDateTime", "hiddenAfterDateTime", "hiddenInIndex", "nodeType", "properties"})
+	 */
+	protected $lastModificationDateTime;
+
+	/**
+	 * @var \DateTime
+	 * @ORM\Column(nullable=true)
+	 */
+	protected $lastPublicationDateTime;
+
+	/**
+	 * @var \DateTime
 	 * @ORM\Column(nullable=true)
 	 */
 	protected $hiddenBeforeDateTime;
@@ -217,6 +235,9 @@ class NodeData extends AbstractNodeData {
 	 * @param array $dimensions An array of dimension name to dimension values
 	 */
 	public function __construct($path, Workspace $workspace, $identifier = NULL, array $dimensions = NULL) {
+		parent::__construct();
+		$this->creationDateTime = new \DateTime();
+		$this->lastModificationDateTime = new \DateTime();
 		$this->setPath($path, FALSE);
 		$this->workspace = $workspace;
 		$this->identifier = ($identifier === NULL) ? Algorithms::generateUUID() : $identifier;
@@ -677,9 +698,10 @@ class NodeData extends AbstractNodeData {
 	 * will be set to the same values as in the source node.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $sourceNode
+	 * @param boolean $isCopy
 	 * @return void
 	 */
-	public function similarize(AbstractNodeData $sourceNode) {
+	public function similarize(AbstractNodeData $sourceNode, $isCopy = FALSE) {
 		$this->properties = array();
 		foreach ($sourceNode->getProperties(TRUE) as $propertyName => $propertyValue) {
 			$this->setProperty($propertyName, $propertyValue);
@@ -689,6 +711,10 @@ class NodeData extends AbstractNodeData {
 			'nodeType', 'hidden', 'hiddenAfterDateTime',
 			'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
 		);
+		if (!$isCopy) {
+			$propertyNames[] = 'creationDateTime';
+			$propertyNames[] = 'lastModificationDateTime';
+		}
 		if ($sourceNode instanceof NodeData) {
 			$propertyNames[] = 'index';
 		}

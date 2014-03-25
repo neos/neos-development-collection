@@ -155,7 +155,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 		$existingNodeData = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
 		if ($existingNodeData !== array()) {
-			throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath() , $path), 1414436551);
+			throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
 		}
 
 		$this->setPathInternal($path);
@@ -345,6 +345,35 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 		}
 		return $otherNodeVariants;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getCreationDateTime() {
+		return $this->nodeData->getCreationDateTime();
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getLastModificationDateTime() {
+		return $this->nodeData->getLastModificationDateTime();
+	}
+
+	/**
+	 * @param \DateTime $lastModificationDateTime
+	 * @return void
+	 */
+	public function setLastPublicationDateTime(\DateTime $lastModificationDateTime) {
+		$this->nodeData->setLastPublicationDateTime($lastModificationDateTime);
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getLastPublicationDateTime() {
+		return $this->nodeData->getLastPublicationDateTime();
 	}
 
 	/**
@@ -1447,7 +1476,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$copiedNode = $referenceNode->createSingleNode($nodeName, NULL, $identifier);
 
-		$copiedNode->similarize($this);
+		$copiedNode->similarize($this, TRUE);
 		/** @var $childNode Node */
 		foreach ($this->getChildNodes() as $childNode) {
 			// Prevent recursive copy when copying into itself
@@ -1477,10 +1506,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * For internal use in createRecursiveCopy.
 	 *
 	 * @param NodeInterface $sourceNode
+	 * @param boolean $isCopy
 	 * @return void
 	 */
-	public function similarize(NodeInterface $sourceNode) {
-		$this->nodeData->similarize($sourceNode->getNodeData());
+	public function similarize(NodeInterface $sourceNode, $isCopy = FALSE) {
+		$this->nodeData->similarize($sourceNode->getNodeData(), $isCopy);
 	}
 
 	/**

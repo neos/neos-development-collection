@@ -15,6 +15,7 @@ use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
@@ -110,6 +111,15 @@ class NodeImportService {
 			'columnType' => Type::DATETIME
 		),
 		'hiddenAfterDateTime' => array(
+			'columnType' => Type::DATETIME
+		),
+		'creationDateTime' => array(
+			'columnType' => Type::DATETIME
+		),
+		'lastModificationDateTime' => array(
+			'columnType' => Type::DATETIME
+		),
+		'lastPublicationDateTime' => array(
 			'columnType' => Type::DATETIME
 		),
 		'accessRoles' => array()
@@ -240,6 +250,7 @@ class NodeImportService {
 				$path = $this->getCurrentPath();
 				$parentPath = $this->getParentPath($path);
 
+				$now = new Now();
 				$currentNodeIdentifier = $this->nodeIdentifierStack[count($this->nodeIdentifierStack) - 1];
 				$this->nodeDataStack[] = array(
 					'Persistence_Object_Identifier' => Algorithms::generateUUID(),
@@ -257,6 +268,8 @@ class NodeImportService {
 					'parentPathHash' => md5($parentPath),
 					'properties' => array(),
 					'accessRoles' => array(),
+					'creationDateTime' => $now,
+					'lastModificationDateTime' => $now,
 					'dimensionValues' => array() // is post-processed before save in END_ELEMENT-case
 				);
 				break;
@@ -271,6 +284,9 @@ class NodeImportService {
 				break;
 			case 'hiddenBeforeDateTime':
 			case 'hiddenAfterDateTime':
+			case 'creationDateTime':
+			case 'lastModificationDateTime':
+			case 'lastPublicationDateTime':
 				$this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->propertyMapper->convert($xmlReader->readString(), 'DateTime', $this->propertyMappingConfiguration);
 				break;
 			default:
@@ -458,6 +474,10 @@ class NodeImportService {
 	 */
 	protected function parseEndElement(\XMLReader $reader) {
 		switch ($reader->name) {
+			case 'creationDateTime':
+			case 'lastModificationDateTime':
+			case 'lastPublicationDateTime':
+				break;
 			case 'node':
 				// update current path
 				array_pop($this->nodeNameStack);
