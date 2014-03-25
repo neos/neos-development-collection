@@ -38,20 +38,20 @@ class RenameNode extends AbstractTransformation {
 	/**
 	 * Returns TRUE if the given node does not yet have the new name.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return boolean
 	 */
-	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		return ($node->getName() !== $this->newName);
 	}
 
 	/**
 	 * Renames the node to the new name.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
 	 * @return void
 	 */
-	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		$node->setName($this->newName);
 	}
 }
