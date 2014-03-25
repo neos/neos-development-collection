@@ -32,17 +32,6 @@ rawContent = TYPO3.Neos:Page {
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/Page/Default.html'
 		sectionName = 'body'
 
-		parts {
-			menu = TYPO3.Neos:Menu {
-				templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/Menu.html'
-				entryLevel = 1
-				maximumLevels = 4
-			}
-			breadcrumb = TYPO3.Neos:Breadcrumb {
-				templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/BreadcrumbMenu.html'
-			}
-		}
-
 		allContentCollections = TYPO3.Neos:PrimaryContent {
 			nodePath = '.'
 			default.type = 'TYPO3.Neos:RawContent'
