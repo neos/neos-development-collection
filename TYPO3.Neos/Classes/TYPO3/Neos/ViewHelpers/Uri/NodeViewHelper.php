@@ -87,12 +87,15 @@ class NodeViewHelper extends AbstractViewHelper {
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
-	 * @throws NeosException
+	 * @param string $section
+	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
+	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+	 * @throws \TYPO3\Neos\Exception
 	 * @throws \InvalidArgumentException
-	 * @throws ViewHelperException
+	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode', array $arguments = array()) {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode', array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
 		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
 			throw new \InvalidArgumentException('Expected NodeInterface, string or NULL for the node argument', 1373101025);
 		}
@@ -146,8 +149,11 @@ class NodeViewHelper extends AbstractViewHelper {
 		$uriBuilder->setRequest($request);
 		return $uriBuilder
 			->reset()
+			->setSection($section)
 			->setCreateAbsoluteUri($absolute)
 			->setArguments($arguments)
+			->setAddQueryString($addQueryString)
+			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
 			->setFormat($format)
 			->uriFor('show', array('node' => $this->convertNode($node)), 'Frontend\Node', 'TYPO3.Neos');
 	}
