@@ -118,22 +118,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 		}
 
 		if (is_string($node)) {
-			if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $node) === 1) {
-				$nodeIdentifier = $node;
-				$contentContext = $this->buildContextFromWorkspaceName('live');
-				try {
-					$node = $this->convertNodeIdentifierToNode($nodeIdentifier);
-				} catch (Exception $exception) {
-					return FALSE;
-				}
-			} else {
-				$nodeContextPath = $node;
-				$contentContext = $this->buildContextFromContextPath($nodeContextPath);
-				if ($contentContext->getWorkspace(FALSE) === NULL) {
-					return FALSE;
-				}
-				$node = $contentContext->getNode($this->removeContextFromContextPath($nodeContextPath));
+			$nodeContextPath = $node;
+			$contentContext = $this->buildContextFromContextPath($nodeContextPath);
+			if ($contentContext->getWorkspace(FALSE) === NULL) {
+				return FALSE;
 			}
+			$node = $contentContext->getNode($this->removeContextFromContextPath($nodeContextPath));
+
 			if ($node === NULL) {
 				return FALSE;
 			}
@@ -153,19 +144,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 		$routePath = $this->resolveRoutePathForNode($siteNode, $node);
 		$this->value = $routePath;
 		return TRUE;
-	}
-
-	/**
-	 * Converts the given $nodeIdentifier to the corresponding node instance, or throws an exception if that fails
-	 *
-	 * @param string $nodeIdentifier
-	 * @return NodeInterface
-	 * @throws Exception
-	 */
-	protected function convertNodeIdentifierToNode($nodeIdentifier) {
-		$context = $this->buildContextFromWorkspaceName('live');
-		$node = $context->getNodeByIdentifier($nodeIdentifier);
-		return $node;
 	}
 
 	/**
@@ -235,19 +213,30 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $contextPathParts);
 		}
 		$workspaceName = isset($contextPathParts['WorkspaceName']) && $contextPathParts['WorkspaceName'] !== '' ? $contextPathParts['WorkspaceName'] : 'live';
-		return $this->buildContextFromWorkspaceName($workspaceName);
+
+		$dimensions = NULL;
+		if ($workspaceName !== 'live' && isset($contextPathParts['Dimensions'])) {
+			$dimensions = $this->contextFactory->parseDimensionValueStringToArray($contextPathParts['Dimensions']);
+		}
+
+		return $this->buildContextFromWorkspaceName($workspaceName, $dimensions);
 	}
 
 	/**
 	 * @param string $workspaceName
+	 * @param array $dimensions
 	 * @return ContentContext
 	 */
-	protected function buildContextFromWorkspaceName($workspaceName) {
+	protected function buildContextFromWorkspaceName($workspaceName, array $dimensions = NULL) {
 		$contextProperties = array(
 			'workspaceName' => $workspaceName,
 			'invisibleContentShown' => TRUE,
 			'inaccessibleContentShown' => TRUE
 		);
+
+		if ($dimensions !== NULL) {
+			$contextProperties['dimensions'] = $dimensions;
+		}
 
 		$currentDomain = $this->domainRepository->findOneByActiveRequest();
 
@@ -307,10 +296,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 * @return string the route path (URI part) for the passed $node
 	 */
 	protected function resolveRoutePathForNode($siteNode, $node) {
-		$nodeContextPath = $node->getPath();
 		$workspaceName = $node->getContext()->getWorkspaceName();
 		if ($workspaceName !== 'live') {
-			$nodeContextPath .= '@' . $workspaceName;
+			// we directly take the node's context path here; such that all dimensions are encoded inside.
+			$nodeContextPath = $node->getContextPath();
+		} else {
+			$nodeContextPath = $node->getPath();
 		}
 
 		$siteNodePath = $siteNode->getPath();

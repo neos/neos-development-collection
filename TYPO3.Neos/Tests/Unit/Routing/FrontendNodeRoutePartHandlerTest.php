@@ -497,21 +497,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function resolveValueReturnsFalseIfSpecifiedValueIsAUuidWithNoCorrespondingNodeDataInLiveWorkspace() {
-		$nodeIdentifier = '044412ab-5bd7-45a5-ba17-95fc87a42dac';
-
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-		$this->mockContext->expects($this->atLeastOnce())->method('getNodeByIdentifier')->will($this->returnValue(NULL));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
-	}
-
-	/**
-	 * @test
-	 */
 	public function resolveValueSetsValueToContextPathAndReturnsTrueIfSpecifiedValueIsAValidNode() {
 		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-		$this->mockNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root/the/context/path'));
+		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('the/site/root/the/context/path@some-workspace'));
 		$this->mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnValue('some-workspace'));
 
 		$this->mockSiteNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root'));
@@ -528,7 +516,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
 
 		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-		$this->mockNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root/the/context/path'));
+		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('the/site/root/the/context/path@some-workspace'));
 		$this->mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnValue('some-workspace'));
 
 		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
@@ -540,26 +528,6 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
 		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('resolveValue', 'the/context/path@some-workspace'));
 		$this->assertSame('the/context/path@some-workspace', $this->frontendNodeRoutePartHandler->getValue());
-	}
-
-	/**
-	 * @test
-	 */
-	public function resolveValueSetsValueToContextPathAndReturnsTrueIfSpecifiedValueIsAValidNodeIdentifier() {
-		$nodeIdentifier = '044412ab-5bd7-45a5-ba17-95fc87a42dac';
-
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-
-		$this->mockContext->expects($this->any())->method('getNodeByIdentifier')->will($this->returnValue($this->mockNode));
-
-		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-		$this->mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnValue('live'));
-		$this->mockNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root/the/context/path'));
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root'));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
-		$this->assertSame('the/context/path', $this->frontendNodeRoutePartHandler->getValue());
 	}
 
 	/**
