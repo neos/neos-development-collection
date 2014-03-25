@@ -128,8 +128,7 @@ class NodeConverter extends AbstractTypeConverter {
 
 		$dimensions = NULL;
 		if (isset($matches['Dimensions'])) {
-			parse_str($matches['Dimensions'], $dimensions);
-			$dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
+			$dimensions = $this->contextFactory->parseDimensionValueStringToArray($matches['Dimensions']);
 		}
 
 		$context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));

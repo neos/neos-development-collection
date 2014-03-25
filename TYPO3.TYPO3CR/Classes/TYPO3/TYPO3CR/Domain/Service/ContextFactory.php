@@ -276,4 +276,21 @@ class ContextFactory implements ContextFactoryInterface {
 			$mergedProperties['dimensions'][$identifier] = $values;
 		}
 	}
+
+	/**
+	 * Helper method which parses the "dimension" part of the context, i.e.
+	 * "locales=de_DE,mul_ZZ&...." into an *array* of dimension values.
+	 *
+	 * Is needed at both the RoutePartHandler and the ObjectConverter; that's why
+	 * it's placed here.
+	 *
+	 * @param array $dimensionPartOfContext
+	 * @return array
+	 */
+	public function parseDimensionValueStringToArray(array $dimensionPartOfContext) {
+		parse_str($dimensionPartOfContext, $dimensions);
+		$dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
+
+		return $dimensions;
+	}
 }
