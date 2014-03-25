@@ -212,6 +212,33 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	}
 
 	/**
+	 * @When /^I publish the workspace "([^"]*)"$/
+	 */
+	public function iPublishTheWorkspace($sourceWorkspaceName) {
+		$sourceContext = $this->getContextForProperties(array('Workspace' => $sourceWorkspaceName));
+		$sourceWorkspace = $sourceContext->getWorkspace();
+
+		$liveContext = $this->getContextForProperties(array('Workspace' => 'live'));
+		$liveWorkspace = $liveContext->getWorkspace();
+
+		$sourceWorkspace->publish($liveWorkspace);
+
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
+	}
+
+	/**
+	 * @Given /^I remove the node$/
+	 */
+	public function iRemoveTheNode() {
+		$node = $this->iShouldHaveOneNode();
+		$node->remove();
+
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
+	}
+
+	/**
 	 * @Then /^I should have one node$/
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface

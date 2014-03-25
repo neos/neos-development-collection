@@ -822,6 +822,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function remove() {
+		/** @var $childNode Node */
+		foreach ($this->getChildNodes() as $childNode) {
+			$childNode->remove();
+		}
+
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
