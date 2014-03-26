@@ -145,7 +145,11 @@ class FeatureContext extends MinkContext {
 	 * @Then /^I should not see the top bar$/
 	 */
 	public function iShouldNotSeeTheTopBar() {
-		$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
+		return array(
+			new \Behat\Behat\Context\Step\Then('I should not see "Navigate"'),
+			new \Behat\Behat\Context\Step\Then('I should not see "Edit / Preview"'),
+		);
+		//c1$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
 	}
 
 	/**
@@ -153,7 +157,7 @@ class FeatureContext extends MinkContext {
 	 */
 	public function thePreviewButtonShouldBeActive() {
 
-		$button = $this->getSession()->getPage()->find('css', '.neos-preview-close > .neos-pressed');
+		$button = $this->getSession()->getPage()->find('css', '.neos-full-screen-close > .neos-pressed');
 		if ($button === NULL) {
 			throw new \Behat\Mink\Exception\ElementNotFoundException($this->getSession(), 'button', 'id|name|label|value');
 		}
@@ -187,8 +191,29 @@ class FeatureContext extends MinkContext {
 			case 'Administration / Site Management':
 				$this->visit('/neos/administration/sites');
 				break;
+			case 'Administration / User Management':
+				$this->visit('/neos/administration/users');
+				break;
 			default:
 				throw new PendingException();
+		}
+	}
+
+	/**
+	 * Clear the content cache. Since this could be needed for multiple Flow contexts, we have to do it on the
+	 * filesystem for now. Using a different cache backend than the FileBackend will not be possible with this approach.
+	 *
+	 * @BeforeScenario @fixtures
+	 */
+	public function clearContentCache() {
+		$directories = array_merge(
+			glob(FLOW_PATH_DATA . 'Data/Temporary/*/Cache/Data/TYPO3_TypoScript_Content'),
+			glob(FLOW_PATH_DATA . 'Data/Temporary/*/*/Cache/Data/TYPO3_TypoScript_Content')
+		);
+		if (is_array($directories)) {
+			foreach ($directories as $directory) {
+				\TYPO3\Flow\Utility\Files::removeDirectoryRecursively($directory);
+			}
 		}
 	}
 
@@ -219,14 +244,17 @@ class FeatureContext extends MinkContext {
 	public function iShouldSeeTheFollowingSitesInATable(TableNode $table) {
 		$sites = $table->getHash();
 
-		$tableLocator = '.neos-module-container table.neos-table';
+		$tableLocator = '.neos-module-wrap table.neos-table';
 		$sitesTable = $this->assertSession()->elementExists('css', $tableLocator);
 
 		$siteRows = $sitesTable->findAll('css', 'tbody tr');
 		$actualSites = array_map(function($row) {
-			return array(
-				'name' => $row->find('css', 'td:first-child')->getText()
-			);
+			$firstColumn = $row->find('css', 'td:nth-of-type(1)');
+			if($firstColumn !== NULL) {
+				return array(
+					'name' => $firstColumn->getText()
+				);
+			}
 		}, $siteRows);
 
 		$sortByName = function($a, $b) {
