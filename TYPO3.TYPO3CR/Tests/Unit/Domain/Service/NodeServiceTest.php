@@ -56,6 +56,11 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockNodeTypeManager->expects($this->any())
 			->method('getSubNodeTypes')
 			->will($this->returnValue($this->subNodeTypesFixture));
+		$mockNodeTypeManager->expects($this->any())
+			->method('getNodeType')
+			->will($this->returnCallback(function ($nodeTypeName) {
+				return new \TYPO3\TYPO3CR\Domain\Model\NodeType($nodeTypeName, array(), array());
+			}));
 
 		$this->inject($nodeService, 'systemLogger', $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface', array(), array(), '', FALSE));
 		$this->inject($nodeService, 'nodeTypeManager', $mockNodeTypeManager);
@@ -337,10 +342,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->method('getNodeType')
 			->will($this->returnValue($mockNodeType));
 
-		$this->assertTrue($nodeService->isNodeOfType($mockNode, 'TYPO3.Neos:ContentObject'));
-
 		$mockNodeType = $this->mockNodeType('TYPO3.Neos:ContentObject');
-
 		$this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
 	}
 
@@ -358,9 +360,6 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->method('getNodeType')
 			->will($this->returnValue($mockNodeType));
 
-		$this->assertTrue($nodeService->isNodeOfType($mockNode, 'TYPO3.Neos:Document'));
-
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Document');
 		$this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
 	}
 

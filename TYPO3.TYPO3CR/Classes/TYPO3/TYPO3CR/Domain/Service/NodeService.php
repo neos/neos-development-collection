@@ -99,10 +99,11 @@ class NodeService {
 	 * @return void
 	 */
 	public function cleanUpChildNodes(NodeInterface $node) {
+		$documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.Neos:Document');
 		$nodeChildNodes = $node->getNodeType()->getAutoCreatedChildNodes();
 		foreach ($node->getChildNodes() as $childNode) {
 			/** @var NodeInterface $childNode */
-			if (!$this->isNodeOfType($childNode, 'TYPO3.Neos:Document') && !isset($nodeChildNodes[$childNode->getName()])) {
+			if (!$this->isNodeOfType($childNode, $documentNodeType) && !isset($nodeChildNodes[$childNode->getName()])) {
 				$this->systemLogger->log(sprintf('Remove child node "%s" from: %s', (string)$childNode, (string)$node), LOG_DEBUG, NULL, 'TYPO3CR');
 				$childNode->remove();
 			}
@@ -127,15 +128,15 @@ class NodeService {
 
 	/**
 	 * @param NodeInterface $node
-	 * @param string $nodeType
+	 * @param NodeType $nodeType
 	 * @return boolean
 	 */
-	public function isNodeOfType(NodeInterface $node, $nodeType) {
+	public function isNodeOfType(NodeInterface $node, NodeType $nodeType) {
 		if ($node->getNodeType()->getName() === $nodeType->getName()) {
 			return TRUE;
 		}
-		$schema = $this->nodeTypeManager->getSubNodeTypes((string)$nodeType);
-		return isset($schema[(string)$node->getNodeType()]);
+		$subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName());
+		return isset($subNodeTypes[$node->getNodeType()->getName()]);
 	}
 
 }
