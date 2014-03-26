@@ -22,7 +22,7 @@
     minimum: 0.08,
     easing: 'ease',
     positionUsing: '',
-    speed: 200,
+    speed: 400,
     trickle: true,
     trickleRate: 0.02,
     trickleSpeed: 800,
@@ -166,24 +166,24 @@
   /**
    * Waits for all supplied jQuery promises and
    * increases the progress as the promises resolve.
-   * 
+   *
    * @param $promise jQUery Promise
    */
   (function() {
     var initial = 0, current = 0;
-    
+
     NProgress.promise = function($promise) {
       if (!$promise || $promise.state() == "resolved") {
         return this;
       }
-      
+
       if (current == 0) {
         NProgress.start();
       }
-      
+
       initial++;
       current++;
-      
+
       $promise.always(function() {
         current--;
         if (current == 0) {
@@ -193,10 +193,10 @@
             NProgress.set((initial - current) / initial);
         }
       });
-      
+
       return this;
     };
-    
+
   })();
 
   /**
