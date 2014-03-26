@@ -284,10 +284,10 @@ class ContextFactory implements ContextFactoryInterface {
 	 * Is needed at both the RoutePartHandler and the ObjectConverter; that's why
 	 * it's placed here.
 	 *
-	 * @param array $dimensionPartOfContext
+	 * @param string $dimensionPartOfContext
 	 * @return array
 	 */
-	public function parseDimensionValueStringToArray(array $dimensionPartOfContext) {
+	public function parseDimensionValueStringToArray($dimensionPartOfContext) {
 		parse_str($dimensionPartOfContext, $dimensions);
 		$dimensions = array_map(function ($commaSeparatedValues) { return explode(',', $commaSeparatedValues); }, $dimensions);
 
