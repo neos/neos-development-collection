@@ -215,12 +215,12 @@ class NodeConverter extends AbstractTypeConverter {
 	/**
 	 * Prepares the context properties for the nodes based on the given workspace and dimensions
 	 *
-	 * @param $workspaceName
+	 * @param string $workspaceName
 	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @param array $dimensions
 	 * @return array
 	 */
-	protected function prepareContextProperties($workspaceName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL, array $dimensions = NULL) {
+	protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = NULL, array $dimensions = NULL) {
 		$contextProperties = array(
 			'workspaceName' => $workspaceName,
 			'invisibleContentShown' => FALSE,
@@ -235,8 +235,6 @@ class NodeConverter extends AbstractTypeConverter {
 
 		if ($dimensions !== NULL) {
 			$contextProperties['dimensions'] = $dimensions;
-
-			return $contextProperties;
 		}
 
 		return $contextProperties;
