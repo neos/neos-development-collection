@@ -10,7 +10,7 @@ define(
 		'vie/instance',
 		'../Model/NodeSelection',
 		'Shared/Configuration',
-		'Shared/ResourceCache',
+		'Shared/NodeTypeService',
 		'Shared/Notification',
 		'../Inspector/InspectorController',
 		'./DeleteNodeDialog',
@@ -25,7 +25,7 @@ define(
 		vieInstance,
 		NodeSelection,
 		Configuration,
-		ResourceCache,
+		NodeTypeService,
 		Notification,
 		InspectorController,
 		DeleteNodeDialog,
@@ -523,12 +523,13 @@ define(
 					Notification.info('You have to select a node');
 					return;
 				}
-				var nodeType = this.get('nodeType');
+
+				var nodeType = this.get('nodeType'),
+					nodeTypeDefiniton;
+
 				if (nodeType !== '') {
-					var that = this;
-					ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType).then(function(data) {
-						that.createNode(activeNode, 'Untitled', nodeType, data[nodeType].ui.icon);
-					});
+					nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
+					this.createNode(activeNode, 'Untitled', nodeType, nodeTypeDefiniton.ui.icon);
 				} else {
 					this.showCreateNodeDialog(activeNode);
 				}

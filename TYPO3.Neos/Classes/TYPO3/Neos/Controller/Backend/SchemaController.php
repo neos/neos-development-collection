@@ -49,23 +49,26 @@ class SchemaController extends ActionController {
 	/**
 	 * Get the node type configuration schema for the Neos UI
 	 *
-	 * @param string $superType
 	 * @return string
 	 */
-	public function nodeTypeSchemaAction($superType = NULL) {
+	public function nodeTypeSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		$schema = array();
-		if ($superType !== NULL) {
-			$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($superType, FALSE);
-		} else {
-			$nodeTypes = $this->nodeTypeManager->getNodeTypes(FALSE);
-		}
+		$schema = array('inheritanceMap' => array('subTypes' => array()), 'nodeTypes' => array());
+
+		$nodeTypes = $this->nodeTypeManager->getNodeTypes(TRUE);
+		/** @var NodeType $nodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
-			/** @var NodeType $nodeType */
-			$configuration = $nodeType->getFullConfiguration();
-			$this->flattenAlohaFormatOptions($configuration);
-			$schema[$nodeTypeName] = $configuration;
+			if ($nodeType->isAbstract() === FALSE) {
+				$configuration = $nodeType->getFullConfiguration();
+				$this->flattenAlohaFormatOptions($configuration);
+				$schema['nodeTypes'][$nodeTypeName] = $configuration;
+			}
+
+			$schema['inheritanceMap']['subTypes'][$nodeTypeName] = array();
+			foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), TRUE) as $subNodeType) {
+				$schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->getName();
+			}
 		}
 
 		return json_encode($schema);

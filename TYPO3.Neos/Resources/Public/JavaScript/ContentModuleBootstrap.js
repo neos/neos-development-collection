@@ -27,6 +27,7 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
+		'Shared/NodeTypeService',
 		'Shared/HttpClient',
 		'InlineEditing/PositioningHelper',
 		'storage'
@@ -43,20 +44,19 @@ require(
 		var T3 = window.T3;
 
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
-		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri'));
-		// We have to preload the Document and ContentCollection children for the ContentElementHandles which
-		// need them in early stage.
-		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri') + '&superType=TYPO3.Neos:Document');
-		ResourceCache.fetch(Configuration.get('NodeTypeSchemaUri') + '&superType=TYPO3.Neos:ContentCollection');
 
 		Ember.$(document).ready(function() {
 			ContentModule.bootstrap();
 
 			ContentModule.advanceReadiness();
-			ApplicationView.create().appendTo('#neos-application');
-			if (window.T3.isContentModule) {
-				PublishMenu.create().appendTo('#neos-top-bar-right');
-			}
+
+			// Wait until the NodeTypeService is usable by resolving the promise
+			ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function() {
+				ApplicationView.create().appendTo('#neos-application');
+				if (window.T3.isContentModule) {
+					PublishMenu.create().appendTo('#neos-top-bar-right');
+				}
+			});
 		});
 	}
 );

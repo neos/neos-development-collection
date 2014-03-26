@@ -29,14 +29,15 @@ class SchemaControllerTest extends FunctionalTestCase {
 		$this->assertEquals('application/json', $result->getHeader('Content-Type'));
 		$this->decodedJson = json_decode($result->getContent(), FALSE); //intentionally not Assoc to check for the correct type like JavaScript would do
 		$this->assertInstanceOf('stdClass', $this->decodedJson);
-		$this->assertObjectHasAttribute('TYPO3.Neos:BackendSchemaControllerTest', $this->decodedJson);
+		$this->assertObjectHasAttribute('TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->decodedJson->nodeTypes);
+		$this->assertObjectHasAttribute('inheritanceMap', $this->decodedJson);
 	}
 
 	/**
 	 * @test
 	 */
 	public function alohaUiConfigurationPartsAreActualArrayAndDontContainExcludedElements() {
-		$alohaConfiguration = $this->decodedJson->{'TYPO3.Neos:BackendSchemaControllerTest'}->properties->text->ui->aloha;
+		$alohaConfiguration = $this->decodedJson->nodeTypes->{'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType'}->properties->text->ui->aloha;
 		$this->assertInternalType('array', $alohaConfiguration->fallbackCase);
 		$this->assertInternalType('array', $alohaConfiguration->sampleCase);
 
@@ -48,4 +49,16 @@ class SchemaControllerTest extends FunctionalTestCase {
 		$this->assertEquals(array('h3', 'sup'), $alohaConfiguration->sampleCase);
 	}
 
+	/**
+	 * @test
+	 */
+	public function theNodeTypeSchemaIncludesSubTypesInheritanceMap() {
+		$subTypesDefinition = $this->decodedJson->inheritanceMap->subTypes;
+
+		$this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Document', $subTypesDefinition->{'TYPO3.Neos.BackendSchemaControllerTest:Node'});
+		$this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Content', $subTypesDefinition->{'TYPO3.Neos.BackendSchemaControllerTest:Node'});
+		$this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Page', $subTypesDefinition->{'TYPO3.Neos.BackendSchemaControllerTest:Node'});
+		$this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:SubPage', $subTypesDefinition->{'TYPO3.Neos.BackendSchemaControllerTest:Node'});
+		$this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Text', $subTypesDefinition->{'TYPO3.Neos.BackendSchemaControllerTest:Node'});
+	}
 }

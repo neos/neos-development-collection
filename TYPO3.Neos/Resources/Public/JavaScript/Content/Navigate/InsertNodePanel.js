@@ -3,7 +3,7 @@ define(
 		'emberjs',
 		'Library/jquery-with-dependencies',
 		'Shared/Configuration',
-		'Shared/ResourceCache',
+		'Shared/NodeTypeService',
 		'LibraryExtensions/Mousetrap',
 		'text!./InsertNodePanel.html'
 	],
@@ -11,7 +11,7 @@ define(
 		Ember,
 		$,
 		Configuration,
-		ResourceCache,
+		NodeTypeService,
 		Mousetrap,
 		template
 	) {
@@ -24,41 +24,42 @@ define(
 			init: function() {
 				this._super();
 
-				var that = this;
-				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.get('baseNodeType')).then(
-					function(data) {
-						var groupedNodeTypes = [],
-							nodeTypeGroups = [];
+				var that = this,
+					allowedSubNodeTypes = NodeTypeService.getSubNodeTypes(this.get('baseNodeType')),
+					groupedNodeTypes = {},
+					nodeTypeGroups = [];
 
-						$.each(data, function(nodeType, nodeTypeInfo) {
-							var groupName = 'group' in nodeTypeInfo.ui ? nodeTypeInfo.ui.group : 'general';
-							if (!groupedNodeTypes[groupName]) {
-								groupedNodeTypes[groupName] = {
-									'name': groupName,
-									'label': '',
-									'children': []
-								};
-							}
-							groupedNodeTypes[groupName].children.push({
-								'nodeType': nodeType,
-								'label': nodeTypeInfo.ui.label,
-								'icon': nodeTypeInfo.ui.icon ? nodeTypeInfo.ui.icon : 'icon-file'
-							});
-						});
-
-						Configuration.get('nodeTypes.groups').forEach(function(group) {
-							if (groupedNodeTypes[group.name]) {
-								groupedNodeTypes[group.name].label = group.label;
-								nodeTypeGroups.push(groupedNodeTypes[group.name]);
-							}
-						});
-
-						that.set('nodeTypeGroups', nodeTypeGroups);
-					},
-					function(error) {
-						console.error('Error loading node type schemata.', error);
+				$.each(allowedSubNodeTypes, function(nodeTypeName, nodeTypeInfo) {
+					if (('abstract' in nodeTypeInfo && nodeTypeInfo.abstract === false || !'ui' in nodeTypeInfo)) {
+						return;
 					}
-				);
+
+					var groupName = 'group' in nodeTypeInfo.ui ? nodeTypeInfo.ui.group : 'general';
+
+					if (!groupedNodeTypes[groupName]) {
+
+						groupedNodeTypes[groupName] = {
+							'name': groupName,
+							'label': '',
+							'children': []
+						};
+					}
+
+					groupedNodeTypes[groupName].children.push({
+						'nodeType': nodeTypeName,
+						'label': nodeTypeInfo.ui.label,
+						'icon': 'icon' in nodeTypeInfo.ui ? nodeTypeInfo.ui.icon : 'icon-file'
+					});
+				});
+
+				Configuration.get('nodeTypes.groups').forEach(function(group) {
+					if (groupedNodeTypes[group.name]) {
+						groupedNodeTypes[group.name].label = group.label;
+						nodeTypeGroups.push(groupedNodeTypes[group.name]);
+					}
+				});
+
+				that.set('nodeTypeGroups', nodeTypeGroups);
 			},
 
 			createElement: function() {

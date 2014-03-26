@@ -12,6 +12,15 @@ define(
 		 */
 		return Ember.Object.extend({
 
+			_schema: {},
+
+			init: function() {
+				var that = this;
+				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function(nodeTypeSchema) {
+					that.set('_schema', nodeTypeSchema);
+				});
+			},
+
 			isOfType: function(node, nodeType) {
 				var matchType;
 
@@ -25,21 +34,33 @@ define(
 					return true;
 				}
 
-				var schema = this.getSubNodeTypes(nodeType);
+				var schema = this.getSubNodeTypes(matchType);
 
 				return matchType in schema;
 			},
 
 			getSubNodeTypes: function(superType) {
-				var schema = {};
-				// the node type schema has already been loaded here; and we rely on the fact that the "done" part of the promise
-				// runs *SYNCHRONOUSLY* because of that. This is somewhat of a hack; and we need to watch out about that; as there
-				// are other promise implementations where the "done" closure always runs asynchronously.
-				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + superType).then(function(nodeTypeSchema) {
-					schema = nodeTypeSchema;
-				});
+				var that = this;
 
-				return schema;
+				var subNodeTypes = {};
+				if (this.get('_schema').inheritanceMap.subTypes[superType]) {
+
+					$.each(this.get('_schema').inheritanceMap.subTypes[superType], function(index, nodeTypeName) {
+						if (that.get('_schema').nodeTypes[nodeTypeName]) {
+							subNodeTypes[nodeTypeName] = that.get('_schema').nodeTypes[nodeTypeName];
+						}
+					});
+				}
+
+				return subNodeTypes;
+			},
+
+			/**
+			 * @param {string} nodeTypeName
+			 * @return {object}
+			 */
+			getNodeTypeDefinition: function(nodeTypeName) {
+				return this.get('_schema').nodeTypes[nodeTypeName];
 			},
 
 			/**
@@ -62,11 +83,12 @@ define(
 				return nodeTypeSchema;
 			},
 
+			/**
+			 * @return {object}
+			 */
 			getCurrentNodeTypeSchema: function() {
-				var nodeType = $('#neos-page-metainformation').data('neos-__nodetype'),
-					superType = 'TYPO3.Neos:Document';
-
-				return this.getNodeTypeSchema(nodeType, superType);
+				var nodeType = $('#neos-page-metainformation').data('neos-__nodetype');
+				return this.getNodeTypeDefinition(nodeType);
 			}
 
 		}).create();

@@ -158,7 +158,7 @@ function(
 					ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(
 						function(nodeTypeSchema) {
 							VIE.Util.loadSchemaOrg(vie, vieSchema, null);
-							Configuration.set('Schema', nodeTypeSchema);
+							Configuration.set('Schema', nodeTypeSchema.nodeTypes);
 							that._initializeVieAfterSchemaIsLoaded(vie);
 						},
 						schemaLoadErrorCallback
