@@ -66,7 +66,7 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 		$rows = $table->getHash();
 		foreach ($rows as $row) {
 			$path = $row['Path'];
-			$name = array_slice(explode('/', $path), -1)[0];
+			$name = reset(array_slice(explode('/', $path), -1));
 			$parentPath = implode('/', array_slice(explode('/', $path), 0, -1)) ? : '/';
 
 			$context = $this->getContextForProperties($row, TRUE);
