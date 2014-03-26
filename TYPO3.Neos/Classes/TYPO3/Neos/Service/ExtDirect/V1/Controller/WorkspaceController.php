@@ -94,7 +94,7 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$this->nodeDataRepository->remove($node);
+		$this->publishingService->discardNode($node);
 
 		$this->view->assign('value', array('success' => TRUE));
 	}
@@ -134,12 +134,7 @@ class WorkspaceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function discardAllAction($workspace) {
-		/** @var \TYPO3\TYPO3CR\Domain\Model\Node $node  */
-		foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
-			if ($node->getPath() !== '/') {
-				$this->nodeDataRepository->remove($node);
-			}
-		}
+		$this->publishingService->discardNodes($this->publishingService->getUnpublishedNodes($workspace));
 
 		$this->view->assign('value', array('success' => TRUE));
 	}
