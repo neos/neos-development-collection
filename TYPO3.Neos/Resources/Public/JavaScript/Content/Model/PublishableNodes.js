@@ -10,6 +10,7 @@ define(
 	'vie/instance',
 	'vie/entity',
 	'Shared/EventDispatcher',
+	'Shared/NodeTypeService',
 	'Shared/ResourceCache',
 	'Shared/Configuration',
 	'Shared/Notification',
@@ -20,6 +21,7 @@ define(
 	vie,
 	EntityWrapper,
 	EventDispatcher,
+	NodeTypeService,
 	ResourceCache,
 	Configuration,
 	Notification,
@@ -121,15 +123,10 @@ define(
 						numberOfUnsavedRecords--;
 						if (numberOfUnsavedRecords <= 0) {
 							if (autoPublish !== true) {
-								var nodeType, title = $('#neos-page-metainformation').attr('data-neos-title');
-								// TODO: The fetching of the current node type should be handled using the NodeTypeService
-								// which at the moment causes issues with promises which still have to be optimized
-								ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=TYPO3.Neos:Document').then(
-									function(schema) {
-										nodeType = schema[$('#neos-page-metainformation').attr('data-neos-__nodetype')].ui.label;
-										Notification.ok('Published changes for ' + nodeType + ' "' + title + '"');
-									}
-								);
+								var nodeType,
+									title = $('#neos-page-metainformation').attr('data-neos-title'),
+									nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
+								Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
 							}
 						}
 					}
@@ -192,16 +189,10 @@ define(
 									});
 								}
 							);
-							var nodeType, title = $('#neos-page-metainformation').attr('data-neos-title');
-
-							// TODO: The fetching of the current node type should be handled using the NodeTypeService
-							// which at the moment causes issues with promises which still have to be optimized
-							ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=TYPO3.Neos:Document').then(
-								function(schema) {
-									nodeType = schema[$('#neos-page-metainformation').attr('data-neos-__nodetype')].ui.label;
-									Notification.ok('Discarded changes for ' + nodeType + ' "' + title + '"');
-								}
-							);
+							var nodeType,
+								title = $('#neos-page-metainformation').attr('data-neos-title'),
+								nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
+							Notification.ok('Discarded changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
 						}
 					}
 				);

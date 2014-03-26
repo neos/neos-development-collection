@@ -11,6 +11,7 @@ define(
 		'Shared/ResourceCache',
 		'Shared/EventDispatcher',
 		'Shared/Notification',
+		'Shared/NodeTypeService',
 		'vie/instance',
 		'../Model/NodeSelection',
 		'../Model/PublishableNodes',
@@ -27,6 +28,7 @@ define(
 		ResourceCache,
 		EventDispatcher,
 		Notification,
+		NodeTypeService,
 		vieInstance,
 		NodeSelection,
 		PublishableNodes,
@@ -111,19 +113,14 @@ define(
 				this._super();
 
 				var that = this,
-					$neosNodeTypeSelect = that.$().find('#neos-node-tree-filter select');
+					$neosNodeTypeSelect = that.$().find('#neos-node-tree-filter select'),
+					allowedSubNodeTypes = NodeTypeService.getSubNodeTypes(this.get('baseNodeType'));
 				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
-				ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType).then(
-					function(data) {
-						$.each(data, function(key) {
-							$neosNodeTypeSelect.append('<option value="' + key + '">' + this.ui.label + '</option>');
-						});
-						$neosNodeTypeSelect.trigger('chosen:updated.chosen');
-					},
-					function(error) {
-						console.error('Error loading node types.', error);
-					}
-				);
+
+				$.each(allowedSubNodeTypes, function(nodeTypeName, nodeTypeInfo) {
+					$neosNodeTypeSelect.append('<option value="' + nodeTypeName + '">' + nodeTypeInfo.ui.label + '</option>');
+				});
+				$neosNodeTypeSelect.trigger('chosen:updated.chosen');
 
 				// Type filter
 				$neosNodeTypeSelect.change(function() {

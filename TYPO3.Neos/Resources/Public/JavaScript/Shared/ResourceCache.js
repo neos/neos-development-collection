@@ -43,7 +43,7 @@ function(Ember, SessionStorage, HttpClient) {
 
 		/**
 		 * @param {string} resourceUri
-		 * @return {mixed}
+		 * @return {Ember.Deferred}
 		 */
 		getItem: function(resourceUri) {
 			var resourceRequests = this.get('resourceRequests');

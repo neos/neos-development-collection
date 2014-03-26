@@ -26,7 +26,28 @@
     text:
       type: 'string'
 
-'TYPO3.Neos:BackendSchemaControllerTest':
+'TYPO3.Neos.BackendSchemaControllerTest:Node':
+  abstract: TRUE
+
+'TYPO3.Neos.BackendSchemaControllerTest:Document':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Node']
+
+'TYPO3.Neos.BackendSchemaControllerTest:Page':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Document']
+
+'TYPO3.Neos.BackendSchemaControllerTest:SubPage':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Page']
+
+'TYPO3.Neos.BackendSchemaControllerTest:Folder':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Document']
+
+'TYPO3.Neos.BackendSchemaControllerTest:Content':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Node']
+
+'TYPO3.Neos.BackendSchemaControllerTest:Text':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Content']
+
+'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType':
   properties:
     text:
       ui:
