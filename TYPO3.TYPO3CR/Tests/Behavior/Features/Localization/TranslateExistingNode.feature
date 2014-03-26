@@ -109,6 +109,31 @@ Feature: Translate existing node
       | Locales              |
       | en_US, en_ZZ, mul_ZZ |
     When I get a node by path "/sites/neosdemotypo3/company" with the following context:
-      | Locales       |
-      | mul_ZZ |
+      | Locales |
+      | mul_ZZ  |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Node variants are created for configured child nodes when materializing a node
+    When I get a node by path "/sites/neosdemotypo3" with the following context:
+      | Locales              |
+      | en_US, en_ZZ, mul_ZZ |
+    And I set the node property "title" to "New home"
+    And I get a node by path "/sites/neosdemotypo3/main" with the following context:
+      | Locales |
+      | en_US   |
+    Then I should have one node
+
+  @fixtures
+  Scenario: Node variants are created for configured child nodes when adopting it from another context
+    When I get a node by path "/sites/neosdemotypo3/company" with the following context:
+      | Locales       |
+      | en_ZZ, mul_ZZ |
+    And I adopt the node to the following context:
+      | Locales       |
+      | de_ZZ, mul_ZZ |
+    And I set the node property "title" to "Unternehmen"
+    And I get a node by path "/sites/neosdemotypo3/company/main" with the following context:
+      | Locales       |
+      | de_ZZ, mul_ZZ |
+    Then I should have one node

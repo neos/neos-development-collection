@@ -681,7 +681,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-				$newNode->createNode($childNodeName, $childNodeType, NULL, $dimensions);
+				$childNodeIdentifier = $this->buildAutoCreatedChildNodeIdentifier($childNodeName, $identifier);
+				$newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier, $dimensions);
 			}
 		}
 
@@ -689,6 +690,21 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$this->emitNodeAdded($newNode);
 
 		return $newNode;
+	}
+
+	/**
+	 * Generate a stable identifier for auto-created child nodes
+	 *
+	 * This is needed if multiple node variants are created through "createNode" with different dimension values. If
+	 * child nodes with the same path and different identifiers exist, bad things can happen.
+	 *
+	 * @param string $childNodeName
+	 * @param string $identifier
+	 * @return string The generated UUID like identifier
+	 */
+	protected function buildAutoCreatedChildNodeIdentifier($childNodeName, $identifier) {
+		$hex = md5($identifier . '-' . $childNodeName);
+		return substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12);
 	}
 
 	/**
@@ -1056,6 +1072,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	protected function materializeNodeData() {
 		$dimensions = array_map(function($value) { return array($value); }, $this->context->getTargetDimensions());
+
 		$newNodeData = new NodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $this->nodeData->getIdentifier(), $dimensions);
 		$this->nodeDataRepository->add($newNodeData);
 
@@ -1063,6 +1080,14 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->nodeData = $newNodeData;
 		$this->nodeDataIsMatchingContext = TRUE;
+
+		$nodeType = $this->getNodeType();
+		foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeConfiguration) {
+			$childNode = $this->getNode($childNodeName);
+			if ($childNode instanceof Node && !$childNode->isNodeDataMatchingContext()) {
+				$childNode->materializeNodeData();
+			}
+		}
 	}
 
 	/**
@@ -1153,6 +1178,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return NodeInterface
 	 */
 	public function createVariantForContext($context) {
+		$autoCreatedChildNodes = array();
+		$nodeType = $this->getNodeType();
+		foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeConfiguration) {
+			$childNode = $this->getNode($childNodeName);
+			if ($childNode !== NULL) {
+				$autoCreatedChildNodes[$childNodeName] = $childNode;
+			}
+		}
+
 		$nodeData = clone $this->nodeData;
 		$nodeData->adjustToContext($context);
 
@@ -1161,6 +1195,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($node);
+
+		foreach ($autoCreatedChildNodes as $autoCreatedChildNode) {
+			$autoCreatedChildNode->createVariantForContext($context);
+		}
 
 		return $node;
 	}

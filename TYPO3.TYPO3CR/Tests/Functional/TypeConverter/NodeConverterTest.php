@@ -15,6 +15,7 @@ use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
 /**
@@ -207,6 +208,6 @@ class NodeConverterTest extends FunctionalTestCase {
 		$nodeDataRepository->flushNodeRegistry();
 		$this->persistenceManager->persistAll();
 		$this->persistenceManager->clearState();
-		$this->inject($this->contextFactory, 'contextInstances', array());
+		$this->contextFactory->reset();
 	}
 }
