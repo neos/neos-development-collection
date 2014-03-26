@@ -32,3 +32,9 @@
       type: reference
     property3:
       type: references
+
+
+'TYPO3.TYPO3CR:TestingHeadline':
+  properties:
+    title:
+      type: string
