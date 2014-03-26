@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Core;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
@@ -457,7 +458,11 @@ class Runtime {
 				$cacheIdentifierValues[$identifierKey] = $this->evaluateInternal($typoScriptPath . '/__meta/cache/entryIdentifier/' . $identifierKey, self::BEHAVIOR_EXCEPTION, $tsObject);
 			}
 		} else {
-			$cacheIdentifierValues = $this->getCurrentContext();
+			foreach ($this->getCurrentContext() as $key => $value) {
+				if (is_string($value) || is_bool($value) || is_integer($value) || $value instanceof CacheAwareInterface) {
+					$cacheIdentifierValues[$key] = $value;
+				}
+			}
 		}
 		return $cacheIdentifierValues;
 	}

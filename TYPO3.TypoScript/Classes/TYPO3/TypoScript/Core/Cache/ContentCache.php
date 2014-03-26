@@ -120,6 +120,7 @@ class ContentCache {
 	 * @param string $typoScriptPath
 	 * @param array $cacheIdentifierValues
 	 * @return string An MD5 hash built from the typoScriptPath and certain elements of the given identifier values
+	 * @throws \TYPO3\TypoScript\Exception\CacheException If an invalid entry identifier value is given
 	 */
 	protected function renderContentCacheEntryIdentifier($typoScriptPath, array $cacheIdentifierValues) {
 		ksort($cacheIdentifierValues);
@@ -128,8 +129,10 @@ class ContentCache {
 		foreach ($cacheIdentifierValues as $key => $value) {
 			if ($value instanceof CacheAwareInterface) {
 				$identifierSource .= $key . '=' . $value->getCacheEntryIdentifier() . '&';
-			} elseif (is_string($value)) {
+			} elseif (is_string($value) || is_bool($value) || is_integer($value)) {
 				$identifierSource .= $key . '=' . $value . '&';
+			} elseif ($value !== NULL) {
+				throw new Exception\CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $typoScriptPath), 1395846615);
 			}
 		}
 

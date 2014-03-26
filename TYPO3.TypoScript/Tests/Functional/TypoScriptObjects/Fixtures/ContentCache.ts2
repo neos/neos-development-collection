@@ -261,6 +261,10 @@ contentCache.nestedCacheSegmentsWithConditionalException = TYPO3.TypoScript:Arra
 
 		@cache {
 			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
 		}
 	}
 
