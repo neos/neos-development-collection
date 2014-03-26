@@ -7925,14 +7925,15 @@
   box-sizing: border-box;
 }
 .neos #neos-navigate-panel #neos-node-tree #neos-node-tree-container input {
-  padding: 0;
-  margin: 0;
+  padding: 0px 3px;
+  margin: 0 -3px;
   width: 100%;
   height: 24px;
   vertical-align: top;
   outline: none;
   border: none;
   background-color: #fff;
+  color: #141414;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
