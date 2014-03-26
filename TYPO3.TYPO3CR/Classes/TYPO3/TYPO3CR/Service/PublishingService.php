@@ -120,6 +120,37 @@ class PublishingService implements PublishingServiceInterface {
 	}
 
 	/**
+	 * Discards the given node.
+	 *
+	 * @param NodeInterface $node
+	 * @return void
+	 * @api
+	 */
+	public function discardNode(NodeInterface $node) {
+		if ($node->getWorkspace()->getName() === 'live') {
+			throw new \TYPO3\TYPO3CR\Exception\WorkspaceException('Nodes in the live workspace cannot be discarded.', 1395841899);
+		}
+
+		if ($node->getPath() !== '/') {
+			$this->nodeDataRepository->remove($node);
+			$this->emitNodeDiscarded($node);
+		}
+	}
+
+	/**
+	 * Discards the given nodes.
+	 *
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to discard
+	 * @return void
+	 * @api
+	 */
+	public function discardNodes(array $nodes) {
+		foreach ($nodes as $node) {
+			$this->discardNode($node);
+		}
+	}
+
+	/**
 	 * Signals that a node has been published.
 	 *
 	 * The signal emits the source node and target workspace, i.e. the node contains its source
@@ -132,5 +163,18 @@ class PublishingService implements PublishingServiceInterface {
 	 * @api
 	 */
 	public function emitNodePublished(NodeInterface $node, Workspace $targetWorkspace = NULL) {
+	}
+
+	/**
+	 * Signals that a node has been discarded.
+	 *
+	 * The signal emits the node that has been discarded.
+	 *
+	 * @param NodeInterface $node
+	 * @return void
+	 * @Flow\Signal
+	 * @api
+	 */
+	public function emitNodeDiscarded(NodeInterface $node) {
 	}
 }
