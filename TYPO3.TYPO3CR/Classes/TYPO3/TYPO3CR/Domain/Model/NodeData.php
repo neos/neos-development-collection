@@ -144,7 +144,7 @@ class NodeData extends AbstractNodeData {
 	protected $removed = FALSE;
 
 	/**
-	 * @ORM\OneToMany(mappedBy="nodeData")
+	 * @ORM\OneToMany(mappedBy="nodeData", orphanRemoval=true)
 	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\TYPO3CR\Domain\Model\NodeDimension>
 	 */
 	protected $dimensions;
@@ -607,10 +607,14 @@ class NodeData extends AbstractNodeData {
 	/**
 	 * Internal use, do not manipulate collection directly
 	 *
-	 * @param Collection $dimensions
+	 * @param array $dimensions
+	 * @return void
 	 */
-	protected function setDimensions(Collection $dimensions) {
-		$this->dimensions = $dimensions;
+	public function setDimensions(array $dimensions) {
+		$this->dimensions->clear();
+		foreach ($dimensions as $dimension) {
+			$this->dimensions->add($dimension);
+		}
 		$this->buildDimensionValues();
 	}
 
@@ -736,19 +740,20 @@ class NodeData extends AbstractNodeData {
 	 * Internal use only!
 	 *
 	 * @param Context $context
+	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
 	 */
 	public function adjustToContext(Context $context) {
 		$this->setWorkspace($context->getWorkspace());
 
-		$nodeDimensions = new \Doctrine\Common\Collections\ArrayCollection();
+		$nodeDimensions = array();
 		$targetDimensionValues = $context->getTargetDimensions();
 		foreach ($context->getDimensions() as $dimensionName => $dimensionValues) {
 			if (!isset($targetDimensionValues[$dimensionName])) {
 				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException(sprintf('Missing target value for dimension "%"', $dimensionName), 1391686089);
 			}
 			$dimensionValueToSet = $targetDimensionValues[$dimensionName];
-			$nodeDimensions->add(new NodeDimension($this, $dimensionName, $dimensionValueToSet));
+			$nodeDimensions[] = new NodeDimension($this, $dimensionName, $dimensionValueToSet);
 		}
 		$this->setDimensions($nodeDimensions);
 	}
@@ -810,6 +815,21 @@ class NodeData extends AbstractNodeData {
 	 */
 	protected function calculateParentPathHash() {
 		$this->parentPathHash = md5($this->parentPath);
+	}
+
+	/**
+	 * Create a fresh collection instance and clone dimensions
+	 *
+	 * @return void
+	 */
+	public function __clone() {
+		if ($this->dimensions instanceof Collection) {
+			$existingDimensions = $this->dimensions->toArray();
+			$this->dimensions = new \Doctrine\Common\Collections\ArrayCollection();
+			foreach ($existingDimensions as $existingDimension) {
+				$this->dimensions->add(new NodeDimension($this, $existingDimension->getName(), $existingDimension->getValue()));
+			}
+		}
 	}
 
 	/**
