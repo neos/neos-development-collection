@@ -1,4 +1,4 @@
-Feature: Localizated structure
+Feature: Localized structure
   In order to have nodes in different places for different locales
   As an API user of the content repository
   I need support for having independent paths for each locale
