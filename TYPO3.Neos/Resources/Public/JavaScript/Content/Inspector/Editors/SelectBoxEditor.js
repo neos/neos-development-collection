@@ -83,9 +83,13 @@ function($, Ember) {
 			}
 
 			// TODO Check value binding
-			this.$().addClass('chosen-select').chosen({allow_single_deselect: true}).change(function() {
+			var chosen;
+			this.$().addClass('chosen-select').on('chosen:ready', function(event, parameters) {
+				chosen = parameters.chosen;
+			}).chosen({allow_single_deselect: true}).change(function() {
 				that.set('value', that.$().val());
 			});
+			chosen.search_results.off('mousewheel.chosen DOMMouseScroll.chosen');
 		}
 	});
 });

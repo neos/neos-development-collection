@@ -60,6 +60,15 @@
 
 	.chosen-container {
 		width: ($inspectorWidth - $defaultMargin * 2) !important;
+
+		&.chosen-with-drop .chosen-drop {
+			display: block;
+		}
+
+		.chosen-drop {
+			display: none;
+			margin-bottom: $defaultMargin;
+		}
 	}
 
 	.neos-toolbar {
