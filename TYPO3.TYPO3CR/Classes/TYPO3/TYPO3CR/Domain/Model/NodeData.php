@@ -151,7 +151,7 @@ class NodeData extends AbstractNodeData {
 
 	/**
 	 * MD5 hash of the content dimensions
-	 * The hash is generated in calculateDimensionsHash().
+	 * The hash is generated in buildDimensionValues().
 	 *
 	 * @var string
 	 * @ORM\Column(length=32)
@@ -220,7 +220,6 @@ class NodeData extends AbstractNodeData {
 				}
 			}
 		}
-		$this->calculateDimensionsHash();
 		$this->buildDimensionValues();
 	}
 
@@ -610,19 +609,9 @@ class NodeData extends AbstractNodeData {
 	 *
 	 * @param Collection $dimensions
 	 */
-	public function setDimensions(Collection $dimensions) {
+	protected function setDimensions(Collection $dimensions) {
 		$this->dimensions = $dimensions;
-		$this->calculateDimensionsHash();
 		$this->buildDimensionValues();
-	}
-
-	/**
-	 * Internal use, do not manipulate collection directly
-	 *
-	 * @return Collection
-	 */
-	public function getDimensions() {
-		return $this->dimensions;
 	}
 
 	/**
@@ -711,7 +700,7 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Build a cached array of dimension values
+	 * Build a cached array of dimension values and a hash to search for it.
 	 *
 	 * @return void
 	 */
@@ -724,7 +713,10 @@ class NodeData extends AbstractNodeData {
 		foreach ($dimensionValues as &$values) {
 			sort($values);
 		}
+
+		ksort($dimensionValues);
 		$this->dimensionValues = $dimensionValues;
+		$this->dimensionsHash = md5(json_encode($dimensionValues));
 	}
 
 	/**
@@ -807,22 +799,6 @@ class NodeData extends AbstractNodeData {
 	 */
 	protected function calculateParentPathHash() {
 		$this->parentPathHash = md5($this->parentPath);
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function calculateDimensionsHash() {
-		$dimensionValues = array();
-		foreach ($this->dimensions as $dimension) {
-			/** @var NodeDimension $dimension */
-			$dimensionValues[$dimension->getName()][] = $dimension->getValue();
-		}
-		// Use a stable ordering
-		foreach ($dimensionValues as &$values) {
-			sort($values);
-		}
-		$this->dimensionsHash = md5(json_encode($dimensionValues));
 	}
 
 	/**
