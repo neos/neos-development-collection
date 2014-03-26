@@ -39,6 +39,13 @@ class NodeType implements FilterInterface {
 	protected $withSubTypes = FALSE;
 
 	/**
+	 * If set this NodeType is actually excluded instead exclusively included.
+	 *
+	 * @var boolean
+	 */
+	protected $exclude = FALSE;
+
+	/**
 	 * Sets the node type name to match on.
 	 *
 	 * @param string $nodeTypeName
@@ -63,6 +70,15 @@ class NodeType implements FilterInterface {
 	}
 
 	/**
+	 * Wether the filter should exclude the given NodeType instead of including only this node type.
+	 *
+	 * @param boolean $exclude
+	 */
+	public function setExclude($exclude) {
+		$this->exclude = $exclude;
+	}
+
+	/**
 	 * Returns TRUE if the given node is of the node type this filter expects.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
@@ -70,12 +86,18 @@ class NodeType implements FilterInterface {
 	 */
 	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		if ($this->withSubTypes === TRUE) {
-			return $this->nodeTypeManager->getNodeType($node->getNodeType())->isOfType($this->nodeTypeName);
+			$nodeIsMatchingNodeType = $this->nodeTypeManager->getNodeType($node->getNodeType())->isOfType($this->nodeTypeName);
 		} else {
 			// This is needed to get the raw string NodeType to prevent errors for NodeTypes that no longer exist.
 			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', TRUE);
-			return $nodeType === $this->nodeTypeName;
+			$nodeIsMatchingNodeType = $nodeType === $this->nodeTypeName;
 		}
+
+		if ($this->exclude === TRUE) {
+			return !$nodeIsMatchingNodeType;
+		}
+
+		return $nodeIsMatchingNodeType;
 	}
 
 }
