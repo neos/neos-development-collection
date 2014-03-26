@@ -36,13 +36,24 @@
 
 				[class^="icon-"],
 				[class*=" icon-"] {
-					margin-left: -6px;
-					margin-top: -10px;
+					margin-left: -7px;
+					margin-top: -11px;
 				}
 
 				i {
 					color: #000;
 					@include text-shadow(none);
+
+					&.neos-handle-loading {
+						display: block;
+						width: 16px;
+						height: 16px;
+						margin-top: 1px;
+						margin-left: -8px;
+						background-image: url('../Images/ajax-preloader.gif') !important;
+						background-repeat: no-repeat !important;
+						background-position: 50% 50% !important;
+					}
 				}
 			}
 
