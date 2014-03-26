@@ -31,11 +31,11 @@ Feature: Site management / List sites
       | Test Demo Site       |
       | TYPO3 Neos Demo Site |
 
-  @fixtures
+  @fixtures @javascript
   Scenario: Update site name
     When I go to the "Administration / Site Management" module
     And I follow "Click to edit" for site "TYPO3 Neos Demo Site"
-    And I fill in "Name" with "Updated Neos Demo Site"
+    And I fill in "name" with "Updated Neos Demo Site"
     And I press "Save"
     Then I should see the following sites in a table:
       | name                   |
