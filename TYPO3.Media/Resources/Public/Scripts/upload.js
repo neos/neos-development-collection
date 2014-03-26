@@ -62,7 +62,7 @@
 
 		if (window.parent !== window && window.parent.Typo3MediaBrowserCallbacks) {
 			// we are inside iframe
-			$('.asset-list').on('click', '.asset', function(e) {
+			$('.asset-list').on('click', '[data-asset-identifier]', function(e) {
 				window.parent.Typo3MediaBrowserCallbacks.assetChosen($(this).attr('data-asset-identifier'));
 				e.preventDefault();
 			});
