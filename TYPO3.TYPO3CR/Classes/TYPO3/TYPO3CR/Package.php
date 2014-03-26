@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Package\Package as BasePackage;
 
 /**
@@ -31,8 +32,8 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Workspace', 'beforeNodePublishing', 'TYPO3\TYPO3CR\Domain\Service\NodeService', 'cleanUpNodePropertiesAndChildNodes');
 
-		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function($configurationManager) {
-			$configurationManager->registerConfigurationType('NodeTypes', \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT);
+		$dispatcher->connect('TYPO3\Flow\Configuration\ConfigurationManager', 'configurationManagerReady', function(ConfigurationManager $configurationManager) {
+			$configurationManager->registerConfigurationType('NodeTypes', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT, TRUE);
 		});
 	}
 
