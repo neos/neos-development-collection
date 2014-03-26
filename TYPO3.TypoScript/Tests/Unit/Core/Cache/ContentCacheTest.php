@@ -43,4 +43,48 @@ class ContentCacheTest extends UnitTestCase {
 		$contentCache->flushByTag($tag);
 	}
 
+	/**
+	 * @return array
+	 */
+	public function invalidEntryIdentifierValues() {
+		return array(
+			'object not implementing CacheAwareInterface' => array(array('foo' => new \stdClass()))
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidEntryIdentifierValues
+	 * @expectedException \TYPO3\TypoScript\Exception\CacheException
+	 * @expectedExceptionCode 1395846615
+	 */
+	public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues) {
+		$contentCache = new ContentCache();
+		$contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function validEntryIdentifierValues() {
+		$mockCacheAware = $this->getMock('TYPO3\Flow\Cache\CacheAwareInterface');
+		return array(
+			'string value' => array(array('foo' => 'Bar')),
+			'boolean value' => array(array('foo' => TRUE)),
+			'integer value' => array(array('foo' => 42)),
+			'object implementing CacheAwareInterface' => array(array('foo' => $mockCacheAware)),
+			'null' => array(array('foo' => NULL))
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider validEntryIdentifierValues
+	 */
+	public function createCacheSegmentWithValidEntryIdentifierValueCreatesIdentifier($entryIdentifierValues) {
+		$contentCache = new ContentCache();
+		$segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
+		$this->assertNotEmpty($segement);
+	}
+
 }
