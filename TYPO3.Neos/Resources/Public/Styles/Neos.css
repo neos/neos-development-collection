@@ -5519,6 +5519,13 @@
 .neos #neos-inspector .chosen-container {
   width: 288px !important;
 }
+.neos #neos-inspector .chosen-container.chosen-with-drop .chosen-drop {
+  display: block;
+}
+.neos #neos-inspector .chosen-container .chosen-drop {
+  display: none;
+  margin-bottom: 16px;
+}
 .neos #neos-inspector .neos-toolbar {
   position: absolute;
   top: 0;
