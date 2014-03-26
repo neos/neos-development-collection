@@ -608,4 +608,14 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertTrue($result);
 	}
 
+	/**
+	 * @test
+	 */
+	public function getDimensionValuesReturnsDimensionsSortedByKey() {
+		$nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+		$dimensionValues = $nodeData->getDimensionValues();
+
+		$this->assertSame(array('a' => array('a1'), 'c' => array('c1', 'c2')), $dimensionValues);
+	}
+
 }
