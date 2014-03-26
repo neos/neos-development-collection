@@ -1,17 +1,15 @@
-namespace: TypoScript=TYPO3.TypoScript
-
 /**
  * Root TypoScript template for the {siteName} Site
  */
 page = Page {
 	head {
-		stylesheets = TypoScript:Template
+		stylesheets = TYPO3.TypoScript:Template
 		stylesheets {
 			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 			sectionName = 'stylesheets'
 		}
 
-		scripts = TypoScript:Template
+		scripts = TYPO3.TypoScript:Template
 		scripts {
 			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 			sectionName = 'scripts'
