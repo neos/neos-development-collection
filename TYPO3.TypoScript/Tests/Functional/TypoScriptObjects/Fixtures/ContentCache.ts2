@@ -54,6 +54,10 @@ contentCache.uncachedSegmentOnTopLevel = TYPO3.TypoScript:Array {
 
 	@cache {
 		mode = 'uncached'
+
+		context {
+			1 = 'object'
+		}
 	}
 }
 
@@ -73,6 +77,10 @@ contentCache.uncachedSegmentInCachedSegment = TYPO3.TypoScript:Array {
 
 		@cache {
 			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
 		}
 	}
 
@@ -187,6 +195,10 @@ contentCache.uncachedSegmentWithProcessor = TYPO3.TypoScript:Array {
 
 		@cache {
 			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
 		}
 	}
 

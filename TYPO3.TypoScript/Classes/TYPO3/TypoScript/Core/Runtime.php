@@ -331,6 +331,10 @@ class Runtime {
 		$cacheForPathEnabled = isset($typoScriptConfiguration['__meta']['cache']['mode']) && $typoScriptConfiguration['__meta']['cache']['mode'] === 'cached';
 		$cacheForPathDisabled = isset($typoScriptConfiguration['__meta']['cache']['mode']) && $typoScriptConfiguration['__meta']['cache']['mode'] === 'uncached';
 
+		if ($cacheForPathDisabled && (!isset($typoScriptConfiguration['__meta']['cache']['context']) || $typoScriptConfiguration['__meta']['cache']['context'] === array())) {
+			throw new Exception(sprintf('Missing @cache.context configuration for path "%s". An uncached segment must have one or more context variable names configured.', $typoScriptPath), 1395922119);
+		}
+
 		$currentPathIsEntryPoint = FALSE;
 		if ($this->enableContentCache && $cacheForPathEnabled) {
 			if ($this->inCacheEntryPoint === NULL) {

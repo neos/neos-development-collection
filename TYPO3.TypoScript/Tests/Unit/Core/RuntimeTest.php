@@ -57,7 +57,6 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$runtime->handleRenderingException('/foo/bar', $runtimeException);
 	}
 
-
 	/**
 	 * @test
 	 */
@@ -77,6 +76,28 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		));
 
 		$runtime->_call('evaluateEelExpression', 'q(node).property("title")');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TypoScript\Exception
+	 * @expectedExceptionCode 1395922119
+	 */
+	public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException() {
+		$mockControllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
+		$runtime = new \TYPO3\TypoScript\Core\Runtime(array(
+			'foo' => array(
+				'bar' => array(
+					'__meta' => array(
+						'cache' => array(
+							'mode' => 'uncached'
+						)
+					)
+				)
+			)
+		), $mockControllerContext);
+
+		$runtime->evaluate('foo/bar');
 	}
 
 }
