@@ -6,19 +6,21 @@
 		</f:if>
 		<h3>
 			<neos:link.module path="{moduleConfiguration.path}/{submoduleIdentifier}">
-				{submoduleConfiguration.label}
+				<neos:backend.translate source="Modules" id="{submoduleIdentifier}.label">{submoduleConfiguration.label}</neos:backend.translate>
 			</neos:link.module>
 		</h3>
 	</div>
 	<f:if condition="{submoduleConfiguration.description}">
 		<div class="widget-body">
-			<p>{submoduleConfiguration.description}</p>
+			<p><neos:backend.translate source="Modules" id="{submoduleIdentifier}.description">{submoduleConfiguration.description}</neos:backend.translate></p>
 		</div>
 	</f:if>
 	<f:if condition="{submoduleConfiguration.actions}">
 		<div class="widget-footer">
 			<f:for each="{submoduleConfiguration.actions}" as="actionConfiguration" key="submoduleAction">
-				<neos:link.module title="{actionConfiguration.title}" class="neos-button neos-button-primary" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction -> f:format.case(mode: \'lower\')}')}">{actionConfiguration.label}</neos:link.module>
+				<neos:link.module title="{actionConfiguration.title}" class="neos-button neos-button-primary" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction -> f:format.case(mode: \'lower\')}')}">
+					<neos:backend.translate source="Modules" id="{submoduleIdentifier}.{submoduleAction}.label">{actionConfiguration.label}</neos:backend.translate>
+				</neos:link.module>
 			</f:for>
 		</div>
 	</f:if>

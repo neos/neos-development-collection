@@ -1,22 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="de">
-    <body>
-      <!-- AccountExistsValidator -->
-      <trans-unit id="1325156008" xml:space="preserve">
+	<file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="de">
+		<body>
+			<!--  general -->
+			<trans-unit id="numberValidationErrors" xml:space="preserve">
+				<source>{0} of validation errors were found.</source>
+				<target xml:lang="de">Es wurden {0} Validierungsfehler gefunden.</target>
+			</trans-unit>
+			<!-- AccountExistsValidator -->
+			<trans-unit id="1325156008" xml:space="preserve">
 				<source>The account identifier (username) is already in use.</source>
-			<target xml:lang="de">Der Kontoname (Benutzername) wird bereits verwendet.</target></trans-unit>
-      <!-- HostnameValidator -->
-      <trans-unit id="1415392993" xml:space="preserve">
+				<target xml:lang="de">Der Kontoname (Benutzername) wird bereits verwendet.</target>
+			</trans-unit>
+			<!-- HostnameValidator -->
+			<trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target xml:lang="de">The hostname "{0}" was not valid.</target></trans-unit>
-      <!-- PasswordValidator -->
-      <trans-unit id="1324641097" xml:space="preserve">
+				<target xml:lang="de">"{0}" ist kein gültiger Hostname.</target>
+			</trans-unit>
+			<!-- PasswordValidator -->
+			<trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>
-			<target xml:lang="de">Das Passwort ist nicht angegeben.</target><alt-trans><target xml:lang="de">"{0}" ist kein gültiger Hostname.</target></alt-trans></trans-unit>
-      <trans-unit id="1324640997" xml:space="preserve">
+				<target xml:lang="de">Das Passwort ist nicht angegeben.</target>
+			</trans-unit>
+			<trans-unit id="1324640997" xml:space="preserve">
 				<source>The passwords did not match.</source>
 			<target xml:lang="de">Die Passwörter stimmen nicht überein.</target></trans-unit>
-    </body>
-  </file>
+			<trans-unit id="1221559976" xml:space="preserve">
+				<source>Please specify a valid email address</source>
+				<target xml:lang="de">Bitte geben Sie eine gültige Email-Adresse an.</target>
+			</trans-unit>
+			<trans-unit id="1343235498" xml:space="preserve">
+				<source>Please specify a valid AIM address.</source>
+				<target xml:lang="de">Bitte geben Sie eine gültige AIM-Adresse an.</target>
+			</trans-unit>
+			<trans-unit id="1334768052" xml:space="preserve">
+				<source>Password doesn't match confirmation</source>
+				<target xml:lang="de">Passwort stimmt nicht mit Passwortwiederholung überein.</target>
+			</trans-unit>
+			<trans-unit id="1327865587" xml:space="preserve">
+				<source>The given value was not a Resource instance.</source>
+				<target xml:lang="de">Der gegebene Wert ist keine gültige Resource.</target>
+			</trans-unit>
+			<trans-unit id="1327865808" xml:space="preserve">
+				<source>The file has no file extension.'</source>
+				<target xml:lang="de">Die Datei hat keine Endung.</target>
+			</trans-unit>
+			<trans-unit id="1327865764" xml:space="preserve">
+				<source>The file extension "{0}" is not allowed.'</source>
+				<target xml:lang="de">Die Dateiendung "{0}" ist nicht erlaubt</target>
+			</trans-unit>
+			<trans-unit id="1328028604" xml:space="preserve">
+				<source>The given value was not an Image instance</source>
+				<target xml:lang="de">Der gegebene Wert ist keine gültige Bildinstanz.</target>
+			</trans-unit>
+			<trans-unit id="1328029406" xml:space="preserve">
+				<source>The image orientation must be {0}"</source>
+				<target xml:lang="de">Die Ausrichtung des Bilder muss {0} sein.</target>
+			</trans-unit>
+			<trans-unit id="1328029362" xml:space="preserve">
+				<source>The image orientation "{0}" is not allowed.</source>
+				<target xml:lang="de">Die Bildausrichtung "{0}" ist nicht erlaubt.</target>
+			</trans-unit>
+			<trans-unit id="1327943859" xml:space="preserve">
+				<source>The given value was not an Image instance</source>
+				<target xml:lang="de">Der gegebene Wert ist keine gültige Bildinstanz.</target>
+			</trans-unit>
+			<trans-unit id="1319801362" xml:space="preserve">
+				<source>The actual image width of {0} is lower than the allowed Minimum width of {1}.</source>
+				<target xml:lang="de">Die Breite des Bildes {0} ist im Moment kleiner als die erlaubte minmale Breite {1}</target>
+			</trans-unit>
+			<trans-unit id="1319801859" xml:space="preserve">
+				<source>The actual image width of {0} is higher than the allowed maximum width of {1}.</source>
+				<target xml:lang="de">Die Breite des Bildes {0} ist im Moment größer als die erlaubte maximale Breite {1}</target>
+			</trans-unit>
+
+			<trans-unit id="1319801925" xml:space="preserve">
+				<source>The actual image height of {0} is lower than the allowed Minimum height of {1}.</source>
+				<target xml:lang="de">Die Höhe des Bildes {0} ist im Moment kleiner als die erlaubte minmale Höhe {1}</target>
+			</trans-unit>
+			<trans-unit id="1319801929" xml:space="preserve">
+				<source>The actual image height of {0} is higher than the allowed maximum height of {1}.</source>
+				<target xml:lang="de">Die Höhe des Bildes {0} ist im Moment höher als die erlaubte maximale Höhe {1}</target>
+			</trans-unit>
+			<trans-unit id="1319813336" xml:space="preserve">
+				<source>The given image size of "{0}" x "{1}" is too low for the required minimum resolution of "{2}"</source>
+				<target xml:lang="de">Die gegebene Bidgröße "{0}" x "{1}" genügt nicht der minmalen Auflösung von "{2}"</target>
+			</trans-unit>
+			<trans-unit id="1319813355" xml:space="preserve">
+				<source>The given image size of "{0}" x "{1}" is too low for the required minimum resolution of "{2}"</source>
+				<target xml:lang="de">Die gegebene Bidgröße "{0}" x "{1}" genügt nicht der minmalen Auflösung von "{2}"</target>
+			</trans-unit>
+			<trans-unit id="1327947256" xml:space="preserve">
+				<source>The given value was not an Image instance</source>
+				<target xml:lang="de">Der gegebene Wert ist keine gültige Bildinstanz.</target>
+			</trans-unit>
+			<trans-unit id="1327947647" xml:space="preserve">
+				<source>The image type "{0}" is not allowed.</source>
+				<target xml:lang="de">Der Bildtyp "{0}" ist nicht erlaubt</target>
+			</trans-unit>
+			<trans-unit id="1328030664" xml:space="preserve">
+				<source>The uploaded file is no valid image</source>
+				<target xml:lang="de">Die hochgeladene Datei hat kein gültiges Bildformat.</target>
+			</trans-unit>
+
+			<!-- Schemaerrors from TYPO3.Flow -->
+			<trans-unit id="1412332864" xml:space="preserve">
+				<source>None of the given schemas matched</source>
+				<target xml:lang="de">Keines der angegbenen Schemen passt</target>
+			</trans-unit>
+			<trans-unit id="1412334254" xml:space="preserve">
+				<source>This property is not allowed here, check the spelling if you think it belongs here.</source>
+				<target xml:lang="de">Der Parameter ist hier nicht erlaubt. Überprüfe die Schreibweise, wenn du denkst, dass er hier hergehört.</target>
+			</trans-unit>
+			<trans-unit id="1412335540" xml:space="preserve">
+				<source>Property "{0}" is required.</source>
+				<target xml:lang="de">Der Parameter "{0}" ist ein Pflichtfeld.</target>
+			</trans-unit>
+			<trans-unit id="1328557141" xml:space="preserve">
+				<source>expected: "{0}" found: "{1}"</source>
+				<target xml:lang="de">erwartetes Schema: "{0}" gefundener Wert: "{1}"</target>
+			</trans-unit>
+			<trans-unit id="1412344219" xml:space="preserve">
+				<source>Disallow rule matched for "{0}"</source>
+				<target xml:lang="de">Der wert für "{0}" ist nicht erlaubt.</target>
+			</trans-unit>
+			<trans-unit id="1412344344" xml:space="preserve">
+				<source>"{0}" is not in enum-rule "{1}"</source>
+				<target xml:lang="de">Der Wert "{0}" genügt nicht der enum-Regel "{1}"</target>
+			</trans-unit>
+			<trans-unit id="1412344663" xml:space="preserve">
+				<source>Type "{0}" is unknown</source>
+				<target xml:lang="de">Der Typ "{0}" ist nicht bekannt.</target>
+			</trans-unit>
+			<trans-unit id="1412344834" xml:space="preserve">
+				<source>Type constraint is required</source>
+				<target xml:lang="de">Eine Typ-Restriktion wird benötigt.</target>
+			</trans-unit>
+			<trans-unit id="1412345054" xml:space="preserve">
+				<source>Unique values are expected</source>
+				<target xml:lang="de">Eindeutige Werte werden benötigt.</target>
+			</trans-unit>
+			<trans-unit id="1412345134" xml:space="preserve">
+				<source>Given string-format "{0}" is unknown</source>
+				<target xml:lang="de">Das gegebene String-Format "{0}" ist unbekannt.</target>
+			</trans-unit>
+			<trans-unit id="1412343672" xml:space="preserve">
+				<source>None of the given schemas matched "{0}"</source>
+				<target xml:lang="de">Keins der gegebenen Schmen passt zu "{0}".</target>
+			</trans-unit>
+		</body>
+	</file>
 </xliff>

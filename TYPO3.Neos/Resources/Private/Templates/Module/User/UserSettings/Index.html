@@ -8,8 +8,8 @@
 		</div>
 
 		<div class="neos-footer">
-			<neos:link.module path="management" class="neos-button">Cancel</neos:link.module>
-			<f:form.submit value="Save" class="neos-button neos-button-primary" />
+			<neos:link.module path="management" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</neos:link.module>
+			<f:form.submit value="{neos:backend.translate(id: 'save', value: 'Save')}" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>

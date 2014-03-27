@@ -1,18 +1,18 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}<html>
 	<head>
-		<title>Nodes</title>
+		<title>{neos:backend.translate(id: 'nodes', value: 'Nodes')}</title>
 		<meta charset="UTF-8" />
 	</head>
 	<body>
 		<div>
-			<h1>Nodes</h1>
+			<h1>{neos:backend.translate(id: 'nodes', value: 'Nodes')}</h1>
 			<ul class="nodes"><f:for each="{nodes}" as="node">
 				<li class="node">
 					<span class="node-path">{node.path}</span>
 					<label class="node-label">{node.label}</label>
 					(<span class="node-identifier">{node.identifier}</span>)
 					[<span class="node-type">{node.nodeType.name}</span>]
-					<f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">show</f:link.action>
+					<f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">{neos:backend.translate(id: 'show', value: 'Show')}</f:link.action>
 				</li></f:for>
 			</ul>
 		</div>

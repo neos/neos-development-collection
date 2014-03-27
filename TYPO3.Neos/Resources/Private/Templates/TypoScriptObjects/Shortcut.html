@@ -3,11 +3,15 @@
 	<p>
 		<f:switch expression="{targetMode}">
 			<f:case value="selectedTarget">
-				This is a shortcut to a specific target:<br />
+				{neos:backend.translate(id: 'shortcut.toSpecificTarget' value='This is a shortcut to a specific target:')<br />
 				<f:if condition="{target}">
 					<f:then>
 						<f:switch expression="{targetSchema}">
-							<f:case value="node">Click <neos:link.node node="{targetConverted}">{targetConverted.label}</neos:link.node> to continue to the page.</f:case>
+							<f:case value="node">
+								<neos:backend.translate id="shortcut.clickToContinueToPage", arguemnts="{0: '<neos:uri.node node=\"{targetConverted}">{targetConverted.label}</neos:uri.node>'}">
+									Click <neos:link.node node="{targetConverted}">{targetConverted.label}</neos:link.node> to continue to the page.
+								</neos:backend.translate>
+							</f:case>
 							<f:case value="asset">Click <a href="{f:uri.resource(resource: targetConverted.resource)}" target="_blank">{targetConverted.label}</a> to see the file.</f:case>
 							<f:defaultCase>Click <a href="{target}" target="_blank">{target}</a> to open the link.</f:defaultCase>
 						</f:switch>

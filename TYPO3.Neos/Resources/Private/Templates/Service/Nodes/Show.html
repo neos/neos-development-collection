@@ -1,15 +1,15 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}<html>
 	<head>
-		<title>Node: {node.label}</title>
+		<title>{neos:backend.translate(id: 'node', value: 'Node')}: {node.label}</title>
 		<meta charset="UTF-8" />
 	</head>
 	<body>
 		<div>
-			<h1>Node</h1>
+			<h1>{neos:backend.translate(id: 'node', value: 'Node')}: {node.label}</h1>
 			<div class="node">
 				<label class="node-label">{node.label}</label>
 				<table class="node-properties">
-					<caption>Node Properties</caption>
+					<caption>{neos:backend.translate(id: 'nodes.properties', value: 'Node Properties')}</caption>
 					<tr><th>_identifier</th><td class="node-identifier">{node.identifier}</td></tr>
 					<tr><th>_path</th><td class="node-path">{node.path}</td></tr>
 					<tr><th>_type</th><td class="node-type">{node.nodeType.name}</td></tr>

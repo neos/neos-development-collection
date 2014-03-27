@@ -1,8 +1,9 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Raw Content Mode</title>
+		<title{neos:backend.translate(id: 'rawContentMode', value: 'Raw Content Mode')}></title>
 		<f:section name="headerIncludes">
 			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/RawContentMode.css')}" />
 		</f:section>

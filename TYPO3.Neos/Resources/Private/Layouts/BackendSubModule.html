@@ -10,10 +10,12 @@
 		<f:if condition="{validationResults.flattenedErrors}">
 			<div class="neos-row neos-module-container neos-indented">
 				<div class="neos-alert neos-alert-error">
-					<p><strong>The following errors occurred</strong></p>
+					<p><strong>{neos:backend.translate(id: 'backend.errorheader', value:'The following errors occurred')}</strong></p>
 					<ul class="neos-error">
 						<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
-							<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
+							<li>
+								<f:for each="{errors}" as="error">{neos:backend.translate(id: '{error.code}', source: 'ValidationErrors', arguments: "{error.arguments}", value:'{error}')}</f:for>
+							</li>
 						</f:for>
 					</ul>
 				</div>

@@ -158,7 +158,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->publishingService->publishNode($node);
-		$this->addFlashMessage('Node has been published', 'Node published');
+		$this->addFlashMessage('Node has been published', 'Node published', NULL, array(), 1412421581);
 		$this->redirect('index');
 	}
 
@@ -169,7 +169,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
 		$this->publishingService->discardNode($node);
-		$this->addFlashMessage('Node has been discarded', 'Node discarded');
+		$this->addFlashMessage('Node has been discarded', 'Node discarded', NULL, array(), 1412420292);
 		$this->redirect('index');
 	}
 
@@ -190,17 +190,16 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 				foreach ($nodes as $node) {
 					$this->publishingService->publishNode($node);
 				}
-				$message = 'Selected changes have been published';
+				$this->addFlashMessage('Selected changes have been published', NULL, NULL, array(), 412420736);
 			break;
 			case 'discard':
 				$this->publishingService->discardNodes($nodes);
-				$message = 'Selected changes have been discarded';
+				$this->addFlashMessage('Selected changes have been discarded', NULL, NULL, array(), 412420851);
 			break;
 			default:
 				throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
 		}
 
-		$this->addFlashMessage($message);
 		$this->redirect('index');
 	}
 
@@ -211,7 +210,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	public function publishWorkspaceAction(Workspace $workspace) {
 		$liveWorkspace = $this->workspaceRepository->findOneByName('live');
 		$workspace->publish($liveWorkspace);
-		$this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array($workspace->getName()));
+		$this->addFlashMessage('Changes in workspace "%s" have been published', 'Changes published', Message::SEVERITY_OK, array($workspace->getName()), 1412420808);
 		$this->redirect('index');
 	}
 
@@ -222,7 +221,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	public function discardWorkspaceAction(Workspace $workspace) {
 		$unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
 		$this->publishingService->discardNodes($unpublishedNodes);
-		$this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()));
+		$this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()), 1412420835);
 		$this->redirect('index');
 	}
 
