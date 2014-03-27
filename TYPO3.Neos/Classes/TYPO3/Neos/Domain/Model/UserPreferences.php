@@ -43,6 +43,14 @@ class UserPreferences {
 	}
 
 	/**
+	 * @param array $preferences
+	 * @return void
+	 */
+	public function setPreferences(array $preferences) {
+		$this->preferences = $preferences;
+	}
+
+	/**
 	 * @param string $key
 	 * @param mixed $value
 	 * @return void

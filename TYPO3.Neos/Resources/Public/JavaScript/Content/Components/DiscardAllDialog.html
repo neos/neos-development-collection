@@ -1,14 +1,18 @@
 <div class="neos-modal" id="discardAllDialog">
 	<div class="neos-modal-header">
-		<button data-dismiss="modal" class="neos-close neos-button icon-remove" title="close" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">Discard all changes</div>
+		<button data-dismiss="modal" class="neos-close neos-button icon-remove" title="{{translate id='close' value='close'}}" {{action "cancel" target="view"}}></button>
+		<div class="neos-header">{{translate id="content-components-discardAllDialog-discardAllChangesHeader" value="Discard all changes"}}</div>
 		<div>
-			<div class="neos-subheader">Are you sure that you want to discard all changes in this workspace?</div>
+			<div class="neos-subheader">
+				{{translate id="content-components-discardAllDialog-discardAllChangesSubheader" value="Are you sure that you want to discard all changes in this workspace?"}}
+			</div>
 		</div>
 	</div>
 	<div class="neos-modal-footer">
-		<button data-dismiss="modal" class="neos-button" title="Close" {{action "cancel" target="view"}}>Cancel</button>
-		<button data-dismiss="modal" class="neos-button neos-button-success" title="Discard" {{action "discard" target="view"}}>Discard</button>
+		<button data-dismiss="modal" class="neos-button" title="{{translate id='cancel' value='Cancel'}}" {{action "cancel" target="view"}}>
+			{{translate id="cancel" value="Cancel"}}
+		</button>
+		<button data-dismiss="modal" class="neos-button neos-button-success" title="{{translate id='discard' value='Discard'}}" {{action "discard" target="view"}}>{{translate id="discard" value="Discard"}}</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

@@ -12,7 +12,6 @@ namespace TYPO3\Neos\Domain\Model;
  *                                                                        */
 
 use TYPO3\Party\Domain\Model\Person;
-
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -27,7 +26,7 @@ class User extends Person {
 	/**
 	 * Preferences of this user
 	 *
-	 * @var \TYPO3\Neos\Domain\Model\UserPreferences
+	 * @var UserPreferences
 	 * @ORM\OneToOne
 	 */
 	protected $preferences;
@@ -42,10 +41,18 @@ class User extends Person {
 	}
 
 	/**
-	 * @return \TYPO3\Neos\Domain\Model\UserPreferences
+	 * @return UserPreferences
 	 */
 	public function getPreferences() {
 		return $this->preferences;
+	}
+
+	/**
+	 * @param UserPreferences $preferences
+	 * @return void
+	 */
+	public function setPreferences(UserPreferences $preferences) {
+		$this->preferences = $preferences;
 	}
 
 }

@@ -32,7 +32,7 @@
 	</div>
 
 	<div class="neos-inspector-image-width">
-		<label {{bindAttr for="view.imageWidthField.elementId"}}>Width:</label>
+		<label {{bindAttr for="view.imageWidthField.elementId"}}>{{translate id='width-ucfirst' value='Width'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
 			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-width-check">{{view view.BooleanEditor checkedBinding="view._imageWidthToggle" elementId="neos-inspector-image-width-check"}}</label></span>
 			<span>
@@ -42,7 +42,7 @@
 		</div>
 	</div>
 	<div class="neos-inspector-image-height">
-		<label {{bindAttr for="view.imageHeightField.elementId"}}>Height:</label>
+		<label {{bindAttr for="view.imageHeightField.elementId"}}>{{translate id='height-ucfirst' value='Height'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
 			<span class="neos-add-on"><label class="neos-checkbox" for="neos-inspector-image-height-check">{{view view.BooleanEditor checkedBinding="view._imageHeightToggle" elementId="neos-inspector-image-height-check"}}</span>
 			<span>

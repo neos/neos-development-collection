@@ -127,6 +127,13 @@ TYPO3:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
 
+      # the current locale for the backend interface (can be overridden by user preference through availableLocales)
+      locale: 'en'
+
+      # the locales the backend user can choose from (the xliff file for this language should be present!)
+      availableLocales:
+        'en': 'English'
+
       navigateComponent:
         nodeTree:
           # number of levels inside the node tree which shall be loaded eagerly, at start.

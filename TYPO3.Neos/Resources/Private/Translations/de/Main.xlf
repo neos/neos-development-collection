@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="de">
+		<body>
+			<!-- general translations like button -->
+			<trans-unit id="active" xml:space="preserve">
+				<source>Active</source>
+				<target xml:lang="de">Aktiv</target>
+			</trans-unit>
+			<trans-unit id="inactive" xml:space="preserve">
+				<source>Inactive</source>
+				<target xml:lang="de">Inaktiv</target>
+			</trans-unit>
+			<trans-unit id="autoPublish" xml:space="preserve">
+				<source>Auto-Publish</source>
+				<target xml:lang="de">Automatisch veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="apply" xml:space="preserve">
+				<source>Apply</source>
+				<target xml:lang="de">Zustimmen</target>
+			</trans-unit>
+			<trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+				<target xml:lang="de">Änderungen zustimmen</target>
+			</trans-unit>
+			<trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+				<target xml:lang="de">Abbrechen</target>
+			</trans-unit>
+			<trans-unit id="createAfter" xml:space="preserve">
+				<source>Create after</source>
+				<target xml:lang="de">Erstellen nach</target>
+			</trans-unit>
+			<trans-unit id="createNew" xml:space="preserve">
+				<source>Create new</source>
+				<target xml:lang="de">Neu erstellen</target>
+			</trans-unit>
+			<trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+				<target xml:lang="de">Schließen</target>
+			</trans-unit>
+			<trans-unit id="copy" xml:space="preserve">
+				<source>Copy</source>
+				<target xml:lang="de">Kopieren</target>
+			</trans-unit>
+			<trans-unit id="content" xml:space="preserve">
+				<source>Content</source>
+				<target xml:lang="de">Inhalt</target>
+			</trans-unit>
+			<trans-unit id="cut" xml:space="preserve">
+				<source>Cut</source>
+				<target xml:lang="de">Ausscheiden</target>
+			</trans-unit>
+			<trans-unit id="hideUnhide" xml:space="preserve">
+				<source>Hide / Unhide</source>
+				<target xml:lang="de">Verstecken/Anzeigen</target>
+			</trans-unit>
+			<trans-unit id="navigate" xml:space="preserve">
+				<source>Navigate</source>
+				<target xml:lang="de">Navigieren</target>
+			</trans-unit>
+			<trans-unit id="okay" xml:space="preserve">
+				<source>OK</source>
+				<target xml:lang="de">OK</target>
+			</trans-unit>
+			<trans-unit id="remove" xml:space="preserve">
+				<source>Remove</source>
+				<target xml:lang="de">Entfernen</target>
+			</trans-unit>
+			<trans-unit id="refresh" xml:space="preserve">
+				<source>Refresh</source>
+				<target xml:lang="de">Neu laden</target>
+			</trans-unit>
+			<trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+				<target xml:lang="de">löschen</target>
+			</trans-unit>
+			<trans-unit id="deleteElement" xml:space="preserve">
+				<source>Yes, delete the element</source>
+				<target xml:lang="de">ja, Element löschen</target>
+			</trans-unit>
+			<trans-unit id="deleteElementTitle" xml:space="preserve">
+				<source>Delete the element</source>
+				<target xml:lang="de">Element löschen</target>
+			</trans-unit>
+			<trans-unit id="discard" xml:space="preserve">
+				<source>Discard</source>
+				<target xml:lang="de">Zurücknehmen</target>
+			</trans-unit>
+			<trans-unit id="discardChanges" xml:space="preserve">
+				<source>Discard changes</source>
+				<target xml:lang="de">Änderungen zurücknehmen</target>
+			</trans-unit>
+			<trans-unit id="editTitle" xml:space="preserve">
+				<source>Edit title</source>
+				<target xml:lang="de">Titel bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="editPreview" xml:space="preserve">
+				<source>Edit / Preview</source>
+				<target xml:lang="de">Bearbeiten / Vorschau</target>
+			</trans-unit>
+			<trans-unit id="edit" xml:space="preserve">
+				<source>Edit</source>
+				<target xml:lang="de">Bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="newAfter" xml:space="preserve">
+				<source>New After</source>
+				<target xml:lang="de">Neu dahinter</target>
+			</trans-unit>
+			<trans-unit id="newBefore" xml:space="preserve">
+				<source>New Before</source>
+				<target xml:lang="de">Neu davor</target>
+			</trans-unit>
+			<trans-unit id="newInto" xml:space="preserve">
+				<source>New Into</source>
+				<target xml:lang="de">Neu darin</target>
+			</trans-unit>
+			<trans-unit id="password" xml:space="preserve">
+				<source>Password</source>
+				<target xml:lang="de">Passwort</target>
+			</trans-unit>
+			<trans-unit id="paste" xml:space="preserve">
+				<source>Paste</source>
+				<target xml:lang="de">Einfügen</target>
+			</trans-unit>
+			<trans-unit id="pasteAfter" xml:space="preserve">
+				<source>Paste After</source>
+				<target xml:lang="de">Danach einfügen</target>
+			</trans-unit>
+			<trans-unit id="pasteBefore" xml:space="preserve">
+				<source>Paste Before</source>
+				<target xml:lang="de">Davor Einfügen</target>
+			</trans-unit>
+			<trans-unit id="pasteInto" xml:space="preserve">
+				<source>Paste Into</source>
+				<target xml:lang="de">Darin einfügen</target>
+			</trans-unit>
+			<trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+				<target xml:lang="de">Vorschau</target>
+			</trans-unit>
+			<trans-unit id="publish" xml:space="preserve">
+				<source>Publish</source>
+				<target xml:lang="de">Veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="saving" xml:space="preserve">
+				<source>Saving...</source>
+				<target xml:lang="de">Speichern...</target>
+			</trans-unit>
+			<trans-unit id="saved" xml:space="preserve">
+				<source>Saved</source>
+				<target xml:lang="de">Gespeichert</target>
+			</trans-unit>
+			<trans-unit id="toggleInspector" xml:space="preserve">
+				<source>Toggle inspector</source>
+				<target xml:lang="de">Inspektor anzeigen/verstecken</target>
+			</trans-unit>
+			<trans-unit id="username" xml:space="preserve">
+				<source>Username</source>
+				<target xml:lang="de">Username</target>
+			</trans-unit>
+
+			<!-- Login -->
+			<trans-unit id="login.index.title" xml:space="preserve">
+				<source>TYPO3 Neos Login</source>
+				<target xml:lang="de">TYPO3 Neos Anmeldung</target>
+			</trans-unit>
+
+			<!-- ErrorHandlers -->
+			<trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
+				<source>Page Not Found</source>
+				<target xml:lang="de">Seite nciht gefunden</target>
+			</trans-unit>
+			<trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			</trans-unit>
+			<trans-unit id="databaseConnectionExceptions.errorTitle" xml:space="preserve">
+				<source>Database Error</source>
+			</trans-unit>
+			<trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
+			</trans-unit>
+			<trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			</trans-unit>
+			<trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
+				<source>Missing Homepage</source>
+			</trans-unit>
+			<trans-unit id="noHomepageException.errorDescription" xml:space="preserve">
+				<source>Either no site has been defined yet or the site does not contain a homepage.</source>
+			</trans-unit>
+			<trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to create or import a site in the setup.</source>
+			</trans-unit>
+			<!-- Templates -->
+			<trans-unit id="userSettings.editUser" xml:space="preserve">
+				<source>Edit User</source>
+				<target xml:lang="de">Bearbeite Benutzer</target>
+			</trans-unit>
+			<trans-unit id="userSettings.userData" xml:space="preserve">
+				<source>User Data</source>
+				<target xml:lang="de">Benutzerdaten</target>
+			</trans-unit>
+			<trans-unit id="userSettings.addElectronicAddress" xml:space="preserve">
+				<source>Add electronic address</source>
+				<target xml:lang="de">Elektronische Adresse hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="userSettings.clickAddElectronicAddress" xml:space="preserve">
+				<source>Click to add a new Electronic address</source>
+				<target xml:lang="de">Hier klicken um eine elektronische Adresse hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="userSettings.personalData" xml:space="preserve">
+				<source>Personal Data</source>
+				<target xml:lang="de">Persönliche Daten</target>
+			</trans-unit>
+			<trans-unit id="userSettings.repeatPassword" xml:space="preserve">
+				<source>Repeat password</source>
+				<target xml:lang="de">Passwortwiederholung</target>
+			</trans-unit>
+			<trans-unit id="userSettings.role" xml:space="preserve">
+				<source>Role</source>
+				<target xml:lang="de">Rolle</target>
+			</trans-unit>
+			<trans-unit id="userSettings.userPrefrences" xml:space="preserve">
+				<source>User prefrences</source>
+				<target xml:lang="de">Benutzer Vorlieben</target>
+			</trans-unit>
+			<trans-unit id="userSettings.interfaceLanguage" xml:space="preserve">
+				<source>Interface language</source>
+				<target xml:lang="de">Backendsprache</target>
+			</trans-unit>
+			<trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
+				<source>Electronic addresses</source>
+				<target xml:lang="de">Elektronische Adresse</target>
+			</trans-unit>
+			<trans-unit id="userSettings.saveUser" xml:space="preserve">
+				<source>Save User</source>
+				<target xml:lang="de">Benutzerdaten speichern</target>
+			</trans-unit>
+			<trans-unit id="userSettings.addNewElectronicAddress" xml:space="preserve">
+				<source>Add new electronic address</source>
+				<target xml:lang="de">Neue Elektronische Adresse hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="userSettings.identifier" xml:space="preserve">
+				<source>Identifier</source>
+				<target xml:lang="de">Adresse</target>
+			</trans-unit>
+			<trans-unit id="userSettings.identifierPlaceholder" xml:space="preserve">
+				<source>Identifier (example: test@typo3.org)</source>
+				<target xml:lang="de">Adresse (z.B. test@typo3.org)</target>
+			</trans-unit>
+			<trans-unit id="userSettings.usage" xml:space="preserve">
+				<source>usage</source>
+				<target xml:lang="de">Nutzung</target>
+			</trans-unit>
+			<trans-unit id="newelectronicaladdress.deleteAnswer" xml:space="preserve">
+				<source>Yes, delete electronic address</source>
+				<target xml:lang="de">Ja, elektronsiche Adresse löschen</target>
+			</trans-unit>
+			<trans-unit id="module.shared.newelectronicaladdress.buttonDelete" xml:space="preserve">
+				<source>Do you really want to delete</source>
+				<target xml:lang="de">Wollen Sie die folgende elektronische Adresse wirklich löschen: </target>
+			</trans-unit>
+			<trans-unit id="newelectronicaladdress.clickDelete" xml:space="preserve">
+				<source>Click to delete</source>
+				<target xml:lang="de">Zum Löschen hier klicken</target>
+			</trans-unit>
+			<trans-unit id="backend.usermenu.usermenu" xml:space="preserve">
+				<source>Usermenu</source>
+				<target xml:lang="de">Benutzer Menu</target>
+			</trans-unit>
+			<trans-unit id="backend.usermenu.logout" xml:space="preserve">
+				<source>Logout</source>
+				<target xml:lang="de">Abmelden</target>
+			</trans-unit>
+			<trans-unit id="backend.usermenu.usersettings" xml:space="preserve">
+				<source>Usersettings</source>
+				<target xml:lang="de">Benutzereinstellungen</target>
+			</trans-unit>
+			<trans-unit id="backend.module.shared.domainform.domainData" xml:space="preserve">
+				<source>Domain Data</source>
+				<target xml:lang="de">Domaindaten</target>
+			</trans-unit>
+			<trans-unit id="backend.module.shared.domainform.HostPattern" xml:space="preserve">
+				<source>Host pattern</source>
+				<target xml:lang="de">Host Name</target>
+			</trans-unit>
+			<trans-unit id="domainform.hostPatternPlaceholder" xml:space="preserve">
+				<source>e.g. www.typo3.org</source>
+				<target xml:lang="de">z.B. www.typo3.org</target>
+			</trans-unit>
+			<trans-unit id="domainform.state" xml:space="preserve">
+				<source>State</source>
+				<target xml:lang="de">Status</target>
+			</trans-unit>
+
+
+			<trans-unit id="backend.errorheader" xml:space="preserve">
+				<source>The following errors occurred</source>
+				<target xml:lang="de">Der folgende Fehler wurde festgestellt</target>
+			</trans-unit>
+
+			<!-- Flashmessages -->
+			<trans-unit id="flashMessage.1412196610" xml:space="preserve">
+				<source>The user profile has been updated.</source>
+				<target xml:lang="de">Die Änderungen am Userprofil wurden gespeichert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412196841" xml:space="preserve">
+				<source>The electronic address "%s" has been deleted for the person "%s".</source>
+				<target xml:lang="de">Die elektronische Adresse "%s" für den user "%s" wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412197642" xml:space="preserve">
+				<source>An electronic -%s- address has been added.</source>
+				<target xml:lang="de">Eine elektronische Adresse "%s" wurde hinzugefügt.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412198080" xml:space="preserve">
+				<source>The user has been deleted.</source>
+				<target xml:lang="de">Der Benutzer wurde gelöscht.</target>
+			</trans-unit>
+
+			<!--Errors -->
+			<trans-unit id="error.1221559976" xml:space="preserve">
+				<source>Please specify a valid email address</source>
+				<target xml:lang="de">Bitte geben Sie eine gültige Email-Adresse an.</target>
+			</trans-unit>
+					<trans-unit id="error.1343235498" xml:space="preserve">
+				<source>Please specify a valid AIM address.</source>
+				<target xml:lang="de">Bitte geben Sie eine gültige AIM-Adresse an.</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

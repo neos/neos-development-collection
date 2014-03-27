@@ -216,11 +216,13 @@ module.exports = function (grunt) {
 			// This file needs jQueryWithDependencies first
 			ember: {
 				src: [
-					libraryPath + 'emberjs/ember-1.0.0.js'
+					libraryPath + 'emberjs/ember-1.0.0.js',
+					libraryPath + 'ember-i18n/lib/i18n.js'
 				],
 				dest: libraryPath + 'ember.js',
 				options: {
-					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars"], function(jQuery, Handlebars) {' +
+					banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {' +
+					'  CLDR.defaultLocale = window.T3Configuration.locale;' + // TODO: make configurable, as this is only used for plurals this is not highest prio (same behavior in cldr for most languages)
 					'  var Ember = {exports: {}};' +
 					'  var ENV = {LOG_VERSION: false};' +
 					'  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};' +
@@ -228,7 +230,14 @@ module.exports = function (grunt) {
 					'  Ember.lookup = { Ember: Ember, T3: window.T3};' +
 					'  window.Ember = Ember;',
 					footer: '  return Ember;' +
-					'});'
+					'});',
+					process: function(src) {
+						src = src.replace('I18n.t(', 'I18n.translate(');
+						src = src.replace("Handlebars.registerHelper('t'", "Handlebars.registerHelper('translate'");
+						src = src.replace('t: function(key, context)', 'translate: function(key, context)');
+
+						return src;
+					}
 				}
 			},
 
@@ -465,6 +474,21 @@ module.exports = function (grunt) {
 						return src;
 					}
 				}
+			}
+		},
+
+		cldr: {
+			src: [
+				libraryPath + 'ember-i18n/vendor/cldr-1.0.0.js'
+			],
+			dest: libraryPath + 'cldr.js',
+			options: {
+				banner: 'define(function() {' +
+				'  var root = {};' +
+				'  (function() {',
+				footer: '  }).apply(root);' +
+				'  return root.CLDR;' +
+				'});'
 			}
 		}
 	});

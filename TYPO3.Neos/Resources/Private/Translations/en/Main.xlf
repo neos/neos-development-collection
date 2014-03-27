@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext">
+		<body>
+			<!-- general translations like button -->
+			<trans-unit id="autoPublish" xml:space="preserve">
+				<source>Auto-Publish</source>
+			</trans-unit>
+			<trans-unit id="apply" xml:space="preserve">
+				<source>Apply</source>
+			</trans-unit>
+			<trans-unit id="applyChanges" xml:space="preserve">
+				<source>Apply changes</source>
+			</trans-unit>
+			<trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			</trans-unit>
+			<trans-unit id="createAfter" xml:space="preserve">
+				<source>Create after</source>
+			</trans-unit>
+			<trans-unit id="createNew" xml:space="preserve">
+				<source>Create new</source>
+			</trans-unit>
+			<trans-unit id="close" xml:space="preserve">
+				<source>Close</source>
+			</trans-unit>
+			<trans-unit id="copy" xml:space="preserve">
+				<source>Copy</source>
+			</trans-unit>
+			<trans-unit id="cut" xml:space="preserve">
+				<source>Cut</source>
+			</trans-unit>
+			<trans-unit id="hideUnhide" xml:space="preserve">
+				<source>Hide / Unhide</source>
+			</trans-unit>
+			<trans-unit id="navigate" xml:space="preserve">
+				<source>Navigate</source>
+			</trans-unit>
+			<trans-unit id="okay" xml:space="preserve">
+				<source>OK</source>
+			</trans-unit>
+			<trans-unit id="remove" xml:space="preserve">
+				<source>Remove</source>
+			</trans-unit>
+			<trans-unit id="refresh" xml:space="preserve">
+				<source>Refresh</source>
+			</trans-unit>
+			<trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+			</trans-unit>
+			<trans-unit id="deleteElement" xml:space="preserve">
+				<source>Yes, delete the element</source>
+			</trans-unit>
+			<trans-unit id="deleteElementTitle" xml:space="preserve">
+				<source>Delete the element</source>
+			</trans-unit>
+			<trans-unit id="discard" xml:space="preserve">
+				<source>Discard</source>
+			</trans-unit>
+			<trans-unit id="discardChanges" xml:space="preserve">
+				<source>Discard changes</source>
+			</trans-unit>
+			<trans-unit id="editTitle" xml:space="preserve">
+				<source>Edit title</source>
+			</trans-unit>
+			<trans-unit id="editPreview" xml:space="preserve">
+				<source>Edit / Preview</source>
+			</trans-unit>
+			<trans-unit id="edit" xml:space="preserve">
+				<source>Edit</source>
+			</trans-unit>
+			<trans-unit id="Navigate" xml:space="preserve">
+				<source>Navigate</source>
+			</trans-unit>
+			<trans-unit id="newAfter" xml:space="preserve">
+				<source>New After</source>
+			</trans-unit>
+			<trans-unit id="newBefore" xml:space="preserve">
+				<source>New Before</source>
+			</trans-unit>
+			<trans-unit id="newInto" xml:space="preserve">
+				<source>New Into</source>
+			</trans-unit>
+			<trans-unit id="paste" xml:space="preserve">
+				<source>Paste</source>
+			</trans-unit>
+			<trans-unit id="pasteAfter" xml:space="preserve">
+				<source>Paste After</source>
+			</trans-unit>
+			<trans-unit id="pasteBefore" xml:space="preserve">
+				<source>Paste Before</source>
+			</trans-unit>
+			<trans-unit id="pasteInto" xml:space="preserve">
+				<source>Paste Into</source>
+			</trans-unit>
+			<trans-unit id="password" xml:space="preserve">
+				<source>Password</source>
+				<target xml:lang="de">Passwort</target>
+			</trans-unit>
+			<trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+			</trans-unit>
+			<trans-unit id="publish" xml:space="preserve">
+				<source>Publish</source>
+			</trans-unit>
+			<trans-unit id="saving" xml:space="preserve">
+				<source>Saving...</source>
+			</trans-unit>
+			<trans-unit id="saved" xml:space="preserve">
+				<source>Saved</source>
+			</trans-unit>
+			<trans-unit id="toggleInspector" xml:space="preserve">
+				<source>Toggle inspector</source>
+			</trans-unit>
+			<trans-unit id="username" xml:space="preserve">
+				<source>Username</source>
+			</trans-unit>
+
+			<!-- javascript -->
+			<trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
+				<source>Full Screen</source>
+			</trans-unit>
+			<trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+				<source>Discard all changes</source>
+			</trans-unit>
+			<trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			</trans-unit>
+			<trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+				<source>Publish all changes</source>
+			</trans-unit>
+			<trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+				<source>Are you sure that you want to publish all changes?</source>
+			</trans-unit>
+			<trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+				<source>Editing Modes</source>
+			</trans-unit>
+			<trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+				<source>Preview Central</source>
+			</trans-unit>
+			<trans-unit id="inspector" xml:space="preserve">
+				<source>Inspector</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+				<source>You still have changes. What do you want to do with them?</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+				<source>Selected element</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+				<source>There are fields that are not correctly filled in.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+				<source>Continue editing</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+				<source>Throw away</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+				<source>Apply</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+				<source>view is displayed on page</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+				<source>view is displayed on current page</source>
+			</trans-unit>
+			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+				<source>This will delete the page</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+				<source>and it's subpages</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This operation can be undone in the workspace management.</source>
+			</trans-unit>
+			<trans-unit id="height.ucfirst" xml:space="preserve">
+				<source>Height</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+				<source>this element</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+				<source>This will delete the element.</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+			</trans-unit>
+			<trans-unit id="width.ucfirst" xml:space="preserve">
+				<source>Width</source>
+			</trans-unit>
+			<trans-unit id="translate.requiredProperty" xml:space="preserve">
+				<source>Missing required property: </source>
+			</trans-unit>
+			<trans-unit id="workspaces" xml:space="preserve">
+				<source>Workspaces</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

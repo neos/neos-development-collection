@@ -6,7 +6,7 @@
 	</div>
 </f:section>
 <f:section name="content">
-	<f:form action="update" name="person" object="{person}" arguments="{account: account}" class="user user-edit">
+	<f:form action="update" name="user" object="{user}" arguments="{account: account}" class="user user-edit">
 		<div class="neos-row-fluid neos-module-container">
 			<fieldset class="neos-span5">
 				<legend>User Data</legend>
@@ -90,8 +90,18 @@
 						<f:form.textfield property="name.alias" id="alias" class="neos-span12" />
 					</div>
 				</div>
+			</fieldset>
+		</div>
+		<div class="neos-row-fluid">
+			<fieldset class="neos-span5">
+				<legend>User Preferences</legend>
 
-
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="interfaceLocale">Interface language</label>
+					<div class="neos-controls">
+						<f:form.select property="preferences.preferences.interfaceLocale" id="interfaceLocale" options="{settings.userInterface.availableLocales}" />
+					</div>
+				</div>
 			</fieldset>
 		</div>
 		<div class="neos-row-fluid">

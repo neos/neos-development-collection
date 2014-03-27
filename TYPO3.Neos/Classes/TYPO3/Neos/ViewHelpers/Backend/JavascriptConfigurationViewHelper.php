@@ -15,6 +15,8 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -47,6 +49,12 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\I18n\Service
 	 */
 	protected $i18nService;
@@ -58,11 +66,19 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	protected $securityContext;
 
 	/**
+	 * @Flow\Inject(setting="userInterface.defaultLocale")
+	 * @var string
+	 */
+	protected $defaultLocale;
+
+	/**
 	 * @return string
 	 */
 	public function render() {
 		$configuration = array(
 			'window.T3Configuration = {};',
+			'window.T3Configuration.locale = "' . $this->defaultLocale . '";',
+			'window.T3Configuration.localeIncludes = ' . json_encode($this->getXliffAsJsonUri()) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.nodeTypes = {};',
 			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
@@ -82,17 +98,33 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	}
 
 	/**
+	 * Returns array with the I18n json uri
+	 *
+	 * @return array
+	 */
+	protected function getXliffAsJsonUri() {
+		$uriBuilder = $this->controllerContext->getUriBuilder();
+		$uriBuilder->setCreateAbsoluteUri(TRUE);
+
+		return array($uriBuilder->uriFor('getXliffAsJson', array(), 'Backend\\Backend', 'TYPO3.Neos'));
+	}
+
+	/**
 	 * @param string $resourcePath
 	 * @return string
 	 */
 	protected function getStaticResourceWebBaseUri($resourcePath) {
 		$localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
 		$matches = array();
-		if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
-			$package = $matches[1];
-			$path = $matches[2];
+		try {
+			if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+				$package = $matches[1];
+				$path = $matches[2];
+				return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+			}
+		} catch (\Exception $exception) {
+			$this->systemLogger->logException($exception);
 		}
-		return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
 	}
 
 	/**

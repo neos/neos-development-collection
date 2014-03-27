@@ -38,6 +38,12 @@ class UserService {
 	protected $workspaceRepository;
 
 	/**
+	 * @Flow\Inject(setting="userInterface.locale")
+	 * @var string
+	 */
+	protected $locale;
+
+	/**
 	 * @return User
 	 */
 	public function getBackendUser() {
@@ -72,5 +78,28 @@ class UserService {
 			return 'live';
 		}
 		return 'user-' . preg_replace('/[^a-z0-9]/i', '', $account->getAccountIdentifier());
+	}
+
+	/**
+	 * Returns the preference of a user
+	 *
+	 * @param string $preference
+	 * @return string
+	 */
+	public function getUserPreference($preference) {
+		$user = $this->getBackendUser();
+		if ($user && $user->getPreferences()) {
+			return $user->getPreferences()->get($preference) ? $user->getPreferences()->get($preference) : NULL;
+		}
+	}
+
+	/**
+	 * Returns the user preferred locale if set. Else will fallback to the original settings
+	 *
+	 * @return string
+	 */
+	public function getUserLocale() {
+		$userLocale = $this->getUserPreference('interfaceLocale');
+		return $userLocale ? $userLocale : $this->locale;
 	}
 }

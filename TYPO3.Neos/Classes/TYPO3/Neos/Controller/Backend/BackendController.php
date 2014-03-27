@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * The TYPO3 Backend controller
@@ -27,6 +28,18 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $backendRedirectionService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Service\XliffService
+	 */
+	protected $xliffService;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Service\UserService
+	 */
+	protected $userService;
+
+	/**
 	 * Default action of the backend controller.
 	 *
 	 * @return void
@@ -37,5 +50,16 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 			$redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
 		}
 		$this->redirectToUri($redirectionUri);
+	}
+
+	/**
+	 * Returns the cached json array with the xliff labels
+	 *
+	 * @return string
+	 */
+	public function getXliffAsJsonAction() {
+		$locale = new Locale($this->userService->getUserLocale());
+
+		return $this->xliffService->getCachedJson($locale);
 	}
 }

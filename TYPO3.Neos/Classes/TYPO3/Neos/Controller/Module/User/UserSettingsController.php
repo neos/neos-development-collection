@@ -12,13 +12,16 @@ namespace TYPO3\Neos\Controller\Module\User;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Flow\Security\Account;
+use TYPO3\Neos\Controller\Module\AbstractModuleController;
 
 /**
  * The TYPO3 Neos User Settings module controller
  *
  * @Flow\Scope("singleton")
  */
-class UserSettingsController extends \TYPO3\Neos\Controller\Module\AbstractModuleController {
+class UserSettingsController extends AbstractModuleController {
 
 	/**
 	 * @Flow\Inject
@@ -69,27 +72,27 @@ class UserSettingsController extends \TYPO3\Neos\Controller\Module\AbstractModul
 		$account = $this->securityContext->getAccount();
 		$this->view->assignMultiple(array(
 			'account' => $account,
-			'person' => $account->getParty()
+			'user' => $account->getParty()
 		));
 	}
 
 	/**
-	 * @param \TYPO3\Flow\Security\Account $account
-	 * @param \TYPO3\Party\Domain\Model\Person $person
+	 * @param Account $account
+	 * @param User $user
 	 * @param array $password
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
 	 * @return void
 	 * @todo Handle validation errors for account (accountIdentifier) & check if there's another account with the same accountIdentifier when changing it
 	 * @todo Security
 	 */
-	public function updateAction(\TYPO3\Flow\Security\Account $account, \TYPO3\Party\Domain\Model\Person $person, array $password = array()) {
+	public function updateAction(Account $account, User $user, array $password = array()) {
 		$password = array_shift($password);
 		if (strlen(trim(strval($password))) > 0) {
 			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
 			$this->accountRepository->update($account);
 		}
 
-		$this->partyRepository->update($person);
+		$this->partyRepository->update($user);
 
 		$this->addFlashMessage('The user profile has been updated.');
 		$this->redirect('index');

@@ -113,3 +113,12 @@
       handler: 'TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
   toLowerCase: false
   appendExceedingArguments: TRUE
+
+-
+  name: 'Backend UI XLIFF configuration'
+  uriPattern: 'xliff.json'
+  defaults:
+    '@package': 'TYPO3.Neos'
+    '@controller': 'Backend\Backend'
+    '@action': 'getXliffAsJson'
+  appendExceedingArguments: TRUE

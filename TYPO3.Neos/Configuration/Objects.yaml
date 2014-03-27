@@ -40,3 +40,13 @@ TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
 
 TYPO3\Neos\Domain\Service\NodeSearchServiceInterface:
   className: TYPO3\Neos\Domain\Service\NodeSearchService
+
+TYPO3\Neos\Service\XliffService:
+  properties:
+    xliffToJsonTranslationsCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_Neos_XliffToJsonTranslations

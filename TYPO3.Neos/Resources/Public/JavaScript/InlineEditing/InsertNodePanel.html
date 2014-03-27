@@ -1,7 +1,7 @@
 <div class="neos-modal neos-modal-wide" id="insertNodeDialog">
 	<div class="neos-modal-header">
 		<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">Create new</div>
+		<div class="neos-header">{{translate id="createNew" value="Create new"}}</div>
 
 		{{#each view.content}}
 			<div class="neos-subheader">{{unbound label}}</div>
@@ -22,7 +22,7 @@
 		{{/each}}
 	</div>
 	<div class="neos-modal-footer">
-		<button class="neos-button" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
+		<button class="neos-button" title="{{translate id='cancel' value='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" value="Cancel"}}</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

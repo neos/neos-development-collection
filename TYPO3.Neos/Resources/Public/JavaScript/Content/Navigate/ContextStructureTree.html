@@ -3,25 +3,25 @@
 	{{#if view.isExpanded}}
 		Structure
 	{{else}}
-		<button id="neos-context-structure-tree-refresh" class="icon-refresh" title="Refresh" {{action "refresh" target="view"}}></button>
-		<button id="neos-context-structure-tree-delete-node" class="icon-trash" title="Delete" {{bindAttr  disabled="view.currentFocusedNodeCanBeModified"}} {{action "showDeleteNodeDialog" target="view"}}></button>
-		{{#view view.pasteButton activeBinding="view.pasteIsActive" pastePositionBinding="view.pastePosition" allowedPastePositionsBinding="view.allowedPastePositions" desiredPastePositionBinding="view.desiredPastePosition" title="Paste (hold to select position)"}}
+		<button id="neos-context-structure-tree-refresh" class="icon-refresh" title="{{translate id='refresh' value='Refresh'}}" {{action "refresh" target="view"}}></button>
+		<button id="neos-context-structure-tree-delete-node" class="icon-trash" title="{{translate id='delete' value='Delete'}}" {{bindAttr  disabled="view.currentFocusedNodeCanBeModified"}} {{action "showDeleteNodeDialog" target="view"}}></button>
+		{{#view view.pasteButton activeBinding="view.pasteIsActive" pastePositionBinding="view.pastePosition" allowedPastePositionsBinding="view.allowedPastePositions" desiredPastePositionBinding="view.desiredPastePosition" title="{{translate id='pasteHoldPosition' value='Paste'}}"}}
 			<div class="neos-arrow"></div>
 			<div class="neos-node-tree-paste-node-position">
-				<button {{bindAttr class=":icon-level-up view.pastingBefore:neos-active" disabled="view.pasteBeforeDisabled"}} title="Paste before" {{action "togglePasteBefore" target="view"}}></button>
-				<button {{bindAttr class=":icon-long-arrow-right view.pastingInto:neos-active" disabled="view.pasteIntoDisabled"}} title="Paste into" {{action "togglePasteInto" target="view"}}></button>
-				<button {{bindAttr class=":icon-level-down view.pastingAfter:neos-active" disabled="view.pasteAfterDisabled"}} title="Paste after" {{action "togglePasteAfter" target="view"}}></button>
+				<button {{bindAttr class=":icon-level-up view.pastingBefore:neos-active" disabled="view.pasteBeforeDisabled"}} title="{{translate id='pasteBefore' value='Paste before'}}" {{action "togglePasteBefore" target="view"}}></button>
+				<button {{bindAttr class=":icon-long-arrow-right view.pastingInto:neos-active" disabled="view.pasteIntoDisabled"}} title="{{translate id='pasteInto' value='Paste into'}}" {{action "togglePasteInto" target="view"}}></button>
+				<button {{bindAttr class=":icon-level-down view.pastingAfter:neos-active" disabled="view.pasteAfterDisabled"}} title="{{translate id='pasteAfter' value='Paste after'}}" {{action "togglePasteAfter" target="view"}}></button>
 			</div>
 		{{/view}}
-		<button id="neos-context-structure-tree-cut-node" title="Cut" {{bindAttr class=":icon-cut view.currentFocusedNodeIsCut:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "cut" target="view"}}></button>
-		<button id="neos-context-structure-tree-copy-node" title="Copy" {{bindAttr class=":icon-copy view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "copy" target="view"}}></button>
-		<button id="neos-context-structure-tree-toggle-hidden" title="Hide/unhide" {{bindAttr class=":icon-eye-close view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "toggleHidden" target="view"}}></button>
-		{{#view view.newButton insertNodePanelShownBinding="view.insertNodePanelShown" newPositionBinding="view.newPosition" allowedNewPositionsBinding="view.allowedNewPositions" desiredNewPositionBinding="view.desiredNewPosition" title="Create new (hold to select position)"}}
+		<button id="neos-context-structure-tree-cut-node" title="{{translate id='cut' value='Cut'}}" {{bindAttr class=":icon-cut view.currentFocusedNodeIsCut:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "cut" target="view"}}></button>
+		<button id="neos-context-structure-tree-copy-node" title="{{translate id='copy' value='Copy'}}" {{bindAttr class=":icon-copy view.currentFocusedNodeIsCopied:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "copy" target="view"}}></button>
+		<button id="neos-context-structure-tree-toggle-hidden" title="{{translate id='hideUnhide' value='Hide/unhide'}}" {{bindAttr class=":icon-eye-close view.currentFocusedNodeIsHidden:neos-pressed" disabled="view.currentFocusedNodeCanBeModified"}} {{action "toggleHidden" target="view"}}></button>
+		{{#view view.newButton insertNodePanelShownBinding="view.insertNodePanelShown" newPositionBinding="view.newPosition" allowedNewPositionsBinding="view.allowedNewPositions" desiredNewPositionBinding="view.desiredNewPosition" title="{{translate id='createNewHoldPosition' value='Create new (hold to select position)'}}"}}
 			<div class="neos-arrow"></div>
 			<div class="neos-node-tree-new-node-position">
-				<button {{bindAttr class=":icon-level-up view.newBefore:neos-active" disabled="view.newBeforeDisabled"}} title="New before" {{action "toggleNewBefore" target="view"}}></button>
-				<button {{bindAttr class=":icon-long-arrow-right view.newInto:neos-active" disabled="view.newIntoDisabled"}} title="New into" {{action "toggleNewInto" target="view"}}></button>
-				<button {{bindAttr class=":icon-level-down view.newAfter:neos-active" disabled="view.newAfterDisabled"}} title="New after" {{action "toggleNewAfter" target="view"}}></button>
+				<button {{bindAttr class=":icon-level-up view.newBefore:neos-active" disabled="view.newBeforeDisabled"}} title="{{translate id='newBefore' value='New before'}}" {{action "toggleNewBefore" target="view"}}></button>
+				<button {{bindAttr class=":icon-long-arrow-right view.newInto:neos-active" disabled="view.newIntoDisabled"}} title="{{translate id='newInto' value='New into'}}" {{action "toggleNewInto" target="view"}}></button>
+				<button {{bindAttr class=":icon-level-down view.newAfter:neos-active" disabled="view.newAfterDisabled"}} title="{{translate id='newAfter' value='New after'}}" {{action "toggleNewAfter" target="view"}}></button>
 			</div>
 		{{/view}}
 	{{/if}}

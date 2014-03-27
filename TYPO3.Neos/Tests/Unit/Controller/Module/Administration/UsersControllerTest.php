@@ -28,7 +28,8 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockUser = $this->getMock('TYPO3\Neos\Domain\Model\User');
 		$mockAccount = $this->getMock('TYPO3\Flow\Security\Account');
 		$mockUser->expects($this->any())->method('getAccounts')->will($this->returnValue(array($mockAccount)));
-
+		$mockUserPreferences = $this->getMock('\TYPO3\Neos\Domain\Model\UserPreferences');
+		$mockUserPreferences->expects($this->any())->method('getPreferences')->will($this->returnValue(array()));
 		$controller = $this->getAccessibleMock('TYPO3\Neos\Controller\Module\Administration\UsersController', array('redirect'));
 		$this->inject($controller, 'response', $mockResponse);
 		$this->inject($controller, 'userFactory', $mockUserFactory);
@@ -39,7 +40,7 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockPartyRepository->expects($this->once())->method('add')->with($mockUser);
 		$mockAccountRepository->expects($this->once())->method('add')->with($mockAccount);
 
-		$controller->createAction('username', array('password'), 'John', 'Doe', 'TYPO3.Neos:Administrator');
+		$controller->createAction('username', array('password'), 'John', 'Doe', 'TYPO3.Neos:Administrator', $mockUserPreferences);
 	}
 
 }

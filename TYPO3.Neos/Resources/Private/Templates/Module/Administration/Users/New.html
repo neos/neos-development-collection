@@ -61,7 +61,18 @@
 				</div>
 			</fieldset>
 		</div>
+		<div class="neos-row-fluid">
+			<fieldset class="neos-span5">
+				<legend>User Preferences</legend>
 
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="userPreferences[preferences][interfaceLocale]">Interface language</label>
+					<div class="neos-controls">
+						<f:form.select name="userPreferences[preferences][interfaceLocale]" options="{settings.userInterface.availableLocales}" />
+					</div>
+				</div>
+			</fieldset>
+		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">Cancel</f:link.action>
 			<f:form.submit value="Save user" class="neos-button neos-button-primary" />

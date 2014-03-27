@@ -168,10 +168,6 @@ Requirejs - https://github.com/jrburke/requirejs
 new BSD, and MIT
 Version 2.1.9
 
-Requirejs i18n - https://github.com/requirejs/i18n
-new BSD, and MIT
-Version 2.0.4
-
 Requirejs text - https://github.com/requirejs/text
 new BSD, and MIT
 Version 2.0.10
@@ -189,6 +185,18 @@ Version 0.1.2
 Sly - https://github.com/darsain/sly
 MIT license
 Version 1.2.3
+
+
+Ember-i18n - https://github.com/jamesarosen/ember-i18n
+Apache License, Version 2.0
+Version 1.6.3
+Kept the lib/i18n.js and the vendor/cldr-1.0.0.js
+
+
+CLDR.js - https://github.com/jamesarosen/CLDR.js
+Apache License, Version 2.0
+Version 1.0.0
+Used file from the Ember-i18n library
 
 
 jQuery Cookie - https://github.com/carhartl/jquery-cookie
