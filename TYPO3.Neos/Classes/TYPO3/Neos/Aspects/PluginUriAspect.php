@@ -95,7 +95,7 @@ class PluginUriAspect {
 	 * temporary overriding the used node
 	 *
 	 * @param ActionRequest $request
-	 * @param JoinPointInterface $joinPoint The current joinpoint
+	 * @param JoinPointInterface $joinPoint The current join point
 	 * @param NodeInterface $node
 	 * @return string $uri
 	 */
