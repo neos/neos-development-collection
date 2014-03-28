@@ -100,6 +100,11 @@ define(
 			init: function() {
 				this._super();
 				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
+
+				var that = this;
+				EventDispatcher.on('nodesInvalidated', function() {
+					that.refresh();
+				});
 			},
 
 			didInsertElement: function() {
