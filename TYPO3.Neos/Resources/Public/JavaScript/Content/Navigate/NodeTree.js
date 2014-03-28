@@ -107,6 +107,11 @@ define(
 				this.on('afterPageLoaded', function(){
 					this._initializePropertyObservers($('#neos-page-metainformation'));
 				});
+
+				var that = this;
+				EventDispatcher.on('nodesInvalidated', function() {
+					that.refresh();
+				});
 			},
 
 			didInsertElement: function() {
