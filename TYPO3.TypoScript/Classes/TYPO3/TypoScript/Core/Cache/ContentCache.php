@@ -215,7 +215,7 @@ class ContentCache {
 			$entry = $cache->get($identifier);
 			if ($entry !== FALSE) {
 				if ($addCacheSegmentMarkersToPlaceholders) {
-					return self::CACHE_SEGMENT_START_TOKEN . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . '*' . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $entry . self::CACHE_SEGMENT_END_TOKEN;
+					return ContentCache::CACHE_SEGMENT_START_TOKEN . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . '*' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $entry . ContentCache::CACHE_SEGMENT_END_TOKEN;
 				} else {
 					return $entry;
 				}
