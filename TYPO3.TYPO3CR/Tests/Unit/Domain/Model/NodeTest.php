@@ -10,6 +10,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\TYPO3CR\Domain\Model\Node;
 
 /**
  * Testcase for the "Node" domain model
@@ -142,6 +143,45 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
 
 		$this->assertSame($expected, $matches);
+	}
+
+	/**
+	 * @test
+	 */
+	public function createNodeWithAutoCreatedChildNodesAndNoIdentifierUsesGeneratedIdentifierOfNodeForChildNodes() {
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array('locales' => 'mul_ZZ')));
+		$mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+		$mockContext->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
+
+		$mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+		$mockSubNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+
+		$mockNodeType->expects($this->any())->method('getDefaultValuesForProperties')->will($this->returnValue(array()));
+		$mockNodeType->expects($this->any())->method('getAutoCreatedChildNodes')->will($this->returnValue(array(
+			'subnode1' => $mockSubNodeType
+		)));
+
+		$i = 0;
+		$generatedIdentifiers = array();
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('createSingleNode'), array($mockNodeData, $mockContext));
+		$node->expects($this->any())->method('createSingleNode')->will($this->returnCallback(function() use (&$i, &$generatedIdentifiers, $mockSubNodeType) {
+			$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+			$newNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-' . $i++));
+
+			$newNode->expects($this->once())->method('createNode')->with('subnode1', $mockSubNodeType, $this->callback(function($identifier) use (&$generatedIdentifiers, $i) {
+				$generatedIdentifiers[$i] = $identifier;
+				return TRUE;
+			}));
+
+			return $newNode;
+		}));
+
+		$node->createNode('foo', $mockNodeType);
+		$node->createNode('bar', $mockNodeType);
+
+		$this->assertNotSame($generatedIdentifiers[1], $generatedIdentifiers[2], 'Child nodes should have distinct identifiers');
 	}
 
 }
