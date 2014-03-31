@@ -1,12 +1,13 @@
 define(
 [
 	'emberjs',
+	'Library/jquery-with-dependencies',
 	'text!./FileUpload.html',
 	'Library/plupload',
 	'Shared/Notification',
 	'Shared/Configuration'
 ],
-function(Ember, template, plupload, Notification, Configuration) {
+function(Ember, $, template, plupload, Notification, Configuration) {
 	return Ember.View.extend({
 		value: '',
 
