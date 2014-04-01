@@ -93,40 +93,6 @@ class NodeService {
 	}
 
 	/**
-	 * Remove all child nodes not configured in the current Node Type
-	 *
-	 * @param NodeInterface $node
-	 * @return void
-	 */
-	public function cleanUpChildNodes(NodeInterface $node) {
-		$documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.Neos:Document');
-		$nodeChildNodes = $node->getNodeType()->getAutoCreatedChildNodes();
-		foreach ($node->getChildNodes() as $childNode) {
-			/** @var NodeInterface $childNode */
-			if (!$this->isNodeOfType($childNode, $documentNodeType) && !isset($nodeChildNodes[$childNode->getName()])) {
-				$this->systemLogger->log(sprintf('Remove child node "%s" from: %s', (string)$childNode, (string)$node), LOG_DEBUG, NULL, 'TYPO3CR');
-				$childNode->remove();
-			}
-		}
-	}
-
-	/**
-	 * Clean up Node properties and child nodes
-	 *
-	 * Remove all properties or child nodes not declared on the current Node Type
-	 *
-	 * @param NodeInterface $node
-	 * @return void
-	 */
-	public function cleanUpNodePropertiesAndChildNodes(NodeInterface $node) {
-		if ($node->getNodeType()->getName() === 'unstructured') {
-			return;
-		}
-		$this->cleanUpProperties($node);
-		$this->cleanUpChildNodes($node);
-	}
-
-	/**
 	 * @param NodeInterface $node
 	 * @param NodeType $nodeType
 	 * @return boolean

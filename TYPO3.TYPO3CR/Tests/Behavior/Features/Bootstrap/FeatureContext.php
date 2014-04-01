@@ -57,6 +57,7 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 
 	/**
 	 * @Given /^I have the following nodes:$/
+	 * @When /^I create the following nodes:$/
 	 */
 	public function iHaveTheFollowingNodes(TableNode $table) {
 		/** @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager $nodeTypeManager */
