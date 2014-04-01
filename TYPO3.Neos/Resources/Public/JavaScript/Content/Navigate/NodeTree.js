@@ -433,6 +433,10 @@ define(
 				});
 			},
 
+			afterPersistNode: function(node) {
+				EventDispatcher.trigger('nodeCreated');
+			},
+
 			refresh: function() {
 				this.filterTree();
 			},
