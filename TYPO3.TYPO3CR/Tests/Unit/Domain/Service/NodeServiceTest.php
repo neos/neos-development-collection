@@ -222,8 +222,12 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 *
+	 * TODO: Adjust after the removal of child nodes is implemented again.
 	 */
 	public function cleanUpChildNodesRemoveAllUndeclaredChildNodes() {
+		$this->markTestSkipped('Currently this functionality is disabled. We will introduce it again at a later point and then reenable this test.');
+
 		$nodeService = $this->createNodeService();
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
@@ -288,8 +292,12 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 *
+	 * TODO: Adjust after the removal of child nodes is implemented again.
 	 */
 	public function cleanUpChildNodesNeverRemoveDocumentNode() {
+		$this->markTestSkipped('Currently this functionality is disabled. We will introduce it again at a later point and then reenable this test.');
+
 		$nodeService = $this->createNodeService();
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
