@@ -18,7 +18,6 @@ use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
@@ -44,6 +43,9 @@ class EditableViewHelper extends AbstractTagBasedViewHelper {
 	/**
 	 * In live workspace this just renders a tag with the specified $tag-name containing the value of the given $property.
 	 * For logged in users with access to the Backend this also adds required attributes for the RTE to work.
+	 *
+	 * Note: when passing a node you have to make sure a metadata wrapper is used around this that matches the given node
+	 * (see contentElement.wrap - i.e. the WrapViewHelper).
 	 *
 	 * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
 	 * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
