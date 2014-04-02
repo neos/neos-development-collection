@@ -722,8 +722,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	public function createSingleNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
 		if ($dimensions === NULL || $dimensions === array()) {
-			$targetDimensions = $this->context->getTargetDimensions();
-			$dimensions = array_map(function ($value) { return array ($value); }, $targetDimensions);
+			$dimensions = $this->context->getTargetDimensionValues();
 		}
 
 		$nodeData = $this->nodeData->createSingleNodeData($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
@@ -1071,7 +1070,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return void
 	 */
 	protected function materializeNodeData() {
-		$dimensions = array_map(function($value) { return array($value); }, $this->context->getTargetDimensions());
+		$dimensions = $this->context->getTargetDimensionValues();
 
 		$newNodeData = new NodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $this->nodeData->getIdentifier(), $dimensions);
 		$this->nodeDataRepository->add($newNodeData);
@@ -1204,11 +1203,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * Internal method
+	 *
 	 * The dimension value of this node has to match the current target dimension value (must be higher in priority or equal)
 	 *
 	 * @return boolean
 	 */
-	protected function dimensionsAreMatchingTargetDimensionValues() {
+	public function dimensionsAreMatchingTargetDimensionValues() {
 		$dimensions = $this->getDimensions();
 		$contextDimensions = $this->context->getDimensions();
 		foreach ($this->context->getTargetDimensions() as $dimensionName => $targetDimensionValue) {
