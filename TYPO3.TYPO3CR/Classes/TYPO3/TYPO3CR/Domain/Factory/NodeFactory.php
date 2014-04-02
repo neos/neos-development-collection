@@ -34,15 +34,16 @@ class NodeFactory {
 	/**
 	 * Creates a node from the given NodeData container.
 	 *
-	 * If this factory has previously created a Node for the given $node and $context,
-	 * it will return the same Node again.
+	 * If this factory has previously created a Node for the given $node and it's dimensions,
+	 * it will return the same node again.
 	 *
 	 * @param NodeData $nodeData
 	 * @param Context $context
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
 	public function createFromNodeData(NodeData $nodeData, Context $context) {
-		$internalNodeIdentifier = $nodeData->getIdentifier() . spl_object_hash($context);
+		$internalNodeIdentifier = $nodeData->getIdentifier() . $nodeData->getDimensionsHash() . spl_object_hash($context);
+
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			$this->nodes[$internalNodeIdentifier] = new Node($nodeData, $context);
 		}
