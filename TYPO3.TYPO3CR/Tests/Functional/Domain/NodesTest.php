@@ -1147,4 +1147,30 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertNotSame($variantNodeA1, $variantNodeB);
 	}
 
+	/**
+	 * @test
+	 */
+	public function createVariantForContextMatchesTargetContextDimensions() {
+		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$contentDimensionRepository->setDimensionsConfiguration(array(
+			'test' => array(
+				'default' => 'a'
+			)
+		));
+
+		$variantContextA = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('a')),
+			'targetDimensions' => array('test' => 'a')
+		));
+		$variantContextB = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('b', 'a')),
+			'targetDimensions' => array('test' => 'b')
+		));
+
+		$variantNodeA = $variantContextA->getRootNode()->createNode('test');
+		$variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
+
+		$this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array ($value); }, $variantContextB->getTargetDimensions()));
+	}
+
 }
