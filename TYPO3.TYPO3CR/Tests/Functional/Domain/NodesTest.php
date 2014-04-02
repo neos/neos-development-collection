@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  *                                                                        */
 
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Functional test case which covers all Node-related behavior of the
@@ -1127,4 +1128,23 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertNotSame($testReferencedNodeProperty->getWorkspace(), $referencedNode->getWorkspace());
 		$this->assertSame($testReferencedNodeProperty->getWorkspace(), $testReferencedNode->getWorkspace());
 	}
+
+	/**
+	 * @test
+	 */
+	public function nodeFactoryCachesCreatedNodesBasedOnIdentifierAndDimensions() {
+		/** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
+		$nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+
+		$nodeDataA = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', array('test' => array(1)));
+		$variantNodeA1 = $nodeFactory->createFromNodeData($nodeDataA, $this->context);
+		$variantNodeA2 = $nodeFactory->createFromNodeData($nodeDataA, $this->context);
+
+		$nodeDataB = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', array('test' => array(2)));
+		$variantNodeB = $nodeFactory->createFromNodeData($nodeDataB, $this->context);
+
+		$this->assertSame($variantNodeA1, $variantNodeA2);
+		$this->assertNotSame($variantNodeA1, $variantNodeB);
+	}
+
 }

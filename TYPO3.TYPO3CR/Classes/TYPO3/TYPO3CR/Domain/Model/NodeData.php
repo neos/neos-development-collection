@@ -490,7 +490,7 @@ class NodeData extends AbstractNodeData {
 	 * @param string $path Path specifying the node, relative to this node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The specified node or NULL if no such node exists
 	 *
-	 * TODO This method should be removed, since it doesn't take the context into account correctly
+	 * @TODO This method should be removed, since it doesn't take the context into account correctly
 	 */
 	public function getNode($path) {
 		return $this->nodeDataRepository->findOneByPath($this->normalizePath($path), $this->workspace);
@@ -717,6 +717,17 @@ class NodeData extends AbstractNodeData {
 		ksort($dimensionValues);
 		$this->dimensionValues = $dimensionValues;
 		$this->dimensionsHash = md5(json_encode($dimensionValues));
+	}
+
+	/**
+	 * Get a unique string for all dimension values
+	 *
+	 * Internal method
+	 *
+	 * @return string
+	 */
+	public function getDimensionsHash() {
+		return $this->dimensionsHash;
 	}
 
 	/**
