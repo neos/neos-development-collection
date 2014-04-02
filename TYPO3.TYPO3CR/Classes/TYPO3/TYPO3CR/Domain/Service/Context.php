@@ -262,19 +262,22 @@ class Context {
 	/**
 	 * Adopts a node from a (possibly) different context to this context
 	 *
-	 * Check if a node variant already exists for this context and return it if found. Otherwise a new node variant for
-	 * this context is created.
+	 * Check if a node variant matching the exact dimensions already exists for this context and
+	 * return it if found. Otherwise a new node variant for this context is created.
+	 *
+	 * In case the node already exists in the context but doesn't match the target dimensions a
+	 * new more specific node is created and returned.
 	 *
 	 * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
 	 * @return NodeInterface A new or existing node that matches this context
 	 */
 	public function adoptNode(NodeInterface $node) {
-		if ($node->getContext() === $this) {
+		if ($node->getContext() === $this && $node->dimensionsAreMatchingTargetDimensionValues()) {
 			return $node;
 		}
 
 		$existingNode = $this->getNodeByIdentifier($node->getIdentifier());
-		if ($existingNode !== NULL) {
+		if ($existingNode !== NULL && $existingNode->dimensionsAreMatchingTargetDimensionValues()) {
 			return $existingNode;
 		}
 
@@ -333,6 +336,15 @@ class Context {
 	 */
 	public function getTargetDimensions() {
 		return $this->targetDimensions;
+	}
+
+	/**
+	 * An indexed array of dimensions with a set of values that should be applied when updating or creating
+	 *
+	 * @return array
+	 */
+	public function getTargetDimensionValues() {
+		return array_map(function ($value) { return array ($value); }, $this->getTargetDimensions());
 	}
 
 	/**

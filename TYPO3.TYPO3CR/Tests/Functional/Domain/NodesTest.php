@@ -1173,4 +1173,88 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array ($value); }, $variantContextB->getTargetDimensions()));
 	}
 
+	/**
+	 * @test
+	 */
+	public function adoptNodeReturnsExistingNodeWithMatchingDimensionsIfPossible() {
+		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$contentDimensionRepository->setDimensionsConfiguration(array(
+			'test' => array(
+				'default' => 'a'
+			)
+		));
+
+		$variantContextA = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('a')),
+			'targetDimensions' => array('test' => 'a')
+		));
+		$variantContextB = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('b', 'a')),
+			'targetDimensions' => array('test' => 'b')
+		));
+
+		$identifier = '30e893c1-caef-0ca5-b53d-e5699bb8e506';
+		$variantNodeA = $variantContextA->getRootNode()->createNode('test', NULL, $identifier);
+		$variantNodeAWithDifferentDimensionValues = $variantContextA->getRootNode()->createNode('test2', NULL, $identifier, array('test' => array('x')));
+
+		// Same context
+		$this->assertSame($variantContextA->adoptNode($variantNodeA), $variantNodeA);
+		$this->assertNotSame($variantContextA->adoptNode($variantNodeAWithDifferentDimensionValues), $variantNodeAWithDifferentDimensionValues);
+
+		// Different context with fallback
+		$this->assertNotSame($variantContextB->adoptNode($variantNodeA)->getDimensions(), $variantNodeA->getDimensions());
+	}
+
+	/**
+	 * @test
+	 */
+	public function adoptNodeMatchesTargetContextDimensions() {
+		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$contentDimensionRepository->setDimensionsConfiguration(array(
+			'test' => array(
+				'default' => 'a'
+			)
+		));
+
+		$variantContextA = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('a')),
+			'targetDimensions' => array('test' => 'a')
+		));
+		$variantContextB = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('b', 'a')),
+			'targetDimensions' => array('test' => 'b')
+		));
+
+		$variantNodeA = $variantContextA->getRootNode()->createNode('test');
+		$variantNodeB = $variantContextB->adoptNode($variantNodeA);
+
+		$this->assertSame($variantNodeB->getDimensions(), $variantContextB->getTargetDimensionValues());
+	}
+
+	/**
+	 * @test
+	 */
+	public function adoptNodeWithExistingNodeMatchingTargetDimensionValuesWillReuseNode() {
+		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$contentDimensionRepository->setDimensionsConfiguration(array(
+			'test' => array(
+				'default' => 'a'
+			)
+		));
+
+		$variantContextA = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('a')),
+			'targetDimensions' => array('test' => 'a')
+		));
+		$variantContextB = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('b', 'a')),
+			'targetDimensions' => array('test' => 'b')
+		));
+
+		$variantNodeA = $variantContextA->getRootNode()->createNode('test', NULL, NULL, array('test' => array('a', 'b')));
+		$variantNodeB = $variantContextB->adoptNode($variantNodeA);
+
+		$this->assertSame($variantNodeA->getDimensions(), $variantNodeB->getDimensions());
+	}
+
 }
