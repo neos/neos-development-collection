@@ -103,7 +103,6 @@ class ContentElementWrappingService {
 
 		$attributes = $this->addNodePropertyAttributes($node, $attributes);
 
-		$attributes['data-neos-__nodetype'] = $nodeType->getName();
 		return $this->htmlAugmenter->addAttributes($content, $attributes);
 	}
 
