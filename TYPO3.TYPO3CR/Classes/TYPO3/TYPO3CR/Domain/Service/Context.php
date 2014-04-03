@@ -252,6 +252,7 @@ class Context {
 			$node = $this->nodeFactory->createFromNodeData($nodeData, $this);
 			if ($node !== NULL) {
 				$nodes[] = $node;
+				$this->firstLevelNodeCache->setByPath($node->getPath(), $node);
 			}
 		}
 
