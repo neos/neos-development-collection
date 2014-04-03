@@ -278,7 +278,9 @@ class Context {
 			return $existingNode;
 		}
 
-		return $node->createVariantForContext($this);
+		$adoptedNode = $node->createVariantForContext($this);
+		$this->firstLevelNodeCache->setByIdentifier($adoptedNode->getIdentifier(), $adoptedNode);
+		return $adoptedNode;
 	}
 
 	/**
