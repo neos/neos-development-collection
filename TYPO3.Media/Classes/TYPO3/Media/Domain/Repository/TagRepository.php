@@ -25,4 +25,13 @@ class TagRepository extends \TYPO3\Flow\Persistence\Repository {
 	 */
 	protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 
+	/**
+	 * @param string $searchTerm
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 */
+	public function findBySearchTerm($searchTerm) {
+		$query = $this->createQuery();
+		return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
+	}
+
 }

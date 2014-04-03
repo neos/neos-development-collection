@@ -26,6 +26,24 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
 
 	/**
+	 * Find assets by title or given tags
+	 *
+	 * @param string $searchTerm
+	 * @param array $tags
+	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 */
+	public function findBySearchTermOrTags($searchTerm, array $tags = array()) {
+		$query = $this->createQuery();
+
+		$constraints = array($query->like('title', '%' . $searchTerm . '%'));
+		foreach ($tags as $tag) {
+			$constraints[] = $query->contains('tags', $tag);
+		}
+
+		return $query->matching($query->logicalOr($constraints))->execute();
+	}
+
+	/**
 	 * Find Assets with the given Tag assigned
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Tag $tag
