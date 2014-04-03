@@ -351,7 +351,7 @@
       type: string
       ui:
         label: 'Form identifier'
-        reloadIfChanged: true
+        reloadIfChanged: TRUE
         inspector:
           group: form
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
@@ -360,3 +360,22 @@
             values:
               '':
                 label: ''
+
+'TYPO3.Neos.NodeTypes:AssetList':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Asset list'
+    icon: 'icon-folder-open-alt'
+    inspector:
+      groups:
+        resources:
+          label: 'Resources'
+          position: 5
+  properties:
+    assets:
+      type: array<TYPO3\Media\Domain\Model\Asset>
+      ui:
+        inspector:
+          group: 'resources'
+        label: 'Assets'
+        reloadIfChanged: TRUE
