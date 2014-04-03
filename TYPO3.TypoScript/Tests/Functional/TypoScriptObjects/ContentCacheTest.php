@@ -282,4 +282,27 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->assertStringStartsWith('Cached segment|counter=2|Exception', $secondRenderResult);
 	}
 
+	/**
+	 * @test
+	 */
+	public function exceptionInAlreadyCachedSegmentShouldNotLeaveSegmentMarkersInOutput() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/nestedCacheSegmentsWithConditionalException');
+
+		$view->assign('object', $object);
+		$view->assign('throwException', FALSE);
+
+		$firstRenderResult = $view->render();
+		$this->assertEquals('Cached segment|counter=1|It depends|End segment', $firstRenderResult);
+
+		$this->contentCache->flushByTag('Inner');
+		$view->assign('throwException', TRUE);
+
+		$secondRenderResult = $view->render();
+		$this->assertStringStartsWith('Cached segment|counter=1|Exception', $secondRenderResult);
+	}
+
 }
