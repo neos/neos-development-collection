@@ -25,6 +25,12 @@ use TYPO3\Flow\Annotations as Flow;
 class Asset implements AssetInterface {
 
 	/**
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 * @Flow\Inject
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @var \DateTime
 	 */
 	protected $lastModified;
@@ -72,6 +78,23 @@ class Asset implements AssetInterface {
 	 * @return void
 	 */
 	protected function initialize() {
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return $this->persistenceManager->getIdentifierByObject($this);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabel() {
+		if (empty($this->title)) {
+			return $this->getIdentifier();
+		}
+		return $this->getTitle();
 	}
 
 	/**
