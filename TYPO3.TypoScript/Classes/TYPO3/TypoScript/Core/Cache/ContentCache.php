@@ -143,17 +143,20 @@ class ContentCache {
 	 * This method is called by the TypoScript Runtime while rendering a TypoScript object.
 	 *
 	 * @param string $content The content with an outer cache segment
+	 * @param boolean $storeCacheEntries Whether to store extracted cache segments in the cache
 	 * @return string The (pure) content without cache segment markers
 	 */
-	public function processCacheSegments($content) {
+	public function processCacheSegments($content, $storeCacheEntries = TRUE) {
 		$this->parser->extractRenderedSegments($content);
 
-		$segments = $this->parser->getCacheSegments();
+		if ($storeCacheEntries) {
+			$segments = $this->parser->getCacheSegments();
 
-		foreach ($segments as $segment) {
-				// FALSE means we do not need to store the cache entry again (because it was previously fetched)
-			if ($segment['tags'] !== FALSE) {
-				$this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($segment['tags']));
+			foreach ($segments as $segment) {
+					// FALSE means we do not need to store the cache entry again (because it was previously fetched)
+				if ($segment['tags'] !== FALSE) {
+					$this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($segment['tags']));
+				}
 			}
 		}
 

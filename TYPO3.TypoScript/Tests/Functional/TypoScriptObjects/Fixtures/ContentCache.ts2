@@ -1,4 +1,5 @@
 prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
+prototype(TYPO3.TypoScript:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
 
 contentCache.cachedSegment = TYPO3.TypoScript:Array {
 	5 = 'Cached segment|'
@@ -239,6 +240,51 @@ contentCache.nestedCacheSegmentsWithInnerException = TYPO3.TypoScript:Array {
 	}
 
 	20 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.nestedCacheSegmentsWithConditionalException = TYPO3.TypoScript:Array {
+
+	5 = 'Cached segment|'
+
+	// This is just a cached path
+	15 = TYPO3.TypoScript:Array {
+		5 = ${'counter=' + object.counter + '|'}
+
+		@cache {
+			mode = 'cached'
+		}
+	}
+
+	// Use an exception to have the exception handler working
+	20 = TYPO3.TypoScript:Collection {
+		collection = ${['Foo']}
+
+		itemName = 'item'
+		itemRenderer = TYPO3.TypoScript:Testing.Throwing {
+			shouldThrow = ${throwException}
+
+			@cache {
+				mode = 'cached'
+
+				entryTags {
+					inner = 'Inner'
+				}
+			}
+
+			@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+		}
+	}
+
+	25 = '|End segment'
 
 	@cache {
 		mode = 'cached'

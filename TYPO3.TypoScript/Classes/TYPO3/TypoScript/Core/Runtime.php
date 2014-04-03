@@ -432,8 +432,8 @@ class Runtime {
 			$this->popContext();
 		}
 
-		if ($this->enableContentCache && $cacheForPathEnabled && $currentPathIsEntryPoint) {
-			$output = $this->contentCache->processCacheSegments($output);
+		if ($cacheForPathEnabled && $currentPathIsEntryPoint) {
+			$output = $this->contentCache->processCacheSegments($output, $this->enableContentCache);
 			$this->inCacheEntryPoint = NULL;
 			$this->addCacheSegmentMarkersToPlaceholders = FALSE;
 		}
