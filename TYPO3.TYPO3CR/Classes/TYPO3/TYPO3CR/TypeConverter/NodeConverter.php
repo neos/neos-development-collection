@@ -238,7 +238,13 @@ class NodeConverter extends AbstractTypeConverter {
 			if (!isset($nodeTypeProperties[$nodePropertyName])) {
 				throw new TypeConverterException(sprintf('node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
 			}
-			if ($this->objectManager->isRegistered($nodePropertyType) && $nodePropertyValue !== '') {
+			if ($nodePropertyType !== NULL) {
+				$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($nodePropertyType);
+				$innerType = $parsedType['elementType'] !== NULL ? $parsedType['elementType'] : $parsedType['type'];
+			} else {
+				$innerType = $nodePropertyType;
+			}
+			if ($this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
 				$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $nodePropertyType);
 			}
 			$nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
