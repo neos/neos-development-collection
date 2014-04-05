@@ -12,9 +12,12 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  *                                                                        */
 
 use PHPUnit_Framework_Assert as Assert;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
@@ -55,11 +58,27 @@ class NodeConverterTest extends UnitTestCase {
 	 */
 	protected $mockConverterConfiguration;
 
+	/**
+	 * @var ObjectManagerInterface
+	 */
+	protected $mockObjectManager;
+
+	/**
+	 * @var PropertyMapper
+	 */
+	protected $mockPropertyMapper;
+
 	public function setUp() {
 		$this->nodeConverter = new NodeConverter();
 
 		$this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface')->disableOriginalConstructor()->getMock();
 		$this->inject($this->nodeConverter, 'contextFactory', $this->mockContextFactory);
+
+		$this->mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
+		$this->inject($this->nodeConverter, 'propertyMapper', $this->mockPropertyMapper);
+
+		$this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+		$this->inject($this->nodeConverter, 'objectManager', $this->mockObjectManager);
 
 		$this->mockConverterConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfigurationInterface')->disableOriginalConstructor()->getMock();
 	}
@@ -69,24 +88,74 @@ class NodeConverterTest extends UnitTestCase {
 	 */
 	public function convertFromSetsRemovedContentShownContextPropertyFromConfigurationForContextPathSource() {
 		$contextPath = '/foo/bar@user-demo';
+		$nodePath = '/foo/bar';
 
-		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-
-		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-
-		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
-		$mockContext->expects($this->any())->method('getNodeByIdentifier')->with($contextPath)->will($this->returnValue($mockNode));
+		$mockNode = $this->setUpNodeWithNodeType($nodePath);
 
 		$this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(TRUE));
 
-		$this->mockContextFactory->expects($this->any())->method('create')->with($this->callback(function($properties) {
-			Assert::assertTrue(isset($properties['removedContentShown']), 'removedContentShown context property should be set');
-			Assert::assertTrue($properties['removedContentShown'], 'removedContentShown context property should be TRUE');
-			return TRUE;
-		}))->will($this->returnValue($mockContext));
+		$result = $this->nodeConverter->convertFrom($contextPath, NULL, array(), $this->mockConverterConfiguration);
+		$this->assertSame($mockNode, $result);
 
+		$contextProperties = $mockNode->getContext()->getProperties();
+		$this->assertArrayHasKey('removedContentShown', $contextProperties, 'removedContentShown context property should be set');
+		$this->assertTrue($contextProperties['removedContentShown'], 'removedContentShown context property should be TRUE');
+	}
 
-		$this->nodeConverter->convertFrom($contextPath, NULL, array(), $this->mockConverterConfiguration);
+	/**
+	 * @test
+	 */
+	public function convertFromUsesPropertyMapperToConvertNodePropertyOfArrayType() {
+		$contextPath = '/foo/bar@user-demo';
+		$nodePath = '/foo/bar';
+		$nodeTypeProperties = array(
+			'assets' => array(
+				'type' => 'array<TYPO3\Media\Domain\Model\Asset>'
+			)
+		);
+		$decodedPropertyValue = array('8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd');
+		$source = array(
+			'__contextNodePath' => $contextPath,
+			'assets' => json_encode($decodedPropertyValue)
+		);
+
+		$convertedPropertyValue = array(new \stdClass(), new \stdClass());
+
+		$mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
+
+		$this->mockObjectManager->expects($this->any())->method('isRegistered')->with('TYPO3\Media\Domain\Model\Asset')->will($this->returnValue(TRUE));
+
+		$this->mockPropertyMapper->expects($this->once())->method('convert')->with($decodedPropertyValue, $nodeTypeProperties['assets']['type'])->will($this->returnValue($convertedPropertyValue));
+		$mockNode->expects($this->once())->method('setProperty')->with('assets', $convertedPropertyValue);
+
+		$this->nodeConverter->convertFrom($source, NULL, array(), $this->mockConverterConfiguration);
+	}
+
+	/**
+	 * @param string $nodePath
+	 * @param array $nodeTypeProperties
+	 * @return NodeInterface
+	 */
+	protected function setUpNodeWithNodeType($nodePath, $nodeTypeProperties = array()) {
+		$mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+		$mockNodeType->expects($this->any())->method('getProperties')->will($this->returnValue($nodeTypeProperties));
+		$mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
+
+		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
+		$mockContext->expects($this->any())->method('getNode')->with($nodePath)->will($this->returnValue($mockNode));
+
+		$mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+
+		// Simulate context properties by returning the same properties that were given to the ContextFactory
+		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function($contextProperties) use ($mockContext) {
+			$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue($contextProperties));
+			return $mockContext;
+		}));
+
+		return $mockNode;
 	}
 }

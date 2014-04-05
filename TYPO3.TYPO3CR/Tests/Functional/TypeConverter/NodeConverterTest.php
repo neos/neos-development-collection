@@ -130,8 +130,6 @@ class NodeConverterTest extends FunctionalTestCase {
 
 	/**
 	 * @test
-	 *
-	 * @return void
 	 */
 	public function nodeFromLiveWorkspaceCanBeRetrievedAgainUsingNodeConverter() {
 		$this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -142,8 +140,6 @@ class NodeConverterTest extends FunctionalTestCase {
 
 	/**
 	 * @test
-	 *
-	 * @return void
 	 */
 	public function nodeFromPersonalWorkspaceCanBeRetrievedAgainUsingNodeConverter() {
 		$this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -156,8 +152,6 @@ class NodeConverterTest extends FunctionalTestCase {
 
 	/**
 	 * @test
-	 *
-	 * @return void
 	 */
 	public function nodeFromGermanDimensionIsFetchedCorrectly() {
 		$this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -168,8 +162,6 @@ class NodeConverterTest extends FunctionalTestCase {
 
 	/**
 	 * @test
-	 *
-	 * @return void
 	 */
 	public function nodePropertiesAreSetWhenConverterIsCalledWithInputArray() {
 		$this->setupNodeWithShadowNodeInPersonalWorkspace();
