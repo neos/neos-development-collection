@@ -368,20 +368,17 @@ class NodeDataRepository extends Repository {
 	/**
 	 * Finds recursively nodes by its parent and (optionally) by its node type.
 	 *
-	 * @see this::findByParentAndNodeType
+	 * @see findByParentAndNodeType()
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
-	 * @param integer $offset An optional offset for the query
+	 * @param Workspace $workspace The containing workspace
+	 * @param array $dimensions An array of dimensions to dimension values
 	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\PersistentNodeInterface> The nodes found on the given path
-	 *
-	 * TODO Respect content dimensions
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
 	 */
-	public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $limit = NULL, $offset = NULL, $removedNodes = FALSE) {
-		return $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, NULL, $limit, $offset, $removedNodes, TRUE);
+	public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = NULL, $removedNodes = FALSE) {
+		return $this->findByParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, TRUE);
 	}
 
 	/**

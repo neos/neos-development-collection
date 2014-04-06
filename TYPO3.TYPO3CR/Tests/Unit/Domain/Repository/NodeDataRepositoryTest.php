@@ -11,12 +11,10 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
-class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class NodeDataRepositoryTest extends UnitTestCase {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
@@ -114,6 +112,23 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$result = $this->nodeDataRepository->findOneByIdentifier('abcd-efgh-ijkl-mnop', $liveWorkspace, $dimensions);
 
 		$this->assertNull($result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function findByParentAndNodeTypeRecursivelyCallsGetNodeDataForParentAndNodeTypeWithRecursiveFlag() {
+		$parentPath = 'some/parent/path';
+		$nodeTypeFilter = 'Some.Package:SomeNodeType';
+		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$removedNodesFlag = TRUE;
+		$recursiveFlag = TRUE;
+
+		$this->nodeDataRepository->expects($this->once())->method('getNodeDataForParentAndNodeType')->with($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, $removedNodesFlag, $recursiveFlag)->will($this->returnValue(array()));
+
+		$this->nodeDataRepository->findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, $mockWorkspace, $dimensions, TRUE);
+
 	}
 
 	/**
