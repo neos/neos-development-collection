@@ -24,7 +24,12 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception;
 
 /**
- * The repository for node data
+ * A purely internal repository for NodeData storage
+ *
+ * DO NOT USE outside the TYPO3CR package!
+ *
+ * The ContextFactory can be used to create a Context that allows to find Node instances that act as the
+ * public API to the TYPO3CR.
  *
  * @Flow\Scope("singleton")
  */
