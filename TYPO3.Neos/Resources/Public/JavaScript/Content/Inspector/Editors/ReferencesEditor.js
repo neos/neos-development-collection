@@ -36,20 +36,21 @@ define(
 						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							$.get(nodesEndpoint + '?searchTerm=' + query.term + that.get('nodeTypes').reduce(function(previousValue, item) {
-								return previousValue + '&nodeTypes[]=' + item;
-							}, ''), function(parsedResponse) {
-								var data = {results: []};
+							var url = nodesEndpoint + '?searchTerm=' + query.term + '&nodeTypes[]=' + that.get('nodeTypes').join('&nodeTypes[]=');
+							HttpClient.getResource(url).then(
+								function(parsedResponse) {
+									var data = {results: []};
 
-								$(parsedResponse).find('li').each(function(index, value){
-									data.results.push({
-										id: $(value).data('identifier'),
-										text:  $(value).text()
+									$(parsedResponse).find('li').each(function(index, value){
+										data.results.push({
+											id: $(value).data('identifier'),
+											text:  $(value).text()
+										});
 									});
-								});
 
-								query.callback(data);
-							}, 'html');
+									query.callback(data);
+								}
+							);
 						}, 200);
 					}
 				});
