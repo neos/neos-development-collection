@@ -170,7 +170,6 @@ function(
 
 		_initializeVieAfterSchemaIsLoaded: function() {
 			NodeSelection.initialize();
-			PublishableNodes.initialize();
 			this.trigger('pageLoaded');
 
 			this._registerVieNodeTypeTemplateCallbacks();

@@ -47,14 +47,15 @@ define(
 			return this.get('workspaceWidePublishableEntitySubjects').length;
 		}.property('workspaceWidePublishableEntitySubjects.length'),
 
-		initialize: function() {
+		init: function() {
 			vie.entities.on('change', this._updatePublishableEntities, this);
 			this._updatePublishableEntities();
 
 			EventDispatcher
 				.on('nodeCreated', this, 'getWorkspaceWideUnpublishedNodes')
 				.on('nodeDeleted', this, 'getWorkspaceWideUnpublishedNodes')
-				.on('nodeMoved', this, 'getWorkspaceWideUnpublishedNodes');
+				.on('nodeMoved', this, 'getWorkspaceWideUnpublishedNodes')
+				.on('nodesUpdated', this, '_updatePublishableEntities');
 		},
 
 		/**
