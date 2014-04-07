@@ -112,6 +112,7 @@ define(
 					entitySubjects.forEach(function(subject) {
 						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 					});
+					that.getWorkspaceWideUnpublishedNodes();
 					if (autoPublish !== true) {
 						var pageMetaInformation = $('#neos-page-metainformation'),
 							nodeType = pageMetaInformation.data('neos-_node-type'),
@@ -156,9 +157,8 @@ define(
 
 			WorkspaceEndpoint.discardNodes(nodes).then(
 				function() {
-					entitySubjects.forEach(function(subject) {
-						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
-					});
+					that.set('publishableEntitySubjects', []);
+					that.getWorkspaceWideUnpublishedNodes();
 					require(
 						{context: 'neos'},
 						[
@@ -189,9 +189,9 @@ define(
 		 * @return {void}
 		 */
 		publishAll: function() {
-			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
-				publishableEntities = this.get('publishableEntitySubjects'),
-				that = this;
+			var that = this,
+				workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
+				publishableEntities = this.get('publishableEntitySubjects');
 
 			WorkspaceEndpoint.publishAll(workspaceName).then(
 				function() {
@@ -199,7 +199,8 @@ define(
 						vie.entities.get(element).set('typo3:__workspacename', 'live');
 					});
 
-					that.getWorkspaceWideUnpublishedNodes();
+					that.set('publishableEntitySubjects', []);
+					that.set('workspaceWidePublishableEntitySubjects', []);
 					Notification.ok('Published all changes.');
 				},
 				function(error) {
@@ -214,9 +215,13 @@ define(
 		 * @return {void}
 		 */
 		discardAll: function() {
-			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
+			var that = this,
+				workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
+
 			WorkspaceEndpoint.discardAll(workspaceName).then(
 				function() {
+					that.set('publishableEntitySubjects', []);
+					that.set('workspaceWidePublishableEntitySubjects', []);
 					require(
 						{context: 'neos'},
 						[
@@ -232,7 +237,6 @@ define(
 							});
 						}
 					);
-					that.getWorkspaceWideUnpublishedNodes();
 					Notification.ok('Discarded all changes.');
 				},
 				function(error) {
