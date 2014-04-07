@@ -259,16 +259,16 @@ define(
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.getParent().data.href);
-					EventDispatcher.trigger('nodeDeleted', node.getParent());
 				}
+				EventDispatcher.trigger('nodeDeleted', node.getParent());
 			},
 
 			afterMove: function(node) {
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.data.href);
-					EventDispatcher.trigger('nodeMoved', node);
 				}
+				EventDispatcher.trigger('nodeMoved', node);
 			},
 
 			editNode: function(node) {
