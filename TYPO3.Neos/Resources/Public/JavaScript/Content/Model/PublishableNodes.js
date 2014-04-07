@@ -62,24 +62,22 @@ define(
 		 * @return {void}
 		 */
 		_updatePublishableEntities: function() {
-			var publishableEntitySubjects = [];
-			var pageNodeContextPath = $('#neos-page-metainformation').attr('about'),
-				pageNodePath = pageNodeContextPath.substr(0, pageNodeContextPath.lastIndexOf('@'));
+			var publishableEntitySubjects = [],
+				documentNodeContextPath = $('#neos-page-metainformation').attr('about');
 
 			vie.entities.forEach(function(entity) {
 				if (this._isEntityPublishable(entity)) {
-					var nodePath = entity.id.substr(1, entity.id.lastIndexOf('@') - 1);
-
-					if (!this.get('workspaceWidePublishableEntitySubjects').findBy('nodePath', nodePath)) {
+					var entitySubject = entity.id,
+						nodeContextPath = entitySubject.slice(1, entitySubject.length - 1);
+					if (!this.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath)) {
 						this.get('workspaceWidePublishableEntitySubjects').addObject({
-							nodePath: nodePath,
-							pageNodePath: pageNodePath
+							nodeContextPath: nodeContextPath,
+							documentNodeContextPath: documentNodeContextPath
 						});
 					}
-					publishableEntitySubjects.push(entity.id);
+					publishableEntitySubjects.push(entitySubject);
 				}
 			}, this);
-
 			this.set('publishableEntitySubjects', publishableEntitySubjects);
 		},
 
@@ -137,8 +135,8 @@ define(
 				entity.set('typo3:__workspacename', workspaceOverride);
 			}
 
-			var nodePath = entity.id.substr(1, entity.id.lastIndexOf('@') - 1),
-				node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodePath', nodePath);
+			var nodeContextPath = entity.id,
+				node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath);
 			if (node) {
 				that.get('workspaceWidePublishableEntitySubjects').removeObject(node);
 			}
@@ -216,8 +214,7 @@ define(
 		 * @return {void}
 		 */
 		discardAll: function() {
-			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
-				that = this;
+			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
 			WorkspaceEndpoint.discardAll(workspaceName).then(
 				function() {
 					require(
