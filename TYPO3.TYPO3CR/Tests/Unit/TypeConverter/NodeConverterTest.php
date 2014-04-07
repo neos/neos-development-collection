@@ -105,6 +105,64 @@ class NodeConverterTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function convertFromUsesPropertyMapperToConvertNodePropertyOfReferenceType() {
+		$contextPath = '/foo/bar@user-demo';
+		$nodePath = '/foo/bar';
+		$nodeTypeProperties = array(
+			'reference' => array(
+				'type' => 'reference'
+			)
+		);
+		$propertyValue = '8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd';
+		$source = array(
+			'__contextNodePath' => $contextPath,
+			'reference' => $propertyValue
+		);
+
+		$convertedPropertyValue = new \stdClass();
+
+		$mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
+
+		$mockNode->getContext()->expects($this->once())->method('getNodeByIdentifier')->with($propertyValue)->will($this->returnValue($convertedPropertyValue));
+
+		$mockNode->expects($this->once())->method('setProperty')->with('reference', $convertedPropertyValue);
+
+		$this->nodeConverter->convertFrom($source, NULL, array(), $this->mockConverterConfiguration);
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertFromUsesPropertyMapperToConvertNodePropertyOfReferencesType() {
+		$contextPath = '/foo/bar@user-demo';
+		$nodePath = '/foo/bar';
+		$nodeTypeProperties = array(
+			'references' => array(
+				'type' => 'references'
+			)
+		);
+		$decodedPropertyValue = array('8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd');
+		$source = array(
+			'__contextNodePath' => $contextPath,
+			'references' => json_encode($decodedPropertyValue)
+		);
+
+		$convertedPropertyValue = array(new \stdClass(), new \stdClass());
+
+		$mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
+
+		$mockContext = $mockNode->getContext();
+		$mockContext->expects($this->at(2))->method('getNodeByIdentifier')->with(current($decodedPropertyValue))->will($this->returnValue(current($convertedPropertyValue)));
+		$mockContext->expects($this->at(3))->method('getNodeByIdentifier')->with(end($decodedPropertyValue))->will($this->returnValue(end($convertedPropertyValue)));
+
+		$mockNode->expects($this->once())->method('setProperty')->with('references', $convertedPropertyValue);
+
+		$this->nodeConverter->convertFrom($source, NULL, array(), $this->mockConverterConfiguration);
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertFromUsesPropertyMapperToConvertNodePropertyOfArrayType() {
 		$contextPath = '/foo/bar@user-demo';
 		$nodePath = '/foo/bar';
