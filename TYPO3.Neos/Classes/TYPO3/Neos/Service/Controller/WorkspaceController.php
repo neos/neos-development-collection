@@ -42,6 +42,18 @@ class WorkspaceController extends AbstractServiceController {
 	protected $workspaceRepository;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
+	 */
+	protected $propertyMappingConfigurationBuilder;
+
+	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
@@ -63,20 +75,25 @@ class WorkspaceController extends AbstractServiceController {
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
 		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
-		/**
-		 * TODO: The publishing pushes the same node twice, which causes the node to be published
-		 * already when it's processed the second time. This obviously leads to a problem for the
-		 * Workspace object which will (in the second time) try to publish a node in the live workspace
-		 * to the baseWorkspace of the live workspace (which does not exist).
-		 */
-		if ($targetWorkspace === $node->getWorkspace()) {
-			$this->throwStatus(204, 'Node has been published');
-			return;
-		}
 
 		$this->publishingService->publishNode($node, $targetWorkspace);
 
 		$this->throwStatus(204, 'Node has been published');
+	}
+
+	/**
+	 * Publishes the given nodes to the specified targetWorkspace
+	 *
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+	 * @param string $targetWorkspaceName
+	 * @return void
+	 */
+	public function publishNodesAction(array $nodes, $targetWorkspaceName) {
+		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
+
+		$this->publishingService->publishNodes($this->convertNodes($nodes), $targetWorkspace);
+
+		$this->throwStatus(204, 'Nodes has been published');
 	}
 
 	/**
@@ -87,6 +104,18 @@ class WorkspaceController extends AbstractServiceController {
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->publishingService->discardNode($node);
+
+		$this->throwStatus(204, 'Node changes have been discarded');
+	}
+
+	/**
+	 * Discards the given nodes
+	 *
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+	 * @return void
+	 */
+	public function discardNodesAction(array $nodes) {
+		$this->publishingService->discardNodes($this->convertNodes($nodes));
 
 		$this->throwStatus(204, 'Node changes have been discarded');
 	}
@@ -126,6 +155,19 @@ class WorkspaceController extends AbstractServiceController {
 		$this->publishingService->discardNodes($this->publishingService->getUnpublishedNodes($workspace));
 
 		$this->throwStatus(204, 'Workspace changes have been discarded');
+	}
+
+	/**
+	 * @param array $nodes
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+	 */
+	protected function convertNodes(array $nodes) {
+		$propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		foreach ($nodes as $key => $node) {
+			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
+		}
+		return $nodes;
 	}
 
 }

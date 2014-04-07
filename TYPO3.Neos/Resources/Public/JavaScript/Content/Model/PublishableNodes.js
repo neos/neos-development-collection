@@ -107,31 +107,24 @@ define(
 		publishChanges: function(autoPublish) {
 			var that = this,
 				targetWorkspace = 'live',
-				transformFn = function(subject) {
-					var entity = vie.entities.get(subject);
-					return [entity.fromReference(subject), targetWorkspace];
-				},
-				numberOfUnsavedRecords = this.get('publishableEntitySubjects.length');
+				entitySubjects = this.get('publishableEntitySubjects'),
+				nodes = entitySubjects.map(function(subject) {
+					return vie.entities.get(subject).fromReference(subject);
+				});
 
-			this.get('publishableEntitySubjects').forEach(function(element) {
-				// Force copy of array
-				var args = transformFn(element).slice();
-
-				WorkspaceEndpoint.publishNode(args[0], targetWorkspace).then(
-					function() {
-						that._removeNodeFromPublishableEntitySubjects(element, 'live');
-						numberOfUnsavedRecords--;
-						if (numberOfUnsavedRecords <= 0) {
-							if (autoPublish !== true) {
-								var nodeType,
-									title = $('#neos-page-metainformation').attr('data-neos-title'),
-									nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-								Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
-							}
-						}
+			WorkspaceEndpoint.publishNodes(nodes, targetWorkspace).then(
+				function() {
+					entitySubjects.forEach(function(subject) {
+						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
+					});
+					if (autoPublish !== true) {
+						var nodeType,
+							title = $('#neos-page-metainformation').attr('data-neos-title'),
+							nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
+						Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
 					}
-				);
-			});
+				}
+			);
 		},
 
 		/**
@@ -160,43 +153,37 @@ define(
 		 */
 		discardChanges: function() {
 			var that = this,
-				transformFn = function(subject) {
-					var entity = vie.entities.get(subject);
-					return [entity.fromReference(subject)];
-				},
-				numberOfUnsavedRecords = this.get('publishableEntitySubjects.length');
+				entitySubjects = this.get('publishableEntitySubjects'),
+				nodes = entitySubjects.map(function(subject) {
+					return vie.entities.get(subject).fromReference(subject);
+				});
 
-			this.get('publishableEntitySubjects').forEach(function(element) {
-				// Force copy of array
-				var args = transformFn(element).slice();
-				WorkspaceEndpoint.discardNode(args[0]).then(
-					function() {
-						that._removeNodeFromPublishableEntitySubjects(element);
-						numberOfUnsavedRecords--;
-						if (numberOfUnsavedRecords <= 0) {
-							require(
-								{context: 'neos'},
-								[
-									'Content/Application'
-								],
-								function(ContentModule) {
-									ContentModule.reloadPage();
-									ContentModule.one('pageLoaded', function() {
-										Ember.run.next(function() {
-											EventDispatcher.trigger('nodesInvalidated');
-											EventDispatcher.trigger('contentChanged');
-										});
-									});
-								}
-							);
-							var nodeType,
-								title = $('#neos-page-metainformation').attr('data-neos-title'),
-								nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-							Notification.ok('Discarded changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
+			WorkspaceEndpoint.discardNodes(nodes).then(
+				function() {
+					entitySubjects.forEach(function(subject) {
+						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
+					});
+					require(
+						{context: 'neos'},
+						[
+							'Content/Application'
+						],
+						function(ContentModule) {
+							ContentModule.reloadPage();
+							ContentModule.one('pageLoaded', function() {
+								Ember.run.next(function() {
+									EventDispatcher.trigger('nodesInvalidated');
+									EventDispatcher.trigger('contentChanged');
+								});
+							});
 						}
-					}
-				);
-			});
+					);
+					var nodeType,
+						title = $('#neos-page-metainformation').attr('data-neos-title'),
+						nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
+					Notification.ok('Discarded changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
+				}
+			);
 		},
 
 		/**
