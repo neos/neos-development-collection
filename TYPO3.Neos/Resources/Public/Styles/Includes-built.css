@@ -5312,6 +5312,82 @@
   float: right;
   margin-left: 4px;
 }
+.neos #neos-inspector .neos-inspector-file {
+  min-width: 288px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-button {
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+}
+.neos #neos-inspector .neos-inspector-file ul {
+  padding-bottom: 5px;
+}
+.neos #neos-inspector .neos-inspector-file ul li {
+  padding: 5px 0;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container {
+  position: relative;
+  overflow: hidden;
+  border: 1px dashed #323232;
+  margin-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-image-preview-thumbnail {
+  max-width: 288px;
+  max-height: 216px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-inspector-file-loadingindicator {
+  z-index: 1;
+  position: absolute;
+  left: 67px;
+  top: 67px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-inspector-file-thumbnail-inner {
+  overflow: hidden;
+  padding: 0;
+  margin: auto;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-inspector-file-thumbnail-inner img {
+  max-width: none;
+  max-height: none;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-imagebadge {
+  position: absolute;
+  top: 80px;
+  width: 100%;
+  height: 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  display: none;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-imagebadge.neos-imagebadge-visible {
+  display: block;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-uploadthumbnail {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-uploadthumbnail-landscape {
+  width: 288px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-uploadthumbnail-portrait {
+  height: 216px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width {
+  padding-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-crop-button,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-upload-button,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-crop-button {
+  float: right;
+  margin-left: 4px;
+}
 .neos #neos-inspector .chosen-container {
   color: #fff;
   line-height: 40px;
