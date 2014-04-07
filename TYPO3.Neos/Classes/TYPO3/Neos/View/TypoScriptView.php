@@ -17,10 +17,18 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * Controller for displaying nodes in the frontend
- *
+ * A TypoScript view for Neos
  */
 class TypoScriptView extends AbstractView {
+
+	/**
+	 * This contains the supported options, their default values, descriptions and types.
+	 *
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'enableContentCache' => array(NULL, 'Flag to enable content caching inside TypoScript (overriding the global setting).', 'boolean')
+	);
 
 	/**
 	 * @Flow\Inject
@@ -127,6 +135,10 @@ class TypoScriptView extends AbstractView {
 	protected function getTypoScriptRuntime(NodeInterface $currentSiteNode) {
 		if ($this->typoScriptRuntime === NULL) {
 			$this->typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $this->controllerContext);
+
+			if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== NULL) {
+				$this->typoScriptRuntime->setEnableContentCache($this->options['enableContentCache']);
+			}
 		}
 		return $this->typoScriptRuntime;
 	}

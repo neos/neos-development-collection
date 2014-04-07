@@ -116,6 +116,7 @@ class NodeController extends AbstractServiceController {
 		$view = new \TYPO3\Neos\View\TypoScriptView();
 		$this->controllerContext->getRequest()->setFormat('html');
 		$view->setControllerContext($this->controllerContext);
+		$view->setOption('enableContentCache', FALSE);
 
 		$view->setTypoScriptPath($typoScriptPath);
 		$view->assign('value', $newNode->getParent());
