@@ -115,8 +115,9 @@ define(
 						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 					});
 					if (autoPublish !== true) {
-						var nodeType,
-							title = $('#neos-page-metainformation').attr('data-neos-title'),
+						var pageMetaInformation = $('#neos-page-metainformation'),
+							nodeType = pageMetaInformation.data('neos-_node-type'),
+							title = pageMetaInformation.attr('data-neos-title'),
 							nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
 						Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
 					}
@@ -175,8 +176,9 @@ define(
 							});
 						}
 					);
-					var nodeType,
-						title = $('#neos-page-metainformation').attr('data-neos-title'),
+					var pageMetaInformation = $('#neos-page-metainformation'),
+						nodeType = pageMetaInformation.data('neos-_node-type'),
+						title = pageMetaInformation.attr('data-neos-title'),
 						nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
 					Notification.ok('Discarded changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
 				}
