@@ -6,20 +6,15 @@ define(
 	],
 	function($, Ember, HttpClient) {
 		return Ember.View.extend({
-
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
 
 			// lazily initialized content – will be an array of select2 datums [{id: '12a9837…', text: 'My Node'}, …]:
-			content: function() {
-				return [];
-			}.property(),
+			content: [],
 
-			// array of allowed node type names, configured via editorOptions:
-			nodeTypes: function() {
-				return ['TYPO3.Neos:Document'];
-			}.property(),
+			// array of allowed node type names, configurable via editorOptions
+			nodeTypes: ['TYPO3.Neos:Document'],
 
 			didInsertElement: function() {
 				var that = this;
@@ -61,6 +56,7 @@ define(
 					that.set('content', $(this).select2('data'));
 				});
 			},
+
 			_updateSelect2: function() {
 				if (!this.$()) {
 					return;

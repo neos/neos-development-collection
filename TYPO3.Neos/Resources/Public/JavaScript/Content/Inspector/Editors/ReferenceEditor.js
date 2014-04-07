@@ -6,17 +6,14 @@ define(
 	],
 	function($, Ember, HttpClient) {
 		return Ember.View.extend({
-
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
 
 			content: null,
 
-			// array of allowed node type names, configured via editorOptions:
-			nodeTypes: function() {
-				return ['TYPO3.Neos:Document'];
-			}.property(),
+			// array of allowed node type names, configurable via editorOptions
+			nodeTypes: ['TYPO3.Neos:Document'],
 
 			didInsertElement: function() {
 				var that = this,
@@ -74,12 +71,6 @@ define(
 					}
 				});
 			},
-			_updateSelect2: function() {
-				if (!this.$()) {
-					return;
-				}
-				this.$().select2('data', this.get('content'));
-			},
 
 			// actual value used and expected by the inspector, in case of this Editor a string (node identifier):
 			value: function(key, value) {
@@ -115,7 +106,6 @@ define(
 				} else {
 					this.$().select2('data', []);
 				}
-
 			}
 		});
 	}
