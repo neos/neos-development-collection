@@ -433,6 +433,11 @@ define(
 
 			afterPersistNode: function(node) {
 				EventDispatcher.trigger('nodeCreated');
+
+				var treeNode = this.$nodeTree.dynatree('getTree').getNodeByKey(node.data.key);
+				if (treeNode) {
+					$(treeNode.span).addClass('neos-dynatree-dirty');
+				}
 			},
 
 			refresh: function() {
