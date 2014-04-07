@@ -438,6 +438,8 @@ define(
 				if (treeNode) {
 					$(treeNode.span).addClass('neos-dynatree-dirty');
 				}
+
+				ContentModule.loadPage(node.data.href);
 			},
 
 			refresh: function() {
