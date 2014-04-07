@@ -43,6 +43,7 @@ ul.neos-dynatree-container {
 		line-height: 24px;
 		white-space: nowrap;
 		@include box-sizing(border-box);
+		border-left: 3px solid transparent;
 
 		&.neos-hidden {
 			span + span:after {
@@ -273,18 +274,11 @@ ul.neos-dynatree-container {
 	$levels: 20;
 	@while $level < $levels {
 		#{$selector} .neos-dynatree-node {
-			padding-left: ($defaultMargin - $tightMargin) * $level;
-		}
-		$selector: #{nest(#{$selector}, 'ul')};
-		$level: $level + 1;
-	}
-
-	$selector: 'ul';
-	$level: 0;
-	$levels: 20;
-	@while $level < $levels {
-		#{$selector} .neos-dynatree-node.neos-dynatree-dirty {
-			padding-left: ($defaultMargin - $tightMargin) * $level - 3;
+			@if $level == 0 {
+				padding-left: 0;
+			} @else {
+				padding-left: ($defaultMargin - $tightMargin) * $level - 3;
+			}
 		}
 		$selector: #{nest(#{$selector}, 'ul')};
 		$level: $level + 1;
