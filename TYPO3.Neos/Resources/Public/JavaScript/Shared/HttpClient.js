@@ -80,9 +80,9 @@ define([
 				}).fail(function(jqXHR, textStatus, errorThrown) {
 					that.set('_failedRequest', true);
 					if (window.localStorage.showDevelopmentFeatures) {
-						that.trigger('error', ['requestMethod: ' + requestMethod, 'url: ' + url, 'data: ' + JSON.stringify(options)].join(' '));
+						that.trigger('failure', textStatus, ['requestMethod: ' + requestMethod, 'url: ' + url, 'data: ' + JSON.stringify(options)].join(' '));
 					} else {
-						that.trigger('error', textStatus + ' ' + errorThrown);
+						that.trigger('failure', textStatus, errorThrown);
 					}
 					promise.reject.apply(promise, arguments);
 				})
