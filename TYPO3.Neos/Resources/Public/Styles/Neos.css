@@ -7807,6 +7807,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  border-left: 3px solid transparent;
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after {
   font-family: FontAwesome;
@@ -8007,123 +8008,63 @@
   outline: none;
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container ul .neos-dynatree-node {
-  padding-left: 0px;
+  padding-left: 0;
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container ul ul .neos-dynatree-node {
-  padding-left: 12px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul .neos-dynatree-node {
-  padding-left: 24px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node {
-  padding-left: 36px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 48px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 60px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 72px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 84px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 96px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 108px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 120px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 132px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 144px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 156px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 168px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 180px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 192px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 204px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 216px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 228px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul .neos-dynatree-node.neos-dynatree-dirty {
-  padding-left: -3px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul .neos-dynatree-node.neos-dynatree-dirty {
   padding-left: 9px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul .neos-dynatree-node {
   padding-left: 21px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node {
   padding-left: 33px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node {
   padding-left: 45px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 57px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 69px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 81px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 93px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 105px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 117px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 129px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 141px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 153px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 165px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 177px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 189px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 201px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 213px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node.neos-dynatree-dirty {
+.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
   padding-left: 225px;
 }
 .neos #neos-navigate-panel .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node {
