@@ -12,13 +12,15 @@ define(
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'vie/instance',
-	'vie/entity'
+	'vie/entity',
+	'Shared/EventDispatcher'
 ], function(
 	Ember,
 	$,
 	_,
 	vie,
-	EntityWrapper
+	EntityWrapper,
+	EventDispatcher
 ) {
 	return Ember.Object.extend({
 		_nodes: [],
@@ -117,10 +119,11 @@ define(
 		initialize: function() {
 			vie.entities.reset();
 			vie.load({element: $('body')}).from('rdfa').execute();
-			this._entitiesBySubject = {};
+			this.set('_entitiesBySubject', {});
 
 			// Update the selection on initialize, such that the current Page is added to the breadcrumb
 			this.updateSelection();
+			EventDispatcher.trigger('nodesUpdated');
 		},
 
 		/**
