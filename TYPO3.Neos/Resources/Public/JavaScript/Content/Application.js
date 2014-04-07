@@ -404,7 +404,7 @@ function(
 						if ($pageMetadata.length === 0) {
 							Notification.error('Could not read page metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
 							that.set('_isLoadingPage', false);
-							LoadingIndicator.stop();
+							LoadingIndicator.done();
 							return;
 						}
 
@@ -450,12 +450,9 @@ function(
 						that.set('_isLoadingPage', false);
 						LoadingIndicator.done();
 					},
-					/**
-					 * FALLBACK: AJAX error occurred,
-					 * so we reload the whole backend.
-					 */
 					function() {
-						window.location.href = uri;
+						that.set('_isLoadingPage', false);
+						LoadingIndicator.done();
 					}
 				);
 		}
