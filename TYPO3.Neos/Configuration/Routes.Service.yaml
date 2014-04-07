@@ -68,12 +68,34 @@
   httpMethods: ['PUT']
 
 -
+  name: 'Services - WorkspaceController->publishNodes'
+  uriPattern: 'workspaces/publish-nodes'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'publishNodes'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
   name: 'Services - WorkspaceController->discardNode'
   uriPattern: 'workspaces/discard-node'
   defaults:
     '@package':    'TYPO3.Neos'
     '@subpackage': 'Service'
     '@action':     'discardNode'
+    '@controller': 'Workspace'
+    '@format':     'html'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->discardNodes'
+  uriPattern: 'workspaces/discard-nodes'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@action':     'discardNodes'
     '@controller': 'Workspace'
     '@format':     'html'
   httpMethods: ['PUT']

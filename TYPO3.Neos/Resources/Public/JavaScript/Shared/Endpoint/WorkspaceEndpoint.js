@@ -13,6 +13,13 @@ define([
 			);
 		},
 
+		publishNodes: function(nodes, targetWorkspaceName) {
+			return HttpClient.updateResource(
+				HttpClient._getEndpointUrl('neos-service-workspace-publishNodes'),
+				{data: {nodes: nodes, targetWorkspaceName: targetWorkspaceName}}
+			);
+		},
+
 		publishAll: function(workspaceName) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-workspace-publishAll'),
@@ -24,6 +31,13 @@ define([
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-workspace-discardNode'),
 				{data: {node: node}}
+			);
+		},
+
+		discardNodes: function(nodes) {
+			return HttpClient.updateResource(
+				HttpClient._getEndpointUrl('neos-service-workspace-discardNodes'),
+				{data: {nodes: nodes}}
 			);
 		},
 
