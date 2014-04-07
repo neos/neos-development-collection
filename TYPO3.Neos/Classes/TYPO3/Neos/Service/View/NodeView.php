@@ -73,8 +73,8 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 				$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 				if ($closestDocumentNode !== NULL) {
 					$data[] = array(
-						'nodePath' => $node->getPath(),
-						'pageNodePath' => $closestDocumentNode->getPath(),
+						'nodeContextPath' => $node->getContextPath(),
+						'documentNodeContextPath' => $closestDocumentNode->getContextPath(),
 					);
 				} else {
 					$this->systemLogger->log('You have a node that is no longer connected to a parent. Path: ' . $node->getPath() . ' (Identifier: ' . $node->getIdentifier() . ')');
