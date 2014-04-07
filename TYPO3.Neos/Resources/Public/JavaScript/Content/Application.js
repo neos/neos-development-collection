@@ -89,9 +89,9 @@ function(
 		spinner: null,
 
 		bootstrap: function() {
-			HttpClient.on('error', function(errorMessage) {
-				Notification.error('Server communication error: ' + errorMessage);
-				LoadingIndicator.stop();
+			HttpClient.on('failure', function(status, message) {
+				Notification.error('Server communication ' + status + ': ' + message);
+				LoadingIndicator.done();
 			});
 
 			this.set('vie', vie);
