@@ -14,6 +14,7 @@ define(
 	'Shared/EventDispatcher',
 	'Shared/NodeTypeService',
 	'../Model/NodeSelection',
+	'../Model/PublishableNodes',
 	'./NavigatePanelController',
 	'./InsertNodePanel',
 	'text!./ContextStructureTree.html'
@@ -29,6 +30,7 @@ define(
 	EventDispatcher,
 	NodeTypeService,
 	NodeSelection,
+	PublishableNodes,
 	NavigatePanelController,
 	InsertNodePanel,
 	template
@@ -45,6 +47,8 @@ define(
 		loadingDepth: 0,
 		unmodifiableLevels: 2,
 		refreshOnPageNodePathChanged: true,
+
+		publishableNodes: PublishableNodes,
 
 		init: function() {
 			this._super();
@@ -109,6 +113,18 @@ define(
 			this.scrollToCurrentNode();
 		}.observes('nodeSelection.selectedNode'),
 
+		markDirtyNodes: function() {
+			$('.neos-dynatree-dirty', this.$nodeTree).removeClass('neos-dynatree-dirty');
+
+			var that = this;
+			PublishableNodes.get('publishableEntitySubjects').forEach(function(entitySubject) {
+				var treeNode = that.$nodeTree.dynatree('getTree').getNodeByKey(entitySubject.slice(1, entitySubject.length - 1));
+				if (treeNode) {
+					$(treeNode.span).addClass('neos-dynatree-dirty');
+				}
+			});
+		}.observes('publishableNodes.publishableEntitySubjects'),
+
 		/**
 		 * Initialize the dynatree instance stored at the DOM node
 		 * this.$nodeTree
@@ -164,11 +180,7 @@ define(
 						 * correctly handling that case and it can lead to broken rootlines if you just publish a node that
 						 * is inside a moved Collection.
 						 */
-						if (NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection')) {
-							return false;
-						}
-
-						return true;
+						return !NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection');
 					}
 				},
 
@@ -191,6 +203,12 @@ define(
 				onDblClick: function(node, event) {
 					event.preventDefault();
 					return true;
+				},
+
+				onRender: function(node, nodeSpan) {
+					if (PublishableNodes.get('publishableEntitySubjects').indexOf('<' + node.data.key + '>') !== -1) {
+						$(nodeSpan).addClass('neos-dynatree-dirty');
+					}
 				}
 			}));
 
