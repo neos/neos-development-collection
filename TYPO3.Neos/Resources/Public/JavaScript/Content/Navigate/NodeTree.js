@@ -55,12 +55,13 @@ define(
 			filtering: false,
 			latestFilterQuery: null,
 
-			markDirtyNodes: function() {
-				$('.neos-dynatree-dirty', this.$nodeTree).removeClass('neos-dynatree-dirty');
+			markDirtyPages: function() {
+				var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
+					that = this;
 
-				var that = this;
+				$('.neos-dynatree-dirty').removeClass('neos-dynatree-dirty');
 				PublishableNodes.get('workspaceWidePublishableEntitySubjects').forEach(function(node) {
-					var treeNode = that.$nodeTree.dynatree('getTree').getNodeByKey(node.documentNodeContextPath);
+					var treeNode = that.$nodeTree.dynatree("getTree").getNodeByKey(node.pageNodePath + workspaceName);
 					if (treeNode) {
 						$(treeNode.span).addClass('neos-dynatree-dirty');
 					}
@@ -213,7 +214,8 @@ define(
 					},
 
 					onRender: function(node, nodeSpan) {
-						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('documentNodeContextPath', node.data.key)) {
+						var nodePath = node.data.key.substr(0, node.data.key.lastIndexOf('@'));
+						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('pageNodePath', nodePath)) {
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
 					}
