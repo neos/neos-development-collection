@@ -636,8 +636,8 @@ define(
 
 						that.afterPersistNode(node);
 					},
-					function(result) {
-						Notification.error('Unexpected error while creating node: ' + JSON.stringify(result));
+					function(error) {
+						Notification.error('Unexpected error while creating node: ' + JSON.stringify(error));
 						node.setLazyNodeStatus(that.statusCodes.error);
 					}
 				);
@@ -655,8 +655,8 @@ define(
 						node.remove();
 						that.afterDeleteNode(node);
 					},
-					function() {
-						Notification.error('Unexpected error while deleting node: ' + JSON.stringify(result));
+					function(error) {
+						Notification.error('Unexpected error while deleting node: ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -699,9 +699,9 @@ define(
 						node.setLazyNodeStatus(that.statusCodes.ok);
 						that.afterToggleHidden(node);
 					},
-					function() {
+					function(error) {
 						node.setLazyNodeStatus(that.statusCodes.error);
-						Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
+						Notification.error('Unexpected error while updating node: ' + JSON.stringify(error));
 					}
 				);
 			},
@@ -793,9 +793,9 @@ define(
 							}
 							that.afterPaste(newNode);
 						},
-						function() {
+						function(error) {
 							newNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
 						}
 					);
 				}
@@ -834,9 +834,9 @@ define(
 							}
 							that.afterMove(sourceNode);
 						},
-						function() {
+						function(error) {
 							sourceNode.setLazyNodeStatus(that.statusCodes.error);
-							Notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
+							Notification.error('Unexpected error while moving node: ' + JSON.stringify(error));
 						}
 					);
 				} catch(e) {
