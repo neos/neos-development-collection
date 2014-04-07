@@ -35,10 +35,7 @@ define(
 						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							var url = nodesEndpoint + '?searchTerm=' + query.term + that.get('nodeTypes').reduce(function(previousValue, item) {
-								return previousValue + '&nodeTypes[]=' + item;
-							}, '');
-
+							var url = nodesEndpoint + '?searchTerm=' + query.term + '&nodeTypes[]=' + that.get('nodeTypes').join('&nodeTypes[]=');
 							HttpClient.getResource(url).then(
 								function(parsedResponse) {
 									var data = {results: []};
