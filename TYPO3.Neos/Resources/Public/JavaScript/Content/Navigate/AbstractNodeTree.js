@@ -64,7 +64,7 @@ define(
 			},
 
 			newPosition: 'after',
-			pastePosition: 'into',
+			pastePosition: 'after',
 			minimumCreateAndPasteLevel: 1,
 
 			pasteIsActive: function() {
