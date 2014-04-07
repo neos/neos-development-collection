@@ -435,6 +435,7 @@ define(
 
 			afterPersistNode: function(node) {
 				EventDispatcher.trigger('nodeCreated');
+				ContentModule.loadPage(node.data.href);
 			},
 
 			refresh: function() {
