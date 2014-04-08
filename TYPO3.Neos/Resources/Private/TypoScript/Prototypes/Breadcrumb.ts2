@@ -1,7 +1,11 @@
 # TYPO3.Neos:Breadcrumb provides a basic breadcrumb navigation
 #
+# @deprecated
+# This TypoScript object is deprecated starting from version 1.1 in favor of TYPO3.Neos:BreadcrumbMenu,
+# which works like any other Menu object and therefor offers item states.
+#
 prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Breadcrumb.html'
 	node = ${node}
 	items = ${q(node).add(q(node).parents('[instanceof TYPO3.Neos:Document]'))}
 
