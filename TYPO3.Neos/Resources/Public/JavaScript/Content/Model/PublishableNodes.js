@@ -112,7 +112,7 @@ define(
 					entitySubjects.forEach(function(subject) {
 						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 					});
-					that.getWorkspaceWideUnpublishedNodes();
+
 					if (autoPublish !== true) {
 						var pageMetaInformation = $('#neos-page-metainformation'),
 							nodeType = pageMetaInformation.data('neos-_node-type'),
@@ -125,18 +125,18 @@ define(
 		},
 
 		/**
-		 * @param {string} subject
+		 * @param {string} entitySubject
 		 * @param {string} workspaceOverride
 		 * @return {void}
 		 */
-		_removeNodeFromPublishableEntitySubjects: function(subject, workspaceOverride) {
+		_removeNodeFromPublishableEntitySubjects: function(entitySubject, workspaceOverride) {
 			var that = this,
-				entity = vie.entities.get(subject);
+				entity = vie.entities.get(entitySubject);
 			if (workspaceOverride) {
 				entity.set('typo3:__workspacename', workspaceOverride);
 			}
 
-			var nodeContextPath = entity.id,
+			var nodeContextPath = entitySubject.slice(1, entitySubject.length - 1),
 				node = that.get('workspaceWidePublishableEntitySubjects').findBy('nodeContextPath', nodeContextPath);
 			if (node) {
 				that.get('workspaceWidePublishableEntitySubjects').removeObject(node);
@@ -157,8 +157,10 @@ define(
 
 			WorkspaceEndpoint.discardNodes(nodes).then(
 				function() {
+					entitySubjects.forEach(function(subject) {
+						that._removeNodeFromPublishableEntitySubjects(subject);
+					});
 					that.set('publishableEntitySubjects', []);
-					that.getWorkspaceWideUnpublishedNodes();
 					require(
 						{context: 'neos'},
 						[
@@ -190,16 +192,14 @@ define(
 		 */
 		publishAll: function() {
 			var that = this,
-				workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
-				publishableEntities = this.get('publishableEntitySubjects');
+				entitySubjects = this.get('publishableEntitySubjects'),
+				workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
 
 			WorkspaceEndpoint.publishAll(workspaceName).then(
 				function() {
-					$.each(publishableEntities, function(index, element) {
-						vie.entities.get(element).set('typo3:__workspacename', 'live');
+					entitySubjects.forEach(function(subject) {
+						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 					});
-
-					that.set('publishableEntitySubjects', []);
 					that.set('workspaceWidePublishableEntitySubjects', []);
 					Notification.ok('Published all changes.');
 				},
