@@ -129,6 +129,7 @@ define(
 							}
 						);
 					}
+					EventDispatcher.trigger('contentChanged');
 				}
 			);
 
