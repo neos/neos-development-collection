@@ -31,6 +31,7 @@ define(
 		// TODO: Move this to a separate controller
 		_clipboard: null,
 		_elementIsAddingNewContent: null,
+		_elementIsPastingContent: null,
 
 		clipboardContainsContent: function() {
 			return this.get('_clipboard') !== null;
@@ -140,6 +141,9 @@ define(
 							}
 						);
 					}
+					// Remove the loading icon from the parent content element where current element was pasted from.
+					that.set('_elementIsPastingContent', null);
+
 					EventDispatcher.trigger('contentChanged');
 				}
 			);
