@@ -90,6 +90,9 @@ function(
 
 		bootstrap: function() {
 			HttpClient.on('failure', function(status, message) {
+				if (status === 'abort') {
+					return;
+				}
 				Notification.error('Server communication ' + status + ': ' + message);
 				LoadingIndicator.done();
 			});
