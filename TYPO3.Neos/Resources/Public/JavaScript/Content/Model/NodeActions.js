@@ -140,6 +140,7 @@ define(
 							}
 						);
 					}
+					EventDispatcher.trigger('contentChanged');
 				}
 			);
 
