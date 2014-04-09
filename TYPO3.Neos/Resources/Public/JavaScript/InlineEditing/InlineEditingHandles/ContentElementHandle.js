@@ -141,7 +141,14 @@ function (
 			return (elementIsAddingNewContent === this.get('_nodePath'));
 		}.property('nodeActions._elementIsAddingNewContent', '_nodePath'),
 
-		_pasteInProgress: false,
+		_elementIsPastingContent: function() {
+			var elementIsPastingContent = NodeActions.get('_elementIsPastingContent');
+			if (!elementIsPastingContent) {
+				return false;
+			}
+
+			return (elementIsPastingContent === this.get('_nodePath'));
+		}.property('nodeActions._elementIsPastingContent', '_nodePath'),
 
 		toggleHidden: function() {
 			var entity = this.get('_entity'),
@@ -162,7 +169,7 @@ function (
 
 		paste: function() {
 			if (ContentCommands.paste() === true) {
-				this.set('_pasteInProgress', true);
+				NodeActions.set('_elementIsPastingContent', this.get('_entity').getSubjectUri());
 			}
 		}
 	});

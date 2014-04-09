@@ -24,7 +24,7 @@
 		{{/if}}
 		{{#if view.nodeActions.clipboardContainsContent}}
 			<button class="neos-button action-paste" {{bindAttr title="view._pasteTitle"}} {{action "paste" target="view"}} tabindex="-1">
-				{{#if view._pasteInProgress}}
+				{{#if view._elementIsPastingContent}}
 					<i class="neos-handle-loading"></i>
 				{{else}}
 					<i class="icon-paste"></i>
