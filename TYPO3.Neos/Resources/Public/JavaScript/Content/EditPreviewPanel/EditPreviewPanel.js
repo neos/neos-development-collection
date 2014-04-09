@@ -31,8 +31,8 @@ define(
 			var editModes = this.get('controller.editingModes'),
 				previewModes = this.get('controller.previewModes'),
 				activeItems = [
-					Math.abs(editModes.indexOf(editModes.findProperty('active'))),
-					Math.abs(previewModes.indexOf(previewModes.findProperty('active')))
+					Math.max(0, editModes.indexOf(editModes.findProperty('active'))),
+					Math.max(0, previewModes.indexOf(previewModes.findProperty('active')))
 				];
 			this.$('.neos-scroll-container > .neos-frame').each(function(index) {
 				$(this).sly({
@@ -68,7 +68,9 @@ define(
 		},
 
 		_reloadSliders: function() {
-			this.$('.neos-scroll-container > .neos-frame').sly('reload');
+			if (this.get('controller.editingModes').length > 0 || this.get('controller.previewModes').length > 0) {
+				this.$('.neos-scroll-container > .neos-frame').sly('reload');
+			}
 		}
 	});
 });
