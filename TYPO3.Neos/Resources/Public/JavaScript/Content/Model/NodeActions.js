@@ -78,11 +78,22 @@ define(
 
 		/**
 		 * Paste the current node on the clipboard after another node
+		 *
 		 * @param {String} nodePath the nodePath of the target node
 		 * @return {boolean}
 		 */
 		pasteAfter: function(nodePath) {
 			return this._paste(nodePath, 'after');
+		},
+
+		/**
+		 * Paste the current node on the clipboard before another node
+		 *
+		 * @param {String} nodePath the nodePath of the target node
+		 * @return {boolean}
+		 */
+		pasteBefore: function(nodePath) {
+			return this._paste(nodePath, 'before');
 		},
 
 		/**
@@ -192,17 +203,6 @@ define(
 					EventDispatcher.trigger('contentChanged');
 				}
 			);
-		},
-
-		/**
-		 * Paste the current node on the clipboard before another node
-		 *
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {$} $handle the clicked handle
-		 * @return {boolean}
-		 */
-		pasteBefore: function(nodePath, $handle) {
-			return this._paste(nodePath, $handle, 'before');
 		},
 
 		/**
