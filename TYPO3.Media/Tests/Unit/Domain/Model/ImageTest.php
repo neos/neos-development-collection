@@ -47,6 +47,7 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function orientationReturnedCorrectlyForLandscapeImage() {
 		$this->image->_set('width', 480);
 		$this->image->_set('height', 320);
+		$this->image->_set('imageSizeAndTypeInitialized', TRUE);
 
 		$this->assertTrue($this->image->isOrientationLandscape());
 		$this->assertFalse($this->image->isOrientationPortrait());
@@ -60,6 +61,7 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function orientationReturnedCorrectlyForPortraitImage() {
 		$this->image->_set('width', 320);
 		$this->image->_set('height', 480);
+		$this->image->_set('imageSizeAndTypeInitialized', TRUE);
 
 		$this->assertFalse($this->image->isOrientationLandscape());
 		$this->assertTrue($this->image->isOrientationPortrait());
@@ -73,6 +75,7 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function orientationReturnedCorrectlyForSquareImage() {
 		$this->image->_set('width', 480);
 		$this->image->_set('height', 480);
+		$this->image->_set('imageSizeAndTypeInitialized', TRUE);
 
 		$this->assertFalse($this->image->isOrientationLandscape());
 		$this->assertFalse($this->image->isOrientationPortrait());
@@ -87,6 +90,7 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function aspectRatioReturnedCorrectlyForLandscapeImage() {
 		$this->image->_set('width', 480);
 		$this->image->_set('height', 320);
+		$this->image->_set('imageSizeAndTypeInitialized', TRUE);
 
 		$this->assertEquals(1.5, $this->image->getAspectRatio());
 		$this->assertEquals(1.5, $this->image->getAspectRatio(FALSE));
@@ -99,6 +103,7 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function aspectRatioReturnedCorrectlyForPortraitImage() {
 		$this->image->_set('width', 320);
 		$this->image->_set('height', 480);
+		$this->image->_set('imageSizeAndTypeInitialized', TRUE);
 
 		$this->assertEquals(1.5, $this->image->getAspectRatio());
 		$this->assertEquals(1.5, $this->image->getAspectRatio(FALSE));
@@ -111,6 +116,7 @@ class ImageTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function aspectRatioReturnedCorrectlyForSquareImage() {
 		$this->image->_set('width', 480);
 		$this->image->_set('height', 480);
+		$this->image->_set('imageSizeAndTypeInitialized', TRUE);
 
 		$this->assertEquals(1, $this->image->getAspectRatio());
 		$this->assertEquals(1, $this->image->getAspectRatio(FALSE));
