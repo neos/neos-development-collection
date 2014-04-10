@@ -1,0 +1,3 @@
+TYPO3_TypoScript_Content:
+  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
+  backend: TYPO3\Flow\Cache\Backend\FileBackend

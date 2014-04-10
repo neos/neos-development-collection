@@ -1,0 +1,32 @@
+up:
+  comments: 'Migrate from no node dimensions to default dimension values.'
+  migration:
+    -
+      filters:
+        -
+          type: 'DimensionValues'
+          settings:
+            dimensionValues: []
+      transformations:
+        -
+          type: 'SetDimensions'
+          settings:
+            dimensionValues: []
+            addDefaultDimensionValues: TRUE
+
+down:
+  comments: 'Migrate nodes with default dimensions to no migrations.'
+  migration:
+    -
+      filters:
+        -
+          type: 'DimensionValues'
+          settings:
+            dimensionValues: []
+            filterForDefaultDimensionValues: TRUE
+      transformations:
+        -
+          type: 'SetDimensions'
+          settings:
+            dimensionValues: []
+            addDefaultDimensionValues: FALSE
