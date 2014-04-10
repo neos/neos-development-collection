@@ -100,7 +100,8 @@ class ImageTest extends \TYPO3\Media\Tests\Functional\AbstractTest {
 		$hash = sha1($dummyImageContent);
 		file_put_contents('resource://' . $hash, $dummyImageContent);
 		$mockResource = $this->createMockResourceAndPointerFromHash($hash);
-		new \TYPO3\Media\Domain\Model\Image($mockResource);
+		$image = new \TYPO3\Media\Domain\Model\Image($mockResource);
+		$image->initializeImageSizeAndType();
 	}
 
 }

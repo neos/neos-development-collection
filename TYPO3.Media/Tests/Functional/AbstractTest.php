@@ -55,10 +55,13 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected function createMockResourceAndPointerFromHash($hash) {
 		$resourcePointer = new \TYPO3\Flow\Resource\ResourcePointer($hash);
 
-		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array('getResourcePointer'));
+		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource', array('getResourcePointer', 'getUri'));
 		$mockResource->expects($this->any())
 				->method('getResourcePointer')
 				->will($this->returnValue($resourcePointer));
+		$mockResource->expects($this->any())
+			->method('getUri')
+			->will($this->returnValue('resource://' . $hash));
 		return $mockResource;
 	}
 
