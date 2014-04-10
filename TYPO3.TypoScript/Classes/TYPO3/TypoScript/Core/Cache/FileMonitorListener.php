@@ -43,7 +43,10 @@ class FileMonitorListener {
 		$fileMonitorsThatTriggerContentCacheFlush = array(
 			'TYPO3CR_NodeTypesConfiguration',
 			'TypoScript_Files',
-			'Fluid_TemplateFiles'
+			'Fluid_TemplateFiles',
+			'Flow_ClassFiles',
+			'Flow_ConfigurationFiles',
+			'Flow_TranslationFiles'
 		);
 
 		if (in_array($fileMonitorIdentifier, $fileMonitorsThatTriggerContentCacheFlush)) {
