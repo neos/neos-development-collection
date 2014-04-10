@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-12-10
+The following reference was automatically generated from code on 2014-04-10
 
 
 Package *TYPO3.NEOS*
@@ -88,7 +88,7 @@ Options
 ``typo3.neos:node:autocreatechildnodes``
 ****************************************
 
-**Create missing childNodes for a node type**
+**Create missing child nodes**
 
 This command automatically creates missing child nodes for a node type
 based on the structure defined in the NodeTypes configuration.
@@ -98,19 +98,17 @@ live workspace:
 
 ./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
 
-Arguments
-^^^^^^^^^
-
-``--node-type``
-  Node type name
-
 
 
 Options
 ^^^^^^^
 
+``--node-type``
+  Node type name, if empty update all declared node types
 ``--workspace``
   Workspace name, default is 'live'
+``--dry-run``
+  Don't do anything, but report missing child nodes
 
 
 
@@ -201,6 +199,8 @@ Options
 
 ``--confirmation``
   
+``--site-node-name``
+  Name of a site root node to clear only content of this site.
 
 
 
