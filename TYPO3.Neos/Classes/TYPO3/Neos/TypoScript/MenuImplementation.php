@@ -260,7 +260,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 			'node' => $possibleFinalNode,
 			'originalNode' => $currentNode,
 			'state' => self::STATE_NORMAL,
-			'label' => $currentNode->getLabel()
+			'label' => $currentNode->getFullLabel()
 		);
 
 		$item['state'] = $this->calculateItemState($possibleFinalNode);
