@@ -1,0 +1,15 @@
+TYPO3:
+  TYPO3CR:
+
+    # Configure available content dimensions for nodes, after adding a dimension the database has to be filled with
+    # the dimension default values.
+    #
+    # Example
+    #
+    #   contentDimensions:
+    #     locales:
+    #       default: mul_ZZ
+    #
+    #     personas:
+    #       default: everybody
+    contentDimensions: []

@@ -1,0 +1,11 @@
+{namespace form=TYPO3\Form\ViewHelpers}
+<div{attributes -> f:format.raw()}>
+	<f:if condition="{formIdentifier}">
+		<f:then>
+			<form:render persistenceIdentifier="{formIdentifier}" presetName="{presetName}" />
+		</f:then>
+		<f:else>
+			<p>Please select a valid Form identifier in the inspector</p>
+		</f:else>
+	</f:if>
+</div>
