@@ -118,6 +118,13 @@ class Runtime {
 	protected $addCacheSegmentMarkersToPlaceholders = FALSE;
 
 	/**
+	 * Stack of cached segment metadata (lifetime)
+	 *
+	 * @var array
+	 */
+	protected $cacheMetadata = array();
+
+	/**
 	 * Constructor for the TypoScript Runtime
 	 *
 	 * @param array $typoScriptConfiguration
@@ -367,17 +374,32 @@ class Runtime {
 		}
 
 		$cacheIdentifierValues = array();
-		if ($this->enableContentCache && $cacheForPathEnabled) {
-			$cacheIdentifierValues = $this->buildCacheIdentifierValues($typoScriptPath, $typoScriptConfiguration, $tsObject);
+		if ($this->enableContentCache) {
+			if ($cacheForPathEnabled) {
+				$cacheIdentifierValues = $this->buildCacheIdentifierValues($typoScriptPath, $typoScriptConfiguration, $tsObject);
 
-			$segment = $this->contentCache->getCachedSegment($this, $typoScriptPath, $cacheIdentifierValues, $this->addCacheSegmentMarkersToPlaceholders);
-			if ($segment !== FALSE) {
-				if ($currentPathIsEntryPoint) {
-					$this->inCacheEntryPoint = NULL;
+				$segment = $this->contentCache->getCachedSegment($this, $typoScriptPath, $cacheIdentifierValues, $this->addCacheSegmentMarkersToPlaceholders);
+				if ($segment !== FALSE) {
+					if ($currentPathIsEntryPoint) {
+						$this->inCacheEntryPoint = NULL;
+					}
+					return $segment;
+				} else {
+					$this->addCacheSegmentMarkersToPlaceholders = TRUE;
 				}
-				return $segment;
-			} else {
-				$this->addCacheSegmentMarkersToPlaceholders = TRUE;
+
+				$this->cacheMetadata[] = array(
+					'lifetime' => NULL
+				);
+			}
+
+			if (isset($typoScriptConfiguration['__meta']['cache']['maximumLifetime'])) {
+				$maximumLifetime = $this->evaluateInternal($typoScriptPath . '/__meta/cache/maximumLifetime', self::BEHAVIOR_EXCEPTION, $tsObject);
+
+				if ($maximumLifetime !== NULL && $this->cacheMetadata !== array()) {
+					$cacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
+					$cacheMetadata['lifetime'] = $cacheMetadata['lifetime'] !== NULL ? min($cacheMetadata['lifetime'], $maximumLifetime) : $maximumLifetime;
+				}
 			}
 		}
 
@@ -408,7 +430,8 @@ class Runtime {
 
 		if ($this->enableContentCache && $cacheForPathEnabled) {
 			$cacheTags = $this->buildCacheTags($typoScriptPath, $typoScriptConfiguration, $tsObject);
-			$output = $this->contentCache->createCacheSegment($output, $typoScriptPath, $cacheIdentifierValues, $cacheTags);
+			$cacheMetadata = array_pop($this->cacheMetadata);
+			$output = $this->contentCache->createCacheSegment($output, $typoScriptPath, $cacheIdentifierValues, $cacheTags, $cacheMetadata['lifetime']);
 		} elseif ($this->enableContentCache && $cacheForPathDisabled && $this->inCacheEntryPoint) {
 			$contextArray = $this->getCurrentContext();
 			if (isset($typoScriptConfiguration['__meta']['cache']['context'])) {
