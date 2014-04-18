@@ -121,15 +121,15 @@ class CacheSegmentParser {
 				}
 
 				$identifier = substr($content, $currentPosition, $nextIdentifierSeparatorPosition - $currentPosition);
-				$tagsString = substr($content, $nextIdentifierSeparatorPosition + 1, $nextSecondIdentifierSeparatorPosition - $nextIdentifierSeparatorPosition - 1);
+				$contextOrMetadata = substr($content, $nextIdentifierSeparatorPosition + 1, $nextSecondIdentifierSeparatorPosition - $nextIdentifierSeparatorPosition - 1);
 
 				$parts[$level]['identifier'] = $identifier;
 				if (strpos($identifier, 'eval=') === 0) {
 					$parts[$level]['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
-					$parts[$level]['context'] = $tagsString;
+					$parts[$level]['context'] = $contextOrMetadata;
 				} else {
 					$parts[$level]['type'] = ContentCache::SEGMENT_TYPE_CACHED;
-					$parts[$level]['tags'] = $tagsString === '' ? array() : ($tagsString === '*' ? FALSE : explode(',', $tagsString));
+					$parts[$level]['metadata'] = $contextOrMetadata;
 				}
 
 				$currentPosition = $nextSecondIdentifierSeparatorPosition + 1;

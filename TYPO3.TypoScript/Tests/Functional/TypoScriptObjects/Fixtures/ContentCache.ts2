@@ -1,3 +1,4 @@
+prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
 prototype(TYPO3.TypoScript:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
 
@@ -296,6 +297,72 @@ contentCache.nestedCacheSegmentsWithConditionalException = TYPO3.TypoScript:Arra
 		entryIdentifier {
 			object = ${object}
 		}
+	}
+
+}
+
+contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = TYPO3.TypoScript:Array {
+
+	5 = TYPO3.TypoScript:Value {
+		value = 'Foo'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				static = 42
+			}
+
+			maximumLifetime = 60
+		}
+	}
+
+	10 = '|'
+
+	15 = TYPO3.TypoScript:Array {
+		1 = TYPO3.TypoScript:Value {
+			value = 'Bar'
+
+			@cache {
+				# This should influence the upper lifetime, since this segment is embedded and the lifetime is lower than 'Foo'
+				maximumLifetime = 5
+			}
+		}
+
+		2 = TYPO3.TypoScript:Value {
+			value = ''
+
+			@cache {
+				# Assigning NULL should not override other maximumLifetime values
+				maximumLifetime = ${null}
+			}
+		}
+	}
+
+	20 = '|'
+
+	25 = TYPO3.TypoScript:Value {
+		value = 'Baz'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				static = 42
+			}
+
+			# No maximumLifetime set, so the default lifetime (NULL) should be used, but it won't affect the outer maximumLifetime
+		}
+	}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			static = 42
+		}
+
+		maximumLifetime = 30
 	}
 
 }

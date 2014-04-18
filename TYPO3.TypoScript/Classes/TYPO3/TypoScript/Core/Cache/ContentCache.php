@@ -91,11 +91,16 @@ class ContentCache {
 	 * @param string $typoScriptPath The TypoScript path that rendered the content, for example "page<TYPO3.Neos:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
 	 * @param array $cacheIdentifierValues The values (simple type or implementing CacheAwareInterface) that should be used to create a cache identifier, will be sorted by keys for consistent ordering
 	 * @param array $tags Tags to add to the cache entry
+	 * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
 	 * @return string The original content, but with additional markers and a cache identifier added
 	 */
-	public function createCacheSegment($content, $typoScriptPath, $cacheIdentifierValues, array $tags = array()) {
+	public function createCacheSegment($content, $typoScriptPath, $cacheIdentifierValues, array $tags = array(), $lifetime = NULL) {
 		$cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
-		return self::CACHE_SEGMENT_START_TOKEN . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . implode(',', $tags) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
+		$metadata = implode(',', $tags);
+		if ($lifetime !== NULL) {
+			$metadata .= ';' . $lifetime;
+		}
+		return self::CACHE_SEGMENT_START_TOKEN . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $metadata . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
 	}
 
 	/**
@@ -156,9 +161,12 @@ class ContentCache {
 			$segments = $this->parser->getCacheSegments();
 
 			foreach ($segments as $segment) {
+				$metadata = explode(';', $segment['metadata']);
+				$tagsValue = $metadata[0] === '' ? array() : ($metadata[0] === '*' ? FALSE : explode(',', $metadata[0]));
 					// FALSE means we do not need to store the cache entry again (because it was previously fetched)
-				if ($segment['tags'] !== FALSE) {
-					$this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($segment['tags']));
+				if ($tagsValue !== FALSE) {
+					$lifetime = isset($metadata[1]) ? (integer)$metadata[1] : NULL;
+					$this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($tagsValue), $lifetime);
 				}
 			}
 		}

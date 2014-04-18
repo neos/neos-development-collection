@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
  *                                                                        */
 
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 
 /**
@@ -85,6 +86,32 @@ class ContentCacheTest extends UnitTestCase {
 		$contentCache = new ContentCache();
 		$segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
 		$this->assertNotEmpty($segement);
+	}
+
+	/**
+	 * @test
+	 */
+	public function createCacheSegmentWithLifetimeStoresLifetimeAfterTagsInMetadata() {
+		$contentCache = new ContentCache();
+		$segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
+		$this->assertContains(ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . 'Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
+	}
+
+	/**
+	 * @test
+	 */
+	public function processCacheSegmentsSetsLifetimeFromMetadata() {
+		$contentCache = new ContentCache();
+		$this->inject($contentCache, 'parser', new CacheSegmentParser());
+
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$this->inject($contentCache, 'cache', $mockCache);
+
+		$segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
+
+		$mockCache->expects($this->once())->method('set')->with($this->anything(), $this->anything(), $this->anything(), 60);
+
+		$contentCache->processCacheSegments($segement);
 	}
 
 }

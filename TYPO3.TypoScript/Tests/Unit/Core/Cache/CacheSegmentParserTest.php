@@ -55,21 +55,21 @@ class CacheSegmentParserTest extends UnitTestCase {
 			'content' => 'lorem ipsum',
 			'identifier' => '2345678901',
 			'type' => 'cached',
-			'tags' => array('ChildOf_abcd-efgh-1234-5678', 'AllNodes')
+			'metadata' => 'ChildOf_abcd-efgh-1234-5678,AllNodes'
 		),
 
 		'3456789012' => array(
 			'content' => 'ipsum lorem',
 			'identifier' => '3456789012',
 			'type' => 'cached',
-			'tags' => array()
+			'metadata' => ''
 		),
 
 		'5678901234' => array(
 			'content' => 'cool stuff',
 			'identifier' => '5678901234',
 			'type' => 'cached',
-			'tags' => array()
+			'metadata' => ''
 		),
 
 		'4567890123' => array(
@@ -78,7 +78,7 @@ class CacheSegmentParserTest extends UnitTestCase {
 			sit",
 			'identifier' => '4567890123',
 			'type' => 'cached',
-			'tags' => FALSE
+			'metadata' => '*'
 		),
 
 		'123456789' => array(
@@ -88,14 +88,14 @@ class CacheSegmentParserTest extends UnitTestCase {
 			bar bar \x022345678901\x03
 			foo foo \x023456789012\x03
 			baz baz \x024567890123\x03",
-			'tags' => array('AllDocumentNodes')
+			'metadata' => 'AllDocumentNodes'
 		),
 
 		'6789012345' => array(
 			'identifier' => '6789012345',
 			'type' => 'cached',
 			'content' => 'footer',
-			'tags' => array('AllNodes')
+			'metadata' => 'AllNodes'
 		)
 	);
 
@@ -154,7 +154,7 @@ class CacheSegmentParserTest extends UnitTestCase {
 			sit",
 			'identifier' => '4567890123',
 			'type' => 'cached',
-			'tags' => FALSE
+			'metadata' => '*'
 		),
 
 		'123456789' => array(
@@ -162,14 +162,14 @@ class CacheSegmentParserTest extends UnitTestCase {
 			'type' => 'cached',
 			'content' => "foo bar baz
 			baz baz \x024567890123\x03",
-			'tags' => array('AllDocumentNodes')
+			'metadata' => 'AllDocumentNodes'
 		),
 
 		'6789012345' => array(
 			'identifier' => '6789012345',
 			'type' => 'cached',
 			'content' => 'footer',
-			'tags' => array('AllNodes')
+			'metadata' => 'AllNodes'
 		)
 	);
 

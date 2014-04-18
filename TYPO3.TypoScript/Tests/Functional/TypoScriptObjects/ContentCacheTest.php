@@ -30,6 +30,13 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 		$this->contentCache->flush();
 	}
 
+	public function tearDown() {
+		// Re-inject the original cache since some tests might replace it with a mock object
+		$cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
+		$cacheFrontend = $cacheManager->getCache('TYPO3_TypoScript_Content');
+		$this->inject($this->contentCache, 'cache', $cacheFrontend);
+	}
+
 	/**
 	 * @test
 	 */
@@ -303,6 +310,48 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 
 		$secondRenderResult = $view->render();
 		$this->assertStringStartsWith('Cached segment|counter=1|Exception', $secondRenderResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function maximumLifetimeForCachedSegmentWillBeMinimumOfNestedEmbedSegmentsAndSelf() {
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/maximumLifetimeInNestedEmbedAndCachedSegments');
+
+		$mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+		$this->inject($this->contentCache, 'cache', $mockCache);
+
+		$mockCache->expects($this->any())->method('get')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
+
+		$entriesWritten = array();
+
+		$mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+			$entriesWritten[$entryIdentifier] = array(
+				'lifetime' => $lifetime
+			);
+		}));
+
+		$firstRenderResult = $view->render();
+		$this->assertEquals('Foo|Bar|Baz', $firstRenderResult);
+
+		$this->assertCount(3, $entriesWritten);
+		$this->assertEquals(array(
+			// contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
+			'46f41cbf610fd5892d847acbdb2c3f4c' => array(
+				'lifetime' => 60
+			),
+			// contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
+			'13535edf2b61c31bc76fc7c09714f10f' => array(
+				'lifetime' => NULL
+			),
+			// contentCache.maximumLifetimeInNestedEmbedAndCachedSegments
+			'6bcf61d298cd47155c5b74bd33a6621c' => array(
+				'lifetime' => 5
+			)
+		), $entriesWritten);
 	}
 
 }
