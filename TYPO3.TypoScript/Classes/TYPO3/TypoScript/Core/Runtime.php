@@ -12,12 +12,11 @@ namespace TYPO3\TypoScript\Core;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\PositionalArraySorter;
-use TYPO3\TypoScript\Core\Cache\ContentCache;
+use TYPO3\TypoScript\Core\Cache\RuntimeContentCache;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
@@ -87,12 +86,6 @@ class Runtime {
 	protected $settings;
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\TypoScript\Core\Cache\ContentCache
-	 */
-	protected $contentCache;
-
-	/**
 	 * @var array
 	 */
 	protected $configurationOnPathRuntimeCache = array();
@@ -103,26 +96,10 @@ class Runtime {
 	protected $debugMode = FALSE;
 
 	/**
-	 * @var boolean
+	 * @var RuntimeContentCache
 	 */
-	protected $enableContentCache = FALSE;
+	protected $runtimeContentCache;
 
-	/**
-	 * @var boolean
-	 */
-	protected $inCacheEntryPoint = NULL;
-
-	/**
-	 * @var boolean
-	 */
-	protected $addCacheSegmentMarkersToPlaceholders = FALSE;
-
-	/**
-	 * Stack of cached segment metadata (lifetime)
-	 *
-	 * @var array
-	 */
-	protected $cacheMetadata = array();
 
 	/**
 	 * Constructor for the TypoScript Runtime
@@ -133,6 +110,7 @@ class Runtime {
 	public function __construct(array $typoScriptConfiguration, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext) {
 		$this->typoScriptConfiguration = $typoScriptConfiguration;
 		$this->controllerContext = $controllerContext;
+		$this->runtimeContentCache = new RuntimeContentCache($this);
 	}
 
 	/**
@@ -225,7 +203,7 @@ class Runtime {
 				);
 			}
 		} catch (\Exception $exception) {
-			$this->enableContentCache = FALSE;
+			$this->setEnableContentCache(FALSE);
 			$output = $this->handleRenderingException($typoScriptPath, $exception);
 		}
 
@@ -328,23 +306,17 @@ class Runtime {
 	 */
 	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = NULL) {
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
+		$runtimeContentCache = $this->runtimeContentCache;
 
-		$cacheForPathEnabled = isset($typoScriptConfiguration['__meta']['cache']['mode']) && $typoScriptConfiguration['__meta']['cache']['mode'] === 'cached';
-		$cacheForPathDisabled = isset($typoScriptConfiguration['__meta']['cache']['mode']) && $typoScriptConfiguration['__meta']['cache']['mode'] === 'uncached';
+		$cacheCtx = $runtimeContentCache->enter(isset($typoScriptConfiguration['__meta']['cache']) ? $typoScriptConfiguration['__meta']['cache'] : array(), $typoScriptPath);
 
-		if ($cacheForPathDisabled && (!isset($typoScriptConfiguration['__meta']['cache']['context']) || $typoScriptConfiguration['__meta']['cache']['context'] === array())) {
-			throw new Exception(sprintf('Missing @cache.context configuration for path "%s". An uncached segment must have one or more context variable names configured.', $typoScriptPath), 1395922119);
-		}
-
-		$currentPathIsEntryPoint = FALSE;
-		if ($this->enableContentCache && $cacheForPathEnabled) {
-			if ($this->inCacheEntryPoint === NULL) {
-				$this->inCacheEntryPoint = TRUE;
-				$currentPathIsEntryPoint = TRUE;
-			}
-		}
+		// A closure that needs to be called for every return path in this method
+		$finallyClosure = function() use ($cacheCtx, $runtimeContentCache) {
+			$runtimeContentCache->leave($cacheCtx);
+		};
 
 		if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
+			$finallyClosure();
 			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
 				if (!isset($typoScriptConfiguration['__objectType'])) {
 					throw new Exceptions\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
@@ -352,13 +324,11 @@ class Runtime {
 					throw new Exceptions\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
 				}
 			} else {
-				if ($currentPathIsEntryPoint) {
-					$this->inCacheEntryPoint = NULL;
-				}
 				return NULL;
 			}
 		}
 		if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
+			$finallyClosure();
 			return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
 		}
 
@@ -373,43 +343,22 @@ class Runtime {
 			$this->pushContextArray($contextArray);
 		}
 
-		$cacheIdentifierValues = array();
-		if ($this->enableContentCache) {
-			if ($cacheForPathEnabled) {
-				$cacheIdentifierValues = $this->buildCacheIdentifierValues($typoScriptPath, $typoScriptConfiguration, $tsObject);
-
-				$segment = $this->contentCache->getCachedSegment($this, $typoScriptPath, $cacheIdentifierValues, $this->addCacheSegmentMarkersToPlaceholders);
-				if ($segment !== FALSE) {
-					if ($currentPathIsEntryPoint) {
-						$this->inCacheEntryPoint = NULL;
-					}
-					return $segment;
-				} else {
-					$this->addCacheSegmentMarkersToPlaceholders = TRUE;
-				}
-
-				$this->cacheMetadata[] = array(
-					'lifetime' => NULL
-				);
-			}
-
-			if (isset($typoScriptConfiguration['__meta']['cache']['maximumLifetime'])) {
-				$maximumLifetime = $this->evaluateInternal($typoScriptPath . '/__meta/cache/maximumLifetime', self::BEHAVIOR_EXCEPTION, $tsObject);
-
-				if ($maximumLifetime !== NULL && $this->cacheMetadata !== array()) {
-					$cacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
-					$cacheMetadata['lifetime'] = $cacheMetadata['lifetime'] !== NULL ? min($cacheMetadata['lifetime'], $maximumLifetime) : $maximumLifetime;
-				}
-			}
+		list($cacheHit, $cachedResult) = $runtimeContentCache->preEvaluate($cacheCtx, $tsObject);
+		if ($cacheHit) {
+			$finallyClosure();
+			return $cachedResult;
 		}
 
 		try {
 			$output = $tsObject->evaluate();
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
+			$finallyClosure();
 			throw $stopActionException;
 		} catch (Exceptions\RuntimeException $runtimeException) {
+			$finallyClosure();
 			throw $runtimeException;
 		} catch (\Exception $exception) {
+			$finallyClosure();
 			throw new Exceptions\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
 		}
 
@@ -428,79 +377,15 @@ class Runtime {
 			}
 		}
 
-		if ($this->enableContentCache && $cacheForPathEnabled) {
-			$cacheTags = $this->buildCacheTags($typoScriptPath, $typoScriptConfiguration, $tsObject);
-			$cacheMetadata = array_pop($this->cacheMetadata);
-			$output = $this->contentCache->createCacheSegment($output, $typoScriptPath, $cacheIdentifierValues, $cacheTags, $cacheMetadata['lifetime']);
-		} elseif ($this->enableContentCache && $cacheForPathDisabled && $this->inCacheEntryPoint) {
-			$contextArray = $this->getCurrentContext();
-			if (isset($typoScriptConfiguration['__meta']['cache']['context'])) {
-				$contextVariables = array();
-				foreach ($typoScriptConfiguration['__meta']['cache']['context'] as $contextVariableName) {
-					$contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
-				}
-			} else {
-				$contextVariables = $contextArray;
-			}
-			$output = $this->contentCache->createUncachedSegment($output, $typoScriptPath, $contextVariables);
-		}
+		$output = $runtimeContentCache->postProcess($cacheCtx, $tsObject, $output);
 
 		if (isset($typoScriptConfiguration['__meta']['override'])) {
 			$this->popContext();
 		}
 
-		if ($cacheForPathEnabled && $currentPathIsEntryPoint) {
-			$output = $this->contentCache->processCacheSegments($output, $this->enableContentCache);
-			$this->inCacheEntryPoint = NULL;
-			$this->addCacheSegmentMarkersToPlaceholders = FALSE;
-		}
+		$finallyClosure();
 
 		return $output;
-	}
-
-	/**
-	 * Builds an array of additional key / values which must go into the calculation of the cache entry identifier for
-	 * a cached content segment.
-	 *
-	 * @param string $typoScriptPath Path to the TypoScript object
-	 * @param array $typoScriptConfiguration  The TypoScript object's configuration containing the "cache" meta configuration
-	 * @param object $tsObject The actual TypoScript object
-	 * @return array
-	 */
-	protected function buildCacheIdentifierValues($typoScriptPath, $typoScriptConfiguration, $tsObject) {
-		$cacheIdentifierValues = array();
-		if (isset($typoScriptConfiguration['__meta']['cache']['entryIdentifier'])) {
-			foreach ($typoScriptConfiguration['__meta']['cache']['entryIdentifier'] as $identifierKey => $identifierValue) {
-				$cacheIdentifierValues[$identifierKey] = $this->evaluateInternal($typoScriptPath . '/__meta/cache/entryIdentifier/' . $identifierKey, self::BEHAVIOR_EXCEPTION, $tsObject);
-			}
-		} else {
-			foreach ($this->getCurrentContext() as $key => $value) {
-				if (is_string($value) || is_bool($value) || is_integer($value) || $value instanceof CacheAwareInterface) {
-					$cacheIdentifierValues[$key] = $value;
-				}
-			}
-		}
-		return $cacheIdentifierValues;
-	}
-
-	/**
-	 * Builds an array of string which must be used as tags for the cache entry identifier of a specific cached content segment.
-	 *
-	 * @param string $typoScriptPath Path to the TypoScript object
-	 * @param array $typoScriptConfiguration  The TypoScript object's configuration containing the "cache" meta configuration
-	 * @param object $tsObject The actual TypoScript object
-	 * @return array
-	 */
-	protected function buildCacheTags($typoScriptPath, $typoScriptConfiguration, $tsObject) {
-		$cacheTags = array();
-		if (isset($typoScriptConfiguration['__meta']['cache']['entryTags'])) {
-			foreach ($typoScriptConfiguration['__meta']['cache']['entryTags'] as $tagKey => $tagValue) {
-				$cacheTags[] = $this->evaluateInternal($typoScriptPath . '/__meta/cache/entryTags/' . $tagKey, self::BEHAVIOR_EXCEPTION, $tsObject);
-			}
-		} else {
-			$cacheTags = array(ContentCache::TAG_EVERYTHING);
-		}
-		return $cacheTags;
 	}
 
 	/**
@@ -704,29 +589,6 @@ class Runtime {
 	}
 
 	/**
-	 * Evaluate a TypoScript path with a given context without content caching
-	 *
-	 * This is used to render uncached segments "out of band" while processing cached segments.
-	 *
-	 * @internal
-	 *
-	 * @param string $path
-	 * @param array $contextArray
-	 * @return mixed
-	 *
-	 * TODO Find another way of disabling the cache (especially to allow cached content inside uncached content)
-	 */
-	public function evaluateUncached($path, array $contextArray) {
-		$previousEnableContentCache = $this->enableContentCache;
-		$this->setEnableContentCache(FALSE);
-		$this->pushContextArray($contextArray);
-		$result = $this->evaluate($path);
-		$this->popContext();
-		$this->setEnableContentCache($previousEnableContentCache);
-		return $result;
-	}
-
-	/**
 	 * Returns the context which has been passed by the currently active MVC Controller
 	 *
 	 * @return \TYPO3\Flow\Mvc\Controller\ControllerContext
@@ -783,7 +645,7 @@ class Runtime {
 	 * @return void
 	 */
 	public function setEnableContentCache($flag) {
-		$this->enableContentCache = $flag;
+		$this->runtimeContentCache->setEnableContentCache($flag);
 	}
 
 }

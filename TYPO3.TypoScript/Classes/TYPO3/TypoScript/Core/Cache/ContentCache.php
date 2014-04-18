@@ -178,14 +178,14 @@ class ContentCache {
 	 * Tries to retrieve the specified content segment from the cache – further nested inline segments are retrieved
 	 * as well and segments which were not cacheable are rendered.
 	 *
-	 * @param \TYPO3\TypoScript\Core\Runtime $runtime The TypoScript Runtime which is currently used
+	 * @param \Closure $uncachedCommandCallback A callback to process commands in uncached segments
 	 * @param string $typoScriptPath TypoScript path identifying the TypoScript object to retrieve from the content cache
 	 * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
 	 * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
 	 * @return string|boolean The segment with replaced cache placeholders, or FALSE if a segment was missing in the cache
 	 * @throws \TYPO3\TypoScript\Exception
 	 */
-	public function getCachedSegment(Runtime $runtime, $typoScriptPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = FALSE) {
+	public function getCachedSegment($uncachedCommandCallback, $typoScriptPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = FALSE) {
 		$cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
 		$content = $this->cache->get($cacheIdentifier);
 
@@ -205,7 +205,7 @@ class ContentCache {
 			$i++;
 		} while ($replaced > 0);
 
-		$this->replaceUncachedPlaceholders($runtime, $content);
+		$this->replaceUncachedPlaceholders($uncachedCommandCallback, $content);
 
 		if ($addCacheSegmentMarkersToPlaceholders) {
 			return self::CACHE_SEGMENT_START_TOKEN . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . '*' . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
@@ -247,13 +247,13 @@ class ContentCache {
 	/**
 	 * Replace segments which are marked as not-cacheable by their actual content by invoking the TypoScript Runtime.
 	 *
-	 * @param Runtime $runtime The currently used TypoScript Runtime
+	 * @param \Closure $uncachedCommandCallback
 	 * @param string $content The content potentially containing not cacheable segments marked by the respective tokens
 	 * @return string The original content, but with uncached segments replaced by the actual content
 	 */
-	protected function replaceUncachedPlaceholders(Runtime $runtime, &$content) {
+	protected function replaceUncachedPlaceholders(\Closure $uncachedCommandCallback, &$content) {
 		$propertyMapper = $this->propertyMapper;
-		$content = preg_replace_callback(self::EVAL_PLACEHOLDER_REGEX, function($match) use ($runtime, $propertyMapper) {
+		$content = preg_replace_callback(self::EVAL_PLACEHOLDER_REGEX, function($match) use ($uncachedCommandCallback, $propertyMapper) {
 			$command = $match['command'];
 			$contextString = $match['context'];
 
@@ -264,13 +264,7 @@ class ContentCache {
 				$unserializedContext[$variableName] = $value;
 			}
 
-			if (strpos($command, 'eval=') === 0) {
-				$path = substr($command, 5);
-				$result = $runtime->evaluateUncached($path, $unserializedContext);
-				return $result;
-			} else {
-				throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
-			}
+			return $uncachedCommandCallback($command, $unserializedContext);
 		}, $content);
 	}
 
