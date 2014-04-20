@@ -32,5 +32,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 		entryTags {
 			1 = ${'DescendantOf_' + contentCollectionNode.identifier}
 		}
+
+		maximumLifetime = ${q(contentCollectionNode).context({'invisibleContentShown': true}).children().cacheLifetime()}
 	}
 }

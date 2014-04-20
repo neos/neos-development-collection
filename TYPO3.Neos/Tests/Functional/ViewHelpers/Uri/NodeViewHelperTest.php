@@ -19,6 +19,7 @@ use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Functional test for the NodeViewHelper
@@ -93,7 +94,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
 		$typoScriptObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', FALSE);
-		$this->tsRuntime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('dummy'), array(), '', FALSE);
+		$this->tsRuntime = new Runtime(array(), $controllerContext);
 		$this->tsRuntime->pushContextArray(array('documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home')));
 		$this->inject($typoScriptObject, 'tsRuntime', $this->tsRuntime);
 		$mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
@@ -114,7 +115,6 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewHelperRendersUriViaGivenNodeObject() {
 		$targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
-		//$targetNode->getContext()->setCurrentNode($this->propertyMapper->convert('/sites/example/home/about-us/mission', 'TYPO3\TYPO3CR\Domain\Model\NodeInterface'));
 
 		$this->assertOutputLinkValid('home.html', $this->viewHelper->render($targetNode));
 	}
