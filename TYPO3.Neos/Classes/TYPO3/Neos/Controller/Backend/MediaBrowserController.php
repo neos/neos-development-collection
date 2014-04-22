@@ -18,7 +18,7 @@ use TYPO3\Media\Domain\Repository\AssetRepository;
 /**
  * Controller for asset handling
  */
-class MediaBrowserController extends \TYPO3\Media\Controller\AssetController {
+class MediaBrowserController extends \TYPO3\Neos\Controller\Module\Management\AssetController {
 
 	/**
 	 * @var array
@@ -27,23 +27,8 @@ class MediaBrowserController extends \TYPO3\Media\Controller\AssetController {
 
 	/**
 	 * @Flow\Inject
-	 * @var ConfigurationManager
-
-	 */
-	protected $configurationManager;
-
-	/**
-	 * @Flow\Inject
 	 * @var AssetRepository
 	 */
 	protected $assetRepository;
-
-	/**
-	 * @return void
-	 */
-	public function initializeAction() {
-		parent::initializeAction();
-		$this->settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Media');
-	}
 
 }

@@ -223,10 +223,10 @@ TYPO3:
             resource: 'TYPO3_Neos_Backend_Module_Management_Workspaces'
           media:
             label: 'Media'
-            controller: '\TYPO3\Media\Controller\AssetController'
+            controller: '\TYPO3\Neos\Controller\Module\Management\AssetController'
             description: 'This module allows managing of media assets including pictures, videos, audio and documents.'
             icon: 'icon-camera'
-            resource: 'TYPO3_Media_ManageAssets'
+            resource: 'TYPO3_Neos_Backend_Module_Media_ManageAssets'
       administration:
         label: 'Administration'
         controller: '\TYPO3\Neos\Controller\Module\AdministrationController'

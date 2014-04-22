@@ -1,5 +1,5 @@
 -
-  requestFilter: 'parentRequest.isPackage("TYPO3.Neos") && isPackage("TYPO3.Media") && isController("Asset")'
+  requestFilter: 'parentRequest.isPackage("TYPO3.Neos") && (isPackage("TYPO3.Neos") && isController("Module\Management\Asset")) || (isPackage("TYPO3.Media") && isController("Asset"))'
   options:
     layoutRootPaths:
       'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Layouts/Media'
@@ -7,6 +7,9 @@
     partialRootPaths:
       'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials/Media'
       'TYPO3.Media': 'resource://TYPO3.Media/Private/Partials'
+
+    templateRootPathPattern: 'resource://TYPO3.Media/Private/Templates'
+    templatePathAndFilenamePattern: '@templateRoot/Asset/@action.@format'
 
 -
   requestFilter: 'isPackage("TYPO3.Neos") && (isController("Backend\MediaBrowser") || isController("Backend\ImageBrowser"))'

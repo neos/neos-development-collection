@@ -27,6 +27,7 @@ resources:
     TYPO3_Neos_Backend_Module_Management: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
     TYPO3_Neos_Backend_Module_Management_Workspaces: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishNode|discardNode|publishOrDiscardNodes)Action())'
     TYPO3_Neos_Backend_Module_Management_Workspaces_ManageOwnWorkspace: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace == NULL))'
+    TYPO3_Neos_Backend_Module_Media_ManageAssets: 'method(TYPO3\Neos\Controller\Module\Management\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|deleteTag)Action())'
 
     TYPO3_Neos_Backend_Module_Administration: 'method(TYPO3\Neos\Controller\Module\AdministrationController->indexAction())'
     TYPO3_Neos_Backend_Module_Administration_Users: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|)Action())'
@@ -56,6 +57,7 @@ acls:
       TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: GRANT
 
       TYPO3_Media_ManageAssets: GRANT
+      TYPO3_Neos_Backend_Module_Media_ManageAssets: GRANT
 
       TYPO3_Neos_Backend_Module_User: GRANT
       TYPO3_Neos_Backend_Module_User_UserSettings: GRANT
