@@ -33,8 +33,16 @@
     property3:
       type: references
 
-
 'TYPO3.TYPO3CR:TestingHeadline':
   properties:
     title:
       type: string
+
+'TYPO3.TYPO3CR:TestingNodeTypeWithEntities':
+  properties:
+    image:
+      type: 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image'
+    wrappedImage:
+      type: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
+    images:
+      type: 'array<TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image>'
