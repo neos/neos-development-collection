@@ -68,6 +68,7 @@
 			width: $unit;
 			height: $unit;
 			margin-left: $defaultMargin;
+			margin-top: -$defaultMargin;
 			border-left: none;
 			@include text-shadow(none);
 			@include opacity(1);
@@ -87,7 +88,7 @@
 		.neos-header {
 			font-size: 16px;
 			line-height: 100%;
-			padding: $defaultMargin;
+			margin: $defaultMargin;
 			line-height: $unit / 2;
 			@include box-sizing(border-box);
 		}
@@ -96,11 +97,9 @@
 	// Header
 	.neos-subheader {
 		font-size: 14px;
-		padding: $defaultMargin;
-		padding-top: 0;
+		margin: $defaultMargin;
 		line-height: 18px;
 		font-weight: normal;
-		margin: 0;
 		color: $textSubtleLight;
 	}
 

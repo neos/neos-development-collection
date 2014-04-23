@@ -3726,6 +3726,7 @@
   width: 40px;
   height: 40px;
   margin-left: 16px;
+  margin-top: -16px;
   border-left: none;
   text-shadow: none;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
@@ -3749,7 +3750,7 @@
 .neos .neos-modal .neos-modal-header .neos-header {
   font-size: 16px;
   line-height: 100%;
-  padding: 16px;
+  margin: 16px;
   line-height: 20px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -3757,11 +3758,9 @@
 }
 .neos .neos-modal .neos-subheader {
   font-size: 14px;
-  padding: 16px;
-  padding-top: 0;
+  margin: 16px;
   line-height: 18px;
   font-weight: normal;
-  margin: 0;
   color: #adadad;
 }
 .neos .neos-modal ul {
