@@ -15,10 +15,13 @@ use Doctrine\ORM\Query;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception;
@@ -1271,6 +1274,154 @@ class NodeDataRepository extends Repository {
 			->where('n.pathHash = :pathHash')
 			->setParameter('pathHash', md5($nodePath));
 		return (count($queryBuilder->getQuery()->getResult()) > 0 ? TRUE : FALSE);
+	}
+
+	/**
+	 * Searches for possible relations to the given entity identifier in NodeData.
+	 * Will return all possible NodeData objects that contain this identifier.
+	 *
+	 * Note: This is an internal method that is likely to be replaced in the future.
+	 *
+	 * $objectTypeMap = array(
+	 *    'TYPO3\Media\Domain\Model\Asset' => '',
+	 *    'TYPO3\Media\Domain\Model\ImageVariant' => 'originalImage'
+	 * )
+	 *
+	 * @param string $identifier Persistence object identifier for which to find relations
+	 * @param array $objectTypeMap array where keys are object names and value is a possible sub object property path on which the object with the identifier is situated
+	 * @return array<NodeData>
+	 */
+	public function findByRelationWithGivenPersistenceIdentifierAndObjectTypeMap($identifier, array $objectTypeMap) {
+		$resultSet = array();
+
+		// TODO: This is dirty, but the best way to detect entity relations. When we change the storage type from serialized to something better we need to adapt this.
+		$query = $this->createQuery();
+		$possibleNodeData = $query->matching(
+			$query->logicalOr(
+				$query->like('properties', '%Persistence_Object_Identifier";s:36:"' . $identifier . '%', FALSE),
+				$query->like('properties', '%__identifier";s:36:"' . $identifier . '%', FALSE)
+			)
+		)->execute()->toArray();
+
+		/** @var NodeData $nodeData */
+		foreach ($possibleNodeData as $nodeData) {
+			$nodeType = $nodeData->getNodeType();
+			$addToResultSet = FALSE;
+
+			foreach ($this->getPropertiesContainingSpecifiedTypes($nodeType, array_keys($objectTypeMap)) as $propertyName => $propertyType) {
+				if (isset($objectTypeMap[$propertyType['type']])) {
+					if ($this->matchesSingleObjectProperty($nodeData, $propertyName, $identifier, $propertyType['type'], $objectTypeMap[$propertyType['type']])) {
+						$addToResultSet = TRUE;
+					}
+				} elseif (isset($objectTypeMap[$propertyType['elementType']])) {
+					if ($this->matchesCollectionObjectProperty($nodeData, $propertyName, $identifier, $propertyType['elementType'], $objectTypeMap[$propertyType['elementType']])) {
+						$addToResultSet = TRUE;
+					}
+				}
+			}
+			if ($addToResultSet) {
+				$resultSet[] = $nodeData;
+			}
+		}
+
+		return $resultSet;
+	}
+
+	/**
+	 * Returns an array of properties that either directly or in a collection contain one of the given types.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+	 * @param array $typeNames Allowed types
+	 * @return array<array> Array with key being the propertyName and value an array as given by \TYPO3\Flow\Utility\TypeHandling::parseType()
+	 */
+	protected function getPropertiesContainingSpecifiedTypes(NodeType $nodeType, array $typeNames) {
+		$propertiesWithTypes = array();
+		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
+			$rawPropertyType = 'string';
+			if (isset($propertyConfiguration['type'])) {
+				$rawPropertyType = $propertyConfiguration['type'];
+			}
+			try {
+				$parsedPropertyType = TypeHandling::parseType($rawPropertyType);
+			} catch (\Exception $e) {
+				// The property type was not a valid PHP type, we just try the raw property then.
+				$parsedPropertyType = array(
+					'type' => $rawPropertyType,
+					'elementType' => NULL
+				);
+			}
+			if (in_array($parsedPropertyType['type'], $typeNames) || in_array($parsedPropertyType['elementType'], $typeNames)) {
+				$propertiesWithTypes[$propertyName] = $parsedPropertyType;
+			}
+		}
+
+		return $propertiesWithTypes;
+	}
+
+	/**
+	 * Checks if for the given NodeData object the property specified by $propertyName contains an object of type
+	 * $objectType or, if $subObjectPath tells that, a sub object, with the specified persistence object identifier exists.
+	 *
+	 * @param NodeData $nodeData Node data object
+	 * @param string $propertyName Name of the property
+	 * @param string $identifier Persistence object identifier
+	 * @param string $objectType Object type
+	 * @param string $subObjectPath Optional sub patch
+	 * @return boolean
+	 */
+	protected function matchesSingleObjectProperty(NodeData $nodeData, $propertyName, $identifier, $objectType, $subObjectPath = '') {
+		$possibleObject = $nodeData->getProperty($propertyName);
+		return $this->isGivenObjectOrSubObjectMatchingIdentifierAndObjectType($possibleObject, $identifier, $objectType, $subObjectPath);
+	}
+
+	/**
+	 * Checks if for the given NodeData object the property specified by $propertyName contains a collection which
+	 * contains an object of type $objectType or, if $subObjectPath tells that, a sub object, with the specified
+	 * persistence object identifier exists.
+	 *
+	 * @param NodeData $nodeData Node data object
+	 * @param string $propertyName Name of the property
+	 * @param string $identifier Persistence object identifier
+	 * @param string $objectType Object type
+	 * @param string $subObjectPath Optional sub patch
+	 * @return boolean
+	 */
+	protected function matchesCollectionObjectProperty($nodeData, $propertyName, $identifier, $objectType, $subObjectPath = '') {
+		$possibleCollection = $nodeData->getProperty($propertyName);
+
+		if (is_array($possibleCollection) || $possibleCollection instanceof \Traversable) {
+			foreach ($possibleCollection as $possibleObject) {
+				if ($this->isGivenObjectOrSubObjectMatchingIdentifierAndObjectType($possibleObject, $identifier, $objectType, $subObjectPath)) {
+					return TRUE;
+				}
+			}
+		}
+
+		return FALSE;
+	}
+
+	/**
+	 * Checks if the given object has the specified persistence object identifier and is of the specified type
+	 *
+	 * @param object $object The object to check
+	 * @param string $identifier The object persistence identifier
+	 * @param string $objectType The object type to match
+	 * @param string $subObjectPath Optional sub path
+	 * @return boolean
+	 */
+	protected function isGivenObjectOrSubObjectMatchingIdentifierAndObjectType($object, $identifier, $objectType, $subObjectPath = '') {
+		if (!is_object($object) || !$object instanceof $objectType) {
+			return FALSE;
+		}
+
+		if ($subObjectPath !== '') {
+			$object = ObjectAccess::getPropertyPath($object, $subObjectPath);
+		}
+		if (!$this->persistenceManager->getIdentifierByObject($object) === $identifier) {
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 	/**
