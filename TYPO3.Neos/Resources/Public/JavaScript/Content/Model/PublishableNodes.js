@@ -107,21 +107,23 @@ define(
 					return vie.entities.get(subject).fromReference(subject);
 				});
 
-			WorkspaceEndpoint.publishNodes(nodes, targetWorkspace).then(
-				function() {
-					entitySubjects.forEach(function(subject) {
-						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
-					});
+			if (nodes.length > 0) {
+				WorkspaceEndpoint.publishNodes(nodes, targetWorkspace).then(
+					function() {
+						entitySubjects.forEach(function(subject) {
+							that._removeNodeFromPublishableEntitySubjects(subject, 'live');
+						});
 
-					if (autoPublish !== true) {
-						var pageMetaInformation = $('#neos-page-metainformation'),
-							nodeType = pageMetaInformation.data('neos-_node-type'),
-							title = pageMetaInformation.attr('data-neos-title'),
-							nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-						Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
+						if (autoPublish !== true) {
+							var pageMetaInformation = $('#neos-page-metainformation'),
+								nodeType = pageMetaInformation.data('neos-_node-type'),
+								title = pageMetaInformation.attr('data-neos-title'),
+								nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
+							Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
+						}
 					}
-				}
-			);
+				);
+			}
 		},
 
 		/**
