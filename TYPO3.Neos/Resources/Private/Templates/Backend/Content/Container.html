@@ -1,4 +1,4 @@
-<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+<f:if condition="{node.context.workspace.name} != 'live'">
 	<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
 	<div id="neos-application" class="neos" role="application">
 		<div id="neos-top-bar">

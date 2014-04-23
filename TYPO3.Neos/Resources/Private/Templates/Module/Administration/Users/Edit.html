@@ -37,7 +37,7 @@
 					<div class="neos-controls">
 						<f:for each="{neosRoles}" as="role">
 							<label class="neos-radio neos-inline">
-								<f:form.radio name="roleIdentifier" value="{role.identifier}" checked="{0: currentRole} == {0: role}" /><span></span>
+								<f:form.radio name="roleIdentifier" value="{role.identifier}" checked="{currentRole} == {role}" /><span></span>
 								{role.name}
 							</label>
 						</f:for>
