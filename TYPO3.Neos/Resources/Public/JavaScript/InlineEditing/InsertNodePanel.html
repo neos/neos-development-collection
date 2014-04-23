@@ -4,23 +4,21 @@
 		<div class="neos-header">Create new</div>
 
 		{{#each view.content}}
-			<div>
-				<div class="neos-subheader">{{unbound label}}</div>
-				<ul class="neos-clearfix">
-					{{#each children}}
-						<li class="neos-content-new-selecttype-button">
-							<a class="neos-content-new" {{action "insertNode" nodeType target="view"}}>
-								{{#if ui.icon}}
-									<i class="{{unbound ui.icon}}"></i>
-								{{else}}
-									<i class="icon-sign-blank"></i>
-								{{/if}}
-								{{unbound label}}
-							</a>
-						</li>
-					{{/each}}
-				</ul>
-			</div>
+			<div class="neos-subheader">{{unbound label}}</div>
+			<ul class="neos-clearfix">
+				{{#each children}}
+					<li class="neos-content-new-selecttype-button">
+						<a class="neos-content-new" {{action "insertNode" nodeType target="view"}}>
+							{{#if ui.icon}}
+								<i class="{{unbound ui.icon}}"></i>
+							{{else}}
+								<i class="icon-sign-blank"></i>
+							{{/if}}
+							{{unbound label}}
+						</a>
+					</li>
+				{{/each}}
+			</ul>
 		{{/each}}
 	</div>
 	<div class="neos-modal-footer">
