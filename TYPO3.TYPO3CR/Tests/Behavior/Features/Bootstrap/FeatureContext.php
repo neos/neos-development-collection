@@ -316,7 +316,12 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 				Assert::assertEquals($row['Path'], $this->currentNodes[$index]->getPath(), 'Path should match');
 			}
 			if (isset($row['Properties'])) {
-				Assert::assertEquals(json_decode($row['Properties'], TRUE), $this->currentNodes[$index]->getProperties(), 'Properties should match');
+				$nodeProperties = $this->currentNodes[$index]->getProperties();
+				$testProperties = json_decode($row['Properties'], TRUE);
+				foreach ($testProperties as $property => $value) {
+					Assert::assertArrayHasKey($property, $nodeProperties, 'Expected property should exist');
+					Assert::assertEquals($value, $nodeProperties[$property], 'The value for property "' . $property . '" should match the expected value');
+				}
 			}
 			if (isset($row['Locales'])) {
 				$dimensions = $this->currentNodes[$index]->getDimensions();
