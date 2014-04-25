@@ -12,6 +12,8 @@ namespace TYPO3\Neos\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Policy\Role;
+use TYPO3\Party\Domain\Model\Person;
 
 /**
  * The User Command Controller
@@ -211,6 +213,38 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$account->removeRole($roleObject);
 		$this->accountRepository->update($account);
 		$this->outputLine('Removed role "%s" from user "%s".', array($role, $username));
+	}
+
+	/**
+	 * Shows the given user
+	 *
+	 * This command shows some basic details about the given user. If such a user does not exist, this command
+	 * will exit with a non-zero status code.
+	 *
+	 * @param string $username The username of the user to show.
+	 * @return void
+	 */
+	public function showCommand($username) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!($account instanceof \TYPO3\Flow\Security\Account)) {
+			$this->outputLine('The username "%s" is not in use', array($username));
+			$this->quit(1);
+		}
+
+		$roleNames = array();
+		foreach ($account->getRoles() as $role) {
+			/** @var Role $role */
+			$roleNames[] = $role->getIdentifier();
+		}
+
+		$this->outputLine('Username:  %s', array($username));
+		$this->outputLine('Roles:     %s', array(implode(', ', $roleNames)));
+
+		$party = $account->getParty();
+		if ($party instanceof Person) {
+			$this->outputLine('Name:      %s', array($party->getName()->getFullName()));
+			$this->outputLine('Email:     %s', array($party->getPrimaryElectronicAddress()));
+		}
 	}
 
 }
