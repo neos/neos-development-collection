@@ -34,12 +34,13 @@ class UserPreferenceController extends AbstractServiceController {
 	protected $partyRepository;
 
 	/**
-	 * @return void
+	 * @return string json encoded user preferences
 	 */
 	public function indexAction() {
 		/** @var $user User */
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
-		$this->view->assign('userPreferences', $user->getPreferences());
+		$this->response->setHeader('Content-Type', 'application/json');
+		return json_encode($user->getPreferences()->getPreferences());
 	}
 
 	/**
