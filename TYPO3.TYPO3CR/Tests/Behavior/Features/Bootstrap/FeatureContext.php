@@ -276,6 +276,17 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	}
 
 	/**
+	 * @Given /^I set the node name to "([^"]*)"$/
+	 */
+	public function iSetTheNodeNameTo($name) {
+		$currentNode = $this->iShouldHaveOneNode();
+		$currentNode->setName($name);
+
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
+	}
+
+	/**
 	 * @Then /^The node locales dimension should be "([^"]*)"$/
 	 */
 	public function theNodeLocaleShouldBe($locales) {

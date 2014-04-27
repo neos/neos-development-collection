@@ -283,6 +283,8 @@ class Workspace {
 	protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace) {
 		$properties = $node->getContext()->getProperties();
 		$properties['workspaceName'] = $targetWorkspace->getName();
+		$properties['dimensions'] = $node->getDimensions();
+		$properties['targetDimensions'] = array();
 		$targetWorkspaceContext = $this->contextFactory->create($properties);
 
 		$targetNodeInstance = $targetWorkspaceContext->getNodeByIdentifier($node->getIdentifier());

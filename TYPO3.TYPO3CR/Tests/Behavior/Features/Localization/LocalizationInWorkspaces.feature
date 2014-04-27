@@ -172,3 +172,37 @@ Feature: Localization in workspaces
       | en_ZZ, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage mul"
+
+
+  @fixtures
+  Scenario: Update existing live node variant in user workspace, publish to live
+    Given I have the following nodes:
+      | Identifier                           | Path                                    | Node Type                 | Properties               | Workspace | Locale |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/mainpage           | TYPO3.Neos.NodeTypes:Page | {"title": "Mainpage"}    | live      | mul_ZZ |
+      | 88745891-222b-e9c9-6144-4b3a5d80d482 | /sites/neosdemotypo3/mainpage/subpage   | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}     | live      | mul_ZZ |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/mainpage           | TYPO3.Neos.NodeTypes:Page | {"title": "mainpage"}    | live      | de_DE  |
+      | 88745891-222b-e9c9-6144-4b3a5d80d482 | /sites/neosdemotypo3/mainpage/subpage   | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"}  | live      | de_DE  |
+
+    And I get a node by path "/sites/neosdemotypo3/mainpage" with the following context:
+      | Locales       | Workspace |
+      | de_DE, mul_ZZ | user-demo |
+    And I set the node name to "hauptseite"
+    And I publish the workspace "user-demo"
+
+    When I get a node by path "/sites/neosdemotypo3/hauptseite/subpage" with the following context:
+      | Locales       | Workspace |
+      | de_DE, mul_ZZ | user-demo |
+    And I set the node property "title" to "bar"
+    And I publish the workspace "user-demo"
+
+    When I get a node by path "/sites/neosdemotypo3/hauptseite/subpage" with the following context:
+      | Locales       | Workspace |
+      | de_DE, mul_ZZ | user-demo |
+    And I set the node name to "unterseite"
+    And I publish the workspace "user-demo"
+    Then The node property "title" should be "bar"
+
+    When I get a node by path "/sites/neosdemotypo3/mainpage/subpage" with the following context:
+      | Locales       | Workspace |
+      | de_DE         | user-demo |
+    Then I should have 0 nodes
