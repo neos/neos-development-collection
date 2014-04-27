@@ -68,7 +68,11 @@ class WorkspaceTest extends UnitTestCase {
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 		$mockTargetWorkspaceContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContextFactory->expects($this->any())->method('create')->with(array('workspaceName' => 'live'))->will($this->returnValue($mockTargetWorkspaceContext));
+		$mockContextFactory->expects($this->any())->method('create')->with($this->callback(function($contextProperties) {
+			$this->assertArrayHasKey('workspaceName', $contextProperties);
+			$this->assertEquals('live', $contextProperties['workspaceName']);
+			return TRUE;
+		}))->will($this->returnValue($mockTargetWorkspaceContext));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
@@ -120,7 +124,11 @@ class WorkspaceTest extends UnitTestCase {
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 		$mockTargetWorkspaceContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContextFactory->expects($this->any())->method('create')->with(array('workspaceName' => 'live'))->will($this->returnValue($mockTargetWorkspaceContext));
+		$mockContextFactory->expects($this->any())->method('create')->with($this->callback(function($contextProperties) {
+			$this->assertArrayHasKey('workspaceName', $contextProperties);
+			$this->assertEquals('live', $contextProperties['workspaceName']);
+			return TRUE;
+		}))->will($this->returnValue($mockTargetWorkspaceContext));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
 		$mockNode1->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('/'));
