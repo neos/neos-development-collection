@@ -67,7 +67,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	public function setUp() {
 		$this->frontendNodeRoutePartHandler = $this->getAccessibleMock('TYPO3\Neos\Routing\FrontendNodeRoutePartHandler', array('dummy'));
 
-		$this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface')->getMock();
+		$this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactory')->setMethods(array('create'))->getMock();
 		$this->inject($this->frontendNodeRoutePartHandler, 'contextFactory', $this->mockContextFactory);
 
 		$this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
@@ -540,6 +540,19 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
 
 		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $this->mockNode));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveValueWithContextPathStringValueParsesDimensions() {
+		$this->mockContextFactory->expects($this->once())->method('create')->with($this->callback(function($contextProperties) {
+			$this->assertArrayHasKey('dimensions', $contextProperties);
+			$this->assertEquals(array('locales' => array('de_DE', 'mul_ZZ')), $contextProperties['dimensions']);
+			return TRUE;
+		}))->will($this->returnValue($this->mockContext));
+
+		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@some-workspace;locales=de_DE,mul_ZZ');
 	}
 
 }

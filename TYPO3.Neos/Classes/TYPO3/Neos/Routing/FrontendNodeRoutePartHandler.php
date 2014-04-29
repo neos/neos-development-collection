@@ -192,7 +192,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 * @return ContentContext
 	 */
 	protected function buildContextFromContextPath($contextPath) {
-		return $this->buildContextFromPath($contextPath);
+		return $this->buildContextFromPath($contextPath, TRUE);
 	}
 
 	/**
@@ -200,15 +200,16 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 * @return ContentContext
 	 */
 	protected function buildContextFromRequestPath($requestPath) {
-		return $this->buildContextFromPath($requestPath);
+		return $this->buildContextFromPath($requestPath, FALSE);
 	}
 
 	/**
 	 * @param string $path a path containing the context, such as foo/bar/@user-blubb
+	 * @param boolean $convertLiveDimensions Whether to parse dimensions from the context path in a non-live workspace
 	 * @return ContentContext adhering to the path; only evaluating the context information (e.g. everything after "@")
 	 * @throws Exception\InvalidRequestPathException
 	 */
-	protected function buildContextFromPath($path) {
+	protected function buildContextFromPath($path, $convertLiveDimensions) {
 		$contextPathParts = array();
 		if ($path !== '' && strpos($path, '@') !== FALSE) {
 			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $contextPathParts);
@@ -216,7 +217,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 		$workspaceName = isset($contextPathParts['WorkspaceName']) && $contextPathParts['WorkspaceName'] !== '' ? $contextPathParts['WorkspaceName'] : 'live';
 
 		$dimensions = NULL;
-		if ($workspaceName !== 'live' && isset($contextPathParts['Dimensions'])) {
+		if (($workspaceName !== 'live' || $convertLiveDimensions === TRUE) && isset($contextPathParts['Dimensions'])) {
 			$dimensions = $this->contextFactory->parseDimensionValueStringToArray($contextPathParts['Dimensions']);
 		}
 
