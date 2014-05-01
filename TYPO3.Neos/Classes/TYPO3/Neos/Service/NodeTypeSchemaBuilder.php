@@ -64,52 +64,8 @@ class NodeTypeSchemaBuilder {
 		}
 
 		$nodeTypes = $this->nodeTypeManager->getNodeTypes();
-
-		/** @var \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType */
 		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
-			$nodeTypeConfiguration = $nodeType->getFullConfiguration();
-			$this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
-			if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
-				foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
-					$this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType;
-				}
-			}
-
-			$nodeTypeProperties = array();
-
-			if (isset($nodeTypeConfiguration['properties'])) {
-				foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
-
-						// TODO Make sure we can configure the range for all multi column elements to define what types a column may contain
-					$this->addProperty('typo3:' . $nodeTypeName, 'typo3:' . $property, $propertyConfiguration);
-					$nodeTypeProperties[] = 'typo3:' . $property;
-				}
-			}
-
-			$metadata = array();
-			$metaDataPropertyIndexes = array('ui');
-			foreach ($metaDataPropertyIndexes as $propertyName) {
-				if (isset($nodeTypeConfiguration[$propertyName])) {
-					$metadata[$propertyName] = $nodeTypeConfiguration[$propertyName];
-				}
-			}
-			if ($nodeType->isAbstract()) {
-				$metadata['abstract'] = TRUE;
-			}
-
-			$this->types['typo3:' . $nodeTypeName] = (object) array(
-				'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeTypeName,
-				'id' => 'typo3:' . $nodeTypeName,
-				'properties' => array(),
-				'specific_properties' => $nodeTypeProperties,
-				'subtypes' => array(),
-				'metadata' => (object) $metadata,
-				'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeTypeName],
-				'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
-				'ancestors' => array(),
-				'comment' => '',
-				'comment_plain' => ''
-			);
+			$this->readNodeTypeConfiguration($nodeTypeName, $nodeType);
 		}
 
 		unset($this->types['typo3:unstructured']);
@@ -145,6 +101,57 @@ class NodeTypeSchemaBuilder {
 			'properties' => (object) $this->properties,
 		);
 		return $this->configuration;
+	}
+
+	/**
+	 * @param string $nodeTypeName
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+	 * @return void
+	 */
+	protected function readNodeTypeConfiguration($nodeTypeName, $nodeType) {
+		$nodeTypeConfiguration = $nodeType->getFullConfiguration();
+		$this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
+		if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
+			foreach ($nodeTypeConfiguration['superTypes'] as $superType) {
+				$this->superTypeConfiguration['typo3:' . $nodeTypeName][] = 'typo3:' . $superType;
+			}
+		}
+
+		$nodeTypeProperties = array();
+
+		if (isset($nodeTypeConfiguration['properties'])) {
+			foreach ($nodeTypeConfiguration['properties'] as $property => $propertyConfiguration) {
+
+				// TODO Make sure we can configure the range for all multi column elements to define what types a column may contain
+				$this->addProperty('typo3:' . $nodeTypeName, 'typo3:' . $property, $propertyConfiguration);
+				$nodeTypeProperties[] = 'typo3:' . $property;
+			}
+		}
+
+		$metadata = array();
+		$metaDataPropertyIndexes = array('ui');
+		foreach ($metaDataPropertyIndexes as $propertyName) {
+			if (isset($nodeTypeConfiguration[$propertyName])) {
+				$metadata[$propertyName] = $nodeTypeConfiguration[$propertyName];
+			}
+		}
+		if ($nodeType->isAbstract()) {
+			$metadata['abstract'] = TRUE;
+		}
+
+		$this->types['typo3:' . $nodeTypeName] = (object) array(
+			'label' => isset($nodeTypeConfiguration['ui']['label']) ? $nodeTypeConfiguration['ui']['label'] : $nodeTypeName,
+			'id' => 'typo3:' . $nodeTypeName,
+			'properties' => array(),
+			'specific_properties' => $nodeTypeProperties,
+			'subtypes' => array(),
+			'metadata' => (object)$metadata,
+			'supertypes' => $this->superTypeConfiguration['typo3:' . $nodeTypeName],
+			'url' => 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/',
+			'ancestors' => array(),
+			'comment' => '',
+			'comment_plain' => ''
+		);
 	}
 
 	/**
