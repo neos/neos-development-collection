@@ -152,19 +152,19 @@ function(
 			},
 			requireConfig: {
 				map: {
-					'../../JavaScript/LibraryExtensions/UiAlohaPlugin/button': {
+					'../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/button': {
 						'originalButton': 'ui/button'
 					},
 					'*': {
-						'ui/ui-plugin': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/ui-plugin',
-						'ui/multiSplit': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/multiSplit',
-						'ui/button': '../../JavaScript/LibraryExtensions/UiAlohaPlugin/button'
+						'ui/ui-plugin': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/ui-plugin',
+						'ui/multiSplit': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/multiSplit',
+						'ui/button': '../../JavaScript/InlineEditing/Editors/Aloha/UiPlugin/button'
 					}
 				},
 				paths: {
-					'node-repository': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib',
-					'asset-repository': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib',
-					'neos-link': '../../JavaScript/Content/LibraryExtensions/AlohaLinkPlugin/lib'
+					'node-repository': '../../JavaScript/InlineEditing/Editors/Aloha/LinkPlugin/lib',
+					'asset-repository': '../../JavaScript/InlineEditing/Editors/Aloha/LinkPlugin/lib',
+					'neos-link': '../../JavaScript/InlineEditing/Editors/Aloha/LinkPlugin/lib'
 				}
 			},
 			// Basic sanitation of content

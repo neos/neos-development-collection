@@ -111,6 +111,7 @@ define([
 		hide: function () {
 			Toolbar.$topmenuSurfaceContainer.hide();
 			Toolbar.$topmenuSurfaceContainer.children().detach();
+
 			Toolbar.$inspectorSurfaceContainer.hide();
 			Toolbar.$inspectorSurfaceContainer.children().detach();
 		}
