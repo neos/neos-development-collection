@@ -3,7 +3,7 @@ define(
 		'Library/jquery-with-dependencies',
 		'./SelectBoxEditor',
 		'Shared/Configuration',
-		'Shared/NodeTypeService',
+		'Shared/NodeTypeService'
 	],
 	function ($, SelectBoxEditor, Configuration, NodeTypeService) {
 		return SelectBoxEditor.extend({

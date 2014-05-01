@@ -2,7 +2,7 @@ define(
 [
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'vie/instance',
+	'vie',
 	'Content/Model/NodeActions',
 	'Content/Model/NodeSelection',
 	'Shared/Notification',

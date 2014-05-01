@@ -11,8 +11,8 @@ define(
 	'emberjs',
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
-	'vie/instance',
-	'vie/entity',
+	'vie',
+	'Content/Model/Node',
 	'Shared/EventDispatcher'
 ], function(
 	Ember,

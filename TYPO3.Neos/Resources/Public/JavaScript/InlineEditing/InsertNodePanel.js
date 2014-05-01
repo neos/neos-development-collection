@@ -2,7 +2,7 @@ define(
 [
 	'emberjs',
 	'Library/underscore',
-	'vie/instance',
+	'vie',
 	'Content/Application',
 	'Shared/Configuration',
 	'Content/Model/NodeActions',

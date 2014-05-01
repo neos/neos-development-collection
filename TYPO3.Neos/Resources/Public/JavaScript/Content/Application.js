@@ -17,11 +17,10 @@ define(
 	'Content/Model/PublishableNodes',
 	'Content/Model/NodeActions',
 	'Content/EditPreviewPanel/EditPreviewPanelController',
-	'vie/instance',
+	'vie',
 	'emberjs',
 	'Content/InputEvents/KeyboardEvents',
 	'create',
-	'Library/vie',
 	'Shared/Notification',
 	'Shared/HttpClient'
 ],
@@ -41,7 +40,6 @@ function(
 	Ember,
 	KeyboardEvents,
 	CreateJS,
-	VIE,
 	Notification,
 	HttpClient
 ) {
@@ -160,7 +158,7 @@ function(
 				function(vieSchema) {
 					ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(
 						function(nodeTypeSchema) {
-							VIE.Util.loadSchemaOrg(vie, vieSchema, null);
+							vie.Util.loadSchemaOrg(vie, vieSchema, null);
 							Configuration.set('Schema', nodeTypeSchema.nodeTypes);
 							that._initializeVieAfterSchemaIsLoaded(vie);
 						},

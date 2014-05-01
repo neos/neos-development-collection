@@ -12,7 +12,7 @@ define(
 		'Shared/EventDispatcher',
 		'Shared/Notification',
 		'Shared/NodeTypeService',
-		'vie/instance',
+		'vie',
 		'../Model/NodeSelection',
 		'../Model/PublishableNodes',
 		'./NavigatePanelController',

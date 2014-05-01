@@ -3,7 +3,7 @@ define([
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'Shared/Configuration',
-	'vie/instance'
+	'vie'
 ], function(
 	Ember,
 	$,

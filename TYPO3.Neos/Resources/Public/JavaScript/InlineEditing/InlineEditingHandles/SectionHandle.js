@@ -3,7 +3,7 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'vie/entity',
+	'Content/Model/Node',
 	'InlineEditing/InlineEditingHandles/ContentElementHandle',
 	'InlineEditing/ContentCommands'
 ],

@@ -1,6 +1,6 @@
 define(
 [
-	'vie/entity',
+	'Content/Model/Node',
 	'Library/backbone',
 	'Content/Model/PublishableNodes',
 	'Shared/Endpoint/NodeEndpoint'

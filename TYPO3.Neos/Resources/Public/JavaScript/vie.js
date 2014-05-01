@@ -67,6 +67,6 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 	};
 
 	vieInstance.use(new vieInstance.RdfaService());
-
+	vieInstance.Util = VIE.Util;
 	return vieInstance;
 });

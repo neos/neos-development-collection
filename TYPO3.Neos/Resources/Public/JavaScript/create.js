@@ -1,7 +1,7 @@
 define(
 	[
 		'Library/jquery-with-dependencies',
-		'vie/instance',
+		'vie',
 		'emberjs',
 		'Content/InputEvents/EntitySelection',
 		'Content/Model/NodeSelection',

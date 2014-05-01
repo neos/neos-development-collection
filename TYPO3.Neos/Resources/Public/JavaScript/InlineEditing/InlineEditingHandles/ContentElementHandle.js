@@ -5,7 +5,7 @@ define(
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'emberjs',
-	'vie/instance',
+	'vie',
 	'text!InlineEditing/InlineEditingHandles/ContentElementHandle.html',
 	'Content/Application',
 	'Content/Inspector/InspectorController',

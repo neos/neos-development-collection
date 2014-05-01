@@ -15,7 +15,7 @@ define(
 	'Shared/Notification',
 	'Shared/EventDispatcher',
 	'Content/Model/NodeSelection',
-	'vie/instance',
+	'vie',
 	'Shared/Endpoint/NodeEndpoint'
 ], function(
 	Ember,
