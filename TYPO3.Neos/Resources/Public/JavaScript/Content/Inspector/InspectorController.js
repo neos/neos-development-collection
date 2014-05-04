@@ -104,6 +104,10 @@ define(
 					}
 				});
 
+				if (properties.length <= 0) {
+					return;
+				}
+
 				properties.sort(function(a, b) {
 					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
 				});
