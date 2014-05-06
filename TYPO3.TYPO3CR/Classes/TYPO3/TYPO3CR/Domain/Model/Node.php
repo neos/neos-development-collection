@@ -1102,7 +1102,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		/** @var $childNode Node */
 		foreach ($this->getChildNodes() as $childNode) {
 			// Prevent recursive copy when copying into itself
-			if ($childNode !== $copiedNode) {
+			if ($childNode->getIdentifier() !== $copiedNode->getIdentifier()) {
 				$childNode->copyInto($copiedNode, $childNode->getName());
 			}
 		}
