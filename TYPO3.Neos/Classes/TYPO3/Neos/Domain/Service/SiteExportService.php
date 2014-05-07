@@ -117,6 +117,7 @@ class SiteExportService {
 	protected function exportSite(Site $site, ContentContext $contentContext) {
 		$contextProperties = $contentContext->getProperties();
 		$contextProperties['currentSite'] = $site;
+		/** @var \TYPO3\Neos\Domain\Service\ContentContext $contentContext */
 		$contentContext = $this->contextFactory->create($contextProperties);
 
 		$siteNode = $contentContext->getCurrentSiteNode();

@@ -87,6 +87,7 @@ class NodeSearchService {
 			)))->execute();
 
 			foreach ($nodes as $node) {
+				/** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $node */
 				if (isset($result[$node->getIdentifier()])) {
 					continue;
 				}

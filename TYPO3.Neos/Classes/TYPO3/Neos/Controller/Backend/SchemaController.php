@@ -67,6 +67,7 @@ class SchemaController extends ActionController {
 
 			$schema['inheritanceMap']['subTypes'][$nodeTypeName] = array();
 			foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), TRUE) as $subNodeType) {
+				/** @var NodeType $subNodeType */
 				$schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->getName();
 			}
 		}

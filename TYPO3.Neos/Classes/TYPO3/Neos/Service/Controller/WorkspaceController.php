@@ -12,6 +12,8 @@ namespace TYPO3\Neos\Service\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
 /**
  * Service Controller for managing Workspaces
@@ -62,18 +64,18 @@ class WorkspaceController extends AbstractServiceController {
 				->arguments
 				->getArgument('node')
 				->getPropertyMappingConfiguration()
-				->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
+				->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
 	}
 
 	/**
 	 * Publishes the given node to the specified targetWorkspace
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 */
-	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
+	public function publishNodeAction(NodeInterface $node, $targetWorkspaceName) {
 		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
 
 		$this->publishingService->publishNode($node, $targetWorkspace);
@@ -99,10 +101,10 @@ class WorkspaceController extends AbstractServiceController {
 	/**
 	 * Discards the given node
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param NodeInterface $node
 	 * @return void
 	 */
-	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function discardNodeAction(NodeInterface $node) {
 		$this->publishingService->discardNode($node);
 
 		$this->throwStatus(204, 'Node changes have been discarded');
@@ -163,7 +165,7 @@ class WorkspaceController extends AbstractServiceController {
 	 */
 	protected function convertNodes(array $nodes) {
 		$propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
-		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		foreach ($nodes as $key => $node) {
 			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
 		}

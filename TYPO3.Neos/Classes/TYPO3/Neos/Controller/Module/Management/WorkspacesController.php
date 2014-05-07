@@ -183,6 +183,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
 	 * @param string $action
 	 * @return void
+	 * @throws \RuntimeException
 	 */
 	public function publishOrDiscardNodesAction(array $nodes, $action) {
 		$propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();

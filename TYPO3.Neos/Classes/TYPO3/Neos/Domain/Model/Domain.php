@@ -69,11 +69,11 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface {
 	/**
 	 * Sets the site this domain is pointing to
 	 *
-	 * @param \TYPO3\Neos\Domain\Model\Site $site The site
+	 * @param Site $site The site
 	 * @return void
 	 * @api
 	 */
-	public function setSite(\TYPO3\Neos\Domain\Model\Site $site) {
+	public function setSite(Site $site) {
 		$this->site = $site;
 	}
 

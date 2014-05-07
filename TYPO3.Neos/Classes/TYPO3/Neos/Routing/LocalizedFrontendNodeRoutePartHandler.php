@@ -154,6 +154,7 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 	 *
 	 * @param array $dimensionValues
 	 * @return string
+	 * @throws Exception
 	 */
 	protected function getUriSegmentForLocales(array $dimensionValues) {
 		if (isset($dimensionValues['locales'])) {

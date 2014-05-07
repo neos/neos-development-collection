@@ -57,6 +57,7 @@ class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->outputLine('The workspace %s contains %u unpublished nodes.', array($workspaceName, count($nodes)));
 
 		foreach ($nodes as $node) {
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
 			if ($verbose) {
 				$this->outputLine('    ' . $node->getPath());
 			}
@@ -90,6 +91,7 @@ class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$this->outputLine('The workspace %s contains %u unpublished nodes.', array($workspaceName, count($nodes)));
 
 		foreach ($nodes as $node) {
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
 			if ($node->getPath() !== '/') {
 				if ($verbose) {
 					$this->outputLine('    ' . $node->getPath());

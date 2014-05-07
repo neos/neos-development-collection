@@ -51,9 +51,8 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
 			$preset = $this->configuration[$dimensionName]['presets'][$this->configuration[$dimensionName]['defaultPreset']];
 			$preset['identifier'] = $this->configuration[$dimensionName]['defaultPreset'];
 			return $preset;
-		} else {
-			return NULL;
 		}
+		return NULL;
 	}
 
 	/**
@@ -67,9 +66,8 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
 					return $presetConfiguration;
 				}
 			}
-		} else {
-			return NULL;
 		}
+		return NULL;
 	}
 
 	/**
@@ -83,9 +81,8 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
 					return $presetConfiguration;
 				}
 			}
-		} else {
-			return NULL;
 		}
+		return NULL;
 	}
 
 	/**

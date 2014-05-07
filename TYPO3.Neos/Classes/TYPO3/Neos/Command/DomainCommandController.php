@@ -85,6 +85,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$availableDomains = array();
 
 		foreach ($domains as $domain) {
+			/** @var \TYPO3\Neos\Domain\Model\Domain $domain */
 			array_push($availableDomains, array(
 				'nodeName' => $domain->getSite()->getNodeName(),
 				'hostPattern' => $domain->getHostPattern()

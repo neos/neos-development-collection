@@ -46,16 +46,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
 	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
-
+	 *
 	 * This function tries to find a matching node by the given relative context node path. If one was found, its
 	 * absolute context node path is returned in $this->value.
-
+	 *
 	 * Note that this matcher does not check if access to the resolved workspace or node is allowed because at the point
 	 * in time the route part handler is invoked, the security framework is not yet fully initialized.
-
 	 *
 	 * @param string $requestPath The relative context node path (without leading "/", relative to the current Site Node)
 	 * @return boolean TRUE if the $requestPath could be matched, otherwise FALSE
+	 * @throws \Exception
+	 * @throws Exception\NoSuchLocaleException
 	 * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
 	 */
 	protected function matchValue($requestPath) {

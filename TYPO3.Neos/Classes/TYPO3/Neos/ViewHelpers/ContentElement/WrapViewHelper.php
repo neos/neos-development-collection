@@ -12,15 +12,11 @@ namespace TYPO3\Neos\ViewHelpers\ContentElement;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
-use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
-use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * Renders a wrapper around a whole block of editable content to enable frontend editing.
@@ -37,7 +33,7 @@ class WrapViewHelper extends AbstractViewHelper {
 	protected $contentElementWrappingService;
 
 	/**
-	 * In live workspace this just renders a tag with the specified $tag-name containing the value of the given $property.
+	 * In live workspace this just renders a the content.
 	 * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
 	 *
 	 * @param NodeInterface $node The node of the content element. Optional, will be resolved from the TypoScript context by default.

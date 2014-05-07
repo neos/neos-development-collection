@@ -95,7 +95,6 @@ class PluginService {
 				$pluginNodes[] = $pluginNode;
 			}
 		}
-
 		return $pluginNodes;
 	}
 
@@ -109,10 +108,9 @@ class PluginService {
 	protected function getNodes($nodeType, ContentContext $context) {
 		$nodes = array();
 		$siteNode = $context->getCurrentSiteNode();
-		foreach($this->nodeDataRepository->findByParentAndNodeTypeRecursively($siteNode->getPath(), $nodeType, $context->getWorkspace()) as $nodeData) {
+		foreach ($this->nodeDataRepository->findByParentAndNodeTypeRecursively($siteNode->getPath(), $nodeType, $context->getWorkspace()) as $nodeData) {
 			$nodes[] = $this->nodeFactory->createFromNodeData($nodeData, $context);
 		}
-
 		return $nodes;
 	}
 
@@ -208,6 +206,7 @@ class PluginService {
 		/** @var $context ContentContext */
 		$context = $node->getContext();
 		foreach ($this->getNodes('TYPO3.Neos:PluginView', $context) as $pluginViewNode) {
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pluginViewNode */
 			if ($pluginViewNode->isRemoved()) {
 				continue;
 			}
