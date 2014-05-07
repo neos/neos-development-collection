@@ -1,6 +1,3 @@
-$max-image-width: $inspectorWidth - $defaultMargin * 2;
-$max-image-height: $max-image-width / 4 * 3;
-
 .neos-inspector-file {
 	min-width: $inspectorWidth - $defaultMargin * 2;
 
@@ -16,67 +13,6 @@ $max-image-height: $max-image-width / 4 * 3;
 		li {
 			padding: 5px 0;
 		}
-	}
-
-	.neos-inspector-file-thumbnail-container {
-		position: relative;
-		overflow: hidden;
-		border: 1px dashed $grayMedium;
-		margin-bottom: $defaultMargin - $tightMargin;
-
-		.neos-image-preview-thumbnail {
-			max-width: $max-image-width;
-			max-height: $max-image-height;
-		}
-
-		.neos-inspector-file-loadingindicator {
-			z-index: 1;
-			position: absolute;
-			left: 67px;
-			top: 67px;
-		}
-
-		.neos-inspector-file-thumbnail-inner {
-			overflow: hidden;
-			padding: 0;
-			margin: auto;
-
-			img {
-				// We need to reset max-width and height, as this is set in neos globally.
-				max-width: none;
-				max-height: none;
-			}
-		}
-
-		.neos-imagebadge {
-			position: absolute;
-			top: 80px;
-			width: 100%;
-			height: 20px;
-			color: white;
-			background: rgba(0,0,0, 0.7);
-			text-align: center;
-			display:none;
-
-			&.neos-imagebadge-visible {
-				display:block;
-			}
-		}
-	}
-
-	.neos-inspector-file-uploadthumbnail {
-		display: block;
-		position:absolute;
-		left: 0;
-		top: 0;
-	}
-
-	.neos-inspector-file-uploadthumbnail-landscape {
-		width: $max-image-width;
-	}
-
-	.neos-inspector-file-uploadthumbnail-portrait {
-		height: $max-image-height;
 	}
 
 	.neos-inspector-file-upload,

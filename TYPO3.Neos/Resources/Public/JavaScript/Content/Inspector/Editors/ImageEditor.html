@@ -1,15 +1,10 @@
 <div class="neos-inspector-image">
-	<div class="neos-inspector-image-thumbnail-container">
-		<div class="neos-inspector-image-thumbnail">
-			<div class="neos-inspector-image-thumbnail-inner">
-				{{#unless view._uploadPreviewShown}}
-					<img {{bindAttr src="view._previewImageUri"}} alt="" />
-				{{/unless}}
-			</div>
-		</div>
-		<div class="neos-inspector-image-uploadthumbnail">
+	<div class="neos-inspector-image-thumbnail">
+		<div class="neos-inspector-image-thumbnail-inner">
 			{{#if view._uploadPreviewShown}}
 				<img {{bindAttr src="view._uploadPreviewImageSource"}} alt="" />
+			{{else}}
+				<img {{bindAttr src="view._previewImageUri"}} alt="" />
 			{{/if}}
 		</div>
 	</div>

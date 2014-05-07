@@ -1,5 +1,5 @@
-$max-image-width: $inspectorWidth - $defaultMargin * 2;
-$max-image-height: $max-image-width / 4 * 3;
+$maxImageWidth: $inspectorWidth - $defaultMargin * 2;
+$maxImageHeight: $maxImageWidth / 4 * 3;
 
 .neos-inspector-image {
 	min-width: $inspectorWidth - $defaultMargin * 2;
@@ -11,16 +11,13 @@ $max-image-height: $max-image-width / 4 * 3;
 		font-size: 13px;
 	}
 
-	.neos-inspector-image-thumbnail-container {
+	.neos-inspector-image-thumbnail {
 		position: relative;
-		overflow: hidden;
 		border: 1px dashed $grayMedium;
 		margin-bottom: $defaultMargin - $tightMargin;
-
-		.neos-image-preview-thumbnail {
-			max-width: $max-image-width;
-			max-height: $max-image-height;
-		}
+		width: $maxImageWidth;
+		height: $maxImageHeight;
+		display: table;
 
 		.neos-inspector-image-loadingindicator {
 			z-index: 1;
@@ -30,46 +27,25 @@ $max-image-height: $max-image-width / 4 * 3;
 		}
 
 		.neos-inspector-image-thumbnail-inner {
-			overflow: hidden;
-			padding: 0;
-			margin: auto;
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+
+			&.neos-inspector-image-thumbnail-cropped {
+				text-align: left;
+				overflow: hidden;
+
+				img {
+					max-width: none;
+					max-height: none;
+				}
+			}
 
 			img {
-				// We need to reset max-width and height, as this is set in neos globally.
-				max-width: none;
-				max-height: none;
+				max-width: $maxImageWidth;
+				max-height: $maxImageHeight;
 			}
 		}
-
-		.neos-imagebadge {
-			position: absolute;
-			top: 80px;
-			width: 100%;
-			height: 20px;
-			color: white;
-			background: rgba(0,0,0, 0.7);
-			text-align: center;
-			display:none;
-
-			&.neos-imagebadge-visible {
-				display:block;
-			}
-		}
-	}
-
-	.neos-inspector-image-uploadthumbnail {
-		display: block;
-		position:absolute;
-		left: 0;
-		top: 0;
-	}
-
-	.neos-inspector-image-uploadthumbnail-landscape {
-		width: $max-image-width;
-	}
-
-	.neos-inspector-image-uploadthumbnail-portrait {
-		height: $max-image-height;
 	}
 
 	.neos-inspector-image-upload,

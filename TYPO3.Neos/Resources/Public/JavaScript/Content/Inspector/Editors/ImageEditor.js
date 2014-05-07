@@ -29,10 +29,6 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 		/**
 		 * Size of the image preview. Public configuration.
-		 *
-		 * If this setting is changed, also the CSS properties
-		 * .neos-inspector-image-uploadthumbnail-portrait and .neos-inspector-image-uploadthumbnail-landscape
-		 * need to be adjusted.
 		 */
 		imagePreviewMaximumDimensions: {w: 288, h: 216},
 
@@ -221,15 +217,6 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 			this._super();
 
-			this.$().find('.neos-inspector-image-thumbnail-inner').css({
-				width: this.imagePreviewMaximumDimensions.w + 'px',
-				height: this.imagePreviewMaximumDimensions.h + 'px'
-			});
-			this.$().find('.neos-inspector-image-thumbnail-container').css({
-				width: this.imagePreviewMaximumDimensions.w + 'px',
-				height: this.imagePreviewMaximumDimensions.h + 'px'
-			});
-
 			this.$().find('.neos-inspector-image-thumbnail').click(function() {
 				SecondaryInspectorController.toggle(that.get('_cropView'));
 			});
@@ -315,24 +302,6 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 						var imageObjForFindingSize = new window.Image();
 						imageObjForFindingSize.onload = function() {
-							var scaleFactor,
-								offset,
-								image = that.$().find('.neos-inspector-image-uploadthumbnail img');
-							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
-								image.addClass('neos-inspector-image-uploadthumbnail-landscape').removeClass('neos-inspector-image-uploadthumbnail-portrait');
-
-									// For landscape images, we set the margin-top correctly to align the image in the center
-								scaleFactor = that.get('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
-								offset = ((that.get('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
-								image.css({'margin-top': parseInt(offset, 10) + 'px', 'margin-left': 0});
-							} else {
-								image.removeClass('neos-inspector-image-uploadthumbnail-landscape').addClass('neos-inspector-image-uploadthumbnail-portrait');
-
-									// For portrait images, we set the margin-left correctly to align the image in the center
-								scaleFactor = that.get('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
-								offset = ((that.get('imagePreviewMaximumDimensions.w') - imageObjForFindingSize.width * scaleFactor) / 2);
-								image.css({'margin-left': parseInt(offset, 10) + 'px', 'margin-top': 0});
-							}
 							that.set('_uploadPreviewShown', true);
 						};
 						imageObjForFindingSize.src = binaryData;
@@ -458,35 +427,40 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 				return;
 			}
 
-			var cropProperties = this.get('_cropProperties.full');
+			var cropProperties = this.get('_cropProperties.full'),
+				container = this.$().find('.neos-inspector-image-thumbnail-inner'),
+				image = container.find('img');
 
-			var scalingFactorX = this.imagePreviewMaximumDimensions.w / cropProperties.w;
-			var scalingFactorY = this.imagePreviewMaximumDimensions.h / cropProperties.h;
-			var overallScalingFactor = Math.min(scalingFactorX, scalingFactorY);
+			if (!this.get('_uploadPreviewShown') && (cropProperties.w !== this.get('_previewImageSize.w') || cropProperties.h !== this.get('_previewImageSize.h'))) {
+				var scalingFactorX = this.imagePreviewMaximumDimensions.w / cropProperties.w,
+					scalingFactorY = this.imagePreviewMaximumDimensions.h / cropProperties.h,
+					overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
+					previewBoundingBoxSize = {
+						w: Math.floor(cropProperties.w * overallScalingFactor),
+						h: Math.floor(cropProperties.h * overallScalingFactor)
+					};
+					// Update size of preview bounding box
+					// and Center preview image thumbnail
+				container.css({
+					width: previewBoundingBoxSize.w + 'px',
+					height: previewBoundingBoxSize.h + 'px',
+					position: 'absolute',
+					left: ((this.imagePreviewMaximumDimensions.w - previewBoundingBoxSize.w) / 2 ) + 'px',
+					top: ((this.imagePreviewMaximumDimensions.h - previewBoundingBoxSize.h) / 2) + 'px'
+				}).addClass('neos-inspector-image-thumbnail-cropped');;
 
-			var previewBoundingBoxSize = {
-				w: Math.floor(cropProperties.w * overallScalingFactor),
-				h: Math.floor(cropProperties.h * overallScalingFactor)
-			};
-
-				// Update size of preview bounding box
-				// and Center preview image thumbnail
-			this.$().find('.neos-inspector-image-thumbnail-inner').css({
-				width: previewBoundingBoxSize.w + 'px',
-				height: previewBoundingBoxSize.h + 'px',
-				position: 'absolute',
-				left: ((this.imagePreviewMaximumDimensions.w - previewBoundingBoxSize.w) / 2 ) + 'px',
-				top: ((this.imagePreviewMaximumDimensions.h - previewBoundingBoxSize.h) / 2) + 'px'
-			});
-
-				// Scale Preview image and update relative image position
-			this.$().find('.neos-inspector-image-thumbnail-inner img').css({
-				width: Math.floor(this.get('_previewImageSize').w * overallScalingFactor) + 'px',
-				height:  Math.floor(this.get('_previewImageSize').h * overallScalingFactor) + 'px',
-				marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
-				marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
-			});
-		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_previewImageUri'),
+					// Scale Preview image and update relative image position
+				image.css({
+					width: Math.floor(this.get('_previewImageSize').w * overallScalingFactor) + 'px',
+					height:  Math.floor(this.get('_previewImageSize').h * overallScalingFactor) + 'px',
+					marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
+					marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
+				});
+			} else {
+				container.attr('style', null).removeClass('neos-inspector-image-thumbnail-cropped');
+				image.attr('style', null);
+			}
+		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_previewImageUri', '_uploadPreviewShown'),
 
 		/****************************************
 		 * Saving / Loading
@@ -602,7 +576,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 		_displayImageLoader: function() {
 			if (this.loadingindicator !== null) {
-				this.loadingindicator.spin(this.$().find('.neos-inspector-image-thumbnail-container').get(0));
+				this.loadingindicator.spin(this.$().find('.neos-inspector-image-thumbnail').get(0));
 				return;
 			}
 			this.loadingindicator = new Spinner({
@@ -621,7 +595,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 				zIndex: 2e9, // The z-index (defaults to 2000000000)
 				top: 'auto', // Top position relative to parent in px
 				left: 'auto' // Left position relative to parent in px
-			}).spin(this.$().find('.neos-inspector-image-thumbnail-container').get(0));
+			}).spin(this.$().find('.neos-inspector-image-thumbnail').get(0));
 		},
 
 		_hideImageLoader: function() {
