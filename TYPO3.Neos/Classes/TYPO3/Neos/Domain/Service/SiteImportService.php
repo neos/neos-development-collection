@@ -262,6 +262,7 @@ class SiteImportService {
 	 *
 	 * @param \SimpleXMLElement $nodeXml
 	 * @return NodeType
+	 * @throws \TYPO3\Neos\Domain\Exception
 	 */
 	protected function parseNodeType(\SimpleXMLElement $nodeXml) {
 		$nodeTypeName = (string)$nodeXml['type'];

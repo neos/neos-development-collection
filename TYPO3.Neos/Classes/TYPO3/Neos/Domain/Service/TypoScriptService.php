@@ -227,7 +227,7 @@ class TypoScriptService {
 	 */
 	protected function prepareAutoIncludeTypoScript() {
 		$autoIncludeTypoScript = array();
-		foreach(array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+		foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
 			if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === TRUE) {
 				$autoIncludeTypoScript[] = sprintf($this->autoIncludeTypoScriptPattern, $packageKey);
 			}

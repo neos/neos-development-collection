@@ -11,7 +11,9 @@ namespace TYPO3\Neos\Domain\EventListener;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Account;
 
 /**
  * Doctrine event listener for clearing configuration cache on account changes.
@@ -27,31 +29,31 @@ class AccountPostEventListener {
 	protected $cacheManager;
 
 	/**
-	 * @param \Doctrine\ORM\Event\LifecycleEventArgs $eventArgs
+	 * @param LifecycleEventArgs $eventArgs
 	 * @return void
 	 */
-	public function postPersist(\Doctrine\ORM\Event\LifecycleEventArgs $eventArgs) {
-		if ($eventArgs->getEntity() instanceof \TYPO3\Flow\Security\Account) {
+	public function postPersist(LifecycleEventArgs $eventArgs) {
+		if ($eventArgs->getEntity() instanceof Account) {
 			$this->flushConfigurationCache($eventArgs->getEntity());
 		}
 	}
 
 	/**
-	 * @param \Doctrine\ORM\Event\LifecycleEventArgs $eventArgs
+	 * @param LifecycleEventArgs $eventArgs
 	 * @return void
 	 */
-	public function postUpdate(\Doctrine\ORM\Event\LifecycleEventArgs $eventArgs) {
-		if ($eventArgs->getEntity() instanceof \TYPO3\Flow\Security\Account) {
+	public function postUpdate(LifecycleEventArgs $eventArgs) {
+		if ($eventArgs->getEntity() instanceof Account) {
 			$this->flushConfigurationCache($eventArgs->getEntity());
 		}
 	}
 
 	/**
-	 * @param \Doctrine\ORM\Event\LifecycleEventArgs $eventArgs
+	 * @param LifecycleEventArgs $eventArgs
 	 * @return void
 	 */
-	public function postRemove(\Doctrine\ORM\Event\LifecycleEventArgs $eventArgs) {
-		if ($eventArgs->getEntity() instanceof \TYPO3\Flow\Security\Account) {
+	public function postRemove(LifecycleEventArgs $eventArgs) {
+		if ($eventArgs->getEntity() instanceof Account) {
 			$this->flushConfigurationCache($eventArgs->getEntity());
 		}
 	}

@@ -226,6 +226,7 @@ class SiteCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$availableSites = array();
 
 		foreach ($sites as $site) {
+			/** @var \TYPO3\Neos\Domain\Model\Site $site */
 			array_push($availableSites, array(
 				'name' => $site->getName(),
 				'nodeName' => $site->getNodeName(),

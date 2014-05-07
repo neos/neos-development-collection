@@ -13,12 +13,18 @@ namespace TYPO3\Neos\Service\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 
 /**
  * Service Controller for managing Nodes
  */
 class NodeController extends AbstractServiceController {
+
+	/**
+	 * @var \TYPO3\Neos\Service\View\NodeView
+	 */
+	protected $view;
 
 	/**
 	 * @var string
@@ -348,10 +354,10 @@ class NodeController extends AbstractServiceController {
 	 * Returns an array with the data needed by for example the Hallo and Aloha
 	 * link plugins to represent the passed Node instance.
 	 *
-	 * @param Node $node
+	 * @param NodeInterface $node
 	 * @return array
 	 */
-	protected function processNodeForEditorPlugins(Node $node) {
+	protected function processNodeForEditorPlugins(NodeInterface $node) {
 		return array(
 			'id' => $node->getPath(),
 			'name' => $node->getLabel(),

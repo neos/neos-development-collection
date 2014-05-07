@@ -18,7 +18,6 @@ use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationControll
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Service\BackendRedirectionService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A controller which allows for logging into the backend

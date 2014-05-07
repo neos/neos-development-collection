@@ -12,6 +12,9 @@ namespace TYPO3\Neos\Setup\Step;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
+use TYPO3\Flow\Validation\Validator\StringLengthValidator;
+use TYPO3\Neos\Validation\Validator\AccountExistsValidator;
 
 /**
  * @Flow\Scope("singleton")
@@ -59,25 +62,25 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$firstName = $personalSection->createElement('firstName', 'TYPO3.Form:SingleLineText');
 		$firstName->setLabel('First name');
-		$firstName->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
-		$firstName->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
+		$firstName->addValidator(new NotEmptyValidator());
+		$firstName->addValidator(new StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
 
 		$lastName = $personalSection->createElement('lastName', 'TYPO3.Form:SingleLineText');
 		$lastName->setLabel('Last name');
-		$lastName->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
-		$lastName->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
+		$lastName->addValidator(new NotEmptyValidator());
+		$lastName->addValidator(new StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
 
 		$credentialsSection = $page1->createElement('credentialsSection', 'TYPO3.Form:Section');
 		$credentialsSection->setLabel('Credentials');
 
 		$username = $credentialsSection->createElement('username', 'TYPO3.Form:SingleLineText');
 		$username->setLabel('Username');
-		$username->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
-		$username->addValidator(new \TYPO3\Neos\Validation\Validator\AccountExistsValidator(array('authenticationProviderName' => 'Typo3BackendProvider')));
+		$username->addValidator(new NotEmptyValidator());
+		$username->addValidator(new AccountExistsValidator(array('authenticationProviderName' => 'Typo3BackendProvider')));
 
 		$password = $credentialsSection->createElement('password', 'TYPO3.Form:PasswordWithConfirmation');
-		$password->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
-		$password->addValidator(new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
+		$password->addValidator(new NotEmptyValidator());
+		$password->addValidator(new StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
 		$password->setLabel('Password');
 		$password->setProperty('passwordDescription', 'At least 6 characters');
 

@@ -44,6 +44,7 @@ class PluginUriAspect {
 	 * @return string The result of the target method if it has not been intercepted
 	 */
 	public function rewritePluginViewUris(JoinPointInterface $joinPoint) {
+		/** @var \TYPO3\Flow\Mvc\ActionRequest $request */
 		$request = $joinPoint->getProxy()->getRequest();
 		$arguments = $joinPoint->getMethodArguments();
 
