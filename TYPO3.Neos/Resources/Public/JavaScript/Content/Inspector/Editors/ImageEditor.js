@@ -25,6 +25,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 		uploaderLabel: 'Upload!',
 		removeButtonLabel: 'Remove',
+		uploadCancelLabel: 'Cancel',
 
 		/**
 		 * Size of the image preview. Public configuration.
@@ -282,6 +283,17 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
 			this.set('_uploadPreviewShown', true);
 			this.set('value', '');
+		},
+
+		cancel: function() {
+			if (this.get('value') !== '') {
+				this._readAndDeserializeValue();
+			} else {
+				this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
+			}
+			this.set('_uploadPreviewShown', true);
+			this.set('_uploadInProgress', false);
+			this.set('_uploadButtonShown', false);
 		},
 
 		/****************************************
