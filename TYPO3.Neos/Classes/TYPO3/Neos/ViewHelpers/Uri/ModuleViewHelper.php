@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Link;
+namespace TYPO3\Neos\ViewHelpers\Uri;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
@@ -12,7 +12,8 @@ namespace TYPO3\Neos\ViewHelpers\Link;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * A view helper for creating links to modules.
@@ -20,38 +21,22 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
  * = Examples =
  *
  * <code title="Defaults">
- * <neos:link.module path="system/useradmin">some link</neos:link.module>
+ * <link rel="some-module" href="{neos:link.module(path: 'system/useradmin')}" />
  * </code>
  *
  * Output:
- * <a href="neos/system/useradmin">some link</a>
+ * <link rel="some-module" href="neos/system/useradmin" />
  * (depending on current node, format etc.)
+ *
+ * @Flow\Scope("prototype")
  */
-class ModuleViewHelper extends AbstractTagBasedViewHelper {
+class ModuleViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper
+	 * @var UriBuilder
 	 */
-	protected $uriModuleViewHelper;
-
-	/**
-	 * @var string
-	 */
-	protected $tagName = 'a';
-
-	/**
-	 * Initialize arguments
-	 *
-	 * @return void
-	 */
-	public function initializeArguments() {
-		$this->registerUniversalTagAttributes();
-		$this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-		$this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-		$this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
-		$this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
-	}
+	protected $uriBuilder;
 
 	/**
 	 * Render a link to a specific module
@@ -68,17 +53,38 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper {
 	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
 	 */
 	public function render($path, $action = NULL, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
-		$this->uriModuleViewHelper->setRenderingContext($this->renderingContext);
-
-		$uri = $this->uriModuleViewHelper->render($path, $action, $arguments, $section, $format, $additionalParams, $addQueryString, $argumentsToBeExcludedFromQueryString);
-		if ($uri !== NULL) {
-			$this->tag->addAttribute('href', $uri);
+		$this->setMainRequestToUriBuilder();
+		$modifiedArguments = array('module' => $path);
+		if ($arguments !== array()) {
+			$modifiedArguments['moduleArguments'] = $arguments;
+		}
+		if ($action !== NULL) {
+			$modifiedArguments['moduleArguments']['@action'] = $action;
 		}
 
-		$this->tag->setContent($this->renderChildren());
-		$this->tag->forceClosingTag(TRUE);
+		try {
+			return $this->uriBuilder
+				->reset()
+				->setSection($section)
+				->setCreateAbsoluteUri(TRUE)
+				->setArguments($additionalParams)
+				->setAddQueryString($addQueryString)
+				->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
+				->setFormat($format)
+				->uriFor('index', $modifiedArguments, 'Backend\Module', 'TYPO3.Neos');
+		} catch (\TYPO3\Flow\Exception $exception) {
+			throw new \TYPO3\Fluid\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
+		}
+	}
 
-		return $this->tag->render();
+	/**
+	 * Extracted out to this method in order to be better unit-testable.
+	 *
+	 * @return void
+	 */
+	protected function setMainRequestToUriBuilder() {
+		$mainRequest = $this->controllerContext->getRequest()->getMainRequest();
+		$this->uriBuilder->setRequest($mainRequest);
 	}
 
 }
