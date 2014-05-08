@@ -96,7 +96,7 @@ class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
 				if ($verbose) {
 					$this->outputLine('    ' . $node->getPath());
 				}
-				$this->nodeDataRepository->remove($node);
+				$this->publishingService->discardNode($node);
 			}
 		}
 
