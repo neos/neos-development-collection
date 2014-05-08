@@ -69,7 +69,7 @@ define(
 
 		activeItem: function() {
 			var that = this;
-			if (location.pathname.substr(0, 6) === '/neos/') {
+			if ($(document.body).hasClass('neos-module')) {
 				var modules = this.get('items.modules');
 				if (typeof modules !== 'undefined') {
 					$.each(modules, function(moduleIndex, moduleConfiguration) {

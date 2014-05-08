@@ -1,6 +1,7 @@
 define(
 	[
 		'emberjs',
+		'Library/jquery-with-dependencies',
 		'Shared/LocalStorage',
 		'./Button',
 		'Content/Model/PublishableNodes',
@@ -9,7 +10,7 @@ define(
 		'Shared/Endpoint/NodeEndpoint',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, LocalStorage, Button, PublishableNodes, PublishAllDialog, DiscardAllDialog, NodeEndpoint, template) {
+	function (Ember, $, LocalStorage, Button, PublishableNodes, PublishAllDialog, DiscardAllDialog, NodeEndpoint, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -22,6 +23,11 @@ define(
 			}.property(),
 
 			controller: PublishableNodes,
+
+			/**
+			 * The URI of the Workspaces Management backend module
+			 */
+			_workspacesManagementModuleUri: $('link[rel="neos-module-workspacesmanagement"]').attr('href'),
 
 			_hasWorkspaceWideChanges: function() {
 				return !this.get('_noWorkspaceWideChanges');
