@@ -9,7 +9,7 @@ if [ -d "src" ] && [ -d "src/.git" ]; then
 	cd src && git reset --hard && git pull && cd ../
 else
 	rm -rf src
-	git clone -b fix-alohaWidget --recursive git://github.com/chlu/create.git src
+	git clone --recursive git://github.com/bergie/create.git src
 fi
 
 echo "Remove files we don't use"
