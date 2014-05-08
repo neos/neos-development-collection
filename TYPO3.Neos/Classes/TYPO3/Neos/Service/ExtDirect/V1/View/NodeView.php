@@ -233,14 +233,15 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		}
 
 		$treeNodes = array();
-		$collectTreeNodeData = function(&$treeNodes, $node) use(&$collectTreeNodeData) {
+		$self = $this;
+		$collectTreeNodeData = function(&$treeNodes, $node) use(&$collectTreeNodeData, $self) {
 			$children = array();
 			if (isset($node['children'])) {
 				foreach ($node['children'] as $childNode) {
 					$collectTreeNodeData($children, $childNode);
 				}
 			}
-			$treeNodes[] = $this->collectTreeNodeData($node['node'], TRUE, $children, $children !== array(), isset($node['matched']));
+			$treeNodes[] = $self->collectTreeNodeData($node['node'], TRUE, $children, $children !== array(), isset($node['matched']));
 		};
 
 		foreach ($nodeCollection as $firstLevelNode) {
