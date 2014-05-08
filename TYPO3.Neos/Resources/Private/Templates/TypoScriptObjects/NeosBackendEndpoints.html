@@ -44,5 +44,8 @@
 
 		<link rel="neos-nodes" href="{f:uri.action(action: 'index', controller: 'Service\Node', package: 'TYPO3.Neos', absolute: true)}" />
 		<link rel="neos-assets" href="{f:uri.action(action: 'index', controller: 'Asset', package: 'TYPO3.Neos', subpackage: 'Service', absolute: true)}" />
+		<link rel="neos-public-resources" href="{f:uri.resource(path: '', package: 'TYPO3.Neos')}" />
+		<link rel="neos-module-workspacesmanagement" href="{neos:uri.module(path: 'management/workspaces')}" />
+		<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Backend\MediaBrowser', package: 'TYPO3.Neos', absolute: true)}" />
 	</f:if>
 </f:security.ifAccess>

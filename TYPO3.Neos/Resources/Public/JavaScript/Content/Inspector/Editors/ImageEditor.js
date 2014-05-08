@@ -53,7 +53,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		}.property('_uploadPreviewShown'),
 
 		_uploadPreviewImageSource: '',
-		_defaultUploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.Neos/Images/dummy-image.png', // TODO: we need a way to fetch the static resources base URI
+		_defaultUploadPreviewImageSource: $('link[rel="neos-public-resources"]').attr('href') + 'Images/dummy-image.png',
 
 		/**
 		 * @var boolean
@@ -69,7 +69,10 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 * This is the UUID of the full-size image; which is being stored.
 		 */
 		_originalImageUuid: null,
-		// size of the original (base) image ("w" + "h")
+
+		/**
+		 * size of the original (base) image ("w" + "h")
+		 */
 		_originalImageSize: null,
 
 		/**
@@ -78,8 +81,10 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 */
 		_previewImageUri: null,
 
-		// This is the size of the image being used for cropping
-		// Object "w" + "h"
+		/**
+		 * This is the size of the image being used for cropping
+		 * Object "w" + "h"
+		 */
 		_previewImageSize: null,
 
 		/**
@@ -88,13 +93,19 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 */
 		_cropProperties: null,
 
-		// After cropping, we still scale the cropped image
+		/**
+		 * After cropping, we still scale the cropped image
+		 */
 		_finalImageScale: null,
 
-		// Contains the handler for the AJAX request loading the preview image
+		/**
+		 * Contains the handler for the AJAX request loading the preview image
+		 */
 		_loadPreviewImageHandler: null,
 
-		// The url of the image service endpoint used for fetching image metadata
+		/**
+		 * The url of the image service endpoint used for fetching image metadata
+		 */
 		_imageServiceEndpointUri: null,
 
 		loadingindicator: null,
@@ -235,7 +246,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: Ember.View.extend({
-			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="/neos/content/assets"></iframe>')
+			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
 		}),
 
 		_beforeMediaBrowserIsShown: function() {

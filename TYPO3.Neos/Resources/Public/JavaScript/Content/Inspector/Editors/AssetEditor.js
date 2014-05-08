@@ -22,6 +22,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		multiple: false,
 
 		_assetMetadataEndpointUri: null,
+
 		_showLoadingIndicator: false,
 
 		init: function() {
@@ -95,7 +96,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: Ember.View.extend({
-			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="/neos/content/assets"></iframe>')
+			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
 		}),
 
 		_beforeMediaBrowserIsShown: function() {
