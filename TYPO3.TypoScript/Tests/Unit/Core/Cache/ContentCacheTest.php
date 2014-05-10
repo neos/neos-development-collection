@@ -27,7 +27,7 @@ class ContentCacheTest extends UnitTestCase {
 		return array(
 			array('Everything', 'Everything'),
 			array('Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'),
-			array('NodeType_TYPO3.Neos:Page', 'NodeType_TYPO3_Neos-Page'),
+			array('NodeType_TYPO3.Neos.NodeTypes:Page', 'NodeType_TYPO3_Neos_NodeTypes-Page'),
 			array('DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef')
 		);
 	}
