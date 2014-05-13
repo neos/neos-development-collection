@@ -246,7 +246,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		 * MEDIA BROWSER
 		 ***************************************/
 		_mediaBrowserView: Ember.View.extend({
-			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
+			template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
 		}),
 
 		_beforeMediaBrowserIsShown: function() {

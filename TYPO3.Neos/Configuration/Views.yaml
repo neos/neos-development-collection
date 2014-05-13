@@ -9,7 +9,7 @@
       'TYPO3.Media': 'resource://TYPO3.Media/Private/Partials'
 
 -
-  requestFilter: 'isPackage("TYPO3.Neos") && isController("Backend\MediaBrowser")'
+  requestFilter: 'isPackage("TYPO3.Neos") && (isController("Backend\MediaBrowser") || isController("Backend\ImageBrowser"))'
   options:
     layoutRootPaths:
       'TYPO3.Media': 'resource://TYPO3.Media/Private/Layouts'
