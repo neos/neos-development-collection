@@ -10627,6 +10627,9 @@
   font-size: 0.8em;
 }
 
+.neos-contentelement {
+  /* Workaround for empty divs collapsing in Firefox / IE needed for Aloha placeholders */
+}
 .neos-contentelement.neos-contentelement-hidden > * {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2;
@@ -10658,6 +10661,10 @@
   background-image: -moz-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -o-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+}
+.neos-contentelement .neos-inline-editable:empty::after {
+  content: '.';
+  color: transparent;
 }
 
 .neos-contentcollection.neos-contentelement-active {
@@ -10698,6 +10705,11 @@ button.neos-create-new-content {
 }
 .neos-rendering-exception .neos-typoscript-path .neos-typoscript-subpath {
   padding-left: 2em;
+}
+
+.aloha-placeholder {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=75);
+  opacity: 0.75;
 }
 
 body.neos-backend {

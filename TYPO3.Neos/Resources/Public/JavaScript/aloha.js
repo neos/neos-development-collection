@@ -23,21 +23,22 @@ function(
 	}
 
 	function initAloha() {
-
-		var nodeTypes = Configuration.get('Schema');
-
-		var nodeSettings = {};
+		var nodeTypes = Configuration.get('Schema'),
+			nodeSettings = {},
+			placeholderSettings = {};
 		$.each(nodeTypes, function(nodeTypeName, nodeType) {
-			if (nodeType.properties && typeof nodeType.properties == 'object') {
+			if (nodeType.properties && typeof nodeType.properties === 'object') {
 				$.each(nodeType.properties, function(propertyName, property) {
+					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]';
 					$.each(['table', 'link', 'list', 'alignment', 'format'], function(i, mode) {
 						if (property.ui && property.ui.aloha && property.ui.aloha[mode]) {
-							var selector = '[typeof="typo3:' + nodeTypeName + '"]' +
-								 ' [property="typo3:' + propertyName + '"]';
-							nodeSettings[mode] = nodeSettings[mode] ? nodeSettings[mode] : {};
+							nodeSettings[mode] = nodeSettings[mode] || {};
 							nodeSettings[mode][selector] = property.ui.aloha[mode];
 						}
 					});
+					if (property.ui && property.ui.aloha && property.ui.aloha.placeholder) {
+						placeholderSettings[selector] = property.ui.aloha.placeholder;
+					}
 				});
 			}
 		});
@@ -50,6 +51,7 @@ function(
 			sidebar: {
 				disabled: true
 			},
+			placeholder: placeholderSettings,
 			plugins: {
 				load: [
 					'common/ui',

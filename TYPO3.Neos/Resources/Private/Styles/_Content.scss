@@ -1,5 +1,4 @@
 .neos-contentelement {
-
 	&.neos-contentelement-hidden > * {
 		@include opacity(0.2);
 	}
@@ -33,6 +32,12 @@
 		position: absolute;
 		display: none;
 		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
+	}
+
+	/* Workaround for empty divs collapsing in Firefox / IE needed for Aloha placeholders */
+	.neos-inline-editable:empty::after {
+		content: '.';
+		color: transparent;
 	}
 }
 
@@ -80,4 +85,8 @@ button.neos-create-new-content {
 			padding-left: 2em;
 		}
 	}
+}
+
+.aloha-placeholder {
+	@include opacity(.75);
 }

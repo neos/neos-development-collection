@@ -26,6 +26,7 @@ module.exports = function(grunt) {
 				process: function(src, filepath) {
 					src = src.replace("$(function(){ element.appendTo('body'); });", "$(function(){ element.appendTo('#neos-application'); });");
 					src = src.replace("jQuery('body').append(layer).bind('click', function(e) {", "jQuery('#neos-application').append(layer).bind('click', function(e) {");
+					src = src.replace('var editableTrimedContent = jQuery.trim(this.getContents()),', "var editableTrimedContent = $('<div />').html(this.getContents()).text().trim(),");
 					return src;
 				}
 			}

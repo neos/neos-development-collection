@@ -73,6 +73,8 @@ additionalProperties:
                       'middle': { type: boolean }
                       'bottom': { type: boolean }
 
+                  'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
+
               'inspector':
                 type: dictionary
                 additionalProperties: FALSE

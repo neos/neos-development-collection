@@ -25627,7 +25627,7 @@ define('aloha/editable',[
 		 * @return {Boolean}
 		 */
 		isEmpty: function () {
-			var editableTrimedContent = jQuery.trim(this.getContents()),
+			var editableTrimedContent = $('<div />').html(this.getContents()).text().trim(),
 				onlyBrTag = (editableTrimedContent === '<br>') ? true : false;
 			return (editableTrimedContent.length === 0 || onlyBrTag);
 		},
