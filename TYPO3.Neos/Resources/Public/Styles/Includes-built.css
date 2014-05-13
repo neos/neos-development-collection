@@ -4892,15 +4892,6 @@
 .neos button.icon-trash:before {
   padding-right: 3px;
 }
-.neos .neos-handle-loading {
-  display: block;
-  width: 14px;
-  height: 14px;
-  padding: 1px 0;
-  background-image: url(../Images/ajax-preloader.gif) !important;
-  background-repeat: no-repeat !important;
-  background-position: 50% 50% !important;
-}
 .neos .neos-popover {
   display: none;
 }
@@ -8946,12 +8937,22 @@
 }
 .neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button [class^="icon-"],
 .neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button [class*=" icon-"] {
-  margin-left: -6px;
-  margin-top: -10px;
+  margin-left: -7px;
+  margin-top: -11px;
 }
 .neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button i {
   color: #000;
   text-shadow: none;
+}
+.neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button i.neos-handle-loading {
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  margin-left: -8px;
+  background-image: url(../Images/ajax-preloader.gif) !important;
+  background-repeat: no-repeat !important;
+  background-position: 50% 50% !important;
 }
 .neos.neos-empty-contentcollection-overlay {
   height: 20px;
