@@ -70,7 +70,7 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @return void
 	 */
 	protected function prepareTemporaryDirectory() {
-		$this->temporaryDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(realpath(sys_get_temp_dir()), str_replace('\\', '_', __CLASS__)));
+		$this->temporaryDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(FLOW_PATH_DATA, 'Temporary', 'Testing', str_replace('\\', '_', __CLASS__)));
 		if (!file_exists($this->temporaryDirectory)) {
 			\TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectory);
 		}
