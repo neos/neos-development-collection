@@ -12,38 +12,17 @@ namespace TYPO3\Neos\Controller\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\ImageRepository;
 
 /**
- * Controller for asset handling
+ * Controller for browsing images in the ImageEditor
  */
-class MediaBrowserController extends \TYPO3\Media\Controller\AssetController {
-
-	/**
-	 * @var array
-	 */
-	protected $settings;
+class ImageBrowserController extends MediaBrowserController {
 
 	/**
 	 * @Flow\Inject
-	 * @var ConfigurationManager
-
-	 */
-	protected $configurationManager;
-
-	/**
-	 * @Flow\Inject
-	 * @var AssetRepository
+	 * @var ImageRepository
 	 */
 	protected $assetRepository;
-
-	/**
-	 * @return void
-	 */
-	public function initializeAction() {
-		parent::initializeAction();
-		$this->settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Media');
-	}
 
 }
