@@ -7,7 +7,7 @@
 	</div>
 </f:section>
 <f:section name="content">
-	<f:form action="update" name="user" object="{user}" arguments="{account: account}" class="user user-edit">
+	<f:form action="update" object="{account}" objectName="account" class="user user-edit">
 		<div class="neos-row-fluid neos-module-container">
 			<fieldset class="neos-span5">
 				<legend>{neos:backend.translate(id: 'UserSettings.userData', value: 'User Data')}</legend>
@@ -15,7 +15,7 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label">{neos:backend.translate(id: 'personName.userName', package: 'TYPO3.Party', value: 'Username')}</label>
 					<div class="neos-controls">
-						<span class="neos-span12 neos-uneditable-input">{account.accountIdentifier}</span>
+						<span class="neos-span12 neos-uneditable-input" title="The account identifier can't be changed via the user interface">{account.accountIdentifier}</span>
 					</div>
 				</div>
 
@@ -34,15 +34,15 @@
 				</div>
 
 				<div class="neos-control-group">
-					<label class="neos-control-label" for="roleIdentifier">{neos:backend.translate(id: 'userSettings.role', value: 'Role')}</label>
-					<div class="neos-controls">
-						<f:for each="{neosRoles}" as="role">
-							<label class="neos-radio neos-inline">
-								<f:form.radio name="roleIdentifier" value="{role.identifier}" checked="{currentRole} == {role}" /><span></span>
-								{role.name}
+					<label class="neos-control-label">Role(s)</label>
+					<f:for each="{roles}" as="role" iteration="rolesIteration">
+						<div class="neos-controls">
+							<label for="roles-{rolesIteration.cycle}" class="neos-checkbox">
+								<f:form.checkbox property="roles" multiple="true" value="{role}" id="roles-{rolesIteration.cycle}" /><span></span>
+								{role.name} <span class="neos-help-inline">({role.packageKey})</span>
 							</label>
-						</f:for>
-					</div>
+						</div>
+					</f:for>
 				</div>
 			</fieldset>
 
@@ -52,21 +52,21 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="title">{neos:backend.translate(id: 'personName.title', package: 'TYPO3.Party', value: 'Title')}</label>
 					<div class="neos-controls neos-controls-row">
-						<f:form.textfield property="name.title" id="title" class="neos-span12" />
+						<f:form.textfield property="party.name.title" id="title" class="neos-span12" />
 					</div>
 				</div>
 				<div class="row">
 					<div class="neos-control-group neos-span7">
 						<label class="neos-control-label" for="firstName">{neos:backend.translate(id: 'personName.firstName', package: 'TYPO3.Party', value: 'First Name')}</label>
 						<div class="neos-controls neos-controls-row">
-							<f:form.textfield property="name.firstName" id="firstName" placeholder="{neos:backend.translate(id: 'personName.firstName', package: 'TYPO3.Party', value: 'First Name')}" class="neos-span12" />
+							<f:form.textfield property="party.name.firstName" id="firstName" placeholder="{neos:backend.translate(id: 'personName.firstName', package: 'TYPO3.Party', value: 'First Name')}" class="neos-span12" />
 						</div>
 					</div>
 
 					<div class="neos-control-group neos-span5">
 						<label class="neos-control-label" for="middleName">&nbsp;</label>
 						<div class="neos-controls neos-controls-row">
-							<f:form.textfield property="name.middleName" id="middleName" placeholder="{neos:backend.translate(id: 'personName.middleName', package: 'TYPO3.Party', value: 'Middle Name')}" class="neos-span12" />
+							<f:form.textfield property="party.name.middleName" id="middleName" placeholder="{neos:backend.translate(id: 'personName.middleName', package: 'TYPO3.Party', value: 'Middle Name')}" class="neos-span12" />
 						</div>
 					</div>
 				</div>
@@ -74,21 +74,21 @@
 					<div class="neos-control-group neos-span7">
 						<label class="neos-control-label" for="lastName">{neos:backend.translate(id: 'personName.lastName', package: 'TYPO3.Party', value: 'Last Name')}</label>
 						<div class="neos-controls neos-controls-row">
-							<f:form.textfield property="name.lastName" id="lastName" placeholder="{neos:backend.translate(id: 'personName.lastName', package: 'TYPO3.Party', value: 'Last Name')}" class="neos-span12" />
+							<f:form.textfield property="party.name.lastName" id="lastName" placeholder="{neos:backend.translate(id: 'personName.lastName', package: 'TYPO3.Party', value: 'Last Name')}" class="neos-span12" />
 						</div>
 					</div>
 
 					<div class="neos-control-group neos-span5">
 						<label class="neos-control-label" for="otherName">&nbsp;</label>
 						<div class="neos-controls neos-controls-row">
-							<f:form.textfield property="name.otherName" id="otherName" placeholder="{neos:backend.translate(id: 'personName.otherName',  package: 'TYPO3.Party', value: 'Other Name')}" class="neos-span12" />
+							<f:form.textfield property="party.name.otherName" id="otherName" placeholder="{neos:backend.translate(id: 'personName.otherName',  package: 'TYPO3.Party', value: 'Other Name')}" class="neos-span12" />
 						</div>
 					</div>
 				</div>
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="alias">{neos:backend.translate(id: 'personName.alias',  package: 'TYPO3.Party', value: 'Alias')}</label>
 					<div class="neos-controls">
-						<f:form.textfield property="name.alias" id="alias" class="neos-span12" />
+						<f:form.textfield property="party.name.alias" id="alias" class="neos-span12" />
 					</div>
 				</div>
 			</fieldset>
@@ -100,7 +100,7 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="interfaceLocale">Interface language</label>
 					<div class="neos-controls">
-						<f:form.select property="preferences.preferences.interfaceLocale" id="interfaceLocale" options="{settings.userInterface.availableLocales}" />
+						<f:form.select property="party.preferences.interfaceLocale" id="interfaceLocale" options="{settings.userInterface.availableLocales}" />
 					</div>
 				</div>
 			</fieldset>
@@ -120,31 +120,32 @@
 						</tr>
 						</thead>
 						<tbody>
-						<f:for each="{person.electronicAddresses}" as="electronicAddress">
+						<f:for each="{account.party.electronicAddresses}" key="index" as="electronicAddress">
 							<tr>
 								<td>
-									<f:form.hidden name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][__identity]" value="{electronicAddress -> f:format.identifier()}" />
 									<div class="neos-select">
-										<f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][type]" options="{electronicAddressTypes}" value="{electronicAddress.type}" />
+										<f:form.select property="party.electronicAddresses.{index}.type" options="{electronicAddressTypes}" />
 									</div>
 								</td>
 								<td>
 									<div class="neos-select">
-										<f:form.select name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][usage]" options="{electronicAddressUsageTypes}" value="{electronicAddress.usage}" />
+										<f:form.select property="party.electronicAddresses.{index}.usage" options="{electronicAddressUsageTypes}" />
 									</div>
 								</td>
-								<td><f:form.textfield name="person[electronicAddresses][{electronicAddress -> f:format.identifier()}][identifier]" value="{electronicAddress.identifier}" class="neos-input-medium" /></td>
+								<td>
+									<f:form.textfield property="party.electronicAddresses.{index}.identifier" class="neos-input-medium" />
+								</td>
 								<td class="neos-aCenter check">
 									<label class="neos-radio">
-										<f:form.radio property="primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{person.primaryElectronicAddress} == {electronicAddress}', then: 'checked')}" /><span></span>
+										<f:form.radio property="party.primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{account.party.primaryElectronicAddress} == {electronicAddress}', then: 'checked')}" /><span></span>
 									</label>
 								</td>
 								<td class="neos-action">
 									<div class="neos-pull-right">
-										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'userSettings.clickDelete', value: 'Click to delete')}" data-toggle="modal" href="#{electronicAddress.type}">
+										<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#electronidAddress-{index}">
 											<i class="icon-trash icon-white"></i>
 										</button>
-										<div class="neos-hide" id="{electronicAddress.type}">
+										<div class="neos-hide" id="electronidAddress-{index}">
 											<div class="neos-modal">
 												<div class="neos-modal-header">
 													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>

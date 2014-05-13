@@ -11,7 +11,7 @@
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
-			<f:for each="{accounts}" key="flowidentifier" as="account">
+			<f:for each="{accounts}" key="index" as="account">
 				<tr>
 					<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
 					<td title="{account.party.alias}">{account.party.name}</td>
@@ -32,10 +32,10 @@
 									<button class="neos-button neos-button-danger neos-disabled" title="You are logged in as this user and you cannot delete yourself."><i class="icon-trash icon-white"></i></button>
 								</f:then>
 								<f:else>
-									<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#{flowidentifier}">
+									<button class="neos-button neos-button-danger" title="Click to delete" data-toggle="modal" href="#user-{index}">
 										<i class="icon-trash icon-white"></i>
 									</button>
-									<div class="neos-hide" id="{flowidentifier}">
+									<div class="neos-hide" id="user-{index}">
 										<div class="neos-modal">
 											<div class="neos-modal-header">
 												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
