@@ -7,7 +7,7 @@ TYPO3:
     # Example
     #
     #   contentDimensions:
-    #     locales:
+    #     languages:
     #       default: mul_ZZ
     #
     #     personas:
