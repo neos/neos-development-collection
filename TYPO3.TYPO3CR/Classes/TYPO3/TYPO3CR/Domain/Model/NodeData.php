@@ -605,6 +605,15 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
+	 * Internal use, do not retrieve collection directly
+	 *
+	 * @return array<NodeDimension>
+	 */
+	public function getDimensions() {
+		return $this->dimensions->toArray();
+	}
+
+	/**
 	 * Internal use, do not manipulate collection directly
 	 *
 	 * @param array $dimensions

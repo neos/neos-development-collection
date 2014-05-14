@@ -87,7 +87,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function buildContextInstance(array $contextProperties) {
-		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+		$contextProperties = $this->removeDeprecatedProperties($contextProperties);
 		return new \TYPO3\TYPO3CR\Domain\Service\Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
 	}
 
@@ -98,7 +98,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @return array
 	 */
 	protected function mergeContextPropertiesWithDefaults(array $contextProperties) {
-		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+		$contextProperties = $this->removeDeprecatedProperties($contextProperties);
 
 		$defaultContextProperties = array(
 			'workspaceName' => 'live',
@@ -210,21 +210,15 @@ class ContextFactory implements ContextFactoryInterface {
 	}
 
 	/**
-	 * Set the "locales" context property from a "locale" property if given
+	 * Removes context properties which have been previously allowed but are not supported
+	 * anymore and should be silently ignored
 	 *
 	 * @param array $contextProperties
 	 * @return array
-	 * @throws \InvalidArgumentException
 	 */
-	protected function setBackwardCompatibleLocales(array $contextProperties) {
+	protected function removeDeprecatedProperties(array $contextProperties) {
 		if (isset($contextProperties['locale'])) {
-			if (!isset($contextProperties['dimensions']['locales'])) {
-				$contextProperties['dimensions']['locales'] = array($contextProperties['locale']);
-				unset($contextProperties['locale']);
-				return $contextProperties;
-			} else {
-				throw new \InvalidArgumentException('Context properties "locale" and dimension "locales" cannot be mixed.', 1389613179);
-			}
+			unset($contextProperties['locale']);
 		}
 		return $contextProperties;
 	}
