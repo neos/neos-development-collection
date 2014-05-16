@@ -178,7 +178,6 @@ class SiteExportService {
 		$this->xmlWriter->writeAttribute('identifier', $node->getIdentifier());
 		$this->xmlWriter->writeAttribute('type', $node->getNodeType()->getName());
 		$this->xmlWriter->writeAttribute('nodeName', $node->getName());
-		$this->xmlWriter->writeAttribute('locale', '');
 		if ($node->isHidden() === TRUE) {
 			$this->xmlWriter->writeAttribute('hidden', 'true');
 		}

@@ -18,7 +18,7 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\Neos\Routing\Exception\NoSuchLocaleException;
+use TYPO3\Neos\Routing\Exception\NoSuchLanguageException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -56,13 +56,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 * @param string $requestPath The relative context node path (without leading "/", relative to the current Site Node)
 	 * @return boolean TRUE if the $requestPath could be matched, otherwise FALSE
 	 * @throws \Exception
-	 * @throws Exception\NoSuchLocaleException
+	 * @throws Exception\NoSuchLanguageException
 	 * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
 	 */
 	protected function matchValue($requestPath) {
 		try {
 			$node = $this->convertRequestPathToNode($requestPath);
-		} catch (NoSuchLocaleException $exception) {
+		} catch (NoSuchLanguageException $exception) {
 			throw $exception;
 		} catch (Exception $exception) {
 			if ($requestPath === '') {

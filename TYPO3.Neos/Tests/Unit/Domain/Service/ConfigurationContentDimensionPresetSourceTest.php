@@ -23,9 +23,9 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	public function setUp() {
 		$this->source = new ConfigurationContentDimensionPresetSource();
 		$this->source->setConfiguration(array(
-			'locales' => array(
+			'languages' => array(
 				'defaultPreset' => 'all',
-				'label' => 'Locale',
+				'label' => 'Language',
 				'icon' => 'icon-language',
 				'position' => 100,
 				'presets' => array(
@@ -59,7 +59,7 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	 */
 	public function getAllPresetsReturnsDimensionsOrderedByPosition() {
 		$presets = $this->source->getAllPresets();
-		$this->assertEquals(array('targetGroups', 'locales'), array_keys($presets));
+		$this->assertEquals(array('targetGroups', 'languages'), array_keys($presets));
 	}
 
 	/**
@@ -67,15 +67,15 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	 */
 	public function getAllPresetsReturnsDimensionPresetsOrderedByPosition() {
 		$presets = $this->source->getAllPresets();
-		$this->assertArrayHasKey('locales', $presets);
-		$this->assertEquals(array('de_DE', 'all'), array_keys($presets['locales']['presets']));
+		$this->assertArrayHasKey('languages', $presets);
+		$this->assertEquals(array('de_DE', 'all'), array_keys($presets['languages']['presets']));
 	}
 
 	/**
 	 * @test
 	 */
 	public function getDefaultPresetWithExistingDimensionReturnsDefaultPresetWithIdentifier() {
-		$preset = $this->source->getDefaultPreset('locales');
+		$preset = $this->source->getDefaultPreset('languages');
 		$this->assertArrayHasKey('identifier', $preset);
 		$this->assertEquals('all', $preset['identifier']);
 	}
@@ -84,7 +84,7 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	 * @test
 	 */
 	public function findPresetByUriSegmentWithExistingUriSegmentReturnsPreset() {
-		$preset = $this->source->findPresetByUriSegment('locales', 'deutsch');
+		$preset = $this->source->findPresetByUriSegment('languages', 'deutsch');
 		$this->assertArrayHasKey('values', $preset);
 		$this->assertEquals(array('de_DE', 'de_ZZ', 'mul_ZZ'), $preset['values']);
 	}
@@ -93,7 +93,7 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	 * @test
 	 */
 	public function findPresetByUriSegmentWithoutExistingUriSegmentReturnsNull() {
-		$preset = $this->source->findPresetByUriSegment('locales', 'english');
+		$preset = $this->source->findPresetByUriSegment('languages', 'english');
 		$this->assertNull($preset);
 	}
 
@@ -101,7 +101,7 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	 * @test
 	 */
 	public function findPresetByDimensionValuesWithExistingValuesReturnsPreset() {
-		$preset = $this->source->findPresetByDimensionValues('locales', array('de_DE', 'de_ZZ', 'mul_ZZ'));
+		$preset = $this->source->findPresetByDimensionValues('languages', array('de_DE', 'de_ZZ', 'mul_ZZ'));
 		$this->assertArrayHasKey('uriSegment', $preset);
 		$this->assertEquals('deutsch', $preset['uriSegment']);
 	}
@@ -110,7 +110,7 @@ class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\Un
 	 * @test
 	 */
 	public function findPresetByDimensionValuesWithoutExistingUriSegmentReturnsNull() {
-		$preset = $this->source->findPresetByDimensionValues('locales', array('ja_JP', 'mul_ZZ'));
+		$preset = $this->source->findPresetByDimensionValues('languages', array('ja_JP', 'mul_ZZ'));
 		$this->assertNull($preset);
 	}
 }

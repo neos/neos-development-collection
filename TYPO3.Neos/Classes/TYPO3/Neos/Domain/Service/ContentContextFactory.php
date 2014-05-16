@@ -39,7 +39,7 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	 * @return \TYPO3\Neos\Domain\Service\ContentContext
 	 */
 	protected function buildContextInstance(array $contextProperties) {
-		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+		$contextProperties = $this->removeDeprecatedProperties($contextProperties);
 
 		return new \TYPO3\Neos\Domain\Service\ContentContext($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown'], $contextProperties['currentSite'], $contextProperties['currentDomain']);
 	}
@@ -51,7 +51,7 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	 * @return array
 	 */
 	protected function mergeContextPropertiesWithDefaults(array $contextProperties) {
-		$contextProperties = $this->setBackwardCompatibleLocales($contextProperties);
+		$contextProperties = $this->removeDeprecatedProperties($contextProperties);
 
 		$defaultContextProperties = array (
 			'workspaceName' => 'live',
