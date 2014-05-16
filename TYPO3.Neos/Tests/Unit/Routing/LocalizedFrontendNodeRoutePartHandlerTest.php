@@ -15,9 +15,9 @@ use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
+use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Routing\LocalizedFrontendNodeRoutePartHandler;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
@@ -38,17 +38,17 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	protected $mockSiteRepository;
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface
+	 * @var ContentDimensionPresetSourceInterface
 	 */
 	protected $mockContentDimensionPresetSource;
 
 	/**
-	 * @var \TYPO3\Neos\Routing\LocalizedFrontendNodeRoutePartHandler
+	 * @var LocalizedFrontendNodeRoutePartHandler
 	 */
 	protected $handler;
 
 	protected function setUp() {
-		$this->handler = new \TYPO3\Neos\Routing\LocalizedFrontendNodeRoutePartHandler();
+		$this->handler = new LocalizedFrontendNodeRoutePartHandler();
 		$this->handler->setName('node');
 
 		$this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface')->getMock();

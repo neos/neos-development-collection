@@ -13,7 +13,6 @@ namespace TYPO3\Neos\Routing;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
-use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
