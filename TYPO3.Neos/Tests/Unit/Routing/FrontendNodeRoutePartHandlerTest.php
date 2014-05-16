@@ -548,11 +548,11 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	public function resolveValueWithContextPathStringValueParsesDimensions() {
 		$this->mockContextFactory->expects($this->once())->method('create')->with($this->callback(function($contextProperties) {
 			$this->assertArrayHasKey('dimensions', $contextProperties);
-			$this->assertEquals(array('locales' => array('de_DE', 'mul_ZZ')), $contextProperties['dimensions']);
+			$this->assertEquals(array('languages' => array('de_DE', 'mul_ZZ')), $contextProperties['dimensions']);
 			return TRUE;
 		}))->will($this->returnValue($this->mockContext));
 
-		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@some-workspace;locales=de_DE,mul_ZZ');
+		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@some-workspace;languages=de_DE,mul_ZZ');
 	}
 
 }

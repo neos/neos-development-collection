@@ -176,19 +176,25 @@ TYPO3:
           title: 'Desktop'
           position: 100
 
+    # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
+    # or via global settings.
     contentDimensions:
       dimensions:
-        'locales':
-          # The default preset to use if no URI segment was given when resolving locales in the routing
+
+        # Content dimension "languages" serves for translation of content into different languages. Its value specifies
+        # the language or language variant by means of a locale.
+        'languages':
+
+          # The default preset to use if no URI segment was given when resolving languages in the router
           defaultPreset: 'all'
-          label: 'Locales'
+          label: 'Languages'
           icon: 'icon-language'
           presets:
             'all':
               label: 'All languages'
               values: ['mul_ZZ']
               uriSegment: 'all'
-            # Example for additional locales:
+            # Example for additional languages:
             #
             #  'en_GB':
             #    label: 'English (Great Britain)'

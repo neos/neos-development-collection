@@ -69,14 +69,14 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function matchValueWithEmptyRoutePathUsesLocaleChainResolverWithNullValue() {
-		$expectedLocales = array('en_UK', 'en_ZZ', 'mul_ZZ');
-		$mockContext = $this->buildMockContext($expectedLocales, 'live');
+	public function matchValueWithEmptyRoutePathUsesLanguageChainResolverWithNullValue() {
+		$expectedLanguages = array('en_UK', 'en_ZZ', 'mul_ZZ');
+		$mockContext = $this->buildMockContext($expectedLanguages, 'live');
 		$mockSiteNode = $this->buildSiteNode($mockContext);
 
-		$mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/foo;locales=en_UK,en_ZZ,mul_ZZ'));
+		$mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/foo;languages=en_UK,en_ZZ,mul_ZZ'));
 
-		$this->mockContentDimensionPresetSource->expects($this->atLeastOnce())->method('getDefaultPreset')->with('locales')->will($this->returnValue(array('values' => array('en_UK', 'en_ZZ', 'mul_ZZ'))));
+		$this->mockContentDimensionPresetSource->expects($this->atLeastOnce())->method('getDefaultPreset')->with('languages')->will($this->returnValue(array('values' => array('en_UK', 'en_ZZ', 'mul_ZZ'))));
 
 		$routePath = '';
 		$matches = $this->handler->match($routePath);
@@ -85,15 +85,15 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
 		$value = $this->handler->getValue();
 
-		$this->assertEquals('/sites/foo;locales=en_UK,en_ZZ,mul_ZZ', $value);
+		$this->assertEquals('/sites/foo;languages=en_UK,en_ZZ,mul_ZZ', $value);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\Neos\Routing\Exception\NoSuchLocaleException
+	 * @expectedException \TYPO3\Neos\Routing\Exception\NoSuchLanguageException
 	 */
-	public function matchValueWithoutMatchingLocaleThrowsException() {
-		$this->mockContentDimensionPresetSource->expects($this->any())->method('findPresetByUriSegment')->with('locales', 'features')->will($this->returnValue(NULL));
+	public function matchValueWithoutMatchingLanguageThrowsException() {
+		$this->mockContentDimensionPresetSource->expects($this->any())->method('findPresetByUriSegment')->with('languages', 'features')->will($this->returnValue(NULL));
 
 		$nodePath = 'features';
 		$this->handler->match($nodePath);
@@ -102,16 +102,16 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function matchValueWithMatchingLocaleAndNodePath() {
+	public function matchValueWithMatchingLanguageAndNodePath() {
 
-		$expectedLocales = array('de_DE', 'de_ZZ', 'mul_ZZ');
-		$mockContext = $this->buildMockContext($expectedLocales, 'live');
+		$expectedLanguages = array('de_DE', 'de_ZZ', 'mul_ZZ');
+		$mockContext = $this->buildMockContext($expectedLanguages, 'live');
 		$mockSiteNode = $this->buildSiteNode($mockContext);
 		$mockSubNode = $this->buildSubNode($mockSiteNode, 'features/foo');
 
-		$mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/foo/features/foo;locales=de_DE,de_ZZ,mul_ZZ'));
+		$mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/foo/features/foo;languages=de_DE,de_ZZ,mul_ZZ'));
 
-		$this->mockContentDimensionPresetSource->expects($this->atLeastOnce())->method('findPresetByUriSegment')->with('locales', 'de')->will($this->returnValue(array('values' => array('de_DE', 'de_ZZ', 'mul_ZZ'))));
+		$this->mockContentDimensionPresetSource->expects($this->atLeastOnce())->method('findPresetByUriSegment')->with('languages', 'de')->will($this->returnValue(array('values' => array('de_DE', 'de_ZZ', 'mul_ZZ'))));
 
 		$routePath = 'de/features/foo';
 		$matches = $this->handler->match($routePath);
@@ -120,21 +120,21 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
 		$value = $this->handler->getValue();
 
-		$this->assertEquals('/sites/foo/features/foo;locales=de_DE,de_ZZ,mul_ZZ', $value);
+		$this->assertEquals('/sites/foo/features/foo;languages=de_DE,de_ZZ,mul_ZZ', $value);
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueWithMatchingLocaleAndEmptyNodePath() {
+	public function matchValueWithMatchingLanguageAndEmptyNodePath() {
 
-		$expectedLocales = array('de_DE', 'mul_ZZ');
-		$mockContext = $this->buildMockContext($expectedLocales, 'live');
+		$expectedLanguages = array('de_DE', 'mul_ZZ');
+		$mockContext = $this->buildMockContext($expectedLanguages, 'live');
 		$mockSiteNode = $this->buildSiteNode($mockContext);
 
-		$mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/foo;locales=de_DE,mul_ZZ'));
+		$mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/foo;languages=de_DE,mul_ZZ'));
 
-		$this->mockContentDimensionPresetSource->expects($this->atLeastOnce())->method('findPresetByUriSegment')->with('locales', 'de')->will($this->returnValue(array('values' => array('de_DE', 'mul_ZZ'))));
+		$this->mockContentDimensionPresetSource->expects($this->atLeastOnce())->method('findPresetByUriSegment')->with('languages', 'de')->will($this->returnValue(array('values' => array('de_DE', 'mul_ZZ'))));
 
 		$routePath = 'de';
 		$matches = $this->handler->match($routePath);
@@ -143,15 +143,15 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 
 		$value = $this->handler->getValue();
 
-		$this->assertEquals('/sites/foo;locales=de_DE,mul_ZZ', $value);
+		$this->assertEquals('/sites/foo;languages=de_DE,mul_ZZ', $value);
 	}
 
 	/**
-	 * @param array $expectedLocales
+	 * @param array $expectedLanguages
 	 * @param string $workspaceName
 	 * @return ContentContext
 	 */
-	protected function buildMockContext($expectedLocales, $workspaceName) {
+	protected function buildMockContext($expectedLanguages, $workspaceName) {
 		$mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
 		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue($workspaceName));
@@ -159,12 +159,12 @@ class LocalizedFrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 		$mockContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 		$mockContext->expects($this->any())->method('getDimensions')->will($this->returnValue(array(
-			'locales' => $expectedLocales
+			'languages' => $expectedLanguages
 		)));
 
-		$this->mockContextFactory->expects($this->once())->method('create')->with($this->callback(function ($contextProperties) use ($expectedLocales) {
+		$this->mockContextFactory->expects($this->once())->method('create')->with($this->callback(function ($contextProperties) use ($expectedLanguages) {
 			\PHPUnit_Framework_Assert::assertEquals($contextProperties['dimensions'], array(
-				'locales' => $expectedLocales
+				'languages' => $expectedLanguages
 			));
 			return TRUE;
 		}))->will($this->returnValue($mockContext));

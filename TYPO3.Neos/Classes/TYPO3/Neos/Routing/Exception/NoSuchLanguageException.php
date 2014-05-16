@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Routing\Exception;
  *                                                                        */
 
 /**
- * A "no such locale" exception
+ * A "no such language" exception
  */
-class NoSuchLocaleException extends \TYPO3\Neos\Routing\Exception {
+class NoSuchLanguageException extends \TYPO3\Neos\Routing\Exception {
 
 	/**
 	 * @var integer

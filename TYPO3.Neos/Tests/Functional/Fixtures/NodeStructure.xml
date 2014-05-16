@@ -6,7 +6,7 @@
 			<state>1</state>
 			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
 		</properties>
-		<node identifier="3239baee-3e7f-785c-0853-f4302ef32570" nodeName="home" type="TYPO3.Neos.NodeTypes:Page" locale="">
+		<node identifier="3239baee-3e7f-785c-0853-f4302ef32570" nodeName="home" type="TYPO3.Neos.NodeTypes:Page">
 			<properties>
 				<title><![CDATA[<h1>Home</h1>]]></title>
 				<someSpecialProperty><![CDATA[<h1>SomeValue</h1>]]></someSpecialProperty>
@@ -112,40 +112,45 @@
 					</properties>
 				</node>
 			</node>
-			<node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us" type="TYPO3.Neos.NodeTypes:Page" locale="">
+			<node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us" type="TYPO3.Neos.NodeTypes:Page">
 				<properties>
 					<title><![CDATA[<h1>About Us</h1>]]></title>
 				</properties>
-				<node identifier="9abf48a7-b8a2-0896-7b42-754c23074a7b" nodeName="history" type="TYPO3.Neos.NodeTypes:Page" locale="">
+				<node identifier="9abf48a7-b8a2-0896-7b42-754c23074a7b" nodeName="history" type="TYPO3.Neos.NodeTypes:Page">
 					<properties>
 						<title><![CDATA[<h1>History</h1>]]></title>
 					</properties>
 				</node>
-				<node identifier="63b28f4d-8831-ecb0-f9a6-466d97ffe2c2" nodeName="mission" type="TYPO3.Neos.NodeTypes:Page" locale="">
+				<node identifier="63b28f4d-8831-ecb0-f9a6-466d97ffe2c2" nodeName="mission" type="TYPO3.Neos.NodeTypes:Page">
 					<properties>
 						<title><![CDATA[<h1>Our mission</h1>]]></title>
 					</properties>
 				</node>
 			</node>
-			<node type="TYPO3.Neos.NodeTypes:Page" nodeName="products" locale="">
+			<node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us" type="TYPO3.Neos.NodeTypes:Page" workspace="test">
+				<properties>
+					<title><![CDATA[<h1>About Us Test</h1>]]></title>
+				</properties>
+			</node>
+			<node identifier="25eaba22-b8ed-11e3-a8b5-c82a1441d728" type="TYPO3.Neos.NodeTypes:Page" nodeName="products">
 				<properties>
 					<title><![CDATA[<h1>Products</h1>]]></title>
 				</properties>
-				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="frameworks" locale="">
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="frameworks">
 					<properties>
 						<title><![CDATA[<h1>Frameworks</h1>]]></title>
 					</properties>
-					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-flow" locale="">
+					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-flow">
 						<properties>
 							<title><![CDATA[<h1>TYPO3 Flow</h1>]]></title>
 						</properties>
 					</node>
 				</node>
-				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="cms" locale="">
+				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="cms">
 					<properties>
 						<title><![CDATA[<h1>CMS</h1>]]></title>
 					</properties>
-					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-neos" locale="">
+					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-neos">
 						<properties>
 							<title><![CDATA[<h1>TYPO3 Neos</h1>]]></title>
 						</properties>
