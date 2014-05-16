@@ -20,6 +20,7 @@ use TYPO3\TypoScript\Core\Cache\RuntimeContentCache;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
+use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 
@@ -202,6 +203,8 @@ class Runtime {
 					$output
 				);
 			}
+		} catch (SecurityException $securityException) {
+			throw $securityException;
 		} catch (\Exception $exception) {
 			$this->setEnableContentCache(FALSE);
 			$output = $this->handleRenderingException($typoScriptPath, $exception);
@@ -354,6 +357,8 @@ class Runtime {
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
 			$finallyClosure();
 			throw $stopActionException;
+		} catch (SecurityException $securityException) {
+			throw $securityException;
 		} catch (Exceptions\RuntimeException $runtimeException) {
 			$finallyClosure();
 			throw $runtimeException;
