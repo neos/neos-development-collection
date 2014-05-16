@@ -100,4 +100,17 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$runtime->evaluate('foo/bar');
 	}
 
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Flow\Security\Exception
+	 */
+	public function renderRethrowsSecurityExceptions() {
+		$controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
+		$securityException = new \TYPO3\Flow\Security\Exception();
+		$runtime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array('evaluateInternal', 'handleRenderingException'), array(array(), $controllerContext));
+		$runtime->expects($this->any())->method('evaluateInternal')->will($this->throwException($securityException));
+
+		$runtime->render('/foo/bar');
+	}
+
 }
