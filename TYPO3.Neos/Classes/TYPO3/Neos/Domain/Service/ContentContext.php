@@ -11,9 +11,11 @@ namespace TYPO3\Neos\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\I18n\Locale;
-
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * The Content Context
@@ -21,24 +23,26 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("prototype")
  * @api
  */
-class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
+class ContentContext extends Context {
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Model\Site
+	 * @var Site
 	 */
 	protected $currentSite;
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Model\Domain
+	 * @var Domain
 	 */
 	protected $currentDomain;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var NodeInterface
 	 */
 	protected $currentSiteNode;
 
 	/**
+	 * Constructor
+	 *
 	 * @param string $workspaceName
 	 * @param \DateTime $currentDateTime
 	 * @param array $dimensions
@@ -46,9 +50,9 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * @param boolean $invisibleContentShown
 	 * @param boolean $removedContentShown
 	 * @param boolean $inaccessibleContentShown
-	 * @param \TYPO3\Neos\Domain\Model\Site $currentSite
-	 * @param \TYPO3\Neos\Domain\Model\Domain $currentDomain
-	 * @return \TYPO3\Neos\Domain\Service\ContentContext
+	 * @param Site $currentSite
+	 * @param Domain $currentDomain
+	 * @return ContentContext
 	 */
 	public function __construct($workspaceName, \DateTime $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $currentSite, $currentDomain) {
 		parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
@@ -60,7 +64,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the current site from this frontend context
 	 *
-	 * @return \TYPO3\Neos\Domain\Model\Site The current site
+	 * @return Site The current site
 	 */
 	public function getCurrentSite() {
 		return $this->currentSite;
@@ -69,7 +73,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the current domain from this frontend context
 	 *
-	 * @return \TYPO3\Neos\Domain\Model\Domain The current domain
+	 * @return Domain The current domain
 	 * @api
 	 */
 	public function getCurrentDomain() {
@@ -79,7 +83,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the node of the current site.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return NodeInterface
 	 */
 	public function getCurrentSiteNode() {
 		if ($this->currentSite !== NULL && $this->currentSiteNode === NULL) {

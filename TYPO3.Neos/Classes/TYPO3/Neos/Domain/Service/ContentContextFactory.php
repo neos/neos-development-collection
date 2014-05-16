@@ -12,6 +12,12 @@ namespace TYPO3\Neos\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Now;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
+use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 
 /**
  * ContentContextFactory which ensures contexts stay unique. Make sure to
@@ -22,7 +28,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory {
+class ContentContextFactory extends ContextFactory {
 
 	/**
 	 * The context implementation this factory will create
@@ -33,15 +39,25 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 
 	/**
 	 * Creates the actual Context instance.
-	 * This needs to be overriden if the Builder is extended.
+	 * This needs to be overridden if the Builder is extended.
 	 *
 	 * @param array $contextProperties
-	 * @return \TYPO3\Neos\Domain\Service\ContentContext
+	 * @return ContentContext
 	 */
 	protected function buildContextInstance(array $contextProperties) {
 		$contextProperties = $this->removeDeprecatedProperties($contextProperties);
 
-		return new \TYPO3\Neos\Domain\Service\ContentContext($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown'], $contextProperties['currentSite'], $contextProperties['currentDomain']);
+		return new ContentContext(
+			$contextProperties['workspaceName'],
+			$contextProperties['currentDateTime'],
+			$contextProperties['dimensions'],
+			$contextProperties['targetDimensions'],
+			$contextProperties['invisibleContentShown'],
+			$contextProperties['removedContentShown'],
+			$contextProperties['inaccessibleContentShown'],
+			$contextProperties['currentSite'],
+			$contextProperties['currentDomain']
+		);
 	}
 
 	/**
@@ -55,7 +71,7 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 
 		$defaultContextProperties = array (
 			'workspaceName' => 'live',
-			'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
+			'currentDateTime' => new Now(),
 			'dimensions' => array(),
 			'targetDimensions' => array(),
 			'invisibleContentShown' => FALSE,
@@ -65,7 +81,7 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 			'currentDomain' => NULL
 		);
 
-		$mergedProperties = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
+		$mergedProperties = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
 
 		$this->mergeDimensionValues($contextProperties, $mergedProperties);
 		$this->mergeTargetDimensionContextProperties($contextProperties, $mergedProperties, $defaultContextProperties);
@@ -74,7 +90,7 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	}
 
 	/**
-	 * This creates the actual identifier and needs to be overriden by builders extending this.
+	 * This creates the actual identifier and needs to be overridden by builders extending this.
 	 *
 	 * @param array $contextProperties
 	 * @return string
@@ -97,9 +113,9 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 				$stringValue = implode('&', $stringParts);
 			} elseif ($propertyValue instanceof \DateTime) {
 				$stringValue = $propertyValue->getTimestamp();
-			} elseif ($propertyValue instanceof \TYPO3\Neos\Domain\Model\Site) {
+			} elseif ($propertyValue instanceof Site) {
 				$stringValue = $propertyValue->getNodeName();
-			} elseif ($propertyValue instanceof \TYPO3\Neos\Domain\Model\Domain) {
+			} elseif ($propertyValue instanceof Domain) {
 				$stringValue = $propertyValue->getHostPattern();
 			} else {
 				$stringValue = (string)$propertyValue;
@@ -113,22 +129,21 @@ class ContentContextFactory extends \TYPO3\TYPO3CR\Domain\Service\ContextFactory
 	/**
 	 * @param array $contextProperties
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
+	 * @throws InvalidNodeContextException
 	 */
 	protected function validateContextProperties($contextProperties) {
 		parent::validateContextProperties($contextProperties);
 
 		if (isset($contextProperties['currentSite'])) {
-			if (!$contextProperties['currentSite'] instanceof \TYPO3\Neos\Domain\Model\Site) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set currentSite in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Site object as value.', 1373145297);
+			if (!$contextProperties['currentSite'] instanceof Site) {
+				throw new InvalidNodeContextException('You tried to set currentSite in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Site object as value.', 1373145297);
 			}
 		}
 		if (isset($contextProperties['currentDomain'])) {
-			if (!$contextProperties['currentDomain'] instanceof \TYPO3\Neos\Domain\Model\Domain) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException('You tried to set currentDomain in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Domain object as value.', 1373145384);
+			if (!$contextProperties['currentDomain'] instanceof Domain) {
+				throw new InvalidNodeContextException('You tried to set currentDomain in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Domain object as value.', 1373145384);
 			}
 		}
 	}
-
 
 }

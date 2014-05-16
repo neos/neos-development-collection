@@ -11,9 +11,10 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 
-class ConfigurationContentDimensionPresetSourceTest extends \TYPO3\Flow\Tests\UnitTestCase {
+class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 
 	/**
 	 * @var ConfigurationContentDimensionPresetSource
