@@ -7,7 +7,7 @@ define(
 		'Content/Model/NodeSelection',
 		'Content/EditPreviewPanel/EditPreviewPanelController',
 		'Library/create',
-		'create/collectionWidgets/jquery.typo3.collectionWidget',
+		'InlineEditing/CreateJs/jquery.typo3.collectionWidget',
 		'aloha'
 	],
 	function(

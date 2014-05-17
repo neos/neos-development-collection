@@ -1,7 +1,7 @@
 define(
 [
 	'./Application',
-	'create/typo3Notifications'
+	'InlineEditing/CreateJs/typo3Notifications'
 ],
 function(Application) {
 	return Application;
