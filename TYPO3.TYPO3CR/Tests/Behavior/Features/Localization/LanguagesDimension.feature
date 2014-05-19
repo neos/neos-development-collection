@@ -1,4 +1,4 @@
-Feature: Multiple locales as content dimension
+Feature: Multiple languages as content dimension
   In order to have content with multiple content dimensions and fallbacks
   As an API user of the content repository
   I need a way to retrieve nodes matching an ordered list of dimension values
@@ -10,23 +10,23 @@ Feature: Multiple locales as content dimension
       | /sites/neosdemotypo3 | TYPO3.Neos.NodeTypes:Page | {"title": "Home"} |
 
   @fixtures
-  Scenario: Assign multiple values to locales content dimension for a node variant
+  Scenario: Assign multiple values to languages content dimension for a node variant
     Given I have the following nodes:
-      | Identifier                           | Path                         | Node Type                     | Properties                  | Locales     |
+      | Identifier                           | Path                         | Node Type                     | Properties                  | Languages   |
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "Swiss content"}  | fr_CH,de_CH |
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "German content"} | de_ZZ       |
     When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
-      | Locales       |
+      | Languages     |
       | de_CH, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Swiss content"
     When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
-      | Locales       |
+      | Languages     |
       | fr_CH, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Swiss content"
     When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
-      | Locales       |
+      | Languages     |
       | de_ZZ, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "German content"

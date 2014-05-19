@@ -45,7 +45,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 
 		$this->nodeDataRepository->add($nodeData);
 
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 
 		$nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(TRUE));
 
@@ -65,7 +65,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 
 		$this->nodeDataRepository->remove($nodeData);
 
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 
 		$nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(TRUE));
 
@@ -85,7 +85,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 
 		$this->nodeDataRepository->add($nodeData);
 
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 
 		$nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(TRUE));
 
@@ -105,7 +105,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 
 		$this->nodeDataRepository->remove($nodeData);
 
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 
 		$nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(TRUE));
 
@@ -121,7 +121,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 		$parentPath = 'some/parent/path';
 		$nodeTypeFilter = 'Some.Package:SomeNodeType';
 		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 		$removedNodesFlag = TRUE;
 		$recursiveFlag = TRUE;
 
@@ -144,7 +144,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 
 		$this->nodeDataRepository->add($nodeData);
 
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 
 		$nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(TRUE));
 
@@ -172,7 +172,7 @@ class NodeDataRepositoryTest extends UnitTestCase {
 
 		$this->nodeDataRepository->remove($nodeData);
 
-		$dimensions = array('personas' => array('everybody'), 'locales' => array('de_DE', 'mul_ZZ'));
+		$dimensions = array('personas' => array('everybody'), 'languages' => array('de_DE', 'mul_ZZ'));
 
 		$nodeData->expects($this->atLeastOnce())->method('matchesWorkspaceAndDimensions')->with($liveWorkspace, $dimensions)->will($this->returnValue(TRUE));
 

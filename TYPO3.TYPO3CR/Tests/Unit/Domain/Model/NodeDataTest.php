@@ -586,11 +586,11 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function matchesWorkspaceAndDimensionsWithDifferentDimensionReturnsFalse() {
-		$this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('locales' => array('en_US')));
+		$this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('languages' => array('en_US')));
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-		$result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, array('locales' => array('de_DE', 'mul_ZZ')));
+		$result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, array('languages' => array('de_DE', 'mul_ZZ')));
 		$this->assertFalse($result);
 	}
 
@@ -598,11 +598,11 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function matchesWorkspaceAndDimensionsWithMatchingWorkspaceAndDimensionsReturnsTrue() {
-		$this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('locales' => array('mul_ZZ')));
+		$this->nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('languages' => array('mul_ZZ')));
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-		$result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, array('locales' => array('de_DE', 'mul_ZZ')));
+		$result = $this->nodeData->matchesWorkspaceAndDimensions($this->mockWorkspace, array('languages' => array('de_DE', 'mul_ZZ')));
 		$this->assertTrue($result);
 	}
 
