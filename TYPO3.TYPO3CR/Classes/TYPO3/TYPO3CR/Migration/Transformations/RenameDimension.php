@@ -79,7 +79,6 @@ class RenameDimension extends AbstractTransformation {
 		$dimensions = $nodeData->getDimensions();
 		if ($dimensions !== array()) {
 			foreach ($dimensions as $dimension) {
-				\TYPO3\Flow\var_dump($dimension->getName());
 				/** @var NodeDimension $dimension */
 				if ($dimension->getName() === $this->oldDimensionName) {
 					$dimension->setName($this->newDimensionName);
