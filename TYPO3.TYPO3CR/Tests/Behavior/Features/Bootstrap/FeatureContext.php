@@ -52,7 +52,7 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	public function resetContentDimensions() {
 		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 			// Set the content dimensions to a fixed value for behat scenarios
-		$contentDimensionRepository->setDimensionsConfiguration(array('locales' => array('default' => 'mul_ZZ')));
+		$contentDimensionRepository->setDimensionsConfiguration(array('languages' => array('default' => 'mul_ZZ')));
 	}
 
 	/**
@@ -89,11 +89,11 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 			}
 
 			$dimensions = NULL;
-			// If Locales is set we pass them as explicit dimensions
-			if (isset($row['Locales'])) {
-				$dimensions['locales'] = explode(',', $row['Locales']);
-			} elseif (isset($row['Locale'])) {
-				$dimensions['locales'] = array($row['Locale']);
+			// If Languages is set we pass them as explicit dimensions
+			if (isset($row['Languages'])) {
+				$dimensions['languages'] = explode(',', $row['Languages']);
+			} elseif (isset($row['Language'])) {
+				$dimensions['languages'] = array($row['Language']);
 			}
 			// Add flexible dimensions to explicit dimensions
 			foreach ($row as $propertyName => $propertyValue) {
@@ -287,12 +287,12 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	}
 
 	/**
-	 * @Then /^The node locales dimension should be "([^"]*)"$/
+	 * @Then /^The node languages dimension should be "([^"]*)"$/
 	 */
-	public function theNodeLocaleShouldBe($locales) {
+	public function theNodeLanguageShouldBe($languages) {
 		$currentNode = $this->iShouldHaveOneNode();
 		$dimensions = $currentNode->getDimensions();
-		Assert::assertEquals($locales, implode(',', $dimensions['locales']), 'Locale should match');
+		Assert::assertEquals($languages, implode(',', $dimensions['languages']), 'Language should match');
 	}
 
 	/**
@@ -334,9 +334,9 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 					Assert::assertEquals($value, $nodeProperties[$property], 'The value for property "' . $property . '" should match the expected value');
 				}
 			}
-			if (isset($row['Locales'])) {
+			if (isset($row['Languages'])) {
 				$dimensions = $this->currentNodes[$index]->getDimensions();
-				Assert::assertEquals($row['Locales'], implode(',', $dimensions['locales']), 'Locale should match');
+				Assert::assertEquals($row['Languages'], implode(',', $dimensions['languages']), 'Language should match');
 			}
 		}
 	}
@@ -350,11 +350,11 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 		/** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
 		$contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$contextProperties = array();
-		if (isset($humanReadableContextProperties['Locale'])) {
-			$contextProperties['dimensions']['locales'] = array($humanReadableContextProperties['Locale'], 'mul_ZZ');
+		if (isset($humanReadableContextProperties['Language'])) {
+			$contextProperties['dimensions']['languages'] = array($humanReadableContextProperties['Language'], 'mul_ZZ');
 		}
-		if (isset($humanReadableContextProperties['Locales'])) {
-			$contextProperties['dimensions']['locales'] = Arrays::trimExplode(',', $humanReadableContextProperties['Locales']);
+		if (isset($humanReadableContextProperties['Languages'])) {
+			$contextProperties['dimensions']['languages'] = Arrays::trimExplode(',', $humanReadableContextProperties['Languages']);
 		}
 		if (isset($humanReadableContextProperties['Workspace'])) {
 			$contextProperties['workspaceName'] = $humanReadableContextProperties['Workspace'];
