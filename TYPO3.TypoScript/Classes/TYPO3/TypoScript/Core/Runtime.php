@@ -629,9 +629,10 @@ class Runtime {
 						}
 						$currentPathBase = &$currentPathBase[$pathName];
 					}
-					$currentPathBase = new $objectType();
+					$currentPathBase = $this->objectManager->get($objectType);
 				}
 			}
+			$this->defaultContextVariables['request'] = $this->controllerContext->getRequest();
 		}
 		return $this->defaultContextVariables;
 	}
