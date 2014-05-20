@@ -53,7 +53,7 @@ class TypoScriptView extends AbstractView {
 	 * Renders the view
 	 *
 	 * @return string The rendered view
-	 * @throws \TYPO3\Neos\Exception if no node is given
+	 * @throws \Exception if no node is given
 	 * @api
 	 */
 	public function render() {
@@ -64,7 +64,6 @@ class TypoScriptView extends AbstractView {
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $currentNode,
 			'documentNode' => $this->getClosestDocumentNode($currentNode),
-			'request' => $this->controllerContext->getRequest(),
 			'site' => $currentSiteNode,
 			'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : NULL
 		));
