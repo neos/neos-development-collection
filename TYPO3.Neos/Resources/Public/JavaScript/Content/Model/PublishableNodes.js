@@ -118,9 +118,11 @@ define(
 						if (autoPublish !== true) {
 							var pageMetaInformation = $('#neos-page-metainformation'),
 								nodeType = pageMetaInformation.data('neos-_node-type'),
-								title = pageMetaInformation.attr('data-neos-title'),
-								nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-							Notification.ok('Published changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
+								page = vie.entities.get(vie.service('rdfa').getElementSubject(pageMetaInformation)),
+								namespace = Configuration.get('TYPO3_NAMESPACE'),
+								title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
+								nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
+							Notification.ok('Published changes for ' + nodeTypeDefinition.ui.label + ' "' + $('<a />').html(title).text() + '"');
 						}
 					}
 				);
@@ -183,9 +185,11 @@ define(
 					);
 					var pageMetaInformation = $('#neos-page-metainformation'),
 						nodeType = pageMetaInformation.data('neos-_node-type'),
-						title = pageMetaInformation.attr('data-neos-title'),
-						nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-					Notification.ok('Discarded changes for ' + nodeTypeDefiniton.ui.label + ' "' + title + '"');
+						page = vie.entities.get(vie.service('rdfa').getElementSubject(pageMetaInformation)),
+						namespace = Configuration.get('TYPO3_NAMESPACE'),
+						title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
+						nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
+					Notification.ok('Discarded changes for ' + nodeTypeDefinition.ui.label + ' "' + title + '"');
 				}
 			);
 		},
