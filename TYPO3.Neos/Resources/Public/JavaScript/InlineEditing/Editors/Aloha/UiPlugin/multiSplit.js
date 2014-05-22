@@ -81,25 +81,34 @@ define([
 				name = 'removeFormat';
 			}
 
-			for (var i = 0; i < this._internalButtons.length; i++) {
-				if (this._internalButtons[i].name === name) {
-					this.select.val(i);
+			if (!this._chosenInitialized) {
+				this.select.chosen({width: '185px', disable_search_threshold: 10, display_disabled_options: false});
+				this._chosenInitialized = true;
+			}
 
-					if (!this._chosenInitialized) {
-						this.select.chosen({width: '185px', disable_search_threshold: 10, display_disabled_options: false});
-						this._chosenInitialized = true;
+			var availableOptions = $('option:not(:disabled)', this.select).length;
+			if (availableOptions > 0) {
+				for (var i = 0; i < this._internalButtons.length; i++) {
+					if (this._internalButtons[i].name === name) {
+						this.select.val(i);
+
+						this.select.trigger('chosen:updated.chosen');
+						return;
 					}
-
-					this.select.trigger('chosen:updated.chosen');
-					return;
 				}
+			}
+
+			if (availableOptions === 0) {
+				$(this.select).siblings('.chosen-container').css('display', 'none');
+			} else {
+				$(this.select).siblings('.chosen-container').css('display', 'inline-block');
 			}
 		},
 
 		/**
 		 * Show the button with given index
 		 * @api
-		 * @param {Number} index button index
+		 * @param {String} name
 		 */
 		show: function (name) {
 			if (!name) {
@@ -118,7 +127,7 @@ define([
 		/**
 		 * Hide the button with given index
 		 * @api
-		 * @param {Number} index button index
+		 * @param {String} name
 		 */
 		hide: function (name) {
 			if (!name) {
