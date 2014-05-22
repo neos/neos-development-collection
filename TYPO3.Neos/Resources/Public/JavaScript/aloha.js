@@ -30,14 +30,21 @@ function(
 			if (nodeType.properties && typeof nodeType.properties === 'object') {
 				$.each(nodeType.properties, function(propertyName, property) {
 					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]';
-					$.each(['table', 'link', 'list', 'alignment', 'format'], function(i, mode) {
+					$.each(['table', 'link', 'list', 'format'], function(i, mode) {
 						if (property.ui && property.ui.aloha && property.ui.aloha[mode]) {
 							nodeSettings[mode] = nodeSettings[mode] || {};
 							nodeSettings[mode][selector] = property.ui.aloha[mode];
 						}
 					});
+
 					if (property.ui && property.ui.aloha && property.ui.aloha.placeholder) {
 						placeholderSettings[selector] = property.ui.aloha.placeholder;
+					}
+
+					// This is a workaround for broken configuration behavior in the Aloha align plugin
+					if (property.ui && property.ui.aloha && property.ui.aloha.alignment) {
+						nodeSettings['alignment'] = nodeSettings['alignment'] || {};
+						nodeSettings['alignment'][selector] = {alignment: property.ui.aloha.alignment};
 					}
 				});
 			}
@@ -101,7 +108,7 @@ function(
 				table: { config: [], editables: nodeSettings['table'] },
 				link: { config: [], editables: nodeSettings['link'] },
 				list: { config: [], editables: nodeSettings['list'] },
-				alignment: { config: [], editables: nodeSettings['alignment'] },
+				align: { config: [], editables: nodeSettings['alignment'] },
 				format: { config: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings['format'] }
 			},
 			toolbar: {
