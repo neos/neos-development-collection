@@ -113,6 +113,7 @@ define(
 						entitySubjects.forEach(function(subject) {
 							that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 						});
+						that._updatePublishableEntities();
 
 						if (autoPublish !== true) {
 							var pageMetaInformation = $('#neos-page-metainformation'),
@@ -135,7 +136,8 @@ define(
 			var that = this,
 				entity = vie.entities.get(entitySubject);
 			if (workspaceOverride) {
-				entity.set('typo3:__workspacename', workspaceOverride);
+				// This is done silently to avoid VIE overriding the existing inline values
+				entity.set('typo3:__workspacename', workspaceOverride, {silent: true});
 			}
 
 			var nodeContextPath = entitySubject.slice(1, entitySubject.length - 1),
@@ -162,6 +164,7 @@ define(
 					entitySubjects.forEach(function(subject) {
 						that._removeNodeFromPublishableEntitySubjects(subject);
 					});
+					that._updatePublishableEntities();
 					that.set('publishableEntitySubjects', []);
 					require(
 						{context: 'neos'},
@@ -202,6 +205,7 @@ define(
 					entitySubjects.forEach(function(subject) {
 						that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 					});
+					that._updatePublishableEntities();
 					that.set('workspaceWidePublishableEntitySubjects', []);
 					Notification.ok('Published all changes.');
 				},
