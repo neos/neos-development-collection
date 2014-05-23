@@ -34,6 +34,9 @@ additionalProperties:
 
           'defaultValue': { type: any, description: "Default value of this property. Used at node creation time. Type must match specified 'type'." }
 
+          'validation':
+            type: dictionary
+
           'ui':
             type: dictionary
             # we intentionally do not specify which properties are allowed here;
