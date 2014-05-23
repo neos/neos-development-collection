@@ -345,7 +345,7 @@
       groups:
         form:
           label: 'Form'
-          priority: 30
+          position: 30
   properties:
     formIdentifier:
       type: string
