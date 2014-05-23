@@ -415,7 +415,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 
-		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
+		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName);
 		$copiedNode->moveBefore($referenceNode);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -441,7 +441,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 
-		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
+		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName);
 		$copiedNode->moveAfter($referenceNode);
 
 		$this->context->getFirstLevelNodeCache()->flush();
