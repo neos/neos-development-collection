@@ -189,7 +189,6 @@
         pluginViews:
           label: 'Plugin Views'
           position: 100
-  nonEditableOverlay: false
   properties:
     plugin:
       type: string

@@ -40,6 +40,9 @@ additionalProperties:
                       'h1': { type: boolean }
                       'h2': { type: boolean }
                       'h3': { type: boolean }
+                      'h4': { type: boolean }
+                      'h5': { type: boolean }
+                      'h6': { type: boolean }
                       'pre': { type: boolean }
                       'removeFormat': { type: boolean }
 
