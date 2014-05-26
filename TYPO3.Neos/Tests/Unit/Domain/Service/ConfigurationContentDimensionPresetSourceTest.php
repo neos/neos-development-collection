@@ -17,49 +17,52 @@ use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 
 	/**
-	 * @var ConfigurationContentDimensionPresetSource
+	 * @var array
 	 */
-	protected $source;
-
-	public function setUp() {
-		$this->source = new ConfigurationContentDimensionPresetSource();
-		$this->source->setConfiguration(array(
-			'languages' => array(
-				'defaultPreset' => 'all',
-				'label' => 'Language',
-				'icon' => 'icon-language',
-				'position' => 100,
-				'presets' => array(
-					'all' => array(
-						'label' => 'All languages',
-						'values' => array('mul_ZZ'),
-						'uriSegment' => 'intl',
-						'position' => 100
-					),
-					'de_DE' => array(
-						'label' => 'Deutsch (Deutschland)',
-						'values' => array('de_DE', 'de_ZZ', 'mul_ZZ'),
-						'uriSegment' => 'deutsch',
-						'position' => 10
-					)
-				)
-			),
-			'targetGroups' => array(
-				'defaultPreset' => 'all',
-				'label' => 'Target Groups',
-				'icon' => 'icon-group',
-				'position' => 20,
-				'presets' => array(
+	protected $validConfiguration = array(
+		'languages' => array(
+			'defaultPreset' => 'all',
+			'label' => 'Language',
+			'icon' => 'icon-language',
+			'position' => 100,
+			'presets' => array(
+				'all' => array(
+					'label' => 'All languages',
+					'values' => array('mul_ZZ'),
+					'uriSegment' => 'intl',
+					'position' => 100
+				),
+				'de_DE' => array(
+					'label' => 'Deutsch (Deutschland)',
+					'values' => array('de_DE', 'de_ZZ', 'mul_ZZ'),
+					'uriSegment' => 'deutsch',
+					'position' => 10
 				)
 			)
-		));
-	}
+		),
+		'targetGroups' => array(
+			'defaultPreset' => 'all',
+			'label' => 'Target Groups',
+			'icon' => 'icon-group',
+			'position' => 20,
+			'presets' => array(
+				'all' => array(
+					'label' => 'All target groups',
+					'values' => array('all'),
+					'uriSegment' => 'all',
+					'position' => 100
+				)
+			)
+		)
+	);
 
 	/**
 	 * @test
 	 */
 	public function getAllPresetsReturnsDimensionsOrderedByPosition() {
-		$presets = $this->source->getAllPresets();
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$presets = $source->getAllPresets();
 		$this->assertEquals(array('targetGroups', 'languages'), array_keys($presets));
 	}
 
@@ -67,7 +70,9 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getAllPresetsReturnsDimensionPresetsOrderedByPosition() {
-		$presets = $this->source->getAllPresets();
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$presets = $source->getAllPresets();
 		$this->assertArrayHasKey('languages', $presets);
 		$this->assertEquals(array('de_DE', 'all'), array_keys($presets['languages']['presets']));
 	}
@@ -76,7 +81,9 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getDefaultPresetWithExistingDimensionReturnsDefaultPresetWithIdentifier() {
-		$preset = $this->source->getDefaultPreset('languages');
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$preset = $source->getDefaultPreset('languages');
 		$this->assertArrayHasKey('identifier', $preset);
 		$this->assertEquals('all', $preset['identifier']);
 	}
@@ -85,7 +92,9 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function findPresetByUriSegmentWithExistingUriSegmentReturnsPreset() {
-		$preset = $this->source->findPresetByUriSegment('languages', 'deutsch');
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$preset = $source->findPresetByUriSegment('languages', 'deutsch');
 		$this->assertArrayHasKey('values', $preset);
 		$this->assertEquals(array('de_DE', 'de_ZZ', 'mul_ZZ'), $preset['values']);
 	}
@@ -94,7 +103,9 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function findPresetByUriSegmentWithoutExistingUriSegmentReturnsNull() {
-		$preset = $this->source->findPresetByUriSegment('languages', 'english');
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$preset = $source->findPresetByUriSegment('languages', 'english');
 		$this->assertNull($preset);
 	}
 
@@ -102,7 +113,9 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function findPresetByDimensionValuesWithExistingValuesReturnsPreset() {
-		$preset = $this->source->findPresetByDimensionValues('languages', array('de_DE', 'de_ZZ', 'mul_ZZ'));
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$preset = $source->findPresetByDimensionValues('languages', array('de_DE', 'de_ZZ', 'mul_ZZ'));
 		$this->assertArrayHasKey('uriSegment', $preset);
 		$this->assertEquals('deutsch', $preset['uriSegment']);
 	}
@@ -111,7 +124,22 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function findPresetByDimensionValuesWithoutExistingUriSegmentReturnsNull() {
-		$preset = $this->source->findPresetByDimensionValues('languages', array('ja_JP', 'mul_ZZ'));
+		$source = new ConfigurationContentDimensionPresetSource();
+		$source->setConfiguration($this->validConfiguration);
+		$preset = $source->findPresetByDimensionValues('languages', array('ja_JP', 'mul_ZZ'));
 		$this->assertNull($preset);
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Neos\Domain\Exception
+	 * @expectedExceptionCode 1401093863
+	 */
+	public function setConfigurationThrowsExceptionIfSpecifiedDefaultPresetDoesNotExist() {
+		$source = new ConfigurationContentDimensionPresetSource();
+		$configuration = $this->validConfiguration;
+		$configuration['languages']['defaultPreset'] = 'something';
+		$source->setConfiguration($configuration);
+	}
+
 }
