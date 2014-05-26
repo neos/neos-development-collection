@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\PositionalArraySorter;
+use TYPO3\Neos\Domain\Exception;
 
 /**
  * A Dimension Preset Source that gets presets from settings
@@ -90,6 +91,12 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
 	 * @return void
 	 */
 	public function setConfiguration(array $configuration) {
+		foreach ($configuration as $dimensionName => $dimensionConfiguration) {
+			$defaultPreset = $dimensionConfiguration['defaultPreset'];
+			if (!isset($dimensionConfiguration['presets'][$defaultPreset])) {
+				throw new Exception(sprintf('The preset "%s" which was configured to be the default preset for the content dimension "%s" does not exist. Please check your content dimension settings.', $defaultPreset, $dimensionName), 1401093863);
+			}
+		}
 		$this->configuration = $configuration;
 	}
 
