@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2014-04-15
+This reference was automatically generated from code on 2014-05-26
 
 
 add
@@ -15,6 +15,30 @@ Add another $flowQuery object to the current one.
 :Priority: 1
 :Final: No
 :Returns: void
+
+
+
+
+
+cacheLifetime
+-------------
+
+"cacheLifetime" operation working on TYPO3CR nodes. Will get the minimum of all allowed cache lifetimes for the
+nodes in the current FlowQuery context. This means it will evaluate to the nearest future value of the
+hiddenBeforeDateTime or hiddenAfterDateTime properties of all nodes in the context. If none are set or all values
+are in the past it will evaluate to NULL.
+
+To include already hidden nodes (with a hiddenBeforeDateTime value in the future) in the result, also invisible nodes
+have to be included in the context. This can be achieved using the "context" operation before fetching child nodes.
+
+Example:
+
+	q(node).context({'invisibleContentShown': true}).children().cacheLifetime()
+
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\CacheLifetimeOperation
+:Priority: 1
+:Final: Yes
+:Returns: integer The cache lifetime in seconds or NULL if either no content collection was given or no child node had a "hiddenBeforeDateTime" or "hiddenAfterDateTime" property set
 
 
 
@@ -62,6 +86,27 @@ traversing up through its ancestors.
 
 :Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ClosestOperation
 :Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+context
+-------
+
+"context" operation working on TYPO3CR nodes. Modifies the TYPO3CR Context of each
+node in the current FlowQuery context by the given properties and returns the same
+nodes by identifier if they can be accessed in the new Context (otherwise they
+will be skipped).
+
+Example:
+
+	q(node).context({'invisibleContentShown': true}).children()
+
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ContextOperation
+:Priority: 1
 :Final: No
 :Returns: void
 

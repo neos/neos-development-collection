@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2014-04-15
+The following reference was automatically generated from code on 2014-05-26
 
 
 Package *TYPO3.NEOS*
@@ -320,6 +320,26 @@ Arguments
   Username of the account to modify
 ``--password``
   The new password
+
+
+
+
+
+
+
+``typo3.neos:user:show``
+************************
+
+**Shows the given user**
+
+This command shows some basic details about the given user. If such a user does not exist, this command
+will exit with a non-zero status code.
+
+Arguments
+^^^^^^^^^
+
+``--username``
+  The username of the user to show.
 
 
 
