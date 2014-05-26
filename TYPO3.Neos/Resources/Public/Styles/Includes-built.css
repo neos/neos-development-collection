@@ -1,4 +1,5 @@
 
+@charset "UTF-8";
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
@@ -23,7 +24,7 @@
   font-weight: 700;
   src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url(../Fonts/NotoSans/NotoSans-BoldItalic.ttf) format('truetype');
 }
-/*
+/*!
  *  Font Awesome 3.2.1
  *  the iconic font designed for Bootstrap
  *  ------------------------------------------------------------------------------
@@ -891,7 +892,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -5240,55 +5241,36 @@
   line-height: 32px;
   font-size: 13px;
 }
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container {
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail {
   position: relative;
-  overflow: hidden;
   border: 1px dashed #323232;
   margin-bottom: 12px;
+  width: 288px;
+  height: 216px;
+  display: table;
 }
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-image-preview-thumbnail {
-  max-width: 288px;
-  max-height: 216px;
-}
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-loadingindicator {
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail .neos-inspector-image-loadingindicator {
   z-index: 1;
   position: absolute;
   left: 67px;
   top: 67px;
 }
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-thumbnail-inner {
-  overflow: hidden;
-  padding: 0;
-  margin: auto;
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail .neos-inspector-image-thumbnail-inner {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
 }
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-inspector-image-thumbnail-inner img {
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail .neos-inspector-image-thumbnail-inner.neos-inspector-image-thumbnail-cropped {
+  text-align: left;
+  overflow: hidden;
+}
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail .neos-inspector-image-thumbnail-inner.neos-inspector-image-thumbnail-cropped img {
   max-width: none;
   max-height: none;
 }
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-imagebadge {
-  position: absolute;
-  top: 80px;
-  width: 100%;
-  height: 20px;
-  color: white;
-  background: rgba(0, 0, 0, 0.7);
-  text-align: center;
-  display: none;
-}
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail-container .neos-imagebadge.neos-imagebadge-visible {
-  display: block;
-}
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-uploadthumbnail {
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-uploadthumbnail-landscape {
-  width: 288px;
-}
-.neos #neos-inspector .neos-inspector-image .neos-inspector-image-uploadthumbnail-portrait {
-  height: 216px;
+.neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail .neos-inspector-image-thumbnail-inner img {
+  max-width: 288px;
+  max-height: 216px;
 }
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-upload,
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-width {
@@ -5315,56 +5297,6 @@
 }
 .neos #neos-inspector .neos-inspector-file ul li {
   padding: 5px 0;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container {
-  position: relative;
-  overflow: hidden;
-  border: 1px dashed #323232;
-  margin-bottom: 12px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-image-preview-thumbnail {
-  max-width: 288px;
-  max-height: 216px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-inspector-file-loadingindicator {
-  z-index: 1;
-  position: absolute;
-  left: 67px;
-  top: 67px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-inspector-file-thumbnail-inner {
-  overflow: hidden;
-  padding: 0;
-  margin: auto;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-inspector-file-thumbnail-inner img {
-  max-width: none;
-  max-height: none;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-imagebadge {
-  position: absolute;
-  top: 80px;
-  width: 100%;
-  height: 20px;
-  color: white;
-  background: rgba(0, 0, 0, 0.7);
-  text-align: center;
-  display: none;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-thumbnail-container .neos-imagebadge.neos-imagebadge-visible {
-  display: block;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-uploadthumbnail {
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-uploadthumbnail-landscape {
-  width: 288px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-uploadthumbnail-portrait {
-  height: 216px;
 }
 .neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload,
 .neos #neos-inspector .neos-inspector-file .neos-inspector-file-width {
