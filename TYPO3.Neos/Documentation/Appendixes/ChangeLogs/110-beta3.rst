@@ -6,39 +6,597 @@
 Base Distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/13/
+
+* Commit: `80d3778 <https://git.typo3.org/Neos/Distributions/Base.git/commit/80d3778d8594136ae2a5edd53b81e7c6f3492059>`_
+
+[TASK] Upgrade PHPUnit to 4.0.*
+-----------------------------------------------------------------------------------------
+
+* Commit: `798a0c5 <https://git.typo3.org/Neos/Distributions/Base.git/commit/798a0c57628deb7f61098cfa3f6e8db1ffb80814>`_
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Neos
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No changes
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/13/
+
+* Commit: `2de7c5c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2de7c5c7d9798882b1dcd188f9d223cd5b80572e>`_
+
+[TASK] Add changelog for TYPO3 Neos 1.1.0-beta3
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/13/
+
+* Commit: `fde3512 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fde3512599ff88b6131157a0591bbc4802abf1e6>`_
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/13/
+
+* Commit: `23aff86 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/23aff8669780183530e13badf28aff7c6b943cdd>`_
+
+[TASK] Add basic validation for content dimension preset configuration
+-----------------------------------------------------------------------------------------
+
+This adds some basic safe guard to the setConfiguration() method which
+throws an exception if a non-existing content dimension preset has been
+defined as the default preset.
+
+* Commit: `41ebdb3 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/41ebdb31e5384123e9f5881f756598b993aa82a9>`_
+
+[TASK] Remove request from context
+-----------------------------------------------------------------------------------------
+
+This removed the request from the TypoScript context as with
+I9c95bccce0f34dc4d4c9faa85a16b8a36006cd96 the context is added in the
+default context to always have the current request in the context.
+
+Needs: I9c95bccce0f34dc4d4c9faa85a16b8a36006cd96
+
+* Commit: `7c9bb2e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7c9bb2ecf84465efeead17e59f6f7bbeb93b2f57>`_
+
+[TASK] Cosmetic changes and clean ups
+-----------------------------------------------------------------------------------------
+
+As a preparation for the further development of the content dimensions
+support, this change contains a few cosmetic changes to existing code.
+
+* Commit: `63061fd <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/63061fd881d068d2b0e64712f43700b3feb54eba>`_
+
+[TASK] Rename content dimension "locales" to "languages"
+-----------------------------------------------------------------------------------------
+
+This change renames the previously introduced content dimension "locales"
+to "languages" as "locales" was too unspecific.
+
+If you relied on the name previously, you'll have to adapt your code
+accordingly.
+
+Resolves: NEOS-116
+
+* Commit: `9cfa5a7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9cfa5a758cd4581cdea6963bd1774c0357c093be>`_
+
+[FEATURE] uri.module view helper
+-----------------------------------------------------------------------------------------
+
+This introduces an uri.module view helper as counterpart
+to the link.module view helper.
+
+* Related: `#58588 <http://forge.typo3.org/issues/58588>`_
+
+(cherry picked from commit 5d75e38df1422aa74440d74706df10546f718f3b)
+
+* Commit: `c6def10 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c6def106423ef7affb468986e707da740c9371bd>`_
+
+[TASK] Only show images in image media browser
+-----------------------------------------------------------------------------------------
+
+This change adds a second controller next to the MediaBrowserController
+to browse only images. This controller is used for the media selection
+in the ImageEditor.
+
+(cherry picked from commit 6dd99c0f24844e8073f83cdefef24273bb263b93)
+
+* Commit: `3059839 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/305983912034f3a8bfca68a9b3f7376d5daad577>`_
+
+[TASK] Amend documentation in EditableViewHelper
+-----------------------------------------------------------------------------------------
+
+This tries to explain the user the need for correct metadata wrapping
+if the ViewHelper is used with a given node.
+
+Also some unused import statements are removed.
+
+(cherry picked from commit f2d0b51630ebccb4fad2769958bf0cf586045a86)
+
+* Commit: `db53aaf <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/db53aaf218da02ee95c2bd9d45b4b9759f1272e3>`_
+
+[BUGFIX] Node tree search/filtering incompatible with PHP 5.3
+-----------------------------------------------------------------------------------------
+
+Due to the use of $this inside a Closure it throws an error on PHP 5.3.
+To circumvent that problem the class instance is referenced instead.
+
+(cherry picked from commit d8e955c7cdabc9580c352564ab15be890325cd5f)
+
+* Commit: `2e12580 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2e12580b096761561a1eecf95b03e645f7ffeb9d>`_
+
+[TASK] Make items in Breadcrumb prototype an array, not FlowQuery
+-----------------------------------------------------------------------------------------
+
+The items in a Breadcrumb were a FlowQuery instance. This changes
+unwraps the query and makes items a simple array.
+
+That way it is consistent with the other menu types' behavior.
+
+(cherry picked from commit 8c53781a73222b36ffe9ffb51af6457ce72bb944)
+
+* Commit: `246b738 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/246b738eeb794993aa348d8cb738c03bd08fbe83>`_
+
+[BUGFIX] Resolve hardcoded URIs in Backend context
+-----------------------------------------------------------------------------------------
+
+This removes occurrences of hard coded URIs to
+end points, modules etc. This finally enables
+using Neos with custom routes or being installed
+below a subdirectory.
+
+* Fixes: `#58588 <http://forge.typo3.org/issues/58588>`_
+
+(cherry picked from commit ad3380e354fd58f2585fc1575a697f7c4e9039b2)
+
+* Commit: `d3dd001 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d3dd0014cfddf0d5467bf4917b41c58ea422b43b>`_
+
+[BUGFIX] Show correct TypoScript path in exception handler messages
+-----------------------------------------------------------------------------------------
+
+This change sets the default TypoScript exception handler to
+"ThrowingHandler". This way an exception will be re-thrown until it is
+handled by a path that has another exception handler configured (e.g.
+the NodeWrappingHandler). A new "ContextDependentHandler" is introduced
+to switch between HtmlMessageHandler in Development or XmlCommentHandler
+in Production. It's configured at the TypoScript root-level to catch
+unhandled exceptions.
+
+This way we can show the correct TypoScript path in messages and not
+stop at all calls to tsRuntime->render(...) that was handled with
+an "HtmlMessageHandler" by default.
+
+(cherry picked from commit fd42bec8edbc641786316ea226a64ab29039a6ed)
+
+* Commit: `eb0fdeb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/eb0fdebd6a77edec7c5513731795be0009e94347>`_
+
+[TASK] Remove duplicate method in reference editor
+-----------------------------------------------------------------------------------------
+
+* Commit: `4a40bf7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4a40bf795c64456f36f3bee11186288e65666fac>`_
+
+[BUGFIX] Preview of image not matching uploaded image
+-----------------------------------------------------------------------------------------
+
+When selecting an image for upload a preview is shown,
+this upload preview didn't match the selected image
+preview shown after upload.
+
+Additionally the solution is made more simple and
+removes unnecessary code from the asset editor.
+
+(cherry picked from commit 796d34c5cabbcd1241fd68d9e215f11c9e171cc4)
+
+* Commit: `09d446b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/09d446bfb9ec990114769488e3c704942f7b30cb>`_
+
+[TASK] Implement "cacheLifetime" and "context" FlowQuery operations
+-----------------------------------------------------------------------------------------
+
+Implement FlowQuery operations to get the cache lifetime of nodes in a
+content collection. This is done with modular operations that can also
+be used when rendering nodes outside of a content collection (e.g.
+rendering a list of document nodes with a filter).
+
+Additionally fix a functional test that broke through a Runtime
+refactoring.
+
+Resolves: NEOS-69
+
+(cherry picked from commit 87b7739da2969ec64284837beac22f80175a39e7)
+
+* Commit: `dbcefb6 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/dbcefb6ab72fdde018296c550a9ab35f287a8ffb>`_
+
+[BUGFIX] Loading indicator when pasting never stops
+-----------------------------------------------------------------------------------------
+
+When pasting content using the content element handles
+the loader never stops and also it's not tied to the
+specific element that the paste button was clicked on.
+
+Fixes: NEOS-41
+
+(cherry picked from commit 74c7967c2356187bda7bf9b91ca5167953ce74e4)
+
+* Commit: `31557e5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/31557e5dfb9c93990247aa9ff47c096cf9ba7261>`_
+
+[BUGFIX] Context structure tree not updated when pasting
+-----------------------------------------------------------------------------------------
+
+Fixes: NEOS-84
+
+* Commit: `74d6aaa <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/74d6aaad1f5ed2d359f8600531ef623ac26eb945>`_
+
+[BUGFIX] FrontendNodeRoutePartHandler should resolve node by context path
+-----------------------------------------------------------------------------------------
+
+Currently the FrontendNodeRoutePartHandler ignores node dimensions for
+the live workspace, which causes the frontend to fail to render
+localized plugins in the frontend that try to render URIs.
+
+* Commit: `784c876 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/784c876e2e3cafa25d56a2becacfbfbae1f569c0>`_
+
+[TASK] Adjust NodeTypes.schema.yaml
+-----------------------------------------------------------------------------------------
+
+Adjusts the NodeTypes schema to allow all supported headlines in the
+aloha format setting.
+
+Besides this removes a left-over "nonEditableOverlay" from the
+NodeTypes configuration.
+
+(cherry picked from commit 82dc12478011dd69a3a5ab8aa90ced673046c213)
+
+* Commit: `a419506 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/a41950604dd4d039d8ad605c370981147201fd47>`_
+
+[TASK] Small addition to the Developer Guide's "Behat" chapter
+-----------------------------------------------------------------------------------------
+
+* Commit: `e95c456 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e95c456909af5593e13ee56614187845de708ec6>`_
+
+[BUGFIX] Use node full label in Menu and Breadcrumb
+-----------------------------------------------------------------------------------------
+
+Currently the Menu and Breadcrumb use the NodeInterface::getLabel(). The
+label is created by the NodeLabelGeneratorInterface and cropped if
+longer than 30 characters. This change use the
+NodeInterface:getFullLabel() to display the full label in the menu.
+
+* Commit: `9f877f9 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9f877f9116fd15bb9f0166dbfcf27917c0ac04b9>`_
+
+[BUGFIX] Padding for sub headers in create dialog
+-----------------------------------------------------------------------------------------
+
+Add more space around sub-headers in the create new dialog.
+
+* Commit: `1614dd7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1614dd78ad1c39022ed88ec909d67e0d1cb2277d>`_
+
+[FEATURE] Cancel button after selecting image for upload
+-----------------------------------------------------------------------------------------
+
+Makes it possible to go back after having selected an image
+for upload in the image editor without having to unselect and
+reselect the element.
+
+* Commit: `9a908e1 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9a908e138cc64bc0f5852c8b2241748a219a2e81>`_
+
+[TASK] Hide empty inspector groups
+-----------------------------------------------------------------------------------------
+
+An inspector group with no properties should not be shown.
+
+* Resolves: `#58502 <http://forge.typo3.org/issues/58502>`_
+
+(cherry picked from commit 79bdf24aa07a001e0fc05ce5cf76374f0ba400e1)
+
+* Commit: `5d24559 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5d24559c7251245bc4a8debce5278b792e158dff>`_
+
+[BUGFIX] Wrong arguments for pasteBefore in node actions
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit f90419939015e4ab02679cf52eda40ab22dfeccf)
+
+* Commit: `2f8c0b5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2f8c0b54911940b09c3f55498294ff569690407c>`_
+
+[BUGFIX] Position of icons incl. loader in content handles
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 930092be797e698246424a136b98858bd1c89bea)
+
+* Commit: `bd97395 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bd9739592e9e60f4c96dffb66b7c05ccf86ded80>`_
+
+[BUGFIX] Auto-publish causes connection error loop
+-----------------------------------------------------------------------------------------
+
+When auto-publishing is enabled a loop of connection
+errors occurs due to the controller not allowing an
+empty array of nodes.
+
+Fixes: NEOS-113
+
+(cherry picked from commit 6680938cf2af67d86df5ce0ee2cc0cfb84f0495a)
+
+* Commit: `23fb06d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/23fb06d8f4e163accc5026678dc97df23947a90d>`_
+
+[BUGFIX] Discard all workspace command broken
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 578d72dd56e10a18564a9d58ae01e74a22d4285a)
+
+* Commit: `e7f39f8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e7f39f8e9e041c4ca37ccbe93917c4682fcc2c43>`_
+
+[TASK] Replace old syntax Fluid if conditions
+-----------------------------------------------------------------------------------------
+
+(cherry picked from commit 3fffc9b48d6f39c6225cf5988b6c694fdd74fcc8)
+
+* Commit: `c0e24d5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/c0e24d5dbc47f6a70392d6ea6ab7aec4eb2da279>`_
+
+[TASK] Code cleanup and CGL violation fixes
+-----------------------------------------------------------------------------------------
+
+* Import of FQL namespaces
+* Inline type hinting
+* CGL violations
+* Missing class references
+* Minor tweaks
+
+(cherry picked from commit 871166b7cec4bba3772d54ae4695a4772180174c)
+
+* Commit: `3d18790 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3d187905f81b08cbc6bce47d0df10a307344edad>`_
+
+[FEATURE] Introduce "user:show" command for showing user details
+-----------------------------------------------------------------------------------------
+
+This commit adds a new command "user:show" which mainly allows for
+checking if a given user exists. If it does, a few user details are
+shown, such as username, person name and email address.
+
+* Commit: `185124b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/185124bbe2d506871b6a367f6d28af3309b7fb1f>`_
+
+[TASK] Disable notifications for aborted HttpClient requests
+-----------------------------------------------------------------------------------------
+
+When HttpClient requests are aborted it's application logic and
+not something we want to display as an error. E.g. when clicking
+between image elements before the request finished.
+
+* Commit: `6e2b2b5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/6e2b2b59eb7ca230b6474638425f2921033d54c1>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Neos.NodeTypes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No changes
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/13/
+
+* Commit: `0c5af9b <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/0c5af9b004550552d3311cc781a04748cfa43fdd>`_
+
+[TASK] Remove obsolete "priority" from NodeTypes configuration
+-----------------------------------------------------------------------------------------
+
+Replaces an occurrence of the deprecated "priority" setting by
+"position" in ``NodeTypes.Content.yaml``.
+
+* Commit: `738a8b8 <https://git.typo3.org/Packages/TYPO3.Neos.NodeTypes.git/commit/738a8b8b76db4c92e5e87280b337fe460c2a3afe>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.Neos.Kickstarter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No changes
+[TASK] Update composer manifest
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/13/
+
+* Commit: `3db8c9c <https://git.typo3.org/Packages/TYPO3.Neos.Kickstarter.git/commit/3db8c9c1adee9e9a500fc4f39edfe754c747f62f>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.TYPO3CR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No changes
+[BUGFIX] Nodes copied recursive under circumstances
+-----------------------------------------------------------------------------------------
+
+The copy of a node leads to recursive copy.
+Result is f.e. and endless copy of an image on itself.
+This happens because a comparison of objects fails.
+I don't know exactly wich property is not equal, but i think it is
+the FirstLevelNodeCache, wich is a part of the node context.
+I guess, this cache changed during runtime in some circumstances.
+So the check is done now by comparison of the node->getIdendifier().
+
+* Resolves: `#58272 <http://forge.typo3.org/issues/58272>`_
+* Commit: `4cdaef6 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4cdaef6fab4b7f4e4df20f2a45b2663a631037f3>`_
+
+[BUGFIX] Remove var_dump() from RenameDimension
+-----------------------------------------------------------------------------------------
+
+no comment
+
+(cherry picked from commit 27485a962e4323effb44d310b4ba78af32fa1911)
+
+* Commit: `66a4449 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/66a44496df27cc70c548daf54a5be6447c535d92>`_
+
+[TASK] Adjust to renaming of "locales" dimension to "languages"
+-----------------------------------------------------------------------------------------
+
+Event though TYPO3CR does not specifically support or even know about
+the "languages" content dimension in Neos, tests do mention this dimension
+for testing purposes. Since "locales" has been renamed to "languages"
+in Neos, all occurrences of "locales" have been replaced by
+"languages" by this change.
+
+(cherry picked from commit d636e51b964cd9b3daf66fb449da3447f5cc1da6)
+
+* Commit: `da6f228 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/da6f228fa67a0d5b3c8964257c0e79b33765524e>`_
+
+[TASK] Remove support for "locale" context property
+-----------------------------------------------------------------------------------------
+
+In a previous change, some backwards compatible handling of the "locale"
+context property was introduced which set the "locales" content dimension
+value accordingly if a "locale" context property was found.
+
+This change removes support for this old context property and silently
+ignores it if present.
+
+Background: although the "locale" context property was allowed previously
+it never had any effect in terms of Neos' or Flow's behaviour. Supporting
+the "locale" context property like we did before this change would
+additionally bind TYPO3CR to the Neos content dimension for languages.
+
+Also provides a Node migration to move from locales to languages to keep
+existing translations from previous betas:
+
+   ./flow node:migrate 20140516221523
+
+Related: NEOS-116
+
+(cherry picked from commit 53c4a731a9ea45fe201e6b70d358c348d3bed536)
+
+* Commit: `4595f7c <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4595f7c74c3176315cec3fdef296873cc95a74fe>`_
+
+[BUGFIX] Fix findNodeDataInTargetWorkspace to work with shine-through nodes
+-----------------------------------------------------------------------------------------
+
+This change fixes a bug which was the cause that created multiple new nodes of
+node variants instead of updating / removing the existing ones. The main issue
+here was, that the "findNodeDataInTargetWorkspace" method didn't take the real
+node dimensions into account which can be different from the context dimensions
+that that method used so far.
+
+(cherry picked from commit d942c972af2fb8eb73dca415b9ce9775a737b7ae)
+
+* Commit: `b3dd79b <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/b3dd79b3f20dbb890d94a2263b1675deb599628b>`_
+
+[TASK] Adjust NodeType schema to recent changes
+-----------------------------------------------------------------------------------------
+
+Validating the NodeType configuration shows some errors due to the
+recently introduced "validation" key.
+This adjusts the NodeType YAML schema accordingly.
+
+(cherry picked from commit 86aae7321287758f250af2cb9f2ee55a8d771cfa)
+
+* Commit: `a415225 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/a415225d183990398abec028a6c668f33a511579>`_
+
+[BUGFIX] Make the Behavior test more compatible to custom Setups
+-----------------------------------------------------------------------------------------
+
+Currently the "iShouldHaveTheFollowingNodes" asserts the properties
+to be exactly as specified. Problem is that this can cause the Tests to fail
+when custom properties with defaults are added by local Sitepackages.
+This change alters that test to assert each specified property to be equal
+ignoring additional existing properties.
+
+* Commit: `9118a00 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/9118a00a4d951afb8fa5dbabe12a3c528bbe5f64>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.TypoScript
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No changes
+[BUGFIX] Request in context cannot be serialized
+-----------------------------------------------------------------------------------------
+
+The request in the TypoScript context cannot be serialized for uncached
+segments. This means an uncached TypoScript cannot use the request.
+To have the current Request at any time in the context it is injected
+together with the default context variables.
+
+Additionally default context objects now come from the object manager
+so singleton scope objects are correctly object managed.
+
+(cherry picked from commit 9012e704f0ba605595ea6840b77cf5674194698a)
+
+* Commit: `2d18183 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/2d181835b16bbf969a3387f908dc5aae5c1cc3e8>`_
+
+[TASK] Apply migration TYPO3.Neos.NodeTypes-201309111655
+-----------------------------------------------------------------------------------------
+
+This is a tweaked version of the ``TYPO3.Neos.NodeTypes-201309111655``
+code migration that break unit tests when applied without changes.
+
+* Commit: `374928b <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/374928bc0767e6503556439075dec09606b620ae>`_
+
+[BUGFIX] Context-specific prototype inheritance should work
+-----------------------------------------------------------------------------------------
+
+Let's imagine you have the following TypoScript::
+
+    prototype(A).value = "Foo"
+    prototype(B) < prototype(A)
+
+    myValue.prototype(A).value = "Bar"
+    myvalue.element = B
+
+When rendering myvalue/element, we'd expect the "value" property to evaluate
+to "Bar", because it has been *overridden* inside myvalue.*
+
+Without this change, this did not work because the prototype inheritance
+hierarchy was flattened on toplevel; and not recursively at runtime.
+
+Fixes: NEOS-59
+
+* Commit: `598c8e4 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/598c8e4db3736837180876a11517a49b40f30ca4>`_
+
+[TASK] Improve exception handling in TypoScript rendering
+-----------------------------------------------------------------------------------------
+
+If Fluid object access is used to render TypoScript objects (which is
+the default of the generated template in the site kickstarter) and an
+exception occurs during rendering, the rendered message should be at the
+correct position in the template.
+
+This change adds tests to verify the correct output of exception
+messages in different scenarios.
+
+* Commit: `1c58992 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/1c589921cb0557156f8f8b2188b63649b3a0bf40>`_
+
+[TASK] Refactor cache functionality in Runtime
+-----------------------------------------------------------------------------------------
+
+Add a new class RuntimeContentCache that serves as the integration point
+between the TypoScript Runtime and the ContentCache. The class holds
+all runtime-global state and makes the Runtime implementation much
+easier to follow.
+
+* Commit: `0248a41 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/0248a41b32d8a53864ff58ec090be7472f7b3af8>`_
+
+[TASK] Support configurable cache lifetime through TypoScript
+-----------------------------------------------------------------------------------------
+
+Add a @cache.maximumLifetime configuration for _every_ path in
+TypoScript. A cached segment will use the minimum of the
+maximumLifetime values (from embedded cache segments and itself).
+
+All cached segments have an independent cache entry lifetime.
+
+This allows to render time dependent data (like nodes with
+hiddenAfterDateTime or hiddenBeforeDateTime) using additional helpers to
+find the relevant lifetimes.
+
+Resolves: NEOS-68
+
+* Commit: `e7436a1 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/e7436a16d082aeacf24ad02f9c5d364f1f336b70>`_
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TYPO3.NeosDemoTypo3Org
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No changes
+[TASK] Use fluid container width when logged in
+-----------------------------------------------------------------------------------------
+
+Currently parts of the page is hidden behind the inspector
+due to a fixed width based on a viewport media query.
+Instead it's set to a maximum of that width, although fluid
+when logged into the backend. This makes the content element
+handles visible all the time.
+
+* Commit: `d677bcd <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/d677bcd54ac895c306da9129e527281a985246e0>`_
 
