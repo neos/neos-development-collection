@@ -82,15 +82,15 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 
 	/**
 	 * @param string $workspaceName
-	 * @param array $locales
+	 * @param array $languages
 	 * @return ContentContext
 	 */
-	protected function buildContextFromWorkspaceNameAndLanguageLocales($workspaceName, array $locales) {
+	protected function buildContextFromWorkspaceNameAndLanguageLocales($workspaceName, array $languages) {
 		$contextProperties = array(
 			'workspaceName' => $workspaceName,
 			'invisibleContentShown' => TRUE,
 			'inaccessibleContentShown' => TRUE,
-			'dimensions' => array('languages' => $locales)
+			'dimensions' => array('languages' => $languages)
 		);
 
 		$currentDomain = $this->domainRepository->findOneByActiveRequest();
@@ -142,7 +142,7 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 		}
 
 		if ($preset === NULL) {
-			throw new NoSuchLanguageException(sprintf('No content dimension preset for dimension "languages" and uriSegment "%s" found', $uriSegment), 1395827628);
+			throw new NoSuchLanguageException(sprintf('No content dimension preset for dimension "languages" and uriSegment "%s" found.', $uriSegment), 1395827628);
 		}
 		return $preset['values'];
 	}
