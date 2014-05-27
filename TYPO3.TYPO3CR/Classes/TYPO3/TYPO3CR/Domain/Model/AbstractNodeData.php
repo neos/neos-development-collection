@@ -155,7 +155,7 @@ abstract class AbstractNodeData {
 				return;
 			}
 			$this->properties[$propertyName] = $value;
-			$this->update();
+			$this->addOrUpdate();
 		} elseif (ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			$contentObject = $this->contentObjectProxy->getObject();
 			ObjectAccess::setProperty($contentObject, $propertyName, $value);
@@ -230,7 +230,7 @@ abstract class AbstractNodeData {
 								}
 							}
 							$this->properties[$propertyName] = $fixedValue;
-							$this->update();
+							$this->addOrUpdate();
 						}
 						$value = $nodeDatas;
 						break;
@@ -239,7 +239,7 @@ abstract class AbstractNodeData {
 						if ($value instanceof NodeData) {
 							$value = $value->getIdentifier();
 							$this->properties[$propertyName] = $value;
-							$this->update();
+							$this->addOrUpdate();
 						}
 						if ($returnNodesAsIdentifiers === FALSE) {
 							$nodeData = $this->nodeDataRepository->findOneByIdentifier($value, $workspace, $dimensions);
@@ -273,7 +273,7 @@ abstract class AbstractNodeData {
 		if (!is_object($this->contentObjectProxy)) {
 			if (isset($this->properties[$propertyName])) {
 				unset($this->properties[$propertyName]);
-				$this->update();
+				$this->addOrUpdate();
 			} else {
 				throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Cannot remove non-existing property "%s" from node.', $propertyName), 1344952312);
 			}
@@ -327,7 +327,7 @@ abstract class AbstractNodeData {
 		}
 		if ($this->contentObjectProxy === NULL || $this->contentObjectProxy->getObject() !== $contentObject) {
 			$this->contentObjectProxy = new ContentObjectProxy($contentObject);
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -348,7 +348,7 @@ abstract class AbstractNodeData {
 	public function unsetContentObject() {
 		if ($this->contentObjectProxy !== NULL) {
 			$this->contentObjectProxy = NULL;
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -361,7 +361,7 @@ abstract class AbstractNodeData {
 	public function setNodeType(NodeType $nodeType) {
 		if ($this->nodeType !== $nodeType->getName()) {
 			$this->nodeType = $nodeType->getName();
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -383,7 +383,7 @@ abstract class AbstractNodeData {
 	public function setHidden($hidden) {
 		if ($this->hidden !== (boolean)$hidden) {
 			$this->hidden = (boolean)$hidden;
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -405,7 +405,7 @@ abstract class AbstractNodeData {
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
 		if ($this->hiddenBeforeDateTime != $dateTime) {
 			$this->hiddenBeforeDateTime = $dateTime;
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -427,7 +427,7 @@ abstract class AbstractNodeData {
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
 		if ($this->hiddenAfterDateTime != $dateTime) {
 			$this->hiddenAfterDateTime = $dateTime;
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -449,7 +449,7 @@ abstract class AbstractNodeData {
 	public function setHiddenInIndex($hidden) {
 		if ($this->hiddenInIndex !== (boolean)$hidden) {
 			$this->hiddenInIndex = (boolean)$hidden;
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -477,7 +477,7 @@ abstract class AbstractNodeData {
 		}
 		if ($this->accessRoles !== $accessRoles) {
 			$this->accessRoles = $accessRoles;
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -492,11 +492,12 @@ abstract class AbstractNodeData {
 
 	/**
 	 * By default this method does not do anything.
-	 * For persisted nodes (PersistedNodeInterface) this updates the node in the node repository
+	 * For persisted nodes (PersistedNodeInterface) this updates the node in the node repository, for new nodes this
+	 * method will add the respective node to the repository.
 	 *
 	 * @return void
 	 */
-	protected function update() {
+	protected function addOrUpdate() {
 	}
 
 	/**

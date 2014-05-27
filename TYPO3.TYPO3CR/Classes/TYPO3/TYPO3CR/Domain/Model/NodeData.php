@@ -274,7 +274,7 @@ class NodeData extends AbstractNodeData {
 			// this method is called both for changing the path AND in the constructor of Node; so we only want to do
 			// these things below if called OUTSIDE a constructor.
 			$this->emitNodePathChanged();
-			$this->update();
+			$this->addOrUpdate();
 		}
 	}
 
@@ -328,7 +328,7 @@ class NodeData extends AbstractNodeData {
 	public function setWorkspace(Workspace $workspace = NULL) {
 		if ($this->workspace !== $workspace) {
 			$this->workspace = $workspace;
-			$this->nodeDataRepository->update($this);
+			$this->addOrUpdate();
 		}
 	}
 
@@ -367,7 +367,7 @@ class NodeData extends AbstractNodeData {
 	public function setIndex($index) {
 		if ($this->index !== $index) {
 			$this->index = $index;
-			$this->nodeDataRepository->update($this);
+			$this->addOrUpdate();
 		}
 	}
 
@@ -429,7 +429,7 @@ class NodeData extends AbstractNodeData {
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
-	 * properties or creating subnodes.
+	 * properties or creating sub nodes.
 	 *
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
@@ -527,7 +527,7 @@ class NodeData extends AbstractNodeData {
 			$this->nodeDataRepository->remove($this);
 		} else {
 			$this->removed = TRUE;
-			$this->nodeDataRepository->update($this);
+			$this->addOrUpdate();
 		}
 	}
 
@@ -765,6 +765,7 @@ class NodeData extends AbstractNodeData {
 			$nodeDimensions[] = new NodeDimension($this, $dimensionName, $dimensionValueToSet);
 		}
 		$this->setDimensions($nodeDimensions);
+		$this->addOrUpdate();
 	}
 
 	/**
@@ -790,12 +791,16 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Updates this node in the Node Repository
+	 * Adds this node to the Node Repository or updates it if it has been added earlier
 	 *
 	 * @return void
 	 */
-	protected function update() {
-		$this->nodeDataRepository->update($this);
+	protected function addOrUpdate() {
+		if ($this->persistenceManager->isNewObject($this)) {
+			$this->nodeDataRepository->add($this);
+		} else {
+			$this->nodeDataRepository->update($this);
+		}
 	}
 
 	/**

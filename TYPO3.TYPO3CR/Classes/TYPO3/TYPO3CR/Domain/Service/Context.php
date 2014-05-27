@@ -262,11 +262,11 @@ class Context {
 	/**
 	 * Adopts a node from a (possibly) different context to this context
 	 *
-	 * Check if a node variant matching the exact dimensions already exists for this context and
+	 * Checks if a node variant matching the exact dimensions already exists for this context and
 	 * return it if found. Otherwise a new node variant for this context is created.
 	 *
-	 * In case the node already exists in the context but doesn't match the target dimensions a
-	 * new more specific node is created and returned.
+	 * In case the node already exists in the context but does not match the target dimensions a
+	 * new, more specific node is created and returned.
 	 *
 	 * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
 	 * @return NodeInterface A new or existing node that matches this context
