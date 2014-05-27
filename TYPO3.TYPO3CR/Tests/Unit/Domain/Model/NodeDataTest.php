@@ -44,7 +44,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->mockNodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', FALSE);
 		$this->mockNodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array(), array(), '', FALSE);
 		$this->mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
-		$this->nodeData = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/bar', $this->mockWorkspace));
+		$this->nodeData = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('addOrUpdate'), array('/foo/bar', $this->mockWorkspace));
 		$this->nodeData->_set('nodeTypeManager', $this->mockNodeTypeManager);
 		$this->nodeData->_set('nodeDataRepository', $this->getMock('TYPO3\Flow\Persistence\RepositoryInterface'));
 	}
@@ -405,11 +405,10 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeDataRepository->_set('entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
 		$nodeDataRepository->_set('persistenceManager', $mockPersistenceManager);
 
-		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', NULL, array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('addOrUpdate'), array('/foo', $workspace));
 		$currentNode->_set('nodeDataRepository', $nodeDataRepository);
 
 		$nodeDataRepository->expects($this->never())->method('remove');
-		$nodeDataRepository->expects($this->atLeastOnce())->method('update');
 
 		$currentNode->remove();
 
@@ -551,7 +550,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function similarizeClearsPropertiesBeforeAddingNewOnes() {
 		/** @var $sourceNode \TYPO3\TYPO3CR\Domain\Model\NodeData */
-		$sourceNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/bar', $this->mockWorkspace));
+		$sourceNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('addOrUpdate'), array('/foo/bar', $this->mockWorkspace));
 		$sourceNode->_set('nodeTypeManager', $this->mockNodeTypeManager);
 		$sourceNode->_set('nodeDataRepository', $this->getMock('TYPO3\Flow\Persistence\RepositoryInterface'));
 

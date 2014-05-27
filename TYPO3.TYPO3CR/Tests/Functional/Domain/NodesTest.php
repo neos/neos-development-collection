@@ -11,7 +11,6 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
@@ -1165,6 +1164,34 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$variantContextB = $this->contextFactory->create(array(
 			'dimensions' => array('test' => array('b', 'a')),
 			'targetDimensions' => array('test' => 'b')
+		));
+
+		$variantNodeA = $variantContextA->getRootNode()->createNode('test');
+		$variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
+
+		$this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array ($value); }, $variantContextB->getTargetDimensions()));
+	}
+
+	/**
+	 * @test
+	 */
+	public function createVariantForContextAlsoWorksIfTheTargetWorkspaceDiffersFromTheSourceWorkspace() {
+		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+		$contentDimensionRepository->setDimensionsConfiguration(array(
+			'test' => array(
+				'default' => 'a'
+			)
+		));
+
+		$variantContextA = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('a')),
+			'targetDimensions' => array('test' => 'a'),
+			'workspace' => 'live'
+		));
+		$variantContextB = $this->contextFactory->create(array(
+			'dimensions' => array('test' => array('b', 'a')),
+			'targetDimensions' => array('test' => 'b'),
+			'workspace' => 'test'
 		));
 
 		$variantNodeA = $variantContextA->getRootNode()->createNode('test');

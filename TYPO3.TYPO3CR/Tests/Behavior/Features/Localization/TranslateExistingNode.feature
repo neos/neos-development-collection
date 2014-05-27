@@ -60,11 +60,11 @@ Feature: Translate existing node
   @fixtures
   Scenario: Use a specific target dimension value in a context with fallback languages
     When I get a node by path "/sites/neosdemotypo3/company" with the following context:
-      | Languages       |
+      | Languages     |
       | en_ZZ, mul_ZZ |
     And I adopt the node to the following context:
-      | Languages              | Target dimension: languages |
-      | de_DE, de_ZZ, mul_ZZ | de_ZZ                         |
+      | Languages            | Target dimension: languages |
+      | de_DE, de_ZZ, mul_ZZ | de_ZZ                       |
     And I set the node property "title" to "Firma"
     Then I should have a node with path "/sites/neosdemotypo3/company" and value "Firma" for property "title" for the following context:
       | Languages     |

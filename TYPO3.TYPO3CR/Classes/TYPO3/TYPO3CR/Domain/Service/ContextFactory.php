@@ -12,7 +12,10 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 
 /**
@@ -40,7 +43,7 @@ class ContextFactory implements ContextFactoryInterface {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository
+	 * @var ContentDimensionRepository
 	 */
 	protected $contentDimensionRepository;
 
@@ -55,7 +58,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 *        'workspaceName' => 'live',
 	 *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
 	 *        'dimensions' => array(...),
-	 *        'targetDimensions' => array(...),
+	 *        'targetDimensions' => array('languages' => 'de', 'persona' => 'Lisa'),
 	 *        'invisibleContentShown' => FALSE,
 	 *        'removedContentShown' => FALSE,
 	 *        'inaccessibleContentShown' => FALSE
@@ -102,7 +105,7 @@ class ContextFactory implements ContextFactoryInterface {
 
 		$defaultContextProperties = array(
 			'workspaceName' => 'live',
-			'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
+			'currentDateTime' => new Now(),
 			'dimensions' => array(),
 			'targetDimensions' => array(),
 			'invisibleContentShown' => FALSE,
@@ -110,7 +113,7 @@ class ContextFactory implements ContextFactoryInterface {
 			'inaccessibleContentShown' => FALSE
 		);
 
-		$mergedProperties = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
+		$mergedProperties = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties, $contextProperties, TRUE);
 
 		$this->mergeDimensionValues($contextProperties, $mergedProperties);
 		$this->mergeTargetDimensionContextProperties($contextProperties, $mergedProperties, $defaultContextProperties);
@@ -251,7 +254,7 @@ class ContextFactory implements ContextFactoryInterface {
 		if (!isset($contextProperties['targetDimensions'])) {
 			$contextProperties['targetDimensions'] = array();
 		}
-		$mergedProperties['targetDimensions'] = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($defaultContextProperties['targetDimensions'], $contextProperties['targetDimensions']);
+		$mergedProperties['targetDimensions'] = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties['targetDimensions'], $contextProperties['targetDimensions']);
 	}
 
 	/**
@@ -265,7 +268,7 @@ class ContextFactory implements ContextFactoryInterface {
 			$identifier = $dimension->getIdentifier();
 			$values = array($dimension->getDefault());
 			if (isset($contextProperties['dimensions'][$identifier])) {
-				$values = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($values, $contextProperties['dimensions'][$identifier]);
+				$values = Arrays::arrayMergeRecursiveOverrule($values, $contextProperties['dimensions'][$identifier]);
 			}
 			$mergedProperties['dimensions'][$identifier] = $values;
 		}

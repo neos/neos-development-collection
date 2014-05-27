@@ -1189,7 +1189,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 		$nodeData = clone $this->nodeData;
 		$nodeData->adjustToContext($context);
 
-		$this->nodeDataRepository->add($nodeData);
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 
 		$this->context->getFirstLevelNodeCache()->flush();
