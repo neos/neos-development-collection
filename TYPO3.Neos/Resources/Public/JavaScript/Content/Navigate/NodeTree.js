@@ -102,6 +102,7 @@ define(
 			init: function() {
 				this._super();
 				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
+				this.set('baseNodeType', Configuration.get('UserInterface.navigateComponent.nodeTree.presets.default.baseNodeType'));
 
 				this.on('afterPageLoaded', function(){
 					this._initializePropertyObservers($('#neos-page-metainformation'));

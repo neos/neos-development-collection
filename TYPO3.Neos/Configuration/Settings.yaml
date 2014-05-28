@@ -133,6 +133,10 @@ TYPO3:
           # if you have lots of nodes you should maybe reduce this number of elements.
           loadingDepth: 4
 
+          presets:
+            default:
+              baseNodeType: 'TYPO3.Neos:Document'
+
       inspector:
         dataTypes:
           'string':
