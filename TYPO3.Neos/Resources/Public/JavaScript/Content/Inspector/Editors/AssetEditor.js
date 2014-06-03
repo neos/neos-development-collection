@@ -75,8 +75,6 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			var that = this;
 
-			this.set('_showLoadingIndicator', true);
-
 			var assetIdentifiers;
 			if (this.multiple) {
 				assetIdentifiers = $.parseJSON(value);
@@ -84,12 +82,15 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				assetIdentifiers = [$.parseJSON(value)];
 			}
 
-			HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '/?' + $.param({assets: assetIdentifiers})).then(
-				function(result) {
-					that.get('assets').addObjects(result);
-					that.set('_showLoadingIndicator', false);
-				}
-			);
+			if (assetIdentifiers.length > 0) {
+				this.set('_showLoadingIndicator', true);
+				HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '/?' + $.param({assets: assetIdentifiers})).then(
+					function(result) {
+						that.get('assets').addObjects(result);
+						that.set('_showLoadingIndicator', false);
+					}
+				);
+			}
 		},
 
 		/****************************************
