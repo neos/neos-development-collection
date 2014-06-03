@@ -38,4 +38,19 @@ class ExceptionHandlerTest extends AbstractTypoScriptObjectTest {
 		$this->assertContains('myCollection', $output, 'The override path should be visible in the message TypoScript path');
 	}
 
+	/**
+	 * We trigger rendering of a TypoScript object with a nested TS object being "evaluated". If an exception happens there,
+	 * the configured exceptionHandler needs to be triggered as well, even though the object has been rendered with "evaluate()"
+	 * and not with "render()"
+	 *
+	 * @test
+	 */
+	public function exceptionHandlerIsEvaluatedForNestedTypoScriptObjects() {
+		$view = $this->buildView();
+		$view->setTypoScriptPath('exceptionHandler/nestedHandlerIsEvaluated');
+		$output = $view->render();
+		$this->assertNotNull($output);
+		$this->assertStringStartsWith('Exception while rendering', $output);
+		$this->assertContains('Just testing an exception', $output);
+	}
 }

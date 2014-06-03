@@ -1,7 +1,22 @@
 TYPO3:
   TypoScript:
     rendering:
+
+      # Default Exception Handler class which should be used when a TypoScript object is rendered
+      # to a string. This happens e.g. if a content element is rendered or inside a "Case" matcher.
+      #
+      # Can be overridden on a TypoScript-Object-level by setting the "@exceptionHandler" meta-property
+      # in TypoScript.
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\XmlCommentHandler'
+
+      # Inner Exception Handler class which should be used when a TypoScript object is evaluated,
+      # e.g. can return arbitrary types and not just strings. By default, the exception handler just
+      # continues throwing the exception upwards.
+      #
+      # However, this can be overridden on a TypoScript-Object-level by setting the "@exceptionHandler"
+      # meta-property in TypoScript, and it is especially useful for e.g. the "TYPO3.TypoScript:ResourceUri"
+      # TypoScript Object, which should just return NULL silently if an exception occurs.
+      innerExceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\BubblingHandler'
     debugMode: FALSE
     enableContentCache: TRUE
 

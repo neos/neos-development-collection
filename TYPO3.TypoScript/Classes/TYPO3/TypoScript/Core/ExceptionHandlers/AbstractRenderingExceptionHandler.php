@@ -65,6 +65,9 @@ abstract class AbstractRenderingExceptionHandler {
 			$typoScriptPath = $exception->getTypoScriptPath();
 			$exception = $exception->getPrevious();
 		}
+		if ($this->exceptionDisablesCache($typoScriptPath, $exception)) {
+			$this->runtime->setEnableContentCache(FALSE);
+		}
 		$referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : NULL;
 		return $this->handle($typoScriptPath, $exception, $referenceCode);
 	}
@@ -105,5 +108,16 @@ abstract class AbstractRenderingExceptionHandler {
 		$elements = explode('/', $typoScriptPath);
 
 		return implode('/' . $delimiter, $elements);
+	}
+
+	/**
+	 * Can be used to determine if handling the exception should disable the cache or not.
+	 *
+	 * @param string $typoScriptPath The typoScriptPath that triggered the Exception
+	 * @param \Exception $exception
+	 * @return boolean Should caching be disabled?
+	 */
+	protected function exceptionDisablesCache($typoScriptPath, \Exception $exception) {
+		return TRUE;
 	}
 }

@@ -12,40 +12,41 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\Exception\RuntimeException;
 
 /**
- * Renders the element as an empty string
+ * Wrap the exception to retain the typoScript path at which it was originally thrown
  */
-class AbsorbingHandler extends AbstractRenderingExceptionHandler {
+class BubblingHandler extends AbstractRenderingExceptionHandler {
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Log\SystemLoggerInterface
+	 * Handle an Exception thrown while rendering TypoScript
+	 *
+	 * @param array $typoScriptPath
+	 * @param \Exception $exception
+	 * @return string
+	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @throws \Exception
 	 */
-	protected $systemLogger;
+	public function handleRenderingException($typoScriptPath, \Exception $exception) {
+		if ($exception instanceof RuntimeException) {
+			throw $exception;
+		} else {
+			throw new RuntimeException('TypoScript Rendering Exception, see typoScriptPath and nested Exception for details.', 1401803055, $exception, $typoScriptPath);
+		}
+	}
 
 	/**
-	 * Returns an empty string
+	 * Handles an Exception thrown while rendering TypoScript
 	 *
 	 * @param string $typoScriptPath path causing the exception
 	 * @param \Exception $exception exception to handle
 	 * @param integer $referenceCode
-	 * @return string
+	 * @return void
 	 */
 	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
-		$this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('typoScriptPath' => $typoScriptPath, 'referenceCode' => $referenceCode), 'TYPO3.TypoScript', 'TYPO3\TypoScript\Core\ExceptionHandlers\AbsorbingHandler');
-		return '';
+		// nothing to be done here, as this method is normally called in "handleRenderingException()", which was overridden above.
 	}
 
-	/**
-	 * The absorbing handler is meant to catch loose evaluation errors (like missing assets) in a useful way,
-	 * therefor caching is desired.
-	 *
-	 * @param string $typoScriptPath
-	 * @param \Exception $exception
-	 * @return boolean
-	 */
-	protected function exceptionDisablesCache($typoScriptPath, \Exception $exception) {
-		return FALSE;
-	}
 }

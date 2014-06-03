@@ -1,3 +1,5 @@
+prototype(TYPO3.TypoScript:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
+
 exceptionHandler.eelExpressionInProperty = TYPO3.TypoScript:Array {
 	start = 'Start'
 	error = TYPO3.TypoScript:Collection {
@@ -18,4 +20,12 @@ exceptionHandler.eelExpressionInOverride = TYPO3.TypoScript:Array {
 		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
 	}
 	end = 'End'
+}
+
+
+exceptionHandler.nestedHandlerIsEvaluated = TYPO3.TypoScript:Value {
+	value = TYPO3.TypoScript:Testing.Throwing {
+		shouldThrow = TRUE
+		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+	}
 }

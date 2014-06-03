@@ -191,6 +191,9 @@ class Runtime {
 	 *
 	 * @param string $typoScriptPath
 	 * @return string
+	 * @throws \Exception
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+	 * @throws \TYPO3\Flow\Security\Exception
 	 */
 	public function render($typoScriptPath) {
 		try {
@@ -206,7 +209,6 @@ class Runtime {
 		} catch (SecurityException $securityException) {
 			throw $securityException;
 		} catch (\Exception $exception) {
-			$this->setEnableContentCache(FALSE);
 			$output = $this->handleRenderingException($typoScriptPath, $exception);
 		}
 
@@ -219,19 +221,24 @@ class Runtime {
 	 *
 	 * @param array $typoScriptPath
 	 * @param \Exception $exception
+	 * @param boolean $useInnerExceptionHandler
 	 * @return string
 	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
 	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
 	 * @throws \Exception|\TYPO3\Flow\Exception
 	 */
-	public function handleRenderingException($typoScriptPath, \Exception $exception) {
+	public function handleRenderingException($typoScriptPath, \Exception $exception, $useInnerExceptionHandler = FALSE) {
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
 
 		if (isset($typoScriptConfiguration['__meta']['exceptionHandler'])) {
 			$exceptionHandlerClass = $typoScriptConfiguration['__meta']['exceptionHandler'];
 			$invalidExceptionHandlerMessage = 'The class "%s" is not valid for property "@exceptionHandler".';
 		} else {
-			$exceptionHandlerClass = $this->settings['rendering']['exceptionHandler'];
+			if ($useInnerExceptionHandler === TRUE) {
+				$exceptionHandlerClass = $this->settings['rendering']['innerExceptionHandler'];
+			} else {
+				$exceptionHandlerClass = $this->settings['rendering']['exceptionHandler'];
+			}
 			$invalidExceptionHandlerMessage = 'The class "%s" is not valid for setting "TYPO3.TypoScript.rendering.exceptionHandler".';
 		}
 		$exceptionHandler = NULL;
@@ -254,6 +261,7 @@ class Runtime {
 			);
 			throw new \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException($message, 1368788926);
 		}
+
 		$exceptionHandler->setRuntime($this);
 		$output = $exceptionHandler->handleRenderingException($typoScriptPath, $exception);
 		return $output;
@@ -298,12 +306,16 @@ class Runtime {
 	 *
 	 * @param string $typoScriptPath
 	 * @param string $behaviorIfPathNotFound one of BEHAVIOR_EXCEPTION or BEHAVIOR_RETURNNULL
-	 * @param mixed $contextObject the object which will be "this" in Eel expressions, if any.
+	 * @param mixed $contextObject the object which will be "this" in Eel expressions, if any
 	 * @return mixed
-	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
-	 * @throws \TYPO3\TypoScript\Exception
+	 *
+	 * @throws \Exception
+	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
 	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
+	 * @throws \TYPO3\Flow\Security\Exception
+	 * @throws \TYPO3\Flow\Utility\Exception\InvalidPositionException
+	 * @throws \TYPO3\TypoScript\Exception
+	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
 	 * @throws \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
 	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
 	 */
@@ -364,7 +376,7 @@ class Runtime {
 			throw $runtimeException;
 		} catch (\Exception $exception) {
 			$finallyClosure();
-			throw new Exceptions\RuntimeException('An exception occurred while rendering "' . $typoScriptPath . '". Please see the nested exception for details.', 1368517488, $exception, $typoScriptPath);
+			return $this->handleRenderingException($typoScriptPath, $exception, TRUE);
 		}
 
 		if (isset($typoScriptConfiguration['__meta']['process'])) {
