@@ -731,13 +731,26 @@ class NodeData extends AbstractNodeData {
 			/** @var NodeDimension $dimension */
 			$dimensionValues[$dimension->getName()][] = $dimension->getValue();
 		}
+		$this->dimensionsHash = self::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
+		$this->dimensionValues = $dimensionValues;
+	}
+
+	/**
+	 * Sorts the incoming $dimensionValues array to make sure that before hashing, the ordering is made deterministic.
+	 * Then, calculates and returns the dimensionsHash.
+	 *
+	 * This method is public because it is used inside SiteImportService.
+	 *
+	 * @param array $dimensionValues, which will be ordered alphabetically
+	 * @return string the calculated DimensionsHash
+	 */
+	public static function sortDimensionValueArrayAndReturnDimensionsHash(array &$dimensionValues) {
 		foreach ($dimensionValues as &$values) {
 			sort($values);
 		}
-
 		ksort($dimensionValues);
-		$this->dimensionValues = $dimensionValues;
-		$this->dimensionsHash = md5(json_encode($dimensionValues));
+
+		return md5(json_encode($dimensionValues));
 	}
 
 	/**

@@ -615,4 +615,19 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertSame(array('a' => array('a1'), 'c' => array('c1', 'c2')), $dimensionValues);
 	}
 
+	/**
+	 * @test
+	 */
+	public function dimensionsHashIsOrderIndependent() {
+		$nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('c' => array('c1', 'c2'), 'a' => array('a1')));
+		$dimensionsHash = $nodeData->getDimensionsHash();
+
+		$this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
+
+		$nodeData = new NodeData('/foo/bar', $this->mockWorkspace, NULL, array('a' => array('a1'), 'c' => array('c2', 'c1')));
+		$dimensionsHash = $nodeData->getDimensionsHash();
+
+		$this->assertSame('955c716a191a0957f205ea9376600e72', $dimensionsHash);
+	}
+
 }

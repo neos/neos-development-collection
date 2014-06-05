@@ -86,7 +86,7 @@ class WorkspacesTest extends FunctionalTestCase {
 		$this->persistenceManager->persistAll();
 	}
 
-	public function saveNodesAndTearDownRootNodeAndRepository() {
+	protected function saveNodesAndTearDownRootNodeAndRepository() {
 		if ($this->nodeDataRepository !== NULL) {
 			$this->nodeDataRepository->flushNodeRegistry();
 		}
