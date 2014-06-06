@@ -296,7 +296,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 * @param NodeInterface $node
 	 * @return string the route path (URI part) for the passed $node
 	 */
-	protected function resolveRoutePathForNode($siteNode, $node) {
+	protected function resolveRoutePathForNode(NodeInterface $siteNode, NodeInterface $node) {
 		$workspaceName = $node->getContext()->getWorkspaceName();
 		if ($workspaceName !== 'live') {
 			// we directly take the node's context path here; such that all dimensions are encoded inside.

@@ -41,7 +41,7 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 	 * @param NodeInterface $node
 	 * @return string
 	 */
-	protected function resolveRoutePathForNode($siteNode, $node) {
+	protected function resolveRoutePathForNode(NodeInterface $siteNode, NodeInterface $node) {
 		$routePath = parent::resolveRoutePathForNode($siteNode, $node);
 
 		$dimensions = $node->getContext()->getDimensions();
