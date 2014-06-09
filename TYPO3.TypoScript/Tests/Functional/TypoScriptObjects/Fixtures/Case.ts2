@@ -52,3 +52,36 @@ case.ignoredPropertiesAreIgnored < case.numericMatching {
 		test = 'somethingwhichshallnotbeshown'
 	}
 }
+
+case.renderer = TYPO3.TypoScript:Case {
+	foo.condition = ${cond}
+	foo.renderer = TYPO3.TypoScript:TestRenderer {
+		test = 'testconditiontrue'
+	}
+
+	default.condition = ${true}
+	default.renderer = TYPO3.TypoScript:TestRenderer {
+		test = 'testconditionfalse'
+	}
+	default.@position = 'end'
+}
+
+case.rendererWithType < case.renderer {
+	foo.type = 'TYPO3.TypoScript:Case.Test1'
+	default.type = 'TYPO3.TypoScript:Case.Test1'
+}
+
+case.rendererWithRenderPath < case.renderer {
+	foo.renderPath = '/renderPathRenderer/false'
+
+	default.renderPath = '/renderPathRenderer/false'
+}
+
+case.rendererWorksWithEelAndSimpleTypes = TYPO3.TypoScript:Case {
+	foo.condition = ${cond}
+	foo.renderer = 'Xtestconditiontrue'
+
+	default.condition = ${true}
+	default.renderer = ${'Xtestconditionfalse'}
+	default.@position = 'end'
+}

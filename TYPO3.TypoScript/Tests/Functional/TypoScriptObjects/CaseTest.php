@@ -77,4 +77,32 @@ class CaseTest extends AbstractTypoScriptObjectTest {
 	public function ignorePropertiesWorks() {
 		$this->assertMatchingWorks('case/ignoredPropertiesAreIgnored');
 	}
+
+	/**
+	 * @test
+	 */
+	public function usingRendererWorks() {
+		$this->assertMatchingWorks('case/renderer');
+	}
+
+	/**
+	 * @test
+	 */
+	public function rendererWinsOverType() {
+		$this->assertMatchingWorks('case/rendererWithType');
+	}
+
+	/**
+	 * @test
+	 */
+	public function rendererWinsOverRenderPath() {
+		$this->assertMatchingWorks('case/rendererWithRenderPath');
+	}
+
+	/**
+	 * @test
+	 */
+	public function rendererWorksWithEelAndSimpleTypes() {
+		$this->assertMatchingWorks('case/rendererWorksWithEelAndSimpleTypes');
+	}
 }
