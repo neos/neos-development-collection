@@ -227,6 +227,7 @@ the values of attributes of context elements:
 	baz[answer = 42]
 	baz[foo = "Bar"]
 	baz[foo = 'Bar']
+	baz[foo != "Bar"]
 	baz[foo ^= "Bar"]
 	baz[foo $= "Bar"]
 	baz[foo *= "Bar"]
@@ -240,11 +241,13 @@ The operators for checking against attribute are as follows:
 
 ``=``
   Strict equality of value and operand
+``!=``
+  Strict inequality of value and operand
 ``$=``
   Value ends with operand (string-based)
 ``^=``
   Value starts with operand (string-based)
-``\*=``
+``*=``
   Value contains operand (string-based)
 ``instanceof``
   Checks if the value is an instance of the operand
