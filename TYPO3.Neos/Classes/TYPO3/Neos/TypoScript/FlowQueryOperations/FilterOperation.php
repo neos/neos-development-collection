@@ -123,7 +123,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 		if ($operator === 'instanceof' && $value instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			if ($this->operandIsSimpleType($operand)) {
 				return $this->handleSimpleTypeOperand($operand, $value);
-			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface') {
+			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface' || $operand === 'TYPO3\TYPO3CR\Domain\Model\Node') {
 				return TRUE;
 			} else {
 				return $value->getNodeType()->isOfType($operand);
