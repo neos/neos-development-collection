@@ -64,7 +64,9 @@ class ChildrenOperation extends AbstractOperation {
 			}
 		}
 
+		/** @var NodeInterface $contextNode */
 		foreach ($flowQuery->getContext() as $contextNode) {
+			/** @var NodeInterface $childNode */
 			foreach ($contextNode->getChildNodes() as $childNode) {
 				if (!isset($outputNodePaths[$childNode->getPath()])) {
 					$output[] = $childNode;
@@ -80,22 +82,34 @@ class ChildrenOperation extends AbstractOperation {
 	}
 
 	/**
+	 * Optimize for typical use cases, filter by node name and filter
+	 * by NodeType (instanceof). These cases are now optimized and will
+	 * only load the Nodes that match the filter.
+	 *
 	 * @param FlowQuery $flowQuery
 	 * @param array $parsedFilter
 	 * @return boolean
 	 */
 	protected function earlyOptimizationOfFilters(FlowQuery $flowQuery, array $parsedFilter) {
-		$output = array();
-		$outputNodePaths = array();
+		$filter = $parsedFilter['Filters'][0];
 
-		if (isset($parsedFilter['Filters'][0]['PropertyNameFilter']) && count($parsedFilter['Filters']) === 1) {
+		if (isset($filter['PropertyNameFilter'])) {
+			if (isset($filter['AttributeFilters'])) {
+				foreach ($filter['AttributeFilters'] as $attributeFilter) {
+					$flowQuery->pushOperation('filter', array($attributeFilter['text']));
+				}
+			}
 			$flowQuery->pushOperation('find', array($parsedFilter['Filters'][0]['PropertyNameFilter']));
 			return TRUE;
 		}
 
-		if (isset($parsedFilter['Filters'][0]['AttributeFilters']) && count($parsedFilter['Filters']) === 1 && count($parsedFilter['Filters'][0]['AttributeFilters']) === 1 && $parsedFilter['Filters'][0]['AttributeFilters'][0]['Operator'] === 'instanceof') {
+		if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof' && $filter['AttributeFilters'][0]['Identifier'] === NULL) {
+			$output = array();
+			$outputNodePaths = array();
+			/** @var NodeInterface $contextNode */
 			foreach ($flowQuery->getContext() as $contextNode) {
-				foreach ($contextNode->getChildNodes($parsedFilter['Filters'][0]['AttributeFilters'][0]['Operand']) as $childNode) {
+				/** @var NodeInterface $childNode */
+				foreach ($contextNode->getChildNodes($filter['AttributeFilters'][0]['Operand']) as $childNode) {
 					if (!isset($outputNodePaths[$childNode->getPath()])) {
 						$output[] = $childNode;
 						$outputNodePaths[$childNode->getPath()] = TRUE;
@@ -103,6 +117,13 @@ class ChildrenOperation extends AbstractOperation {
 				}
 			}
 			$flowQuery->setContext($output);
+
+			if (count($filter['AttributeFilters']) > 1) {
+				array_shift($filter['AttributeFilters']);
+				foreach ($filter['AttributeFilters'] as $attributeFilter) {
+					$flowQuery->pushOperation('filter', array($attributeFilter['text']));
+				}
+			}
 			return TRUE;
 		}
 
