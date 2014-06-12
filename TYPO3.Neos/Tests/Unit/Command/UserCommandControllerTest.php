@@ -10,12 +10,23 @@ namespace TYPO3\Neos\Tests\Unit\Command;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Testcase for the "UserCommandController"
  *
  */
 class UserCommandControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
+
+	/**
+	 * @var ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $mockConsoleOutput;
+
+	public function setUp() {
+		parent::setUp();
+		$this->mockConsoleOutput = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutput')->disableOriginalConstructor()->getMock();
+	}
 
 	/**
 	 * @test
@@ -30,6 +41,7 @@ class UserCommandControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockUser->expects($this->any())->method('getAccounts')->will($this->returnValue(array($mockAccount)));
 
 		$controller = new \TYPO3\Neos\Command\UserCommandController();
+		$this->inject($controller, 'output', $this->mockConsoleOutput);
 		$this->inject($controller, 'response', $mockResponse);
 		$this->inject($controller, 'userFactory', $mockUserFactory);
 		$this->inject($controller, 'partyRepository', $mockPartyRepository);
