@@ -65,7 +65,7 @@ class Image extends Asset implements ImageInterface {
 	protected $imageSizeAndTypeInitialized = FALSE;
 
 	/**
-	 * If the object is recreated (that is, hydrated from persistence) the size and type is set to be intialized.
+	 * If the object is recreated (that is, hydrated from persistence) the size and type is set to be initialized.
 	 *
 	 * @param integer $cause Why this object is initialized
 	 */
@@ -94,7 +94,7 @@ class Image extends Asset implements ImageInterface {
 		} catch(ImageFileException $exception) {
 			throw $exception;
 		} catch(Exception $exception) {
-			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
+			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occurred when trying to read the image: "' . $exception->getMessage() . '"';
 			throw new ImageFileException($exceptionMessage, 1336663970);
 		}
 	}
