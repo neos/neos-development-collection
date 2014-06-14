@@ -54,7 +54,8 @@ function(
 				var that = this;
 				setTimeout(function() {
 					$('li', notifications).each(function(index, notification) {
-						that[$(notification).attr('data-type')]($(notification).html());
+						var title = $(notification).attr('data-title');
+						that[$(notification).attr('data-type')](title ? title : $(notification).text(), title ? $(notification).html() : '');
 					});
 				}, 250);
 			}
