@@ -60,7 +60,7 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 	 * @throws Exception
 	 */
 	public function evaluate() {
-		$text = $this->getValue();
+		$text = $this->getValue() ?: '';
 		if (!is_string($text)) {
 			throw new Exception(sprintf('Only strings can be processed by this TypoScript object, given: "%s".', gettype($text)), 1382624080);
 		}
