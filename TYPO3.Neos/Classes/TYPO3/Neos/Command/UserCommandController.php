@@ -164,6 +164,40 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	}
 
 	/**
+	 * Activate a user which has access to the backend user interface.
+	 *
+	 * @param string $username The username of the user to be activated.
+	 * @return void
+	 */
+	public function activateCommand($username) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!$account instanceof Account) {
+			$this->outputLine('The username "%s" is not in use', array($username));
+			exit(1);
+		}
+		$account->setExpirationDate(NULL);
+		$this->accountRepository->update($account);
+		$this->outputLine('Activated user "%s".', array($username));
+	}
+
+	/**
+	 * Deactivate a user which has access to the backend user interface.
+	 *
+	 * @param string $username The username of the user to be deactivated.
+	 * @return void
+	 */
+	public function deactivateCommand($username) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!$account instanceof Account) {
+			$this->outputLine('The username "%s" is not in use', array($username));
+			exit(1);
+		}
+		$account->setExpirationDate(new Now());
+		$this->accountRepository->update($account);
+		$this->outputLine('Deactivated user "%s".', array($username));
+	}
+
+	/**
 	 * Set a new password for the given user
 	 *
 	 * This allows for setting a new password for an existing user account.
