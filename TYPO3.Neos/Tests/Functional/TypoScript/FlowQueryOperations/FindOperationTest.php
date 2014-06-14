@@ -85,4 +85,13 @@ class FindOperationTest extends AbstractNodeTest {
 		$foundNode = $foundNodes[0];
 		$this->assertSame('b1e0e78d-04f3-8fc3-e3d1-e2399f831312', $foundNode->getIdentifier());
 	}
+
+	/**
+	 * @test
+	 */
+	public function findByNodeWithPathReturnsEmptyArrayIfNotFound() {
+		$q = new FlowQuery(array($this->node));
+		$foundNodes = $q->find('/sites/example/home/main/limbo')->get();
+		$this->assertEmpty($foundNodes);
+	}
 }

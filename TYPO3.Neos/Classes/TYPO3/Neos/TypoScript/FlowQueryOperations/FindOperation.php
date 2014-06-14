@@ -64,8 +64,9 @@ class FindOperation extends AbstractOperation {
 	public function evaluate(FlowQuery $flowQuery, array $arguments) {
 		$context = $flowQuery->getContext();
 		if (!isset($context[0]) || empty($arguments[0])) {
-			return NULL;
+			return;
 		}
+
 		/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
 		$contextNode = $context[0];
 		$selectorAndFilter = $arguments[0];
@@ -73,6 +74,7 @@ class FindOperation extends AbstractOperation {
 		try {
 			$parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($selectorAndFilter);
 		} catch (\Exception $e) {}
+
 		if ($selectorAndFilter[0] === '#') {
 			if (!preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, substr($selectorAndFilter, 1))) {
 				throw new \TYPO3\Eel\FlowQuery\FlowQueryException('find() requires a valid identifier', 1332492263);
@@ -87,8 +89,10 @@ class FindOperation extends AbstractOperation {
 			}
 			$result = $this->nodeDataRepository->findByParentAndNodeTypeInContext($contextNode->getPath(), implode(',', $nodeTypes), $contextNode->getContext(), TRUE);
 		} else {
-			$result = array($contextNode->getNode($selectorAndFilter));
+			$node = $contextNode->getNode($selectorAndFilter);
+			$result = $node !== NULL ? array($node) : array();
 		}
+
 		$flowQuery->setContext($result);
 	}
 }
