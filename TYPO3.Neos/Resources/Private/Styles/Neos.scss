@@ -60,6 +60,7 @@
 	color: $textOnGray;
 	@include font;
 
+	@import "Tree";
 	@import "General";
 	@import "Shared/Scrollbar";
 	@import "ContentProperties";

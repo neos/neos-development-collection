@@ -1,0 +1,58 @@
+&.neos-module-administration-configuration {
+	#configuration {
+		> ul {
+			display: none;
+
+			&.neos-dynatree-container {
+				display: block;
+
+				> li > span {
+					display: none;
+				}
+
+				.neos-dynatree-node {
+					cursor: pointer;
+					height: auto;
+
+					&.neos-dynatree-folder .neos-dynatree-title {
+						@include user-select(none);
+					}
+
+					.neos-dynatree-icon {
+						display: none;
+					}
+
+					.neos-dynatree-title {
+						width: calc(100% - 24px);
+						height: auto;
+						white-space: normal;
+						text-align: left;
+						word-break: break-word;
+						word-wrap: break-word;
+					}
+				}
+			}
+		}
+
+		.key,
+		.value {
+			display: inline;
+		}
+
+		.value {
+			&[title="boolean"],
+			&[title="NULL"] {
+				color: $orange;
+			}
+
+			&[title="integer"],
+			&[title="double"] {
+				color: $warning;
+			}
+
+			&[title="string"] {
+				color: $blue;
+			}
+		}
+	}
+}

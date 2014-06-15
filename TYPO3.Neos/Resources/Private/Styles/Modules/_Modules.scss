@@ -1,5 +1,6 @@
 &.neos-module {
 	@import "Administration/Packages";
+	@import "Administration/Configuration";
 	@import "Management/Workspaces";
 	@include font;
 

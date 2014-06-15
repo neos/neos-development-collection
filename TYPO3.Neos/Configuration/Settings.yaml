@@ -260,6 +260,12 @@ TYPO3:
                 label: 'Create site'
                 title: 'Create a new site'
             resource: 'TYPO3_Neos_Backend_Module_Administration_Sites'
+          configuration:
+            label: 'Configuration'
+            controller: '\TYPO3\Neos\Controller\Module\Administration\ConfigurationController'
+            description: 'The Configuration module provides you with an overview of all configuration types.'
+            icon: 'icon-list-alt'
+            resource: 'TYPO3_Neos_Backend_Module_Administration_Configuration'
       user:
         label: 'User'
         controller: '\TYPO3\Neos\Controller\Module\UserController'

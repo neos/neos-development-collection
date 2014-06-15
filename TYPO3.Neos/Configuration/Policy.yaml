@@ -32,6 +32,7 @@ resources:
     TYPO3_Neos_Backend_Module_Administration_Users: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|)Action())'
     TYPO3_Neos_Backend_Module_Administration_Packages: 'method(TYPO3\Neos\Controller\Module\Administration\PackagesController->(index|activate|deactivate|delete|freeze|unfreeze|batch)Action())'
     TYPO3_Neos_Backend_Module_Administration_Sites: 'method(TYPO3\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'
+    TYPO3_Neos_Backend_Module_Administration_Configuration: 'method(TYPO3\Neos\Controller\Module\Administration\ConfigurationController->indexAction())'
 
 roles:
   Editor: ['TYPO3.TYPO3CR:Administrator']
@@ -72,3 +73,4 @@ acls:
       TYPO3_Neos_Backend_Module_Administration_Users: GRANT
       TYPO3_Neos_Backend_Module_Administration_Packages: GRANT
       TYPO3_Neos_Backend_Module_Administration_Sites: GRANT
+      TYPO3_Neos_Backend_Module_Administration_Configuration: GRANT
