@@ -16,7 +16,8 @@ define(
 		value: null,
 		isModified: false,
 		hasValidationErrors: false,
-		classNameBindings: ['isModified:neos-modified', 'hasValidationErrors:neos-error'],
+		classNameBindings: ['isModified:neos-modified', 'hasValidationErrors:neos-error', 'editorClassName'],
+		editorClassName: '',
 
 		_valueDidChange: function() {
 			if (this.get('inspector').isPropertyModified(this.get('propertyDefinition.key')) === true) {
@@ -57,8 +58,6 @@ define(
 			var that = this,
 				propertyDefinition = this.get('propertyDefinition'),
 				typeDefinition = Configuration.get('UserInterface.inspector.dataTypes.' + propertyDefinition.type),
-				editorDefinition,
-				globalEditorOptions,
 				editor;
 
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
@@ -84,6 +83,10 @@ define(
 				// Rename old editor names for backwards compatibility
 				editor = editor.replace('Content/Inspector/Editors/', 'TYPO3.Neos/Inspector/Editors/');
 			}
+
+			// Convert last part of editor path into dashed class name
+			var editorName = editor.substring(editor.lastIndexOf('/') + 1);
+			this.set('editorClassName', editorName.replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase());
 
 			require({context: 'neos'}, [editor], function(editorClass) {
 				Ember.run(function() {
