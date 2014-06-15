@@ -117,31 +117,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		jQueryWithDependencies: {
-			src: [
-				baseUri + 'jquery/jquery-2.0.3.js',
-				baseUri + 'jquery/jquery-migrate-1.2.1.js',
-				baseUri + 'jquery-easing/jquery.easing.1.3.js',
-				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
-				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
-				baseUri + 'chosen/chosen/chosen.jquery.js',
-				baseUri + 'jcrop/js/jquery.Jcrop.js',
-				baseUri + 'select2.js',
-				baseUri + 'sly.js',
-				baseUri + 'bootstrap-components.js'
-			],
-			dest: baseUri + 'jquery-with-dependencies.js',
-			options: {
-				banner: 'define(function() {',
-				footer: 'return jQuery.noConflict(true);' +
-						'});',
-				process: function(src, filepath) {
-					// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
-					return src.replace('define( "jquery", [], function () { return jQuery; } );', 'jQuery.migrateMute = true;');
-				}
-			}
-		},
-
 		handlebars: {
 			src: [
 				baseUri + 'handlebars/handlebars-1.0.0.js'
@@ -336,6 +311,32 @@ module.exports = function(grunt) {
 				process: function(src, filepath) {
 					src = src.replace('jQuery.', '$.');
 					return src;
+				}
+			}
+		},
+
+		jQueryWithDependencies: {
+			src: [
+				baseUri + 'jquery/jquery-2.0.3.js',
+				baseUri + 'jquery/jquery-migrate-1.2.1.js',
+				baseUri + 'jquery-easing/jquery.easing.1.3.js',
+				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
+				baseUri + 'jquery-cookie/jquery.cookie.js',
+				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
+				baseUri + 'chosen/chosen/chosen.jquery.js',
+				baseUri + 'jcrop/js/jquery.Jcrop.js',
+				baseUri + 'select2.js',
+				baseUri + 'sly.js',
+				baseUri + 'bootstrap-components.js'
+			],
+			dest: baseUri + 'jquery-with-dependencies.js',
+			options: {
+				banner: 'define(function() {',
+				footer: 'return jQuery.noConflict(true);' +
+				'});',
+				process: function(src, filepath) {
+					// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
+					return src.replace('define( "jquery", [], function () { return jQuery; } );', 'jQuery.migrateMute = true;');
 				}
 			}
 		}

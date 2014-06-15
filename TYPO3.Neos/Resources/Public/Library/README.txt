@@ -189,3 +189,8 @@ Version 0.1.2
 Sly - https://github.com/darsain/sly
 MIT license
 Version 1.2.3
+
+
+jQuery Cookie - https://github.com/carhartl/jquery-cookie
+MIT license
+Version 1.3.1
