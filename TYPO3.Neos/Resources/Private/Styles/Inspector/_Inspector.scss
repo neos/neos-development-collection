@@ -310,6 +310,7 @@
 		input[type="tel"],
 		input[type="color"],
 		input[type="number"],
+		textarea,
 		.neos-uneditable-input {
 			width: 100%;
 			min-width: $inspectorWidth - $defaultMargin * 2;
@@ -356,6 +357,7 @@
 			& > input[type="tel"],
 			& > input[type="color"],
 			& > input[type="number"],
+			& > textarea,
 			& > .neos-uneditable-input {
 				border: 2px solid $green;
 			}
@@ -418,6 +420,7 @@
 			& > input[type="tel"],
 			& > input[type="color"],
 			& > input[type="number"],
+			& > textarea,
 			& > .neos-uneditable-input {
 				color: $warning;
 				border: 2px solid $warning;
@@ -429,6 +432,28 @@
 		input::-webkit-input-placeholder,
 		input:-moz-placeholder {
 			color: $textSubtle;
+		}
+
+		textarea {
+			max-height: $unit;
+			line-height: $unit - 2px;
+			overflow: hidden;
+			resize: none;
+			height: auto;
+			@include box-sizing(border-box);
+
+			&:focus {
+				max-height: none;
+				line-height: $generalFontSize * 1.5;
+				padding-top: $relatedMargin;
+				padding-bottom: $relatedMargin;
+				overflow: auto;
+				resize: vertical;
+			}
+		}
+
+		.text-area-editor {
+			@include scroll-bar-light;
 		}
 
 		select {

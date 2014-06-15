@@ -5759,6 +5759,7 @@
 .neos #neos-inspector .neos-inspector-form input[type="tel"],
 .neos #neos-inspector .neos-inspector-form input[type="color"],
 .neos #neos-inspector .neos-inspector-form input[type="number"],
+.neos #neos-inspector .neos-inspector-form textarea,
 .neos #neos-inspector .neos-inspector-form .neos-uneditable-input {
   width: 100%;
   min-width: 288px;
@@ -5799,6 +5800,7 @@
 .neos #neos-inspector .neos-inspector-form input[type="tel"]:focus,
 .neos #neos-inspector .neos-inspector-form input[type="color"]:focus,
 .neos #neos-inspector .neos-inspector-form input[type="number"]:focus,
+.neos #neos-inspector .neos-inspector-form textarea:focus,
 .neos #neos-inspector .neos-inspector-form .neos-uneditable-input:focus {
   background-color: #fff;
   border: 2px solid #fff;
@@ -5824,10 +5826,11 @@
 .neos #neos-inspector .neos-inspector-form input[type="tel"].neos-modified,
 .neos #neos-inspector .neos-inspector-form input[type="color"].neos-modified,
 .neos #neos-inspector .neos-inspector-form input[type="number"].neos-modified,
+.neos #neos-inspector .neos-inspector-form textarea.neos-modified,
 .neos #neos-inspector .neos-inspector-form .neos-uneditable-input.neos-modified {
   border: 2px solid #00a338;
 }
-.neos #neos-inspector .neos-inspector-form .neos-modified > input[type="text"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="password"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="month"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="time"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="week"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="range"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="email"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="url"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="search"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="tel"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="color"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > .neos-uneditable-input {
+.neos #neos-inspector .neos-inspector-form .neos-modified > input[type="text"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="password"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="month"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="time"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="week"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="range"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="email"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="url"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="search"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="tel"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="color"], .neos #neos-inspector .neos-inspector-form .neos-modified > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-modified > textarea, .neos #neos-inspector .neos-inspector-form .neos-modified > .neos-uneditable-input {
   border: 2px solid #00a338;
 }
 .neos #neos-inspector .neos-inspector-form .neos-modified input[type=checkbox] + span:before {
@@ -5860,7 +5863,7 @@
   right: 13px;
   line-height: 36px;
 }
-.neos #neos-inspector .neos-inspector-form .neos-error > input[type="text"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="password"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="month"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="time"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="week"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="range"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="email"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="url"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="search"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="tel"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="color"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-error > .neos-uneditable-input {
+.neos #neos-inspector .neos-inspector-form .neos-error > input[type="text"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="password"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="datetime"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="datetime-local"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="month"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="time"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="week"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="range"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="date"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="email"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="url"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="search"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="tel"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="color"], .neos #neos-inspector .neos-inspector-form .neos-error > input[type="number"], .neos #neos-inspector .neos-inspector-form .neos-error > textarea, .neos #neos-inspector .neos-inspector-form .neos-error > .neos-uneditable-input {
   color: #ff460d;
   border: 2px solid #ff460d;
   -webkit-box-shadow: none;
@@ -5871,6 +5874,34 @@
 .neos #neos-inspector .neos-inspector-form input::-webkit-input-placeholder,
 .neos #neos-inspector .neos-inspector-form input:-moz-placeholder {
   color: #5b5b5b;
+}
+.neos #neos-inspector .neos-inspector-form textarea {
+  max-height: 40px;
+  line-height: 38px;
+  overflow: hidden;
+  resize: none;
+  height: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos #neos-inspector .neos-inspector-form textarea:focus {
+  max-height: none;
+  line-height: 21px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  overflow: auto;
+  resize: vertical;
+}
+.neos #neos-inspector .neos-inspector-form .text-area-editor ::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+.neos #neos-inspector .neos-inspector-form .text-area-editor ::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border: 1px solid #fff;
+}
+.neos #neos-inspector .neos-inspector-form .text-area-editor ::-webkit-scrollbar-corner {
+  background-color: #fff;
 }
 .neos #neos-inspector .neos-inspector-form select {
   width: 100%;
