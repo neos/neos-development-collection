@@ -892,7 +892,7 @@
 .neos .icon-caret-left:before {
   content: "\f0d9";
 }
-.neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+.neos .icon-caret-right:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
   content: "\f0da";
 }
 .neos .icon-columns:before {
@@ -4788,6 +4788,316 @@
     box-shadow: none;
   }
 }
+.neos ul.neos-dynatree-container {
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  white-space: nowrap;
+  display: table;
+}
+.neos ul.neos-dynatree-container.neos-dynatree-no-connector > li > span span {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+}
+.neos ul.neos-dynatree-container.neos-dynatree-no-connector > li > span.neos-dynatree-loading span {
+  vertical-align: middle;
+  background-image: url(../Images/ajax-preloader-222222.gif);
+  background-repeat: no-repeat;
+  background-position: 5px 3px;
+}
+.neos ul.neos-dynatree-container.neos-dynatree-no-connector > li > span.neos-dynatree-loading span:before {
+  display: none;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node {
+  display: block;
+  float: left;
+  position: relative;
+  min-width: 100%;
+  display: table-cell;
+  height: 24px;
+  line-height: 24px;
+  white-space: nowrap;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-left: 3px solid transparent;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "\f057";
+  position: absolute;
+  left: 12px;
+  top: 0px;
+  font-size: 12px;
+  color: #ff460d;
+  background: #fff;
+  height: 8px;
+  width: 8px;
+  margin-top: 11px;
+  line-height: 9px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  content: "\f017";
+  position: absolute;
+  left: 12px;
+  top: 0px;
+  font-size: 12px;
+  color: #00b5ff;
+  background: #fff;
+  height: 8px;
+  width: 10px;
+  margin-top: 11px;
+  line-height: 9px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-hiddenInIndex span + span {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused {
+  background-color: #323232;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused span + span,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused a {
+  color: #adadad;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active {
+  background-color: #323232;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active span + span,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active a {
+  color: white;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-dirty {
+  border-left: 3px solid #ff8700;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-empty,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-vline,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-connector,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-icon,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-checkbox,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-radio,
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-drag-helper-img,
+.neos ul.neos-dynatree-container .neos-dynatree-node #neos-dynatree-drop-marker {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: top;
+  color: #adadad;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before {
+  left: 11px;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-expander {
+  vertical-align: middle;
+  background-image: url(../Images/ajax-preloader-222222.gif);
+  background-repeat: no-repeat;
+  background-position: 5px 4px;
+  -webkit-transform: rotate(0);
+  -moz-transform: rotate(0);
+  -ms-transform: rotate(0);
+  -o-transform: rotate(0);
+  transform: rotate(0);
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector:before,
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-expander:before {
+  display: none;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+  cursor: pointer;
+  font-size: 16px;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
+  position: relative;
+  left: 10px;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:hover {
+  color: #00b5ff;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node span + span {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-selected a {
+  color: #00b5ff;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drag-source {
+  background-color: #323232;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-before:after, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-after:after {
+  width: 100%;
+  height: 2px;
+  margin-left: 30px;
+  position: absolute;
+  content: "";
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-before:after {
+  top: 0;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-after:after {
+  bottom: 0;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) {
+  background-color: #00b5ff;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) span + span,
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) a {
+  color: #fff;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-before:after, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-after:after {
+  display: block;
+  background-color: #00b5ff;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject {
+  cursor: not-allowed !important;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject .neos-dynatree-expander,
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject span + span,
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject a {
+  cursor: not-allowed !important;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) {
+  background-color: #ff460d;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover span + span,
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover a, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) span + span,
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) a {
+  color: #fff;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drop-before:after, .neos ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drop-after:after {
+  display: block;
+  background-color: #ff460d;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node a {
+  display: inline-block;
+  color: #fff;
+  vertical-align: top;
+  line-height: 24px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos ul.neos-dynatree-container .neos-dynatree-node a:focus {
+  text-decoration: none;
+  outline: none;
+}
+.neos ul.neos-dynatree-container ul .neos-dynatree-node {
+  padding-left: 0;
+}
+.neos ul.neos-dynatree-container ul ul .neos-dynatree-node {
+  padding-left: 9px;
+}
+.neos ul.neos-dynatree-container ul ul ul .neos-dynatree-node {
+  padding-left: 21px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node {
+  padding-left: 33px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 45px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 57px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 69px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 81px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 93px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 105px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 117px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 129px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 141px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 153px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 165px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 177px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 189px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 201px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 213px;
+}
+.neos ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
+  padding-left: 225px;
+}
+.neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node {
+  cursor: move;
+}
+.neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
+.neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node span + span,
+.neos .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node a {
+  cursor: move;
+}
 .neos form {
   text-align: left;
   margin: 0px;
@@ -7775,316 +8085,6 @@
 .neos-navigate-panel-open.neos-menu-panel-open.neos-menu-panel-sticky .neos #neos-navigate-panel {
   left: 54px;
 }
-.neos #neos-navigate-panel ul.neos-dynatree-container {
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  border: none;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  white-space: nowrap;
-  display: table;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container.neos-dynatree-no-connector > li > span span {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  line-height: 20px;
-  vertical-align: middle;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container.neos-dynatree-no-connector > li > span.neos-dynatree-loading span {
-  vertical-align: middle;
-  background-image: url(../Images/ajax-preloader-222222.gif);
-  background-repeat: no-repeat;
-  background-position: 5px 3px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container.neos-dynatree-no-connector > li > span.neos-dynatree-loading span:before {
-  display: none;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node {
-  display: block;
-  float: left;
-  position: relative;
-  min-width: 100%;
-  display: table-cell;
-  height: 24px;
-  line-height: 24px;
-  white-space: nowrap;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  border-left: 3px solid transparent;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-hidden span + span:after {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  content: "\f057";
-  position: absolute;
-  left: 12px;
-  top: 0px;
-  font-size: 12px;
-  color: #ff460d;
-  background: #fff;
-  height: 8px;
-  width: 8px;
-  margin-top: 11px;
-  line-height: 9px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-timedVisibility span + span:after {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  content: "\f017";
-  position: absolute;
-  left: 12px;
-  top: 0px;
-  font-size: 12px;
-  color: #00b5ff;
-  background: #fff;
-  height: 8px;
-  width: 10px;
-  margin-top: 11px;
-  line-height: 9px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-hiddenInIndex span + span {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  opacity: 0.5;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused {
-  background-color: #323232;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused span + span,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-focused a {
-  color: #adadad;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active {
-  background-color: #323232;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active span + span,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active a {
-  color: white;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-dirty {
-  border-left: 3px solid #ff8700;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-empty,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-vline,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-connector,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-icon,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-checkbox,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-radio,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-drag-helper-img,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node #neos-dynatree-drop-marker {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  vertical-align: top;
-  color: #adadad;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander {
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before {
-  left: 11px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-expander {
-  vertical-align: middle;
-  background-image: url(../Images/ajax-preloader-222222.gif);
-  background-repeat: no-repeat;
-  background-position: 5px 4px;
-  -webkit-transform: rotate(0);
-  -moz-transform: rotate(0);
-  -ms-transform: rotate(0);
-  -o-transform: rotate(0);
-  transform: rotate(0);
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-connector:before,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-loading .neos-dynatree-expander:before {
-  display: none;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  *margin-right: .3em;
-  cursor: pointer;
-  font-size: 16px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
-  position: relative;
-  left: 10px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:hover {
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node span + span {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  line-height: 20px;
-  vertical-align: middle;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-selected a {
-  color: #00b5ff;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drag-source {
-  background-color: #323232;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  opacity: 0.5;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-before:after, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-after:after {
-  width: 100%;
-  height: 2px;
-  margin-left: 30px;
-  position: absolute;
-  content: "";
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-before:after {
-  top: 0;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-after:after {
-  bottom: 0;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) {
-  background-color: #00b5ff;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) span + span,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-target:not(.dynatree-drop-before):not(.dynatree-drop-after) a {
-  color: #fff;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-before:after, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-accept.dynatree-drop-after:after {
-  display: block;
-  background-color: #00b5ff;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject {
-  cursor: not-allowed !important;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject .neos-dynatree-expander,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject span + span,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject a {
-  cursor: not-allowed !important;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) {
-  background-color: #ff460d;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover span + span,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drag-source:hover a, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) span + span,
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject:not(.dynatree-drag-source):not(.dynatree-drop-before):not(.dynatree-drop-after) a {
-  color: #fff;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drop-before:after, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.dynatree-drop-reject.dynatree-drop-after:after {
-  display: block;
-  background-color: #ff460d;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node a {
-  display: inline-block;
-  color: #fff;
-  vertical-align: top;
-  line-height: 24px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node a:focus {
-  text-decoration: none;
-  outline: none;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul .neos-dynatree-node {
-  padding-left: 0;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul .neos-dynatree-node {
-  padding-left: 9px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul .neos-dynatree-node {
-  padding-left: 21px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul .neos-dynatree-node {
-  padding-left: 33px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 45px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 57px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 69px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 81px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 93px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 105px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 117px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 129px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 141px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 153px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 165px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 177px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 189px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 201px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 213px;
-}
-.neos #neos-navigate-panel ul.neos-dynatree-container ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul ul .neos-dynatree-node {
-  padding-left: 225px;
-}
-.neos #neos-navigate-panel .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node {
-  cursor: move;
-}
-.neos #neos-navigate-panel .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander,
-.neos #neos-navigate-panel .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node span + span,
-.neos #neos-navigate-panel .neos-tree-drag-in-progress ul.neos-dynatree-container .neos-dynatree-node a {
-  cursor: move;
-}
 .neos #neos-navigate-panel #neos-node-tree {
   position: relative;
 }
@@ -8994,6 +8994,50 @@
 }
 .neos.neos-module.neos-module-administration-packages table td.neos-action {
   width: auto;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul {
+  display: none;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container {
+  display: block;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container > li > span {
+  display: none;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node {
+  cursor: pointer;
+  height: auto;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-folder .neos-dynatree-title {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-icon {
+  display: none;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration > ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-title {
+  width: calc(100% - 24px);
+  height: auto;
+  white-space: normal;
+  text-align: left;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration .key,
+.neos.neos-module.neos-module-administration-configuration #configuration .value {
+  display: inline;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration .value[title="boolean"], .neos.neos-module.neos-module-administration-configuration #configuration .value[title="NULL"] {
+  color: #ff8700;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration .value[title="integer"], .neos.neos-module.neos-module-administration-configuration #configuration .value[title="double"] {
+  color: #ff460d;
+}
+.neos.neos-module.neos-module-administration-configuration #configuration .value[title="string"] {
+  color: #00b5ff;
 }
 .neos.neos-module.neos-module-management-workspaces td {
   white-space: nowrap;
