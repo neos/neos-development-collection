@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2013-12-10
+This reference was automatically generated from code on 2014-06-16
 
 
 add
@@ -13,6 +13,46 @@ Add another $flowQuery object to the current one.
 
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\AddOperation
 :Priority: 1
+:Final: No
+:Returns: void
+
+
+
+
+
+cacheLifetime
+-------------
+
+"cacheLifetime" operation working on TYPO3CR nodes. Will get the minimum of all allowed cache lifetimes for the
+nodes in the current FlowQuery context. This means it will evaluate to the nearest future value of the
+hiddenBeforeDateTime or hiddenAfterDateTime properties of all nodes in the context. If none are set or all values
+are in the past it will evaluate to NULL.
+
+To include already hidden nodes (with a hiddenBeforeDateTime value in the future) in the result, also invisible nodes
+have to be included in the context. This can be achieved using the "context" operation before fetching child nodes.
+
+Example:
+
+	q(node).context({'invisibleContentShown': true}).children().cacheLifetime()
+
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\CacheLifetimeOperation
+:Priority: 1
+:Final: Yes
+:Returns: integer The cache lifetime in seconds or NULL if either no content collection was given or no child node had a "hiddenBeforeDateTime" or "hiddenAfterDateTime" property set
+
+
+
+
+
+children
+--------
+
+"children" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns all child nodes or only those matching
+the filter expression specified as optional argument.
+
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ChildrenOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -37,22 +77,6 @@ filter operation.
 
 
 
-children
---------
-
-"children" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns all child nodes or only those matching
-the filter expression specified as optional argument.
-
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ChildrenOperation
-:Priority: 100
-:Final: No
-:Returns: void
-
-
-
-
-
 closest
 -------
 
@@ -62,6 +86,27 @@ traversing up through its ancestors.
 
 :Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ClosestOperation
 :Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
+context
+-------
+
+"context" operation working on TYPO3CR nodes. Modifies the TYPO3CR Context of each
+node in the current FlowQuery context by the given properties and returns the same
+nodes by identifier if they can be accessed in the new Context (otherwise they
+will be skipped).
+
+Example:
+
+	q(node).context({'invisibleContentShown': true}).children()
+
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ContextOperation
+:Priority: 1
 :Final: No
 :Returns: void
 
@@ -139,6 +184,8 @@ object, array, int(eger), float, double, bool(ean) or string the value is checke
 for being of the specified type. For any other strings the value is used as
 classname with the PHP instanceof operation to check if the value matches.
 
+Accepts a filter, an array, an object, a traversable object & a FlowQuery object.
+
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\FilterOperation
 :Priority: 1
 :Final: No
@@ -200,6 +247,24 @@ returned. If no such index exists, NULL is returned.
 
 
 
+has
+---
+
+"has" operation working on NodeInterface. Reduce the set of matched elements
+to those that have a descendant that matches the selector or given subject.
+
+Accepts a selector, an array, an object, a traversable object & a FlowQuery
+object as argument.
+
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\HasOperation
+:Priority: 100
+:Final: No
+:Returns: void
+
+
+
+
+
 is
 --
 
@@ -242,6 +307,22 @@ the filter expression specified as optional argument.
 :Priority: 100
 :Final: No
 :Returns: void
+
+
+
+
+
+not
+---
+
+"not" operation working on generic objects. Remove elements from the set of
+matched elements.
+Accepts objects, arrays, traversable objects, FlowQuery and filters.
+
+:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\NotOperation
+:Priority: 1
+:Final: No
+:Returns: boolean
 
 
 
@@ -298,12 +379,14 @@ the filter expression specified as optional argument
 property
 --------
 
-Used to access properties of a TYPO3CR Node. If the property mame is
-prefixed with _, internal node properties like start time, end time,
-hidden are accessed.
+Access properties of an object using ObjectAccess.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\PropertyOperation
-:Priority: 100
+Expects the name of a property as argument. If the context is empty, NULL
+is returned. Otherwise the value of the property on the first context
+element is returned.
+
+:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
+:Priority: 1
 :Final: Yes
 :Returns: mixed
 
@@ -314,14 +397,12 @@ hidden are accessed.
 property
 --------
 
-Access properties of an object using ObjectAccess.
+Used to access properties of a TYPO3CR Node. If the property mame is
+prefixed with _, internal node properties like start time, end time,
+hidden are accessed.
 
-Expects the name of a property as argument. If the context is empty, NULL
-is returned. Otherwise the value of the property on the first context
-element is returned.
-
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
-:Priority: 1
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\PropertyOperation
+:Priority: 100
 :Final: Yes
 :Returns: mixed
 
