@@ -45,7 +45,9 @@ function(
 		 * @return {boolean}
 		 */
 		isContentElementBar: function() {
-			return this.get('_selectedNode') && ContentCommands.isCollection(this.get('_selectedNode')) === false;
+			return this.get('_selectedNode')
+				&& ContentCommands.isCollection(this.get('_selectedNode')) === false
+				&& ContentCommands.closestParentIsCollection(this.get('_selectedNode')) === true;
 		}.property('_selectedNode'),
 
 		/**

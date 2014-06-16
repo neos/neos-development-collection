@@ -36,6 +36,17 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		},
 
 		/**
+		 * Returns true if the selected node's closest parent is a section
+		 *
+		 * @param {object} node
+		 * @return {boolean}
+		 */
+		closestParentIsCollection: function(node) {
+			var parentElement = node.$element.parents('[typeof^="typo3:"]').first();
+			return parentElement.length > 0 ? NodeTypeService.isOfType(parentElement.attr('typeof').substr(6), 'TYPO3.Neos:ContentCollection') : false;
+		},
+
+		/**
 		 * Opens the create new node dialog. Given position, referenceNode
 		 * and index are optional.
 		 *
