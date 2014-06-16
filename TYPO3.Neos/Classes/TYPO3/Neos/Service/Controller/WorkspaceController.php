@@ -66,6 +66,15 @@ class WorkspaceController extends AbstractServiceController {
 				->getPropertyMappingConfiguration()
 				->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
+
+		if ($this->arguments->hasArgument('nodes')) {
+			$this
+				->arguments
+				->getArgument('nodes')
+				->getPropertyMappingConfiguration()
+				->forProperty('*')
+				->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		}
 	}
 
 	/**
@@ -93,9 +102,9 @@ class WorkspaceController extends AbstractServiceController {
 	public function publishNodesAction(array $nodes, $targetWorkspaceName) {
 		$targetWorkspace = $this->workspaceRepository->findOneByName($targetWorkspaceName);
 
-		$this->publishingService->publishNodes($this->convertNodes($nodes), $targetWorkspace);
+		$this->publishingService->publishNodes($nodes, $targetWorkspace);
 
-		$this->throwStatus(204, 'Nodes has been published');
+		$this->throwStatus(204, 'Nodes have been published');
 	}
 
 	/**
@@ -117,7 +126,7 @@ class WorkspaceController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function discardNodesAction(array $nodes) {
-		$this->publishingService->discardNodes($this->convertNodes($nodes));
+		$this->publishingService->discardNodes($nodes);
 
 		$this->throwStatus(204, 'Node changes have been discarded');
 	}
@@ -157,19 +166,6 @@ class WorkspaceController extends AbstractServiceController {
 		$this->publishingService->discardNodes($this->publishingService->getUnpublishedNodes($workspace));
 
 		$this->throwStatus(204, 'Workspace changes have been discarded');
-	}
-
-	/**
-	 * @param array $nodes
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
-	 */
-	protected function convertNodes(array $nodes) {
-		$propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
-		$propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
-		foreach ($nodes as $key => $node) {
-			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
-		}
-		return $nodes;
 	}
 
 }
