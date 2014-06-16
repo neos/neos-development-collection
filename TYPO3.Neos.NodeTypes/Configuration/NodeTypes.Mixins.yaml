@@ -23,10 +23,11 @@
   properties:
     text:
       type: string
-      defaultValue: '<p>Enter text here</p>'
+      defaultValue: ''
       ui:
         inlineEditable: TRUE
         aloha:
+          placeholder: '<p>Enter text here</p>'
           'format':
             'strong': TRUE
             'em': TRUE
@@ -101,9 +102,11 @@
           position: 200
     caption:
       type: string
-      defaultValue: '<p>Enter caption here</p>'
+      defaultValue: ''
       ui:
         inlineEditable: TRUE
+        aloha:
+          placeholder: '<p>Enter caption here</p>'
 
 # Image alignment mixin
 'TYPO3.Neos.NodeTypes:ImageAlignmentMixin':
