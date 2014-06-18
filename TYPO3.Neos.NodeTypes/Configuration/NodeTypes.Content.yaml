@@ -3,6 +3,7 @@
   ui:
     label: 'Headline'
     icon: 'icon-file-text'
+    position: 100
   properties:
     title:
       type: string
@@ -26,6 +27,7 @@
   ui:
     label: 'Text'
     icon: 'icon-file-text'
+    position: 200
   properties:
     text:
       type: string
@@ -58,6 +60,7 @@
   ui:
     label: 'Image'
     icon: 'icon-picture'
+    position: 300
     inspector:
       groups:
         image:
@@ -131,14 +134,15 @@
     - 'TYPO3.Neos.NodeTypes:Text'
   ui:
     label: 'Text with Image'
-
     icon: 'icon-picture'
+    position: 400
 
 'TYPO3.Neos.NodeTypes:Html':
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'HTML'
     icon: 'icon-code'
+    position: 500
     inspector:
       groups:
         html:
@@ -161,6 +165,7 @@
     label: 'Menu'
     group: 'structure'
     icon: 'icon-sitemap'
+    position: 100
     inspector:
       groups:
         options:
@@ -259,6 +264,7 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Two column content'
+    position: 200
   childNodes:
     column0:
       type: 'TYPO3.Neos:ContentCollection'
@@ -287,6 +293,7 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Three column content'
+    position: 300
   childNodes:
     column0:
       type: 'TYPO3.Neos:ContentCollection'
@@ -315,6 +322,7 @@
   superTypes: ['TYPO3.Neos.NodeTypes:Column']
   ui:
     label: 'Four column content'
+    position: 400
   childNodes:
     column0:
       type: 'TYPO3.Neos:ContentCollection'
@@ -339,8 +347,8 @@
   superTypes: ['TYPO3.Neos:Content']
   ui:
     label: 'Form'
-    group: 'general'
     icon: 'icon-envelope-alt'
+    position: 600
     inspector:
       groups:
         form:
@@ -366,6 +374,7 @@
   ui:
     label: 'Asset list'
     icon: 'icon-folder-open-alt'
+    position: 700
     inspector:
       groups:
         resources:

@@ -32,6 +32,7 @@
   ui:
     label: 'Page'
     icon: 'icon-file'
+    position: 100
     inspector:
       groups:
         document:
