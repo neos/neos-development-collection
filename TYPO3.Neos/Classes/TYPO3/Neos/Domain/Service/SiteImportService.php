@@ -16,6 +16,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Exception\InvalidPackageStateException;
 use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Files;
@@ -98,6 +99,12 @@ class SiteImportService {
 	 * @var array<string>
 	 */
 	protected $dateTimeClassNames = array();
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
 
 	/**
 	 * @return void
@@ -348,6 +355,45 @@ class SiteImportService {
 	}
 
 	/**
+	 * Imports a resource based on exported hash or content
+	 *
+	 * @param string $fileName
+	 * @param string|null $hash
+	 * @param string|null $content
+	 * @param string $forcedIdentifier
+	 * @return \TYPO3\Flow\Resource\Resource
+	 * @throws NeosException
+	 */
+	protected function importResource($fileName, $hash = NULL, $content = NULL, $forcedIdentifier = NULL) {
+		if ($hash !== NULL) {
+			$resource = $this->resourceManager->createResourceFromContent(
+				file_get_contents(Files::concatenatePaths(array($this->resourcesPath, $hash))),
+				$fileName
+			);
+		} else {
+			$resourceData = trim($content);
+			if ($resourceData === '') {
+				throw new NeosException('Could not import resource because neither "hash" nor "content" tags are present.', 1403009453);
+			}
+			$decodedResourceData = base64_decode($resourceData);
+			if ($decodedResourceData === FALSE) {
+				throw new NeosException('Could not import resource because the "content" tag doesn\'t contain valid base64 encoded data.', 1403009477);
+			}
+
+			$resource = $this->resourceManager->createResourceFromContent(
+				$decodedResourceData,
+				$fileName
+			);
+		}
+
+		if ($forcedIdentifier !== NULL) {
+			ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedIdentifier, TRUE);
+		}
+
+		return $resource;
+	}
+
+	/**
 	 * Sets the $nodes access roles
 	 *
 	 * @param \SimpleXMLElement $nodeXml
@@ -396,27 +442,34 @@ class SiteImportService {
 	 */
 	protected function importImageVariant(\SimpleXMLElement $objectXml, $className) {
 		$processingInstructions = unserialize(trim((string)$objectXml->processingInstructions));
+
+		if (isset($objectXml->originalImage['__identifier'])) {
+			$image = $this->imageRepository->findByIdentifier((string)$objectXml->originalImage['__identifier']);
+			if (is_object($image)) {
+				return $this->objectManager->get($className, $image, $processingInstructions);
+			}
+		}
+
 		$resourceHash = (string)$objectXml->originalImage->resource->hash;
-		if ($resourceHash !== '') {
-			$resource = $this->resourceManager->createResourceFromContent(
-				file_get_contents(Files::concatenatePaths(array($this->resourcesPath, $resourceHash))),
-				(string)$objectXml->originalImage->resource->filename
-			);
-		} else {
-			$resourceData = trim((string)$objectXml->originalImage->resource->content);
-			if ($resourceData === '') {
-				throw new NeosException('Could not import resource because neither "hash" nor "content" tags are present.', 1384205744);
-			}
-			$decodedResourceData = base64_decode($resourceData);
-			if ($decodedResourceData === FALSE) {
-				throw new NeosException('Could not import resource because the "content" tag doesn\'t contain valid base64 encoded data.', 1384205748);
-			}
-			$resource = $this->resourceManager->createResourceFromContent(
-				$decodedResourceData,
-				(string)$objectXml->originalImage->resource->filename
+		$resourceData = trim((string)$objectXml->originalImage->resource->content);
+
+		if ((string)$objectXml->originalImage->resource['__identifier'] !== '') {
+			$resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], 'TYPO3\Flow\Resource\Resource');
+		}
+
+		if (!isset($resource) || $resource === NULL) {
+			$resource = $this->importResource(
+				(string)$objectXml->originalImage->resource->filename,
+				$resourceHash !== '' ? $resourceHash : NULL,
+				!empty($resourceData) ? $resourceData : NULL,
+				(string)$objectXml->originalImage->resource['__identifier'] !== '' ? (string)$objectXml->originalImage->resource['__identifier'] : NULL
 			);
 		}
+
 		$image = new Image($resource);
+		if ((string)$objectXml->originalImage['__identifier'] !== '') {
+			ObjectAccess::setProperty($image, 'Persistence_Object_Identifier', (string)$objectXml->originalImage['__identifier'], TRUE);
+		}
 		$this->imageRepository->add($image);
 
 		return $this->objectManager->get($className, $image, $processingInstructions);
