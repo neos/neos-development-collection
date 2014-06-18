@@ -28,7 +28,7 @@ interface TransformationInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return boolean
 	 */
-	function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
+	public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 	/**
 	 * Execute the transformation on the given node.
@@ -36,6 +36,6 @@ interface TransformationInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
+	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 }

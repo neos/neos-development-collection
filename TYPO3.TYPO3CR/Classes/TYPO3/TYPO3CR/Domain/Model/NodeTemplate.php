@@ -100,10 +100,9 @@ class NodeTemplate extends AbstractNodeData {
 	/**
 	 * A NodeTemplate is not stored in any workspace, thus this method returns NULL.
 	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+	 * @return void
 	 */
 	public function getWorkspace() {
-		return;
 	}
 
 }
