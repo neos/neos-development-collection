@@ -50,6 +50,12 @@ class NodeController extends AbstractServiceController {
 	protected $contextFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\Service\NodeNameGenerator
+	 */
+	protected $nodeNameGenerator;
+
+	/**
 	 * Select special error action
 	 *
 	 * @return void
@@ -141,24 +147,9 @@ class NodeController extends AbstractServiceController {
 	 * @param string $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
 	 * @throws \InvalidArgumentException
-	 * @todo maybe the actual creation should be put in a helper / service class
 	 */
 	public function createNodeForTheTreeAction(Node $referenceNode, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
-
-		if (!isset($nodeData['nodeName']) && $newNode->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-			// TODO: we should actually give preference to $nodeData['nodeName'] here if it is set.
-			$idealNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($newNode->hasProperty('title') ? $newNode->getProperty('title') : uniqid('node'));
-			$possibleNodeName = $idealNodeName;
-			$counter = 1;
-			while ($referenceNode->getNode($possibleNodeName) !== NULL) {
-				$possibleNodeName = $idealNodeName . '-' . $counter;
-				$counter++;
-			}
-
-			$newNode->setName($possibleNodeName);
-		}
-
 		$this->view->assign('value', array('data' => $this->view->collectTreeNodeData($newNode), 'success' => TRUE));
 	}
 
@@ -173,11 +164,16 @@ class NodeController extends AbstractServiceController {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
 		}
-
-		if (empty($nodeData['nodeName'])) {
-			$nodeData['nodeName'] = uniqid('node');
-		}
 		$nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
+
+		$expectedNodeName = NULL;
+		if (isset($nodeData['nodeName'])) {
+			$expectedNodeName = $nodeData['nodeName'];
+		} elseif ($nodeType->isOfType('TYPO3.Neos:Document') && isset($nodeData['properties']['title'])) {
+			$expectedNodeName = $nodeData['properties']['title'];
+		}
+
+		$nodeData['nodeName'] = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($referenceNode, $position), $expectedNodeName);
 
 		if ($position === 'into') {
 			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeType);
@@ -243,22 +239,16 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 */
-	public function copyAction(Node $node, Node $targetNode, $position, $nodeName) {
+	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = NULL) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
 		}
 
-		if ($nodeName !== '') {
-			$idealNodeName = $nodeName;
-			$possibleNodeName = $idealNodeName;
-			$counter = 1;
-			$parentNode = $position === 'into' ? $targetNode : $targetNode->getParent();
-			while ($parentNode->getNode($possibleNodeName) !== NULL) {
-				$possibleNodeName = $idealNodeName . '-' . $counter;
-				$counter++;
-			}
+		if (!empty($nodeName)) {
+			$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position), $nodeName);
+		} else {
+			$nodeName = $this->nodeNameGenerator->generateUniqueNodeName($this->getDesignatedParentNode($targetNode, $position));
 		}
-		$nodeName = isset($possibleNodeName) ? $possibleNodeName : uniqid('node');
 
 		switch ($position) {
 			case 'before':
@@ -379,5 +369,19 @@ class NodeController extends AbstractServiceController {
 		);
 
 		return $this->contextFactory->create($contextProperties);
+	}
+
+	/**
+	 * @param NodeInterface $targetNode
+	 * @param string $position
+	 * @return NodeInterface
+	 */
+	protected function getDesignatedParentNode(NodeInterface $targetNode, $position) {
+		$referenceNode = $targetNode;
+		if (in_array($position, array('before', 'after'))) {
+			$referenceNode = $targetNode->getParent();
+		}
+
+		return $referenceNode;
 	}
 }
