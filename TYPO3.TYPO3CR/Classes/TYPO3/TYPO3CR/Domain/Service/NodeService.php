@@ -39,6 +39,12 @@ class NodeService {
 	protected $systemLogger;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
 	 * Set default node property base on the target node type configuration
 	 *
 	 * @param NodeInterface $node
@@ -103,6 +109,16 @@ class NodeService {
 		}
 		$subNodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName());
 		return isset($subNodeTypes[$node->getNodeType()->getName()]);
+	}
+
+	/**
+	 * Checks if the given node path exists in any possible context already.
+	 *
+	 * @param string $nodePath
+	 * @return boolean
+	 */
+	public function nodePathExistsInAnyContext($nodePath) {
+		return $this->nodeDataRepository->pathExists($nodePath);
 	}
 
 }
