@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Neos\Domain\Exception as DomainException;
 use TYPO3\Neos\Domain\Model\Site;
@@ -287,6 +289,17 @@ class SiteExportService {
 					}
 					$this->objectToXml($propertyValue);
 					$this->xmlWriter->endElement();
+				} elseif (is_array($propertyValue)) {
+					$this->xmlWriter->startElement($propertyName);
+					$this->xmlWriter->writeAttribute('__type', 'array');
+					if (is_array($propertyValue)) {
+						foreach ($propertyValue as $propertyArrayValue) {
+							if (is_object($propertyArrayValue)) {
+								$this->objectToXml($propertyArrayValue);
+							}
+						}
+					}
+					$this->xmlWriter->endElement();
 				} elseif (is_string($propertyValue) && (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE)) {
 					$this->xmlWriter->startElement($propertyName);
 					if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
@@ -314,15 +327,66 @@ class SiteExportService {
 	protected function objectToXml($object) {
 		if ($object instanceof ImageVariant) {
 			$this->exportImageVariant($object);
-
 			return;
 		}
+
+		if ($object instanceof Asset) {
+			$this->exportAsset($object);
+			return;
+		}
+
 		if ($object instanceof \DateTime) {
 			$this->xmlWriter->writeElement('dateTime', $object->format(\DateTime::W3C));
-
 			return;
 		}
 		throw new DomainException(sprintf('Unsupported object of type "%s" hit during XML export.', get_class($object)), 1347144928);
+	}
+
+	/**
+	 * Export an asset object and adds it to the xmlWriter
+	 *
+	 * @param Asset $asset
+	 * @return void
+	 */
+	protected function exportAsset(Asset $asset) {
+		$tagName = $asset instanceof Image ? 'image' : 'asset';
+		$this->xmlWriter->startElement($tagName);
+		$this->xmlWriter->writeAttribute('__classname', get_class($asset));
+		$this->xmlWriter->writeAttribute('__identifier', $this->persistenceManager->getIdentifierByObject($asset));
+
+		$this->xmlWriter->startElement('properties');
+		if ($asset instanceof Image) {
+			$this->xmlWriter->writeElement('width', $asset->getWidth());
+			$this->xmlWriter->writeElement('height', $asset->getHeight());
+			$this->xmlWriter->writeElement('type', $asset->getType());
+		}
+
+		if ($asset->getCaption() !== '') {
+			$this->xmlWriter->writeElement('caption', $asset->getCaption());
+		}
+		if ($asset->getTitle() !== '') {
+			$this->xmlWriter->writeElement('title', $asset->getTitle());
+		}
+		$this->xmlWriter->endElement();
+
+		$resource = $asset->getResource();
+
+		$this->xmlWriter->startElement('resource');
+		$this->xmlWriter->writeAttribute('__type', 'object');
+		$this->xmlWriter->writeAttribute('__classname', 'TYPO3\Flow\Resource\Resource');
+		$this->xmlWriter->writeAttribute('__identifier', $this->persistenceManager->getIdentifierByObject($resource));
+		$this->xmlWriter->writeElement('filename', $resource->getFilename());
+
+		if ($this->resourcesPath === NULL) {
+			$this->xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
+		} else {
+			$hash = $resource->getResourcePointer()->getHash();
+			copy($resource->getUri(), Files::concatenatePaths(array($this->resourcesPath, $hash)));
+			$this->xmlWriter->writeElement('hash', $hash);
+		}
+
+		$this->xmlWriter->endElement();
+		$this->xmlWriter->endElement();
 	}
 
 	/**
