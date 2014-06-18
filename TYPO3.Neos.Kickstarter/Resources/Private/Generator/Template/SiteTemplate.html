@@ -4,10 +4,10 @@
 <html>
 <head>
 	<![CDATA[<f:section name="stylesheets">
-		<!-- put your stylesheet inclusions here, they will be included in your website by TypoScript -->
+		<!-- Put your stylesheet inclusions here, they will be included in your website by TypoScript -->
 	</f:section>
-	<f:section name="scripts">
-		<!-- put your scripts inclusions here, they will be included in your website by TypoScript -->
+	<f:section name="headScripts">
+		<!-- Put your scripts inclusions for the head here, they will be included in your website by TypoScript -->
 	</f:section>]]>
 </head>
 <body>
@@ -21,6 +21,9 @@
 	<div class="content">
 		{content.main -> f:format.raw()}
 	</div>
+</f:section>
+<f:section name="bodyScripts">
+	<!-- Put your scripts inclusions for the end of the body here, they will be included in your website by TypoScript -->
 </f:section>]]>
 </body>
 </html>
