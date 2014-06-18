@@ -263,7 +263,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 			'label' => $currentNode->getFullLabel()
 		);
 
-		$item['state'] = $this->calculateItemState($possibleFinalNode);
+		$item['state'] = $this->calculateItemState($currentNode);
 		if (!$this->isOnLastLevelOfMenu($currentNode)) {
 			$this->currentLevel++;
 			$item['subItems'] = $this->buildMenuLevelRecursive($currentNode->getChildNodes($this->getFilter()));
@@ -284,7 +284,7 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 			return self::STATE_CURRENT;
 		}
 
-		if (in_array($node, $this->getCurrentNodeRootline())) {
+		if ($node !== $this->currentNode->getContext()->getCurrentSiteNode() && in_array($node, $this->getCurrentNodeRootline())) {
 			return self::STATE_ACTIVE;
 		}
 
