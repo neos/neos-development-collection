@@ -23,10 +23,10 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 class SchemaController extends ActionController {
 
 	/**
-	 * @var \TYPO3\Neos\Service\NodeTypeSchemaBuilder
+	 * @var \TYPO3\Neos\Service\VieSchemaBuilder
 	 * @Flow\Inject
 	 */
-	protected $schemaBuilder;
+	protected $vieSchemaBuilder;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
@@ -43,7 +43,7 @@ class SchemaController extends ActionController {
 	public function vieSchemaAction() {
 		$this->response->setHeader('Content-Type', 'application/json');
 
-		return json_encode($this->schemaBuilder->generateVieSchema());
+		return json_encode($this->vieSchemaBuilder->generateVieSchema());
 	}
 
 	/**

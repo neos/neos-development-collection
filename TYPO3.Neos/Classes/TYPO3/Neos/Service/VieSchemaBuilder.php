@@ -22,7 +22,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
  *
  * @Flow\Scope("singleton")
  */
-class NodeTypeSchemaBuilder {
+class VieSchemaBuilder {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager

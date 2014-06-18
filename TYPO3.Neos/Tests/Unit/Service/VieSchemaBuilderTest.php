@@ -15,15 +15,15 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the NodeTypeSchemaBuilder
+ * Testcase for the VieSchemaBuilder
  *
  */
-class NodeTypeSchemaBuilderTest extends UnitTestCase {
+class VieSchemaBuilderTest extends UnitTestCase {
 
 	/**
-	 * @var \TYPO3\Neos\Service\NodeTypeSchemaBuilder
+	 * @var \TYPO3\Neos\Service\VieSchemaBuilder
 	 */
-	protected $nodeTypeSchemaBuilder;
+	protected $vieSchemaBuilder;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
@@ -99,7 +99,7 @@ class NodeTypeSchemaBuilderTest extends UnitTestCase {
 	);
 
 	public function setUp() {
-		$this->nodeTypeSchemaBuilder = $this->getAccessibleMock('TYPO3\Neos\Service\NodeTypeSchemaBuilder', array('dummy'));
+		$this->vieSchemaBuilder = $this->getAccessibleMock('TYPO3\Neos\Service\VieSchemaBuilder', array('dummy'));
 
 		$mockConfigurationManager = $this->getMock('TYPO3\Flow\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
@@ -107,7 +107,7 @@ class NodeTypeSchemaBuilderTest extends UnitTestCase {
 		$this->nodeTypeManager = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array('dummy'));
 		$this->nodeTypeManager->_set('configurationManager', $mockConfigurationManager);
 
-		$this->nodeTypeSchemaBuilder->_set('nodeTypeManager', $this->nodeTypeManager);
+		$this->vieSchemaBuilder->_set('nodeTypeManager', $this->nodeTypeManager);
 	}
 
 	/**
@@ -115,35 +115,35 @@ class NodeTypeSchemaBuilderTest extends UnitTestCase {
 	 */
 	public function generateVieSchemaReturnsCachedConfigurationIfAvailable() {
 		$testConfig = array('foo' => 'bar');
-		$this->nodeTypeSchemaBuilder->_set('configuration', $testConfig);
-		$this->assertEquals($testConfig, $this->nodeTypeSchemaBuilder->generateVieSchema());
+		$this->vieSchemaBuilder->_set('configuration', $testConfig);
+		$this->assertEquals($testConfig, $this->vieSchemaBuilder->generateVieSchema());
 	}
 
 	/**
 	 * @test
 	 */
 	public function readNodeTypeConfigurationFillsTypeAndPropertyConfiguration() {
-		$this->assertEquals($this->nodeTypeSchemaBuilder->_get('superTypeConfiguration'), array());
-		$this->assertEquals($this->nodeTypeSchemaBuilder->_get('types'), array());
-		$this->assertEquals($this->nodeTypeSchemaBuilder->_get('properties'), array());
+		$this->assertEquals($this->vieSchemaBuilder->_get('superTypeConfiguration'), array());
+		$this->assertEquals($this->vieSchemaBuilder->_get('types'), array());
+		$this->assertEquals($this->vieSchemaBuilder->_get('properties'), array());
 
-		$this->nodeTypeSchemaBuilder->_call('readNodeTypeConfiguration', 'TYPO3.Neos:TextWithImage', $this->nodeTypeManager->getNodeType('TYPO3.Neos:TextWithImage'));
+		$this->vieSchemaBuilder->_call('readNodeTypeConfiguration', 'TYPO3.Neos:TextWithImage', $this->nodeTypeManager->getNodeType('TYPO3.Neos:TextWithImage'));
 
 		$this->assertEquals(
 			array(
 				'typo3:TYPO3.Neos:TextWithImage' => array('typo3:TYPO3.Neos:Text')
 			),
-			$this->nodeTypeSchemaBuilder->_get('superTypeConfiguration')
+			$this->vieSchemaBuilder->_get('superTypeConfiguration')
 		);
-		$this->arrayHasKey('typo3:TYPO3.Neos:TextWithImage', $this->nodeTypeSchemaBuilder->_get('types'));
-		$this->assertEquals(4, count($this->nodeTypeSchemaBuilder->_get('properties')));
+		$this->arrayHasKey('typo3:TYPO3.Neos:TextWithImage', $this->vieSchemaBuilder->_get('types'));
+		$this->assertEquals(4, count($this->vieSchemaBuilder->_get('properties')));
 	}
 
 	/**
 	 * @test
 	 */
 	public function generatedVieSchemaMatchesExpectedOutput() {
-		$schema = $this->nodeTypeSchemaBuilder->generateVieSchema();
+		$schema = $this->vieSchemaBuilder->generateVieSchema();
 		$fixtureSchema = file_get_contents(__DIR__ . '/Fixtures/VieSchema.json');
 		$this->assertEquals(json_decode($fixtureSchema), json_decode(json_encode($schema)));
 	}
