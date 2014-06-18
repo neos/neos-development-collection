@@ -134,7 +134,7 @@ To execute the update scripts method you'll need:
 
 
 Font Awesome v3.0
-http://fortawesome.github.com/Font-Awesome/
+http://fortawesome.github.io/Font-Awesome/3.2.1/
 
 * Changed $fontAwesomePath in sass/font-awesome.scss
 * Wrapped everything in .neos sass/font-awesome.scss

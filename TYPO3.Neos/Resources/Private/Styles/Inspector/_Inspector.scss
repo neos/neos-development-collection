@@ -6,7 +6,7 @@
 	width: $unit + 1;
 	height: $unit + 2;
 	border: 1px solid $grayLight;
-	background-color: $grayDark;
+	background-color: $grayDarker;
 	background-image: none;
 	@include text-shadow(none);
 	@include box-shadow(none);
@@ -77,11 +77,54 @@
 		top: 0;
 		width: 100%;
 		height: $unit + 1px;
-		border-bottom: 1px solid $grayLight;
-		line-height: $unit;
-		padding-left: $defaultMargin;
 		@include box-sizing(border-box);
+		border-bottom: 1px solid $grayLight;
+		background: $grayDarker;
+		line-height: $unit;
 		z-index: 10015;
+		overflow: hidden;
+	}
+
+	.neos-inspector-tabs {
+		clear: both;
+
+		> button {
+			position: relative;
+			display: inline-block;
+			float: left;
+			background: none;
+			border-right: 1px solid $grayLight;
+			color: $textSubtleLight;
+			cursor: pointer;
+
+			i {
+				font-size: 16px;
+				line-height: 16px;
+			}
+
+			&.is-active {
+				background-color: $grayDark;
+				color: $blue;
+
+				&:after {
+					display: block;
+					position: absolute;
+					top: $unit;
+					left: 0;
+					width: 100%;
+					border-bottom: 1px solid $grayDark;
+					content: '';
+				}
+			}
+		}
+	}
+
+	.neos-inspector-tab-content {
+		display: none;
+
+		&.is-visible {
+			display: block;
+		}
 	}
 
 	.neos-inspector-form {

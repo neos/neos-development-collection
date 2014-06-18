@@ -1,28 +1,41 @@
-<div class="neos-toolbar">Inspector</div>
+<div class="neos-toolbar">
+	<div class="neos-inspector-tabs">
+		{{#each tab in groupedPropertyViews}}
+			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active" title="tab.label"}}>
+				<i {{bindAttr class="tab.icon"}}></i>
+			</button>
+		{{/each}}
+	</div>
+</div>
 <div class="neos-inspector-form">
 	<div class="neos-inspector-field">
 		<label for="neos-content-breadcrumb">Selected element</label>
 		{{view view.Breadcrumb}}
 	</div>
-	{{#each groupedPropertyViews}}
-		{{#view view.Section classNames="neos-inspector-section" groupBinding="group" propertiesBinding="properties" inspectorBinding="controller"}}
-			<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
-				<span>{{unbound label}}</span>
-				{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
-				<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}}></div>
-			</div>
-			{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="properties"}}
-				{{#if isBoolean}}
-					<label for="{{unbound elementId}}" class="neos-checkbox">
-						{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
-						{{unbound ui.label}}
-					</label>
-				{{else}}
-					<label for="{{unbound elementId}}">{{unbound ui.label}}</label>
-					{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
-				{{/if}}
-			{{/collection}}
-		{{/view}}
+
+	{{#each tab in groupedPropertyViews}}
+		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
+			{{#each group in tab.groups}}
+				{{#view view.Section classNames="neos-inspector-section" groupBinding="group.group" propertiesBinding="group.properties" inspectorBinding="controller"}}
+					<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
+						<span>{{unbound group.label}}</span>
+						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
+						<div {{bindAttr class=":neos-inspector-collapse view._collapsed:neos-collapsed:neos-open"}} {{action "toggleCollapsed" target="view"}}></div>
+					</div>
+					{{#collection tagName="div" classNames="neos-inspector-field" contentBinding="group.properties"}}
+						{{#if isBoolean}}
+							<label for="{{unbound elementId}}" class="neos-checkbox">
+								{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
+								{{unbound ui.label}}
+							</label>
+						{{else}}
+							<label for="{{unbound elementId}}">{{unbound ui.label}}</label>
+							{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
+						{{/if}}
+					{{/collection}}
+				{{/view}}
+			{{/each}}
+		</div>
 	{{/each}}
 </div>
 {{#if _enableTransactionalInspector}}

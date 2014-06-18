@@ -133,7 +133,7 @@ The following options are allowed:
     This setting define the icon to use in the Neos UI for the node type
 
     Currently it's only possible to use a predefined selection of icons, which
-    are available in Font Awesome http://fortawesome.github.io/Font-Awesome/icons/.
+    are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
 
   ``inlineEditable``
     If TRUE, it is possible to interact with this Node directly in the content view.
@@ -143,14 +143,32 @@ The following options are allowed:
   ``inspector``
     These settings configure the inspector in the Neos UI for the node type
 
-    ``groups``
-      Defines an inspector group that can be used to group properties of the node later.
+    ``tabs``
+      Defines an inspector tab that can be used to group property groups of the node type
 
       ``label``
-        The human-readable label for this Inspector Group.
+        The human-readable label for this inspector tab
+
+      ``position``
+        Position of the inspector tab, small numbers are sorted on top
+
+      ``icon``
+        This setting define the icon to use in the Neos UI for the tab
+
+        Currently it's only possible to use a predefined selection of icons, which
+        are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
+
+    ``groups``
+      Defines an inspector group that can be used to group properties of the node type
+
+      ``label``
+        The human-readable label for this inspector group
 
       ``position``
         Position of the inspector group, small numbers are sorted on top
+
+      ``tab``
+        The tab the group belongs to. If left empty the group is added to the ``default`` tab.
 
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.

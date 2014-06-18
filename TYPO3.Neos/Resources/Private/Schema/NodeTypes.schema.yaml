@@ -110,6 +110,21 @@ additionalProperties:
           additionalProperties: FALSE
           properties:
 
+            'tabs':
+              type: dictionary
+              additionalProperties:
+
+                # for each inspector tab:
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+
+                  'label': { type: string, description: "Human-readable label for this Inspector Tab." }
+
+                  'icon': { type: string, description: "CSS Class for displaying an icon for each tab." }
+
+                  'position': { type: integer, description: 'Position of the inspector tab, small numbers are sorted on left' }
+
             'groups':
               type: dictionary
               additionalProperties:
@@ -120,6 +135,8 @@ additionalProperties:
                 properties:
 
                   'label': { type: string, description: "Human-readable label for this Inspector Group." }
+
+                  'tab': { type: string, description: "Reference to a tab identifier." }
 
                   'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 

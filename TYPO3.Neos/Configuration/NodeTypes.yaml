@@ -4,6 +4,17 @@
   properties:
     _removed:
       type: boolean
+  ui:
+    inspector:
+      tabs:
+        default:
+          label: 'General'
+          position: 10
+          icon: 'icon-pencil'
+        meta:
+          label: 'Metadata'
+          position: 20
+          icon: 'icon-cog'
 
 # Hidable Mixin
 'TYPO3.Neos:Hidable':
@@ -14,6 +25,7 @@
         visibility:
           label: 'Visibility'
           position: 100
+          tab: meta
   properties:
     _hidden:
       type: boolean
@@ -32,6 +44,7 @@
         visibility:
           label: 'Visibility'
           position: 100
+          tab: meta
   properties:
     _hiddenBeforeDateTime:
       type: date
@@ -82,6 +95,7 @@
         type:
           label: 'Change type'
           position: 1000
+          tab: meta
   properties:
     _nodeType:
       type: string
@@ -238,6 +252,7 @@
         type:
           label: 'Change type'
           position: 100
+          tab: meta
   properties:
     _nodeType:
       type: string

@@ -23,6 +23,18 @@ define(
 	ContentModule,
 	LoadingIndicator
 ) {
+
+	/**
+	 * Is used for the first level nesting in the inspector
+	 */
+	var InspectorTab = Ember.Object.extend({
+		_inspectorController: Ember.required,
+		tab: Ember.required,
+		isActive: function() {
+			return this.get('_inspectorController.activeTab') === this.get('tab');
+		}.property('_inspectorController.activeTab')
+	});
+
 	/**
 	 * The Inspector is displayed on the right side of the page.
 	 *
@@ -47,11 +59,18 @@ define(
 		selectedNode: null,
 		cleanProperties: null,
 
+		activeTab: 'default',
+
 		init: function() {
 			if (LocalStorage.getItem('inspectorMode') !== false) {
 				this.set('inspectorMode', true);
 			}
 			this.set('configuration', LocalStorage.getItem('inspectorConfiguration') || {});
+
+			var activeTab = LocalStorage.getItem('activeInspectorTab');
+			if (activeTab) {
+				this.set('activeTab', activeTab);
+			}
 		},
 
 		onConfigurationChanged: function() {
@@ -67,62 +86,158 @@ define(
 			LocalStorage.setItem('inspectorMode', state);
 		},
 
+		toggleCurrentInspectorTab: function(tab) {
+			this.set('activeTab', tab.get('tab'));
+			LocalStorage.setItem('activeInspectorTab', tab.get('tab'));
+		},
+
 		/**
-		 * This is a computed property which builds up a nested array powering the
-		 * Inspector. It essentially contains two levels: On the first level,
-		 * the groups are displayed, while on the second level, the properties
+		 * This is a computed property which builds up a nested array powering the Inspector.
+		 * It essentially contains three levels: On the first level, the tabs are configured,
+		 * on the second level the groups are displayed, while on the third level, the properties
 		 * belonging to each group are displayed.
 		 *
 		 * Thus, the output looks possibly as follows:
-		 * - Visibility
-		 *   - _hidden (boolean)
-		 *   - _starttime (date)
-		 * - Image Settings
-		 *   - image (file upload)
+		 * - Default
+		 *    - Visibility
+		 *       - _hidden (boolean)
+		 *       - _starttime (date)
+		 *    - Image Settings
+		 *    - image (file upload)
 		 */
 		groupedPropertyViews: function() {
-			var selectedNodeSchema = NodeSelection.get('selectedNodeSchema');
+			var selectedNodeSchema,
+				propertiesArray,
+				sortedPropertiesArray,
+				groupsObject,
+				tabsObject,
+				sortedGroupsArray,
+				sortedTabsArray;
+
+			selectedNodeSchema = NodeSelection.get('selectedNodeSchema');
 			if (!selectedNodeSchema || !selectedNodeSchema.properties) {
 				return [];
 			}
 
-			var inspectorGroups = Ember.get(selectedNodeSchema, 'ui.inspector.groups');
-			if (!inspectorGroups) {
-				return [];
+			// properties
+			propertiesArray = [];
+			for (var property in selectedNodeSchema.properties) {
+				if (selectedNodeSchema.properties.hasOwnProperty(property)) {
+					var isBoolean = selectedNodeSchema.properties[property].type === 'boolean';
+					propertiesArray.push($.extend({
+						key: property,
+						elementId: Ember.generateGuid(),
+						isBoolean: isBoolean
+					}, selectedNodeSchema.properties[property]));
+				}
+			}
+			sortedPropertiesArray = propertiesArray.sort(function(a, b) {
+				return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
+			});
+
+			// groups
+			groupsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.groups'));
+
+			// tabs
+			tabsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.tabs'));
+
+			// build nested structure
+			sortedGroupsArray = this._assignPropertiesToGroups(sortedPropertiesArray, groupsObject);
+			sortedTabsArray = this._assignGroupsToTabs(sortedGroupsArray, tabsObject);
+
+			return sortedTabsArray;
+		}.property('nodeSelection.selectedNodeSchema'),
+
+		_assignPropertiesToGroups: function(sortedPropertiesArray, groupsObject) {
+			var groupsArray;
+
+			// 1. assign properties to groups
+			sortedPropertiesArray.forEach(function(property) {
+				var groupIdentifier = Ember.get(property, 'ui.inspector.group');
+				if (groupIdentifier in groupsObject) {
+					if (groupsObject.hasOwnProperty(groupIdentifier)) {
+						if (!groupsObject[groupIdentifier].properties) {
+							groupsObject[groupIdentifier].properties = [];
+						}
+						groupsObject[groupIdentifier].properties.push(property);
+					}
+				}
+			});
+
+			// 2. transform object into array
+			groupsArray = [];
+			for (var groupIdentifier in groupsObject) {
+				if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier].properties && groupsObject[groupIdentifier].properties.length) {
+					groupsArray.push($.extend({group: groupIdentifier}, groupsObject[groupIdentifier]));
+				}
 			}
 
-			var groupedPropertyViews = [],
-				nodeProperties = this.get('nodeProperties');
+			// 3. sort
+			groupsArray.sort(function(a, b) {
+				return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
+			});
 
-			$.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
-				var properties = [];
-				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-					if (propertyName in nodeProperties) {
-						if (Ember.get(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
-							properties.push($.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
+			return groupsArray;
+		},
+
+		_assignGroupsToTabs: function(sortedGroupsArray, tabsObject) {
+			var tabsArray;
+
+			// 1. assign groups to tabs
+			sortedGroupsArray.forEach(function(group) {
+				var tabIdentifier = Ember.get(group, 'tab');
+				// if a group is not assigned to a tab it is placed inside the 'default' group
+				if (!tabIdentifier) {
+					tabIdentifier = 'default';
+				}
+				if (tabIdentifier in tabsObject) {
+					if (tabsObject.hasOwnProperty(tabIdentifier)) {
+						if (!tabsObject[tabIdentifier].groups) {
+							tabsObject[tabIdentifier].groups = [];
 						}
+						tabsObject[tabIdentifier].groups.push(group);
 					}
-				});
+				} else {
+					console.warn('The tab ' + tabIdentifier + ' does not exist!');
+				}
+			});
 
-				if (properties.length <= 0) {
+			// 2. transform object into array
+			tabsArray = [];
+			for (var tabIdentifier in tabsObject) {
+				if (tabsObject.hasOwnProperty(tabIdentifier) && tabsObject[tabIdentifier].groups && tabsObject[tabIdentifier].groups.length) {
+					var inspectorTab = InspectorTab.create($.extend({tab: tabIdentifier, _inspectorController: this}, tabsObject[tabIdentifier]));
+					tabsArray.push(inspectorTab);
+				}
+			}
+
+			// 3. sort
+			tabsArray.sort(function(a, b) {
+				return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
+			});
+
+			return tabsArray;
+		},
+
+		_ensureTabSelection: function() {
+			var groupedPropertyViews = this.get('groupedPropertyViews');
+			if (this.get('preferredTab')) {
+				var preferredTab = groupedPropertyViews.findBy('tab', this.get('preferredTab'));
+				if (preferredTab) {
+					this.set('activeTab', preferredTab.get('tab'));
+					this.set('preferredTab', null);
 					return;
 				}
-
-				properties.sort(function(a, b) {
-					return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
-				});
-
-				groupedPropertyViews.push($.extend({}, propertyGroupConfiguration, {
-					properties: properties,
-					group: groupIdentifier
-				}));
-			});
-			groupedPropertyViews.sort(function(a, b) {
-				return (a.position || 9999) - (b.position || 9999);
-			});
-
-			return groupedPropertyViews;
-		}.property('nodeSelection.selectedNodeSchema'),
+			}
+			var activeTabExists = groupedPropertyViews.findBy('tab', this.get('activeTab'));
+			if (!activeTabExists) {
+				this.set('preferredTab', this.get('activeTab'));
+				var firstTab = groupedPropertyViews.objectAt(0);
+				if (firstTab) {
+					this.set('activeTab', firstTab.get('tab'));
+				}
+			}
+		}.observes('nodeSelection.selectedNodeSchema'),
 
 		/**
 		 * If "true", we show "save" and "cancel" and behave as if the user edited
