@@ -411,10 +411,14 @@ function(
 							return;
 						}
 
-						var currentContentDimensions = $currentPageMetaData.attr('about').substr($currentPageMetaData.attr('about').lastIndexOf(';') + 1),
-							newContentDimensions = $pageMetadata.attr('about').substr($pageMetadata.attr('about').lastIndexOf(';') + 1);
-						if (currentContentDimensions !== newContentDimensions) {
-							EventDispatcher.trigger('contentDimensionsChanged');
+						var currentNodePath = $currentPageMetaData.attr('about');
+						if (currentNodePath.indexOf(';') !== -1) {
+							var newNodePath = $pageMetadata.attr('about'),
+								currentContentDimensions = currentNodePath.substr(currentNodePath.lastIndexOf(';') + 1),
+								newContentDimensions = newNodePath.substr(newNodePath.lastIndexOf(';') + 1);
+							if (currentContentDimensions !== newContentDimensions) {
+								EventDispatcher.trigger('contentDimensionsChanged');
+							}
 						}
 
 						pushUriToHistory();
