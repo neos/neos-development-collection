@@ -1,0 +1,16 @@
+<f:if condition="{records}">
+	<f:then>
+		<div{attributes -> f:format.raw()}>
+			{records -> f:format.raw()}
+		</div>
+	</f:then>
+	<f:else>
+		<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+			<f:if condition="{node.context.workspace.name} != 'live'">
+				<div{attributes -> f:format.raw()}>
+					<p>No records selected</p>
+				</div>
+			</f:if>
+		</f:security.ifAccess>
+	</f:else>
+</f:if>

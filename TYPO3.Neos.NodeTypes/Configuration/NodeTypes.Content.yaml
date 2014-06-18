@@ -379,3 +379,25 @@
           group: 'resources'
         label: 'Assets'
         reloadIfChanged: TRUE
+
+'TYPO3.Neos.NodeTypes:Records':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Insert records'
+    icon: 'icon-copy'
+    position: 800
+    inspector:
+      groups:
+        records:
+          label: 'Records'
+          position: 10
+  properties:
+    records:
+      type: 'references'
+      ui:
+        inspector:
+          group: 'records'
+          editorOptions:
+            nodeTypes: ['TYPO3.Neos:Content']
+        label: 'Select'
+        reloadIfChanged: TRUE
