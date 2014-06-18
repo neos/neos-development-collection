@@ -1254,6 +1254,26 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
+	 * Find out if the given path exists anywhere in the CR. (internal)
+	 * If you need this functionality use \TYPO3\TYPO3CR\Domain\Service\NodeService::nodePathExistsInAnyContext()
+	 *
+	 * @param string $nodePath
+	 * @return boolean
+	 */
+	public function pathExists($nodePath) {
+		// TODO: We need to make sure that this is not affected by entity contraints.
+
+		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+		$queryBuilder = $this->entityManager->createQueryBuilder();
+
+		$queryBuilder->select('n.identifier')
+			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+			->where('n.pathHash = :pathHash')
+			->setParameter('pathHash', md5($nodePath));
+		return (count($queryBuilder->getQuery()->getResult()) > 0 ? TRUE : FALSE);
+	}
+
+	/**
 	 * Remove all nodes below a given path. Does not care about workspaces and dimensions.
 	 *
 	 * @param string $path Starting point path underneath all nodes are to be removed.
