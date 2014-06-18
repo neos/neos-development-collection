@@ -103,6 +103,8 @@ additionalProperties:
 
         'group': { type: string, description: "Name of the group this content element is grouped into for the 'New Content Element' dialog." }
 
+        'position': { type: integer, description: 'Position of the node type in the insert new panels' }
+
         'inspector':
           type: dictionary
           additionalProperties: FALSE

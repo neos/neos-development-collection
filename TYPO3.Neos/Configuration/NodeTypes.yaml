@@ -137,6 +137,7 @@
   ui:
     label: 'Shortcut'
     icon: 'icon-share'
+    position: 200
     inspector:
       groups:
         document:
@@ -187,6 +188,7 @@
   ui:
     label: 'Plugin View'
     group: 'plugins'
+    position: 100
     inspector:
       groups:
         pluginViews:

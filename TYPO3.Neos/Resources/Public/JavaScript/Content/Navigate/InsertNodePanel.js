@@ -48,12 +48,16 @@ define(
 					groupedNodeTypes[groupName].children.push({
 						'nodeType': nodeTypeName,
 						'label': nodeType.ui.label,
-						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file'
+						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file',
+						'position': nodeType.ui.position
 					});
 				});
 
 				Configuration.get('nodeTypes.groups').forEach(function(group) {
 					if (groupedNodeTypes[group.name]) {
+						groupedNodeTypes[group.name].children.sort(function(a, b) {
+							return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
+						});
 						groupedNodeTypes[group.name].label = group.label;
 						nodeTypeGroups.push(groupedNodeTypes[group.name]);
 					}

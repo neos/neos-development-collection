@@ -65,6 +65,9 @@ function(
 			var data = [];
 			Configuration.get('nodeTypes.groups').forEach(function(group) {
 				if (groups[group.name]) {
+					groups[group.name].children.sort(function(a, b) {
+						return (Ember.get(a, 'ui.position') || 9999) - (Ember.get(b, 'ui.position') || 9999);
+					});
 					groups[group.name].label = group.label;
 					data.push(groups[group.name]);
 				}
