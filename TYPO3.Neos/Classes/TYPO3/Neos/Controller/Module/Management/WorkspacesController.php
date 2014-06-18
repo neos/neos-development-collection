@@ -38,12 +38,6 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
-	 */
-	protected $nodeDataRepository;
-
-	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
@@ -174,7 +168,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 */
 	public function discardNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
-		$this->nodeDataRepository->remove($node);
+		$this->publishingService->discardNode($node);
 		$this->addFlashMessage('Node has been discarded', 'Node discarded');
 		$this->redirect('index');
 	}
@@ -199,10 +193,7 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 				$message = 'Selected changes have been published';
 			break;
 			case 'discard':
-				foreach ($nodes as $node) {
-					// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
-					$this->nodeDataRepository->remove($node);
-				}
+				$this->publishingService->discardNodes($nodes);
 				$message = 'Selected changes have been discarded';
 			break;
 			default:
@@ -229,12 +220,8 @@ class WorkspacesController extends \TYPO3\Neos\Controller\Module\AbstractModuleC
 	 * @return void
 	 */
 	public function discardWorkspaceAction(Workspace $workspace) {
-		foreach ($this->publishingService->getUnpublishedNodes($workspace) as $node) {
-			if ($node->getPath() !== '/') {
-				// Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
-				$this->nodeDataRepository->remove($node);
-			}
-		}
+		$unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
+		$this->publishingService->discardNodes($unpublishedNodes);
 		$this->addFlashMessage('Changes in workspace "%s" have been discarded', 'Changes discarded', Message::SEVERITY_OK, array($workspace->getName()));
 		$this->redirect('index');
 	}
