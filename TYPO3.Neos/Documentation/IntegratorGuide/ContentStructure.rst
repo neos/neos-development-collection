@@ -175,7 +175,11 @@ The following options are allowed:
             'removeFormat': TRUE
           'link':
             'a': TRUE
-
+          'alignment':
+            'left': TRUE
+            'center': TRUE
+            'right': TRUE
+            'justify': FALSE
 
 
     ``inspector``
