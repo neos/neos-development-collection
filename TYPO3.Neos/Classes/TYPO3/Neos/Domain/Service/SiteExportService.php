@@ -47,6 +47,12 @@ class SiteExportService {
 	protected $xmlWriter;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Fetches the site with the given name and exports it into XML.
 	 *
 	 * @param array<Site> $sites
@@ -275,9 +281,13 @@ class SiteExportService {
 					$this->xmlWriter->startElement($propertyName);
 					$this->xmlWriter->writeAttribute('__type', 'object');
 					$this->xmlWriter->writeAttribute('__classname', get_class($propertyValue));
+					$objectIdentifier = $this->persistenceManager->getIdentifierByObject($propertyValue);
+					if ($objectIdentifier !== NULL) {
+						$this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
+					}
 					$this->objectToXml($propertyValue);
 					$this->xmlWriter->endElement();
-				} elseif (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
+				} elseif (is_string($propertyValue) && (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE)) {
 					$this->xmlWriter->startElement($propertyName);
 					if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
 						$this->xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
@@ -329,11 +339,19 @@ class SiteExportService {
 		$this->xmlWriter->startElement('originalImage');
 		$this->xmlWriter->writeAttribute('__type', 'object');
 		$this->xmlWriter->writeAttribute('__classname', 'TYPO3\Media\Domain\Model\Image');
+		$objectIdentifier = $this->persistenceManager->getIdentifierByObject($imageVariant->getOriginalImage());
+		if ($objectIdentifier !== NULL) {
+			$this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
+		}
 
 		$this->xmlWriter->startElement('resource');
 		$this->xmlWriter->writeAttribute('__type', 'object');
 		$this->xmlWriter->writeAttribute('__classname', 'TYPO3\Flow\Resource\Resource');
 		$resource = $imageVariant->getOriginalImage()->getResource();
+		$objectIdentifier = $this->persistenceManager->getIdentifierByObject($resource);
+		if ($objectIdentifier !== NULL) {
+			$this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
+		}
 		$this->xmlWriter->writeElement('filename', $resource->getFilename());
 		if ($this->resourcesPath === NULL) {
 			$this->xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
