@@ -101,6 +101,9 @@ define(
 				this._super();
 				this.set('loadingDepth', Configuration.get('UserInterface.navigateComponent.nodeTree.loadingDepth'));
 
+				this.on('afterPageLoaded', function () {
+					this._initializePropertyObservers($('#neos-page-metainformation'));
+				});
 				var that = this;
 				EventDispatcher.on('nodesInvalidated', function() {
 					that.refresh();
