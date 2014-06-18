@@ -95,3 +95,5 @@ prototype(TYPO3.Neos.NodeTypes:Form) {
 		}
 	}
 }
+
+prototype(TYPO3.Neos.NodeTypes:AssetList).@class = 'TYPO3\\Neos\\NodeTypes\\TypoScriptObjects\\AssetListImplementation'
