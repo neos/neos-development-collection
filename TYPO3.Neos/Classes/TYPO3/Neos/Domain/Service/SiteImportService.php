@@ -23,6 +23,7 @@ use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Repository\ImageRepository;
+use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Neos\Domain\Exception as DomainException;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -68,6 +69,12 @@ class SiteImportService {
 	 * @var ImageRepository
 	 */
 	protected $imageRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var AssetRepository
+	 */
+	protected $assetRepository;
 
 	/**
 	 * @Flow\Inject
@@ -347,6 +354,82 @@ class SiteImportService {
 					}
 				}
 				$node->setProperty($nodePropertyXml->getName(), $referencedNodeIdentifiers);
+				break;
+			case 'array':
+				$entries = array();
+				foreach ($nodePropertyXml->children() as $childNodeXml) {
+					$entry = NULL;
+
+					if (!isset($childNodeXml['__classname']) || !in_array($childNodeXml['__classname'], array('TYPO3\Media\Domain\Model\Image', 'TYPO3\Media\Domain\Model\Asset'))) {
+						// Only arrays of asset objects are supported now
+						continue;
+					}
+
+					$entryClassName = (string)$childNodeXml['__classname'];
+					if (isset($childNodeXml['__identifier'])) {
+						if ($entryClassName === 'TYPO3\Media\Domain\Model\Image') {
+							$entry = $this->imageRepository->findByIdentifier((string)$childNodeXml['__identifier']);
+						} else {
+							$entry = $this->assetRepository->findByIdentifier((string)$childNodeXml['__identifier']);
+						}
+					}
+
+					if ($entry === NULL) {
+						$resourceXml = $childNodeXml->xpath('resource');
+						$resourceHash = $resourceXml[0]->xpath('hash');
+						$content = $resourceXml[0]->xpath('content');
+						$filename = $resourceXml[0]->xpath('filename');
+
+						$resource = $this->importResource(
+							!empty($resourceHash) ? (string)$resourceHash[0] : NULL,
+							!empty($content) ? (string)$content[0] : NULL,
+							!empty($filename) ? (string)$filename[0] : NULL,
+							isset($resourceXml[0]['__identifier']) ? (string)$resourceXml[0]['__identifier'] : NULL
+						);
+
+						$entry = new $entryClassName($resource);
+
+						if (isset($childNodeXml['__identifier'])) {
+							ObjectAccess::setProperty($entry, 'Persistence_Object_Identifier', (string)$childNodeXml['__identifier'], TRUE);
+						}
+					}
+
+					$propertiesXml = $childNodeXml->xpath('properties/*');
+					foreach ($propertiesXml as $propertyXml) {
+						if (!isset($propertyXml['__type'])) {
+							ObjectAccess::setProperty($entry, $propertyXml->getName(), (string)$propertyXml);
+							continue;
+						}
+
+						switch ($propertyXml['__type']) {
+							case 'boolean':
+								ObjectAccess::setProperty($entry, $propertyXml->getName(), (boolean)$propertyXml);
+								break;
+							case 'string':
+								ObjectAccess::setProperty($entry, $propertyXml->getName(), (string)$propertyXml);
+								break;
+							case 'object':
+								ObjectAccess::setProperty($entry, $propertyXml->getName(), $this->xmlToObject($propertyXml));
+						}
+					}
+
+					/**
+					 * During the persist Doctrine calls the serialize() method on the asset for the ObjectArray
+					 * object, during this serialize the resource property gets lost.
+					 * The AssetList node type has a custom implementation to work around this bug.
+					 * @see NEOS-121
+					 */
+					$repositoryAction = $this->persistenceManager->isNewObject($entry) ? 'add' : 'update';
+					if ($entry instanceof Image) {
+						$this->imageRepository->$repositoryAction($entry);
+					} else {
+						$this->assetRepository->$repositoryAction($entry);
+					}
+
+					$entries[] = $entry;
+				}
+
+				$node->setProperty($nodePropertyXml->getName(), $entries);
 				break;
 			case 'object':
 				$node->setProperty($nodePropertyXml->getName(), $this->xmlToObject($nodePropertyXml));
