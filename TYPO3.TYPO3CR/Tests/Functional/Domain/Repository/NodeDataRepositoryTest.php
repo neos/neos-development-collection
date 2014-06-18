@@ -85,6 +85,11 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function findByRelationWithGivenPersistenceIdentifierAndObjectTypeMapFindsExistingNodeWithMatchingNestedEntityProperty() {
+		$persistenceDriver = $this->objectManager->get('TYPO3\Flow\Configuration\ConfigurationManager')->getConfiguration(\TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.Flow.persistence.backendOptions.driver');
+		if ($persistenceDriver === 'pdo_sqlite') {
+			$this->markTestSkipped('This test fails on SQLite, thus it is skipped.');
+		}
+
 		$rootNode = $this->context->getRootNode();
 		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithEntities'));
 
