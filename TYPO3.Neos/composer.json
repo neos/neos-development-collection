@@ -8,8 +8,8 @@
         "typo3/media": "1.1.*",
         "typo3/setup": "1.0.*",
         "typo3/twitter-bootstrap": "*",
-        "typo3/typo3cr": "1.1.0-beta3",
-        "typo3/typoscript": "1.1.0-beta3"
+        "typo3/typo3cr": "1.1.*",
+        "typo3/typoscript": "1.1.*"
     },
     "suggest": {
         "typo3/neos-kickstarter": "Helps with creating new packages for TYPO3 Neos."
