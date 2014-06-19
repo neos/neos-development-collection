@@ -103,6 +103,13 @@
                 label: 'Fifth Level Of Website'
               '6':
                 label: 'Sixth Level Of Website'
+    selection:
+      type: 'references'
+      ui:
+        reloadIfChanged: TRUE
+        label: 'Selection'
+        inspector:
+          group: 'options'
     maximumLevels:
       type: string
       defaultValue: '1'
