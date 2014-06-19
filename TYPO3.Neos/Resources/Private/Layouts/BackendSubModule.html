@@ -1,0 +1,25 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+<div class="neos-content neos-container-fluid">
+	<f:render section="subtitle" optional="1" />
+
+	<div class="neos-module-container">
+		<f:render partial="Module/FlashMessages" />
+	</div>
+
+	<f:form.validationResults>
+		<f:if condition="{validationResults.flattenedErrors}">
+			<div class="neos-row neos-module-container neos-indented">
+				<div class="neos-alert neos-alert-error">
+					<p><strong>The following errors occurred</strong></p>
+					<ul class="neos-error">
+						<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
+							<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
+						</f:for>
+					</ul>
+				</div>
+			</div>
+		</f:if>
+	</f:form.validationResults>
+
+	<f:render section="content" />
+</div>

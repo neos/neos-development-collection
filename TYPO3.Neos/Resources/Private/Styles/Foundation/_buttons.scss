@@ -1,0 +1,117 @@
+//
+// Buttons
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+// Core
+button,
+.neos-button {
+	display: inline-block;
+	padding: 0 $defaultMargin;
+	margin: 0;
+	@include font;
+	color: #fff;
+	font-size: $generalFontSize;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	width: auto;
+	height: $unit;
+	line-height: $unit;
+	background-color: $grayLight;
+	background-image: none;
+	border: none;
+	@include text-shadow(none);
+	@include box-shadow(none);
+	@include box-sizing(border-box);
+	@include transition(all 0 ease 0);
+
+	&.neos-button-small {
+		height: $defaultMargin + $relatedMargin;
+		line-height: $defaultMargin + $relatedMargin;
+		font-size: 12px;
+		padding: 0 $relatedMargin;
+	}
+
+	&:not([disabled]),
+	&:not(.neos-disabled) {
+		// Hover/focus state
+		&:hover,
+		&:active,
+		&.neos-active,
+		&.neos-pressed {
+			color: #fff;
+			background-color: $blue;
+			text-decoration: none;
+			outline: none;
+		}
+	}
+
+	// Focus state for keyboard and accessibility
+	&:focus {
+		@include tab-focus();
+		outline: none;
+	}
+
+	// Disabled state
+	&.neos-disabled,
+	&[disabled] {
+		cursor: not-allowed;
+		@include opacity(.65);
+	}
+
+	&[class^="icon-"],
+	&[class*=" icon-"] {
+		font-family: FontAwesome;
+	}
+
+	&.neos-button-primary {
+		background-color: $blue;
+	}
+
+	&.neos-button-success {
+		background-color: $green;
+
+		&:hover,
+		&:active {
+			background-color: $green;
+		}
+	}
+
+	&.neos-button-warning {
+		background-color: $orange;
+
+		&:hover,
+		&:active {
+			background-color: $orange;
+		}
+	}
+
+	&.neos-button-danger {
+		background-color: $warning;
+
+		&:hover,
+		&:active {
+			background-color: $warning;
+		}
+	}
+
+	i {
+		margin-top: 3px;
+	}
+}
+
+a.neos-button {
+	color: #fff;
+
+	&:hover {
+		color: #fff;
+	}
+
+	i {
+		display: inline-block !important;
+	}
+}

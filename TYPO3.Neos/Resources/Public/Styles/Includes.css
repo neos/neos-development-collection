@@ -1,0 +1,7 @@
+/**
+ * This file should be built using "r.js -o cssIn=Includes.css out=IncludesBuilt.css" in this directory.
+ */
+@import "Neos.css";
+@import "../Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css";
+@import "../Library/jcrop/css/jquery.Jcrop.css";
+@import "../Library/chosen/chosen/chosen.min.css";
