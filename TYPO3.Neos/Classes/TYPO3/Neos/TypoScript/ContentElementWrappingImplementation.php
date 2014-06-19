@@ -60,7 +60,7 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 		/** @var $node NodeInterface */
 		$node = $this->tsValue('node');
 		if (!$node instanceof NodeInterface) {
-			throw new Exception(sprintf('The "node" property did not resolve to a NodeInterface, %s given', gettype($node)), 1386601777);
+			return $content;
 		}
 
 		/** @var $contentContext ContentContext */
