@@ -31,7 +31,7 @@
 
 	> .neos-contentelement-overlay {
 		position: absolute;
-		display: none;
+		z-index: 10000;
 		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
 	}
 }
