@@ -5,7 +5,7 @@
 **The goals for the 1.1 version were performance and stability improvements while providing a proper base
 for localization support in the next version. The new content cache and other performance improvements will
 give Neos sites a huge speed boost, eliminating the need for a separate caching proxy for most installations.
-he content dimension concept is the foundation to work with different content variants and have a very flexible
+The content dimension concept is the foundation to work with different content variants and have a very flexible
 localization solution in Neos. The user interface to work with content dimensions and translations will be part
 of the next version.**
 
