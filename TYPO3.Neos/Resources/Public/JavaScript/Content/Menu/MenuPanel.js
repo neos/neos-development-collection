@@ -76,8 +76,10 @@ define(
 				}.property('description', 'label', 'shouldShowDescription')
 			}),
 
-			mouseLeave: function() {
-				if (this.get('controller.menuPanelStickyMode') === false) {
+			mouseLeave: function(event) {
+				// We do not want the panel to close if we move from the panel back to the button because this
+				// leads to a confusing behaviour of the user.
+				if (this.get('controller.menuPanelStickyMode') === false && event.relatedTarget !== $('#neos-menu-button').get(0)) {
 					this.set('controller.menuPanelMode', false);
 				}
 			},
