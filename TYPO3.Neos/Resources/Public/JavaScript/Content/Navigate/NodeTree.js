@@ -423,6 +423,7 @@ define(
 					} else {
 						title = newTitle;
 					}
+					title = title || 'unnamed';
 					// Hack for Chrome and Safari, otherwise two pages will be created, because .blur fires one request with two datasets
 					if (that.get('editNodeTitleMode') === true) {
 						that.set('editNodeTitleMode', false);
