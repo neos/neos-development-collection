@@ -164,7 +164,7 @@ class SitesController extends AbstractModuleController {
 	 * @Flow\Validate(argumentName="$packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
 	 * @return void
 	 */
-	public function createSiteAction($site, $packageKey, $siteName) {
+	public function createSiteAction($site, $packageKey = '', $siteName = '') {
 		if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
 			if ($this->packageManager->isPackageAvailable($packageKey)) {
 				$this->addFlashMessage('The package key "%s" already exists.', 'Invalid package key', Message::SEVERITY_ERROR, array($packageKey));
