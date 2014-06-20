@@ -227,9 +227,10 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 			var that = this;
 
 			this._super();
-
 			this.$().find('.neos-inspector-image-thumbnail').click(function() {
-				SecondaryInspectorController.toggle(that.get('_cropView'));
+				if (!that.get('_uploadPreviewShown')) {
+					SecondaryInspectorController.toggle(that.get('_cropView'));
+				}
 			});
 
 			this._readAndDeserializeValue();
