@@ -142,7 +142,10 @@ define(
 			var selectedNode = NodeSelection.get('selectedNode'),
 				cleanProperties = {},
 				enableTransactionalInspector = true;
+
+			SecondaryInspectorController.hide();
 			this.set('selectedNode', selectedNode);
+
 			if (selectedNode) {
 				cleanProperties = selectedNode.get('attributes');
 				if (selectedNode.get('_enableTransactionalInspector') === false) {
