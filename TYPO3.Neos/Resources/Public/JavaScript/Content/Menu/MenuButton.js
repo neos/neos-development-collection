@@ -19,35 +19,25 @@ define(
 				}
 			},
 
-			triggerAction: function() {
-				this.toggleProperty('controller.menuPanelMode');
-				if (this.get('controller.configuration.menuPanelStickyMode')) {
-					this.toggleProperty('controller.isMenuPanelStickyModeShown');
-				}
-			},
-
-			mouseEnter: function() {
+			mouseDown: function() {
 				this._super();
 
 				if (this.get('controller.menuPanelStickyMode') === false) {
-					this.set('controller.menuPanelMode', true);
+					this.toggleProperty('controller.menuPanelMode');
 				}
+
 			},
 
-			mouseLeave: function() {
+			touchStart: function(event) {
 				this._super();
 
-				var that = this;
-				if (this.get('controller.menuPanelStickyMode') === false) {
-						// Defer the check of the hover state as some browser will not update the hover status synchronously
-					setTimeout(function() {
-						// Check if one of the child elements have the hover state.
-						// This fix a opera problem with the :hover on the container only
-						if (that.get('controller.menuPanelMode') === true && $('#neos-menu-panel *:hover').length === 0) {
-							that.set('controller.menuPanelMode', false);
-						}
-					}, 0);
-				}
+				// On mobile devices we need to prevent ghost clicks, otherwise the `MenuPanel` will be
+				// closed immediately after opening. `preventDefault()` will also prevent the user to
+				// start a page scroll on the `MenuButton` but this is ok for the `MenuButton`.
+				//
+				// For more information see
+				// http://ariatemplates.com/blog/2014/05/ghost-clicks-in-mobile-browsers/
+				event.preventDefault();
 			}
 		});
 	}
