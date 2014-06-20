@@ -86,6 +86,12 @@ class SitesController extends AbstractModuleController {
 	protected $contextFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Session\SessionInterface
+	 */
+	protected $session;
+
+	/**
 	 * @return void
 	 */
 	public function indexAction() {
@@ -136,7 +142,7 @@ class SitesController extends AbstractModuleController {
 		}
 		$this->siteRepository->update($site);
 		$this->addFlashMessage(sprintf('The site "%s" has been updated.', $site->getName()));
-		$this->redirect('index');
+		$this->unsetLastVisitedNodeAndRedirect('index');
 	}
 
 	/**
@@ -197,7 +203,7 @@ class SitesController extends AbstractModuleController {
 			$this->redirect('newSite');
 		}
 
-		$this->redirect('index');
+		$this->unsetLastVisitedNodeAndRedirect('index');
 	}
 
 	/**
@@ -218,7 +224,7 @@ class SitesController extends AbstractModuleController {
 		$siteNode = $this->propertyMapper->convert('/sites/' . $site->getNodeName(), 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$siteNode->remove();
 		$this->addFlashMessage('The site "%s" has been deleted.', 'Site deleted', Message::SEVERITY_OK, array($site->getName()));
-		$this->redirect('index');
+		$this->unsetLastVisitedNodeAndRedirect('index');
 	}
 
 	/**
@@ -231,7 +237,7 @@ class SitesController extends AbstractModuleController {
 		$site->setState($site::STATE_ONLINE);
 		$this->siteRepository->update($site);
 		$this->addFlashMessage('The site "%s" has been activated.', 'Site activated', Message::SEVERITY_OK, array($site->getName()));
-		$this->redirect('index');
+		$this->unsetLastVisitedNodeAndRedirect('index');
 	}
 
 	/**
@@ -244,7 +250,7 @@ class SitesController extends AbstractModuleController {
 		$site->setState($site::STATE_OFFLINE);
 		$this->siteRepository->update($site);
 		$this->addFlashMessage('The site "%s" has been deactivated.', 'Site deactivated', Message::SEVERITY_OK, array($site->getName()));
-		$this->redirect('index');
+		$this->unsetLastVisitedNodeAndRedirect('index');
 	}
 
 	/**
@@ -268,7 +274,7 @@ class SitesController extends AbstractModuleController {
 	public function updateDomainAction(Domain $domain) {
 		$this->domainRepository->update($domain);
 		$this->addFlashMessage('The domain "%s" has been updated.', 'Domain updated', Message::SEVERITY_OK, array($domain->getHostPattern()));
-		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
+		$this->unsetLastVisitedNodeAndRedirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
@@ -296,7 +302,7 @@ class SitesController extends AbstractModuleController {
 	public function createDomainAction(Domain $domain) {
 		$this->domainRepository->add($domain);
 		$this->addFlashMessage('The domain "%s" has been created.', 'Domain created', Message::SEVERITY_OK, array($domain->getHostPattern()));
-		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
+		$this->unsetLastVisitedNodeAndRedirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
@@ -309,7 +315,7 @@ class SitesController extends AbstractModuleController {
 	public function deleteDomainAction(Domain $domain) {
 		$this->domainRepository->remove($domain);
 		$this->addFlashMessage('The domain "%s" has been deleted.', 'Domain deleted', Message::SEVERITY_OK, array($domain->getHostPattern()));
-		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
+		$this->unsetLastVisitedNodeAndRedirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
@@ -322,7 +328,7 @@ class SitesController extends AbstractModuleController {
 		$domain->setActive(TRUE);
 		$this->domainRepository->update($domain);
 		$this->addFlashMessage('The domain "%s" has been activated.', 'Domain activated', Message::SEVERITY_OK, array($domain->getHostPattern()));
-		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
+		$this->unsetLastVisitedNodeAndRedirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
 	/**
@@ -335,7 +341,21 @@ class SitesController extends AbstractModuleController {
 		$domain->setActive(FALSE);
 		$this->domainRepository->update($domain);
 		$this->addFlashMessage('The domain "%s" has been deactivated.', 'Domain deactivated', Message::SEVERITY_OK, array($domain->getHostPattern()));
-		$this->redirect('edit', NULL, NULL, array('site' => $domain->getSite()));
+		$this->unsetLastVisitedNodeAndRedirect('edit', NULL, NULL, array('site' => $domain->getSite()));
 	}
 
+	/**
+	 * @param string $actionName Name of the action to forward to
+	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+	 * @param array $arguments Array of arguments for the target action
+	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
+	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+	 * @param string $format The format to use for the redirect URI
+	 * @return void
+	 */
+	protected function unsetLastVisitedNodeAndRedirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303, $format = NULL) {
+		$this->session->putData('lastVisitedNode', NULL);
+		parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);
+	}
 }
