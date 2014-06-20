@@ -83,7 +83,10 @@ function($, Ember, HttpClient) {
 			var chosen;
 			this.$().addClass('chosen-select').on('chosen:ready', function(event, parameters) {
 				chosen = parameters.chosen;
-			}).chosen({allow_single_deselect: true}).change(function() {
+			}).chosen({
+				allow_single_deselect: true,
+				disable_search_threshold: 5
+			}).change(function() {
 				that.set('value', that.$().val());
 			});
 			chosen.search_results.off('mousewheel.chosen DOMMouseScroll.chosen');
