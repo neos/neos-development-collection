@@ -766,7 +766,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
 	}
 
-
 	/**
 	 * Checks if simple values (string, boolean, integer) are parsed correctly
 	 *
@@ -786,6 +785,31 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$actualParseTree = $this->parser->parse($sourceCode);
 		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 19.');
+	}
+
+	/**
+	 * Checks if path with an underscore is parsed correctly
+	 *
+	 * @test
+	 */
+	public function parserCorrectlyParsesFixture20() {
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture20.ts2', FILE_TEXT);
+
+		$expectedParseTree = array(
+			'somepath' => array(
+				'_stringValue' => 'A string value',
+				'_booleanValueFalse' => FALSE,
+				'_booleanValueTrue' => TRUE,
+				'_integerValue' => 42,
+				'value_with_underscores_inBetween' => 42,
+				'nested_value' => array(
+					'is' => 21
+				)
+			),
+		);
+
+		$actualParseTree = $this->parser->parse($sourceCode);
+		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
 	}
 
 }

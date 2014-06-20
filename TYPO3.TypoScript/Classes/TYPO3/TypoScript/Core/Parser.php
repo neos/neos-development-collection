@@ -23,7 +23,7 @@ use TYPO3\TypoScript\Exception;
 class Parser implements ParserInterface {
 
 	const SCAN_PATTERN_COMMENT = '/
-		^\s*                      # beginning of line; with numerous whitespace
+		^\s*                       # beginning of line; with numerous whitespace
 		(
 			\#                     # this can be a comment char
 			|\/\/                  # or two slashes
@@ -32,10 +32,10 @@ class Parser implements ParserInterface {
 	/x';
 	const SCAN_PATTERN_OPENINGCONFINEMENT = '/
 		^\s*                      # beginning of line; with numerous whitespace
-		[a-zA-Z0-9():@\-]*          # first part of a TS path
+		[a-zA-Z0-9():@_\-]*       # first part of a TS path
 		(?:                       # followed by multiple .<tsPathPart> sections:
 			\.
-			[a-zA-Z0-9():@\-]*
+			[a-zA-Z0-9():@_\-]*
 		)*
 		\s*                       # followed by multiple whitespace
 		\{                        # followed by opening {
@@ -54,7 +54,7 @@ class Parser implements ParserInterface {
 	/x';
 	const SCAN_PATTERN_OBJECTDEFINITION = '/
 		^\s*                      # beginning of line; with numerous whitespace
-		[a-zA-Z0-9.\\\\$():@\-]+
+		[a-zA-Z0-9.\\\\$():@_\-]+
 		\s*
 		(=|<|>)
 	/x';
@@ -62,13 +62,13 @@ class Parser implements ParserInterface {
 		^
 			\.?
 			(?:
-				@?[a-zA-Z0-9:\-]*
+				@?[a-zA-Z0-9:_\-]*
 				| prototype\([a-zA-Z0-9.:]+\)
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9:\-]*
+					@?[a-zA-Z0-9:_\-]*
 					| prototype\([a-zA-Z0-9.:]+\)
 				)
 			)*
@@ -80,8 +80,8 @@ class Parser implements ParserInterface {
 	 * at the dots (but not the dots inside the prototype definition prototype(...))
 	 */
 	const SPLIT_PATTERN_OBJECTPATH = '/
-		\.                        # we split at dot characters...
-		(?!                       # which are not inside prototype(...). Thus, the dot does NOT match IF it is followed by:
+		\.                         # we split at dot characters...
+		(?!                        # which are not inside prototype(...). Thus, the dot does NOT match IF it is followed by:
 			[^(]*                  # - any character except (
 			\)                     # - the character )
 		)
@@ -106,13 +106,13 @@ class Parser implements ParserInterface {
 
 			\.?
 			(?:
-				@?[a-zA-Z0-9:\-]*
+				@?[a-zA-Z0-9:_\-]*
 				|prototype\([a-zA-Z0-9.:]+\)
 			)
 			(?:
 				\.
 				(?:
-					@?[a-zA-Z0-9:\-]*
+					@?[a-zA-Z0-9:_\-]*
 					|prototype\([a-zA-Z0-9.:]+\)
 				)
 			)*
@@ -127,7 +127,7 @@ class Parser implements ParserInterface {
 		)
 		\s*
 		(?P<OpeningConfinement>
-			\{                     # optionally followed by an opening confinement
+			\{                    # optionally followed by an opening confinement
 		)?
 		\s*$
 	/x';
@@ -141,12 +141,12 @@ class Parser implements ParserInterface {
 		^\s*                      # beginning of line; with numerous whitespace
 		(?:                       # non-capturing submatch containing the namespace followed by ":" (optional)
 			(?P<namespace>
-				[a-zA-Z0-9.]+       # namespace alias (cms, …) or fully qualified namespace (TYPO3.Neos, …)
+				[a-zA-Z0-9.]+     # namespace alias (cms, …) or fully qualified namespace (TYPO3.Neos, …)
 			)
-			:                      # : as delimiter
+			:                     # : as delimiter
 		)?
 		(?P<unqualifiedType>
-			[a-zA-Z0-9.]+          # the unqualified type
+			[a-zA-Z0-9.]+         # the unqualified type
 		)
 		\s*$
 	/x';

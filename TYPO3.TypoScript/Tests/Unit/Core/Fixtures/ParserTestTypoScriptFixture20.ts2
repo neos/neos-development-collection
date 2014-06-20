@@ -1,0 +1,16 @@
+//
+// TypoScript Fixture 20
+//
+// Checks if path with an underscore is parsed correctly
+
+somepath._stringValue = "A string value"
+
+somepath {
+	_booleanValueFalse = FALSE
+	_booleanValueTrue = TRUE
+	_integerValue = 42
+	value_with_underscores_inBetween = 42
+	nested_value {
+		is = 21
+	}
+}
