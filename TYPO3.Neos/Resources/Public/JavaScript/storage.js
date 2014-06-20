@@ -3,12 +3,14 @@ define(
 	'vie/entity',
 	'Library/backbone',
 	'Content/Model/PublishableNodes',
-	'Shared/Endpoint/NodeEndpoint'
+	'Shared/Endpoint/NodeEndpoint',
+	'Shared/EventDispatcher'
 ], function(
 	Entity,
 	Backbone,
 	PublishableNodes,
-	NodeEndpoint
+	NodeEndpoint,
+	EventDispatcher
 ) {
 	Backbone.sync = function(method, model, options) {
 		var methods = {
@@ -36,6 +38,7 @@ define(
 						// The PublishableNodes are explicitly uppdated, as changes from the backbone models
 						// workspacename attribute are suppressed and our entity wrapper would not notice.
 						NodeEndpoint.set('_saveRunning', false);
+						EventDispatcher.trigger('contentSaved');
 
 						if (result !== undefined) {
 							model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
