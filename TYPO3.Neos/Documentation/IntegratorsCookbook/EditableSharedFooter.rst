@@ -27,13 +27,15 @@ the following configuration in NodeTypes.yaml::
 
 	If you run into the situation that the child nodes for your page are missing
 	(for example if you manually updated the node type in the database) you might
-	have to create the missing child nodes using:
+	have to create the missing child nodes using::
 
 		./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
 
 TypoScript code::
 
 	footer = TYPO3.Neos:ContentCollection {
+		@cache.mode = 'cached'
+
 		nodePath = ${q(site).find('footer').property('_path')}
 		collection = ${q(site).children('footer').children()}
 	}
