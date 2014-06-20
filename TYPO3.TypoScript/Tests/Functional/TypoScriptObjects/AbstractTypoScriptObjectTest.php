@@ -24,6 +24,11 @@ use TYPO3\Flow\Mvc\Routing\UriBuilder;
 abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
+	 * @var ControllerContext
+	 */
+	protected $controllerContext;
+
+	/**
 	 * Helper to build a TypoScript view object
 	 *
 	 * @return \TYPO3\TypoScript\View\TypoScriptView
@@ -37,14 +42,14 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
 		$uriBuilder = new UriBuilder();
 		$uriBuilder->setRequest($request);
 
-		$controllerContext = new ControllerContext(
+		$this->controllerContext = new ControllerContext(
 			$request,
 			new Response(),
 			new Arguments(array()),
 			$uriBuilder
 		);
 
-		$view->setControllerContext($controllerContext);
+		$view->setControllerContext($this->controllerContext);
 		$view->disableFallbackView();
 		$view->setPackageKey('TYPO3.TypoScript');
 		$view->setTypoScriptPathPattern(__DIR__ . '/Fixtures');

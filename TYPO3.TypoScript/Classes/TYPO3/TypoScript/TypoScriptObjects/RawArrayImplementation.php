@@ -32,7 +32,11 @@ class RawArrayImplementation extends ArrayImplementation {
 
 		$output = array();
 		foreach ($sortedChildTypoScriptKeys as $key) {
-			$output[$key] = $this->tsValue($key);
+			$value = $this->tsValue($key);
+			if ($value === NULL && $this->tsRuntime->getLastEvaluationStatus() === \TYPO3\TypoScript\Core\Runtime::EVALUATION_SKIPPED) {
+				continue;
+			}
+			$output[$key] = $value;
 		}
 
 		return $output;

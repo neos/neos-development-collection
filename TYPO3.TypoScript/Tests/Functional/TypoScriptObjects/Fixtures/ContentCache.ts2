@@ -218,6 +218,61 @@ contentCache.uncachedSegmentWithProcessor = TYPO3.TypoScript:Array {
 
 }
 
+contentCache.cachedSegmentWithCondition = TYPO3.TypoScript:Array {
+
+	@if.isFirst = ${condition && object.counter == 1}
+
+	5 = 'Cached segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|End cached'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+			condition = ${condition}
+		}
+	}
+
+}
+
+contentCache.uncachedSegmentWithCondition = TYPO3.TypoScript:Array {
+
+	5 = 'Cached segment|'
+
+	10 = TYPO3.TypoScript:Array {
+		@if.isFirst = ${request.arguments.currentPage < 3}
+
+		5 = 'Uncached segment|'
+
+		10 = ${'request.currentPage=' + request.arguments.currentPage}
+
+		15 = '|End cached'
+
+		@cache {
+			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
+		}
+	}
+
+	15 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
 contentCache.nestedCacheSegmentsWithInnerException = TYPO3.TypoScript:Array {
 
 	5 = 'Cached segment|'

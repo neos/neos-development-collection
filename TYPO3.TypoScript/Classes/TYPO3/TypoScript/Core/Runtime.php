@@ -48,6 +48,12 @@ class Runtime {
 	const BEHAVIOR_RETURNNULL = 'NULL';
 
 	/**
+	 * Internal constants defining a status of how evaluateInternal evaluated.
+	 */
+	const EVALUATION_EXECUTED = 'Executed';
+	const EVALUATION_SKIPPED = 'Skipped';
+
+	/**
 	 * @var \TYPO3\Eel\CompilingEvaluator
 	 * @Flow\Inject
 	 */
@@ -101,6 +107,10 @@ class Runtime {
 	 */
 	protected $runtimeContentCache;
 
+	/**
+	 * @var string
+	 */
+	protected $lastEvaluationStatus;
 
 	/**
 	 * Constructor for the TypoScript Runtime
@@ -182,6 +192,13 @@ class Runtime {
 	 */
 	public function evaluate($typoScriptPath, $contextObject = NULL) {
 		return $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_RETURNNULL, $contextObject);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLastEvaluationStatus() {
+		return $this->lastEvaluationStatus;
 	}
 
 	/**
@@ -320,6 +337,7 @@ class Runtime {
 	 * @throws \TYPO3\TypoScript\Exception\RuntimeException
 	 */
 	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = NULL) {
+		$this->lastEvaluationStatus = self::EVALUATION_EXECUTED;
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
 		$runtimeContentCache = $this->runtimeContentCache;
 
@@ -339,13 +357,27 @@ class Runtime {
 					throw new Exceptions\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
 				}
 			} else {
+				$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
 				return NULL;
 			}
 		}
 
 		try {
 			if (isset($typoScriptConfiguration['__eelExpression']) || isset($typoScriptConfiguration['__value'])) {
-				return $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
+				if (isset($typoScriptConfiguration['__meta']['if'])) {
+					foreach ($typoScriptConfiguration['__meta']['if'] as $conditionKey => $conditionValue) {
+						$conditionValue = $this->evaluateInternal($typoScriptPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, NULL);
+						if ($conditionValue === FALSE) {
+							$finallyClosure();
+							$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
+							return NULL;
+						}
+					}
+				}
+
+				$evaluatedExpression = $this->evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, $typoScriptConfiguration, $contextObject);
+				$finallyClosure();
+				return $evaluatedExpression;
 			}
 
 			$tsObject = $this->instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration);
@@ -365,7 +397,22 @@ class Runtime {
 				return $cachedResult;
 			}
 
-			$output = $tsObject->evaluate();
+			$evaluateObject = TRUE;
+			if (isset($typoScriptConfiguration['__meta']['if'])) {
+				foreach ($typoScriptConfiguration['__meta']['if'] as $conditionKey => $conditionValue) {
+					$conditionValue = $this->evaluateInternal($typoScriptPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, NULL);
+					if ($conditionValue === FALSE) {
+						$evaluateObject = FALSE;
+					}
+				}
+			}
+
+			if ($evaluateObject) {
+				$output = $tsObject->evaluate();
+			} else {
+				$output = NULL;
+				$this->lastEvaluationStatus = self::EVALUATION_SKIPPED;
+			}
 		} catch (\TYPO3\Flow\Mvc\Exception\StopActionException $stopActionException) {
 			$finallyClosure();
 			throw $stopActionException;

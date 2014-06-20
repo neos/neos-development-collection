@@ -273,6 +273,65 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest {
 	/**
 	 * @test
 	 */
+	public function conditionsAreAppliedAfterGettingCachedSegment() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/cachedSegmentWithCondition');
+
+		$view->assignMultiple(array(
+			'object' => $object,
+			'condition' => TRUE
+		));
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Cached segment|object=Object value 1|End cached', $firstRenderResult);
+
+		$secondRenderResult = $view->render();
+		$this->assertSame($firstRenderResult, $secondRenderResult);
+
+		$view->assign('condition', FALSE);
+
+		$updatedRenderResult = $view->render();
+		$this->assertSame('', $updatedRenderResult);
+	}
+
+	/**
+	 * @test
+	 */
+	public function conditionsAreAppliedForUncachedSegment() {
+		$object = new TestModel(42, 'Object value 1');
+
+		$view = $this->buildView();
+		$view->setOption('enableContentCache', TRUE);
+		$view->setTypoScriptPath('contentCache/uncachedSegmentWithCondition');
+
+		$view->assignMultiple(array(
+			'object' => $object
+		));
+
+		/** @var \TYPO3\Flow\Mvc\ActionRequest $actionRequest */
+		$actionRequest = $this->controllerContext->getRequest();
+		$actionRequest->setArgument('currentPage', 1);
+
+		$firstRenderResult = $view->render();
+		$this->assertSame('Cached segment|Uncached segment|request.currentPage=1|End cached|End segment', $firstRenderResult, 'Initial cached result');
+
+		$actionRequest->setArgument('currentPage', 2);
+
+		$secondRenderResult = $view->render();
+		$this->assertSame('Cached segment|Uncached segment|request.currentPage=2|End cached|End segment', $secondRenderResult, 'Evaluated result with updated request');
+
+		$actionRequest->setArgument('currentPage', 3);
+
+		$updatedRenderResult = $view->render();
+		$this->assertSame('Cached segment||End segment', $updatedRenderResult);
+	}
+
+	/**
+	 * @test
+	 */
 	public function handlingInnerRenderingExceptionsDisablesTheContentCache() {
 		$object = new TestModel(42, 'Object value 1');
 
