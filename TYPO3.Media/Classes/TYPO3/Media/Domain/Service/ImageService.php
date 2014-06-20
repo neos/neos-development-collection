@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Imagine\Image\AbstractImagine;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -18,6 +19,7 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Resource\ResourcePointer;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Exception\ImageFileException;
 
@@ -62,32 +64,46 @@ class ImageService {
 	/**
 	 * @param ImageInterface $image
 	 * @param array $processingInstructions
-	 * @return \TYPO3\Flow\Resource\Resource
+	 * @return Resource
 	 */
 	public function transformImage(ImageInterface $image, array $processingInstructions) {
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . json_encode($processingInstructions));
+		$additionalOptions = array();
 		if (!file_exists('resource://' . $uniqueHash)) {
 			/** @var \Imagine\Image\ImagineInterface $imagine */
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
-			$imagineImage = $imagine->open('resource://' . $image->getResource()->getResourcePointer()->getHash());
-			$imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
-			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension(), $this->getDefaultOptions()));
+			$imageContent = file_get_contents('resource://' . $image->getResource()->getResourcePointer()->getHash());
+			$imagineImage = $imagine->load($imageContent);
+			if ($imagine instanceof \Imagine\Imagick\Imagine &&  $image->getFileExtension() === 'gif' && $this->isAnimatedGif($imageContent) === TRUE) {
+				$imagineImage->layers()->coalesce();
+				foreach ($imagineImage->layers() as $imagineFrame) {
+					$this->applyProcessingInstructions($imagineFrame, $processingInstructions);
+				}
+				$additionalOptions['animated'] = TRUE;
+			} else {
+				$imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
+			}
+			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension(), $this->getDefaultOptions($additionalOptions)));
 		}
-		$resource = new \TYPO3\Flow\Resource\Resource();
+		$resource = new Resource();
 		$resource->setFilename($image->getResource()->getFilename());
-		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($uniqueHash));
+		$resource->setResourcePointer(new ResourcePointer($uniqueHash));
 
 		return $resource;
 	}
 
 	/**
+	 * @param array $additionalOptions
 	 * @return array
 	 * @throws InvalidConfigurationException
 	 */
-	protected function getDefaultOptions() {
+	protected function getDefaultOptions(array $additionalOptions = array()) {
 		$defaultOptions = Arrays::getValueByPath($this->settings, 'image.defaultOptions');
 		if (!is_array($defaultOptions)) {
 			$defaultOptions = array();
+		}
+		if ($additionalOptions !== array()) {
+			$defaultOptions = Arrays::arrayMergeRecursiveOverrule($defaultOptions, $additionalOptions);
 		}
 		$quality = isset($defaultOptions['quality']) ? (integer)$defaultOptions['quality'] : 90;
 		if ($quality < 0 || $quality > 100) {
@@ -277,5 +293,16 @@ class ImageService {
 		$size = $options['size'];
 		$color = $this->parseColor($options['color']);
 		return $this->objectManager->get('Imagine\Image\FontInterface', $file, $size, $color);
+	}
+
+	/**
+	 * Detects whether the given GIF image data contains more than one frame
+	 *
+	 * @param string $image string containing the binary GIF data
+	 * @return boolean true if gif contains more than one frame
+	 */
+	protected function isAnimatedGif($image) {
+		$count = preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $image, $matches);
+		return $count ? TRUE : FALSE;
 	}
 }
