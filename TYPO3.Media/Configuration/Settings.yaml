@@ -10,6 +10,7 @@ TYPO3:
   Media:
     image:
       defaultOptions:
+        # Image quality, from 0 to 100
         'quality': 90
     bodyClasses: 'media-browser'
     scripts:

@@ -13,9 +13,11 @@ namespace TYPO3\Media\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Exception\ImageFileException;
 
@@ -65,16 +67,40 @@ class ImageService {
 	public function transformImage(ImageInterface $image, array $processingInstructions) {
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . json_encode($processingInstructions));
 		if (!file_exists('resource://' . $uniqueHash)) {
+			/** @var \Imagine\Image\ImagineInterface $imagine */
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
 			$imagineImage = $imagine->open('resource://' . $image->getResource()->getResourcePointer()->getHash());
 			$imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
-			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension(), $this->settings['image']['defaultOptions']));
+			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension(), $this->getDefaultOptions()));
 		}
 		$resource = new \TYPO3\Flow\Resource\Resource();
 		$resource->setFilename($image->getResource()->getFilename());
 		$resource->setResourcePointer(new \TYPO3\Flow\Resource\ResourcePointer($uniqueHash));
 
 		return $resource;
+	}
+
+	/**
+	 * @return array
+	 * @throws InvalidConfigurationException
+	 */
+	protected function getDefaultOptions() {
+		$defaultOptions = Arrays::getValueByPath($this->settings, 'image.defaultOptions');
+		if (!is_array($defaultOptions)) {
+			$defaultOptions = array();
+		}
+		$quality = isset($defaultOptions['quality']) ? (integer)$defaultOptions['quality'] : 90;
+		if ($quality < 0 || $quality > 100) {
+			throw new InvalidConfigurationException(
+				sprintf('Setting "TYPO3.Media.image.defaultOptions.quality" allow only value between 0 and 100, current value: %s', $quality),
+				1404982574
+			);
+		}
+		$defaultOptions['jpeg_quality'] = $quality;
+		// png_compression_level should be an integer between 0 and 9 and inverse to the quality level given. So quality 100 should result in compression 0.
+		$defaultOptions['png_compression_level'] = (9 - ceil($quality * 9 / 100));
+
+		return $defaultOptions;
 	}
 
 	/**
