@@ -53,7 +53,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 		}.property('_uploadPreviewShown'),
 
 		_uploadPreviewImageSource: '',
-		_defaultUploadPreviewImageSource: $('link[rel="neos-public-resources"]').attr('href') + 'Images/dummy-image.png',
+		_defaultUploadPreviewImageSource: $('link[rel="neos-public-resources"]').attr('href') + 'Images/dummy-image.svg',
 
 		/**
 		 * @var boolean

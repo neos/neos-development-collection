@@ -94,7 +94,7 @@ Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/CarouselItem.html) :
 				<media:image image="{image}" alt="{alternativeText}" title="{title}" maximumWidth="{maximumWidth}" maximumHeight="{maximumHeight}" />
 			</f:then>
 			<f:else>
-				<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.png')}" title="Dummy image" alt="Dummy image" />
+				<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" />
 			</f:else>
 		</f:if>
 		<div class="carousel-caption">
