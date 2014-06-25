@@ -28,6 +28,16 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
+	 * @var string the Nodes fixture
+	 */
+	protected $fixtureFileName = 'Fixtures/NodeStructure.xml';
+
+	/**
+	 * @var string the context path of the node to load initially
+	 */
+	protected $nodeContextPath = '/sites/example/home';
+
+	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $node;
@@ -43,10 +53,12 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importSitesFromFile(__DIR__ . '/Fixtures/NodeStructure.xml', $contentContext);
+		$siteImportService->importFromFile(__DIR__ . '/' . $this->fixtureFileName, $contentContext);
 		$this->persistenceManager->persistAll();
 
-		$this->node = $this->getNodeWithContextPath('/sites/example/home');
+		if ($this->nodeContextPath !== NULL) {
+			$this->node = $this->getNodeWithContextPath($this->nodeContextPath);
+		}
 	}
 
 	/**
@@ -56,9 +68,10 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected function getNodeWithContextPath($contextPath) {
+		/* @var $propertyMapper \TYPO3\Flow\Property\PropertyMapper */
 		$propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 		$node = $propertyMapper->convert($contextPath, 'TYPO3\TYPO3CR\Domain\Model\Node');
-		$this->assertFalse($propertyMapper->getMessages()->hasErrors());
+		$this->assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
 		return $node;
 	}
 
