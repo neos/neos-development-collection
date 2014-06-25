@@ -252,6 +252,14 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @Then /^The node should be hidden in index$/
+	 */
+	public function theNodeShouldBeHiddenInIndex() {
+		$currentNode = $this->iShouldHaveOneNode();
+		Assert::assertTrue($currentNode->isHiddenInIndex(), 'The current node should be hidden in index, but it is not.');
+	}
+
+	/**
 	 * @When /^I set the node property "([^"]*)" to "([^"]*)"$/
 	 */
 	public function iSetTheNodePropertyTo($propertyName, $propertyValue) {
