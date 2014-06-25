@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextInterface;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
@@ -625,7 +626,11 @@ class Node implements NodeInterface {
 		$newNode = $this->createSingleNode($name, $nodeType, $identifier);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-				$newNode->setProperty($propertyName, $propertyValue);
+				if (substr($propertyName, 0, 1) === '_') {
+					ObjectAccess::setProperty($newNode, substr($propertyName, 1), $propertyValue);
+				} else {
+					$newNode->setProperty($propertyName, $propertyValue);
+				}
 			}
 
 			foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
