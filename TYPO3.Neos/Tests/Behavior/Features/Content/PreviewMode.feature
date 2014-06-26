@@ -11,6 +11,8 @@ Feature: Content module / Preview mode
       | jdoe     | password | John      | Doe      | Editor |
     And I am authenticated with "jdoe" and "password" for the backend
     Then I should be in the "Content" module
-    When I press "Full Screen"
+    When I wait for the "Open full screen" button to be visible
+    And I press "Full Screen"
+    And I wait for the "Close full screen" button to be visible
     Then I should not see the top bar
     And the Previewbutton should be active

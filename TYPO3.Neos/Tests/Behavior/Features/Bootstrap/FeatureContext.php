@@ -326,6 +326,31 @@ class FeatureContext extends MinkContext {
 	}
 
 	/**
+	 * @param string $elementName
+	 * @return string
+	 */
+	protected function getNamedElementSelector($elementName) {
+		switch ($elementName) {
+			case 'Open full screen':
+				return '.neos-full-screen-open';
+			case 'Close full screen':
+				return '.neos-full-screen-close';
+			default:
+				Assert::fail('No element definition found for named element "' . $elementName . '"');
+		}
+	}
+
+	/**
+	 * @When /^I wait for the "([^"]*)"( button) to be visible$/
+	 */
+	public function iWaitForElement($elementName) {
+		$elementSelector = $this->getNamedElementSelector($elementName);
+
+		$this->getSession()->wait(30000, '$("' . $elementSelector . '").length > 0');
+		$this->assertSession()->elementExists('css', $elementSelector);
+	}
+
+	/**
 	 * @param string $path
 	 * @return string
 	 */
