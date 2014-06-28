@@ -1,0 +1,20 @@
+========================
+1.2.0 (Work In Progress)
+========================
+
+Node Type Constraints
+=====================
+
+In a typical TYPO3 Neos project, you will create lots of custom node types. However, many node types should only be
+used in a specific context and not everywhere. Using *node type constraints*, it is now possible to restrict the allowed
+child node types inside a given node type. Additionally for being able to specify direct child node constraints, it is
+also possible to specify grandchild constraints for auto-created node types.
+
+See the chapter :ref:`node-constraints` for details.
+
+Node type constraints are supported in the following places in Neos:
+
+- "Create New" wizard in Content Module
+- "Create New" wizard in Navigate component (document and structure tree)
+- moving in Navigate component
+- changing node type in Navigate component

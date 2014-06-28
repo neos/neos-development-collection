@@ -119,10 +119,10 @@ define(
 
 				var that = this,
 					$neosNodeTypeSelect = that.$().find('#neos-node-tree-filter select'),
-					allowedSubNodeTypes = NodeTypeService.getSubNodeTypes(this.get('baseNodeType'));
+					availableNodeTypes = NodeTypeService.getSubNodeTypes(this.get('baseNodeType'));
 				$neosNodeTypeSelect.chosen({disable_search_threshold: 10, allow_single_deselect: true});
 
-				$.each(allowedSubNodeTypes, function(nodeTypeName, nodeTypeInfo) {
+				$.each(availableNodeTypes, function(nodeTypeName, nodeTypeInfo) {
 					$neosNodeTypeSelect.append('<option value="' + nodeTypeName + '">' + nodeTypeInfo.ui.label + '</option>');
 				});
 				$neosNodeTypeSelect.trigger('chosen:updated.chosen');

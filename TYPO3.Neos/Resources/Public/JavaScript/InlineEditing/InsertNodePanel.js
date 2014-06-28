@@ -6,6 +6,7 @@ define(
 	'Content/Application',
 	'Shared/Configuration',
 	'Content/Model/NodeActions',
+	'Shared/NodeTypeService',
 	'LibraryExtensions/Mousetrap',
 	'text!./InsertNodePanel.html'
 ],
@@ -16,6 +17,7 @@ function(
 	ContentModule,
 	Configuration,
 	NodeActions,
+	NodeTypeService,
 	Mousetrap,
 	template
 ) {
@@ -30,13 +32,21 @@ function(
 
 		content: function() {
 			var groups = {},
-				namespace = Configuration.get('TYPO3_NAMESPACE');
+				namespace = Configuration.get('TYPO3_NAMESPACE'),
+				$collectionElement = this.get('_entity._enclosingCollectionWidget').element,
+				// $collectionElement is currently *ALWAYS* autocreated!!!
+				types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode($collectionElement.attr('data-neos-_parentnodetype'), $collectionElement.attr('data-neos-_nodename'));
 
-			_.each(this.get('_entity._enclosingCollectionWidget').options.definition.range, function(nodeType) {
+			types = _.map(types, function(nodeType) {
+				return 'typo3:' + nodeType;
+			});
+
+			_.each(types, function(nodeType) {
 				var type = this.get('_entity._enclosingCollectionWidget').options.vie.types.get(nodeType);
-				if (type.metadata.abstract === true) {
+				if (!type || !type.metadata || type.metadata.abstract === true) {
 					return;
 				}
+
 				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
 
 				if (type.metadata.ui && type.metadata.ui.group) {

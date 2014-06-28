@@ -35,6 +35,14 @@ define(
 	) {
 		var pageMetaInformation = $('#neos-page-metainformation');
 
+		var _getAllowedChildNodeTypesForNode = function(node) {
+			if (node.data.isAutoCreated) {
+				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(node.parent.data.nodeType, node.data.name);
+			} else {
+				return NodeTypeService.getAllowedChildNodeTypes(node.data.nodeType);
+			}
+		};
+
 		return Ember.View.extend({
 			template: Ember.required(),
 
@@ -54,7 +62,7 @@ define(
 			pageNodePath: pageMetaInformation.attr('about'),
 			siteRootNodePath: pageMetaInformation.data('__siteroot'),
 
-			baseNodeType: 'TYPO3.Neos:Document',
+			baseNodeType: Ember.K,
 			unmodifiableLevels: 1,
 
 			statusCodes: {
@@ -239,7 +247,6 @@ define(
 			init: function() {
 				this._super();
 				var that = this;
-				this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: this.baseNodeType}).create());
 
 				ContentModule.on('pageLoaded', this, function() {
 					that.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
@@ -333,7 +340,26 @@ define(
 					 * Any other return value will calc the hitMode from the cursor position.
 					 */
 					onDragEnter: function(node, sourceNode) {
-						return true;
+						var sourceNodeType = sourceNode.data.nodeType,
+							positions = [],
+							level = node.getLevel(),
+							unmodifiableLevels = node.tree.options.parent.get('unmodifiableLevels');
+
+						if (level >= unmodifiableLevels) {
+							var possibleChildrenNodeTypes = _getAllowedChildNodeTypesForNode(node);
+							if (possibleChildrenNodeTypes.contains(sourceNodeType)) {
+								positions.push('over');
+							}
+
+							if (level > unmodifiableLevels) {
+								var possibleSiblingNodeTypes = _getAllowedChildNodeTypesForNode(node.parent);
+								if (possibleSiblingNodeTypes.contains(sourceNodeType)) {
+									positions.push('before');
+									positions.push('after');
+								}
+							}
+						}
+						return positions;
 					},
 
 					onDragOver: function(node, sourceNode, hitMode) {
@@ -536,20 +562,47 @@ define(
 			},
 
 			showCreateNodeDialog: function(activeNode) {
-				var that = this;
+				var that = this,
+					parentNode = activeNode.parent,
+					allowedNodeTypes;
+
 				this.set('insertNodePanelShown', true);
-				var insertNodePanel = this.get('insertNodePanel');
-				insertNodePanel.createElement();
-				insertNodePanel.set('insertNode', function(nodeTypeInfo) {
-					that.set('insertNodePanelShown', false);
-					that.createNode(activeNode, 'Untitled', nodeTypeInfo.nodeType, nodeTypeInfo.icon);
-					this.cancel();
+
+				if (this.get('newPosition') === 'into' || activeNode.getLevel() === 1) {
+					parentNode = activeNode;
+				}
+
+				allowedNodeTypes = _getAllowedChildNodeTypesForNode(parentNode);
+
+				// Only show node types which inherit from the base node type(s).
+				// If the base node type is prefixed with "!", it is seen as negated.
+				this.get('baseNodeType').split(',').forEach(function(nodeTypeFilter) {
+					nodeTypeFilter = nodeTypeFilter.trim();
+
+					allowedNodeTypes = allowedNodeTypes.filter(function (nodeTypeName) {
+						if (NodeTypeService.isOfType(nodeTypeName, 'TYPO3.Neos:ContentCollection')) {
+							return false;
+						}
+						if (nodeTypeFilter[0] === '!') {
+							return !NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter.substring(1));
+						} else {
+							return NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter);
+						}
+					});
 				});
-				insertNodePanel.set('cancel', function() {
-					that.set('insertNodePanelShown', false);
-					that.set('deleteNode', Ember.K);
-					this.destroyElement();
-				});
+
+				InsertNodePanel.extend({
+					allowedNodeTypes: allowedNodeTypes,
+					insertNode: function(nodeTypeInfo) {
+						that.set('insertNodePanelShown', false);
+						that.createNode(activeNode, 'Untitled', nodeTypeInfo.nodeType, nodeTypeInfo.icon);
+						this.cancel();
+					},
+					cancel: function() {
+						that.set('insertNodePanelShown', false);
+						this._super();
+					}
+				}).create().appendTo($('#neos-application'));
 			},
 
 			/**

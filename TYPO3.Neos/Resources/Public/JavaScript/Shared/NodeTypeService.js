@@ -1,11 +1,12 @@
 define(
 	[
 		'emberjs',
+		'Library/underscore',
 		'Library/jquery-with-dependencies',
 		'Shared/Configuration',
 		'Shared/ResourceCache'
 	],
-	function(Ember, $, Configuration, ResourceCache) {
+	function(Ember, _, $, Configuration, ResourceCache) {
 
 		/**
 		 * @singleton
@@ -34,17 +35,17 @@ define(
 					return true;
 				}
 
-				var schema = this.getSubNodeTypes(matchType);
+				var schema = this.getSubNodeTypes(nodeType);
 
-				return matchType in schema;
+				return schema[matchType] ? true : false;
 			},
 
 			getSubNodeTypes: function(superType) {
 				var that = this;
 
 				var subNodeTypes = {};
-				if (this.get('_schema').inheritanceMap.subTypes[superType]) {
 
+				if (this.get('_schema').inheritanceMap.subTypes[superType]) {
 					$.each(this.get('_schema').inheritanceMap.subTypes[superType], function(index, nodeTypeName) {
 						if (that.get('_schema').nodeTypes[nodeTypeName]) {
 							subNodeTypes[nodeTypeName] = that.get('_schema').nodeTypes[nodeTypeName];
@@ -53,6 +54,26 @@ define(
 				}
 
 				return subNodeTypes;
+			},
+
+			getAllowedChildNodeTypes: function(nodeType) {
+				var constraints = this.get('_schema.constraints');
+
+				return $.map(constraints[nodeType].nodeTypes, function(element, index) {
+					return index;
+				});
+			},
+
+			getAllowedChildNodeTypesForAutocreatedNode: function(nodeType, autocreatedNodeName) {
+				var constraints = this.get('_schema.constraints');
+				constraints = constraints[nodeType].childNodes[autocreatedNodeName];
+
+				if (!constraints) {
+					// No constraints configuration found, so no allowedChildNodes
+					return [];
+				}
+
+				return $.map(constraints.nodeTypes, function(element,index) { return index; });
 			},
 
 			/**

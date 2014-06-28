@@ -16,7 +16,6 @@ define(
 	'../Model/NodeSelection',
 	'../Model/PublishableNodes',
 	'./NavigatePanelController',
-	'./InsertNodePanel',
 	'text!./ContextStructureTree.html'
 ], function(
 	Ember,
@@ -32,7 +31,6 @@ define(
 	NodeSelection,
 	PublishableNodes,
 	NavigatePanelController,
-	InsertNodePanel,
 	template
 ) {
 	var pageMetaInformation = $('#neos-page-metainformation');
@@ -52,7 +50,6 @@ define(
 
 		init: function() {
 			this._super();
-			this.set('insertNodePanel', InsertNodePanel.extend({baseNodeType: 'TYPO3.Neos:Content'}).create());
 			var that = this;
 			EventDispatcher.on('contentChanged', function() {
 				that.refresh();
@@ -136,7 +133,8 @@ define(
 
 			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(pageMetaInformation)),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.pageNodePath;
+				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.pageNodePath,
+				documentNodeType = (page ? page.get('typo3:_nodeType'): 'TYPO3.Neos.NodeTypes:Page'); // TODO: This fallback to TYPO3.Neos.NodeTypes:Page should go away, but currently in some rare cases "page" is not yet initialized. In order to fix this loading order issue, we need to re-structure the tree, though.
 
 			this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 				parent: this,
@@ -150,30 +148,12 @@ define(
 						select: false,
 						active: false,
 						unselectable: true,
-						nodeType: 'TYPO3.Neos.NodeTypes:Page',
+						nodeType: documentNodeType,
 						addClass: 'typo3-neos-page',
 						iconClass: 'icon-sitemap'
 					}
 				],
 				dnd: {
-					/**
-					 * sourceNode may be null for non-dynatree droppables.
-					 * Return false to disallow dropping on node. In this case
-					 * onDragOver and onDragLeave are not called.
-					 * Return 'over', 'before, or 'after' to force a hitMode.
-					 * Return ['before', 'after'] to restrict available hitModes.
-					 * Any other return value will calc the hitMode from the cursor position.
-					 */
-					onDragEnter: function(node, sourceNode) {
-						// It is only possible to move nodes into nodes of the nodeType ContentCollection
-						if (NodeTypeService.isOfType(node.data.nodeType, 'TYPO3.Neos:ContentCollection')) {
-							return ['before', 'after', 'over'];
-						}
-						else{
-							return ['before', 'after'];
-						}
-					},
-
 					onDragStart: function(node) {
 						/**
 						 * This is to prevent changing of ContentCollections as the Workspaces module / publishing are not

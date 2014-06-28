@@ -303,6 +303,7 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),
 			'nodeType' => $nodeType->getName(),
+			'isAutoCreated' => $node->isAutoCreated(),
 			'expand' => $expand,
 			'addClass' => implode(' ', $classes),
 			'name' => $node->getName(),

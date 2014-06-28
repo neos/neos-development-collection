@@ -90,13 +90,32 @@ The following options are allowed:
 ``superTypes``
   An array of parent node types inherited from
 
+``constraints``
+  Constraint definitions stating which nested child node types are allowed. Also see the dedicated chapter
+  :ref:`node-constraints` for detailed explanation::
+
+    constraints:
+      nodeTypes:
+        # ALLOW text, DISALLOW Image
+        'TYPO3.Neos.NodeTypes:Text': TRUE
+        'TYPO3.Neos.NodeTypes:Image': FALSE
+        # DISALLOW as Fallback (for not-explicitely-listed node types)
+        '*': FALSE
+
 ``childNodes``
   A list of child nodes that are automatically created if a node of this type is created.
-  For each child the ``type`` has to be given. Here is an example::
+  For each child the ``type`` has to be given. Additionally, for each of these child nodes,
+  the ``constraints`` can be specified to override the "global" constraints per type.
+  Here is an example::
 
     childNodes:
       someChild:
         type: 'TYPO3.Neos:ContentCollection'
+        constraints:
+          nodeTypes:
+            # only allow images in this ContentCollection
+            'TYPO3.Neos.NodeTypes:Image': TRUE
+            '*': FALSE
 
 ``ui``
   Configuration options related to the user interface representation of the node type
@@ -132,7 +151,6 @@ The following options are allowed:
 
       ``position``
         Position of the inspector group, small numbers are sorted on top
-
 
 ``properties``
   A list of named properties for this node type. For each property the following settings are available.

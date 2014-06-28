@@ -18,26 +18,26 @@ define(
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-overlay-component'],
-			nodeTypeGroups: [],
+			// Callback function after selecting a node type
 			insertNode: Ember.K,
+			// List of allowed node types (strings); with constraints already evaluated.
+			allowedNodeTypes: Ember.K,
 
-			init: function() {
-				this._super();
-
-				var that = this,
-					allowedSubNodeTypes = NodeTypeService.getSubNodeTypes(this.get('baseNodeType')),
-					groupedNodeTypes = {},
+			nodeTypeGroups: function() {
+				var groupedNodeTypes = {},
 					nodeTypeGroups = [];
 
-				$.each(allowedSubNodeTypes, function(nodeTypeName, nodeTypeInfo) {
-					if (('abstract' in nodeTypeInfo && nodeTypeInfo.abstract === false || !'ui' in nodeTypeInfo)) {
+				$.each(this.get('allowedNodeTypes'), function(index, nodeTypeName) {
+					var nodeType = NodeTypeService.getNodeTypeDefinition(nodeTypeName),
+						groupName;
+
+					if (!nodeType || !nodeType.ui) {
 						return;
 					}
 
-					var groupName = 'group' in nodeTypeInfo.ui ? nodeTypeInfo.ui.group : 'general';
+					groupName = 'group' in nodeType.ui ? nodeType.ui.group : 'general';
 
 					if (!groupedNodeTypes[groupName]) {
-
 						groupedNodeTypes[groupName] = {
 							'name': groupName,
 							'label': '',
@@ -47,8 +47,8 @@ define(
 
 					groupedNodeTypes[groupName].children.push({
 						'nodeType': nodeTypeName,
-						'label': nodeTypeInfo.ui.label,
-						'icon': 'icon' in nodeTypeInfo.ui ? nodeTypeInfo.ui.icon : 'icon-file'
+						'label': nodeType.ui.label,
+						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file'
 					});
 				});
 
@@ -59,26 +59,24 @@ define(
 					}
 				});
 
-				that.set('nodeTypeGroups', nodeTypeGroups);
-			},
+				return nodeTypeGroups;
+			}.property('allowedNodeTypes'),
 
-			createElement: function() {
+			init: function() {
 				this._super();
-				this.$().appendTo($('#neos-application'));
 				var that = this;
 				Mousetrap.bind('esc', function() {
 					that.cancel();
 				});
 			},
 
-			destroyElement: function() {
+			destroy: function() {
 				Mousetrap.unbind('esc');
 				this._super();
 			},
 
 			cancel: function() {
-				this.destroyElement();
-				this.set('insertNode', Ember.K);
+				this.destroy();
 			}
 		});
 	}

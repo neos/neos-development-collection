@@ -34,6 +34,9 @@
 
 'TYPO3.Neos.BackendSchemaControllerTest:Page':
   superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Document']
+  constraints:
+    nodeTypes:
+      'TYPO3.Neos.BackendSchemaControllerTest:SubPage': TRUE
 
 'TYPO3.Neos.BackendSchemaControllerTest:SubPage':
   superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Page']
@@ -47,12 +50,37 @@
 'TYPO3.Neos.BackendSchemaControllerTest:Text':
   superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Content']
 
-'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType':
+'TYPO3.Neos.BackendSchemaControllerTest:TwoColumn':
+  superTypes: ['TYPO3.Neos.BackendSchemaControllerTest:Content']
+  childNodes:
+    column0:
+      type: 'TYPO3.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType': TRUE
+    column1:
+      type: 'TYPO3.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'TYPO3.Neos.BackendSchemaControllerTest:Document': FALSE
+          'TYPO3.Neos.BackendSchemaControllerTest:SubPage': FALSE
+          '*': TRUE
+
+
+'TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType':
   properties:
     text:
       ui:
         aloha:
           fallbackCase: ['defined', 'as', 'plain', 'array']
+
+'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType':
+  superTypes:
+    - TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType
+  properties:
+    text:
+      ui:
+        aloha:
           sampleCase:
             'h3': TRUE
             'sup': TRUE
