@@ -126,6 +126,31 @@ define([
 		}.property('_vieEntity'),
 
 		/**
+		 * @return {boolean}
+		 */
+		isHideable: function() {
+			return this.get('_vieEntity').has('typo3:_hidden');
+		},
+
+		/**
+		 * @return {boolean}
+		 */
+		isHidden: function() {
+			return this.get('_vieEntity').get('typo3:_hidden');
+		},
+
+		/**
+		 * @return {string}
+		 */
+		nodeLabel: function() {
+			if (this.get('_vieEntity').get('typo3:title') !== undefined) {
+				return this.get('_vieEntity').get('typo3:title');
+			}
+
+			return '';
+		}.property('_vieEntity'),
+
+		/**
 		 * Receive the node type schema
 		 *
 		 * @return {object}

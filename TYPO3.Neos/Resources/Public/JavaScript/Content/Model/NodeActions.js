@@ -49,30 +49,34 @@ define(
 		/**
 		 * Cut a node and put it on the clipboard
 		 * TODO: Decide if we move cut copy paste to another controller
+		 * @param {object} node
 		 * @return {void}
 		 */
-		cut: function(nodePath) {
-			if (this.get('_clipboard.type') === 'cut' && this.get('_clipboard.nodePath') === nodePath) {
+		cut: function(node) {
+			if (this.get('_clipboard.type') === 'cut' && this.get('_clipboard.nodePath') === node.get('nodePath')) {
 				this.set('_clipboard', null);
 			} else {
 				this.set('_clipboard', {
 					type: 'cut',
-					nodePath: nodePath
+					nodePath: node.get('nodePath'),
+					nodeType: node.get('nodeType')
 				});
 			}
 		},
 
 		/**
 		 * Copy a node and put it on the clipboard
+		 * @param {object} node
 		 * @return {void}
 		 */
-		copy: function(nodePath) {
-			if (this.get('_clipboard.type') === 'copy' && this.get('_clipboard.nodePath') === nodePath) {
+		copy: function(node) {
+			if (this.get('_clipboard.type') === 'copy' && this.get('_clipboard.nodePath') === node.get('nodePath')) {
 				this.set('_clipboard', null);
 			} else {
 				this.set('_clipboard', {
 					type: 'copy',
-					nodePath: nodePath
+					nodePath: node.get('nodePath'),
+					nodeType: node.get('nodeType')
 				});
 			}
 		},
@@ -80,30 +84,40 @@ define(
 		/**
 		 * Paste the current node on the clipboard after another node
 		 *
-		 * @param {String} nodePath the nodePath of the target node
+		 * @param {object} node, the target node
 		 * @return {boolean}
 		 */
-		pasteAfter: function(nodePath) {
-			return this._paste(nodePath, 'after');
+		pasteAfter: function(node) {
+			return this._paste(node, 'after');
 		},
 
 		/**
 		 * Paste the current node on the clipboard before another node
 		 *
-		 * @param {String} nodePath the nodePath of the target node
+		 * @param {object} node, the target node
 		 * @return {boolean}
 		 */
-		pasteBefore: function(nodePath) {
-			return this._paste(nodePath, 'before');
+		pasteBefore: function(node) {
+			return this._paste(node, 'before');
+		},
+
+		/**
+		 * Paste the current node on the clipboard into another node
+		 *
+		 * @param {object} node, the target node
+		 * @return {boolean}
+		 */
+		pasteInto: function(node) {
+			return this._paste(node, 'into');
 		},
 
 		/**
 		 * Paste a node on a certain location, relative to another node
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {String} position
+		 * @param {object} node, the target node
+		 * @param {string} position
 		 * @return {boolean}
 		 */
-		_paste: function(nodePath, position) {
+		_paste: function(node, position) {
 			var that = this,
 				clipboard = this.get('_clipboard');
 
@@ -111,7 +125,7 @@ define(
 				Notification.info('No node found on the clipboard');
 				return false;
 			}
-			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
+			if (clipboard.nodePath === node.get('nodePath') && clipboard.type === 'cut') {
 				Notification.info('It is not possible to paste a node ' + position + ' itself.');
 				return false;
 			}
@@ -120,7 +134,7 @@ define(
 			NodeEndpoint[action].call(
 				that,
 				clipboard.nodePath,
-				nodePath,
+				node.get('nodePath'),
 				position,
 				''
 			).then(
@@ -152,8 +166,8 @@ define(
 		},
 
 		remove: function(model) {
-			model.set('typo3:_removed', true);
-			model.save(null);
+			model.get('_vieEntity').set('typo3:_removed', true);
+			model.get('_vieEntity').save(null);
 			NodeSelection.updateSelection();
 			EventDispatcher.on('contentSaved', function() {
 				this.trigger('contentChanged');

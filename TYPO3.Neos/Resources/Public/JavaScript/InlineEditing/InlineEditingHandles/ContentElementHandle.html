@@ -1,12 +1,14 @@
 <div class="neos-button-toolbar">
 	<div class="neos-button-group">
-		<button class="neos-button action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
-			{{#if view._thisElementIsAddingNewContent}}
-				<i class="neos-handle-loading"></i>
-			{{else}}
-				<i class="icon-plus"></i>
-			{{/if}}
-		</button>
+		{{#if view._showCreate}}
+			<button class="neos-button action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
+				{{#if view._thisElementIsAddingNewContent}}
+					<i class="neos-handle-loading"></i>
+				{{else}}
+					<i class="icon-plus"></i>
+				{{/if}}
+			</button>
+		{{/if}}
 		{{#if view._showHide}}
 			<button {{bindAttr title="view._hideToggleTitle" class=":neos-button :action-toggle-hidden view._hidden:neos-active"}} {{action "toggleHidden" target="view"}} tabindex="-1">
 				<i class="icon-eye-close"></i>
@@ -22,7 +24,7 @@
 				<i class="icon-copy"></i>
 			</button>
 		{{/if}}
-		{{#if view.nodeActions.clipboardContainsContent}}
+		{{#if view._showPaste}}
 			<button class="neos-button action-paste" {{bindAttr title="view._pasteTitle"}} {{action "paste" target="view"}} tabindex="-1">
 				{{#if view._elementIsPastingContent}}
 					<i class="neos-handle-loading"></i>

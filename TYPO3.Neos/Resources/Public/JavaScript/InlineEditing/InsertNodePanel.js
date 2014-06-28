@@ -27,13 +27,12 @@ function(
 		classNames: ['neos-overlay-component'],
 
 		_node: null,
-		_entity: null,
 		_index: null,
 
 		content: function() {
 			var groups = {},
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
-				$collectionElement = this.get('_entity._enclosingCollectionWidget').element,
+				$collectionElement = this.get('_node._vieEntity._enclosingCollectionWidget').element,
 				// $collectionElement is currently *ALWAYS* autocreated!!!
 				types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode($collectionElement.attr('data-neos-_parentnodetype'), $collectionElement.attr('data-neos-_nodename'));
 
@@ -42,7 +41,7 @@ function(
 			});
 
 			_.each(types, function(nodeType) {
-				var type = this.get('_entity._enclosingCollectionWidget').options.vie.types.get(nodeType);
+				var type = this.get('_node._vieEntity._enclosingCollectionWidget').options.vie.types.get(nodeType);
 				if (!type || !type.metadata || type.metadata.abstract === true) {
 					return;
 				}
@@ -89,9 +88,9 @@ function(
 		},
 
 		insertNode: function(nodeType) {
-			NodeActions.set('_elementIsAddingNewContent', this.get('_entity').getSubjectUri());
+			NodeActions.set('_elementIsAddingNewContent', this.get('_node.nodePath'));
 
-			this.get('_entity._enclosingCollectionWidget').options.collection.add({
+			this.get('_node._vieEntity._enclosingCollectionWidget').options.collection.add({
 				'@type': 'typo3:' + nodeType
 			}, {at: this.get('_index')});
 

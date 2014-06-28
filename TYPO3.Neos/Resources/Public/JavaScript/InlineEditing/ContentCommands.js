@@ -11,7 +11,6 @@ define(
 function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeTypeService) {
 	return Ember.Object.create({
 
-		_entity: null,
 		_nodePath: null,
 		_selectedNode: null,
 
@@ -60,7 +59,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		create: function(position, referenceNode, index) {
 			if (!referenceNode) {
-				referenceNode = this._getSelectedNode();
+				referenceNode = NodeSelection.get('selectedNode');
 			}
 
 			if (this.isDocument(referenceNode)) {
@@ -68,13 +67,8 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 				return;
 			}
 
-			var entity = this._getEntity(referenceNode);
-			if (!entity) {
-				return;
-			}
-
 			if (typeof index === 'undefined') {
-				index = this._collectionIndex(entity);
+				index = this._collectionIndex(referenceNode);
 			}
 
 			require({context: 'neos'}, ['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
@@ -83,7 +77,6 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 				}
 
 				InsertNodePanel.create({
-					_entity: entity,
 					_node: referenceNode,
 					_index: position === 'after' ? index : 0
 				}).appendTo($('#neos-application'));
@@ -98,15 +91,10 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		cut: function(node) {
 			if (!node) {
-				node = this._getSelectedNode();
+				node = NodeSelection.get('selectedNode');
 			}
 
-			var entity = this._getEntity(node);
-			if (!entity) {
-				return;
-			}
-
-			NodeActions.cut(entity.getSubjectUri());
+			NodeActions.cut(node);
 		},
 
 		/**
@@ -117,15 +105,10 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		copy: function(node) {
 			if (!node) {
-				node = this._getSelectedNode();
+				node = NodeSelection.get('selectedNode');
 			}
 
-			var entity = this._getEntity(node);
-			if (!entity) {
-				return;
-			}
-
-			NodeActions.copy(entity.getSubjectUri());
+			NodeActions.copy(node);
 		},
 
 		/**
@@ -137,18 +120,13 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		paste: function(position, referenceNode) {
 			if (!referenceNode) {
-				referenceNode = this._getSelectedNode();
-			}
-
-			var entity = this._getEntity(referenceNode);
-			if (!entity) {
-				return;
+				referenceNode = NodeSelection.get('selectedNode');
 			}
 
 			if (this.isCollection(referenceNode)) {
-				return NodeActions._paste(entity.getSubjectUri(), 'into');
+				return NodeActions.pasteInto(referenceNode);
 			} else {
-				return NodeActions.pasteAfter(entity.getSubjectUri());
+				return NodeActions.pasteAfter(referenceNode);
 			}
 		},
 
@@ -160,12 +138,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		remove: function(node) {
 			if (!node) {
-				node = this._getSelectedNode();
-			}
-
-			var entity = this._getEntity(node);
-			if (!entity) {
-				return;
+				node = NodeSelection.get('selectedNode');
 			}
 
 			require({context: 'neos'}, ['InlineEditing/Dialogs/DeleteNodeDialog'], function(DeleteNodeDialog) {
@@ -173,30 +146,20 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 					$('.neos-modal .neos-close').trigger('click');
 				}
 
-				DeleteNodeDialog.create({
-					_entity: entity,
-					_node: node
-				}).appendTo($('#neos-application'));
+				DeleteNodeDialog.create({_node: node}).appendTo($('#neos-application'));
 			});
-		},
-
-		_getSelectedNode: function() {
-			return NodeSelection.get('selectedNode');
-		},
-
-		_getEntity: function(selectedNode) {
-			return vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
 		},
 
 		/**
 		 * Returns the index of the content element in the current section
 		 */
-		_collectionIndex: function(entity) {
-			if (!entity) {
+		_collectionIndex: function(node) {
+			if (!node) {
 				return 0;
 			}
 
-			var enclosingCollectionWidget = entity._enclosingCollectionWidget,
+			var entity = node.get('_vieEntity'),
+				enclosingCollectionWidget = entity._enclosingCollectionWidget,
 				entityIndex = enclosingCollectionWidget.options.collection.indexOf(entity);
 
 			if (entityIndex === -1) {
