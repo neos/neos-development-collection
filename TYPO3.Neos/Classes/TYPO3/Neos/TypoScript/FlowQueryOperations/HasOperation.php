@@ -46,7 +46,7 @@ class HasOperation extends AbstractOperation {
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
 	}
 
 	/**

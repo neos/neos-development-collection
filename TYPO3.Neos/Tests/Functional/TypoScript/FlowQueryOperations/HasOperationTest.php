@@ -62,6 +62,11 @@ class HasOperationTest extends AbstractNodeTest {
 				'currentNodePaths' => array('/a', '/b'),
 				'subject' => array('/c'),
 				'expectedNodePaths' => array()
+			),
+			array(
+				'currentNodePaths' => array(),
+				'subject' => array('/c'),
+				'expectedNodePaths' => array()
 			)
 		);
 	}
