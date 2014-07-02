@@ -8,6 +8,7 @@ function (Ember, $, template) {
 	return Ember.View.extend({
 		attributeBindings: ['placeholder', 'name', 'value'],
 		value: '',
+		hrValue: '',
 		_timeOnly: false,
 		isOpen: false,
 		template: Ember.Handlebars.compile(template),
@@ -66,15 +67,25 @@ function (Ember, $, template) {
 		/**
 		 * @param {string} date
 		 * @param {string} format
+		 * @param {boolean} includeTimezoneOffset
 		 * @return {string}
 		 */
-		formatDate: function(date, format) {
-			return $.fn.datetimepicker.DPGlobal.formatDate(
-				date,
-				$.fn.datetimepicker.DPGlobal.parseFormat(format, 'standard'),
-				'en',
-				'standard'
-			);
+		formatDate: function(date, format, includeTimezoneOffset) {
+			function pad(n) {
+				return n < 10 ? '0' + n : n;
+			}
+			var datetime = $.fn.datetimepicker.DPGlobal.formatDate(
+					date,
+					$.fn.datetimepicker.DPGlobal.parseFormat(format, 'standard'),
+					'en',
+					'standard'
+				);
+			if (includeTimezoneOffset !== true) {
+				return datetime;
+			}
+			var offset = new Date().getTimezoneOffset(),
+				timezone = (offset < 0 ? '+' : '-') + pad(parseInt(Math.abs(offset / 60)), 2) + ':' + pad(Math.abs(offset % 60), 2);
+			return datetime + timezone;
 		},
 
 		/**
@@ -92,23 +103,16 @@ function (Ember, $, template) {
 		},
 
 		/**
-		 * @return {string}
-		 */
-		hrValue: function() {
-			if (this.get('value')) {
-				return this.formatDate(new Date(this.get('value')), this.get('format'));
-			}
-			return '';
-		}.property(),
-
-		/**
 		 * @return {void}
 		 */
-		onHrValueChanged: function() {
-			var value = this.get('hrValue');
-			this.set('value', this.formatDate(this.parseDate(value, this.get('format')), 'yyyy-mm-dd'));
-			this.get('$datetimepicker').datetimepicker('update');
-		}.observes('hrValue'),
+		onValueChanged: function() {
+			if (this.get('value') && !/Invalid|NaN/.test(new Date(this.get('value')).toString())) {
+				var d = new Date(this.get('value'));
+				this.set('hrValue', this.formatDate(new Date(d.getTime() - (d.getTimezoneOffset() * 60000)), this.get('format')));
+			} else {
+				this.set('hrValue', '');
+			}
+		}.observes('value'),
 
 		/**
 		 * @return {void}
@@ -138,16 +142,15 @@ function (Ember, $, template) {
 				startView: viewSettings.startView,
 				weekStart: 1
 			}).on('changeDate',function(event) {
-				that.set('value', that.formatDate(new Date(event.date), 'yyyy-mm-dd'));
-				that.set('hrValue', that.formatDate(new Date(event.date), that.get('format')));
+				that.set('value', that.formatDate(new Date(event.date), 'yyyy-mm-ddThh:ii:ss', true));
 				that.close();
 			});
 
 			// Hide datetimepicker by default
 			$datetimepicker.hide();
 
-			if (this.get('value')) {
-				$datetimepicker.datetimepicker('update', this.get('value'));
+			if (this.get('value') && !/Invalid|NaN/.test(new Date(this.get('value')).toString())) {
+				$datetimepicker.datetimepicker('update', new Date(this.get('value')));
 			}
 		},
 

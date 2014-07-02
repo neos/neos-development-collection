@@ -177,7 +177,7 @@ class ContentElementWrappingService {
 
 		// Serialize date values to String
 		if ($dataType === 'date') {
-			return $propertyValue instanceof \DateTime ? $propertyValue->format('Y-m-d') : '';
+			return $propertyValue instanceof \DateTime ? $propertyValue->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::W3C) : '';
 		}
 
 		// Serialize node references to node identifiers
