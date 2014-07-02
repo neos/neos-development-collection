@@ -44,7 +44,7 @@ define(
 					.on('click', '.neos, .ui-widget-overlay', function(e) {
 						// Stop propagation if a click was issued somewhere in a .neos element
 						e.stopPropagation();
-						// TODO Test if we can use e.result for stopping unselect, too
+						// TODO Test if we can use e.result for stopping deselect, too
 					})
 					.on('click', 'body:not(.neos-preview-mode) .neos-contentelement', function(e) {
 						// Don't unselect if a previous handler activated an element
@@ -54,21 +54,20 @@ define(
 						return 'activated';
 					})
 					.on('click', function(e) {
-						// Don't unselect if a previous handler activated an element
+						// Don't deselect if a previous handler activated an element
 						if (e.result === 'activated') {
 							return;
 						}
-						if ($(e.target).parents().length === 0) {
+						if ($(e.target).parents().length === 0 && !$(e.target).is('html')) {
 							// BUGFIX for working together with DynaTree:
 							// Somehow, when clicking on a non-leaf node in the tree,
 							// DynaTree replaces the clicked element with a new DOM element.
 							// Thus, the event target is not connected to the page anymore.
-							// Thus, the stopPropagation() of neos is never called; effectively
-							// unselecting the current node.
+							// Thus, the stopPropagation() of Neos is never called; effectively
+							// deselecting the current node.
 							return;
 						}
-
-						// Unselect any other active element
+						// Deselect any other active element
 						if (NodeSelection.get('selectedNode') !== null) {
 							NodeSelection.updateSelection();
 						}
