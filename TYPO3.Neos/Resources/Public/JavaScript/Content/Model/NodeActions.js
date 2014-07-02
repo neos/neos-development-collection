@@ -162,12 +162,13 @@ define(
 		 * @private
 		 */
 		_add: function(nodeType, referenceEntity, position, callBack) {
-			var that = this;
-			var nodePath = referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1);
-			var $entityElement = vieInstance.service('rdfa').getElementBySubject(referenceEntity.getSubject(), $(document)),
+			var that = this,
+				nodePath = referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
+				$entityElement = vieInstance.service('rdfa').getElementBySubject(referenceEntity.getSubject(), $(document)),
 				$closestCollection = $entityElement.closest('[rel="typo3:content-collection"]'),
-				closestCollectionEntity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject($closestCollection));
-			var typoScriptPath = position === 'into' ? referenceEntity.get('typo3:_typoscriptPath') : closestCollectionEntity.get('typo3:_typoscriptPath');
+				closestCollectionEntity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject($closestCollection)),
+				typoScriptPath = position === 'into' ? referenceEntity.get('typo3:_typoscriptPath') : closestCollectionEntity.get('typo3:_typoscriptPath');
+
 			TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
 				nodePath,
 				typoScriptPath,

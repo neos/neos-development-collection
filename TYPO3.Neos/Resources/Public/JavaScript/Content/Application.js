@@ -220,8 +220,11 @@ function(
 						});
 
 						if (referenceEntity === null) {
+							var visibleEntities = collectionView.collection.models.filter(function(model) {
+								return !model.get(namespace + '_removed');
+							});
 								// No reference entity found. This only happens when an element is created into a content collection
-							if (collectionView.collection.models.length === 1) {
+							if (visibleEntities.length === 1) {
 									// The content collection only contains the new entity and was empty before, so we create the node into the content collection
 								NodeActions.addInside(
 									nodeType,
