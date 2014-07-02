@@ -14,28 +14,38 @@ function (Ember, $, template) {
 		template: Ember.Handlebars.compile(template),
 
 		/**
-		 * The date format, combination of p, P, h, hh, i, ii, s, ss, d, dd, m, mm, M, MM, yy, yyyy.
+		 * The date format, a combination of y, Y, F, m, M, n, t, d, D, j, l, N, S, w, a, A, g, G, h, H, i, s.
 		 *
-		 * p : meridian in lower case ('am' or 'pm') - according to locale file
-		 * P : meridian in upper case ('AM' or 'PM') - according to locale file
-		 * s : seconds without leading zeros
-		 * ss : seconds, 2 digits with leading zeros
-		 * i : minutes without leading zeros
-		 * ii : minutes, 2 digits with leading zeros
-		 * h : hour without leading zeros - 24-hour format
-		 * hh : hour, 2 digits with leading zeros - 24-hour format
-		 * H : hour without leading zeros - 12-hour format
-		 * HH : hour, 2 digits with leading zeros - 12-hour format
-		 * d : day of the month without leading zeros
-		 * dd : day of the month, 2 digits with leading zeros
-		 * m : numeric representation of month without leading zeros
-		 * mm : numeric representation of the month, 2 digits with leading zeros
-		 * M : short textual representation of a month, three letters
-		 * MM : full textual representation of a month, such as January or March
-		 * yy : two digit representation of a year
-		 * yyyy : full numeric representation of a year, 4 digits
+		 * // year
+		 * y: A two digit representation of a year - Examples: 99 or 03
+		 * Y: A full numeric representation of a year, 4 digits - Examples: 1999 or 2003
+		 * // month
+		 * F: A full textual representation of a month, such as January or March - January through December
+		 * m: Numeric representation of a month, with leading zeros - 01 through 12
+		 * M: A short textual representation of a month, three letters - Jan through Dec
+		 * n: Numeric representation of a month, without leading zeros - 1 through 12
+		 * t: Number of days in the given month - 28 through 31
+		 * // day
+		 * d: Day of the month, 2 digits with leading zeros - 01 to 31
+		 * D: A textual representation of a day, three letters - Mon through Sun
+		 * j: Day of the month without leading zeros - 1 to 31
+		 * l: A full textual representation of the day of the week - Sunday through Saturday
+		 * N: ISO-8601 numeric representation of the day of the week - 1 (for Monday) through 7 (for Sunday)
+		 * S: English ordinal suffix for the day of the month, 2 characters - st, nd, rd or th.
+		 * w: Numeric representation of the day of the week - 0 (for Sunday) through 6 (for Saturday)
+		 * // hour
+		 * a: Lowercase Ante meridiem and Post meridiem - am or pm
+		 * A: Uppercase Ante meridiem and Post meridiem - AM or PM
+		 * g: hour without leading zeros - 12-hour format - 1 through 12
+		 * G: hour without leading zeros - 24-hour format - 0 through 23
+		 * h: 12-hour format of an hour with leading zeros - 01 through 12
+		 * H: 24-hour format of an hour with leading zeros - 00 through 23
+		 * // minute
+		 * i: minutes, 2 digits with leading zeros - 00 to 59
+		 * // second
+		 * s: seconds, 2 digits with leading zeros - 00 through 59
 		 */
-		format: 'dd-mm-yyyy',
+		format: 'd-m-Y',
 
 		/**
 		 * The increment used to build the hour view. A preset is created for each minuteStep minutes.
@@ -76,9 +86,9 @@ function (Ember, $, template) {
 			}
 			var datetime = $.fn.datetimepicker.DPGlobal.formatDate(
 					date,
-					$.fn.datetimepicker.DPGlobal.parseFormat(format, 'standard'),
+					$.fn.datetimepicker.DPGlobal.parseFormat(format, 'php'),
 					'en',
-					'standard'
+					'php'
 				);
 			if (includeTimezoneOffset !== true) {
 				return datetime;
@@ -96,9 +106,9 @@ function (Ember, $, template) {
 		parseDate: function(date, format) {
 			return $.fn.datetimepicker.DPGlobal.parseDate(
 				date,
-				$.fn.datetimepicker.DPGlobal.parseFormat(format, 'standard'),
+				$.fn.datetimepicker.DPGlobal.parseFormat(format, 'php'),
 				'en',
-				'standard'
+				'php'
 			);
 		},
 
@@ -140,9 +150,10 @@ function (Ember, $, template) {
 				minView: viewSettings.minView,
 				maxView: viewSettings.maxView,
 				startView: viewSettings.startView,
-				weekStart: 1
+				weekStart: 1,
+				formatType: 'php'
 			}).on('changeDate',function(event) {
-				that.set('value', that.formatDate(new Date(event.date), 'yyyy-mm-ddThh:ii:ss', true));
+				that.set('value', that.formatDate(new Date(event.date), 'Y-m-dTH:i:s', true));
 				that.close();
 			});
 
@@ -201,30 +212,31 @@ function (Ember, $, template) {
 		 * @return {object}
 		 */
 		calculateViewSettings: function() {
-			var format = this.get('format').toLowerCase(),
+			var format = this.get('format'),
 				minView = 0,
 				maxView = 4,
 				startView = 2;
-			if (format.indexOf('y') === -1) {
+
+			if (!/y|Y/.test(format)) {
 				maxView = 3;
-				if (format.indexOf('m') === -1) {
+				if (!/F|m|M|n|t/.test(format)) {
 					maxView = 2;
-					if (format.indexOf('d') === -1) {
+					if (!/d|D|j|l|N|S|w/.test(format)) {
 						maxView = 1;
-						if (format.indexOf('h') === -1) {
+						if (!/a|A|g|G|h|H/.test(format)) {
 							maxView = 0;
 						}
 					}
 				}
 			}
 
-			if (format.indexOf('i') === -1 && format.indexOf('s') === -1) {
+			if (!/i/.test(format) && /s/.test(format)) {
 				minView = 1;
-				if (format.indexOf('h') === -1) {
+				if (!/a|A|g|G|h|H/.test(format)) {
 					minView = 2;
-					if (format.indexOf('d') === -1) {
+					if (!/d|D|j|l|N|S|w/.test(format)) {
 						minView = 3;
-						if (format.indexOf('m') === -1) {
+						if (!/F|m|M|n|t/.test(format)) {
 							minView = 4;
 						}
 					}
