@@ -94,4 +94,13 @@ class FindOperationTest extends AbstractNodeTest {
 		$foundNodes = $q->find('/sites/example/home/main/limbo')->get();
 		$this->assertEmpty($foundNodes);
 	}
+
+	/**
+	 * @test
+	 */
+	public function findOperationEvaluatesWithEmptyContext() {
+		$q = new FlowQuery(array());
+		$foundNodes = $q->find('/sites/example/home/main/limbo')->get();
+		$this->assertEmpty($foundNodes);
+	}
 }
