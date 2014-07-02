@@ -33,7 +33,7 @@ TYPO3:
     persistence:
       doctrine:
         eventListeners:
-          -
+          'TYPO3\Neos\Domain\EventListener\AccountPostEventListener':
             events: ['postPersist', 'postUpdate', 'postRemove']
             listener: 'TYPO3\Neos\Domain\EventListener\AccountPostEventListener'
 
