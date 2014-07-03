@@ -70,7 +70,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @api
 	 */
-	public function create(array $contextProperties) {
+	public function create(array $contextProperties = array()) {
 		$contextProperties = $this->mergeContextPropertiesWithDefaults($contextProperties);
 		$contextIdentifier = $this->getIdentifier($contextProperties);
 		if (!isset($this->contextInstances[$contextIdentifier])) {
