@@ -36,6 +36,9 @@ prototype(TYPO3.Neos.NodeTypes:Image) {
 	imageClassName = ${q(node).property('alignment') ? ('typo3-neos-alignment-' + q(node).property('alignment')) : ''}
 	allowCropping = FALSE
 	allowUpScaling = FALSE
+	link.@process.convertUris = TYPO3.Neos:ConvertUris {
+		forceConversion = true
+	}
 }
 
 # Text TS Object
