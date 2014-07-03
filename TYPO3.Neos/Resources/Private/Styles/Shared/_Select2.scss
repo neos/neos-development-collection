@@ -44,6 +44,27 @@
 		.neos-select2-result-label {
 			padding: 10px 0 0 0 !important;
 			min-height: $unit !important;
+
+			img {
+				float: left;
+				padding-right: $relatedMargin;
+			}
+
+			i {
+				vertical-align: top;
+				padding-right: $tightMargin;
+			}
+
+			span {
+				font-size: 12px;
+				color: $textSubtleLight;
+
+				b {
+					font-size: 14px;
+					font-weight: 400;
+					color: white;
+				}
+			}
 		}
 
 		.neos-select2-match {
@@ -96,9 +117,27 @@
 		> .neos-select2-arrow {
 			display: none
 		}
+
+		img {
+			float: left;
+			padding-right: $relatedMargin;
+		}
+
+		i {
+			padding-right: $tightMargin;
+		}
+
+		span {
+			font-size: 12px;
+			color: $textSubtleLight;
+
+			b {
+				font-size: 14px;
+				font-weight: 400;
+				color: white;
+			}
+		}
 	}
-
-
 }
 
 /* Multi Selection */
@@ -158,6 +197,26 @@
 				position: absolute;
 				left: 14px;
 				top: 13px;
+			}
+		}
+
+		img {
+			float: left;
+			padding-right: $relatedMargin;
+		}
+
+		i {
+			padding-right: $tightMargin;
+		}
+
+		span {
+			font-size: 11px;
+			color: $textSubtleLight;
+
+			b {
+				font-size: 14px;
+				font-weight: 400;
+				color: white;
 			}
 		}
 	}
