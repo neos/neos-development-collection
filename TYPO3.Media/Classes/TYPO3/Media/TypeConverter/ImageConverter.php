@@ -14,7 +14,9 @@ namespace TYPO3\Media\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * This converter transforms arrays to \TYPO3\Media\Domain\Model\Image objects
+ * This converter transforms arrays to \TYPO3\Media\Domain\Model\Image objects.
+ *
+ * Note: It works only on non-persisted Image instances (no __identity in source).
  *
  * @api
  * @Flow\Scope("singleton")
@@ -42,13 +44,13 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	 *
 	 * @param mixed $source The source for the to-build Image
 	 * @param string $targetType Should always be 'TYPO3\Media\Domain\Model\Image'
-	 *
 	 * @return boolean
 	 */
 	public function canConvertFrom($source, $targetType) {
 		if (array_key_exists('__identity', $source)) {
 			return FALSE;
 		}
+
 		return TRUE;
 	}
 
@@ -97,10 +99,10 @@ class ImageConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 			if (isset($convertedChildProperties['title'])) {
 				$image->setTitle($convertedChildProperties['title']);
 			}
+
 			return $image;
-		} catch(\TYPO3\Media\Exception\ImageFileException $exception) {
+		} catch (\TYPO3\Media\Exception\ImageFileException $exception) {
 			return new \TYPO3\Flow\Validation\Error($exception->getMessage(), $exception->getCode());
 		}
 	}
-
 }

@@ -22,6 +22,7 @@ use TYPO3\Media\Exception\ImageFileException;
  * An image
  *
  * TODO: Remove duplicate code in Image and ImageVariant, by introducing a common base class or through Mixins/Traits (once they are available)
+ *
  * @Flow\Entity
  */
 class Image extends Asset implements ImageInterface {
@@ -91,9 +92,9 @@ class Image extends Asset implements ImageInterface {
 			}
 			list($this->width, $this->height, $this->type) = $this->imageService->getImageSize($this->resource);
 			$this->imageSizeAndTypeInitialized = TRUE;
-		} catch(ImageFileException $exception) {
+		} catch (ImageFileException $exception) {
 			throw $exception;
-		} catch(Exception $exception) {
+		} catch (Exception $exception) {
 			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occurred when trying to read the image: "' . $exception->getMessage() . '"';
 			throw new ImageFileException($exceptionMessage, 1336663970);
 		}
@@ -106,6 +107,7 @@ class Image extends Asset implements ImageInterface {
 	 */
 	public function getWidth() {
 		$this->initializeImageSizeAndType();
+
 		return $this->width;
 	}
 
@@ -116,6 +118,7 @@ class Image extends Asset implements ImageInterface {
 	 */
 	public function getHeight() {
 		$this->initializeImageSizeAndType();
+
 		return $this->height;
 	}
 
@@ -143,11 +146,9 @@ class Image extends Asset implements ImageInterface {
 		$aspectRatio = $this->getAspectRatio(TRUE);
 		if ($aspectRatio > 1) {
 			return ImageInterface::ORIENTATION_LANDSCAPE;
-		}
-		elseif ($aspectRatio < 1) {
+		} elseif ($aspectRatio < 1) {
 			return ImageInterface::ORIENTATION_PORTRAIT;
-		}
-		else {
+		} else {
 			return ImageInterface::ORIENTATION_SQUARE;
 		}
 	}
@@ -187,11 +188,13 @@ class Image extends Asset implements ImageInterface {
 	 */
 	public function getType() {
 		$this->initializeImageSizeAndType();
+
 		return $this->type;
 	}
 
 	/**
 	 * File extension of the image without leading dot.
+	 *
 	 * @see http://www.php.net/manual/function.image-type-to-extension.php
 	 *
 	 * @return string
@@ -229,6 +232,7 @@ class Image extends Asset implements ImageInterface {
 				),
 			),
 		);
+
 		return new ImageVariant($this, $processingInstructions);
 	}
 
@@ -269,6 +273,7 @@ class Image extends Asset implements ImageInterface {
 		// FIXME we currently need a unique hash because $this->imageVariants has to be an array in order to be serialized by Doctrine
 		$uniqueHash = sha1($this->resource->getResourcePointer()->getHash() . '|' . ($alias ?: json_encode($processingInstructions)));
 		$this->imageVariants[$uniqueHash] = $imageVariant;
+
 		return $imageVariant;
 	}
 
@@ -300,6 +305,7 @@ class Image extends Asset implements ImageInterface {
 				return $imageVariant;
 			}
 		}
+
 		return NULL;
 	}
 
@@ -315,5 +321,4 @@ class Image extends Asset implements ImageInterface {
 			$this->removeImageVariant($imageVariant);
 		}
 	}
-
 }

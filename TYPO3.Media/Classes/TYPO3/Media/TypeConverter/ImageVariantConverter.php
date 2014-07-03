@@ -14,7 +14,7 @@ namespace TYPO3\Media\TypeConverter;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * This converter transforms arrays to \TYPO3\Media\Domain\Model\ImageVariant objects
+ * This converter transforms arrays to \TYPO3\Media\Domain\Model\ImageVariant objects.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -79,6 +79,7 @@ class ImageVariantConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractT
 		if (!isset($convertedChildProperties['originalImage']) || !$convertedChildProperties['originalImage'] instanceof \TYPO3\Media\Domain\Model\Image) {
 			return NULL;
 		}
+
 		return new \TYPO3\Media\Domain\Model\ImageVariant($convertedChildProperties['originalImage'], $convertedChildProperties['processingInstructions']);
 	}
 }
