@@ -23,8 +23,8 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function aNodeTypeHasAName() {
-		$nodeType = new NodeType('TYPO3.Neos:Text', array(), array());
-		$this->assertSame('TYPO3.Neos:Text', $nodeType->getName());
+		$nodeType = new NodeType('TYPO3.TYPO3CR.Testing:Text', array(), array());
+		$this->assertSame('TYPO3.TYPO3CR.Testing:Text', $nodeType->getName());
 	}
 
 	/**
@@ -41,16 +41,16 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	public function nodeTypesCanHaveAnyNumberOfSuperTypes() {
 		$baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array());
 
-		$folderType = new NodeType('TYPO3.Neos:Document', array($baseType), array());
+		$folderType = new NodeType('TYPO3.TYPO3CR.Testing:Document', array($baseType), array());
 
-		$hideableNodeType = new NodeType('TYPO3.Neos:HideableContent', array(), array());
-		$pageType = new NodeType('TYPO3.Neos:Page', array($folderType, $hideableNodeType), array());
+		$hideableNodeType = new NodeType('TYPO3.TYPO3CR.Testing:HideableContent', array(), array());
+		$pageType = new NodeType('TYPO3.TYPO3CR.Testing:Page', array($folderType, $hideableNodeType), array());
 
 		$this->assertEquals(array($folderType, $hideableNodeType), $pageType->getDeclaredSuperTypes());
 
-		$this->assertTrue($pageType->isOfType('TYPO3.Neos:Page'));
-		$this->assertTrue($pageType->isOfType('TYPO3.Neos:HideableContent'));
-		$this->assertTrue($pageType->isOfType('TYPO3.Neos:Document'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR.Testing:Page'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR.Testing:HideableContent'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR.Testing:Document'));
 		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Base'));
 		$this->assertFalse($pageType->isOfType('TYPO3.TYPO3CR:Exotic'));
 	}

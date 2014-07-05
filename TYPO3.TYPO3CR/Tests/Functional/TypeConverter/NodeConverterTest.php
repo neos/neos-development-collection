@@ -103,7 +103,7 @@ class NodeConverterTest extends FunctionalTestCase {
 	/**
 	 * Set up the following node structure:
 	 *
-	 * /headline (TYPO3.TYPO3CR:TestingHeadline)
+	 * /headline (TYPO3.TYPO3CR.Testing:Headline)
 	 *   - live workspace
 	 *     - title: Hello World
 	 *   - personal workspace
@@ -116,7 +116,7 @@ class NodeConverterTest extends FunctionalTestCase {
 	 */
 	protected function setupNodeWithShadowNodeInPersonalWorkspace() {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingHeadline'));
+		$headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline'));
 		$headlineNode->setProperty('title', 'Hello World');
 		$headlineNodeInPersonalWorkspace = $this->rootNodeInPersonalWorkspace->getNode('headline');
 		$headlineNodeInPersonalWorkspace->setProperty('subtitle', 'Brave new world');

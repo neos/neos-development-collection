@@ -91,7 +91,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
 	 */
 	public function creatingNodeInChildNodeWithChildNodeConstraintsThrowsException() {
-		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodesAndConstraints');
+		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints');
 		$documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document');
 		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $nodeTypeWithChildNodeAndConstraints);
 		$childNode = $nodeWithChildNode->getNode('subnode1');
@@ -102,7 +102,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsWorks() {
-		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodesAndConstraints');
+		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints');
 		$headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
 
 		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $nodeTypeWithChildNodeAndConstraints);
@@ -116,7 +116,7 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
 	 */
 	public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsThrowsException() {
-		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodesAndConstraints');
+		$nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints');
 		$textNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text');
 
 		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $nodeTypeWithChildNodeAndConstraints);

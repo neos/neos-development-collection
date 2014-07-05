@@ -65,7 +65,7 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function findByRelationWithGivenPersistenceIdentifierAndObjectTypeMapFindsExistingNodeWithMatchingEntityProperty() {
 		$rootNode = $this->context->getRootNode();
-		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithEntities'));
+		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
 
 		$testImage = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image();
 		$this->persistenceManager->add($testImage);
@@ -91,7 +91,7 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		}
 
 		$rootNode = $this->context->getRootNode();
-		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithEntities'));
+		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
 
 		$testImage = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image();
 		$this->persistenceManager->add($testImage);

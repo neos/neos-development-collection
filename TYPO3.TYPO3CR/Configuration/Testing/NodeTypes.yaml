@@ -1,23 +1,23 @@
 # Node Types for Functional Tests
 
-'TYPO3.TYPO3CR:TestingNodeType':
+'TYPO3.TYPO3CR.Testing:NodeType':
   properties:
     test1:
       defaultValue: 'default value 1'
   constraints:
     nodeTypes:
-      'TYPO3.TYPO3CR:TestingNodeType': TRUE
-      'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes': TRUE
+      'TYPO3.TYPO3CR.Testing:NodeType': TRUE
+      'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes': TRUE
 
-'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes':
+'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes':
   childNodes:
     subnode1:
-      type: 'TYPO3.TYPO3CR:TestingNodeType'
+      type: 'TYPO3.TYPO3CR.Testing:NodeType'
   constraints:
     nodeTypes:
-      'TYPO3.TYPO3CR:TestingNodeType': TRUE
+      'TYPO3.TYPO3CR.Testing:NodeType': TRUE
 
-'TYPO3.TYPO3CR:TestingNodeTypeWithProcessor':
+'TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor':
   properties:
     test1:
       defaultValue: 'default value 1'
@@ -32,7 +32,7 @@
         someOption: 'someOverriddenValue'
         someOtherOption: 'someOtherValue'
 
-'TYPO3.TYPO3CR:TestingNodeTypeWithReferences':
+'TYPO3.TYPO3CR.Testing:NodeTypeWithReferences':
   properties:
     property1:
       type: string
@@ -41,12 +41,13 @@
     property3:
       type: references
 
-'TYPO3.TYPO3CR:TestingHeadline':
+'TYPO3.TYPO3CR.Testing:Headline':
+  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
   properties:
     title:
       type: string
 
-'TYPO3.TYPO3CR:TestingNodeTypeWithEntities':
+'TYPO3.TYPO3CR.Testing:NodeTypeWithEntities':
   properties:
     image:
       type: 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image'
@@ -55,15 +56,50 @@
     images:
       type: 'array<TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
-'TYPO3.TYPO3CR:HappyTestingNode':
+'TYPO3.TYPO3CR.Testing:HappyTestingNode':
   supertypes: ['TYPO3.TYPO3CR:TestingNodeType']
   class: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode'
 
 # Constraint behat test nodetypes
+'TYPO3.TYPO3CR.Testing:Node':
+  abstract: TRUE
+
+'TYPO3.TYPO3CR.Testing:ContentCollection':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Node']
+  constraints:
+    nodeTypes:
+      'TYPO3.TYPO3CR.Testing:Headline': TRUE
+      'TYPO3.TYPO3CR.Testing:TwoColumn': TRUE
+      'TYPO3.TYPO3CR.Testing:Text': TRUE
+
 'TYPO3.TYPO3CR.Testing:Document': []
 
 'TYPO3.TYPO3CR.Testing:Page':
   superTypes: ['TYPO3.TYPO3CR.Testing:Document']
+  properties:
+    title:
+      type: string
+  childNodes:
+    'main':
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+  constraints:
+    nodeTypes:
+      '*': TRUE
+
+'TYPO3.TYPO3CR.Testing:Chapter':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Page']
+
+'TYPO3.TYPO3CR.Testing:Column':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  abstract: TRUE
+
+'TYPO3.TYPO3CR.Testing:TwoColumn':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Column']
+  childNodes:
+    column0:
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+    column1:
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
 
 'TYPO3.TYPO3CR.Testing:Content':
   constraints:
@@ -73,13 +109,17 @@
 'TYPO3.TYPO3CR.Testing:Text':
   superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
 
-'TYPO3.TYPO3CR.Testing:Headline':
-  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
-
-'TYPO3.TYPO3CR:TestingNodeTypeWithSubnodesAndConstraints':
+'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints':
   childNodes:
     subnode1:
-      type: 'TYPO3.TYPO3CR:TestingNodeType'
+      type: 'TYPO3.TYPO3CR.Testing:NodeType'
       constraints:
         nodeTypes:
           'TYPO3.TYPO3CR.Testing:Headline': TRUE # allowed
+
+'TYPO3.TYPO3CR.Testing:Image':
+  superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]
+
+'TYPO3.TYPO3CR.Testing:TextWithImage':
+  superTypes: [ 'TYPO3.TYPO3CR.Testing:Text', 'TYPO3.TYPO3CR.Testing:Image' ]
+

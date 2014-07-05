@@ -25,7 +25,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 	 * @var array
 	 */
 	protected $nodeTypesFixture = array(
-		'TYPO3.Neos:ContentObject' => array(
+		'TYPO3.TYPO3CR.Testing:ContentObject' => array(
 			'ui' => array(
 				'label' => 'Abstract content object',
 			),
@@ -45,19 +45,19 @@ class NodeTypeManagerTest extends UnitTestCase {
 				)
 			)
 		),
-		'TYPO3.Neos:MyFinalType' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+		'TYPO3.TYPO3CR.Testing:MyFinalType' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
 			'final' => TRUE
 		),
-		'TYPO3.Neos:AbstractType' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+		'TYPO3.TYPO3CR.Testing:AbstractType' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
 			'ui' => array(
 				'label' => 'Abstract type',
 			),
 			'abstract' => TRUE
 		),
-		'TYPO3.Neos:Text' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+		'TYPO3.TYPO3CR.Testing:Text' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
 			'ui' => array(
 				'label' => 'Text',
 			),
@@ -73,8 +73,8 @@ class NodeTypeManagerTest extends UnitTestCase {
 			),
 			'inlineEditableProperties' => array('headline', 'text')
 		),
-		'TYPO3.Neos:TextWithImage' => array(
-			'superTypes' => array('TYPO3.Neos:Text'),
+		'TYPO3.TYPO3CR.Testing:TextWithImage' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:Text'),
 			'ui' => array(
 				'label' => 'Text with image',
 			),
@@ -115,7 +115,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeType = $nodeTypeManager->getNodeType('TYPO3.Neos:Text');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text');
 		$this->assertSame('Text', $nodeType->getLabel());
 
 		$expectedProperties = array(
@@ -145,7 +145,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeTypeManager->getNodeType('TYPO3.Neos:TextFooBarNotHere');
+		$nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere');
 	}
 
 	/**
@@ -156,7 +156,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeTypeManager->createNodeType('TYPO3.Neos:ContentObject');
+		$nodeTypeManager->createNodeType('TYPO3.TYPO3CR.Testing:ContentObject');
 	}
 
 	/**
@@ -166,7 +166,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$this->assertTrue($nodeTypeManager->hasNodeType('TYPO3.Neos:TextWithImage'));
+		$this->assertTrue($nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:TextWithImage'));
 	}
 
 	/**
@@ -176,7 +176,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$this->assertFalse($nodeTypeManager->hasNodeType('TYPO3.Neos:TextFooBarNotHere'));
+		$this->assertFalse($nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:TextFooBarNotHere'));
 	}
 
 	/**
@@ -186,7 +186,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$this->assertTrue($nodeTypeManager->hasNodeType('TYPO3.Neos:ContentObject'));
+		$this->assertTrue($nodeTypeManager->hasNodeType('TYPO3.TYPO3CR.Testing:ContentObject'));
 	}
 
 	/**
@@ -197,11 +197,11 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$expectedNodeTypes = array(
-			'TYPO3.Neos:ContentObject',
-			'TYPO3.Neos:MyFinalType',
-			'TYPO3.Neos:AbstractType',
-			'TYPO3.Neos:Text',
-			'TYPO3.Neos:TextWithImage'
+			'TYPO3.TYPO3CR.Testing:ContentObject',
+			'TYPO3.TYPO3CR.Testing:MyFinalType',
+			'TYPO3.TYPO3CR.Testing:AbstractType',
+			'TYPO3.TYPO3CR.Testing:Text',
+			'TYPO3.TYPO3CR.Testing:TextWithImage'
 		);
 		$this->assertEquals($expectedNodeTypes, array_keys($nodeTypeManager->getNodeTypes()));
 	}
@@ -214,7 +214,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$nodeTypes = $nodeTypeManager->getNodeTypes();
-		$this->assertArrayHasKey('TYPO3.Neos:ContentObject', $nodeTypes);
+		$this->assertArrayHasKey('TYPO3.TYPO3CR.Testing:ContentObject', $nodeTypes);
 	}
 
 	/**
@@ -225,7 +225,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
 		$nodeTypes = $nodeTypeManager->getNodeTypes(FALSE);
-		$this->assertArrayNotHasKey('TYPO3.Neos:ContentObject', $nodeTypes);
+		$this->assertArrayNotHasKey('TYPO3.TYPO3CR.Testing:ContentObject', $nodeTypes);
 	}
 
 	/**
@@ -235,8 +235,8 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.Neos:ContentObject');
-		$this->assertArrayHasKey('TYPO3.Neos:TextWithImage', $nodeTypes);
+		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject');
+		$this->assertArrayHasKey('TYPO3.TYPO3CR.Testing:TextWithImage', $nodeTypes);
 	}
 
 	/**
@@ -246,8 +246,8 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.Neos:ContentObject');
-		$this->assertArrayHasKey('TYPO3.Neos:AbstractType', $nodeTypes);
+		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject');
+		$this->assertArrayHasKey('TYPO3.TYPO3CR.Testing:AbstractType', $nodeTypes);
 	}
 
 	/**
@@ -257,8 +257,8 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.Neos:ContentObject', FALSE);
-		$this->assertArrayNotHasKey('TYPO3.Neos:AbstractType', $nodeTypes);
+		$nodeTypes = $nodeTypeManager->getSubNodeTypes('TYPO3.TYPO3CR.Testing:ContentObject', FALSE);
+		$this->assertArrayNotHasKey('TYPO3.TYPO3CR.Testing:AbstractType', $nodeTypes);
 	}
 
 	/**
@@ -267,7 +267,7 @@ class NodeTypeManagerTest extends UnitTestCase {
 	public function getNodeTypeAllowsToRetrieveFinalNodeTypes() {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
-		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.Neos:MyFinalType')->isFinal());
+		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:MyFinalType')->isFinal());
 	}
 
 	/**
@@ -277,15 +277,15 @@ class NodeTypeManagerTest extends UnitTestCase {
 	public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed() {
 		$nodeTypeManager = new NodeTypeManager();
 		$this->setUp(array(
-			'TYPO3.Neos:Base' => array(
+			'TYPO3.TYPO3CR.Testing:Base' => array(
 				'final' => TRUE
 			),
-			'TYPO3.Neos:Sub' => array(
-				'superTypes' => array('TYPO3.Neos:Base')
+			'TYPO3.TYPO3CR.Testing:Sub' => array(
+				'superTypes' => array('TYPO3.TYPO3CR.Testing:Base')
 			)
 		));
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 
-		$nodeTypeManager->getNodeType('TYPO3.Neos:Sub');
+		$nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Sub');
 	}
 }

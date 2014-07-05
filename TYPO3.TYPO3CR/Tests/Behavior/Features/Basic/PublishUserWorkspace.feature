@@ -5,18 +5,18 @@ Feature: Publish user workspace
 
   Background:
     Given I have the following nodes:
-      | Identifier                           | Path                 | Node Type                 | Properties        | Workspace |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites               | unstructured              |                   | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3 | TYPO3.Neos.NodeTypes:Page | {"title": "Home"} | live      |
+      | Identifier                           | Path                 | Node Type                  | Properties        | Workspace |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites               | unstructured               |                   | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr       | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} | live      |
 
   @fixtures
   Scenario: Publish a new ContentCollection with Content
     When I create the following nodes:
-      | Path                                     | Node Type                      | Properties              | Workspace |
-      | /sites/neosdemotypo3/twocol              | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
-      | /sites/neosdemotypo3/twocol/column0/text | TYPO3.Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+      | Path                                          | Node Type                               | Properties              | Workspace |
+      | /sites/typo3cr/main/twocol                    | TYPO3.TYPO3CR.Testing:TwoColumn         | {}                      | user-demo |
+      | /sites/typo3cr/main/twocol/column0/text       | TYPO3.TYPO3CR.Testing:Text              | {"text": "Hello world"} | user-demo |
     And I publish the workspace "user-demo"
-    And I get a node by path "/sites/neosdemotypo3/twocol/column0/text" with the following context:
+    And I get a node by path "/sites/typo3cr/main/twocol/column0/text" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
@@ -24,9 +24,9 @@ Feature: Publish user workspace
   @fixtures
   Scenario: Unpublished nodes returns the correct count before publish
     And I create the following nodes:
-      | Path                                     | Node Type                      | Properties              | Workspace |
-      | /sites/neosdemotypo3/twocol              | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
-      | /sites/neosdemotypo3/twocol/column0/text | TYPO3.Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+      | Path                               | Node Type                       | Properties              | Workspace |
+      | /sites/typo3cr/twocol              | TYPO3.TYPO3CR.Testing:TwoColumn | {}                      | user-demo |
+      | /sites/typo3cr/twocol/column0/text | TYPO3.TYPO3CR.Testing:Text      | {"text": "Hello world"} | user-demo |
     # We expect 4, the 2 column element with 2 columns (3) and the text element (1)
     Then I expect to have 4 unpublished nodes for the following context:
       | Workspace |
@@ -35,9 +35,9 @@ Feature: Publish user workspace
   @fixtures
   Scenario: Unpublished nodes returns the correct count after publish
     And I create the following nodes:
-      | Path                                     | Node Type                      | Properties              | Workspace |
-      | /sites/neosdemotypo3/twocol              | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
-      | /sites/neosdemotypo3/twocol/column0/text | TYPO3.Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+      | Path                               | Node Type                       | Properties              | Workspace |
+      | /sites/typo3cr/twocol              | TYPO3.TYPO3CR.Testing:TwoColumn | {}                      | user-demo |
+      | /sites/typo3cr/twocol/column0/text | TYPO3.TYPO3CR.Testing:Text      | {"text": "Hello world"} | user-demo |
     And I publish the workspace "user-demo"
     Then I expect to have 0 unpublished nodes for the following context:
       | Workspace |

@@ -9,51 +9,51 @@ Feature: Multiple languages as content dimension
       | language   | mul_ZZ    |
       | personas   | everybody |
     And I have the following nodes:
-      | Path                 | Node Type                 | Properties        |
-      | /sites               | unstructured              |                   |
-      | /sites/neosdemotypo3 | TYPO3.Neos.NodeTypes:Page | {"title": "Home"} |
+      | Path           | Node Type                  | Properties        |
+      | /sites         | unstructured               |                   |
+      | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} |
 
   @fixtures
   Scenario: Get a node from multiple mixed content dimensions
     Given I have the following nodes:
-      | Identifier                           | Path                         | Node Type                     | Properties                                   | Language  | Dimension: personas |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "Welcome!"}                        | en_ZZ     | everybody           |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "Welcome, nice to see you again!"} | en_ZZ     | customer            |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "Welcome, fellow customer!"}       | en_ZZ     | frequent_buyer      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "Willkommen!"}                     | de_ZZ     | everybody           |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/main/c2 | TYPO3.Neos.NodeTypes:Headline | {"title": "Willkommen, lieber Kunde!"}       | de_ZZ     | frequent_buyer      |
+      | Identifier                           | Path                   | Node Type                      | Properties                                   | Language  | Dimension: personas |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome!"}                        | en_ZZ     | everybody           |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome, nice to see you again!"} | en_ZZ     | customer            |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome, fellow customer!"}       | en_ZZ     | frequent_buyer      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Willkommen!"}                     | de_ZZ     | everybody           |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Willkommen, lieber Kunde!"}       | de_ZZ     | frequent_buyer      |
 
-    When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
+    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | de_DE, de_ZZ, mul_ZZ   | everybody           |
     Then I should have one node
     And The node property "title" should be "Willkommen!"
 
-    When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
+    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas       |
       | de_DE, de_ZZ, mul_ZZ   | frequent_buyer, everybody |
     Then I should have one node
     And The node property "title" should be "Willkommen, lieber Kunde!"
 
-    When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
+    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | en_US, en_ZZ, mul_ZZ   | everybody           |
     Then I should have one node
     And The node property "title" should be "Welcome!"
 
-    When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
+    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas       |
       | en_US, en_ZZ, mul_ZZ   | frequent_buyer, everybody |
     Then I should have one node
     And The node property "title" should be "Welcome, fellow customer!"
 
-    When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
+    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | de_DE, de_ZZ, mul_ZZ   | customer, everybody |
     Then I should have one node
     And The node property "title" should be "Willkommen!"
 
-    When I get a node by path "/sites/neosdemotypo3/main/c2" with the following context:
+    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | en_US, en_ZZ, mul_ZZ   | customer, everybody |
     Then I should have one node

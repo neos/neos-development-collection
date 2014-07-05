@@ -115,7 +115,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getRootNode();
 
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeType');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
 		$fooNode = $rootNode->createNode('foo', $testNodeType);
 
 		$this->assertSame('default value 1', $fooNode->getProperty('test1'));
@@ -128,7 +128,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getRootNode();
 
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithProcessor');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor');
 		$fooNode = $rootNode->createNode('foo', $testNodeType);
 
 		$this->assertSame('The value of "someOption" is "someOverriddenValue", the value of "someOtherOption" is "someOtherValue"', $fooNode->getProperty('test1'));
@@ -141,7 +141,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getRootNode();
 
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes');
+		$testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
 		$fooNode = $rootNode->createNode('foo', $testNodeType);
 		$firstSubnode = $fooNode->getNode('subnode1');
 		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\Node', $firstSubnode);
@@ -1027,7 +1027,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setPropertyAcceptsAndConvertsIdentifierIfTargetTypeIsReference() {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$rootNode = $this->context->getNode('/');
 		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1045,7 +1045,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function setPropertyAcceptsAndConvertsIdentifiersIfTargetTypeIsReferences() {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$rootNode = $this->context->getNode('/');
 		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1066,7 +1066,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function getPropertiesReturnsReferencePropertiesAsNodeObjects() {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$rootNode = $this->context->getNode('/');
 		$nodeA = $rootNode->createNode('nodeA', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1088,7 +1088,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function getPropertyDoesNotReturnNodeReferencesIfTheyAreNotVisibleAccordingToTheContentContext() {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live', 'invisibleContentShown' => FALSE));
 
@@ -1111,7 +1111,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function getPropertyReturnsReferencedNodesInCorrectWorkspace() {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
 		$identifier = '81c848ed-abb5-7608-a5db-7eea0331ccfa';
 		$rootNode = $this->context->getNode('/');
@@ -1295,9 +1295,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function nodesCanHaveCustomImplementationClass() {
 		$rootNode = $this->context->getRootNode();
-		$testingNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
-		$happyNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:HappyTestingNode');
-		$headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingHeadline');
+		$testingNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
+		$happyNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:HappyTestingNode');
+		$headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
 
 		$fooNode = $rootNode->createNode('foo', $testingNodeType);
 		$happyNode = $fooNode->createNode('bar', $happyNodeType);

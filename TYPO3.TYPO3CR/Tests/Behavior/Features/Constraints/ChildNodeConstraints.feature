@@ -29,155 +29,155 @@ Feature: ChildNode Constraints
         nodeTypes:
           '*': TRUE
 
-    'TYPO3.Neos:Document':
+    'TYPO3.TYPO3CR.Testing:Document':
       constraints:
         nodeTypes:
           "*": TRUE
 
-    'TYPO3.Neos.NodeTypes:Page':
-      superTypes: ['TYPO3.Neos:Document']
+    'TYPO3.TYPO3CR.Testing:Page':
+      superTypes: ['TYPO3.TYPO3CR.Testing:Document']
 
-    'TYPO3.NeosDemoTypo3Org:Chapter':
-      superTypes: ['TYPO3.Neos:Document']
+    'TYPO3.TYPO3CR.Testing:Chapter':
+      superTypes: ['TYPO3.TYPO3CR.Testing:Document']
 
-    'TYPO3.Neos:Content': []
+    'TYPO3.TYPO3CR.Testing:Content': []
 
-    'TYPO3.Neos:ContentCollection':
-      superTypes: ['TYPO3.Neos:Content']
+    'TYPO3.TYPO3CR.Testing:ContentCollection':
+      superTypes: ['TYPO3.TYPO3CR.Testing:Content']
       constraints:
         nodeTypes:
           "*": TRUE
 
-    'TYPO3.Neos.NodeTypes:Text':
-      superTypes: ['TYPO3.Neos:Content']
+    'TYPO3.TYPO3CR.Testing:Text':
+      superTypes: ['TYPO3.TYPO3CR.Testing:Content']
 
-    'TYPO3.Neos.NodeTypes:Image':
-      superTypes: ['TYPO3.Neos:Content']
+    'TYPO3.TYPO3CR.Testing:Image':
+      superTypes: ['TYPO3.TYPO3CR.Testing:Content']
 
-    'TYPO3.Neos.NodeTypes:TextWithImage':
-      superTypes: ['TYPO3.Neos.NodeTypes:Text', 'TYPO3.Neos.NodeTypes:Image']
+    'TYPO3.TYPO3CR.Testing:TextWithImage':
+      superTypes: ['TYPO3.TYPO3CR.Testing:Text', 'TYPO3.TYPO3CR.Testing:Image']
     """
     And I have the following nodes:
-      | Identifier                           | Path                      | Node Type                    |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                    | unstructured                 |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3      | TYPO3.Neos.NodeTypes:Page    |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/neosdemotypo3/main | TYPO3.Neos:ContentCollection |
+      | Identifier                           | Path                | Node Type                               |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites              | unstructured                            |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr      | TYPO3.TYPO3CR.Testing:Page              |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/main | TYPO3.TYPO3CR.Testing:ContentCollection |
 
   @fixtures
   Scenario: Allow node types for direct child nodes
-    When I get a node by path "/sites/neosdemotypo3" with the following context:
+    When I get a node by path "/sites/typo3cr" with the following context:
       | Workspace |
       | live      |
-    Then I should be able to create a child node of type "TYPO3.Neos.NodeTypes:Page"
+    Then I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Page"
 
   @fixtures
   Scenario: Disallow node types for direct child nodes
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       constraints:
         nodeTypes:
-          'TYPO3.Neos.NodeTypes:Page': FALSE
+          'TYPO3.TYPO3CR.Testing:Page': FALSE
     """
-    When I get a node by path "/sites/neosdemotypo3" with the following context:
+    When I get a node by path "/sites/typo3cr" with the following context:
       | Workspace |
       | live      |
-    Then I should not be able to create a child node of type "TYPO3.Neos.NodeTypes:Page"
-    And  I should be able to create a child node of type "TYPO3.NeosDemoTypo3Org:Chapter"
+    Then I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Page"
+    And  I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Chapter"
 
   @fixtures
   Scenario: Allow node types for auto-created child nodes
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       childNodes:
         main:
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
           constraints:
             nodeTypes:
-              'TYPO3.Neos.NodeTypes:Text': TRUE
+              'TYPO3.TYPO3CR.Testing:Text': TRUE
               '*': FALSE
     """
-    When I get a node by path "/sites/neosdemotypo3/main" with the following context:
+    When I get a node by path "/sites/typo3cr/main" with the following context:
       | Workspace |
       | live      |
-    Then I should be able to create a child node of type "TYPO3.Neos.NodeTypes:Text"
-    And I should not be able to create a child node of type "TYPO3.Neos.NodeTypes:Image"
-    And I should not be able to create a child node of type "TYPO3.Neos.NodeTypes:TextWithImage"
+    Then I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
+    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
 
   @fixtures
   Scenario: Disallow node types for auto-created child nodes, taking child node type constraints into account
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       childNodes:
         main:
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
           constraints:
             nodeTypes:
-              'TYPO3.Neos.NodeTypes:Text': FALSE
+              'TYPO3.TYPO3CR.Testing:Text': FALSE
     """
-    When I get a node by path "/sites/neosdemotypo3/main" with the following context:
+    When I get a node by path "/sites/typo3cr/main" with the following context:
       | Workspace |
       | live      |
-    Then I should not be able to create a child node of type "TYPO3.Neos.NodeTypes:Text"
-    And I should be able to create a child node of type "TYPO3.Neos.NodeTypes:Image"
-    And I should be able to create a child node of type "TYPO3.Neos.NodeTypes:TextWithImage"
+    Then I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
+    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
 
   @fixtures
   Scenario: Inherit constraints from super-types
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       childNodes:
         main:
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
           constraints:
             nodeTypes:
-              'TYPO3.Neos.NodeTypes:Text': FALSE
+              'TYPO3.TYPO3CR.Testing:Text': FALSE
     """
-    When I get a node by path "/sites/neosdemotypo3/main" with the following context:
+    When I get a node by path "/sites/typo3cr/main" with the following context:
       | Workspace |
       | live      |
-    Then I should not be able to create a child node of type "TYPO3.Neos.NodeTypes:Text"
-    And I should be able to create a child node of type "TYPO3.Neos.NodeTypes:Image"
-    And I should be able to create a child node of type "TYPO3.Neos.NodeTypes:TextWithImage"
+    Then I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
+    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
 
   @fixtures
   Scenario: Reset constraints from super-types
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos:Document':
+    'TYPO3.TYPO3CR.Testing:Document':
       constraints:
         childNodes:
-          'TYPO3.NeosDemoTypo3Org:Chapter': FALSE
+          'TYPO3.TYPO3CR.Testing:Chapter': FALSE
 
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       constraints:
         childNodes:
-          'TYPO3.NeosDemoTypo3Org:Chapter': ~
+          'TYPO3.TYPO3CR.Testing:Chapter': ~
     """
-    When I get a node by path "/sites/neosdemotypo3" with the following context:
+    When I get a node by path "/sites/typo3cr" with the following context:
       | Workspace |
       | live      |
-    And I should be able to create a child node of type "TYPO3.NeosDemoTypo3Org:Chapter"
+    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Chapter"
 
   @fixtures
   Scenario: Constraints for auto created childnodes are ignored on node create
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       childNodes:
         main:
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
       constraints:
         nodeTypes:
-          'TYPO3.Neos:ContentCollection': FALSE
+          'TYPO3.TYPO3CR.Testing:ContentCollection': FALSE
     """
     And I have the following nodes:
-      | Identifier                           | Path                                | Node Type                     | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/create-page    | TYPO3.Neos.NodeTypes:Page     | {"title": "page"}
-    And I get a node by path "/sites/neosdemotypo3/create-page/main" with the following context:
+      | Identifier                           | Path                          | Node Type                      | Properties
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/create-page    | TYPO3.TYPO3CR.Testing:Page     | {"title": "page"}
+    And I get a node by path "/sites/typo3cr/create-page/main" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
@@ -186,24 +186,24 @@ Feature: ChildNode Constraints
   Scenario: Constraints for auto created childnodes are ignored on node copy
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       childNodes:
         main:
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
       constraints:
         nodeTypes:
-          'TYPO3.Neos:ContentCollection': FALSE
+          'TYPO3.TYPO3CR.Testing:ContentCollection': FALSE
     """
     And I have the following nodes:
-      | Identifier                           | Path                              | Node Type                     | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/copy-page    | TYPO3.Neos.NodeTypes:Page     | {"title": "page"}
-    And I get a node by path "/sites/neosdemotypo3/copy-page" with the following context:
+      | Identifier                           | Path                        | Node Type                      | Properties
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/copy-page    | TYPO3.TYPO3CR.Testing:Page     | {"title": "page"}
+    And I get a node by path "/sites/typo3cr/copy-page" with the following context:
       | Workspace |
       | live      |
-    When I copy the node into path "/sites/neosdemotypo3" with the following context:
+    When I copy the node into path "/sites/typo3cr" with the following context:
       | Workspace |
       | live      |
-    And I get a node by path "/sites/neosdemotypo3/copy-page-1" with the following context:
+    And I get a node by path "/sites/typo3cr/copy-page-1" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
@@ -212,25 +212,25 @@ Feature: ChildNode Constraints
   Scenario: Nodes with auto created childnodes with constraints on nodetype can be moved
     Given I have the following additional NodeTypes configuration:
     """
-    'TYPO3.Neos.NodeTypes:Page':
+    'TYPO3.TYPO3CR.Testing:Page':
       childNodes:
         main:
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
       constraints:
         nodeTypes:
-          'TYPO3.Neos:ContentCollection': FALSE
+          'TYPO3.TYPO3CR.Testing:ContentCollection': FALSE
     """
     And I have the following nodes:
-      | Identifier                           | Path                               | Node Type                     | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/move-page1    | TYPO3.Neos.NodeTypes:Page     | {"title": "page"}
-      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/neosdemotypo3/move-page2    | TYPO3.Neos.NodeTypes:Page     | {"title": "page 2"}
-    And I get a node by path "/sites/neosdemotypo3/move-page1" with the following context:
+      | Identifier                           | Path                         | Node Type                      | Properties
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/move-page1    | TYPO3.TYPO3CR.Testing:Page     | {"title": "page"}
+      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/typo3cr/move-page2    | TYPO3.TYPO3CR.Testing:Page     | {"title": "page 2"}
+    And I get a node by path "/sites/typo3cr/move-page1" with the following context:
       | Workspace |
       | live      |
-    When I move the node into path "/sites/neosdemotypo3/move-page2" with the following context:
+    When I move the node into path "/sites/typo3cr/move-page2" with the following context:
       | Workspace |
       | live      |
-    And I get a node by path "/sites/neosdemotypo3/move-page2/move-page1" with the following context:
+    And I get a node by path "/sites/typo3cr/move-page2/move-page1" with the following context:
       | Workspace |
       | live      |
     Then I should have one node

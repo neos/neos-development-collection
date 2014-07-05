@@ -97,7 +97,7 @@ class NodeTemplatesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	protected function generateBasicNodeTemplate() {
 		$source = array(
-			'__nodeType' => 'TYPO3.TYPO3CR:TestingNodeType',
+			'__nodeType' => 'TYPO3.TYPO3CR.Testing:NodeType',
 			'test1' => 'Neos rules!'
 		);
 

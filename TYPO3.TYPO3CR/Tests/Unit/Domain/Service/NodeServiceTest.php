@@ -24,12 +24,12 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @var array
 	 */
 	protected $subNodeTypesFixture = array(
-		'TYPO3.Neos:MyFinalType' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+		'TYPO3.TYPO3CR.Testing:MyFinalType' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
 			'final' => TRUE
 		),
-		'TYPO3.Neos:Text' => array(
-			'superTypes' => array('TYPO3.Neos:ContentObject'),
+		'TYPO3.TYPO3CR.Testing:Text' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:ContentObject'),
 			'ui' => array(
 				'label' => 'Text',
 			),
@@ -92,7 +92,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
 		$mockNode->expects($this->once())
 			->method('getNodeType')
@@ -126,7 +126,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
 		$mockNode->expects($this->once())
 			->method('getNodeType')
@@ -159,9 +159,9 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
-		$firstChildNodeType = $this->mockNodeType('TYPO3.Neos:Content');
-		$secondChildNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
+		$firstChildNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
+		$secondChildNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
 		$mockNodeType->expects($this->once())
 			->method('getAutoCreatedChildNodes')
@@ -193,7 +193,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 		$mockNodeType->expects($this->once())
 			->method('getProperties')
 			->will($this->returnValue(array(
@@ -232,9 +232,9 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
-		$mockContentNodeType = $this->mockNodeType('TYPO3.Neos:ContentCollection');
+		$mockContentNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:ContentCollection');
 
 		$mockFirstChildNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 		$mockFirstChildNode->expects($this->any())
@@ -266,8 +266,8 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockThirdChildNode->expects($this->once())
 			->method('remove');
 
-		$mockMainChildNodeType = $this->mockNodeType('TYPO3.Neos:ContentCollection');
-		$mockSidebarChildNodeType = $this->mockNodeType('TYPO3.Neos:ContentCollection');
+		$mockMainChildNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:ContentCollection');
+		$mockSidebarChildNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:ContentCollection');
 		$mockNodeType->expects($this->once())
 			->method('getAutoCreatedChildNodes')
 			->will($this->returnValue(array(
@@ -302,9 +302,9 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Page');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Page');
 
-		$mockContentNodeType = $this->mockNodeType('TYPO3.Neos:Document');
+		$mockContentNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Document');
 
 		$mockFirstChildNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 		$mockFirstChildNode->expects($this->any())
@@ -316,7 +316,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockFirstChildNode->expects($this->never())
 			->method('remove');
 
-		$mockMainChildNodeType = $this->mockNodeType('TYPO3.Neos:ContentCollection');
+		$mockMainChildNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:ContentCollection');
 		$mockNodeType->expects($this->once())
 			->method('getAutoCreatedChildNodes')
 			->will($this->returnValue(array(
@@ -344,13 +344,13 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:MyFinalType');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:MyFinalType');
 
 		$mockNode->expects($this->atLeastOnce())
 			->method('getNodeType')
 			->will($this->returnValue($mockNodeType));
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:ContentObject');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:ContentObject');
 		$this->assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
 	}
 
@@ -362,7 +362,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
-		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Document');
+		$mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Document');
 
 		$mockNode->expects($this->atLeastOnce())
 			->method('getNodeType')
