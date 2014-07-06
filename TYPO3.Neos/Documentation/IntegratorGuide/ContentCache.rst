@@ -182,19 +182,19 @@ The following list of TypoScript prototypes is cached by default:
 * TYPO3.Neos:Breadcrumb
 * TYPO3.Neos:Menu
 * TYPO3.Neos:Page
-* TYPO3.Neos:PrimaryContent
+* TYPO3.Neos:ContentCollection (see note)
 
 The following list of TypoScript prototypes is uncached by default:
 
 * TYPO3.Neos.NodeTypes:Form
 * TYPO3.Neos:Plugin
 
-.. warning::
+.. note::
 
-	The ``TYPO3.Neos:ContentCollection`` prototype is embedded by default but has a cache configuration with proper
-	identifier, tags and maximumLifetime defined. For every fixed ``ContentCollection`` on the page (e.g. an additional
-	sidebar or footer) the caching must be enabled explicitly (``@cache.mode = 'cached'``) to get the correct flushing
-	behavior. For node types like multi-column elements there is no need to set the cache mode.
+	The ``TYPO3.Neos:ContentCollection`` prototype is cached by default and has a cache configuration with proper
+	identifier, tags and maximumLifetime defined. For all ``ContentCollection`` objects inside a ``Content`` object the
+	mode is set to ``embed``. This means that node types that have a ``ContentCollection`` do not generate a separate
+	cache entry but are embedded in the outer *static* ``ContentCollection``.
 
 Overriding default cache configuration
 ======================================
@@ -208,20 +208,6 @@ You can also override cache configuration for a specific TypoScript Path::
     page.content.main {
     	prototype(TYPO3.Neos:Plugin).@cache.mode = 'cached'
     }
-
-Enable caching for an additional, fixed ContentCollection::
-
-	page {
-		content {
-			teaser = ContentCollection {
-				nodePath = 'teaser'
-
-				@cache {
-					mode = 'cached'
-				}
-			}
-		}
-	}
 
 Tuning your cache
 =================

@@ -34,8 +34,6 @@ the following configuration in NodeTypes.yaml::
 TypoScript code::
 
 	footer = TYPO3.Neos:ContentCollection {
-		@cache.mode = 'cached'
-
 		nodePath = ${q(site).find('footer').property('_path')}
 		collection = ${q(site).children('footer').children()}
 	}

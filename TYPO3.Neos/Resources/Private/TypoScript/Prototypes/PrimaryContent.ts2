@@ -12,12 +12,6 @@ prototype(TYPO3.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
 			nodePath = ${nodePath}
 		}
 
-		element {
-			@cache {
-				mode = 'cached'
-			}
-		}
-
 		condition = TRUE
 		type = 'TYPO3.Neos:ContentCollection'
 		@position = 'end'
