@@ -141,7 +141,9 @@ class BackendRedirectionService {
 	 */
 	protected function createContext($workspaceName) {
 		$contextProperties = array(
-			'workspaceName' => $workspaceName
+			'workspaceName' => $workspaceName,
+			'invisibleContentShown' => TRUE,
+			'inaccessibleContentShown' => TRUE
 		);
 
 		$currentDomain = $this->domainRepository->findOneByActiveRequest();
