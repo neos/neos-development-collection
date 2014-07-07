@@ -54,15 +54,17 @@ class AssetListImplementation extends TemplateImplementation {
 		$processedAssets = array();
 
 		/** @var Asset $asset */
-		foreach ($assets as $asset) {
-			if ($asset->getResource() === NULL) {
-				if ($asset instanceof Image) {
-					$processedAssets[] = $this->imageRepository->findByIdentifier($asset->getIdentifier());
-				} elseif ($asset instanceof Asset) {
-					$processedAssets[] = $this->assetRepository->findByIdentifier($asset->getIdentifier());
+		if (is_array($assets)) {
+			foreach ($assets as $asset) {
+				if ($asset->getResource() === NULL) {
+					if ($asset instanceof Image) {
+						$processedAssets[] = $this->imageRepository->findByIdentifier($asset->getIdentifier());
+					} elseif ($asset instanceof Asset) {
+						$processedAssets[] = $this->assetRepository->findByIdentifier($asset->getIdentifier());
+					}
+				} else {
+					$processedAssets[] = $asset;
 				}
-			} else {
-				$processedAssets[] = $asset;
 			}
 		}
 
