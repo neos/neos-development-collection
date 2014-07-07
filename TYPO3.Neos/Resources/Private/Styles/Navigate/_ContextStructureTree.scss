@@ -51,29 +51,32 @@
 				cursor: not-allowed;
 
 				&:hover,
-				&:after {
+				&::after {
 					color: $textSubtle;
 				}
 			}
 
-			&.node-node-tree-new-node-before:after {
+			&.node-node-tree-new-node-into::after {
+				content: $long-arrow-right;
+				left: 18px;
+				top: 9px;
+			}
+
+			&.node-node-tree-new-node-before::after {
 				content: $level-up;
 				left: 24px;
 				top: 6px;
 			}
 
-			&.node-node-tree-new-node-after:after {
+			&.node-node-tree-new-node-after::after {
 				content: $level-down;
 				left: 24px;
 				top: 7px;
 			}
 
-			&:after {
+			&::after {
 				@include icon-FontAwesome();
-				content: $long-arrow-right;
 				position: absolute;
-				left: 18px;
-				top: 9px;
 				font-size: 14px;
 				color: $blue;
 			}
@@ -117,29 +120,32 @@
 				cursor: not-allowed;
 
 				&:hover,
-				&:after {
+				&::after {
 					color: $textSubtle;
 				}
 			}
 
-			&.node-node-tree-paste-node-before:after {
+			&.node-node-tree-paste-node-into::after {
+				content: $long-arrow-right;
+				left: 18px;
+				top: 9px;
+			}
+
+			&.node-node-tree-paste-node-before::after {
 				content: $level-up;
 				left: 24px;
 				top: 5px;
 			}
 
-			&.node-node-tree-paste-node-after:after {
+			&.node-node-tree-paste-node-after::after {
 				content: $level-down;
 				left: 24px;
 				top: 6px;
 			}
 
-			&:after {
+			&::after {
 				@include icon-FontAwesome();
-				content: $long-arrow-right;
 				position: absolute;
-				left: 18px;
-				top: 9px;
 				font-size: 14px;
 				color: $blue;
 			}
