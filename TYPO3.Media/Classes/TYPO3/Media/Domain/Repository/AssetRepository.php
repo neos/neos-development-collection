@@ -35,7 +35,10 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	public function findBySearchTermOrTags($searchTerm, array $tags = array()) {
 		$query = $this->createQuery();
 
-		$constraints = array($query->like('title', '%' . $searchTerm . '%'));
+		$constraints = array(
+			$query->like('title', '%' . $searchTerm . '%'),
+			$query->like('resource.filename', '%' . $searchTerm . '%')
+		);
 		foreach ($tags as $tag) {
 			$constraints[] = $query->contains('tags', $tag);
 		}
