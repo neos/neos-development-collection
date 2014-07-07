@@ -78,7 +78,7 @@ define(
 					disabled: true,
 					vie: vieInstance
 				};
-				$('.neos-contentelement[about]').each(function() {
+				$('[about]').each(function() {
 					$(this).midgardEditable(editableOptions);
 					$(this).removeClass('ui-state-disabled');
 				});
