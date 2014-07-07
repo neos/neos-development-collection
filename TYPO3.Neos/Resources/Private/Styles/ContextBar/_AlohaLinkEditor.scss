@@ -36,6 +36,16 @@
 					background: $grayLight;
 				}
 
+				img {
+					float: left;
+					padding-right: $relatedMargin;
+				}
+
+				i {
+					vertical-align: top;
+					padding-right: $tightMargin;
+				}
+
 				span {
 					font-size: 12px;
 					color: $textSubtleLight;

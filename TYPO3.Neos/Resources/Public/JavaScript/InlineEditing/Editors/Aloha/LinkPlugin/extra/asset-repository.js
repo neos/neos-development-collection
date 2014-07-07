@@ -7,7 +7,6 @@ define(
 		'use strict';
 
 		var Repository = Aloha.AbstractRepository.extend({
-
 			_type: 'asset',
 			_repositoryIdentifier: 'asset-repository',
 
@@ -25,14 +24,24 @@ define(
 				return '';
 			},
 
+			getResultThumbnail: function($result) {
+				if ($result.data('thumbnail')) {
+					return '<img src="' + $result.data('thumbnail') + '" width="40" height="40" alt="' + $result.text() + '" />';
+				}
+				return '';
+			},
+
 			getResultPath: function($result) {
+				if ($result.data('identifier')) {
+					return '<br />' + $result.data('identifier');
+				}
 				return '';
 			},
 
 			getQueryRequestData: function(searchTerm) {
 				return {
 					searchTerm: searchTerm
-				}
+				};
 			},
 
 			getObjectQueryRequestData: function() {
@@ -63,6 +72,7 @@ define(
 							'id': assetIdentifier,
 							'__icon': that.getResultIcon($(this)),
 							'__path': that.getResultPath($(this)),
+							'__thumbnail': that.getResultThumbnail($(this)),
 							'name': $(this).text(),
 							'url': that._type + '://' + assetIdentifier,
 							'type': that._type,
@@ -123,5 +133,5 @@ define(
 		});
 
 		return Repository;
-
-	});
+	}
+);

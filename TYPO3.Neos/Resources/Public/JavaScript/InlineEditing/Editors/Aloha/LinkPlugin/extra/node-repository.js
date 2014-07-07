@@ -7,7 +7,6 @@ define(
 		'use strict';
 
 		var Repository = AssetRepository.extend({
-
 			_type: 'node',
 			_repositoryIdentifier: 'node-repository',
 
@@ -20,7 +19,7 @@ define(
 
 			getResultPath: function($result) {
 				if ($result.data('path')) {
-					return '<br/>' + $result.data('path').replace(/^\/sites\/[^\/]*/, '');
+					return '<br />' + $result.data('path').replace(/^\/sites\/[^\/]*/, '');
 				}
 				return '';
 			},
@@ -29,7 +28,7 @@ define(
 				return {
 					searchTerm: searchTerm,
 					workspaceName: this.workspaceName
-				}
+				};
 			},
 
 			getObjectQueryRequestData: function() {
@@ -39,5 +38,5 @@ define(
 		});
 
 		return Repository;
-
-	});
+	}
+);

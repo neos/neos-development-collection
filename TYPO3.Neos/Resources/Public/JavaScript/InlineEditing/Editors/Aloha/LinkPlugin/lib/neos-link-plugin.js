@@ -41,7 +41,7 @@ define( [
 			noTargetHighlight: false,
 			targetHighlightClass: 'aloha-focus'
 		});
-		this.hrefField.setTemplate('<span>{__icon}<b>{name}</b>{__path}</span>'); // This template is customized for Neos
+		this.hrefField.setTemplate('{__thumbnail}<span>{__icon}<b>{name}</b>{__path}</span>'); // This template is customized for Neos
 		this.hrefField.setObjectTypeFilter( this.objectTypeFilter );
 
 		this._removeLinkButton = Ui.adopt('removeLink', Button, {
