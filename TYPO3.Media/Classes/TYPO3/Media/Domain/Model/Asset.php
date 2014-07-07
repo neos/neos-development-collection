@@ -92,7 +92,7 @@ class Asset implements AssetInterface {
 	 */
 	public function getLabel() {
 		if (empty($this->title)) {
-			return $this->getIdentifier();
+			return $this->getResource()->getFilename() ?: $this->getIdentifier();
 		}
 		return $this->getTitle();
 	}
