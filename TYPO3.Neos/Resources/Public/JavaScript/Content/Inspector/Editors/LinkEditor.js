@@ -2,9 +2,15 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Shared/HttpClient'
+		'Shared/HttpClient',
+		'Shared/Utility'
 	],
-	function($, Ember, HttpClient) {
+	function(
+		$,
+		Ember,
+		HttpClient,
+		Utility
+	) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
@@ -86,7 +92,7 @@ define(
 
 							var data = {results: []};
 
-							if (that._isExternalUrl(query.term) || that._isValidEmailOrPhoneLink(query.term)) {
+							if (Utility.isValidLink(query.term)) {
 								data.results.push({
 									id: query.term,
 									text: query.term,
@@ -194,16 +200,6 @@ define(
 				} else {
 					this.$().select2('data', []);
 				}
-			},
-
-			_isExternalUrl: function(value) {
-				var regularExpression = /^([a-z]){3,10}:\/\/.{2,}$/;
-				return regularExpression.test(value);
-			},
-
-			_isValidEmailOrPhoneLink: function(value) {
-				var regularExpression =/^(mailto|tel):.{2,}$/;
-				return regularExpression.test(value);
 			},
 
 			_findByIdentifier: function(identifier, endpointUrl) {

@@ -1,4 +1,4 @@
-define( [
+define([
 	'aloha',
 	'jquery',
 	'link/link-plugin',
@@ -7,9 +7,11 @@ define( [
 	'ui/button',
 	'ui/toggleButton',
 	'ui/port-helper-attribute-field',
-	'PubSub'
+	'util/keys'
 
-], function ( Aloha, $, LinkPlugin, Ui, i18n, Button, ToggleButton, AttributeField, PubSub ) {
+], function(Aloha, $, LinkPlugin, Ui, i18n, Button, ToggleButton, AttributeField, Keys) {
+	// Overwrite default value
+	LinkPlugin.hrefValue = '';
 
 	LinkPlugin.createButtons = function () {
 		var that = this;
@@ -41,10 +43,22 @@ define( [
 			noTargetHighlight: false,
 			targetHighlightClass: 'aloha-focus',
 			// Hide link field by default, otherwise it will be shown when linking isn't available
-			element: $('<input id="aloha-attribute-field-editLink" style="display: none;">')
+			// Add placeholder
+			element: $('<input id="aloha-attribute-field-editLink" placeholder="Paste a link, or search" style="display: none;">')
 		});
 		this.hrefField.setTemplate('{__thumbnail}<span>{__icon}<b>{name}</b>{__path}</span>'); // This template is customized for Neos
-		this.hrefField.setObjectTypeFilter( this.objectTypeFilter );
+		this.hrefField.setObjectTypeFilter(this.objectTypeFilter);
+		this.hrefField.addListener('keyup', function (event) {
+			var key = Keys.getToken(event.keyCode);
+			if (key === 'enter') {
+				var value = that.hrefField.getValue();
+				require({context: 'neos'}, ['Shared/Utility'], function(Utility) {
+					if (!Utility.isValidLink(value)) {
+						$(that.hrefField.getTargetObject()).attr('href', 'http://' + value);
+					}
+				});
+			}
+		});
 
 		this._removeLinkButton = Ui.adopt('removeLink', Button, {
 			tooltip: i18n.t('button.removelink.tooltip'),
@@ -57,5 +71,4 @@ define( [
 	};
 
 	return LinkPlugin;
-
-} );
+});
