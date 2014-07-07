@@ -104,6 +104,10 @@
 				&::after {
 					color: $textSubtle;
 				}
+
+				.neos-arrow {
+					border-bottom-color: $textSubtle;
+				}
 			}
 
 			&.node-node-tree-new-node-into::after {
@@ -135,6 +139,19 @@
 				.neos-node-tree-new-node-position {
 					display: block;
 				}
+
+				.neos-arrow {
+					display: none;
+				}
+			}
+
+			.neos-arrow {
+				position: absolute;
+				bottom: $tightMargin;
+				right: $tightMargin;
+				border-left: $tightMargin solid transparent;
+				border-bottom: $tightMargin solid $blue;
+				@include transform(rotate(45deg));
 			}
 
 			.neos-node-tree-new-node-position {
@@ -173,6 +190,10 @@
 				&::after {
 					color: $textSubtle;
 				}
+
+				.neos-arrow {
+					border-bottom-color: $textSubtle;
+				}
 			}
 
 			&.node-node-tree-paste-node-into::after {
@@ -204,6 +225,19 @@
 				.neos-node-tree-paste-node-position {
 					display: block;
 				}
+
+				.neos-arrow {
+					display: none;
+				}
+			}
+
+			.neos-arrow {
+				position: absolute;
+				bottom: $tightMargin;
+				right: $tightMargin;
+				border-left: $tightMargin solid transparent;
+				border-bottom: $tightMargin solid $blue;
+				@include transform(rotate(45deg));
 			}
 
 			.neos-node-tree-paste-node-position {

@@ -8511,6 +8511,9 @@
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled::after {
   color: #5b5b5b;
 }
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled .neos-arrow {
+  border-bottom-color: #5b5b5b;
+}
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
   content: "\f178";
   left: 18px;
@@ -8539,6 +8542,21 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-expanded .neos-node-tree-new-node-position {
   display: block;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-expanded .neos-arrow {
+  display: none;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-arrow {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid #00b5ff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
   display: none;
@@ -8570,6 +8588,9 @@
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled::after {
   color: #5b5b5b;
 }
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled .neos-arrow {
+  border-bottom-color: #5b5b5b;
+}
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
   content: "\f178";
   left: 18px;
@@ -8598,6 +8619,21 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-expanded .neos-node-tree-paste-node-position {
   display: block;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-expanded .neos-arrow {
+  display: none;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-arrow {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid #00b5ff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position {
   display: none;
@@ -8775,6 +8811,9 @@
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled::after {
   color: #5b5b5b;
 }
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled .neos-arrow {
+  border-bottom-color: #5b5b5b;
+}
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
   content: "\f178";
   left: 18px;
@@ -8803,6 +8842,21 @@
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-expanded .neos-node-tree-new-node-position {
   display: block;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-expanded .neos-arrow {
+  display: none;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-arrow {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid #00b5ff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
   display: none;
@@ -8834,6 +8888,9 @@
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled::after {
   color: #5b5b5b;
 }
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled .neos-arrow {
+  border-bottom-color: #5b5b5b;
+}
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
   content: "\f178";
   left: 18px;
@@ -8862,6 +8919,21 @@
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-expanded .neos-node-tree-paste-node-position {
   display: block;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-expanded .neos-arrow {
+  display: none;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-arrow {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid #00b5ff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position {
   display: none;
