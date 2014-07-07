@@ -70,14 +70,15 @@ class ContentElementWrappingService {
 		$attributes = array();
 		$attributes['typeof'] = 'typo3:' . $nodeType->getName();
 		$attributes['about'] = $node->getContextPath();
-		$attributes['class'] = 'neos-contentelement';
-
-		if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
-			$attributes['class'] = '';
-			$attributes['rel'] = 'typo3:content-collection';
-		}
 
 		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
+			if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
+				$attributes['class'] = '';
+				$attributes['rel'] = 'typo3:content-collection';
+			} else {
+				$attributes['class'] = 'neos-contentelement';
+			}
+
 			if ($node->isHidden()) {
 				$attributes['class'] .= ' neos-contentelement-hidden';
 			}
@@ -90,6 +91,7 @@ class ContentElementWrappingService {
 				$attributes['class'] .= ' neos-not-inline-editable';
 			}
 
+			$attributes['class'] = trim($attributes['class']);
 			$attributes['tabindex'] = 0;
 		} else {
 			$attributes['data-__sitename'] = $contentContext->getCurrentSite()->getName();
