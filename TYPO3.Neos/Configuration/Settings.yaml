@@ -191,7 +191,7 @@ TYPO3:
 
           # The default preset to use if no URI segment was given when resolving languages in the router
           defaultPreset: 'all'
-          label: 'Languages'
+          label: 'Language'
           icon: 'icon-language'
           presets:
             'all':

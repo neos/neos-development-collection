@@ -40,6 +40,11 @@
 	.neos-left {
 		float: left;
 		white-space: nowrap;
+		width: 50%;
+
+		.neos-contentelement-selected & {
+			width: auto;
+		}
 	}
 
 	.neos-right {
@@ -87,28 +92,30 @@
 	}
 
 	@import "Shared/Chosen";
-	.chosen-container {
-		.chosen-single {
-			border-left: 1px solid $grayLight;
-			border-right: 1px solid $grayLight;
-
-			div {
+	#neos-aloha-topmenu {
+		.chosen-container {
+			.chosen-single {
 				border-left: 1px solid $grayLight;
+				border-right: 1px solid $grayLight;
+
+				div {
+					border-left: 1px solid $grayLight;
+				}
 			}
-		}
 
 
-		.chosen-drop {
-			margin-top: 0;
+			.chosen-drop {
+				margin-top: 0;
 
-			.chosen-results {
-				max-height: none;
+				.chosen-results {
+					max-height: none;
 
-				li {
-					border-bottom: 1px solid $grayLight;
+					li {
+						border-bottom: 1px solid $grayLight;
 
-					&:first-child {
-						border-top: 1px solid $grayLight;
+						&:first-child {
+							border-top: 1px solid $grayLight;
+						}
 					}
 				}
 			}

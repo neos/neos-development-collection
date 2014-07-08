@@ -33,7 +33,7 @@ define(
 		Mousetrap,
 		NodeEndpoint
 	) {
-		var pageMetaInformation = $('#neos-page-metainformation');
+
 
 		var _getAllowedChildNodeTypesForNode = function(node) {
 			if (node.data.isAutoCreated) {
@@ -59,8 +59,8 @@ define(
 			dragInProgress: false,
 			loadingDepth: 4,
 
-			pageNodePath: pageMetaInformation.attr('about'),
-			siteRootNodePath: pageMetaInformation.data('__siteroot'),
+			pageNodePath: null,
+			siteRootNodePath: null,
 
 			baseNodeType: Ember.K,
 			unmodifiableLevels: 1,
@@ -74,6 +74,17 @@ define(
 			newPosition: 'after',
 			pastePosition: 'after',
 			minimumCreateAndPasteLevel: 1,
+
+			_updateMetaInformation: function() {
+				var pageMetaInformation = $('#neos-page-metainformation');
+				this.set('pageNodePath', pageMetaInformation.attr('about'));
+				this.set('siteRootNodePath', pageMetaInformation.data('__siteroot'));
+
+				// Make sure we update the siteRootNodePath in case the dimensions changed
+				if (this.$nodeTree && this.$nodeTree.dynatree('getRoot').getChildren()[0]) {
+					this.$nodeTree.dynatree('getRoot').getChildren()[0].data.key = this.get('siteRootNodePath');
+				}
+			},
 
 			pasteIsActive: function() {
 				return this.get('cutNode') !== null || this.get('copiedNode') !== null;
@@ -246,6 +257,8 @@ define(
 
 			init: function() {
 				this._super();
+				this._updateMetaInformation();
+
 				var that = this;
 
 				ContentModule.on('pageLoaded', this, function() {

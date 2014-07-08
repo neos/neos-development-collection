@@ -96,8 +96,14 @@ class ContentElementWrappingService {
 			$attributes['data-__siteroot'] = $contentContext->getCurrentSiteNode()->getContextPath();
 			// Add the workspace of the TYPO3CR context to the attributes
 			$attributes['data-context-__workspacename'] = $contentContext->getWorkspaceName();
+			$attributes['data-context-__dimensions'] = json_encode($contentContext->getDimensions());
 		}
-		// Add the actual workspace of the node to the attributes
+		if (!$node->dimensionsAreMatchingTargetDimensionValues()) {
+			$attributes['class'] .= ' neos-contentelement-shine-through';
+		}
+
+		// Add the actual workspace of the node, the node identifier and the TypoScript path to the attributes
+		$attributes['data-neos-_identifier'] = $node->getIdentifier();
 		$attributes['data-neos-__workspacename'] = $node->getWorkspace()->getName();
 		$attributes['data-neos-_typoscript-path'] = $typoScriptPath;
 

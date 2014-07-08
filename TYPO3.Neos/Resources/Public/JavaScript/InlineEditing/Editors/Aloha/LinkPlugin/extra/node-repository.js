@@ -22,6 +22,7 @@ function (
 
 			_constructor: function (endpoint, workspaceName, dimensions) {
 				this.workspaceName = workspaceName;
+				this.dimensions = dimensions;
 				this.endpoint = endpoint;
 				this._super(this._repositoryIdentifier);
 			},
@@ -34,13 +35,15 @@ function (
 			getQueryRequestData: function(searchTerm) {
 				return {
 					searchTerm: searchTerm,
-					workspaceName: this.workspaceName
+					workspaceName: this.workspaceName,
+					dimensions: this.dimensions
 				};
 			},
 
 			getObjectQueryRequestData: function() {
 				return {
-					workspaceName: this.workspaceName
+					workspaceName: this.workspaceName,
+					dimensions: this.dimensions
 				};
 			},
 

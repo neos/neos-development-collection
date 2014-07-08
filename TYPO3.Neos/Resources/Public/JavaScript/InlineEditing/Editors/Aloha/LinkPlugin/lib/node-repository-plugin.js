@@ -13,7 +13,8 @@ define([
 		init: function () {
 			new Repository(
 				$('link[rel="neos-service-nodes"]').attr('href'),
-				$('#neos-page-metainformation').attr('data-context-__workspacename')
+				$('#neos-page-metainformation').attr('data-context-__workspacename'),
+				$('#neos-page-metainformation').data('context-__dimensions')
 			);
 		},
 

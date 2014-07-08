@@ -2,9 +2,9 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Shared/HttpClient'
+		'Shared/HttpRestClient'
 	],
-	function($, Ember, HttpClient) {
+	function($, Ember, HttpRestClient) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
@@ -17,7 +17,6 @@ define(
 
 			didInsertElement: function() {
 				var that = this,
-					nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href'),
 					currentQueryTimer = null;
 
 				this.$().select2({
@@ -32,21 +31,22 @@ define(
 						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							var url = nodesEndpoint + '?searchTerm=' + query.term + '&nodeTypes[]=' + that.get('nodeTypes').join('&nodeTypes[]=');
-							HttpClient.getResource(url).then(
-								function(parsedResponse) {
-									var data = {results: []};
+							var arguments = {
+								workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename'),
+								searchTerm: query.term,
+								nodeTypes: that.get('nodeTypes')
+							};
 
-									$(parsedResponse).find('li').each(function(index, value){
-										data.results.push({
-											id: $(value).data('identifier'),
-											text:  $(value).text()
-										});
+							HttpRestClient.getResource('neos-service-nodes', null, {data: arguments}).then(function(result) {
+								var data = {results: []};
+								$(result.resource).find('li').each(function(index, value) {
+									data.results.push({
+										id: $('.node-property-_identifier', value).text(),
+										text: $('.node-property-_label', value).text()
 									});
-
 									query.callback(data);
-								}
-							);
+								});
+							});
 						}, 200);
 					}
 				});
@@ -77,20 +77,17 @@ define(
 				var that = this;
 
 				if (value) {
-					var nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href');
-
 					var item = Ember.Object.extend({
 						id: value,
 						text: 'Loading ...'
 					}).create();
 					that.set('content', item);
 
-					HttpClient.getResource(nodesEndpoint + '/' + value).then(
-						function(response) {
-							item.set('text', $(response).filter('div').text());
-							that._updateSelect2();
-						}
-					);
+					var arguments = { workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename') };
+					HttpRestClient.getResource('neos-service-nodes', value, {data: arguments}).then(function(result) {
+						item.set('text', $('.node-label', result.resource).text());
+						that._updateSelect2();
+					});
 
 					that._updateSelect2();
 				}

@@ -41,6 +41,9 @@ function (
 		nodeSelection: NodeSelection,
 		nodeActions: NodeActions,
 
+		// this property mirrors the _hidden property of the node (it's automatically updated)
+		_hidden: false,
+
 		_onNodeSelectionChange: function() {
 			this.$().find('.action-new').trigger('hidePopover');
 			var selectedNode = NodeSelection.get('selectedNode');
@@ -51,15 +54,9 @@ function (
 				this.set('_entity', entity);
 
 				entity.on('change', this._entityChanged, this);
+				this._entityChanged();
 
-				if (entity.has('typo3:_hidden') === true) {
-					this.set('_showHide', true);
-					this.set('_hidden', entity.get('typo3:_hidden'));
-				} else {
-					this.set('_showHide', false);
-					this.set('_hidden', false);
-				}
-
+				this.set('_showHide', entity.has('typo3:_hidden'));
 				this.set('_nodePath', this.get('_entity').getSubjectUri());
 			}
 		}.observes('nodeSelection.selectedNode'),

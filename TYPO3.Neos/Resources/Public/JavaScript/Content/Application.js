@@ -363,7 +363,7 @@ function(
 			}
 		},
 
-		loadPage: function(uri, ignorePushToHistory) {
+		loadPage: function(uri, ignorePushToHistory, callback) {
 			var that = this;
 			if (uri === '#') {
 					// Often, pages use an URI of "#" to go to the homepage. In this case,
@@ -422,6 +422,9 @@ function(
 							}
 						}
 
+						var currentContentDimensions = $currentPageMetaData.attr('about').substr($currentPageMetaData.attr('about').lastIndexOf(';') + 1),
+						newContentDimensions = $pageMetadata.attr('about').substr($pageMetadata.attr('about').lastIndexOf(';') + 1);
+
 						pushUriToHistory();
 
 						// Extract the HTML from the page, starting at (including) #neos-page-metainformation until #neos-application.
@@ -461,8 +464,17 @@ function(
 						if ($currentlyActiveContentElement.length === 1) {
 							NodeSelection.updateSelection($currentlyActiveContentElement);
 						}
+
+						if (currentContentDimensions !== newContentDimensions) {
+							EventDispatcher.trigger('contentDimensionsChanged');
+						}
+
 						that.set('_isLoadingPage', false);
 						LoadingIndicator.done();
+
+						if (typeof callback === 'function') {
+							callback();
+						}
 					},
 					function() {
 						that.set('_isLoadingPage', false);

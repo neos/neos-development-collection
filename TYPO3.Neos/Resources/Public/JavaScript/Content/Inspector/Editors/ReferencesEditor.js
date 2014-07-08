@@ -2,9 +2,9 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Shared/HttpClient'
+		'Shared/HttpRestClient'
 	],
-	function($, Ember, HttpClient) {
+	function($, Ember, HttpRestClient) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
@@ -18,12 +18,12 @@ define(
 
 			didInsertElement: function() {
 				var that = this;
-				var nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href');
 
 				var currentQueryTimer = null;
 				this.$().select2({
 					multiple: true,
 					minimumInputLength: 3,
+
 					query: function (query) {
 						if (currentQueryTimer) {
 							window.clearTimeout(currentQueryTimer);
@@ -31,21 +31,22 @@ define(
 						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							var url = nodesEndpoint + '?searchTerm=' + query.term + '&nodeTypes[]=' + that.get('nodeTypes').join('&nodeTypes[]=');
-							HttpClient.getResource(url).then(
-								function(parsedResponse) {
-									var data = {results: []};
+							var arguments = {
+								searchTerm: query.term,
+								workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename'),
+								nodeTypes: that.get('nodeTypes')
+							};
 
-									$(parsedResponse).find('li').each(function(index, value){
-										data.results.push({
-											id: $(value).data('identifier'),
-											text:  $(value).text()
-										});
+							HttpRestClient.getResource('neos-service-nodes', null, {data: arguments}).then(function(result) {
+								var data = {results: []};
+								$(result.resource).find('li').each(function(index, value) {
+									data.results.push({
+										id: $('.node-identifier', value).text(),
+										text: $('.node-label', value).text()
 									});
-
 									query.callback(data);
-								}
-							);
+								});
+							});
 						}, 200);
 					}
 				});
@@ -69,14 +70,11 @@ define(
 				var that = this;
 
 				if (value) {
-					var nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href');
-
 					// Remove all items so they don't appear multiple times.
 					// TODO: cache already found items and load multiple node records at once
 					that.set('content', []);
 					// load names of already selected nodes via the Node REST service:
 					$(JSON.parse(value)).each(function(index, nodeIdentifier) {
-
 						var item = Ember.Object.extend({
 							id: nodeIdentifier,
 							text: 'Loading ...'
@@ -84,12 +82,14 @@ define(
 
 						that.get('content').pushObject(item);
 
-						HttpClient.getResource(nodesEndpoint + '/' + nodeIdentifier).then(
-							function(response) {
-								item.set('text', $(response).filter('div').text());
-								that._updateSelect2();
-							}
-						);
+						var arguments = {
+							workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename')
+						}
+						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: arguments}).then(function(result) {
+							item.set('text', $('.node-label', result.resource).text());
+							that._updateSelect2();
+						});
+
 					});
 					that._updateSelect2();
 				}
