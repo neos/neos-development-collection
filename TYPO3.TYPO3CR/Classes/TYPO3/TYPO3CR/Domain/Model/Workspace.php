@@ -233,7 +233,11 @@ class Workspace {
 	 */
 	protected function moveNodeVariantToTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace) {
 		$nodeData = $node->getNodeData();
-		$nodeData->setWorkspace($targetWorkspace);
+		if ($targetWorkspace->getBaseWorkspace() === NULL && $node->isRemoved()) {
+			$this->nodeDataRepository->remove($nodeData);
+		} else {
+			$nodeData->setWorkspace($targetWorkspace);
+		}
 		$node->setNodeDataIsMatchingContext(NULL);
 	}
 

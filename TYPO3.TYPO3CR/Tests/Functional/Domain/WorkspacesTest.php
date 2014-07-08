@@ -281,4 +281,25 @@ class WorkspacesTest extends FunctionalTestCase {
 
 		$this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $teaserNode);
 	}
+
+	/**
+	 * @test
+	 */
+	public function removedNodeWithoutExistingTargetNodeDataWillBeRemovedWhenPublished() {
+		$homepageNode = $this->rootNode->createNode('homepage');
+		$homepageNode->remove();
+
+		$this->rootNode->getWorkspace()->publish($this->liveWorkspace);
+
+		$this->saveNodesAndTearDownRootNodeAndRepository();
+		$this->setUpRootNodeAndRepository();
+
+		$liveContext = $this->contextFactory->create(array('workspaceName' => 'live', 'removedContentShown' => TRUE));
+		$liveRootNode = $liveContext->getRootNode();
+
+		$liveHomepageNode = $liveRootNode->getNode('homepage');
+
+		$this->assertTrue($liveHomepageNode === NULL, 'A removed node should be removed after publishing, but it was still found');
+	}
+
 }

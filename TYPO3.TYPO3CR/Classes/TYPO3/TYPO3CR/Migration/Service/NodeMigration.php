@@ -78,7 +78,9 @@ class NodeMigration {
 			foreach ($this->configuration as $migrationDescription) {
 				if ($this->nodeFilterService->matchFilters($node, $migrationDescription['filters'])) {
 					$this->nodeTransformationService->execute($node, $migrationDescription['transformations']);
-					$this->nodeDataRepository->update($node);
+					if (!$this->nodeDataRepository->isInRemovedNodes($node)) {
+						$this->nodeDataRepository->update($node);
+					}
 				}
 			}
 		}
