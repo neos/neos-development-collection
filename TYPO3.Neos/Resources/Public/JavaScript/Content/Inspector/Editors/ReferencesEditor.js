@@ -18,7 +18,7 @@ define(
 
 			didInsertElement: function() {
 				var that = this;
-				var nodesEndpoint = $('link[rel="neos-nodes"]').attr('href');
+				var nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href');
 
 				var currentQueryTimer = null;
 				this.$().select2({
@@ -69,7 +69,7 @@ define(
 				var that = this;
 
 				if (value) {
-					var nodesEndpoint = $('link[rel="neos-nodes"]').attr('href');
+					var nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href');
 
 					// Remove all items so they don't appear multiple times.
 					// TODO: cache already found items and load multiple node records at once

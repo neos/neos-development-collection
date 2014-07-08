@@ -18,6 +18,10 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 
 /**
  * Service Controller for managing Nodes
+ *
+ * Note: This controller should be, step-by-step, transformed into a clean REST controller (see NEOS-190 and NEOS-199).
+ *       Since this is a rather big endeavor, we slice the elephant and move methods in a clean way from here to the
+ *       new NodesController (\TYPO3\Neos\Controller\Service\NodesController)
  */
 class NodeController extends AbstractServiceController {
 
@@ -66,6 +70,10 @@ class NodeController extends AbstractServiceController {
 		}
 		$this->uriBuilder->setRequest($this->request->getMainRequest());
 	}
+
+	#
+	# Actions which are not yet refactored to REST below (see NEOS-199):
+	#
 
 	/**
 	 * Return child nodes of specified node for usage in a TreeLoader
@@ -357,10 +365,9 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
-	 * Create a Context for a workspace given by name to be used in this
-	 * controller.
+	 * Create a Context for a workspace given by name to be used in this controller.
 	 *
-	 * @param string $workspaceName
+	 * @param string $workspaceName Name of the current workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	protected function createContext($workspaceName) {

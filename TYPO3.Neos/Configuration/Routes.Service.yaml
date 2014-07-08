@@ -2,11 +2,13 @@
 # "Service" subroutes configuration for the TYPO3.Neos package           #
 #                                                                        #
 
+# RESTful routes for Nodes service
 -
   name: 'Nodes - index'
   uriPattern: 'nodes'
   defaults:
-    '@controller': 'Service\Node'
+    '@controller': 'Service\Nodes'
+    '@action':     'index'
   appendExceedingArguments: TRUE
   httpMethods: ['GET']
 
@@ -14,10 +16,10 @@
   name: 'Nodes - single node'
   uriPattern: 'nodes/{identifier}'
   defaults:
-    '@controller': 'Service\Node'
+    '@controller': 'Service\Nodes'
     '@action':     'show'
   appendExceedingArguments: TRUE
-  httpMethods: ['GET']
+  httpMethods: ['HEAD', 'GET']
 
 # UserPreferencesController routes
 -

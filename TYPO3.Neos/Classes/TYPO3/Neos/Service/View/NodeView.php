@@ -20,6 +20,9 @@ use TYPO3\Flow\Utility\Arrays;
 /**
  * An View specialized on single or multiple Nodes in a tree structure
  *
+ * NOTE: This class only exists for backwards compatibility with not-yet refactored service end points and service
+ *       controllers.
+ *
  * @Flow\Scope("prototype")
  */
 class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {

@@ -12,8 +12,8 @@ define([
 
 		init: function () {
 			new Repository(
-				$('link[rel="neos-nodes"]').attr('href'),
-				$('meta[name="neos-workspace"]').attr('content')
+				$('link[rel="neos-service-nodes"]').attr('href'),
+				$('#neos-page-metainformation').attr('data-context-__workspacename')
 			);
 		},
 

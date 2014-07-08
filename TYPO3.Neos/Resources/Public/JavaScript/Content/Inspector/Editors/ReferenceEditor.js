@@ -17,7 +17,7 @@ define(
 
 			didInsertElement: function() {
 				var that = this,
-					nodesEndpoint = $('link[rel="neos-nodes"]').attr('href'),
+					nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href'),
 					currentQueryTimer = null;
 
 				this.$().select2({
@@ -77,7 +77,7 @@ define(
 				var that = this;
 
 				if (value) {
-					var nodesEndpoint = $('link[rel="neos-nodes"]').attr('href');
+					var nodesEndpoint = $('link[rel="neos-service-nodes"]').attr('href');
 
 					var item = Ember.Object.extend({
 						id: value,

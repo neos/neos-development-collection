@@ -12,11 +12,12 @@ namespace TYPO3\Neos\Service\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 
 /**
  * Abstract Service Controller
  */
-abstract class AbstractServiceController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+abstract class AbstractServiceController extends ActionController {
 
 	/**
 	 * A preliminary error action for handling validation errors

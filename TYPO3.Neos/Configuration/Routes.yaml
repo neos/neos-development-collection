@@ -42,7 +42,6 @@
   defaults:
     '@package':    'TYPO3.Neos'
     '@action':     'index'
-    '@format':     'html'
   subRoutes:
     'ServiceSubRoutes':
       package: 'TYPO3.Neos'
