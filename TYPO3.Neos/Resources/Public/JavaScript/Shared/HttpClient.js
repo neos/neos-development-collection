@@ -1,3 +1,9 @@
+/**
+ * HTTP service for communication with the server-side backend.
+ *
+ * This is the OLD service which exists for backwards compatibility with not yet refactored endpoints.
+ * See https://jira.typo3.org/browse/NEOS-190 for the current state and to-dos regarding this migration.
+ */
 define([
 	'emberjs',
 	'Library/jquery-with-dependencies',
