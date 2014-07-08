@@ -1435,4 +1435,15 @@ class NodeDataRepository extends Repository {
 		$query->setParameter('path', $path . '/%');
 		$query->execute();
 	}
+
+	/**
+	 * Test if a given NodeData is in the set of removed node data objects
+	 *
+	 * @param NodeData $nodeData
+	 * @return boolean TRUE If the NodeData was marked for removal
+	 */
+	public function isInRemovedNodes(NodeData $nodeData) {
+		return $this->removedNodes->contains($nodeData);
+	}
+
 }
