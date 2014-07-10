@@ -1,30 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<site nodeName="{siteNodeName}" type="TYPO3.Neos.NodeTypes:Page">
-		<properties>
-			<name>{siteName}</name>
-			<title><![CDATA[<![CDATA[Home]]>]]></title>
-			<state>1</state>
-			<siteResourcesPackageKey>{packageKey}</siteResourcesPackageKey>
-		</properties>
-		<node type="TYPO3.Neos:ContentCollection" nodeName="main">
-			<node type="TYPO3.Neos.NodeTypes:Text" nodeName="text1">
-				<properties>
-					<text><![CDATA[<![CDATA[<p>This is the homepage</p>]]>]]></text>
-				</properties>
-			</node>
-		</node>
-		<node type="TYPO3.Neos.NodeTypes:Page" nodeName="subpage">
-			<properties>
-				<title>A sub page</title>
-			</properties>
-			<node type="TYPO3.Neos:ContentCollection" nodeName="main">
-				<node type="TYPO3.Neos.NodeTypes:Text" nodeName="text1">
-					<properties>
-						<text><![CDATA[<![CDATA[<p>This is the first sub page</p>]]>]]></text>
-					</properties>
-				</node>
-			</node>
-		</node>
-	</site>
+ <site name="{siteName}" state="1" siteResourcesPackageKey="{packageKey}" siteNodeName="{siteNodeName}">
+  <nodes formatVersion="2.0">
+   <node nodeName="{siteNodeName}">
+    <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+     <dimensions/>
+     <accessRoles __type="array">[]</accessRoles>
+     <properties>
+      <title __type="string">Home</title>
+     </properties>
+    </variant>
+    <node nodeName="main">
+     <variant workspace="live" nodeType="TYPO3.Neos:ContentCollection" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+      <dimensions/>
+      <accessRoles __type="array">[]</accessRoles>
+     </variant>
+     <node nodeName="text1">
+      <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Text" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+       <dimensions/>
+       <accessRoles __type="array">[]</accessRoles>
+       <properties>
+        <text __type="string">&lt;p&gt;This is the homepage&lt;/p&gt;</text>
+       </properties>
+      </variant>
+     </node>
+    </node>
+    <node nodeName="subpage">
+     <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+      <dimensions/>
+      <accessRoles __type="array">[]</accessRoles>
+      <properties>
+       <title __type="string">A sub page</title>
+      </properties>
+     </variant>
+     <node nodeName="main">
+      <variant workspace="live" nodeType="TYPO3.Neos:ContentCollection" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+       <dimensions/>
+       <accessRoles __type="array">[]</accessRoles>
+      </variant>
+      <node nodeName="text1">
+       <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Text" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+        <dimensions/>
+        <accessRoles __type="array">[]</accessRoles>
+        <properties>
+         <text __type="string">&lt;p&gt;This is the first sub page&lt;/p&gt;</text>
+        </properties>
+       </variant>
+      </node>
+     </node>
+    </node>
+   </node>
+  </nodes>
+ </site>
 </root>
