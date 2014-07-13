@@ -39,7 +39,9 @@ define( [
 			cls: 'aloha-link-href-field',
 			scope: 'Aloha.continuoustext',
 			noTargetHighlight: false,
-			targetHighlightClass: 'aloha-focus'
+			targetHighlightClass: 'aloha-focus',
+			// Hide link field by default, otherwise it will be shown when linking isn't available
+			element: $('<input id="aloha-attribute-field-editLink" style="display: none;">')
 		});
 		this.hrefField.setTemplate('<span>{__icon}<b>{name}</b>{__path}</span>'); // This template is customized for Neos
 		this.hrefField.setObjectTypeFilter( this.objectTypeFilter );
