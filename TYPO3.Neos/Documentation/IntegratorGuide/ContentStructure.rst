@@ -209,6 +209,10 @@ The following options are allowed:
             'center': TRUE
             'right': TRUE
             'justify': TRUE
+          'formatlesspaste':
+            'button': TRUE # Show toggle button for formatless pasting.
+            'formatlessPasteOption': FALSE # Whether the format less pasting should be enable by default.
+#           'strippedElements': ['a'] # If not set the default value is used.
 
       Example of disabling all formatting options::
 
@@ -218,7 +222,9 @@ The following options are allowed:
           'link': []
           'list': []
           'alignment': []
-
+          'formatlesspaste':
+            'button': FALSE
+            'formatlessPasteOption': TRUE
 
     ``inspector``
       These settings configure the inspector in the Neos UI for the property.

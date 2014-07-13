@@ -30,7 +30,7 @@ function(
 			if (nodeType.properties && typeof nodeType.properties === 'object') {
 				$.each(nodeType.properties, function(propertyName, property) {
 					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]';
-					$.each(['table', 'link', 'list', 'format'], function(i, mode) {
+					$.each(['table', 'link', 'list', 'format', 'formatlesspaste'], function(i, mode) {
 						if (property.ui && property.ui.aloha && property.ui.aloha[mode]) {
 							nodeSettings[mode] = nodeSettings[mode] || {};
 							nodeSettings[mode][selector] = property.ui.aloha[mode];
@@ -43,8 +43,8 @@ function(
 
 					// This is a workaround for broken configuration behavior in the Aloha align plugin
 					if (property.ui && property.ui.aloha && property.ui.aloha.alignment) {
-						nodeSettings['alignment'] = nodeSettings['alignment'] || {};
-						nodeSettings['alignment'][selector] = {alignment: property.ui.aloha.alignment};
+						nodeSettings.alignment = nodeSettings.alignment || {};
+						nodeSettings.alignment[selector] = {alignment: property.ui.aloha.alignment};
 					}
 				});
 			}
@@ -105,11 +105,12 @@ function(
 				 * meaning that all options are still shown. This seems to be an Aloha bug and needs
 				 * more research.
 				 */
-				table: { config: [], editables: nodeSettings['table'] },
-				link: { config: [], editables: nodeSettings['link'] },
-				list: { config: [], editables: nodeSettings['list'] },
-				align: { config: [], editables: nodeSettings['alignment'] },
-				format: { config: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings['format'] }
+				table: { config: [], editables: nodeSettings.table },
+				link: { config: [], editables: nodeSettings.link },
+				list: { config: [], editables: nodeSettings.list },
+				align: { config: [], editables: nodeSettings.alignment },
+				format: { config: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings.format },
+				formatlesspaste: { config: [], editables: nodeSettings.formatlesspaste }
 			},
 			toolbar: {
 				tabs: [
@@ -219,6 +220,6 @@ function(
 				baseUrl: alohaBaseUrl
 			},
 			['aloha']
-		)
+		);
 	}
 });

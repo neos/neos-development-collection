@@ -87,16 +87,15 @@ class NodeTypeSchemaBuilder {
 			foreach (array_keys($options['properties']) as $propertyName) {
 				if (isset($options['properties'][$propertyName]['ui']['aloha'])) {
 					foreach ($options['properties'][$propertyName]['ui']['aloha'] as $formatGroup => $settings) {
-						if (!is_array($settings)) {
-							$flattenedSettings = $settings;
-						} else {
-							$flattenedSettings = array();
-							foreach ($settings as $key => $option) {
-								if (is_numeric($key) && is_string($option)) {
-									$flattenedSettings[] = $option;
-								} elseif ($option === TRUE) {
-									$flattenedSettings[] = $key;
-								}
+						if (!is_array($settings) || in_array($formatGroup, array('formatlesspaste'))) {
+							continue;
+						}
+						$flattenedSettings = array();
+						foreach ($settings as $key => $option) {
+							if (is_numeric($key) && is_string($option)) {
+								$flattenedSettings[] = $option;
+							} elseif ($option === TRUE) {
+								$flattenedSettings[] = $key;
 							}
 						}
 						$options['properties'][$propertyName]['ui']['aloha'][$formatGroup] = $flattenedSettings;
