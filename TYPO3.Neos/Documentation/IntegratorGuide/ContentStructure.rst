@@ -165,21 +165,41 @@ The following options are allowed:
       Example::
 
         aloha:
-          'format':
+          'format': # Enable specific formatting options.
+            'b': TRUE
+            'i': TRUE
+            'u': TRUE
             'sub': TRUE
             'sup': TRUE
             'p': TRUE
             'h1': TRUE
             'h2': TRUE
             'h3': TRUE
+            'h4': FALSE
+            'h5': FALSE
+            'h6': FALSE
             'removeFormat': TRUE
+          'table':
+            'table': TRUE
           'link':
             'a': TRUE
+          'list':
+            'ul': TRUE
+            'ol': TRUE
           'alignment':
             'left': TRUE
             'center': TRUE
             'right': TRUE
-            'justify': FALSE
+            'justify': TRUE
+
+      Example of disabling all formatting options::
+
+        aloha:
+          'format': []
+          'table': []
+          'link': []
+          'list': []
+          'alignment': []
 
 
     ``inspector``
