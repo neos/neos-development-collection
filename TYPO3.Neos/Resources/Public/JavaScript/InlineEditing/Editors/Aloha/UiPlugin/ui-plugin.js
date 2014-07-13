@@ -10,6 +10,7 @@ define([
 	// BEGIN MODIFICATION FOR NEOS
 	'./toolbar',
 	// END MODIFICATION FOR NEOS
+	'ui/scopes',
 	'ui/settings',
 	'PubSub',
 	// Most modules of the ui plugin depend on jquery-ui, but its easy
@@ -22,32 +23,34 @@ define([
 	Container,
 	Surface,
 	Toolbar,
+	Scopes,
 	Settings,
 	PubSub
-) {
+	) {
 	'use strict';
 
 	var context = new Context(),
 		toolbar = new Toolbar(context, getToolbarSettings());
 
-
-	Aloha.bind('aloha-editable-activated', function(event, alohaEvent) {
+	Aloha.bind('aloha-editable-activated', function (event, alohaEvent) {
 		Surface.show(context);
 		Container.showContainersForContext(context, event);
 	});
 
 	Aloha.bind('aloha-editable-deactivated', function (event, alohaEvent) {
-		Surface.hide(context);
+		if (!Surface.suppressHide) {
+			Surface.hide(context);
+		}
 	});
 
-	PubSub.sub('aloha.ui.scope.change', function() {
+	PubSub.sub('aloha.ui.scope.change', function () {
 		Container.showContainersForContext(context);
+		primaryScopeForegroundTab(Scopes.getPrimaryScope());
 	});
 
 	function getToolbarSettings() {
 		var userSettings = Aloha.settings.toolbar,
 			defaultSettings = Settings.defaultToolbarSettings;
-
 		if (!userSettings) {
 			return defaultSettings.tabs;
 		}
@@ -56,6 +59,20 @@ define([
 			defaultSettings.tabs,
 			userSettings.exclude || []
 		);
+	}
+
+	function primaryScopeForegroundTab() {
+		var tabs = toolbar._tabs,
+			primaryScope = Scopes.getPrimaryScope(),
+			settings,
+			i;
+		for (i = 0; i < tabs.length; i++) {
+			settings = tabs[i].settings;
+			if ('object' === $.type(settings.showOn) && settings.showOn.scope === primaryScope) {
+				tabs[i].tab.foreground();
+				break;
+			}
+		}
 	}
 
 	/**

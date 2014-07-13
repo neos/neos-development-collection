@@ -82,7 +82,7 @@ define([
 			for (i = 0; i < components.length; i++) {
 				if (typeof components[i] === 'string') {
 					if (1 === components[i].length && components[i].charCodeAt(0) === 10) {
-						this.panel.append('<div>', {'unselectable': 'on'});
+						this.panel.append('<span>', {'unselectable': 'on'});
 					} else {
 						elem = $('<span>', {'unselectable': 'on'});
 						this._elemBySlot[components[i]] = elem;
@@ -101,7 +101,7 @@ define([
 						if (groupedComponents[j] &&
 							1 === groupedComponents[j].length &&
 							groupedComponents[j].charCodeAt(0) === 10) {
-							group.append($('<div>', {'unselectable': 'on'}));
+							group.append($('<span>', {'unselectable': 'on'}));
 						} else {
 							componentName = groupedComponents[j];
 							elem = $('<span>', {'unselectable': 'on'});
@@ -138,6 +138,7 @@ define([
 			}
 			return true;
 		},
+
 		_getSlottedComponents: function() {
 			return slottedComponents;
 		},

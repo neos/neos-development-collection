@@ -24,13 +24,34 @@ module.exports = function(grunt) {
 			dest: baseUri + 'aloha/aloha.js',
 			options: {
 				process: function(src, filepath) {
-					src = src.replace("$(function(){ element.appendTo('body'); });", "$(function(){ element.appendTo('#neos-application'); });");
+					src = src.replace(/\$\(function \(\) {\s*\n\s+element.appendTo\('body'\);\n\s+}\);/, "$(function(){ element.appendTo('#neos-application'); });");
 					src = src.replace("jQuery('body').append(layer).bind('click', function(e) {", "jQuery('#neos-application').append(layer).bind('click', function(e) {");
 					src = src.replace('var editableTrimedContent = jQuery.trim(this.getContents()),', "var editableTrimedContent = $('<div />').html(this.getContents()).text().trim(),");
 
+					// Compatibility with no conflict jQuery UI
+					src = src.replace(/\.button\(/g, '.uibutton(');
+
+					// Fix broken this reference in list plugin
+					src = src.replace('jQuery.each(this.templates[nodeName].classes, function () {', 'jQuery.each(this.templates[nodeName].classes, function (i, cssClass) {');
+					src = src.replace('if (listToStyle.hasClass(this.cssClass) && this.cssClass === style) {', 'if (listToStyle.hasClass(cssClass) && cssClass === style) {');
+					src = src.replace('listToStyle.removeClass(this.cssClass);', 'listToStyle.removeClass(cssClass);');
+
+					// Workaround for jQueryUI menu issue / poorly written code in list plugin
+					src = src.replace("elem.data('aloha-ui-menubutton-select', function (){", "elem.click(function (){");
+
+					// We need to patch this file to make Aloha compatible with jquery UI 1.10.4
+					src = src.replace("this.container.tabs('select', this.index);", "this.container.tabs('option', 'active', this.index);");
+
+					// Remove instantiation of language repository in link plugin
+					src = src.replace(/\s+LANG_REPOSITORY[\s\w=('\-./,]+\);/, '');
+
+					// Remove setting of hreflang attribute on links
+					src = src.replace(/\s+this.hrefField.setAttribute\('hreflang', ''\);/, '');
+
 					// add "code" element
-					src = src.replace(/var componentNameByElement = {\n/g, 'var componentNameByElement = { "code": "code", \n');
+					src = src.replace(/var componentNameByElement = {\n/, "var componentNameByElement = { 'code': 'code'," + "\n");
 					src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
+
 					return src;
 				}
 			}
@@ -358,7 +379,7 @@ module.exports = function(grunt) {
 				baseUri + 'jquery/jquery-2.0.3.js',
 				baseUri + 'jquery/jquery-migrate-1.2.1.js',
 				baseUri + 'jquery-easing/jquery.easing.1.3.js',
-				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
+				baseUri + 'jquery-ui/js/jquery-ui-1.10.4.custom.js',
 				baseUri + 'jquery-cookie/jquery.cookie.js',
 				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
 				baseUri + 'chosen/chosen/chosen.jquery.js',
@@ -373,8 +394,18 @@ module.exports = function(grunt) {
 				footer: 'return jQuery.noConflict(true);' +
 				'});',
 				process: function(src, filepath) {
-					// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
-					return src.replace('define( "jquery", [], function () { return jQuery; } );', 'jQuery.migrateMute = true;');
+					switch (filepath) {
+						case baseUri + 'jquery/jquery-2.0.3.js':
+							// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
+							src = src.replace('define( "jquery", [], function () { return jQuery; } );', 'jQuery.migrateMute = true;');
+						break;
+						case baseUri + 'jquery-ui/js/jquery-ui-1.10.4.custom.js':
+							// Prevent conflict with Twitter Bootstrap
+							src += "$.widget.bridge('uitooltip', $.ui.tooltip);";
+							src += "$.widget.bridge('uibutton', $.ui.button);";
+						break;
+					}
+					return src;
 				}
 			}
 		}

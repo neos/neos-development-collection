@@ -10,4 +10,4 @@ if [ ! -d "src" ]; then
 fi
 
 cd src
-git checkout e54f2d24de2dd17cf47a97d98abe5914aca46ed4
+git checkout alohaeditor-1.1.3

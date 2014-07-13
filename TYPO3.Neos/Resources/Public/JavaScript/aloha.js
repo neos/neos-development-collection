@@ -83,6 +83,7 @@ function(
 					//'flag-icons/flag-icons-plugin',
 					//'numerated-headers/numerated-headers-plugin',
 					'extra/formatlesspaste',
+					'extra/autoparagraph',
 					//'linkbrowser/linkbrowser-plugin',
 					//'imagebrowser/imagebrowser-plugin',
 					//'extra/ribbon',
@@ -100,11 +101,44 @@ function(
 					sidebarAttributeEditor: false
 				},
 				table: { config: [], editables: nodeSettings.table },
-				link: { config: [], editables: nodeSettings.link },
-				list: { config: [], editables: nodeSettings.list },
+				link: {
+					config: [],
+					editables: nodeSettings.link,
+
+					// all links that match the targetregex will get set the target
+					// e.g. ^(?!.*aloha-editor.com).* matches all href except aloha-editor.com
+					targetregex: /^([a-z]){3,10}:\/\/.+/i,
+
+					// this target is set when either targetregex matches or not set
+					// e.g. _blank opens all links in new window
+					target: '_blank'
+				},
+				list: {
+					config: [],
+					editables: nodeSettings.list,
+					templates: {
+						ul: {
+							classes: ['neos-list-disc', 'neos-list-circle', 'neos-list-square'],
+							template: '<ul class="${cssClass}"><li></li></ul>',
+							locale: {
+								fallback: {first: 'first layer', second: 'second layer', third: 'third layer'}
+							}
+						},
+						ol: {
+							classes: ['neos-list-decimal', 'neos-list-decimal-leading-zero',
+								'neos-list-lower-roman', 'neos-list-upper-roman', 'neos-list-lower-greek',
+								'neos-list-lower-latin', 'neos-list-upper-latin' ],
+							template: '<ol class="${cssClass}"><li></li></ol>',
+							locale: {
+								fallback: {first: 'first layer', second: 'second layer', third: 'third layer'}
+							}
+						}
+					}
+				},
 				align: { config: [], editables: nodeSettings.alignment },
-				format: { config: ['b', 'i', 'u', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings.format },
-				formatlesspaste: { config: [], editables: nodeSettings.formatlesspaste }
+				format: { config: ['strong', 'em', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings.format },
+				formatlesspaste: { config: [], editables: nodeSettings.formatlesspaste },
+				autoparagraph: { config: ['autoparagraph'] }
 			},
 			toolbar: {
 				tabs: [
@@ -113,7 +147,7 @@ function(
 						// The "format" tab is shown in the top-menu, the remaining tabs are shown
 						// in the inspector.
 						components: [
-							[ 'formatBlock', 'bold', 'italic', 'underline', 'subscript', 'superscript', 'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop', 'toggleMetaView', 'wailang', 'toggleFormatlessPaste', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker', 'code']
+							[ 'formatBlock', 'strong', 'bold', 'emphasis', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'formatLink', 'editLink', 'createTable', 'toggleFormatlessPaste', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'orderedList', 'orderedListFormatSelector', 'unorderedList', 'unorderedListFormatSelector', 'indentList', 'outdentList', 'code']
 						]
 					},
 					// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.
