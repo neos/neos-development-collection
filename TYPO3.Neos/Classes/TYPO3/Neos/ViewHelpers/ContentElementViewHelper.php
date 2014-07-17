@@ -19,7 +19,9 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * View helper to wrap nodes for editing in the backend
  *
- * @deprecated This ViewHelper is no longer needed as wrapping is now done with a TypoScript processor
+ * **Deprecated!** This ViewHelper is no longer needed as wrapping is now done with a TypoScript processor.
+ *
+ * @deprecated since 1.0
  */
 class ContentElementViewHelper extends AbstractTagBasedViewHelper {
 

@@ -17,8 +17,8 @@ use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * ViewHelper for the backend 'container'. Renders the required HTML to integrate
- * the Neos backend into a website.
+ * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
+ * the Neos backend.
  */
 class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 

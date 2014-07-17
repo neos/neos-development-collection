@@ -17,14 +17,27 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * View helper to check if a given value is an array.
  *
- * Usage::
+ * = Examples =
  *
- *   {neos:getType(value: 'foo')} or {myValue -> neos:getType()}
+ * <code title="Basic usage">
+ * {neos:getType(value: 'foo')}
+ * </code>
+ * <output>
+ * string
+ * </output>
+ *
+ * <code title="Use with shorthand syntax">
+ * {myValue -> neos:getType()}
+ * </code>
+ * <output>
+ * string
+ * (if myValue is a string)
+ * </output>
  */
 class GetTypeViewHelper extends AbstractViewHelper {
 
 	/**
-	 * @param mixed $value
+	 * @param mixed $value The value to determine the type of
 	 * @return string
 	 */
 	public function render($value = NULL) {

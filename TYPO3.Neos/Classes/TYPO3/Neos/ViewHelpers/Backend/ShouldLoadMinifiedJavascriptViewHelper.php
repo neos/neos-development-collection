@@ -14,7 +14,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * return TRUE if the minified javascript should be loaded, FALSE otherwise.
+ * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
  */
 class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 

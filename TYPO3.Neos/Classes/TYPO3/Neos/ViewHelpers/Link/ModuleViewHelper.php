@@ -22,10 +22,9 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
  * <code title="Defaults">
  * <neos:link.module path="system/useradmin">some link</neos:link.module>
  * </code>
- *
- * Output:
+ * <output>
  * <a href="neos/system/useradmin">some link</a>
- * (depending on current node, format etc.)
+ * </output>
  */
 class ModuleViewHelper extends AbstractTagBasedViewHelper {
 

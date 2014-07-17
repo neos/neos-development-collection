@@ -21,8 +21,15 @@ use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
+ *
  * The wrapper contains the property name which should be made editable, and is by default
  * a "div" tag. The tag to use can be given as `tag` argument to the ViewHelper.
+ *
+ * In live workspace this just renders a tag with the specified $tag-name containing the value of the given $property.
+ * For logged in users with access to the Backend this also adds required attributes for the RTE to work.
+ *
+ * Note: when passing a node you have to make sure a metadata wrapper is used around this that matches the given node
+ * (see contentElement.wrap - i.e. the WrapViewHelper).
  */
 class EditableViewHelper extends AbstractTagBasedViewHelper {
 
@@ -41,11 +48,8 @@ class EditableViewHelper extends AbstractTagBasedViewHelper {
 	}
 
 	/**
-	 * In live workspace this just renders a tag with the specified $tag-name containing the value of the given $property.
-	 * For logged in users with access to the Backend this also adds required attributes for the RTE to work.
-	 *
-	 * Note: when passing a node you have to make sure a metadata wrapper is used around this that matches the given node
-	 * (see contentElement.wrap - i.e. the WrapViewHelper).
+	 * In live workspace this just renders a tag; for logged in users with access to the Backend this also adds required
+	 * attributes for the editing.
 	 *
 	 * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
 	 * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
