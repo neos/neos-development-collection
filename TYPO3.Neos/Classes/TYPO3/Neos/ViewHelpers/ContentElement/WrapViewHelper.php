@@ -19,10 +19,22 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
- * Renders a wrapper around a whole block of editable content to enable frontend editing.
+ * A view helper for manually wrapping content editables.
+ *
  * Note that using this view helper is usually not necessary as Neos will automatically wrap editables of content
- * elements. For cases where there are no real content element nodes (for example if you'd like to make properties
- * of a document node inline editable) this wrapper can be used.
+ * elements.
+ *
+ * By explicitly wrapping template parts with node meta data that is required for the backend to show properties in the
+ * inspector, this ViewHelper enables usage of the ``contentElement.editable`` ViewHelper outside of content element
+ * templates. This is useful if you want to make properties of a custom document node inline-editable.
+ *
+ * = Examples =
+ *
+ * <code title="Defaults">
+ * <neos:contentElement.wrap>
+ *  <div>{neos:contentElement.editable(property: 'someProperty')}</div>
+ * </neos:contentElement.wrap>
+ * </code>
  */
 class WrapViewHelper extends AbstractViewHelper {
 

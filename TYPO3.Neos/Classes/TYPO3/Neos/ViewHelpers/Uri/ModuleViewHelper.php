@@ -24,9 +24,9 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
  * <link rel="some-module" href="{neos:link.module(path: 'system/useradmin')}" />
  * </code>
  *
- * Output:
+ * <output>
  * <link rel="some-module" href="neos/system/useradmin" />
- * (depending on current node, format etc.)
+ * </output>
  *
  * @Flow\Scope("prototype")
  */

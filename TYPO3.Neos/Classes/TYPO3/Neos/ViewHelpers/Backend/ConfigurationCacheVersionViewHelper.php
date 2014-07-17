@@ -16,7 +16,7 @@ use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * ViewHelper for rendering the current version identifier for the
- * configuration cache
+ * configuration cache.
  */
 class ConfigurationCacheVersionViewHelper extends AbstractViewHelper {
 
