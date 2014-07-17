@@ -82,7 +82,8 @@ class NodeSearchService {
 			$workspaceQuery = $this->nodeDataRepository->createQuery();
 			$nodes = $workspaceQuery->matching($workspaceQuery->logicalAnd(array(
 				$workspaceQuery->equals('workspace', $workspace),
-				$workspaceQuery->like('properties', '%' . $term . '%', FALSE),
+				// FIXME: This should be case insensitive (second argument FALSE) but due to properties being a blob field that doesn't work currently.
+				$workspaceQuery->like('properties', '%' . $term . '%', TRUE),
 				$workspaceQuery->in('nodeType', $searchNodeTypes)
 			)))->execute();
 
