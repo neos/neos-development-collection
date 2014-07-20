@@ -4,3 +4,6 @@
       setting: 'TYPO3.TYPO3CR.contentDimensions'
 'TYPO3\TYPO3CR\Service\PublishingServiceInterface':
   className: TYPO3\TYPO3CR\Service\PublishingService
+
+'TYPO3\TYPO3CR\Domain\Model\NodeInterface':
+  className: TYPO3\TYPO3CR\Domain\Model\Node

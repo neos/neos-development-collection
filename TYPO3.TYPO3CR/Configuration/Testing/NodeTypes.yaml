@@ -55,6 +55,10 @@
     images:
       type: 'array<TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
+'TYPO3.TYPO3CR:HappyTestingNode':
+  supertypes: ['TYPO3.TYPO3CR:TestingNodeType']
+  class: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode'
+
 # Constraint behat test nodetypes
 'TYPO3.TYPO3CR.Testing:Document': []
 

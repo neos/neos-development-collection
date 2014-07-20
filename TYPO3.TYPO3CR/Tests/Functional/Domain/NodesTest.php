@@ -40,6 +40,11 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $contextFactory;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 */
+	protected $nodeTypeManager;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -47,6 +52,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
+		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
 	}
 
 	/**
@@ -1284,4 +1290,23 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->assertSame($variantNodeA->getDimensions(), $variantNodeB->getDimensions());
 	}
 
+	/**
+	 * @test
+	 */
+	public function nodesCanHaveCustomImplementationClass() {
+		$rootNode = $this->context->getRootNode();
+		$testingNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithReferences');
+		$happyNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:HappyTestingNode');
+		$headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingHeadline');
+
+		$fooNode = $rootNode->createNode('foo', $testingNodeType);
+		$happyNode = $fooNode->createNode('bar', $happyNodeType);
+		$bazNode = $happyNode->createNode('baz', $headlineNodeType);
+
+		$this->assertNotInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $fooNode);
+		$this->assertInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $happyNode);
+		$this->assertNotInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $bazNode);
+
+		$this->assertEquals('bar claps hands!', $happyNode->clapsHands());
+	}
 }

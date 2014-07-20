@@ -12,10 +12,11 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
 
 /**
  * This factory creates nodes based on node data. Its main purpose is to
@@ -32,6 +33,12 @@ class NodeFactory {
 	protected $nodes = array();
 
 	/**
+	 * @Flow\Inject
+	 * @var ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * Creates a node from the given NodeData container.
 	 *
 	 * If this factory has previously created a Node for the given $node and it's dimensions,
@@ -39,17 +46,36 @@ class NodeFactory {
 	 *
 	 * @param NodeData $nodeData
 	 * @param Context $context
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeConfigurationException if a configured 'class' for a Node does not exist or does not inherit NodeInterface
 	 */
 	public function createFromNodeData(NodeData $nodeData, Context $context) {
 		$internalNodeIdentifier = $nodeData->getIdentifier() . $nodeData->getDimensionsHash() . spl_object_hash($context);
 
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
-			$this->nodes[$internalNodeIdentifier] = new Node($nodeData, $context);
+			// Warning: Alternative node implementations are considered internal for now, feature can change or be removed anytime. We want to be sure it works well and makes sense before declaring it public.
+			$class = $nodeData->getNodeType()->getConfiguration('class') ?: $this->objectManager->getClassNameByObjectName('TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface');
+			if (!in_array($class, self::getNodeInterfaceImplementations($this->objectManager))) {
+				throw new NodeConfigurationException('The configured implementation class name "' . $class . '" for NodeType "' . $nodeData->getNodeType() . '" does not inherit from TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface.', 1406884014);
+			}
+			$this->nodes[$internalNodeIdentifier] = new $class($nodeData, $context);
 		}
 		$node = $this->nodes[$internalNodeIdentifier];
 
 		return $this->filterNodeByContext($node, $context);
+	}
+
+	/**
+	 * Get all NodeInterface implementations to check if a configured node class is in there.
+	 *
+	 * @param ObjectManagerInterface $objectManager
+	 * @return array
+	 * @Flow\CompileStatic
+	 */
+	static public function getNodeInterfaceImplementations($objectManager) {
+		$reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+		$nodeImplementations = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface');
+		return $nodeImplementations;
 	}
 
 	/**
@@ -58,7 +84,7 @@ class NodeFactory {
 	 *
 	 * @param NodeInterface $node
 	 * @param Context $context
-	 * @return \TYPO3\TYPO3CR\Domain\Model\Node|NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface|NULL
 	 */
 	protected function filterNodeByContext(NodeInterface $node, Context $context) {
 		if (!$context->isRemovedContentShown() && $node->isRemoved()) {
