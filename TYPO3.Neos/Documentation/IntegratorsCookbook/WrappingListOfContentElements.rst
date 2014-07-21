@@ -10,7 +10,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
     superTypes:
       - 'TYPO3.Neos:Content'
     ui:
-      group: Structure
+      group: structure
       label: Box
       icon: icon-columns
       inlineEditable: true
@@ -50,7 +50,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
     superTypes:
       - 'TYPO3.Neos:Content'
     ui:
-      group: Structure
+      group: structure
       label: Box
       icon: icon-columns
       inlineEditable: true
