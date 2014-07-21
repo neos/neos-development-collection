@@ -101,6 +101,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	body = TYPO3.TypoScript:Template {
 		@position = 'after bodyTag'
 		node = ${node}
+		site = ${site}
 
 		# Script includes before the closing body tag should go here
 		javascripts = TYPO3.TypoScript:Array
