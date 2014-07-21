@@ -9,6 +9,7 @@ define(
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
+			placeholder: 'Type to search',
 
 			content: null,
 
@@ -23,7 +24,8 @@ define(
 					minimumInputLength: 1,
 					maximumSelectionSize: 1,
 					multiple: true,
-					placeholder: 'Select ...',
+					placeholder: this.get('placeholder'),
+
 					query: function (query) {
 						if (currentQueryTimer) {
 							window.clearTimeout(currentQueryTimer);
@@ -41,8 +43,8 @@ define(
 								var data = {results: []};
 								$(result.resource).find('li').each(function(index, value) {
 									data.results.push({
-										id: $('.node-property-_identifier', value).text(),
-										text: $('.node-property-_label', value).text()
+										id: $('.node-identifier', value).text(),
+										text: $('.node-label', value).text()
 									});
 									query.callback(data);
 								});
@@ -51,11 +53,11 @@ define(
 					}
 				});
 
-				$(this.$().select2('container')).find('.neos-select2-input').attr('placeholder', 'Type to Search');
+				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('placeholder'));
 				if (this.get('content')) {
-					$(this.$().select2('container')).find('.neos-select2-input').css({'display' : 'none'});
+					this.$().select2('container').find('.neos-select2-input').css({'display' : 'none'});
 				} else {
-					$(this.$().select2('container')).find('.neos-select2-input').css({'display' : 'inline-block'});
+					this.$().select2('container').find('.neos-select2-input').css({'display' : 'inline-block'});
 				}
 
 				this._updateSelect2();
@@ -64,10 +66,10 @@ define(
 					var data = $(this).select2('data');
 					if (data.length > 0) {
 						that.set('content', data[0]);
-						$(that.$().select2('container')).find('.neos-select2-input').css({'display' : 'none'});
+						that.$().select2('container').find('.neos-select2-input').css({'display' : 'none'});
 					} else {
 						that.set('content', '');
-						$(that.$().select2('container')).find('.neos-select2-input').css({'display' : 'inline-block'});
+						that.$().select2('container').find('.neos-select2-input').css({'display' : 'inline-block'});
 					}
 				});
 			},

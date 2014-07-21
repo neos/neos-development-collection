@@ -54,11 +54,11 @@ function (
 			 * @param {object} params object with properties
 			 * @param {function} callback this method must be called with all resulting repository items
 			 */
-			query: function (p, callback) {
+			query: function (params, callback) {
 				var that = this;
 
 				require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
-					HttpRestClient.getResource('neos-service-nodes', null, {data: that.getQueryRequestData(p.queryString)}).then(function(result) {
+					HttpRestClient.getResource('neos-service-nodes', null, {data: that.getQueryRequestData(params.queryString)}).then(function(result) {
 						var convertedResults = [];
 
 						$.each($('.nodes', result.resource).children('li'), function() {

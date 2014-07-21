@@ -11,10 +11,11 @@ define([
 	return Plugin.create('node-repository-plugin', {
 
 		init: function () {
+			$metaInformation = $('#neos-page-metainformation');
 			new Repository(
 				$('link[rel="neos-service-nodes"]').attr('href'),
-				$('#neos-page-metainformation').attr('data-context-__workspacename'),
-				$('#neos-page-metainformation').data('context-__dimensions')
+				$metaInformation.attr('data-context-__workspacename'),
+				$metaInformation.data('context-__dimensions')
 			);
 		},
 

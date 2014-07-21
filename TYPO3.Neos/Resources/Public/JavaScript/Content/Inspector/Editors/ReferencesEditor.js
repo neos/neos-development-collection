@@ -9,6 +9,7 @@ define(
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
+			placeholder: 'Type to search',
 
 			// lazily initialized content – will be an array of select2 datums [{id: '12a9837…', text: 'My Node'}, …]:
 			content: [],
@@ -23,6 +24,7 @@ define(
 				this.$().select2({
 					multiple: true,
 					minimumInputLength: 3,
+					placeholder: this.get('placeholder'),
 
 					query: function (query) {
 						if (currentQueryTimer) {
@@ -51,7 +53,7 @@ define(
 					}
 				});
 
-				$(this.$().select2('container')).find('.neos-select2-input').attr('placeholder', 'Type to Search');
+				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('placeholder'));
 
 				this.$().on('change', function() {
 					that.set('content', $(this).select2('data'));
