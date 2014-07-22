@@ -25,7 +25,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 class NodeJsonView extends JsonView {
 
 	/**
-	 * Assigns a node to the NodeView.
+	 * Assigns a node to the view.
 	 *
 	 * @param NodeInterface $node The node to render
 	 * @param array $propertyNames Optional list of property names to include in the JSON output
@@ -35,10 +35,8 @@ class NodeJsonView extends JsonView {
 		$this->setConfiguration(
 			array(
 				'value' => array(
-					'resource' => array(
-						'_only' => $propertyNames,
-						'_descend' => array('properties' => $propertyNames)
-					)
+					'_only' => $propertyNames,
+					'_descend' => array('properties' => $propertyNames)
 				)
 			)
 		);
