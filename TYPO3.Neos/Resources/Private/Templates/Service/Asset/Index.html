@@ -1,9 +1,0 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}{namespace media=TYPO3\Media\ViewHelpers}<html>
-	<body>
-		<ul>
-			<f:for each="{assets}" as="asset">
-				<li data-identifier="{asset.identifier}" data-icon="icon-file-alt" data-thumbnail="{media:uri.image(asset: asset, maximumWidth: 40, maximumHeight: 40, allowCropping: 1, allowUpScaling: 1)}">{asset.label}</li>
-			</f:for>
-		</ul>
-	</body>
-</html>

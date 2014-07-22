@@ -111,6 +111,7 @@ class NodesController extends ActionController {
 
 		$contentContext = $this->createContentContext($workspaceName, $dimensions);
 		$nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext);
+
 		$this->view->assign('nodes', $nodes);
 	}
 
@@ -131,26 +132,22 @@ class NodesController extends ActionController {
 			$this->throwStatus(404);
 		}
 
-		if ($this->view instanceof NodeJsonView) {
-			$this->view->assignNode($node);
-		} else {
-			$convertedProperties = array();
-			foreach ($node->getProperties() as $propertyName => $propertyValue) {
-				try {
-					$convertedProperties[$propertyName] = $this->propertyMapper->convert($propertyValue, 'string');
-				} catch (\TYPO3\Flow\Property\Exception $exception) {
-					$convertedProperties[$propertyName] = '';
-				}
+		$convertedProperties = array();
+		foreach ($node->getProperties() as $propertyName => $propertyValue) {
+			try {
+				$convertedProperties[$propertyName] = $this->propertyMapper->convert($propertyValue, 'string');
+			} catch (\TYPO3\Flow\Property\Exception $exception) {
+				$convertedProperties[$propertyName] = '';
 			}
-
-			$flowQuery = new FlowQuery(array($node));
-			$closestDocumentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-			$this->view->assignMultiple(array(
-				'node' => $node,
-				'closestDocumentNode' => $closestDocumentNode,
-				'convertedNodeProperties' => $convertedProperties
-			));
 		}
+
+		$flowQuery = new FlowQuery(array($node));
+		$closestDocumentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+		$this->view->assignMultiple(array(
+			'node' => $node,
+			'closestDocumentNode' => $closestDocumentNode,
+			'convertedNodeProperties' => $convertedProperties
+		));
 	}
 
 	/**

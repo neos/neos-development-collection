@@ -1,0 +1,19 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}{namespace media=TYPO3\Media\ViewHelpers}<html>
+	<head>
+		<title>Assets</title>
+		<meta charset="UTF-8" />
+	</head>
+	<body>
+		<div>
+			<h1>Nodes</h1>
+			<ul class="assets"><f:for each="{assets}" as="asset">
+				<li class="asset">
+					<label class="asset-label">{asset.label}</label>
+					(<span class="asset-identifier">{asset.identifier}</span>)
+					<a rel="thumbnail" href="{media:uri.image(asset: asset, maximumWidth: 40, maximumHeight: 40, allowCropping: 1, allowUpScaling: 1)}">thumbnail</a>
+					<f:link.action rel="asset-show" controller="Service\Assets" action="show" arguments="{identifier: asset.identifier}" format="html">show</f:link.action>
+				</li></f:for>
+			</ul>
+		</div>
+	</body>
+</html>

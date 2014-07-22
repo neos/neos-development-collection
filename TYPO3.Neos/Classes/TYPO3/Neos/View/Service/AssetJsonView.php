@@ -13,15 +13,16 @@ namespace TYPO3\Neos\View\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\JsonView;
+use TYPO3\Media\Domain\Model\AssetInterface;
 
 /**
- * A view specialised on a JSON representation of Nodes.
+ * A view specialised on a JSON representation of Assets.
  *
  * This view is used by the service controllers in TYPO3\Neos\Controller\Service\
  *
  * @Flow\Scope("prototype")
  */
-class NodeJsonView extends JsonView {
+class AssetJsonView extends JsonView {
 
 	/**
 	 * Configures rendering according to the set variable(s) and calls
@@ -30,26 +31,26 @@ class NodeJsonView extends JsonView {
 	 * @return string
 	 */
 	public function render() {
-		if (isset($this->variables['nodes'])) {
+		if (isset($this->variables['assets'])) {
 			$this->setConfiguration(
 				array(
-					'nodes' => array(
+					'assets' => array(
 						'_descendAll' => array(
-							'_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
+							'_only' => array('label', 'tags', 'identifier')
 						)
 					)
 				)
 			);
-			$this->setVariablesToRender(array('nodes'));
+			$this->setVariablesToRender(array('assets'));
 		} else {
 			$this->setConfiguration(
 				array(
-					'node' => array(
-						'_only' => array('name', 'path', 'identifier', 'properties', 'nodeType')
+					'asset' => array(
+						'_only' => array('label', 'tags', 'identifier')
 					)
 				)
 			);
-			$this->setVariablesToRender(array('node'));
+			$this->setVariablesToRender(array('asset'));
 		}
 
 		return parent::render();

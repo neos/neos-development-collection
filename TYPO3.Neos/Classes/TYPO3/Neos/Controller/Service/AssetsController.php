@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Service\Controller;
+namespace TYPO3\Neos\Controller\Service;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
@@ -12,11 +12,15 @@ namespace TYPO3\Neos\Service\Controller;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Neos\View\Service\AssetJsonView;
 
 /**
- * Service Controller for managing assets
+ * Rudimentary REST service for assets
+ *
+ * @Flow\Scope("singleton")
  */
-class AssetController extends AbstractServiceController {
+class AssetsController extends ActionController {
 
 	/**
 	 * @Flow\Inject
@@ -31,28 +35,51 @@ class AssetController extends AbstractServiceController {
 	protected $tagRepository;
 
 	/**
+	 * @var array
+	 */
+	protected $viewFormatToObjectNameMap = array(
+		'html' => 'TYPO3\Fluid\View\TemplateView',
+		'json' => 'TYPO3\Neos\View\Service\AssetJsonView'
+	);
+
+	/**
+	 * A list of IANA media types which are supported by this controller
+	 *
+	 * @var array
+	 * @see http://www.iana.org/assignments/media-types/index.html
+	 */
+	protected $supportedMediaTypes = array(
+		'text/html',
+		'application/json'
+	);
+
+	/**
 	 * Shows a list of assets
 	 *
-	 * @param string $searchTerm
-	 * @return void
+	 * @param string $searchTerm An optional search term used for filtering the list of assets
+	 * @return string
 	 */
-	public function indexAction($searchTerm = NULL) {
+	public function indexAction($searchTerm = '') {
 		$assets = $this->assetRepository->findBySearchTermOrTags(
 			$searchTerm,
 			$this->tagRepository->findBySearchTerm($searchTerm)->toArray()
 		);
 
-		$this->view->assign('assets', $assets);
+		$this->view->assign('assets', $assets->toArray());
 	}
 
 	/**
 	 * Shows a specific asset
 	 *
-	 * @param string $identifier
+	 * @param string $identifier Specifies the asset to look up
 	 * @return string
 	 */
 	public function showAction($identifier) {
 		$asset = $this->assetRepository->findByIdentifier($identifier);
+
+		if ($asset === NULL) {
+			$this->throwStatus(404);
+		}
 
 		$this->view->assign('asset', $asset);
 	}
