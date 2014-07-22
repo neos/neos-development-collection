@@ -281,3 +281,14 @@
   # For now we can not use DELETE and also pass arguments using the request body,
   # and client side we don\t have a UrlTemplates implementation yet
   httpMethods: ['POST']
+
+# ContentDimensionController routes
+-
+  name: 'Services - ContentDimensionController->presetConfiguration'
+  uriPattern: 'content-dimensions'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Service\ContentDimensions'
+    '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']

@@ -108,30 +108,15 @@ WARNING: TODO - write this
 REST Server Side API
 --------------------
 
-URL ``/neos/content/new``
+Most backend services which are currently used in the user interface are not RESTful. The goal is to migrate them,
+step by step, to a clean REST architecture.
 
-* +referenceNode+ - Context node path
-* +position+ - if @above@, new node will be inserted above @referenceNode@, if @below@, otherwise.
+Two services have been – partially – migrated: Nodes and ContentDimensions. We provide an HTML and a JSON based interface,
+roughly following HATEOAS concepts. Both formats a not yet part of the public API and we expect them to change as we
+gain more experience with the pros and cons of their structure.
 
-URL ``/neos/content/create``
+URL ``/neos/service/nodes``
+URL ``/neos/service/contentdimensions``
 
-* all options from @/neos/content/new@
-* +type+ - TYPO3CR Node Type to be created
-
-Return Commands
----------------
-
-Command ``created-new-content``::
-
-	<html>
-		<a rel="typo3-created-new-content"
-			data-page="/sites/neosdemotypo3org/homepage@user-admin"
-			href="/sites/neosdemotypo3org/homepage/main/4e1ef025442f5@user-admin">
-			Goto New Content
-		</a>
-	</html>
-
-* +href+ Context node path of newly created content
-* +data-page+ Context node path of enclosing page
-
-WARNING: TODO: should also include the URL of the nearest page, maybe even in HREF?
+Inspect the HTML output and the controller / template code for more information about the currently supported operations
+and arguments.

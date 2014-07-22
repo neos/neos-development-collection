@@ -10,6 +10,11 @@
 	&.neos-contentelement-hover {
 		outline: 2px solid rgba(0, 0, 0, .2);
 		outline-offset: 6px;
+
+		// Content elements which "shine through" from other content dimensions should appear with orange outline
+		&.neos-contentelement-shine-through {
+			outline: 2px solid $orange;
+		}
 	}
 
 	&.neos-contentelement-active {

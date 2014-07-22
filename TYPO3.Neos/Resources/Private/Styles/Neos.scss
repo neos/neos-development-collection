@@ -5,6 +5,7 @@
 @import "Constants";
 @import "Mixins";
 @import "Fonts";
+@import "Icons";
 @import "../../Public/Library/fontawesome/scss/font-awesome.scss";
 
 .neos {
@@ -72,6 +73,7 @@
 	@import "TopBar/UserMenu";
 	@import "EditPreview/EditPreviewPanel";
 	@import "ContextBar/ContextBar";
+	@import "ContextBar/ContentDimensionSelector";
 	@import "Menu/MenuPanel";
 	@import "Navigate/NavigatePanel";
 	@import "ContextBar/AlohaMenu";

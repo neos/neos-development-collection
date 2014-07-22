@@ -133,7 +133,9 @@ define(
 					that.filterTree();
 				});
 
-				EventDispatcher.on('contentDimensionsChanged', this, 'refresh');
+				EventDispatcher.on('contentDimensionsChanged', function() {
+					that.refresh();
+				});
 			},
 
 			onContextStructureModeChanged: function() {
@@ -447,6 +449,7 @@ define(
 			},
 
 			refresh: function() {
+				this._updateMetaInformation();
 				this.filterTree();
 			},
 
@@ -455,7 +458,7 @@ define(
 			 */
 			filterTree: function() {
 				var that = this,
-					node = that.$nodeTree.dynatree('getRoot').getChildren()[0];
+					node = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 				node.removeChildren();
 				node.setLazyNodeStatus(this.statusCodes.loading);
 
@@ -465,7 +468,7 @@ define(
 					this.loadNode(node, this.get('loadingDepth'));
 				} else {
 					var filterQuery = Ember.generateGuid();
-					that.set('latestFilterQuery', filterQuery);
+					this.set('latestFilterQuery', filterQuery);
 					this.set('filtering', true);
 					node._currentlySendingServerRequest = true;
 					NodeEndpoint.filterChildNodesForTree(

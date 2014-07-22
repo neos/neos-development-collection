@@ -1,0 +1,88 @@
+.neos-content-dimension-selector {
+	@include clearfix;
+	position: relative;
+	width: 100%;
+	border-right: 1px solid $grayLight;
+	@include box-sizing(border-box);
+
+	&.active {
+		background-color: $grayDark;
+
+		.neos-content-dimension-selector-dimensions {
+			display: block;
+		}
+
+		.neos-content-dimension-selector-summary::before {
+			right: 3px;
+			@include rotate(-90deg);
+		}
+	}
+
+	.neos-contentelement-selected & {
+		display: none;
+	}
+
+	.neos-content-dimension-selector-summary {
+		cursor: pointer;
+		@include clearfix;
+		@include user-select(none);
+
+		&::before {
+			content: "›";
+			font-size: 26px;
+			font-weight: normal;
+			display: inline-block;
+			position: absolute;
+			top: 0;
+			right: -3px;
+			width: $unit;
+			line-height: $unit;
+			text-align: center;
+			@include rotate(90deg);
+		}
+
+		.neos-content-dimension-selector-dimension {
+			float: left;
+			line-height: $unit;
+			padding-right: $defaultMargin;
+
+			i {
+				width: $wideMargin;
+				text-align: center;
+				color: $textSubtleLight;
+			}
+		}
+	}
+
+	.neos-content-dimension-selector-dimensions {
+		display: none;
+		position: absolute;
+		top: $unit;
+		left: 0;
+		width: calc(100% + 1px);
+		min-width: $unit * 8 + $defaultMargin * 2;
+		background-color: $grayDark;
+		border-right: 1px solid $grayLight;
+		border-bottom: 1px solid $grayLight;
+		padding-top: $relatedMargin + $tightMargin + 1;
+		padding-left: $defaultMargin;
+		padding-right: $defaultMargin;
+		@include box-sizing(border-box);
+
+		.neos-content-dimension-selector-dimension {
+			padding-bottom: $defaultMargin;
+
+			i {
+				width: $defaultMargin + $relatedMargin;
+			}
+
+			select {
+				width: $unit * 8;
+			}
+
+			.chosen-container {
+				width: $unit * 8 !important;
+			}
+		}
+	}
+}

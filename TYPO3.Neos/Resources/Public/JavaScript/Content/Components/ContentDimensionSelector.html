@@ -1,0 +1,17 @@
+<div class="neos-content-dimension-selector-summary">
+	{{#each dimension in dimensions}}
+		<div class="neos-content-dimension-selector-dimension"><i class="{{unbound dimension.icon}}"></i> {{dimension.selected.label}}</div>
+	{{/each}}
+</div>
+<div class="neos-content-dimension-selector-dimensions">
+	{{#each dimension in dimensions}}
+		<div class="neos-content-dimension-selector-dimension">
+			<label for="neos-content-dimension-{{unbound dimension.identifier}}"><i class="{{unbound dimension.icon}}"></i> {{unbound dimension.label}}</label>
+			<select name="{{unbound dimension.identifier}}" id="neos-content-dimension-{{unbound dimension.identifier}}">
+				{{#each preset in dimension.presets}}
+					<option value="{{unbound preset.identifier}}" {{bind-attr selected=preset.selected}}>{{unbound preset.label}}</option>
+				{{/each}}
+			</select>
+		</div>
+	{{/each}}
+</div>

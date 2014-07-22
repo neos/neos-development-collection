@@ -22,6 +22,7 @@ function (
 
 			_constructor: function (endpoint, workspaceName, dimensions) {
 				this.workspaceName = workspaceName;
+				this.dimensions = dimensions;
 				this.endpoint = endpoint;
 				this._super(this._repositoryIdentifier);
 			},
@@ -34,13 +35,15 @@ function (
 			getQueryRequestData: function(searchTerm) {
 				return {
 					searchTerm: searchTerm,
-					workspaceName: this.workspaceName
+					workspaceName: this.workspaceName,
+					dimensions: this.dimensions
 				};
 			},
 
 			getObjectQueryRequestData: function() {
 				return {
-					workspaceName: this.workspaceName
+					workspaceName: this.workspaceName,
+					dimensions: this.dimensions
 				};
 			},
 
@@ -51,11 +54,11 @@ function (
 			 * @param {object} params object with properties
 			 * @param {function} callback this method must be called with all resulting repository items
 			 */
-			query: function (p, callback) {
+			query: function (params, callback) {
 				var that = this;
 
 				require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
-					HttpRestClient.getResource('neos-service-nodes', null, {data: that.getQueryRequestData(p.queryString)}).then(function(result) {
+					HttpRestClient.getResource('neos-service-nodes', null, {data: that.getQueryRequestData(params.queryString)}).then(function(result) {
 						var convertedResults = [];
 
 						$.each($('.nodes', result.resource).children('li'), function() {

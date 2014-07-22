@@ -9,6 +9,7 @@ define(
 			tagName: 'input',
 			attributeBindings: ['type'],
 			type: 'hidden',
+			placeholder: 'Paste a link, or type to search',
 
 			content: null,
 
@@ -29,7 +30,7 @@ define(
 					minimumInputLength: 2,
 					maximumSelectionSize: 1,
 					multiple: true,
-					placeholder: 'Paste a link, or search',
+					placeholder: this.get('placeholder'),
 					escapeMarkup: function (markup) {
 						return markup;
 					},
@@ -124,11 +125,11 @@ define(
 					}
 				});
 
-				$(this.$().select2('container')).find('.neos-select2-input').attr('placeholder', 'Paste a link, or search');
+				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('placeholder'));
 				if (this.get('content')) {
-					$(this.$().select2('container')).find('.neos-select2-input').css({'display' : 'none'});
+					this.$().select2('container').find('.neos-select2-input').css({'display' : 'none'});
 				} else {
-					$(this.$().select2('container')).find('.neos-select2-input').css({'display' : 'inline-block'});
+					this.$().select2('container').find('.neos-select2-input').css({'display' : 'inline-block'});
 				}
 
 				this._updateSelect2();
@@ -137,10 +138,10 @@ define(
 					var data = $(this).select2('data');
 					if (data.length > 0) {
 						that.set('content', data[0]);
-						$(that.$().select2('container')).find('.neos-select2-input').css({'display' : 'none'});
+						that.$().select2('container').find('.neos-select2-input').css({'display' : 'none'});
 					} else {
 						that.set('content', '');
-						$(that.$().select2('container')).find('.neos-select2-input').css({'display' : 'inline-block'});
+						that.$().select2('container').find('.neos-select2-input').css({'display' : 'inline-block'});
 					}
 				});
 			},
