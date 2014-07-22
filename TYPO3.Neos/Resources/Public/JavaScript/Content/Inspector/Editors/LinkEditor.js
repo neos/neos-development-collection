@@ -2,13 +2,13 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Shared/HttpClient',
+		'Shared/HttpRestClient',
 		'Shared/Utility'
 	],
 	function(
 		$,
 		Ember,
-		HttpClient,
+		HttpRestClient,
 		Utility
 	) {
 		return Ember.View.extend({
@@ -18,10 +18,6 @@ define(
 			placeholder: 'Paste a link, or type to search',
 
 			content: null,
-
-			nodesEndpoint: $('link[rel="neos-nodes"]').attr('href'),
-
-			assetsEndpoint: $('link[rel="neos-assets"]').attr('href'),
 
 			searchRequest: null,
 
@@ -88,9 +84,10 @@ define(
 							window.clearTimeout(currentQueryTimer);
 						}
 						currentQueryTimer = window.setTimeout(function () {
+							var data, parameters;
 							currentQueryTimer = null;
 
-							var data = {results: []};
+							data = {results: []};
 
 							if (Utility.isValidLink(query.term)) {
 								data.results.push({
@@ -103,30 +100,40 @@ define(
 								});
 								query.callback(data);
 							} else {
-								Ember.RSVP.all([
-									that._searchIn(query.term, that.nodesEndpoint, '&nodeTypes[]=' + that.get('nodeTypes').join('&nodeTypes[]=')),
-									that._searchIn(query.term, that.assetsEndpoint, '')
-								]).then(function (responses) {
-									responses.forEach(function (parsedResponse) {
-										$(parsedResponse).find('li').each(function (index, value) {
-											var type = 'asset';
-											if ($(value).data('path')) {
-												type = 'node';
-											}
+								parameters = {
+									workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename'),
+									searchTerm: query.term,
+									nodeTypes: that.get('nodeTypes')
+								};
 
-											data.results.push({
-												id: type + '://' + $(value).data('identifier'),
-												text: $(value).text(),
-												data: $(value).data(),
-												'type': type
-											});
+								HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function (result) {
+									$(result.resource).find('li').each(function (index, value) {
+										data.results.push({
+											id: 'node://' + $('.node-identifier', value).text(),
+											text: $('.node-label', value).text(),
+											data: $(value).data(),
+											'type': 'node'
+										});
+										query.callback(data);
+									});
+								});
+
+								parameters = {
+									searchTerm: query.term
+								};
+
+								HttpRestClient.getResource('neos-service-assets', null, {data: parameters}).then(function (result) {
+									data = {results: []};
+									$(result.resource).find('li').each(function (index, value) {
+										data.results.push({
+											id: 'asset://' + $('.asset-identifier', value).text(),
+											text: $('.asset-label', value).text(),
+											data: $(value).data(),
+											'type': 'asset'
 										});
 									});
-
-									query.callback(data);
 								});
 							}
-
 						}, 200);
 					}
 				});
@@ -154,11 +161,11 @@ define(
 
 			// actual value used and expected by the inspector, in case of this Editor a string (node identifier):
 			value: function(key, value) {
-				var that = this,
-					protocol = null;
+				var parameters, nodeIdentifier, item, that, protocol;
 
 				if (value) {
-					var item = Ember.Object.extend({
+					that = this;
+					item = Ember.Object.extend({
 						id: value,
 						text: 'Loading ...',
 						data: {}
@@ -169,16 +176,21 @@ define(
 
 					switch (protocol) {
 						case 'node':
-							this._findByIdentifier(value.substr(7, 36), this.nodesEndpoint).then(function(response) {
-								item.set('text', $(response).filter('div').text());
-								item.set('data', $(response).filter('div').data());
+							nodeIdentifier = value.substr(7, 36);
+							parameters = {
+								workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename')
+							};
+							HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
+								item.set('text', $('.node-label', result.resource).text());
+								item.set('data', $('.node-data', result.resource).text());
 								that._updateSelect2();
 							});
 						break;
 						case 'asset':
-							this._findByIdentifier(value.substr(8, 36), this.assetsEndpoint).then(function (response) {
-								item.set('text', $(response).filter('div').text());
-								item.set('data', $(response).filter('div').data());
+							var assetIdentifier = value.substr(8, 36);
+							HttpRestClient.getResource('neos-service-assets', assetIdentifier).then(function(result) {
+								item.set('text', $('.asset-label', result.resource).text());
+								item.set('data', $('.asset-data', result.resource).text());
 								that._updateSelect2();
 							});
 						break;
@@ -200,15 +212,6 @@ define(
 				} else {
 					this.$().select2('data', []);
 				}
-			},
-
-			_findByIdentifier: function(identifier, endpointUrl) {
-				return HttpClient.getResource(endpointUrl + '/' + identifier);
-			},
-
-			_searchIn: function(term, endpointUrl, additionalArguments) {
-				var url = endpointUrl + '?searchTerm=' + term + additionalArguments;
-				return HttpClient.getResource(url);
 			}
 		});
 	}

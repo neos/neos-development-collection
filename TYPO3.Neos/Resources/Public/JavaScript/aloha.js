@@ -93,8 +93,8 @@ function(
 
 					// 'neosAloha/neosintegration',
 					'neosAloha/neos-link',
-					'neosAloha/asset-repository',
-					'neosAloha/node-repository'
+					'neosAloha/node-repository',
+					'neosAloha/asset-repository'
 				].join(','),
 				block: {
 					sidebarAttributeEditor: false

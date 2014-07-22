@@ -92,8 +92,7 @@ define([
 		 * @private
 		 */
 		_request: function(url, requestMethod, optionsOverride) {
-			var that = this,
-				options = {
+			var options = {
 					type: requestMethod,
 					url: url,
 					data: {}
