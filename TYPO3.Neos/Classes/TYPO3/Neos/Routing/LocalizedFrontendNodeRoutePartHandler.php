@@ -18,7 +18,7 @@ use TYPO3\Neos\Routing\Exception\NoSuchLanguageException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * A frontend node route part handler that handles a "languages" dimension
+ * A frontend node route part handler that handles a "language" dimension
  *
  * It always matches a language identifier in the first path segment for now, for example:
  *
@@ -35,7 +35,7 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 	/**
 	 * Prepend the Language Chain Identifier to the route path.
 	 *
-	 * This takes the node's context "languages" dimension value into account.
+	 * This takes the node's context "language" dimension value into account.
 	 *
 	 * @param NodeInterface $siteNode
 	 * @param NodeInterface $node
@@ -45,7 +45,7 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 		$routePath = parent::resolveRoutePathForNode($siteNode, $node);
 
 		$dimensions = $node->getContext()->getDimensions();
-		$uriSegment = $this->getUriSegmentForLanguages($dimensions);
+		$uriSegment = $this->getUriSegmentForLanguage($dimensions);
 		$routePath = $uriSegment . '/' . $routePath;
 
 		return $routePath;
@@ -90,7 +90,7 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 			'workspaceName' => $workspaceName,
 			'invisibleContentShown' => TRUE,
 			'inaccessibleContentShown' => TRUE,
-			'dimensions' => array('languages' => $languages)
+			'dimensions' => array('language' => $languages)
 		);
 
 		$currentDomain = $this->domainRepository->findOneByActiveRequest();
@@ -126,9 +126,9 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 	}
 
 	/**
-	 * Find the languages dimension values for a URI segment
+	 * Find the language dimension values for a URI segment
 	 *
-	 * If the given URI segment is NULL, the default preset of the "languages" dimension will be used.
+	 * If the given URI segment is NULL, the default preset of the "language" dimension will be used.
 	 *
 	 * @param string $uriSegment A URI segment of a content dimension preset or NULL if none was given in the route path
 	 * @return array A list of locales or NoSuchLanguageException if none could be matched by the given identifier
@@ -136,19 +136,19 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 	 */
 	protected function getLocalesForUriSegment($uriSegment) {
 		if ($uriSegment === NULL) {
-			$preset = $this->contentDimensionPresetSource->getDefaultPreset('languages');
+			$preset = $this->contentDimensionPresetSource->getDefaultPreset('language');
 		} else {
-			$preset = $this->contentDimensionPresetSource->findPresetByUriSegment('languages', $uriSegment);
+			$preset = $this->contentDimensionPresetSource->findPresetByUriSegment('language', $uriSegment);
 		}
 
 		if ($preset === NULL) {
-			throw new NoSuchLanguageException(sprintf('No content dimension preset for dimension "languages" and uriSegment "%s" found.', $uriSegment), 1395827628);
+			throw new NoSuchLanguageException(sprintf('No content dimension preset for dimension "language" and uriSegment "%s" found.', $uriSegment), 1395827628);
 		}
 		return $preset['values'];
 	}
 
 	/**
-	 * Find a URI segment in the content dimension presets for the given "languages" dimension values
+	 * Find a URI segment in the content dimension presets for the given "language" dimension values
 	 *
 	 * This will do a reverse lookup from actual dimension values to a preset and fall back to the default preset if none
 	 * can be found.
@@ -157,18 +157,18 @@ class LocalizedFrontendNodeRoutePartHandler extends FrontendNodeRoutePartHandler
 	 * @return string
 	 * @throws Exception
 	 */
-	protected function getUriSegmentForLanguages(array $dimensionValues) {
-		if (isset($dimensionValues['languages'])) {
-			$preset = $this->contentDimensionPresetSource->findPresetByDimensionValues('languages', $dimensionValues['languages']);
+	protected function getUriSegmentForLanguage(array $dimensionValues) {
+		if (isset($dimensionValues['language'])) {
+			$preset = $this->contentDimensionPresetSource->findPresetByDimensionValues('language', $dimensionValues['language']);
 			if ($preset === NULL) {
-				$preset = $this->contentDimensionPresetSource->getDefaultPreset('languages');
+				$preset = $this->contentDimensionPresetSource->getDefaultPreset('language');
 			}
 			if (!isset($preset['uriSegment'])) {
-				throw new Exception(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "languages".', $dimensionValues['identifier']), 1395824520);
+				throw new Exception(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "language".', $dimensionValues['identifier']), 1395824520);
 			}
 			return $preset['uriSegment'];
 		}
-		throw new Exception('No "languages" dimension found, but it is needed by the LocalizedFrontendNodeRoutePartHandler. Please configure it in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".', 1395672860);
+		throw new Exception('No "language" dimension found, but it is needed by the LocalizedFrontendNodeRoutePartHandler. Please configure it in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".', 1395672860);
 	}
 
 }

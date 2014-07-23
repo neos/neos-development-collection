@@ -185,9 +185,9 @@ TYPO3:
     contentDimensions:
       dimensions:
 
-        # Content dimension "languages" serves for translation of content into different languages. Its value specifies
+        # Content dimension "language" serves for translation of content into different languages. Its value specifies
         # the language or language variant by means of a locale.
-        'languages':
+        'language':
 
           # The default preset to use if no URI segment was given when resolving languages in the router
           defaultPreset: 'all'

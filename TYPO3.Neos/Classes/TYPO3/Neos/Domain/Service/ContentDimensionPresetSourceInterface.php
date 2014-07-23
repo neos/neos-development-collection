@@ -34,7 +34,7 @@ interface ContentDimensionPresetSourceInterface {
 	 *
 	 * Example:
 	 *
-	 *  'languages':
+	 *  'language':
 	 *    defaultPreset: 'all'
 	 *    label: 'Language'
 	 *    icon: 'icon-language'

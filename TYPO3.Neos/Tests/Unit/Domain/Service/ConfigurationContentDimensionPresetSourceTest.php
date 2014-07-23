@@ -20,7 +20,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	 * @var array
 	 */
 	protected $validConfiguration = array(
-		'languages' => array(
+		'language' => array(
 			'defaultPreset' => 'all',
 			'label' => 'Language',
 			'icon' => 'icon-language',
@@ -63,7 +63,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
 		$presets = $source->getAllPresets();
-		$this->assertEquals(array('targetGroups', 'languages'), array_keys($presets));
+		$this->assertEquals(array('targetGroups', 'language'), array_keys($presets));
 	}
 
 	/**
@@ -73,8 +73,8 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
 		$presets = $source->getAllPresets();
-		$this->assertArrayHasKey('languages', $presets);
-		$this->assertEquals(array('de_DE', 'all'), array_keys($presets['languages']['presets']));
+		$this->assertArrayHasKey('language', $presets);
+		$this->assertEquals(array('de_DE', 'all'), array_keys($presets['language']['presets']));
 	}
 
 	/**
@@ -83,7 +83,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	public function getDefaultPresetWithExistingDimensionReturnsDefaultPresetWithIdentifier() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
-		$preset = $source->getDefaultPreset('languages');
+		$preset = $source->getDefaultPreset('language');
 		$this->assertArrayHasKey('identifier', $preset);
 		$this->assertEquals('all', $preset['identifier']);
 	}
@@ -94,7 +94,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	public function findPresetByUriSegmentWithExistingUriSegmentReturnsPreset() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
-		$preset = $source->findPresetByUriSegment('languages', 'deutsch');
+		$preset = $source->findPresetByUriSegment('language', 'deutsch');
 		$this->assertArrayHasKey('values', $preset);
 		$this->assertEquals(array('de_DE', 'de_ZZ', 'mul_ZZ'), $preset['values']);
 	}
@@ -105,7 +105,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	public function findPresetByUriSegmentWithoutExistingUriSegmentReturnsNull() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
-		$preset = $source->findPresetByUriSegment('languages', 'english');
+		$preset = $source->findPresetByUriSegment('language', 'english');
 		$this->assertNull($preset);
 	}
 
@@ -115,7 +115,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	public function findPresetByDimensionValuesWithExistingValuesReturnsPreset() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
-		$preset = $source->findPresetByDimensionValues('languages', array('de_DE', 'de_ZZ', 'mul_ZZ'));
+		$preset = $source->findPresetByDimensionValues('language', array('de_DE', 'de_ZZ', 'mul_ZZ'));
 		$this->assertArrayHasKey('uriSegment', $preset);
 		$this->assertEquals('deutsch', $preset['uriSegment']);
 	}
@@ -126,7 +126,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	public function findPresetByDimensionValuesWithoutExistingUriSegmentReturnsNull() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
-		$preset = $source->findPresetByDimensionValues('languages', array('ja_JP', 'mul_ZZ'));
+		$preset = $source->findPresetByDimensionValues('language', array('ja_JP', 'mul_ZZ'));
 		$this->assertNull($preset);
 	}
 
@@ -138,7 +138,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	public function setConfigurationThrowsExceptionIfSpecifiedDefaultPresetDoesNotExist() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$configuration = $this->validConfiguration;
-		$configuration['languages']['defaultPreset'] = 'something';
+		$configuration['language']['defaultPreset'] = 'something';
 		$source->setConfiguration($configuration);
 	}
 
