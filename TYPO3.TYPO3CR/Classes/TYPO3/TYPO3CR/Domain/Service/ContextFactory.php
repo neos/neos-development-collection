@@ -58,7 +58,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 *        'workspaceName' => 'live',
 	 *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
 	 *        'dimensions' => array(...),
-	 *        'targetDimensions' => array('languages' => 'de', 'persona' => 'Lisa'),
+	 *        'targetDimensions' => array('language' => 'de', 'persona' => 'Lisa'),
 	 *        'invisibleContentShown' => FALSE,
 	 *        'removedContentShown' => FALSE,
 	 *        'inaccessibleContentShown' => FALSE

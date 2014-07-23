@@ -80,7 +80,7 @@ class NodeConverterTest extends FunctionalTestCase {
 		parent::setUp();
 		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 		$contentDimensionRepository->setDimensionsConfiguration(array(
-			'languages' => array(
+			'language' => array(
 				'default' => 'mul_ZZ'
 			)
 		));
@@ -109,7 +109,7 @@ class NodeConverterTest extends FunctionalTestCase {
 	 *   - personal workspace
 	 *     - title: Hello World
 	 *     - subtitle: Brave new world
-	 * /headline with languages=de_DE
+	 * /headline with language=de_DE
 	 *   - personal workspace
 	 *     - title: Hallo Welt
 	 * @return void
@@ -121,7 +121,7 @@ class NodeConverterTest extends FunctionalTestCase {
 		$headlineNodeInPersonalWorkspace = $this->rootNodeInPersonalWorkspace->getNode('headline');
 		$headlineNodeInPersonalWorkspace->setProperty('subtitle', 'Brave new world');
 
-		$germanContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName, 'dimensions' => array('languages' => array('de_DE', 'mul_ZZ'))));
+		$germanContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName, 'dimensions' => array('language' => array('de_DE', 'mul_ZZ'))));
 		$headlineInGerman = $germanContext->getNode('/headline');
 		$headlineInGerman->setProperty('title', 'Hallo Welt');
 
@@ -156,7 +156,7 @@ class NodeConverterTest extends FunctionalTestCase {
 	public function nodeFromGermanDimensionIsFetchedCorrectly() {
 		$this->setupNodeWithShadowNodeInPersonalWorkspace();
 
-		$headlineNode = $this->convert('/headline@' . $this->currentTestWorkspaceName . ';languages=de_DE');
+		$headlineNode = $this->convert('/headline@' . $this->currentTestWorkspaceName . ';language=de_DE');
 		$this->assertSame('Hallo Welt', $headlineNode->getProperty('title'));
 	}
 

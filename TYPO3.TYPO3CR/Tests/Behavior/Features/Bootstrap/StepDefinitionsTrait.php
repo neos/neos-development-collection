@@ -76,11 +76,11 @@ trait StepDefinitionsTrait {
 			}
 
 			$dimensions = NULL;
-			// If Languages is set we pass them as explicit dimensions
-			if (isset($row['Languages'])) {
-				$dimensions['languages'] = explode(',', $row['Languages']);
+			// If Language is set we pass them as explicit dimensions
+			if (isset($row['Language'])) {
+				$dimensions['language'] = explode(',', $row['Language']);
 			} elseif (isset($row['Language'])) {
-				$dimensions['languages'] = array($row['Language']);
+				$dimensions['language'] = array($row['Language']);
 			}
 			// Add flexible dimensions to explicit dimensions
 			foreach ($row as $propertyName => $propertyValue) {
@@ -274,12 +274,12 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
-	 * @Then /^The node languages dimension should be "([^"]*)"$/
+	 * @Then /^The node language dimension should be "([^"]*)"$/
 	 */
-	public function theNodeLanguageShouldBe($languages) {
+	public function theNodeLanguagehouldBe($language) {
 		$currentNode = $this->iShouldHaveOneNode();
 		$dimensions = $currentNode->getDimensions();
-		Assert::assertEquals($languages, implode(',', $dimensions['languages']), 'Language should match');
+		Assert::assertEquals($language, implode(',', $dimensions['language']), 'Language should match');
 	}
 
 	/**
@@ -321,9 +321,9 @@ trait StepDefinitionsTrait {
 					Assert::assertEquals($value, $nodeProperties[$property], 'The value for property "' . $property . '" should match the expected value');
 				}
 			}
-			if (isset($row['Languages'])) {
+			if (isset($row['Language'])) {
 				$dimensions = $this->currentNodes[$index]->getDimensions();
-				Assert::assertEquals($row['Languages'], implode(',', $dimensions['languages']), 'Language should match');
+				Assert::assertEquals($row['Language'], implode(',', $dimensions['language']), 'Language should match');
 			}
 		}
 	}
@@ -396,7 +396,7 @@ trait StepDefinitionsTrait {
 		/** @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
 
 		// Set the content dimensions to a fixed value for Behat scenarios
-		$contentDimensionRepository->setDimensionsConfiguration(array('languages' => array('default' => 'mul_ZZ')));
+		$contentDimensionRepository->setDimensionsConfiguration(array('language' => array('default' => 'mul_ZZ')));
 	}
 
 	/**
@@ -412,10 +412,10 @@ trait StepDefinitionsTrait {
 		$contextFactory = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$contextProperties = array();
 		if (isset($humanReadableContextProperties['Language'])) {
-			$contextProperties['dimensions']['languages'] = array($humanReadableContextProperties['Language'], 'mul_ZZ');
+			$contextProperties['dimensions']['language'] = array($humanReadableContextProperties['Language'], 'mul_ZZ');
 		}
-		if (isset($humanReadableContextProperties['Languages'])) {
-			$contextProperties['dimensions']['languages'] = Arrays::trimExplode(',', $humanReadableContextProperties['Languages']);
+		if (isset($humanReadableContextProperties['Language'])) {
+			$contextProperties['dimensions']['language'] = Arrays::trimExplode(',', $humanReadableContextProperties['Language']);
 		}
 		if (isset($humanReadableContextProperties['Workspace'])) {
 			$contextProperties['workspaceName'] = $humanReadableContextProperties['Workspace'];

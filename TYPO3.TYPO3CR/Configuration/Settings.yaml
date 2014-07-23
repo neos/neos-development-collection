@@ -7,9 +7,9 @@ TYPO3:
     # Example
     #
     #   contentDimensions:
-    #     languages:
+    #     language:
     #       default: mul_ZZ
     #
-    #     personas:
+    #     persona:
     #       default: everybody
     contentDimensions: []

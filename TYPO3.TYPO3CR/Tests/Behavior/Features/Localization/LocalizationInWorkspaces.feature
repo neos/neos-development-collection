@@ -16,17 +16,17 @@ Feature: Localization in workspaces
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | live      | mul_ZZ   |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | user-demo | de_DE    |
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Unterseite"
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage"
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | en_US, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Subpage"
@@ -38,12 +38,12 @@ Feature: Localization in workspaces
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | live      | mul_ZZ   |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | user-demo | de_DE    |
     When I get the child nodes of "/sites/neosdemotypo3" with filter "TYPO3.Neos:Document" and the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | en_US, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Subpage"
     When I get the child nodes of "/sites/neosdemotypo3" with filter "TYPO3.Neos:Document" and the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Unterseite"
@@ -54,12 +54,12 @@ Feature: Localization in workspaces
       | Path                         | Node Type                 | Properties              | Workspace | Language |
       | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | user-demo | de_DE    |
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Unterseite"
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | live      |
     Then I should have 0 nodes
 
@@ -70,24 +70,24 @@ Feature: Localization in workspaces
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}        | user-demo | en_ZZ    |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage for US"} | live      | en_US    |
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages            | Workspace |
+      | Language             | Workspace |
       | en_US, en_ZZ, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Subpage"
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages            | Workspace |
+      | Language             | Workspace |
       | en_US, en_ZZ, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage for US"
 
     When I get the child nodes of "/sites/neosdemotypo3" with filter "TYPO3.Neos:Document" and the following context:
-      | Languages            | Workspace |
+      | Language             | Workspace |
       | en_US, en_ZZ, mul_ZZ | user-demo |
     Then I should have one node
     And The node property "title" should be "Subpage"
 
     When I get the child nodes of "/sites/neosdemotypo3" with filter "TYPO3.Neos:Document" and the following context:
-      | Languages            | Workspace |
+      | Language             | Workspace |
       | en_US, en_ZZ, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage for US"
@@ -99,18 +99,18 @@ Feature: Localization in workspaces
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | live      | mul_ZZ   |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | user-demo | de_DE    |
     And I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     When I publish the node
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Unterseite"
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | en_US, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage"
@@ -122,23 +122,23 @@ Feature: Localization in workspaces
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}     | live      | mul_ZZ   |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unternehmen"} | live      | de_DE    |
     And I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     And I set the node property "title" to "Firma"
     # FIXME We have to get the node again to have a clean context, after persistAll there will be duplicate Workspace instances otherwise
     And I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     When I publish the node
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Firma"
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | en_US, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage"
@@ -151,24 +151,24 @@ Feature: Localization in workspaces
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage mul"} | live      | mul_ZZ   |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"}  | user-demo | de_DE    |
     And I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages            | Workspace |
+      | Language             | Workspace |
       | de_DE, de_ZZ, mul_ZZ | user-demo |
     When I publish the node
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages            | Workspace |
+      | Language             | Workspace |
       | de_DE, de_ZZ, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Unterseite"
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_ZZ, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage de"
 
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | en_ZZ, mul_ZZ | live      |
     Then I should have one node
     And The node property "title" should be "Subpage mul"
@@ -184,25 +184,25 @@ Feature: Localization in workspaces
       | 88745891-222b-e9c9-6144-4b3a5d80d482 | /sites/neosdemotypo3/mainpage/subpage   | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"}  | live      | de_DE    |
 
     And I get a node by path "/sites/neosdemotypo3/mainpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     And I set the node name to "hauptseite"
     And I publish the workspace "user-demo"
 
     When I get a node by path "/sites/neosdemotypo3/hauptseite/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     And I set the node property "title" to "bar"
     And I publish the workspace "user-demo"
 
     When I get a node by path "/sites/neosdemotypo3/hauptseite/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE, mul_ZZ | user-demo |
     And I set the node name to "unterseite"
     And I publish the workspace "user-demo"
     Then The node property "title" should be "bar"
 
     When I get a node by path "/sites/neosdemotypo3/mainpage/subpage" with the following context:
-      | Languages     | Workspace |
+      | Language      | Workspace |
       | de_DE         | user-demo |
     Then I should have 0 nodes

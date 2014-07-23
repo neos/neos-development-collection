@@ -108,27 +108,27 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 				)
 			),
 			'simple dimension' => array(
-				'path' => 'features@user-admin;languages=de_DE,mul_ZZ',
+				'path' => 'features@user-admin;language=de_DE,mul_ZZ',
 				'expected' => array(
-					0 => 'features@user-admin;languages=de_DE,mul_ZZ',
+					0 => 'features@user-admin;language=de_DE,mul_ZZ',
 					'NodePath' => 'features',
 					1 => 'features',
 					'WorkspaceName' => 'user-admin',
 					2 => 'user-admin',
-					'Dimensions' => 'languages=de_DE,mul_ZZ',
-					3 => 'languages=de_DE,mul_ZZ'
+					'Dimensions' => 'language=de_DE,mul_ZZ',
+					3 => 'language=de_DE,mul_ZZ'
 				)
 			),
 			'multiple dimensions' => array(
-				'path' => 'features@user-admin;languages=de_DE,mul_ZZ&original=blah',
+				'path' => 'features@user-admin;language=de_DE,mul_ZZ&original=blah',
 				'expected' => array(
-					0 => 'features@user-admin;languages=de_DE,mul_ZZ&original=blah',
+					0 => 'features@user-admin;language=de_DE,mul_ZZ&original=blah',
 					'NodePath' => 'features',
 					1 => 'features',
 					'WorkspaceName' => 'user-admin',
 					2 => 'user-admin',
-					'Dimensions' => 'languages=de_DE,mul_ZZ&original=blah',
-					3 => 'languages=de_DE,mul_ZZ&original=blah'
+					'Dimensions' => 'language=de_DE,mul_ZZ&original=blah',
+					3 => 'language=de_DE,mul_ZZ&original=blah'
 				)
 			)
 		);
@@ -150,7 +150,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function createNodeWithAutoCreatedChildNodesAndNoIdentifierUsesGeneratedIdentifierOfNodeForChildNodes() {
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-		$mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array('languages' => 'mul_ZZ')));
+		$mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array('language' => 'mul_ZZ')));
 		$mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
 		$mockContext->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 

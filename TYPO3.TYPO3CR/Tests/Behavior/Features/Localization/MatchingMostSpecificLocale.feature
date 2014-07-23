@@ -16,12 +16,12 @@ Feature: Matching most specific language
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | en_US  |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | de_DE  |
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages       |
+      | Language        |
       | de_DE, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Unterseite"
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages       |
+      | Language        |
       | en_US, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Subpage"
@@ -33,28 +33,28 @@ Feature: Matching most specific language
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | en_ZZ  |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | de_ZZ  |
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages              |
+      | Language               |
       | de_DE, de_ZZ, mul_ZZ |
     Then I should have one node
-    And The node languages dimension should be "de_ZZ"
+    And The node language dimension should be "de_ZZ"
 
   @fixtures
-  Scenario: One document node and fallback to most specific language in list of languages
+  Scenario: One document node and fallback to most specific language in list of language
     Given I have the following nodes:
       | Identifier                           | Path                         | Node Type                 | Properties                 | Language |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "International"} | en_ZZ  |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "US"}            | en_US  |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "UK"}            | en_UK  |
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages             |
+      | Language              |
       | en_UK, en_US, en_ZZ |
     Then I should have one node
-    And The node languages dimension should be "en_UK"
+    And The node language dimension should be "en_UK"
     When I get a node by path "/sites/neosdemotypo3/subpage" with the following context:
-      | Languages             |
+      | Language             |
       | en_US, en_UK, en_ZZ |
     Then I should have one node
-    And The node languages dimension should be "en_US"
+    And The node language dimension should be "en_US"
 
   @fixtures
   Scenario: Multiple child nodes and specific languages
@@ -68,11 +68,11 @@ Feature: Matching most specific language
       | 418158c7-6096-9243-dc5b-16159e6f15bc | /sites/neosdemotypo3/subpage/main/c3 | TYPO3.Neos.NodeTypes:Headline | {"title": "Third"}         | en_US  |
       | 418158c7-6096-9243-dc5b-16159e6f15bc | /sites/neosdemotypo3/subpage/main/c3 | TYPO3.Neos.NodeTypes:Headline | {"title": "Drittens"}      | de_DE  |
     When I get the child nodes of "/sites/neosdemotypo3/subpage/main" with the following context:
-      | Languages       |
+      | Language       |
       | de_DE, mul_ZZ |
     Then I should have 3 nodes
     And I should have the following nodes:
-      | Path                                 | Properties            | Languages |
+      | Path                                 | Properties            | Language |
       | /sites/neosdemotypo3/subpage/main/c1 | {"title": "Erstens"}  | de_DE   |
       | /sites/neosdemotypo3/subpage/main/c2 | {"title": "Zweitens"} | de_DE   |
       | /sites/neosdemotypo3/subpage/main/c3 | {"title": "Drittens"} | de_DE   |
@@ -90,11 +90,11 @@ Feature: Matching most specific language
       | 418158c7-6096-9243-dc5b-16159e6f15bc | /sites/neosdemotypo3/subpage/main/c3 | TYPO3.Neos.NodeTypes:Headline | {"title": "Drittens"}      | de_ZZ  |
       | e0dbe38c-9540-dd4e-7c38-df1518c46311 | /sites/neosdemotypo3/subpage/main/c4 | TYPO3.Neos.NodeTypes:Headline | {"title": "Fourth"}        | en_US  |
     When I get the child nodes of "/sites/neosdemotypo3/subpage/main" with the following context:
-      | Languages              |
+      | Language              |
       | en_US, en_ZZ, mul_ZZ |
     Then I should have 4 nodes
     And I should have the following nodes:
-      | Path                                 | Properties          | Languages |
+      | Path                                 | Properties          | Language |
       | /sites/neosdemotypo3/subpage/main/c1 | {"title": "First"}  | en_ZZ   |
       | /sites/neosdemotypo3/subpage/main/c2 | {"title": "Second"} | en_ZZ   |
       | /sites/neosdemotypo3/subpage/main/c3 | {"title": "Third"}  | en_ZZ   |
@@ -112,11 +112,11 @@ Feature: Matching most specific language
       | e0dbe38c-9540-dd4e-7c38-df1518c46311 | /sites/neosdemotypo3/subpage/main/c4 | TYPO3.Neos.NodeTypes:Headline | {"title": "Fourth"}               | en_ZZ    |
       | e0dbe38c-9540-dd4e-7c38-df1518c46311 | /sites/neosdemotypo3/subpage/main/c4 | TYPO3.Neos.NodeTypes:Headline | {"title": "Fourth of US"}         | en_US    |
     When I get the child nodes of "/sites/neosdemotypo3/subpage/main" with the following context:
-      | Languages              |
+      | Language              |
       | en_US, en_ZZ, mul_ZZ |
     Then I should have 4 nodes
     And I should have the following nodes:
-      | Path                                 | Properties                | Languages |
+      | Path                                 | Properties                | Language |
       | /sites/neosdemotypo3/subpage/main/c1 | {"title": "First"}        | en_ZZ   |
       | /sites/neosdemotypo3/subpage/main/c2 | {"title": "Second"}       | en_ZZ   |
       | /sites/neosdemotypo3/subpage/main/c3 | {"title": "Third"}        | en_ZZ   |
@@ -135,11 +135,11 @@ Feature: Matching most specific language
       | 7c3e4946-d216-14d0-92c5-d7fa75163863 | /sites/neosdemotypo3/features/navigation-elements/first-item | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage #1"}          | en_US    |
       | 7c3e4946-d216-14d0-92c5-d7fa75163863 | /sites/neosdemotypo3/features/navigation-elements/first-item | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite #1"}       | de_DE    |
     When I get the nodes on path "/sites/neosdemotypo3/features" to "/sites/neosdemotypo3/features/navigation-elements/first-item" with the following context:
-      | Languages       |
+      | Language       |
       | en_US, mul_ZZ   |
     Then I should have 3 nodes
     And I should have the following nodes:
-      | Path                                                         | Properties                       | Languages |
+      | Path                                                         | Properties                       | Language |
       | /sites/neosdemotypo3/features                                | {"title": "Features"}            | en_US     |
       | /sites/neosdemotypo3/features/navigation-elements            | {"title": "Navigation elements"} | en_US     |
       | /sites/neosdemotypo3/features/navigation-elements/first-item | {"title": "Subpage #1"}          | en_US     |
@@ -155,11 +155,11 @@ Feature: Matching most specific language
       | a66ec7db-3459-b67b-7bcb-16e2508a89f0 | /sites/neosdemotypo3/features/navigation-elements            | TYPO3.Neos.NodeTypes:Page | {"title": "Navigation items"}         | en_UK    |
       | 7c3e4946-d216-14d0-92c5-d7fa75163863 | /sites/neosdemotypo3/features/navigation-elements/first-item | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage #1"}               | en_ZZ    |
     When I get the nodes on path "/sites/neosdemotypo3/features" to "/sites/neosdemotypo3/features/navigation-elements/first-item" with the following context:
-      | Languages            |
+      | Language            |
       | en_UK, en_ZZ, mul_ZZ |
     Then I should have 3 nodes
     And I should have the following nodes:
-      | Path                                                         | Properties                    | Languages |
+      | Path                                                         | Properties                    | Language |
       | /sites/neosdemotypo3/features                                | {"title": "Features"}         | mul_ZZ   |
       | /sites/neosdemotypo3/features/navigation-elements            | {"title": "Navigation items"} | en_UK    |
       | /sites/neosdemotypo3/features/navigation-elements/first-item | {"title": "Subpage #1"}       | en_ZZ    |
@@ -171,12 +171,12 @@ Feature: Matching most specific language
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | en_US   |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | de_DE   |
     When I get a node by identifier "fd5ba6e1-4313-b145-1004-dad2f1173a35" with the following context:
-      | Languages     |
+      | Language     |
       | de_DE, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Unterseite"
     When I get a node by identifier "fd5ba6e1-4313-b145-1004-dad2f1173a35" with the following context:
-      | Languages     |
+      | Language     |
       | en_US, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Subpage"
@@ -188,10 +188,10 @@ Feature: Matching most specific language
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Subpage"}    | en_ZZ    |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "Unterseite"} | de_ZZ    |
     When I get a node by identifier "fd5ba6e1-4313-b145-1004-dad2f1173a35" with the following context:
-      | Languages            |
+      | Language            |
       | de_DE, de_ZZ, mul_ZZ |
     Then I should have one node
-    And The node languages dimension should be "de_ZZ"
+    And The node language dimension should be "de_ZZ"
 
   @fixtures
   Scenario: One document node and fallback to most specific language in list of languages by identifier
@@ -201,12 +201,12 @@ Feature: Matching most specific language
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "US"}            | en_US    |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/subpage | TYPO3.Neos.NodeTypes:Page | {"title": "UK"}            | en_UK    |
     When I get a node by identifier "fd5ba6e1-4313-b145-1004-dad2f1173a35" with the following context:
-      | Languages           |
+      | Language           |
       | en_UK, en_US, en_ZZ |
     Then I should have one node
-    And The node languages dimension should be "en_UK"
+    And The node language dimension should be "en_UK"
     When I get a node by identifier "fd5ba6e1-4313-b145-1004-dad2f1173a35" with the following context:
-      | Languages           |
+      | Language           |
       | en_US, en_UK, en_ZZ |
     Then I should have one node
-    And The node languages dimension should be "en_US"
+    And The node language dimension should be "en_US"

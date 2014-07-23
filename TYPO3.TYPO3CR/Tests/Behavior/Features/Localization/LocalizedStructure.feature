@@ -20,12 +20,12 @@ Feature: Localized structure
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/company/about | TYPO3.Neos.NodeTypes:Page | {"title": "About"}    | en_US    |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/service/about | TYPO3.Neos.NodeTypes:Page | {"title": "Über uns"} | de_DE    |
     When I get a node by path "/sites/neosdemotypo3/company/about" with the following context:
-      | Languages     |
+      | Language      |
       | en_US, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "About"
     When I get a node by path "/sites/neosdemotypo3/service/about" with the following context:
-      | Languages     |
+      | Language      |
       | de_DE, mul_ZZ |
     Then I should have one node
     And The node property "title" should be "Über uns"
@@ -39,15 +39,15 @@ Feature: Localized structure
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/company/about   | TYPO3.Neos.NodeTypes:Page | {"title": "About"}      | en_US    |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/neosdemotypo3/service/about   | TYPO3.Neos.NodeTypes:Page | {"title": "Über uns"}   | de_DE    |
     When I get the child nodes of "/sites/neosdemotypo3/company" with filter "TYPO3.Neos:Document" and the following context:
-      | Languages     |
+      | Language      |
       | en_US, mul_ZZ |
     And I should have the following nodes:
-      | Path                                 | Properties           | Languages |
+      | Path                                 | Properties           | Language  |
       | /sites/neosdemotypo3/company/history | {"title": "History"} | en_US     |
       | /sites/neosdemotypo3/company/about   | {"title": "About"}   | en_US     |
     When I get the child nodes of "/sites/neosdemotypo3/company" with filter "TYPO3.Neos:Document" and the following context:
-      | Languages       |
+      | Language        |
       | de_DE, mul_ZZ |
     And I should have the following nodes:
-      | Path                                 | Properties              | Languages |
+      | Path                                 | Properties              | Language  |
       | /sites/neosdemotypo3/company/history | {"title": "Geschichte"} | de_DE     |
