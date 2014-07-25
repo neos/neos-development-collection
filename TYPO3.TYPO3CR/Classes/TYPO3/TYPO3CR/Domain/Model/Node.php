@@ -495,7 +495,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 		}
 
 		if (!$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
-			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648177);
+			throw new NodeConstraintException(sprintf('Cannot copy "%s" into "%s" due to node type constraints.', $this->__toString(), $referenceNode->__toString()), 1404648177);
 		}
 
 		if (!$this->isNodeDataMatchingContext()) {
