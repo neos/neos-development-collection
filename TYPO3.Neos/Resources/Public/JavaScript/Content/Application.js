@@ -403,7 +403,6 @@ function(
 				}).then(
 					function(htmlString) {
 						var $htmlDom = $($.parseHTML(htmlString)),
-							$currentDocumentMetadata = $('#neos-document-metadata'),
 							$documentMetadata = $htmlDom.filter('#neos-document-metadata');
 						if ($documentMetadata.length === 0) {
 							Notification.error('Could not read document metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
@@ -411,19 +410,6 @@ function(
 							LoadingIndicator.done();
 							return;
 						}
-
-						var currentNodePath = $currentDocumentMetadata.attr('about');
-						if (currentNodePath.indexOf(';') !== -1) {
-							var newNodePath = $documentMetadata.attr('about'),
-								currentContentDimensions = currentNodePath.substr(currentNodePath.lastIndexOf(';') + 1),
-								newContentDimensions = newNodePath.substr(newNodePath.lastIndexOf(';') + 1);
-							if (currentContentDimensions !== newContentDimensions) {
-								EventDispatcher.trigger('contentDimensionsChanged');
-							}
-						}
-
-						var currentContentDimensions = $currentDocumentMetadata.attr('about').substr($currentDocumentMetadata.attr('about').lastIndexOf(';') + 1),
-						newContentDimensions = $documentMetadata.attr('about').substr($documentMetadata.attr('about').lastIndexOf(';') + 1);
 
 						pushUriToHistory();
 
@@ -463,10 +449,6 @@ function(
 						var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
 						if ($currentlyActiveContentElement.length === 1) {
 							NodeSelection.updateSelection($currentlyActiveContentElement);
-						}
-
-						if (currentContentDimensions !== newContentDimensions) {
-							EventDispatcher.trigger('contentDimensionsChanged');
 						}
 
 						that.set('_isLoadingPage', false);

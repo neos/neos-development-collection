@@ -54,22 +54,25 @@ function(
 	 */
 	return Ember.Controller.extend({
 		classNames: 'neos-dimension-selector',
-		dimensions: [],
 		selectedDimensions: {},
 		disableOverlayButtons: false,
 		selectorIsActive: false,
 
 		/**
 		 * Initialization
-		 *
-		 * Retrieves the available content dimension presets via the REST service and sets the local configuration accordingly.
-		 * Also fetches the "currently selected dimensions" from the meta data of the currently shown document.
 		 */
 		init: function() {
 			var that = this;
+			this._updateSelectedDimensionsFromCurrentDocument();
+			this._loadConfiguration();
+		},
 
-			this.set('selectedDimensions', $('#neos-page-metainformation').data('context-__dimensions'));
-
+		/**
+		 * Retrieve the available content dimension presets via the REST service and set the local configuration accordingly.
+		 * Also fetches the "currently selected dimensions" from the meta data of the currently shown document.
+		 */
+		_loadConfiguration: function() {
+			var that = this;
 			HttpRestClient.getResource('neos-service-contentdimensions').then(function(result) {
 				var configuration = {};
 
@@ -81,7 +84,7 @@ function(
 						var values = [];
 						$.each($('.contentdimension-preset-values li', contentDimensionPresetSnippet), function(key, contentDimensionPresetValuesSnippet) {
 							values.push($(contentDimensionPresetValuesSnippet).text());
-						})
+						});
 
 						var presetIdentifier = $('.contentdimension-preset-identifier', contentDimensionPresetSnippet).text();
 						presets[presetIdentifier] = {
@@ -100,22 +103,27 @@ function(
 				});
 				that.set('configuration', configuration);
 			}, function(error) {
-				Notification.error('Failed loading dimension presets data.');
 				console.error('Failed loading dimension presets data.', error);
 			});
 		},
 
 		/**
-		 * On configuration change (for example after loading content dimension data via init) this function will prepare
-		 * the 'dimensions' property accordingly.
+		 * Updates the "selectedDimensions" property by retrieving the currently active dimensions from the document markup
 		 */
-		_onConfigurationChanged: function() {
-			if (!this.get('configuration')) {
-				return;
-			}
+		_updateSelectedDimensionsFromCurrentDocument: function() {
+			this.set('selectedDimensions', $('#neos-document-metadata').data('context-__dimensions'));
+		},
 
+		/**
+		 * Computed property: available dimensions and their presets
+		 */
+		dimensions: function() {
 			var dimensions = [];
 			var selectedDimensions = this.get('selectedDimensions');
+
+			if (!this.get('configuration')) {
+				return dimensions;
+			}
 
 			$.each(this.get('configuration'), function(dimensionIdentifier, dimensionConfiguration) {
 				var presets = [];
@@ -138,12 +146,17 @@ function(
 				});
 				dimensions.push(Dimension.create($.extend(dimensionConfiguration, {identifier: dimensionIdentifier, presets: presets})));
 			});
+
 			dimensions.sort(function(a, b) {
 				return a.get('position') > b.get('position') ? 1 : -1;
 			});
-			this.set('dimensions', dimensions);
-		}.observes('configuration').on('init'),
 
+			return dimensions;
+		}.property('configuration', 'selectedDimensions'),
+
+		/**
+		 * Computed property of selected dimension values
+		 */
 		dimensionValues: function() {
 			var dimensions = {};
 			$.each(this.get('dimensions'), function(index, dimension) {
@@ -153,24 +166,27 @@ function(
 		}.property('dimensions.@each.selected'),
 
 		/*
-		 * Send an AJAX request for querying the Nodes service to check if the current node already exists in the
-		 * currently selected dimension
+		 * Send an AJAX request for querying the Nodes service to check if the current node can be displayed in the
+		 * currently configured dimensions and if so, reloads the current document with the new context.
 		 *
-		 * @param skipReload If a reload of the page should be skipped
+		 * Also triggers "contentDimensionsSelectionChanged" if the document could be reloaded.
 		 */
-		checkIfSelectedDimensionExists: function(skipReload) {
-			var that = this;
-			var nodeIdentifier = $('#neos-page-metainformation').attr('data-neos-_identifier');
-			var arguments = {
-				dimensions: this.get('dimensionValues'),
-				workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename')
-			}
+		reloadDocument: function() {
+			var that = this,
+				$documentMetadata = $('#neos-document-metadata'),
+				nodeIdentifier = $documentMetadata.attr('data-neos-_identifier'),
+				arguments = {
+					dimensions: this.get('dimensionValues'),
+					workspaceName: $documentMetadata.attr('data-context-__workspacename')
+				};
+
 			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: arguments}).then(function(result) {
 				that.set('selectorIsActive', false);
-				if (!skipReload) {
-					ContentModule.loadPage($("link[rel='node-frontend']", result.resource).attr('href'));
-				}
+				ContentModule.loadPage($("link[rel='node-frontend']", result.resource).attr('href'), false, function() {
+					EventDispatcher.trigger('contentDimensionsSelectionChanged');
+				});
 			});
 		}
 	}).create();
+
 });

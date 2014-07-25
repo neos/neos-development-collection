@@ -13,6 +13,14 @@ function(
 	EventDispatcher,
 	template
 ) {
+
+	/**
+	 * Ember view which displays the content dimensions selector
+	 *
+	 * The view consists of two parts: the dimension selector summary, which displays the currently selected dimensions
+	 * even if the dimensions selector is collapsed, and the expandable selector which shows a selector box for each
+	 * dimension with more than one preset.
+	 */
 	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
 		classNames: ['neos-content-dimension-selector'],
@@ -21,53 +29,50 @@ function(
 
 		controller: ContentDimensionController,
 
+		/**
+		 * Initialize the click handler for the dimensions selector panel
+		 */
 		didInsertElement: function() {
 			var that = this;
 			this.$('.neos-content-dimension-selector-summary').on('click', function() {
 				that.toggleProperty('isActive');
 			});
-
-			EventDispatcher.on('contentDimensionsChanged', function() {
-				that._onContentDimensionsChanged();
-			});
 		},
 
-		_initializeChosen: function() {
+		/**
+		 * (Re-)initialize the content dimension selectors
+		 *
+		 * When dimensions are available (REST service delivered a response) or they changed by some other means,
+		 * a function is registered which calls _updateValue() when the user selected a different dimension preset in
+		 * any of the selector boxes.
+		 */
+		_initialize: function() {
 			Ember.run.scheduleOnce('afterRender', this, function() {
 				var that = this;
 				this.$('select').chosen({disable_search_threshold: 10}).change(function() {
-					that._updateValue(false);
+					that._updateValue();
+					that.get('controller').reloadDocument();
 				});
 			});
+
 		}.observes('controller.dimensions'),
 
-		_updateValue: function(skipReload) {
-			var controller = this.get('controller'),
-				dimensionIdentifier = this.$('select').attr('name'),
-				presetIdentifier = this.$('select').val(),
-				dimension = controller.get('dimensions').filter(function(dimension) {
+		/**
+		 * Update the currently selected dimension(s) in the selector box(es)
+		 */
+		_updateValue: function() {
+			var controller = this.get('controller');
+			this.$('select').each(function() {
+				var dimensionIdentifier = $(this).attr('name');
+				var dimensionPresetIdentifier = $(this).val();
+				var dimension = controller.get('dimensions').filter(function(dimension) {
 					return dimension.get('identifier') === dimensionIdentifier;
 				}).get(0);
-			dimension.set('selected', dimension.get('presets').filter(function(preset) {
-				return preset.get('identifier') === presetIdentifier;
-			}).get(0));
-			controller.checkIfSelectedDimensionExists(skipReload);
-		},
 
-		_onContentDimensionsChanged: function() {
-			this.get('controller').set('selectedDimensions', $('#neos-page-metainformation').data('context-__dimensions'));
-			var that = this;
-			$.each(this.get('controller.dimensions'), function(dimensionIndex, dimensionConfiguration) {
-				$.each(dimensionConfiguration.get('presets'), function (presetIndex, presetConfiguration) {
-					if (JSON.stringify(that.get('controller.selectedDimensions.' + dimensionConfiguration.identifier)) === JSON.stringify(presetConfiguration.get('values'))) {
-						that.$('select').val(presetConfiguration.identifier);
-						that.$('select').trigger('chosen:updated');
-					}
-				});
-
+				dimension.set('selected', dimension.get('presets').filter(function(preset) {
+					return preset.get('identifier') === dimensionPresetIdentifier;
+				}).get(0));
 			});
-
-			this._updateValue(true);
 		}
 	});
 });

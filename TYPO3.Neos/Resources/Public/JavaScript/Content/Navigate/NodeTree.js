@@ -133,7 +133,7 @@ define(
 					that.filterTree();
 				});
 
-				EventDispatcher.on('contentDimensionsChanged', function() {
+				EventDispatcher.on('contentDimensionsSelectionChanged', function() {
 					that.refresh();
 				});
 			},
