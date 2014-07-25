@@ -108,7 +108,7 @@ define(
 			 * @return {object}
 			 */
 			getCurrentNodeTypeSchema: function() {
-				var nodeType = $('#neos-page-metainformation').attr('typeof').slice(6);
+				var nodeType = $('#neos-document-metadata').attr('typeof').slice(6);
 				return this.getNodeTypeDefinition(nodeType);
 			}
 		}).create();

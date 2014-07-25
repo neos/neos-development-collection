@@ -368,7 +368,7 @@ function(
 			if (uri === '#') {
 					// Often, pages use an URI of "#" to go to the homepage. In this case,
 					// we get the current workspace name and redirect to this workspace instead.
-				var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
+				var workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename');
 				uri = '@' + workspaceName;
 			}
 
@@ -403,18 +403,18 @@ function(
 				}).then(
 					function(htmlString) {
 						var $htmlDom = $($.parseHTML(htmlString)),
-							$currentPageMetaData = $('#neos-page-metainformation'),
-							$pageMetadata = $htmlDom.filter('#neos-page-metainformation');
-						if ($pageMetadata.length === 0) {
-							Notification.error('Could not read page metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
+							$currentDocumentMetadata = $('#neos-document-metadata'),
+							$documentMetadata = $htmlDom.filter('#neos-document-metadata');
+						if ($documentMetadata.length === 0) {
+							Notification.error('Could not read document metadata from response. Please open the location ' + uri + ' outside the Neos backend.');
 							that.set('_isLoadingPage', false);
 							LoadingIndicator.done();
 							return;
 						}
 
-						var currentNodePath = $currentPageMetaData.attr('about');
+						var currentNodePath = $currentDocumentMetadata.attr('about');
 						if (currentNodePath.indexOf(';') !== -1) {
-							var newNodePath = $pageMetadata.attr('about'),
+							var newNodePath = $documentMetadata.attr('about'),
 								currentContentDimensions = currentNodePath.substr(currentNodePath.lastIndexOf(';') + 1),
 								newContentDimensions = newNodePath.substr(newNodePath.lastIndexOf(';') + 1);
 							if (currentContentDimensions !== newContentDimensions) {
@@ -422,13 +422,13 @@ function(
 							}
 						}
 
-						var currentContentDimensions = $currentPageMetaData.attr('about').substr($currentPageMetaData.attr('about').lastIndexOf(';') + 1),
-						newContentDimensions = $pageMetadata.attr('about').substr($pageMetadata.attr('about').lastIndexOf(';') + 1);
+						var currentContentDimensions = $currentDocumentMetadata.attr('about').substr($currentDocumentMetadata.attr('about').lastIndexOf(';') + 1),
+						newContentDimensions = $documentMetadata.attr('about').substr($documentMetadata.attr('about').lastIndexOf(';') + 1);
 
 						pushUriToHistory();
 
-						// Extract the HTML from the page, starting at (including) #neos-page-metainformation until #neos-application.
-						var $newContent = $htmlDom.filter('#neos-page-metainformation').nextUntil('#neos-application').andSelf();
+						// Extract the HTML from the page, starting at (including) #neos-document-metadata until #neos-application.
+						var $newContent = $htmlDom.filter('#neos-document-metadata').nextUntil('#neos-application').andSelf();
 
 						// remove the current HTML content
 						var $neosApplication = $('#neos-application');

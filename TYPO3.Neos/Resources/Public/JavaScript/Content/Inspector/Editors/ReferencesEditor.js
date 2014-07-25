@@ -35,7 +35,7 @@ define(
 
 							var arguments = {
 								searchTerm: query.term,
-								workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename'),
+								workspaceName: $('#neos-document-metadata').attr('data-context-__workspacename'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
@@ -85,7 +85,7 @@ define(
 						that.get('content').pushObject(item);
 
 						var arguments = {
-							workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename')
+							workspaceName: $('#neos-document-metadata').attr('data-context-__workspacename')
 						}
 						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: arguments}).then(function(result) {
 							item.set('text', $('.node-label', result.resource).text());

@@ -76,9 +76,9 @@ define(
 			minimumCreateAndPasteLevel: 1,
 
 			_updateMetaInformation: function() {
-				var pageMetaInformation = $('#neos-page-metainformation');
-				this.set('pageNodePath', pageMetaInformation.attr('about'));
-				this.set('siteRootNodePath', pageMetaInformation.data('__siteroot'));
+				var documentMetadata = $('#neos-document-metadata');
+				this.set('pageNodePath', documentMetadata.attr('about'));
+				this.set('siteRootNodePath', documentMetadata.data('__siteroot'));
 
 				// Make sure we update the siteRootNodePath in case the dimensions changed
 				if (this.$nodeTree && this.$nodeTree.dynatree('getRoot').getChildren()[0]) {
@@ -262,7 +262,7 @@ define(
 				var that = this;
 
 				ContentModule.on('pageLoaded', this, function() {
-					that.set('pageNodePath', $('#neos-page-metainformation').attr('about'));
+					that.set('pageNodePath', $('#neos-document-metadata').attr('about'));
 					this.trigger('afterPageLoaded');
 				});
 			},

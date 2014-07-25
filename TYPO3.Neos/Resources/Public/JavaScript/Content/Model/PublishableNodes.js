@@ -63,7 +63,7 @@ define(
 		 */
 		_updatePublishableEntities: function() {
 			var publishableEntitySubjects = [],
-				documentNodeContextPath = $('#neos-page-metainformation').attr('about');
+				documentNodeContextPath = $('#neos-document-metadata').attr('about');
 
 			vie.entities.forEach(function(entity) {
 				if (this._isEntityPublishable(entity)) {
@@ -116,9 +116,9 @@ define(
 						that._updatePublishableEntities();
 
 						if (autoPublish !== true) {
-							var pageMetaInformation = $('#neos-page-metainformation'),
-								nodeType = pageMetaInformation.data('neos-_node-type'),
-								page = vie.entities.get(vie.service('rdfa').getElementSubject(pageMetaInformation)),
+							var documentMetadata = $('#neos-document-metadata'),
+								nodeType = documentMetadata.data('neos-_node-type'),
+								page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
 								namespace = Configuration.get('TYPO3_NAMESPACE'),
 								title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
 								nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
@@ -183,9 +183,9 @@ define(
 							});
 						}
 					);
-					var pageMetaInformation = $('#neos-page-metainformation'),
-						nodeType = pageMetaInformation.data('neos-_node-type'),
-						page = vie.entities.get(vie.service('rdfa').getElementSubject(pageMetaInformation)),
+					var documentMetadata = $('#neos-document-metadata'),
+						nodeType = documentMetadata.data('neos-_node-type'),
+						page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
 						namespace = Configuration.get('TYPO3_NAMESPACE'),
 						title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
 						nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
@@ -202,7 +202,7 @@ define(
 		publishAll: function() {
 			var that = this,
 				entitySubjects = this.get('publishableEntitySubjects'),
-				workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
+				workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename');
 
 			WorkspaceEndpoint.publishAll(workspaceName).then(
 				function() {
@@ -226,7 +226,7 @@ define(
 		 */
 		discardAll: function() {
 			var that = this,
-				workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename');
+				workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename');
 
 			WorkspaceEndpoint.discardAll(workspaceName).then(
 				function() {
@@ -261,7 +261,7 @@ define(
 		 * @return {void}
 		 */
 		getWorkspaceWideUnpublishedNodes: function() {
-			var workspaceName = $('#neos-page-metainformation').attr('data-context-__workspacename'),
+			var workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename'),
 				that = this;
 
 			WorkspaceEndpoint.getWorkspaceWideUnpublishedNodes(workspaceName).then(

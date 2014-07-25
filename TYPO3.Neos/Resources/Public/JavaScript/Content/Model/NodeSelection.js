@@ -167,8 +167,8 @@ define(
 			}
 
 			// add page node
-			if (!$element || !$element.is('#neos-page-metainformation')) {
-				this._addNodeByElement(nodes, $('#neos-page-metainformation'));
+			if (!$element || !$element.is('#neos-document-metadata')) {
+				this._addNodeByElement(nodes, $('#neos-document-metadata'));
 			}
 
 			nodes = nodes.reverse();

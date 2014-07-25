@@ -33,7 +33,7 @@ define(
 	NavigatePanelController,
 	template
 ) {
-	var pageMetaInformation = $('#neos-page-metainformation');
+	var documentMetadata = $('#neos-document-metadata');
 
 	return AbstractNodeTree.extend({
 		elementId: ['neos-context-structure'],
@@ -56,7 +56,7 @@ define(
 			});
 
 			this.on('afterPageLoaded', function(){
-				this._initializePropertyObservers($('#neos-page-metainformation'));
+				this._initializePropertyObservers($('#neos-document-metadata'));
 			});
 		},
 
@@ -66,7 +66,7 @@ define(
 				return;
 			}
 
-			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-page-metainformation'))),
+			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-document-metadata'))),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.get('pageNodePath'),
 				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
@@ -131,7 +131,7 @@ define(
 				return;
 			}
 
-			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(pageMetaInformation)),
+			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject(documentMetadata)),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.pageNodePath,
 				documentNodeType = (page ? page.get('typo3:_nodeType'): 'TYPO3.Neos.NodeTypes:Page'); // TODO: This fallback to TYPO3.Neos.NodeTypes:Page should go away, but currently in some rare cases "page" is not yet initialized. In order to fix this loading order issue, we need to re-structure the tree, though.
@@ -194,7 +194,7 @@ define(
 
 			this._super();
 
-			this._initializePropertyObservers(pageMetaInformation);
+			this._initializePropertyObservers(documentMetadata);
 		},
 
 		afterDeleteNode: function() {

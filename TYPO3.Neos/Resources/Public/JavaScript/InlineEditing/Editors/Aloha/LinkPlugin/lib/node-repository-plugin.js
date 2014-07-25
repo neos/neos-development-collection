@@ -11,7 +11,7 @@ define([
 	return Plugin.create('node-repository-plugin', {
 
 		init: function () {
-			$metaInformation = $('#neos-page-metainformation');
+			$metaInformation = $('#neos-document-metadata');
 			new Repository(
 				$('link[rel="neos-service-nodes"]').attr('href'),
 				$metaInformation.attr('data-context-__workspacename'),

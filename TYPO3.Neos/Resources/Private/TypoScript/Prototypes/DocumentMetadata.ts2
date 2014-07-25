@@ -6,7 +6,7 @@ prototype(TYPO3.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
 	tagName = 'div'
 	forceClosingTag = TRUE
 	attributes {
-		id = 'neos-page-metainformation'
+		id = 'neos-document-metadata'
 	}
 
 	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping

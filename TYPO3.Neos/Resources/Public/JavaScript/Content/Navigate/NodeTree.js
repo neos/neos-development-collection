@@ -37,7 +37,7 @@ define(
 		template,
 		NodeEndpoint
 	) {
-		var pageMetaInformation = $('#neos-page-metainformation');
+		var documentMetadata = $('#neos-document-metadata');
 
 		return AbstractNodeTree.extend({
 			elementId: ['neos-node-tree'],
@@ -105,7 +105,7 @@ define(
 				this.set('baseNodeType', Configuration.get('UserInterface.navigateComponent.nodeTree.presets.default.baseNodeType'));
 
 				this.on('afterPageLoaded', function(){
-					this._initializePropertyObservers($('#neos-page-metainformation'));
+					this._initializePropertyObservers($('#neos-document-metadata'));
 				});
 
 				var that = this;
@@ -151,8 +151,8 @@ define(
 					return;
 				}
 
-				var siteName = pageMetaInformation.data('__sitename'),
-					nodeType = pageMetaInformation.attr('typeof').substr(6);
+				var siteName = documentMetadata.data('__sitename'),
+					nodeType = documentMetadata.attr('typeof').substr(6);
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					autoFocus: true,
 					parent: this,
@@ -226,7 +226,7 @@ define(
 
 				this._super();
 
-				this._initializePropertyObservers(pageMetaInformation);
+				this._initializePropertyObservers(documentMetadata);
 
 				// Activate the current node in the tree if possible
 				var pageTreeNode = this.getPageTreeNode();
