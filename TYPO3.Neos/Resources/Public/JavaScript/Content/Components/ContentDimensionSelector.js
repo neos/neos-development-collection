@@ -40,6 +40,13 @@ function(
 		},
 
 		/**
+		 * Hide the dimensions selector if no dimensions can be selected anyway
+		 */
+		isVisible: function() {
+			return this.get('controller.dimensions').length > 0;
+		}.property('controller.dimensions'),
+
+		/**
 		 * (Re-)initialize the content dimension selectors
 		 *
 		 * When dimensions are available (REST service delivered a response) or they changed by some other means,

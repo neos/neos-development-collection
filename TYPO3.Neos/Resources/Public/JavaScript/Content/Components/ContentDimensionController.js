@@ -141,10 +141,13 @@ function(
 					}
 					presets.push(Preset.create($.extend({selected: selected, identifier: presetIdentifier}, presetConfiguration)));
 				});
-				presets.sort(function(a, b) {
-					return a.get('position') > b.get('position') ? 1 : -1;
-				});
-				dimensions.push(Dimension.create($.extend(dimensionConfiguration, {identifier: dimensionIdentifier, presets: presets})));
+
+				if (presets.length > 1) {
+					presets.sort(function(a, b) {
+						return a.get('position') > b.get('position') ? 1 : -1;
+					});
+					dimensions.push(Dimension.create($.extend(dimensionConfiguration, {identifier: dimensionIdentifier, presets: presets})));
+				}
 			});
 
 			dimensions.sort(function(a, b) {
