@@ -37,6 +37,6 @@ interface ContextFactoryInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @api
 	 */
-	public function create(array $contextConfiguration);
+	public function create(array $contextConfiguration = array());
 
 }
