@@ -428,8 +428,9 @@ function(
 						LoadingIndicator.done();
 
 						$('title').html($htmlDom.filter('title').html());
+						$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
 
-						// TODO: transfer body classes
+						// TODO: transfer body classes and other possibly important tags from the head section
 
 						that._setPagePosition();
 

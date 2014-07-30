@@ -61,6 +61,7 @@ define(
 
 			pageNodePath: null,
 			siteRootNodePath: null,
+			siteRootUri: null,
 
 			baseNodeType: Ember.K,
 			unmodifiableLevels: 1,
@@ -79,10 +80,16 @@ define(
 				var documentMetadata = $('#neos-document-metadata');
 				this.set('pageNodePath', documentMetadata.attr('about'));
 				this.set('siteRootNodePath', documentMetadata.data('__siteroot'));
+				this.set('siteRootUri', $('link[rel="neos-site"]').attr('href'));
 
 				// Make sure we update the siteRootNodePath in case the dimensions changed
-				if (this.$nodeTree && this.$nodeTree.dynatree('getRoot').getChildren()[0]) {
-					this.$nodeTree.dynatree('getRoot').getChildren()[0].data.key = this.get('siteRootNodePath');
+				if (this.$nodeTree) {
+					var rootNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
+					if (rootNode) {
+						rootNode.data.key = this.get('siteRootNodePath');
+						rootNode.data.href = this.get('siteRootUri');
+						rootNode.render();
+					}
 				}
 			},
 
