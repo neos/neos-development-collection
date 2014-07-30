@@ -12,6 +12,7 @@ namespace TYPO3\Neos\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Mvc\View\AbstractView;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -21,6 +22,12 @@ use TYPO3\TypoScript\Exception\RuntimeException;
  * A TypoScript view for Neos
  */
 class TypoScriptView extends AbstractView {
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\I18n\Service
+	 */
+	protected $i18nService;
 
 	/**
 	 * This contains the supported options, their default values, descriptions and types.
@@ -60,6 +67,13 @@ class TypoScriptView extends AbstractView {
 		$currentNode = $this->getCurrentNode();
 		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
 		$typoScriptRuntime = $this->getTypoScriptRuntime($currentSiteNode);
+
+		$dimensions = $currentNode->getContext()->getDimensions();
+		if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+			$currentLocale = new Locale($dimensions['language'][0]);
+			$this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
+			$this->i18nService->getConfiguration()->setFallbackRule(array('strict' => FALSE, 'order' => array_reverse($dimensions['language'])));
+		}
 
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $currentNode,
