@@ -3,13 +3,22 @@ TYPO3:
 
     # Configure available content dimensions for nodes, after adding a dimension the database has to be filled with
     # the dimension default values.
+    # Also add named presets with fallback chains that can happen in your dimensions.
     #
     # Example
     #
     #   contentDimensions:
     #     language:
     #       default: mul_ZZ
+    #       defaultPreset: 'all'
+    #       presets:
+    #         'all':
+    #           values: ['mul_ZZ']
     #
     #     persona:
     #       default: everybody
+    #       defaultPreset: 'all'
+    #       presets:
+    #         'all':
+    #           values: ['everybody']
     contentDimensions: []
