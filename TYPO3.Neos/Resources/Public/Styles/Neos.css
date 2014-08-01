@@ -11018,7 +11018,7 @@ body.neos-preview-mode .neos .neos-modal-backdrop {
   cursor: wait !important;
 }
 
-#neos-page-metainformation {
+#neos-document-metadata {
   display: none;
 }
 
@@ -11877,6 +11877,23 @@ disabled look for disabled choices in the results dropdown
   padding: 10px 0 0 0 !important;
   min-height: 40px !important;
 }
+.neos-select2-drop .neos-select2-results .neos-select2-result-label img {
+  float: left;
+  padding-right: 8px;
+}
+.neos-select2-drop .neos-select2-results .neos-select2-result-label i {
+  vertical-align: top;
+  padding-right: 4px;
+}
+.neos-select2-drop .neos-select2-results .neos-select2-result-label span {
+  font-size: 12px;
+  color: #adadad;
+}
+.neos-select2-drop .neos-select2-results .neos-select2-result-label span b {
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
+}
 .neos-select2-drop .neos-select2-results .neos-select2-match {
   text-decoration: none !important;
   font-weight: bold;
@@ -11919,6 +11936,22 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-container .neos-select2-choice > .neos-select2-arrow {
   display: none;
+}
+.neos-select2-container .neos-select2-choice img {
+  float: left;
+  padding-right: 8px;
+}
+.neos-select2-container .neos-select2-choice i {
+  padding-right: 4px;
+}
+.neos-select2-container .neos-select2-choice span {
+  font-size: 12px;
+  color: #adadad;
+}
+.neos-select2-container .neos-select2-choice span b {
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
 }
 
 /* Multi Selection */
@@ -11968,4 +12001,20 @@ disabled look for disabled choices in the results dropdown
   position: absolute;
   left: 14px;
   top: 13px;
+}
+.neos-select2-container-multi .neos-select2-search-choice img {
+  float: left;
+  padding-right: 8px;
+}
+.neos-select2-container-multi .neos-select2-search-choice i {
+  padding-right: 4px;
+}
+.neos-select2-container-multi .neos-select2-search-choice span {
+  font-size: 11px;
+  color: #adadad;
+}
+.neos-select2-container-multi .neos-select2-search-choice span b {
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
 }
