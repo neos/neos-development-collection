@@ -33,7 +33,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 
 		$success = $congratulations->createElement('success', 'TYPO3.Form:StaticText');
 		$success->setProperty('text', 'You have successfully installed Neos! If you need help getting started, please refer to the Neos documentation.');
-		$success->setProperty('class', 'alert alert-success');
+		$success->setProperty('elementClassAttribute', 'alert alert-success');
 
 		$docs = $congratulations->createElement('docsLink', 'TYPO3.Setup:LinkElement');
 		$docs->setLabel('Read the documentation');
@@ -46,7 +46,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 		$link = $frontend->createElement('link', 'TYPO3.Setup:LinkElement');
 		$link->setLabel('Go to the frontend');
 		$link->setProperty('href', '/');
-		$link->setProperty('class', 'btn btn-large btn-primary');
+		$link->setProperty('elementClassAttribute', 'btn btn-large btn-primary');
 
 		$backend = $page1->createElement('backendSection', 'TYPO3.Form:Section');
 		$backend->setLabel('Start editing');
@@ -54,7 +54,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 		$backendLink = $backend->createElement('backendLink', 'TYPO3.Setup:LinkElement');
 		$backendLink->setLabel('Go to the backend');
 		$backendLink->setProperty('href', '/neos');
-		$backendLink->setProperty('class', 'btn btn-large btn-primary');
+		$backendLink->setProperty('elementClassAttribute', 'btn btn-large btn-primary');
 	}
 
 }
