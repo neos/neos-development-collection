@@ -126,7 +126,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		} else {
 			$error = $title->createElement('noSitePackagesError', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'No site packages were available, make sure you have an active site package');
-			$error->setProperty('class', 'alert alert-warning');
+			$error->setProperty('elementClassAttribute', 'alert alert-warning');
 		}
 
 		if ($this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
@@ -144,7 +144,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		} else {
 			$error = $title->createElement('neosKickstarterUnavailableError', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'The Neos Kickstarter package (TYPO3.Neos.Kickstarter) is not installed, install it for kickstarting new sites (using "composer require typo3/neos-kickstarter")');
-			$error->setProperty('class', 'alert alert-warning');
+			$error->setProperty('elementClassAttribute', 'alert alert-warning');
 		}
 
 		$step = $this;
