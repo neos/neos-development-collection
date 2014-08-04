@@ -102,10 +102,13 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	 */
 	protected function buildForm(\TYPO3\Form\Core\Model\FormDefinition $formDefinition) {
 		$page1 = $formDefinition->createPage('page1');
-		$page1->setRenderingOption('header', 'Import or create a site');
+		$page1->setRenderingOption('header', 'Create a new site');
 
-		$title = $page1->createElement('connectionSection', 'TYPO3.Form:Section');
-		$title->setLabel('Import a site');
+		$introduction = $page1->createElement('introduction', 'TYPO3.Form:StaticText');
+		$introduction->setProperty('text', 'There are two ways of creating a site. Choose between the following:');
+
+		$importSection = $page1->createElement('import', 'TYPO3.Form:Section');
+		$importSection->setLabel('Import a site from an existing site package');
 
 		$sitePackages = array();
 		foreach ($this->packageManager->getFilteredPackages('available', NULL, 'typo3-flow-site') as $package) {
@@ -113,18 +116,18 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 		}
 
 		if (count($sitePackages) > 0) {
-			$site = $title->createElement('site', 'TYPO3.Form:SingleSelectDropdown');
-			$site->setLabel('Select a site');
+			$site = $importSection->createElement('site', 'TYPO3.Form:SingleSelectDropdown');
+			$site->setLabel('Select a site package');
 			$site->setProperty('options', $sitePackages);
 			$site->addValidator(new \TYPO3\Flow\Validation\Validator\NotEmptyValidator());
 
 			$sites = $this->siteRepository->findAll();
 			if ($sites->count() > 0) {
-				$prune = $title->createElement('prune', 'TYPO3.Form:Checkbox');
+				$prune = $importSection->createElement('prune', 'TYPO3.Form:Checkbox');
 				$prune->setLabel('Delete existing sites');
 			}
 		} else {
-			$error = $title->createElement('noSitePackagesError', 'TYPO3.Form:StaticText');
+			$error = $importSection->createElement('noSitePackagesError', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'No site packages were available, make sure you have an active site package');
 			$error->setProperty('elementClassAttribute', 'alert alert-warning');
 		}
@@ -134,18 +137,22 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$separator->setProperty('elementClassAttribute', 'section-separator');
 
 			$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
-			$newPackageSection->setLabel('Create a new site');
+			$newPackageSection->setLabel('Create a new site package with a dummy site');
 			$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
-			$packageName->setLabel('Package Name (in form "Vendor.MyPackageName")');
+			$packageName->setLabel('Package Name (in form "Vendor.DomainCom")');
 			$packageName->addValidator(new \TYPO3\Neos\Validation\Validator\PackageKeyValidator());
 
 			$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
-			$siteName->setLabel('Site Name');
+			$siteName->setLabel('Site Name (e.g. "domain.com")');
 		} else {
-			$error = $title->createElement('neosKickstarterUnavailableError', 'TYPO3.Form:StaticText');
+			$error = $importSection->createElement('neosKickstarterUnavailableError', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'The Neos Kickstarter package (TYPO3.Neos.Kickstarter) is not installed, install it for kickstarting new sites (using "composer require typo3/neos-kickstarter")');
 			$error->setProperty('elementClassAttribute', 'alert alert-warning');
 		}
+
+		$explanation = $page1->createElement('explanation', 'TYPO3.Form:StaticText');
+		$explanation->setProperty('text', 'Notice the difference between a site package and a site. A site package is a Flow package that can be used for creating multiple site instances.');
+		$explanation->setProperty('elementClassAttribute', 'alert alert-info');
 
 		$step = $this;
 		$callback = function(\TYPO3\Form\Core\Model\FinisherContext $finisherContext) use ($step) {
