@@ -14,7 +14,8 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
+use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\TypoScript\Exception as TypoScriptException;
 
 /**
@@ -32,9 +33,9 @@ class ResourceUriImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
-	 * @var ResourcePublisher
+	 * @var ResourceManager
 	 */
-	protected $resourcePublisher;
+	protected $resourceManager;
 
 	/**
 	 * @Flow\Inject
@@ -63,7 +64,7 @@ class ResourceUriImplementation extends AbstractTypoScriptObject {
 	/**
 	 * If specified, this resource object is used instead of the path and package information
 	 *
-	 * @return \TYPO3\Flow\Resource\Resource
+	 * @return Resource
 	 */
 	public function getResource() {
 		return $this->tsValue('resource');
@@ -87,7 +88,10 @@ class ResourceUriImplementation extends AbstractTypoScriptObject {
 	public function evaluate() {
 		$resource = $this->getResource();
 		if ($resource !== NULL) {
-			$uri = $this->resourcePublisher->getPersistentResourceWebUri($resource);
+			$uri = FALSE;
+			if ($resource instanceof Resource) {
+				$uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
+			}
 			if ($uri === FALSE) {
 				throw new TypoScriptException('The specified resource is invalid', 1386458728);
 			}
@@ -123,7 +127,8 @@ class ResourceUriImplementation extends AbstractTypoScriptObject {
 				$path = $matches[2];
 			}
 		}
-		return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+
+		return $this->resourceManager->getPublicPackageResourceUri($package, $path);
 	}
 
 }

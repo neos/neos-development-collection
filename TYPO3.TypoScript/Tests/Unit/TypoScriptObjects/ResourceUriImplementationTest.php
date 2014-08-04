@@ -38,7 +38,7 @@ class ResourceUriTest extends UnitTestCase {
 	/**
 	 * @var ResourcePublisher
 	 */
-	protected $mockResourcePublisher;
+	protected $mockResourceManager;
 
 	/**
 	 * @var Service
@@ -67,8 +67,8 @@ class ResourceUriTest extends UnitTestCase {
 
 		$this->resourceUriImplementation = new ResourceUriImplementation($this->mockTsRuntime, 'resourceUri/test', 'TYPO3.TypoScript:ResourceUri');
 
-		$this->mockResourcePublisher = $this->getMockBuilder('TYPO3\Flow\Resource\Publishing\ResourcePublisher')->disableOriginalConstructor()->getMock();
-		$this->inject($this->resourceUriImplementation, 'resourcePublisher', $this->mockResourcePublisher);
+		$this->mockResourceManager = $this->getMockBuilder('TYPO3\Flow\Resource\ResourceManager')->disableOriginalConstructor()->getMock();
+		$this->inject($this->resourceUriImplementation, 'resourceManager', $this->mockResourceManager);
 
 		$this->mockI18nService = $this->getMockBuilder('TYPO3\Flow\I18n\Service')->disableOriginalConstructor()->getMock();
 		$this->inject($this->resourceUriImplementation, 'i18nService', $this->mockI18nService);
@@ -80,11 +80,6 @@ class ResourceUriTest extends UnitTestCase {
 	 */
 	public function evaluateThrowsExceptionIfSpecifiedResourceIsInvalid() {
 		$invalidResource = new \stdClass();
-		$this->mockTsRuntime->expects($this->atLeastOnce())->method('evaluate')->with('resourceUri/test/resource')->will($this->returnCallback(function($evaluatePath, $that) use ($invalidResource) {
-			return $invalidResource;
-		}));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getPersistentResourceWebUri')->with($invalidResource)->will($this->returnValue(FALSE));
-
 		$this->resourceUriImplementation->evaluate();
 	}
 
@@ -96,7 +91,7 @@ class ResourceUriTest extends UnitTestCase {
 		$this->mockTsRuntime->expects($this->atLeastOnce())->method('evaluate')->with('resourceUri/test/resource')->will($this->returnCallback(function($evaluatePath, $that) use ($validResource) {
 			return $validResource;
 		}));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getPersistentResourceWebUri')->with($validResource)->will($this->returnValue('the/resolved/resource/uri'));
+		$this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPersistentResourceUri')->with($validResource)->will($this->returnValue('the/resolved/resource/uri'));
 
 		$this->assertSame('the/resolved/resource/uri', $this->resourceUriImplementation->evaluate());
 	}
@@ -143,7 +138,7 @@ class ResourceUriTest extends UnitTestCase {
 			return NULL;
 		}));
 		$this->mockActionRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue('Current.Package'));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('Static/Resources/'));
+		$this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->will($this->returnValue('Static/Resources/Packages/Current.Package/Relative/Resource/Path'));
 
 		$this->assertSame('Static/Resources/Packages/Current.Package/Relative/Resource/Path', $this->resourceUriImplementation->evaluate());
 	}
@@ -163,7 +158,7 @@ class ResourceUriTest extends UnitTestCase {
 			return NULL;
 		}));
 		$this->mockActionRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Current.Package'));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('Static/Resources/'));
+		$this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->will($this->returnValue('Static/Resources/Packages/Specified.Package/Relative/Resource/Path'));
 
 		$this->assertSame('Static/Resources/Packages/Specified.Package/Relative/Resource/Path', $this->resourceUriImplementation->evaluate());
 	}
@@ -181,7 +176,7 @@ class ResourceUriTest extends UnitTestCase {
 			}
 			return NULL;
 		}));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('Static/Resources/'));
+		$this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->will($this->returnValue('Static/Resources/Packages/Some.Package/SomeResource'));
 
 		$this->assertSame('Static/Resources/Packages/Some.Package/SomeResource', $this->resourceUriImplementation->evaluate());
 	}
@@ -201,7 +196,7 @@ class ResourceUriTest extends UnitTestCase {
 			return NULL;
 		}));
 		$this->mockActionRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Current.Package'));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('Static/Resources/'));
+		$this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->will($this->returnValue('Static/Resources/Packages/Some.Package/SomeResource'));
 
 		$this->assertSame('Static/Resources/Packages/Some.Package/SomeResource', $this->resourceUriImplementation->evaluate());
 	}
@@ -223,7 +218,7 @@ class ResourceUriTest extends UnitTestCase {
 			return NULL;
 		}));
 		$this->mockI18nService->expects($this->atLeastOnce())->method('getLocalizedFilename')->will($this->returnValue(array('resource://Some.Package/Public/LocalizedFilename')));
-		$this->mockResourcePublisher->expects($this->atLeastOnce())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('Static/Resources/'));
+		$this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->will($this->returnValue('Static/Resources/Packages/Some.Package/LocalizedFilename'));
 
 		$this->assertSame('Static/Resources/Packages/Some.Package/LocalizedFilename', $this->resourceUriImplementation->evaluate());
 	}
