@@ -88,6 +88,12 @@ class NodeDataRepository extends Repository {
 	protected $nodeFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
@@ -1264,16 +1270,20 @@ class NodeDataRepository extends Repository {
 	 * @return boolean
 	 */
 	public function pathExists($nodePath) {
-		// TODO: We need to make sure that this is not affected by entity contraints.
+		$result = NULL;
 
-		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
-		$queryBuilder = $this->entityManager->createQueryBuilder();
+		$this->securityContext->withoutAuthorizationChecks(function () use ($nodePath, &$result) {
+			/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+			$queryBuilder = $this->entityManager->createQueryBuilder();
 
-		$queryBuilder->select('n.identifier')
-			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
-			->where('n.pathHash = :pathHash')
-			->setParameter('pathHash', md5($nodePath));
-		return (count($queryBuilder->getQuery()->getResult()) > 0 ? TRUE : FALSE);
+			$queryBuilder->select('n.identifier')
+				->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+				->where('n.pathHash = :pathHash')
+				->setParameter('pathHash', md5($nodePath));
+			$result = (count($queryBuilder->getQuery()->getResult()) > 0 ? TRUE : FALSE);
+		});
+
+		return $result;
 	}
 
 	/**
