@@ -55,6 +55,10 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 		$backendLink->setLabel('Go to the backend');
 		$backendLink->setProperty('href', '/neos');
 		$backendLink->setProperty('elementClassAttribute', 'btn btn-large btn-primary');
+
+		$loggedOut = $page1->createElement('loggedOut', 'TYPO3.Form:StaticText');
+		$loggedOut->setProperty('text', 'You have automatically been logged out for security reasons since this is the final step. Refresh the page to log in again if you missed something.');
+		$loggedOut->setProperty('elementClassAttribute', 'alert alert-info');
 	}
 
 }
