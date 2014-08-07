@@ -271,6 +271,9 @@ class ContextFactory implements ContextFactoryInterface {
 			$identifier = $dimension->getIdentifier();
 			$values = array($dimension->getDefault());
 			if (isset($contextProperties['dimensions'][$identifier])) {
+				if (!is_array($contextProperties['dimensions'][$identifier])) {
+					throw new InvalidNodeContextException(sprintf('The given dimension fallback chain for "%s" should be an array of string, but "%s" was given.', $identifier, gettype($contextProperties['dimensions'][$identifier])), 1407417930);
+				}
 				$values = Arrays::arrayMergeRecursiveOverrule($values, $contextProperties['dimensions'][$identifier]);
 			}
 			$mergedProperties['dimensions'][$identifier] = $values;
