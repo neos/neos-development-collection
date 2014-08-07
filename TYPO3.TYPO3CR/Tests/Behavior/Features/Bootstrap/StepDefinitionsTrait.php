@@ -122,6 +122,42 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @When /^I copy the node (into|after|before) path "([^"]*)" with the following context:$/
+	 */
+	public function iCopyANodeToPath($position, $path, TableNode $table) {
+		$rows = $table->getHash();
+		$context = $this->getContextForProperties($rows[0]);
+
+		$node = $this->iShouldHaveOneNode();
+		$referenceNode = $context->getNode($path);
+		if ($position === 'into') {
+			$node->copyInto($referenceNode, $node->getName() . '-1');
+		} elseif ($position === 'after') {
+			$node->copyAfter($referenceNode, $node->getName() . '-1');
+		} else {
+			$node->copyBefore($referenceNode, $node->getName() . '-1');
+		}
+	}
+
+	/**
+	 * @When /^I move the node (into|after|before) path "([^"]*)" with the following context:$/
+	 */
+	public function iMoveANodeToPath($position, $path, TableNode $table) {
+		$rows = $table->getHash();
+		$context = $this->getContextForProperties($rows[0]);
+
+		$node = $this->iShouldHaveOneNode();
+		$referenceNode = $context->getNode($path);
+		if ($position === 'into') {
+			$node->moveInto($referenceNode);
+		} elseif ($position === 'after') {
+			$node->moveAfter($referenceNode);
+		} else {
+			$node->moveBefore($referenceNode);
+		}
+	}
+
+	/**
 	 * @When /^I get a node by path "([^"]*)" with the following context:$/
 	 */
 	public function iGetANodeByPathWithTheFollowingContext($path, TableNode $table) {
