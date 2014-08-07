@@ -1272,10 +1272,10 @@ class NodeDataRepository extends Repository {
 	public function pathExists($nodePath) {
 		$result = NULL;
 
-		$this->securityContext->withoutAuthorizationChecks(function () use ($nodePath, &$result) {
-			/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
-			$queryBuilder = $this->entityManager->createQueryBuilder();
+		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+		$queryBuilder = $this->entityManager->createQueryBuilder();
 
+		$this->securityContext->withoutAuthorizationChecks(function () use ($nodePath, $queryBuilder, &$result) {
 			$queryBuilder->select('n.identifier')
 				->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
 				->where('n.pathHash = :pathHash')
