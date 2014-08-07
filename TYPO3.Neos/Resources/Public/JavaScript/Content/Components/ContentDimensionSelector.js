@@ -46,6 +46,11 @@ function(
 			return this.get('controller.dimensions').length > 0;
 		}.property('controller.dimensions'),
 
+		init: function() {
+			this._super();
+			this._initialize();
+		},
+
 		/**
 		 * (Re-)initialize the content dimension selectors
 		 *
@@ -54,7 +59,7 @@ function(
 		 * any of the selector boxes.
 		 */
 		_initialize: function() {
-			Ember.run.scheduleOnce('afterRender', this, function() {
+			Ember.run.next(this, function() {
 				var that = this;
 				this.$('select').chosen({disable_search_threshold: 10}).change(function() {
 					that._updateValue();
