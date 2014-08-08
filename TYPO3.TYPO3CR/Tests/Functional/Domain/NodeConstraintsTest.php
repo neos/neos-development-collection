@@ -123,4 +123,16 @@ class NodeConstraintsTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$childNode = $nodeWithChildNode->getNode('subnode1');
 		$childNode->createNode('text', $textNodeType);
 	}
+
+	/**
+	 * @test
+	 */
+	public function inheritanceBasedConstraintsWork() {
+		$testingNodeTypeWithSubnodes = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
+		$testingNodeTypeThatInheritsFromDocumentType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Page');
+
+		$nodeWithChildNode = $this->rootNode->createNode('nodeWithChildNode', $testingNodeTypeWithSubnodes);
+		$nodeWithChildNode->createNode('page', $testingNodeTypeThatInheritsFromDocumentType);
+		$this->assertCount(2, $nodeWithChildNode->getChildNodes());
+	}
 }
