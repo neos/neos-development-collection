@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Logging;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * An aspect which centralizes the logging of TYPO3's routing functions.
+ * An aspect which centralizes the logging of TYPO3 Neos routing functions.
  *
  * @Flow\Aspect
  * @Flow\Scope("singleton")
