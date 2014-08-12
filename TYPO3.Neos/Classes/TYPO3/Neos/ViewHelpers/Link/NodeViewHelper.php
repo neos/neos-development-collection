@@ -13,6 +13,11 @@ namespace TYPO3\Neos\ViewHelpers\Link;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\Neos\Exception as NeosException;
+use TYPO3\Neos\Service\NodeLinkingService;
+use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
+use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -74,6 +79,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	protected $tagName = 'a';
 
 	/**
+	 * @Flow\Inject
+	 * @var NodeLinkingService
+	 */
+	protected $nodeLinkingService;
+
+	/**
 	 * Initialize arguments
 	 *
 	 * @return void
@@ -87,23 +98,47 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	}
 
 	/**
-	 * Render the link.
+	 * Renders the link.
 	 *
-	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path
+	 * @param mixed $node A node object or a string node path or NULL to resolve the current document node
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
-	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 	 * @param string $section The anchor to be added to the URI
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @return string The rendered link
+	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+	 * @throws \TYPO3\Neos\Exception
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode', array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
-		$uriViewHelper = $this->createUriNodeViewHelper();
-		$uriViewHelper->setRenderingContext($this->renderingContext);
-
-		$uri = $uriViewHelper->render($node, $format, $absolute, $baseNodeName, $arguments, $section, $addQueryString, $argumentsToBeExcludedFromQueryString);
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode') {
+		$baseNode = NULL;
+		if (!$node instanceof NodeInterface) {
+			$view = $this->viewHelperVariableContainer->getView();
+			if (!$view instanceof TypoScriptAwareViewInterface) {
+				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
+			}
+			$typoScriptObject = $view->getTypoScriptObject();
+			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+			if (isset($currentContext[$baseNodeName])) {
+				$baseNode = $currentContext[$baseNodeName];
+			} else {
+				throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+			}
+		}
+		$controllerContext = $this->controllerContext;
+		$uri = $this->nodeLinkingService->createNodeUri(
+			$controllerContext,
+			$node,
+			$baseNode,
+			$format,
+			$absolute,
+			$arguments,
+			$section,
+			$addQueryString,
+			$argumentsToBeExcludedFromQueryString
+		);
 
 		if ($uri !== NULL) {
 			$this->tag->addAttribute('href', $uri);
@@ -111,12 +146,5 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 
 		$this->tag->setContent($this->renderChildren());
 		return $this->tag->render();
-	}
-
-	/**
-	 * @return \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper
-	 */
-	protected function createUriNodeViewHelper() {
-		return new \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper();
 	}
 }

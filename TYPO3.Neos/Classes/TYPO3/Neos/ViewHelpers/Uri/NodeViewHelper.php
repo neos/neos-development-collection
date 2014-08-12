@@ -12,12 +12,12 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Neos\Exception as NeosException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Neos\Service\NodeLinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -75,42 +75,32 @@ class NodeViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
-	 * @var PropertyMapper
+	 * @var NodeLinkingService
 	 */
-	protected $propertyMapper;
+	protected $nodeLinkingService;
 
 	/**
-	 * Render the Uri.
+	 * Renders the URI.
 	 *
-	 * @param mixed $node A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path or NULL to resolve the current document node
+	 * @param mixed $node A node object or a string node path or NULL to resolve the current document node
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
-	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 	 * @param string $section
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
 	 * @throws \TYPO3\Neos\Exception
 	 * @throws \InvalidArgumentException
 	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
-	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, $baseNodeName = 'documentNode', array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
-		if (!($node === NULL || $node instanceof NodeInterface || is_string($node))) {
-			throw new \InvalidArgumentException('Expected NodeInterface, string or NULL for the node argument', 1373101025);
-		}
-
-		if (is_string($node)) {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $node, $matches);
-			if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
-				$node = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-			}
-		}
-
-		if ($node === NULL || is_string($node)) {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode') {
+		$baseNode = NULL;
+		if (!$node instanceof NodeInterface) {
 			$view = $this->viewHelperVariableContainer->getView();
 			if (!$view instanceof TypoScriptAwareViewInterface) {
-				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
+				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element, if you don\'t specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
 			}
 			$typoScriptObject = $view->getTypoScriptObject();
 			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
@@ -119,43 +109,20 @@ class NodeViewHelper extends AbstractViewHelper {
 			} else {
 				throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
 			}
-
-			if (is_string($node)) {
-				$contentContext = $baseNode->getContext();
-				if (substr($node, 0, 2) === '~/') {
-					$node = $contentContext->getCurrentSiteNode()->getNode(substr($node, 2));
-				} else {
-					if (substr($node, 0, 1) === '/') {
-						$node = $contentContext->getNode($node);
-					} else {
-						$node = $baseNode->getNode($node);
-					}
-				}
-			} else {
-				$node = $baseNode;
-			}
 		}
+		$controllerContext = $this->controllerContext;
 
-		if (!$node instanceof NodeInterface) {
-			return NULL;
-		}
-		$request = $this->controllerContext->getRequest()->getMainRequest();
-
-		if ($format === NULL) {
-			$format = $request->getFormat();
-		}
-
-		$uriBuilder = clone $this->controllerContext->getUriBuilder();
-		$uriBuilder->setRequest($request);
-		return $uriBuilder
-			->reset()
-			->setSection($section)
-			->setCreateAbsoluteUri($absolute)
-			->setArguments($arguments)
-			->setAddQueryString($addQueryString)
-			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-			->setFormat($format)
-			->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+		return $this->nodeLinkingService->createNodeUri(
+			$controllerContext,
+			$node,
+			$baseNode,
+			$format,
+			$absolute,
+			$arguments,
+			$section,
+			$addQueryString,
+			$argumentsToBeExcludedFromQueryString
+		);
 	}
 
 }

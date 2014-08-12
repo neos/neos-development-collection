@@ -369,13 +369,11 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``node`` (mixed, *optional*): A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path
+* ``node`` (mixed, *optional*): A node object or a string node path or NULL to resolve the current document node
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
 * ``absolute`` (boolean, *optional*): If set, an absolute URI is rendered
-
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
@@ -384,6 +382,8 @@ Arguments
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+
+* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -573,21 +573,21 @@ Example: given that the current node is ``/sites/acmecom/products/``,
 Arguments
 *********
 
-* ``node`` (mixed, *optional*): A TYPO3\TYPO3CR\Domain\Model\NodeInterface object or a string node path or NULL to resolve the current document node
+* ``node`` (mixed, *optional*): A node object or a string node path or NULL to resolve the current document node
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
 * ``absolute`` (boolean, *optional*): If set, an absolute URI is rendered
 
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
-
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
-* ``section`` (string, *optional*): 
+* ``section`` (string, *optional*):
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
+
+* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 
 
 

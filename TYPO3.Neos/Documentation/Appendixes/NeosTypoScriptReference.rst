@@ -389,6 +389,28 @@ Menu
 Breadcrumb
 ----------
 
+NodeUri
+-------
+
+Create links to nodes easily by using this TypoScript object. Accepts the same arguments as the
+node link/uri view helpers.
+
+:node: (string/object/null) A node object or a string node path or NULL to resolve the current document node.
+:arguments: (array) Additional arguments to be passed to the UriBuilder (for example pagination parameters).
+:format: (string) The requested format, for example "html".
+:section: (string) The anchor to be appended to the URL.
+:additionalParams: (array) Additional query parameters that won't be prefixed like $arguments (overrule $arguments).
+:argumentsToBeExcludedFromQueryString: (array) Arguments to be removed from the URI. Only active if addQueryString = TRUE.
+:addQueryString: (boolean, default **false**) If TRUE, the current query parameters will be kept in the URI.
+:absolute: (boolean, default **false**) If TRUE, an absolute URI is rendered.
+:baseNodeName: (string, default **documentNode**) The name of the base node inside the TypoScript context to use for resolving relative paths.
+
+Example::
+
+	nodeLink = TYPO3.Neos:NodeUri {
+		node = ${q(node).parent().get(0)}
+	}
+
 TYPO3.Neos.NodeTypes
 ====================
 
@@ -416,8 +438,8 @@ TYPO3.Neos.NodeTypes:Text
 =========================
 TYPO3.Neos.NodeTypes:TextWithImage
 ==================================
-TYPO3.Neos.NodeTypes:Menu (!!!!?!?!?)
-=====================================
+TYPO3.Neos.NodeTypes:Menu
+=========================
 TYPO3.Neos.NodeTypes:MultiColumn
 ================================
 TYPO3.Neos.NodeTypes:TwoColumn

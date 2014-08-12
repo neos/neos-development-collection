@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\ViewHelpers\Uri;
+namespace TYPO3\Neos\Tests\Functional\ViewHelpers\Link;
 
 /*                                                                        *
  * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
