@@ -1,6 +1,6 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
-	<f:if condition="{node.context.workspace.name} != 'live'">
+<f:if condition="{node.context.workspace.name} != 'live'">
+	<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 		<script type="text/javascript">
 					// TODO Get rid of those global variables
 				{neos:backend.javascriptConfiguration()}
@@ -16,5 +16,5 @@
 				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
 			</f:else>
 		</f:if>
-	</f:if>
-</f:security.ifAccess>
+	</f:security.ifAccess>
+</f:if>
