@@ -29,7 +29,7 @@ the following configuration in NodeTypes.yaml::
 	(for example if you manually updated the node type in the database) you might
 	have to create the missing child nodes using::
 
-		./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
+		./flow node:repair --node-type TYPO3.Neos.NodeTypes:Page
 
 TypoScript code::
 
