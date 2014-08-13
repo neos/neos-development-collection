@@ -269,7 +269,7 @@ The following options are allowed:
 
   ``validation``
     A list of validators to use on the property. Below each validator type any options for the validator
-    can be given.
+    can be given. See below for more information.
 
 Here is one of the standard Neos node types (slightly shortened)::
 
@@ -318,6 +318,10 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        reloadIfChanged: TRUE
 	        inspector:
 	          group: 'image'
+	      validation:
+	        'TYPO3.Neos/Validation/StringLengthValidator':
+	          minimum: 1
+	          maximum: 255
 	    hasCaption:
 	      type: boolean
 	      ui:
@@ -331,6 +335,112 @@ Here is one of the standard Neos node types (slightly shortened)::
 	      ui:
 	        inlineEditable: TRUE
 
+
+Property Validation
+-------------------
+
+The validators that can be assigned to properties in the node type configuration are used on properties
+that are edited via the inspector and are applied on the client-side only. The available validators can
+be found in the Neos package in ``Resources/Public/JavaScript/Shared/Validation``:
+
+* AlphanumericValidator
+* CountValidator
+* DateTimeRangeValidator
+* DateTimeValidator
+* EmailAddressValidator
+* FloatValidator
+* IntegerValidator
+* LabelValidator
+* NotEmptyValidator
+* NumberRangeValidator
+* RegularExpressionValidator
+* StringLengthValidator
+* StringValidator
+* TextValidator
+* UuidValidator
+
+The options are in sync with the Flow validators, so feel free to check the Flow documentation for details.
+
+To apply options, just specify them like this::
+
+	someProperty:
+	  validation:
+	    'TYPO3.Neos/Validation/StringLengthValidator':
+	      minimum: 1
+	      maximum: 255
+
+Custom Validators
+~~~~~~~~~~~~~~~~~
+
+It is possible to register paths into RequireJS (the JavaScript file and module loader used by Neos, see
+http://requirejs.org) and by this custom validators into Neos. Validators should be named '<SomeType>Validator',
+and can be referenced by ``My.Package/Public/Scripts/Validators/FooValidator`` for example.
+
+Namespaces can be registered like this in *Settings.yaml*::
+
+	TYPO3:
+	  Neos:
+	    userInterface:
+	      requireJsPathMapping:
+	        'My.Package/Validation': 'resource://My.Package/Public/Scripts/Validators'
+
+Registering specific validators is also possible like this::
+
+	TYPO3:
+	  Neos:
+	    userInterface:
+	      validators:
+	        'My.Package/AlphanumericValidator':
+	          path: 'resource://My.Package/Public/Scripts/Validators/FooValidator'
+
+Custom Editors
+~~~~~~~~~~~~~~
+
+Like with validators, using custom editors is possible as well. Every dataType has it's default editor set, which
+can have options applied like::
+
+	TYPO3:
+	  Neos:
+	    userInterface:
+	      inspector:
+	        dataTypes:
+	          'string':
+	            editor: 'TYPO3.Neos/Editors/TextFieldEditor'
+	            editorOptions:
+	              placeholder: 'This is a placeholder'
+
+On a property level this can be overridden like::
+
+	TYPO3:
+	  Neos:
+	    userInterface:
+	      inspector:
+	        properties:
+	          'string':
+	            editor: 'My.Package/Editors/TextFieldEditor'
+	            editorOptions:
+	              placeholder: 'This is my custom placeholder'
+
+Namespaces can be registered like this, as with validators::
+
+	TYPO3:
+	  Neos:
+	    userInterface:
+	      requireJsPathMapping:
+	        'My.Package/Editors': 'resource://My.Package/Public/Scripts/Inspector/Editors'
+
+Editors should be named `<SomeType>Editor` and can be referenced by `My.Package/Inspector/Editors/MyCustomEditor`
+for example.
+
+Registering specific editors is also possible like this::
+
+	TYPO3:
+	  Neos:
+	    userInterface:
+	      inspector:
+	        editors:
+	          'TYPO3.Neos/BooleanEditor':
+	            path: 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/BooleanEditor'
 
 Predefined Node Types
 ---------------------
