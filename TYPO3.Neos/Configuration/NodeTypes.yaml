@@ -40,6 +40,8 @@
         inspector:
           group: 'visibility'
           position: 10
+          editorOptions:
+            format: 'd-m-Y H:i'
       validation:
         'TYPO3.Neos/Validation/DateTimeValidator': []
     _hiddenAfterDateTime:
@@ -49,6 +51,8 @@
         inspector:
           group: 'visibility'
           position: 20
+          editorOptions:
+            format: 'd-m-Y H:i'
       validation:
         'TYPO3.Neos/Validation/DateTimeValidator': []
 
