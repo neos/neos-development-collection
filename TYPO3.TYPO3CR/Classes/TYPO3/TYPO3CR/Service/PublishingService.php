@@ -11,8 +11,11 @@ namespace TYPO3\TYPO3CR\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
  * A generic TYPO3CR Publishing Service
@@ -54,19 +57,11 @@ class PublishingService implements PublishingServiceInterface {
 	 * @api
 	 */
 	public function getUnpublishedNodes(Workspace $workspace) {
-		$contextProperties = array(
-			'workspaceName' => $workspace->getName(),
-			'inaccessibleContentShown' => TRUE,
-			'invisibleContentShown' => TRUE,
-			'removedContentShown' => TRUE
-		);
-
-		$contentContext = $this->contextFactory->create($contextProperties);
-
 		$nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
 		$unpublishedNodes = array();
 		foreach ($nodeData as $singleNodeData) {
-			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $contentContext);
+			/** @var NodeData $singleNodeData */
+			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $this->createContext($workspace, $singleNodeData->getDimensionValues()));
 			if ($node !== NULL) {
 				$unpublishedNodes[] = $node;
 			}
@@ -128,7 +123,7 @@ class PublishingService implements PublishingServiceInterface {
 	 */
 	public function discardNode(NodeInterface $node) {
 		if ($node->getWorkspace()->getName() === 'live') {
-			throw new \TYPO3\TYPO3CR\Exception\WorkspaceException('Nodes in the live workspace cannot be discarded.', 1395841899);
+			throw new WorkspaceException('Nodes in the live workspace cannot be discarded.', 1395841899);
 		}
 
 		if ($node->getPath() !== '/') {
@@ -177,4 +172,25 @@ class PublishingService implements PublishingServiceInterface {
 	 */
 	public function emitNodeDiscarded(NodeInterface $node) {
 	}
+
+	/**
+	 * Creates a new content context based on the given workspace and the NodeData object.
+	 *
+	 * @param Workspace $workspace Workspace for the new context
+	 * @param array $dimensionValues The dimension values for the new context
+	 * @param array $contextProperties Additional pre-defined context properties
+	 * @return Context
+	 */
+	protected function createContext(Workspace $workspace, array $dimensionValues, array $contextProperties = array()) {
+		$contextProperties += array(
+			'workspaceName' => $workspace->getName(),
+			'inaccessibleContentShown' => TRUE,
+			'invisibleContentShown' => TRUE,
+			'removedContentShown' => TRUE,
+			'dimensions' => $dimensionValues
+		);
+
+		return $this->contextFactory->create($contextProperties);
+	}
+
 }
