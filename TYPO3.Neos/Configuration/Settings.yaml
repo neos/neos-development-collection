@@ -155,6 +155,8 @@ TYPO3:
               multiple: TRUE
           'date':
             editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
+            editorOptions:
+              format: 'd-m-Y'
           'reference':
             editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
           'references':
