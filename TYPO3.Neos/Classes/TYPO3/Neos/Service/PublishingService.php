@@ -12,8 +12,14 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * The workspaces service adds some basic helper methods for getting workspaces,
@@ -26,15 +32,25 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+	 * @var DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var SiteRepository
 	 */
 	protected $siteRepository;
+
+	/**
+	 * @var Domain
+	 */
+	protected $currentDomain = FALSE;
+
+	/**
+	 * @var Site
+	 */
+	protected $currentSite = FALSE;
 
 	/**
 	 * Returns a list of nodes contained in the given workspace which are not yet published
@@ -44,26 +60,11 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 	 * @api
 	 */
 	public function getUnpublishedNodes(Workspace $workspace) {
-		$contextProperties = array(
-			'workspaceName' => $workspace->getName(),
-			'inaccessibleContentShown' => TRUE,
-			'invisibleContentShown' => TRUE,
-			'removedContentShown' => TRUE
-		);
-
-		$currentDomain = $this->domainRepository->findOneByActiveRequest();
-		if ($currentDomain !== NULL) {
-			$contextProperties['currentSite'] = $currentDomain->getSite();
-			$contextProperties['currentDomain'] = $currentDomain;
-		} else {
-			$contextProperties['currentSite'] = $this->siteRepository->findOnline()->getFirst();
-		}
-		$contentContext = $this->contextFactory->create($contextProperties);
-
 		$nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
 		$unpublishedNodes = array();
 		foreach ($nodeData as $singleNodeData) {
-			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $contentContext);
+			/** @var NodeData $singleNodeData */
+			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $this->createContext($workspace, $singleNodeData->getDimensionValues()));
 			if ($node !== NULL) {
 				$unpublishedNodes[] = $node;
 			}
@@ -95,4 +96,32 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 
 		$this->emitNodePublished($node, $targetWorkspace);
 	}
+
+	/**
+	 * Creates a new content context based on the given workspace and the NodeData object and additionally takes
+	 * the current site and current domain into account.
+	 *
+	 * @param Workspace $workspace Workspace for the new context
+	 * @param array $dimensionValues The dimension values for the new context
+	 * @param array $contextProperties Additional pre-defined context properties
+	 * @return Context
+	 */
+	protected function createContext(Workspace $workspace, array $dimensionValues, array $contextProperties = array()) {
+		if ($this->currentDomain === FALSE) {
+			$this->currentDomain = $this->domainRepository->findOneByActiveRequest();
+		}
+
+		if ($this->currentDomain !== NULL) {
+			$contextProperties['currentSite'] = $this->currentDomain->getSite();
+			$contextProperties['currentDomain'] = $this->currentDomain;
+		} else {
+			if ($this->currentSite === FALSE) {
+				$this->currentSite = $this->siteRepository->findOnline()->getFirst();
+			}
+			$contextProperties['currentSite'] = $this->currentSite;
+		}
+
+		return parent::createContext($workspace, $dimensionValues, $contextProperties);
+	}
+
 }
