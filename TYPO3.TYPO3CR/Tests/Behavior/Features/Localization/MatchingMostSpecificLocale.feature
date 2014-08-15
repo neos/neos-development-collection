@@ -19,12 +19,12 @@ Feature: Matching most specific language
       | Language      |
       | de_DE, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Unterseite"
+    And the node property "title" should be "Unterseite"
     When I get a node by path "/sites/typo3cr/subpage" with the following context:
-      | Language      |
+      | Language        |
       | en_US, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Subpage"
+    And the node property "title" should be "Subpage"
 
   @fixtures
   Scenario: One document node and fallback from specific language to language in list of languages
@@ -174,12 +174,12 @@ Feature: Matching most specific language
       | Language      |
       | de_DE, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Unterseite"
+    And the node property "title" should be "Unterseite"
     When I get a node by identifier "fd5ba6e1-4313-b145-1004-dad2f1173a35" with the following context:
       | Language      |
       | en_US, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Subpage"
+    And the node property "title" should be "Subpage"
 
   @fixtures
   Scenario: One document node and fallback from specific language to language in list of languages by identifier

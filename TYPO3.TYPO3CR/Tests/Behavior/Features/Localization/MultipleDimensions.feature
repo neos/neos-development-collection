@@ -27,34 +27,34 @@ Feature: Multiple languages as content dimension
       | Language               | Dimension: personas |
       | de_DE, de_ZZ, mul_ZZ   | everybody           |
     Then I should have one node
-    And The node property "title" should be "Willkommen!"
+    And the node property "title" should be "Willkommen!"
 
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas       |
       | de_DE, de_ZZ, mul_ZZ   | frequent_buyer, everybody |
     Then I should have one node
-    And The node property "title" should be "Willkommen, lieber Kunde!"
+    And the node property "title" should be "Willkommen, lieber Kunde!"
 
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | en_US, en_ZZ, mul_ZZ   | everybody           |
     Then I should have one node
-    And The node property "title" should be "Welcome!"
+    And the node property "title" should be "Welcome!"
 
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas       |
       | en_US, en_ZZ, mul_ZZ   | frequent_buyer, everybody |
     Then I should have one node
-    And The node property "title" should be "Welcome, fellow customer!"
+    And the node property "title" should be "Welcome, fellow customer!"
 
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | de_DE, de_ZZ, mul_ZZ   | customer, everybody |
     Then I should have one node
-    And The node property "title" should be "Willkommen!"
+    And the node property "title" should be "Willkommen!"
 
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |
       | en_US, en_ZZ, mul_ZZ   | customer, everybody |
     Then I should have one node
-    And The node property "title" should be "Welcome, nice to see you again!"
+    And the node property "title" should be "Welcome, nice to see you again!"

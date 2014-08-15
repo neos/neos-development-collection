@@ -24,13 +24,13 @@ Feature: Translate existing node
       | Language      |
       | de_ZZ, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Unternehmen"
+    And the node property "title" should be "Unternehmen"
 
     When I get a node by path "/sites/typo3cr/company" with the following context:
       | Language      |
       | en_ZZ, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Company"
+    And the node property "title" should be "Company"
 
   @fixtures
   Scenario: An existing node variant will be re-used when adopting a node
@@ -49,13 +49,13 @@ Feature: Translate existing node
       | Language      |
       | de_ZZ, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Firma"
+    And the node property "title" should be "Firma"
 
     When I get a node by path "/sites/typo3cr/company" with the following context:
       | Language      |
       | en_ZZ, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Company"
+    And the node property "title" should be "Company"
 
   @fixtures
   Scenario: Use a specific target dimension value in a context with fallback languages

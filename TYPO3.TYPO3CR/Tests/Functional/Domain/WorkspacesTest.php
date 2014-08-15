@@ -248,7 +248,7 @@ class WorkspacesTest extends FunctionalTestCase {
 		$this->setUpRootNodeAndRepository();
 
 		$childNodeB3 = $this->rootNode->getNode('parentNode/childNodeB');
-		$this->assertNull($childNodeB3->getPrimaryChildNode());
+		$this->assertTrue($childNodeB3->getPrimaryChildNode() === NULL, 'Overlaid child node should be null');
 		$childNodeA3 = $this->rootNode->getNode('parentNode/childNodeA');
 		$childNodeC3 = $childNodeA3->getPrimaryChildNode();
 		$this->assertNotNull($childNodeC3);

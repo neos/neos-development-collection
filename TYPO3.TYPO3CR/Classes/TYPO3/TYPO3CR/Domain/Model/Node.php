@@ -129,12 +129,17 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * This method is only for internal use by the content repository. Changing
 	 * the path of a node manually may lead to unexpected behavior.
 	 *
+	 * To achieve a correct behavior when changing the path (moving the node) in a worspace, a shadow node data that will
+	 * hide the node data in the base workspace will be created. Thus queries do not need to worry about moved nodes.
+	 * Through a movedTo reference the shadow node data will be removed when publishing the moved node.
+	 *
 	 * @param string $path
 	 * @param boolean $recursive
 	 * @return void
 	 */
 	public function setPath($path, $recursive = TRUE) {
-		if ($this->nodeData->getPath() === $path) {
+		$originalPath = $this->nodeData->getPath();
+		if ($originalPath === $path) {
 			return;
 		}
 		if ($recursive === TRUE) {
@@ -143,11 +148,46 @@ class Node implements NodeInterface, CacheAwareInterface {
 				$childNode->setPath($path . '/' . $childNode->getNodeData()->getName(), TRUE);
 			}
 		}
+		$nodeDataWasMaterialized = FALSE;
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
+			$nodeDataWasMaterialized = TRUE;
 		}
 		$this->nodeData->setPath($path, FALSE);
+
+		$this->removeExistingShadowNodeData($path);
+		if ($nodeDataWasMaterialized) {
+			$this->createShadowNodeData($originalPath);
+		}
+
 		$this->context->getFirstLevelNodeCache()->flush();
+	}
+
+	/**
+	 * Remove an existing shadow node data for the current node data of the node (used by setPath)
+	 *
+	 * @param string $path The (new) path of the node data
+	 * @return void
+	 */
+	protected function removeExistingShadowNodeData($path) {
+		$existingRemovedNode = $this->nodeDataRepository->findOneByPath($path, $this->nodeData->getWorkspace(), $this->nodeData->getDimensionValues(), TRUE);
+		if ($existingRemovedNode !== NULL && $existingRemovedNode->isRemoved()) {
+			$this->nodeDataRepository->remove($existingRemovedNode);
+		}
+	}
+
+	/**
+	 * Create a shadow node data with the same workspace and dimensions as the materialized current node data (used by setPath)
+	 *
+	 * Note: The constructor will already add the new object to the repository
+	 *
+	 * @param string $path The (original) path for the node data
+	 * @return void
+	 */
+	protected function createShadowNodeData($path) {
+		$shadowNode = new NodeData($path, $this->nodeData->getWorkspace(), $this->nodeData->getIdentifier(), $this->nodeData->getDimensionValues());
+		$shadowNode->similarize($this->nodeData);
+		$shadowNode->shadowMovedNodeData($this->nodeData);
 	}
 
 	/**
@@ -322,9 +362,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
 		}
 
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -363,9 +400,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
 		}
 
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -404,9 +438,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
 		}
 
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
 		$parentPath = $referenceNode->getPath();
 		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 		$this->nodeDataRepository->persistEntities();
@@ -1376,5 +1407,4 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	protected function emitNodeRemoved(NodeInterface $node) {
 	}
-
 }

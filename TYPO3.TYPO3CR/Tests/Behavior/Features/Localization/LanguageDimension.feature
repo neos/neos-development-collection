@@ -19,14 +19,14 @@ Feature: Multiple languages as content dimension
       | Language      |
       | de_CH, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Swiss content"
+    And the node property "title" should be "Swiss content"
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language      |
       | fr_CH, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Swiss content"
+    And the node property "title" should be "Swiss content"
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language      |
       | de_ZZ, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "German content"
+    And the node property "title" should be "German content"

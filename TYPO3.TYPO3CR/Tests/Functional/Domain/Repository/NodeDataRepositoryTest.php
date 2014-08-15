@@ -10,11 +10,17 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Repository;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization;
 
 /**
  * Functional test case.
  */
-class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodeDataRepositoryTest extends FunctionalTestCase {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
@@ -27,17 +33,17 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 * @var NodeTypeManager
 	 */
 	protected $nodeTypeManager;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
@@ -67,7 +73,7 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getRootNode();
 		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
 
-		$testImage = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image();
+		$testImage = new Image();
 		$this->persistenceManager->add($testImage);
 
 		$newNode->setProperty('image', $testImage);
@@ -93,10 +99,10 @@ class NodeDataRepositoryTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$rootNode = $this->context->getRootNode();
 		$newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
 
-		$testImage = new \TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image();
+		$testImage = new Image();
 		$this->persistenceManager->add($testImage);
 
-		$imageWrapper = new \TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization($testImage);
+		$imageWrapper = new TestObjectForSerialization($testImage);
 
 		$newNode->setProperty('wrappedImage', $imageWrapper);
 

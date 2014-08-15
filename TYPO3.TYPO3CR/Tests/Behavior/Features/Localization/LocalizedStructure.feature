@@ -23,12 +23,12 @@ Feature: Localized structure
       | Language      |
       | en_US, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "About"
+    And the node property "title" should be "About"
     When I get a node by path "/sites/typo3cr/service/about" with the following context:
       | Language      |
       | de_DE, mul_ZZ |
     Then I should have one node
-    And The node property "title" should be "Über uns"
+    And the node property "title" should be "Über uns"
 
   @fixtures
   Scenario: Child nodes can be fetched using different node paths in different languages

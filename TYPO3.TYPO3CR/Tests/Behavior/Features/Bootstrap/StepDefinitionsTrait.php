@@ -8,6 +8,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Gherkin\Node\PyStringNode;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
+use TYPO3\TYPO3CR\Service\PublishingServiceInterface;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -259,11 +260,54 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @When /^I use the publishing service to publish nodes in the workspace "([^"]*)" with the following context:$/
+	 */
+	public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, TableNode $table) {
+		/** @var PublishingServiceInterface $publishingService */
+		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+
+		$rows = $table->getHash();
+		$rows[0]['Workspace'] = $sourceWorkspaceName;
+
+		$sourceContext = $this->getContextForProperties($rows[0]);
+		$sourceWorkspace = $sourceContext->getWorkspace();
+
+		$publishingService->publishNodes($publishingService->getUnpublishedNodes($sourceWorkspace));
+
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
+	}
+
+	/**
 	 * @Given /^I remove the node$/
 	 */
 	public function iRemoveTheNode() {
 		$node = $this->iShouldHaveOneNode();
 		$node->remove();
+
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
+	}
+
+	/**
+	 * @Given /^I move the node (before|after|into) the node with path "([^"]*)"$/
+	 */
+	public function iMoveTheNodeIntoTheNodeWithPath($action, $referenceNodePath) {
+		$node = $this->iShouldHaveOneNode();
+		$referenceNode = $node->getContext()->getNode($referenceNodePath);
+		switch ($action) {
+			case 'before':
+				$node->moveBefore($referenceNode);
+				break;
+			case 'after':
+				$node->moveAfter($referenceNode);
+				break;
+			case 'into':
+				$node->moveInto($referenceNode);
+				break;
+			default:
+				throw new \InvalidArgumentException('Unknown move action "' . $action . '"');
+		}
 
 		$this->getSubcontext('flow')->persistAll();
 		$this->resetNodeInstances();
@@ -287,7 +331,7 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
-	 * @Then /^The node property "([^"]*)" should be "([^"]*)"$/
+	 * @Then /^the node property "([^"]*)" should be "([^"]*)"$/
 	 */
 	public function theNodePropertyShouldBe($propertyName, $propertyValue) {
 		$currentNode = $this->iShouldHaveOneNode();
@@ -295,7 +339,7 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
-	 * @Then /^The node should be hidden in index$/
+	 * @Then /^the node should be hidden in index$/
 	 */
 	public function theNodeShouldBeHiddenInIndex() {
 		$currentNode = $this->iShouldHaveOneNode();
@@ -376,6 +420,26 @@ trait StepDefinitionsTrait {
 				$dimensions = $this->currentNodes[$index]->getDimensions();
 				Assert::assertEquals($row['Language'], implode(',', $dimensions['language']), 'Language should match');
 			}
+		}
+	}
+
+	/**
+	 * @Given /^the unpublished node count in workspace "([^"]*)" should be (\d+)$/
+	 */
+	public function theUnpublishedNodeCountInWorkspaceShouldBe($workspaceName, $count) {
+		$workspaceRepository = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+		$workspace = $workspaceRepository->findOneByName($workspaceName);
+		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+		$unpublishedNodesCount = $publishingService->getUnpublishedNodesCount($workspace);
+		Assert::assertEquals($count, $unpublishedNodesCount);
+	}
+
+	/**
+	 * @Then /^print the nodes$/
+	 */
+	public function printTheNodes() {
+		foreach ($this->currentNodes as $node) {
+			$this->printDebug($node->getPath());
 		}
 	}
 

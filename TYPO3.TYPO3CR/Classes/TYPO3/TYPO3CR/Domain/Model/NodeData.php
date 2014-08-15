@@ -177,6 +177,14 @@ class NodeData extends AbstractNodeData {
 	protected $dimensionValues;
 
 	/**
+	 * If a node data is moved a "shadow" node data is inserted that references the new node data
+	 *
+	 * @var NodeData
+	 * @ORM\ManyToOne
+	 */
+	protected $movedTo;
+
+	/**
 	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
@@ -788,6 +796,17 @@ class NodeData extends AbstractNodeData {
 			}
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Shadow the source of a moved node data
+	 *
+	 * @param NodeData $movedTo
+	 * @return void
+	 */
+	public function shadowMovedNodeData(NodeData $movedTo) {
+		$this->movedTo = $movedTo;
+		$this->setRemoved(TRUE);
 	}
 
 	/**

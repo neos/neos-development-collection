@@ -20,7 +20,7 @@ Feature: Set Default Node Values on node creation
     When I get a node by path "/nodeA" with the following context:
       | Workspace |
       | live      |
-    Then The node property "text" should be "My default text"
+    Then the node property "text" should be "My default text"
 
 
   @fixtures
@@ -40,4 +40,4 @@ Feature: Set Default Node Values on node creation
     When I get a node by path "/nodeA" with the following context:
       | Workspace |
       | live      |
-    Then The node should be hidden in index
+    Then the node should be hidden in index

@@ -57,7 +57,7 @@ class WorkspaceTest extends UnitTestCase {
 		$mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->inject($currentWorkspace, 'contextFactory', $mockContextFactory);
 
-		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'remove', 'add'))->getMock();
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'findOneByMovedTo', 'remove', 'add'))->getMock();
 		$this->inject($currentWorkspace, 'nodeDataRepository', $mockNodeDataRepository);
 
 		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
@@ -112,7 +112,7 @@ class WorkspaceTest extends UnitTestCase {
 		$mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->inject($currentWorkspace, 'contextFactory', $mockContextFactory);
 
-		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'remove', 'add'))->getMock();
+		$mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByIdentifier', 'findOneByMovedTo', 'remove', 'add'))->getMock();
 		$this->inject($currentWorkspace, 'nodeDataRepository', $mockNodeDataRepository);
 
 		$mockPublishingService = $this->getMockBuilder('TYPO3\Neos\Service\PublishingService')->disableOriginalConstructor()->getMock();
@@ -150,8 +150,9 @@ class WorkspaceTest extends UnitTestCase {
 		$mockPublishingService->expects($this->once())->method('getUnpublishedNodes')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockTargetWorkspaceContext->expects($this->once())->method('getNodeByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
 
-		$mockNodeDataRepository->expects($this->at(0))->method('remove')->with($mockNode2NodeData);
-		$mockNodeDataRepository->expects($this->at(1))->method('remove')->with($existingNodeData);
+		$mockNodeDataRepository->expects($this->at(0))->method('findOneByMovedTo');
+		$mockNodeDataRepository->expects($this->at(1))->method('remove')->with($mockNode2NodeData);
+		$mockNodeDataRepository->expects($this->at(2))->method('remove')->with($existingNodeData);
 
 		$currentWorkspace->publish($liveWorkspace);
 	}

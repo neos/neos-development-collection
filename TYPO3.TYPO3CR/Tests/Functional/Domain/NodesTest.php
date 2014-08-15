@@ -45,6 +45,11 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	protected $nodeTypeManager;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository
+	 */
+	protected $contentDimensionRepository;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -53,6 +58,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
 		$this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 		$this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$this->contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 	}
 
 	/**
@@ -61,6 +67,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		$this->inject($this->contextFactory, 'contextInstances', array());
+		$this->contentDimensionRepository->setDimensionsConfiguration(array());
 	}
 
 	/**
@@ -1156,8 +1163,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function createVariantForContextMatchesTargetContextDimensions() {
-		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
-		$contentDimensionRepository->setDimensionsConfiguration(array(
+		$this->contentDimensionRepository->setDimensionsConfiguration(array(
 			'test' => array(
 				'default' => 'a'
 			)
@@ -1182,8 +1188,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function createVariantForContextAlsoWorksIfTheTargetWorkspaceDiffersFromTheSourceWorkspace() {
-		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
-		$contentDimensionRepository->setDimensionsConfiguration(array(
+		$this->contentDimensionRepository->setDimensionsConfiguration(array(
 			'test' => array(
 				'default' => 'a'
 			)
@@ -1210,8 +1215,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function adoptNodeReturnsExistingNodeWithMatchingDimensionsIfPossible() {
-		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
-		$contentDimensionRepository->setDimensionsConfiguration(array(
+		$this->contentDimensionRepository->setDimensionsConfiguration(array(
 			'test' => array(
 				'default' => 'a'
 			)
@@ -1242,8 +1246,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function adoptNodeMatchesTargetContextDimensions() {
-		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
-		$contentDimensionRepository->setDimensionsConfiguration(array(
+		$this->contentDimensionRepository->setDimensionsConfiguration(array(
 			'test' => array(
 				'default' => 'a'
 			)
@@ -1268,8 +1271,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function adoptNodeWithExistingNodeMatchingTargetDimensionValuesWillReuseNode() {
-		$contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
-		$contentDimensionRepository->setDimensionsConfiguration(array(
+		$this->contentDimensionRepository->setDimensionsConfiguration(array(
 			'test' => array(
 				'default' => 'a'
 			)

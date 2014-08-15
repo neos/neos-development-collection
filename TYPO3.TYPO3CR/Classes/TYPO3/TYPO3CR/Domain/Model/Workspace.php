@@ -211,6 +211,12 @@ class Workspace {
 	 */
 	protected function replaceNodeData(NodeInterface $node, NodeData $targetNodeData) {
 		$sourceNodeData = $node->getNodeData();
+
+		$movedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
+		if ($movedShadowNodeData instanceof NodeData) {
+			$this->nodeDataRepository->remove($movedShadowNodeData);
+		}
+
 		if ($node->isRemoved() === TRUE) {
 			$this->nodeDataRepository->remove($targetNodeData);
 		} else {
