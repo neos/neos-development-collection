@@ -33,5 +33,4 @@ class TagRepository extends \TYPO3\Flow\Persistence\Repository {
 		$query = $this->createQuery();
 		return $query->matching($query->like('label', '%' . $searchTerm . '%'))->execute();
 	}
-
 }
