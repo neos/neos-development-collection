@@ -438,7 +438,7 @@ class NodeData extends AbstractNodeData {
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
-	 * properties or creating sub nodes.
+	 * properties or creating subnodes.
 	 *
 	 * @param string $name Name of the new node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
@@ -611,7 +611,7 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Tells if a node, in general,  has access restrictions, independent of the
+	 * Tells if a node, in general, has access restrictions, independent of the
 	 * current security context.
 	 *
 	 * @return boolean
