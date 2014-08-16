@@ -191,8 +191,8 @@ trait StepDefinitionsTrait {
 	public function iPublishNodeToWorkspaceWithTheFollowingContext() {
 		$node = $this->iShouldHaveOneNode();
 
-		/** @var \TYPO3\Neos\Service\PublishingService $publishingService */
-		$publishingService = $this->getObjectManager()->get('TYPO3\Neos\Service\PublishingService');
+		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
+		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingService');
 		$publishingService->publishNode($node);
 
 		$this->getSubcontext('flow')->persistAll();
@@ -442,6 +442,18 @@ trait StepDefinitionsTrait {
 		}
 
 		return $contextFactory->create($contextProperties);
+	}
+
+	/**
+	 * @Then /^I expect to have (\d+) unpublished node[s]? for the following context:$/
+	 */
+	public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, TableNode $table) {
+		$rows = $table->getHash();
+		$context = $this->getContextForProperties($rows[0]);
+
+		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
+		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingService');
+		Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes($context->getWorkspace())));
 	}
 
 }
