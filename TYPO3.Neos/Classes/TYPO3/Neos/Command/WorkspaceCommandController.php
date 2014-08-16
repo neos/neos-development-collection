@@ -102,4 +102,30 @@ class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$this->outputLine('Discarded all nodes in workspace %s', array($workspaceName));
 	}
+
+	/**
+	 * Display a list of existing workspaces
+	 *
+	 * @return void
+	 */
+	public function listCommand() {
+		$workspaces = $this->workspaceRepository->findAll();
+
+		if ($workspaces->count() === 0) {
+			$this->outputLine('No workspaces found.');
+			exit(0);
+		}
+
+		$workspaceNames = array();
+		foreach ($workspaces as $workspace) {
+			$workspaceNames[$workspace->getName()] = $workspace->getBaseWorkspace() ? $workspace->getBaseWorkspace()->getName() : '';
+		}
+		ksort($workspaceNames);
+
+		$longestName = max(array_map('strlen', array_keys($workspaceNames)));
+		$this->outputLine(' <b>' . str_pad('Workspace', $longestName + 10) . 'Base workspace</b>');
+		foreach ($workspaceNames as $workspaceName => $baseWorkspaceName) {
+			$this->outputLine(' ' . str_pad($workspaceName, $longestName + 10) . $baseWorkspaceName);
+		}
+	}
 }
