@@ -10,6 +10,7 @@ namespace TYPO3\TYPO3CR\Service;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -54,6 +55,10 @@ class PublishingService implements PublishingServiceInterface {
 	 * @api
 	 */
 	public function getUnpublishedNodes(Workspace $workspace) {
+		if ($workspace->getName() === 'live') {
+			return array();
+		}
+
 		$contextProperties = array(
 			'workspaceName' => $workspace->getName(),
 			'inaccessibleContentShown' => TRUE,
@@ -66,11 +71,17 @@ class PublishingService implements PublishingServiceInterface {
 		$nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
 		$unpublishedNodes = array();
 		foreach ($nodeData as $singleNodeData) {
+			/** @var NodeData $singleNodeData */
+			// Skip the root entry from the workspace as it can't be published
+			if ($singleNodeData->getPath() === '/') {
+				continue;
+			}
 			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $contentContext);
 			if ($node !== NULL) {
 				$unpublishedNodes[] = $node;
 			}
 		}
+
 		return $unpublishedNodes;
 	}
 
@@ -124,6 +135,7 @@ class PublishingService implements PublishingServiceInterface {
 	 *
 	 * @param NodeInterface $node
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
 	 * @api
 	 */
 	public function discardNode(NodeInterface $node) {
