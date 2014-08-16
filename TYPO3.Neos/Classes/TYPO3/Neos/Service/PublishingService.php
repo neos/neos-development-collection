@@ -60,15 +60,25 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 	 * @api
 	 */
 	public function getUnpublishedNodes(Workspace $workspace) {
+		if ($workspace->getName() === 'live') {
+			return array();
+		}
+
 		$nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
+
 		$unpublishedNodes = array();
 		foreach ($nodeData as $singleNodeData) {
 			/** @var NodeData $singleNodeData */
+			// Skip the root entry from the workspace as it can't be published
+			if ($singleNodeData->getPath() === '/') {
+				continue;
+			}
 			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $this->createContext($workspace, $singleNodeData->getDimensionValues()));
 			if ($node !== NULL) {
 				$unpublishedNodes[] = $node;
 			}
 		}
+
 		return $unpublishedNodes;
 	}
 
