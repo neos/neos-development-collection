@@ -47,6 +47,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$mockSiteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
 		$mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
+		$mockContext->expects($this->any())->method('getDimensions')->will($this->returnValue(array()));
 
 		$mockContextualizedNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
