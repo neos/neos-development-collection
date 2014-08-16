@@ -62,7 +62,9 @@
   superTypes: ['TYPO3.TYPO3CR.Testing:Document']
 
 'TYPO3.TYPO3CR.Testing:Content':
-  superTypes: []
+  constraints:
+    nodeTypes:
+      '*': FALSE
 
 'TYPO3.TYPO3CR.Testing:Text':
   superTypes: [ 'TYPO3.TYPO3CR.Testing:Content' ]

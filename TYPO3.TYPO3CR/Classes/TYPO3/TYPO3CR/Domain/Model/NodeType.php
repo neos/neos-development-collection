@@ -404,6 +404,10 @@ class NodeType {
 	 * @return boolean TRUE if the passed $nodeType is allowed by the $constraints
 	 */
 	protected function isNodeTypeAllowedByConstraints(NodeType $nodeType, array $constraints) {
+		if ($constraints === array()) {
+			return TRUE;
+		}
+
 		if (array_key_exists($nodeType->getName(), $constraints) && $constraints[$nodeType->getName()] === TRUE) {
 			return TRUE;
 		}
