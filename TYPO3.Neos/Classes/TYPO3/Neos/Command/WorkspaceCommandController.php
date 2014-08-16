@@ -12,46 +12,53 @@ namespace TYPO3\Neos\Command;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * The Workspace Command Controller
  *
  * @Flow\Scope("singleton")
  */
-class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
+class WorkspaceCommandController extends CommandController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\PublishingService
+	 * @var PublishingService
 	 */
 	protected $publishingService;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 * @var WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * Publish everything in the workspace with the given workspace name.
+	 * Publish changes of a workspace
 	 *
-	 * @param string $workspaceName
-	 * @param boolean $verbose
+	 * This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
+	 *
+	 * @param string $workspace Name of the workspace containing the changes to publish, for example "user-john"
+	 * @param boolean $verbose If enabled, some information about individual nodes will be displayed
+	 * @param boolean $dryRun If set, only displays which nodes would be published, no real changes are committed
 	 * @return void
 	 */
-	public function publishAllCommand($workspaceName, $verbose = FALSE) {
+	public function publishCommand($workspace, $verbose = FALSE, $dryRun = FALSE) {
+		$workspaceName = $workspace;
 		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
 		if (!$workspace instanceof Workspace) {
 			$this->outputLine('Workspace "%s" does not exist', array($workspaceName));
-			$this->quit(1);
+			exit(1);
 		}
 
 		try {
 			$nodes = $this->publishingService->getUnpublishedNodes($workspace);
 		} catch (\Exception $exception) {
 			$this->outputLine('An error occurred while fetching unpublished nodes from workspace %s, publish aborted.', array($workspaceName));
-			$this->quit(1);
+			exit(1);
 		}
 
 		$this->outputLine('The workspace %s contains %u unpublished nodes.', array($workspaceName, count($nodes)));
@@ -61,31 +68,39 @@ class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
 			if ($verbose) {
 				$this->outputLine('    ' . $node->getPath());
 			}
-			$this->publishingService->publishNode($node);
+			if (!$dryRun) {
+				$this->publishingService->publishNode($node);
+			}
 		}
 
-		$this->outputLine('Published all nodes in workspace %s', array($workspaceName));
+		if (!$dryRun) {
+			$this->outputLine('Published all nodes in workspace %s', array($workspaceName));
+		}
 	}
 
 	/**
-	 * Discard everything in the workspace with the given workspace name.
+	 * Discard changes in workspace
 	 *
-	 * @param string $workspaceName
-	 * @param boolean $verbose
+	 * This command discards all modified, created or deleted nodes in the specified workspace.
+	 *
+	 * @param string $workspace Name of the workspace, for example "user-john"
+	 * @param boolean $verbose If enabled, information about individual nodes will be displayed
+	 * @param boolean $dryRun If set, only displays which nodes would be discarded, no real changes are committed
 	 * @return void
 	 */
-	public function discardAllCommand($workspaceName, $verbose = FALSE) {
+	public function discardCommand($workspace, $verbose = FALSE, $dryRun = FALSE) {
+		$workspaceName = $workspace;
 		$workspace = $this->workspaceRepository->findOneByName($workspaceName);
 		if (!$workspace instanceof Workspace) {
 			$this->outputLine('Workspace "%s" does not exist', array($workspaceName));
-			$this->quit(1);
+			exit(1);
 		}
 
 		try {
 			$nodes = $this->publishingService->getUnpublishedNodes($workspace);
 		} catch (\Exception $exception) {
 			$this->outputLine('An error occurred while fetching unpublished nodes from workspace %s, discard aborted.', array($workspaceName));
-			$this->quit(1);
+			exit(1);
 		}
 
 		$this->outputLine('The workspace %s contains %u unpublished nodes.', array($workspaceName, count($nodes)));
@@ -96,11 +111,45 @@ class WorkspaceCommandController extends \TYPO3\Flow\Cli\CommandController {
 				if ($verbose) {
 					$this->outputLine('    ' . $node->getPath());
 				}
-				$this->publishingService->discardNode($node);
+				if (!$dryRun) {
+					$this->publishingService->discardNode($node);
+				}
 			}
 		}
 
-		$this->outputLine('Discarded all nodes in workspace %s', array($workspaceName));
+		if (!$dryRun) {
+			$this->outputLine('Discarded all nodes in workspace %s', array($workspaceName));
+		}
+	}
+
+	/**
+	 * Publish changes of a workspace
+	 *
+	 * This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
+	 *
+	 * @param string $workspaceName Name of the workspace, for example "user-john"
+	 * @param boolean $verbose If enabled, information about individual nodes will be displayed
+	 * @return void
+	 * @deprecated since 1.2
+	 * @see typo3.neos:workspace:publish
+	 */
+	public function publishAllCommand($workspaceName, $verbose = FALSE) {
+		$this->publishCommand($workspaceName, $verbose);
+	}
+
+	/**
+	 * Discard changes in workspace
+	 *
+	 * This command discards all modified, created or deleted nodes in the specified workspace.
+	 *
+	 * @param string $workspaceName Name of the workspace, for example "user-john"
+	 * @param boolean $verbose If enabled, information about individual nodes will be displayed
+	 * @return void
+	 * @deprecated since 1.2
+	 * @see typo3.neos:workspace:discard
+	 */
+	public function discardAllCommand($workspaceName, $verbose = FALSE) {
+		$this->discardCommand($workspaceName, $verbose);
 	}
 
 	/**
