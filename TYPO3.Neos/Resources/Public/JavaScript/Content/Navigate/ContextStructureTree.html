@@ -1,5 +1,5 @@
 <div id="neos-context-structure-toolbar">
-	<div id="neos-context-structure-collapse" {{bindAttr class="contextStructureMode:collapsed:open"}} {{action "toggleContextStructureMode"}}></div>
+	<div id="neos-context-structure-collapse" title="Toggle context structure" {{bindAttr class="contextStructureMode:collapsed:open"}} {{action "toggleContextStructureMode"}}></div>
 	{{#if view.isExpanded}}
 		Structure
 	{{else}}
