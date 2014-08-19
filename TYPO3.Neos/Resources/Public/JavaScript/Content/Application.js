@@ -305,7 +305,7 @@ function(
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			this._linkInterceptionHandler($('a:not(' + this.rootElement + ' a, .aloha-floatingmenu a)'));
+			this._linkInterceptionHandler($('a:not(' + this.rootElement + ' a)'));
 			this._linkInterceptionHandler('a.neos-link-ajax', true);
 		},
 
