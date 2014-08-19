@@ -60,6 +60,10 @@ class EditableViewHelper extends AbstractTagBasedViewHelper {
 			$node = $this->getNodeFromTypoScriptContext();
 		}
 
+		if ($node === NULL) {
+			throw new ViewHelperException('A node is required, but one was not supplied and could not be found in the TypoScript context.', 1408521638);
+		}
+
 		if ($content === NULL) {
 			if (!$this->templateVariableContainer->exists($property)) {
 				throw new ViewHelperException(sprintf('The property "%1$s" was not set as a template variable. If you use this ViewHelper in a partial, make sure to pass the node property "%1$s" as an argument.', $property), 1384507046);
