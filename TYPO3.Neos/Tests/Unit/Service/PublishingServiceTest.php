@@ -22,7 +22,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
- * Testcase for the Workspace PublishingService
+ * Test case for the Workspace PublishingService
  *
  */
 class PublishingServiceTest extends UnitTestCase {
@@ -123,12 +123,16 @@ class PublishingServiceTest extends UnitTestCase {
 			'inaccessibleContentShown' => TRUE,
 			'invisibleContentShown' => TRUE,
 			'removedContentShown' => TRUE,
-			'currentSite' => $mockSite
+			'currentSite' => $mockSite,
+			'dimensions' => array()
 		);
-		$this->mockContextFactory->expects($this->once())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
+		$this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
 
 		$mockNodeData1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockNodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+
+		$mockNodeData1->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
+		$mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
@@ -156,12 +160,16 @@ class PublishingServiceTest extends UnitTestCase {
 			'inaccessibleContentShown' => TRUE,
 			'invisibleContentShown' => TRUE,
 			'removedContentShown' => TRUE,
-			'currentSite' => $mockSite
+			'currentSite' => $mockSite,
+			'dimensions' => array()
 		);
-		$this->mockContextFactory->expects($this->once())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
+		$this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
 
 		$mockNodeData1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 		$mockNodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+
+		$mockNodeData1->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
+		$mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
