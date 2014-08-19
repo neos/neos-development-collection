@@ -20,7 +20,6 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
@@ -28,6 +27,7 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Exception\NodeException;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -128,7 +128,7 @@ class NodeConverter extends AbstractTypeConverter {
 	 * @param array $subProperties not used
 	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
-	 * @throws \Exception
+	 * @throws NodeException
 	 */
 	public function convertFrom($source, $targetType = NULL, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
@@ -188,8 +188,8 @@ class NodeConverter extends AbstractTypeConverter {
 	 * @param object $nodeLike
 	 * @param NodeType $nodeType
 	 * @param array $properties
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
-	 * @throws \TYPO3\Flow\Property\Exception\TypeConverterException
+	 * @param TYPO3CRContext $context
+	 * @throws TypeConverterException
 	 * @return void
 	 */
 	protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context) {
@@ -237,13 +237,13 @@ class NodeConverter extends AbstractTypeConverter {
 				continue;
 			}
 			if (!isset($nodeTypeProperties[$nodePropertyName])) {
-				throw new TypeConverterException(sprintf('node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
+				throw new TypeConverterException(sprintf('Node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
 			}
 			$innerType = $nodePropertyType;
 			if ($nodePropertyType !== NULL) {
 				try {
 					$parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($nodePropertyType);
-					$innerType = $parsedType['elementType'] !== NULL ? $parsedType['elementType'] : $parsedType['type'];
+					$innerType = $parsedType['elementType'] ?: $parsedType['type'];
 				} catch(\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 				}
 			}
