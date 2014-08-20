@@ -34,8 +34,6 @@ Behat needs two special Flow contexts, `Development/Behat` and `Testing/Behat`.
 These contexts should share the same database to work properly. Make sure to create a new database for the Behat tests
 since all the data will be removed after each scenario.
 
-
-
 `FLOW_ROOT/Configuration/Development/Behat/Settings.yaml`::
 
 	TYPO3:
@@ -105,6 +103,10 @@ Behat tests can be run from the Flow root folder with the `bin/behat` command by
 file::
 
 	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml
+
+In case the executable file `bin/behat` is missing, create a symlink by running the following command in `FLOW_ROOT/bin`::
+
+	ln -s ../Build/Behat/vendor/behat/behat/bin/behat
 
 .. tip::
 
