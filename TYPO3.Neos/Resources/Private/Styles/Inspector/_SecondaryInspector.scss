@@ -17,7 +17,7 @@
 		left: 0;
 	}
 
-	@import "Editors/HtmlEditor";
+	@import "Editors/CodeEditor";
 
 	.neos-inspector-panel-open & {
 		padding-right: $inspectorWidth;

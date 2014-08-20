@@ -6,18 +6,21 @@ define(
 ],
 function(Ember, SecondaryInspectorController, CodeMirror) {
 	return SecondaryInspectorController.SecondaryInspectorButton.extend({
-		label: 'Edit HTML',
+		buttonLabel: 'Edit code',
+		labelBinding: 'buttonLabel',
+		highlightingMode: 'text/html',
 
 		viewClass: function() {
 			var that = this;
 
 			return Ember.View.extend({
-				classNames: ['neos-secondary-inspector-html-editor'],
+				classNames: ['neos-secondary-inspector-code-editor'],
 				template: Ember.Handlebars.compile('<textarea></textarea>'),
 
 				didInsertElement: function() {
 					var $editorContent = this.$().find('textarea'),
-						value = that.get('value');
+						value = that.get('value'),
+						highlightingMode = that.get('highlightingMode');
 					/*
 					 * inserting the content into the textarea before creating the editor
 					 * causes all contained inline-javascript to be executed
@@ -26,7 +29,7 @@ function(Ember, SecondaryInspectorController, CodeMirror) {
 					 * set the value of the editor instead
 					 */
 					var editor = CodeMirror.fromTextArea($editorContent.get(0), {
-							mode: 'text/html',
+							mode: highlightingMode,
 							theme: 'solarized dark',
 							indentWithTabs: true,
 							styleActiveLine: true,

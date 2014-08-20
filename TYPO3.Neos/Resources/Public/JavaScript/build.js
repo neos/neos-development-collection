@@ -21,7 +21,7 @@
 		'Content/Inspector/Editors/BooleanEditor',
 		'Content/Inspector/Editors/DateTimeEditor',
 		'Content/Inspector/Editors/FileUpload',
-		'Content/Inspector/Editors/HtmlEditor',
+		'Content/Inspector/Editors/CodeEditor',
 		'Content/Inspector/Editors/ImageEditor',
 		'Content/Inspector/Editors/MasterPluginEditor',
 		'Content/Inspector/Editors/PluginViewEditor',
