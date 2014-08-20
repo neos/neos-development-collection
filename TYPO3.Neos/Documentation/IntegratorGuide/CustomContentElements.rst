@@ -287,9 +287,23 @@ By default the following list of editors is available in Neos:
   A datepicker with support for time selection too. By default configured for properties
   of type `date`.
 
-* `TYPO3.Neos/Inspector/Editors/HtmlEditor`
+* `TYPO3.Neos/Inspector/Editors/CodeEditor`
 
-  An HTML editor with syntax highlighting.
+  An code editor with syntax highlighting. You can use this editor for editing
+  other types of *textual* content, by configuring a different `highlightingMode` and
+  `buttonLabel` to change usage for this editor::
+
+    style:
+      type: string
+      ui:
+        label: 'CSS'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'code'
+          editor: 'TYPO3.Neos/Inspector/Editors/CodeEditor'
+          editorOptions:
+            buttonLabel: 'Edit CSS source'
+            highlightingMode: 'text/css'
 
 * `TYPO3.Neos/Inspector/Editors/ImageEditor`
 
