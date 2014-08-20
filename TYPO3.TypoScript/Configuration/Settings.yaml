@@ -35,3 +35,4 @@ TYPO3:
       Math: 'TYPO3\Eel\Helper\MathHelper'
       Json: 'TYPO3\Eel\Helper\JsonHelper'
       Security: 'TYPO3\Eel\Helper\SecurityHelper'
+      Translation: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
