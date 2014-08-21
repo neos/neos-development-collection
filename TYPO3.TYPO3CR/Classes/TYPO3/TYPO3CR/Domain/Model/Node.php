@@ -699,7 +699,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 	/**
 	 * Creates, adds and returns a child node of this node. Also sets default
-	 * properties and creates default sub nodes.
+	 * properties and creates default subnodes.
 	 *
 	 * @param string $name Name of the new node
 	 * @param NodeType $nodeType Node type of the new node (optional)
@@ -744,7 +744,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 	/**
 	 * Creates, adds and returns a child node of this node, without setting default
-	 * properties or creating sub nodes. Only used internally.
+	 * properties or creating subnodes. Only used internally.
 	 *
 	 * For internal use only!
 	 * TODO: Check if we can change the import service to avoid making this public.
@@ -1061,7 +1061,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
-	 * Tells if a node, in general, has access restrictions, independent of the
+	 * Tells if a node, in general,  has access restrictions, independent of the
 	 * current security context.
 	 *
 	 * @return boolean
