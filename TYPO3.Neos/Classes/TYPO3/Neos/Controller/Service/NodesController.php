@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Controller\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\PropertyMapper;
@@ -143,6 +144,8 @@ class NodesController extends ActionController {
 			}
 
 			$this->view->assign('node', $node);
+			$closestDocumentNode = (new FlowQuery(array($node)))->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+			$this->view->assign('closestDocumentNode', $closestDocumentNode);
 			$this->view->assign('convertedNodeProperties', $convertedProperties);
 		}
 	}
