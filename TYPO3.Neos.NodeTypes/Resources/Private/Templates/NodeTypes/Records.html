@@ -5,12 +5,12 @@
 		</div>
 	</f:then>
 	<f:else>
-		<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
-			<f:if condition="{node.context.workspace.name} != 'live'">
+		<f:if condition="{node.context.workspace.name} != 'live'">
+			<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
 				<div{attributes -> f:format.raw()}>
 					<p>No records selected</p>
 				</div>
-			</f:if>
-		</f:security.ifAccess>
+			</f:security.ifAccess>
+		</f:if>
 	</f:else>
 </f:if>
