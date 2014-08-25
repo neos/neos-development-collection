@@ -70,10 +70,10 @@ class ContentElementWrappingService {
 		$attributes = array();
 		$attributes['typeof'] = 'typo3:' . $nodeType->getName();
 		$attributes['about'] = $node->getContextPath();
+		$attributes['class'] = '';
 
 		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
 			if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
-				$attributes['class'] = '';
 				$attributes['rel'] = 'typo3:content-collection';
 			} else {
 				$attributes['class'] = 'neos-contentelement';
