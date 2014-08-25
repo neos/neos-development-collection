@@ -16,6 +16,8 @@ use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Neos\Domain\Exception as DomainException;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -53,6 +55,18 @@ class SiteExportService {
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var ImageRepository
+	 */
+	protected $imageRepository;
+
+	/**
+	 * @Flow\Inject
+	 * @var AssetRepository
+	 */
+	protected $assetRepository;
 
 	/**
 	 * Fetches the site with the given name and exports it into XML.
@@ -374,6 +388,24 @@ class SiteExportService {
 		$this->xmlWriter->startElement('resource');
 		$this->xmlWriter->writeAttribute('__type', 'object');
 		$this->xmlWriter->writeAttribute('__classname', 'TYPO3\Flow\Resource\Resource');
+
+		/*
+		 * In the site import command we load images and assets and Doctrine
+		 * serializes them in when we store the node properties as ObjectArray.
+		 *
+		 * This serialize removes the resource property without a clear reason
+		 * and there's no solution for this issue available yet. THIS IS A WORKAROUND!
+		 * @see NEOS-121
+		 */
+		if ($resource === NULL) {
+			if ($asset instanceof Image) {
+				$asset = $this->imageRepository->findByIdentifier($asset->getIdentifier());
+			} elseif ($asset instanceof Asset) {
+				$asset = $this->assetRepository->findByIdentifier($asset->getIdentifier());
+			}
+			$resource = $asset->getResource();
+		}
+
 		$this->xmlWriter->writeAttribute('__identifier', $this->persistenceManager->getIdentifierByObject($resource));
 		$this->xmlWriter->writeElement('filename', $resource->getFilename());
 
