@@ -1,0 +1,174 @@
+.chosen-container {
+	color: #fff;
+	line-height: $unit;
+	font-size: 14px;
+
+	.chosen-single {
+		height: $unit;
+		border: none;
+		background-color: $grayMedium;
+		background-image: none;
+		padding-left: $defaultMargin;
+		@include border-radius(0);
+		@include box-shadow(none);
+		color: inherit;
+		line-height: inherit;
+		text-decoration: none;
+
+		&.chosen-default {
+			color: $textSubtleLight;
+
+			div {
+				color: #fff;
+			}
+		}
+
+		&.chosen-single-with-deselect span {
+			margin-right: $unit + 1px + 18px + $defaultMargin;
+		}
+
+		span {
+			margin-right: $unit + 1px + $defaultMargin;
+		}
+
+		div {
+			width: $unit;
+			border-left: 1px solid $grayDark;
+
+			&:before,
+			&:after {
+				display: block;
+				position: absolute;
+				right: 15px;
+				font-family: Arial;
+				font-size: 17px;
+				line-height: $unit;
+				content: "▾";
+			}
+
+			&:before {
+				top: -4px;
+				@include rotate(180deg);
+			}
+
+			&:after {
+				top: 4px;
+			}
+
+			b {
+				display: none;
+				background-image: none !important;
+			}
+		}
+
+		abbr {
+			background: none;
+			background-color: #fff;
+			top: 11px;
+			right: $unit + $relatedMargin;
+			width: 18px;
+			height: 18px;
+			@include border-radius(10px);
+
+			&:hover {
+				background-color: $blue;
+			}
+
+			&:before {
+				display: block;
+				width: 18px;
+				text-align: center;
+				content: "×";
+				font-size: 17px;
+				font-weight: bold;
+				line-height: 18px;
+				color: $grayDark;
+			}
+		}
+	}
+
+	.chosen-drop {
+		border: none;
+		background-color: $grayMedium;
+		background-image: none;
+		@include border-radius(0);
+		@include box-shadow(1px 2px 5px $grayDark);
+		color: inherit;
+		margin-top: 0;
+
+		.chosen-search {
+			padding: 0;
+			color: $black;
+			@include icon-FontAwesome();
+			font-size: 0;
+
+			input {
+				min-width: 0px;
+				width: 100%;
+				height: $unit;
+				border: none;
+				color: $textOnGray;
+				@include font;
+				font-size: 14px;
+				margin: 0;
+				padding: 0 $defaultMargin;
+				@include box-sizing(border-box);
+				@include box-shadow(none);
+				background: none;
+				background-image: none !important;
+				background-color: #fff;
+			}
+
+			&:after {
+				position: absolute;
+				top: 14px;
+				right: 12px;
+				width: 16px;
+				height: 16px;
+				text-decoration: inherit;
+				display: inline-block;
+				speak: none;
+				content: $search;
+				line-height: 100%;
+				font-size: 12px;
+			}
+		}
+
+		.chosen-results {
+			margin: 0;
+			padding: 0;
+			max-height: 247px;
+
+			li {
+				width: 100%;
+				border-bottom: 1px solid $grayDark;
+				line-height: $unit - $defaultMargin;
+				padding: ($unit - $defaultMargin * 2) $defaultMargin;
+				@include box-sizing(border-box);
+
+				&:first-child {
+					border-top: 1px solid $grayDark;
+				}
+
+				&.highlighted {
+					background-color: $blue;
+					background-image: none;
+				}
+
+				&.no-results {
+					background-color: $grayMedium;
+				}
+
+				&.disabled-result {
+					color: $textSubtle;
+				}
+
+				em {
+					background: none;
+					font-weight: bold;
+					line-height: $unit - 2px;
+				}
+			}
+		}
+	}
+}

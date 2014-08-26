@@ -1,0 +1,422 @@
+====================
+1.0.2
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/TYPO3%20Neos%20Release/4/
+
+* Commit: `695a3ca <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/695a3ca11bb571ae4cb7cc3024c4208e3a45c91c>`_
+
+[BUGFIX] Secondary inspector is rendered outside viewport in FF
+-----------------------------------------------------------------------------------------
+
+The secondary inspector opens from the right to the left using a
+transition, but in Firefox the left positioning is incorrect so it
+animates to a position which is outside the viewport.
+
+This patch changes the animation to be done on the left css property
+to make it less error prone.
+
+* Fixes: `#54401 <http://forge.typo3.org/issues/54401>`_
+* Commit: `d60059c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d60059ccf7e8097b6f12d0ef425baf3d31c359aa>`_
+
+[BUGFIX] A better way of parsing the HTML of asynchronous page loads
+-----------------------------------------------------------------------------------------
+
+The change I3234d053ade3c92448a9538e24731c6df8e83f8a introduced a small
+regression by slightly changing the way of parsing the returned HTML
+of an asynchronous page load. This leads to problems if the page
+contained script tags that manipulate the dom (e.g. `document.write`).
+
+This change adjusts the page loading to use the same jQuery function
+as before.
+
+* Commit: `33be32b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/33be32bb773714499becd82757797272b8473833>`_
+
+[TASK] Optimize typical filter usages of EEL children operation
+-----------------------------------------------------------------------------------------
+
+The children operation supports filters, two typical cases are
+filter by node name and filter by NodeType (instanceof). These
+cases are now optimized and will only load the Nodes that match
+the filter.
+
+* Commit: `7adc18c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7adc18c0dc2ac4292885f523c84cbd03049dc994>`_
+
+[BUGFIX] Default attributes property of menu TypoScript object
+-----------------------------------------------------------------------------------------
+
+The template of the menu TypoScript object uses the attributes
+property by default and for convenience it should be predefined
+as a attribute object so it's easy to extend.
+
+* Commit: `f7510dd <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f7510dd1e93a4d1347fa0d811fda50369311b3bc>`_
+
+[BUGFIX] "node" used in label for create new dialog
+-----------------------------------------------------------------------------------------
+
+Get rid of the undesired word "node" in the insert new element overlay
+since the word shouldn't be exposed to the editor. It also keeps in
+consistant with the other instances of insert new in the navigate component.
+
+* Commit: `19afc84 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/19afc844acdc6e6d8872e3f92cc0dd84e2a4956b>`_
+
+[BUGFIX] Security policies in Neos are too strict
+-----------------------------------------------------------------------------------------
+
+The current security policies fail with a "could not authenticate
+any token" if an initializeAction is made public.
+
+This change updates the policy so it does not match initialize
+actions to prevent this error.
+
+* Fixes: `#54592 <http://forge.typo3.org/issues/54592>`_
+* Commit: `9578321 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9578321c3437e8e0d42a714d9631bc29a420f192>`_
+
+[BUGFIX] Link inceptor handling of local links
+-----------------------------------------------------------------------------------------
+
+* Fixed default action to happen if link shouldn't be intercepted
+* Fixed handling of absolute internal links
+* Fixed handling of internal links with hash tags
+* Fixed clicking links inside editables in preview mode
+* Updated jQuery event handlers to use on
+* Commit: `5d1f534 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5d1f534543fb6d082f1ae5e8fb8f3ac6309a7c99>`_
+
+[BUGFIX] Node tree filter too wide in Firefox
+-----------------------------------------------------------------------------------------
+
+* Commit: `b366ff7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b366ff783c35563076b107f6d80441dfa61b3207>`_
+
+[BUGFIX] Sites management module widget action button
+-----------------------------------------------------------------------------------------
+
+The action button for the sites management module widget
+points to a unresolved path due to the action name is camelcased.
+Since all module paths are automatically lowercased we can safely
+convert actions names into lowercase when creating links for them.
+In case a custom path is desired that's already configurable.
+
+* Commit: `0d57158 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0d571586db11fe39fbc0200d7f90acdf9483e7b3>`_
+
+[TASK] Improve usability of position menus in navigate component
+-----------------------------------------------------------------------------------------
+
+Makes it possible to select a new position for the new or paste
+buttons without having to click twice when using a mouse.
+
+* Related: `#48071 <http://forge.typo3.org/issues/48071>`_
+* Commit: `1299cec <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1299cec718b6f61f428fa71fcf6991583f3d49d1>`_
+
+[BUGFIX] Title missing for paste/new buttons in navigate component
+-----------------------------------------------------------------------------------------
+
+In the navigate component the paste and new buttons are
+missing a title tag, unlike the other buttons.
+This commit fixes those title tags for both the node tree
+and context structure tree.
+
+* Commit: `5c2f200 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/5c2f20087a1099cd5893001cae20f6ce0e3a4c66>`_
+
+[BUGFIX] Shortcut to siteroot has no active state
+-----------------------------------------------------------------------------------------
+
+The new menu implementation returns a state normal for
+nodes equal to the siteroot. This prevents a menu which
+contains a shortcut to the homepage to render an active
+state.
+
+A menu could now render an active state on the shortcut
+to the homepage by for example using a custom node type
+for the homepage and adding the following condition:
+
+  <f:if condition="{item.node.nodeType.name} == 'My.Package:Homepage'">
+      <f:then>
+          <li class="{f:if(condition:'{item.state}==\\'current\\'', then:'active')}">
+              <neos:link.node node="{item.node}">{item.label}</neos:link.node>
+          </li>
+      </f:then>
+      <f:else>
+          ...
+      </f:else>
+  </f:if>
+
+* Related: `#55873 <http://forge.typo3.org/issues/55873>`_
+* Commit: `ff7cf76 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ff7cf76ac30b6df6fbf46932ccca73cac572a034>`_
+
+[TASK] Fix minor errors in documentation
+-----------------------------------------------------------------------------------------
+
+The integrator cookbook was referring to node type TYPO3.Neos:Page
+which was recently changed to TYPO3.Neos.NodeTypes:Page. Also the
+quotes in an example of using prototypes was incorrect.
+
+* Commit: `858d11b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/858d11bdffd81531461602156229b5c2eacffa46>`_
+
+[!!!][BUGFIX] Only accepts URLs with the configured URI suffix
+-----------------------------------------------------------------------------------------
+
+This change removes two obsolete routes and adjusts the
+``FrontendNodeRoutePartHandler`` so that it matches the full node path.
+
+Background:
+The route "Content with some format" accepted all URLs in the format
+``{node}.{@format}`` which lead to duplicate content (if your default
+suffix is empty and the user appends ".html") and weird errors (if an
+arbitrary extension is added to the path, like "some/path.anything").
+
+Besides this change simplifies the ``FrontendNodeRoutePartHandler`` so
+that it does not ignore the ``splitString`` option if no dot could be
+found in the request path.
+
+This is a breaking change if you relied on the fact that any format
+suffix is accepted by Neos.
+If you provide a custom format (for example "ics") you should register
+a custom route for it in your package::
+
+  -
+    name:  'ICS'
+    uriPattern: '{node}.ics'
+    defaults:
+      '@package':    'TYPO3.Neos'
+      '@controller': 'Frontend\\Node'
+      '@action':     'show'
+      '@format':     'ics'
+    routeParts:
+      'node':
+        handler:     'TYPO3\\Neos\\Routing\\FrontendNodeRoutePartHandler'
+
+* Fixes: `#54187 <http://forge.typo3.org/issues/54187>`_
+* Related: `#54217 <http://forge.typo3.org/issues/54217>`_
+* Related: `#55492 <http://forge.typo3.org/issues/55492>`_
+* Commit: `437ec25 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/437ec25a5c3ee52b836267e0bf2805b8a253a058>`_
+
+[BUGFIX] YAML indention and typo in integrators cookbook
+-----------------------------------------------------------------------------------------
+
+* Commit: `e54ba0c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/e54ba0c19832567f1a23e45270897c3acce87f59>`_
+
+[TASK] Fix various CGL violations
+-----------------------------------------------------------------------------------------
+
+* Commit: `274cc0c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/274cc0cfcefa7ac35e83eb227c32f53743a493ff>`_
+
+[BUGFIX] Opacity of datetime editor inspector field
+-----------------------------------------------------------------------------------------
+
+After the module styling implementation uneditable fields
+were made transparent and this also applied to the date
+editor field, but it shouldn't since it's not really
+uneditable since it has a wizard.
+
+* Related: `#48091 <http://forge.typo3.org/issues/48091>`_
+* Commit: `2a6d77b <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2a6d77b2a5986671f49fc6c4a82b49786121aeea>`_
+
+[TASK] Add missing grunt-trimtrailingspaces dependency
+-----------------------------------------------------------------------------------------
+
+This changes adds a missing dependency to
+grunt-trimtrailingspaces in Scripts/package.json
+
+* Fixes: `#56000 <http://forge.typo3.org/issues/56000>`_
+* Commit: `79f6262 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/79f6262e1a72ef354e9f1fd8e4dd69bafa147d9a>`_
+
+[FEATURE] Reworked MenuImplementation
+-----------------------------------------------------------------------------------------
+
+A new MenuImplementation that has the following additional features:
+
+- Resolves shortcuts, in this case the item.node will be the shortcut
+  target and the original shortcut node is available in item.originalNode.
+- Corect state calculation.
+- New Property itemCollection to set an arbitrary collection of nodes as
+  first menu level items.
+- New Property renderHiddenInIndex to also render items that should be
+  hidden in menus otherwise
+
+* Commit: `ad8129d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ad8129df1a00729c658ac255eb19508dd5a17d7f>`_
+
+[TASK] Minor coding fixes for users management module
+-----------------------------------------------------------------------------------------
+
+In the new action there is multiple usages of assign, this
+commit changes this to use assignMultiple instead.
+
+A minor typo in the comment for the action create is fixed.
+
+* Commit: `0f70249 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0f702490a0252ace19b1b2fc42a846a04b9e5835>`_
+
+[BUGFIX] Remove obsolete route that might break routing
+-----------------------------------------------------------------------------------------
+
+This removes the frontend route "content with URI suffix and type"
+that could break routing in frontend and backend in certain
+circumstances.
+
+Background:
+This route was meant to support custom rendering formats (similar to
+the ``typeNum`` feature in TYPO3 CMS). But apparently this is currently
+not used anywhere in the code and the same can be achieved with custom
+routes and/or the ``{@format}`` suffix.
+Since support for configurable URI suffixes (introduced with
+I14c8a98f341fbc312c57fee44cd383271778e57b) it is possible to disable
+the ".html" suffix from all Neos routes. But with that change the
+route mentioned above incorreclty matches all pages in the second
+level (e.g. "foo/bar").
+
+* Fixes: `#55492 <http://forge.typo3.org/issues/55492>`_
+* Commit: `0c03e9a <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/0c03e9a7764c6c0e9ec55d02e04c58e6d168a171>`_
+
+[TASK] Fix Page documentation in TS reference
+-----------------------------------------------------------------------------------------
+
+- Additionally add missing Tag and Attributes documentation
+
+* Commit: `9e4d0b5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9e4d0b578259350a097622d7bd94ac135294d7d3>`_
+
+[BUGFIX] Correctly rename site root nodes
+-----------------------------------------------------------------------------------------
+
+When renaming the ``site root node`` via the Sites management module
+the site name was incorrectly used for setting the new root node name
+instead of the specified node name.
+
+This change fixes this by mapping the new node name only to the site
+when it has been changed.
+Besides this cleans up SiteController, Site and the Edit form.
+
+* Fixes: `#53330 <http://forge.typo3.org/issues/53330>`_
+* Commit: `3ebd0bb <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3ebd0bb1c62faa967210766264b0fe75e54ecd48>`_
+
+[BUGFIX] Menu section collapse arrow styling
+-----------------------------------------------------------------------------------------
+
+The arrow for the section collapse buttons in the
+menu used the wrong font.
+
+Introduced in Ia0bb003a9c41e8fa89a87f17e971e16138e1721a.
+
+* Commit: `3fbd4bc <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3fbd4bc792287fc60685cbac35664413904d3571>`_
+
+[BUGFIX] Headline alignment is not persisted
+-----------------------------------------------------------------------------------------
+
+Aloha sanitize removes the style attribute from headline elements
+when a headline is aligned using aloha.
+
+* Fixes: `#54574 <http://forge.typo3.org/issues/54574>`_
+* Commit: `d58d2df <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/d58d2df9621d422c46ffa6f7fcd0b245d680ca88>`_
+
+[BUGFIX] Shortcut rendering is broken in combination with layout
+-----------------------------------------------------------------------------------------
+
+If a layout is applied to a shortcut because of a layout set in the
+rootpath of the node, then openening the shortcut in the navigate
+component fails with a 'Could not read metadata from page'.
+
+This change moves the rendering of the Shortcut from the PrimaryContent
+prototype to the root TypoScript case object to fix this.
+
+* Fixes: `#54480 <http://forge.typo3.org/issues/54480>`_
+* Commit: `03b431d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/03b431d2e29dffcb24fd8a9021bdfed5ee72c26e>`_
+
+[BUGFIX] Dateselector should do "previous" too
+-----------------------------------------------------------------------------------------
+
+The dateselector incorrectly only moves forward
+regardless of the arrow clicked, it should go back on the left
+arrow and forward on the right arrow.
+
+Credits for finding the broken part go to Thomas Hempel. Thanks!
+
+* Fixes: `#54210 <http://forge.typo3.org/issues/54210>`_
+* Commit: `25e9112 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/25e9112b9e1841df3dc263dd50e1bf40aea4b7d8>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.SiteKickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Node references do not respect context workspace
+-----------------------------------------------------------------------------------------
+
+When a node referenced as a property it doesn't take the
+contexts workspace into account but rather the node's own
+workspace resulting in wrong instances being returned in
+non live workspaces.
+
+* Commit: `6beabd5 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/6beabd5f63ee63351f2cf36a517920cf1ab7d53e>`_
+
+[BUGFIX] Prevent database error with too long index
+-----------------------------------------------------------------------------------------
+
+For MySQL if innodb_large_prefix is set to off from version 5.6
+on an index that is longer than the maximum index size is no
+longer silently truncated. Instead an error
+1071 Specified key was too long; max key length is 767 bytes
+can be thrown. In that case you have no way to install Neos in
+this environment because of an index created and removed one
+version later. As the index is not of much use we should remove
+it totally from the past migration files to avoid this error.
+
+This change is not marked breaking, the worst thing that can
+happen is that you are exactly on version 20131129110302 and
+keep the useless index in your database if you migrate up.
+The index is also removed from the PostgreSQL migrations in
+order to have both migrations in sync.
+
+For more details see: http://forum.typo3.org/index.php/t/200966/
+
+* Commit: `3b8e898 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/3b8e898b2ec7a9ef087004576043de3e1cada2b2>`_
+
+[BUGFIX] materialize NodeData in removeProperty()
+-----------------------------------------------------------------------------------------
+
+In removeProperty() the underlying NodeData was not materialized as
+needed.
+
+* Commit: `a4e3354 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/a4e3354278177bf7143a7fc329ef59e053736cf6>`_
+
+[TASK] Fix wrong hint in method docblock
+-----------------------------------------------------------------------------------------
+
+The @deprecated notice on __call() pointed to two wrong method names.
+
+* Commit: `4122b9c <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/4122b9cf8d3030884511cd8efea90f1ca2a60d12>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] isEven & isOdd not supported in TYPO3.Neos:ContentCollection
+-----------------------------------------------------------------------------------------
+
+* Commit: `e042103 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/e042103df785a4bad943767189fe4c00e1cae263>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+

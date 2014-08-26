@@ -1,0 +1,43 @@
+# Default case for ContentCollection TS Object
+#
+prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ContentCollectionImplementation'
+
+	nodePath = 'to-be-set-by-user'
+
+	itemName = 'node'
+	itemRenderer = TYPO3.Neos:ContentCase
+
+	attributes.class = 'neos-contentcollection'
+
+	# You may override this to get your content collection from a different place than the current node.
+	@override.contentCollectionNode = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? node :  q(node).find(this.nodePath).get(0)}
+
+	@process.contentElementWrapping {
+		node = ${contentCollectionNode}
+	}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			collection = ${contentCollectionNode}
+			domain = ${site.context.currentDomain}
+		}
+
+		entryTags {
+			1 = ${'DescendantOf_' + contentCollectionNode.identifier}
+		}
+
+		maximumLifetime = ${q(contentCollectionNode).context({'invisibleContentShown': true}).children().cacheLifetime()}
+	}
+}
+
+prototype(TYPO3.Neos:Content) {
+	prototype(TYPO3.Neos:ContentCollection) {
+		# Make ContentCollection inside content node types embedded by default.
+		# Usually there's no need for a separate cache entry for container content elements, but depending on the use-case
+		# the mode can safely be switched to 'cached'.
+		@cache.mode = 'embed'
+	}
+}

@@ -1,0 +1,28 @@
+.neos-inspector-file {
+	min-width: $inspectorWidth - $defaultMargin * 2;
+
+	.neos-button {
+		padding: 0 $relatedMargin;
+		height: $wideMargin;
+		line-height: $wideMargin;
+		font-size: 13px;
+	}
+
+	ul {
+		padding-bottom: 5px;
+		li {
+			padding: 5px 0;
+		}
+	}
+
+	.neos-inspector-file-upload,
+	.neos-inspector-file-width {
+		padding-bottom: $defaultMargin - $tightMargin;
+
+		.neos-inspector-file-upload-button,
+		.neos-inspector-file-crop-button {
+			float: right;
+			margin-left: 4px;
+		}
+	}
+}

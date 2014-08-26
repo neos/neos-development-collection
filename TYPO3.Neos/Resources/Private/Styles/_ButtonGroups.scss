@@ -1,0 +1,11 @@
+.neos-button-group {
+	&.neos-open {
+		.neos-dropdown-toggle {
+			@include box-shadow(0px 0px 0px transparent);
+		}
+	}
+
+	+ .neos-button-group {
+		margin-left: $relatedMargin;
+	}
+}
