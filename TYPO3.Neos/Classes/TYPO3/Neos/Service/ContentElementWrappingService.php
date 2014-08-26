@@ -98,11 +98,11 @@ class ContentElementWrappingService {
 
 			$attributes['tabindex'] = 0;
 		} else {
-			$attributes['data-__sitename'] = $contentContext->getCurrentSite()->getName();
-			$attributes['data-__siteroot'] = $contentContext->getCurrentSiteNode()->getContextPath();
+			$attributes['data-neos-site-name'] = $contentContext->getCurrentSite()->getName();
+			$attributes['data-neos-site-node-context-path'] = $contentContext->getCurrentSiteNode()->getContextPath();
 			// Add the workspace of the TYPO3CR context to the attributes
-			$attributes['data-context-__workspacename'] = $contentContext->getWorkspaceName();
-			$attributes['data-context-__dimensions'] = json_encode($contentContext->getDimensions());
+			$attributes['data-neos-context-workspace-name'] = $contentContext->getWorkspaceName();
+			$attributes['data-neos-context-dimensions'] = json_encode($contentContext->getDimensions());
 		}
 
 		if (!$node->dimensionsAreMatchingTargetDimensionValues()) {
@@ -114,24 +114,24 @@ class ContentElementWrappingService {
 		}
 
 		// Add the actual workspace of the node, the node identifier and the TypoScript path to the attributes
-		$attributes['data-neos-_identifier'] = $node->getIdentifier();
-		$attributes['data-neos-__workspacename'] = $node->getWorkspace()->getName();
-		$attributes['data-neos-_typoscript-path'] = $typoScriptPath;
+		$attributes['data-node-_identifier'] = $node->getIdentifier();
+		$attributes['data-node-__workspace-name'] = $node->getWorkspace()->getName();
+		$attributes['data-node-__typoscript-path'] = $typoScriptPath;
 
 		// these properties are needed together with the current NodeType to evaluate Node Type Constraints
 		// TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
 		if ($node->getParent()) {
-			$attributes['data-neos-_parentnodetype'] = $node->getParent()->getNodeType()->getName();
+			$attributes['data-node-__parent-node-type'] = $node->getParent()->getNodeType()->getName();
 		}
 
 		if ($node->isAutoCreated()) {
-			$attributes['data-neos-_nodename'] = $node->getName();
+			$attributes['data-node-_name'] = $node->getName();
 		}
 
 		if ($node->getParent() && $node->getParent()->isAutoCreated()) {
 			// we shall only add these properties if the parent is actually auto-created; as the Node-Type-Switcher in the UI relies on that.
-			$attributes['data-neos-_parentnodename'] = $node->getParent()->getName();
-			$attributes['data-neos-_grandparentnodetype'] = $node->getParent()->getParent()->getNodeType()->getName();
+			$attributes['data-node-__parent-node-name'] = $node->getParent()->getName();
+			$attributes['data-node-__grandparent-node-type'] = $node->getParent()->getParent()->getNodeType()->getName();
 		}
 
 		$attributes = $this->addNodePropertyAttributes($node, $attributes);
@@ -160,10 +160,10 @@ class ContentElementWrappingService {
 			}
 			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			$dasherizedPropertyName = $this->dasherize($propertyName);
-			$attributes['data-neos-' . $dasherizedPropertyName] = $this->getNodeProperty($node, $propertyName, $dataType);
+			$attributes['data-node-' . $dasherizedPropertyName] = $this->getNodeProperty($node, $propertyName, $dataType);
 			if ($dataType !== 'string') {
 				$prefixedDataType = $dataType === 'jsonEncoded' ? 'typo3:jsonEncoded' : 'xsd:' . $dataType;
-				$attributes['data-neosdatatype-' . $dasherizedPropertyName] = $prefixedDataType;
+				$attributes['data-nodedatatype-' . $dasherizedPropertyName] = $prefixedDataType;
 			}
 		}
 		return $attributes;

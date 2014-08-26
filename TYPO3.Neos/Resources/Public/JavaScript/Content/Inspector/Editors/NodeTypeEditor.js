@@ -19,15 +19,14 @@ define(
 					nodeTypes,
 					nodeTypeDefinition,
 					baseNodeType = this.get('baseNodeType'),
-					parentNodeName = this.get('inspector.selectedNode.attributes._parentnodename'),
-					parentNodeType = this.get('inspector.selectedNode.attributes._parentnodetype');
+					parentNodeName = this.get('inspector.selectedNode.attributes.__parentNodeName'),
+					parentNodeType = this.get('inspector.selectedNode.attributes.__parentNodeType');
 
 				// 1. Figure out the Node Types which are allowed according to the Node Type Constraints
 				if (parentNodeName) {
 					// parent IS auto created; as only then the ContentElementWrappingService adds this property.
-					this.get('inspector.selectedNode.attributes._grandparentnodetype');
 					nodeTypes = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
-						this.get('inspector.selectedNode.attributes._grandparentnodetype'),
+						this.get('inspector.selectedNode.attributes.__grandparentNodeType'),
 						parentNodeName
 					);
 				} else if(parentNodeType) {

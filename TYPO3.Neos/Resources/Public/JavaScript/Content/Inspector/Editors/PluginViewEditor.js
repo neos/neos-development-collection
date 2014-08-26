@@ -23,7 +23,7 @@ function(
 		_loadOptionsOnChange: function() {
 			var that = this,
 				nodePath = InspectorController.get('nodeProperties.plugin'),
-				workspaceName = InspectorController.get('nodeProperties.__workspacename');
+				workspaceName = InspectorController.get('nodeProperties.__workspaceName');
 
 			if (!Ember.empty(nodePath)) {
 				this._loadValuesFromController(
