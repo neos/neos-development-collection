@@ -20,3 +20,31 @@ Feature: Publish user workspace
       | Workspace |
       | live      |
     Then I should have one node
+
+  @fixtures
+  Scenario: Unpublished nodes returns the correct count before publish
+    And I create the following nodes:
+      | Path                                     | Node Type                      | Properties              | Workspace |
+      | /sites/neosdemotypo3/twocol              | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
+      | /sites/neosdemotypo3/twocol/column0/text | TYPO3.Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+    # We expect 4, the 2 column element with 2 columns (3) and the text element (1)
+    Then I expect to have 4 unpublished nodes for the following context:
+      | Workspace |
+      | user-demo |
+
+  @fixtures
+  Scenario: Unpublished nodes returns the correct count after publish
+    And I create the following nodes:
+      | Path                                     | Node Type                      | Properties              | Workspace |
+      | /sites/neosdemotypo3/twocol              | TYPO3.Neos.NodeTypes:TwoColumn | {}                      | user-demo |
+      | /sites/neosdemotypo3/twocol/column0/text | TYPO3.Neos.NodeTypes:Text      | {"text": "Hello world"} | user-demo |
+    And I publish the workspace "user-demo"
+    Then I expect to have 0 unpublished nodes for the following context:
+      | Workspace |
+      | user-demo |
+
+  @fixtures
+  Scenario: Unpublished nodes will return an empty array for the live workspace
+    Then I expect to have 0 unpublished nodes for the following context:
+      | Workspace |
+      | live      |
