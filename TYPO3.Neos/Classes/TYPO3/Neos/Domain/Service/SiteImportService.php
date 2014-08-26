@@ -381,9 +381,9 @@ class SiteImportService {
 						$filename = $resourceXml[0]->xpath('filename');
 
 						$resource = $this->importResource(
+							!empty($filename) ? (string)$filename[0] : NULL,
 							!empty($resourceHash) ? (string)$resourceHash[0] : NULL,
 							!empty($content) ? (string)$content[0] : NULL,
-							!empty($filename) ? (string)$filename[0] : NULL,
 							isset($resourceXml[0]['__identifier']) ? (string)$resourceXml[0]['__identifier'] : NULL
 						);
 
