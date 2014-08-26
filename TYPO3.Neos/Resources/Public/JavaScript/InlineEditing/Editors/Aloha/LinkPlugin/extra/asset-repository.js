@@ -101,7 +101,7 @@ define(
 		 * @return {void}
 		 */
 		markObject: function(obj, repositoryItem) {
-			$(obj).attr('data-' + this._repositoryIdentifier + '-temporary-data', repositoryItem.name);
+			$(obj).data(this._repositoryIdentifier + '-temporary-data', repositoryItem.name);
 		},
 
 		/**

@@ -41,7 +41,7 @@ define(
 						EventDispatcher.trigger('contentSaved');
 
 						if (result !== undefined) {
-							model.set('typo3:__workspacename', result.data.workspaceNameOfNode, {silent: true});
+							model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
 							PublishableNodes._updatePublishableEntities();
 							if (options && options.success) {

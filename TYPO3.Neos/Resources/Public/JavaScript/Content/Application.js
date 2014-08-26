@@ -417,7 +417,7 @@ function(
 			if (uri === '#') {
 					// Often, pages use an URI of "#" to go to the homepage. In this case,
 					// we get the current workspace name and redirect to this workspace instead.
-				var workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename');
+				var workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 				uri = '@' + workspaceName;
 			}
 

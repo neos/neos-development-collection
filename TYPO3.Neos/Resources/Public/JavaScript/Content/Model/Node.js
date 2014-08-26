@@ -76,7 +76,7 @@ define([
 				namespace = Configuration.get('TYPO3_NAMESPACE');
 
 			this.set('modified', !$.isEmptyObject(vieEntity.changed));
-			this.set('publishable', vieEntity.get(namespace + '__workspacename') !== 'live');
+			this.set('publishable', vieEntity.get(namespace + '__workspaceName') !== 'live');
 
 			var $entityElement = vieInstance.service('rdfa').getElementBySubject(vieEntity.getSubject(), $(document));
 				// this event fires if inline content changes

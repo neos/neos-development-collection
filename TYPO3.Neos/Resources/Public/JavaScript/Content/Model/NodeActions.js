@@ -204,7 +204,7 @@ define(
 				$entityElement = vieInstance.service('rdfa').getElementBySubject(referenceEntity.getSubject(), $(document)),
 				$closestCollection = $entityElement.closest('[rel="typo3:content-collection"]'),
 				closestCollectionEntity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject($closestCollection)),
-				typoScriptPath = position === 'into' ? referenceEntity.get('typo3:_typoscriptPath') : closestCollectionEntity.get('typo3:_typoscriptPath');
+				typoScriptPath = position === 'into' ? referenceEntity.get('typo3:__typoscriptPath') : closestCollectionEntity.get('typo3:__typoscriptPath');
 
 			NodeEndpoint.createAndRender(
 				nodePath,

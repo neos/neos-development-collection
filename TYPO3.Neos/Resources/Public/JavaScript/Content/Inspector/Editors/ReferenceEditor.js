@@ -34,7 +34,7 @@ define(
 							currentQueryTimer = null;
 
 							var arguments = {
-								workspaceName: $('#neos-document-metadata').attr('data-context-__workspacename'),
+								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								searchTerm: query.term,
 								nodeTypes: that.get('nodeTypes')
 							};
@@ -85,8 +85,8 @@ define(
 					}).create();
 					that.set('content', item);
 
-					var arguments = { workspaceName: $('#neos-document-metadata').attr('data-context-__workspacename') };
-					HttpRestClient.getResource('neos-service-nodes', value, {data: arguments}).then(function(result) {
+					var parameters = {workspaceName: $('#neos-document-metadata').data('neos-context-__workspace-name')};
+					HttpRestClient.getResource('neos-service-nodes', value, {data: parameters}).then(function(result) {
 						item.set('text', $('.node-label', result.resource).text());
 						that._updateSelect2();
 					});

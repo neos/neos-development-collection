@@ -111,7 +111,7 @@ function(
 		 * Updates the "selectedDimensions" property by retrieving the currently active dimensions from the document markup
 		 */
 		_updateSelectedDimensionsFromCurrentDocument: function() {
-			this.set('selectedDimensions', $('#neos-document-metadata').data('context-__dimensions'));
+			this.set('selectedDimensions', $('#neos-document-metadata').data('neos-context-dimensions'));
 		},
 
 		/**
@@ -177,13 +177,13 @@ function(
 		reloadDocument: function() {
 			var that = this,
 				$documentMetadata = $('#neos-document-metadata'),
-				nodeIdentifier = $documentMetadata.attr('data-neos-_identifier'),
-				arguments = {
+				nodeIdentifier = $documentMetadata.data('node-_identifier'),
+				parameters = {
 					dimensions: this.get('dimensionValues'),
-					workspaceName: $documentMetadata.attr('data-context-__workspacename')
+					workspaceName: $documentMetadata.data('neos-context-workspace-name')
 				};
 
-			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: arguments}).then(function(result) {
+			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 				that.set('selectorIsActive', false);
 				ContentModule.loadPage($("link[rel='node-frontend']", result.resource).attr('href'), false, function() {
 					EventDispatcher.trigger('contentDimensionsSelectionChanged');
@@ -191,5 +191,4 @@ function(
 			});
 		}
 	}).create();
-
 });

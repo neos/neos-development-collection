@@ -9,7 +9,7 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 	}
 
 	/**
-	 * We're monkey-patching the VIE RDFa-Service, in order to be able to read and write data-neos-* attributes
+	 * We're monkey-patching the VIE RDFa-Service, in order to be able to read and write data-node-* attributes
 	 * instead of RDFa tags.
 	 */
 	var originalRdfaServiceReadEntityPredicatesFn = vieInstance.RdfaService.prototype._readEntityPredicates;
@@ -18,10 +18,10 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 		var entityPredicates = originalRdfaServiceReadEntityPredicatesFn.apply(this, arguments);
 
 		$.each(element.get(0).attributes, function(i, attribute) {
-			if (attribute.name.substr(0, 10) === 'data-neos-' && element.attr('typeof') !== undefined) {
+			if (attribute.name.substr(0, 10) === 'data-node-' && element.attr('typeof') !== undefined) {
 				var value = attribute.value;
 				var propertyName = attribute.name.substr(10);
-				var dataType = element.attr('data-neosdatatype-' + propertyName);
+				var dataType = element.data('nodedatatype-' + propertyName);
 
 				if (dataType) {
 					var fullyQualifiedDataType = service.vie.namespaces.uri(dataType);
@@ -44,9 +44,9 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 		var service = this;
 
 		$.each(element.attributes, function(i, attribute) {
-			if (attribute.name.substr(0, 10) === 'data-neos-') {
+			if (attribute.name.substr(0, 10) === 'data-node-') {
 				var propertyName = attribute.name.substr(10);
-				var dataType = $(element).attr('data-neosdatatype-' + propertyName);
+				var dataType = $(element).data('nodedatatype-' + propertyName);
 
 				propertyName = propertyName.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
 
