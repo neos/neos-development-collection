@@ -43,6 +43,14 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @return \TYPO3\TYPO3CR\Service\PublishingService $publishingService
+	 */
+	private function getPublishingService() {
+		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
+		return $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingService');
+	}
+
+	/**
 	 * @Given /^I have the following nodes:$/
 	 * @When /^I create the following nodes:$/
 	 */
@@ -191,8 +199,7 @@ trait StepDefinitionsTrait {
 	public function iPublishNodeToWorkspaceWithTheFollowingContext() {
 		$node = $this->iShouldHaveOneNode();
 
-		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
-		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingService');
+		$publishingService = $this->getPublishingService();
 		$publishingService->publishNode($node);
 
 		$this->getSubcontext('flow')->persistAll();
@@ -451,8 +458,7 @@ trait StepDefinitionsTrait {
 		$rows = $table->getHash();
 		$context = $this->getContextForProperties($rows[0]);
 
-		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
-		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingService');
+		$publishingService = $this->getPublishingService();
 		Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes($context->getWorkspace())));
 	}
 
