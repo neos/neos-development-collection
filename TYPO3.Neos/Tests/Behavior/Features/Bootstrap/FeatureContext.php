@@ -7,11 +7,14 @@ use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 
 require_once(__DIR__ . '/../../../../../Flowpack.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/StepDefinitionsTrait.php');
 
 /**
  * Features context
  */
 class FeatureContext extends MinkContext {
+
+	use StepDefinitionsTrait;
 
 	/**
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
@@ -31,6 +34,14 @@ class FeatureContext extends MinkContext {
 	public function __construct(array $parameters) {
 		$this->useContext('flow', new \Flowpack\Behat\Tests\Behat\FlowContext($parameters));
 		$this->objectManager = $this->getSubcontext('flow')->getObjectManager();
+	}
+
+	/**
+	 * @return \TYPO3\Neos\Service\PublishingService $publishingService
+	 */
+	private function getPublishingService() {
+		/** @var \TYPO3\TYPO3CR\Service\PublishingService $publishingService */
+		return $this->getObjectManager()->get('TYPO3\Neos\Service\PublishingService');
 	}
 
 	/**
