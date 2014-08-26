@@ -1308,8 +1308,8 @@ class NodeDataRepository extends Repository {
 		$query = $this->createQuery();
 		$possibleNodeData = $query->matching(
 			$query->logicalOr(
-				$query->like('properties', '%Persistence_Object_Identifier";s:36:"' . $identifier . '%', FALSE),
-				$query->like('properties', '%__identifier";s:36:"' . $identifier . '%', FALSE)
+				$query->like('properties', '%Persistence_Object_Identifier";s:36:"' . $identifier . '%', TRUE),
+				$query->like('properties', '%__identifier";s:36:"' . $identifier . '%', TRUE)
 			)
 		)->execute()->toArray();
 
