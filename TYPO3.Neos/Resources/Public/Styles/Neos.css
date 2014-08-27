@@ -10386,74 +10386,6 @@
   cursor: pointer;
   outline: 4px solid #00b5ff;
 }
-.neos.media-browser .page-navigation ul {
-  border-top: 1px solid #3f3f3f;
-  text-align: center;
-  font-size: 0;
-}
-.neos.media-browser .page-navigation ul li {
-  display: inline-block;
-  font-size: 14px;
-  width: 40px;
-}
-.neos.media-browser .page-navigation ul li.previous, .neos.media-browser .page-navigation ul li.next {
-  position: relative;
-  border: 1px solid #3f3f3f;
-  border-top: 0;
-  overflow: hidden;
-}
-.neos.media-browser .page-navigation ul li.previous a, .neos.media-browser .page-navigation ul li.next a {
-  text-indent: -9999px;
-}
-.neos.media-browser .page-navigation ul li.previous a:before, .neos.media-browser .page-navigation ul li.next a:before {
-  position: relative;
-  top: 5px;
-  display: block;
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  font-size: 26px;
-  line-height: 26px;
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-  -webkit-font-smoothing: antialiased;
-  text-indent: 0;
-  color: #fff;
-}
-.neos.media-browser .page-navigation ul li.previous {
-  float: left;
-}
-.neos.media-browser .page-navigation ul li.previous a:before {
-  content: "‹";
-}
-.neos.media-browser .page-navigation ul li.next {
-  float: right;
-}
-.neos.media-browser .page-navigation ul li.next a:before {
-  content: "›";
-}
-.neos.media-browser .page-navigation ul li.current {
-  border: 1px solid #3f3f3f;
-  border-top: 0;
-  height: 40px;
-  width: 40px;
-  line-height: 40px;
-  color: #00b5ff;
-}
-.neos.media-browser .page-navigation ul li a {
-  display: block;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
-  color: #fff;
-}
-.neos.media-browser .page-navigation ul li a:hover {
-  color: #fff;
-  background-color: #00b5ff;
-  text-decoration: none;
-}
 .neos.media-browser .neos-row-fluid .neos-image-inputs {
   float: left;
   margin-left: 0;
@@ -10716,6 +10648,74 @@
   color: white;
   font-weight: 400;
   font-size: 14px;
+}
+.neos .page-navigation ul {
+  border-top: 1px solid #3f3f3f;
+  text-align: center;
+  font-size: 0;
+}
+.neos .page-navigation ul li {
+  display: inline-block;
+  font-size: 14px;
+  width: 40px;
+}
+.neos .page-navigation ul li.previous, .neos .page-navigation ul li.next {
+  position: relative;
+  border: 1px solid #3f3f3f;
+  border-top: 0;
+  overflow: hidden;
+}
+.neos .page-navigation ul li.previous a, .neos .page-navigation ul li.next a {
+  text-indent: -9999px;
+}
+.neos .page-navigation ul li.previous a:before, .neos .page-navigation ul li.next a:before {
+  position: relative;
+  top: 5px;
+  display: block;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 26px;
+  line-height: 26px;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  text-indent: 0;
+  color: #fff;
+}
+.neos .page-navigation ul li.previous {
+  float: left;
+}
+.neos .page-navigation ul li.previous a:before {
+  content: "‹";
+}
+.neos .page-navigation ul li.next {
+  float: right;
+}
+.neos .page-navigation ul li.next a:before {
+  content: "›";
+}
+.neos .page-navigation ul li.current {
+  border: 1px solid #3f3f3f;
+  border-top: 0;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  color: #00b5ff;
+}
+.neos .page-navigation ul li a {
+  display: block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  color: #fff;
+}
+.neos .page-navigation ul li a:hover {
+  color: #fff;
+  background-color: #00b5ff;
+  text-decoration: none;
 }
 .neos #aloha-ui-context ::-webkit-scrollbar {
   width: 8px;
@@ -11844,7 +11844,8 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-search input.neos-select2-active,
 .neos-select2-more-results.neos-select2-active,
-.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field input.neos-select2-active {
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field input.neos-select2-active,
+.neos-select2-search input, .neos-select2-search-choice-close, .neos-select2-container .neos-select2-choice abbr, .neos-select2-container .neos-select2-choice .neos-select2-arrow b {
   background-image: none !important;
 }
 
