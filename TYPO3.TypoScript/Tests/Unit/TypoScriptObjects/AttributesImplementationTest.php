@@ -35,9 +35,13 @@ class AttributesImplementationTest extends UnitTestCase {
 		return array(
 			'null' => array(NULL, ''),
 			'empty array' => array(array(), ''),
+			'boolean values' => array(array('booleanTrueAttribute' => TRUE, 'booleanFalseAttribute' => FALSE), ' booleanTrueAttribute'),
+			'empty string value' => array(array('emptyStringAttribute' => ''), ' emptyStringAttribute'),
+			'null value' => array(array('nullAttribute' => NULL), ''),
 			'simple array' => array(array('attributeName1' => 'attributeValue1'), ' attributeName1="attributeValue1"'),
 			'encoding' => array(array('spec<ial' => 'chara>cters'), ' spec&lt;ial="chara&gt;cters"'),
-			'array attributes' => array(array('class' => array('icon', 'icon-neos')), ' class="icon icon-neos"'),
+			'array attributes' => array(array('class' => array('icon', NULL, 'icon-neos', '')), ' class="icon icon-neos"'),
+			'empty attribute value without allowEmpty' => array(array('emptyStringAttribute' => '', '__meta' => array('allowEmpty' => FALSE)), ' emptyStringAttribute=""'),
 		);
 	}
 
@@ -49,7 +53,7 @@ class AttributesImplementationTest extends UnitTestCase {
 		$path = 'attributes/test';
 		$this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function($evaluatePath, $that) use ($path, $properties) {
 			$relativePath = str_replace($path . '/', '', $evaluatePath);
-			return ObjectAccess::getProperty($properties, $relativePath);
+			return ObjectAccess::getPropertyPath($properties, str_replace('/', '.', $relativePath));
 		}));
 
 		$typoScriptObjectName = 'TYPO3.TypoScript:Attributes';

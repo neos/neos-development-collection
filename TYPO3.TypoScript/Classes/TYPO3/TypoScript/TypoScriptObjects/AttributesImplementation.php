@@ -32,20 +32,46 @@ class AttributesImplementation extends AbstractArrayTypoScriptObject {
 	 * @return string
 	 */
 	public function evaluate() {
+		$allowEmpty = $this->getAllowEmpty();
+
 		$renderedAttributes = '';
 		foreach (array_keys($this->properties) as $attributeName) {
+			if ($attributeName === '__meta') continue;
+
 			$encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', FALSE);
 			$attributeValue = $this->tsValue($attributeName);
-			if ($attributeValue === NULL) {
-				$renderedAttributes .= ' ' . $encodedAttributeName;
+			if ($attributeValue === NULL || $attributeValue === FALSE) {
+				// No op
+			} elseif ($attributeValue === TRUE || $attributeValue === '') {
+				$renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
 			} else {
 				if (is_array($attributeValue)) {
-					$attributeValue = implode(' ', $attributeValue);
+					$joinedAttributeValue = '';
+					foreach ($attributeValue as $attributeValuePart) {
+						if ((string)$attributeValuePart !== '') {
+							$joinedAttributeValue .= ' ' . trim($attributeValuePart);
+						}
+					}
+					$attributeValue = trim($joinedAttributeValue);
 				}
 				$encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', FALSE);
 				$renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
 			}
 		}
 		return $renderedAttributes;
+	}
+
+	/**
+	 * Whether empty attributes (HTML5 syntax) should be allowed
+	 *
+	 * @return boolean
+	 */
+	protected function getAllowEmpty() {
+		$allowEmpty = $this->tsValue('__meta/allowEmpty');
+		if ($allowEmpty === NULL) {
+			return TRUE;
+		} else {
+			return (boolean)$allowEmpty;
+		}
 	}
 }
