@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -126,6 +127,12 @@ class NodeCommandController extends CommandController {
 			$childNodes = $nodeType->getAutoCreatedChildNodes();
 			$context = $this->createContext($workspace);
 			foreach ($this->nodeDataRepository->findByNodeType($nodeTypeName) as $nodeData) {
+				/* @var $nodeData NodeData */
+				if ($nodeData->getWorkspace()->getName() !== $workspace) {
+					// We'll only work on nodes which exist materialized in the specified workspace; else we continue
+					// with the next node.
+					continue;
+				}
 				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 				if (!$node instanceof NodeInterface || $node->isRemoved() === TRUE) {
 					continue;
