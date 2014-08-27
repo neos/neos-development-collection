@@ -99,12 +99,6 @@ function(
 				block: {
 					sidebarAttributeEditor: false
 				},
-				/**
-				 * FIXME:
-				 * Currently the filtering of options for alignment and format don't work correctly,
-				 * meaning that all options are still shown. This seems to be an Aloha bug and needs
-				 * more research.
-				 */
 				table: { config: [], editables: nodeSettings.table },
 				link: { config: [], editables: nodeSettings.link },
 				list: { config: [], editables: nodeSettings.list },
