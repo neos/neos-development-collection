@@ -59,38 +59,6 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getAllPresetsReturnsDimensionsOrderedByPosition() {
-		$source = new ConfigurationContentDimensionPresetSource();
-		$source->setConfiguration($this->validConfiguration);
-		$presets = $source->getAllPresets();
-		$this->assertEquals(array('targetGroups', 'language'), array_keys($presets));
-	}
-
-	/**
-	 * @test
-	 */
-	public function getAllPresetsReturnsDimensionPresetsOrderedByPosition() {
-		$source = new ConfigurationContentDimensionPresetSource();
-		$source->setConfiguration($this->validConfiguration);
-		$presets = $source->getAllPresets();
-		$this->assertArrayHasKey('language', $presets);
-		$this->assertEquals(array('de_DE', 'all'), array_keys($presets['language']['presets']));
-	}
-
-	/**
-	 * @test
-	 */
-	public function getDefaultPresetWithExistingDimensionReturnsDefaultPresetWithIdentifier() {
-		$source = new ConfigurationContentDimensionPresetSource();
-		$source->setConfiguration($this->validConfiguration);
-		$preset = $source->getDefaultPreset('language');
-		$this->assertArrayHasKey('identifier', $preset);
-		$this->assertEquals('all', $preset['identifier']);
-	}
-
-	/**
-	 * @test
-	 */
 	public function findPresetByUriSegmentWithExistingUriSegmentReturnsPreset() {
 		$source = new ConfigurationContentDimensionPresetSource();
 		$source->setConfiguration($this->validConfiguration);
@@ -128,18 +96,6 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase {
 		$source->setConfiguration($this->validConfiguration);
 		$preset = $source->findPresetByDimensionValues('language', array('ja_JP', 'mul_ZZ'));
 		$this->assertNull($preset);
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\Neos\Domain\Exception
-	 * @expectedExceptionCode 1401093863
-	 */
-	public function setConfigurationThrowsExceptionIfSpecifiedDefaultPresetDoesNotExist() {
-		$source = new ConfigurationContentDimensionPresetSource();
-		$configuration = $this->validConfiguration;
-		$configuration['language']['defaultPreset'] = 'something';
-		$source->setConfiguration($configuration);
 	}
 
 }
