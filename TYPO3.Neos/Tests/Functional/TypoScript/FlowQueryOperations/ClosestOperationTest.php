@@ -22,7 +22,7 @@ class ClosestOperationTest extends AbstractNodeTest {
 		return array(
 			array(
 				'currentNodePath' => '/b/b1/b1a',
-				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR:TestingNodeType]',
+				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
 				'expectedNodePath' => '/b/b1'
 			),
 			array(
@@ -32,22 +32,22 @@ class ClosestOperationTest extends AbstractNodeTest {
 			),
 			array(
 				'currentNodePath' => '/b/b3/b3b',
-				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes]',
+				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes]',
 				'expectedNodePath' => '/b/b3'
 			),
 			array(
 				'currentNodePath' => '/b/b1/b1a',
-				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes]',
+				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes]',
 				'expectedNodePath' => NULL
 			),
 			array(
 				'currentNodePath' => '/b/b1',
-				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes]',
+				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes]',
 				'expectedNodePath' => NULL
 			),
 			array(
 				'currentNodePath' => '/b/b3/b3a',
-				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR:TestingNodeType]',
+				'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
 				'expectedNodePath' => '/b/b3/b3a'
 			),
 		);
@@ -72,8 +72,8 @@ class ClosestOperationTest extends AbstractNodeTest {
 	 */
 	public function closestOperationTests($currentNodePath, $nodeTypeFilter, $expectedNodePath) {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeType');
-		$testNodeType2 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeTypeWithSubnodes');
+		$testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
+		$testNodeType2 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
 
 		$rootNode = $this->node->getNode('/');
 		$nodeA = $rootNode->createNode('a');

@@ -35,12 +35,12 @@ class HasOperationTest extends AbstractNodeTest {
 			),
 			array(
 				'currentNodePaths' => array('/b'),
-				'subject' => '[instanceof TYPO3.TYPO3CR:TestingNodeType]',
+				'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
 				'expectedNodePaths' => array('/b')
 			),
 			array(
 				'currentNodePaths' => array('/b'),
-				'subject' => 'b1[instanceof TYPO3.TYPO3CR:TestingNodeType]',
+				'subject' => 'b1[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
 				'expectedNodePaths' => array('/b')
 			),
 			array(
@@ -86,7 +86,7 @@ class HasOperationTest extends AbstractNodeTest {
 	 */
 	public function hasOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths) {
 		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-		$testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR:TestingNodeType');
+		$testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
 
 		$rootNode = $this->node->getNode('/');
 		$nodeA = $rootNode->createNode('a');
