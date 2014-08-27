@@ -197,7 +197,10 @@ class TypoScriptService {
 
 		foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
 			if (isset($propertyName[0]) && $propertyName[0] !== '_') {
-				$output .= "\t" . $propertyName . ' = ${node.properties.' . $propertyName . '}' . chr(10);
+				$output .= "\t" . $propertyName . ' = ${q(node).property("' . $propertyName . '")}' . chr(10);
+				if ($propertyConfiguration['type'] === 'string' && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['ui']['inlineEditable'] === TRUE) {
+					$output .= "\t" . $propertyName . '.@process.convertUris = TYPO3.Neos:ConvertUris' . chr(10);
+				}
 			}
 		}
 
