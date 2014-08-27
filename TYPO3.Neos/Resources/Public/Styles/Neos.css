@@ -10634,6 +10634,16 @@
   outline-offset: 6px;
 }
 
+.neos-inline-editable {
+  outline-offset: 6px;
+}
+.neos-inline-editable:hover {
+  outline: 2px solid rgba(0, 0, 0, 0.2);
+}
+.neos-inline-editable.aloha-editable-active {
+  outline: 2px solid #00b5ff !important;
+}
+
 button.neos-create-new-content {
   position: relative;
   z-index: 100;
