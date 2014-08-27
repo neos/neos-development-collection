@@ -143,7 +143,8 @@ class NodesController extends ActionController {
 				}
 			}
 
-			$closestDocumentNode = (new FlowQuery(array($node)))->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+			$flowQuery = new FlowQuery(array($node));
+			$closestDocumentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 			$this->view->assignMultiple(array(
 				'node' => $node,
 				'closestDocumentNode' => $closestDocumentNode,
