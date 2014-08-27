@@ -8467,30 +8467,32 @@
   color: #5b5b5b;
   cursor: not-allowed;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.neos-disabled::after {
   color: #5b5b5b;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
+  content: "\f178";
+  left: 18px;
+  top: 9px;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before::after {
   content: "\f148";
   left: 24px;
   top: 6px;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after::after {
   content: "\f149";
   left: 24px;
   top: 7px;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node::after {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
   position: absolute;
-  left: 18px;
-  top: 9px;
   font-size: 14px;
   color: #00b5ff;
 }
@@ -8524,30 +8526,32 @@
   color: #5b5b5b;
   cursor: not-allowed;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.neos-disabled::after {
   color: #5b5b5b;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
+  content: "\f178";
+  left: 18px;
+  top: 9px;
+}
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before::after {
   content: "\f148";
   left: 24px;
   top: 5px;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after::after {
   content: "\f149";
   left: 24px;
   top: 6px;
 }
-.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node:after {
+.neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node::after {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
   position: absolute;
-  left: 18px;
-  top: 9px;
   font-size: 14px;
   color: #00b5ff;
 }
@@ -8727,30 +8731,32 @@
   color: #5b5b5b;
   cursor: not-allowed;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.neos-disabled::after {
   color: #5b5b5b;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
+  content: "\f178";
+  left: 18px;
+  top: 9px;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before::after {
   content: "\f148";
   left: 24px;
   top: 6px;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after::after {
   content: "\f149";
   left: 24px;
   top: 7px;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node::after {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
   position: absolute;
-  left: 18px;
-  top: 9px;
   font-size: 14px;
   color: #00b5ff;
 }
@@ -8784,30 +8790,32 @@
   color: #5b5b5b;
   cursor: not-allowed;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled:hover, .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.neos-disabled::after {
   color: #5b5b5b;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
+  content: "\f178";
+  left: 18px;
+  top: 9px;
+}
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before::after {
   content: "\f148";
   left: 24px;
   top: 5px;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after::after {
   content: "\f149";
   left: 24px;
   top: 6px;
 }
-.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node:after {
+.neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node::after {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
   position: absolute;
-  left: 18px;
-  top: 9px;
   font-size: 14px;
   color: #00b5ff;
 }
