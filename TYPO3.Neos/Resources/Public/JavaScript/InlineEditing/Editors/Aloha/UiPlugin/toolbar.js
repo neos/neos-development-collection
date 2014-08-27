@@ -103,6 +103,8 @@ define([
 			Toolbar.$inspectorSurfaceContainer.children().detach();
 			Toolbar.$inspectorSurfaceContainer.append(this.$inspectorContainer);
 			Toolbar.$inspectorSurfaceContainer.show();
+
+			$('body').addClass('neos-inline-editing-active');
 		},
 
 		/**
@@ -114,6 +116,8 @@ define([
 
 			Toolbar.$inspectorSurfaceContainer.hide();
 			Toolbar.$inspectorSurfaceContainer.children().detach();
+
+			$('body').removeClass('neos-inline-editing-active');
 		}
 	});
 
