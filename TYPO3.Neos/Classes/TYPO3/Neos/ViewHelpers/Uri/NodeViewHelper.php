@@ -35,13 +35,14 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``
+ * ``../about`` results in ``/sites/acmecom/about/``,
+ * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
  * Example: given that the current node is ``/sites/acmecom/products/``,
- * ``~/about/us`` results in ``/sites/acmecom/about/us``.
+ * ``~/about/us`` results in ``/sites/acmecom/about/us``,
+ * ``~`` results in ``/sites/acmecom``.
  *
  * = Examples =
  *
@@ -69,6 +70,13 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * (depending on current workspace, current node, format etc.)
  * </output>
  *
+ * <code title="Target node given as relative node path">
+ * <neos:uri.node node="~/about/us" />
+ * </code>
+ * <output>
+ * about/us.html
+ * (depending on current workspace, current node, format etc.)
+ * </output>
  * @api
  */
 class NodeViewHelper extends AbstractViewHelper {
@@ -82,7 +90,7 @@ class NodeViewHelper extends AbstractViewHelper {
 	/**
 	 * Renders the URI.
 	 *
-	 * @param mixed $node A node object or a string node path or NULL to resolve the current document node
+	 * @param mixed $node A node object or a string node path (absolute or relative) or NULL to resolve the current document node
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)

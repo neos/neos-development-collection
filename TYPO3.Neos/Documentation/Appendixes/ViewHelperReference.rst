@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2014-08-29
+This reference was automatically generated from code on 2014-09-02
 
 
 neos:backend.configurationCacheVersion
@@ -349,13 +349,14 @@ Example: ``/sites/acmecom/home/about/us``
 The given path is treated as a path relative to the current node.
 Examples: given that the current node is ``/sites/acmecom/products/``,
 ``stapler`` results in ``/sites/acmecom/products/stapler``,
-``../about`` results in ``/sites/acmecom/about/``
-``./neos/info`` results in ``/sites/acmecom/products/neos/info``
+``../about`` results in ``/sites/acmecom/about/``,
+``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
 
 *``node`` starts with a tilde character (``~``):*
 The given path is treated as a path relative to the current site node.
 Example: given that the current node is ``/sites/acmecom/products/``,
-``~/about/us`` results in ``/sites/acmecom/about/us``.
+``~/about/us`` results in ``/sites/acmecom/about/us``,
+``~`` results in ``/sites/acmecom``.
 
 :Implementation: TYPO3\\Neos\\ViewHelpers\\Link\\NodeViewHelper
 
@@ -447,6 +448,17 @@ Expected result::
 Expected result::
 
 	<a href="contact/imprint.html">Corporate imprint</a>
+	(depending on current workspace, current node, format etc.)
+
+
+**Target node given as relative node path**::
+
+	<neos:link.node node="~/about/us">About us</neos:link.node>
+
+
+Expected result::
+
+	<a href="about/us.html">About us</a>
 	(depending on current workspace, current node, format etc.)
 
 
@@ -557,13 +569,14 @@ Example: ``/sites/acmecom/home/about/us``
 The given path is treated as a path relative to the current node.
 Examples: given that the current node is ``/sites/acmecom/products/``,
 ``stapler`` results in ``/sites/acmecom/products/stapler``,
-``../about`` results in ``/sites/acmecom/about/``
-``./neos/info`` results in ``/sites/acmecom/products/neos/info``
+``../about`` results in ``/sites/acmecom/about/``,
+``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
 
 *``node`` starts with a tilde character (``~``):*
 The given path is treated as a path relative to the current site node.
 Example: given that the current node is ``/sites/acmecom/products/``,
-``~/about/us`` results in ``/sites/acmecom/about/us``.
+``~/about/us`` results in ``/sites/acmecom/about/us``,
+``~`` results in ``/sites/acmecom``.
 
 :Implementation: TYPO3\\Neos\\ViewHelpers\\Uri\\NodeViewHelper
 
@@ -573,7 +586,7 @@ Example: given that the current node is ``/sites/acmecom/products/``,
 Arguments
 *********
 
-* ``node`` (mixed, *optional*): A node object or a string node path or NULL to resolve the current document node
+* ``node`` (mixed, *optional*): A node object or a string node path (absolute or relative) or NULL to resolve the current document node
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
@@ -581,7 +594,7 @@ Arguments
 
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
-* ``section`` (string, *optional*):
+* ``section`` (string, *optional*): 
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
@@ -620,6 +633,17 @@ Expected result::
 **Target node given as absolute node path**::
 
 	<neos:uri.node node="/sites/acmecom/about/us" />
+
+
+Expected result::
+
+	about/us.html
+	(depending on current workspace, current node, format etc.)
+
+
+**Target node given as relative node path**::
+
+	<neos:uri.node node="~/about/us" />
 
 
 Expected result::

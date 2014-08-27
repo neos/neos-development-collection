@@ -126,6 +126,7 @@ class NodeLinkingServiceTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function nodeLinkingServiceCreatesUriViaStringStartingWithTilde() {
+		$this->assertOutputLinkValid('/', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~', $this->baseNode));
 		$this->assertOutputLinkValid('home.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~/home', $this->baseNode));
 		$this->assertOutputLinkValid('home/about-us.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~/home/about-us', $this->baseNode));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~/home/about-us/mission', $this->baseNode));

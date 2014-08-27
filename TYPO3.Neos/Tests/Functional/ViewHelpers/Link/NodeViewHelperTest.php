@@ -136,6 +136,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
+		$this->assertOutputLinkValid('/', $this->viewHelper->render('~'));
 		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('~/home'));
 		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('~/home/about-us'));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('~/home/about-us/mission'));

@@ -33,13 +33,14 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``
+ * ``../about`` results in ``/sites/acmecom/about/``,
+ * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
  * Example: given that the current node is ``/sites/acmecom/products/``,
- * ``~/about/us`` results in ``/sites/acmecom/about/us``.
+ * ``~/about/us`` results in ``/sites/acmecom/about/us``,
+ * ``~`` results in ``/sites/acmecom``.
  *
  * @Flow\Scope("singleton")
  */
@@ -81,7 +82,10 @@ class NodeLinkingService {
 					throw new NeosException('The baseNode argument is required for linking to nodes with a relative path.', 1407879905);
 				}
 				$contentContext = $baseNode->getContext();
-				if (substr($node, 0, 2) === '~/') {
+
+				if ($node === '~' || $node === '~/') {
+					$node = $contentContext->getCurrentSiteNode();
+				} elseif (substr($node, 0, 2) === '~/') {
 					$node = $contentContext->getCurrentSiteNode()->getNode(substr($node, 2));
 				} else {
 					if (substr($node, 0, 1) === '/') {

@@ -35,13 +35,14 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * The given path is treated as a path relative to the current node.
  * Examples: given that the current node is ``/sites/acmecom/products/``,
  * ``stapler`` results in ``/sites/acmecom/products/stapler``,
- * ``../about`` results in ``/sites/acmecom/about/``
- * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``
+ * ``../about`` results in ``/sites/acmecom/about/``,
+ * ``./neos/info`` results in ``/sites/acmecom/products/neos/info``.
  *
  * *``node`` starts with a tilde character (``~``):*
  * The given path is treated as a path relative to the current site node.
  * Example: given that the current node is ``/sites/acmecom/products/``,
- * ``~/about/us`` results in ``/sites/acmecom/about/us``.
+ * ``~/about/us`` results in ``/sites/acmecom/about/us``,
+ * ``~`` results in ``/sites/acmecom``.
  *
  * = Examples =
  *
@@ -69,6 +70,13 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * (depending on current workspace, current node, format etc.)
  * </output>
  *
+ * <code title="Target node given as relative node path">
+ * <neos:link.node node="~/about/us">About us</neos:link.node>
+ * </code>
+ * <output>
+ * <a href="about/us.html">About us</a>
+ * (depending on current workspace, current node, format etc.)
+ * </output>
  * @api
  */
 class NodeViewHelper extends AbstractTagBasedViewHelper {
