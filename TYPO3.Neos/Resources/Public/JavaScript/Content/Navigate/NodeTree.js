@@ -376,11 +376,9 @@ define(
 						addClass: 'typo3_neos-page neos-matched',
 						iconClass: iconClass,
 						expand: false
-					};
-				if (activeNode.getLevel() <= this.get('unmodifiableLevels')) {
-					newPosition = 'into';
-				}
-				var newNode;
+					},
+					newNode;
+
 				switch (newPosition) {
 					case 'before':
 						newNode = activeNode.getParent().addChild(data, activeNode);

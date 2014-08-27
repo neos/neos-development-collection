@@ -72,9 +72,71 @@ define(
 				ok: 0
 			},
 
-			newPosition: 'after',
-			pastePosition: 'after',
-			minimumCreateAndPasteLevel: 1,
+			desiredNewPosition: 'after',
+			newPosition: function() {
+				var allowedNewPositions = this.get('allowedNewPositions'),
+					desiredNewPosition = this.get('desiredNewPosition');
+				return allowedNewPositions.indexOf(desiredNewPosition) !== -1 ? desiredNewPosition : allowedNewPositions[allowedNewPositions.length - 1];
+			}.property('allowedNewPositions', 'desiredNewPosition'),
+			allowedNewPositions: function() {
+				var positions = [''],
+					activeNode = this.get('activeNode');
+				if (!activeNode) {
+					return positions;
+				}
+
+				var level = activeNode.getLevel(),
+					unmodifiableLevels = this.get('unmodifiableLevels');
+				if (level >= unmodifiableLevels) {
+					var possibleChildNodeTypes = _getAllowedChildNodeTypesForNode(activeNode);
+					if (possibleChildNodeTypes.length > 0) {
+						positions.push('into');
+					}
+
+					if (level > unmodifiableLevels) {
+						var possibleSiblingNodeTypes = _getAllowedChildNodeTypesForNode(activeNode.parent);
+						if (possibleSiblingNodeTypes.length > 0) {
+							positions.push('before');
+							positions.push('after');
+						}
+					}
+				}
+				return positions;
+			}.property('activeNode'),
+
+			desiredPastePosition: 'after',
+			pastePosition: function() {
+				var allowedPastePositions = this.get('allowedPastePositions'),
+					desiredPastePosition = this.get('desiredPastePosition');
+				return allowedPastePositions.indexOf(desiredPastePosition) !== -1 ? desiredPastePosition : allowedPastePositions[allowedPastePositions.length - 1];
+			}.property('allowedPastePositions', 'desiredPastePosition'),
+			allowedPastePositions: function() {
+				var positions = [''],
+					activeNode = this.get('activeNode'),
+					sourceNode = this.get('cutNode') || this.get('copiedNode');
+				if (!activeNode || !sourceNode) {
+					return positions;
+				}
+
+				var level = activeNode.getLevel(),
+					unmodifiableLevels = this.get('unmodifiableLevels');
+				if (level >= unmodifiableLevels) {
+					var sourceNodeType = sourceNode.data.nodeType,
+						possibleChildNodeTypes = _getAllowedChildNodeTypesForNode(activeNode);
+					if (possibleChildNodeTypes.length > 0 && possibleChildNodeTypes.contains(sourceNodeType)) {
+						positions.push('into');
+					}
+
+					if (activeNode.getLevel() > unmodifiableLevels) {
+						var possibleSiblingNodeTypes = _getAllowedChildNodeTypesForNode(activeNode.parent);
+						if (possibleSiblingNodeTypes.length > 0 && possibleSiblingNodeTypes.contains(sourceNodeType)) {
+							positions.push('before');
+							positions.push('after');
+						}
+					}
+				}
+				return positions;
+			}.property('activeNode', 'cutNode', 'copiedNode'),
 
 			_updateMetaInformation: function() {
 				var documentMetadata = $('#neos-document-metadata');
@@ -103,7 +165,6 @@ define(
 
 			newButton: Ember.View.extend({
 				active: true,
-				inactive: false,
 				expand: false,
 				attributeBindings: ['title'],
 				classNameBindings: [
@@ -131,6 +192,22 @@ define(
 					return this.get('newPosition') === 'after';
 				}.property('newPosition'),
 
+				newBeforeDisabled: function() {
+					return this.get('allowedNewPositions').indexOf('before') === -1;
+				}.property('allowedNewPositions'),
+
+				newIntoDisabled: function() {
+					return this.get('allowedNewPositions').indexOf('into') === -1;
+				}.property('allowedNewPositions'),
+
+				newAfterDisabled: function() {
+					return this.get('allowedNewPositions').indexOf('after') === -1;
+				}.property('allowedNewPositions'),
+
+				inactive: function() {
+					return this.get('newBeforeDisabled') && this.get('newIntoDisabled') && this.get('newAfterDisabled');
+				}.property('newBeforeDisabled', 'newIntoDisabled', 'newAfterDisabled'),
+
 				mouseDown: function() {
 					if (this.get('expand') === true) {
 						if ($(event.target).closest('.neos-node-tree-new-node-position').length === 0) {
@@ -148,7 +225,7 @@ define(
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
 					this.set('downTimer', null);
-					if ((this.get('active') || !this.get('inactive')) && this.get('expand') === false) {
+					if ((this.get('active') && !this.get('inactive')) && this.get('expand') === false) {
 						this.get('parentView').create();
 					}
 					$(event.target).filter('button').click();
@@ -159,24 +236,23 @@ define(
 				},
 
 				toggleNewBefore: function() {
-					this.set('newPosition', 'before');
+					this.set('desiredNewPosition', 'before');
 					this.set('expand', false);
 				},
 
 				toggleNewInto: function() {
-					this.set('newPosition', 'into');
+					this.set('desiredNewPosition', 'into');
 					this.set('expand', false);
 				},
 
 				toggleNewAfter: function() {
-					this.set('newPosition', 'after');
+					this.set('desiredNewPosition', 'after');
 					this.set('expand', false);
 				}
 			}),
 
 			pasteButton: Ember.View.extend({
 				active: true,
-				inactive: false,
 				expand: false,
 				attributeBindings: ['title'],
 				classNameBindings: [
@@ -203,6 +279,22 @@ define(
 					return this.get('pastePosition') === 'after';
 				}.property('pastePosition'),
 
+				pasteBeforeDisabled: function() {
+					return this.get('allowedPastePositions').indexOf('before') === -1;
+				}.property('allowedPastePositions'),
+
+				pasteIntoDisabled: function() {
+					return this.get('allowedPastePositions').indexOf('into') === -1;
+				}.property('allowedPastePositions'),
+
+				pasteAfterDisabled: function() {
+					return this.get('allowedPastePositions').indexOf('after') === -1;
+				}.property('allowedPastePositions'),
+
+				inactive: function() {
+					return this.get('pasteBeforeDisabled') && this.get('pasteIntoDisabled') && this.get('pasteAfterDisabled');
+				}.property('pasteBeforeDisabled', 'pasteIntoDisabled', 'pasteAfterDisabled'),
+
 				mouseDown: function() {
 					if (this.get('expand') === true) {
 						if ($(event.target).closest('.neos-node-tree-paste-node-position').length === 0) {
@@ -220,7 +312,7 @@ define(
 				mouseUp: function(event) {
 					clearTimeout(this.get('downTimer'));
 					this.set('downTimer', null);
-					if ((this.get('active') || !this.get('inactive')) && this.get('expand') === false) {
+					if ((this.get('active') && !this.get('inactive')) && this.get('expand') === false) {
 						this.get('parentView').paste();
 					}
 					$(event.target).filter('button').click();
@@ -231,17 +323,17 @@ define(
 				},
 
 				togglePasteBefore: function() {
-					this.set('pastePosition', 'before');
+					this.set('desiredPastePosition', 'before');
 					this.set('expand', false);
 				},
 
 				togglePasteInto: function() {
-					this.set('pastePosition', 'into');
+					this.set('desiredPastePosition', 'into');
 					this.set('expand', false);
 				},
 
 				togglePasteAfter: function() {
-					this.set('pastePosition', 'after');
+					this.set('desiredPastePosition', 'after');
 					this.set('expand', false);
 				}
 			}),
@@ -588,7 +680,7 @@ define(
 
 				this.set('insertNodePanelShown', true);
 
-				if (this.get('newPosition') === 'into' || activeNode.getLevel() === 1) {
+				if (this.get('newPosition') === 'into') {
 					parentNode = activeNode;
 				}
 
@@ -657,11 +749,9 @@ define(
 						addClass: 'neos-matched',
 						iconClass: iconClass,
 						expand: true
-					};
-				if (activeNode.getLevel() <= this.get('unmodifiableLevels')) {
-					newPosition = 'into';
-				}
-				var newNode;
+					},
+					newNode;
+
 				switch (newPosition) {
 					case 'before':
 						newNode = activeNode.getParent().addChild(data, activeNode);
@@ -825,9 +915,6 @@ define(
 					Notification.info('You have to select a node');
 				}
 				var pastePosition = this.get('pastePosition');
-				if (targetNode.getLevel() < this.minimumCreateAndPasteLevel) {
-					pastePosition = 'into';
-				}
 				if (cutNode) {
 					this.set('cutNode', null);
 					this.move(cutNode, targetNode, pastePosition);
