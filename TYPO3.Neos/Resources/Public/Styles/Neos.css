@@ -7624,10 +7624,6 @@
 .neos #neos-context-bar .neos-left {
   float: left;
   white-space: nowrap;
-  width: 50%;
-}
-.neos-contentelement-selected .neos #neos-context-bar .neos-left {
-  width: auto;
 }
 .neos #neos-context-bar .neos-right {
   float: right;
@@ -8968,12 +8964,6 @@
 }
 .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure #neos-context-structure-tree-container {
   display: none;
-}
-.neos #neos-aloha-topmenu {
-  display: none;
-}
-.neos-contentelement-selected .neos #neos-aloha-topmenu {
-  display: block;
 }
 .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
   position: absolute;

@@ -1,10 +1,4 @@
 #neos-aloha-topmenu {
-	display: none;
-
-	.neos-contentelement-selected & {
-		display: block;
-	}
-
 	// Aloha Link editor (for entering the link target URL) is displayed as some "flyout"
 	#aloha-attribute-field-editLink {
 		position: absolute;

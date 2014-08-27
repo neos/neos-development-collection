@@ -40,11 +40,6 @@
 	.neos-left {
 		float: left;
 		white-space: nowrap;
-		width: 50%;
-
-		.neos-contentelement-selected & {
-			width: auto;
-		}
 	}
 
 	.neos-right {
