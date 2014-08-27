@@ -70,28 +70,27 @@ class ContentElementWrappingService {
 		$attributes = array();
 		$attributes['typeof'] = 'typo3:' . $nodeType->getName();
 		$attributes['about'] = $node->getContextPath();
-		$attributes['class'] = '';
 
+		$classNames = array();
 		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
 			if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
 				$attributes['rel'] = 'typo3:content-collection';
 			} else {
-				$attributes['class'] = 'neos-contentelement';
+				$classNames[] = 'neos-contentelement';
 			}
 
 			if ($node->isHidden()) {
-				$attributes['class'] .= ' neos-contentelement-hidden';
+				$classNames[] = 'neos-contentelement-hidden';
 			}
 			if ($node->isRemoved()) {
-				$attributes['class'] .= ' neos-contentelement-removed';
+				$classNames[] = 'neos-contentelement-removed';
 			}
 
 			$uiConfiguration = $nodeType->hasConfiguration('ui') ? $nodeType->getConfiguration('ui') : array();
 			if ((isset($uiConfiguration['inlineEditable']) && $uiConfiguration['inlineEditable'] !== TRUE) || (!isset($uiConfiguration['inlineEditable']) && !$this->hasInlineEditableProperties($node))) {
-				$attributes['class'] .= ' neos-not-inline-editable';
+				$classNames[] = 'neos-not-inline-editable';
 			}
 
-			$attributes['class'] = trim($attributes['class']);
 			$attributes['tabindex'] = 0;
 		} else {
 			$attributes['data-__sitename'] = $contentContext->getCurrentSite()->getName();
@@ -100,8 +99,13 @@ class ContentElementWrappingService {
 			$attributes['data-context-__workspacename'] = $contentContext->getWorkspaceName();
 			$attributes['data-context-__dimensions'] = json_encode($contentContext->getDimensions());
 		}
+
 		if (!$node->dimensionsAreMatchingTargetDimensionValues()) {
-			$attributes['class'] .= ' neos-contentelement-shine-through';
+			$classNames[] = 'neos-contentelement-shine-through';
+		}
+
+		if (count($classNames) > 0) {
+			$attributes['class'] = implode(' ', $classNames);
 		}
 
 		// Add the actual workspace of the node, the node identifier and the TypoScript path to the attributes
