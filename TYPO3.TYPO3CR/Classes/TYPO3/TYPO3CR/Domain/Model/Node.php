@@ -494,7 +494,9 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getPath() . '/' . $nodeName . '" already exists.', 1292503467);
 		}
 
-		if (!$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
+		// On copy we basically re-recreate an existing node on a new location. As we skip the constraints check on
+		// node creation we should do the same while writing the node on the new location.
+		if (!$referenceNode->willChildNodeBeAutoCreated($nodeName) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
 			throw new NodeConstraintException(sprintf('Cannot copy "%s" into "%s" due to node type constraints.', $this->__toString(), $referenceNode->__toString()), 1404648177);
 		}
 
@@ -780,7 +782,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $name The node name to check.
 	 * @return boolean TRUE if the given nodeName is configured as auto-created child node.
 	 */
-	protected function willChildNodeBeAutoCreated($name) {
+	public function willChildNodeBeAutoCreated($name) {
 		$autoCreatedChildNodes = $this->getNodeType()->getAutoCreatedChildNodes();
 		return isset($autoCreatedChildNodes[$name]);
 	}

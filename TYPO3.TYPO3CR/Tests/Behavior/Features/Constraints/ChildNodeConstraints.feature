@@ -161,3 +161,76 @@ Feature: ChildNode Constraints
       | Workspace |
       | live      |
     And I should be able to create a child node of type "TYPO3.NeosDemoTypo3Org:Chapter"
+
+  @fixtures
+  Scenario: Constraints for auto created childnodes are ignored on node create
+    Given I have the following additional NodeTypes configuration:
+    """
+    'TYPO3.Neos.NodeTypes:Page':
+      childNodes:
+        main:
+          type: 'TYPO3.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'TYPO3.Neos:ContentCollection': FALSE
+    """
+    And I have the following nodes:
+      | Identifier                           | Path                                | Node Type                     | Properties
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/create-page    | TYPO3.Neos.NodeTypes:Page     | {"title": "page"}
+    And I get a node by path "/sites/neosdemotypo3/create-page/main" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+
+  @fixtures
+  Scenario: Constraints for auto created childnodes are ignored on node copy
+    Given I have the following additional NodeTypes configuration:
+    """
+    'TYPO3.Neos.NodeTypes:Page':
+      childNodes:
+        main:
+          type: 'TYPO3.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'TYPO3.Neos:ContentCollection': FALSE
+    """
+    And I have the following nodes:
+      | Identifier                           | Path                              | Node Type                     | Properties
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/copy-page    | TYPO3.Neos.NodeTypes:Page     | {"title": "page"}
+    And I get a node by path "/sites/neosdemotypo3/copy-page" with the following context:
+      | Workspace |
+      | live      |
+    When I copy the node into path "/sites/neosdemotypo3" with the following context:
+      | Workspace |
+      | live      |
+    And I get a node by path "/sites/neosdemotypo3/copy-page-1" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+
+  @fixtures
+  Scenario: Nodes with auto created childnodes with constraints on nodetype can be moved
+    Given I have the following additional NodeTypes configuration:
+    """
+    'TYPO3.Neos.NodeTypes:Page':
+      childNodes:
+        main:
+          type: 'TYPO3.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'TYPO3.Neos:ContentCollection': FALSE
+    """
+    And I have the following nodes:
+      | Identifier                           | Path                               | Node Type                     | Properties
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/neosdemotypo3/move-page1    | TYPO3.Neos.NodeTypes:Page     | {"title": "page"}
+      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/neosdemotypo3/move-page2    | TYPO3.Neos.NodeTypes:Page     | {"title": "page 2"}
+    And I get a node by path "/sites/neosdemotypo3/move-page1" with the following context:
+      | Workspace |
+      | live      |
+    When I move the node into path "/sites/neosdemotypo3/move-page2" with the following context:
+      | Workspace |
+      | live      |
+    And I get a node by path "/sites/neosdemotypo3/move-page2/move-page1" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
