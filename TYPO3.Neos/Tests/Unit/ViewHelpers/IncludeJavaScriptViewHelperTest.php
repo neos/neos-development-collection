@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
 
 /**
  * Testcase for the IncludeJavaScript view helper
- *
+ * @deprecated Same as the ViewHelper this test is for
  */
 class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
