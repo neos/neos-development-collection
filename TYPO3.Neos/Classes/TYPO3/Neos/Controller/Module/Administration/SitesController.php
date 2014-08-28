@@ -106,11 +106,15 @@ class SitesController extends AbstractModuleController {
 	 * @return void
 	 */
 	public function editAction(Site $site) {
-		$sitePackage = $this->packageManager->getPackage($site->getSiteResourcesPackageKey());
+		try {
+			$sitePackage = $this->packageManager->getPackage($site->getSiteResourcesPackageKey());
+		} catch(\Exception $e) {
+			$this->addFlashMessage('The site package with key "%s" was not found.', 'Site package not found', Message::SEVERITY_ERROR, array($site->getSiteResourcesPackageKey()));
+		}
 
 		$this->view->assignMultiple(array(
 			'site' => $site,
-			'sitePackageMetaData' => $sitePackage->getPackageMetaData(),
+			'sitePackageMetaData' => isset($sitePackage) ? $sitePackage->getPackageMetaData() : array(),
 			'domains' => $this->domainRepository->findBySite($site)
 		));
 	}
