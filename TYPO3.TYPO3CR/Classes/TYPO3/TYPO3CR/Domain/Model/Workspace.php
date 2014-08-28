@@ -212,16 +212,20 @@ class Workspace {
 	protected function replaceNodeData(NodeInterface $node, NodeData $targetNodeData) {
 		$sourceNodeData = $node->getNodeData();
 
+		$nodeWasMoved = FALSE;
 		$movedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
 		if ($movedShadowNodeData instanceof NodeData) {
 			$this->nodeDataRepository->remove($movedShadowNodeData);
+			$nodeWasMoved = TRUE;
 		}
 
 		if ($node->isRemoved() === TRUE) {
 			$this->nodeDataRepository->remove($targetNodeData);
 		} else {
 			$targetNodeData->similarize($node->getNodeData());
-			$targetNodeData->setPath($node->getPath(), FALSE);
+			if ($nodeWasMoved) {
+				$targetNodeData->setPath($node->getPath(), FALSE);
+			}
 			$node->setNodeData($targetNodeData);
 		}
 		$this->nodeDataRepository->remove($sourceNodeData);

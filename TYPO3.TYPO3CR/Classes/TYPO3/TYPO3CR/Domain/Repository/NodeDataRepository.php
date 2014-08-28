@@ -1084,6 +1084,33 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
+	 * Given an array with duplicate nodes (from different workspaces) those are reduced to uniqueness (by node identifier and dimensions hash)
+	 *
+	 * @param array $nodes NodeData
+	 * @param array $workspaces
+	 * @return array Array of unique node results indexed by identifier and dimensions hash
+	 */
+	protected function reduceNodeVariantsByWorkspaces(array $nodes, array $workspaces) {
+		$foundNodes = array();
+
+		$minimalPositionByIdentifier = array();
+		/** @var $node NodeData */
+		foreach ($nodes as $node) {
+
+			// Find the position of the workspace, a smaller value means more priority
+			$workspacePosition = array_search($node->getWorkspace(), $workspaces);
+
+			$uniqueNodeDataIdentity = $node->getIdentifier() . '|' . $node->getDimensionsHash();
+			if (!isset($minimalDimensionPositionsByIdentifier[$uniqueNodeDataIdentity]) || $workspacePosition < $minimalPositionByIdentifier[$uniqueNodeDataIdentity]) {
+				$foundNodes[$uniqueNodeDataIdentity] = $node;
+				$minimalDimensionPositionsByIdentifier[$uniqueNodeDataIdentity] = $workspacePosition;
+			}
+		}
+
+		return $foundNodes;
+	}
+
+	/**
 	 * Find all NodeData objects inside a given workspace sorted by path to be used
 	 * in publishing. The order makes sure that parent nodes are published first.
 	 *
@@ -1125,6 +1152,32 @@ class NodeDataRepository extends Repository {
 		});
 
 		return $result;
+	}
+
+	/**
+	 * Find all node data in a path matching the given workspace hierarchy
+	 *
+	 * Internal method, used by Node::setPath
+	 *
+	 * @param string $path
+	 * @param Workspace $workspace
+	 * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
+	 */
+	public function findByPathWithoutReduce($path, Workspace $workspace) {
+		$workspaces = array();
+		while ($workspace !== NULL) {
+			$workspaces[] = $workspace;
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		$queryBuilder = $this->createQueryBuilder($workspaces);
+		$this->addPathConstraintToQueryBuilder($queryBuilder, $path);
+
+		$query = $queryBuilder->getQuery();
+		$foundNodes = $query->getResult();
+		$foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
+
+		return $foundNodes;
 	}
 
 	/**

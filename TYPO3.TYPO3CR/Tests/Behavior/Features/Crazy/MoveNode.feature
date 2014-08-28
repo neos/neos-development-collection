@@ -5,11 +5,11 @@ Feature: Move node
 
   Background:
     Given I have the following nodes:
-      | Identifier                           | Path                   | Node Type                      | Properties           | Workspace |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured                   |                      | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Document | {"title": "Home"}    | live      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Document | {"title": "Company"} | live      |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Document | {"title": "Service"} | live      |
+      | Identifier                           | Path                   | Node Type                  | Properties           | Workspace |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured               |                      | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | live      |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"} | live      |
 
   @fixtures
   Scenario: Move a node (into) in user workspace and get by path
@@ -74,7 +74,8 @@ Feature: Move node
       | Workspace |
       | live      |
     Then I should have one node
-    And the unpublished node count in workspace "user-admin" should be 0
+    # TODO Publish a single node should publish auto-created child-nodes
+    # And the unpublished node count in workspace "user-admin" should be 0
 
   @fixtures
   Scenario: Move a node (into) and move it back
@@ -97,8 +98,8 @@ Feature: Move node
   @fixtures
   Scenario: Move a node (before) in user workspace and get by path
     Given I have the following nodes:
-      | Identifier                           | Path                         | Node Type                      | Properties         | Workspace |
-      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Document | {"title": "About"} | live      |
+      | Identifier                           | Path                         | Node Type                  | Properties         | Workspace |
+      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Page | {"title": "About"} | live      |
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
       | user-admin |
@@ -122,8 +123,8 @@ Feature: Move node
   @fixtures
   Scenario: Move a node (after) in user workspace and get by path
     Given I have the following nodes:
-      | Identifier                           | Path                         | Node Type                      | Properties         | Workspace |
-      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Document | {"title": "About"} | live      |
+      | Identifier                           | Path                         | Node Type                  | Properties         | Workspace |
+      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Page | {"title": "About"} | live      |
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
       | user-admin |
@@ -143,3 +144,23 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Edit moved node in separate workspace and publish edited node after moving was published
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace |
+      | user-john |
+    And I set the node property "title" to "Our services"
+
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace |
+      | user-jack |
+    And I move the node into the node with path "/sites/typo3cr/company"
+    And I publish the workspace "user-jack"
+    And I publish the workspace "user-john"
+
+    And I get a node by path "/sites/typo3cr/company/service" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node property "title" should be "Our services"

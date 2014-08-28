@@ -126,7 +126,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Sets the absolute path of this node.
 	 *
-	 * This method is only for internal use by the content repository. Changing
+	 * This method is only for internal use by the content repository or node methods. Changing
 	 * the path of a node manually may lead to unexpected behavior.
 	 *
 	 * To achieve a correct behavior when changing the path (moving the node) in a worspace, a shadow node data that will
@@ -148,29 +148,56 @@ class Node implements NodeInterface, CacheAwareInterface {
 				$childNode->setPath($path . '/' . $childNode->getNodeData()->getName(), TRUE);
 			}
 		}
-		$nodeDataWasMaterialized = FALSE;
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-			$nodeDataWasMaterialized = TRUE;
-		}
-		$this->nodeData->setPath($path, FALSE);
 
-		$this->removeExistingShadowNodeData($path);
-		if ($nodeDataWasMaterialized) {
-			$this->createShadowNodeData($originalPath);
-		}
+		$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace());
+		/** @var $nodeData NodeData */
+		foreach ($nodeDataVariants as $nodeData) {
+			$nodeDataWasMaterialized = FALSE;
+			if ($nodeData->getWorkspace()->getName() !== $this->context->getWorkspace()->getName()) {
+				$isCurrentNodeInContext = $nodeData === $this->nodeData;
+				$nodeData = $this->materializeNodeDataToWorkspace($nodeData);
+				$nodeDataWasMaterialized = TRUE;
+				if ($isCurrentNodeInContext) {
+					// Workaround to set the new index in move* methods
+					$this->nodeData = $nodeData;
+				}
+			}
+			$nodeData->setPath($path, FALSE);
 
-		$this->context->getFirstLevelNodeCache()->flush();
+			$this->removeExistingShadowNodeData($path, $nodeData);
+			if ($nodeDataWasMaterialized) {
+				$this->createShadowNodeData($originalPath, $nodeData);
+			}
+
+		}
+	}
+
+	/**
+	 * Materializes the original node data (of a different workspace) into the current
+	 * workspace, excluding content dimensions
+	 *
+	 * This is only used in setPath for now
+	 *
+	 * @param NodeData $nodeData
+	 * @return NodeData
+	 */
+	protected function materializeNodeDataToWorkspace(NodeData $nodeData) {
+		$newNodeData = new NodeData($nodeData->getPath(), $this->context->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+		$this->nodeDataRepository->add($newNodeData);
+
+		$newNodeData->similarize($nodeData);
+		return $newNodeData;
 	}
 
 	/**
 	 * Remove an existing shadow node data for the current node data of the node (used by setPath)
 	 *
 	 * @param string $path The (new) path of the node data
+	 * @param NodeData $nodeData
 	 * @return void
 	 */
-	protected function removeExistingShadowNodeData($path) {
-		$existingRemovedNode = $this->nodeDataRepository->findOneByPath($path, $this->nodeData->getWorkspace(), $this->nodeData->getDimensionValues(), TRUE);
+	protected function removeExistingShadowNodeData($path, NodeData $nodeData) {
+		$existingRemovedNode = $this->nodeDataRepository->findOneByPath($path, $nodeData->getWorkspace(), $nodeData->getDimensionValues(), TRUE);
 		if ($existingRemovedNode !== NULL && $existingRemovedNode->isRemoved()) {
 			$this->nodeDataRepository->remove($existingRemovedNode);
 		}
@@ -182,12 +209,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * Note: The constructor will already add the new object to the repository
 	 *
 	 * @param string $path The (original) path for the node data
+	 * @param NodeData $nodeData
 	 * @return void
 	 */
-	protected function createShadowNodeData($path) {
-		$shadowNode = new NodeData($path, $this->nodeData->getWorkspace(), $this->nodeData->getIdentifier(), $this->nodeData->getDimensionValues());
-		$shadowNode->similarize($this->nodeData);
-		$shadowNode->shadowMovedNodeData($this->nodeData);
+	protected function createShadowNodeData($path, NodeData $nodeData) {
+		$shadowNode = new NodeData($path, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+		$shadowNode->similarize($nodeData);
+		$shadowNode->shadowMovedNodeData($nodeData);
 	}
 
 	/**
@@ -1407,4 +1435,5 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	protected function emitNodeRemoved(NodeInterface $node) {
 	}
+
 }

@@ -87,7 +87,6 @@ class WorkspaceTest extends UnitTestCase {
 		$mockNode2->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
 		$existingNodeData->expects($this->once())->method('similarize')->with($nodeData2);
-		$existingNodeData->expects($this->once())->method('setPath')->with('/sites/foo/homepage');
 		$mockNode2->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 		$mockNode2->expects($this->any())->method('getNodeData')->will($this->returnValue($nodeData2));
 		$mockNode2->expects($this->once())->method('setNodeData')->with($nodeData2);

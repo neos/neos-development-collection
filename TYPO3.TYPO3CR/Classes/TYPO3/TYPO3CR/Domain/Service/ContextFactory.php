@@ -296,4 +296,16 @@ class ContextFactory implements ContextFactoryInterface {
 
 		return $dimensions;
 	}
+
+	/**
+	 * Internal method to flush first-level node caches of all contexts
+	 *
+	 * @return void
+	 */
+	public function flushFirstLevelNodeCaches() {
+		foreach ($this->contextInstances as $context) {
+			$context->getFirstLevelNodeCache()->flush();
+		}
+	}
+
 }
