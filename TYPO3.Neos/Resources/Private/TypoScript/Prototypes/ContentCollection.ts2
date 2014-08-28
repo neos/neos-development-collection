@@ -11,7 +11,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 	attributes.class = 'neos-contentcollection'
 
 	# You may override this to get your content collection from a different place than the current node.
-	@override.contentCollectionNode = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? node :  q(node).find(this.nodePath).get(0)}
+	@override.contentCollectionNode = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ? node : (this.nodePath ? q(node).find(this.nodePath).get(0) : null)}
 
 	@process.contentElementWrapping {
 		node = ${contentCollectionNode}
