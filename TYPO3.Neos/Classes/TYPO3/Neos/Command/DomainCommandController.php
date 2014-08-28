@@ -11,9 +11,11 @@ namespace TYPO3\Neos\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Annotations as Flow,
-	TYPO3\Neos\Domain\Model\Domain as Domain,
-	TYPO3\Neos\Domain\Model\Site as Site;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 
 /**
  * Domain command controller for the TYPO3.Neos package
@@ -23,13 +25,13 @@ use TYPO3\Flow\Annotations as Flow,
 class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+	 * @var DomainRepository
 	 * @Flow\Inject
 	 */
 	protected $domainRepository;
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+	 * @var SiteRepository
 	 * @Flow\Inject
 	 */
 	protected $siteRepository;
@@ -50,7 +52,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 
 		$domains = $this->domainRepository->findByHostPattern($hostPattern);
 		if ($domains->count() > 0) {
-			$this->outputLine('The host pattern "%s" is not unique', array($hostPattern));
+			$this->outputLine('The host pattern "%s" is not unique.', array($hostPattern));
 			$this->quit(1);
 		}
 
@@ -59,7 +61,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 		$domain->setHostPattern($hostPattern);
 		$this->domainRepository->add($domain);
 
-		$this->outputLine('Domain created');
+		$this->outputLine('Domain created.');
 	}
 
 	/**
@@ -76,7 +78,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 
 		if (count($domains) === 0) {
-			$this->outputLine('No domains available');
+			$this->outputLine('No domains available.');
 			$this->quit(0);
 		}
 
@@ -88,7 +90,8 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 			/** @var \TYPO3\Neos\Domain\Model\Domain $domain */
 			array_push($availableDomains, array(
 				'nodeName' => $domain->getSite()->getNodeName(),
-				'hostPattern' => $domain->getHostPattern()
+				'hostPattern' => $domain->getHostPattern(),
+				'active' => $domain->getActive()
 			));
 			if (strlen($domain->getSite()->getNodeName()) > $longestNodeName) {
 				$longestNodeName = strlen($domain->getSite()->getNodeName());
@@ -99,10 +102,10 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 
 		$this->outputLine();
-		$this->outputLine(' ' . str_pad('Node name', $longestNodeName + 15) . 'Host pattern');
-		$this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 15 + 2));
+		$this->outputLine(' ' . str_pad('Node name', $longestNodeName + 10) . str_pad('Host pattern', $longestHostPattern + 5) . 'State');
+		$this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 10 + 2 + 14));
 		foreach ($availableDomains as $domain) {
-			$this->outputLine(' ' . str_pad($domain['nodeName'], $longestNodeName + 15) . $domain['hostPattern']);
+			$this->outputLine(' ' . str_pad($domain['nodeName'], $longestNodeName + 10) . str_pad($domain['hostPattern'], $longestHostPattern + 5) . ($domain['active'] ? 'Active' : 'Inactive'));
 		}
 		$this->outputLine();
 	}
@@ -116,12 +119,48 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController {
 	public function deleteCommand($hostPattern) {
 		$domain = $this->domainRepository->findOneByHostPattern($hostPattern);
 		if (!$domain instanceof Domain) {
-			$this->outputLine('Domain is not found');
+			$this->outputLine('Domain not found.');
 			$this->quit(1);
 		}
 
 		$this->domainRepository->remove($domain);
-		$this->outputLine('Domain deleted');
+		$this->outputLine('Domain deleted.');
+	}
+
+	/**
+	 * Activate a domain record
+	 *
+	 * @param string $hostPattern The host pattern of the domain to activate
+	 * @return void
+	 */
+	public function activateCommand($hostPattern) {
+		$domain = $this->domainRepository->findOneByHostPattern($hostPattern);
+		if (!$domain instanceof Domain) {
+			$this->outputLine('Domain not found.');
+			$this->quit(1);
+		}
+
+		$domain->setActive(TRUE);
+		$this->domainRepository->update($domain);
+		$this->outputLine('Domain activated.');
+	}
+
+	/**
+	 * Deactivate a domain record
+	 *
+	 * @param string $hostPattern The host pattern of the domain to deactivate
+	 * @return void
+	 */
+	public function deactivateCommand($hostPattern) {
+		$domain = $this->domainRepository->findOneByHostPattern($hostPattern);
+		if (!$domain instanceof Domain) {
+			$this->outputLine('Domain not found.');
+			$this->quit(1);
+		}
+
+		$domain->setActive(FALSE);
+		$this->domainRepository->update($domain);
+		$this->outputLine('Domain deactivated.');
 	}
 
 }
