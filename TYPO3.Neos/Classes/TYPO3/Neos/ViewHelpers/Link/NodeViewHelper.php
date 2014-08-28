@@ -77,6 +77,23 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * <a href="about/us.html">About us</a>
  * (depending on current workspace, current node, format etc.)
  * </output>
+ *
+ * <code title="Node label as tag content">
+ * <neos:link.node node="/sites/exampleorg/contact/imprint" />
+ * </code>
+ * <output>
+ * <a href="contact/imprint.html">Imprint</a>
+ * (depending on current workspace, current node, format etc.)
+ * </output>
+ *
+ * <code title="Dynamic tag content involving the linked node's properties">
+ * <neos:link.node node="about-us">see our <span>{linkedNode.label}</span> page</neos:link.node>
+ * </code>
+ * <output>
+ * <a href="about-us.html">see our <span>About Us</span> page</a>
+ * (depending on current workspace, current node, format etc.)
+ * </output>
+ *
  * @api
  */
 class NodeViewHelper extends AbstractTagBasedViewHelper {
@@ -106,7 +123,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	}
 
 	/**
-	 * Renders the link.
+	 * Renders the link. Renders the linked node's label if there's no child content.
 	 *
 	 * @param mixed $node A node object or a string node path or NULL to resolve the current document node
 	 * @param string $format Format to use for the URL, for example "html" or "json"
@@ -115,12 +132,13 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	 * @param string $section The anchor to be added to the URI
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+	 * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @return string The rendered link
 	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
 	 * @throws \TYPO3\Neos\Exception
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode') {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode') {
 		$baseNode = NULL;
 		if (!$node instanceof NodeInterface) {
 			$view = $this->viewHelperVariableContainer->getView();
@@ -152,7 +170,16 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 			$this->tag->addAttribute('href', $uri);
 		}
 
-		$this->tag->setContent($this->renderChildren());
+		$linkedNode = $this->linkingService->getLastLinkedNode();
+		$this->templateVariableContainer->add($nodeVariableName, $linkedNode);
+		$content = $this->renderChildren();
+		$this->templateVariableContainer->remove($nodeVariableName, $linkedNode);
+
+		if ($content === NULL) {
+			$content = $linkedNode->getLabel();
+		}
+
+		$this->tag->setContent($content);
 		return $this->tag->render();
 	}
 }

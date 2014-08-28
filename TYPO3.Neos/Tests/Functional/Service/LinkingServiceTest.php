@@ -212,6 +212,28 @@ class LinkingServiceTest extends FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function nodeLinkingServiceReturnsLastLinkedNode() {
+		$targetNodeA = $this->baseNode;
+		$targetNodeB = $this->baseNode->getNode('about-us');
+		$this->linkingService->createNodeUri($this->controllerContext, $targetNodeA);
+		$this->assertSame($targetNodeA, $this->linkingService->getLastLinkedNode());
+		$this->linkingService->createNodeUri($this->controllerContext, $targetNodeB);
+		$this->assertSame($targetNodeB, $this->linkingService->getLastLinkedNode());
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodeLinkingServiceUnsetsLastLinkedNodeOnFailure() {
+		$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode);
+		$this->assertNotNull($this->linkingService->getLastLinkedNode());
+		$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/not-found', $this->baseNode);
+		$this->assertNull($this->linkingService->getLastLinkedNode());
+	}
+
+	/**
 	 * A wrapper function for the appropriate assertion for the Link- and its Uri-ViewHelper derivate.
 	 * Is overridden in the FunctionalTest for the LinkViewHelper.
 	 */

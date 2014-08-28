@@ -45,7 +45,7 @@ HTML template code::
         <ul class="nav nav-pills">
             <f:for each="{items}" as="item" iteration="menuItemIterator">
                 <li class="{item.state}">
-                    <neos:link.node node="{item.node}">{item.label}</neos:link.node>
+                    <neos:link.node node="{item.node}" />
                 </li>
             </f:for>
         </ul>
@@ -77,7 +77,7 @@ node is the text.
 Wrapping and linking of node::
 
     <li class="{item.state}">
-        <neos:link.node node="{item.node}">{item.label}</neos:link.node>
+        <neos:link.node node="{item.node}" />
     </li>
 
 The last thing to do is to include the meta menu to our page layout(s).

@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2014-09-02
+This reference was automatically generated from code on 2014-09-07
 
 
 neos:backend.configurationCacheVersion
@@ -32,7 +32,7 @@ the Neos backend into a website.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface): 
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface):
 
 
 
@@ -79,11 +79,11 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface): 
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface):
 
-* ``page`` (boolean, *optional*): 
+* ``page`` (boolean, *optional*):
 
-* ``tag`` (string, *optional*): 
+* ``tag`` (string, *optional*):
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -384,7 +384,9 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths (defaults to "documentNode")
+
+* ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content (defaults to "linkedNode")
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -459,6 +461,28 @@ Expected result::
 Expected result::
 
 	<a href="about/us.html">About us</a>
+	(depending on current workspace, current node, format etc.)
+
+
+**Node label as tag content**::
+
+	<neos:link.node node="/sites/exampleorg/contact/imprint" />
+
+
+Expected result::
+
+	<a href="contact/imprint.html">Imprint</a>
+	(depending on current workspace, current node, format etc.)
+
+
+**Dynamic tag content involving the linked node's properties**::
+
+	<neos:link.node node="about-us">see our <span>{linkedNode.label}</span> page</neos:link.node>
+
+
+Expected result::
+
+	<a href="about-us.html">see our <span>About Us</span> page</a>
 	(depending on current workspace, current node, format etc.)
 
 
@@ -594,7 +618,7 @@ Arguments
 
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
-* ``section`` (string, *optional*): 
+* ``section`` (string, *optional*):
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
