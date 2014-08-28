@@ -31,7 +31,7 @@ Full HTML code::
     <ul class="nav">
         <f:for each="{items}" as="item">
             <li class="menu-item">
-                <neos:link.node node="{item.node}">{item.label}</neos:link.node>
+                <neos:link.node node="{item.node}" />
             </li>
         </f:for>
     </ul>
@@ -62,5 +62,5 @@ node is the text.
 Wrapping and linking of node::
 
     <li class="menu-item">
-        <neos:link.node node="{item.node}">{item.label}</neos:link.node>
+        <neos:link.node node="{item.node}" />
     </li>

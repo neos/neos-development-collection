@@ -74,6 +74,11 @@ class LinkingService {
 	protected $propertyMapper;
 
 	/**
+	 * @var NodeInterface
+	 */
+	protected $lastLinkedNode;
+
+	/**
 	 * @param string|Uri $uri
 	 * @return boolean
 	 */
@@ -129,7 +134,7 @@ class LinkingService {
 	 *
 	 * @param string|Uri $uri
 	 * @param NodeInterface $contextNode
-	 * @return object|NULL
+	 * @return NodeInterface|AssetInterface|NULL
 	 */
 	public function convertUriToObject($uri, NodeInterface $contextNode = NULL) {
 		if ($uri instanceof Uri) {
@@ -169,6 +174,7 @@ class LinkingService {
 	 * @throws \InvalidArgumentException
 	 */
 	public function createNodeUri(ControllerContext $controllerContext, $node = NULL, NodeInterface $baseNode = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
+		$this->lastLinkedNode = NULL;
 		if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
 			throw new \InvalidArgumentException('Expected NodeInterface, string for the node argument or a NoteInterface for the baseNode argument.', 1373101025);
 		}
@@ -222,7 +228,7 @@ class LinkingService {
 
 		$uriBuilder = clone $controllerContext->getUriBuilder();
 		$uriBuilder->setRequest($request);
-		return $uriBuilder
+		$uri = $uriBuilder
 			->reset()
 			->setSection($section)
 			->setCreateAbsoluteUri($absolute)
@@ -231,5 +237,19 @@ class LinkingService {
 			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
 			->setFormat($format ?: $request->getFormat())
 			->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+
+		$this->lastLinkedNode = $node;
+		return $uri;
 	}
+
+	/**
+	 * Returns the node that was last used to resolve a link to.
+	 * May return NULL in case no link has been generated or an error occured on the last linking run.
+	 *
+	 * @return NodeInterface
+	 */
+	public function getLastLinkedNode() {
+		return $this->lastLinkedNode;
+	}
+
 }
