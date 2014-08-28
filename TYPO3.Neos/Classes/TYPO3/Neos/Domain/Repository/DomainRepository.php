@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Repository;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
 
 /**
  * The Site Repository
@@ -32,6 +33,14 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * @var \TYPO3\Flow\Core\Bootstrap
 	 */
 	protected $bootstrap;
+
+	/**
+	 * @var array
+	 */
+	protected $defaultOrderings = array(
+		'site' => QueryInterface::ORDER_ASCENDING,
+		'hostPattern' => QueryInterface::ORDER_ASCENDING
+	);
 
 	/**
 	 * Finds all active domains matching the given host.
