@@ -181,8 +181,9 @@ define(
 
 		/**
 		 *
-		 * @param nodes
-		 * @param $element
+		 * @param {array} nodes
+		 * @param {object} $element
+		 * @return {void}
 		 */
 		_addNodeByElement: function(nodes, $element) {
 			if ($element !== undefined) {

@@ -11,6 +11,7 @@ define(
 	'Content/Inspector/InspectorController',
 	'Content/Model/NodeSelection',
 	'Content/Model/NodeActions',
+	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'InlineEditing/Dialogs/DeleteNodeDialog',
 	'InlineEditing/InsertNodePanel'
@@ -25,6 +26,7 @@ function (
 	InspectorController,
 	NodeSelection,
 	NodeActions,
+	NodeTypeService,
 	ContentCommands,
 	DeleteNodeDialog,
 	InsertNodePanel
@@ -32,9 +34,7 @@ function (
 	return Ember.View.extend({
 		template: Ember.Handlebars.compile(template),
 
-		_entity: null,
-		_nodePath: null,
-		_selectedNode: null,
+		_node: null,
 
 		$newAfterPopoverContent: null,
 
@@ -46,18 +46,24 @@ function (
 
 		_onNodeSelectionChange: function() {
 			this.$().find('.action-new').trigger('hidePopover');
-			var selectedNode = NodeSelection.get('selectedNode');
+			var selectedNode = this.get('nodeSelection.selectedNode');
 
-			this.set('_selectedNode', selectedNode);
 			if (selectedNode) {
-				var entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-				this.set('_entity', entity);
+				var entity = selectedNode.get('_vieEntity');
+				this.set('_node', selectedNode);
 
 				entity.on('change', this._entityChanged, this);
 				this._entityChanged();
 
-				this.set('_showHide', entity.has('typo3:_hidden'));
-				this.set('_nodePath', this.get('_entity').getSubjectUri());
+				//this.set('_nodePath', this.get('_entity').getSubjectUri());
+
+				if (selectedNode.isHideable()) {
+					this.set('_showHide', true);
+					this.set('_hidden', selectedNode.isHidden());
+				} else {
+					this.set('_showHide', false);
+					this.set('_hidden', false);
+				}
 			}
 		}.observes('nodeSelection.selectedNode'),
 
@@ -67,6 +73,58 @@ function (
 		_showCut: true,
 		_showCopy: true,
 
+		/**
+		 * @return {array}
+		 */
+		_getAllowedNodeTypesForSelectedNode: function() {
+			var selectedNode = this.get('nodeSelection.selectedNode');
+
+			// Collections are now always autocreated
+			if (NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:ContentCollection')) {
+				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
+					selectedNode.$element.attr('data-neos-_parentnodetype'),
+					selectedNode.$element.attr('data-neos-_nodename')
+				);
+			} else if (selectedNode.$element.attr('data-neos-_grandparentnodetype') && selectedNode.$element.attr('data-neos-_parentnodename')) {
+				// The currently selected node is no collection, so we check the constraints on the parent collection
+				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
+					selectedNode.$element.attr('data-neos-_grandparentnodetype'),
+					selectedNode.$element.attr('data-neos-_parentnodename')
+				);
+			}
+
+			return [];
+		},
+
+		/**
+		 * @return {boolean}
+		 */
+		_showCreate: function() {
+			var allowedNodeTypes = this._getAllowedNodeTypesForSelectedNode();
+			return allowedNodeTypes.length > 0;
+		}.property('nodeSelection.selectedNode'),
+
+		/**
+		 * @return {boolean}
+		 */
+		_showPaste: function() {
+			if (this.get('nodeActions.clipboardContainsContent') === false) {
+				return false;
+			}
+
+			var nodeTypeOfNodeOnClipboard = this.get('nodeActions._clipboard.nodeType'),
+				allowedNodeTypesToPaste = this._getAllowedNodeTypesForSelectedNode(),
+				isAllowed = false;
+
+			_.each(allowedNodeTypesToPaste, function(nodeType) {
+				if (nodeType === nodeTypeOfNodeOnClipboard) {
+					isAllowed = true;
+				}
+			});
+
+			return isAllowed;
+		}.property('nodeActions.clipboardContainsContent', 'nodeSelection.selectedNode'),
+
 		_popoverPosition: 'right',
 
 		_pasteTitle: 'Paste after',
@@ -75,9 +133,9 @@ function (
 		 * Returns the index of the content element in the current section
 		 */
 		_collectionIndex: function() {
-			var entity = this.get('_entity'),
-				enclosingCollectionWidget = entity._enclosingCollectionWidget,
-				entityIndex = enclosingCollectionWidget.options.collection.indexOf(entity);
+			var node = this.get('_node'),
+				enclosingCollectionWidget = node.get('_vieEntity')._enclosingCollectionWidget,
+				entityIndex = enclosingCollectionWidget.options.collection.indexOf(node.get('_vieEntity'));
 
 			if (entityIndex === -1) {
 				entityIndex = enclosingCollectionWidget.options.collection.length;
@@ -85,24 +143,22 @@ function (
 				entityIndex++;
 			}
 			return entityIndex;
-		}.property('_entity'),
+		}.property('_node'),
 
 		_entityChanged: function() {
-			this.set('_hidden', this.get('_entity').get('typo3:_hidden'));
+			this.set('_hidden', this.get('_node._vieEntity').get('typo3:_hidden'));
 		},
 
 		/** Content element actions **/
 		remove: function() {
 			DeleteNodeDialog.create({
-				_entity: this.get('_entity'),
-				_node: this.get('_selectedNode')
+				_node: this.get('nodeSelection.selectedNode')
 			}).appendTo($('#neos-application'));
 		},
 
 		newAfter: function() {
 			InsertNodePanel.create({
-				_entity: this.get('_entity'),
-				_node: this.get('_selectedNode'),
+				_node: this.get('nodeSelection.selectedNode'),
 				_index: this.get('_collectionIndex')
 			}).appendTo($('#neos-application'));
 		},
@@ -117,8 +173,8 @@ function (
 				return false;
 			}
 
-			return (clipboard.type === 'cut' && clipboard.nodePath === this.get('_nodePath'));
-		}.property('nodeActions._clipboard', '_nodePath'),
+			return (clipboard.type === 'cut' && clipboard.nodePath === this.get('_node.nodePath'));
+		}.property('nodeActions._clipboard', '_node'),
 
 		_thisElementStartedCopy: function() {
 			var clipboard = NodeActions.get('_clipboard');
@@ -126,8 +182,8 @@ function (
 				return false;
 			}
 
-			return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_nodePath'));
-		}.property('nodeActions._clipboard', '_nodePath'),
+			return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_node.nodePath'));
+		}.property('nodeActions._clipboard', '_node'),
 
 		_thisElementIsAddingNewContent: function() {
 			var elementIsAddingNewContent = NodeActions.get('_elementIsAddingNewContent');
@@ -135,8 +191,8 @@ function (
 				return false;
 			}
 
-			return (elementIsAddingNewContent === this.get('_nodePath'));
-		}.property('nodeActions._elementIsAddingNewContent', '_nodePath'),
+			return (elementIsAddingNewContent === this.get('_node.nodePath'));
+		}.property('nodeActions._elementIsAddingNewContent', '_node'),
 
 		_elementIsPastingContent: function() {
 			var elementIsPastingContent = NodeActions.get('_elementIsPastingContent');
@@ -144,11 +200,11 @@ function (
 				return false;
 			}
 
-			return (elementIsPastingContent === this.get('_nodePath'));
-		}.property('nodeActions._elementIsPastingContent', '_nodePath'),
+			return (elementIsPastingContent === this.get('_node.nodePath'));
+		}.property('nodeActions._elementIsPastingContent', '_node'),
 
 		toggleHidden: function() {
-			var entity = this.get('_entity'),
+			var entity = this.get('_node._vieEntity'),
 				value = !entity.get('typo3:_hidden');
 			this.set('_hidden', value);
 			entity.set('typo3:_hidden', value);
@@ -166,7 +222,7 @@ function (
 
 		paste: function() {
 			if (ContentCommands.paste() === true) {
-				NodeActions.set('_elementIsPastingContent', this.get('_entity').getSubjectUri());
+				NodeActions.set('_elementIsPastingContent', this.get('_node.nodePath'));
 			}
 		}
 	});
