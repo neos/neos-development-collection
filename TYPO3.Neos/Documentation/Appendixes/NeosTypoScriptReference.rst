@@ -224,7 +224,8 @@ TYPO3.TypoScript:Attributes
 A TypoScript object to render HTML tag attributes. This object is used by the :ref:`TYPO3_TypoScript__Tag` object to
 render the attributes of a tag. But it's also useful standalone to render extensible attributes in a Fluid template.
 
-:*: (String) A single attribute, array values are joined with whitespace
+:*: (String) A single attribute, array values are joined with whitespace. Boolean values will be rendered as an empty or absent attribute.
+:@allowEmpty: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values
 
 Example:
 ^^^^^^^^
@@ -242,6 +243,12 @@ Example:
 Evaluates to::
 
 	foo="bar" class="class1 class2"
+
+Unsetting an attribute:
+^^^^^^^^^^^^^^^^^^^^^^^
+
+It's possible to unset an attribute by assigning ``false`` or ``${null}`` as a value. No attribute will be rendered for
+this case.
 
 TYPO3.Neos TypoScript Objects
 =============================
