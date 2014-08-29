@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2014-06-16
+This reference was automatically generated from code on 2014-08-29
 
 
 Array
@@ -375,6 +375,35 @@ Get the year of a date
 * ``dateTime`` (\DateTime) 
 
 **Return** (integer) The year of the given date
+
+
+
+
+
+
+Json
+----
+
+JSON helpers for Eel contexts
+
+Json.parse(json, associativeArrays)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+JSON decode the given string
+
+* ``json`` (string) 
+* ``associativeArrays`` (boolean, *optional*) 
+
+**Return** (mixed) 
+
+Json.stringify(value)
+^^^^^^^^^^^^^^^^^^^^^
+
+JSON encode the given value
+
+* ``value`` (mixed) 
+
+**Return** (string) 
 
 
 

@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2014-06-16
+This reference was automatically generated from code on 2014-08-29
 
 
 add
@@ -47,12 +47,13 @@ Example:
 children
 --------
 
-"children" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns all child nodes or only those matching
-the filter expression specified as optional argument.
+"children" operation working on generic objects. It iterates over all
+context elements and returns the values of the properties given in the
+filter expression that has to be specified as argument or in a following
+filter operation.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ChildrenOperation
-:Priority: 100
+:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
+:Priority: 1
 :Final: No
 :Returns: void
 
@@ -63,13 +64,12 @@ the filter expression specified as optional argument.
 children
 --------
 
-"children" operation working on generic objects. It iterates over all
-context elements and returns the values of the properties given in the
-filter expression that has to be specified as argument or in a following
-filter operation.
+"children" operation working on TYPO3CR nodes. It iterates over all
+context elements and returns all child nodes or only those matching
+the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
-:Priority: 1
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ChildrenOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -183,8 +183,6 @@ For the latter the behavior is as follows: if the operand is one of the strings
 object, array, int(eger), float, double, bool(ean) or string the value is checked
 for being of the specified type. For any other strings the value is used as
 classname with the PHP instanceof operation to check if the value matches.
-
-Accepts a filter, an array, an object, a traversable object & a FlowQuery object.
 
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\FilterOperation
 :Priority: 1
@@ -312,22 +310,6 @@ the filter expression specified as optional argument.
 
 
 
-not
----
-
-"not" operation working on generic objects. Remove elements from the set of
-matched elements.
-Accepts objects, arrays, traversable objects, FlowQuery and filters.
-
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\NotOperation
-:Priority: 1
-:Final: No
-:Returns: boolean
-
-
-
-
-
 parent
 ------
 
@@ -379,14 +361,12 @@ the filter expression specified as optional argument
 property
 --------
 
-Access properties of an object using ObjectAccess.
+Used to access properties of a TYPO3CR Node. If the property mame is
+prefixed with _, internal node properties like start time, end time,
+hidden are accessed.
 
-Expects the name of a property as argument. If the context is empty, NULL
-is returned. Otherwise the value of the property on the first context
-element is returned.
-
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
-:Priority: 1
+:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\PropertyOperation
+:Priority: 100
 :Final: Yes
 :Returns: mixed
 
@@ -397,12 +377,14 @@ element is returned.
 property
 --------
 
-Used to access properties of a TYPO3CR Node. If the property mame is
-prefixed with _, internal node properties like start time, end time,
-hidden are accessed.
+Access properties of an object using ObjectAccess.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\PropertyOperation
-:Priority: 100
+Expects the name of a property as argument. If the context is empty, NULL
+is returned. Otherwise the value of the property on the first context
+element is returned.
+
+:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
+:Priority: 1
 :Final: Yes
 :Returns: mixed
 

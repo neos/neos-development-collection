@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2014-07-17
+This reference was automatically generated from code on 2014-08-29
 
 
 neos:backend.configurationCacheVersion
@@ -224,6 +224,32 @@ Expected result::
 
 	string
 	(if myValue is a string)
+
+
+
+
+neos:includeJavaScript
+----------------------
+
+A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\IncludeJavaScriptViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``include`` (string): Regular expression of files to include
+
+* ``exclude`` (string, *optional*): Regular expression of files to exclude
+
+* ``package`` (string, *optional*): The package key of the resources to include or current controller package if NULL
+
+* ``subpackage`` (string, *optional*): The subpackage key of the resources to include or current controller subpackage if NULL
+
+* ``directory`` (string, *optional*): The directory inside the current subpackage. By default, the "JavaScript" directory will be used.
 
 
 
