@@ -394,6 +394,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 			$this->nodeDataRepository->persistEntities();
+		} else {
+			if (!$this->isNodeDataMatchingContext()) {
+				$this->materializeNodeData();
+			}
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
@@ -432,6 +436,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 			$this->nodeDataRepository->persistEntities();
+		} else {
+			if (!$this->isNodeDataMatchingContext()) {
+				$this->materializeNodeData();
+			}
 		}
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);

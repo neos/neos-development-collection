@@ -406,7 +406,7 @@ trait StepDefinitionsTrait {
 
 		foreach ($rows as $index => $row) {
 			if (isset($row['Path'])) {
-				Assert::assertEquals($row['Path'], $this->currentNodes[$index]->getPath(), 'Path should match');
+				Assert::assertEquals($row['Path'], $this->currentNodes[$index]->getPath(), 'Path should match on element ' . $index);
 			}
 			if (isset($row['Properties'])) {
 				$nodeProperties = $this->currentNodes[$index]->getProperties();

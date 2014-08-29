@@ -164,3 +164,39 @@ Feature: Move node
       | live      |
     Then I should have one node
     And the node property "title" should be "Our services"
+
+    @fixtures
+    Scenario: Reordering nodes only applies in user workspace
+      When I get a node by path "/sites/typo3cr/service" with the following context:
+        | Workspace  |
+        | user-admin |
+      And I move the node before the node with path "/sites/typo3cr/company"
+      When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+        | Workspace  |
+        | user-admin |
+      Then I should have the following nodes:
+        | Path                   | Properties           |
+        | /sites/typo3cr/service | {"title": "Service"} |
+        | /sites/typo3cr/company | {"title": "Company"} |
+      When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+        | Workspace |
+        | live      |
+      Then I should have the following nodes:
+        | Path                   | Properties           |
+        | /sites/typo3cr/company | {"title": "Company"} |
+        | /sites/typo3cr/service | {"title": "Service"} |
+
+  @fixtures
+  Scenario: Reordering nodes can be published
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node before the node with path "/sites/typo3cr/company"
+    And I publish the workspace "user-admin"
+    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | Workspace |
+      | live      |
+    Then I should have the following nodes:
+      | Path                   | Properties           |
+      | /sites/typo3cr/service | {"title": "Service"} |
+      | /sites/typo3cr/company | {"title": "Company"} |
