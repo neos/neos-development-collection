@@ -78,8 +78,13 @@ function (
 		 */
 		_getAllowedNodeTypesForSelectedNode: function() {
 			var selectedNode = this.get('nodeSelection.selectedNode');
+			if (!selectedNode) {
+				// very early when initializing the user interface, the selectedNode is not set. Because the code below breaks
+				// if node is null, we need to catch that here.
+				return [];
+			}
 
-			// Collections are now always autocreated
+			// Collections are now always auto-created
 			if (NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:ContentCollection')) {
 				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
 					selectedNode.$element.attr('data-neos-_parentnodetype'),
