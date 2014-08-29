@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
- * This converter transforms TYPO3.Media Image and ImageVariant objects to arrays.
+ * This converter transforms TYPO3.Media AssetInterface instances to arrays.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -25,7 +25,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	/**
 	 * @var array
 	 */
-	protected $sourceTypes = array('TYPO3\Media\Domain\Model\ImageVariant', 'TYPO3\Media\Domain\Model\Image');
+	protected $sourceTypes = array('TYPO3\Media\Domain\Model\AssetInterface');
 
 	/**
 	 * @var string
@@ -38,34 +38,33 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	protected $priority = 1;
 
 	/**
-	 * Convert properties in the source depending on type
+	 * Return a list of sub-properties inside the source object.
+	 * The "key" is the sub-property name, and the "value" is the value of the sub-property.
 	 *
 	 * @param mixed $source
 	 * @return array
 	 */
 	public function getSourceChildPropertiesToBeConverted($source) {
-		switch (TRUE) {
-			case $source instanceof \TYPO3\Media\Domain\Model\ImageVariant:
-				return array(
-					'originalImage' => $source->getOriginalImage(),
-					'processingInstructions' => $source->getProcessingInstructions()
-				);
-			case $source instanceof \TYPO3\Media\Domain\Model\Image:
-				return array(
-					'resource' => $source->getResource()
-				);
-			default:
-				return array();
+		$sourceChildPropertiesToBeConverted = array(
+			'resource' => $source->getResource()
+		);
+
+		if ($source instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
+			unset($sourceChildPropertiesToBeConverted['resource']);
+			$sourceChildPropertiesToBeConverted['originalImage'] = $source->getOriginalImage();
+			$sourceChildPropertiesToBeConverted['processingInstructions'] = $source->getProcessingInstructions();
 		}
+
+		return $sourceChildPropertiesToBeConverted;
 	}
 
 	/**
-	 * Define types of to be converted child properties
+	 * Return the type of a given sub-property inside the $targetType, in this case always "array"
 	 *
-	 * @param string $targetType
-	 * @param string $propertyName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return string
+	 * @param string $targetType is ignored
+	 * @param string $propertyName is ignored
+	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration is ignored
+	 * @return string always "array"
 	 */
 	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
 		return 'array';
@@ -75,10 +74,10 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	 * Convert an object from $source to an \TYPO3\Media\Domain\Model\ImageVariant
 	 *
 	 * @param array $source
-	 * @param string $targetType must be 'TYPO3\Media\Domain\Model\ImageVariant'
+	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\Media\Domain\Model\ImageVariant|\TYPO3\Flow\Validation\Error The converted Image, a Validation Error or NULL
+	 * @return \TYPO3\Media\Domain\Model\ImageVariant|\TYPO3\Flow\Validation\Error The converted asset or NULL
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		switch (TRUE) {
@@ -91,7 +90,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 					'originalImage' => $convertedChildProperties['originalImage'],
 					'processingInstructions' => $convertedChildProperties['processingInstructions']
 				);
-			case $source instanceof \TYPO3\Media\Domain\Model\Image:
+			case $source instanceof \TYPO3\Media\Domain\Model\AssetInterface:
 				if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {
 					return NULL;
 				}
@@ -100,8 +99,6 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 					'title' => $source->getTitle(),
 					'resource' => $convertedChildProperties['resource']
 				);
-			default:
-				throw new \TYPO3\Flow\Property\Exception\TypeConverterException('Conversion to array failed due to unsupported input', 1404977796);
 		}
 	}
 }
