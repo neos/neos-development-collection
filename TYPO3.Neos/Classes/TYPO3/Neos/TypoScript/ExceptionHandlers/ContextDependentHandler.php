@@ -43,6 +43,7 @@ class ContextDependentHandler extends AbstractRenderingExceptionHandler {
 		} else {
 			$handler = new XmlCommentHandler();
 		}
+		$handler->setRuntime($this->getRuntime());
 		return $handler->handleRenderingException($typoScriptPath, $exception);
 	}
 
