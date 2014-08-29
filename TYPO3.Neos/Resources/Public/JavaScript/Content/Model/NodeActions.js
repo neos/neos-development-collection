@@ -155,7 +155,7 @@ define(
 			model.set('typo3:_removed', true);
 			model.save(null);
 			NodeSelection.updateSelection();
-			EventDispatcher.on('contentSaved', function() {
+			EventDispatcher.one('contentSaved', function() {
 				this.trigger('contentChanged');
 			});
 		},
