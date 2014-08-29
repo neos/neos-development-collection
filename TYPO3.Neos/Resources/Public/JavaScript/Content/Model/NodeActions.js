@@ -169,7 +169,7 @@ define(
 			model.get('_vieEntity').set('typo3:_removed', true);
 			model.get('_vieEntity').save(null);
 			NodeSelection.updateSelection();
-			EventDispatcher.on('contentSaved', function() {
+			EventDispatcher.one('contentSaved', function() {
 				this.trigger('contentChanged');
 			});
 		},
