@@ -158,6 +158,8 @@ contentCache.cacheSegmentsWithTags = TYPO3.TypoScript:Array {
 
 		entryTags {
 			1 = 'Outer'
+			# Empty tags should be ignored
+			2 = ${null}
 		}
 	}
 }
