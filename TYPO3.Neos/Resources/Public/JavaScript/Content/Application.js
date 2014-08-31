@@ -143,11 +143,10 @@ function(
 				}));
 			}
 
-			$.when(ResourceCache.getItem(Configuration.get('VieSchemaUri')), ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri'))).done(function(vieSchemaString, nodeTypeSchemaString) {
-				var schema = JSON.parse(vieSchemaString);
-				VIE.Util.loadSchemaOrg(vie, schema, null);
+			$.when(ResourceCache.getItem(Configuration.get('VieSchemaUri')), ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri'))).done(function(vieSchema, nodeTypeSchema) {
+				VIE.Util.loadSchemaOrg(vie, vieSchema, null);
 
-				Configuration.set('Schema', JSON.parse(nodeTypeSchemaString));
+				Configuration.set('Schema', nodeTypeSchema);
 
 				that._initializeVieAfterSchemaIsLoaded(vie);
 			}).fail(function(xhr, status, error) {

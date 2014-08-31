@@ -522,8 +522,7 @@ define(
 				var nodeType = this.get('nodeType');
 				if (nodeType !== '') {
 					var that = this;
-					$.when(ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType)).done(function(dataString) {
-						var data = JSON.parse(dataString);
+					$.when(ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri') + '&superType=' + this.baseNodeType)).done(function(data) {
 						that.createNode(activeNode, 'Untitled', nodeType, data[nodeType].ui.icon);
 					});
 				} else {

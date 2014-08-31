@@ -83,8 +83,7 @@ define(
 
 		init: function() {
 			var that = this;
-			$.when(ResourceCache.getItem(Configuration.get('EditPreviewDataUri'))).done(function(dataString) {
-				var data = JSON.parse(dataString);
+			$.when(ResourceCache.getItem(Configuration.get('EditPreviewDataUri'))).done(function(data) {
 				that.set('configuration', data);
 			}).fail(function(xhr, status, error) {
 				Notification.error('Failed loading edit / preview data.');
