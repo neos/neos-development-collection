@@ -28,7 +28,7 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Content) {
 
 		entryTags {
 			1 = ${'DescendantOf_' + contentCollectionNode.identifier}
-			2 = ${'DescendantOf_' + documentNode.identifier}
+			2 = ${'Node_' + contentCollectionNode.identifier}
 		}
 
 		maximumLifetime = ${q(contentCollectionNode).context({'invisibleContentShown': true}).children().cacheLifetime()}
@@ -42,7 +42,6 @@ prototype(TYPO3.Neos:Content) {
 		# the mode can safely be switched to 'cached'.
 		@cache {
 			mode = 'embed'
-			entryTags.2 >
 		}
 	}
 }
