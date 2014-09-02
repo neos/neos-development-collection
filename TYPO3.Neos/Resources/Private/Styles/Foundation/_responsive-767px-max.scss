@@ -1,0 +1,164 @@
+//
+// Responsive: Landscape phone to desktop/tablet
+// --------------------------------------------------
+
+
+@media (max-width: 767px) {
+
+  // Padding to set content in a bit
+  body {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  // Negative indent the now static "fixed" navbar
+  .neos-navbar-fixed-top,
+  .neos-navbar-fixed-bottom,
+  .neos-navbar-static-top {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+  // Remove padding on container given explicit padding set on body
+  .neos-container-fluid {
+    padding: 0;
+  }
+
+  // TYPOGRAPHY
+  // ----------
+  // Reset horizontal dl
+  .neos-dl-horizontal {
+    dt {
+      float: none;
+      clear: none;
+      width: auto;
+      text-align: left;
+    }
+    dd {
+      margin-left: 0;
+    }
+  }
+
+  // GRID & CONTAINERS
+  // -----------------
+  // Remove width from containers
+  .neos-container {
+    width: auto;
+  }
+  // Fluid rows
+  .neos-row-fluid {
+    width: 100%;
+  }
+  // Undo negative margin on rows
+  .neos-row {
+    margin-left: 0;
+  }
+  // Make all grid-sized elements block level again
+  [class*="neos-span"],
+  .neos-uneditable-input[class*="neos-span"], // Makes uneditable inputs full-width when using grid sizing
+  .neos-row-fluid [class*="neos-span"] {
+    float: none;
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    @include box-sizing(border-box);
+  }
+  neos-span12,
+  .neos-row-fluid neos-span12 {
+    width: 100%;
+    @include box-sizing(border-box);
+  }
+  .neos-row-fluid [class*="neos-offset"]:first-child {
+    margin-left: 0;
+  }
+
+  // FORM FIELDS
+  // -----------
+  // Make span* classes full width
+  .neos-input-large,
+  .neos-input-xlarge,
+  .neos-input-xxlarge,
+  input[class*="neos-span"],
+  select[class*="neos-span"],
+  textarea[class*="neos-span"],
+  .neos-uneditable-input {
+    @include input-block-level();
+  }
+  // But don't let it screw up prepend/append inputs
+  .neos-input-prepend input,
+  .neos-input-append input,
+  .neos-input-prepend input[class*="neos-span"],
+  .neos-input-append input[class*="neos-span"] {
+    display: inline-block; // redeclare so they don't wrap to new lines
+    width: auto;
+  }
+  .neos-controls-row [class*="neos-span"] + [class*="neos-span"] {
+    margin-left: 0;
+  }
+
+  // Modals
+  .neos-modal {
+    position: fixed;
+    top:   20px;
+    left:  20px;
+    right: 20px;
+    width: auto;
+    margin: 0;
+    &.neos-fade  { top: -100px; }
+    &.neos-fade.neos-in { top: 20px; }
+  }
+
+}
+
+
+
+// UP TO LANDSCAPE PHONE
+// ---------------------
+
+@media (max-width: 480px) {
+
+  // Block level the page header small tag for readability
+  neos-page-header h1 small {
+    display: block;
+    line-height: $baseLineHeight;
+  }
+
+  // Update checkboxes for iOS
+  input[type="checkbox"],
+  input[type="radio"] {
+    border: 1px solid #ccc;
+  }
+
+  // Remove the horizontal form styles
+  .neos-form-horizontal {
+    .neos-control-label {
+      float: none;
+      width: auto;
+      padding-top: 0;
+      text-align: left;
+    }
+    // Move over all input controls and content
+    .neos-controls {
+      margin-left: 0;
+    }
+    // Move the options list down to align with labels
+    neos-control-list {
+      padding-top: 0; // has to be padding because margin collaspes
+    }
+    // Move over buttons in .neos-form-actions to align with .neos-controls
+    .neos-form-actions {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+
+  // Modals
+  .neos-modal {
+    top:   10px;
+    left:  10px;
+    right: 10px;
+  }
+  .neos-modal-header .neos-close {
+    padding: 10px;
+    margin: -10px;
+  }
+
+}

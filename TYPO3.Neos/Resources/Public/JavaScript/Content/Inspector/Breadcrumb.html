@@ -1,0 +1,18 @@
+<div>
+	<span>
+		<i {{bindAttr class="view.nodes.0.nodeTypeSchema.ui.icon::icon-sign-blank view.nodes.0.nodeTypeSchema.ui.icon"}}></i>
+		{{view.nodes.0.nodeTypeSchema.ui.label}}
+		{{#if view.nodes.0.status}}({{view.nodes.0.status}}){{/if}}
+	</span>
+</div>
+<ul>
+	{{#each node in view.nodes}}
+		<li>
+			<a href="#" {{action "selectNode" node bubbles=false target="view.nodeSelection"}}>
+				<i {{bindAttr class="node.nodeTypeSchema.ui.icon::icon-sign-blank node.nodeTypeSchema.ui.icon"}}></i>
+				{{unbound node.nodeTypeSchema.ui.label}}
+				{{#if status}}<span class="neos-breadcrumbitem-status">({{status}})</span>{{/if}}
+			</a>
+		</li>
+	{{/each}}
+</ul>

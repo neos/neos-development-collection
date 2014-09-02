@@ -1,0 +1,16 @@
+/**
+ * This TypoScript template defines a rudimentary Page object,
+ * which is used until real data can be fetched from the Content
+ * Repository.
+ */
+ 
+rhabarber = Page
+rhabarber.view = "default"
+rhabarber.bodyTag = "<body style=\"background-color:rgb(255,135,0); color:white; font-family:Helvetica, Arial, sans-serif';\">"
+
+rhabarber.10 = Text
+rhabarber.10.value = "This value will be overwritten."
+
+# rhabarber.10.value.processors.1.wrap('<strong>', '<strong')
+
+rhabarber.10.value = "Hey this is real output from a TypoScript object!"

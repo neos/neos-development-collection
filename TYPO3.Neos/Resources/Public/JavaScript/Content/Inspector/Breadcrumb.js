@@ -1,0 +1,31 @@
+/**
+ * Inspector breadcrumb
+ */
+define(
+[
+	'emberjs',
+	'Content/Model/NodeSelection',
+	'text!./Breadcrumb.html'
+], function(
+	Ember,
+	NodeSelection,
+	template
+) {
+	return Ember.View.extend({
+		elementId: 'neos-content-breadcrumb',
+		classNameBindings: ['open:neos-open'],
+		template: Ember.Handlebars.compile(template),
+		open: false,
+
+		nodeSelection: NodeSelection,
+
+		nodes: function() {
+			this.set('open', false);
+			return NodeSelection.get('nodes').toArray().reverse();
+		}.property('nodeSelection.nodes'),
+
+		click: function() {
+			this.set('open', !this.get('open'));
+		}
+	});
+});

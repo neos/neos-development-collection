@@ -1,0 +1,22 @@
+<f:layout name="Default" />
+
+<f:section name="head">
+	<title>TYPO3 Neos Error</title>
+	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Error.css', package: 'TYPO3.Neos')}" />
+</f:section>
+
+<f:section name="body">
+	<body class="neos">
+		<div class="neos-error-screen">
+			<div class="neos-message-icon">
+				<i class="icon-warning-sign"></i>
+			</div>
+			<h1>{errorTitle}</h1>
+			<p>{errorDescription -> f:format.raw()}</p>
+			<f:if condition="{setupMessage -> f:format.raw()}">
+				<p><strong>{setupMessage}</strong></p>
+				<p><a href="/setup" class="neos-button neos-button-primary">Go to setup</a></p>
+			</f:if>
+		</div>
+	</body>
+</f:section>

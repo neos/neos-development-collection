@@ -1,0 +1,156 @@
+// Notifications
+#neos-notification-container.neos-notification-top {
+	position: fixed;
+	z-index: 999999;
+	top: 0;
+	left: 50%;
+	width: 512px;
+	padding-top: 8px;
+	@include font;
+	@include translate(-50%, 0);
+
+	> .neos-notification {
+		color: white;
+		font-size: 14px;
+		position: relative;
+		width: 512px;
+		margin: 0 auto $tightMargin;
+		word-wrap: break-word;
+		overflow: hidden;
+		@include box-sizing(border-box);
+		@include box-shadow(0 0 14px rgba(0, 0, 0, .15));
+
+		&::before {
+			content: '';
+			display: block;
+			position: absolute;
+			left: 40px;
+			top: 0;
+			bottom: 0;
+			width: 1px;
+			background: rgba(255, 255, 255, .25);
+		}
+
+		&.neos-notification-error {
+			background-color: $warning;
+
+			.icon-error {
+				@extend .icon-ban-circle;
+			}
+		}
+
+		&.neos-notification-success {
+			background-color: $green;
+
+			.icon-success {
+				@extend .icon-ok;
+			}
+		}
+
+		&.neos-notification-warning {
+			background-color: $orange;
+
+			.icon-warning {
+				@extend .icon-warning-sign;
+			}
+		}
+
+		&.neos-notification-info {
+			background-color: $blue;
+
+			.icon-info-circle {
+				@extend .icon-info-sign;
+			}
+		}
+
+		.neos-title {
+			display: none;
+		}
+
+		i {
+			height: $unit;
+			line-height: $unit;
+			width: $unit;
+			text-align: center;
+			font-size: 16px;
+			padding: 0;
+			margin: 0;
+			font-family: FontAwesome;
+			font-weight: normal;
+			font-style: normal;
+			text-decoration: inherit;
+			-webkit-font-smoothing: antialiased;
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			&.neos-close-button {
+				color: white;
+				height: 40px;
+				line-height: 40px;
+				width: 40px;
+				text-align: center;
+				left: auto;
+				right: 0;
+				cursor: pointer;
+				font-size: 18px;
+				@extend .icon-remove-sign;
+
+				&:hover {
+					background-color: rgba(255, 255, 255, .25);
+				}
+			}
+		}
+
+		.neos-notification-content {
+			.neos-expand-content {
+				display: none;
+				padding: $defaultMargin ($unit + 1 + $relatedMargin);
+
+				pre {
+					padding: $defaultMargin 0;
+					font-family: "Lucida Console", Monaco, monospace;
+					background-color: transparent;
+					border: none;
+					color: #fff;
+					border-radius: 0;
+					white-space: pre-wrap;
+				}
+			}
+
+			&.expandable {
+				.neos-notification-heading {
+					cursor: pointer;
+					color: #fff;
+
+					&::after {
+						content: "›";
+						font-size: 26px;
+						font-weight: normal;
+						display: inline-block;
+						position: relative;
+						@include rotate(-90deg);
+						top: 5px;
+						left: 13px;
+						line-height: 0;
+					}
+				}
+
+				&.expanded {
+					.neos-notification-heading::after {
+						@include rotate(90deg);
+						left: 19px;
+					}
+				}
+			}
+
+			.neos-notification-heading {
+				padding: 12px ($unit + 1 + $relatedMargin) 12px;
+				margin-bottom: 0;
+				color: white;
+				font-weight: 400;
+				font-size: 14px;
+			}
+		}
+	}
+}
