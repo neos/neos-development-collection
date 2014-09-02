@@ -13,6 +13,7 @@ namespace TYPO3\Neos\TypoScript;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Exception;
+use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
@@ -37,88 +38,50 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
+	 * @var LinkingService
 	 */
-	protected $assetRepository;
-
-	/**
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
-	 * @Flow\Inject
-	 */
-	protected $resourcePublisher;
-
-	const PATTERN_NODE_URIS = '/(node|asset):\/\/(([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
-
-	/**
-	 * The string to be processed
-	 *
-	 * @return string
-	 */
-	public function getValue() {
-		return $this->tsValue('value');
-	}
+	protected $linkingService;
 
 	/**
 	 * Convert URIs matching a supported scheme with generated URIs
 	 *
-	 * If the workspace of the current node context is not live, no replacement will be done. This is needed to show
-	 * the editable links with metadata in the content module.
+	 * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
+	 * set. This is needed to show the editable links with metadata in the content module.
 	 *
 	 * @return string
 	 * @throws Exception
 	 */
 	public function evaluate() {
-		$text = $this->getValue() ?: '';
+		$text = $this->tsValue('value');
+
+		if ($text === '' || $text === NULL) {
+			return '';
+		}
+
 		if (!is_string($text)) {
 			throw new Exception(sprintf('Only strings can be processed by this TypoScript object, given: "%s".', gettype($text)), 1382624080);
 		}
-		$currentContext = $this->tsRuntime->getCurrentContext();
-		$node = $currentContext['node'];
+
+		$node = $this->tsValue('node');
+
 		if (!$node instanceof NodeInterface) {
 			throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
 		}
+
 		if ($node->getContext()->getWorkspace()->getName() !== 'live' && !($this->tsValue('forceConversion'))) {
 			return $text;
 		}
-		$self = $this;
-		return preg_replace_callback(self::PATTERN_NODE_URIS, function(array $matches) use ($self, $node) {
+
+		$linkingService = $this->linkingService;
+		$controllerContext = $this->tsRuntime->getControllerContext();
+		return preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function(array $matches) use ($node, $linkingService, $controllerContext) {
 			switch ($matches[1]) {
 				case 'node':
-					return $self->convertNodeIdentifierToUri($matches[2], $node);
+					return $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
 				case 'asset':
-					return $self->convertAssetIdentifierToUri($matches[2], $node);
+					return $linkingService->resolveAssetUri($matches[0]);
 			}
 		}, $text);
 	}
 
-	/**
-	 * Converts the given node identifier (UUID) with a proper URI pointing to the target node - or with an empty string if the target node was not found in the current workspace
-	 *
-	 * @param string $nodeIdentifier
-	 * @param NodeInterface $contextNode
-	 * @return string
-	 */
-	public function convertNodeIdentifierToUri($nodeIdentifier, NodeInterface $contextNode) {
-		$targetNode = $contextNode->getContext()->getNodeByIdentifier($nodeIdentifier);
-		if ($targetNode === NULL) {
-			return '';
-		}
-		$uriBuilder = $this->tsRuntime->getControllerContext()->getUriBuilder();
-		return $uriBuilder->setFormat('html')->uriFor('show', array('node' => $targetNode), 'Frontend\\Node', 'TYPO3.Neos');
-	}
-
-	/**
-	 * Converts the given asset identifier (UUID) with a proper URI pointing to the target asset - or with an empty string if the target asset was not found
-	 *
-	 * @param string $assetIdentifier
-	 * @return string
-	 */
-	public function convertAssetIdentifierToUri($assetIdentifier) {
-		$asset = $this->assetRepository->findByIdentifier($assetIdentifier);
-		if ($asset === NULL) {
-			return '';
-		}
-
-		return $this->resourcePublisher->getPersistentResourceWebUri($asset->getResource());
-	}
 }

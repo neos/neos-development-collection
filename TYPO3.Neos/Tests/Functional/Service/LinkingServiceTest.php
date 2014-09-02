@@ -23,8 +23,14 @@ use TYPO3\Flow\Mvc\Routing\UriBuilder;
  */
 class LinkingServiceTest extends FunctionalTestCase {
 
+	/**
+	 * @var boolean
+	 */
 	protected $testableSecurityEnabled = TRUE;
 
+	/**
+	 * @var boolean
+	 */
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
@@ -62,6 +68,9 @@ class LinkingServiceTest extends FunctionalTestCase {
 	 */
 	protected $baseNode;
 
+	/**
+	 * @return void
+	 */
 	public function setUp() {
 		parent::setUp();
 		$this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
@@ -97,6 +106,9 @@ class LinkingServiceTest extends FunctionalTestCase {
 		$this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
 	}
 
+	/**
+	 * @return void
+	 */
 	public function tearDown() {
 		parent::tearDown();
 		$this->inject($this->contextFactory, 'contextInstances', array());
@@ -149,6 +161,54 @@ class LinkingServiceTest extends FunctionalTestCase {
 		$this->assertOutputLinkValid('home.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home@live'));
 		$this->assertOutputLinkValid('home/about-us.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us@live'));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission@live'));
+	}
+
+	public function supportedSchemesDataProvider() {
+		return array(
+			array('node://aeabe76a-551a-495f-a324-ad9a86b2aff7', TRUE),
+			array('asset://aeabe76a-551a-495f-a324-ad9a86b2aff7', TRUE),
+			array('random://aeabe76a-551a-495f-a324-ad9a86b2aff7', FALSE)
+		);
+	}
+
+	/**
+	 * @dataProvider supportedSchemesDataProvider
+	 * @test
+	 */
+	public function linkingServiceOnlySupportsNodesAndAssetSchemes($scheme, $match) {
+		$this->assertSame($match, $this->linkingService->hasSupportedScheme($scheme));
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceCanGetSchemeFromUrl() {
+		$this->assertSame('node', $this->linkingService->getScheme('node://aeabe76a-551a-495f-a324-ad9a86b2aff7'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceCanResolveNodeUri() {
+		$this->assertSame('/home.html', $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode, $this->controllerContext));
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceCanResolveAssetUri() {
+		$this->assertSame('http://baseuri/_Resources/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/TYPO3-Neos-logo-sRGB-color.pdf', $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceCanConvertUriToObject() {
+		$assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
+		$asset = $assetRepository->findByIdentifier('89cd85cc-270e-0902-7113-d14ac7539c75');
+
+		$this->assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));
+		$this->assertSame($asset, $this->linkingService->convertUriToObject('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
 	}
 
 	/**

@@ -12,13 +12,15 @@ namespace TYPO3\Neos\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * A service for creating URIs pointing to nodes.
+ * A service for creating URIs pointing to nodes and assets.
  *
  * The target node can be provided as string or as a Node object; if not specified
  * at all, the generated URI will refer to the current document node inside the TypoScript context.
@@ -47,10 +49,108 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 class LinkingService {
 
 	/**
+	 * Pattern to match supported URIs.
+	 *
+	 * @var string
+	 */
+	const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/(([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
+	 */
+	protected $assetRepository;
+
+	/**
+	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+	 * @Flow\Inject
+	 */
+	protected $resourcePublisher;
+
+	/**
 	 * @Flow\Inject
 	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
+
+	/**
+	 * @param string|Uri $uri
+	 * @return boolean
+	 */
+	public function hasSupportedScheme($uri) {
+		if ($uri instanceof Uri) {
+			$uri = (string)$uri;
+		}
+		return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
+	}
+
+	/**
+	 * @param string|Uri $uri
+	 * @return string
+	 */
+	public function getScheme($uri) {
+		if ($uri instanceof Uri) {
+			return $uri->getScheme();
+		}
+
+		if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+			return $matches[1];
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolves a given node:// URI to a "normal" HTTP(S) URI for the addressed node.
+	 *
+	 * @param string|Uri $uri
+	 * @param NodeInterface $contextNode
+	 * @param ControllerContext $controllerContext
+	 * @return string
+	 * @throws \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException
+	 */
+	public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext) {
+		return $this->createNodeUri($controllerContext, $this->convertUriToObject($uri, $contextNode));
+	}
+
+	/**
+	 * Resolves a given asset:// URI to a "normal" HTTP(S) URI for the addressed asset's resource.
+	 *
+	 * @param string|Uri $uri
+	 * @return string
+	 */
+	public function resolveAssetUri($uri) {
+		$targetObject = $this->convertUriToObject($uri);
+		return $this->resourcePublisher->getPersistentResourceWebUri($targetObject->getResource());
+	}
+
+	/**
+	 * Return the object the URI addresses or NULL.
+	 *
+	 * @param string|Uri $uri
+	 * @param NodeInterface $contextNode
+	 * @return object|NULL
+	 */
+	public function convertUriToObject($uri, NodeInterface $contextNode = NULL) {
+		if ($uri instanceof Uri) {
+			$uri = (string)$uri;
+		}
+
+		if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+			switch ($matches[1]) {
+				case 'node':
+					if ($contextNode === NULL) {
+						throw new \RuntimeException('node:// URI conversion requires a context node to be passed', 1409734235);
+					};
+
+					return $contextNode->getContext()->getNodeByIdentifier($matches[2]);
+				case 'asset':
+					return $this->assetRepository->findByIdentifier($matches[2]);
+			}
+		}
+
+		return NULL;
+	}
 
 	/**
 	 * Renders the URI.
@@ -105,10 +205,6 @@ class LinkingService {
 
 		$request = $controllerContext->getRequest()->getMainRequest();
 
-		if ($format === NULL) {
-			$format = $request->getFormat();
-		}
-
 		$uriBuilder = clone $controllerContext->getUriBuilder();
 		$uriBuilder->setRequest($request);
 		return $uriBuilder
@@ -118,7 +214,7 @@ class LinkingService {
 			->setArguments($arguments)
 			->setAddQueryString($addQueryString)
 			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-			->setFormat($format)
+			->setFormat($format ?: $request->getFormat())
 			->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
 	}
 }
