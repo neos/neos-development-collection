@@ -17,13 +17,11 @@ use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Service\ContentContext;
 
 /**
- * Testcase for the NodeLinkingService
+ * Testcase for the LinkingService
  */
-class NodeLinkingServiceTest extends FunctionalTestCase {
+class LinkingServiceTest extends FunctionalTestCase {
 
 	protected $testableSecurityEnabled = TRUE;
 
@@ -55,9 +53,9 @@ class NodeLinkingServiceTest extends FunctionalTestCase {
 	protected $contextFactory;
 
 	/**
-	 * @var \TYPO3\Neos\Service\NodeLinkingService
+	 * @var \TYPO3\Neos\Service\LinkingService
 	 */
-	protected $nodeLinkingService;
+	protected $linkingService;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
@@ -93,7 +91,7 @@ class NodeLinkingServiceTest extends FunctionalTestCase {
 
 		$this->baseNode = $this->contentContext->getCurrentSiteNode()->getNode('home');
 
-		$this->nodeLinkingService = $this->objectManager->get('TYPO3\Neos\Service\NodeLinkingService');
+		$this->linkingService = $this->objectManager->get('TYPO3\Neos\Service\LinkingService');
 		/** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
@@ -107,38 +105,38 @@ class NodeLinkingServiceTest extends FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function nodeLinkingServiceCreatesUriViaGivenNodeObject() {
+	public function linkingServiceCreatesUriViaGivenNodeObject() {
 		$targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
 
-		$this->assertOutputLinkValid('home.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, $targetNode));
+		$this->assertOutputLinkValid('home.html', $this->linkingService->createNodeUri($this->controllerContext, $targetNode));
 	}
 
 	/**
 	 * @test
 	 */
-	public function nodeLinkingServiceCreatesUriViaAbsoluteNodePathString() {
-		$this->assertOutputLinkValid('home.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode));
-		$this->assertOutputLinkValid('home/about-us.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us', $this->baseNode));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission', $this->baseNode));
+	public function linkingServiceCreatesUriViaAbsoluteNodePathString() {
+		$this->assertOutputLinkValid('home.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode));
+		$this->assertOutputLinkValid('home/about-us.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us', $this->baseNode));
+		$this->assertOutputLinkValid('home/about-us/mission.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission', $this->baseNode));
 	}
 
 	/**
 	 * @test
 	 */
-	public function nodeLinkingServiceCreatesUriViaStringStartingWithTilde() {
-		$this->assertOutputLinkValid('/', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~', $this->baseNode));
-		$this->assertOutputLinkValid('home.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~/home', $this->baseNode));
-		$this->assertOutputLinkValid('home/about-us.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~/home/about-us', $this->baseNode));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '~/home/about-us/mission', $this->baseNode));
+	public function linkingServiceCreatesUriViaStringStartingWithTilde() {
+		$this->assertOutputLinkValid('/', $this->linkingService->createNodeUri($this->controllerContext, '~', $this->baseNode));
+		$this->assertOutputLinkValid('home.html', $this->linkingService->createNodeUri($this->controllerContext, '~/home', $this->baseNode));
+		$this->assertOutputLinkValid('home/about-us.html', $this->linkingService->createNodeUri($this->controllerContext, '~/home/about-us', $this->baseNode));
+		$this->assertOutputLinkValid('home/about-us/mission.html', $this->linkingService->createNodeUri($this->controllerContext, '~/home/about-us/mission', $this->baseNode));
 	}
 
 	/**
 	 * @test
 	 */
-	public function nodeLinkingServiceCreatesUriViaStringPointingToSubNodes() {
-		$this->assertOutputLinkValid('home/about-us/history.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '../history', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, 'about-us/mission', $this->baseNode));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, './about-us/mission', $this->baseNode));
+	public function linkingServiceCreatesUriViaStringPointingToSubNodes() {
+		$this->assertOutputLinkValid('home/about-us/history.html', $this->linkingService->createNodeUri($this->controllerContext, '../history', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')));
+		$this->assertOutputLinkValid('home/about-us/mission.html', $this->linkingService->createNodeUri($this->controllerContext, 'about-us/mission', $this->baseNode));
+		$this->assertOutputLinkValid('home/about-us/mission.html', $this->linkingService->createNodeUri($this->controllerContext, './about-us/mission', $this->baseNode));
 	}
 
 	/**
@@ -147,10 +145,10 @@ class NodeLinkingServiceTest extends FunctionalTestCase {
 	 *
 	 * @test
 	 */
-	public function nodeLinkingServiceCreatesUriViaContextNodePathString() {
-		$this->assertOutputLinkValid('home.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '/sites/example/home@live'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us@live'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->nodeLinkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission@live'));
+	public function linkingServiceCreatesUriViaContextNodePathString() {
+		$this->assertOutputLinkValid('home.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home@live'));
+		$this->assertOutputLinkValid('home/about-us.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us@live'));
+		$this->assertOutputLinkValid('home/about-us/mission.html', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission@live'));
 	}
 
 	/**

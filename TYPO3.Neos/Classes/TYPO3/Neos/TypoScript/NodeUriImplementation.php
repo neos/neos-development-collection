@@ -12,7 +12,7 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Service\NodeLinkingService;
+use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\Neos\Exception as NeosException;
 
@@ -23,9 +23,9 @@ class NodeUriImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeLinkingService
+	 * @var LinkingService
 	 */
-	protected $nodeLinkingService;
+	protected $linkingService;
 
 	/**
 	 * A node object or a string node path or NULL to resolve the current document node
@@ -124,7 +124,7 @@ class NodeUriImplementation extends AbstractTypoScriptObject {
 			throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
 		}
 
-		return $this->nodeLinkingService->createNodeUri(
+		return $this->linkingService->createNodeUri(
 			$this->tsRuntime->getControllerContext(),
 			$this->getNode(),
 			$baseNode,

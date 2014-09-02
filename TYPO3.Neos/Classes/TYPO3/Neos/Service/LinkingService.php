@@ -44,7 +44,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @Flow\Scope("singleton")
  */
-class NodeLinkingService {
+class LinkingService {
 
 	/**
 	 * @Flow\Inject

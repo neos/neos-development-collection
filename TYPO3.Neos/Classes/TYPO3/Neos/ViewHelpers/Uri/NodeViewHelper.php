@@ -14,7 +14,7 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Neos\Service\NodeLinkingService;
+use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -83,9 +83,9 @@ class NodeViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
-	 * @var NodeLinkingService
+	 * @var LinkingService
 	 */
-	protected $nodeLinkingService;
+	protected $linkingService;
 
 	/**
 	 * Renders the URI.
@@ -120,7 +120,7 @@ class NodeViewHelper extends AbstractViewHelper {
 		}
 		$controllerContext = $this->controllerContext;
 
-		return $this->nodeLinkingService->createNodeUri(
+		return $this->linkingService->createNodeUri(
 			$controllerContext,
 			$node,
 			$baseNode,
