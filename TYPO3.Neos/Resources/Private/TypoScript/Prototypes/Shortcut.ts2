@@ -4,8 +4,11 @@ prototype(TYPO3.Neos:Shortcut) < prototype(TYPO3.TypoScript:Template) {
 	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/Shortcut.html'
 
 	targetMode = ${q(node).property('targetMode')}
-	targetNode = ${q(node).property('targetNode')}
 	firstChildNode = ${q(node).children('[instanceof TYPO3.Neos:Document]').get(0)}
+	target = ${q(node).property('target')}
+	targetConverted = ${Neos.Link.hasSupportedScheme(this.target) ? Neos.Link.convertUriToObject(this.target, node) : null}
+	targetSchema = ${Neos.Link.getScheme(this.target)}
+
 	node = ${node}
 
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'

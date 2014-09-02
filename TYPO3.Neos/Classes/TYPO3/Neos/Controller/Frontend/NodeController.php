@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Frontend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -111,8 +112,12 @@ class NodeController extends ActionController {
 				$node = $this->nodeShortcutResolver->resolveShortcutTarget($node);
 				if ($node === NULL) {
 					$this->throwStatus(404);
-				} else {
+				} elseif (is_string($node)) {
+					$this->redirectToUri($node);
+				} elseif ($node instanceof NodeInterface) {
 					$this->redirect('show', NULL, NULL, array('node' => $node));
+				} else {
+					$this->throwStatus(500, 'Shortcut resolved to an unsupported type.');
 				}
 			}
 		}

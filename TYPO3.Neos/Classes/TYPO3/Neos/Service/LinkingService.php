@@ -164,7 +164,7 @@ class LinkingService {
 	 * @param string $section
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
+	 * @return string|NULL The rendered URI or NULL if no URI could be resolved for the given node
 	 * @throws \TYPO3\Neos\Exception
 	 * @throws \InvalidArgumentException
 	 */
@@ -201,6 +201,21 @@ class LinkingService {
 
 		if (!$node instanceof NodeInterface) {
 			return NULL;
+		}
+
+		if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut') && $node->getProperty('targetMode') === 'selectedTarget') {
+			$target = $node->getProperty('target');
+			if (!$this->hasSupportedScheme($target)) {
+				return $target;
+			}
+
+			$targetObject = $this->convertUriToObject($target, $node);
+
+			if ($targetObject === NULL) {
+				return NULL;
+			} elseif ($targetObject instanceof AssetInterface) {
+				return $this->resourcePublisher->getPersistentResourceWebUri($targetObject->getResource());
+			}
 		}
 
 		$request = $controllerContext->getRequest()->getMainRequest();

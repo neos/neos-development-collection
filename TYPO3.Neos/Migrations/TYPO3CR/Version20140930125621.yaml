@@ -1,0 +1,54 @@
+up:
+  comments: 'Migrate shortcut nodes: targetMode value adjustment and rename targetNode property'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos:Shortcut'
+      transformations:
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'targetMode'
+            search: 'selectedNode'
+            replace: 'selectedTarget'
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'targetNode'
+            to: 'target'
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'target'
+            newValue: 'node://{current}'
+
+down:
+  comments: 'Migrate shortcut nodes: targetMode value adjustment and rename target property'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos:Shortcut'
+      transformations:
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'targetMode'
+            search: 'selectedTarget'
+            replace: 'selectedNode'
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'target'
+            to: 'targetNode'
+        -
+          type: 'ChangePropertyValue'
+          settings:
+            property: 'targetNode'
+            search: 'node://'
+            replace: ''

@@ -162,14 +162,16 @@
                 label: 'First child node'
               parentNode:
                 label: 'Parent node'
-              selectedNode:
-                label: 'Selected node'
-    targetNode:
-      type: reference
+              selectedTarget:
+                label: 'Selected target'
+    target:
+      type: string
       ui:
-        label: 'Target node'
+        label: 'Target'
+        reloadIfChanged: TRUE
         inspector:
           group: 'document'
+          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
 
 # Base class for all "Plugins"; that are PHP controllers being called during the rendering.
 'TYPO3.Neos:Plugin':

@@ -287,6 +287,7 @@ TYPO3:
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
     defaultContext:
       'Neos.Node': 'TYPO3\Neos\TypoScript\Helper\NodeHelper'
+      'Neos.Link': 'TYPO3\Neos\TypoScript\Helper\LinkHelper'
 
   #TYPO3CR:
     # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
