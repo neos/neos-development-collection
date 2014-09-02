@@ -24,6 +24,14 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  * Usage::
  *
  *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris
+ *
+ * The optional property ``forceConversion`` can be used to have the links converted even when not
+ * rendering the live workspace. This is used for links that are not inline editable (for
+ * example links on images)::
+ *
+ *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris {
+ *     forceConversion = true
+ *   }
  */
 class ConvertUrisImplementation extends AbstractTypoScriptObject {
 
@@ -69,7 +77,7 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 		if (!$node instanceof NodeInterface) {
 			throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
 		}
-		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
+		if ($node->getContext()->getWorkspace()->getName() !== 'live' && !($this->tsValue('forceConversion'))) {
 			return $text;
 		}
 		$self = $this;
