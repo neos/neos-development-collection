@@ -29,7 +29,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypes() {
 		$folderType = new NodeType('TYPO3CR:Folder', array('foo'), array());
@@ -187,6 +187,22 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeType->_set('configuration', array('someProperty' => 'someValue'));
 		$nodeType->expects($this->once())->method('initialize');
 		$nodeType->getSomeProperty();
+	}
+
+	/**
+	 * @test
+	 */
+	public function defaultValuesForPropertiesHandlesDateTypes() {
+		$nodeType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
+			'properties' => array(
+				'date' => array(
+					'type' => 'date',
+					'defaultValue' => '2014-09-23'
+				)
+			)
+		));
+
+		$this->assertEquals($nodeType->getDefaultValuesForProperties(), array('date' => new \DateTime('2014-09-23')));
 	}
 
 }

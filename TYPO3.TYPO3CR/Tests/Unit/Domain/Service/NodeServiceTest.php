@@ -119,6 +119,38 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function setDefaultDateValueOnlyIfTheCurrentPropertyIsNull() {
+		$nodeService = $this->createNodeService();
+
+		$mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+
+		$mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+
+		$mockNode->expects($this->once())
+			->method('getNodeType')
+			->will($this->returnValue($mockNodeType));
+
+		$mockNode->expects($this->once())
+			->method('getProperty')
+			->with('date')
+			->will($this->returnValue(NULL));
+
+		$mockNode->expects($this->once())
+			->method('setProperty')
+			->with('date', new \DateTime('2014-09-03'));
+
+		$mockNodeType->expects($this->once())
+			->method('getDefaultValuesForProperties')
+			->will($this->returnValue(array(
+				'date' => new \DateTime('2014-09-03')
+			)));
+
+		$nodeService->setDefaultValues($mockNode);
+	}
+
+	/**
+	 * @test
+	 */
 	public function setDefaultValueNeverReplaceExistingValue() {
 		$nodeService = $this->createNodeService();
 
