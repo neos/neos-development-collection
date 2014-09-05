@@ -20,6 +20,7 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Repository\ImageRepository;
@@ -101,6 +102,13 @@ class SiteImportService {
 	protected $imageVariantClassNames = array();
 
 	/**
+	 * An array that contains all fully qualified class names that implement AssetInterface
+	 *
+	 * @var array<string>
+	 */
+	protected $assetClassNames = array();
+
+	/**
 	 * An array that contains all fully qualified class names that extend \DateTime including \DateTime itself
 	 *
 	 * @var array<string>
@@ -119,6 +127,8 @@ class SiteImportService {
 	public function initializeObject() {
 		$this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Media\Domain\Model\ImageVariant');
 		array_unshift($this->imageVariantClassNames, 'TYPO3\Media\Domain\Model\ImageVariant');
+
+		$this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Model\AssetInterface');
 
 		$this->dateTimeClassNames = $this->reflectionService->getAllSubClassNamesForClass('DateTime');
 		array_unshift($this->dateTimeClassNames, 'DateTime');
@@ -508,6 +518,10 @@ class SiteImportService {
 			return $this->importImageVariant($objectXml, $className);
 		}
 
+		if (in_array($className, $this->assetClassNames)) {
+			return $this->importAsset($objectXml, $className);
+		}
+
 		if (in_array($className, $this->dateTimeClassNames)) {
 			return call_user_func_array($className . '::createFromFormat', array(\DateTime::W3C, (string)$objectXml->dateTime));
 		}
@@ -556,6 +570,45 @@ class SiteImportService {
 		$this->imageRepository->add($image);
 
 		return $this->objectManager->get($className, $image, $processingInstructions);
+	}
+
+	/**
+	 * Converts the given $objectXml to an AssetInterface instance and returns it
+	 *
+	 * @param \SimpleXMLElement $objectXml
+	 * @param string $className the concrete class name of the AssetInterface to create
+	 * @return AssetInterface
+	 * @throws NeosException
+	 */
+	protected function importAsset(\SimpleXMLElement $objectXml, $className) {
+		if (isset($objectXml['__identifier'])) {
+			$asset = $this->assetRepository->findByIdentifier((string)$objectXml['__identifier']);
+			if (is_object($asset)) {
+				return $asset;
+			}
+		}
+
+		$resourceHash = (string)$objectXml->resource->hash;
+		$resourceData = trim((string)$objectXml->resource->content);
+
+		if ((string)$objectXml->resource['__identifier'] !== '') {
+			$resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], 'TYPO3\Flow\Resource\Resource');
+		}
+
+		if (!isset($resource) || $resource === NULL) {
+			$resource = $this->importResource(
+				(string)$objectXml->resource->filename,
+				$resourceHash !== '' ? $resourceHash : NULL,
+				!empty($resourceData) ? $resourceData : NULL,
+				(string)$objectXml->resource['__identifier'] !== '' ? (string)$objectXml->resource['__identifier'] : NULL
+			);
+		}
+
+		$asset = $this->objectManager->get($className);
+		$asset->setResource($resource);
+		$this->assetRepository->add($asset);
+
+		return $asset;
 	}
 
 	/**
