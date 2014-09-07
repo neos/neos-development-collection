@@ -160,8 +160,6 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaContextNodePathString() {
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
-		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
 		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home@live'));
 		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
 		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
