@@ -109,7 +109,7 @@ element selector (existing groups are *General*, *Structure* and *Plugins*).
 Second, the rendering of the plugin needs to be specified using TypoScript, so the following
 TypoScript needs to be added to your package.
 
-*Resources/Private/TypoScripts/Library/Plugin.ts2*::
+*Resources/Private/TypoScript/Plugin.ts2*::
 
   prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
@@ -120,7 +120,7 @@ TypoScript needs to be added to your package.
 
 Finally tweak your site package's *Root.ts2* and include the newly created TypoScript file::
 
-  include: resource://Sarkosh.CdCollection/Private/TypoScripts/Library/Plugin.ts2
+  include: resource://Sarkosh.CdCollection/Private/TypoScript/Plugin.ts2
 
 Now log in to your Neos backend (you must remove the TYPO3 Flow routes again), and you
 will be able to add your plugin just like any other content element.

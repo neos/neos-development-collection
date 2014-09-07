@@ -35,7 +35,15 @@ class TypoScriptService {
 	 *
 	 * @var string
 	 */
-	protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScripts/Library/Root.ts2';
+	protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
+
+	/**
+	 * Pattern used for determining the TypoScript root file for a site
+	 *
+	 * @var string
+	 * @deprecated since 1.2 will be removed in 2.0
+	 */
+	protected $legacySiteRootTypoScriptPattern = 'resource://%s/Private/TypoScripts/Library/Root.ts2';
 
 	/**
 	 * Pattern used for determining the TypoScript root file for autoIncludes
@@ -122,11 +130,18 @@ class TypoScriptService {
 	public function getMergedTypoScriptObjectTree(NodeInterface $startNode) {
 		$contentContext = $startNode->getContext();
 		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
-		$siteRootTypoScriptPathAndFilename = sprintf($this->siteRootTypoScriptPattern, $siteResourcesPackageKey);
 
+		$siteRootTypoScriptPathAndFilename = sprintf($this->siteRootTypoScriptPattern, $siteResourcesPackageKey);
 		$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
+		$expectedSiteRootTypoScriptPathAndFilename = $siteRootTypoScriptPathAndFilename;
+
+		if ($siteRootTypoScriptCode === '') {
+			$siteRootTypoScriptPathAndFilename = sprintf($this->legacySiteRootTypoScriptPattern, $siteResourcesPackageKey);
+			$siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
+		}
+
 		if (trim($siteRootTypoScriptCode) === '') {
-			throw new \TYPO3\Neos\Domain\Exception(sprintf('The site package %s did not contain a root TypoScript configuration. Please make sure that there is one at %s.', $siteResourcesPackageKey, $siteRootTypoScriptPathAndFilename), 1357215211);
+			throw new \TYPO3\Neos\Domain\Exception(sprintf('The site package %s did not contain a root TypoScript configuration. Please make sure that there is one at %s.', $siteResourcesPackageKey, $expectedSiteRootTypoScriptPathAndFilename), 1357215211);
 		}
 
 		$mergedTypoScriptCode = '';
