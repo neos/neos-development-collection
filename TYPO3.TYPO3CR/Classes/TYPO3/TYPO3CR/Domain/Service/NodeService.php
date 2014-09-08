@@ -53,9 +53,9 @@ class NodeService {
 	 */
 	public function setDefaultValues(NodeInterface $node, NodeType $targetNodeType = NULL) {
 		$nodeType = $targetNodeType ?: $node->getNodeType();
-		foreach ($nodeType->getProperties() as $propertyName => $propertySettings) {
-			if (isset($propertySettings['defaultValue']) && trim($node->getProperty($propertyName)) === '') {
-				$node->setProperty($propertyName, $propertySettings['defaultValue']);
+		foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+			if (trim($node->getProperty($propertyName)) === '') {
+				$node->setProperty($propertyName, $defaultValue);
 			}
 		}
 	}

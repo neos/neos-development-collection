@@ -108,11 +108,9 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->with('title', 'hello');
 
 		$mockNodeType->expects($this->once())
-			->method('getProperties')
+			->method('getDefaultValuesForProperties')
 			->will($this->returnValue(array(
-				'title' => array(
-					'defaultValue' => 'hello'
-				)
+				'title' => 'hello'
 			)));
 
 		$nodeService->setDefaultValues($mockNode);
@@ -141,11 +139,9 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase {
 			->method('setProperty');
 
 		$mockNodeType->expects($this->once())
-			->method('getProperties')
+			->method('getDefaultValuesForProperties')
 			->will($this->returnValue(array(
-				'title' => array(
-					'defaultValue' => 'hello'
-				)
+				'title' => 'hello'
 			)));
 
 		$nodeService->setDefaultValues($mockNode);
