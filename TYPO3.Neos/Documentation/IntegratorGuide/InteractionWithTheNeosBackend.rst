@@ -40,3 +40,11 @@ events occur:
 * **Neos.ContentModuleLoaded** When the content module is loaded (i.e. when a user is logged in).
 * **Neos.NodeCreated** When a new node was added to the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
 * **Neos.NodeRemoved** When a new node was added to the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
+
+Backend API
+===========
+
+The Neos backend exposes certain functions in a JavaScript API. These can be helpful to
+customize the editing experience for special elements.
+
+* **Typo3Neos.Content.reloadPage()** Reload the current page in the content module.
