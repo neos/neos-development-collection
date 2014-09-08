@@ -169,6 +169,7 @@ define(
 			model.get('_vieEntity').set('typo3:_removed', true);
 			model.get('_vieEntity').save(null);
 			NodeSelection.updateSelection();
+			EventDispatcher.triggerExternalEvent('Neos.NodeRemoved', 'Node was removed.', {element: model.$element.get(0)});
 			EventDispatcher.one('contentSaved', function() {
 				this.trigger('contentChanged');
 			});
@@ -223,6 +224,9 @@ define(
 					that.set('_elementIsAddingNewContent', null);
 
 					EventDispatcher.trigger('contentChanged');
+
+					var $createdElement = vieInstance.service('rdfa').getElementBySubject('<' + result.nodePath + '>', $(document));
+					EventDispatcher.triggerExternalEvent('Neos.NodeCreated', 'Node was created.', {element: $createdElement.get(0)});
 				}
 			);
 		},
