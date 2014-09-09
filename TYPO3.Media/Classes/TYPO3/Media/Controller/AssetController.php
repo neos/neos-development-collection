@@ -55,8 +55,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
-		$view->assign('view', $this->browserState->get('view'));
-		$view->assign('activeTag', $this->browserState->get('activeTag'));
+		$view->assignMultiple(array(
+			'view' => $this->browserState->get('view'),
+			'activeTag' => $this->browserState->get('activeTag')
+		));
 	}
 
 	/**
@@ -120,8 +122,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	public function editAction(\TYPO3\Media\Domain\Model\Asset $asset) {
-		$this->view->assign('tags', $this->tagRepository->findAll());
-		$this->view->assign('asset', $asset);
+		$this->view->assignMultiple(array(
+			'tags' => $this->tagRepository->findAll(),
+			'asset' => $asset
+		));
 	}
 
 	/**
