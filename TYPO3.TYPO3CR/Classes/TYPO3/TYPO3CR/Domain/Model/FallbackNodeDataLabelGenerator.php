@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
+ * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -16,9 +16,9 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * The default node label generator; used if no-other is configured
  *
- * @Flow\Scope("singleton")
+ * @deprecated Since 1.2 You should implement the NodeLabelGeneratorInterface now.
  */
-class DefaultNodeLabelGenerator implements NodeLabelGeneratorInterface {
+class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface {
 
 	/**
 	 * Render a node label

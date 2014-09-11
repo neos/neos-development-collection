@@ -14,17 +14,17 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 /**
  * Interface for rendering a node label string based on some strategy
  *
- * @api
+ * @deprecated Since version 1.2. Use NodeLabelGeneratorInterface
  */
-interface NodeLabelGeneratorInterface {
+interface NodeDataLabelGeneratorInterface {
 
 	/**
 	 * Render a node label
 	 *
-	 * @param NodeInterface $node
+	 * @param AbstractNodeData $nodeData
 	 * @param boolean $crop
 	 * @return string
 	 * @api
 	 */
-	public function getLabel(NodeInterface $node, $crop = TRUE);
+	public function getLabel(AbstractNodeData $nodeData, $crop = TRUE);
 }

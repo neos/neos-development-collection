@@ -76,6 +76,11 @@ class NodeType {
 	protected $nodeTypeManager;
 
 	/**
+	 * @var NodeDataLabelGeneratorInterface|NodeLabelGeneratorInterface
+	 */
+	protected $nodeLabelGenerator;
+
+	/**
 	 * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
 	 *
 	 * @var boolean
@@ -272,12 +277,28 @@ class NodeType {
 	 */
 	public function getNodeLabelGenerator() {
 		$this->initialize();
-		if (isset($this->configuration['nodeLabelGenerator'])) {
-			$nodeLabelGeneratorClassName = $this->configuration['nodeLabelGenerator'];
-		} else {
-			$nodeLabelGeneratorClassName = 'TYPO3\TYPO3CR\Domain\Model\DefaultNodeLabelGenerator';
+
+		if ($this->nodeLabelGenerator === NULL) {
+			if ($this->hasConfiguration('label.generatorClass')) {
+				$nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
+			} elseif ($this->hasConfiguration('label') && is_string($this->getConfiguration('label'))) {
+				$nodeLabelGenerator = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator');
+				$nodeLabelGenerator->setExpression($this->getConfiguration('label'));
+			} else {
+				$nodeLabelGenerator = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface');
+			}
+
+			// TODO: Remove after deprecation phase of NodeDataLabelGeneratorInterface
+			if ($nodeLabelGenerator instanceof NodeDataLabelGeneratorInterface) {
+				$adaptor = new NodeDataLabelGeneratorAdaptor();
+				$adaptor->setNodeDataLabelGenerator($nodeLabelGenerator);
+				$nodeLabelGenerator = $adaptor;
+			}
+
+			$this->nodeLabelGenerator = $nodeLabelGenerator;
 		}
-		return $this->objectManager->get($nodeLabelGeneratorClassName);
+
+		return $this->nodeLabelGenerator;
 	}
 
 	/**

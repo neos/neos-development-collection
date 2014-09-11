@@ -227,7 +227,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return string
 	 */
 	public function getLabel() {
-		return $this->nodeData->getLabel();
+		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
 	}
 
 	/**
@@ -236,7 +236,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return string
 	 */
 	public function getFullLabel() {
-		return $this->nodeData->getFullLabel();
+		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this, FALSE);
 	}
 
 	/**

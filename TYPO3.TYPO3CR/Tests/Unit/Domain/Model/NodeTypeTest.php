@@ -152,7 +152,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
 		$nodeType->_set('objectManager', $mockObjectManager);
-		$nodeType->expects($this->once())->method('initialize');
+		$nodeType->expects($this->atLeastOnce())->method('initialize');
 		$nodeType->$getter();
 	}
 

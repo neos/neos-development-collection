@@ -812,17 +812,28 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function getLabelUsesFallbackExpression() {
+		$node = $this->context->getNode('/');
+
+		$this->assertEquals('unstructured ()', $node->getLabel());
+	}
+
+	/**
+	 * @test
+	 */
 	public function getLabelCropsTheLabelIfNecessary() {
-		$workspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
-		$nodeData = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/bar', $workspace);
-		$this->inject($nodeData, 'nodeDataRepository', $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository'));
-		$this->assertEquals('unstructured (bar)', $nodeData->getLabel());
+		$nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+		$nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:PageWithConfiguredLabel');
 
-		$nodeData->setProperty('title', 'The point of this title is, that it`s a bit long and needs to be cropped.');
-		$this->assertEquals('The point of this title is, th …', $nodeData->getLabel());
+		$node = $this->context->getNode('/')->createNode('withlabel', $nodeType);
 
-		$nodeData->setProperty('title', 'A better title');
-		$this->assertEquals('A better title', $nodeData->getLabel());
+		$this->assertEquals('Labeled Page (withlabel)', $node->getLabel());
+
+		$node->setProperty('title', 'The point of this title is, that it`s a bit long and needs to be cropped.');
+		$this->assertEquals('The point of this title is, th …', $node->getLabel());
+
+		$node->setProperty('title', 'A better title');
+		$this->assertEquals('A better title', $node->getLabel());
 	}
 
 	/**
