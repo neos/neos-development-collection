@@ -23,7 +23,7 @@
 		display: block;
 	}
 
-	&.neos-contentelement-active .neos-inline-editable,
+	.neos-inline-editable,
 	.aloha-editable-active,
 	.aloha-editable-active[contenteditable=true]:focus {
 		outline: none !important;
