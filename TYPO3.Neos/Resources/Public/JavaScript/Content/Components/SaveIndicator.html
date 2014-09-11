@@ -1,7 +1,0 @@
-{{#if view.saveRunning}}
-	<button class="neos-button neos-indicator neos-indicator-saving"><span class="icon-white icon-refresh"></span> Saving...</button>
-{{else}}
-	{{#if view.lastSuccessfulTransfer}}
-		<button class="neos-button neos-indicator neos-indicator-saved" {{bindAttr title="view.lastSuccessfulTransferLabel"}}><span class="icon-white icon-ok"></span> Saved</button>
-	{{/if}}
-{{/if}}

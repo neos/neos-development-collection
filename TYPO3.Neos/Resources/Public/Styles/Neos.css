@@ -7274,16 +7274,6 @@
   -webkit-font-smoothing: antialiased;
   float: right;
 }
-.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active,
-.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
-  background-color: #ff8700;
-  cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
 .neos #neos-publish-menu.neos-button-group.neos-open .neos-dropdown-toggle {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
@@ -7307,6 +7297,13 @@
 }
 .neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-connection-status-down {
   background-color: #ff460d;
+}
+.neos #neos-publish-menu.neos-button-group .neos-publish-button[disabled] {
+  cursor: not-allowed;
+}
+.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active[disabled] {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=75);
+  opacity: 0.75;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle {
   width: 40px;
@@ -7337,6 +7334,16 @@
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
   left: 3px;
+}
+.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
+  background-color: #ff8700;
+  cursor: pointer;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.neos-button {
   width: 100%;

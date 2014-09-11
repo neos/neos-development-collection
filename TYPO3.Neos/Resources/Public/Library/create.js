@@ -1145,6 +1145,18 @@ See http://createjs.org for more information
       var widget = this;
       widget.saveEnabled = true;
 
+      var throttledDoAutoSave = _.throttle(function() {
+        widget.saveRemoteAll({
+          // We make autosaves silent so that potential changes from server
+          // don't disrupt user while writing.
+          silent: true
+        });
+      }, widget.options.autoSaveInterval);
+      var currentVersion;
+      var debouncedDoAutoSave = _.debounce(function() {
+        currentVersion = null;
+        throttledDoAutoSave();
+      }, 500);
       var doAutoSave = function () {
         if (!widget.saveEnabled) {
           return;
@@ -1154,14 +1166,16 @@ See http://createjs.org for more information
           return;
         }
 
-        widget.saveRemoteAll({
-          // We make autosaves silent so that potential changes from server
-          // don't disrupt user while writing.
-          silent: true
+        var version = widget.changedModels.length > 0 ? widget.changedModels[0].midgardStorageVersion : widget.changedModels.reduce(function(previousValue, currentValue) {
+          return previousValue ? previousValue.midgardStorageVersion + currentValue.midgardStorageVersion : currentValue.midgardStorageVersion;
         });
+        if (version !== currentVersion) {
+          currentVersion = version;
+          debouncedDoAutoSave();
+        }
       };
 
-      var timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
+      var timeout = window.setInterval(doAutoSave, 200);
 
       this.element.on('startPreventSave', function () {
         if (timeout) {
@@ -1172,7 +1186,7 @@ See http://createjs.org for more information
       });
       this.element.on('stopPreventSave', function () {
         if (!timeout) {
-          timeout = window.setInterval(doAutoSave, widget.options.autoSaveInterval);
+          timeout = window.setInterval(doAutoSave, 200);
         }
         widget.enableAutoSave();
       });

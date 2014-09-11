@@ -22,7 +22,8 @@ define(
 	'Content/InputEvents/KeyboardEvents',
 	'create',
 	'Shared/Notification',
-	'Shared/HttpClient'
+	'Shared/HttpClient',
+	'Content/Components/StorageManager'
 ],
 function(
 	$,
@@ -41,7 +42,8 @@ function(
 	KeyboardEvents,
 	CreateJS,
 	Notification,
-	HttpClient
+	HttpClient,
+	StorageManager
 ) {
 	var ContentModule = Ember.Application.extend(Ember.Evented, {
 		rootElement: '#neos-application',
@@ -265,8 +267,13 @@ function(
 				vie: vie,
 				url: function () { /* empty function to prevent Midgard error */ },
 				localStorage: true,
-				autoSave: true
+				autoSave: true,
+				autoSaveInterval: 2500
 			});
+
+			StorageManager.set('changes', $('body').data('Midgard-midgardStorage').changedModels);
+			StorageManager.start();
+			this.on('beforePageLoad', StorageManager, 'persist');
 
 			CreateJS.initialize();
 		},
@@ -374,6 +381,7 @@ function(
 
 			LoadingIndicator.start();
 			this.set('_isLoadingPage', true);
+			this.trigger('beforePageLoad');
 
 			function pushUriToHistory() {
 				if (window.history && !ignorePushToHistory && _.isFunction(window.history.pushState)) {

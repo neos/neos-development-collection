@@ -2,14 +2,6 @@
 	@include font;
 	float: right;
 
-	.neos-publish-button.neos-publish-menu-active,
-	.neos-dropdown-toggle.neos-publish-menu-active {
-		background-color: $orange;
-		cursor: pointer;
-		@include opacity(1);
-		@include box-shadow(none);
-	}
-
 	&.neos-open {
 		.neos-dropdown-toggle {
 			@include opacity(1);
@@ -31,6 +23,14 @@
 
 		&.neos-connection-status-down {
 			background-color: $warning;
+		}
+
+		&[disabled] {
+			cursor: not-allowed;
+		}
+
+		&.neos-publish-menu-active[disabled] {
+			@include opacity(.75);
 		}
 	}
 
@@ -55,6 +55,14 @@
 			@include rotate(90deg);
 			left: 3px;
 		}
+	}
+
+	.neos-publish-button.neos-publish-menu-active,
+	.neos-dropdown-toggle.neos-publish-menu-active {
+		background-color: $orange;
+		cursor: pointer;
+		@include opacity(1);
+		@include box-shadow(none);
 	}
 
 	.neos-dropdown-menu {

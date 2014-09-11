@@ -210,7 +210,39 @@ module.exports = function(grunt) {
 			dest: baseUri + 'create.js',
 			options: {
 				banner: 'define(["Library/underscore", "Library/backbone", "Library/jquery-with-dependencies"], function(_, Backbone, jQuery) {',
-				footer: '});'
+				footer: '});',
+				process: function(src, filepath) {
+					src = src.replace(/widget.options.autoSaveInterval/g, 200);
+					src = src.replace(
+						/[ ]*widget.saveRemoteAll\({(.|\n)*?}\);/i,
+
+						'        var version = widget.changedModels.length > 0 ? widget.changedModels[0].midgardStorageVersion : widget.changedModels.reduce(function(previousValue, currentValue) {' + "\n" +
+						'          return previousValue ? previousValue.midgardStorageVersion + currentValue.midgardStorageVersion : currentValue.midgardStorageVersion;' + "\n" +
+						'        });' + "\n" +
+						'        if (version !== currentVersion) {' + "\n" +
+						'          currentVersion = version;' + "\n" +
+						'          debouncedDoAutoSave();' + "\n" +
+						'        }'
+					);
+					src = src.replace(
+						'      var doAutoSave = function () {',
+
+						'      var throttledDoAutoSave = _.throttle(function() {' + "\n" +
+						'        widget.saveRemoteAll({' + "\n" +
+						'          // We make autosaves silent so that potential changes from server' + "\n" +
+						'          // don\'t disrupt user while writing.' + "\n" +
+						'          silent: true' + "\n" +
+						'        });' + "\n" +
+						'      }, widget.options.autoSaveInterval);' + "\n" +
+						'      var currentVersion;' + "\n" +
+						'      var debouncedDoAutoSave = _.debounce(function() {' + "\n" +
+						'        currentVersion = null;' + "\n" +
+						'        throttledDoAutoSave();' + "\n" +
+						'      }, 500);' + "\n" +
+						'      var doAutoSave = function () {'
+					);
+					return src;
+				}
 			}
 		},
 
