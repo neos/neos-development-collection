@@ -1,10 +1,11 @@
 {
     "name": "typo3/typo3cr",
     "type": "typo3-flow-package",
-    "description": "",
+    "description": "Content repository based on TYPO3 Flow, specifically made for TYPO3 Neos.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*"
+        "typo3/flow": "*",
+        "typo3/eel": "*"
     },
     "autoload": {
         "psr-0": {
