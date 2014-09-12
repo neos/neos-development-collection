@@ -23,6 +23,7 @@ use TYPO3\TypoScript\Exception;
 use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\Utility as EelUtility;
 
 /**
  * TypoScript Runtime
@@ -639,30 +640,23 @@ class Runtime {
 	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	protected function evaluateEelExpression($expression, AbstractTypoScriptObject $contextObject = NULL) {
+		if ($expression[0] !== '$' || $expression[1] !== '{') {
+			// We still assume this is an EEL expression and wrap the markers for backwards compatibility.
+			$expression = '${' . $expression . '}';
+		}
+
 		$contextVariables = array_merge($this->getDefaultContextVariables(), $this->getCurrentContext());
-		if (!isset($contextVariables['context']) && isset($contextVariables['node'])) {
-			// DEPRECATED since sprint release 10; should be removed lateron.
-			$contextVariables['context'] = new FlowQuery(array($contextVariables['node']));
-		}
-		if (isset($contextVariables['q'])) {
-			throw new Exception('Context variable "q" not allowed, as it is already reserved for FlowQuery use.', 1344325040);
-		}
-		$contextVariables['q'] = function ($element) {
-			if (is_array($element) || $element instanceof \Traversable) {
-				return new FlowQuery($element);
-			} else {
-				return new FlowQuery(array($element));
-			}
-		};
+
 		if (isset($contextVariables['this'])) {
 			throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current TypoScript object.', 1344325044);
 		}
 		$contextVariables['this'] = $contextObject;
 
-		$context = new \TYPO3\Eel\ProtectedContext($contextVariables);
-		$context->whitelist('q');
-		$value = $this->eelEvaluator->evaluate($expression, $context);
-		return $value;
+		if ($this->eelEvaluator instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+			$this->eelEvaluator->_activateDependency();
+		}
+
+		return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables);
 	}
 
 	/**
@@ -684,17 +678,7 @@ class Runtime {
 		if ($this->defaultContextVariables === NULL) {
 			$this->defaultContextVariables = array();
 			if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
-				foreach ($this->settings['defaultContext'] as $variableName => $objectType) {
-					$currentPathBase = &$this->defaultContextVariables;
-					$variablePathNames = explode('.', $variableName);
-					foreach ($variablePathNames as $pathName) {
-						if (!isset($currentPathBase[$pathName])) {
-							$currentPathBase[$pathName] = array();
-						}
-						$currentPathBase = &$currentPathBase[$pathName];
-					}
-					$currentPathBase = $this->objectManager->get($objectType);
-				}
+				$this->defaultContextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
 			}
 			$this->defaultContextVariables['request'] = $this->controllerContext->getRequest();
 		}
