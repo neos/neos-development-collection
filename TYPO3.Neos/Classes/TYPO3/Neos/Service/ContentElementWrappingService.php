@@ -115,13 +115,15 @@ class ContentElementWrappingService {
 
 		// these properties are needed together with the current NodeType to evaluate Node Type Constraints
 		// TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
-		$attributes['data-neos-_parentnodetype'] = $node->getParent()->getNodeType()->getName();
+		if ($node->getParent()) {
+			$attributes['data-neos-_parentnodetype'] = $node->getParent()->getNodeType()->getName();
+		}
 
 		if ($node->isAutoCreated()) {
 			$attributes['data-neos-_nodename'] = $node->getName();
 		}
 
-		if ($node->getParent()->isAutoCreated()) {
+		if ($node->getParent() && $node->getParent()->isAutoCreated()) {
 			// we shall only add these properties if the parent is actually auto-created; as the Node-Type-Switcher in the UI relies on that.
 			$attributes['data-neos-_parentnodename'] = $node->getParent()->getName();
 			$attributes['data-neos-_grandparentnodetype'] = $node->getParent()->getParent()->getNodeType()->getName();
