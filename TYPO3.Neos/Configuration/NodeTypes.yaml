@@ -69,7 +69,7 @@
   abstract: TRUE
   constraints:
     nodeTypes:
-      "*": TRUE
+      '*': TRUE
   ui:
     label: 'Document'
     search:
@@ -260,4 +260,4 @@
     icon: 'icon-unchecked'
   constraints:
     nodeTypes:
-      "*": TRUE
+      '*': TRUE
