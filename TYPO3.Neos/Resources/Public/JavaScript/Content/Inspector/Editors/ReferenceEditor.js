@@ -46,8 +46,8 @@ define(
 										id: $('.node-identifier', value).text(),
 										text: $('.node-label', value).text()
 									});
-									query.callback(data);
 								});
+								query.callback(data);
 							});
 						}, 200);
 					}
