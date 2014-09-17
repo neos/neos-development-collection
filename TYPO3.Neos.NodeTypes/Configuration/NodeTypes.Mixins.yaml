@@ -1,0 +1,149 @@
+# Title mixin
+'TYPO3.Neos.NodeTypes:TitleMixin':
+  abstract: TRUE
+  properties:
+    title:
+      type: string
+      defaultValue: '<h1>Enter headline here</h1>'
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          'format':
+            'sub': TRUE
+            'sup': TRUE
+            'p': FALSE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'removeFormat': TRUE
+          'link':
+            'a': TRUE
+
+# Text mixin
+'TYPO3.Neos.NodeTypes:TextMixin':
+  abstract: TRUE
+  properties:
+    text:
+      type: string
+      defaultValue: '<p>Enter text here</p>'
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          'format':
+            'b': TRUE
+            'i': TRUE
+            'u': TRUE
+            'sub': TRUE
+            'sup': TRUE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'pre': TRUE
+            'removeFormat': TRUE
+          'table':
+            'table': TRUE
+          'list':
+            'ol': TRUE
+            'ul': TRUE
+          'link':
+            'a': TRUE
+
+# Image mixin
+'TYPO3.Neos.NodeTypes:ImageMixin':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        image:
+          label: 'Image'
+          position: 5
+  properties:
+    image:
+      type: TYPO3\Media\Domain\Model\ImageVariant
+      ui:
+        label: 'Image'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    alternativeText:
+      type: string
+      ui:
+        label: 'Alternative text'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    title:
+      type: string
+      ui:
+        label: 'Title'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+
+# Image caption mixin
+'TYPO3.Neos.NodeTypes:ImageCaptionMixin':
+  abstract: TRUE
+  properties:
+    hasCaption:
+      type: boolean
+      ui:
+        label: 'Enable caption'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+    caption:
+      type: string
+      defaultValue: '<p>Enter caption here</p>'
+      ui:
+        inlineEditable: TRUE
+
+# Image alignment mixin
+'TYPO3.Neos.NodeTypes:ImageAlignmentMixin':
+  abstract: TRUE
+  properties:
+    alignment:
+      type: string
+      defaultValue: ''
+      ui:
+        label: 'Alignment'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: 'Default'
+            values:
+              '':
+                label: ''
+              center:
+                label: 'Center'
+              left:
+                label: 'Left'
+              right:
+                label: 'Right'
+
+# Link mixin
+'TYPO3.Neos.NodeTypes:LinkMixin':
+  abstract: TRUE
+  properties:
+    link:
+      type: string
+      ui:
+        label: 'Link'
+        reloadIfChanged: TRUE
+
+# Content image mixin
+'TYPO3.Neos.NodeTypes:ContentImageMixin':
+  abstract: TRUE
+  superTypes:
+    - 'TYPO3.Neos.NodeTypes:ImageMixin'
+    - 'TYPO3.Neos.NodeTypes:LinkMixin'
+    - 'TYPO3.Neos.NodeTypes:ImageCaptionMixin'
+    - 'TYPO3.Neos.NodeTypes:ImageAlignmentMixin'
+  properties:
+    link:
+      ui:
+        inspector:
+          group: 'image'
+

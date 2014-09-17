@@ -1,137 +1,35 @@
 'TYPO3.Neos.NodeTypes:Headline':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    - 'TYPO3.Neos:Content'
+    - 'TYPO3.Neos.NodeTypes:TitleMixin'
   ui:
     label: 'Headline'
     icon: 'icon-file-text'
     position: 100
-  properties:
-    title:
-      type: string
-      defaultValue: '<h1>Enter headline here</h1>'
-      ui:
-        inlineEditable: TRUE
-        aloha:
-          'format':
-            'sub': TRUE
-            'sup': TRUE
-            'p': TRUE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'removeFormat': TRUE
-          'link':
-            'a': TRUE
 
 'TYPO3.Neos.NodeTypes:Text':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    - 'TYPO3.Neos:Content'
+    - 'TYPO3.Neos.NodeTypes:TextMixin'
   ui:
     label: 'Text'
     icon: 'icon-file-text'
     position: 200
-  properties:
-    text:
-      type: string
-      defaultValue: '<p>Enter text here</p>'
-      ui:
-        inlineEditable: TRUE
-        aloha:
-          'format':
-            'b': TRUE
-            'i': TRUE
-            'u': TRUE
-            'sub': TRUE
-            'sup': TRUE
-            'p': TRUE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'pre': TRUE
-            'removeFormat': TRUE
-          'table':
-            'table': TRUE
-          'list':
-            'ol': TRUE
-            'ul': TRUE
-          'link':
-            'a': TRUE
 
 'TYPO3.Neos.NodeTypes:Image':
-  superTypes: ['TYPO3.Neos:Content']
+  superTypes:
+    - 'TYPO3.Neos:Content'
+    - 'TYPO3.Neos.NodeTypes:ContentImageMixin'
   ui:
     label: 'Image'
     icon: 'icon-picture'
     position: 300
-    inspector:
-      groups:
-        image:
-          label: 'Image'
-          position: 5
-  properties:
-    image:
-      type: TYPO3\Media\Domain\Model\ImageVariant
-      ui:
-        label: 'Image'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-    alignment:
-      type: string
-      defaultValue: ''
-      ui:
-        label: 'Alignment'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
-          editorOptions:
-            placeholder: 'Default'
-            values:
-              '':
-                label: ''
-              center:
-                label: 'Center'
-              left:
-                label: 'Left'
-              right:
-                label: 'Right'
-    alternativeText:
-      type: string
-      ui:
-        label: 'Alternative text'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-    title:
-      type: string
-      ui:
-        label: 'Title'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-    link:
-      type: string
-      ui:
-        label: 'Link'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-    hasCaption:
-      type: boolean
-      ui:
-        label: 'Enable caption'
-        reloadIfChanged: TRUE
-        inspector:
-          group: 'image'
-    caption:
-      type: string
-      defaultValue: '<p>Enter caption here</p>'
-      ui:
-        inlineEditable: TRUE
 
 'TYPO3.Neos.NodeTypes:TextWithImage':
   superTypes:
-    - 'TYPO3.Neos.NodeTypes:Image'
-    - 'TYPO3.Neos.NodeTypes:Text'
+    - 'TYPO3.Neos:Content'
+    - 'TYPO3.Neos.NodeTypes:TextMixin'
+    - 'TYPO3.Neos.NodeTypes:ContentImageMixin'
   ui:
     label: 'Text with Image'
     icon: 'icon-picture'
