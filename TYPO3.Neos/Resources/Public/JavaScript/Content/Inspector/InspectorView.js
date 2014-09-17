@@ -10,6 +10,7 @@ define(
 	'./Section',
 	'./UnappliedChangesDialog',
 	'../Components/Button',
+	'Shared/EventDispatcher',
 	'text!./InspectorView.html'
 ], function(
 	Ember,
@@ -19,6 +20,7 @@ define(
 	Section,
 	UnappliedChangesDialog,
 	Button,
+	EventDispatcher,
 	template
 ) {
 	/**
@@ -43,6 +45,17 @@ define(
 		$clickProtectionLayer: null,
 
 		onInspectorModeChanged: function() {
+			if (this.$()) {
+				var that = this;
+				this.$().one('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function () {
+					if (that.get('controller.inspectorMode') === true) {
+						EventDispatcher.triggerExternalEvent('Neos.InspectorPanelOpened');
+					} else {
+						EventDispatcher.triggerExternalEvent('Neos.InspectorPanelClosed');
+					}
+					EventDispatcher.triggerExternalEvent('Neos.LayoutChanged');
+				});
+			}
 			if (this.get('controller.inspectorMode') === true) {
 				$('body').addClass('neos-inspector-panel-open');
 			} else {
