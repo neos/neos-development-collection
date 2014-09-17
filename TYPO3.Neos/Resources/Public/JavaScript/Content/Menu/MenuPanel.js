@@ -4,8 +4,9 @@ define(
 		'Library/jquery-with-dependencies',
 		'Shared/LocalStorage',
 		'./MenuPanelController',
+		'Shared/EventDispatcher',
 		'text!./MenuPanel.html'
-	], function(Ember, $, LocalStorage, MenuPanelController, template) {
+	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, template) {
 
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
@@ -45,8 +46,8 @@ define(
 				},
 
 				toggleCollapsed: function() {
-					var menuGroup = this.get('group');
-					var isCollapsed = this.get('controller').toggleCollapsed(menuGroup);
+					var menuGroup = this.get('group'),
+						isCollapsed = this.get('controller').toggleCollapsed(menuGroup);
 					this.set('_collapsed', isCollapsed);
 				},
 
@@ -82,6 +83,20 @@ define(
 			},
 
 			onMenuPanelModeChanged: function() {
+				if (this.$()) {
+					var that = this;
+					this.$().one('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function () {
+						if (that.get('controller.menuPanelMode') === true) {
+							EventDispatcher.triggerExternalEvent('Neos.MenuPanelOpened');
+						} else {
+							EventDispatcher.triggerExternalEvent('Neos.MenuPanelClosed');
+						}
+						if (that.get('controller.menuPanelStickyMode') === false) {
+							return;
+						}
+						EventDispatcher.triggerExternalEvent('Neos.LayoutChanged');
+					});
+				}
 				if (this.get('controller.menuPanelMode') === true) {
 					$('body').addClass('neos-menu-panel-open');
 				} else {

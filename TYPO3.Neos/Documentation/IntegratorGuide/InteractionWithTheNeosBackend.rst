@@ -21,7 +21,7 @@ whatever code is needed to render the content correctly.
 
   if (typeof document.addEventListener === 'function') {
   	document.addEventListener('Neos.PageLoaded', function(event) {
-  		// Do your stuff!
+  		// Do stuff
   	}, false);
   }
 
@@ -39,7 +39,35 @@ events occur:
 * **Neos.PreviewModeDeactivated** When the backend switches from preview to edit mode.
 * **Neos.ContentModuleLoaded** When the content module is loaded (i.e. when a user is logged in).
 * **Neos.NodeCreated** When a new node was added to the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
-* **Neos.NodeRemoved** When a new node was added to the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
+* **Neos.NodeRemoved** When a new node was removed from the document. The event has a reference to the DOM element in ``event.detail.element``. Additional information can be fetched through the element's attributes.
+* **Neos.LayoutChanged** When the content window layout changes (when panels that alter the body margin are opened/closed).
+* **Neos.NavigatePanelOpened** When the navigate panel is opened.
+* **Neos.NavigatePanelClosed** When the inspector panel is closed.
+* **Neos.InspectorPanelOpened** When the navigate panel is opened.
+* **Neos.InspectorPanelClosed** When the inspector panel is closed.
+* **Neos.EditPreviewPanelOpened** When the edit/preview panel is opened.
+* **Neos.EditPreviewPanelClosed** When the edit/preview panel is closed.
+* **Neos.MenuPanelOpened** When the menu panel is opened.
+* **Neos.MenuPanelClosed** When the menu panel is closed.
+
+Example of listening for the ``LayoutChanged`` event.
+
+.. code-block:: javascript
+
+  document.addEventListener('Neos.LayoutChanged', function(event) {
+  	// Do stuff
+  }, false);
+
+.. tip::
+
+As an alternative to using the ``LayoutChanged`` event, listening to transition events on the body can be done.
+
+Example (using jQuery)::
+
+  $('body').on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+  	// Do stuff
+  });
+
 
 Backend API
 ===========

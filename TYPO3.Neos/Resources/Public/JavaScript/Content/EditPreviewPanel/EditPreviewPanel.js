@@ -4,12 +4,14 @@ define(
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'./EditPreviewPanelController',
+	'Shared/EventDispatcher',
 	'text!./EditPreviewPanel.html'
 ], function(
 	Ember,
 	$,
 	_,
 	EditPreviewPanelController,
+	EventDispatcher,
 	template
 ) {
 	return Ember.View.extend({
@@ -20,6 +22,17 @@ define(
 		controller: EditPreviewPanelController,
 
 		onEditPreviewPanelModeChanged: function() {
+			if (this.$()) {
+				var that = this;
+				this.$().one('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+					if (that.get('controller.editPreviewPanelMode') === true) {
+						EventDispatcher.triggerExternalEvent('Neos.EditPreviewPanelOpened');
+					} else {
+						EventDispatcher.triggerExternalEvent('Neos.EditPreviewPanelClosed');
+					}
+					EventDispatcher.triggerExternalEvent('Neos.LayoutChanged');
+				});
+			}
 			if (this.get('controller.editPreviewPanelMode') === true) {
 				$('body').addClass('neos-edit-preview-panel-open');
 			} else {
