@@ -34,24 +34,7 @@ versions the events are not triggered.
 The Neos backend will dispatch events that can be listened on when the following
 events occur:
 
-* **Neos.PageLoaded** Whenever the page reloads by Ajax
-* **Neos.EnablePreview** When the backend switches from edit to preview mode
-* **Neos.DisablePreview** When the backend switches from preview to edit mode
-* **Neos.NodeSelected** When a new node is selected.
-* **Neos.NodeUnselected** When a new node is unselected.
+* **Neos.PageLoaded** Whenever the page reloads by Ajax.
+* **Neos.PreviewModeActivated** When the backend switches from edit to preview mode.
+* **Neos.PreviewModeDeactivated** When the backend switches from preview to edit mode.
 * **Neos.ContentModuleLoaded** When the content module is loaded (i.e. when a user is logged in).
-
-The NodeSelected and NodeUnselected events will have additional information about
-the selected/unselected node in the event.detail.node attribute.
-
-Example of setting the background-color on elements when they are selected.
-
-.. code-block:: javascript
-
-  document.addEventListener('Neos.NodeSelected', function(event) {
-  	event.detail.node.$element.css({backgroundColor: 'blue'});
-  }, false);
-
-  document.addEventListener('Neos.NodeUnselected', function(event) {
-  	event.detail.node.$element.css({backgroundColor: 'green'});
-  }, false);
