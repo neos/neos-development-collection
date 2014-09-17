@@ -74,6 +74,15 @@
 		cursor: pointer;
 	}
 
+	a.neos-add-on {
+		&:hover,
+		&:focus {
+			background-color: $blue;
+			text-decoration: none;
+			outline: none;
+		}
+	}
+
 	input {
 		cursor: pointer;
 		opacity: 1;
