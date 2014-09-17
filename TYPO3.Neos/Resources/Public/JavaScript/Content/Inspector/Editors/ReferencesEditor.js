@@ -2,9 +2,10 @@ define(
 	[
 		'Library/jquery-with-dependencies',
 		'emberjs',
-		'Shared/HttpRestClient'
+		'Shared/HttpRestClient',
+		'Shared/NodeTypeService'
 	],
-	function($, Ember, HttpRestClient) {
+	function($, Ember, HttpRestClient, NodeTypeService) {
 		return Ember.View.extend({
 			tagName: 'input',
 			attributeBindings: ['type'],
@@ -25,7 +26,29 @@ define(
 					multiple: true,
 					minimumInputLength: 3,
 					placeholder: this.get('placeholder'),
+					formatResult: function(item) {
+						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 
+						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+						if (iconClass) {
+							$itemContent.prepend('<i class="' + iconClass + '"></i>');
+						}
+
+						$itemContent.attr('title', item.data.path);
+						return $itemContent.get(0).outerHTML;
+					},
+					formatSelection: function(item) {
+						var $itemContent = $('<span><b>' + item.text + '</b></span>');
+
+						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+						if (iconClass) {
+							$itemContent.prepend('<i class="' + iconClass + '"></i>');
+						}
+
+						$itemContent.attr('title', item.data.path);
+
+						return $itemContent.get(0).outerHTML;
+					},
 					query: function (query) {
 						if (currentQueryTimer) {
 							window.clearTimeout(currentQueryTimer);
@@ -42,9 +65,11 @@ define(
 							HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function(result) {
 								var data = {results: []};
 								$(result.resource).find('li').each(function(index, value) {
+									var identifier = $('.node-identifier', value).text();
 									data.results.push({
-										id: $('.node-identifier', value).text(),
-										text: $('.node-label', value).text()
+										id: identifier,
+										text: $('.node-label', value).text().trim(),
+										data: {identifier: identifier, path: $('.node-path', value).text(), nodeType: $('.node-type', value).text()}
 									});
 								});
 								query.callback(data);
@@ -85,10 +110,11 @@ define(
 						that.get('content').pushObject(item);
 
 						var parameters = {
-							workspaceName: $('#neos-document-metadata').data('neos-context-__workspace-name')
+							workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name')
 						};
 						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
-							item.set('text', $('.node-label', result.resource).text());
+							item.set('text', $('.node-label', result.resource).text().trim());
+							item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: $('.node-path', result.resource).text(), nodeType: $('.node-type', result.resource).text()});
 							that._updateSelect2();
 						});
 
