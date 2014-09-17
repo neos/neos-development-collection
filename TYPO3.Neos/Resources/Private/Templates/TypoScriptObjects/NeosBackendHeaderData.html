@@ -1,20 +1,18 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<f:if condition="{node.context.workspace.name} != 'live'">
-	<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
-		<script type="text/javascript">
-					// TODO Get rid of those global variables
-				{neos:backend.javascriptConfiguration()}
-				var Aloha,
-					alohaBaseUrl = '{f:uri.resource(path: 'Library/aloha', package: 'TYPO3.Neos')}';
-		</script>
+<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+	<script type="text/javascript">
+				// TODO Get rid of those global variables
+			{neos:backend.javascriptConfiguration()}
+			var Aloha,
+				alohaBaseUrl = '{f:uri.resource(path: 'Library/aloha', package: 'TYPO3.Neos')}';
+	</script>
 
-		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-			<f:then>
-				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
-			</f:then>
-			<f:else>
-				<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
-			</f:else>
-		</f:if>
-	</f:security.ifAccess>
-</f:if>
+	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+		<f:then>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}" />
+		</f:then>
+		<f:else>
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
+		</f:else>
+	</f:if>
+</f:security.ifAccess>

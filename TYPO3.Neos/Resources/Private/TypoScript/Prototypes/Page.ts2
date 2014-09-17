@@ -14,9 +14,13 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 
 		attributes {
 			version = 'HTML+RDFa 1.1'
+			version.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 			xmlns = 'http://www.w3.org/1999/xhtml'
+			xmlns.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 			xmlns:typo3 = 'http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/'
+			xmlns:typo3.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 			xmlns:xsd = 'http://www.w3.org/2001/XMLSchema#'
+			xmlns:xsd.@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 		}
 	}
 
@@ -60,6 +64,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 					1 = 'node'
 				}
 			}
+			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 		}
 
 		neosBackendEndpoints = TYPO3.TypoScript:Template {
@@ -75,6 +80,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 					2 = 'account'
 				}
 			}
+			@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 		}
 
 		# Script includes in the head should go here
@@ -97,6 +103,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 	# Required for the backend to work.
 	neosBackendDocumentNodeData = TYPO3.Neos:DocumentMetadata {
 		@position = 'before body'
+		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 	}
 
 	# Content of the body tag. To be defined by the integrator.
@@ -123,6 +130,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 				1 = 'node'
 			}
 		}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 	}
 
 	# This enables redirecting to the last visited page after login
@@ -142,6 +150,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 		@position = 'after lastVisitedNodeScript 10000'
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
 		node = ${node}
+		@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 	}
 
 	closingBodyTag = '</body>'

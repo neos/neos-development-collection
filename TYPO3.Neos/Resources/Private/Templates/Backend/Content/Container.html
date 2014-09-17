@@ -1,13 +1,11 @@
-<f:if condition="{node.context.workspace.name} != 'live'">
-	<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
-	<div id="neos-application" class="neos" role="application">
-		<div id="neos-top-bar">
-			<div id="neos-top-bar-right">
-				<div id="neos-user-actions">
-					<f:render partial="Backend/UserMenu" arguments="{_all}" />
-				</div>
+<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
+<div id="neos-application" class="neos" role="application">
+	<div id="neos-top-bar">
+		<div id="neos-top-bar-right">
+			<div id="neos-user-actions">
+				<f:render partial="Backend/UserMenu" arguments="{_all}" />
 			</div>
 		</div>
-		<f:render partial="Backend/Menu" arguments="{_all}" />
 	</div>
-</f:if>
+	<f:render partial="Backend/Menu" arguments="{_all}" />
+</div>
