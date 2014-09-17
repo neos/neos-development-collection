@@ -27,43 +27,80 @@
 		background: white !important;
 		border: none;
 	}
-	.neos-select2-results {
 
+	.neos-select2-results {
 		padding: 0 !important;
 		margin: 0 !important;
+		max-height: $unit * 4.5 + 4px;
 
 		li {
 			min-height: $unit !important;
 			margin: 0;
-			padding: 0 $defaultMargin !important;
+			padding: $relatedMargin $defaultMargin !important;
 			border-top: 1px solid $grayDark !important;
 			background: $grayMedium !important;
 			color: white !important;
 			vertical-align: middle !important;
-		}
+			@include box-sizing(border-box);
 
-		.neos-select2-result-label {
-			padding: 10px 0 0 0 !important;
-			min-height: $unit !important;
-
-			img {
-				float: left;
-				padding-right: $relatedMargin;
+			&.neos-select2-no-results,
+			&.neos-select2-selection-limit {
+				display: none !important;
 			}
 
-			i {
-				vertical-align: top;
-				padding-right: $tightMargin;
+			&.neos-select2-searching {
+				color: transparent !important;
+				background-image: url('../Images/ajax-preloader-222222.gif') !important;
+				background-repeat: no-repeat !important;
+				background-position: $defaultMargin 13px !important;
 			}
 
-			span {
-				font-size: 12px;
-				color: $textSubtleLight;
+			&.neos-select2-highlighted {
+				background: $blue !important;
+				border-top: 1px solid $grayDark !important;
+				color: white !important;
+				vertical-align: middle !important;
 
-				b {
-					font-size: 14px;
-					font-weight: 400;
-					color: white;
+				.neos-select2-result-label img {
+					border: 1px solid #fff;
+				}
+			}
+
+			.neos-select2-result-label {
+				padding: 0 !important;
+				line-height: $unit - $defaultMargin;
+				min-height: $unit - $defaultMargin;
+				max-height: $unit - $defaultMargin;
+
+				img {
+					float: left;
+					margin-right: $tightMargin;
+					width: 24px;
+					height: 24px;
+					border: 1px solid $grayLight;
+					@include box-sizing(border-box);
+				}
+
+				i {
+					vertical-align: baseline;
+					padding-right: $tightMargin;
+					color: #fff;
+					text-align: center;
+				}
+
+				span {
+					font-size: 12px;
+					color: #fff;
+					display: inline-block;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					width: 100%;
+
+					b {
+						font-size: 14px;
+						font-weight: 400;
+					}
 				}
 			}
 		}
@@ -72,26 +109,6 @@
 			text-decoration: none !important;
 			font-weight: bold;
 		}
-
-		li.neos-select2-no-results, li.neos-select2-selection-limit {
-			display: none !important;
-		}
-
-		li.neos-select2-searching {
-			color: transparent !important;
-			background-image: url('../Images/ajax-preloader-222222.gif') !important;
-			background-repeat: no-repeat !important;
-			background-position: $defaultMargin 13px !important;
-		}
-
-		li.neos-select2-highlighted {
-			background: $blue !important;
-			padding: 0 $defaultMargin !important;
-			border-top: 1px solid $grayDark !important;
-			color: white !important;
-			vertical-align: middle !important;
-		}
-
 	}
 }
 
@@ -121,11 +138,13 @@
 
 		img {
 			float: left;
-			padding-right: $relatedMargin;
+			padding-right: $tightMargin;
 		}
 
 		i {
 			padding-right: $tightMargin;
+			vertical-align: baseline;
+			text-align: center;
 		}
 
 		span {
@@ -142,14 +161,83 @@
 }
 
 /* Multi Selection */
-.neos-select2-choices {
-	border: none !important;
-}
-
 .neos-select2-container-multi {
+
+	&.neos-select2-container-active {
+		.neos-select2-choices {
+			border: none;
+			@include box-shadow(none);
+		}
+	}
 
 	.neos-select2-choices {
 		background: $grayMedium;
+		border: none;
+
+		.neos-select2-search-choice {
+			line-height: $unit;
+			padding: 0 ($unit + 1px + $defaultMargin) 0 $defaultMargin;
+			@include box-sizing(border-box);
+			margin: 0;
+			background: $grayMedium;
+			width: $inspectorWidth - $defaultMargin * 2;
+			max-height: $unit;
+			color: white;
+			border: 0;
+			box-shadow: none;
+			border-radius: 0;
+
+			.neos-select2-search-choice-close {
+				right: 0;
+				left: auto;
+				top: 0;
+				height: $unit;
+				width: $unit;
+				background: none;
+				border-left: 1px solid $grayDark;
+				color: white;
+				text-decoration: none;
+
+				&:hover,
+				&:focus {
+					background-color: $blue;
+					outline: none;
+					@include transition(none);
+				}
+
+				i {
+					position: absolute;
+					left: 14px;
+					top: 13px;
+				}
+			}
+
+			span {
+				font-size: 11px;
+				color: #fff;
+				display: inline-block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 100%;
+
+				img {
+					float: left;
+					padding-right: $tightMargin;
+				}
+
+				i {
+					padding-right: $tightMargin;
+					vertical-align: baseline;
+					text-align: center;
+				}
+
+				b {
+					font-size: 14px;
+					font-weight: 400;
+				}
+			}
+		}
 	}
 
 	.neos-select2-search-field {
@@ -165,61 +253,4 @@
 			}
 		}
 	}
-
-	.neos-select2-search-choice {
-
-		line-height: $unit !important;
-		padding: 0 $defaultMargin !important;
-		margin: 0 !important;
-		background: $grayMedium !important;
-		width: 256px !important;
-		color: white !important;
-
-		border-top: 1px solid $grayDark !important;
-		border-left: 0 !important;
-		border-right: 0 !important;
-		border-bottom: 0 !important;
-		box-shadow: none !important;
-		border-radius: 0 !important;
-
-		.neos-select2-search-choice-close {
-			right: 0px;
-			left: auto;
-			top: 0;
-			height: $unit;
-			width: $unit;
-			background: none;
-			border-left: 1px solid $grayDark;
-
-			color: white;
-			text-decoration: none;
-
-			i {
-				position: absolute;
-				left: 14px;
-				top: 13px;
-			}
-		}
-
-		img {
-			float: left;
-			padding-right: $relatedMargin;
-		}
-
-		i {
-			padding-right: $tightMargin;
-		}
-
-		span {
-			font-size: 11px;
-			color: $textSubtleLight;
-
-			b {
-				font-size: 14px;
-				font-weight: 400;
-				color: white;
-			}
-		}
-	}
-
 }

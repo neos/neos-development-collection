@@ -51,7 +51,6 @@ define(
 		 */
 		query: function(params, callback) {
 			var that = this;
-
 			require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
 				HttpRestClient.getResource('neos-service-nodes', null, {data: that.getQueryRequestData(params.queryString)}).then(function(result) {
 					var convertedResults = [];
@@ -60,9 +59,9 @@ define(
 						convertedResults.push({
 							'id': nodeIdentifier,
 							'__icon': that.getResultIcon($(this)),
-							'__path': '<br />' + $('.node-path', this).text().replace(/^\/sites\/[^\/]*/, ''),
+							'__path': '<br />' + ($('.node-path', this).text().replace(/^\/sites\/[^\/]*/, '') || '/'),
 							'__thumbnail': '',
-							'name': $('.node-label', this).text(),
+							'name': $('.node-label', this).text().trim(),
 							'url': that._type + '://' + nodeIdentifier,
 							'type': that._type,
 							'repositoryId': that._repositoryIdentifier
@@ -82,22 +81,20 @@ define(
 		 */
 		getObjectById: function(itemId, callback) {
 			var that = this;
-
 			require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
 				HttpRestClient.getResource('neos-service-nodes', itemId, {data: that.getObjectQueryRequestData()}).then(function(result) {
-					var convertedResults = [];
-					var $node = $('.node', result.resource);
-					convertedResult.push({
+					var $node = $('.node', result.resource),
+						path = ($('.node-path', $node).text().replace(/^\/sites\/[^\/]*/, '') || '/');
+					callback.call(this, [{
 						'id': $('.node-identifier', $node).text(),
 						'__icon': that.getResultIcon($node),
-						'__path': '<br />' + $('.node-path', $node).text().replace(/^\/sites\/[^\/]*/, ''),
+						'__path': '<br />' + path,
 						'__thumbnail': '',
-						'name': $('.node-label', $node).text(),
+						'name': $('.node-label', $node).text().trim() + ' (' + path + ')',
 						'url': that._type + '://' + $('.node-identifier', $node).text(),
 						'type': that._type,
 						'repositoryId': that._repositoryIdentifier
-					});
-					callback.call(this, convertedResult);
+					}]);
 				});
 			});
 		},

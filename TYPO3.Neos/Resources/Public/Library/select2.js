@@ -2807,7 +2807,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 enabledItem = $(
                     "<li class='neos-select2-search-choice'>" +
                     "    <div></div>" +
-                    "    <a href='#' onclick='return false;' class='neos-select2-search-choice-close' tabindex='-1'><i class='icon-remove'></i></a>" +
+                    "    <a href='#' onclick='return false;' class='neos-select2-search-choice-close'><i class='icon-remove'></i></a>" +
                     "</li>"),
                 disabledItem = $(
                     "<li class='neos-select2-search-choice neos-select2-locked'>" +

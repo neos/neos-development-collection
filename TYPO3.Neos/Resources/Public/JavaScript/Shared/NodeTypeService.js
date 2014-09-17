@@ -12,7 +12,6 @@ define(
 		 * @singleton
 		 */
 		return Ember.Object.extend({
-
 			_schema: {},
 
 			init: function() {

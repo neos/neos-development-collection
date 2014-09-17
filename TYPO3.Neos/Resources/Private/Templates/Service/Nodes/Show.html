@@ -7,11 +7,12 @@
 		<div>
 			<h1>Node</h1>
 			<div class="node">
-				<label class="node-label">{node.label}</label>
+				<label class="node-label">{node.fullLabel}</label>
 				<table class="node-properties">
 					<caption>Node Properties</caption>
 					<tr><th>_identifier</th><td class="node-identifier">{node.identifier}</td></tr>
 					<tr><th>_path</th><td class="node-path">{node.path}</td></tr>
+					<tr><th>_type</th><td class="node-type">{node.nodeType.name}</td></tr>
 					<f:for each="{convertedNodeProperties}" as="value" key="name">
 						<tr class="node-property"><th class="node-property-name">{name}</th><td class="node-property-value">{value}</td></tr>
 					</f:for>

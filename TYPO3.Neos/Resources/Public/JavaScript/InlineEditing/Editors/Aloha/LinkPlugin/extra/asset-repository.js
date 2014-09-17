@@ -44,7 +44,6 @@ define(
 		 */
 		query: function(params, callback) {
 			var that = this;
-
 			require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
 				HttpRestClient.getResource('neos-service-assets', null, {data: that.getQueryRequestData(params.queryString)}).then(function(result) {
 					var convertedResults = [];
@@ -76,21 +75,18 @@ define(
 		 */
 		getObjectById: function(itemId, callback) {
 			var that = this;
-
 			require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
-				HttpRestClient.getResource('neos-service-nodes', itemId, {data: that.getObjectQueryRequestData()}).then(function(result) {
-					var convertedResult = [],
-						$asset = $('.asset', result.resource),
-						assetIdentifier = $('.asset-identifier', $asset),
+				HttpRestClient.getResource('neos-service-assets', itemId, {data: that.getObjectQueryRequestData()}).then(function(result) {
+					var $asset = $('.asset', result.resource),
+						assetIdentifier = $('.asset-identifier', $asset).text(),
 						url = that._type + '://' + assetIdentifier;
-					convertedResult.push({
+					callback.call(this, [{
 						'id': assetIdentifier,
 						'name': $('.asset-label', $asset).text() + ' (' + url + ')',
 						'url': url,
 						'type': that._type,
 						'repositoryId': that._repositoryIdentifier
-					});
-					callback.call(this, convertedResult);
+					}]);
 				});
 			});
 		},

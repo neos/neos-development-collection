@@ -3,13 +3,15 @@ define(
 		'Library/jquery-with-dependencies',
 		'emberjs',
 		'Shared/HttpRestClient',
-		'Shared/Utility'
+		'Shared/Utility',
+		'Shared/NodeTypeService'
 	],
 	function(
 		$,
 		Ember,
 		HttpRestClient,
-		Utility
+		Utility,
+		NodeTypeService
 	) {
 		return Ember.View.extend({
 			tagName: 'input',
@@ -18,11 +20,11 @@ define(
 			placeholder: 'Paste a link, or type to search',
 
 			content: null,
-
 			searchRequest: null,
 
 			// array of allowed node type names, configurable via editorOptions
 			nodeTypes: ['TYPO3.Neos:Document'],
+			assets: true,
 
 			didInsertElement: function() {
 				var that = this,
@@ -33,64 +35,48 @@ define(
 					maximumSelectionSize: 1,
 					multiple: true,
 					placeholder: this.get('placeholder'),
-					escapeMarkup: function (markup) {
+					escapeMarkup: function(markup) {
 						return markup;
 					},
 					formatResult: function(item) {
-						var itemContent = '';
-
-						itemContent += '<span>';
+						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 
 						if (item.data.icon) {
-							itemContent += '<i class="' + item.data.icon + '"></i> ';
+							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
 						}
 
-						itemContent += '<b>' + item.text + '</b>';
-
-						if (item.data.path) {
-							itemContent += '<br />' + item.data.path;
-						} else if (item.data.identifier) {
-							itemContent += '<br />' + item.data.identifier;
+						if (item.data.thumbnail) {
+							$itemContent.prepend($('<img />').attr({src: item.data.thumbnail, alt: item.text}));
 						}
 
-						itemContent += '</span>';
+						var info = item.data.path ? item.data.path : item.data.identifier;
+						$itemContent.attr('title', item.text + (info ? ' (' + info + ')' : ''));
 
-						return itemContent;
+						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var itemContent = '';
-
-						itemContent += '<span>';
+						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 
 						if (item.data.icon) {
-							itemContent += '<i class="' + item.data.icon + '"></i> ';
+							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
 						}
 
-						itemContent += '<b>' + item.text + '</b>';
+						var info = item.data.path ? item.data.path : item.data.identifier;
+						$itemContent.attr('title', item.text + (info ? ' (' + info + ')' : ''));
 
-						if (item.data.path) {
-							itemContent += '<br />' + item.data.path;
-						} else if (item.data.identifier) {
-							itemContent += '<br />' + item.data.identifier;
-						}
-
-						itemContent += '</span>';
-
-						return itemContent;
+						return $itemContent.get(0).outerHTML;
 					},
 					dropdownCssClass: 'neos',
-					query: function (query) {
+					query: function(query) {
 						if (currentQueryTimer) {
 							window.clearTimeout(currentQueryTimer);
 						}
-						currentQueryTimer = window.setTimeout(function () {
-							var data, parameters;
+						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							data = {results: []};
-
 							if (Utility.isValidLink(query.term)) {
-								data.results.push({
+								var results = [];
+								results.push({
 									id: query.term,
 									text: query.term,
 									data: {
@@ -98,64 +84,81 @@ define(
 									},
 									'type': 'external'
 								});
-								query.callback(data);
+								query.callback({results: results});
 							} else {
-								parameters = {
-									workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename'),
-									searchTerm: query.term,
-									nodeTypes: that.get('nodeTypes')
-								};
+								var requests = [];
+								if (that.get('nodeTypes')) {
+									requests.push(HttpRestClient.getResource('neos-service-nodes', null, {data: {
+										workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename'),
+										searchTerm: query.term,
+										nodeTypes: that.get('nodeTypes')
+									}}));
+								}
 
-								HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function (result) {
-									$(result.resource).find('li').each(function (index, value) {
-										data.results.push({
-											id: 'node://' + $('.node-identifier', value).text(),
-											text: $('.node-label', value).text(),
-											data: $(value).data(),
-											'type': 'node'
+								if (that.get('assets')) {
+									requests.push(HttpRestClient.getResource('neos-service-assets', null, {data: {searchTerm: query.term}}));
+								}
+
+								Ember.RSVP.all(requests).then(function(results) {
+									var nodes = [],
+										assets = [];
+									results.forEach(function(result) {
+										$(result.resource).find('li').each(function(index, value) {
+											if ($(value).hasClass('node')) {
+												var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', value).text()).ui.icon;
+												nodes.push({
+													id: 'node://' + $('.node-identifier', value).text(),
+													text: $('.node-label', value).text().trim(),
+													data: {icon: iconClass, path: $('.node-path', value).text()},
+													'type': 'node'
+												});
+											} else {
+												var identifier = $('.asset-identifier', value).text();
+												assets.push({
+													id: 'asset://' + identifier,
+													text: $('.asset-label', value).text().trim(),
+													data: {identifier: identifier, thumbnail: $('[rel="thumbnail"]', value).attr('href')},
+													'type': 'asset'
+												});
+											}
 										});
-										query.callback(data);
 									});
-								});
-
-								parameters = {
-									searchTerm: query.term
-								};
-
-								HttpRestClient.getResource('neos-service-assets', null, {data: parameters}).then(function (result) {
-									data = {results: []};
-									$(result.resource).find('li').each(function (index, value) {
-										data.results.push({
-											id: 'asset://' + $('.asset-identifier', value).text(),
-											text: $('.asset-label', value).text(),
-											data: $(value).data(),
-											'type': 'asset'
-										});
-									});
+									query.callback({results: nodes.concat(assets)});
 								});
 							}
 						}, 200);
 					}
 				});
 
-				this.$().select2('container').find('.neos-select2-input').attr('placeholder', this.get('placeholder'));
-				if (this.get('content')) {
-					this.$().select2('container').find('.neos-select2-input').css({'display' : 'none'});
-				} else {
-					this.$().select2('container').find('.neos-select2-input').css({'display' : 'inline-block'});
-				}
-
+				var $input = this.$().select2('container').find('.neos-select2-input'),
+					parseLink = function() {
+						var value = $input.val();
+						if (!Utility.isValidLink(value) && value.indexOf('.') > -1) {
+							var url = 'http://' + value;
+							that.$().select2('data', {
+								id: url,
+								text: url,
+								data: {
+									icon: 'icon-link'
+								},
+								'type': 'external'
+							}, true);
+						}
+					};
+				$input
+					.attr('placeholder', this.get('placeholder'))
+					.css({'display': this.get('content') ? 'none' : 'inline-block'})
+					.on('keyup', function(e) {
+						if (e.keyCode === 13) {
+							parseLink();
+						}
+					});
 				this._updateSelect2();
 
 				this.$().on('change', function() {
 					var data = $(this).select2('data');
-					if (data.length > 0) {
-						that.set('content', data[0]);
-						that.$().select2('container').find('.neos-select2-input').css({'display' : 'none'});
-					} else {
-						that.set('content', '');
-						that.$().select2('container').find('.neos-select2-input').css({'display' : 'inline-block'});
-					}
+					that.set('content', data[0] || '');
+					$input.css({'display': data.length > 0 ? 'none' : 'inline-block'});
 				});
 			},
 
@@ -181,21 +184,23 @@ define(
 								workspaceName: $('#neos-page-metainformation').attr('data-context-__workspacename')
 							};
 							HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
-								item.set('text', $('.node-label', result.resource).text());
-								item.set('data', $('.node-data', result.resource).text());
+								var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;
+								item.set('text', $('.node-label', result.resource).text().trim());
+								item.set('data', {icon: iconClass, path: $('.node-path', result.resource).text()});
 								that._updateSelect2();
 							});
 						break;
 						case 'asset':
 							var assetIdentifier = value.substr(8, 36);
 							HttpRestClient.getResource('neos-service-assets', assetIdentifier).then(function(result) {
-								item.set('text', $('.asset-label', result.resource).text());
-								item.set('data', $('.asset-data', result.resource).text());
+								item.set('text', $('.asset-label', result.resource).text().trim());
+								item.set('data', {icon: 'icon-file-alt', identifier: $('.asset-identifier', result.resource).text()});
 								that._updateSelect2();
 							});
 						break;
 						default:
 							item.set('text', value);
+							item.set('data', {icon: 'icon-link'});
 							that._updateSelect2();
 						break;
 					}

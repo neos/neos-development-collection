@@ -93,7 +93,7 @@ module.exports = function(grunt) {
 					src = src.replace('css.top = dropTop;', 'css.top = dropTop - $window.scrollTop();');
 
 					// add bootstrap icon-close
-					src = src.replace("<a href='#' onclick='return false;' class='neos-select2-search-choice-close' tabindex='-1'></a>", "<a href='#' onclick='return false;' class='neos-select2-search-choice-close' tabindex='-1'><i class='icon-remove'></i></a>");
+					src = src.replace("<a href='#' onclick='return false;' class='neos-select2-search-choice-close' tabindex='-1'></a>", "<a href='#' onclick='return false;' class='neos-select2-search-choice-close'><i class='icon-remove'></i></a>");
 
 					src = src.replace('this.body = thunk(function() { return opts.element.closest("body"); });', "this.body = thunk(function() { return $('#neos-application'); });");
 
