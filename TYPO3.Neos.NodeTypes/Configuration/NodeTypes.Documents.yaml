@@ -5,30 +5,30 @@
       type: 'TYPO3.Neos:ContentCollection'
   properties:
     layout:
-     type: string
-     ui:
-       label: 'Layout for this page only'
-       reloadIfChanged: TRUE
-       inspector:
-         group: 'layout'
-         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
-         editorOptions:
-           placeholder: 'Inherit from parent'
-           values:
-             '':
-               label: ''
+      type: string
+      ui:
+        label: 'Layout for this page only'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'layout'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: 'Inherit from parent'
+            values:
+              '':
+                label: ''
     subpageLayout:
-     type: string
-     ui:
-       label: 'Layout for subpages of this page'
-       inspector:
-         group: 'layout'
-         editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
-         editorOptions:
-           placeholder: 'Inherit from parent'
-           values:
-             '':
-               label: ''
+      type: string
+      ui:
+        label: 'Layout for subpages of this page'
+        inspector:
+          group: 'layout'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: 'Inherit from parent'
+            values:
+              '':
+                label: ''
   ui:
     label: 'Page'
     icon: 'icon-file'
