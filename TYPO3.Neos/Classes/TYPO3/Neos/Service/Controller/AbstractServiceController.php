@@ -26,7 +26,24 @@ abstract class AbstractServiceController extends ActionController {
 	 */
 	public function errorAction() {
 		if ($this->arguments->getValidationResults()->hasErrors()) {
-			$this->throwStatus(409, NULL, json_encode($this->arguments->getValidationResults()->getFlattenedErrors()));
+			$errors = [];
+			foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors) {
+				foreach ($propertyErrors as $propertyError) {
+					/** @var \TYPO3\Flow\Error\Error $propertyError */
+					$error = array(
+						'severity' => $propertyError->getSeverity(),
+						'message' => $propertyError->render()
+					);
+					if ($propertyError->getCode()) {
+						$error['code'] = $propertyError->getCode();
+					}
+					if ($propertyError->getTitle()) {
+						$error['title'] = $propertyError->getTitle();
+					}
+					$errors[$propertyName][] = $error;
+				}
+			}
+			$this->throwStatus(409, NULL, json_encode($errors));
 		}
 		$this->throwStatus(400);
 	}
