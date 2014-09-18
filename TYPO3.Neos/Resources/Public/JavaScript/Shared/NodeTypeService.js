@@ -63,9 +63,9 @@ define(
 				});
 			},
 
-			getAllowedChildNodeTypesForAutocreatedNode: function(nodeType, autocreatedNodeName) {
+			getAllowedChildNodeTypesForAutocreatedNode: function(nodeType, autoCreatedNodeName) {
 				var constraints = this.get('_schema.constraints');
-				constraints = constraints[nodeType].childNodes[autocreatedNodeName];
+				constraints = constraints[nodeType].childNodes[autoCreatedNodeName];
 
 				if (!constraints) {
 					// No constraints configuration found, so no allowedChildNodes

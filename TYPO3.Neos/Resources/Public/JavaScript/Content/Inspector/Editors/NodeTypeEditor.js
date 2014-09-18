@@ -18,7 +18,9 @@ define(
 					subNodeTypeCounter = 0,
 					nodeTypes,
 					nodeTypeDefinition,
-					parentNodeName = this.get('inspector.selectedNode.attributes._parentnodename');
+					baseNodeType = this.get('baseNodeType'),
+					parentNodeName = this.get('inspector.selectedNode.attributes._parentnodename'),
+					parentNodeType = this.get('inspector.selectedNode.attributes._parentnodetype');
 
 				// 1. Figure out the Node Types which are allowed according to the Node Type Constraints
 				if (parentNodeName) {
@@ -28,16 +30,16 @@ define(
 						this.get('inspector.selectedNode.attributes._grandparentnodetype'),
 						parentNodeName
 					);
-				} else {
+				} else if(parentNodeType) {
 					// parent is NOT auto created
-					nodeTypes = NodeTypeService.getAllowedChildNodeTypes(
-						this.get('inspector.selectedNode.attributes._parentnodetype')
-					);
+					nodeTypes = NodeTypeService.getAllowedChildNodeTypes(parentNodeType);
+				} else {
+					nodeTypes = NodeTypeService.getAllowedChildNodeTypes(baseNodeType);
 				}
 
 				// 2. Filter for subtypes of BaseNodeType
 				nodeTypes = nodeTypes.filter(function(nodeTypeName) {
-					return NodeTypeService.isOfType(nodeTypeName, that.get('baseNodeType'));
+					return NodeTypeService.isOfType(nodeTypeName, baseNodeType);
 				});
 
 				// 3. Pre-process the selector and then fill it
