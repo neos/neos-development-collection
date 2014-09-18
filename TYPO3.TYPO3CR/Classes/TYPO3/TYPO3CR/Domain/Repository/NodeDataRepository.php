@@ -159,7 +159,7 @@ class NodeDataRepository extends Repository {
 	 * @param string $path Absolute path of the node
 	 * @param Workspace $workspace The containing workspace
 	 * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
-	 * @param boolean $removedNodes Include removed nodes, NULL (all), FALSE (no removed nodes) or TRUE (only removed nodes)
+	 * @param boolean|NULL $removedNodes Include removed nodes, NULL (all), FALSE (no removed nodes) or TRUE (only removed nodes)
 	 * @throws \InvalidArgumentException
 	 * @return NodeData The matching node if found, otherwise NULL
 	 */
@@ -230,7 +230,7 @@ class NodeDataRepository extends Repository {
 	 * @throws \InvalidArgumentException
 	 */
 	public function findOneByPathInContext($path, Context $context) {
-		$node = $this->findOneByPath($path, $context->getWorkspace(), $context->getDimensions());
+		$node = $this->findOneByPath($path, $context->getWorkspace(), $context->getDimensions(), ($context->isRemovedContentShown() ? NULL : FALSE));
 		if ($node !== NULL) {
 			$node = $this->nodeFactory->createFromNodeData($node, $context);
 		}
@@ -450,7 +450,7 @@ class NodeDataRepository extends Repository {
 	 * @param string $nodeTypeFilter
 	 * @param Workspace $workspace
 	 * @param array $dimensions
-	 * @param boolean $removedNodes
+	 * @param boolean|NULL $removedNodes
 	 * @param boolean $recursive
 	 * @return array
 	 */
@@ -972,7 +972,7 @@ class NodeDataRepository extends Repository {
 	 * Removes NodeData with the removed property set from the given array.
 	 *
 	 * @param array $nodes NodeData including removed entries
-	 * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes.
+	 * @param boolean|NULL $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes.
 	 * @return array NodeData with removed entries removed
 	 */
 	protected function filterRemovedNodes($nodes, $removedNodes) {
