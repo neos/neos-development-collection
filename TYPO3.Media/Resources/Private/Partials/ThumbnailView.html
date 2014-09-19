@@ -3,12 +3,21 @@
 	<ul class="neos-thumbnails asset-list">
 		<f:for each="{paginatedAssets}" as="asset">
 			<li class="asset">
-				<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail" arguments="{asset: asset}">
-					<div class="neos-img-container draggable-asset" data-asset-identifier="{asset->f:format.identifier()}">
-						<m:image asset="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
-					</div>
-					<span class="neos-caption"><f:format.crop maxCharacters="100">{f:if(condition: asset.caption, then: '{asset.caption}', else: asset.resource.filename)}</f:format.crop></span>
-				</f:link.action>
+				<f:if condition="{asset.resource}">
+					<f:then>
+						<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="neos-thumbnail" arguments="{asset: asset}">
+							<div class="neos-img-container draggable-asset" data-asset-identifier="{asset->f:format.identifier()}">
+								<m:image asset="{asset}" maximumWidth="250" maximumHeight="250" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" />
+							</div>
+							<span class="neos-caption"><f:format.crop maxCharacters="100">{f:if(condition: asset.caption, then: '{asset.caption}', else: asset.resource.filename)}</f:format.crop></span>
+						</f:link.action>
+					</f:then>
+					<f:else>
+						<f:link.action action="edit" title="Edit {f:if(condition: asset.title, then: asset.title, else: 'unknown')}" class="neos-thumbnail" arguments="{asset: asset}">
+							<span class="neos-caption"><f:format.crop maxCharacters="100">{f:if(condition: asset.caption, then: '{asset.caption}', else: asset.title)}</f:format.crop></span>
+						</f:link.action>
+					</f:else>
+				</f:if>
 			</li>
 		</f:for>
 	</ul>

@@ -14,10 +14,21 @@
 			<tr class="asset draggable-asset" data-asset-identifier="{asset -> f:format.identifier()}">
 				<td>
 					<div class="neos-list-thumbnail">
-						<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
+						<f:if condition="{asset.resource}">
+							<m:image asset="{asset}" allowCropping="false" maximumWidth="40" maximumHeight="40" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}"/>
+						</f:if>
 					</div>
 				</td>
-				<td><f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop></td>
+				<td>
+					<f:if condition="{asset.resource}">
+						<f:then>
+							<f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}</f:format.crop>
+						</f:then>
+						<f:else>
+							<f:format.crop maxCharacters="50">{f:if(condition: asset.title, then: asset.title, else: 'unknown')}</f:format.crop>
+						</f:else>
+					</f:if>
+				</td>
 				<td>{asset.resource.mediatype}</td>
 				<td class="tags"><f:for each="{asset.tags}" as="tag">
 					<span class="neos-label">{tag.label}</span>

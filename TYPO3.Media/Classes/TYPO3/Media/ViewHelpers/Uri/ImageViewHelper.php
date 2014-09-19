@@ -12,10 +12,12 @@ namespace TYPO3\Media\ViewHelpers\Uri;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Fluid\Core\ViewHelper\Exception;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
+use TYPO3\Media\Exception as MediaException;
 
 /**
  * Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
@@ -81,12 +83,21 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 		if (!$asset instanceof AssetInterface) {
 			throw new ViewHelperException('No asset given for rendering.', 1415797902);
 		}
-		if ($asset instanceof ImageInterface) {
-			$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
-			return $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource());
-		} else {
-			$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
-			return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'];
+
+		try {
+			if ($asset instanceof ImageInterface) {
+				$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+				return $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource());
+			} else {
+				$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+				return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'];
+			}
+		} catch (MediaException $exception) {
+			$this->systemLogger->logException($exception);
+			return NULL;
+		} catch (InvalidConfigurationException $exception) {
+			$this->systemLogger->logException($exception);
+			return NULL;
 		}
 	}
 

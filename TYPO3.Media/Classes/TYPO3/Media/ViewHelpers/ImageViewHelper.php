@@ -117,20 +117,26 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 		if (!$asset instanceof AssetInterface) {
 			throw new ViewHelperException('No asset given for rendering.', 1415797903);
 		}
-		if ($asset instanceof ImageInterface) {
-			$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
-			$this->tag->addAttributes(array(
-				'width' => $thumbnailImage->getWidth(),
-				'height' => $thumbnailImage->getHeight(),
-				'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource()),
-			));
-		} else {
-			$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
-			$this->tag->addAttributes(array(
-				'width' => $thumbnailImage['width'],
-				'height' => $thumbnailImage['height'],
-				'src' => $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'],
-			));
+
+		try {
+			if ($asset instanceof ImageInterface) {
+				$thumbnailImage = $this->imageService->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
+				$this->tag->addAttributes(array(
+					'width' => $thumbnailImage->getWidth(),
+					'height' => $thumbnailImage->getHeight(),
+					'src' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnailImage->getResource()),
+				));
+			} else {
+				$thumbnailImage = $this->imageService->getAssetThumbnailImage($asset, $maximumWidth, $maximumHeight);
+				$this->tag->addAttributes(array(
+					'width' => $thumbnailImage['width'],
+					'height' => $thumbnailImage['height'],
+					'src' => $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $thumbnailImage['src'],
+				));
+			}
+		} catch (\Exception $exception) {
+			$this->systemLogger->logException($exception);
+			return '<!-- Unable to render image, exception code ' . $exception->getCode() . ' -->';
 		}
 
 		return $this->tag->render();

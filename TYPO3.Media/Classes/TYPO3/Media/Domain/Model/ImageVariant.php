@@ -13,7 +13,6 @@ namespace TYPO3\Media\Domain\Model;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Exception;
-use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Media\Exception\ImageFileException;
 
 /**
@@ -109,8 +108,8 @@ class ImageVariant implements ImageInterface {
 			$this->imageSizeAndTypeInitialized = TRUE;
 		} catch(ImageFileException $exception) {
 			throw $exception;
-		} catch(Exception $exception) {
-			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
+		} catch(\Exception $exception) {
+			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occurred when trying to read the image: "' . $exception->getMessage() . '"';
 			throw new ImageFileException($exceptionMessage, 1391806394);
 		}
 	}

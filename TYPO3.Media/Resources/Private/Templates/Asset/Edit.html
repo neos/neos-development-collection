@@ -28,7 +28,11 @@
 						<tbody>
 							<tr>
 								<th>Filename</th>
-								<td><a href="{f:uri.resource(resource:asset.resource)}" target="_blank">{asset.resource.filename}</a></td>
+								<td>
+									<f:if condition="{asset.resource}">
+										<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">{asset.resource.filename}</a>
+									</f:if>
+								</td>
 							</tr>
 							<tr>
 								<th>Last modified (resource)</th>
@@ -54,6 +58,8 @@
 <f:section name="ContentImage">
 	<label>Preview</label>
 	<div class="neos-preview-image">
-		<m:image asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="img-polaroid" />
+		<f:if condition="{asset.resource}">
+			<m:image asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{f:if(condition: asset.title, then: asset.title, else: asset.resource.filename)}" class="img-polaroid" />
+		</f:if>
 	</div>
 </f:section>

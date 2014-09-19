@@ -11,7 +11,6 @@ namespace TYPO3\Media\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Imagine\Image\AbstractImagine;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -22,6 +21,7 @@ use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Resource\ResourcePointer;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Exception\ImageFileException;
+use TYPO3\Media\Exception\MissingResourceException;
 
 /**
  * An image service that acts as abstraction for the Imagine library
@@ -65,14 +65,26 @@ class ImageService {
 	 * @param ImageInterface $image
 	 * @param array $processingInstructions
 	 * @return Resource
+	 * @throws \Exception
 	 */
 	public function transformImage(ImageInterface $image, array $processingInstructions) {
+		if (!$image->getResource()) {
+			throw new MissingResourceException('Image resource could not be found.', 1403195673);
+		}
+		if (!$image->getResource()->getResourcePointer()) {
+			throw new MissingResourceException('Image resource pointer could not be found.', 1403195674);
+		}
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . json_encode($processingInstructions));
 		$additionalOptions = array();
 		if (!file_exists('resource://' . $uniqueHash)) {
+			$originalResourcePath = 'resource://' . $image->getResource()->getResourcePointer()->getHash();
+			if (!file_exists($originalResourcePath)) {
+				throw new MissingResourceException('Image resource file could not be found.', 1418243434);
+			}
+
 			/** @var \Imagine\Image\ImagineInterface $imagine */
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
-			$imageContent = file_get_contents('resource://' . $image->getResource()->getResourcePointer()->getHash());
+			$imageContent = file_get_contents($originalResourcePath);
 			$imagineImage = $imagine->load($imageContent);
 			if ($imagine instanceof \Imagine\Imagick\Imagine &&  $image->getFileExtension() === 'gif' && $this->isAnimatedGif($imageContent) === TRUE) {
 				$imagineImage->layers()->coalesce();
