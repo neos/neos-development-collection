@@ -22,9 +22,9 @@ define(
 			this._super(this._repositoryIdentifier);
 		},
 
-		getResultIcon: function($result) {
-			// TODO: Implement support for passing icon classes via the service
-			return '<i class="icon-file"></i> ';
+		getResultIcon: function($result, NodeTypeService) {
+			var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', $result).text()).ui.icon;
+			return '<i class="' + (iconClass ? iconClass : 'icon-file') + '"></i>';
 		},
 
 		getQueryRequestData: function(searchTerm) {
@@ -51,14 +51,14 @@ define(
 		 */
 		query: function(params, callback) {
 			var that = this;
-			require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
+			require({context: 'neos'}, ['Shared/HttpRestClient', 'Shared/NodeTypeService'], function(HttpRestClient, NodeTypeService) {
 				HttpRestClient.getResource('neos-service-nodes', null, {data: that.getQueryRequestData(params.queryString)}).then(function(result) {
 					var convertedResults = [];
 					$.each($('.nodes', result.resource).children('li'), function() {
 						var nodeIdentifier = $('.node-identifier', this).text();
 						convertedResults.push({
 							'id': nodeIdentifier,
-							'__icon': that.getResultIcon($(this)),
+							'__icon': that.getResultIcon($(this), NodeTypeService),
 							'__path': '<br />' + ($('.node-path', this).text().replace(/^\/sites\/[^\/]*/, '') || '/'),
 							'__thumbnail': '',
 							'name': $('.node-label', this).text().trim(),
@@ -81,13 +81,13 @@ define(
 		 */
 		getObjectById: function(itemId, callback) {
 			var that = this;
-			require({context: 'neos'}, ['Shared/HttpRestClient'], function(HttpRestClient) {
+			require({context: 'neos'}, ['Shared/HttpRestClient', 'Shared/NodeTypeService'], function(HttpRestClient, NodeTypeService) {
 				HttpRestClient.getResource('neos-service-nodes', itemId, {data: that.getObjectQueryRequestData()}).then(function(result) {
 					var $node = $('.node', result.resource),
 						path = ($('.node-path', $node).text().replace(/^\/sites\/[^\/]*/, '') || '/');
 					callback.call(this, [{
 						'id': $('.node-identifier', $node).text(),
-						'__icon': that.getResultIcon($node),
+						'__icon': that.getResultIcon($node, NodeTypeService),
 						'__path': '<br />' + path,
 						'__thumbnail': '',
 						'name': $('.node-label', $node).text().trim() + ' (' + path + ')',
