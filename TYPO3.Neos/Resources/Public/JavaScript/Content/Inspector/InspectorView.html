@@ -12,7 +12,6 @@
 		<label for="neos-content-breadcrumb">Selected element</label>
 		{{view view.Breadcrumb}}
 	</div>
-
 	{{#each tab in groupedPropertyViews}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each group in tab.groups}}
@@ -29,7 +28,7 @@
 								{{unbound ui.label}}
 							</label>
 						{{else}}
-							<label for="{{unbound elementId}}">{{unbound ui.label}}</label>
+							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">{{unbound ui.label}}</label>
 							{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
 						{{/if}}
 					{{/collection}}

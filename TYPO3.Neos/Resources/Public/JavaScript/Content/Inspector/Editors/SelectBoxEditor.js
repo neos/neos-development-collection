@@ -1,95 +1,207 @@
-define(
-[
+define([
 	'Library/jquery-with-dependencies',
 	'emberjs',
 	'Shared/HttpClient'
-],
-function($, Ember, HttpClient) {
-	var SelectboxOption = Ember.View.extend({
-		tagName: 'option',
-		attributeBindings: ['value', 'selected', 'disabled'],
-		valueBinding: 'content.value',
-		selectedBinding: 'content.selected',
-		disabled: function() {
-			if (this.get('content.disabled')) {
-				return 'disabled';
+], function($, Ember, HttpClient) {
+	/**
+	 * Allow for options without a group
+	 */
+	Ember.Select.reopen({
+		groupedContent: Ember.computed(function() {
+			var groupPath = this.get('optionGroupPath');
+			var groupedContent = Ember.A();
+
+			this.get('content').forEach(function(item) {
+				var label = Ember.get(item, groupPath);
+
+				if (label) {
+					if (Ember.get(groupedContent, 'lastObject.label') !== label) {
+						groupedContent.pushObject({
+							label: label,
+							content: Ember.A()
+						});
+					}
+
+					Ember.get(groupedContent, 'lastObject.content').push(item);
+				} else {
+					groupedContent.push(item);
+				}
+			});
+
+			return groupedContent;
+		}).property('optionGroupPath', 'content.@each'),
+
+		groupView: Ember.ContainerView.extend({
+			childViews: ['view'],
+			init: function() {
+				if (this.get('content')) {
+					this.set('view', Ember.SelectOptgroup.extend({
+						contentBinding: 'parentView.content',
+						labelBinding: 'parentView.label',
+						selectionBinding: 'parentView.parentView.selection',
+						multipleBinding: 'parentView.parentView.multiple',
+						optionLabelPathBinding: 'parentView.parentView.optionLabelPath',
+						optionValuePathBinding: 'parentView.parentView.optionValuePath',
+
+						itemViewClassBinding: 'parentView.parentView.optionView'
+					}));
+				} else {
+					this.set('view', Ember.SelectOption.extend({
+						content: this
+					}));
+				}
+				this._super();
 			}
-			return null;
-		}.property('content.disabled'),
-		template: Ember.Handlebars.compile('{{unbound view.content.label}}')
+		})
 	});
 
-	return Ember.CollectionView.extend({
-		classNames: ['typo3-form-selectbox'],
+	/** Allow for disabled options */
+	Ember.SelectOption.reopen({
+		attributeBindings: ['value', 'selected', 'disabled', 'icon'],
 
-		tagName: 'select',
-		contentBinding: 'options',
-		itemViewClass: SelectboxOption,
+		disabled: function() {
+			var content = this.get('content');
+			return content.disabled || false;
+		}.property('content'),
 
-		value: '',
+		icon: function() {
+			return this.get('content.icon');
+		}.property('content')
+	});
+
+	return Ember.Select.extend({
+		value: null,
+		values: [],
 		allowEmpty: false,
-		placeholder: '',
-
-		attributeBindings: ['size', 'disabled'],
-
-		values: [ ],
+		multiple: false,
+		placeholder: 'Choose',
+		attributeBindings: ['size', 'disabled', 'multiple'],
+		optionLabelPath: 'content.label',
+		optionValuePath: 'content.value',
 
 		init: function() {
 			this._super();
-			this.get('options');
+			this.off('didInsertElement', this, this._triggerChange);
+			this.on('change', function() {
+				this._change();
+				this._updateValue();
+			});
 		},
 
-		options: function() {
-			var options = [],
+		content: function() {
+			var that = this,
+				options = [],
 				values = this.get('values'),
 				currentValue = this.get('value');
 
+			if (Ember.get(values, Object.keys(values)[0] + '.group')) {
+				this.set('optionGroupPath', 'group');
+			}
+
 			if (this.get('allowEmpty')) {
-				options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
+				var emptyOptionValues = {value: ''};
+				options.push(Ember.Object.create(emptyOptionValues));
 			}
 
 			$.each(values, function(value) {
 				options.push(Ember.Object.create($.extend({
-					selected: value === currentValue,
+					selected: that.get('multiple') && Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : value === currentValue,
 					value: value,
 					disabled: value && values[value] && values[value].disabled
 				}, this)));
 			});
 
-			return options;
-		}.property('values.@each', 'value', 'placeholder', 'allowEmpty'),
-
-		_initializePlaceholder: function() {
-			var that = this;
-
-			this.$().attr('data-placeholder', that.get('placeholder'));
 			Ember.run.next(function() {
-				that.$().trigger('chosen:updated');
+				that.valueDidChange();
 			});
-		}.observes('placeholder', 'values.@each'),
 
-		_loadValuesFromController: function(uri, callback) {
-			HttpClient.getResource(uri, {dataType: 'json'}).then(callback);
+			return options;
+		}.property('values.@each'),
+
+		valueDidChange: function() {
+			var content = this.get('content'),
+				value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value'),
+				valuePath = this.get('optionValuePath').replace(/^content\.?/, ''),
+				selection = content ? content.filter(function(obj) {
+					var optionValue = valuePath ? Ember.get(obj, valuePath) : obj;
+					return Array.isArray(value) ? value.indexOf(optionValue) !== -1 : value === optionValue;
+				}) : null;
+			if (!selection) {
+				return;
+			}
+			if (this.get('multiple') || (value !== (valuePath ? this.get('selection.' + valuePath) : this.get('selection')))) {
+				this.set('selection', this.get('multiple') ? selection : selection[0]);
+				var that = this;
+				Ember.run.next(function() {
+					if (that.$()) {
+						that.$().trigger('change');
+					}
+				});
+			}
+		}.observes('value'),
+
+		_updateValue: function() {
+			var selection = this.get('selection');
+			if (this.get('multiple')) {
+				var selectedValues = selection.length > 0 ? selection.map(function(option) {
+					return option.value;
+				}) : null;
+				this.set('value', selectedValues ? JSON.stringify(selectedValues) : '');
+			} else if (selection) {
+				this.set('value', selection.value && isFinite(selection.value) ? parseFloat(selection.value) : selection.value);
+			}
 		},
 
 		didInsertElement: function() {
-			var that = this;
+			this._initializeSelect2();
+		},
 
-			if (this.get('placeholder')) {
-				this.$().attr('data-placeholder', this.get('placeholder'));
-			}
-
-			// TODO Check value binding
-			var chosen;
-			this.$().addClass('chosen-select').on('chosen:ready', function(event, parameters) {
-				chosen = parameters.chosen;
-			}).chosen({
-				allow_single_deselect: true,
-				disable_search_threshold: 5
-			}).change(function() {
-				that.set('value', that.$().val());
+		_initializeSelect2: function() {
+			this.$().select2('destroy').select2({
+				maximumSelectionSize: this.get('multiple') ? 0 : 1,
+				minimumResultsForSearch: 5,
+				allowClear: this.get('allowEmpty') || this.get('content.0.value') === '',
+				placeholder: this.get('placeholder'),
+				relative: true,
+				formatSelection: function (data, container, escapeMarkup) {
+					var icon = $(data.element).attr('icon');
+					return data ? '<span title="' + escapeMarkup(data.text) + '">' + (icon ? '<i class="' + icon + '"></i>' : '') + escapeMarkup(data.text) + '</span>' : undefined;
+				},
+				formatResult: function (result, container, query, escapeMarkup) {
+					var markup = [],
+						icon = $(result.element).attr('icon');
+					window.Select2.util.markMatch(result.text, query.term, markup, escapeMarkup);
+					container.attr('title', escapeMarkup(result.text));
+					return (icon ? '<i class="' + icon + '"></i>' : '') + markup.join('');
+				}
+			}).on('select2-open', function() {
+				var that = this,
+					parent = $(this).parent(),
+					document = $('#neos-application');
+				$('.neos-select2-offscreen', '#neos-inspector').not(this).each(function() {
+					$(this).select2('close');
+				});
+				document.on('click.select2-custom', document, function(e) {
+					if (!$.contains(parent, e.target)) {
+						$(that).select2('close');
+						document.off('click.select2-custom');
+					}
+				});
+				parent.css('padding-bottom', $('#neos-select2-drop').height());
+			}).on('select2-close', function() {
+				$(this).parent().css('padding-bottom', 0);
+				$('#neos-application').off('click.select2-custom');
 			});
-			chosen.search_results.off('mousewheel.chosen DOMMouseScroll.chosen');
+		},
+
+		_placeholderDidChange: function() {
+			if (this.$()) {
+				this._initializeSelect2();
+			}
+		}.observes('placeholder'),
+
+		_loadValuesFromController: function(uri, callback) {
+			HttpClient.getResource(uri, {dataType: 'json'}).then(callback);
 		}
 	});
 });

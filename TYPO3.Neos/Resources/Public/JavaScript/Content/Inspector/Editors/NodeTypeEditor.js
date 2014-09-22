@@ -7,11 +7,11 @@ define(
 	],
 	function ($, SelectBoxEditor, Configuration, NodeTypeService) {
 		return SelectBoxEditor.extend({
+			placeholder: 'Loading ...',
 			baseNodeType: 'TYPO3.Neos:Content',
 
 			// todo add support for optgroup when Select2 replace Chosen
-			didInsertElement: function () {
-				this._super();
+			values: function () {
 				var that = this,
 					values = [],
 					sortedNodeTypes = {},
@@ -63,12 +63,12 @@ define(
 					for (var i = 0; i < values.length; i++) {
 						sortedNodeTypes[values[i].value] = values[i];
 					}
-
-					this.set('values', sortedNodeTypes);
 				} else {
 					this.set('placeholder', 'Unable to load sub node types of: ' + this.get('baseNodeType'));
 				}
-			}
+
+				return sortedNodeTypes;
+			}.property('inspector.selectedNode')
 		});
 	}
 );

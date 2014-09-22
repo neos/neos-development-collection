@@ -188,6 +188,11 @@ class ContentElementWrappingService {
 			return $propertyValue ? 'true' : 'false';
 		}
 
+		// Serialize array values to String
+		if ($dataType === 'array') {
+			return $propertyValue ? json_encode($propertyValue, JSON_UNESCAPED_UNICODE) : NULL;
+		}
+
 		// Serialize date values to String
 		if ($dataType === 'date') {
 			if (!$propertyValue instanceof \DateTime) {

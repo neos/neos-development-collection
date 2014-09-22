@@ -108,7 +108,6 @@
           position: 100
           editor: Content/Inspector/Editors/NodeTypeEditor
           editorOptions:
-            placeholder: 'Loading ...'
             baseNodeType: 'TYPO3.Neos:Document'
     title:
       type: string

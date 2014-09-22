@@ -31575,7 +31575,7 @@ the specific language governing permissions and limitations under the Apache Lic
             this.container.attr("id", this.containerId);
 
             // cache the body so future lookups are cheap
-            this.body = thunk(function() { return $('#neos-application'); });
+            this.body = thunk(function() { return opts.relative ? opts.element.parent() : $('#neos-application'); });
 
             syncCssClasses(this.container, this.opts.element, this.opts.adaptContainerCssClass);
 
@@ -32709,7 +32709,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 "class": "neos-select2-container"
             }).html([
                 "<a href='javascript:void(0)' onclick='return false;' class='neos-select2-choice' tabindex='-1'>",
-                "   <span class='neos-select2-chosen'>&nbsp;</span><abbr class='neos-select2-search-choice-close'></abbr>",
+                "   <span class='neos-select2-chosen'>&nbsp;</span><abbr class='neos-select2-search-choice-close'><i class='icon-remove'></i></abbr>",
                 "   <span class='neos-select2-arrow'><b></b></span>",
                 "</a>",
                 "<input class='neos-select2-focusser neos-select2-offscreen' type='text'/>",

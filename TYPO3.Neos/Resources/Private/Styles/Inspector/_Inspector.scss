@@ -57,20 +57,7 @@
 	@import "Editors/DateTimePicker";
 	@import "Editors/ImageEditor";
 	@import "Editors/AssetEditor";
-	@import "../Shared/Chosen";
-
-	.chosen-container {
-		width: ($inspectorWidth - $defaultMargin * 2) !important;
-
-		&.chosen-with-drop .chosen-drop {
-			display: block;
-		}
-
-		.chosen-drop {
-			display: none;
-			margin-bottom: $defaultMargin;
-		}
-	}
+	@import "Editors/SelectBoxEditor";
 
 	.neos-toolbar {
 		position: absolute;
@@ -420,26 +407,76 @@
 				}
 			}
 
-			.chosen-container .chosen-single {
-				border: 2px solid $green;
-				@include box-sizing(border-box);
-				padding-left: $defaultMargin - 2px;
+			.neos-select2-container {
+				.neos-select2-choice {
+					border: 2px solid $green;
+					padding: ($relatedMargin - 3px) ($defaultMargin - 2px);
 
-				span {
-					line-height: $unit - 4px;
+					.neos-select2-arrow {
+						width: $unit - 2px;
+
+						&::before,
+						&::after {
+							right: 13px;
+						}
+
+						&::before {
+							top: -6px;
+						}
+
+						&::after {
+							top: 2px;
+						}
+					}
+
+					.neos-select2-search-choice-close {
+						width: $unit - 2px;
+
+						i {
+							top: 10px;
+						}
+					}
 				}
 
-				abbr {
-					top: 9px;
-				}
+				.neos-select2-choices {
+					border: 2px solid $green;
 
-				div {
-					width: $unit - 2px;
+					.neos-select2-search-choice {
+						&:first-child {
+							div {
+								padding: ($relatedMargin - 2px) ($defaultMargin - 2px) $relatedMargin;
+							}
 
-					&:before,
-					&:after {
-						right: 13px;
-						line-height: $unit - 4px;
+							.neos-select2-search-choice-close {
+								height: $unit - 2px;
+
+								i {
+									top: 10px;
+								}
+							}
+						}
+
+						div {
+							padding: $relatedMargin ($defaultMargin - 2px);
+							margin-right: $unit + 2px;
+						}
+
+						.neos-select2-search-choice-close {
+							width: $unit + 2px;
+						}
+					}
+
+					.neos-select2-search-field {
+						input {
+							height: $unit - 2px;
+							padding-left: $defaultMargin - 4px;
+							padding-top: 2px;
+						}
+
+						&:after {
+							bottom: 9px;
+							right: 8px;
+						}
 					}
 				}
 			}

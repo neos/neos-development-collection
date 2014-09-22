@@ -66,6 +66,7 @@ define(
 			var editorOptions = $.extend(
 				{
 					elementId: propertyDefinition.elementId,
+					property: propertyDefinition.key,
 					inspectorBinding: this.inspectorBinding,
 					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
 				},

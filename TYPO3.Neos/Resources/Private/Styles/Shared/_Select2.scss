@@ -1,65 +1,91 @@
 @import "../../../Public/Library/select2/select2-prefixed.scss";
 
-// Remove spinner & sprite image
+// Remove spinner:
 .neos-select2-search input.neos-select2-active,
 .neos-select2-more-results.neos-select2-active,
-.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field input.neos-select2-active,
-.neos-select2-search input, .neos-select2-search-choice-close, .neos-select2-container .neos-select2-choice abbr, .neos-select2-container .neos-select2-choice .neos-select2-arrow b {
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-field input.neos-select2-active {
 	background-image: none !important;
 }
 
 .neos-select2-drop-mask {
-	display: none;
+	z-index: 10019;
 }
+
 .neos-select2-drop {
 	position: fixed;
 	z-index: 10020;
 }
 
 .neos-select2-drop {
-	background: $grayMedium !important;
+	background: $grayMedium;
 	border: none;
 	border-radius: 0;
-	box-shadow: none;
+	@include box-shadow(1px 2px 5px $grayDark);
 
 	.neos-select2-input {
-		min-height: $unit !important;
-		background: white !important;
+		min-height: $unit;
+		background: white;
 		border: none;
 	}
 
 	.neos-select2-results {
-		padding: 0 !important;
-		margin: 0 !important;
+		padding: 0;
+		margin: 0;
 		max-height: $unit * 4.5 + 4px;
 
 		li {
-			min-height: $unit !important;
+			min-height: $unit;
 			margin: 0;
-			padding: $relatedMargin $defaultMargin !important;
-			border-top: 1px solid $grayDark !important;
-			background: $grayMedium !important;
-			color: white !important;
-			vertical-align: middle !important;
-			@include box-sizing(border-box);
+			padding: 0 $defaultMargin;
+			border-top: 1px solid $grayDark;
+			background: $grayMedium;
+			color: #fff;
+			vertical-align: middle;
+
+			&.neos-select2-result-with-children {
+				padding: 0;
+				background-color: $grayLight;
+
+				> .neos-select2-result-label {
+					padding: ($unit - $defaultMargin * 2) $defaultMargin;
+					cursor: default;
+				}
+
+				> .neos-select2-result-sub {
+					.neos-select2-result-label {
+						padding: ($unit - $defaultMargin * 2) 0 ($unit - $defaultMargin * 2) $relatedMargin;
+					}
+				}
+			}
+
+			&.neos-select2-disabled {
+				cursor: not-allowed;
+
+				.neos-select2-result-label {
+					cursor: not-allowed;
+					color: $textSubtle;
+				}
+			}
 
 			&.neos-select2-no-results,
 			&.neos-select2-selection-limit {
-				display: none !important;
+				line-height: $unit - $defaultMargin;
+				padding: ($unit - $defaultMargin * 2) $defaultMargin;
+				min-height: initial;
 			}
 
 			&.neos-select2-searching {
-				color: transparent !important;
-				background-image: url('../Images/ajax-preloader-222222.gif') !important;
-				background-repeat: no-repeat !important;
-				background-position: $defaultMargin 13px !important;
+				color: transparent;
+				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-repeat: no-repeat;
+				background-position: $defaultMargin 13px;
 			}
 
 			&.neos-select2-highlighted {
-				background: $blue !important;
-				border-top: 1px solid $grayDark !important;
-				color: white !important;
-				vertical-align: middle !important;
+				background: $blue;
+				padding: 0 $defaultMargin;
+				border-top: 1px solid $grayDark;
+				color: #fff;
 
 				.neos-select2-result-label img {
 					border: 1px solid #fff;
@@ -67,10 +93,20 @@
 			}
 
 			.neos-select2-result-label {
-				padding: 0 !important;
 				line-height: $unit - $defaultMargin;
-				min-height: $unit - $defaultMargin;
-				max-height: $unit - $defaultMargin;
+				padding: ($unit - $defaultMargin * 2) 0;
+				@include box-sizing(border-box);
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				color: #fff;
+
+				i {
+					padding-right: $tightMargin;
+					vertical-align: baseline;
+					color: #fff;
+					text-align: center;
+				}
 
 				img {
 					float: left;
@@ -80,33 +116,11 @@
 					border: 1px solid $grayLight;
 					@include box-sizing(border-box);
 				}
-
-				i {
-					vertical-align: baseline;
-					padding-right: $tightMargin;
-					color: #fff;
-					text-align: center;
-				}
-
-				span {
-					font-size: 12px;
-					color: #fff;
-					display: inline-block;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					width: 100%;
-
-					b {
-						font-size: 14px;
-						font-weight: 400;
-					}
-				}
 			}
 		}
 
 		.neos-select2-match {
-			text-decoration: none !important;
+			text-decoration: none;
 			font-weight: bold;
 		}
 	}
@@ -114,92 +128,199 @@
 
 /* Single Selection, General Styling */
 .neos-select2-container {
-	width: 288px;
+	width: $inspectorWidth - $defaultMargin * 2;
+
+	a:focus {
+		outline: none;
+	}
+
+	&.neos-select2-allowclear {
+		.neos-select2-choice {
+			.neos-select2-chosen {
+				margin-right: $unit + $defaultMargin + $relatedMargin + 2px;
+				padding-right: $defaultMargin;
+			}
+		}
+	}
 
 	.neos-select2-choice {
-		height: $unit !important;
-		line-height: $unit !important;
-		background-color: $grayMedium !important;
-		background-image: none !important;
-		border-radius: 0 !important;
-		border: 0 !important;
-		box-shadow: none !important;
-		padding: 0 !important;
-		text-decoration: none !important;
-		color: white !important;
+		line-height: $relatedMargin + $defaultMargin;
+		padding: ($relatedMargin - 1px) $defaultMargin;
+		background-color: $grayMedium;
+		background-image: none;
+		border-radius: 0;
+		border: 0;
+		box-shadow: none;
+		text-decoration: none;
+		color: #fff;
+
+		&:focus,
+		&:hover {
+			color: #fff;
+			text-decoration: none;
+		}
+
+		.neos-select2-search-choice-close {
+			right: 0px;
+			left: auto;
+			top: 0;
+			height: $unit;
+			width: $unit;
+			background: none;
+			border-left: 1px solid $grayDark;
+			color: white;
+			text-decoration: none;
+			right: $unit + 1px;
+			border-radius: 0;
+
+			&:hover {
+				background-color: $blue;
+			}
+
+			i {
+				position: absolute;
+				left: 14px;
+				top: 12px;
+			}
+		}
 
 		> .neos-select2-chosen {
-			padding-left: 14px !important;
+			padding-right: $unit;
+			margin-right: 0;
+
+			i {
+				padding-right: $tightMargin;
+				vertical-align: baseline;
+				color: #fff;
+				text-align: center;
+			}
 		}
 
 		> .neos-select2-arrow {
-			display: none
-		}
-
-		img {
-			float: left;
-			padding-right: $tightMargin;
-		}
-
-		i {
-			padding-right: $tightMargin;
-			vertical-align: baseline;
-			text-align: center;
-		}
-
-		span {
-			font-size: 12px;
-			color: $textSubtleLight;
+			width: $unit;
+			border-left: 1px solid $grayDark;
+			background: none;
+			color: $textOnGray;
 
 			b {
-				font-size: 14px;
-				font-weight: 400;
-				color: white;
+				display: none;
+				background-image: none;
+			}
+
+			&:before,
+			&:after {
+				display: block;
+				position: absolute;
+				right: 15px;
+				font-family: Arial;
+				font-size: 17px;
+				line-height: $unit;
+				content: "▾";
+			}
+
+			&:before {
+				top: -4px;
+				@include rotate(180deg);
+			}
+
+			&:after {
+				top: 4px;
 			}
 		}
 	}
 }
 
 /* Multi Selection */
-.neos-select2-container-multi {
+.neos-select2-choices {
+	border: none;
+}
 
-	&.neos-select2-container-active {
-		.neos-select2-choices {
-			border: none;
-			@include box-shadow(none);
-		}
+.neos-select2-container-multi {
+	&.neos-select2-container-active .neos-select2-choices {
+		border: none;
+		@include box-shadow(none);
 	}
 
 	.neos-select2-choices {
-		background: $grayMedium;
+		background-color: $grayMedium;
 		border: none;
 
+		.neos-select2-search-field {
+			background-color: $grayMedium;
+			width: 100%;
+
+			input {
+				min-width: $inspectorWidth - $defaultMargin * 2;
+				padding-right: $unit;
+				color: #fff;
+
+				&:focus {
+					color: #fff;
+				}
+			}
+
+			&:after {
+				position: absolute;
+				bottom: 11px;
+				right: 10px;
+				width: 16px;
+				height: 16px;
+				text-decoration: inherit;
+				display: inline-block;
+				speak: none;
+				content: $search;
+				line-height: 100%;
+				font-size: 14px;
+				@include icon-FontAwesome();
+				cursor: pointer;
+			}
+		}
+
 		.neos-select2-search-choice {
-			line-height: $unit;
-			padding: 0 ($unit + 1px + $defaultMargin) 0 $defaultMargin;
-			@include box-sizing(border-box);
 			margin: 0;
+			padding: 0;
 			background: $grayMedium;
 			width: $inspectorWidth - $defaultMargin * 2;
-			max-height: $unit;
-			color: white;
-			border: 0;
+			color: #fff;
+			@include box-sizing(border-box);
+
 			box-shadow: none;
-			border-radius: 0;
+			border-left: none;
+			border-right: none;
+			border-top: none;
+			border-bottom: 1px solid $grayDark;
+
+			div {
+				line-height: $relatedMargin + $defaultMargin;
+				padding: $relatedMargin $defaultMargin;
+				border-right: 1px solid $grayDark;
+				margin-right: $unit;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+
+				i {
+					padding-right: $tightMargin;
+					vertical-align: baseline;
+					color: #fff;
+					text-align: center;
+				}
+			}
 
 			.neos-select2-search-choice-close {
-				right: 0;
+				right: 0px;
 				left: auto;
 				top: 0;
 				height: $unit;
 				width: $unit;
 				background: none;
-				border-left: 1px solid $grayDark;
 				color: white;
 				text-decoration: none;
+				border-radius: 0;
+				background-color: $grayMedium;
+				z-index: 1;
 
-				&:hover,
-				&:focus {
+				&:hover {
 					background-color: $blue;
 					outline: none;
 					@include transition(none);
@@ -211,45 +332,39 @@
 					top: 13px;
 				}
 			}
-
-			span {
-				font-size: 11px;
-				color: #fff;
-				display: inline-block;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				width: 100%;
-
-				img {
-					float: left;
-					padding-right: $tightMargin;
-				}
-
-				i {
-					padding-right: $tightMargin;
-					vertical-align: baseline;
-					text-align: center;
-				}
-
-				b {
-					font-size: 14px;
-					font-weight: 400;
-				}
-			}
 		}
 	}
+}
 
-	.neos-select2-search-field {
+.neos-select2-with-searchbox {
+	.neos-select2-search {
+		&:after {
+			position: absolute;
+			bottom: 11px;
+			right: 10px;
+			width: 16px;
+			height: 16px;
+			text-decoration: inherit;
+			display: inline-block;
+			speak: none;
+			content: $search;
+			line-height: 100%;
+			font-size: 14px;
+			@include icon-FontAwesome();
+			cursor: pointer;
+		}
+
 		input {
-			min-width: 288px !important;
-			border-top: 1px solid $grayDark !important;
-			border-left: 0 !important;
-			border-right: 0 !important;
-			border-bottom: 0 !important;
+			border: none;
+			margin-bottom: 0;
+			color: $textOnWhite;
+			@include font;
+			font-size: 14px;
+			padding: 0 ($defaultMargin - 2px + $unit) 0 ($defaultMargin - 2px);
 
 			&:focus {
-				background: white !important;
+				outline: none;
+				@include box-shadow(none);
 			}
 		}
 	}
