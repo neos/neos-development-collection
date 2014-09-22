@@ -176,11 +176,9 @@ class ImageVariant implements ImageInterface {
 		$aspectRatio = $this->getAspectRatio(TRUE);
 		if ($aspectRatio > 1) {
 			return ImageInterface::ORIENTATION_LANDSCAPE;
-		}
-		elseif ($aspectRatio < 1) {
+		} elseif ($aspectRatio < 1) {
 			return ImageInterface::ORIENTATION_PORTRAIT;
-		}
-		else {
+		} else {
 			return ImageInterface::ORIENTATION_SQUARE;
 		}
 	}
@@ -270,7 +268,18 @@ class ImageVariant implements ImageInterface {
 	 * @see \TYPO3\Media\Domain\Model\Image::getThumbnail
 	 */
 	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
-		return $this->originalImage->getThumbnail($maximumWidth, $maximumHeight, $ratioMode);
+		$processingInstructions = array_merge($this->processingInstructions, array(array(
+			'command' => 'thumbnail',
+			'options' => array(
+				'size' => array(
+					'width' => intval($maximumWidth ?: $this->width),
+					'height' => intval($maximumHeight ?: $this->height)
+				),
+				'mode' => $ratioMode
+			)
+		)));
+
+		return new ImageVariant($this, $processingInstructions);
 	}
 
 	/**
@@ -340,6 +349,5 @@ class ImageVariant implements ImageInterface {
 	public function setTags(\Doctrine\Common\Collections\Collection $tags) {
 		throw new \RuntimeException('Settings tags on an ImageVariant is not supported.', 1371237597);
 	}
-
 
 }
