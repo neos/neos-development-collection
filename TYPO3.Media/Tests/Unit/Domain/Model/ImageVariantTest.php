@@ -10,6 +10,8 @@ namespace TYPO3\Media\Tests\Unit\Domain\Model;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
  * Testcase for an image variant
@@ -22,14 +24,27 @@ class ImageVariantTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function constructorSetsPropertiesCorrectly() {
 		$imageMock = $this->getImageMock();
-		$variant = new \TYPO3\Media\Domain\Model\ImageVariant($imageMock, array('foo'), 'dummyAlias');
+		$variant = new ImageVariant($imageMock, array('foo'), 'dummyAlias');
 		$this->assertSame($imageMock, $variant->getOriginalImage());
 		$this->assertSame(array('foo'), $variant->getProcessingInstructions());
 		$this->assertSame('dummyAlias', $variant->getAlias());
 	}
 
 	/**
-	 * @return \TYPO3\Media\Domain\Model\Image
+	 * @test
+	 */
+	public function getThumbnailLeavesPresentProcessingInstructionsInPlace() {
+		$imageMock = $this->getImageMock();
+
+		$variant = new ImageVariant($imageMock, array('somePreset' => array('processing' => 'instructions')), 'dummyAlias');
+		$thumbnailVariant = $variant->getThumbnail();
+		$actualProcessingInstructions = $thumbnailVariant->getProcessingInstructions();
+		$this->assertArrayHasKey('somePreset', $actualProcessingInstructions);
+		$this->assertEquals(array('processing' => 'instructions'), $actualProcessingInstructions['somePreset']);
+	}
+
+	/**
+	 * @return Image|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected function getImageMock() {
 		$mockResource = $this->getMock('TYPO3\Flow\Resource\Resource');
