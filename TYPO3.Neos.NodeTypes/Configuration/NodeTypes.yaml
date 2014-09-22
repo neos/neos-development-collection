@@ -61,7 +61,7 @@
           'format':
             'sub': TRUE
             'sup': TRUE
-            'p': TRUE
+            'p': FALSE
             'h1': TRUE
             'h2': TRUE
             'h3': TRUE
