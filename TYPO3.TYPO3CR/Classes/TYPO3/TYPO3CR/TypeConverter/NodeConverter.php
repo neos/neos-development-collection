@@ -229,7 +229,8 @@ class NodeConverter extends AbstractTypeConverter {
 					if (is_string($nodePropertyValue)) {
 						$nodePropertyValue = $nodePropertyValue === 'true' ? TRUE : FALSE;
 					}
-				break;
+				case 'array':
+					$nodePropertyValue = json_decode($nodePropertyValue);
 			}
 			if (substr($nodePropertyName, 0, 1) === '_') {
 				$nodePropertyName = substr($nodePropertyName, 1);
