@@ -50,9 +50,9 @@ class NodeController extends ActionController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
@@ -155,7 +155,7 @@ class NodeController extends ActionController {
 	 * @return boolean
 	 */
 	protected function hasAccessToBackend() {
-		return $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess');
+		return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess');
 	}
 
 }

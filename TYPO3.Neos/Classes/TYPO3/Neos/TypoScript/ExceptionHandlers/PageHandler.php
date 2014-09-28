@@ -12,10 +12,10 @@ namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Fluid\View\StandaloneView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use TYPO3\Neos\TypoScript\ExceptionHandlers\ContextDependentHandler;
 use TYPO3\Neos\Service\ContentElementWrappingService;
 
 /**
@@ -26,9 +26,9 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 
 	/**
 	 * @Flow\Inject
-	 * @var AccessDecisionManagerInterface
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
@@ -56,7 +56,9 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 
 		$fluidView = $this->prepareFluidView();
 		$isBackend = FALSE;
-		if ($this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') && $currentContext['site']->getContext()->getWorkspace()->getName() !== 'live') {
+		/** @var NodeInterface $siteNode */
+		$siteNode = $currentContext['site'];
+		if ($this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess') && $siteNode->getContext()->getWorkspace()->getName() !== 'live') {
 			$isBackend = TRUE;
 			$fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>'));
 		}
@@ -73,10 +75,10 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 	/**
 	 * Prepare fluid view for rendering error page with neos backend
 	 *
-	 * @return \TYPO3\Fluid\View\StandaloneView
+	 * @return StandaloneView
 	 */
 	protected function prepareFluidView() {
-		$fluidView = new \TYPO3\Fluid\View\StandaloneView();
+		$fluidView = new StandaloneView();
 		$fluidView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Error/NeosBackendMessage.html');
 		$fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
 		// FIXME find a better way than using templates as partials

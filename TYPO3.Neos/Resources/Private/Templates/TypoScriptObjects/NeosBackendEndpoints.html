@@ -1,5 +1,5 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.GeneralAccess">
 	<meta name="neos-username" content="{account.accountIdentifier}" />
 	<meta name="neos-workspace" content="{node.context.workspace.name}" />
 	<meta name="neos-csrf-token" content="{f:security.csrfToken()}" />

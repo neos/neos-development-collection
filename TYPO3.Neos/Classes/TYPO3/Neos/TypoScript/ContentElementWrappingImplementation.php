@@ -12,7 +12,7 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -26,9 +26,9 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @Flow\Inject
-	 * @var AccessDecisionManagerInterface
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
@@ -66,7 +66,7 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject {
 			return $content;
 		}
 
-		if (!$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+		if (!$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
 			return $content;
 		}
 
