@@ -27,7 +27,10 @@ define(
 			 */
 			updateNotInlineEditableOverlay: function() {
 				$('.neos-contentelement-overlay').each(function() {
-					$(this).width($(this).parent().width());
+						$(this).css({
+							'width': $(this).parent().outerWidth(),
+							'height': $(this).parent().outerHeight()
+						});
 				});
 			},
 
