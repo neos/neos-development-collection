@@ -15,7 +15,7 @@
 			</f:if>
 		</f:then>
 		<f:else>
-			<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.GeneralAccess">
 				<f:if condition="{node.context.workspace.name} != 'live'">
 					<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" class="neos-handle" />
 				</f:if>

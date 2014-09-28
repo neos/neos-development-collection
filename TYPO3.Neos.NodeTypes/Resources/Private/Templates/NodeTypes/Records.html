@@ -6,7 +6,7 @@
 	</f:then>
 	<f:else>
 		<f:if condition="{node.context.workspace.name} != 'live'">
-			<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.GeneralAccess">
 				<div{attributes -> f:format.raw()}>
 					<p>No records selected</p>
 				</div>
