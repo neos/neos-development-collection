@@ -31,8 +31,8 @@ define(
 				// has a possibly updated size
 				window.setTimeout(function() {
 					that.$().css({
-						'width': that.get('$element').width(),
-						'height': that.get('$element').height()
+						'width': that.get('$element').outerWidth(),
+						'height': that.get('$element').outerHeight()
 					});
 				}, 10);
 			}
