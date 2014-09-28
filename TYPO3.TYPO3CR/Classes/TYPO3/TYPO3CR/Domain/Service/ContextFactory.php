@@ -30,7 +30,7 @@ use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 class ContextFactory implements ContextFactoryInterface {
 
 	/**
-	 * @var array<\TYPO3\TYPO3CR\Domain\Service\Context>
+	 * @var array<Context>
 	 */
 	protected $contextInstances = array();
 
@@ -73,7 +73,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 * This array also shows the defaults that get used if you don't provide a certain property.
 	 *
 	 * @param array $contextProperties
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @return Context
 	 * @api
 	 */
 	public function create(array $contextProperties = array()) {
@@ -93,11 +93,11 @@ class ContextFactory implements ContextFactoryInterface {
 	 * This needs to be overridden if the Builder is extended.
 	 *
 	 * @param array $contextProperties
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @return Context
 	 */
 	protected function buildContextInstance(array $contextProperties) {
 		$contextProperties = $this->removeDeprecatedProperties($contextProperties);
-		return new \TYPO3\TYPO3CR\Domain\Service\Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
+		return new Context($contextProperties['workspaceName'], $contextProperties['currentDateTime'], $contextProperties['dimensions'], $contextProperties['targetDimensions'], $contextProperties['invisibleContentShown'], $contextProperties['removedContentShown'], $contextProperties['inaccessibleContentShown']);
 	}
 
 	/**
@@ -269,6 +269,8 @@ class ContextFactory implements ContextFactoryInterface {
 	/**
 	 * @param array $contextProperties
 	 * @param array $mergedProperties
+	 * @return void
+	 * @throws InvalidNodeContextException
 	 */
 	protected function mergeDimensionValues(array $contextProperties, array &$mergedProperties) {
 		$dimensions = $this->getAvailableDimensions();
@@ -309,6 +311,7 @@ class ContextFactory implements ContextFactoryInterface {
 	 * @return void
 	 */
 	public function flushFirstLevelNodeCaches() {
+		/** @var Context $context */
 		foreach ($this->contextInstances as $context) {
 			$context->getFirstLevelNodeCache()->flush();
 		}
