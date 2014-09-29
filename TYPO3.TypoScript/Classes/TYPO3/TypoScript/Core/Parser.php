@@ -516,26 +516,59 @@ class Parser implements ParserInterface {
 	 * Parse an include file. Currently, we start a new parser object; but we could as well re-use
 	 * the given one.
 	 *
-	 * @param string $include The include value, for example " FooBar" or " resource://...."
+	 * @param string $include The include value, for example " FooBar" or " resource://....". Can also include wildcard mask for TypoScript globbing.
 	 * @return void
 	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	protected function parseInclude($include) {
 		$include = trim($include);
 		$parser = clone $this;
-		if (strpos($include, 'resource://') === 0) {
-			if (!file_exists($include)) {
+		if (strpos($include, 'resource://') !== 0) {
+			// Resolve relative paths
+			if ($this->contextPathAndFilename !== NULL) {
+				$include = dirname($this->contextPathAndFilename) . '/' . $include;
+			} else {
+				throw new Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()', 1329806940);
+			}
+		}
+
+		// Match recursive wildcard globbing "**/*"
+		if (preg_match('#([^\*]*)\*\*/\*#', $include, $matches) === 1) {
+			$basePath = $matches['1'];
+			if (!is_dir($basePath)) {
+				throw new Exception(sprintf('The path %s does not point to a non-directory.', $basePath), 1415033179);
+			}
+			$recursiveDirectoryIterator = new \RecursiveDirectoryIterator($basePath);
+			$iterator = new \RecursiveIteratorIterator($recursiveDirectoryIterator);
+		// Match simple wildcard globbing "*"
+		} elseif (preg_match('#([^\*]*)\*#', $include, $matches) === 1) {
+			$basePath = $matches['1'];
+			if (!is_dir($basePath)) {
+				throw new Exception(sprintf('The path %s does not point to a non-directory.', $basePath), 1415033180);
+			}
+			$iterator = new \DirectoryIterator($basePath);
+		}
+
+		// If iterator is set it means we're doing globbing
+		if (isset($iterator)) {
+			foreach ($iterator as $fileInfo) {
+				$pathAndFilename = $fileInfo->getPathname();
+				// Only work on .ts2 files
+				if ($fileInfo->getExtension() === 'ts2') {
+					// Check if not trying to recursively include the current file via globbing
+					if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
+						if (!is_readable($pathAndFilename)) {
+							throw new Exception(sprintf('Could not include TypoScript file "%s"', $pathAndFilename), 1347977018);
+						}
+						$this->objectTree = $parser->parse(file_get_contents($pathAndFilename), $pathAndFilename, $this->objectTree, FALSE);
+					}
+				}
+			}
+		} else {
+			if (!is_readable($include)) {
 				throw new Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
 			}
 			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree, FALSE);
-		} elseif ($this->contextPathAndFilename !== NULL) {
-			$include = dirname($this->contextPathAndFilename) . '/' . $include;
-			if (!file_exists($include)) {
-				throw new Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977016);
-			}
-			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree, FALSE);
-		} else {
-			throw new Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()', 1329806940);
 		}
 	}
 
