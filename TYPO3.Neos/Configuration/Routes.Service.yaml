@@ -44,28 +44,25 @@
     '@format':     'html'
   httpMethods: ['PUT']
 
-# Asset routes
+# RESTful routes for Assets service
 -
-  name: 'Services - AssetController->index'
-  uriPattern: 'asset'
+  name: 'Assets - index'
+  uriPattern: 'assets'
   defaults:
-    '@package':    'TYPO3.Neos'
-    '@subpackage': 'Service'
-    '@controller': 'Asset'
+    '@controller': 'Service\Assets'
     '@action':     'index'
-    '@format':     'html'
+  appendExceedingArguments: TRUE
   httpMethods: ['GET']
 
 -
-  name: 'Services - AssetController->show'
-  uriPattern: 'asset/{identifier}'
+  name: 'Assets - single asset'
+  uriPattern: 'assets/{identifier}'
   defaults:
-    '@package':    'TYPO3.Neos'
-    '@subpackage': 'Service'
-    '@controller': 'Asset'
+    '@controller': 'Service\Assets'
     '@action':     'show'
-    '@format':     'html'
-  httpMethods: ['GET']
+  appendExceedingArguments: TRUE
+  httpMethods: ['HEAD', 'GET']
+
 
 # WorkspaceController routes
 -
