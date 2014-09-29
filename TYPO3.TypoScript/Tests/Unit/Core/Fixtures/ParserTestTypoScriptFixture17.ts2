@@ -1,7 +1,7 @@
 //
-// TypoScript Fixture 17
+// TypoScript Fixture 21
 //
-// - Inclusion
+// - Inclusion globing
 
 include: ParserTestTypoScriptFixture16.ts2
 
@@ -12,3 +12,7 @@ include: ParserTestTypoScriptFixture17b.ts2
 
 prototype(TYPO3.Foo:Bar2).baz = "New Value"
 
+# Test for globbing and recursive globbing
+include: Globbing/*
+include: Globbing/RecursiveGlobbing/**/*
+include: ../Fixtures/Globbing/GlobbingWithDots/**/*

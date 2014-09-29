@@ -42,7 +42,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	/**
 	 * call back for mocking the object factory
-	 * @return fixture objects ...
+	 * @return object fixture objects ...
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function objectManagerCallback() {
@@ -116,7 +116,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid() {
-		$sourceCode = "namespace: cms=\-notvalid-\TypoScript\Fixtures";
+		$sourceCode = 'namespace: cms=\-notvalid-\TypoScript\Fixtures';
 		$this->parser->parse($sourceCode);
 	}
 
@@ -698,12 +698,23 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		// Set the default namespace to TYPO3.Neos - that's what Neos does as well in Domain\Service\TypoScriptService:
 		$this->parser->setObjectTypeNamespace('default', 'TYPO3.Neos');
 
-		// Make sure that the namespace declaration for "default" is also available when fixture #17b is parsed:
-		$expectedParseTree['object'] = array(
+		$text = array(
 			'__objectType' => 'TYPO3.Neos:Text',
 			'__value' => NULL,
 			'__eelExpression' => NULL
 		);
+
+		// Make sure that the namespace declaration for "default" is also available when fixture #17b is parsed:
+		$expectedParseTree['object'] = $text;
+		// Test normal globbing
+		$expectedParseTree['globbing1'] = $text;
+		$expectedParseTree['globbing2'] = $text;
+		// Test recursive globbing
+		$expectedParseTree['recursiveGlobbing1'] = $text;
+		$expectedParseTree['recursiveGlobbing2'] = $text;
+		$expectedParseTree['recursiveGlobbingUpTheTree'] = $text;
+		// Test globbing with dots
+		$expectedParseTree['globbingWithDots1'] = $text;
 
 		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
 		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
