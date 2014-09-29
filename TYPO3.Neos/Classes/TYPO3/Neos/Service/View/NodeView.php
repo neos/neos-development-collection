@@ -301,7 +301,7 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 		$treeNode = array(
 			'key' => $node->getContextPath(),
 			'title' => $node->getLabel(),
-			'tooltip' => $node->getFullLabel(),
+			'tooltip' => $node->getLabel(),
 			'href' => $uriForNode,
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),

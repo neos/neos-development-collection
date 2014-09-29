@@ -5,7 +5,6 @@ ul.neos-dynatree-container {
 	border: none;
 	width: 100%;
 	height: 100%;
-	margin: 0;
 	white-space: nowrap;
 	display: table;
 
@@ -34,14 +33,12 @@ ul.neos-dynatree-container {
 	}
 
 	.neos-dynatree-node {
-		display: block;
+		display: table-cell;
+		min-width: 100%;
 		float: left;
 		position: relative;
-		min-width: 100%;
-		display: table-cell;
 		height: 24px;
 		line-height: 24px;
-		white-space: nowrap;
 		@include box-sizing(border-box);
 		border-left: 3px solid transparent;
 
@@ -259,7 +256,11 @@ ul.neos-dynatree-container {
 			color: #fff;
 			vertical-align: top;
 			line-height: 24px;
-			@include box-sizing(border-box);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: $unit * 5.5;
+			padding-right: $relatedMargin;
 
 			&:hover,
 			&:focus {

@@ -9,7 +9,7 @@
 			<ul class="nodes"><f:for each="{nodes}" as="node">
 				<li class="node">
 					<span class="node-path">{node.path}</span>
-					<label class="node-label">{node.fullLabel}</label>
+					<label class="node-label">{node.label}</label>
 					(<span class="node-identifier">{node.identifier}</span>)
 					[<span class="node-type">{node.nodeType.name}</span>]
 					<f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">show</f:link.action>
