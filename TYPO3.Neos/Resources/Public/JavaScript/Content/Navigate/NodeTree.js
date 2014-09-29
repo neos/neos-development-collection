@@ -429,7 +429,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
-						that.persistNode(activeNode, newNode, nodeType, newPosition);
+						that.persistNode(activeNode, newNode, nodeType, title, newPosition);
 					}
 				});
 			},

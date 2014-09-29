@@ -529,7 +529,7 @@ define(
 
 				if (nodeType !== '') {
 					nodeTypeDefiniton = NodeTypeService.getNodeTypeDefinition(nodeType);
-					this.createNode(activeNode, 'Untitled', nodeType, nodeTypeDefiniton.ui.icon);
+					this.createNode(activeNode, null, nodeType, nodeTypeDefiniton.ui.icon);
 				} else {
 					this.showCreateNodeDialog(activeNode);
 				}
@@ -542,7 +542,7 @@ define(
 				insertNodePanel.createElement();
 				insertNodePanel.set('insertNode', function(nodeTypeInfo) {
 					that.set('insertNodePanelShown', false);
-					that.createNode(activeNode, 'Untitled', nodeTypeInfo.nodeType, nodeTypeInfo.icon);
+					that.createNode(activeNode, null, nodeTypeInfo.nodeType, nodeTypeInfo.icon);
 					this.cancel();
 				});
 				insertNodePanel.set('cancel', function() {
@@ -579,7 +579,7 @@ define(
 			createNode: function(activeNode, title, nodeType, iconClass) {
 				var newPosition = this.get('newPosition'),
 					data = {
-						title: title,
+						title: title ? title : 'Loading ...',
 						nodeType: nodeType,
 						addClass: 'neos-matched',
 						iconClass: iconClass,
@@ -599,22 +599,25 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				this.persistNode(activeNode, newNode, nodeType, newPosition);
+				this.persistNode(activeNode, newNode, nodeType, title, newPosition);
 			},
 
-			persistNode: function(activeNode, node, nodeType, position) {
+			persistNode: function(activeNode, node, nodeType, title, position) {
 				var that = this,
-					tree = node.tree;
+					tree = node.tree,
+					parameters = {
+						nodeType: nodeType
+					};
+				if (title) {
+					parameters.properties = {
+						title: title
+					};
+				}
+
 				node.setLazyNodeStatus(this.statusCodes.loading);
 				NodeEndpoint.createNodeForTheTree(
 					activeNode.data.key,
-					{
-						nodeType: nodeType,
-						//@todo give a unique nodename from the title
-						properties: {
-							title: node.data.title
-						}
-					},
+					parameters,
 					position
 				).then(
 					function(result) {
@@ -630,10 +633,10 @@ define(
 						node.data.expand = result.data.expand;
 						node.data.addClass = result.data.addClass;
 						node.setLazyNodeStatus(that.statusCodes.ok);
+						node.render();
 
 						// Re-enable mouse and keyboard handling
 						tree.$widget.bind();
-
 						that.afterPersistNode(node);
 					},
 					function(error) {
