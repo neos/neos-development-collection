@@ -11761,40 +11761,19 @@ td.aloha-table-selectrow {
 .neos-select2-drop .neos-select2-results {
   padding: 0 !important;
   margin: 0 !important;
+  max-height: 184px;
 }
 .neos-select2-drop .neos-select2-results li {
   min-height: 40px !important;
   margin: 0;
-  padding: 0 16px !important;
+  padding: 8px 16px !important;
   border-top: 1px solid #222222 !important;
   background: #323232 !important;
   color: white !important;
   vertical-align: middle !important;
-}
-.neos-select2-drop .neos-select2-results .neos-select2-result-label {
-  padding: 10px 0 0 0 !important;
-  min-height: 40px !important;
-}
-.neos-select2-drop .neos-select2-results .neos-select2-result-label img {
-  float: left;
-  padding-right: 8px;
-}
-.neos-select2-drop .neos-select2-results .neos-select2-result-label i {
-  vertical-align: top;
-  padding-right: 4px;
-}
-.neos-select2-drop .neos-select2-results .neos-select2-result-label span {
-  font-size: 12px;
-  color: #adadad;
-}
-.neos-select2-drop .neos-select2-results .neos-select2-result-label span b {
-  font-size: 14px;
-  font-weight: 400;
-  color: white;
-}
-.neos-select2-drop .neos-select2-results .neos-select2-match {
-  text-decoration: none !important;
-  font-weight: bold;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .neos-select2-drop .neos-select2-results li.neos-select2-no-results, .neos-select2-drop .neos-select2-results li.neos-select2-selection-limit {
   display: none !important;
@@ -11807,10 +11786,51 @@ td.aloha-table-selectrow {
 }
 .neos-select2-drop .neos-select2-results li.neos-select2-highlighted {
   background: #00b5ff !important;
-  padding: 0 16px !important;
   border-top: 1px solid #222222 !important;
   color: white !important;
   vertical-align: middle !important;
+}
+.neos-select2-drop .neos-select2-results li.neos-select2-highlighted .neos-select2-result-label img {
+  border: 1px solid #fff;
+}
+.neos-select2-drop .neos-select2-results li .neos-select2-result-label {
+  padding: 0 !important;
+  line-height: 24px;
+  min-height: 24px;
+  max-height: 24px;
+}
+.neos-select2-drop .neos-select2-results li .neos-select2-result-label img {
+  float: left;
+  margin-right: 4px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #3f3f3f;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.neos-select2-drop .neos-select2-results li .neos-select2-result-label i {
+  vertical-align: baseline;
+  padding-right: 4px;
+  color: #fff;
+  text-align: center;
+}
+.neos-select2-drop .neos-select2-results li .neos-select2-result-label span {
+  font-size: 12px;
+  color: #fff;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+.neos-select2-drop .neos-select2-results li .neos-select2-result-label span b {
+  font-size: 14px;
+  font-weight: 400;
+}
+.neos-select2-drop .neos-select2-results .neos-select2-match {
+  text-decoration: none !important;
+  font-weight: bold;
 }
 .neos-select2-container {
   width: 288px;
@@ -11835,10 +11855,12 @@ td.aloha-table-selectrow {
 }
 .neos-select2-container .neos-select2-choice img {
   float: left;
-  padding-right: 8px;
+  padding-right: 4px;
 }
 .neos-select2-container .neos-select2-choice i {
   padding-right: 4px;
+  vertical-align: baseline;
+  text-align: center;
 }
 .neos-select2-container .neos-select2-choice span {
   font-size: 12px;
@@ -11849,11 +11871,76 @@ td.aloha-table-selectrow {
   font-weight: 400;
   color: white;
 }
-.neos-select2-choices {
-  border: none !important;
+.neos-select2-container-multi.neos-select2-container-active .neos-select2-choices {
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 .neos-select2-container-multi .neos-select2-choices {
   background: #323232;
+  border: none;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice {
+  line-height: 40px;
+  padding: 0 57px 0 16px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  background: #323232;
+  width: 288px;
+  max-height: 40px;
+  color: white;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-search-choice-close {
+  right: 0;
+  left: auto;
+  top: 0;
+  height: 40px;
+  width: 40px;
+  background: none;
+  border-left: 1px solid #222222;
+  color: white;
+  text-decoration: none;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-search-choice-close:hover, .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-search-choice-close:focus {
+  background-color: #00b5ff;
+  outline: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-search-choice-close i {
+  position: absolute;
+  left: 14px;
+  top: 13px;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice span {
+  font-size: 11px;
+  color: #fff;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice span img {
+  float: left;
+  padding-right: 4px;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice span i {
+  padding-right: 4px;
+  vertical-align: baseline;
+  text-align: center;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice span b {
+  font-size: 14px;
+  font-weight: 400;
 }
 .neos-select2-container-multi .neos-select2-search-field input {
   min-width: 288px !important;
@@ -11864,52 +11951,6 @@ td.aloha-table-selectrow {
 }
 .neos-select2-container-multi .neos-select2-search-field input:focus {
   background: white !important;
-}
-.neos-select2-container-multi .neos-select2-search-choice {
-  line-height: 40px !important;
-  padding: 0 16px !important;
-  margin: 0 !important;
-  background: #323232 !important;
-  width: 256px !important;
-  color: white !important;
-  border-top: 1px solid #222222 !important;
-  border-left: 0 !important;
-  border-right: 0 !important;
-  border-bottom: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-.neos-select2-container-multi .neos-select2-search-choice .neos-select2-search-choice-close {
-  right: 0px;
-  left: auto;
-  top: 0;
-  height: 40px;
-  width: 40px;
-  background: none;
-  border-left: 1px solid #222222;
-  color: white;
-  text-decoration: none;
-}
-.neos-select2-container-multi .neos-select2-search-choice .neos-select2-search-choice-close i {
-  position: absolute;
-  left: 14px;
-  top: 13px;
-}
-.neos-select2-container-multi .neos-select2-search-choice img {
-  float: left;
-  padding-right: 8px;
-}
-.neos-select2-container-multi .neos-select2-search-choice i {
-  padding-right: 4px;
-}
-.neos-select2-container-multi .neos-select2-search-choice span {
-  font-size: 11px;
-  color: #adadad;
-}
-.neos-select2-container-multi .neos-select2-search-choice span b {
-  font-size: 14px;
-  font-weight: 400;
-  color: white;
 }
 /*
  * jQuery UI CSS Framework 1.8.16
