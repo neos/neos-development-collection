@@ -71,6 +71,7 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
 		return json_encode(array(
 			'imageUuid' => $this->persistenceManager->getIdentifierByObject($image),
+			'originalImageResourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($image->getResource()),
 			'previewImageResourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnail->getResource()),
 			'originalSize' => array('w' => $image->getWidth(), 'h' => $image->getHeight()),
 			'previewSize' => array('w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight())
