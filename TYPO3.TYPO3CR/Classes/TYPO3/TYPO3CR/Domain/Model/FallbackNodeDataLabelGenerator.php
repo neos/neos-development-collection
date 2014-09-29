@@ -24,7 +24,7 @@ class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface 
 	 * Render a node label
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $nodeData
-	 * @param boolean $crop
+	 * @param boolean $crop This argument is deprecated as of Neos 1.2 and will be removed. Don't rely on this behavior and crop labels in the view.
 	 * @return string
 	 */
 	public function getLabel(AbstractNodeData $nodeData, $crop = TRUE) {
@@ -40,7 +40,7 @@ class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface 
 			return $label;
 		}
 
-		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, NodeInterface::LABEL_MAXIMUM_CHARACTERS);
+		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, 30);
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}
 }
