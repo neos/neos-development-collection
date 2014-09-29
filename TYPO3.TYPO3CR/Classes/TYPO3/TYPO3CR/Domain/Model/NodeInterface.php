@@ -56,11 +56,6 @@ interface NodeInterface {
 		)?$/ix';
 
 	/**
-	 * Maximum number of characters to allow / use for a "label" of a Node
-	 */
-	const LABEL_MAXIMUM_CHARACTERS = 30;
-
-	/**
 	 * Regex pattern which matches a Node Name (ie. segment of a node path)
 	 */
 	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
@@ -84,7 +79,7 @@ interface NodeInterface {
 	public function getName();
 
 	/**
-	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description of this node
+	 * Returns a full length plain text label of this node
 	 *
 	 * @return string
 	 * @api
@@ -92,10 +87,10 @@ interface NodeInterface {
 	public function getLabel();
 
 	/**
-	 * Returns a full length plain text description of this node
+	 * Returns a full length plain text label of this node
 	 *
 	 * @return string
-	 * @api
+	 * @deprecated since 1.2
 	 */
 	public function getFullLabel();
 
