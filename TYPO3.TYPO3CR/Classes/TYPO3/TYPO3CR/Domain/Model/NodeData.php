@@ -636,6 +636,13 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
+	 * @return NodeData
+	 */
+	public function getMovedTo() {
+		return $this->movedTo;
+	}
+
+	/**
 	 * Make the node "similar" to the given source node. That means,
 	 *  - all properties
 	 *  - index

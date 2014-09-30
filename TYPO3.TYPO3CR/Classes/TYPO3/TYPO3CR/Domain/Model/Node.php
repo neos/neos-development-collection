@@ -1403,6 +1403,15 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * Determine if this node is a shadow node of a moved node.
+	 *
+	 * @return boolean TRUE if this node is a shadow node of a moved node.
+	 */
+	public function isShadowNode() {
+		return $this->nodeData->getMovedTo() !== NULL;
+	}
+
+	/**
 	 * Set the status of the associated NodeData in regards to the Context.
 	 *
 	 * NOTE: This is internal only and should not be used outside of the TYPO3CR.
