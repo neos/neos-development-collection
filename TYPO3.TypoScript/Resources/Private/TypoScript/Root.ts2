@@ -6,6 +6,31 @@ prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\
 prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
 prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 
+# Render an HTTP response header
+#
+prototype(TYPO3.TypoScript:Http.ResponseHead) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\Http\\ResponseHeadImplementation'
+	headers = TYPO3.TypoScript:RawArray
+}
+
+# Render an HTTP message (response)
+#
+# This is a convenient base prototype for rendering documents.
+#
+# Usage:
+# page = TYPO3.TypoScript:Http.Message {
+#   httpResponseHead {
+#     statusCode = 404
+#     headers.Content-Type = 'application/json'
+#   }
+# }
+#
+#
+prototype(TYPO3.TypoScript:Http.Message) < prototype(TYPO3.TypoScript:Array) {
+	httpResponseHead = TYPO3.TypoScript:Http.ResponseHead
+	httpResponseHead.@position = 'start 1000'
+}
+
 # Renders attributes of a HTML tag
 #
 # Usage:
