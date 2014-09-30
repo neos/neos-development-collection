@@ -4,13 +4,15 @@ define(
 	'Library/backbone',
 	'Content/Model/PublishableNodes',
 	'Shared/Endpoint/NodeEndpoint',
-	'Shared/EventDispatcher'
+	'Shared/EventDispatcher',
+	'Shared/Notification'
 ], function(
 	Entity,
 	Backbone,
 	PublishableNodes,
 	NodeEndpoint,
-	EventDispatcher
+	EventDispatcher,
+	Notification
 ) {
 	Backbone.sync = function(method, model, options) {
 		var methods = {
@@ -21,7 +23,8 @@ define(
 				console.log('READ', arguments);
 			},
 			'update': function(model, options) {
-				var nodeJson = this._convertModelToJson(model);
+				var that = this,
+					nodeJson = this._convertModelToJson(model);
 
 				NodeEndpoint.set('_saveRunning', true);
 				NodeEndpoint.update(nodeJson).then(
@@ -32,15 +35,15 @@ define(
 						// That's why we need to update the (possibly changed) workspace
 						// name in the VIE entity.
 						//
-						// Furthermore, we do not want event listeners to be fired, as otherwise the contentelement
+						// Furthermore, we do not want event listeners to be fired, as otherwise the content element
 						// would be redrawn leading to a loss of the current editing cursor position.
 						//
-						// The PublishableNodes are explicitly uppdated, as changes from the backbone models
-						// workspacename attribute are suppressed and our entity wrapper would not notice.
+						// The PublishableNodes are explicitly updated, as changes from the backbone models
+						// workspace name attribute are suppressed and our entity wrapper would not notice.
 						NodeEndpoint.set('_saveRunning', false);
 						EventDispatcher.trigger('contentSaved');
 
-						if (result !== undefined) {
+						if (result !== undefined && result.success === true) {
 							model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
 							PublishableNodes._updatePublishableEntities();
@@ -48,6 +51,13 @@ define(
 								options.success(model, result);
 							}
 						}
+					},
+					function() {
+						NodeEndpoint.set('_saveRunning', false);
+						Notification.error('An error occurred while saving.');
+						require({context: 'neos'}, ['InlineEditing/Dialogs/NodeUpdateFailureDialog'], function(NodeUpdateFailureDialog) {
+							NodeUpdateFailureDialog.create();
+						});
 					}
 				);
 			},
@@ -60,7 +70,7 @@ define(
 						// skip internal properties starting with __
 					return !(k[0] === '_' && k[1] === '_');
 				});
-				attributes['__contextNodePath'] = contextPath;
+				attributes.__contextNodePath = contextPath;
 				return attributes;
 			}
 		};
