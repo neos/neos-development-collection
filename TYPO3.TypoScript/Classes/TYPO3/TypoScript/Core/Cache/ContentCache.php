@@ -13,8 +13,8 @@ namespace TYPO3\TypoScript\Core\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception;
+use \Doctrine\ORM\Proxy\Proxy;
 
 /**
  * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)
@@ -278,13 +278,33 @@ class ContentCache {
 	protected function serializeContext(array $contextVariables) {
 		$serializedContextArray = array();
 		foreach ($contextVariables as $variableName => $contextValue) {
-			$type = is_object($contextValue) ? get_class($contextValue) : gettype($contextValue);
-			$serializedContextArray[$variableName]['type'] = $type;
-				// TODO This relies on a converter being available from the context value type to string
-			$serializedContextArray[$variableName]['value'] = $this->propertyMapper->convert($contextValue, 'string');
+			// TODO This relies on a converter being available from the context value type to string
+			if ($contextValue !== NULL) {
+				$serializedContextArray[$variableName]['type'] = $this->getTypeForContextValue($contextValue);
+				$serializedContextArray[$variableName]['value'] = $this->propertyMapper->convert($contextValue, 'string');
+			}
 		}
 		$serializedContext = json_encode($serializedContextArray);
 		return $serializedContext;
+	}
+
+	/**
+	 * TODO: Adapt to Flow change https://review.typo3.org/#/c/33138/
+	 *
+	 * @param mixed $contextValue
+	 * @return string
+	 */
+	protected function getTypeForContextValue($contextValue) {
+		if (is_object($contextValue)) {
+			if ($contextValue instanceof Proxy) {
+				$type = get_parent_class($contextValue);
+			} else {
+				$type = get_class($contextValue);
+			}
+		} else {
+			$type = gettype($contextValue);
+		}
+		return $type;
 	}
 
 	/**
