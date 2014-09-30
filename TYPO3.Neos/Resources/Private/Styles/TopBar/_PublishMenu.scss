@@ -28,6 +28,14 @@
 		}
 	}
 
+	.neos-publish-button.neos-publish-menu-active,
+	.neos-dropdown-toggle.neos-publish-menu-active {
+		background-color: $orange;
+		cursor: pointer;
+		@include opacity(1);
+		@include box-shadow(none);
+	}
+
 	.neos-publish-button {
 		min-width: 165px;
 		background-color: $green;
@@ -70,14 +78,6 @@
 			@include rotate(90deg);
 			left: 3px;
 		}
-	}
-
-	.neos-publish-button.neos-publish-menu-active,
-	.neos-dropdown-toggle.neos-publish-menu-active {
-		background-color: $orange;
-		cursor: pointer;
-		@include opacity(1);
-		@include box-shadow(none);
 	}
 
 	.neos-dropdown-menu {
