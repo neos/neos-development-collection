@@ -5,21 +5,19 @@ define(
 [
 	'emberjs',
 	'./InspectorController',
+	'Shared/AbstractDialog',
 	'text!./UnappliedChangesDialog.html'
 ], function(
 	Ember,
 	InspectorController,
+	AbstractDialog,
 	template
 ) {
-	return Ember.View.extend({
+	return AbstractDialog.extend({
 		classNames: ['inspector-dialog'],
 		template: Ember.Handlebars.compile(template),
 
 		controller: InspectorController,
-
-		cancel: function() {
-			this.destroy();
-		},
 
 		apply: function() {
 			this.get('controller').apply();
