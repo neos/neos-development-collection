@@ -14,8 +14,8 @@ namespace TYPO3\Neos\Tests\Unit\TypoScript;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Service\LinkingService;
 use TYPO3\Neos\TypoScript\ConvertUrisImplementation;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -31,6 +31,11 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	 * @var ConvertUrisImplementation
 	 */
 	protected $convertUrisImplementation;
+
+	/**
+	 * @var LinkingService
+	 */
+	protected $mockLinkingService;
 
 	/**
 	 * @var Runtime
@@ -58,11 +63,6 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	protected $mockWorkspace;
 
 	/**
-	 * @var NodeFactory
-	 */
-	protected $mockNodeFactory;
-
-	/**
 	 * @var ControllerContext
 	 */
 	protected $mockControllerContext;
@@ -72,9 +72,8 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	 */
 	protected $mockUriBuilder;
 
-
 	public function setUp() {
-		$this->convertUrisImplementation = $this->getAccessibleMock('TYPO3\Neos\TypoScript\ConvertUrisImplementation', array('getValue', 'tsValue'), array(), '', FALSE);
+		$this->convertUrisImplementation = $this->getAccessibleMock('TYPO3\Neos\TypoScript\ConvertUrisImplementation', array('tsValue'), array(), '', FALSE);
 
 		$this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
@@ -84,15 +83,25 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
 
-		$this->mockUriBuilder = $this->getMockBuilder('TYPO3\Flow\Mvc\Routing\UriBuilder')->disableOriginalConstructor()->getMock();
-
 		$this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
-		$this->mockControllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->mockUriBuilder));
+
+		$this->mockLinkingService = $this->getMock('TYPO3\Neos\Service\LinkingService');
+		$this->convertUrisImplementation->_set('linkingService', $this->mockLinkingService);
 
 		$this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
-		$this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue(array('node' => $this->mockNode)));
 		$this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 		$this->convertUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
+	}
+
+	protected function addValueExpectation($value, $node = NULL, $forceConversion = FALSE) {
+		$this->convertUrisImplementation
+			->expects($this->atLeastOnce())
+			->method('tsValue')
+			->will($this->returnValueMap(array(
+				array('value', $value),
+				array('node', $node ?: $this->mockNode),
+				array('forceConversion', $forceConversion)
+			)));
 	}
 
 	/**
@@ -101,7 +110,7 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	 */
 	public function evaluateThrowsExceptionIfValueIsNoString() {
 		$someObject = new \stdClass();
-		$this->convertUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($someObject));
+		$this->addValueExpectation($someObject);
 
 		$this->convertUrisImplementation->evaluate();
 	}
@@ -111,14 +120,7 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	 * @expectedException \TYPO3\Neos\Domain\Exception
 	 */
 	public function evaluateThrowsExceptionIfTheCurrentContextArrayDoesNotContainANode() {
-		$this->convertUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue('some string'));
-
-		$contextData = array(
-			'node' => new \stdClass()
-		);
-		$mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
-		$mockTsRuntime->expects($this->atLeastOnce())->method('getCurrentContext')->will($this->returnValue($contextData));
-		$this->convertUrisImplementation->_set('tsRuntime', $mockTsRuntime);
+		$this->addValueExpectation('some string', new \stdClass());
 
 		$this->convertUrisImplementation->evaluate();
 	}
@@ -128,7 +130,7 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	 */
 	public function evaluateDoesNotModifyTheValueIfItDoesNotContainNodeUris() {
 		$value = ' this Is some string with line' . chr(10) . ' breaks, special chärß and leading/trailing space  ';
-		$this->convertUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+		$this->addValueExpectation($value);
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
@@ -143,7 +145,7 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
 
 		$value = 'This string contains a node URI: node://aeabe76a-551a-495f-a324-ad9a86b2aff7 and two <a href="node://cb2d0e4a-7d2f-4601-981a-f9a01530f53f">node</a> <a href="node://aeabe76a-551a-495f-a324-ad9a86b2aff7">links</a>.';
-		$this->convertUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+		$this->addValueExpectation($value);
 
 		$actualResult = $this->convertUrisImplementation->evaluate();
 		$this->assertSame($value, $actualResult);
@@ -156,39 +158,18 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$nodeIdentifier1 = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
 		$nodeIdentifier2 = 'cb2d0e4a-7d2f-4601-981a-f9a01530f53f';
 		$value = 'This string contains a node URI: node://' . $nodeIdentifier1 . ' and two <a href="node://' . $nodeIdentifier2 . '">node</a> <a href="node://' . $nodeIdentifier1 . '">links</a>.';
-		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
+		$this->addValueExpectation($value, NULL, TRUE);
 
-		$this->convertUrisImplementation->expects($this->once())->method('getValue')->will($this->returnValue($value));
-		$this->convertUrisImplementation->expects($this->once())->method('tsValue')->with('forceConversion')->will($this->returnValue(TRUE));
-
-		$mockTargetNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-		$mockTargetNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
 		$self = $this;
-
-		$this->mockContext->expects($this->atLeastOnce())->method('getNodeByIdentifier')->will($this->returnCallback(function($nodeIdentifier) use ($self, $nodeIdentifier1, $nodeIdentifier2, $mockTargetNode1, $mockTargetNode2) {
-			if ($nodeIdentifier === $nodeIdentifier1) {
-				return $mockTargetNode1;
-			} elseif ($nodeIdentifier === $nodeIdentifier2) {
-				return $mockTargetNode2;
-			} else {
-				$self->fail('Unexpected node identifier "' . $nodeIdentifier . '"');
-			}
-		}));
-
-		$this->mockUriBuilder->expects($this->atLeastOnce())->method('setFormat')->with('html')->will($this->returnValue($this->mockUriBuilder));
-		$this->mockUriBuilder->expects($this->atLeastOnce())->method('uriFor')->will($this->returnCallback(function($action, $arguments, $controller, $package) use ($self, $mockTargetNode1, $mockTargetNode2) {
-			$self->assertSame('show', $action);
-			$self->assertSame('Frontend\\Node', $controller);
-			$self->assertSame('TYPO3.Neos', $package);
-			$self->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', isset($arguments['node']) ? $arguments['node'] : NULL);
-			$node = $arguments['node'];
-			if ($node === $mockTargetNode1) {
+		$this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
+			if ($nodeUri === 'node://' . $nodeIdentifier1) {
 				return 'http://replaced/uri/01';
-			} elseif ($node === $mockTargetNode2) {
+			} elseif ($nodeUri === 'node://' . $nodeIdentifier2) {
 				return 'http://replaced/uri/02';
 			} else {
-				$self->fail('Unexpected node argument');
+				$self->fail('Unexpected node URI "' . $nodeUri . '"');
 			}
 		}));
 
@@ -204,38 +185,18 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 		$nodeIdentifier1 = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
 		$nodeIdentifier2 = 'cb2d0e4a-7d2f-4601-981a-f9a01530f53f';
 		$value = 'This string contains a node URI: node://' . $nodeIdentifier1 . ' and two <a href="node://' . $nodeIdentifier2 . '">node</a> <a href="node://' . $nodeIdentifier1 . '">links</a>.';
-		$this->convertUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+		$this->addValueExpectation($value);
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-		$mockTargetNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-		$mockTargetNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-
 		$self = $this;
-
-		$this->mockContext->expects($this->atLeastOnce())->method('getNodeByIdentifier')->will($this->returnCallback(function($nodeIdentifier) use ($self, $nodeIdentifier1, $nodeIdentifier2, $mockTargetNode1, $mockTargetNode2) {
-			if ($nodeIdentifier === $nodeIdentifier1) {
-				return $mockTargetNode1;
-			} elseif ($nodeIdentifier === $nodeIdentifier2) {
-				return $mockTargetNode2;
-			} else {
-				$self->fail('Unexpected node identifier "' . $nodeIdentifier . '"');
-			}
-		}));
-
-		$this->mockUriBuilder->expects($this->atLeastOnce())->method('setFormat')->with('html')->will($this->returnValue($this->mockUriBuilder));
-		$this->mockUriBuilder->expects($this->atLeastOnce())->method('uriFor')->will($this->returnCallback(function($action, $arguments, $controller, $package) use ($self, $mockTargetNode1, $mockTargetNode2) {
-			$self->assertSame('show', $action);
-			$self->assertSame('Frontend\\Node', $controller);
-			$self->assertSame('TYPO3.Neos', $package);
-			$self->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', isset($arguments['node']) ? $arguments['node'] : NULL);
-			$node = $arguments['node'];
-			if ($node === $mockTargetNode1) {
+		$this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
+			if ($nodeUri === 'node://' . $nodeIdentifier1) {
 				return 'http://replaced/uri/01';
-			} elseif ($node === $mockTargetNode2) {
+			} elseif ($nodeUri === 'node://' . $nodeIdentifier2) {
 				return 'http://replaced/uri/02';
 			} else {
-				$self->fail('Unexpected node argument');
+				$self->fail('Unexpected node URI "' . $nodeUri . '"');
 			}
 		}));
 
@@ -253,7 +214,7 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 	public function evaluateReplacesUnresolvableNodeUrisWithAnEmptyString() {
 		$unknownNodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
 		$value = 'This string contains an unresolvable node URI: node://' . $unknownNodeIdentifier . ' and a <a href="node://' . $unknownNodeIdentifier . '">link</a>.';
-		$this->convertUrisImplementation->expects($this->atLeastOnce())->method('getValue')->will($this->returnValue($value));
+		$this->addValueExpectation($value);
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 

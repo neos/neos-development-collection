@@ -156,6 +156,19 @@
 						</properties>
 					</node>
 				</node>
+				<node type="TYPO3.Neos.NodeTypes:AssetList" nodeName="assetlist">
+					<properties>
+						<assets __type="array">
+							<asset __classname="TYPO3\Media\Domain\Model\Asset" __identifier="89cd85cc-270e-0902-7113-d14ac7539c75">
+								<properties/>
+								<resource __type="object" __classname="TYPO3\Flow\Resource\Resource" __identifier="8a4496e4-fa0d-8550-0995-01fd869728bf">
+									<filename>TYPO3_Neos-logo_sRGB_color.pdf</filename>
+									<hash>bed9a3e45070e97b921877e2bd9c35ba368beca0</hash>
+								</resource>
+							</asset>
+						</assets>
+					</properties>
+				</node>
 			</node>
 		</node>
 	</site>
