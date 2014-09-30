@@ -4,20 +4,24 @@
 
 -
   name: 'Login form'
-  uriPattern: 'login'
+  uriPattern: 'login(.{@format})'
+  defaults:
+    '@format': 'html'
   httpMethods: ['GET']
   appendExceedingArguments: TRUE
 
 -
   name: 'Authenticate'
-  uriPattern: 'login'
+  uriPattern: 'login(.{@format})'
   defaults:
     '@action': 'authenticate'
+    '@format': 'html'
   httpMethods: ['POST']
 
 -
   name:  'Logout'
-  uriPattern: 'logout'
+  uriPattern: 'logout(.{@format})'
   defaults:
-    '@action':     'logout'
+    '@action': 'logout'
+    '@format': 'html'
   httpMethods: ['POST']

@@ -17,6 +17,7 @@ use TYPO3\Flow\Mvc\View\AbstractView;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Exception\RuntimeException;
+use TYPO3\Flow\Security\Context;
 
 /**
  * A TypoScript view for Neos
@@ -57,6 +58,12 @@ class TypoScriptView extends AbstractView {
 	protected $typoScriptRuntime;
 
 	/**
+	 * @Flow\Inject
+	 * @var Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
@@ -79,6 +86,7 @@ class TypoScriptView extends AbstractView {
 			'node' => $currentNode,
 			'documentNode' => $this->getClosestDocumentNode($currentNode),
 			'site' => $currentSiteNode,
+			'account' => $this->securityContext->getAccount(),
 			'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : NULL
 		));
 		try {

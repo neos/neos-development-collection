@@ -85,7 +85,7 @@ class NodeController extends ActionController {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
 				// TODO: Introduce check if workspace is visible or accessible to the user
 			if ($this->hasAccessToBackend() === FALSE) {
-				$this->redirect('index', 'Login');
+				$this->redirect('index', 'Login', NULL, array('unauthorized' => TRUE));
 			}
 		}
 		if (!$node->isAccessible()) {

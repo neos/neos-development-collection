@@ -6,33 +6,14 @@
  */
 define([
 	'emberjs',
-	'Library/jquery-with-dependencies',
-	'./Configuration',
-	'./RequestManager'
+	'Shared/HttpClient',
+	'Library/jquery-with-dependencies'
 ], function(
 	Ember,
-	$,
-	Configuration,
-	RequestManager
+	HttpClient,
+	$
 ) {
-	return Ember.Object.createWithMixins(Ember.Evented, {
-		_endpoints: {},
-		_responseStatus: null,
-
-		/**
-		 * Determines the URL of the REST service endpoint specified by the given endpoint name
-		 *
-		 * @param {string} endpoint For example "neos-service-nodes"
-		 * @returns {string} URL of the specified endpoint
-		 * @private
-		 */
-		_getEndpointUrl: function(endpoint) {
-			if (!this._endpoints[endpoint]) {
-				this._endpoints[endpoint] = $('link[rel="' + endpoint + '"]').attr('href');
-			}
-			return this._endpoints[endpoint];
-		},
-
+	return Ember.Object.extend(HttpClient, {
 		/**
 		 * Retrieve a resource from the REST service
 		 *
@@ -84,54 +65,11 @@ define([
 			return;
 		},
 
-		/**
-		 * Internal function which executes an Ajax request to the REST endpoint
-		 *
-		 * @param {string} url The absolute URL of the service endpoint
-		 * @param {string} requestMethod The HTTP request method
-		 * @param {object} optionsOverride Options to send as query parameters or body arguments
-		 * @returns {Promise} An RSVP promise
-		 * @private
-		 */
-		_request: function(url, requestMethod, optionsOverride) {
-			var options = {
-					type: requestMethod,
-					url: url,
-					data: {}
-				};
-
-			if (optionsOverride) {
-				$.extend(options, optionsOverride);
-			}
-
-			if (requestMethod !== 'GET' && requestMethod !== 'HEAD') {
-				options.data.__csrfToken = Configuration.get('CsrfToken');
-			}
-
-			return new Ember.RSVP.Promise(function(resolve, reject) {
-				var xhr = $.ajax(options);
-				RequestManager.add(xhr);
-
-				xhr.done(function(data) {
-					RequestManager.remove(xhr);
-					resolve({
-						'resource': $.parseHTML(data),
-						'xhr': xhr
-					});
-				});
-
-				xhr.fail(function(xhr, textStatus, errorThrown) {
-					RequestManager.remove(xhr);
-					reject({
-						'error': errorThrown,
-						'xhr': xhr
-					});
-				});
-
-				if (window.localStorage.showDevelopmentFeatures) {
-					window.console.log('HttpRestClient: _request() sent', requestMethod, url, options);
-				}
+		_success: function(resolve, data, textStatus, xhr) {
+			resolve({
+				'resource': $.parseHTML(data),
+				'xhr': xhr
 			});
 		}
-	});
+	}).create();
 });

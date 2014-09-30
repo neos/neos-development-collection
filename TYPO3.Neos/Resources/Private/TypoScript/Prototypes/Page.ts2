@@ -64,13 +64,15 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Array) {
 
 		neosBackendEndpoints = TYPO3.TypoScript:Template {
 			@position = 'end 10001'
-			node = ${node}
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
+			node = ${node}
+			account = ${account}
 
 			@cache {
 				mode = 'uncached'
 				context {
 					1 = 'node'
+					2 = 'account'
 				}
 			}
 		}

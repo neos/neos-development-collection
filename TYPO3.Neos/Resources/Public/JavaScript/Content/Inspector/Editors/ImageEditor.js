@@ -5,14 +5,13 @@ define(
 	'Content/Inspector/Editors/FileUpload',
 	'text!./ImageEditor.html',
 	'Content/Inspector/Editors/BooleanEditor',
-	'Content/Inspector/Editors/TextFieldEditor',
 	'Library/spinjs/spin',
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Notification',
 	'Shared/Utility',
 	'Shared/HttpClient'
 ],
-function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient) {
+function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -40,7 +39,6 @@ function(Ember, $, FileUpload, template, BooleanEditor, TextFieldEditor, Spinner
 
 		template: Ember.Handlebars.compile(template),
 		BooleanEditor: BooleanEditor,
-		TextFieldEditor: TextFieldEditor,
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 
 		/**

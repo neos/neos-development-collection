@@ -18,6 +18,7 @@ use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationControll
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Neos\Service\BackendRedirectionService;
+use TYPO3\Flow\Mvc\View\JsonView;
 
 /**
  * A controller which allows for logging into the backend
@@ -39,16 +40,31 @@ class LoginController extends AbstractAuthenticationController {
 	/**
 	 * @var array
 	 */
-	protected $viewFormatToObjectNameMap = array('json' => 'TYPO3\Flow\Mvc\View\JsonView');
+	protected $viewFormatToObjectNameMap = array(
+		'html' => 'TYPO3\Fluid\View\TemplateView',
+		'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+	);
+
+	/**
+	 * @var array
+	 */
+	protected $supportedMediaTypes = array(
+		'text/html',
+		'application/json'
+	);
 
 	/**
 	 * Default action, displays the login screen
 	 *
 	 * @param string $username Optional: A username to pre-fill into the username field
+	 * @param boolean $unauthorized
 	 * @return void
 	 */
-	public function indexAction($username = NULL) {
+	public function indexAction($username = NULL, $unauthorized = FALSE) {
 		$this->view->assign('username', $username);
+		if ($this->securityContext->getInterceptedRequest() || $unauthorized) {
+			$this->response->setStatus(401);
+		}
 	}
 
 	/**
@@ -68,16 +84,19 @@ class LoginController extends AbstractAuthenticationController {
 	 * @return void
 	 */
 	public function onAuthenticationSuccess(ActionRequest $originalRequest = NULL) {
-		if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
-			$this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
-		}
+		if ($this->view instanceof JsonView) {
+			$this->view->assign('value', array('success' => $this->authenticationManager->isAuthenticated()));
+		} else {
+			if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
+				$this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
+			}
+			if ($originalRequest !== NULL) {
+				// Redirect to the location that redirected to the login form because the user was nog logged in
+				$this->redirectToRequest($originalRequest);
+			}
 
-		if ($originalRequest !== NULL) {
-			// Redirect to the location that redirected to the login form because the user was nog logged in
-			$this->redirectToRequest($originalRequest);
+			$this->redirect('index', 'Backend\Backend');
 		}
-
-		$this->redirect('index', 'Backend\Backend');
 	}
 
 	/**

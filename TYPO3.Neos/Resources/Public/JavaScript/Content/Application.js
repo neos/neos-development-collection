@@ -90,8 +90,8 @@ function(
 
 		bootstrap: function() {
 			var that = this;
-			HttpClient.on('failure', function(status, message, jqXHR) {
-				if (status === 'abort') {
+			HttpClient.on('failure', function(xhr, status, message) {
+				if (status === 'abort' || xhr.status === 401) {
 					return;
 				}
 				if (jqXHR === undefined || jqXHR.status !== 404) {
