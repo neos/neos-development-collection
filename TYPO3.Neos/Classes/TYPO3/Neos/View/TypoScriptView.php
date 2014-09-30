@@ -12,10 +12,12 @@ namespace TYPO3\Neos\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Mvc\View\AbstractView;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception\RuntimeException;
 use TYPO3\Flow\Security\Context;
 
@@ -91,10 +93,40 @@ class TypoScriptView extends AbstractView {
 		));
 		try {
 			$output = $typoScriptRuntime->render($this->typoScriptPath);
+			$output = $this->mergeHttpResponseFromOutput($output, $typoScriptRuntime);
 		} catch (RuntimeException $exception) {
 			throw $exception->getPrevious();
 		}
 		$typoScriptRuntime->popContext();
+
+		return $output;
+	}
+
+	/**
+	 * @param string $output
+	 * @param Runtime $typoScriptRuntime
+	 * @return string The message body without the message head
+	 */
+	protected function mergeHttpResponseFromOutput($output, Runtime $typoScriptRuntime) {
+		if (substr($output, 0, 5) === 'HTTP/') {
+			$endOfHeader = strpos($output, "\r\n\r\n");
+			if ($endOfHeader !== FALSE) {
+				$header = substr($output, 0, $endOfHeader + 4);
+				try {
+					$renderedResponse = Response::createFromRaw($header);
+
+					/** @var Response $response */
+					$response = $typoScriptRuntime->getControllerContext()->getResponse();
+					$response->setStatus($renderedResponse->getStatusCode());
+					foreach ($renderedResponse->getHeaders()->getAll() as $headerName => $headerValues) {
+						$response->setHeader($headerName, $headerValues[0]);
+					}
+
+					$output = substr($output, strlen($header));
+				} catch (\InvalidArgumentException $exception) {
+				}
+			}
+		}
 
 		return $output;
 	}

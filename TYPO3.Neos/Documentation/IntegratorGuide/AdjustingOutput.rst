@@ -326,3 +326,9 @@ JavaScript Requirements
 -----------------------
 
 TODO "what about the UI below a single DOM element idea"
+
+Adjusting the HTTP response
+===========================
+
+It is possible to set HTTP headers and the status code of the response from TypoScript. See :ref:`TYPO3_TypoScript__Http_Message`
+for an example.

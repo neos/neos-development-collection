@@ -116,7 +116,7 @@ Example::
 		itemRenderer.element = ${element}
 	}
 
-.. _TYPO3_TypoScript__Case
+.. _TYPO3_TypoScript__Case:
 
 TYPO3.TypoScript:Case
 ---------------------
@@ -216,7 +216,7 @@ Evaluates to::
 
 	<html version="HTML+RDFa 1.1" xmlns="http://www.w3.org/1999/xhtml">
 
-.. TYPO3__TypoScript__Attributes:
+.. _TYPO3__TypoScript__Attributes:
 
 TYPO3.TypoScript:Attributes
 ---------------------------
@@ -249,6 +249,40 @@ Unsetting an attribute:
 
 It's possible to unset an attribute by assigning ``false`` or ``${null}`` as a value. No attribute will be rendered for
 this case.
+
+.. _TYPO3_TypoScript__Http_Message:
+
+TYPO3.TypoScript:Http.Message
+-----------------------------
+
+A prototype based on :ref:`TYPO3_TypoScript__Array` for rendering an HTTP message (response). It should be used to
+render documents since it generates a full HTTP response and allows to override the HTTP status code and headers.
+
+:httpResponseHead: (:ref:`TYPO3_TypoScript__Http_ResponseHead`) An HTTP response head with properties to adjust the status and headers, the position in the ``Array`` defaults to the very beginning
+:[any]: (Any) the nested TypoScript objects
+
+Example:
+^^^^^^^^
+
+::
+
+	// Page extends from Http.Message
+	//
+	// prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message)
+	//
+	page = TYPO3.Neos:Page {
+		httpResponseHead.headers.Content-Type = 'application/json'
+	}
+
+.. _TYPO3_TypoScript__Http_ResponseHead:
+
+TYPO3.TypoScript:Http.ResponseHead
+----------------------------------
+
+A helper object to render the head of an HTTP response
+
+:statusCode: (integer) The HTTP status code for the response, defaults to ``200``
+:headers.*: (String) An HTTP header that should be set on the response, the property name (e.g. ``headers.Content-Type``) will be used for the header name
 
 TYPO3.Neos TypoScript Objects
 =============================
@@ -283,9 +317,8 @@ Example::
 
 Page
 ----
-
-Subclass of :ref:`TYPO3_TypoScript__Array`. Main entry point into rendering a page;
-responsible for rendering the ``<html>`` tag and everything inside.
+Subclass of :ref:`TYPO3_TypoScript__Http_Message`, which is based on :ref:`TYPO3_TypoScript__Array`. Main entry point
+into rendering a page; responsible for rendering the ``<html>`` tag and everything inside.
 
 :doctype: (String) Defaults to ``<!DOCTYPE html>``
 :htmlTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<html>`` tag
