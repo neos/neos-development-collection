@@ -9,9 +9,10 @@ define(
 		'./PublishAllDialog',
 		'./DiscardAllDialog',
 		'Shared/Endpoint/NodeEndpoint',
+		'Shared/HttpClient',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, $, LocalStorage, Button, PublishableNodes, StorageManager, PublishAllDialog, DiscardAllDialog, NodeEndpoint, template) {
+	function (Ember, $, LocalStorage, Button, PublishableNodes, StorageManager, PublishAllDialog, DiscardAllDialog, NodeEndpoint, HttpClient, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -56,7 +57,9 @@ define(
 				_nodeEndpoint: NodeEndpoint,
 				_storageManager: StorageManager,
 
-				_connectionFailedBinding: '_nodeEndpoint._failedRequest',
+				_httpClient: HttpClient,
+				_connectionFailedBinding: '_httpClient._failedRequest',
+
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 				_savePendingBinding: '_storageManager.savePending',
 
@@ -120,7 +123,6 @@ define(
 			}),
 
 			DiscardButton: Button.extend({
-				classNameBindings: ['connectionStatusClass'],
 				classNames: ['neos-discard-button'],
 				controller: PublishableNodes,
 
@@ -128,8 +130,6 @@ define(
 				action: 'discardChanges',
 
 				_nodeEndpoint: NodeEndpoint,
-
-				_connectionFailedBinding: '_nodeEndpoint._failedRequest',
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				_noChangesBinding: 'controller.noChanges',
@@ -145,13 +145,7 @@ define(
 
 				disabled: function() {
 					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('controller.discardRunning');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', 'controller.discardRunning'),
-
-				connectionStatusClass: function() {
-					var className = 'neos-connection-status-';
-					className += this.get('_connectionFailed') ? 'down' : 'up';
-					return className;
-				}.property('_connectionFailed')
+				}.property('_noChanges', 'autoPublish', '_saveRunning', 'controller.discardRunning')
 			}),
 
 			PublishAllButton: Button.extend({
@@ -171,8 +165,8 @@ define(
 
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
-				_nodeEndpoint: NodeEndpoint,
 
+				_nodeEndpoint: NodeEndpoint,
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				click: function() {
@@ -209,8 +203,8 @@ define(
 
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
-				_nodeEndpoint: NodeEndpoint,
 
+				_nodeEndpoint: NodeEndpoint,
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				click: function() {
