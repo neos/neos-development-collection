@@ -15,6 +15,13 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Change the value of a given property.
+ *
+ * This can apply two transformations:
+ *
+ * If newValue is set, the value will be set to this, with any occurences of the currentValuePlaceholder replaced with
+ * the current value of the property.
+ *
+ * If search and replace are given, that replacament will be done on the value (after applying the newValue if set).
  */
 class ChangePropertyValue extends AbstractTransformation {
 
@@ -26,7 +33,17 @@ class ChangePropertyValue extends AbstractTransformation {
 	/**
 	 * @var string
 	 */
-	protected $newValue;
+	protected $newValue = '{current}';
+
+	/**
+	 * @var string
+	 */
+	protected $search = '';
+
+	/**
+	 * @var string
+	 */
+	protected $replace = '';
 
 	/**
 	 * Placeholder for the current property value to be inserted in newValue.
@@ -56,6 +73,26 @@ class ChangePropertyValue extends AbstractTransformation {
 	 */
 	public function setNewValue($newValue) {
 		$this->newValue = $newValue;
+	}
+
+	/**
+	 * Search string to replace in current property value.
+	 *
+	 * @param string $search
+	 * @return void
+	 */
+	public function setSearch($search) {
+		$this->search = $search;
+	}
+
+	/**
+	 * Replacement for the search string
+	 *
+	 * @param string $replace
+	 * @return void
+	 */
+	public function setReplace($replace) {
+		$this->replace = $replace;
 	}
 
 	/**
@@ -89,6 +126,7 @@ class ChangePropertyValue extends AbstractTransformation {
 	public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node) {
 		$currentPropertyValue = $node->getProperty($this->propertyName);
 		$newValueWithReplacedCurrentValue = str_replace($this->currentValuePlaceholder, $currentPropertyValue, $this->newValue);
-		$node->setProperty($this->propertyName, $newValueWithReplacedCurrentValue);
+		$newValueWithReplacedSearch = str_replace($this->search, $this->replace, $newValueWithReplacedCurrentValue);
+		$node->setProperty($this->propertyName, $newValueWithReplacedSearch);
 	}
 }
