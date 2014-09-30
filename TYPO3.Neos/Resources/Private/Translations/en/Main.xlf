@@ -226,6 +226,18 @@
 			<trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			</trans-unit>
 
 			<!-- Login -->
 			<trans-unit id="login.index.title" xml:space="preserve">
