@@ -22,7 +22,7 @@ define(
 			 * @return {void}
 			 */
 			isValid: function(value) {
-				if ((typeof(value) === 'number' || typeof(value) === 'string') && value !== '' && !isNaN(value)) {
+				if (!((typeof value === 'number') || (typeof value  === 'string') && !isNaN(value))) {
 					this.addError('A valid number is expected.');
 					return;
 				}
