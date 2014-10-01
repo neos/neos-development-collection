@@ -84,14 +84,7 @@ class NodeController extends ActionController {
 	public function showAction(Node $node) {
 		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
 				// TODO: Introduce check if workspace is visible or accessible to the user
-			if ($this->hasAccessToBackend()) {
-				$contextProperties = $node->getContext()->getProperties();
-				$contextProperties['invisibleContentShown'] = TRUE;
-				$contextProperties['removedContentShown'] = FALSE;
-				$contextProperties['invisibleContentShown'] = TRUE;
-				$context = $this->contextFactory->create($contextProperties);
-				$node = $context->getNode($node->getPath());
-			} else {
+			if ($this->hasAccessToBackend() === FALSE) {
 				$this->redirect('index', 'Login');
 			}
 		}
