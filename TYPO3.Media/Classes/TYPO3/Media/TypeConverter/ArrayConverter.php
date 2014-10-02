@@ -23,6 +23,12 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @var array
 	 */
 	protected $sourceTypes = array('TYPO3\Media\Domain\Model\AssetInterface');
@@ -71,13 +77,13 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	}
 
 	/**
-	 * Convert an object from $source to an \TYPO3\Media\Domain\Model\ImageVariant
+	 * Convert an object from $source to an array
 	 *
-	 * @param array $source
+	 * @param AssetInterface $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\Media\Domain\Model\ImageVariant|\TYPO3\Flow\Validation\Error The converted asset or NULL
+	 * @return array The converted asset or NULL
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		switch (TRUE) {
@@ -85,6 +91,8 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 				if (!isset($convertedChildProperties['originalImage']) || !is_array($convertedChildProperties['originalImage'])) {
 					return NULL;
 				}
+
+				$convertedChildProperties['originalImage']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getOriginalImage());
 
 				return array(
 					'originalImage' => $convertedChildProperties['originalImage'],
@@ -94,6 +102,8 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 				if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {
 					return NULL;
 				}
+
+				$convertedChildProperties['resource']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getResource());
 
 				return array(
 					'title' => $source->getTitle(),
