@@ -51,7 +51,16 @@ class FindOperation extends AbstractOperation {
 	 * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
 	 */
 	public function canEvaluate($context) {
-		return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+		if (count($context) === 0) {
+			return TRUE;
+		}
+
+		foreach ($context as $contextNode) {
+			if (!$contextNode instanceof NodeInterface) {
+				return FALSE;
+			}
+		}
+		return TRUE;
 	}
 
 	/**
@@ -67,8 +76,7 @@ class FindOperation extends AbstractOperation {
 			return;
 		}
 
-		/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
-		$contextNode = $context[0];
+		$result = array();
 		$selectorAndFilter = $arguments[0];
 
 		try {
@@ -79,7 +87,10 @@ class FindOperation extends AbstractOperation {
 			if (!preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, substr($selectorAndFilter, 1))) {
 				throw new \TYPO3\Eel\FlowQuery\FlowQueryException('find() requires a valid identifier', 1332492263);
 			}
-			$result = array($contextNode->getContext()->getNodeByIdentifier(substr($selectorAndFilter, 1)));
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
+			foreach ($context as $contextNode) {
+				array_push($result, $contextNode->getContext()->getNodeByIdentifier(substr($selectorAndFilter, 1)));
+			}
 		} elseif (isset($parsedFilter['Filters'][0]['AttributeFilters']) && $parsedFilter['Filters'][0]['AttributeFilters'][0]['Operator'] === 'instanceof') {
 			$nodeTypes = array();
 			foreach ($parsedFilter['Filters'] as $filter) {
@@ -87,12 +98,20 @@ class FindOperation extends AbstractOperation {
 					$nodeTypes[] = $filter['AttributeFilters'][0]['Operand'];
 				}
 			}
-			$result = $this->nodeDataRepository->findByParentAndNodeTypeInContext($contextNode->getPath(), implode(',', $nodeTypes), $contextNode->getContext(), TRUE);
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
+			foreach ($context as $contextNode) {
+				$result = array_merge($result, $this->nodeDataRepository->findByParentAndNodeTypeInContext($contextNode->getPath(), implode(',', $nodeTypes), $contextNode->getContext(), TRUE));
+			}
 		} else {
-			$node = $contextNode->getNode($selectorAndFilter);
-			$result = $node !== NULL ? array($node) : array();
+			/** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
+			foreach ($context as $contextNode) {
+				$node = $contextNode->getNode($selectorAndFilter);
+				if ($node !== NULL) {
+					array_push($result, $node);
+				}
+			}
 		}
 
-		$flowQuery->setContext($result);
+		$flowQuery->setContext(array_unique($result));
 	}
 }
