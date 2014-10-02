@@ -92,6 +92,12 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     Then I should have one node
+
+    When I get a node by path "/sites/typo3cr/company/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
     # TODO This would be nice, but right now we might not be able to do this reliably
     # And the unpublished node count in workspace "user-admin" should be 0
 
@@ -165,26 +171,26 @@ Feature: Move node
     Then I should have one node
     And the node property "title" should be "Our services"
 
-    @fixtures
-    Scenario: Reordering nodes only applies in user workspace
-      When I get a node by path "/sites/typo3cr/service" with the following context:
-        | Workspace  |
-        | user-admin |
-      And I move the node before the node with path "/sites/typo3cr/company"
-      When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
-        | Workspace  |
-        | user-admin |
-      Then I should have the following nodes:
-        | Path                   | Properties           |
-        | /sites/typo3cr/service | {"title": "Service"} |
-        | /sites/typo3cr/company | {"title": "Company"} |
-      When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
-        | Workspace |
-        | live      |
-      Then I should have the following nodes:
-        | Path                   | Properties           |
-        | /sites/typo3cr/company | {"title": "Company"} |
-        | /sites/typo3cr/service | {"title": "Service"} |
+  @fixtures
+  Scenario: Reordering nodes only applies in user workspace
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node before the node with path "/sites/typo3cr/company"
+    When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have the following nodes:
+      | Path                   | Properties           |
+      | /sites/typo3cr/service | {"title": "Service"} |
+      | /sites/typo3cr/company | {"title": "Company"} |
+    When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | Workspace |
+      | live      |
+    Then I should have the following nodes:
+      | Path                   | Properties           |
+      | /sites/typo3cr/company | {"title": "Company"} |
+      | /sites/typo3cr/service | {"title": "Service"} |
 
   @fixtures
   Scenario: Reordering nodes can be published
@@ -200,3 +206,42 @@ Feature: Move node
       | Path                   | Properties           |
       | /sites/typo3cr/service | {"title": "Service"} |
       | /sites/typo3cr/company | {"title": "Company"} |
+
+  @fixtures
+  Scenario: Move a node with updated property (materialized node data) in user workspace
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I set the node property "title" to "Our service"
+    And I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/company"
+    And I get a node by path "/sites/typo3cr/company/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+    And I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Move a new node in user workspace
+    Given I have the following nodes:
+      | Identifier                           | Path                               | Node Type                       | Workspace  |
+      | 829d0d76-47fc-11e4-886a-14109fd7a2dd | /sites/typo3cr/company/main/text1  | TYPO3.TYPO3CR.Testing:Text      | user-admin |
+    When I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/service/main"
+
+    When I get a node by path "/sites/typo3cr/service/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+    When I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes

@@ -181,6 +181,7 @@ class NodeData extends AbstractNodeData {
 	 *
 	 * @var NodeData
 	 * @ORM\ManyToOne
+	 * @ORM\JoinColumn(onDelete="SET NULL")
 	 */
 	protected $movedTo;
 
@@ -548,6 +549,8 @@ class NodeData extends AbstractNodeData {
 	public function setRemoved($removed) {
 		if ((boolean)$removed === TRUE) {
 			$this->remove();
+		} else {
+			$this->removed = FALSE;
 		}
 	}
 
@@ -640,6 +643,14 @@ class NodeData extends AbstractNodeData {
 	 */
 	public function getMovedTo() {
 		return $this->movedTo;
+	}
+
+	/**
+	 * @param NodeData $nodeData
+	 * @return void
+	 */
+	public function setMovedTo(NodeData $nodeData = NULL) {
+		$this->movedTo = $nodeData;
 	}
 
 	/**

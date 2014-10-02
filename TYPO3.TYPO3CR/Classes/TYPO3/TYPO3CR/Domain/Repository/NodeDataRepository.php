@@ -1101,9 +1101,9 @@ class NodeDataRepository extends Repository {
 			$workspacePosition = array_search($node->getWorkspace(), $workspaces);
 
 			$uniqueNodeDataIdentity = $node->getIdentifier() . '|' . $node->getDimensionsHash();
-			if (!isset($minimalDimensionPositionsByIdentifier[$uniqueNodeDataIdentity]) || $workspacePosition < $minimalPositionByIdentifier[$uniqueNodeDataIdentity]) {
+			if (!isset($minimalPositionByIdentifier[$uniqueNodeDataIdentity]) || $workspacePosition < $minimalPositionByIdentifier[$uniqueNodeDataIdentity]) {
 				$foundNodes[$uniqueNodeDataIdentity] = $node;
-				$minimalDimensionPositionsByIdentifier[$uniqueNodeDataIdentity] = $workspacePosition;
+				$minimalPositionByIdentifier[$uniqueNodeDataIdentity] = $workspacePosition;
 			}
 		}
 
