@@ -7,11 +7,13 @@
 define([
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Shared/Configuration'
+	'./Configuration',
+	'./RequestManager'
 ], function(
 	Ember,
 	$,
-	Configuration
+	Configuration,
+	RequestManager
 ) {
 	return Ember.Object.createWithMixins(Ember.Evented, {
 		_failedRequest: null,
@@ -74,9 +76,13 @@ define([
 				console.log('HttpClient', requestMethod, url, options);
 			}
 
+			var xhr = $.ajax(options);
+			RequestManager.add(xhr);
+
 			promise.set(
 				'_currentRequest',
-				$.ajax(options).done(function() {
+				xhr.done(function() {
+					RequestManager.remove(xhr);
 					if (requestMethod === 'POST' || requestMethod === 'PUT') {
 						that.set('_lastSuccessfulTransfer', new Date());
 					}
@@ -84,6 +90,7 @@ define([
 
 					promise.resolve.apply(promise, arguments);
 				}).fail(function(jqXHR, textStatus, errorThrown) {
+					RequestManager.remove(xhr);
 					that.set('_failedRequest', true);
 					if (window.localStorage.showDevelopmentFeatures) {
 						that.trigger('failure', textStatus, ['requestMethod: ' + requestMethod, 'url: ' + url, 'data: ' + JSON.stringify(options)].join(' '));

@@ -7,12 +7,14 @@
 define([
 	'emberjs',
 	'Library/jquery-with-dependencies',
-	'Shared/Configuration'
+	'./Configuration',
+	'./RequestManager'
 ], function(
 	Ember,
 	$,
-	Configuration
-	) {
+	Configuration,
+	RequestManager
+) {
 	return Ember.Object.createWithMixins(Ember.Evented, {
 		_endpoints: {},
 		_responseStatus: null,
@@ -108,15 +110,18 @@ define([
 
 			return new Ember.RSVP.Promise(function(resolve, reject) {
 				var xhr = $.ajax(options);
+				RequestManager.add(xhr);
 
 				xhr.done(function(data) {
+					RequestManager.remove(xhr);
 					resolve({
 						'resource': $.parseHTML(data),
 						'xhr': xhr
 					});
 				});
 
-				xhr.fail(function(xhr, textStatus, errorThrown ) {
+				xhr.fail(function(xhr, textStatus, errorThrown) {
+					RequestManager.remove(xhr);
 					reject({
 						'error': errorThrown,
 						'xhr': xhr
