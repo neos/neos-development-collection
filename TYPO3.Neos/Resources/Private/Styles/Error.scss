@@ -34,30 +34,62 @@ body {
 		margin-top: -($errorBoxHeight / 2);
 		margin-left: -($errorBoxWidth / 2);
 		color: #fff;
+		font-size: 16px;
 		@include box-shadow(none);
 		@include border-radius(none);
 
 		.neos-message-icon {
-			font-size: 4em;
 			color: $warning;
 			float: left;
-			margin-right: .75em;
+			margin-right: 12px;
+			line-height: 76px;
+
+			i {
+				font-size: 64px;
+			}
 		}
 
 		h1 {
-			font-size: 1.6em;
-			margin-top: .3em;
-			margin-bottom: .25em;
+			font-size: 26px;
+			line-height: 1.2;
+			margin-top: 8px;
+			margin-bottom: 6px;
 			margin-left: 112px;
 		}
 
 		p {
-			margin-left: 112px;
-			margin-top: 0;
+			margin: 0 0 0 112px;
+			font-size: 16px;
 		}
 
 		a {
 			color: $blue;
+		}
+
+		.neos-rendering-exception {
+			background-color: transparent;
+			border: 2px dashed $warning;
+			padding: 16px;
+			font-weight: bold;
+			margin: 50px -100px 0;
+			font-size: 14px;
+			line-height: 1.2;
+
+			.neos-rendering-exception-title,
+			.neos-exception-message {
+				color: $warning;
+				font-weight: bold;
+			}
+
+			.neos-typoscript-path {
+				font-weight: normal;
+				color: #fff;
+				margin: 16px 0;
+			}
+
+			.neos-typoscript-subpath {
+				padding-left: 2em;
+			}
 		}
 	}
 }

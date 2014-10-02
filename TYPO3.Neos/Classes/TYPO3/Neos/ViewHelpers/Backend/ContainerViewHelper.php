@@ -14,10 +14,9 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Fluid\View\StandaloneView;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
  * ViewHelper for the backend 'container'. Renders the required HTML to integrate
@@ -66,15 +65,11 @@ class ContainerViewHelper extends AbstractViewHelper {
 			return '';
 		}
 
-		$view = $this->viewHelperVariableContainer->getView();
-		if (!$view instanceof TypoScriptAwareViewInterface) {
-			throw new NeosException('This ViewHelper can only be used inside a view implementing the TypoScriptAwareInterface, such as inside a TYPO3.TypoScript:Template implementation.', 1386554873);
-		}
-
 		/** @var $actionRequest ActionRequest */
 		$actionRequest = $this->controllerContext->getRequest();
-		$innerView =  new FluidView($view->getTypoScriptObject(), $actionRequest);
+		$innerView = new StandaloneView($actionRequest);
 		$innerView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Backend/Content/Container.html');
+		$innerView->setFormat('html');
 		$innerView->setPartialRootPath('resource://TYPO3.Neos/Private/Partials');
 
 		$user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');

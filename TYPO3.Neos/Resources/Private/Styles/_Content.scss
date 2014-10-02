@@ -96,7 +96,8 @@ button.neos-create-new-content {
 	margin-top: $defaultMargin;
 	margin-bottom: $defaultMargin;
 
-	.neos-rendering-exception-title, .neos-exception-message {
+	.neos-rendering-exception-title,
+	.neos-exception-message {
 		color: $warning;
 		font-weight: bold;
 	}
