@@ -171,5 +171,5 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		}
 	}
 
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\ContextDependentHandler'
+	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\PageHandler'
 }

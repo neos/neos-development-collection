@@ -80,5 +80,5 @@ root {
 	}
 
 	# Catch all unhandled exceptions at the root
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\ContextDependentHandler'
+	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\PageHandler'
 }
