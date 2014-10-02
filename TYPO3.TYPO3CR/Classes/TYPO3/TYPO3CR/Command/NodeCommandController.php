@@ -13,10 +13,10 @@ namespace TYPO3\TYPO3CR\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -26,7 +26,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  *
  * @Flow\Scope("singleton")
  */
-class NodeCommandController extends CommandController {
+class NodeCommandController extends CommandController implements DescriptionAwareCommandControllerInterface {
 
 	/**
 	 * @Flow\Inject
@@ -59,6 +59,17 @@ class NodeCommandController extends CommandController {
 	protected $nodeFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
+	 * @var array
+	 */
+	protected $pluginConfigurations = array();
+
+	/**
 	 * Repair inconsistent nodes
 	 *
 	 * This command analyzes and repairs the node tree structure and individual nodes
@@ -66,13 +77,8 @@ class NodeCommandController extends CommandController {
 	 *
 	 * The following checks will be performed:
 	 *
-	 * 1. Missing child nodes
-	 *
-	 * For all nodes (or only those which match the --node-type filter specified with this
-	 * command) which currently don't have child nodes as configured by the node type's
-	 * configuration new child nodes will be created.
-	 *
-	 * Examples:
+	 * {pluginDescriptions}
+	 * <b>Examples:</b>
 	 *
 	 * ./flow node:repair
 	 *
@@ -84,6 +90,8 @@ class NodeCommandController extends CommandController {
 	 * @return void
 	 */
 	public function repairCommand($nodeType = NULL, $workspace = 'live', $dryRun = FALSE) {
+		$this->pluginConfigurations = self::detectPlugins($this->objectManager);
+
 		if ($this->workspaceRepository->findByName($workspace)->count() === 0) {
 			$this->outputLine('Workspace "%s" does not exist', array($workspace));
 			exit(1);
@@ -102,7 +110,14 @@ class NodeCommandController extends CommandController {
 			$this->outputLine('Dry run, not committing any changes.');
 		}
 
-		$this->createMissingChildNodes($nodeType, $workspace, $dryRun);
+		foreach($this->pluginConfigurations as $pluginConfiguration) {
+			/** @var NodeCommandControllerPluginInterface $plugin */
+			$plugin = $pluginConfiguration['object'];
+			$this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
+			$plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
+			$this->outputLine();
+		}
+
 		$this->outputLine('Node repair finished.');
 	}
 
@@ -123,111 +138,54 @@ class NodeCommandController extends CommandController {
 	 * @deprecated since 1.2
 	 */
 	public function autoCreateChildNodesCommand($nodeType = NULL, $workspace = 'live', $dryRun = FALSE) {
-		$this->createMissingChildNodes($nodeType, $workspace, $dryRun);
+		$this->pluginConfigurations = self::detectPlugins($this->objectManager);
+		$this->pluginConfigurations['TYPO3\TYPO3CR\Command\NodeCommandControllerPlugin']['object']->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
 	}
 
 	/**
-	 * Performs checks for missing child nodes according to the node's auto-create configuration and creates
-	 * them if necessary.
+	 * Processes the given short description of the specified command.
 	 *
-	 * @param NodeType $nodeType Only for this node type, if specified
-	 * @param string $workspace Name of the workspace to consider
-	 * @param boolean $dryRun Simulate?
-	 * @return void
+	 * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
+	 * @param string $shortDescription The short command description so far
+	 * @param ObjectManagerInterface $objectManager The object manager, can be used to access further information necessary for rendering the description
+	 * @return string the possibly modified short command description
 	 */
-	protected function createMissingChildNodes(NodeType $nodeType = NULL, $workspace, $dryRun) {
-		if ($nodeType !== NULL) {
-			$this->outputLine('Checking nodes of type "%s" for missing child nodes ...', array($nodeType->getName()));
-			$this->createChildNodesByNodeType($nodeType, $workspace, $dryRun);
-		} else {
-			$this->outputLine('Checking for missing child nodes ...');
-			foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
-				/** @var NodeType $nodeType */
-				if ($nodeType->isAbstract()) {
-					continue;
-				}
-				$this->createChildNodesByNodeType($nodeType, $workspace, $dryRun);
-			}
-		}
+	static public function processShortDescription($controllerCommandName, $shortDescription, ObjectManagerInterface $objectManager) {
+		return $shortDescription;
 	}
 
 	/**
-	 * Create missing child nodes for the given node type
+	 * Processes the given description of the specified command.
 	 *
-	 * @param NodeType $nodeType
-	 * @param string $workspace
-	 * @param boolean $dryRun
-	 * @return void
+	 * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
+	 * @param string $description The command description so far
+	 * @param ObjectManagerInterface $objectManager The object manager, can be used to access further information necessary for rendering the description
+	 * @return string the possibly modified command description
 	 */
-	protected function createChildNodesByNodeType(NodeType $nodeType, $workspace, $dryRun) {
-		$createdNodesCount = 0;
-		$nodeCreationExceptions = 0;
-
-		$nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), FALSE);
-		$nodeTypes[$nodeType->getName()] = $nodeType;
-
-		if ($this->nodeTypeManager->hasNodeType((string)$nodeType)) {
-			$nodeType = $this->nodeTypeManager->getNodeType((string)$nodeType);
-			$nodeTypeNames[$nodeType->getName()] = $nodeType;
-		} else {
-			$this->outputLine('Node type "%s" does not exist', array((string)$nodeType));
-			exit(1);
+	static public function processDescription($controllerCommandName, $description, ObjectManagerInterface $objectManager) {
+		$pluginConfigurations = self::detectPlugins($objectManager);
+		$pluginDescriptions = '';
+		foreach ($pluginConfigurations as $className => $configuration) {
+			$pluginDescriptions .= $className::getSubCommandDescription($controllerCommandName) . PHP_EOL;
 		}
-
-		/** @var $nodeType NodeType */
-		foreach ($nodeTypes as $nodeTypeName => $nodeType) {
-			$childNodes = $nodeType->getAutoCreatedChildNodes();
-			$context = $this->createContext($workspace);
-			foreach ($this->nodeDataRepository->findByNodeType($nodeTypeName) as $nodeData) {
-				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-				if (!$node instanceof NodeInterface || $node->isRemoved() === TRUE) {
-					continue;
-				}
-				foreach ($childNodes as $childNodeName => $childNodeType) {
-					try {
-						$childNodeMissing = $node->getNode($childNodeName) ? FALSE : TRUE;
-						if ($childNodeMissing) {
-							if ($dryRun === FALSE) {
-								$node->createNode($childNodeName, $childNodeType);
-								$this->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
-							} else {
-								$this->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
-							}
-							$createdNodesCount++;
-						}
-					} catch (\Exception $exception) {
-						$this->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
-						$nodeCreationExceptions++;
-					}
-				}
-			}
-		}
-
-		if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0) {
-			if ($dryRun === FALSE) {
-				$this->outputLine('Created %s new child nodes', array($createdNodesCount));
-
-				if ($nodeCreationExceptions > 0) {
-					$this->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
-				}
-			} else {
-				$this->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
-			}
-		}
+		return str_replace('{pluginDescriptions}', $pluginDescriptions, $description);
 	}
 
 	/**
-	 * Creates a content context for given workspace
+	 * Detects plugins for this command controller
 	 *
-	 * @param string $workspaceName
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
+	 * @param ObjectManagerInterface $objectManager
+	 * @return array
 	 */
-	protected function createContext($workspaceName) {
-		return $this->contextFactory->create(array(
-			'workspaceName' => $workspaceName,
-			'invisibleContentShown' => TRUE,
-			'inaccessibleContentShown' => TRUE
-		));
+	static protected function detectPlugins(ObjectManagerInterface $objectManager) {
+		$pluginConfigurations = array();
+		$classNames = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface');
+		foreach ($classNames as $className) {
+			$pluginConfigurations[$className] = array (
+				'object' => $objectManager->get($objectManager->getObjectNameByClassName($className))
+			);
+		}
+		return $pluginConfigurations;
 	}
 
 }
