@@ -60,7 +60,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
-		$contextVariables['siteName'] = $siteName;
+		$contextVariables['siteName'] = htmlspecialchars($siteName);
 		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
 		$contextVariables['siteNodeName'] = strtolower($packageKeyDomainPart);
 
