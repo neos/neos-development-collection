@@ -1117,6 +1117,8 @@ class NodeDataRepository extends Repository {
 	 * Find all NodeData objects inside a given workspace sorted by path to be used
 	 * in publishing. The order makes sure that parent nodes are published first.
 	 *
+	 * Shadow nodes are excluded, because they will be published when publishing the moved node.
+	 *
 	 * @param Workspace $workspace
 	 * @return array<NodeData>
 	 */
@@ -1128,6 +1130,7 @@ class NodeDataRepository extends Repository {
 			->distinct()
 			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
 			->where('n.workspace = :workspace')
+			->andWhere('n.movedTo IS NULL')
 			->orderBy('n.path', 'ASC')
 			->setParameter('workspace', $workspace);
 		return $queryBuilder->getQuery()->getResult();

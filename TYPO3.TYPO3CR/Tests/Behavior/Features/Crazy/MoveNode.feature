@@ -78,6 +78,22 @@ Feature: Move node
     # And the unpublished node count in workspace "user-admin" should be 0
 
   @fixtures
+  Scenario: Move a node (into) in user workspace node with content collection and publish all
+    Given I have the following nodes:
+      | Identifier                           | Path                               | Node Type                       | Workspace  |
+      | 829d0d76-47fc-11e4-886a-14109fd7a2dd | /sites/typo3cr/company/main/text1  | TYPO3.TYPO3CR.Testing:Text      | live       |
+      | 07fcc3b2-47fd-11e4-bf41-14109fd7a2dd | /sites/typo3cr/company/main/twocol | TYPO3.TYPO3CR.Testing:TwoColumn | user-admin |
+    When I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/company/main/twocol/column0"
+    And I publish the workspace "user-admin"
+    And I get a node by path "/sites/typo3cr/company/main/twocol/column0/text1" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+
+  @fixtures
   Scenario: Move a node (into) and move it back
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
