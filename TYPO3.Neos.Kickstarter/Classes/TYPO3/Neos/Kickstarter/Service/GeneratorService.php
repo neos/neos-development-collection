@@ -78,7 +78,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 * @return void
 	 */
 	protected function generateSitesTypoScript($packageKey, $siteName) {
-		$templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/TypoScripts/Root.ts2';
+		$templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/TypoScript/Root.ts2';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -88,7 +88,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScripts/Library/Root.ts2';
+		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScript/Root.ts2';
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
 	}
 
