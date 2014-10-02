@@ -54,7 +54,7 @@ class RenderViewHelper extends AbstractViewHelper {
 	 * @return void
 	 */
 	public function initializeArguments() {
-		$this->registerArgument('typoScriptFilePathPattern', 'string', 'Resource pattern to load TypoScript from. Defaults to: resource://@package/Private/TypoScripts/', FALSE);
+		$this->registerArgument('typoScriptFilePathPattern', 'string', 'Resource pattern to load TypoScript from. Defaults to: resource://@package/Private/TypoScript/', FALSE);
 	}
 
 	/**

@@ -36,7 +36,7 @@ class TypoScriptView extends AbstractView {
 	 * @var array
 	 */
 	protected $supportedOptions = array(
-		'typoScriptPathPatterns' => array(array('resource://@package/Private/TypoScripts'), 'TypoScript files will be recursively loaded from this paths.', 'array'),
+		'typoScriptPathPatterns' => array(array('resource://@package/Private/TypoScript'), 'TypoScript files will be recursively loaded from this paths.', 'array'),
 		'typoScriptPath' => array(NULL, 'The TypoScript path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
 		'packageKey' => array(NULL, 'The package key where the TypoScript should be loaded from. If not given, is automatically derived from the current request.', 'string'),
 		'debugMode' => array(FALSE, 'Flag to enable debug mode of the TypoScript runtime explicitly (overriding the global setting).', 'boolean'),
