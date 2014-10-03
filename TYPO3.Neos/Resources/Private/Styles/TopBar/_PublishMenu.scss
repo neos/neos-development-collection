@@ -13,6 +13,21 @@
 		}
 	}
 
+	&.neos-publish-menu-action-running {
+		.neos-dropdown-toggle {
+			&::before {
+				display: none;
+			}
+
+			@extend %ellipsis;
+
+			&::after {
+				line-height: 1;
+				font-size: $generalFontSize;
+			}
+		}
+	}
+
 	.neos-publish-button {
 		min-width: 165px;
 		background-color: $green;
