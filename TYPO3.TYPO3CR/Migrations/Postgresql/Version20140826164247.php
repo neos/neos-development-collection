@@ -7,17 +7,17 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 /**
  * Add movedTo reference to NodeData
  */
-class Version20140826164246 extends AbstractMigration {
+class Version20140826164247 extends AbstractMigration {
 
 	/**
 	 * @param Schema $schema
 	 * @return void
 	 */
 	public function up(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ADD movedto VARCHAR(40) DEFAULT NULL");
-		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ADD CONSTRAINT FK_60A956B92D45FE4D FOREIGN KEY (movedto) REFERENCES typo3_typo3cr_domain_model_nodedata (persistence_object_identifier)");
+		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ADD CONSTRAINT FK_60A956B92D45FE4D FOREIGN KEY (movedto) REFERENCES typo3_typo3cr_domain_model_nodedata (persistence_object_identifier) NOT DEFERRABLE INITIALLY IMMEDIATE");
 		$this->addSql("CREATE INDEX IDX_60A956B92D45FE4D ON typo3_typo3cr_domain_model_nodedata (movedto)");
 	}
 
@@ -26,10 +26,10 @@ class Version20140826164246 extends AbstractMigration {
 	 * @return void
 	 */
 	public function down(Schema $schema) {
-		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
-		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP FOREIGN KEY FK_60A956B92D45FE4D");
-		$this->addSql("DROP INDEX IDX_60A956B92D45FE4D ON typo3_typo3cr_domain_model_nodedata");
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP movedto");
+		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata DROP CONSTRAINT FK_60A956B92D45FE4D");
+		$this->addSql("DROP INDEX IDX_60A956B92D45FE4D");
 	}
 }
