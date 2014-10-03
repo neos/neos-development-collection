@@ -103,4 +103,40 @@ class FindOperationTest extends AbstractNodeTest {
 		$foundNodes = $q->find('/sites/example/home/main/limbo')->get();
 		$this->assertEmpty($foundNodes);
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+	 */
+	public function findOperationThrowsExceptionOnAtLeastOneInvalidContext() {
+		$q = new FlowQuery(array($this->node, '1'));
+		$q->find('/sites/example/home/main/limbo')->get();
+	}
+
+	/**
+	 * @test
+	 */
+	public function findByMultipleNodesReturnsMatchingNodesForAllNodes() {
+		$testContext = $this->contextFactory->create(array('workspaceName' => 'test'));
+		$testNodeA = $testContext->getNode('/sites/example/home/main/dummy44');
+		$testNodeB = $testContext->getNode('/sites/example/home/main/dummy45');
+		$q = new FlowQuery(array($testNodeA, $testNodeB));
+
+		$foundNodes = $q->find('[instanceof TYPO3.Neos.NodeTypes:Headline],[instanceof Acme.Demo:ListItem]')->get();
+		$this->assertGreaterThan(0, count($foundNodes));
+		$foundChildrenOfA = FALSE;
+		$foundChildrenOfB = FALSE;
+
+		foreach ($foundNodes as $foundNode) {
+			if (strpos($foundNode->getPath(), $testNodeA->getPath()) === 0 && $foundNode->getNodeType()->getName() === 'TYPO3.Neos.NodeTypes:Headline') {
+				$foundChildrenOfA = TRUE;
+			}
+			elseif (strpos($foundNode->getPath(), $testNodeB->getPath()) === 0 && $foundNode->getNodeType()->getName() === 'Acme.Demo:ListItem') {
+				$foundChildrenOfB = TRUE;
+			}
+		}
+
+		$this->assertTrue($foundChildrenOfA);
+		$this->assertTrue($foundChildrenOfB);
+	}
 }
