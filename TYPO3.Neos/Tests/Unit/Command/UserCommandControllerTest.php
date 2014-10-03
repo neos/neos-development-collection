@@ -10,7 +10,8 @@ namespace TYPO3\Neos\Tests\Unit\Command;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use Symfony\Component\Console\Output\ConsoleOutput;
+
+use TYPO3\Flow\Cli\ConsoleOutput;
 
 /**
  * Testcase for the "UserCommandController"
@@ -25,7 +26,7 @@ class UserCommandControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->mockConsoleOutput = $this->getMockBuilder('Symfony\Component\Console\Output\ConsoleOutput')->disableOriginalConstructor()->getMock();
+		$this->mockConsoleOutput = $this->getMockBuilder('TYPO3\Flow\Cli\ConsoleOutput')->disableOriginalConstructor()->getMock();
 	}
 
 	/**
