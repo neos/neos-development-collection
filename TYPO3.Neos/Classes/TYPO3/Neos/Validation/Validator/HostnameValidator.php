@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Validation\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator for hostnames
+ * Validator for http://tools.ietf.org/html/rfc1123 compatible host names
  */
 class HostnameValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
 
@@ -32,7 +32,7 @@ class HostnameValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
 	 * @return void
 	 */
 	protected function isValid($hostname) {
-		$pattern = '/([a-zA-Z0-9\-_]+\.)?[a-zA-Z0-9\-_]+\.[a-zA-Z]{2,5}/';
+		$pattern = '/(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)*(?!-)[a-zA-Z]{2,63}(?<!-)$)/';
 
 		if ($this->options['ignoredHostnames']) {
 			$ignoredHostnames = explode(',', $this->options['ignoredHostnames']);
@@ -45,5 +45,4 @@ class HostnameValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
 			$this->addError('The hostname "%1$s" was not valid.', 1324641097, array($hostname));
 		}
 	}
-
 }
