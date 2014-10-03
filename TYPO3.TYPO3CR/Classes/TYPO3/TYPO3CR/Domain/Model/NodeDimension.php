@@ -26,6 +26,7 @@ class NodeDimension {
 
 	/**
 	 * @ORM\ManyToOne(inversedBy="dimensions")
+	 * @ORM\JoinColumn(onDelete="CASCADE")
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
 	 */
 	protected $nodeData;
