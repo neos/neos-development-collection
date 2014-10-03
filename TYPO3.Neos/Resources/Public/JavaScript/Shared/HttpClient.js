@@ -133,7 +133,7 @@ define([
 								}).appendTo('#neos-application');
 							} else {
 								that.set('_failedRequest', true);
-								that.trigger('failure', xhr, textStatus, errorThrown)
+								that.trigger('failure', xhr, textStatus, errorThrown);
 								that._fail(reject, xhr, textStatus, errorThrown);
 							}
 						}
