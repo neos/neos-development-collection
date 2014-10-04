@@ -87,11 +87,16 @@ function(
 		spinner: null,
 
 		bootstrap: function() {
-			HttpClient.on('failure', function(status, message) {
+			var that = this;
+			HttpClient.on('failure', function(status, message, jqXHR) {
 				if (status === 'abort') {
 					return;
 				}
-				Notification.error('Server communication ' + status + ': ' + message);
+				if (jqXHR === undefined || jqXHR.status !== 404) {
+					Notification.error('Server communication ' + status + ': ' + message);
+				} else {
+					that._handlePageNotFoundError(that.getCurrentUri());
+				}
 				LoadingIndicator.done();
 			});
 
@@ -116,6 +121,43 @@ function(
 				this._initializeHistoryManagement();
 
 				KeyboardEvents.initializeContentModuleEvents();
+			}
+		},
+
+		/**
+		 * Find a valid URI up in the document tree
+		 *
+		 * A valid URI in Neos backend for the root page is domain.com/@user-john and for a subpage,
+		 * it's domain.com/page@user-john, so the script try the URL with / first and without on the
+		 * second try. This slows down the process for deep tree discarding, but work more reliable.
+		 *
+		 * The method only reload the page with the new URL if the URL return a 20x HTTP code.
+		 *
+		 * @private
+		 * @param currentUri
+		 * @return {void}
+		 */
+		_handlePageNotFoundError: function(currentUri) {
+			var that = this, retries = 1, retry = true, options = {};
+
+			while (retry === true && retries <= 100 ) {
+				currentUri = currentUri.replace(/\/([^\/]*)@/g, retries % 2 === 1 ? '/@' : '@');
+
+				options = {
+					type: 'GET',
+					async: false,
+					url: currentUri
+				};
+
+				$.ajax(options).done(function () {
+					that.loadPage(currentUri);
+					retry = false;
+				});
+
+				if (retries === 100) {
+					Notification.error('Unable to find a valid document up in the document tree');
+				}
+				++retries;
 			}
 		},
 

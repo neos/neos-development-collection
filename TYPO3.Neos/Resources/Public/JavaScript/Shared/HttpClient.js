@@ -88,7 +88,7 @@ define([
 					if (window.localStorage.showDevelopmentFeatures) {
 						that.trigger('failure', textStatus, ['requestMethod: ' + requestMethod, 'url: ' + url, 'data: ' + JSON.stringify(options)].join(' '));
 					} else {
-						that.trigger('failure', textStatus, errorThrown);
+						that.trigger('failure', textStatus, errorThrown, jqXHR);
 					}
 					promise.reject.apply(promise, arguments);
 				})
