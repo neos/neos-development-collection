@@ -17,12 +17,24 @@
 				<f:form name="login" action="authenticate">
 					<f:form.hidden name="lastVisitedNode" />
 					<fieldset>
-						<div class="neos-controls">
-							<f:form.textfield id="username" type="text" placeholder="Username" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
-						</div>
-						<div class="neos-controls">
-							<f:form.textfield id="password" type="password" placeholder="Password" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
-						</div>
+							<f:if condition="{username}">
+								<f:then>
+									<div class="neos-controls">
+										<f:form.textfield id="username" type="text" placeholder="Username" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" value="{username}" />
+									</div>
+									<div class="neos-controls">
+										<f:form.textfield id="password" type="password" placeholder="Password" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" additionalAttributes="{autofocus: 'autofocus'}" />
+									</div>
+								</f:then>
+								<f:else>
+									<div class="neos-controls">
+										<f:form.textfield id="username" type="text" placeholder="Username" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" />
+									</div>
+									<div class="neos-controls">
+										<f:form.textfield id="password" type="password" placeholder="Password" class="neos-span12" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" />
+									</div>
+								</f:else>
+							</f:if>
 						<div class="neos-actions">
 							<!-- Forgot password link will be here -->
 							<f:form.button type="submit" class="neos-span5 neos-pull-right neos-button neos-button-primary neos-button-warning neos-login-btn">
