@@ -37,3 +37,6 @@ TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
 
 TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+
+TYPO3\Neos\Domain\Service\NodeSearchServiceInterface:
+  className: TYPO3\Neos\Domain\Service\NodeSearchService
