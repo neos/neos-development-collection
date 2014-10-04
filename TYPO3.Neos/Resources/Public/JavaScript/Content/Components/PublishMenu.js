@@ -5,12 +5,13 @@ define(
 		'Shared/LocalStorage',
 		'./Button',
 		'Content/Model/PublishableNodes',
+		'./StorageManager',
 		'./PublishAllDialog',
 		'./DiscardAllDialog',
 		'Shared/Endpoint/NodeEndpoint',
 		'text!./PublishMenu.html'
 	],
-	function (Ember, $, LocalStorage, Button, PublishableNodes, PublishAllDialog, DiscardAllDialog, NodeEndpoint, template) {
+	function (Ember, $, LocalStorage, Button, PublishableNodes, StorageManager, PublishAllDialog, DiscardAllDialog, NodeEndpoint, template) {
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
@@ -49,20 +50,24 @@ define(
 				action: 'publishChanges',
 
 				_nodeEndpoint: NodeEndpoint,
+				_storageManager: StorageManager,
 
 				_connectionFailedBinding: '_nodeEndpoint._failedRequest',
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
+				_savePendingBinding: '_storageManager.savePending',
 
 				_noChangesBinding: 'controller.noChanges',
 				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
 				label: function() {
+					if (this.get('_savePending')) {
+						return 'Saving...';
+					}
 					if (this.get('autoPublish')) {
 						return 'Auto-Publish';
-					} else {
-						return this.get('_noChanges') ? 'Published' : 'Publish' + ' ('  + this.get('_numberOfChanges') + ')';
 					}
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges'),
+					return this.get('_noChanges') ? 'Published' : 'Publish' + ' ('  + this.get('_numberOfChanges') + ')';
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending'),
 
 				title: function() {
 					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
@@ -91,8 +96,8 @@ define(
 				}.observes('autoPublish').on('init'),
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning');
-				}.property('_noChanges', 'autoPublish', '_saveRunning'),
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending');
+				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending'),
 
 				_hasChanges: function() {
 					return !this.get('_noChanges') && !this.get('autoPublish');
