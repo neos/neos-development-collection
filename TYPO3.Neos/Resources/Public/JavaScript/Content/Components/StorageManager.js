@@ -8,6 +8,16 @@ function(Ember, $) {
 		savePending: false,
 		changes: null,
 
+		init: function() {
+			var that = this;
+			window.addEventListener('beforeunload', function(e) {
+				if (that.get('savePending')) {
+					e.preventDefault();
+					e.returnValue = 'Some changes have not yet been saved.';
+				}
+			});
+		},
+
 		start: function() {
 			var that = this;
 			setInterval(function() {
