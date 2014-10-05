@@ -17,18 +17,22 @@ define(
 			// array of allowed node type names, configurable via editorOptions
 			nodeTypes: ['TYPO3.Neos:Document'],
 
+			// Minimum amount of characters to trigger search
+			threshold: 2,
+
 			didInsertElement: function() {
 				var that = this,
 					currentQueryTimer = null;
 
 				this.$().select2({
-					minimumInputLength: 1,
-					maximumSelectionSize: 1,
 					multiple: true,
+					maximumSelectionSize: 1,
+					minimumInputLength: that.get('threshold'),
 					placeholder: this.get('placeholder'),
 					formatResult: function(item) {
 						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+					query: function(query) {
 
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');

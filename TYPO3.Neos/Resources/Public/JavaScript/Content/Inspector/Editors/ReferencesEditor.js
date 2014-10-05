@@ -18,13 +18,16 @@ define(
 			// array of allowed node type names, configurable via editorOptions
 			nodeTypes: ['TYPO3.Neos:Document'],
 
+			// Minimum amount of characters to trigger search
+			threshold: 2,
+
 			didInsertElement: function() {
 				var that = this;
 
 				var currentQueryTimer = null;
 				this.$().select2({
 					multiple: true,
-					minimumInputLength: 3,
+					minimumInputLength: that.get('threshold'),
 					placeholder: this.get('placeholder'),
 					formatResult: function(item) {
 						var $itemContent = $('<span><b>' + item.text + '</b></span>');
@@ -49,7 +52,7 @@ define(
 
 						return $itemContent.get(0).outerHTML;
 					},
-					query: function (query) {
+					query: function(query) {
 						if (currentQueryTimer) {
 							window.clearTimeout(currentQueryTimer);
 						}
