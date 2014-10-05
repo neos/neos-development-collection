@@ -10673,6 +10673,63 @@
   font-weight: 400;
   font-size: 14px;
 }
+.neos .neos-login-dialog .neos-modal {
+  width: 400px;
+  top: 240px;
+  margin: 0px 0px 0px -160px;
+}
+.neos .neos-login-dialog input[type="text"],
+.neos .neos-login-dialog input[type="password"] {
+  width: 100%;
+  min-width: 288px;
+  height: 40px;
+  border: 2px solid #323232;
+  background-color: #323232;
+  color: white;
+  font-size: 14px;
+  padding: 0 14px;
+  margin: 0 0 15px 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.neos .neos-login-dialog input[type="text"]:focus,
+.neos .neos-login-dialog input[type="password"]:focus {
+  background-color: #fff;
+  border: 2px solid #fff;
+  color: #252525;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.neos .neos-login-dialog input[type="text"]:-webkit-autofill,
+.neos .neos-login-dialog input[type="password"]:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 50px #323232 inset;
+  -webkit-text-fill-color: white;
+}
+.neos .neos-login-dialog input[type="text"]:-webkit-autofill:focus,
+.neos .neos-login-dialog input[type="password"]:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 50px #fff inset;
+  -webkit-text-fill-color: #252525;
+}
+.neos .neos-login-dialog .neos-modal-body {
+  padding: 16px;
+}
+.neos .neos-login-dialog .neos-button {
+  width: 100%;
+}
 .neos .page-navigation ul {
   border-top: 1px solid #3f3f3f;
   text-align: center;
