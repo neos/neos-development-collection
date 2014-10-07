@@ -55,6 +55,8 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$mockControllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', FALSE);
 
+		$mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context', array(), array(), '', FALSE);
+
 		$mockTypoScriptService = $this->getMock('TYPO3\Neos\Domain\Service\TypoScriptService');
 		$mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($mockRuntime));
 
@@ -62,6 +64,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$view->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($mockContextualizedNode));
 
 		$this->inject($view, 'controllerContext', $mockControllerContext);
+		$this->inject($view, 'securityContext', $mockSecurityContext);
 		$this->inject($view, 'typoScriptService', $mockTypoScriptService);
 
 		$view->_set('variables', array('value' => $mockContextualizedNode));
