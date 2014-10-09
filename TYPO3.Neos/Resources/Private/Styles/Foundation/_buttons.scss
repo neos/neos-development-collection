@@ -53,7 +53,7 @@ button,
 	// Focus state for keyboard and accessibility
 	&:focus {
 		@include tab-focus();
-		outline: none;
+		outline: 1px dotted $blue;
 	}
 
 	// Disabled state

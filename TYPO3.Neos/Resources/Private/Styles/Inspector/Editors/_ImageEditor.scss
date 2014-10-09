@@ -9,6 +9,11 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 		height: $wideMargin;
 		line-height: $wideMargin;
 		font-size: 13px;
+
+		&:focus {
+			height: $wideMargin - 2;
+			line-height: $wideMargin - 4;
+		}
 	}
 
 	.neos-inspector-image-thumbnail {

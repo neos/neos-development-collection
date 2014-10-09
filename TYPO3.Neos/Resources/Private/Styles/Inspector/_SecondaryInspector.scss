@@ -47,6 +47,79 @@
 	}
 }
 
-.neos-secondary-inspector-image-crop .jcrop-holder {
-	margin: $unit auto;
+.neos-secondary-inspector-image-crop {
+	.jcrop-holder {
+		margin: $defaultMargin auto;
+	}
+
+	.neos-image-editor-crop-aspect-ratio {
+		margin: $unit auto 0;
+		width: 600px;
+
+		> span {
+			line-height: $unit;
+			margin-right: $relatedMargin;
+			width: 92px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			i {
+				vertical-align: baseline;
+			}
+		}
+
+		> input {
+			text-align: center;
+
+			+ input {
+				margin-left: $tightMargin;
+			}
+		}
+
+		> span,
+		> input,
+		> button {
+			float: left;
+		}
+
+		button {
+			margin-left: $tightMargin;
+			margin-right: $tightMargin;
+
+			~ button {
+				margin-left: $defaultMargin;
+				margin-right: 0;
+			}
+		}
+
+		.neos-select2-container {
+			float: left;
+			width: 270px;
+			margin-right: $defaultMargin;
+		}
+	}
+
+	 input[type="number"] {
+		width: $unit * 2;
+		height: $unit;
+		border: 2px solid $grayMedium;
+		background-color: $grayMedium;
+		color: $textOnGray;
+		font-size: 14px;
+		padding: 0 ($defaultMargin - 2px);
+		margin: 0;
+		@include border-radius(0);
+		@include box-sizing(border-box);
+		@include box-shadow(none);
+		@include transition(none);
+		@include font;
+
+		&:focus {
+			background-color: #fff;
+			border: 2px solid #fff;
+			color: $textOnWhite;
+			@include box-shadow(none);
+		}
+	}
 }

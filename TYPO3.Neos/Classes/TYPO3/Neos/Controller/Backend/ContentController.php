@@ -98,7 +98,7 @@ class ContentController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return array
 	 */
 	protected function getImageProperties(Image $image) {
-		$thumbnail = $image->getThumbnail(500, 500);
+		$thumbnail = $image->getThumbnail(600, 600);
 		$imageProperties = array(
 			'imageUuid' => $this->persistenceManager->getIdentifierByObject($image),
 			'originalImageResourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($image->getResource()),
