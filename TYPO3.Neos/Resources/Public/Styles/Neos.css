@@ -3397,7 +3397,7 @@
   outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
-  outline: none;
+  outline: 1px dotted #00b5ff;
 }
 .neos button.neos-disabled, .neos button[disabled],
 .neos .neos-button.neos-disabled,
@@ -5576,6 +5576,10 @@
   line-height: 32px;
   font-size: 13px;
 }
+.neos #neos-inspector .neos-inspector-image .neos-button:focus {
+  height: 30px;
+  line-height: 28px;
+}
 .neos #neos-inspector .neos-inspector-image .neos-inspector-image-thumbnail {
   position: relative;
   border: 1px dashed #323232;
@@ -6958,7 +6962,79 @@
   height: 100%;
 }
 .neos .neos-secondary-inspector-image-crop .jcrop-holder {
-  margin: 40px auto;
+  margin: 16px auto;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio {
+  margin: 40px auto 0;
+  width: 600px;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > span {
+  line-height: 40px;
+  margin-right: 8px;
+  width: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > span i {
+  vertical-align: baseline;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > input {
+  text-align: center;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > input + input {
+  margin-left: 4px;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > span,
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > input,
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio > button {
+  float: left;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio button {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio button ~ button {
+  margin-left: 16px;
+  margin-right: 0;
+}
+.neos .neos-secondary-inspector-image-crop .neos-image-editor-crop-aspect-ratio .neos-select2-container {
+  float: left;
+  width: 270px;
+  margin-right: 16px;
+}
+.neos .neos-secondary-inspector-image-crop input[type="number"] {
+  width: 80px;
+  height: 40px;
+  border: 2px solid #323232;
+  background-color: #323232;
+  color: #fff;
+  font-size: 14px;
+  padding: 0 14px;
+  margin: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.neos .neos-secondary-inspector-image-crop input[type="number"]:focus {
+  background-color: #fff;
+  border: 2px solid #fff;
+  color: #252525;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 .neos #neos-top-bar {
   position: fixed;
@@ -12040,6 +12116,9 @@ disabled look for disabled choices in the results dropdown
   -webkit-box-shadow: 1px 2px 5px #222;
   -moz-box-shadow: 1px 2px 5px #222;
   box-shadow: 1px 2px 5px #222;
+}
+.neos-select2-drop.neos-select2-large .neos-select2-results {
+  max-height: 430px;
 }
 .neos-select2-drop .neos-select2-input {
   min-height: 40px;

@@ -4,7 +4,7 @@ define(
 ],
 function(Ember) {
 	Ember.TextSupport.reopen({
-		attributeBindings: ['name', 'required', 'pattern', 'step', 'min', 'max']
+		attributeBindings: ['placeholder', 'disabled', 'maxlength', 'tabindex', 'readonly', 'autofocus', 'form', 'selectionDirection', 'spellcheck', 'required', 'title', 'autocapitalize', 'autocorrect']
 	});
 
 	return Ember.TextField.extend({
