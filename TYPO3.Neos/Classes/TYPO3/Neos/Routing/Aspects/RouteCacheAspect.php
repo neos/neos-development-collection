@@ -38,7 +38,7 @@ class RouteCacheAspect {
 	 */
 	public function addCurrentNodeIdentifier(JoinPointInterface $joinPoint) {
 		$values = $joinPoint->getMethodArgument('values');
-		if (!isset($values['node'])) {
+		if (!isset($values['node']) || strpos($values['node'], '@') === FALSE) {
 			return;
 		}
 		list($nodePath, $contextArguments) = explode('@', $values['node']);
