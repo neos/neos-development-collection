@@ -16,8 +16,6 @@ use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**
@@ -126,16 +124,16 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function viewHelperRendersUriViaGivenNodeObject() {
 		$targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
 
-		$this->assertSame('<a href="/home.html">' . $targetNode->getLabel() . '</a>', $this->viewHelper->render($targetNode));
+		$this->assertSame('<a href="/en/home.html">' . $targetNode->getLabel() . '</a>', $this->viewHelper->render($targetNode));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRendersUriViaAbsoluteNodePathString() {
-		$this->assertSame('<a href="/home.html">Home</a>', $this->viewHelper->render('/sites/example/home'));
-		$this->assertSame('<a href="/home/about-us.html">About Us Test</a>', $this->viewHelper->render('/sites/example/home/about-us'));
-		$this->assertSame('<a href="/home/about-us/mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission'));
+		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home'));
+		$this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $this->viewHelper->render('/sites/example/home/about-us'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission'));
 	}
 
 	/**
@@ -143,9 +141,9 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
 		$this->assertSame('<a href="/">example.org</a>', $this->viewHelper->render('~'));
-		$this->assertSame('<a href="/home.html">Home</a>', $this->viewHelper->render('~/home'));
-		$this->assertSame('<a href="/home/about-us.html">About Us Test</a>', $this->viewHelper->render('~/home/about-us'));
-		$this->assertSame('<a href="/home/about-us/mission.html">Our mission</a>', $this->viewHelper->render('~/home/about-us/mission'));
+		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('~/home'));
+		$this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $this->viewHelper->render('~/home/about-us'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('~/home/about-us/mission'));
 	}
 
 	/**
@@ -153,10 +151,10 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewHelperRendersUriViaStringPointingToSubNodes() {
 		$this->tsRuntime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
-		$this->assertSame('<a href="/home/about-us/history.html">History</a>', $this->viewHelper->render('../history'));
+		$this->assertSame('<a href="/en/home/about-us/history.html">History</a>', $this->viewHelper->render('../history'));
 		$this->tsRuntime->popContext();
-		$this->assertSame('<a href="/home/about-us/mission.html">Our mission</a>', $this->viewHelper->render('about-us/mission'));
-		$this->assertSame('<a href="/home/about-us/mission.html">Our mission</a>', $this->viewHelper->render('./about-us/mission'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('about-us/mission'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('./about-us/mission'));
 	}
 
 	/**
@@ -166,30 +164,30 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaContextNodePathString() {
-		$this->assertSame('<a href="/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));
-		$this->assertSame('<a href="/home/about-us.html">About Us Test</a>', $this->viewHelper->render('/sites/example/home/about-us@live'));
-		$this->assertSame('<a href="/home/about-us/mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $this->viewHelper->render('/sites/example/home/about-us@live'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsAbsoluteParameter() {
-		$this->assertSame('<a href="http://neos.test/home.html">Home</a>', $this->viewHelper->render(NULL, NULL, TRUE));
+		$this->assertSame('<a href="http://neos.test/en/home.html">Home</a>', $this->viewHelper->render(NULL, NULL, TRUE));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsBaseNodeNameParameter() {
-		$this->assertSame('<a href="/home/about-us/mission.html">Our mission</a>', $this->viewHelper->render(NULL, NULL, FALSE, array(), '', FALSE, array(), 'alternativeDocumentNode'));
+		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render(NULL, NULL, FALSE, array(), '', FALSE, array(), 'alternativeDocumentNode'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsArgumentsParameter() {
-		$this->assertSame('<a href="/home.html?foo=bar">Home</a>', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
+		$this->assertSame('<a href="/en/home.html?foo=bar">Home</a>', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
 	}
 
 	/**
@@ -201,7 +199,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->viewHelper->setRenderChildrenClosure(function() use ($templateVariableContainer) {
 			return NULL;
 		});
-		$this->assertSame('<a href="/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));
 	}
 
 	/**
@@ -213,7 +211,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$this->viewHelper->setRenderChildrenClosure(function() use ($templateVariableContainer) {
 			return $templateVariableContainer->get('alternativeLinkedNode')->getLabel();
 		});
-		$this->assertSame('<a href="/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array(), '', FALSE, array(), 'documentNode', 'alternativeLinkedNode'));
+		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array(), '', FALSE, array(), 'documentNode', 'alternativeLinkedNode'));
 	}
 
 }

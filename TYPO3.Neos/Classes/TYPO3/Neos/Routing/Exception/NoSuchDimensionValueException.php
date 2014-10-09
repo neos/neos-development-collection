@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Routing\Exception;
  *                                                                        */
 
 /**
- * A "no such language" exception
+ * A "no such dimension value" exception
  */
-class NoSuchLanguageException extends \TYPO3\Neos\Routing\Exception {
+class NoSuchDimensionValueException extends \TYPO3\Neos\Routing\Exception {
 
 	/**
 	 * @var integer

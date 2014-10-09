@@ -16,14 +16,13 @@ use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Functional test for the NodeViewHelper
  */
-class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodeViewHelperTest extends FunctionalTestCase {
 
 	protected $testableSecurityEnabled = TRUE;
 
@@ -127,9 +126,9 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaAbsoluteNodePathString() {
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission'));
+		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home'));
+		$this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission'));
 	}
 
 	/**
@@ -137,9 +136,9 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
 		$this->assertOutputLinkValid('/', $this->viewHelper->render('~'));
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('~/home'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('~/home/about-us'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('~/home/about-us/mission'));
+		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('~/home'));
+		$this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('~/home/about-us'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('~/home/about-us/mission'));
 	}
 
 	/**
@@ -147,10 +146,10 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewHelperRendersUriViaStringPointingToSubNodes() {
 		$this->tsRuntime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
-		$this->assertOutputLinkValid('home/about-us/history.html', $this->viewHelper->render('../history'));
+		$this->assertOutputLinkValid('en/home/about-us/history.html', $this->viewHelper->render('../history'));
 		$this->tsRuntime->popContext();
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('about-us/mission'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('./about-us/mission'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('about-us/mission'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('./about-us/mission'));
 	}
 
 	/**
@@ -160,30 +159,30 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaContextNodePathString() {
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home@live'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsAbsoluteParameter() {
-		$this->assertOutputLinkValid('http://neos.test/home.html', $this->viewHelper->render(NULL, NULL, TRUE));
+		$this->assertOutputLinkValid('http://neos.test/en/home.html', $this->viewHelper->render(NULL, NULL, TRUE));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsBaseNodeNameParameter() {
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render(NULL, NULL, FALSE, array(), '', FALSE, array(), 'alternativeDocumentNode'));
+		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render(NULL, NULL, FALSE, array(), '', FALSE, array(), 'alternativeDocumentNode'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsArgumentsParameter() {
-		$this->assertOutputLinkValid('home.html?foo=bar', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
+		$this->assertOutputLinkValid('en/home.html?foo=bar', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
 	}
 
 	/**

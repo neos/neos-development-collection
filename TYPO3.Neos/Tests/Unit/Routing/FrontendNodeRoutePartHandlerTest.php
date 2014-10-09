@@ -13,21 +13,26 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
- * Testcase for the Content Routepart Handler
+ * Test case for the frontend node route part handler
+ *
+ * This test case still falls into the category of unit tests but makes use of some build methods to create rather
+ * extensive set of mock objects which mocks the Content Context, the Site and a node structure as needed by the
+ * individual tests. The mocked nodes simulate most of the common functions, but they are note and are not intended to
+ * be a complete and realistic replacement for real nodes.
+ *
+ * Some of the mock object (context and node specifically) use public properties (!) which can be modified by the
+ * individual tests to set which child nodes should be available, what the current site node is etc. Check carefully
+ * which of these public properties exist and how they are used because they are introduced dynamically (!), like in
+ * good old PHP 3 times ...
  */
 class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
-
-	/**
-	 * @var FrontendNodeRoutePartHandler
-	 */
-	protected $frontendNodeRoutePartHandler;
 
 	/**
 	 * @var ContextFactoryInterface
@@ -45,186 +50,323 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	protected $mockSiteRepository;
 
 	/**
-	 * @var ContentContext
+	 * @var ConfigurationContentDimensionPresetSource
 	 */
-	protected $mockContext;
+	protected $contentDimensionPresetSource;
 
 	/**
-	 * @var NodeInterface
+	 * @var FrontendNodeRoutePartHandler
 	 */
-	protected $mockNode;
+	protected $routePartHandler;
 
 	/**
-	 * @var NodeInterface
+	 * Setup the most commonly used mocks and a real FrontendRoutePartHandler. The mock objects created by this function
+	 * will not be sufficient for most tests, but they are the lowest common denominator.
+	 *
+	 * @return void
 	 */
-	protected $mockSiteNode;
+	protected function setUp() {
+		$this->routePartHandler = new FrontendNodeRoutePartHandler();
+		$this->routePartHandler->setName('node');
 
-	/**
-	 * @var NodeType
-	 */
-	protected $mockNodeType;
-
-	public function setUp() {
-		$this->frontendNodeRoutePartHandler = $this->getAccessibleMock('TYPO3\Neos\Routing\FrontendNodeRoutePartHandler', array('dummy'));
-
-		$this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactory')->setMethods(array('create'))->getMock();
-		$this->inject($this->frontendNodeRoutePartHandler, 'contextFactory', $this->mockContextFactory);
+		// The mockContextFactory is configured to return the last mock context which has been built with buildMockContext():
+		$mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactory', array('create'));
+		$mockContextFactory->mockContext = NULL;
+		$mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function($contextProperties) use ($mockContextFactory) {
+			if (isset($contextProperties['currentSite'])) {
+				$mockContextFactory->mockContext->mockSite = $contextProperties['currentSite'];
+			}
+			if (isset($contextProperties['currentDomain'])) {
+				$mockContextFactory->mockContext->mockDomain = $contextProperties['currentDomain'];
+			}
+			if (isset($contextProperties['dimensions'])) {
+				$mockContextFactory->mockContext->mockDimensions = $contextProperties['dimensions'];
+			}
+			if (isset($contextProperties['targetDimensions'])) {
+				$mockContextFactory->mockContext->mockTargetDimensions = $contextProperties['targetDimensions'];
+			}
+			return $mockContextFactory->mockContext;
+		}));
+		$this->mockContextFactory = $mockContextFactory;
+		$this->inject($this->routePartHandler, 'contextFactory', $this->mockContextFactory);
 
 		$this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
-		$this->inject($this->frontendNodeRoutePartHandler, 'domainRepository', $this->mockDomainRepository);
+		$this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);
 
 		$this->mockSiteRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\SiteRepository')->disableOriginalConstructor()->getMock();
 		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
 		$this->mockSiteRepository->expects($this->any())->method('findOnline')->will($this->returnValue($mockQueryResult));
-		$this->inject($this->frontendNodeRoutePartHandler, 'siteRepository', $this->mockSiteRepository);
+		$this->inject($this->routePartHandler, 'siteRepository', $this->mockSiteRepository);
 
-		$this->mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
-
-		$this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-		$this->mockSiteNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-
-		$this->mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
-		$this->mockNodeType->expects($this->any())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(TRUE));
-		$this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
-		$this->mockSiteNode->expects($this->any())->method('getNodeType')->will($this->returnValue($this->mockNodeType));
+		$this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
+		$this->contentDimensionPresetSource->setConfiguration(array());
+		$this->inject($this->routePartHandler, 'contentDimensionPresetSource', $this->contentDimensionPresetSource);
 	}
 
 	/**
+	 * Data provider for
+	 *
+	 *    resolveConsidersDimensionValuesPassedViaTheContextPathForRenderingTheUrl()
+	 *    matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext()
+	 *
+	 * @return array
+	 */
+	public function contextPathsAndRequestPathsDataProvider() {
+		return array(
+			array('/sites/examplecom@live;language=en_US', ''),
+			array('/sites/examplecom@user-robert;language=de_DE,en_US', 'de_global'),
+			array('/sites/examplecom/features@user-robert;language=de_DE,en_US', 'de_global/features'),
+			array('/sites/examplecom/features@user-robert;language=en_US', 'en_global/features'),
+			array('/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', 'de_global/features'),
+			array('/sites/examplecom/features@user-robert;country=de', 'en_de/features')
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function matchReturnsTrueIfTheNodeExists() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$expectedContextPath = '/sites/examplecom/home';
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+		$mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
+
+		$routePath = 'home';
+		$this->assertTrue($this->routePartHandler->match($routePath));
+		$this->assertSame($expectedContextPath, $this->routePartHandler->getValue());
+	}
+
+	/**
+	 * If convertRequestPathToNode() throws any exception and the request path is '' a "missing homepage" message should appear.
+	 *
 	 * @test
 	 * @expectedException \TYPO3\Neos\Routing\Exception\NoHomepageException
 	 */
-	public function matchValueThrowsAnExceptionIfNoHomepageExists() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-		$this->frontendNodeRoutePartHandler->_call('matchValue', '');
+	public function matchThrowsAnExceptionIfNoHomepageExists() {
+		$this->buildMockContext(array('workspaceName' => 'live'));
+		$routePath = '';
+		$this->routePartHandler->match($routePath);
+	}
+	/**
+	 * @test
+	 */
+	public function matchReturnsFalseIfASiteExistsButNoSiteNodeExists() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+
+		$routePath = 'home';
+		$this->assertFalse($this->routePartHandler->match($routePath));
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueCreatesContextForLiveWorkspaceByDefault() {
-		$self = $this;
-		$mockContext = $this->mockContext;
-		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($self, $mockContext) {
-			$self->assertSame('live', $contextProperties['workspaceName']);
+	public function matchReturnsFalseIfTheNodeCouldNotBeFound() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+		$routePath = 'home/about-us';
+		$this->assertFalse($this->routePartHandler->match($routePath));
+	}
+
+	/**
+	 * If a node matches the given request path but the context contains now Workspace, match() must return FALSE
+	 *
+	 * @test
+	 */
+	public function matchReturnsFalseIfTheWorkspaceCouldNotBeFound() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+		// match() should only return FALSE because we remove the workspace, without the following line it returns TRUE:
+		$mockContext->mockWorkspace = NULL;
+
+		$routePath = 'home';
+		$this->assertFalse($this->routePartHandler->match($routePath));
+	}
+
+	/**
+	 * If a node matches the given request path, the node's context path is stored in $this->value and TRUE is returned.
+	 *
+	 * @test
+	 */
+	public function valueContainsContextPathOfFoundNode() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'features';
+		$mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features@user-robert'));
+
+		$routePath = 'features';
+		$this->assertTrue($this->routePartHandler->match($routePath));
+		$this->assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
+	}
+
+	/**
+	 * If the route part handler has been configured to only match on a site node (via the "onlyMatchSiteNodes" option),
+	 * it returns FALSE if no node matched or if the matched node is not a site node.
+	 *
+	 * This case is needed in order allow routes matching "/" without a suffix for a website's homepage even if "defaultUriSuffix"
+	 * is empty.
+	 *
+	 * @test
+	 */
+	public function matchReturnsFalseOnNotMatchingSiteNodes() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'features';
+
+		$routePath = 'features';
+		$this->assertTrue($this->routePartHandler->match($routePath));
+		$routePath = '';
+		$this->assertTrue($this->routePartHandler->match($routePath));
+
+		$this->routePartHandler->setOptions(array('onlyMatchSiteNodes' => TRUE));
+
+		$routePath = 'features';
+		$this->assertFalse($this->routePartHandler->match($routePath));
+		$routePath = '';
+		$this->assertTrue($this->routePartHandler->match($routePath));
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function matchCreatesContextForLiveWorkspaceByDefault() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+		$that = $this;
+		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($that, $mockContext) {
+			$that->assertSame('live', $contextProperties['workspaceName']);
 			return $mockContext;
 		}));
-		$this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path');
+
+		$routePath = 'home';
+		$this->routePartHandler->match($routePath);
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath() {
-		$self = $this;
-		$mockContext = $this->mockContext;
-		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($self, $mockContext) {
-			$self->assertSame('some-workspace', $contextProperties['workspaceName']);
+	public function matchCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+		$that = $this;
+		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($that, $mockContext) {
+			$that->assertSame('user-john', $contextProperties['workspaceName']);
 			return $mockContext;
 		}));
-		$this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path@some-workspace');
+
+		$routePath = 'home@user-john';
+		$this->routePartHandler->match($routePath);
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueCreatesContextForCurrentDomainIfOneIsFound() {
-		$mockDomain = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
-
+	public function matchCreatesContextForCurrentDomainIfOneIsFound() {
 		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$mockDomain->expects($this->atLeastOnce())->method('getSite')->will($this->returnValue($mockSite));
+
+		$mockDomain = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
+		$mockDomain->expects($this->any())->method('getSite')->will($this->returnValue($mockSite));
 
 		$this->mockDomainRepository->expects($this->atLeastOnce())->method('findOneByActiveRequest')->will($this->returnValue($mockDomain));
 
-		$self = $this;
-		$mockContext = $this->mockContext;
-		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($self, $mockSite, $mockDomain, $mockContext) {
-			$self->assertSame($mockDomain, $contextProperties['currentDomain']);
-			$self->assertSame($mockSite, $contextProperties['currentSite']);
-			return $mockContext;
-		}));
-		$this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path');
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $mockSite;
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$this->assertNull($mockContext->getCurrentDomain());
+
+		$routePath = '';
+		$this->routePartHandler->match($routePath);
+
+		$this->assertSame($mockDomain, $mockContext->getCurrentDomain());
 	}
 
 	/**
 	 * @test
+	 * @dataProvider contextPathsAndRequestPathsDataProvider
 	 */
-	public function matchValueReturnsFalseIfNoWorkspaceCanBeResolved() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-		$this->mockContext->expects($this->atLeastOnce())->method('getWorkspace')->with(FALSE)->will($this->returnValue(NULL));
+	public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath) {
+		$this->contentDimensionPresetSource->setConfiguration(array(
+			'language' => array(
+				'default' => 'en_US',
+				'defaultPreset' => 'en_US',
+				'presets' => array(
+					'en_US' => array(
+						'label' => 'English (US)',
+						'values' => array('en_US'),
+						'uriSegment' => 'en'
+					),
+					'de_DE' => array(
+						'label' => 'Deutsch',
+						'values' => array('de_DE', 'en_US'),
+						'uriSegment' => 'de'
+					)
+				)
+			),
+			'country' => array(
+				'default' => 'global',
+				'defaultPreset' => 'global',
+				'presets' => array(
+					'global' => array(
+						'label' => 'Global',
+						'values' => array('global'),
+						'uriSegment' => 'global'
+					),
+					'us' => array(
+						'label' => 'USA',
+						'values' => array('us'),
+						'uriSegment' => 'us'
+					),
+					'de' => array(
+						'label' => 'Deutschland',
+						'values' => array('de'),
+						'uriSegment' => 'de'
+					)
+				)
+			)
+		));
 
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
-	}
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-	/**
-	 * @test
-	 */
-	public function matchValueReturnsFalseIfNoSiteCanBeResolved() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue(NULL));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function matchValueReturnsFalseIfNoSiteNodeCanBeResolved() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue(NULL));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function matchValueReturnsFalseIfNodeCantBeFetchedFromSiteNode() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
-
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue(NULL));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function matchValueReturnsFalseIfNodeIsNoDocument() {
-		$mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-
-		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
-		$mockNodeType->expects($this->any())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(FALSE));
-		$mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
-
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
-
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue($mockNode));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
+		$this->assertTrue($this->routePartHandler->match($requestPath));
+		$value = $this->routePartHandler->getValue();
 	}
 
 	/**
@@ -232,327 +374,466 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 	 *
 	 * @test
 	 */
-	public function matchValueReturnsFalseIfContextPathIsInvalid() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+	public function matchReturnsFalseIfContextPathIsInvalid() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('not-live'));
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
-
-		$this->mockSiteNode->expects($this->any())->method('getNode')->with('some/path')->will($this->returnValue($this->mockNode));
-		$this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->mockNode->expects($this->any())->method('getContextPath')->will($this->returnValue('some/path@not-live'));
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path@not-live.html'));
+		$routePath = 'home@user-robert.html';
+		$this->assertFalse($this->routePartHandler->match($routePath));
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueSetsValueToTheNodeContextPathAndReturnsTrueIfNodePathCouldBeResolved() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+	public function matchStripsOffSuffixIfSplitStringIsSpecified() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
+		$this->routePartHandler->setOptions(array('splitString' => '.'));
 
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue($this->mockNode));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('some/context/path'));
-		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
-		$this->assertSame('some/context/path', $this->frontendNodeRoutePartHandler->getValue());
+		$routePath = 'home@user-robert.html';
+		$this->assertFalse($this->routePartHandler->match($routePath));
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueReturnsFalseIfOnlyMatchSiteNodesOptionIsSetAndMatchingNodeIsNoSiteNode() {
-		$this->frontendNodeRoutePartHandler->setOptions(array('onlyMatchSiteNodes' => TRUE));
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+	public function resolveSetsValueToContextPathIfPassedNodeCouldBeResolved() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'user-robert'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+		$mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/home@user-robert'));
 
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
+		$mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184');
+		$mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
+		$mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
 
-		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue($this->mockNode));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('matchValue', 'some/path'));
+		$routeValues = array('node' => $mockSubSubNode);
+		$this->assertTrue($this->routePartHandler->resolve($routeValues));
+		$this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
 	}
 
 	/**
 	 * @test
 	 */
-	public function matchValueReturnsTrueIfOnlyMatchSiteNodesOptionIsSetAndMatchingNodeIsASiteNode() {
-		$this->frontendNodeRoutePartHandler->setOptions(array('onlyMatchSiteNodes' => TRUE));
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+	public function resolveReturnsFalseIfGivenRouteValueIsNeitherStringNorNode() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->any())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSite')->will($this->returnValue($mockSite));
+		$routeValues = array('node' => NULL);
+		$this->assertFalse($this->routePartHandler->resolve($routeValues));
 
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue(''));
-		$this->mockSiteNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-
-		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('matchValue', '@some-context'));
-	}
-
-	/**
-	 * Data provider for findValueToMatchRespectsSplitString() see below
-	 */
-	public function findValueToMatchRespectsSplitStringDataProvider() {
-		return array(
-			array(
-				'requestPath' => 'homepage',
-				'splitString' => NULL,
-				'expectedResult' => 'homepage'
-			),
-			array(
-				'requestPath' => 'homepage.html',
-				'splitString' => NULL,
-				'expectedResult' => 'homepage.html'
-			),
-			array(
-				'requestPath' => 'homepage.html',
-				'splitString' => '.html',
-				'expectedResult' => 'homepage'
-			),
-			array(
-				'requestPath' => 'homepage/subpage',
-				'splitString' => NULL,
-				'expectedResult' => 'homepage/subpage'
-			),
-			array(
-				'requestPath' => 'homepage/subpage.html',
-				'splitString' => NULL,
-				'expectedResult' => 'homepage/subpage.html'
-			),
-			array(
-				'requestPath' => 'homepage/subpage.html',
-				'splitString' => '.html',
-				'expectedResult' => 'homepage/subpage'
-			),
-			array(
-				'requestPath' => 'homepage/subpage.rss.xml',
-				'splitString' => '.html',
-				'expectedResult' => 'homepage/subpage.rss.xml'
-			),
-			array(
-				'requestPath' => 'homepage/subpage.rss.xml',
-				'splitString' => '.rss.xml',
-				'expectedResult' => 'homepage/subpage'
-			),
-			array(
-				'requestPath' => 'homepage/subpage/suffix',
-				'splitString' => '/suffix',
-				'expectedResult' => 'homepage/subpage'
-			),
-		);
-	}
-
-	/**
-	 * @param string $requestPath
-	 * @param string $splitString
-	 * @param string $expectedResult
-	 * @test
-	 * @dataProvider findValueToMatchRespectsSplitStringDataProvider
-	 */
-	public function findValueToMatchRespectsSplitString($requestPath, $splitString, $expectedResult) {
-		if ($splitString !== NULL) {
-			$this->frontendNodeRoutePartHandler->setSplitString($splitString);
-		}
-
-		$actualResult = $this->frontendNodeRoutePartHandler->_call('findValueToMatch', $requestPath);
-		$this->assertSame($expectedResult, $actualResult);
+		$routeValues = array('node' => 42);
+		$this->assertFalse($this->routePartHandler->resolve($routeValues));
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolveValueReturnsFalseIfGivenValueIsNull() {
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', NULL));
-	}
+	public function resolveCreatesContextForLiveWorkspaceByDefault() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-	/**
-	 * @test
-	 */
-	public function resolveValueReturnsFalseIfGivenValueIsNumeric() {
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', 123));
-	}
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
 
-	/**
-	 * @test
-	 */
-	public function resolveValueCreatesContextForLiveWorkspaceIfGivenValueIsAStringWithoutWorkspaceToken() {
-		$self = $this;
-		$mockContext = $this->mockContext;
-		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($self, $mockContext) {
-			$self->assertSame('live', $contextProperties['workspaceName']);
+		// resolveValue() will use $contentContext to retrieve the resolved node:
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSubNode) {
+			return ($nodePath === '/sites/examplecom/home') ? $mockSubNode : NULL;
+		}));
+
+		$that = $this;
+		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($that, $mockContext) {
+			// The important assertion:
+			$that->assertSame('live', $contextProperties['workspaceName']);
 			return $mockContext;
 		}));
-		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path');
+
+		$routeValues = array('node' => '/sites/examplecom/home');
+		$this->assertTrue($this->routePartHandler->resolve($routeValues));
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolveValueCreatesContextForLiveWorkspaceIfGivenValueIsAStringWithWorkspaceToken() {
-		$self = $this;
-		$mockContext = $this->mockContext;
-		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($self, $mockContext) {
-			$self->assertSame('some-workspace', $contextProperties['workspaceName']);
+	public function resolveCreatesContextForTheWorkspaceMentionedInTheContextString() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'home';
+
+		// resolveValue() will use $contentContext to retrieve the resolved node:
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSubNode) {
+			return ($nodePath === '/sites/examplecom/home') ? $mockSubNode : NULL;
+		}));
+
+		$that = $this;
+		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($that, $mockContext) {
+			// The important assertion:
+			$that->assertSame('user-johndoe', $contextProperties['workspaceName']);
 			return $mockContext;
 		}));
-		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@some-workspace');
+
+		$routeValues = array('node' => '/sites/examplecom/home@user-johndoe');
+		$this->assertTrue($this->routePartHandler->resolve($routeValues));
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolveValueCreatesContextForCurrentDomainIfGivenValueIsAStringAndADomainIsFound() {
+	public function resolveCreatesContextForCurrentDomainIfGivenValueIsAStringAndADomainIsFound() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+		$mockContext->mockSiteNode = $mockSiteNode;
+
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSiteNode) {
+			return ($nodePath === '/sites/examplecom') ? $mockSiteNode : NULL;
+		}));
+
 		$mockDomain = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
-
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$mockDomain->expects($this->atLeastOnce())->method('getSite')->will($this->returnValue($mockSite));
-
 		$this->mockDomainRepository->expects($this->atLeastOnce())->method('findOneByActiveRequest')->will($this->returnValue($mockDomain));
 
-		$self = $this;
-		$mockContext = $this->mockContext;
-		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($self, $mockSite, $mockDomain, $mockContext) {
-			$self->assertSame($mockDomain, $contextProperties['currentDomain']);
-			$self->assertSame($mockSite, $contextProperties['currentSite']);
+		$that = $this;
+		$this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function($contextProperties) use ($that, $mockContext, $mockDomain) {
+			// The important assertion:
+			$that->assertSame($mockDomain, $contextProperties['currentDomain']);
 			return $mockContext;
 		}));
-		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path');
+
+		$routeValues = array('node' => '/sites/examplecom');
+		$this->assertTrue($this->routePartHandler->resolve($routeValues));
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolveValueReturnsFalseIfNoWorkspaceCanBeResolved() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-		$this->mockContext->expects($this->atLeastOnce())->method('getWorkspace')->with(FALSE)->will($this->returnValue(NULL));
+	public function resolveReturnsFalseIfWorkspaceMentionedInTheContextDoesNotExist() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+		$mockContext->mockSiteNode = $mockSiteNode;
 
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path'));
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSiteNode) {
+			return ($nodePath === '/sites/examplecom') ? $mockSiteNode : NULL;
+		}));
+
+		// resolve() should only return FALSE because we remove the workspace, without the following line it returns TRUE:
+		$mockContext->mockWorkspace = NULL;
+
+		$routeValues = array('node' => '/sites/examplecom@user-johndoe');
+		$this->assertFalse($this->routePartHandler->resolve($routeValues));
 	}
 
 	/**
 	 * @test
 	 */
-	public function resolveValueReturnsFalseIfNodeCantBeRetrievedFromContext() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
+	public function resolveReturnsFalseIfNodeMentionedInTheContextPathDoesNotExist() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+		$mockContext->mockSiteNode = $mockSiteNode;
+
+		$routeValues = array('node' => '/sites/examplecom/not-found');
+		$this->assertFalse($this->routePartHandler->resolve($routeValues));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveReturnsFalseIfNodeIsNoDocument() {
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		// The important bit: sub node is not a document but TYPO3.Neos:Content
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'some-content', 'TYPO3.Neos:Content');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'some-content';
+
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSubNode) {
+			return ($nodePath === '/sites/examplecom/some-content') ? $mockSubNode : NULL;
+		}));
+
+		$routeValues = array('node' => '/sites/examplecom/some-content');
+		$this->assertFalse($this->routePartHandler->resolve($routeValues));
+	}
+
+	/**
+	 * @test
+	 */
+	public function resolveReturnsFalseIfOnlyMatchSiteNodesOptionIsSetAndResolvedNodeIsNoSiteNode() {
+		$this->routePartHandler->setOptions(array('onlyMatchSiteNodes' => TRUE));
+
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+		$mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'features';
+
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSubNode) {
+			return ($nodePath === '/sites/examplecom/features') ? $mockSubNode : NULL;
+		}));
+
+		$routeValues = array('node' => '/sites/examplecom/features');
+		$this->assertFalse($this->routePartHandler->resolve($routeValues));
+	}
+
+	/**
+	 * @dataProvider contextPathsAndRequestPathsDataProvider
+	 * @test
+	 */
+	public function resolveConsidersDimensionValuesPassedViaTheContextPathForRenderingTheUrl($contextPath, $expectedUriPath) {
+		$this->contentDimensionPresetSource->setConfiguration(array(
+			'language' => array(
+				'default' => 'en_US',
+				'defaultPreset' => 'en_US',
+				'presets' => array(
+					'en_US' => array(
+						'label' => 'English (US)',
+						'values' => array('en_US'),
+						'uriSegment' => 'en'
+					),
+					'de_DE' => array(
+						'label' => 'Deutsch',
+						'values' => array('de_DE', 'en_US'),
+						'uriSegment' => 'de'
+					)
+				)
+			),
+			'country' => array(
+				'default' => 'global',
+				'defaultPreset' => 'global',
+				'presets' => array(
+					'global' => array(
+						'label' => 'Global',
+						'values' => array('global'),
+						'uriSegment' => 'global'
+					),
+					'us' => array(
+						'label' => 'USA',
+						'values' => array('us'),
+						'uriSegment' => 'us'
+					),
+					'de' => array(
+						'label' => 'Deutschland',
+						'values' => array('de'),
+						'uriSegment' => 'de'
+					)
+				)
+			)
+		));
+
+		$mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
+		$mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', FALSE);
+
+		$mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
+		$mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom'));
+		$mockContext->mockSiteNode = $mockSiteNode;
+
+		$mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
+		$mockSubNode->mockProperties['uriPathSegment'] = 'features';
+		$mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features'));
+
+		$mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function($nodePath) use ($mockSubNode, $mockSiteNode) {
+			switch ($nodePath) {
+				case '/sites/examplecom/features':
+					return $mockSubNode;
+				case '/sites/examplecom':
+					return $mockSiteNode;
+				default:
+					return NULL;
+			}
+		}));
+
+		$routeValues = array('node' => $contextPath);
+		$this->assertTrue($this->routePartHandler->resolve($routeValues));
+		$this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
+	}
+
+	/********************************************************************************************************************
+	 *
+	 *
+	 * HELPER METHODS
+	 *
+	 *
+	 ********************************************************************************************************************/
+
+	/**
+	 * Builds a mock ContentContext based on the given context properties and returns it.
+	 *
+	 * Note that the mockContextFactory is also configured (in setUp()) to return the mock context built by this method
+	 * NO MATTER IF THE CONTEXT PROPERTIES MATCH OR NOT! This is to keep mockery a bit simpler - enough for our purpose.
+	 *
+	 * Whenever we need to support scenarios where multiple contexts come into play, this method must be refactored.
+	 *
+	 * @param array $contextProperties The context properties, "workspaceName" is mandatory
+	 * @return ContentContext
+	 */
+	protected function buildMockContext(array $contextProperties) {
+		if (!isset($contextProperties['currentDateTime'])) {
+			$contextProperties['currentDateTime'] = new \DateTime;
+		}
 
 		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
+		$mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue($contextProperties['workspaceName']));
 
-		$this->mockContext->expects($this->atLeastOnce())->method('getNode')->with('some/path')->will($this->returnValue(NULL));
+		$mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
+		$mockContext->mockWorkspace = $mockWorkspace;
+		$mockContext->expects($this->any())->method('getWorkspace')->will($this->returnCallback(function() use ($mockContext) {
+			return $mockContext->mockWorkspace;
+		}));
 
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@context'));
+		$mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnCallback(function() use ($mockContext) {
+			return $mockContext->mockWorkspace->getName();
+		}));
+
+		$mockContext->mockDomain = NULL;
+		$mockContext->expects($this->any())->method('getCurrentDomain')->will($this->returnCallback(function() use ($mockContext) {
+			return $mockContext->mockDomain;
+		}));
+
+		$mockContext->mockSite = NULL;
+		$mockContext->expects($this->any())->method('getCurrentSite')->will($this->returnCallback(function() use ($mockContext) {
+			return $mockContext->mockSite;
+		}));
+
+		$mockContext->mockDimensions = array();
+		$mockContext->expects($this->any())->method('getDimensions')->will($this->returnCallback(function() use ($mockContext) {
+			return $mockContext->mockDimensions;
+		}));
+
+		$mockContext->mockTargetDimensions = array();
+		$mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnCallback(function() use ($mockContext) {
+			return $mockContext->mockTargetDimensions;
+		}));
+
+		$mockContext->expects($this->any())->method('getProperties')->will($this->returnCallback(function() use ($mockContext, $contextProperties) {
+			return array(
+				'workspaceName' => $contextProperties['workspaceName'],
+				'currentDateTime' => $contextProperties['currentDateTime'],
+				'dimensions' => $mockContext->getDimensions(),
+				'targetDimensions' => $mockContext->getTargetDimensions(),
+				'invisibleContentShown' => isset($contextProperties['invisibleContentShown']) ? $contextProperties['invisibleContentShown'] : FALSE,
+				'removedContentShown' => isset($contextProperties['removedContentShown']) ? $contextProperties['removedContentShown'] : FALSE,
+				'inaccessibleContentShown' => isset($contextProperties['inaccessibleContentShown']) ? $contextProperties['inaccessibleContentShown'] : FALSE,
+				'currentSite' => $mockContext->getCurrentSite(),
+				'currentDomain' => $mockContext->getCurrentDomain()
+			);
+		}));
+
+		$this->mockContextFactory->mockContext = $mockContext;
+
+		return $mockContext;
 	}
 
 	/**
-	 * @test
+	 * Builds a mock node which responds to most function calls like a real node. Your mileage may vary. Carefully read
+	 * what the mock can actually do before you use it in your own additional tests.
+	 *
+	 * @param ContentContext $mockContext
+	 * @param string $nodeName
+	 * @param string $nodeTypeName
+	 * @return \PHPUnit_Framework_MockObject_MockObject
 	 */
-	public function resolveValueReturnsFalseIfNodeIsNoDocument() {
-		$mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-
+	protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'TYPO3.Neos:Document') {
 		$mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
-		$mockNodeType->expects($this->any())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(FALSE));
+		$mockNodeType->expects($this->any())->method('isOfType')->will($this->returnCallback(function($expectedNodeTypeName) use ($nodeTypeName) {
+			return $expectedNodeTypeName === $nodeTypeName;
+		}));
+
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('site-node-uuid'));
+		$mockNode->expects($this->any())->method('getName')->will($this->returnValue($nodeName));
 		$mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
-		$mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
+		// Parent node is set by buildSubNode()
+		$mockNode->mockParentNode = NULL;
+		$mockNode->expects($this->any())->method('getParent')->will($this->returnCallback(function() use ($mockNode) {
+			return $mockNode->mockParentNode;
+		}));
 
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $mockNode));
+		$mockNode->mockChildNodes = array();
+		$mockNode->expects($this->any())->method('getChildNodes')->will($this->returnCallback(function($nodeTypeFilter) use ($mockNode) {
+			return $mockNode->mockChildNodes;
+		}));
+
+		$mockNode->expects($this->any())->method('getNode')->will($this->returnCallback(function($relativeNodePath) use ($mockNode) {
+			$foundNode = NULL;
+			foreach ($mockNode->mockChildNodes as $nodeName => $mockChildNode) {
+				if ($nodeName === $relativeNodePath) {
+					$foundNode = $mockChildNode;
+				}
+			}
+			return $foundNode;
+		}));
+
+		$mockNode->mockProperties = array();
+		$mockNode->expects($this->any())->method('getProperties')->will($this->returnCallback(function() use ($mockNode) {
+			return $mockNode->mockProperties;
+		}));
+
+		$mockNode->mockProperties = array();
+		$mockNode->expects($this->any())->method('getProperty')->will($this->returnCallback(function($propertyName) use ($mockNode) {
+			return isset($mockNode->mockProperties[$propertyName]) ? $mockNode->mockProperties[$propertyName] : NULL;
+		}));
+		$mockNode->expects($this->any())->method('hasProperty')->will($this->returnCallback(function($propertyName) use ($mockNode) {
+			return array_key_exists($propertyName, $mockNode->mockProperties);
+		}));
+
+		return $mockNode;
 	}
 
 	/**
-	 * @test
+	 * Creates a mock site node
+	 *
+	 * @param ContentContext $mockContext
+	 * @param string $nodePath
+	 * @return NodeInterface
 	 */
-	public function resolveValueReturnsFalseIfSpecifiedValueIsAContextPathAndTheWorkspaceCantBeRetrieved() {
-		$nodeIdentifier = '/sites/foo/bar/baz@user-test';
-
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-		$this->mockContext->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue(NULL));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $nodeIdentifier));
+	protected function buildSiteNode(ContentContext $mockContext, $nodePath) {
+		$nodeName = substr($nodePath, strrpos($nodePath, '/') + 1);
+		$mockSiteNode = $this->buildNode($mockContext, $nodeName);
+		$mockSiteNode->expects($this->any())->method('getPath')->will($this->returnValue($nodePath));
+		$mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
+		return $mockSiteNode;
 	}
 
 	/**
-	 * @test
+	 * Creates a mock sub node of the given parent node
+	 *
+	 * @param NodeInterface $mockParentNode
+	 * @param string $nodeName
+	 * @return NodeInterface
 	 */
-	public function resolveValueSetsValueToContextPathAndReturnsTrueIfSpecifiedValueIsAValidNode() {
-		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('the/site/root/the/context/path@some-workspace'));
-		$this->mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnValue('some-workspace'));
+	protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'TYPO3.Neos:Document') {
+		$mockNode = $this->buildNode($mockParentNode->getContext(), $nodeName, $nodeTypeName);
+		$mockNode->mockParentNode = $mockParentNode;
 
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root'));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('resolveValue', $this->mockNode));
-		$this->assertSame('the/context/path@some-workspace', $this->frontendNodeRoutePartHandler->getValue());
-	}
-
-	/**
-	 * @test
-	 */
-	public function resolveValueSetsValueToContextPathAndReturnsTrueIfSpecifiedValueIsAValidNodeContextPath() {
-		$this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($this->mockContext));
-
-		$this->mockNode->expects($this->atLeastOnce())->method('getContext')->will($this->returnValue($this->mockContext));
-		$this->mockNode->expects($this->atLeastOnce())->method('getContextPath')->will($this->returnValue('the/site/root/the/context/path@some-workspace'));
-		$this->mockContext->expects($this->any())->method('getWorkspaceName')->will($this->returnValue('some-workspace'));
-
-		$mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
-		$this->mockContext->expects($this->atLeastOnce())->method('getWorkspace')->with(FALSE)->will($this->returnValue($mockWorkspace));
-
-		$this->mockContext->expects($this->atLeastOnce())->method('getNode')->with('the/context/path')->will($this->returnValue($this->mockNode));
-		$this->mockSiteNode->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue('the/site/root'));
-		$this->mockContext->expects($this->atLeastOnce())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertTrue($this->frontendNodeRoutePartHandler->_call('resolveValue', 'the/context/path@some-workspace'));
-		$this->assertSame('the/context/path@some-workspace', $this->frontendNodeRoutePartHandler->getValue());
-	}
-
-	/**
-	 * @test
-	 */
-	public function resolveValueReturnsFalseIfOnlyMatchSiteNodesOptionIsSetAndResolvedNodeIsNoSiteNode() {
-		$this->frontendNodeRoutePartHandler->setOptions(array('onlyMatchSiteNodes' => TRUE));
-		$this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
-
-		$this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->mockSiteNode));
-
-		$this->assertFalse($this->frontendNodeRoutePartHandler->_call('resolveValue', $this->mockNode));
-	}
-
-	/**
-	 * @test
-	 */
-	public function resolveValueWithContextPathStringValueParsesDimensions() {
-		$this->mockContextFactory->expects($this->once())->method('create')->with($this->callback(function($contextProperties) {
-			$this->assertArrayHasKey('dimensions', $contextProperties);
-			$this->assertEquals(array('language' => array('de_DE', 'mul_ZZ')), $contextProperties['dimensions']);
-			return TRUE;
-		}))->will($this->returnValue($this->mockContext));
-
-		$this->frontendNodeRoutePartHandler->_call('resolveValue', 'some/path@some-workspace;language=de_DE,mul_ZZ');
+		$mockParentNode->mockChildNodes[$nodeName] = $mockNode;
+		$mockNode->expects($this->any())->method('getChildNodes')->will($this->returnCallback(function($nodeTypeFilter) use ($mockNode) {
+			return $mockNode->mockChildNodes;
+		}));
+		return $mockNode;
 	}
 
 }

@@ -10,6 +10,7 @@
 			<properties>
 				<title><![CDATA[<h1>Home</h1>]]></title>
 				<someSpecialProperty><![CDATA[<h1>SomeValue</h1>]]></someSpecialProperty>
+				<uriPathSegment>home</uriPathSegment>
 			</properties>
 			<node identifier="eab73e26-0dbf-8a2f-fcd7-a3cab1821e49" nodeName="teaser" type="TYPO3.Neos:ContentCollection">
 				<properties>
@@ -115,44 +116,53 @@
 			<node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us" type="TYPO3.Neos.NodeTypes:Page">
 				<properties>
 					<title><![CDATA[<h1>About Us</h1>]]></title>
+					<uriPathSegment>about-us</uriPathSegment>
 				</properties>
 				<node identifier="9abf48a7-b8a2-0896-7b42-754c23074a7b" nodeName="history" type="TYPO3.Neos.NodeTypes:Page">
 					<properties>
 						<title><![CDATA[<h1>History</h1>]]></title>
+						<uriPathSegment>history</uriPathSegment>
 					</properties>
 				</node>
 				<node identifier="63b28f4d-8831-ecb0-f9a6-466d97ffe2c2" nodeName="mission" type="TYPO3.Neos.NodeTypes:Page">
 					<properties>
 						<title><![CDATA[<h1>Our mission</h1>]]></title>
+						<uriPathSegment>our-mission</uriPathSegment>
 					</properties>
 				</node>
 			</node>
 			<node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us" type="TYPO3.Neos.NodeTypes:Page" workspace="test">
 				<properties>
 					<title><![CDATA[<h1>About Us Test</h1>]]></title>
+					<uriPathSegment>about-us</uriPathSegment>
 				</properties>
 			</node>
 			<node identifier="25eaba22-b8ed-11e3-a8b5-c82a1441d728" type="TYPO3.Neos.NodeTypes:Page" nodeName="products">
 				<properties>
 					<title><![CDATA[<h1>Products</h1>]]></title>
+					<uriPathSegment>products</uriPathSegment>
 				</properties>
 				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="frameworks">
 					<properties>
 						<title><![CDATA[<h1>Frameworks</h1>]]></title>
+						<uriPathSegment>frameworks</uriPathSegment>
 					</properties>
-					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-flow">
+					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="who-cares-about-nodenames">
 						<properties>
 							<title><![CDATA[<h1>TYPO3 Flow</h1>]]></title>
+							<uriPathSegment>typo3-flow</uriPathSegment>
 						</properties>
 					</node>
 				</node>
 				<node type="TYPO3.Neos.NodeTypes:Page" nodeName="cms">
 					<properties>
 						<title><![CDATA[<h1>CMS</h1>]]></title>
+						<uriPathSegment>content-management</uriPathSegment>
 					</properties>
 					<node type="TYPO3.Neos.NodeTypes:Page" nodeName="typo3-neos">
 						<properties>
 							<title><![CDATA[<h1>TYPO3 Neos</h1>]]></title>
+							<uriPathSegment>typo3-neos</uriPathSegment>
 						</properties>
 					</node>
 				</node>
