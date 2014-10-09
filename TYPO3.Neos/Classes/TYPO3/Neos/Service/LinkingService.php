@@ -177,7 +177,7 @@ class LinkingService {
 	 * Renders the URI.
 	 *
 	 * @param ControllerContext $controllerContext
-	 * @param mixed $node A node object or a string node path, if a relative path is provided the baseNode arguments is required
+	 * @param mixed $node A node object or a string node path, if a relative path is provided the baseNode argument is required
 	 * @param NodeInterface $baseNode
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered

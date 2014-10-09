@@ -35,6 +35,12 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', $flushConfigurationCache);
 		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
 
+		// TODO: re-think this:
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePublished', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeDiscarded', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
+
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');

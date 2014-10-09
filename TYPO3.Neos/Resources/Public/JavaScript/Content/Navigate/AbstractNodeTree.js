@@ -568,6 +568,9 @@ define(
 						entityWrapper.addObserver('typo3:_name', function() {
 							that.synchronizeNodeName(vieEntity);
 						});
+						entityWrapper.addObserver('typo3:uriPathSegment', function() {
+							that.synchronizeUriPathSegment(vieEntity);
+						});
 					}
 					entityWrapper.addObserver('typo3:_hidden', function() {
 						that.synchronizeNodeVisibility(vieEntity);
@@ -629,10 +632,32 @@ define(
 					if (node.data.key) {
 						node.data.key = node.data.key.replace(previousNodeName + '@', newNodeName + '@');
 					}
-					if (node.data.href) {
-						node.data.href = node.data.href.replace(previousNodeName + '@', newNodeName + '@');
-					}
 					node.data.name = newNodeName;
+					node.render();
+					if (node.hasChildren() === true) {
+						node.data.isLazy = true;
+						// Remove children so they can't be clicked until they are reloaded
+						node.removeChildren();
+						node.setLazyNodeStatus(this.statusCodes.loading);
+
+						this.one('afterPageLoaded', function() {
+							node.data.isLazy = true;
+							node.reloadChildren();
+						});
+					}
+				}
+			},
+
+			synchronizeUriPathSegment: function(vieEntity) {
+				var node = this.getNodeByEntity(vieEntity);
+				if (node) {
+					var uriPathSegmentAttributeUri = '<' + Configuration.get('TYPO3_NAMESPACE') + 'uriPathSegment' + '>',
+						previousUriPathSegment = vieEntity.previousAttributes()[uriPathSegmentAttributeUri],
+						newUriPathSegment = vieEntity.attributes['<' + Configuration.get('TYPO3_NAMESPACE') + 'uriPathSegment' + '>'];
+
+					if (node.data.href) {
+						node.data.href = node.data.href.replace(previousUriPathSegment + '@', newUriPathSegment + '@');
+					}
 					node.render();
 					if (node.hasChildren() === true) {
 						node.data.isLazy = true;

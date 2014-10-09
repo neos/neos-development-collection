@@ -122,10 +122,10 @@
         'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
-    _name:
+    uriPathSegment:
       type: string
       ui:
-        label: 'Name (URL)'
+        label: 'URL path segment'
         reloadIfChanged: TRUE
         inspector:
           group: 'document'
