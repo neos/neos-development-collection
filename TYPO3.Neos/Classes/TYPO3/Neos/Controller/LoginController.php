@@ -65,6 +65,9 @@ class LoginController extends AbstractAuthenticationController {
 		if ($this->securityContext->getInterceptedRequest() || $unauthorized) {
 			$this->response->setStatus(401);
 		}
+		if ($this->authenticationManager->isAuthenticated()) {
+			$this->redirect('index', 'Backend\Backend');
+		}
 	}
 
 	/**
