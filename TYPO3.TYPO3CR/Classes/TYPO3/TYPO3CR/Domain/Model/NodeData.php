@@ -601,8 +601,11 @@ class NodeData extends AbstractNodeData {
 	 * @return boolean
 	 */
 	public function isAccessible() {
-		// TODO: if security context can not be initialized (because too early), we return TRUE.
 		if ($this->hasAccessRestrictions() === FALSE) {
+			return TRUE;
+		}
+
+		if ($this->securityContext->canBeInitialized() === FALSE) {
 			return TRUE;
 		}
 
