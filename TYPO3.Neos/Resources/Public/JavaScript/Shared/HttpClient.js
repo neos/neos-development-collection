@@ -112,37 +112,45 @@ define([
 				console.log('HttpClient', requestMethod, url, options);
 			}
 
-			return new Ember.RSVP.Promise(function(resolve, reject) {
-				options = $.extend(options, {
-					success: function(data, textStatus, xhr) {
-						RequestManager.remove(xhr);
-						if (requestMethod === 'POST' || requestMethod === 'PUT') {
-							that.set('_lastSuccessfulTransfer', new Date());
+			var request,
+				promise = Ember.RSVP.Promise(function(resolve, reject) {
+					options = $.extend(options, {
+						success: function(data, textStatus, xhr) {
+							RequestManager.remove(xhr);
+							if (requestMethod === 'POST' || requestMethod === 'PUT') {
+								that.set('_lastSuccessfulTransfer', new Date());
+							}
+							that.set('_failedRequest', false);
+							that._success(resolve, data, textStatus, xhr);
+						},
+						error: function(xhr, textStatus, errorThrown) {
+							RequestManager.remove(xhr);
+							if (xhr.status === 401) {
+								LoginDialog.create({
+									callback: function() {
+										RequestManager.add($.ajax(options));
+									}
+								}).appendTo('#neos-application');
+							} else {
+								that.set('_failedRequest', true);
+								that.trigger('failure', xhr, textStatus, errorThrown)
+								that._fail(reject, xhr, textStatus, errorThrown);
+							}
 						}
-						that.set('_failedRequest', false);
-						that._success(resolve, data, textStatus, xhr);
-					},
-					error: function(xhr, textStatus, errorThrown) {
-						RequestManager.remove(xhr);
-						if (xhr.status === 401) {
-							LoginDialog.create({
-								callback: function() {
-									RequestManager.add($.ajax(options));
-								}
-							}).appendTo('#neos-application');
-						} else {
-							that.set('_failedRequest', true);
-							that.trigger('failure', xhr, textStatus, errorThrown)
-							that._fail(reject, xhr, textStatus, errorThrown);
-						}
+					});
+					request = $.ajax(options);
+					RequestManager.add(request);
+
+					if (window.localStorage.showDevelopmentFeatures) {
+						window.console.log('HttpRestClient: _request() sent', requestMethod, url, options);
 					}
 				});
-				RequestManager.add($.ajax(options));
 
-				if (window.localStorage.showDevelopmentFeatures) {
-					window.console.log('HttpRestClient: _request() sent', requestMethod, url, options);
-				}
-			});
+			promise.abort = function() {
+				request.abort();
+			};
+
+			return promise;
 		},
 
 		_success: function(resolve, data, textStatus, xhr) {
