@@ -18,7 +18,19 @@ prototype(TYPO3.Neos:Content) < prototype(TYPO3.TypoScript:Template) {
 	#   attributes.class.@process.nodeType >
 	# }
 	# in your site's TypoScript if you don't need that behavior.
-	attributes.class.@process.nodeType = ${String.trim(value + ' ' + String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-')))}
+	attributes.class.@process.nodeType = TYPO3.TypoScript:Case {
+		@override.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
+
+		classIsString {
+			condition = ${q(value).count() == 1}
+			renderer = ${String.trim(value + ' ' + nodeTypeClassName)}
+		}
+
+		classIsArray {
+			condition = ${q(value).count() > 0}
+			renderer = ${Array.push(value, nodeTypeClassName)}
+		}
+	}
 
 	# The following line must not be removed as it adds required meta data to all content elements in backend
 	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
