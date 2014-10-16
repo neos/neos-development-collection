@@ -72,16 +72,36 @@ class ConvertUrisImplementation extends AbstractTypoScriptObject {
 			return $text;
 		}
 
+		$unresolvedUris = array();
 		$linkingService = $this->linkingService;
 		$controllerContext = $this->tsRuntime->getControllerContext();
-		return preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function(array $matches) use ($node, $linkingService, $controllerContext) {
+
+		$processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function(array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris) {
 			switch ($matches[1]) {
 				case 'node':
-					return $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
+					$resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext);
+					break;
 				case 'asset':
-					return $linkingService->resolveAssetUri($matches[0]);
+					$resolvedUri = $linkingService->resolveAssetUri($matches[0]);
+					break;
+				default:
+					$resolvedUri = NULL;
 			}
+
+			if ($resolvedUri === NULL) {
+				$unresolvedUris[] = $matches[0];
+				return $matches[0];
+			}
+
+			return $resolvedUri;
 		}, $text);
+
+		if ($unresolvedUris !== array()) {
+			$processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+			$processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
+		}
+
+		return $processedContent;
 	}
 
 }
