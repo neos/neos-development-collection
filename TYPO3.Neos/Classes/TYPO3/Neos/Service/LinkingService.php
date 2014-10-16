@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Media\Domain\Model\AssetInterface;
@@ -79,6 +80,12 @@ class LinkingService {
 	protected $lastLinkedNode;
 
 	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @param string|Uri $uri
 	 * @return boolean
 	 */
@@ -115,7 +122,12 @@ class LinkingService {
 	 * @throws \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException
 	 */
 	public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext) {
-		return $this->createNodeUri($controllerContext, $this->convertUriToObject($uri, $contextNode));
+		$targetObject = $this->convertUriToObject($uri, $contextNode);
+		if ($targetObject === NULL) {
+			$this->systemLogger->log(sprintf('Could not resolve %s to an existing node; The node was probably deleted.', $uri));
+			return NULL;
+		}
+		return $this->createNodeUri($controllerContext, $targetObject);
 	}
 
 	/**
@@ -126,6 +138,10 @@ class LinkingService {
 	 */
 	public function resolveAssetUri($uri) {
 		$targetObject = $this->convertUriToObject($uri);
+		if ($targetObject === NULL) {
+			$this->systemLogger->log(sprintf('Could not resolve %s to an existing asset; The asset was probably deleted.', $uri));
+			return NULL;
+		}
 		return $this->resourcePublisher->getPersistentResourceWebUri($targetObject->getResource());
 	}
 
@@ -176,7 +192,7 @@ class LinkingService {
 	public function createNodeUri(ControllerContext $controllerContext, $node = NULL, NodeInterface $baseNode = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
 		$this->lastLinkedNode = NULL;
 		if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
-			throw new \InvalidArgumentException('Expected NodeInterface, string for the node argument or a NoteInterface for the baseNode argument.', 1373101025);
+			throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
 		}
 
 		if (is_string($node) && $node !== '') {

@@ -196,8 +196,22 @@ class LinkingServiceTest extends FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function linkingServiceResolveNodeUriReturnsNullForUnresolvableNodes() {
+		$this->assertSame(NULL, $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef3257x', $this->baseNode, $this->controllerContext));
+	}
+
+	/**
+	 * @test
+	 */
 	public function linkingServiceCanResolveAssetUri() {
 		$this->assertSame('http://baseuri/_Resources/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/TYPO3-Neos-logo-sRGB-color.pdf', $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceResolveAssetUriReturnsNullForUnresolvableAssets() {
+		$this->assertSame(NULL, $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c7x'));
 	}
 
 	/**
