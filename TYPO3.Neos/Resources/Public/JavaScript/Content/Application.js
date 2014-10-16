@@ -94,7 +94,7 @@ function(
 				if (status === 'abort' || xhr.status === 401) {
 					return;
 				}
-				if (jqXHR === undefined || jqXHR.status !== 404) {
+				if (xhr === undefined || xhr.status !== 404) {
 					Notification.error('Server communication ' + status + ': ' + message);
 				} else {
 					that._handlePageNotFoundError(that.getCurrentUri());
