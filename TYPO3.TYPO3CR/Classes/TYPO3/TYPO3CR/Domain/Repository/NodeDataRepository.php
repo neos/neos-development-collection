@@ -111,10 +111,10 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
-	 * Adds a Node to this repository.
+	 * Adds a NodeData object to this repository.
 	 *
-	 * This repository keeps track of added and removed nodes (additionally to the
-	 * other Unit of Work) in order to find in-memory nodes.
+	 * This repository keeps track of added and removed nodes (additionally to the other Unit of Work)
+	 * in order to find in-memory nodes.
 	 *
 	 * @param object $object The object to add
 	 * @return void

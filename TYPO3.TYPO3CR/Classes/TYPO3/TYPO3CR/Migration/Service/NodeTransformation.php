@@ -87,7 +87,7 @@ class NodeTransformation {
 	}
 
 	/**
-	 * Tries to resolve the given transformation name into a classname.
+	 * Tries to resolve the given transformation name into a class name.
 	 *
 	 * The name can be a fully qualified class name or a name relative to the
 	 * TYPO3\TYPO3CR\Migration\Transformations namespace.
