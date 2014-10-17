@@ -9,3 +9,4 @@ These are the development guidelines of TYPO3 Neos.
 
 	UserInterface/Index
 	Testing/Index
+	Development/Index
