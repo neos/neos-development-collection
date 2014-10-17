@@ -27,6 +27,11 @@ class FeatureContext extends MinkContext {
 	protected $selectedContentElement;
 
 	/**
+	 * @var string
+	 */
+	protected $lastExportedSiteXmlPathAndFilename = '';
+
+	/**
 	 * Initializes the context
 	 *
 	 * @param array $parameters Context parameters (configured through behat.yml)
@@ -71,7 +76,7 @@ class FeatureContext extends MinkContext {
 		/** @var \TYPO3\Flow\Security\AccountRepository $accountRepository */
 		$accountRepository = $this->objectManager->get('TYPO3\Flow\Security\AccountRepository');
 		foreach ($rows as $row) {
-			$roleIdentifiers = array_map(function($role) {
+			$roleIdentifiers = array_map(function ($role) {
 				return 'TYPO3.Neos:' . $role;
 			}, Arrays::trimExplode(',', $row['roles']));
 			$user = $userFactory->create($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
@@ -250,6 +255,13 @@ class FeatureContext extends MinkContext {
 	}
 
 	/**
+	 * @BeforeScenario @fixtures
+	 */
+	public function resetContentDimensionConfiguration() {
+		$this->resetContentDimensions();
+	}
+
+	/**
 	 * @Then /^I should see the following sites in a table:$/
 	 */
 	public function iShouldSeeTheFollowingSitesInATable(TableNode $table) {
@@ -259,16 +271,16 @@ class FeatureContext extends MinkContext {
 		$sitesTable = $this->assertSession()->elementExists('css', $tableLocator);
 
 		$siteRows = $sitesTable->findAll('css', 'tbody tr');
-		$actualSites = array_map(function($row) {
+		$actualSites = array_map(function ($row) {
 			$firstColumn = $row->find('css', 'td:nth-of-type(1)');
-			if($firstColumn !== NULL) {
+			if ($firstColumn !== NULL) {
 				return array(
 					'name' => $firstColumn->getText()
 				);
 			}
 		}, $siteRows);
 
-		$sortByName = function($a, $b) {
+		$sortByName = function ($a, $b) {
 			return strcmp($a['name'], $b['name']);
 		};
 		usort($sites, $sortByName);
@@ -278,13 +290,13 @@ class FeatureContext extends MinkContext {
 	}
 
 	/**
-     * @Given /^I follow "([^"]*)" for site "([^"]*)"$/
-     */
-    public function iFollowForSite($link, $siteName) {
+	 * @Given /^I follow "([^"]*)" for site "([^"]*)"$/
+	 */
+	public function iFollowForSite($link, $siteName) {
 		$rowLocator = sprintf("//table[@class='neos-table']//tr[td/text()='%s']", $siteName);
 		$siteRow = $this->assertSession()->elementExists('xpath', $rowLocator);
 		$siteRow->findLink($link)->click();
-    }
+	}
 
 	/**
 	 * @When /^I select the first content element$/
@@ -312,7 +324,9 @@ class FeatureContext extends MinkContext {
 	public function iSetTheContentTo($content) {
 		$editable = $this->assertSession()->elementExists('css', '.neos-inline-editable', $this->selectedContentElement);
 
-		$this->spinWait(function() use ($editable) { return $editable->hasAttribute('contenteditable'); }, 10000, 'editable has contenteditable attribute set');
+		$this->spinWait(function () use ($editable) {
+				return $editable->hasAttribute('contenteditable');
+			}, 10000, 'editable has contenteditable attribute set');
 
 		$editable->setValue($content);
 	}
@@ -375,4 +389,56 @@ class FeatureContext extends MinkContext {
 		}
 	}
 
+	/**
+	 * @Given /^I have the site "([^"]*)"$/
+	 */
+	public function iHaveTheSite($siteName) {
+		$site = new \TYPO3\Neos\Domain\Model\Site($siteName);
+		$site->setSiteResourcesPackageKey('TYPO3.NeosDemoTypo3Org');
+		/** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
+		$siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
+		$siteRepository->add($site);
+
+		$this->getSubContext('flow')->persistAll();
+	}
+
+	/**
+	 * @When /^I export the site "([^"]*)"$/
+	 */
+	public function iExportTheSite($siteNodeName) {
+		/** @var \TYPO3\Neos\Domain\Service\SiteExportService $siteExportService */
+		$siteExportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteExportService');
+
+		/** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
+		$siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
+		$site = $siteRepository->findOneByNodeName($siteNodeName);
+
+		$this->lastExportedSiteXmlPathAndFilename = tempnam(sys_get_temp_dir(), 'Neos_LastExportedSite');
+
+		file_put_contents($this->lastExportedSiteXmlPathAndFilename, $siteExportService->export(array($site)));
+	}
+
+	/**
+	 * @When /^I prune all sites$/
+	 */
+	public function iPruneAllSites() {
+		/** @var \TYPO3\Neos\Domain\Service\SiteService $siteService */
+		$siteService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteService');
+		$siteService->pruneAll();
+
+		$this->getSubContext('flow')->persistAll();
+	}
+
+	/**
+	 * @When /^I import the last exported site$/
+	 */
+	public function iImportTheLastExportedSite() {
+		// Persist any pending entity insertions (caused by lazy creation of live Workspace)
+		// This is a workaround which should be solved by properly isolating all read-only steps
+		$this->getSubContext('flow')->persistAll();
+
+		/** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
+		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+		$siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
+	}
 }

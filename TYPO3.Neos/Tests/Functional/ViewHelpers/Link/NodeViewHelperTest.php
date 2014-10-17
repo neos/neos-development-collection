@@ -70,7 +70,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		);
 		$contentContext = $this->contextFactory->create($contextProperties);
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
-		$siteImportService->importSitesFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
+		$siteImportService->importFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
 		$this->persistenceManager->persistAll();
 
 		$currentDomain = $domainRepository->findOneByActiveRequest();
