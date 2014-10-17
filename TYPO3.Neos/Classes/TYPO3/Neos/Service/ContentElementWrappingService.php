@@ -185,7 +185,11 @@ class ContentElementWrappingService {
 
 		// Serialize date values to String
 		if ($dataType === 'date') {
-			return $propertyValue instanceof \DateTime ? $propertyValue->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::W3C) : '';
+			if (!$propertyValue instanceof \DateTime) {
+				return '';
+			}
+			$value = clone $propertyValue;
+			return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::W3C);
 		}
 
 		// Serialize node references to node identifiers
