@@ -8,7 +8,7 @@ up:
           type: 'RenameDimension'
           settings:
             oldDimensionName: 'languages'
-            newDimensionNAme: 'language'
+            newDimensionName: 'language'
 
 down:
   comments: 'Migrate from "language" dimension to "languages" dimension.'
@@ -20,4 +20,4 @@ down:
           type: 'RenameDimension'
           settings:
             oldDimensionName: 'language'
-            newDimensionNAme: 'languages'
+            newDimensionName: 'languages'
