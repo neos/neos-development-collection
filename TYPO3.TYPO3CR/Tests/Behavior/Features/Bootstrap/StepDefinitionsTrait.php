@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/StepDefinitionsTrait.php');
-
 use Behat\Behat\Context\ExtendedContextInterface;
 use TYPO3\Flow\Utility\Arrays;
 use Behat\Gherkin\Node\TableNode;
