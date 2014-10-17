@@ -251,8 +251,13 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 			return NULL;
 		}
 
-		$possibleFinalNode = $this->resolveShortcuts($currentNode);
-		if ($possibleFinalNode === NULL || $possibleFinalNode->isAccessible() === FALSE || $possibleFinalNode->isVisible() === FALSE) {
+		$possibleFinalNode = $this->nodeShortcutResolver->resolveShortcutTarget($currentNode);
+		if (is_string($possibleFinalNode)) {
+			$possibleFinalNode = $currentNode;
+		} elseif ($possibleFinalNode === NULL || $possibleFinalNode->isAccessible() === FALSE || $possibleFinalNode->isVisible() === FALSE) {
+			return NULL;
+		} elseif (!$possibleFinalNode instanceof NodeInterface) {
+			// Shortcut resolved to an unsupported type.
 			return NULL;
 		}
 
@@ -420,13 +425,4 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 		return $node->getDepth() - $siteNode->getDepth();
 	}
 
-	/**
-	 * If the given Node is a shortcut it will be resolved and the target returned, otherwise just the given Node is returned.
-	 *
-	 * @param NodeInterface $node
-	 * @return NodeInterface
-	 */
-	protected function resolveShortcuts(NodeInterface $node) {
-		return $this->nodeShortcutResolver->resolveShortcutTarget($node);
-	}
 }
