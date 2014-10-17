@@ -6,7 +6,7 @@
 
 <f:section name="itemsList">
 	<f:for each="{items}" as="item">
-		<li{ts:render(path:'{item.state}.attributes') -> f:format.raw()}>
+		<li{ts:render(path:'{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
 		<neos:link.node node="{item.node}">{item.label}</neos:link.node>
 		<f:if condition="{item.subItems}">
 			<ul>
