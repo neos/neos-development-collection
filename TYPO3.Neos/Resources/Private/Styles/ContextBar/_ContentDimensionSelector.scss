@@ -1,9 +1,14 @@
 .neos-content-dimension-selector {
 	@include clearfix;
 	position: relative;
-	width: 100%;
+	float: left;
 	border-right: 1px solid $grayLight;
 	@include box-sizing(border-box);
+	min-width: $unit * 8 + $defaultMargin * 2;
+
+	.neos-inline-editing-active & {
+		display: none;
+	}
 
 	&.active {
 		background-color: $grayDark;
@@ -26,6 +31,13 @@
 		cursor: pointer;
 		@include clearfix;
 		@include user-select(none);
+		padding-left: $defaultMargin;
+		padding-right: $defaultMargin + $unit + 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 100%;
+		@include box-sizing(border-box);
 
 		&::before {
 			content: "›";
@@ -42,12 +54,14 @@
 		}
 
 		.neos-content-dimension-selector-dimension {
-			float: left;
 			line-height: $unit;
-			padding-right: $defaultMargin;
+
+			~ .neos-content-dimension-selector-dimension {
+				padding-left: $defaultMargin;
+			}
 
 			i {
-				width: $wideMargin;
+				width: $defaultMargin + $relatedMargin;
 				text-align: center;
 				color: $textSubtleLight;
 			}
@@ -74,6 +88,12 @@
 
 			i {
 				width: $defaultMargin + $relatedMargin;
+			}
+
+			label {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 			}
 
 			select {
