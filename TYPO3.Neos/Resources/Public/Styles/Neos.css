@@ -10987,19 +10987,24 @@
 .neos-contentelement.neos-contentelement-hover > .neos-contentelement-overlay, .neos-contentelement.neos-contentelement-active > .neos-contentelement-overlay {
   display: block;
 }
-.neos-contentelement .neos-inline-editable,
-.neos-contentelement .aloha-editable-active,
-.neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
-  outline: none !important;
+.neos-contentelement.neos-not-inline-editable {
+  position: relative;
 }
-.neos-contentelement > .neos-contentelement-overlay {
+.neos-contentelement.neos-not-inline-editable > .neos-contentelement-overlay {
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: 10000;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 0.1)), color-stop(50%, rgba(50, 50, 50, 0.2)), color-stop(100%, rgba(50, 50, 50, 0.1)));
   background-image: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -moz-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -o-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+}
+.neos-contentelement .neos-inline-editable,
+.neos-contentelement .aloha-editable-active,
+.neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
+  outline: none !important;
 }
 .neos-contentelement .neos-inline-editable:empty::after {
   content: '.';

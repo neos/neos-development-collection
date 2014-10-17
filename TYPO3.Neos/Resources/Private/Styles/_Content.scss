@@ -27,16 +27,22 @@
 		display: block;
 	}
 
+	&.neos-not-inline-editable {
+		position: relative;
+
+		> .neos-contentelement-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 10000;
+			@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
+		}
+	}
+
 	.neos-inline-editable,
 	.aloha-editable-active,
 	.aloha-editable-active[contenteditable=true]:focus {
 		outline: none !important;
-	}
-
-	> .neos-contentelement-overlay {
-		position: absolute;
-		z-index: 10000;
-		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
 	}
 
 	/* Workaround for empty divs collapsing in Firefox / IE needed for Aloha placeholders */
