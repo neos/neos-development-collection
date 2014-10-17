@@ -2,10 +2,10 @@
  * WARNING: if changing any of the statements below, make sure to also
  * update them inside ContentModuleBootstrap.js!
  *
- * To start a build, run 'r.js -o build.js' from within the current directory.
+ * To start a build, run 'grunt requirejs' from within the current directory.
  */
-({
-	baseUrl: '.',
+requirejs({
+	baseUrl: '../Resources/Public/JavaScript/',
 	paths: {
 		'Library': '../Library/',
 		'text': '../Library/requirejs/text',
@@ -51,7 +51,7 @@
 		'Shared/Validation/TextValidator',
 		'Shared/Validation/UuidValidator'
 	],
-	out: 'ContentModule-built.js'
+	out: '../Resources/Public/JavaScript/ContentModule-built.js'
 
 	/**
 	 * To generate a source map in development context, uncomment the lines below
