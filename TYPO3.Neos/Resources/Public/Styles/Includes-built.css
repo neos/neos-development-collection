@@ -7818,11 +7818,12 @@
 .neos .neos-content-dimension-selector {
   *zoom: 1;
   position: relative;
-  width: 100%;
+  float: left;
   border-right: 1px solid #3f3f3f;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  min-width: 352px;
 }
 .neos .neos-content-dimension-selector:before, .neos .neos-content-dimension-selector:after {
   display: table;
@@ -7831,6 +7832,9 @@
 }
 .neos .neos-content-dimension-selector:after {
   clear: both;
+}
+.neos-inline-editing-active .neos .neos-content-dimension-selector {
+  display: none;
 }
 .neos .neos-content-dimension-selector.active {
   background-color: #222222;
@@ -7857,6 +7861,15 @@
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+  padding-left: 16px;
+  padding-right: 57px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-summary:before, .neos .neos-content-dimension-selector .neos-content-dimension-selector-summary:after {
   display: table;
@@ -7884,12 +7897,13 @@
   transform: rotate(90deg);
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension {
-  float: left;
   line-height: 40px;
-  padding-right: 16px;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension ~ .neos-content-dimension-selector-dimension {
+  padding-left: 16px;
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-summary .neos-content-dimension-selector-dimension i {
-  width: 32px;
+  width: 24px;
   text-align: center;
   color: #adadad;
 }
@@ -7915,6 +7929,11 @@
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension i {
   width: 24px;
+}
+.neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .neos .neos-content-dimension-selector .neos-content-dimension-selector-dimensions .neos-content-dimension-selector-dimension select {
   width: 320px;
@@ -8998,6 +9017,9 @@
 }
 .neos #neos-navigate-panel.neos-navigate-panel-context-structure-open #neos-context-structure #neos-context-structure-tree-container {
   display: none;
+}
+.neos #neos-aloha-topmenu {
+  float: left;
 }
 .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
   position: absolute;
@@ -10919,19 +10941,24 @@
 .neos-contentelement.neos-contentelement-hover > .neos-contentelement-overlay, .neos-contentelement.neos-contentelement-active > .neos-contentelement-overlay {
   display: block;
 }
-.neos-contentelement .neos-inline-editable,
-.neos-contentelement .aloha-editable-active,
-.neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
-  outline: none !important;
+.neos-contentelement.neos-not-inline-editable {
+  position: relative;
 }
-.neos-contentelement > .neos-contentelement-overlay {
+.neos-contentelement.neos-not-inline-editable > .neos-contentelement-overlay {
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: 10000;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 0.1)), color-stop(50%, rgba(50, 50, 50, 0.2)), color-stop(100%, rgba(50, 50, 50, 0.1)));
   background-image: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -moz-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -o-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+}
+.neos-contentelement .neos-inline-editable,
+.neos-contentelement .aloha-editable-active,
+.neos-contentelement .aloha-editable-active[contenteditable=true]:focus {
+  outline: none !important;
 }
 .neos-contentelement .neos-inline-editable:empty::after {
   content: '.';
