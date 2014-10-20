@@ -73,17 +73,22 @@ class ContentElementWrappingService {
 
 		$classNames = array();
 		if (!$nodeType->isOfType('TYPO3.Neos:Document')) {
-			if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
-				$attributes['rel'] = 'typo3:content-collection';
-			} else {
-				$classNames[] = 'neos-contentelement';
+			if ($node->isRemoved()) {
+				if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node && $node->isShadowNode()) {
+					return '';
+				}
+
+				$classNames[] = 'neos-contentelement-removed';
 			}
 
 			if ($node->isHidden()) {
 				$classNames[] = 'neos-contentelement-hidden';
 			}
-			if ($node->isRemoved()) {
-				$classNames[] = 'neos-contentelement-removed';
+
+			if ($nodeType->isOfType('TYPO3.Neos:ContentCollection')) {
+				$attributes['rel'] = 'typo3:content-collection';
+			} else {
+				$classNames[] = 'neos-contentelement';
 			}
 
 			$uiConfiguration = $nodeType->hasConfiguration('ui') ? $nodeType->getConfiguration('ui') : array();
