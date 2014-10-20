@@ -151,7 +151,7 @@ class BackendRedirectionService {
 			$contextProperties['currentSite'] = $currentDomain->getSite();
 			$contextProperties['currentDomain'] = $currentDomain;
 		} else {
-			$contextProperties['currentSite'] = $this->siteRepository->findOnline()->getFirst();
+			$contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
 		}
 		return $this->contextFactory->create($contextProperties);
 	}

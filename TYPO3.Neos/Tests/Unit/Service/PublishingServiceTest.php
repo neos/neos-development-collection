@@ -72,6 +72,11 @@ class PublishingServiceTest extends UnitTestCase {
 	 */
 	protected $mockQueryResult;
 
+	/**
+	 * @var \TYPO3\Neos\Domain\Model\Site
+	 */
+	protected $mockSite;
+
 	public function setUp() {
 		$this->publishingService = new PublishingService();
 
@@ -91,8 +96,8 @@ class PublishingServiceTest extends UnitTestCase {
 		$this->inject($this->publishingService, 'domainRepository', $this->mockDomainRepository);
 
 		$this->mockSiteRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\SiteRepository')->disableOriginalConstructor()->getMock();
-		$this->mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
-		$this->mockSiteRepository->expects($this->any())->method('findOnline')->will($this->returnValue($this->mockQueryResult));
+		$this->mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+		$this->mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue($this->mockSite));
 		$this->inject($this->publishingService, 'siteRepository', $this->mockSiteRepository);
 
 		$this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
@@ -113,9 +118,6 @@ class PublishingServiceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getUnpublishedNodesReturnsANodeInstanceForEveryNodeInTheGivenWorkspace() {
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockQueryResult->expects($this->atLeastOnce())->method('getFirst')->will($this->returnValue($mockSite));
-
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 
 		$expectedContextProperties = array(
@@ -123,7 +125,7 @@ class PublishingServiceTest extends UnitTestCase {
 			'inaccessibleContentShown' => TRUE,
 			'invisibleContentShown' => TRUE,
 			'removedContentShown' => TRUE,
-			'currentSite' => $mockSite,
+			'currentSite' => $this->mockSite,
 			'dimensions' => array()
 		);
 		$this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
@@ -155,9 +157,6 @@ class PublishingServiceTest extends UnitTestCase {
 	 * @test
 	 */
 	public function getUnpublishedNodesDoesNotReturnInvalidNodes() {
-		$mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
-		$this->mockQueryResult->expects($this->atLeastOnce())->method('getFirst')->will($this->returnValue($mockSite));
-
 		$mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 
 		$expectedContextProperties = array(
@@ -165,7 +164,7 @@ class PublishingServiceTest extends UnitTestCase {
 			'inaccessibleContentShown' => TRUE,
 			'invisibleContentShown' => TRUE,
 			'removedContentShown' => TRUE,
-			'currentSite' => $mockSite,
+			'currentSite' => $this->mockSite,
 			'dimensions' => array()
 		);
 		$this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
