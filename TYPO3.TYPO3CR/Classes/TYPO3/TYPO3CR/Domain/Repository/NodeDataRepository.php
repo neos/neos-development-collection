@@ -1062,6 +1062,9 @@ class NodeDataRepository extends Repository {
 
 			// Find the position of the workspace, a smaller value means more priority
 			$workspacePosition = array_search($node->getWorkspace(), $workspaces);
+			if ($workspacePosition === FALSE) {
+				throw new Exception\NodeException('Node workspace not found in allowed workspaces, this could result from a detached workspace entity in the context.', 1413902143);
+			}
 
 			// Find positions in dimensions, add workspace in front for highest priority
 			$dimensionPositions = array();
@@ -1175,6 +1178,14 @@ class NodeDataRepository extends Repository {
 
 		$query = $queryBuilder->getQuery();
 		$foundNodes = $query->getResult();
+
+		// Consider materialized, but not yet persisted nodes
+		foreach ($this->addedNodes as $addedNode) {
+			if ($addedNode->getPath() === $path) {
+				$foundNodes[] = $addedNode;
+			}
+		}
+
 		$foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
 
 		return $foundNodes;

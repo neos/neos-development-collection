@@ -147,6 +147,23 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @Given /^I set some property and rename the node to "([^"]*)"$/
+	 */
+	public function iSetSomePropertyAndRenameTheNodeTo($newName) {
+		$node = $this->iShouldHaveOneNode();
+		$node->setHidden(NULL);
+		$node->setName($newName);
+	}
+
+	/**
+	 * @Given /^I rename the node to "([^"]*)"$/
+	 */
+	public function iRenameTheNodeTo($newName) {
+		$node = $this->iShouldHaveOneNode();
+		$node->setName($newName);
+	}
+
+	/**
 	 * @When /^I move the node (into|after|before) path "([^"]*)" with the following context:$/
 	 */
 	public function iMoveANodeToPath($position, $path, TableNode $table) {

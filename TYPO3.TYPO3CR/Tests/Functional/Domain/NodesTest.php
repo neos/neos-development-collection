@@ -214,7 +214,6 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$secondLevelNode->createNode('thirdlevel');
 
 		$this->persistenceManager->persistAll();
-		$this->persistenceManager->clearState();
 
 		$retrievedNode = $rootNode->getNode('/firstlevel/secondlevel/thirdlevel');
 
