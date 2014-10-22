@@ -196,6 +196,7 @@ The following options are allowed:
             'h4': FALSE
             'h5': FALSE
             'h6': FALSE
+            'code': FALSE
             'removeFormat': TRUE
           'table':
             'table': TRUE

@@ -27,6 +27,10 @@ module.exports = function(grunt) {
 					src = src.replace("$(function(){ element.appendTo('body'); });", "$(function(){ element.appendTo('#neos-application'); });");
 					src = src.replace("jQuery('body').append(layer).bind('click', function(e) {", "jQuery('#neos-application').append(layer).bind('click', function(e) {");
 					src = src.replace('var editableTrimedContent = jQuery.trim(this.getContents()),', "var editableTrimedContent = $('<div />').html(this.getContents()).text().trim(),");
+
+					// add "code" element
+					src = src.replace(/var componentNameByElement = {\n/g, 'var componentNameByElement = { "code": "code", \n');
+					src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
 					return src;
 				}
 			}

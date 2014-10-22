@@ -113,7 +113,7 @@ function(
 						// The "format" tab is shown in the top-menu, the remaining tabs are shown
 						// in the inspector.
 						components: [
-							[ 'formatBlock', 'bold', 'italic', 'underline', 'subscript', 'superscript', 'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop', 'toggleMetaView', 'wailang', 'toggleFormatlessPaste', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker']
+							[ 'formatBlock', 'bold', 'italic', 'underline', 'subscript', 'superscript', 'formatLink', 'editLink', 'createTable', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop', 'toggleMetaView', 'wailang', 'toggleFormatlessPaste', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker', 'code']
 						]
 					},
 					// we completely disable the "insert" tab, as the needed features should reside in the "format" tab.

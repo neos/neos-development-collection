@@ -41104,7 +41104,7 @@ define('format/format-plugin', [
 		'u': 'underline',
 		's': 'strikethrough'
 	};
-	var componentNameByElement = {
+	var componentNameByElement = { "code": "code", 
 		'strong': 'strong',
 		'em': 'emphasis',
 		's': 'strikethrough2'
@@ -41363,7 +41363,7 @@ define('format/format-plugin', [
 		 * 
 		 * @todo new buttons needed for 'code'
 		 */
-		availableButtons: [ 'u', 'strong', 'del', 'em', 'b', 'i', 's', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat' ],
+		availableButtons: [ 'code', 'u', 'strong', 'del', 'em', 'b', 'i', 's', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat' ],
 
 		/**
 		 * HotKeys used for special actions
