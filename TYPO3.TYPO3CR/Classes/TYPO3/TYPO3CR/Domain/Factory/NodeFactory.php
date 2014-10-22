@@ -55,7 +55,7 @@ class NodeFactory {
 		if (!isset($this->nodes[$internalNodeIdentifier])) {
 			// Warning: Alternative node implementations are considered internal for now, feature can change or be removed anytime. We want to be sure it works well and makes sense before declaring it public.
 			$class = $nodeData->getNodeType()->getConfiguration('class') ?: $this->objectManager->getClassNameByObjectName('TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface');
-			if (!in_array($class, self::getNodeInterfaceImplementations($this->objectManager))) {
+			if (!in_array($class, static::getNodeInterfaceImplementations($this->objectManager))) {
 				throw new NodeConfigurationException('The configured implementation class name "' . $class . '" for NodeType "' . $nodeData->getNodeType() . '" does not inherit from TYPO3\\TYPO3CR\\Domain\\Model\\NodeInterface.', 1406884014);
 			}
 			$this->nodes[$internalNodeIdentifier] = new $class($nodeData, $context);
