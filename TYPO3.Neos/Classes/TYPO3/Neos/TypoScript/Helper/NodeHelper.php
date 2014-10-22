@@ -42,7 +42,7 @@ class NodeHelper implements ProtectedContextAwareInterface {
 			if ($subNode !== NULL && $subNode->getNodeType()->isOfType($contentCollectionType)) {
 				return $subNode;
 			} else {
-				throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:autocreatechildnodes --node-type %s" command.', $contentCollectionType, $node->getPath(), $nodePath, (string)$node->getNodeType()), 1389352984);
+				throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->getPath(), $nodePath, (string)$node->getNodeType()), 1389352984);
 			}
 		}
 	}
