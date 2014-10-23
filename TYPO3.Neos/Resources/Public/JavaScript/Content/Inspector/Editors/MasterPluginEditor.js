@@ -1,22 +1,19 @@
 define(
 [
 	'Library/jquery-with-dependencies',
-	'Content/Inspector/Editors/SelectBoxEditor',
-	'Content/Inspector/InspectorController'
+	'Content/Inspector/Editors/SelectBoxEditor'
 ],
 function(
 	$,
-	SelectBoxEditor,
-	InspectorController
+	SelectBoxEditor
 ) {
 	return SelectBoxEditor.extend({
 		init: function() {
 			var that = this,
-				nodePath = InspectorController.nodeSelection.get('selectedNode.nodePath'),
 				url = $('link[rel="neos-masterplugins"]').attr('href');
 
 			this.set('placeholder', 'Loading ...');
-			this._loadValuesFromController(url + '?node=' + nodePath, function(results) {
+			this._loadValuesFromController(url, function(results) {
 				var values = {}, placeholder, i = 0;
 				values[''] = {};
 

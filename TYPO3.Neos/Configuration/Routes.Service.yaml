@@ -279,6 +279,20 @@
   # and client side we don\t have a UrlTemplates implementation yet
   httpMethods: ['POST']
 
+# DataSourceController routes
+-
+  name: 'Services - DataSourceController->index'
+  uriPattern: 'data-source(/{dataSourceIdentifier)'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'DataSource'
+    '@action':     'index'
+    '@format':     'json'
+    dataSourceIdentifier: ''
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
 # ContentDimensionController routes
 -
   name: 'Services - ContentDimensionController->presetConfiguration'

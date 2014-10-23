@@ -1,8 +1,9 @@
 define([
 	'Library/jquery-with-dependencies',
 	'emberjs',
-	'Shared/HttpClient'
-], function($, Ember, HttpClient) {
+	'Shared/HttpClient',
+	'Content/Inspector/InspectorController'
+], function($, Ember, HttpClient, InspectorController) {
 	/**
 	 * Allow for options without a group
 	 */
@@ -75,6 +76,8 @@ define([
 		allowEmpty: false,
 		multiple: false,
 		placeholder: 'Choose',
+		dataSourceIdentifier: null,
+		dataSourceUri: null,
 		attributeBindings: ['size', 'disabled', 'multiple'],
 		optionLabelPath: 'content.label',
 		optionValuePath: 'content.value',
@@ -144,6 +147,9 @@ define([
 		}.observes('value'),
 
 		_updateValue: function() {
+			if (this.get('values').length === 0) {
+				return;
+			}
 			var selection = this.get('selection');
 			if (this.get('multiple')) {
 				var selectedValues = selection.length > 0 ? selection.map(function(option) {
@@ -157,6 +163,13 @@ define([
 
 		didInsertElement: function() {
 			this._initializeSelect2();
+			if (this.get('dataSourceUri') || this.get('dataSourceIdentifier')) {
+				var that = this,
+					dataSourceUri = this.get('dataSourceUri') || HttpClient._getEndpointUrl('neos-data-source') + '/' + this.get('dataSourceIdentifier');
+				this._loadValuesFromController(dataSourceUri, function(options) {
+					that.set('values', options);
+				});
+			}
 		},
 
 		_initializeSelect2: function() {
@@ -203,8 +216,21 @@ define([
 			}
 		}.observes('placeholder'),
 
-		_loadValuesFromController: function(uri, callback) {
-			HttpClient.getResource(uri, {dataType: 'json'}).then(callback);
+		/**
+		 * @param {string} dataSourceUri
+		 * @param {array|function} parameters
+		 * @param {function} callback
+		 * @private
+		 */
+		_loadValuesFromController: function(dataSourceUri, parameters, callback) {
+			if (typeof parameters === 'function') {
+				callback = parameters;
+				parameters = [];
+			}
+			if (parameters.length === 0) {
+				parameters = [{name: 'node', value: InspectorController.nodeSelection.get('selectedNode.nodePath')}];
+			}
+			HttpClient.getResource(dataSourceUri + (parameters ? '?' + $.param(parameters) : ''), {dataType: 'json'}).then(callback);
 		}
 	});
 });

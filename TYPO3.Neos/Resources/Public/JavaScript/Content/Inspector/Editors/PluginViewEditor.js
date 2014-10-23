@@ -27,7 +27,8 @@ function(
 
 			if (!Ember.empty(nodePath)) {
 				this._loadValuesFromController(
-					$('link[rel="neos-pluginviews"]').attr('href') + '?node=' + nodePath + '@' + workspaceName,
+					$('link[rel="neos-pluginviews"]').attr('href'),
+					[{name: 'node', value: nodePath + '@' + workspaceName}],
 					function(results) {
 						var values = {},
 							placeholder,

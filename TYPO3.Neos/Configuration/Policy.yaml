@@ -19,6 +19,7 @@ resources:
     TYPO3_Neos_Backend_PublishOwnWorkspaceContent: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
     TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
     TYPO3_Neos_Backend_ContentDimensions: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|error)Action())'
+    TYPO3_Neos_Backend_DataSource: 'method(TYPO3\Neos\Service\Controller\DataSourceController->(index|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     TYPO3_Neos_Backend_Module_User: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
     TYPO3_Neos_Backend_Module_User_UserSettings: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress)Action())'
@@ -58,6 +59,7 @@ acls:
       TYPO3_Neos_Backend_PublishOwnWorkspaceContent: GRANT
       TYPO3_Neos_Backend_DiscardOwnWorkspaceContent: GRANT
       TYPO3_Neos_Backend_ContentDimensions: GRANT
+      TYPO3_Neos_Backend_DataSource: GRANT
 
       TYPO3_Media_ManageAssets: GRANT
       TYPO3_Neos_Backend_Module_Media_ManageAssets: GRANT
