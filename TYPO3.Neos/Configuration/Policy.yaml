@@ -42,6 +42,9 @@ privilegeTargets:
     'TYPO3.Neos:Backend.ContentDimensions':
       matcher: 'method(TYPO3\Neos\Controller\Service\ContentDimensionsController->(index|error)Action())'
 
+    'TYPO3.Neos:Backend.DataSource':
+      matcher: 'method(TYPO3\Neos\Service\Controller\DataSourceController->(index|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+
     'TYPO3.Neos:Backend.Module.User':
       matcher: 'method(TYPO3\Neos\Controller\Module\UserController->indexAction())'
 
@@ -130,6 +133,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.ContentDimensions'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:Backend.DataSource'
         permission: GRANT
 
       -
