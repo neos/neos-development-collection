@@ -5821,13 +5821,49 @@
   top: 0;
   width: 100%;
   height: 41px;
-  border-bottom: 1px solid #3f3f3f;
-  line-height: 40px;
-  padding-left: 16px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  border-bottom: 1px solid #3f3f3f;
+  background: #141414;
+  line-height: 40px;
   z-index: 10015;
+  overflow: hidden;
+}
+.neos #neos-inspector .neos-inspector-tabs {
+  clear: both;
+}
+.neos #neos-inspector .neos-inspector-tabs > button {
+  position: relative;
+  display: inline-block;
+  float: left;
+  background: none;
+  border-right: 1px solid #3f3f3f;
+  color: #adadad;
+  cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-tabs > button i {
+  font-size: 16px;
+  line-height: 16px;
+}
+.neos #neos-inspector .neos-inspector-tabs > button.is-active {
+  background-color: #222;
+  color: #00b5ff;
+}
+.neos #neos-inspector .neos-inspector-tabs > button.is-active:after {
+  display: block;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px solid #222;
+  content: '';
+}
+.neos #neos-inspector .neos-inspector-tab-content {
+  display: none;
+}
+.neos #neos-inspector .neos-inspector-tab-content.is-visible {
+  display: block;
 }
 .neos #neos-inspector .neos-inspector-form {
   width: 100%;
