@@ -44,16 +44,11 @@ define(
 				// Inspector UI.
 				var currentlyShownSecondaryAlohaTabs = this.get('currentlyShownSecondaryAlohaTabs'),
 					nodeTypeGroups = {},
-					nodeTypeGroupCount = 0,
-					nodeTypeProperties = {},
-					nodeTypeLabel = null;
+					nodeTypeProperties = {};
 
 				currentlyShownSecondaryAlohaTabs.forEach(function(tab) {
-					// by convention, the last tab is the most specific one; so this is the one we show here.
-					nodeTypeLabel = tab._settings.label;
-
-					nodeTypeGroups['group' + nodeTypeGroupCount] = {
-						position: nodeTypeGroupCount,
+					var tabIdentifier = tab._settings.label.replace(/ /g, '-').toLowerCase();
+					nodeTypeGroups[tabIdentifier] = {
 						label: tab._settings.label
 					};
 					$.each(tab._elemBySlot, function(componentKey) {
@@ -69,14 +64,14 @@ define(
 						} else if (componentObject.buttonElement) {
 							editorClass = 'AlohaButtonEditor';
 						} else {
-							editorClass = 'AlohaNonDefinedEditor';
+							return;
 						}
 
 						nodeTypeProperties[componentKey] = {
 							type: 'string', // Dummy, is ignored
 							ui: {
 								inspector: {
-									group: 'group' + nodeTypeGroupCount,
+									group: tabIdentifier,
 									editor: 'TYPO3.Neos/Inspector/Editors/Aloha/' + editorClass,
 									editorOptions: {
 										alohaComponent: componentObject
@@ -85,7 +80,6 @@ define(
 							}
 						};
 					});
-					nodeTypeGroupCount++;
 				});
 
 				var nodesWithVirtualNode = [];
@@ -95,18 +89,25 @@ define(
 					nodeType: 'ALOHA-CONTROL',
 					$element: nodesWithVirtualNode.get('lastObject.$element'),
 					_enableTransactionalInspector: false,
-					attributes: Ember.Object.create({
-					}),
+					attributes: Ember.Object.create(),
 					nodeTypeSchema: Ember.Object.create({
 						properties: nodeTypeProperties,
 						ui: {
-							label: nodeTypeLabel,
+							label: 'Table',
+							icon: 'icon-table',
 							inspector: {
-								groups: nodeTypeGroups
+								groups: nodeTypeGroups,
+								tabs: {
+									'default': {
+										label: 'Table settings',
+										icon: 'icon-cog'
+									}
+								}
 							}
 						}
 					})
 				}));
+
 				return nodesWithVirtualNode;
 			} else {
 				return this.get('_nodes');
