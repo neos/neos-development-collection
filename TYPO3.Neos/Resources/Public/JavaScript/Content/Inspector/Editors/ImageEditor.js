@@ -69,13 +69,17 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 		_originalImageUuid: null,
 
 		/**
+		 * The "original" image is shown in the sidebar.
+		 */
+		_originalImageUri: null,
+
+		/**
 		 * size of the original (base) image ("w" + "h")
 		 */
 		_originalImageSize: null,
 
 		/**
-		 * The "preview" image is shown in the sidebar, and is also used
-		 * for cropping.
+		 * The "preview" image is used for cropping.
 		 */
 		_previewImageUri: null,
 
@@ -274,6 +278,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 		 ***************************************/
 		remove: function() {
 			this.set('_originalImageUuid', null);
+			this.set('_originalImageUri', null);
 			this.set('_previewImageUri', null);
 			this.set('_finalImageScale.w', null);
 			this.set('_finalImageScale.h', null);
@@ -356,6 +361,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 			Ember.beginPropertyChanges();
 
 			this.set('_originalImageSize', responseJson.originalSize);
+			this.set('_originalImageUri', responseJson.originalImageResourceUri);
 			this.set('_previewImageSize', responseJson.previewSize);
 			this.set('_previewImageUri', responseJson.previewImageResourceUri);
 			this.set('_uploadPreviewShown', false);
