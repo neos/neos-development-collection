@@ -40,10 +40,6 @@ a {
 	clear: both;
 }
 
-.neos-controls #neos-neos-top {
-	@include single-box-shadow(transparent, 0, 0, 0);
-}
-
 .neos-pageloader-wrapper {
 	position: fixed;
 	top: 0;
