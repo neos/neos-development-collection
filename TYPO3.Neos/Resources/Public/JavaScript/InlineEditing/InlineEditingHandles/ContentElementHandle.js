@@ -46,10 +46,10 @@ function (
 
 		_onNodeSelectionChange: function() {
 			this.$().find('.action-new').trigger('hidePopover');
-			var selectedNode = this.get('nodeSelection.selectedNode');
+			var selectedNode = this.get('nodeSelection.selectedNode'),
+				entity = selectedNode.get('_vieEntity');
 
-			if (selectedNode) {
-				var entity = selectedNode.get('_vieEntity');
+			if (selectedNode && entity) {
 				this.set('_node', selectedNode);
 
 				entity.on('change', this._entityChanged, this);
