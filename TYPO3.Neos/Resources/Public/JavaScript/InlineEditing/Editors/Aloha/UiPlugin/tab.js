@@ -72,12 +72,9 @@ define([
 			this._settings = settings;
 
 			this.container = settings.container;
-			this.list = this.container.data('list');
 			this.panels = this.container.data('panels');
 			this.id = 'tab-ui-container-' + (++idCounter);
 			this.panel = $('<div>', {id : this.id, 'unselectable': 'on'});
-			this.handle = $('<li><a href="' + location.href.replace(/#.*$/, '') + '#' + this.id + '">' +
-				settings.label + '</a></li>');
 
 			for (i = 0; i < components.length; i++) {
 				if (typeof components[i] === 'string') {
@@ -113,7 +110,6 @@ define([
 			}
 
 			this.panel.append($('<div>', {'class': 'aloha-ui-clear', 'unselectable': 'on'}));
-			this.handle.appendTo(this.list);
 			this.panel.appendTo(this.panels);
 		},
 
@@ -190,10 +186,6 @@ define([
 		 * @override
 		 */
 		show: function() {
-			if (!this.list.children().length) {
-				return;
-			}
-			this.handle.show();
 			this.visible = true;
 
 			// Hiding all tabs may hide the toolbar, so showing the
@@ -207,11 +199,6 @@ define([
 		 * @override
 		 */
 		hide: function() {
-			var tabs = this.list.children();
-			if ( 0 === tabs.length ) {
-				return;
-			}
-			this.handle.hide();
 			this.panel.hide();
 			this.visible = false;
 		}
@@ -229,11 +216,9 @@ define([
 		 */
 		createContainer: function () {
 			var $container = $('<div>', {'unselectable': 'on'});
-			var $list = $('<ul>', {'unselectable': 'on'}); // we deliberately do NOT append the list of tabs anymore...
 			var $panels = $('<div>', {'unselectable': 'on'}).appendTo($container);
 
 			$container
-				.data('list', $list)
 				.data('panels', $panels);
 
 			return $container;
