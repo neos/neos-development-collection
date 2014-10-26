@@ -29,13 +29,11 @@
   src: local("Georgia"), local("Garamond"), local("Palatino"), local("Book Antiqua");
   unicode-range: U+0026;
 }
-
 @font-face {
   font-family: "Ampersand";
   src: local("Georgia");
   unicode-range: U+270C;
 }
-
 body {
   word-wrap: break-word;
 }
@@ -63,7 +61,7 @@ body {
   -ms-hyphens: auto;
   -o-hyphens: auto;
   hyphens: auto;
-  color: #444444;
+  color: #444;
 }
 
 small {
@@ -196,7 +194,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #222222;
+  color: #222;
 }
 
 p + .drop-cap {

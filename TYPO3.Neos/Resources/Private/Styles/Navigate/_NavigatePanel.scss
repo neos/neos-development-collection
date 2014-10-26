@@ -42,7 +42,7 @@
 	border-top: 1px solid $grayLight;
 	border-right: 1px solid $grayLight;
 	@include box-sizing(border-box);
-	@include transition-property('left, margin-top');
+	@include transition-property(left, margin-top);
 	@include transition-duration(.2s);
 	@include font;
 
@@ -59,7 +59,7 @@
 
 	#neos-node-tree {
 		height: 50%;
-		@include transition-property('height');
+		@include transition-property(height);
 		@include transition-duration(.2s);
 	}
 

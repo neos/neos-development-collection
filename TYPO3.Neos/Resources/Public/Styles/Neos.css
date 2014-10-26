@@ -6,37 +6,32 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1408190103') format('truetype');
 }
-
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1408190103') format('truetype');
 }
-
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1408190103') format('truetype');
 }
-
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1408190103') format('truetype');
 }
-
 @font-face {
   font-family: 'neos-language';
   src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMggi/LYAAAC8AAAAYGNtYXAaVcxXAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zr9/DIIAAAFwAAABfGhlYWT/r6QdAAAC7AAAADZoaGVhA8QB5gAAAyQAAAAkaG10eAMAAB4AAANIAAAAFGxvY2EAKADSAAADXAAAAAxtYXhwAAoAfAAAA2gAAAAgbmFtZXu8lvUAAAOIAAABHnBvc3QAAwAAAAAEqAAAACAAAwIAAZAABQAAAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADmAAHg/+D/4AHgACAAAAABAAAAAAAAAAAAAAAgAAAAAAACAAAAAwAAABQAAwABAAAAFAAEADgAAAAKAAgAAgACAAEAIOYA//3//wAAAAAAIOYA//3//wAB/+MaBAADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAAAAAAAAAIAADc5AQAAAAABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAABAAe//sB4gHFAFMAVwBwAHkAABMOAwcnPgM3LgMnMx4DFz4DNyM1MzUzFTMVIw4DBx4DFz4DOwE+ATQ2NTQuAiMiDgIVFB4CMzoCNjM1LgMnFwczJzcjIg4CHQEUHgI7ATI+Aj0BNC4CIwcnIwcjNzMXI7AHERMVDQcLExEPBgcMCgYCFgIFCAoGCg4JBAGBThZOHAEEChANAQMDAwIBBAUFA2IBAQEXKDUeHjUoFxcoNR4DBQYFAwMGBQYCrBw3G3HkBAgFBAQFCATkBAgFBAQFCAQ9EkUSFj8YQBgBCAYLCwsFEwUJCgoFCBAPDQcFCwsMBgsUEw8FFRkZFQYSFhkNAQICAwECBAICAwcHCAMeNSgXFyg1Hh41KBYBVQIEBAQCRkxMRgMFCATkBQcGAwMGBwXkBAgFA9UxMaKiAAABAAAAAQAAdXvwoV8PPPUACwIAAAAAAM9XMbAAAAAAz1cxsAAA//sB4gHFAAAACAACAAAAAAAAAAEAAAHg/+AAAAIAAAAAAAHiAAEAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAQAAAAIAAB4AAAAAAAoAFAAeAL4AAQAAAAUAegAEAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA4ArgABAAAAAAABAAgAAAABAAAAAAACAA4AMgABAAAAAAADAAgAHgABAAAAAAAEAAgAQAABAAAAAAAFABYACAABAAAAAAAGAAQAJgABAAAAAAAKACgASAADAAEECQABAAgAAAADAAEECQACAA4AMgADAAEECQADAAgAHgADAAEECQAEAAgAQAADAAEECQAFABYACAADAAEECQAGAAgAKgADAAEECQAKACgASABuAGUAbwBzAFYAZQByAHMAaQBvAG4AIAAxAC4AMABuAGUAbwBzbmVvcwBuAGUAbwBzAFIAZQBnAHUAbABhAHIAbgBlAG8AcwBHAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4AAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format("truetype"), url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAATEAAoAAAAABHwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAWIAAAFi8ShyJk9TLzIAAAJYAAAAYAAAAGAIIvy2Y21hcAAAArgAAABMAAAATBpVzFdnYXNwAAADBAAAAAgAAAAIAAAAEGhlYWQAAAMMAAAANgAAADb/r6QdaGhlYQAAA0QAAAAkAAAAJAPEAeZobXR4AAADaAAAABQAAAAUAwAAHm1heHAAAAN8AAAABgAAAAYABVAAbmFtZQAAA4QAAAEeAAABHnu8lvVwb3N0AAAEpAAAACAAAAAgAAMAAAEABAQAAQEBBW5lb3MAAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAABtDx0AAAByER0AAAAJHQAAAVkSAAYBAQUJCw0QFW5lb3NuZW9zdTB1MXUyMHVFNjAwAAACAYkAAwAFAQEEBwoN3/yUDvyUDvyUDvuUDvdE95wVeHxye2p+CISeBaiXoZicmXeggKCFnAihiwWQfpV7m3unp5OnjZkI+xWLi6DZi4ukoYuLctmLi3ZviwWJe4NpaWmPiI+Ij4iPkZGPk4sI7YsFjZSMlIuVi9xKzDqLO4tJSos6izvNStuLk4uSi5KMCIvgBYOQg5GFkAj3QEUVbz/Ci3DXBfcF0RX7eIsFgIuBgouACIv7eAWLf5WClosI93iLBZaLlZSLlwiL93gFi5aBlICLCE77aRV5vEaLeVp1i8r3NqOLy/s2c4sFDviUFPiUFYsMCgAAAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA5gAB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDmAP/9//8AAAAAACDmAP/9//8AAf/jGgQAAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAABAABTxcwFXw889QALAgAAAAAAz1cxsAAAAADPVzGwAAD/+wHiAcUAAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAAeIAAQAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAABAAAAAgAAHgAAUAAABQAAAAAADgCuAAEAAAAAAAEACAAAAAEAAAAAAAIADgAyAAEAAAAAAAMACAAeAAEAAAAAAAQACABAAAEAAAAAAAUAFgAIAAEAAAAAAAYABAAmAAEAAAAAAAoAKABIAAMAAQQJAAEACAAAAAMAAQQJAAIADgAyAAMAAQQJAAMACAAeAAMAAQQJAAQACABAAAMAAQQJAAUAFgAIAAMAAQQJAAYACAAqAAMAAQQJAAoAKABIAG4AZQBvAHMAVgBlAHIAcwBpAG8AbgAgADEALgAwAG4AZQBvAHNuZW9zAG4AZQBvAHMAUgBlAGcAdQBsAGEAcgBuAGUAbwBzAEcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=) format("woff");
   font-weight: normal;
   font-style: normal;
 }
-
 .neos [class^="icon-"].icon-language:before {
   font-size: 20px;
   line-height: 20px;
@@ -78,7 +73,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
 /* FONT AWESOME CORE
  * -------------------------- */
 .neos {
@@ -213,56 +207,6 @@
   /* Stacked and layered icon */
   /* Animated rotating icon */
   /* Prevent stack and spinners from being taken inline when inside a link */
-  @-moz-keyframes spin {
-    0% {
-      -moz-transform: rotate(0deg);
-    }
-
-    100% {
-      -moz-transform: rotate(359deg);
-    }
-}
-
-  @-webkit-keyframes spin {
-    0% {
-      -webkit-transform: rotate(0deg);
-    }
-
-    100% {
-      -webkit-transform: rotate(359deg);
-    }
-}
-
-  @-o-keyframes spin {
-    0% {
-      -o-transform: rotate(0deg);
-    }
-
-    100% {
-      -o-transform: rotate(359deg);
-    }
-}
-
-  @-ms-keyframes spin {
-    0% {
-      -ms-transform: rotate(0deg);
-    }
-
-    100% {
-      -ms-transform: rotate(359deg);
-    }
-}
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(359deg);
-    }
-}
-
   /* Icon rotations and mirroring */
   /* ensure rotation occurs inside anchor tags */
 }
@@ -300,6 +244,46 @@
 .neos a .icon-spin {
   display: inline-block;
   text-decoration: none;
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
+}
+@-ms-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(359deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 .neos .icon-rotate-90:before {
   -webkit-transform: rotate(90deg);
@@ -346,1106 +330,1106 @@
 /* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
  * readers do not read off random characters that represent icons */
 .neos .icon-glass:before {
-  content: "\f000";
+  content: "";
 }
 .neos .icon-music:before {
-  content: "\f001";
+  content: "";
 }
 .neos .icon-search:before {
-  content: "\f002";
+  content: "";
 }
 .neos .icon-envelope-alt:before {
-  content: "\f003";
+  content: "";
 }
 .neos .icon-heart:before {
-  content: "\f004";
+  content: "";
 }
 .neos .icon-star:before {
-  content: "\f005";
+  content: "";
 }
 .neos .icon-star-empty:before {
-  content: "\f006";
+  content: "";
 }
 .neos .icon-user:before {
-  content: "\f007";
+  content: "";
 }
 .neos .icon-film:before {
-  content: "\f008";
+  content: "";
 }
 .neos .icon-th-large:before {
-  content: "\f009";
+  content: "";
 }
 .neos .icon-th:before {
-  content: "\f00a";
+  content: "";
 }
 .neos .icon-th-list:before {
-  content: "\f00b";
+  content: "";
 }
 .neos .icon-ok:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .icon-success:before {
-  content: "\f00c";
+  content: "";
 }
 .neos .icon-remove:before {
-  content: "\f00d";
+  content: "";
 }
 .neos .icon-zoom-in:before {
-  content: "\f00e";
+  content: "";
 }
 .neos .icon-zoom-out:before {
-  content: "\f010";
+  content: "";
 }
 .neos .icon-power-off:before,
 .neos .icon-off:before {
-  content: "\f011";
+  content: "";
 }
 .neos .icon-signal:before {
-  content: "\f012";
+  content: "";
 }
 .neos .icon-gear:before,
 .neos .icon-cog:before {
-  content: "\f013";
+  content: "";
 }
 .neos .icon-trash:before {
-  content: "\f014";
+  content: "";
 }
 .neos .icon-home:before {
-  content: "\f015";
+  content: "";
 }
 .neos .icon-file-alt:before {
-  content: "\f016";
+  content: "";
 }
 .neos .icon-time:before {
-  content: "\f017";
+  content: "";
 }
 .neos .icon-road:before {
-  content: "\f018";
+  content: "";
 }
 .neos .icon-download-alt:before {
-  content: "\f019";
+  content: "";
 }
 .neos .icon-download:before {
-  content: "\f01a";
+  content: "";
 }
 .neos .icon-upload:before {
-  content: "\f01b";
+  content: "";
 }
 .neos .icon-inbox:before {
-  content: "\f01c";
+  content: "";
 }
 .neos .icon-play-circle:before {
-  content: "\f01d";
+  content: "";
 }
 .neos .icon-rotate-right:before,
 .neos .icon-repeat:before {
-  content: "\f01e";
+  content: "";
 }
 .neos .icon-refresh:before {
-  content: "\f021";
+  content: "";
 }
 .neos .icon-list-alt:before {
-  content: "\f022";
+  content: "";
 }
 .neos .icon-lock:before {
-  content: "\f023";
+  content: "";
 }
 .neos .icon-flag:before {
-  content: "\f024";
+  content: "";
 }
 .neos .icon-headphones:before {
-  content: "\f025";
+  content: "";
 }
 .neos .icon-volume-off:before {
-  content: "\f026";
+  content: "";
 }
 .neos .icon-volume-down:before {
-  content: "\f027";
+  content: "";
 }
 .neos .icon-volume-up:before {
-  content: "\f028";
+  content: "";
 }
 .neos .icon-qrcode:before {
-  content: "\f029";
+  content: "";
 }
 .neos .icon-barcode:before {
-  content: "\f02a";
+  content: "";
 }
 .neos .icon-tag:before {
-  content: "\f02b";
+  content: "";
 }
 .neos .icon-tags:before {
-  content: "\f02c";
+  content: "";
 }
 .neos .icon-book:before {
-  content: "\f02d";
+  content: "";
 }
 .neos .icon-bookmark:before {
-  content: "\f02e";
+  content: "";
 }
 .neos .icon-print:before {
-  content: "\f02f";
+  content: "";
 }
 .neos .icon-camera:before {
-  content: "\f030";
+  content: "";
 }
 .neos .icon-font:before {
-  content: "\f031";
+  content: "";
 }
 .neos .icon-bold:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold:before,
 .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strong:before {
-  content: "\f032";
+  content: "";
 }
 .neos .icon-italic:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic:before,
 .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-emphasis:before {
-  content: "\f033";
+  content: "";
 }
 .neos .icon-text-height:before {
-  content: "\f034";
+  content: "";
 }
 .neos .icon-text-width:before {
-  content: "\f035";
+  content: "";
 }
 .neos .icon-align-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-left:before {
-  content: "\f036";
+  content: "";
 }
 .neos .icon-align-center:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-center:before {
-  content: "\f037";
+  content: "";
 }
 .neos .icon-align-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-right:before {
-  content: "\f038";
+  content: "";
 }
 .neos .icon-align-justify:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-justify:before {
-  content: "\f039";
+  content: "";
 }
 .neos .icon-list:before {
-  content: "\f03a";
+  content: "";
 }
 .neos .icon-indent-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-outdent:before {
-  content: "\f03b";
+  content: "";
 }
 .neos .icon-indent-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-indent:before {
-  content: "\f03c";
+  content: "";
 }
 .neos .icon-facetime-video:before {
-  content: "\f03d";
+  content: "";
 }
 .neos .icon-picture:before {
-  content: "\f03e";
+  content: "";
 }
 .neos .icon-pencil:before {
-  content: "\f040";
+  content: "";
 }
 .neos .icon-map-marker:before {
-  content: "\f041";
+  content: "";
 }
 .neos .icon-adjust:before {
-  content: "\f042";
+  content: "";
 }
 .neos .icon-tint:before {
-  content: "\f043";
+  content: "";
 }
 .neos .icon-edit:before {
-  content: "\f044";
+  content: "";
 }
 .neos .icon-share:before {
-  content: "\f045";
+  content: "";
 }
 .neos .icon-check:before {
-  content: "\f046";
+  content: "";
 }
 .neos .icon-move:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-toggledragdrop:before {
-  content: "\f047";
+  content: "";
 }
 .neos .icon-step-backward:before {
-  content: "\f048";
+  content: "";
 }
 .neos .icon-fast-backward:before {
-  content: "\f049";
+  content: "";
 }
 .neos .icon-backward:before {
-  content: "\f04a";
+  content: "";
 }
 .neos .icon-play:before {
-  content: "\f04b";
+  content: "";
 }
 .neos .icon-pause:before {
-  content: "\f04c";
+  content: "";
 }
 .neos .icon-stop:before {
-  content: "\f04d";
+  content: "";
 }
 .neos .icon-forward:before {
-  content: "\f04e";
+  content: "";
 }
 .neos .icon-fast-forward:before {
-  content: "\f050";
+  content: "";
 }
 .neos .icon-step-forward:before {
-  content: "\f051";
+  content: "";
 }
 .neos .icon-eject:before {
-  content: "\f052";
+  content: "";
 }
 .neos .icon-chevron-left:before {
-  content: "\f053";
+  content: "";
 }
 .neos .icon-chevron-right:before {
-  content: "\f054";
+  content: "";
 }
 .neos .icon-plus-sign:before {
-  content: "\f055";
+  content: "";
 }
 .neos .icon-minus-sign:before {
-  content: "\f056";
+  content: "";
 }
 .neos .icon-remove-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:before {
-  content: "\f057";
+  content: "";
 }
 .neos .icon-ok-sign:before {
-  content: "\f058";
+  content: "";
 }
 .neos .icon-question-sign:before {
-  content: "\f059";
+  content: "";
 }
 .neos .icon-info-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .icon-info-circle:before {
-  content: "\f05a";
+  content: "";
 }
 .neos .icon-screenshot:before {
-  content: "\f05b";
+  content: "";
 }
 .neos .icon-remove-circle:before {
-  content: "\f05c";
+  content: "";
 }
 .neos .icon-ok-circle:before {
-  content: "\f05d";
+  content: "";
 }
 .neos .icon-ban-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .icon-error:before {
-  content: "\f05e";
+  content: "";
 }
 .neos .icon-arrow-left:before {
-  content: "\f060";
+  content: "";
 }
 .neos .icon-arrow-right:before {
-  content: "\f061";
+  content: "";
 }
 .neos .icon-arrow-up:before {
-  content: "\f062";
+  content: "";
 }
 .neos .icon-arrow-down:before {
-  content: "\f063";
+  content: "";
 }
 .neos .icon-mail-forward:before,
 .neos .icon-share-alt:before {
-  content: "\f064";
+  content: "";
 }
 .neos .icon-resize-full:before {
-  content: "\f065";
+  content: "";
 }
 .neos .icon-resize-small:before {
-  content: "\f066";
+  content: "";
 }
 .neos .icon-plus:before {
-  content: "\f067";
+  content: "";
 }
 .neos .icon-minus:before {
-  content: "\f068";
+  content: "";
 }
 .neos .icon-asterisk:before {
-  content: "\f069";
+  content: "";
 }
 .neos .icon-exclamation-sign:before {
-  content: "\f06a";
+  content: "";
 }
 .neos .icon-gift:before {
-  content: "\f06b";
+  content: "";
 }
 .neos .icon-leaf:before {
-  content: "\f06c";
+  content: "";
 }
 .neos .icon-fire:before {
-  content: "\f06d";
+  content: "";
 }
 .neos .icon-eye-open:before {
-  content: "\f06e";
+  content: "";
 }
 .neos .icon-eye-close:before {
-  content: "\f070";
+  content: "";
 }
 .neos .icon-warning-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .icon-warning:before {
-  content: "\f071";
+  content: "";
 }
 .neos .icon-plane:before {
-  content: "\f072";
+  content: "";
 }
 .neos .icon-calendar:before {
-  content: "\f073";
+  content: "";
 }
 .neos .icon-random:before {
-  content: "\f074";
+  content: "";
 }
 .neos .icon-comment:before {
-  content: "\f075";
+  content: "";
 }
 .neos .icon-magnet:before {
-  content: "\f076";
+  content: "";
 }
 .neos .icon-chevron-up:before {
-  content: "\f077";
+  content: "";
 }
 .neos .icon-chevron-down:before {
-  content: "\f078";
+  content: "";
 }
 .neos .icon-retweet:before {
-  content: "\f079";
+  content: "";
 }
 .neos .icon-shopping-cart:before {
-  content: "\f07a";
+  content: "";
 }
 .neos .icon-folder-close:before {
-  content: "\f07b";
+  content: "";
 }
 .neos .icon-folder-open:before {
-  content: "\f07c";
+  content: "";
 }
 .neos .icon-resize-vertical:before {
-  content: "\f07d";
+  content: "";
 }
 .neos .icon-resize-horizontal:before {
-  content: "\f07e";
+  content: "";
 }
 .neos .icon-bar-chart:before {
-  content: "\f080";
+  content: "";
 }
 .neos .icon-twitter-sign:before {
-  content: "\f081";
+  content: "";
 }
 .neos .icon-facebook-sign:before {
-  content: "\f082";
+  content: "";
 }
 .neos .icon-camera-retro:before {
-  content: "\f083";
+  content: "";
 }
 .neos .icon-key:before {
-  content: "\f084";
+  content: "";
 }
 .neos .icon-gears:before,
 .neos .icon-cogs:before {
-  content: "\f085";
+  content: "";
 }
 .neos .icon-comments:before {
-  content: "\f086";
+  content: "";
 }
 .neos .icon-thumbs-up-alt:before {
-  content: "\f087";
+  content: "";
 }
 .neos .icon-thumbs-down-alt:before {
-  content: "\f088";
+  content: "";
 }
 .neos .icon-star-half:before {
-  content: "\f089";
+  content: "";
 }
 .neos .icon-heart-empty:before {
-  content: "\f08a";
+  content: "";
 }
 .neos .icon-signout:before {
-  content: "\f08b";
+  content: "";
 }
 .neos .icon-linkedin-sign:before {
-  content: "\f08c";
+  content: "";
 }
 .neos .icon-pushpin:before {
-  content: "\f08d";
+  content: "";
 }
 .neos .icon-external-link:before {
-  content: "\f08e";
+  content: "";
 }
 .neos .icon-signin:before {
-  content: "\f090";
+  content: "";
 }
 .neos .icon-trophy:before {
-  content: "\f091";
+  content: "";
 }
 .neos .icon-github-sign:before {
-  content: "\f092";
+  content: "";
 }
 .neos .icon-upload-alt:before {
-  content: "\f093";
+  content: "";
 }
 .neos .icon-lemon:before {
-  content: "\f094";
+  content: "";
 }
 .neos .icon-phone:before {
-  content: "\f095";
+  content: "";
 }
 .neos .icon-unchecked:before,
 .neos .icon-check-empty:before {
-  content: "\f096";
+  content: "";
 }
 .neos .icon-bookmark-empty:before {
-  content: "\f097";
+  content: "";
 }
 .neos .icon-phone-sign:before {
-  content: "\f098";
+  content: "";
 }
 .neos .icon-twitter:before {
-  content: "\f099";
+  content: "";
 }
 .neos .icon-facebook:before {
-  content: "\f09a";
+  content: "";
 }
 .neos .icon-github:before {
-  content: "\f09b";
+  content: "";
 }
 .neos .icon-unlock:before {
-  content: "\f09c";
+  content: "";
 }
 .neos .icon-credit-card:before {
-  content: "\f09d";
+  content: "";
 }
 .neos .icon-rss:before {
-  content: "\f09e";
+  content: "";
 }
 .neos .icon-hdd:before {
-  content: "\f0a0";
+  content: "";
 }
 .neos .icon-bullhorn:before {
-  content: "\f0a1";
+  content: "";
 }
 .neos .icon-bell:before {
-  content: "\f0a2";
+  content: "";
 }
 .neos .icon-certificate:before {
-  content: "\f0a3";
+  content: "";
 }
 .neos .icon-hand-right:before {
-  content: "\f0a4";
+  content: "";
 }
 .neos .icon-hand-left:before {
-  content: "\f0a5";
+  content: "";
 }
 .neos .icon-hand-up:before {
-  content: "\f0a6";
+  content: "";
 }
 .neos .icon-hand-down:before {
-  content: "\f0a7";
+  content: "";
 }
 .neos .icon-circle-arrow-left:before {
-  content: "\f0a8";
+  content: "";
 }
 .neos .icon-circle-arrow-right:before {
-  content: "\f0a9";
+  content: "";
 }
 .neos .icon-circle-arrow-up:before {
-  content: "\f0aa";
+  content: "";
 }
 .neos .icon-circle-arrow-down:before {
-  content: "\f0ab";
+  content: "";
 }
 .neos .icon-globe:before {
-  content: "\f0ac";
+  content: "";
 }
 .neos .icon-wrench:before {
-  content: "\f0ad";
+  content: "";
 }
 .neos .icon-tasks:before {
-  content: "\f0ae";
+  content: "";
 }
 .neos .icon-filter:before {
-  content: "\f0b0";
+  content: "";
 }
 .neos .icon-briefcase:before {
-  content: "\f0b1";
+  content: "";
 }
 .neos .icon-fullscreen:before {
-  content: "\f0b2";
+  content: "";
 }
 .neos .icon-group:before {
-  content: "\f0c0";
+  content: "";
 }
 .neos .icon-link:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-link:before {
-  content: "\f0c1";
+  content: "";
 }
 .neos .icon-cloud:before {
-  content: "\f0c2";
+  content: "";
 }
 .neos .icon-beaker:before {
-  content: "\f0c3";
+  content: "";
 }
 .neos .icon-cut:before {
-  content: "\f0c4";
+  content: "";
 }
 .neos .icon-copy:before {
-  content: "\f0c5";
+  content: "";
 }
 .neos .icon-paperclip:before,
 .neos .icon-paper-clip:before {
-  content: "\f0c6";
+  content: "";
 }
 .neos .icon-save:before {
-  content: "\f0c7";
+  content: "";
 }
 .neos .icon-sign-blank:before {
-  content: "\f0c8";
+  content: "";
 }
 .neos .icon-reorder:before {
-  content: "\f0c9";
+  content: "";
 }
 .neos .icon-list-ul:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-unorderedlist:before {
-  content: "\f0ca";
+  content: "";
 }
 .neos .icon-list-ol:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-orderedlist:before {
-  content: "\f0cb";
+  content: "";
 }
 .neos .icon-strikethrough:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strikethrough:before {
-  content: "\f0cc";
+  content: "";
 }
 .neos .icon-underline:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-underline:before {
-  content: "\f0cd";
+  content: "";
 }
 .neos .icon-table:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-createTable:before {
-  content: "\f0ce";
+  content: "";
 }
 .neos .icon-magic:before {
-  content: "\f0d0";
+  content: "";
 }
 .neos .icon-truck:before {
-  content: "\f0d1";
+  content: "";
 }
 .neos .icon-pinterest:before {
-  content: "\f0d2";
+  content: "";
 }
 .neos .icon-pinterest-sign:before {
-  content: "\f0d3";
+  content: "";
 }
 .neos .icon-google-plus-sign:before {
-  content: "\f0d4";
+  content: "";
 }
 .neos .icon-google-plus:before {
-  content: "\f0d5";
+  content: "";
 }
 .neos .icon-money:before {
-  content: "\f0d6";
+  content: "";
 }
 .neos .icon-caret-down:before {
-  content: "\f0d7";
+  content: "";
 }
 .neos .icon-caret-up:before {
-  content: "\f0d8";
+  content: "";
 }
 .neos .icon-caret-left:before {
-  content: "\f0d9";
+  content: "";
 }
 .neos .icon-caret-right:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
-  content: "\f0da";
+  content: "";
 }
 .neos .icon-columns:before {
-  content: "\f0db";
+  content: "";
 }
 .neos .icon-sort:before {
-  content: "\f0dc";
+  content: "";
 }
 .neos .icon-sort-down:before {
-  content: "\f0dd";
+  content: "";
 }
 .neos .icon-sort-up:before {
-  content: "\f0de";
+  content: "";
 }
 .neos .icon-envelope:before {
-  content: "\f0e0";
+  content: "";
 }
 .neos .icon-linkedin:before {
-  content: "\f0e1";
+  content: "";
 }
 .neos .icon-rotate-left:before,
 .neos .icon-undo:before {
-  content: "\f0e2";
+  content: "";
 }
 .neos .icon-legal:before {
-  content: "\f0e3";
+  content: "";
 }
 .neos .icon-dashboard:before {
-  content: "\f0e4";
+  content: "";
 }
 .neos .icon-comment-alt:before {
-  content: "\f0e5";
+  content: "";
 }
 .neos .icon-comments-alt:before {
-  content: "\f0e6";
+  content: "";
 }
 .neos .icon-bolt:before {
-  content: "\f0e7";
+  content: "";
 }
 .neos .icon-sitemap:before {
-  content: "\f0e8";
+  content: "";
 }
 .neos .icon-umbrella:before {
-  content: "\f0e9";
+  content: "";
 }
 .neos .icon-paste:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-formatless-paste:before {
-  content: "\f0ea";
+  content: "";
 }
 .neos .icon-lightbulb:before {
-  content: "\f0eb";
+  content: "";
 }
 .neos .icon-exchange:before {
-  content: "\f0ec";
+  content: "";
 }
 .neos .icon-cloud-download:before {
-  content: "\f0ed";
+  content: "";
 }
 .neos .icon-cloud-upload:before {
-  content: "\f0ee";
+  content: "";
 }
 .neos .icon-user-md:before {
-  content: "\f0f0";
+  content: "";
 }
 .neos .icon-stethoscope:before {
-  content: "\f0f1";
+  content: "";
 }
 .neos .icon-suitcase:before {
-  content: "\f0f2";
+  content: "";
 }
 .neos .icon-bell-alt:before {
-  content: "\f0f3";
+  content: "";
 }
 .neos .icon-coffee:before {
-  content: "\f0f4";
+  content: "";
 }
 .neos .icon-food:before {
-  content: "\f0f5";
+  content: "";
 }
 .neos .icon-file-text-alt:before {
-  content: "\f0f6";
+  content: "";
 }
 .neos .icon-building:before {
-  content: "\f0f7";
+  content: "";
 }
 .neos .icon-hospital:before {
-  content: "\f0f8";
+  content: "";
 }
 .neos .icon-ambulance:before {
-  content: "\f0f9";
+  content: "";
 }
 .neos .icon-medkit:before {
-  content: "\f0fa";
+  content: "";
 }
 .neos .icon-fighter-jet:before {
-  content: "\f0fb";
+  content: "";
 }
 .neos .icon-beer:before {
-  content: "\f0fc";
+  content: "";
 }
 .neos .icon-h-sign:before {
-  content: "\f0fd";
+  content: "";
 }
 .neos .icon-plus-sign-alt:before {
-  content: "\f0fe";
+  content: "";
 }
 .neos .icon-double-angle-left:before {
-  content: "\f100";
+  content: "";
 }
 .neos .icon-double-angle-right:before {
-  content: "\f101";
+  content: "";
 }
 .neos .icon-double-angle-up:before {
-  content: "\f102";
+  content: "";
 }
 .neos .icon-double-angle-down:before {
-  content: "\f103";
+  content: "";
 }
 .neos .icon-angle-left:before {
-  content: "\f104";
+  content: "";
 }
 .neos .icon-angle-right:before {
-  content: "\f105";
+  content: "";
 }
 .neos .icon-angle-up:before {
-  content: "\f106";
+  content: "";
 }
 .neos .icon-angle-down:before {
-  content: "\f107";
+  content: "";
 }
 .neos .icon-desktop:before {
-  content: "\f108";
+  content: "";
 }
 .neos .icon-laptop:before {
-  content: "\f109";
+  content: "";
 }
 .neos .icon-tablet:before {
-  content: "\f10a";
+  content: "";
 }
 .neos .icon-mobile-phone:before {
-  content: "\f10b";
+  content: "";
 }
 .neos .icon-circle-blank:before {
-  content: "\f10c";
+  content: "";
 }
 .neos .icon-quote-left:before {
-  content: "\f10d";
+  content: "";
 }
 .neos .icon-quote-right:before {
-  content: "\f10e";
+  content: "";
 }
 .neos .icon-spinner:before {
-  content: "\f110";
+  content: "";
 }
 .neos .icon-circle:before {
-  content: "\f111";
+  content: "";
 }
 .neos .icon-mail-reply:before,
 .neos .icon-reply:before {
-  content: "\f112";
+  content: "";
 }
 .neos .icon-github-alt:before {
-  content: "\f113";
+  content: "";
 }
 .neos .icon-folder-close-alt:before {
-  content: "\f114";
+  content: "";
 }
 .neos .icon-folder-open-alt:before {
-  content: "\f115";
+  content: "";
 }
 .neos .icon-expand-alt:before {
-  content: "\f116";
+  content: "";
 }
 .neos .icon-collapse-alt:before {
-  content: "\f117";
+  content: "";
 }
 .neos .icon-smile:before {
-  content: "\f118";
+  content: "";
 }
 .neos .icon-frown:before {
-  content: "\f119";
+  content: "";
 }
 .neos .icon-meh:before {
-  content: "\f11a";
+  content: "";
 }
 .neos .icon-gamepad:before {
-  content: "\f11b";
+  content: "";
 }
 .neos .icon-keyboard:before {
-  content: "\f11c";
+  content: "";
 }
 .neos .icon-flag-alt:before {
-  content: "\f11d";
+  content: "";
 }
 .neos .icon-flag-checkered:before {
-  content: "\f11e";
+  content: "";
 }
 .neos .icon-terminal:before {
-  content: "\f120";
+  content: "";
 }
-.neos .icon-code:before {
-  content: "\f121";
+.neos .icon-code:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-code:before {
+  content: "";
 }
 .neos .icon-reply-all:before {
-  content: "\f122";
+  content: "";
 }
 .neos .icon-mail-reply-all:before {
-  content: "\f122";
+  content: "";
 }
 .neos .icon-star-half-full:before,
 .neos .icon-star-half-empty:before {
-  content: "\f123";
+  content: "";
 }
 .neos .icon-location-arrow:before {
-  content: "\f124";
+  content: "";
 }
 .neos .icon-crop:before {
-  content: "\f125";
+  content: "";
 }
 .neos .icon-code-fork:before {
-  content: "\f126";
+  content: "";
 }
 .neos .icon-unlink:before {
-  content: "\f127";
+  content: "";
 }
 .neos .icon-question:before {
-  content: "\f128";
+  content: "";
 }
 .neos .icon-info:before {
-  content: "\f129";
+  content: "";
 }
 .neos .icon-exclamation:before {
-  content: "\f12a";
+  content: "";
 }
 .neos .icon-superscript:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-superscript:before {
-  content: "\f12b";
+  content: "";
 }
 .neos .icon-subscript:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-subscript:before {
-  content: "\f12c";
+  content: "";
 }
 .neos .icon-eraser:before {
-  content: "\f12d";
+  content: "";
 }
 .neos .icon-puzzle-piece:before {
-  content: "\f12e";
+  content: "";
 }
 .neos .icon-microphone:before {
-  content: "\f130";
+  content: "";
 }
 .neos .icon-microphone-off:before {
-  content: "\f131";
+  content: "";
 }
 .neos .icon-shield:before {
-  content: "\f132";
+  content: "";
 }
 .neos .icon-calendar-empty:before {
-  content: "\f133";
+  content: "";
 }
 .neos .icon-fire-extinguisher:before {
-  content: "\f134";
+  content: "";
 }
 .neos .icon-rocket:before {
-  content: "\f135";
+  content: "";
 }
 .neos .icon-maxcdn:before {
-  content: "\f136";
+  content: "";
 }
 .neos .icon-chevron-sign-left:before {
-  content: "\f137";
+  content: "";
 }
 .neos .icon-chevron-sign-right:before {
-  content: "\f138";
+  content: "";
 }
 .neos .icon-chevron-sign-up:before {
-  content: "\f139";
+  content: "";
 }
 .neos .icon-chevron-sign-down:before {
-  content: "\f13a";
+  content: "";
 }
 .neos .icon-html5:before {
-  content: "\f13b";
+  content: "";
 }
 .neos .icon-css3:before {
-  content: "\f13c";
+  content: "";
 }
 .neos .icon-anchor:before {
-  content: "\f13d";
+  content: "";
 }
 .neos .icon-unlock-alt:before {
-  content: "\f13e";
+  content: "";
 }
 .neos .icon-bullseye:before {
-  content: "\f140";
+  content: "";
 }
 .neos .icon-ellipsis-horizontal:before {
-  content: "\f141";
+  content: "";
 }
 .neos .icon-ellipsis-vertical:before {
-  content: "\f142";
+  content: "";
 }
 .neos .icon-rss-sign:before {
-  content: "\f143";
+  content: "";
 }
 .neos .icon-play-sign:before {
-  content: "\f144";
+  content: "";
 }
 .neos .icon-ticket:before {
-  content: "\f145";
+  content: "";
 }
 .neos .icon-minus-sign-alt:before {
-  content: "\f146";
+  content: "";
 }
 .neos .icon-check-minus:before {
-  content: "\f147";
+  content: "";
 }
 .neos .icon-level-up:before {
-  content: "\f148";
+  content: "";
 }
 .neos .icon-level-down:before {
-  content: "\f149";
+  content: "";
 }
 .neos .icon-check-sign:before {
-  content: "\f14a";
+  content: "";
 }
 .neos .icon-edit-sign:before {
-  content: "\f14b";
+  content: "";
 }
 .neos .icon-external-link-sign:before {
-  content: "\f14c";
+  content: "";
 }
 .neos .icon-share-sign:before {
-  content: "\f14d";
+  content: "";
 }
 .neos .icon-compass:before {
-  content: "\f14e";
+  content: "";
 }
 .neos .icon-collapse:before {
-  content: "\f150";
+  content: "";
 }
 .neos .icon-collapse-top:before {
-  content: "\f151";
+  content: "";
 }
 .neos .icon-expand:before {
-  content: "\f152";
+  content: "";
 }
 .neos .icon-euro:before,
 .neos .icon-eur:before {
-  content: "\f153";
+  content: "";
 }
 .neos .icon-gbp:before {
-  content: "\f154";
+  content: "";
 }
 .neos .icon-dollar:before,
 .neos .icon-usd:before {
-  content: "\f155";
+  content: "";
 }
 .neos .icon-rupee:before,
 .neos .icon-inr:before {
-  content: "\f156";
+  content: "";
 }
 .neos .icon-yen:before,
 .neos .icon-jpy:before {
-  content: "\f157";
+  content: "";
 }
 .neos .icon-renminbi:before,
 .neos .icon-cny:before {
-  content: "\f158";
+  content: "";
 }
 .neos .icon-won:before,
 .neos .icon-krw:before {
-  content: "\f159";
+  content: "";
 }
 .neos .icon-bitcoin:before,
 .neos .icon-btc:before {
-  content: "\f15a";
+  content: "";
 }
 .neos .icon-file:before {
-  content: "\f15b";
+  content: "";
 }
 .neos .icon-file-text:before {
-  content: "\f15c";
+  content: "";
 }
 .neos .icon-sort-by-alphabet:before {
-  content: "\f15d";
+  content: "";
 }
 .neos .icon-sort-by-alphabet-alt:before {
-  content: "\f15e";
+  content: "";
 }
 .neos .icon-sort-by-attributes:before {
-  content: "\f160";
+  content: "";
 }
 .neos .icon-sort-by-attributes-alt:before {
-  content: "\f161";
+  content: "";
 }
 .neos .icon-sort-by-order:before {
-  content: "\f162";
+  content: "";
 }
 .neos .icon-sort-by-order-alt:before {
-  content: "\f163";
+  content: "";
 }
 .neos .icon-thumbs-up:before {
-  content: "\f164";
+  content: "";
 }
 .neos .icon-thumbs-down:before {
-  content: "\f165";
+  content: "";
 }
 .neos .icon-youtube-sign:before {
-  content: "\f166";
+  content: "";
 }
 .neos .icon-youtube:before {
-  content: "\f167";
+  content: "";
 }
 .neos .icon-xing:before {
-  content: "\f168";
+  content: "";
 }
 .neos .icon-xing-sign:before {
-  content: "\f169";
+  content: "";
 }
 .neos .icon-youtube-play:before {
-  content: "\f16a";
+  content: "";
 }
 .neos .icon-dropbox:before {
-  content: "\f16b";
+  content: "";
 }
 .neos .icon-stackexchange:before {
-  content: "\f16c";
+  content: "";
 }
 .neos .icon-instagram:before {
-  content: "\f16d";
+  content: "";
 }
 .neos .icon-flickr:before {
-  content: "\f16e";
+  content: "";
 }
 .neos .icon-adn:before {
-  content: "\f170";
+  content: "";
 }
 .neos .icon-bitbucket:before {
-  content: "\f171";
+  content: "";
 }
 .neos .icon-bitbucket-sign:before {
-  content: "\f172";
+  content: "";
 }
 .neos .icon-tumblr:before {
-  content: "\f173";
+  content: "";
 }
 .neos .icon-tumblr-sign:before {
-  content: "\f174";
+  content: "";
 }
 .neos .icon-long-arrow-down:before {
-  content: "\f175";
+  content: "";
 }
 .neos .icon-long-arrow-up:before {
-  content: "\f176";
+  content: "";
 }
 .neos .icon-long-arrow-left:before {
-  content: "\f177";
+  content: "";
 }
 .neos .icon-long-arrow-right:before {
-  content: "\f178";
+  content: "";
 }
 .neos .icon-apple:before {
-  content: "\f179";
+  content: "";
 }
 .neos .icon-windows:before {
-  content: "\f17a";
+  content: "";
 }
 .neos .icon-android:before {
-  content: "\f17b";
+  content: "";
 }
 .neos .icon-linux:before {
-  content: "\f17c";
+  content: "";
 }
 .neos .icon-dribbble:before {
-  content: "\f17d";
+  content: "";
 }
 .neos .icon-skype:before {
-  content: "\f17e";
+  content: "";
 }
 .neos .icon-foursquare:before {
-  content: "\f180";
+  content: "";
 }
 .neos .icon-trello:before {
-  content: "\f181";
+  content: "";
 }
 .neos .icon-female:before {
-  content: "\f182";
+  content: "";
 }
 .neos .icon-male:before {
-  content: "\f183";
+  content: "";
 }
 .neos .icon-gittip:before {
-  content: "\f184";
+  content: "";
 }
 .neos .icon-sun:before {
-  content: "\f185";
+  content: "";
 }
 .neos .icon-moon:before {
-  content: "\f186";
+  content: "";
 }
 .neos .icon-archive:before {
-  content: "\f187";
+  content: "";
 }
 .neos .icon-bug:before {
-  content: "\f188";
+  content: "";
 }
 .neos .icon-vk:before {
-  content: "\f189";
+  content: "";
 }
 .neos .icon-weibo:before {
-  content: "\f18a";
+  content: "";
 }
 .neos .icon-renren:before {
-  content: "\f18b";
+  content: "";
 }
 
 .neos {
@@ -1453,7 +1437,7 @@
   font-size: 14px;
   line-height: 1em;
   text-align: left;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   /* Modal Dialog Content area */
@@ -1574,12 +1558,6 @@
   vertical-align: top;
 }
 @media print {
-  .neos {
-    @page {
-      margin: 0.5cm;
-}
-
-  }
   .neos * {
     text-shadow: none !important;
     color: #000 !important;
@@ -1615,6 +1593,11 @@
   }
   .neos img {
     max-width: 100% !important;
+  }
+  @page {
+    .neos {
+      margin: 0.5cm;
+    }
   }
   .neos p,
   .neos h2,
@@ -1993,7 +1976,7 @@
   margin-bottom: 10px;
   font-size: 100%;
   line-height: 20px;
-  color: #555555;
+  color: #555;
   vertical-align: middle;
 }
 .neos input,
@@ -2020,8 +2003,8 @@
 .neos input[type="tel"],
 .neos input[type="color"],
 .neos .neos-uneditable-input {
-  background-color: white;
-  border: 1px solid #cccccc;
+  background-color: #fff;
+  border: 1px solid #ccc;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -2082,8 +2065,8 @@
 }
 .neos select {
   width: 220px;
-  border: 1px solid #cccccc;
-  background-color: white;
+  border: 1px solid #ccc;
+  background-color: #fff;
 }
 .neos select[multiple],
 .neos select[size] {
@@ -2101,7 +2084,7 @@
 .neos .neos-uneditable-textarea {
   color: #3f3f3f;
   background-color: #fcfcfc;
-  border-color: #cccccc;
+  border-color: #ccc;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
@@ -2117,15 +2100,15 @@
 }
 .neos input:-moz-placeholder,
 .neos textarea:-moz-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos input:-ms-input-placeholder,
 .neos textarea:-ms-input-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos input::-webkit-input-placeholder,
 .neos textarea::-webkit-input-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos .neos-radio,
 .neos .neos-checkbox {
@@ -2278,7 +2261,7 @@
 .neos .neos-uneditable-input {
   opacity: .65;
   cursor: not-allowed;
-  background-color: #eeeeee;
+  background-color: #eee;
 }
 .neos input[type="radio"][disabled],
 .neos input[type="checkbox"][disabled],
@@ -2440,7 +2423,7 @@
   padding: 19px 20px 20px;
   margin-top: 20px;
   margin-bottom: 20px;
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
   border-top: 1px solid #e5e5e5;
   *zoom: 1;
 }
@@ -2521,8 +2504,8 @@
   font-weight: normal;
   line-height: 20px;
   text-align: center;
-  text-shadow: 0 1px 0 white;
-  background-color: #eeeeee;
+  text-shadow: 0 1px 0 #fff;
+  background-color: #eee;
   border: 1px solid #ccc;
 }
 .neos .neos-input-append .neos-add-on,
@@ -2770,8 +2753,8 @@
   line-height: 20px;
   text-align: left;
   vertical-align: top;
-  border-top: 1px solid #dddddd;
-  color: white;
+  border-top: 1px solid #ddd;
+  color: #fff;
 }
 .neos .neos-table th {
   font-weight: bold;
@@ -2802,18 +2785,18 @@
   vertical-align: top;
 }
 .neos .neos-table tbody + tbody {
-  border-top: 2px solid #dddddd;
+  border-top: 2px solid #ddd;
 }
 .neos .neos-table .neos-table {
-  background-color: white;
+  background-color: #fff;
 }
 .neos .neos-table-condensed th,
 .neos .neos-table-condensed td {
   padding: 4px 5px;
-  color: white;
+  color: #fff;
 }
 .neos .neos-table-bordered {
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
   border-collapse: separate;
   *border-collapse: collapse;
   border-left: 0;
@@ -2823,7 +2806,7 @@
 }
 .neos .neos-table-bordered th,
 .neos .neos-table-bordered td {
-  border-left: 1px solid #dddddd;
+  border-left: 1px solid #ddd;
 }
 .neos .neos-table-bordered caption + thead tr:first-child th,
 .neos .neos-table-bordered caption + tbody tr:first-child th,
@@ -2900,7 +2883,7 @@
 }
 .neos .neos-table-hover tbody tr:hover > td,
 .neos .neos-table-hover tbody tr:hover > th {
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
 }
 .neos table td[class*="neos-span"],
 .neos table th[class*="neos-span"],
@@ -3046,7 +3029,7 @@
   width: 0;
   height: 0;
   vertical-align: top;
-  border-top: 4px solid black;
+  border-top: 4px solid #000;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
   content: "";
@@ -3066,7 +3049,7 @@
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   *border-right-width: 2px;
@@ -3092,7 +3075,7 @@
   *margin: -5px 0 5px;
   overflow: hidden;
   background-color: #e5e5e5;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #fff;
 }
 .neos .neos-dropdown-menu > li > a {
   display: block;
@@ -3100,7 +3083,7 @@
   clear: both;
   font-weight: normal;
   line-height: 20px;
-  color: #333333;
+  color: #333;
   white-space: nowrap;
 }
 .neos .neos-dropdown-menu > li > a:hover,
@@ -3108,12 +3091,12 @@
 .neos .neos-dropdown-submenu:hover > a,
 .neos .neos-dropdown-submenu:focus > a {
   text-decoration: none;
-  color: white;
+  color: #fff;
   background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -moz-linear-gradient(top, #08c, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#08c), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #08c, #0077b3);
+  background-image: -o-linear-gradient(top, #08c, #0077b3);
   background-image: linear-gradient(to bottom, #0088cc, #0077b3);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF0088CC', endColorstr='#FF0077B3', GradientType=0);
@@ -3121,14 +3104,14 @@
 .neos .neos-dropdown-menu > .neos-active > a,
 .neos .neos-dropdown-menu > .neos-active > a:hover,
 .neos .neos-dropdown-menu > .neos-active > a:focus {
-  color: white;
+  color: #fff;
   text-decoration: none;
   outline: 0;
   background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -moz-linear-gradient(top, #08c, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#08c), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #08c, #0077b3);
+  background-image: -o-linear-gradient(top, #08c, #0077b3);
   background-image: linear-gradient(to bottom, #0088cc, #0077b3);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF0088CC', endColorstr='#FF0077B3', GradientType=0);
@@ -3159,7 +3142,7 @@
 .neos .neos-dropup .neos-caret,
 .neos .neos-navbar-fixed-bottom .neos-dropdown .neos-caret {
   border-top: 0;
-  border-bottom: 4px solid black;
+  border-bottom: 4px solid #000;
   content: "";
 }
 .neos .neos-dropup .neos-dropdown-menu,
@@ -3206,7 +3189,7 @@
   margin-right: -10px;
 }
 .neos .neos-dropdown-submenu:hover > a:after {
-  border-left-color: white;
+  border-left-color: #fff;
 }
 .neos .neos-dropdown-submenu.neos-pull-left {
   float: none;
@@ -3233,7 +3216,7 @@
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
   border: 1px solid #e3e3e3;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -3285,13 +3268,13 @@
   font-size: 20px;
   font-weight: bold;
   line-height: 20px;
-  color: black;
+  color: #000;
   text-shadow: 0 1px 0 white;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2;
 }
 .neos .neos-close:hover, .neos .neos-close:focus {
-  color: black;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
@@ -3343,7 +3326,7 @@
 }
 .neos a.neos-thumbnail:hover,
 .neos a.neos-thumbnail:focus {
-  border-color: #0088cc;
+  border-color: #08c;
   -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
@@ -3356,7 +3339,7 @@
 }
 .neos .neos-thumbnail .neos-caption {
   padding: 9px;
-  color: #555555;
+  color: #555;
 }
 .neos button,
 .neos .neos-button {
@@ -3585,7 +3568,7 @@
   background-color: #2f96b4;
 }
 .neos .neos-button-group.neos-open .neos-button-inverse.neos-dropdown-toggle {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-button .neos-caret {
   margin-top: 8px;
@@ -3612,8 +3595,8 @@
 .neos .neos-button-info .neos-caret,
 .neos .neos-button-success .neos-caret,
 .neos .neos-button-inverse .neos-caret {
-  border-top-color: white;
-  border-bottom-color: white;
+  border-top-color: #fff;
+  border-bottom-color: #fff;
 }
 .neos .neos-button-group-vertical {
   display: inline-block;
@@ -3667,7 +3650,7 @@
   *display: inline;
   /* IE7 inline-block hack */
   *zoom: 1;
-  text-shadow: 0 1px 0 white;
+  text-shadow: 0 1px 0 #fff;
 }
 .neos .neos-breadcrumb > li > .neos-divider {
   padding: 0 5px;
@@ -3683,7 +3666,7 @@
   bottom: 0;
   left: 0;
   z-index: 10040;
-  background-color: black;
+  background-color: #000;
 }
 .neos .neos-modal-backdrop.neos-fade {
   opacity: 0;
@@ -3699,8 +3682,8 @@
   left: 50%;
   z-index: 10050;
   margin: 0px 0px 0px -17.5%;
-  color: white;
-  background: #222222;
+  color: #fff;
+  background: #222;
   border: 1px solid #3f3f3f;
   padding: 0px;
   width: 35%;
@@ -3744,7 +3727,7 @@
   margin-top: -16px;
   border-left: none;
   text-shadow: none;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
   font-family: FontAwesome;
   font-weight: normal;
@@ -3757,7 +3740,7 @@
   box-sizing: border-box;
 }
 .neos .neos-modal .neos-modal-header .neos-close:before {
-  content: "\f00d";
+  content: "";
 }
 .neos .neos-modal .neos-modal-header .neos-close:hover {
   background: #00b5ff;
@@ -3856,10 +3839,10 @@
 .neos .neos-tooltip-inner {
   max-width: 200px;
   padding: 8px;
-  color: white;
+  color: #fff;
   text-align: center;
   text-decoration: none;
-  background-color: black;
+  background-color: #000;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -3876,28 +3859,28 @@
   left: 50%;
   margin-left: -5px;
   border-width: 5px 5px 0;
-  border-top-color: black;
+  border-top-color: #000;
 }
 .neos .neos-tooltip.neos-right .neos-tooltip-arrow {
   top: 50%;
   left: 0;
   margin-top: -5px;
   border-width: 5px 5px 5px 0;
-  border-right-color: black;
+  border-right-color: #000;
 }
 .neos .neos-tooltip.neos-left .neos-tooltip-arrow {
   top: 50%;
   right: 0;
   margin-top: -5px;
   border-width: 5px 0 5px 5px;
-  border-left-color: black;
+  border-left-color: #000;
 }
 .neos .neos-tooltip.neos-bottom .neos-tooltip-arrow {
   top: 0;
   left: 50%;
   margin-left: -5px;
   border-width: 0 5px 5px;
-  border-bottom-color: black;
+  border-bottom-color: #000;
 }
 .neos .neos-label,
 .neos .neos-badge {
@@ -3906,7 +3889,7 @@
   font-size: 84.6%;
   font-weight: bold;
   line-height: 14px;
-  color: white;
+  color: #fff;
   vertical-align: baseline;
   white-space: nowrap;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -3929,7 +3912,7 @@
   display: none;
 }
 .neos a.neos-label:hover, .neos a.neos-label:focus, .neos a.neos-badge:hover, .neos a.neos-badge:focus {
-  color: white;
+  color: #fff;
   text-decoration: none;
   cursor: pointer;
 }
@@ -3946,7 +3929,7 @@
   background-color: #00b5ff;
 }
 .neos .neos-label-inverse {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-badge-important {
   background-color: #ff460d;
@@ -3961,7 +3944,7 @@
   background-color: #00b5ff;
 }
 .neos .neos-badge-inverse {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-button .neos-label,
 .neos .neos-button .neos-badge {
@@ -4882,7 +4865,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f057";
+  content: "";
   position: absolute;
   left: 12px;
   top: 0px;
@@ -4904,7 +4887,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f017";
+  content: "";
   position: absolute;
   left: 12px;
   top: 0px;
@@ -4935,7 +4918,7 @@
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active span + span,
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active a {
-  color: white;
+  color: #fff;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-dirty {
   border-left: 3px solid #ff8700;
@@ -5183,11 +5166,6 @@
 .neos .neos-clear {
   clear: both;
 }
-.neos .neos-controls #neos-neos-top {
-  -webkit-box-shadow: 0 0 0 transparent;
-  -moz-box-shadow: 0 0 0 transparent;
-  box-shadow: 0 0 0 transparent;
-}
 .neos .neos-pageloader-wrapper {
   position: fixed;
   top: 0;
@@ -5204,9 +5182,9 @@
   left: 50% !important;
   margin-top: 41px;
   margin-left: -190px;
-  -webkit-transition-property: margin;
   -moz-transition-property: margin;
   -o-transition-property: margin;
+  -webkit-transition-property: margin;
   transition-property: margin;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -5230,7 +5208,7 @@
   background-color: #3f3f3f;
 }
 .neos ::-webkit-scrollbar-thumb {
-  background-color: #222222;
+  background-color: #222;
   border: 1px solid #3f3f3f;
 }
 .neos ::-webkit-scrollbar-corner {
@@ -5322,15 +5300,15 @@
   width: 41px;
   height: 42px;
   border: 1px solid #3f3f3f;
-  background-color: #222222;
+  background-color: #141414;
   background-image: none;
   text-shadow: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  -webkit-transition-property: top;
   -moz-transition-property: top;
   -o-transition-property: top;
+  -webkit-transition-property: top;
   transition-property: top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -5359,15 +5337,15 @@
   bottom: 0;
   right: -321px;
   width: 320px;
-  background-color: #222222;
+  background-color: #222;
   z-index: 10014;
   border-top: 1px solid #3f3f3f;
   border-left: 1px solid #3f3f3f;
   padding-top: 40px;
   padding-bottom: 41px;
-  -webkit-transition-property: right;
   -moz-transition-property: right;
   -o-transition-property: right;
+  -webkit-transition-property: right;
   transition-property: right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -5491,7 +5469,7 @@
   line-height: 40px;
   border: 1px solid #323232;
   padding: 0;
-  background-color: #222222;
+  background-color: #222;
 }
 .neos #neos-inspector .neos-datetimepicker table tr td.neos-minute:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-hour:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-day:hover {
   background-color: #00b5ff;
@@ -5539,7 +5517,7 @@
 }
 .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover {
   background-color: #00b5ff;
-  color: white;
+  color: #fff;
 }
 .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active[disabled], .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover[disabled], .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled[disabled], .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover[disabled] {
   background-color: #00b5ff;
@@ -5697,7 +5675,7 @@
 }
 .neos #neos-inspector .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos #neos-inspector .chosen-container .chosen-single div:before, .neos #neos-inspector .chosen-container .chosen-single div:after {
   display: block;
@@ -5745,7 +5723,7 @@
   font-size: 17px;
   font-weight: bold;
   line-height: 18px;
-  color: #222222;
+  color: #222;
 }
 .neos #neos-inspector .chosen-container .chosen-drop {
   border: none;
@@ -5754,15 +5732,15 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
   color: inherit;
   margin-top: 0;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-search {
   padding: 0;
-  color: black;
+  color: #000;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -5776,7 +5754,7 @@
   width: 100%;
   height: 40px;
   border: none;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -5801,7 +5779,7 @@
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f002";
+  content: "";
   line-height: 100%;
   font-size: 12px;
 }
@@ -5812,7 +5790,7 @@
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
   line-height: 24px;
   padding: 8px 16px;
   -webkit-box-sizing: border-box;
@@ -5820,7 +5798,7 @@
   box-sizing: border-box;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.highlighted {
   background-color: #00b5ff;
@@ -5932,7 +5910,7 @@
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div span {
   display: block;
   margin-right: 40px;
-  border-right: 1px solid #222222;
+  border-right: 1px solid #222;
   line-height: 40px;
   height: 40px;
   overflow: hidden;
@@ -5966,15 +5944,15 @@
   margin: 0;
   width: 100%;
   z-index: 10015;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li {
   position: relative;
   min-height: 40px;
   background-color: #323232;
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li:first-child {
   background-color: #00b5ff;
@@ -6126,7 +6104,7 @@
   height: 40px;
   border: 2px solid #323232;
   background-color: #323232;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -6371,7 +6349,7 @@
   color: #fff;
   text-shadow: none;
   border: none;
-  border-right: 1px solid #222222;
+  border-right: 1px solid #222;
   padding: 9px;
   min-width: 41px;
   text-align: center;
@@ -6406,7 +6384,7 @@
   min-width: 0;
 }
 .neos #neos-inspector .neos-inspector-form span + .neos-add-on {
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
   border-right: none;
 }
 .neos #neos-inspector .neos-inspector-form .neos-tooltip.neos-bottom {
@@ -6415,7 +6393,7 @@
   margin-top: -1px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-tooltip.neos-in {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
 .neos #neos-inspector .neos-inspector-form .neos-tooltip .neos-tooltip-arrow {
@@ -6440,8 +6418,8 @@
   bottom: 0;
   width: 100%;
   height: 40px;
-  border-top: 1px solid #222222;
-  background-color: #222222;
+  border-top: 1px solid #222;
+  background-color: #222;
 }
 .neos #neos-inspector .neos-actions button.neos-inspector-cancel {
   float: left;
@@ -6475,10 +6453,10 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
-  background-color: #222222;
-  -webkit-transition-property: top, left, padding-left, padding-right;
+  background-color: #222;
   -moz-transition-property: top, left, padding-left, padding-right;
   -o-transition-property: top, left, padding-left, padding-right;
+  -webkit-transition-property: top, left, padding-left, padding-right;
   transition-property: top, left, padding-left, padding-right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -7050,7 +7028,7 @@
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAQAAAAHUWYVAABFFUlEQVQYGbzBCeDVU/74/6fj9HIcx/FRHx9JCFmzMyGRURhLZIkUsoeRfUjS2FNDtr6WkMhO9sm+S8maJfu+Jcsg+/o/c+Z4z/t97/vezy3z+z8ekGlnYICG/o7gdk+wmSHZ1z4pJItqapjoKXWahm8NmV6eOTbWUOp6/6a/XIg6GQqmenJ2lDHyvCFZ2cBDbmtHA043VFhHwXxClWmeYAdLhV00Bd85go8VmaFCkbVkzlQENzfBDZ5gtN7HwF0KDrTwJ0dypSOzpaKCMwQHKTIreYIxlmhXTzTWkVm+LTynZhiSBT3RZQ7aGfjGEd3qyXQ1FDymqbKxpspERQN2MiRjNZlFFQXfCNFm9nM1zpAsoYjmtRTc5ajwuaXc5xrWskT97RaKzAGe5ARHhVUsDbjKklziiX5WROcJwSNCNI+9w1Jwv4Zb2r7lCMZ4oq5C0EdTx+2GzNuKpJ+iFf38JEWkHJn9DNF7mmBDITrWEg0VWL3pHU20tSZnuqWu+R3BtYa8XxV1HO7GyD32UkOpL/yDloINFTmvtId+nmAjxRw40VMwVKiwrKLE4bK5UOVntYwhOcSSXKrJHKPJedocpGjVz/ZMIbnYUPB10/eKCrs5apqpgVmWzBYWpmtKHecJPjaUuEgRDDaU0oZghCJ6zNMQ5ZhDYx05r5v2muQdM0EILtXUsaKiQX9WMEUotagQzFbUNN6NUPC2nm5pxEWGCjMc3GdJHjSU2kORLK/JGSrkfGEIjncU/CYUnOipoYemwj8tST9NsJmB7TUVXtbUtXATJVZXBMvYeTXJfobgJUPmGMP/yFaWonaa6BcFO3nqcIqCozSZoZoSr1g4zJOzuyGnxTEX3lUEJ7WcZgme8ddaWvWJo2AJR9DZU3CUIbhCSG6ybSwN6qtJVnCU2svDTP2ZInOw2cBTrqtQahtNZn9NcJ4l2NaSmSkkP1noZWnVwkLmdUPOwLZEwy2Z3S3R+4rIG9hcbpPXHFVWcQdZkn2FOta3cKWQnNRC5g1LsJah4GCzSVsKnCOY5OAFRTBekyyryeyilhFKva75r4Mc0aWanGEaThcy31s439KKxTzJYY5WTHPU1FtIHjQU3Oip4xlNzj/lBw23dYZVliQa7WAXf4shetcQfatI+jWRDBPmyNeW6A1P5kdDgyYJlba0BIM8BZu1JfrFwItyjcAMR3K0BWOIrtMEXyhyrlVEx3ui5dUBjmB/Q3CXW85R4mBD0s7B+4q5tKUjOlb9qqmhi5AZ6GFIC5HXtOobdYGlVdMVbNJ8toNTFcHxnoL+muBagcctjWnbNMuR00uI7nQESwg5q2qqrKWIfrNUmeQocY6HuyxJV02wj36w00yhpmUFenv4p6fUkZYqLyuinx2RGOjhCXYyJF84oiU00YMOOhhquNdfbOB7gU88pY4xJO8LVdp6/q2voeB4R04vIdhSE40xZObx1HGGJ/ja0LBthFInKaLPPFzuCaYaoj8JjPME8yoyxo6zlBqkiUZYgq00OYMswbWO5NGmq+xhipxHLRW29ARjNKXO0wRnear8XSg4XFPLKEPUS1GqvyLwiuBUoa7zpZ0l5xxFwWmWZC1H5h5FwU8eQ7K+g8UcVY6TMQreVQT/8uQ8Z+ALIXnSEa2pYZQneE9RZbSBNYXfWYJzW/h/4j4Dp1tYVcFIC5019Vyi4ThPqSFCzjGWaHQTBU8q6vrVwgxP9Lkm840imWKpcLCjYTtrKuwvsKSnrvHCXGkSMk9p6lhckfRpIeis+N2PiszT+mFLspyGleUhDwcLrZqmyeylxwjBcKHEapqkmyangyLZRVOijwOtCY5SsG5zL0OwlCJ4y5KznF3EUNDDrinwiyLZRzOXtlBbK5ITHFGLp8Q0R6ab6mS7enI2cFrxOyHvOCFaT1HThS1krjCwqWeurCkk+willhCC+RSZnRXBiZaC5RXRIZYKp2lyfrHwiKPKR0JDzrdU2EFgpidawlFDR6FgXUMNa+g1FY3bUQh2cLCwosRdnuQTS/S+JVrGLeWIvtQUvONJxlqSQYYKpwoN2kaocLjdVsis4Mk80ESF2YpSkzwldjHkjFCUutI/r+EHDU8oCs6yzL3PhWiEooZdFMkymlas4AcI3KmoMMNSQ3tHzjGWCrcJJdYyZC7QFGwjRL9p+MrRkAGWzIaWCn9W0F3TsK01c2ZvQw0byvxuQU0r1lM0qJO7wW0kRIMdDTtXEdzi4VIh+EoIHm0mWtAtpCixlabgn83fKTI7anJe9ST7WIK1DMGpQmYeA58ImV6ezOGOzK2Kgq01pd60cKWiUi9Lievb/0vIDPHQ05Kzt4ddPckQBQtoaurjyHnek/nKzpQLrVgKPjIkh2v4uyezpv+Xoo7fPFXaGFp1vaLKxQ4uUpQQS5VuQs7BCq4xRJv7fwpVvvFEB3j+620haOuocqMhWd6TTPAEx+mdFNGHdranFe95WrWmIvlY4F1Dle2ECgc6cto7SryuqGGGha0tFQ5V53migUKmg6XKAo4qS3mik+0OZpAhOLeZKicacgaYcyx5hypYQE02ZA4xi/pNhOQxR4klNKyqacj+mpxnLTnnGSo85++3ZCZq6lrZkXlGEX3o+C9FieccJbZWVFjC0Yo1FZnJhoYMFoI1hEZ9r6hwg75HwzBNhbZCdJEfJwTPGzJvaKImw1yYX1HDAmpXR+ZJQ/SmgqMNVQb5vgamGwLtt7VwvP7Qk1xpiM5x5Cyv93E06MZmgs0Nya2azIKOYKCGBQQW97RmhKNKF02JZqHEJ4o58qp7X5EcZmc56trXEqzjCBZ1MFGR87Ql2tSTs6CGxS05PTzRQorkbw7aKoKXFDXsYW42VJih/q+FP2BdTzDTwVqOYB13liM50vG7wy28qagyuIXMeQI/Oqq8bcn5wJI50xH00CRntyfpL1T4hydYpoXgNiFzoIUTDZnLNRzh4TBHwbYGDvZkxmlyJloyr6tRihpeUG94GnKtIznREF0tzJG/OOr73JBcrSh1k6WuTprgLU+mnSGnv6Zge0NNz+kTDdH8nuAuTdJDCNb21LCiIuqlYbqGzT3RAoZofQfjFazkqeNWdYaGvYTM001EW2oKPvVk1ldUGSgUtHFwjKM1h9jnFcmy5lChoLNaQMGGDsYbKixlaMBmmsx1QjCfflwTfO/gckW0ruZ3jugKR3R5W9hGUWqCgxuFgsuaCHorotGKzGaeZB9DMsaTnKCpMtwTvOzhYk0rdrArKCqcaWmVk1+F372ur1YkKxgatI8Qfe1gIX9wE9FgS8ESmuABIXnRUbCapcKe+nO7slClSZFzpV/LkLncEb1qiO42fS3R855Su2mCLh62t1SYZZYVmKwIHjREF2uihTzB20JOkz7dkxzYQnK0UOU494wh+VWRc6Un2kpTaVgLDFEkJ/uhzRcI0YKGgpGWOlocBU/a4fKoJ/pEaNV6jip3+Es9VXY078rGnmAdf7t9ylPXS34RBSuYPs1UecZTU78WanhBCHpZ5sAoTz0LGZKjPf9TRypqWEiTvOFglL1fCEY3wY/++rbk7C8bWebA6p6om6PgOL2kp44TFJlVNBXae2rqqdZztOJpT87GQsE9jqCPIe9VReZuQ/CIgacsyZdCpIScSYqcZk8r+nsyCzhyfhOqHGOIvrLknC8wTpFcaYiGC/RU1NRbUeUpocQOnkRpGOrIOcNRx+1uA0UrzhSSt+VyS3SJpnFWkzNDqOFGIWcfR86DnmARTQ1HKIL33ExPiemeOhYSSjzlSUZZuE4TveoJLnBUOFof6KiysCbnAEcZgcUNTDOwkqWu3RWtmGpZwlHhJENdZ3miGz0lJlsKnjbwqSHQjpxnFDlTLLwqJPMZMjd7KrzkSG7VsxXBZE+F8YZkb01Oe00yyRK9psh5SYh29ySPKBo2ylNht7ZkZnsKenjKNJu9PNEyZpaCHv4Kt6RQsLvAVp7M9kIimmCUwGeWqLMmGuIotYMmWNpSahkhZw9FqZsVnKJhsjAHvtHMsTM9fCI06Dx/u3vfUXCqfsKRc4oFY2jMsoo/7DJDwZ1CsIKnJu+J9ldkpmiCxQx1rWjI+T9FwcWWzOuaYH0Hj7klNRVWEQpmaqosakiGNTFHdjS/qnUdmf0NJW5xsL0HhimCCZZSRzmSPTXJQ4aaztAwtZnoabebJ+htCaZ7Cm535ByoqXKbX1WRc4Eh2MkRXWzImVc96Cj4VdOKVxR84VdQsIUM8Psoou2byVHyZFuq7O8otbSQ2UAoeEWTudATLGSpZzVLlXVkPU2Jc+27lsw2jmg5T5VhbeE3BT083K9WsTTkFU/Osi0rC5lRlpwRHUiesNS0sOvmqGML1aRbPAxTJD9ZKtxuob+hhl8cwYGWpJ8nub7t5p6coYbMovZ1BTdaKn1jYD6h4GFDNFyT/Kqe1XCXphXHOKLZmuRSRdBPEfVUXQzJm5YGPGGJdvAEr7hHNdGZnuBvrpciGmopOLf5N0uVMy0FfYToJk90uUCbJupaVpO53UJXR2bVpoU00V2KOo4zMFrBd0Jtz2pa0clT5Q5L8IpQ177mWQejPMEJhuQjS10ref6HHjdEhy1P1EYR7GtO0uSsKJQYLiTnG1rVScj5lyazpqWGl5uBbRWl7m6ixGOOnEsMJR7z8J0n6KMnCdxhiNYQCoZ6CmYLnO8omC3MkW3bktlPmEt/VQQHejL3+dOE5FlPdK/Mq8hZxxJtLyRrepLThYKbLZxkSb5W52vYxNOaOxUF0yxMUPwBTYqCzy01XayYK0sJyWBLqX0MwU5CzoymRzV0EjjeUeLgDpTo6ij42ZAzvD01dHUUTPLU96MdLbBME8nFBn7zJCMtJcZokn8YoqU0FS5WFKyniHobguMcmW8N0XkWZjkyN3hqOMtS08r+/xTBwpZSZ3qiVRX8SzMHHjfUNFjgHEPmY9PL3ykEzxkSre/1ZD6z/NuznuB0RcE1TWTm9zRgfUWVJiG6yrzgmWPXC8EAR4Wxhlad0ZbgQyEz3pG5RVEwwDJH2mgKpjcTiCOzn1lfUWANFbZ2BA8balnEweJC9J0iuaeZoI+ippFCztEKVvckR2iice1JvhVytrQwUAZpgsubCPaU7xUe9vWnaOpaSBEspalykhC9bUlOMpT42ZHca6hyrqKmw/wMR8H5ZmdFoBVJb03O4UL0tSNnvIeRmkrLWqrs78gcrEn2tpcboh0UPOW3UUR9PMk4T4nnNKWmCjlrefhCwxRNztfmIQVdDElvS4m1/WuOujoZCs5XVOjtKPGokJzsYCtFYoWonSPT21DheU/wWhM19FcElwqNGOsp9Q8N/cwXaiND1MmeL1Q5XROtYYgGeFq1aTMsoMmcrKjQrOFQTQ1fmBYhmW6o8Jkjc7iDJRTBIo5kgJD5yMEYA3srCg7VFKwiVJkmRCc5ohGOKhsYMn/XBLdo5taZjlb9YAlGWRimqbCsoY7HFAXLa5I1HPRxMMsQDHFkWtRNniqT9UEeNjcE7RUlrCJ4R2CSJuqlKHWvJXjAUNcITYkenuBRB84TbeepcqTj3zZyFJzgYQdHnqfgI0ddUwS6GqWpsKWhjq9cV0vBAEMN2znq+EBfIWT+pClYw5xsTlJU6GeIBsjGmmANTzJZiIYpgrM0Oa8ZMjd7NP87jxhqGOhJlnQtjuQpB+8aEE00wZFznSJPyHxgH3HkPOsJFvYk8zqCHzTs1BYOa4J3PFU+UVRZxlHDM4YavlNUuMoRveiZA2d7grMNc2g+RbSCEKzmgYsUmWmazFJyoiOZ4KnyhKOGRzWJa0+moyV4TVHDzn51Awtqaphfk/lRQ08FX1iiqxTB/kLwd0VynKfEvI6cd4XMV5bMhZ7gZUWVzYQ6Nm2BYzxJbw3bGthEUUMfgbGeorae6DxHtJoZ6alhZ0+ytiVoK1R4z5PTrOECT/SugseEOlb1MMNR4VRNcJy+V1Hg9ONClSZFZjdHlc6W6FBLdJja2MC5hhpu0DBYEY1TFGwiFAxRRCsYkiM9JRb0JNMVkW6CZYT/2EiTGWmo8k+h4FhDNE7BvppoTSFnmCV5xZKzvcCdDo7VVPnIU+I+Rc68juApC90MwcFCsJ5hDqxgScYKreruyQwTqrzoqDCmhWi4IbhB0Yrt3RGa6GfDv52rKXWhh28dyZaWUvcZeMTBaZoSGyiCtRU5J8iviioHaErs7Jkj61syVzTTgOcUOQ8buFBTYWdL5g3T4qlpe0+wvD63heAXRfCCIed9RbCsp2CiI7raUOYOTU13N8PNHvpaGvayo4a3LLT1lDrVEPT2zLUlheB1R+ZTRfKWJ+dcocLJfi11vyJ51lLqJ0WD7tRwryezjiV5W28uJO9qykzX8JDe2lHl/9oyBwa2UMfOngpXCixvKdXTk3wrsKmiVYdZIqsoWEERjbcUNDuiaQomGoIbFdEHmsyWnuR+IeriKDVLnlawlyNHKwKlSU631PKep8J4Q+ayjkSLKYLhalNHlYvttb6fHm0p6OApsZ4l2VfdqZkjuysy6ysKLlckf1KUutCTs39bmCgEyyoasIWlVaMF7mgmWtBT8Kol5xpH9IGllo8cJdopcvZ2sImlDmMIbtDk3KIpeNiS08lQw11NFPTwVFlPP6pJ2gvRfI7gQUfmNAtf6Gs0wQxDsKGlVBdF8rCa3jzdwMaGHOsItrZk7hAyOzpK9VS06j5F49b0VNGOOfKs3lDToMsMBe9ZWtHFEgxTJLs7qrygKZjUnmCYoeAqeU6jqWuLJup4WghOdvCYJnrSkSzoyRkm5M2StQwVltPkfCAk58tET/CSg+8MUecmotMEnhBKfWBIZsg2ihruMJQaoIm+tkTLKEqspMh00w95gvFCQRtDwTT1gVDDSEVdlwqZfxoQRbK0g+tbiBZxzKlpnpypejdDwTaeOvorMk/IJE10h9CqRe28hhLbe0pMsdSwv4ZbhKivo2BjDWfL8UKJgeavwlwb5KlwhyE4u4XkGE2ytZCznKLCDZZq42VzT8HLCrpruFbIfOIINmh/qCdZ1ZBc65kLHR1Bkyf5zn6pN3SvGKIlFNGplhrO9QSXanLOMQTLCa0YJCRrCZm/CZmrLTm7WzCK4GJDiWUdFeYx1LCFg3NMd0XmCuF3Y5rITLDUsYS9zoHVzwnJoYpSTQoObyEzr4cFBNqYTopoaU/wkyLZ2lPhX/5Y95ulxGTV7KjhWrOZgl8MyUUafjYraNjNU1N3IWcjT5WzWqjwtoarHSUObGYO3GCJZpsBlnJGPd6ZYLyl1GdCA2625IwwJDP8GUKymbzuyPlZlvTUsaUh5zFDhRWFzPKKZLAlWdcQbObgF9tOqOsmB1dqcqYJmWstFbZRRI9poolmqiLnU0POvxScpah2iSL5UJNzgScY5+AuIbpO0YD3NCW+dLMszFSdFCWGqG6eVq2uYVNDdICGD6W7EPRWZEY5gpsE9rUkS3mijzzJnm6UpUFXG1hCUeVoS5WfNcFpblELL2qqrCvMvRfd45oalvKU2tiQ6ePJOVMRXase9iTtLJztPxJKLWpo2CRDcJwn2sWSLKIO1WQWNTCvpVUvOZhgSC40JD0dOctaSqzkCRbXsKlb11Oip6PCJ0IwSJM31j3akRxlP7Rwn6aGaUL0qiLnJkvB3xWZ2+Q1TfCwpQH3G0o92UzmX4o/oJNQMMSQc547wVHhdk+VCw01DFYEnTxzZKAm74QmeNNR1w6WzEhNK15VJzuCdxQ53dRUDws5KvwgBMOEgpcVNe0hZI6RXT1Jd0cyj5nsaEAHgVmGaJIlWdsc5Ui2ElrRR6jrRAttNMEAIWrTDFubkZaok7/AkzfIwfuWVq0jHzuCK4QabtLUMVPB3kJ0oyHTSVFlqMALilJf2Rf8k5aaHtMfayocLBS8L89oKoxpJvnAkDPa0qp5DAUTHKWmCcnthlou8iCKaFFLHWcINd1nyIwXqrSxMNmSs6KmoL2QrKuWtlQ5V0120xQ5vRyZS1rgFkWwhiOwiuQbR0OOVhQM9iS3tiXp4RawRPMp5tDletOOBL95MpM01dZTBM9pkn5qF010rIeHFcFZhmSGpYpTsI6nwhqe5C9ynhlpp5ophuRb6WcJFldkVnVEwwxVfrVkvnWUuNLCg5bgboFHPDlDPDmnK7hUrWiIbjadDclujlZcaokOFup4Ri1kacV6jmrrK1hN9bGwpKEBQ4Q6DvIUXOmo6U5LqQM6EPyiKNjVkPnJkDPNEaxhiFay5ExW1NXVUGqcpYYdPcGiCq7z/TSlbhL4pplWXKd7NZO5QQFrefhRQW/NHOsqcIglc4UhWklR8K0QzbAw08CBDnpbgqXdeD/QUsM4RZXDFBW6WJKe/mFPdH0LtBgiq57wFLzlyQzz82qYx5D5WJP5yVJDW01BfyHnS6HKO/reZqId1WGa4Hkh2kWodJ8i6KoIPlAj2hPt76CzXsVR6koPRzWTfKqIentatYpQw2me4AA3y1Kind3SwoOKZDcFXTwl9tWU6mfgRk9d71sKtlNwrjnYw5tC5n5LdKiGry3JKNlHEd3oaMCFHrazBPMp/uNJ+V7IudcSbeOIdjUEdwl0VHCOZo5t6YluEuaC9mQeMgSfOyKnYGFHcIeQ84yQWbuJYJpZw5CzglDH7gKnWqqM9ZTaXcN0TeYhR84eQtJT76JJ1lREe7WnnvsMmRc9FQ7SBBM9mV3lCUdmHk/S2RAMt0QjFNFqQpWjDPQ01DXWUdDBkXziKPjGEP3VP+zIWU2t7im41FOloyWzn/L6dkUy3VLDaZ6appgDLHPjJEsyvJngWEPUyVBiAaHCTEXwrLvSEbV1e1gKJniicWorC1MUrVjB3uDhJE/wgSOzk1DXpk0k73qCM8xw2UvD5kJmDUfOomqMpWCkJRlvKXGmoeBm18USjVIk04SClxTB6YrgLAPLWYK9HLUt5cmc0vYES8GnTeRc6skZbQkWdxRsIcyBRzx1DbTk9FbU0caTPOgJHhJKnOGIVhQqvKmo0llRw9sabrZkDtdg3PqaKi9oatjY8B+G371paMg6+mZFNNtQ04mWBq3rYLOmtWWQp8KJnpy9DdFensyjdqZ+yY40VJlH8wcdLzC8PZnvHMFUTZUrDTkLyQaGus5X5LzpYAf3i+e/ZlhqGqWhh6Ou6xTR9Z6oi5AZZtp7Mj2EEm8oSpxiYZCHU/1fbGdNNNRRoZMhmilEb2gqHOEJDtXkHK/JnG6IrvbPCwV3NhONVdS1thBMs1T4QOBcTWa2IzhMk2nW5Kyn9tXUtpv9RsG2msxk+ZsQzRQacJncpgke0+T8y5Fzj8BiGo7XlJjaTIlpQs7KFjpqGnKuoyEPeIKnFMkZHvopgh81ySxNFWvJWcKRs70j2FOT012IllEEO1n4pD1513Yg2ssQPOThOkvyrqHUdEXOSEsihmBbTbKX1kLBPWqWkLOqJbjB3GBIZmoa8qWl4CG/iZ7oiA72ZL7TJNeZUY7kFQftDcHHluBzRbCegzMtrRjVQpX2lgoPKKLJAkcbMl01XK2p7yhL8pCBbQ3BN2avJgKvttcrWDK3CiUOVxQ8ZP+pqXKyIxnmBymCg5vJjNfkPK4+c8cIfK8ocVt7kmfd/I5SR1hKvCzUtb+lhgc00ZaO6CyhIQP1Uv4yIZjload72PXX0OIJvnFU+0Zf6MhsJwTfW0r0UwQfW4LNLZl5HK261JCZ4qnBaAreVAS3WrjV0LBnNDUNNDToCEeFfwgcb4gOEqLRhirWkexrCEYKVV711DLYEE1XBEsp5tpTGjorkomKYF9FDXv7fR3BGwbettSxnyL53MBPjsxDZjMh+VUW9NRxq1DhVk+FSxQcaGjV9Pawv6eGByw5qzoy7xk4RsOShqjJwWKe/1pEEfzkobeD/dQJmpqedcyBTy2sr4nGNRH0c0SPWTLrqAc0OQcb/gemKgqucQT7ySWKCn2EUotoCvpZct7RO2sy/QW0IWcXd7pQRQyZVwT2USRO87uhjioTLKV2brpMUcMQRbKH/N2T+UlTpaMls6cmc6CCNy3JdYYSUzzJQ4oSD3oKLncULOiJvjBEC2oqnCJkJluCYy2ZQ5so9YYlZ1VLlQU1mXEW1jZERwj/MUSRc24TdexlqLKfQBtDTScJUV8FszXBEY5ktpD5Ur9hYB4Nb1iikw3JoYpkKX+RodRKFt53MMuRnKSpY31PwYaGaILh3wxJGz9TkTPEETxoCWZrgvOlmyMzxFEwVJE5xZKzvyJ4WxEc16Gd4Xe3Weq4XH2jKRikqOkGQ87hQnC7wBmGYLAnesX3M+S87eFATauuN+Qcrh7xIxXJbUIdMw3JGE3ylCWzrieaqCn4zhGM19TQ3z1oH1AX+pWEqIc7wNGAkULBo/ZxRaV9NNyh4Br3rCHZzbzmSfawBL0dNRwpW1kK9mxPXR9povcdrGSZK9c2k0xwFGzjuniCtRSZCZ6ccZ7gaktmgAOtKbG/JnOkJrjcQTdFMsxRQ2cLY3WTIrlCw1eWKn8R6pvt4GFDso3QoL4a3nLk3G6JrtME3dSenpx7PNFTmga0EaJTLQ061sEeQoWXhSo9LTXsaSjoJQRXeZLtDclbCrYzfzHHeaKjHCVOUkQHO3JeEepr56mhiyaYYKjjNU+Fed1wS5VlhWSqI/hYUdDOkaxiKehoyOnrCV5yBHtbWFqTHCCwtpDcYolesVR5yUzTZBb3RNMd0d6WP+SvhuBmRcGxnuQzT95IC285cr41cLGQ6aJJhmi4TMGempxeimBRQw1tFKV+8jd6KuzoSTqqDxzRtpZkurvKEHxlqXKRIjjfUNNXQsNOsRScoWFLT+YeRZVD3GRN0MdQcKqQjHDMrdGGVu3iYJpQx3WGUvfbmxwFfR20WBq0oYY7LMFhhgYtr8jpaEnaOzjawWWaTP8mMr0t/EPDPoqcnxTBI5o58L7uoWnMrpoqPwgVrlAUWE+V+TQl9rawoyP6QGAlQw2TPRX+YSkxyBC8Z6jhHkXBgQL7WII3DVFnRfCrBfxewv9D6xsyjys4VkhWb9pUU627JllV0YDNHMku/ldNMMXDEo4aFnAkk4U6frNEU4XgZUPmEKHUl44KrzmYamjAbh0JFvGnaTLPu1s9jPCwjFpYiN7z1DTOk/nc07CfDFzmCf7i+bfNHXhDtLeBXzTBT5rkMvWOIxpl4EMh2LGJBu2syDnAEx2naEhHDWMMzPZEhygyS1mS5RTJr5ZkoKbEUoYqr2kqdDUE8ztK7OaIntJkFrIECwv8LJTaVx5XJE86go8dFeZ3FN3rjabCAYpoYEeC9zzJVULBbmZhDyd7ko09ydpNZ3nm2Kee4FPPXHnYEF1nqOFEC08LUVcDvYXkJHW8gTaKCk9YGOeIJhqiE4ToPEepdp7IWFjdwnWaufGMwJJCMtUTTBBK9BGCOy2tGGrJTHIwyEOzp6aPzNMOtlZkDvcEWpP5SVNhfkvDxhmSazTJXYrM9U1E0xwFVwqZQwzJxw6+kGGGUj2FglGGmnb1/G51udRSMNlTw6GGnCcUwVcOpmsqTHa06o72sw1RL02p9z0VbnMLOaIX3QKaYKSCFQzBKEUNHTSc48k53RH9wxGMtpQa5KjjW0W0n6XCCCG4yxNNdhQ4R4l1Ff+2sSd6UFHiIEOyqqFgT01mEUMD+joy75jPhOA+oVVLm309FR4yVOlp4RhLiScNmSmaYF5Pw0STrOIoWMSR2UkRXOMp+M4SHW8o8Zoi6OZgjKOaFar8zZDzkWzvKOjkKBjmCXby8JahhjXULY4KlzgKLvAwxVGhvyd4zxB1d9T0piazmKLCVZY5sKiD0y2ZSYrkUEPUbIk+dlQ4SJHTR50k1DPaUWIdTZW9NJwnJMOECgd7ou/MnppMJ02O1VT4Wsh85MnZzcFTngpXGKo84qmwgKbCL/orR/SzJ2crA+t6Mp94KvxJUeIbT3CQu1uIdlQEOzlKfS3UMcrTiFmOuroocrZrT2AcmamOKg8YomeEKm/rlT2sociMaybaUlFhuqHCM2qIJ+rg4EcDFymiDSxzaHdPcpE62pD5kyM5SBMoA1PaUtfIthS85ig1VPiPPYXgYEMNk4Qq7TXBgo7oT57gPUdwgCHzhIVFPFU6OYJzHAX9m5oNrVjeE61miDrqQ4VSa1oiURTsKHC0IfjNwU2WzK6eqK8jWln4g15TVBnqmDteCJ501PGAocJhhqjZdtBEB6lnhLreFJKxmlKbeGrqLiSThVIbCdGzloasa6lpMQXHCME2boLpJgT7yWaemu6wBONbqGNVRS0PKIL7LckbjmQtR7K8I5qtqel+T/ChJTNIKLjdUMNIRyvOEko9YYl2cwQveBikCNawJKcLBbc7+JM92mysNvd/Fqp8a0k6CNEe7cnZrxlW0wQXaXjaktnRwNOGZKYiONwS7a1JVheq3WgJHlQUGKHKmp4KAxXR/ULURcNgoa4zhKSLpZR3kxRRb0NmD0OFn+UCS7CzI1nbP6+o4x47QZE5xRCt3ZagnYcvmpYQktXdk5YKXTzBC57kKEe0VVuiSYqapssMS3C9p2CKkHOg8B8Pa8p5atrIw3qezIWanMGa5HRDNF6RM9wcacl0N+Q8Z8hsIkSnaIIdHRUOEebAPy1zbCkhM062FCJtif7PU+UtoVXzWKqM1PxXO8cfdruhFQ/a6x3JKYagvVDhQEtNiyiiSQ7OsuRsZUku0CRNDs4Sog6KKjsZgk2bYJqijgsEenoKeniinRXBn/U3lgpPdyDZynQx8IiioMnCep5Ky8mjGs6Wty0l1hUQTcNWswS3WRp2kCNZwJG8omG8JphPUaFbC8lEfabwP7VtM9yoaNCAjpR41VNhrD9LkbN722v0CoZMByFzhaW+MyzRYEWFDQwN2M4/JiT76PuljT3VU/A36eaIThb+R9oZGOAJ9tewkgGvqOMNRWYjT/Cwu99Q8LqDE4TgbLWxJ1jaDDAERsFOFrobgjUsBScaguXU8kKm2RL19tRypSHnHNlHiIZqgufs4opgQdVdwxBNNFBR6kVFqb8ogimOzB6a6HTzrlDHEpYaxjiiA4TMQobkDg2vejjfwJGWmnbVFAw3H3hq2NyQfG7hz4aC+w3BbwbesG0swYayvpAs6++Ri1Vfzx93mFChvyN5xVHTS+0p9aqCAxyZ6ZacZyw5+7uuQkFPR9DDk9NOiE7X1PCYJVjVUqq7JlrHwWALF5nfHNGjApdpqgzx5OwilDhCiDYTgnc9waGW4BdLNNUQvOtpzDOWHDH8D7TR/A/85KljEQu3NREc4Pl/6B1Hhc8Umb5CsKMmGC9EPcxoT2amwHNCmeOEnOPbklnMkbOgIvO5UMOpQrS9UGVdt6iH/fURjhI/WOpaW9OKLYRod6HCUEdOX000wpDZQ6hwg6LgZfOqo1RfT/CrJzjekXOGhpc1VW71ZLbXyyp+93ILbC1kPtIEYx0FIx1VDrLoVzXRKRYWk809yYlC9ImcrinxtabKnzRJk3lAU1OLEN1j2zrYzr2myHRXJFf4h4QKT1qSTzTB5+ZNTzTRkAxX8FcLV2uS8eoQQ2aAkFzvCM72sJIcJET3WPjRk5wi32uSS9rfZajpWEvj9hW42F4o5NytSXYy8IKHay10VYdrcl4SkqscrXpMwyGOgtkajheSxdQqmpxP1L3t4R5PqasFnrQEjytq6qgp9Y09Qx9o4S1FzhUCn1kyHSzBWLemoSGvOqLNhZyBjmCaAUYpMgt4Ck7wBBMMwWKWgjsUwTaGVsxWC1mYoKiyqqeGKYqonSIRQ3KIkHO0pmAxTdBHkbOvfllfr+AA+7gnc50huVKYK393FOyg7rbPO/izI7hE4CnHHHnJ0ogNPRUGeUpsrZZTBJcrovUcJe51BPsr6GkJdhCCsZ6aTtMEb2pqWkqeVtDXE/QVggsU/Nl86d9RMF3DxvZTA58agu810RWawCiSzzXBeU3MMW9oyJUedvNEvQyNu1f10BSMddR1vaLCYpYa/mGocLSiYDcLbQz8aMn5iyF4xBNMs1P0QEOV7o5gaWGuzSeLue4tt3ro7y4Tgm4G/mopdZgl6q0o6KzJWE3mMksNr3r+a6CbT8g5wZNzT9O7fi/zpaOmnz3BRoqos+tv9zMbdpxsqDBOEewtJLt7cg5wtKKbvldpSzRRCD43VFheCI7yZLppggMVBS/KMAdHODJvOwq2NQSbKKKPLdFWQs7Fqo+mpl01JXYRgq8dnGLhTiFzqmWsUMdpllZdbKlyvSdYxhI9YghOtxR8LgSLWHK62mGGVoxzBE8LNWzqH9CUesQzFy5RQzTc56mhi6fgXEWwpKfE5Z7M05ZgZUPmo6auiv8YKzDYwWBLMErIbKHJvOwIrvEdhOBcQ9JdU1NHQ7CXn2XIDFBKU2WAgcX9UAUzDXWd5alwuyJ41Z9rjKLCL4aCp4WarhPm2rH+SaHUYE001JDZ2ZAzXPjdMpZWvC9wmqIB2lLhQ01D5jO06hghWMndbM7yRJMsoCj1vYbnFQVrW9jak3OlEJ3s/96+p33dEPRV5GxiqaGjIthUU6FFEZyqCa5qJrpBdzSw95IUnOPIrCUUjRZQFrbw5PR0R1qiYx3cb6nrWUMrBmmiBQxVHtTew5ICP/ip6g4hed/Akob/32wvBHsIOX83cI8hGeNeNPCIkPmXe8fPKx84OMSRM1MTdXSwjCZ4S30jVGhvqTRak/OVhgGazHuOCud5onEO1lJr6ecVyaOK6H7zqlBlIaHE0oroCgfvGJIdPcmfLNGLjpz7hZwZQpUbFME0A1cIJa7VNORkgfsMBatbKgwwJM9bSvQXeNOvbIjelg6WWvo5kvbKaJJNHexkKNHL9xRyFlH8Ti2riB5wVPhUk7nGkJnoCe428LR/wRGdYIlmWebCyxou1rCk4g/ShugBDX0V0ZQWkh0dOVsagkM0yV6OoLd5ye+pRlsCr0n+KiQrGuq5yJDzrTAXHtLUMduTDBVKrSm3eHL+6ijxhFDX9Z5gVU/wliHYTMiMFpKLNMEywu80wd3meoFmt6VbRMPenhrOc6DVe4pgXU8DnnHakLOIIrlF4FZPIw6R+zxBP0dyq6OOZ4Q5sLKCcz084ok+VsMMyQhNZmmBgX5xIXOEJTmi7VsGTvMTNdHHhpzdbE8Du2oKxgvBqQKdDDnTFOylCFaxR1syz2iqrOI/FEpNc3C6f11/7+ASS6l2inq2ciTrCCzgyemrCL5SVPjQkdPZUmGy2c9Sw9FtR1sS30RmsKPCS4rkIC/2U0MduwucYolGaPjKEyhzmiPYXagyWbYz8LWBDdzRimAXzxx4z8K9hpzlhLq+NiQ97HuKorMUfK/OVvC2JfiHUPCQI/q7J2gjK+tTDNxkCc4TMssqCs4TGtLVwQihyoAWgj9bosU80XGW6Ac9TJGziaUh5+hnFcHOnlaM1iRn29NaqGENTTTSUHCH2tWTeV0osUhH6psuVLjRUmGWhm6OZEshGeNowABHcJ2Bpy2ZszRcKkRXd2QuKVEeXnbfaEq825FguqfgfE2whlChSRMdron+LATTPQ2Z369t4B9C5gs/ylzv+CMmepIDPclFQl13W0rspPd1JOcbghGOEutqCv5qacURQl3dDKyvyJlqKXGPgcM9FfawJAMVmdcspcYKOZc4GjDYkFlK05olNMHyHn4zFNykyOxt99RkHlfwmiHo60l2EKI+mhreEKp080Tbug08BVPcgoqC5zWt+NLDTZ7oNSF51N1qie7Va3uCCwyZbkINf/NED6jzOsBdZjFN8oqG3wxVunqCSYYKf3EdhJyf9YWGf7tRU2oH3VHgPr1fe5J9hOgHd7xQ0y7qBwXr23aGErP0cm64JVjZwsOGqL+mhNgZmhJLW2oY4UhedsyBgzrCKrq7BmcpNVhR6jBPq64Vgi+kn6XE68pp8J5/+0wRHGOpsKenQn9DZntPzjRLZpDAdD2fnSgkG9tmIXnUwQ6WVighs7Yi2MxQ0N3CqYaCXkJ0oyOztMDJjmSSpcpvlrk0RMMOjmArQ04PRV1DO1FwhCVaUVPpKUM03JK5SxPsIWRu8/CGHi8UHChiqGFDTbSRJWeYUDDcH6vJWUxR4k1FXbMUwV6e4AJFXS8oMqsZKqzvYQ9DDQdZckY4aGsIhtlubbd2r3j4QBMoTamdPZk7O/Bf62lacZwneNjQoGcdVU7zJOd7ghsUHOkosagic6cnWc8+4gg285R6zZP5s1/LUbCKIznTwK36PkdwlOrl4U1LwfdCCa+IrvFkmgw1PCAUXKWo0sURXWcI2muKJlgyFzhynCY4RBOsqCjoI1R5zREco0n2Vt09BQtYSizgKNHfUmUrQ5UOCh51BFcLmY7umhYqXKQomOop8bUnWNNQcIiBcYaC6xzMNOS8JQQfeqKBmmglB+97ok/lfk3ygaHSyZaCRTzRxQo6GzLfa2jWBPepw+UmT7SQEJyiyRkhBLMVOfcoMjcK0eZChfUNzFAUzCsEN5vP/X1uP/n/aoMX+K+nw/Hjr/9xOo7j7Pju61tLcgvJpTWXNbfN5jLpi6VfCOviTktKlFusQixdEKWmEBUKNaIpjZRSSOXSgzaaKLdabrm1/9nZ+/f+vd/vz/v9+Xy+zZ7PRorYoZqyLrCwQdEAixxVOEXNNnjX2nUSRlkqGmWowk8lxR50JPy9Bo6qJXaXwNvREBvnThPEPrewryLhcAnj5WE15Fqi8W7R1sAuEu86S4ENikItFN4xkv9Af4nXSnUVcLiA9xzesFpivRRVeFKtsMRaKBhuSbjOELnAUtlSQUpXgdfB4Z1oSbnFEetbQ0IrAe+Y+pqnDcEJFj6S8LDZzZHwY4e3XONNlARraomNEt2bkvGsosA3ioyHm+6jCMbI59wqt4eeara28IzEmyPgoRaUOEDhTVdEJhmCoTWfC0p8aNkCp0oYqih2iqGi4yXeMkOsn4LdLLnmKfh/YogjNsPebeFGR4m9BJHLzB61XQ3BtpISfS2FugsK9FAtLWX1dCRcrCnUp44CNzuCowUZmxSRgYaE6Za0W2u/E7CVXCiI/UOR8aAm1+OSyE3mOUcwyc1zBBeoX1kiKy0Zfxck1Gsyulti11i83QTBF5Kg3pDQThFMVHiPSlK+0cSedng/VaS8bOZbtsBcTcZAR8JP5KeqQ1OYKAi20njdNNRpgnsU//K+JnaXJaGTomr7aYIphoRn9aeShJWKEq9LcozSF7QleEfDI5LYm5bgVkFkRwVDBCVu0DDIkGupo8TZBq+/pMQURYErJQmPKGKjNDkWOLx7Jd5QizdUweIaKrlP7SwJDhZvONjLkOsBBX9UpGxnydhXkfBLQ8IxgojQbLFnJf81JytSljclYYyEFyx0kVBvKWOFJmONpshGAcsduQY5giVNCV51eOdJYo/pLhbvM0uDHSevNKRcrKZIqnCtJeEsO95RoqcgGK4ocZcho1tTYtcZvH41pNQ7vA0WrhIfOSraIIntIAi+NXWCErdbkvrWwjRLrt0NKUdL6KSOscTOdMSOUtBHwL6OLA0vNSdynaWQEnCpIvKaIrJJEbvHkmuNhn6OjM8VkSGSqn1uYJCGHnq9I3aLhNME3t6GjIkO7xrNFumpyTNX/NrwX7CrIRiqqWijI9JO4d1iieykyfiposQIQ8YjjsjlBh6oHWbwRjgYJQn2NgSnNycmJAk3NiXhx44Sxykihxm8ybUwT1OVKySc7vi3OXVkdBJ4AyXBeksDXG0IhgtYY0lY5ahCD0ehborIk5aUWRJviMA7Xt5kyRjonrXENkm8yYqgs8VzgrJmClK20uMM3jRJ0FiQICQF9hdETlLQWRIb5ki6WDfWRPobvO6a4GP5mcOrNzDFELtTkONLh9dXE8xypEg7z8A9jkhrQ6Fhjlg/QVktJXxt4WXzT/03Q8IaQWSqIuEvloQ2mqC9Jfi7wRul4RX3pSPlzpoVlmCtI2jvKHCFhjcM3sN6lqF6HxnKelLjXWbwrpR4xzuCrTUZx2qq9oAh8p6ixCUGr78g8oyjRAtB5CZFwi80VerVpI0h+IeBxa6Zg6kWvpDHaioYYuEsRbDC3eOmC2JvGYLeioxGknL2UATNJN6hmtj1DlpLvDVmocYbrGCVJKOrg4X6DgddLA203BKMFngdJJFtFd7vJLm6KEpc5yjQrkk7M80SGe34X24nSex1Ra5Omgb71JKyg8SrU3i/kARKwWpH0kOGhKkObyfd0ZGjvyXlAkVZ4xRbYJ2irFMkFY1SwyWxr2oo4zlNiV+7zmaweFpT4kR3kaDAFW6xpSqzJay05FtYR4HmZhc9UxKbbfF2V8RG1MBmSaE+kmC6JnaRXK9gsiXhJHl/U0qM0WTcbyhwkYIvFGwjSbjfwhiJt8ZSQU+Bd5+marPMOkVkD0muxYLIfEuhh60x/J92itguihJSEMySVPQnTewnEm+620rTQEMsOfo4/kP/0ARvWjitlpSX7GxBgcMEsd3EEeYWvdytd+Saawi6aCIj1CkGb6Aj9rwhx16Cf3vAwFy5pyLhVonXzy51FDpdEblbkdJbUcEPDEFzQ8qNmhzzLTmmKWKbFCXeEuRabp6rxbvAtLF442QjQ+wEA9eL1xSR7Q0JXzlSHjJ4exq89yR0laScJ/FW6z4a73pFMEfDiRZvuvijIt86RaSFOl01riV2mD1UEvxGk/Geg5aWwGki1zgKPG9J2U8PEg8qYvMsZeytiTRXBMslCU8JSlxi8EabjwUldlDNLfzTUmCgxWsjqWCOHavYAqsknKFIO0yQ61VL5AVFxk6WhEaCAkdJgt9aSkzXlKNX2jEa79waYuc7gq0N3GDJGCBhoiTXUEPsdknCUE1CK0fwsiaylSF2uiDyO4XX3pFhNd7R4itFGc0k/ElBZwWvq+GC6szVeEoS/MZ+qylwpKNKv9Z469UOjqCjwlusicyTxG6VpNxcQ8IncoR4RhLbR+NdpGGmJWOcIzJGUuKPGpQg8rrG21dOMqQssJQ4RxH5jaUqnZuQ0F4Q+cjxLwPtpZbIAk3QTJHQWBE5S1BokoVtDd6lhqr9UpHSUxMcIYl9pojsb8h4SBOsMQcqvOWC2E8EVehqiJ1hrrAEbQxeK0NGZ0Gkq+guSRgniM23bIHVkqwx4hiHd7smaOyglyIyQuM978j4VS08J/A2G1KeMBRo4fBaSNhKUEZfQewVQ/C1I+MgfbEleEzCUw7mKXI0M3hd1EESVji8x5uQ41nxs1q4RMJCCXs7Iq9acpxn22oSDnQ/sJTxsCbHIYZiLyhY05TY0ZLIOQrGaSJDDN4t8pVaIrsqqFdEegtizc1iTew5Q4ayBDMUsQMkXocaYkc0hZua412siZ1rSXlR460zRJ5SlHGe5j801RLMlJTxtaOM3Q1pvxJ45zUlWFD7rsAbpfEm1JHxG0eh8w2R7QQVzBUw28FhFp5QZzq8t2rx2joqulYTWSuJdTYfWwqMFMcovFmSyJPNyLhE4E10pHzYjOC3huArRa571ZsGajQpQx38SBP5pyZB6lMU3khDnp0MBV51BE9o2E+TY5Ml2E8S7C0o6w1xvCZjf0HkVEHCzFoyNmqC+9wdcqN+Tp7jSDheE9ws8Y5V0NJCn2bk2tqSY4okdrEhx1iDN8cSudwepWmAGXKcJXK65H9to8jYQRH7SBF01ESUJdd0TayVInaWhLkOjlXE5irKGOnI6GSWGCJa482zBI9rCr0jyTVcEuzriC1vcr6mwFGSiqy5zMwxBH/TJHwjSPhL8+01kaaSUuMFKTcLEvaUePcrSmwn8DZrgikWb7CGPxkSjhQwrRk57tctmxLsb9sZvL9LSlyuSLlWkqOjwduo8b6Uv1DkmudIeFF2dHCgxVtk8dpIvHpBxhEOdhKk7OLIUSdJ+cSRY57B+0DgGUUlNfpthTfGkauzxrvTsUUaCVhlKeteTXCoJDCa2NOKhOmC4G1H8JBd4OBZReSRGkqcb/CO1PyLJTLB4j1q8JYaIutEjSLX8YKM+a6phdMsdLFUoV5RTm9JSkuDN8WcIon0NZMNZWh1q8C7SJEwV5HxrmnnTrf3KoJBlmCYI2ilSLlfEvlE4011NNgjgthzEua0oKK7JLE7HZHlEl60BLMVFewg4EWNt0ThrVNEVkkiTwpKXSWJzdRENgvKGq4IhjsiezgSFtsfCUq8qki5S1LRQeYQQ4nemmCkImWMw3tFUoUBZk4NOeZYEp4XRKTGa6wJjrWNHBVJR4m3FCnbuD6aak2WsMTh3SZImGCIPKNgsDpVwnsa70K31lCFJZYcwwSMFcQulGTsZuEaSdBXkPGZhu0FsdUO73RHjq8MPGGIfaGIbVTk6iuI3GFgucHrIQkmWSJdBd7BBu+uOryWAhY7+Lki9rK5wtEQzWwvtbqGhIMFwWRJsElsY4m9IIg9L6lCX0VklaPAYkfkZEGDnOWowlBJjtMUkcGK4Lg6EtoZInMUBVYLgn0UsdmCyCz7gIGHFfk+k1QwTh5We7A9x+IdJ6CvIkEagms0hR50eH9UnTQJ+2oiKyVlLFUE+8gBGu8MQ3CppUHesnjTHN4QB/UGPhCTHLFPHMFrCqa73gqObUJGa03wgbhHkrCfpEpzNLE7JDS25FMKhlhKKWKfCgqstLCPu1zBXy0J2ztwjtixBu8UTRn9LVtkmCN2iyFhtME70JHRQ1KVZXqKI/KNIKYMCYs1GUMEKbM1bKOI9LDXC7zbHS+bt+1MTWS9odA9DtrYtpbImQJ2VHh/lisEwaHqUk1kjKTAKknkBEXkbkdMGwq0dnhzLJF3NJH3JVwrqOB4Sca2hti75nmJN0WzxS6UxDYoEpxpa4htVlRjkYE7DZGzJVU72uC9IyhQL4i8YfGWSYLLNcHXloyz7QhNifmKSE9JgfGmuyLhc403Xm9vqcp6gXe3xuuv8F6VJNxkyTHEkHG2g0aKXL0MsXc1bGfgas2//dCONXiNLCX+5mB7eZIl1kHh7ajwpikyzlUUWOVOsjSQlsS+M0R+pPje/dzBXRZGO0rMtgQrLLG9VSu9n6CMXS3BhwYmSoIBhsjNBmZbgusE9BCPCP5triU4VhNbJfE+swSP27aayE8tuTpYYjtrYjMVGZdp2NpS1s6aBnKSHDsbKuplKbHM4a0wMFd/5/DmGyKrJSUaW4IBrqUhx0vyfzTBBLPIUcnZdrAkNsKR0sWRspumSns6Ch0v/qqIbBYUWKvPU/CFoyrDJGwSNFhbA/MlzKqjrO80hRbpKx0Jewsi/STftwGSlKc1JZyAzx05dhLEdnfQvhZOqiHWWEAHC7+30FuRcZUgaO5gpaIK+xsiHRUsqaPElTV40xQZQ107Q9BZE1nryDVGU9ZSQ47bmhBpLcYpUt7S+xuK/FiT8qKjwXYw5ypS2iuCv7q1gtgjhuBuB8LCFY5cUuCNtsQOFcT+4Ih9JX+k8Ea6v0iCIRZOtCT0Et00JW5UeC85Cg0ScK0k411HcG1zKtre3SeITBRk7WfwDhEvaYLTHP9le0m8By0JDwn4TlLW/aJOvGHxdjYUes+ScZigCkYQdNdEOhkiezgShqkx8ueKjI8lDfK2oNiOFvrZH1hS+tk7NV7nOmLHicGWEgubkXKdwdtZknCLJXaCpkrjZBtLZFsDP9CdxWsSr05Sxl6CMmoFbCOgryX40uDtamB7SVmXW4Ihlgpmq+00tBKUUa83WbjLUNkzDmY7cow1JDygyPGlhgGKYKz4vcV7QBNbJIgM11TUqZaMdwTeSguH6rOaw1JRKzaaGyxVm2EJ/uCIrVWUcZUkcp2grMsEjK+DMwS59jQk3Kd6SEq1d0S6uVmO4Bc1lDXTUcHjluCXEq+1OlBDj1pi9zgiXxnKuE0SqTXwhqbETW6RggMEnGl/q49UT2iCzgJvRwVXS2K/d6+ZkyUl7jawSVLit46EwxVljDZwoSQ20sDBihztHfk2yA8NVZghiXwrYHQdfKAOtzsayjhY9bY0yE2CWEeJ9xfzO423xhL5syS2TFJofO2pboHob0nY4GiAgRrvGQEDa/FWSsoaaYl0syRsEt3kWoH3B01shCXhTUWe9w3Bt44SC9QCh3eShQctwbaK2ApLroGCMlZrYqvlY3qYhM0aXpFkPOuoqJ3Dm6fxXrGwVF9gCWZagjPqznfkuMKQ8DPTQRO8ZqG1hPGKEm9IgpGW4DZDgTNriTxvFiq+Lz+0cKfp4wj6OCK9JSnzNSn9LFU7UhKZZMnYwcJ8s8yRsECScK4j5UOB95HFO0CzhY4xJxuCix0lDlEUeMdS6EZBkTsUkZ4K74dugyTXS7aNgL8aqjDfkCE0ZbwkCXpaWCKhl8P7VD5jxykivSyxyZrYERbe168LYu9ZYh86IkscgVLE7tWPKmJv11CgoyJltMEbrohtVAQfO4ImltiHEroYEs7RxAarVpY8AwXMcMReFOTYWe5iiLRQxJ5Q8DtJ8LQhWOhIeFESPGsILhbNDRljNbHzNRlTFbk2S3L0NOS6V1KFJYKUbSTcIIhM0wQ/s2TM0SRMNcQmSap3jCH4yhJZKSkwyRHpYYgsFeQ4U7xoCB7VVOExhXepo9ABBsYbvGWKXPME3lyH95YioZ0gssQRWWbI+FaSMkXijZXwgiTlYdPdkNLaETxlyDVIwqeaEus0aTcYcg0RVOkpR3CSJqIddK+90JCxzsDVloyrFd5ZAr4TBKfaWa6boEA7C7s6EpYaeFPjveooY72mjIccLHJ9HUwVlDhKkmutJDJBwnp1rvulJZggKDRfbXAkvC/4l3ozQOG9a8lxjx0i7nV4jSXc7vhe3OwIxjgSHjdEhhsif9YkPGlus3iLFDnWOFhtCZbJg0UbQcIaR67JjthoCyMEZRwhiXWyxO5QxI6w5NhT4U1WsJvDO60J34fW9hwzwlKij6ZAW9ne4L0s8C6XeBMEkd/LQy1VucBRot6QMlbivaBhoBgjqGiCJNhsqVp/S2SsG6DIONCR0dXhvWbJ+MRRZJkkuEjgDXJjFQW6SSL7GXK8Z2CZg7cVsbWGoKmEpzQ5elpiy8Ryg7dMkLLUEauzeO86CuwlSOlgYLojZWeJ9xM3S1PWfEfKl5ISLQ0MEKR8YOB2QfCxJBjrKPCN4f9MkaSsqoVXJBmP7EpFZ9UQfOoOFwSzBN4MQ8LsGrymlipcJQhmy0GaQjPqCHaXRwuCZwRbqK2Fg9wlClZqYicrIgMdZfxTQ0c7TBIbrChxmuzoKG8XRaSrIhhiyNFJkrC7oIAWMEOQa5aBekPCRknCo4IKPrYkvCDI8aYmY7WFtprgekcJZ3oLIqssCSMtFbQTJKwXYy3BY5oCh2iKPCpJOE+zRdpYgi6O2KmOAgvVCYaU4ySRek1sgyFhJ403QFHiVEmJHwtybO1gs8Hr5+BETQX3War0qZngYGgtVZtoqd6vFSk/UwdZElYqyjrF4HXUeFspIi9IGKf4j92pKGAdCYMVsbcV3kRF0N+R8LUd5PCsIGWoxDtBkCI0nKofdJQxT+LtZflvuc8Q3CjwWkq8KwUpHzkK/NmSsclCL0nseQdj5FRH5CNHSgtLiW80Of5HU9Hhlsga9bnBq3fEVltKfO5IaSTmGjjc4J0otcP7QsJUSQM8pEj5/wCuUuC2DWz8AAAAAElFTkSuQmCC");
 }
 .neos .neos-secondary-inspector .neos-secondary-inspector-html-editor .CodeMirror.cm-s-solarized.cm-s-dark {
-  background-color: #222222;
+  background-color: #222;
   background-image: none;
   height: 100%;
   box-shadow: none;
@@ -7095,16 +7073,16 @@
   right: 0;
   top: 0;
   z-index: 10021;
-  background-color: #222222;
+  background-color: #222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   display: none;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 0;
-  -webkit-transition-property: top;
   -moz-transition-property: top;
   -o-transition-property: top;
+  -webkit-transition-property: top;
   transition-property: top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -7252,7 +7230,7 @@
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li {
   height: 40px;
   background: #323232;
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li:first-child,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li:first-child {
@@ -7311,7 +7289,7 @@
   float: right;
 }
 .neos #neos-publish-menu.neos-button-group.neos-open .neos-dropdown-toggle {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
 .neos #neos-publish-menu.neos-button-group.neos-open .neos-dropdown-toggle::before {
@@ -7375,7 +7353,7 @@
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
   background-color: #ff8700;
   cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -7438,7 +7416,7 @@
 }
 .neos #neos-edit-preview-button {
   position: relative;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
 }
 .neos #neos-edit-preview-button:hover, .neos #neos-edit-preview-button.neos-pressed {
@@ -7472,9 +7450,9 @@
   background-color: #141414;
   z-index: 10013;
   border-bottom: 1px solid #3f3f3f;
-  -webkit-transition-property: top, left, right;
   -moz-transition-property: top, left, right;
   -o-transition-property: top, left, right;
+  -webkit-transition-property: top, left, right;
   transition-property: top, left, right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -7576,10 +7554,11 @@
   content: "";
   height: 100%;
   width: 1px;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNmM2YzZiIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjE2cHgiIHN0b3AtY29sb3I9IiMzZjNmM2YiIHN0b3Atb3BhY2l0eT0iMC43Ii8+PHN0b3Agb2Zmc2V0PSIzN3B4IiBzdG9wLWNvbG9yPSIjM2YzZjNmIiBzdG9wLW9wYWNpdHk9IjAuNyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNmM2YzZiIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+  background-size: 100%;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(63, 63, 63, 0)), color-stop(16px, rgba(63, 63, 63, 0.7)), color-stop(37px, rgba(63, 63, 63, 0.7)), color-stop(100%, rgba(63, 63, 63, 0)));
-  background-image: -webkit-linear-gradient(rgba(63, 63, 63, 0) 0%, rgba(63, 63, 63, 0.7) 16px, rgba(63, 63, 63, 0.7) 37px, rgba(63, 63, 63, 0) 100%);
   background-image: -moz-linear-gradient(rgba(63, 63, 63, 0) 0%, rgba(63, 63, 63, 0.7) 16px, rgba(63, 63, 63, 0.7) 37px, rgba(63, 63, 63, 0) 100%);
-  background-image: -o-linear-gradient(rgba(63, 63, 63, 0) 0%, rgba(63, 63, 63, 0.7) 16px, rgba(63, 63, 63, 0.7) 37px, rgba(63, 63, 63, 0) 100%);
+  background-image: -webkit-linear-gradient(rgba(63, 63, 63, 0) 0%, rgba(63, 63, 63, 0.7) 16px, rgba(63, 63, 63, 0.7) 37px, rgba(63, 63, 63, 0) 100%);
   background-image: linear-gradient(rgba(63, 63, 63, 0) 0%, rgba(63, 63, 63, 0.7) 16px, rgba(63, 63, 63, 0.7) 37px, rgba(63, 63, 63, 0) 100%);
   position: absolute;
   top: 0px;
@@ -7593,11 +7572,12 @@
 .neos #neos-edit-preview-panel .neos-edit .neos-scroll-previous,
 .neos #neos-edit-preview-panel .neos-preview .neos-scroll-previous {
   left: 0px;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjAuNSIgeDI9IjAuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjQ4LjE0ODE1JSIgc3RvcC1jb2xvcj0iIzE0MTQxNCIgc3RvcC1vcGFjaXR5PSIwLjQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNDE0MTQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+  background-size: 100%;
   background-image: -webkit-gradient(linear, 100% 50%, 0% 50%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(48.14815%, rgba(20, 20, 20, 0.4)), color-stop(100%, #141414));
-  background-image: -webkit-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
   background-image: -moz-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
-  background-image: -o-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
-  background-image: linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
+  background-image: -webkit-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
+  background-image: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
 }
 .neos #neos-edit-preview-panel .neos-edit .neos-scroll-previous::after,
 .neos #neos-edit-preview-panel .neos-preview .neos-scroll-previous::after {
@@ -7611,11 +7591,12 @@
 .neos #neos-edit-preview-panel .neos-edit .neos-scroll-next,
 .neos #neos-edit-preview-panel .neos-preview .neos-scroll-next {
   right: 0px;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjQ4LjE0ODE1JSIgc3RvcC1jb2xvcj0iIzE0MTQxNCIgc3RvcC1vcGFjaXR5PSIwLjQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNDE0MTQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+  background-size: 100%;
   background-image: -webkit-gradient(linear, 0% 50%, 27 50%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(48.14815%, rgba(20, 20, 20, 0.4)), color-stop(100%, #141414));
-  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
   background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
-  background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
-  background-image: linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
+  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(20, 20, 20, 0.4) 13px, #141414 27px);
 }
 .neos #neos-edit-preview-panel .neos-edit .neos-scroll-next::after,
 .neos #neos-edit-preview-panel .neos-preview .neos-scroll-next::after {
@@ -7637,9 +7618,9 @@
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   padding-right: 40px;
-  -webkit-transition-property: top, padding;
   -moz-transition-property: top, padding;
   -o-transition-property: top, padding;
+  -webkit-transition-property: top, padding;
   transition-property: top, padding;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -7737,7 +7718,7 @@
 }
 .neos #neos-context-bar .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos #neos-context-bar .chosen-container .chosen-single div:before, .neos #neos-context-bar .chosen-container .chosen-single div:after {
   display: block;
@@ -7785,7 +7766,7 @@
   font-size: 17px;
   font-weight: bold;
   line-height: 18px;
-  color: #222222;
+  color: #222;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
   border: none;
@@ -7794,15 +7775,15 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
   color: inherit;
   margin-top: 0;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
-  color: black;
+  color: #000;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -7816,7 +7797,7 @@
   width: 100%;
   height: 40px;
   border: none;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -7841,7 +7822,7 @@
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f002";
+  content: "";
   line-height: 100%;
   font-size: 12px;
 }
@@ -7852,7 +7833,7 @@
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
   line-height: 24px;
   padding: 8px 16px;
   -webkit-box-sizing: border-box;
@@ -7860,7 +7841,7 @@
   box-sizing: border-box;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li.highlighted {
   background-color: #00b5ff;
@@ -7918,7 +7899,7 @@
   display: none;
 }
 .neos .neos-content-dimension-selector.active {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-content-dimension-selector.active .neos-content-dimension-selector-dimensions {
   display: block;
@@ -7995,7 +7976,7 @@
   left: 0;
   width: calc(100% + 1px);
   min-width: 352px;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
   padding-top: 13px;
@@ -8026,11 +8007,11 @@
   float: left;
   width: 54px;
   height: 40px;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
-  -webkit-transition-property: top;
   -moz-transition-property: top;
   -o-transition-property: top;
+  -webkit-transition-property: top;
   transition-property: top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -8074,16 +8055,16 @@
   bottom: 0;
   left: -321px;
   width: 320px;
-  background-color: #222222;
+  background-color: #222;
   z-index: 10020;
   border-top: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   padding-top: 1px;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-transition-property: left, width;
   -moz-transition-property: left, width;
   -o-transition-property: left, width;
+  -webkit-transition-property: left, width;
   transition-property: left, width;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -8208,7 +8189,7 @@
 .neos #neos-menu-panel .neos-menu-section span.neos-menu-item i {
   display: block;
   position: absolute;
-  background-color: #222222;
+  background-color: #222;
   top: 0;
   left: 0;
   width: 54px;
@@ -8232,7 +8213,7 @@
   left: 0;
   width: 53px;
   height: 42px;
-  background-color: #222222;
+  background-color: #222;
   background-image: none;
   text-shadow: none;
   -webkit-box-shadow: none;
@@ -8257,7 +8238,7 @@
 }
 .neos #neos-navigate-button {
   position: relative;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
 }
 .neos #neos-navigate-button:hover, .neos #neos-navigate-button.neos-pressed {
@@ -8274,10 +8255,10 @@
   left: 0;
   bottom: -1px;
   position: absolute;
-  background-color: #222222;
+  background-color: #222;
 }
 .neos #neos-navigate-panel {
-  background-color: #222222;
+  background-color: #222;
   width: 321px;
   margin: 0;
   padding: 0;
@@ -8294,9 +8275,9 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-transition-property: left, margin-top;
   -moz-transition-property: left, margin-top;
   -o-transition-property: left, margin-top;
+  -webkit-transition-property: left, margin-top;
   transition-property: left, margin-top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -8369,7 +8350,7 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single div:before, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
   display: block;
@@ -8417,7 +8398,7 @@
   font-size: 17px;
   font-weight: bold;
   line-height: 18px;
-  color: #222222;
+  color: #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop {
   border: none;
@@ -8426,15 +8407,15 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
   color: inherit;
   margin-top: 0;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
-  color: black;
+  color: #000;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -8448,7 +8429,7 @@
   width: 100%;
   height: 40px;
   border: none;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -8473,7 +8454,7 @@
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f002";
+  content: "";
   line-height: 100%;
   font-size: 12px;
 }
@@ -8484,7 +8465,7 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
   line-height: 24px;
   padding: 8px 16px;
   -webkit-box-sizing: border-box;
@@ -8492,7 +8473,7 @@
   box-sizing: border-box;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li.highlighted {
   background-color: #00b5ff;
@@ -8510,7 +8491,7 @@
   line-height: 38px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single > div {
   border-left: 1px solid #3f3f3f;
@@ -8541,7 +8522,7 @@
   *margin-right: .3em;
   height: 40px;
   font-size: 14px;
-  color: white;
+  color: #fff;
   line-height: 40px;
   width: 40px;
   text-align: center;
@@ -8577,17 +8558,17 @@
   border-bottom-color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
-  content: "\f178";
+  content: "";
   left: 18px;
   top: 9px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before::after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 6px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after::after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 7px;
 }
@@ -8614,10 +8595,9 @@
   right: 4px;
   border-left: 4px solid transparent;
   border-bottom: 4px solid #00b5ff;
-  -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
@@ -8626,7 +8606,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
 }
@@ -8654,17 +8634,17 @@
   border-bottom-color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
-  content: "\f178";
+  content: "";
   left: 18px;
   top: 9px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before::after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 5px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after::after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 6px;
 }
@@ -8691,10 +8671,9 @@
   right: 4px;
   border-left: 4px solid transparent;
   border-bottom: 4px solid #00b5ff;
-  -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position {
@@ -8703,7 +8682,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
@@ -8726,8 +8705,8 @@
   width: 100%;
   height: 40px;
   float: left;
-  background-color: #222222;
-  color: white;
+  background-color: #222;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -8840,7 +8819,7 @@
   *margin-right: .3em;
   height: 40px;
   font-size: 14px;
-  color: white;
+  color: #fff;
   line-height: 40px;
   width: 40px;
   text-align: center;
@@ -8877,17 +8856,17 @@
   border-bottom-color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-into::after {
-  content: "\f178";
+  content: "";
   left: 18px;
   top: 9px;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before::after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 6px;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after::after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 7px;
 }
@@ -8914,10 +8893,9 @@
   right: 4px;
   border-left: 4px solid transparent;
   border-bottom: 4px solid #00b5ff;
-  -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node .neos-node-tree-new-node-position {
@@ -8926,7 +8904,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
 }
@@ -8954,17 +8932,17 @@
   border-bottom-color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-into::after {
-  content: "\f178";
+  content: "";
   left: 18px;
   top: 9px;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before::after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 5px;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after::after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 6px;
 }
@@ -8991,10 +8969,9 @@
   right: 4px;
   border-left: 4px solid transparent;
   border-bottom: 4px solid #00b5ff;
-  -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node .neos-node-tree-paste-node-position {
@@ -9003,7 +8980,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
@@ -9072,9 +9049,9 @@
 }
 .neos #neos-navigate-panel #neos-node-tree {
   height: 50%;
-  -webkit-transition-property: height;
   -moz-transition-property: height;
   -o-transition-property: height;
+  -webkit-transition-property: height;
   transition-property: height;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -9106,13 +9083,13 @@
   position: absolute;
   top: 40px;
   left: 0px;
-  border: 8px solid #222222;
+  border: 8px solid #222;
   padding: 8px 16px;
   color: white !important;
   background: #3f3f3f;
-  -webkit-transition-property: margin-left;
   -moz-transition-property: margin-left;
   -o-transition-property: margin-left;
+  -webkit-transition-property: margin-left;
   transition-property: margin-left;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -9184,7 +9161,7 @@
   top: -43px;
   border: 2px solid #00b5ff;
   border-bottom: 0px;
-  background-color: #eeeeee;
+  background-color: #eee;
 }
 .neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button {
   background-color: transparent;
@@ -9403,7 +9380,7 @@
 }
 .neos.neos-module > .neos-module-wrap {
   position: relative;
-  background: #222222;
+  background: #222;
   padding: 80px 54px 40px 54px;
 }
 .neos.neos-module h1, .neos.neos-module h2, .neos.neos-module h3, .neos.neos-module h4, .neos.neos-module h5, .neos.neos-module h6 {
@@ -9533,7 +9510,7 @@
   line-height: 36px;
   border: 2px solid #3f3f3f;
   background-color: #3f3f3f;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -9604,7 +9581,7 @@
 .neos.neos-module textarea {
   border: 2px solid #3f3f3f;
   background-color: #3f3f3f;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -9669,12 +9646,11 @@
 .neos.neos-module .neos-select:after {
   top: 0px;
   padding-top: 4px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos.neos-module .neos-select select {
-  -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
+  -webkit-appearance: none;
   -o-appearance: window;
   -moz-appearance: window;
   background-color: transparent;
@@ -9854,7 +9830,7 @@
   padding-right: 0 !important;
 }
 .neos.neos-module table.neos-table tr.neos-folder td {
-  background: #222222;
+  background: #222;
   padding-left: 0 !important;
   padding-right: 0 !important;
   border-top: 1px solid #323232;
@@ -9899,7 +9875,7 @@
 }
 .neos.neos-module table.neos-info-table tbody th span {
   font-weight: normal;
-  color: #eeeeee;
+  color: #eee;
   font-size: .9em;
 }
 .neos.neos-module table.neos-info-table tbody tr:first-child th,
@@ -9907,7 +9883,7 @@
   border-top: 0;
 }
 .neos.neos-module table td {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos.neos-module table th {
   text-shadow: none;
@@ -10109,7 +10085,7 @@
   line-height: 40px;
   font-weight: normal;
   color: #fff;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
 }
 .neos .widget .widget-header h3 a {
   color: #fff;
@@ -10119,7 +10095,7 @@
   font-size: 12px;
   width: 40px;
   height: 40px;
-  border-right: 1px solid #222222;
+  border-right: 1px solid #222;
   margin-right: 16px;
 }
 .neos .widget .widget-header i:before {
@@ -10333,7 +10309,7 @@
 }
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle {
   float: right;
-  background-color: #222222;
+  background-color: #222;
 }
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle.neos-active {
   background-color: #00b5ff;
@@ -10382,7 +10358,7 @@
   line-height: 1;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button:hover {
   background-color: #00b5ff;
@@ -10391,7 +10367,7 @@
   position: absolute;
   top: 1px;
   right: 0;
-  background-color: #222222;
+  background-color: #222;
   display: none;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button[type="submit"]:hover {
@@ -10788,7 +10764,7 @@
   height: 40px;
   border: 2px solid #323232;
   background-color: #323232;
-  color: white;
+  color: #fff;
   font-size: 14px;
   padding: 0 14px;
   margin: 0 0 15px 0;
@@ -10820,7 +10796,7 @@
 .neos .neos-login-dialog input[type="text"]:-webkit-autofill,
 .neos .neos-login-dialog input[type="password"]:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 50px #323232 inset;
-  -webkit-text-fill-color: white;
+  -webkit-text-fill-color: #fff;
 }
 .neos .neos-login-dialog input[type="text"]:-webkit-autofill:focus,
 .neos .neos-login-dialog input[type="password"]:-webkit-autofill:focus {
@@ -10909,7 +10885,7 @@
   background-color: #3f3f3f;
 }
 .neos #aloha-ui-context ::-webkit-scrollbar-thumb {
-  background-color: #222222;
+  background-color: #222;
   border: 1px solid #3f3f3f;
 }
 .neos #aloha-ui-context ::-webkit-scrollbar-corner {
@@ -10920,7 +10896,7 @@
   z-index: 10001;
   bottom: 0;
   overflow-y: auto;
-  background: #222222;
+  background: #222;
   padding: 0 16px 8px;
   width: 480px !important;
   border: 1px solid #3f3f3f;
@@ -10972,7 +10948,7 @@
 .neos .aloha-table-createdialog {
   z-index: 99999;
   position: absolute;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #444;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -11031,11 +11007,12 @@
   top: 0;
   left: 0;
   z-index: 10000;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzMyMzIzMiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzMyMzIzMiIgc3RvcC1vcGFjaXR5PSIwLjIiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzMjMyMzIiIHN0b3Atb3BhY2l0eT0iMC4xIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background-size: 100%;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 0.1)), color-stop(50%, rgba(50, 50, 50, 0.2)), color-stop(100%, rgba(50, 50, 50, 0.1)));
-  background-image: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -moz-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
-  background-image: -o-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
-  background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+  background-image: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+  background-image: linear-gradient(to bottom, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
 }
 .neos-contentelement .neos-inline-editable,
 .neos-contentelement .aloha-editable-active,
@@ -11078,7 +11055,7 @@ button.neos-create-new-content {
  * its format is defined here
  */
 .neos-rendering-exception {
-  background-color: #eeeeee;
+  background-color: #eee;
   padding-top: 8px;
   padding-left: 16px;
   padding-right: 16px;
@@ -11103,9 +11080,9 @@ button.neos-create-new-content {
 }
 
 body.neos-backend {
-  -webkit-transition-property: margin;
   -moz-transition-property: margin;
   -o-transition-property: margin;
+  -webkit-transition-property: margin;
   transition-property: margin;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -11305,7 +11282,7 @@ td.aloha-table-selectrow {
 
 .aloha-cell-selected {
   background-color: #00b5ff !important;
-  color: white;
+  color: #fff;
 }
 
 .aloha-table td.aloha-table-selectrow,
@@ -11403,7 +11380,7 @@ td.aloha-table-selectrow {
   *margin-right: .3em;
   font-size: 16px;
   cursor: pointer;
-  color: white;
+  color: #fff;
 }
 .aloha-block-draghandle:hover {
   color: #00b5ff;
@@ -11412,7 +11389,7 @@ td.aloha-table-selectrow {
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f047";
+  content: "";
 }
 
 .aloha-table-wrapper .aloha-table-leftuppercorner .aloha-wai-red,
@@ -11491,21 +11468,21 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
   -ms-user-select: none;
   user-select: none;
   background-color: #fff;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
-  background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-  background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.5, #fff));
+  background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 50%);
+  background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 50%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0);
-  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to bottom, #ffffff 0%, #eeeeee 50%);
 }
 
 .neos-select2-container.neos-select2-drop-above .neos-select2-choice {
   border-bottom-color: #aaa;
   border-radius: 0 0 4px 4px;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.9, white));
-  background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 90%);
-  background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 90%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.9, #fff));
+  background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 90%);
+  background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 90%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
-  background-image: linear-gradient(top, #eeeeee 0%, #ffffff 90%);
+  background-image: linear-gradient(to bottom, #eeeeee 0%, #ffffff 90%);
 }
 
 .neos-select2-container.neos-select2-allowclear .neos-select2-choice .neos-select2-chosen {
@@ -11615,11 +11592,11 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
   border-radius: 0 4px 4px 0;
   background-clip: padding-box;
   background: #ccc;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #cccccc), color-stop(0.6, #eeeeee));
-  background-image: -webkit-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
-  background-image: -moz-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ccc), color-stop(0.6, #eee));
+  background-image: -webkit-linear-gradient(center bottom, #ccc 0%, #eee 60%);
+  background-image: -moz-linear-gradient(center bottom, #ccc 0%, #eee 60%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#cccccc', GradientType = 0);
-  background-image: linear-gradient(top, #cccccc 0%, #eeeeee 60%);
+  background-image: linear-gradient(to bottom, #cccccc 0%, #eeeeee 60%);
 }
 
 .neos-select2-container .neos-select2-choice .neos-select2-arrow b {
@@ -11654,11 +11631,11 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
   border-radius: 0;
   -webkit-box-shadow: none;
   box-shadow: none;
-  background: white url("../Library/select2/select2.png") no-repeat 100% -22px;
-  background: url("../Library/select2/select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
-  background: url("../Library/select2/select2.png") no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url("../Library/select2/select2.png") no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url("../Library/select2/select2.png") no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  background: #fff url("../Library/select2/select2.png") no-repeat 100% -22px;
+  background: url("../Library/select2/select2.png") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
+  background: url("../Library/select2/select2.png") no-repeat 100% -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url("../Library/select2/select2.png") no-repeat 100% -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url("../Library/select2/select2.png") no-repeat 100% -22px, linear-gradient(to bottom, #ffffff 85%, #eeeeee 99%);
 }
 
 .neos-select2-drop.neos-select2-drop-above .neos-select2-search input {
@@ -11666,11 +11643,11 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
 }
 
 .neos-select2-search input.neos-select2-active {
-  background: white url("select2-spinner.gif") no-repeat 100%;
-  background: url("select2-spinner.gif") no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
-  background: url("select2-spinner.gif") no-repeat 100%, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url("select2-spinner.gif") no-repeat 100%, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url("select2-spinner.gif") no-repeat 100%, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  background: #fff url("select2-spinner.gif") no-repeat 100%;
+  background: url("select2-spinner.gif") no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
+  background: url("select2-spinner.gif") no-repeat 100%, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url("select2-spinner.gif") no-repeat 100%, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url("select2-spinner.gif") no-repeat 100%, linear-gradient(to bottom, #ffffff 85%, #eeeeee 99%);
 }
 
 .neos-select2-container-active .neos-select2-choice,
@@ -11688,22 +11665,22 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   background-color: #eee;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, white), color-stop(0.5, #eeeeee));
-  background-image: -webkit-linear-gradient(center bottom, white 0%, #eeeeee 50%);
-  background-image: -moz-linear-gradient(center bottom, white 0%, #eeeeee 50%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #fff), color-stop(0.5, #eee));
+  background-image: -webkit-linear-gradient(center bottom, #fff 0%, #eee 50%);
+  background-image: -moz-linear-gradient(center bottom, #fff 0%, #eee 50%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);
-  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to bottom, #ffffff 0%, #eeeeee 50%);
 }
 
 .neos-select2-dropdown-open.neos-select2-drop-above .neos-select2-choice,
 .neos-select2-dropdown-open.neos-select2-drop-above .neos-select2-choices {
   border: 1px solid #5897fb;
   border-top-color: transparent;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, white), color-stop(0.5, #eeeeee));
-  background-image: -webkit-linear-gradient(center top, white 0%, #eeeeee 50%);
-  background-image: -moz-linear-gradient(center top, white 0%, #eeeeee 50%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(0.5, #eee));
+  background-image: -webkit-linear-gradient(center top, #fff 0%, #eee 50%);
+  background-image: -moz-linear-gradient(center top, #fff 0%, #eee 50%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);
-  background-image: linear-gradient(bottom, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to top, #ffffff 0%, #eeeeee 50%);
 }
 
 .neos-select2-dropdown-open .neos-select2-choice .neos-select2-arrow {
@@ -11724,7 +11701,7 @@ Version: 3.4.5 Timestamp: Mon Nov  4 08:22:42 PST 2013
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .neos-select2-results ul.neos-select2-result-sub {
@@ -11866,10 +11843,10 @@ disabled look for disabled choices in the results dropdown
   cursor: text;
   overflow: hidden;
   background-color: #fff;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, white));
-  background-image: -webkit-linear-gradient(top, #eeeeee 1%, white 15%);
-  background-image: -moz-linear-gradient(top, #eeeeee 1%, white 15%);
-  background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eee), color-stop(15%, #fff));
+  background-image: -webkit-linear-gradient(top, #eee 1%, #fff 15%);
+  background-image: -moz-linear-gradient(top, #eee 1%, #fff 15%);
+  background-image: linear-gradient(to bottom, #eeeeee 1%, #ffffff 15%);
 }
 
 .neos-select2-locked {
@@ -11912,7 +11889,7 @@ disabled look for disabled choices in the results dropdown
 }
 
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-field input.neos-select2-active {
-  background: white url("select2-spinner.gif") no-repeat 100% !important;
+  background: #fff url("select2-spinner.gif") no-repeat 100% !important;
 }
 
 .neos-select2-default {
@@ -11928,8 +11905,8 @@ disabled look for disabled choices in the results dropdown
   cursor: default;
   border: 1px solid #aaaaaa;
   border-radius: 3px;
-  -webkit-box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
-  box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
   background-clip: padding-box;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -11938,10 +11915,10 @@ disabled look for disabled choices in the results dropdown
   user-select: none;
   background-color: #e4e4e4;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
-  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));
+  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
+  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
+  background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
 }
 
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-chosen {
@@ -12077,7 +12054,7 @@ disabled look for disabled choices in the results dropdown
   min-height: 40px !important;
   margin: 0;
   padding: 8px 16px !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   background: #323232 !important;
   color: white !important;
   vertical-align: middle !important;
@@ -12096,7 +12073,7 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-drop .neos-select2-results li.neos-select2-highlighted {
   background: #00b5ff !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   color: white !important;
   vertical-align: middle !important;
 }
@@ -12217,7 +12194,7 @@ disabled look for disabled choices in the results dropdown
   height: 40px;
   width: 40px;
   background: none;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
   color: white;
   text-decoration: none;
 }
@@ -12258,7 +12235,7 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-container-multi .neos-select2-search-field input {
   min-width: 288px !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   border-left: 0 !important;
   border-right: 0 !important;
   border-bottom: 0 !important;

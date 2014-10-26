@@ -61,7 +61,7 @@
 	padding-top: 1px;
 	overflow-x: hidden;
 	overflow-y: auto;
-	@include transition-property('left, width');
+	@include transition-property(left, width);
 	@include transition-duration(.2s);
 	@include font;
 
