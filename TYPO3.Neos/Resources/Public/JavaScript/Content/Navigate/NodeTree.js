@@ -459,12 +459,14 @@ define(
 
 				if (this.get('searchTerm') === '' && this.get('nodeType') === '') {
 					this.set('filtering', false);
+					this.$nodeTree.dynatree('option', 'autoFocus', true);
 					node._currentlySendingServerRequest = false;
 					this.loadNode(node, this.get('loadingDepth'));
 				} else {
 					var filterQuery = Ember.generateGuid();
 					that.set('latestFilterQuery', filterQuery);
 					this.set('filtering', true);
+					this.$nodeTree.dynatree('option', 'autoFocus', false);
 					node._currentlySendingServerRequest = true;
 					NodeEndpoint.filterChildNodesForTree(
 						this.get('siteRootNodePath'),
