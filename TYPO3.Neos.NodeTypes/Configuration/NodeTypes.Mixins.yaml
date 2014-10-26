@@ -30,8 +30,8 @@
         inlineEditable: TRUE
         aloha:
           'format':
-            'b': TRUE
-            'i': TRUE
+            'strong': TRUE
+            'em': TRUE
             'u': TRUE
             'sub': TRUE
             'sup': TRUE
