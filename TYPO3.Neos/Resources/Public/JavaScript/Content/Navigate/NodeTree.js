@@ -447,12 +447,14 @@ define(
 
 				if (this.get('searchTerm') === '' && this.get('nodeType') === '') {
 					this.set('filtering', false);
+					this.$nodeTree.dynatree('option', 'autoFocus', true);
 					node._currentlySendingExtDirectAjaxRequest = false;
 					this.loadNode(node, this.get('loadingDepth'));
 				} else {
 					var filterQuery = Ember.generateGuid();
 					that.set('latestFilterQuery', filterQuery);
 					this.set('filtering', true);
+					this.$nodeTree.dynatree('option', 'autoFocus', false);
 					node._currentlySendingExtDirectAjaxRequest = true;
 					TYPO3_Neos_Service_ExtDirect_V1_Controller_NodeController.filterChildNodesForTree(
 						this.get('siteRootNodePath'),
