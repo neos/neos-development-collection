@@ -7716,8 +7716,7 @@
   background-image: none !important;
 }
 .neos #neos-context-bar .chosen-container .chosen-single abbr {
-  background: none;
-  background-color: #fff;
+  background: #fff !important;
   top: 11px;
   right: 48px;
   width: 18px;
@@ -8348,8 +8347,7 @@
   background-image: none !important;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single abbr {
-  background: none;
-  background-color: #fff;
+  background: #fff !important;
   top: 11px;
   right: 48px;
   width: 18px;
