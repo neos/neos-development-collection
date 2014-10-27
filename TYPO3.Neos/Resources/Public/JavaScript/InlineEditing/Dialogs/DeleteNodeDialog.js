@@ -3,25 +3,23 @@ define(
 		'Library/jquery-with-dependencies',
 		'emberjs',
 		'Content/Model/NodeActions',
+		'Shared/AbstractDialog',
 		'text!InlineEditing/Dialogs/DeleteNodeDialog.html'
 	],
 	function(
 		$,
 		Ember,
 		NodeActions,
+		AbstractDialog,
 		template
 	) {
-		return Ember.View.extend({
+		return AbstractDialog.extend({
 			template: Ember.Handlebars.compile(template),
 			classNames: ['neos-ui neos-overlay-component'],
 
 			id: 'deleteNodeDialog',
 
 			_node: null,
-
-			cancel: function() {
-				this.destroy();
-			},
 
 			'delete': function() {
 				this.get('_node').$element.remove();
