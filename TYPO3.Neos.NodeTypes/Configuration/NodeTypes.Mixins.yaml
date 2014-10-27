@@ -9,8 +9,6 @@
         inlineEditable: TRUE
         aloha:
           'format':
-            'sub': TRUE
-            'sup': TRUE
             'p': FALSE
             'h1': TRUE
             'h2': TRUE
@@ -32,9 +30,10 @@
           'format':
             'strong': TRUE
             'em': TRUE
-            'u': TRUE
-            'sub': TRUE
-            'sup': TRUE
+            'u': FALSE
+            'sub': FALSE
+            'sup': FALSE
+            'del': FALSE
             'p': TRUE
             'h1': TRUE
             'h2': TRUE
