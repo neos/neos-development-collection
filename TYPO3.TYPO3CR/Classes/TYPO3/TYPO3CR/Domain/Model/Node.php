@@ -136,8 +136,14 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @param string $path
 	 * @param boolean $recursive
 	 * @return void
+	 * @throws NodeException
 	 */
 	public function setPath($path, $recursive = TRUE) {
+		$existingNodeData = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
+		if ($existingNodeData !== array()) {
+			throw new NodeException(sprintf('Can not rename the node as a node already exists on path "%s"', $path), 1414436551);
+		}
+
 		$originalPath = $this->nodeData->getPath();
 		if ($originalPath === $path) {
 			return;
@@ -149,7 +155,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 		}
 
-		$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace());
+		$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE);
 		/** @var $nodeData NodeData */
 		foreach ($nodeDataVariants as $nodeData) {
 			$nodeDataWasMaterialized = FALSE;
@@ -158,24 +164,37 @@ class Node implements NodeInterface, CacheAwareInterface {
 			if ($nodeData->getWorkspace()->getName() !== $this->context->getWorkspace()->getName()) {
 				$nodeData = $this->materializeNodeDataToWorkspace($nodeData);
 				$nodeDataWasMaterialized = TRUE;
+				$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
 				$nodeData->setPath($path, FALSE);
 				if ($isCurrentNodeInContext) {
 					// Workaround to set the new index in move* methods
 					$this->nodeData = $nodeData;
 				}
+			} else {
+				$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
 			}
 
-			$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
-			// If a node data was materialized before moving, we need to create a shadow node
 			if ($nodeDataWasMaterialized) {
 				if ($shadowNodeData !== NULL) {
-					throw new NodeException('Invalid state for moving the node, found a shadow node but none was expected', 1412170422);
+					// The existing shadow node on the target path will be used as the moved node and the current node data will be removed
+					$movedNodeData = $shadowNodeData;
+					$movedNodeData->setMovedTo(NULL);
+					$movedNodeData->setRemoved(FALSE);
+					$movedNodeData->similarize($nodeData);
+					$movedNodeData->setPath($path, FALSE);
+					$this->nodeDataRepository->remove($nodeData);
+
+					// A new shadow node will be created for the node data that references the recycled, existing shadow node
+					$shadowNode = $this->createShadowNodeData($originalPath, $nodeData);
+					$shadowNode->setMovedTo($movedNodeData);
+				} else {
+					// If a node data was materialized before moving, we need to create a shadow node
+					$this->createShadowNodeData($originalPath, $nodeData);
 				}
-				$this->createShadowNodeData($originalPath, $nodeData);
 			} else {
-				// If there is already shadow node (with the same path as the move target), we need to make that shadow node the actual moved node and remove the current node data (which cannot be live)
-				// We cannot remove the shadow node and update the current node data, since the order of Doctrine queries would cause unique key conflicts
 				if ($shadowNodeData !== NULL) {
+					// If there is already shadow node (with the same path as the move target), we need to make that shadow node the actual moved node and remove the current node data (which cannot be live)
+					// We cannot remove the shadow node and update the current node data, since the order of Doctrine queries would cause unique key conflicts
 					$movedNodeData = $shadowNodeData;
 					$movedNodeData->setMovedTo(NULL);
 					$movedNodeData->setRemoved(FALSE);
@@ -185,7 +204,6 @@ class Node implements NodeInterface, CacheAwareInterface {
 				} else {
 					// There is no shadow node, so the current node data will be turned to a shadow node and a new node data will be created for the moved node
 					// We cannot just create a new shadow node, since the order of Doctrine queries would cause unique key conflicts
-
 					$movedNodeData = new NodeData($originalPath, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
 					$movedNodeData->similarize($nodeData);
 					$movedNodeData->setPath($path, FALSE);
@@ -240,12 +258,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 *
 	 * @param string $path The (original) path for the node data
 	 * @param NodeData $nodeData
-	 * @return void
+	 * @return NodeData
 	 */
 	protected function createShadowNodeData($path, NodeData $nodeData) {
 		$shadowNode = new NodeData($path, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
 		$shadowNode->similarize($nodeData);
 		$shadowNode->shadowMovedNodeData($nodeData);
+		return $shadowNode;
 	}
 
 	/**
