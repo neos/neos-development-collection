@@ -461,11 +461,10 @@ class NodeData extends AbstractNodeData {
 		}
 
 		$newNodeData = new NodeData($newPath, $nodeWorkspace, $identifier, $dimensions);
-		$this->nodeDataRepository->add($newNodeData);
-		$this->nodeDataRepository->setNewIndex($newNodeData, NodeDataRepository::POSITION_LAST);
 		if ($nodeType !== NULL) {
 			$newNodeData->setNodeType($nodeType);
 		}
+		$this->nodeDataRepository->setNewIndex($newNodeData, NodeDataRepository::POSITION_LAST);
 
 		return $newNodeData;
 	}
