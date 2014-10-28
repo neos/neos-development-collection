@@ -57,10 +57,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	/**
 	 * List all users
 	 *
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function listCommand() {
-		$accounts = $this->accountRepository->findByAuthenticationProviderName('Typo3BackendProvider');
+	public function listCommand($authenticationProvider = 'Typo3BackendProvider') {
+		$accounts = $this->accountRepository->findByAuthenticationProviderName($authenticationProvider);
 
 		$activeAccounts = array();
 		$inactiveAccounts = array();
@@ -103,10 +104,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * @param string $firstName First name of the user to be created
 	 * @param string $lastName Last name of the user to be created
 	 * @param string $roles A comma separated list of roles to assign
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function createCommand($username, $password, $firstName, $lastName, $roles = NULL) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function createCommand($username, $password, $firstName, $lastName, $roles = NULL, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if ($account instanceof Account) {
 			$this->outputLine('The username "%s" is already in use', array($username));
 			exit(1);
@@ -124,7 +126,7 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 		}
 
 		try {
-			$user = $this->userFactory->create($username, $password, $firstName, $lastName, $roleIdentifiers);
+			$user = $this->userFactory->create($username, $password, $firstName, $lastName, $roleIdentifiers, $authenticationProvider);
 			$this->partyRepository->add($user);
 			$accounts = $user->getAccounts();
 			foreach ($accounts as $account) {
@@ -143,9 +145,10 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 *
 	 * @param string $username The username of the user to be removed.
 	 * @param boolean $confirmation
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function removeCommand($username, $confirmation = FALSE) {
+	public function removeCommand($username, $confirmation = FALSE, $authenticationProvider = 'Typo3BackendProvider') {
 		if ($confirmation === FALSE) {
 			$this->outputLine('Please confirm that you really want to remove the user from the database.');
 			$this->outputLine('');
@@ -154,7 +157,7 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 			exit(1);
 		}
 
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('The username "%s" is not in use', array($username));
 			exit(1);
@@ -167,10 +170,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Activate a user which has access to the backend user interface.
 	 *
 	 * @param string $username The username of the user to be activated.
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function activateCommand($username) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function activateCommand($username, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('The username "%s" is not in use', array($username));
 			exit(1);
@@ -184,10 +188,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Deactivate a user which has access to the backend user interface.
 	 *
 	 * @param string $username The username of the user to be deactivated.
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function deactivateCommand($username) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function deactivateCommand($username, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('The username "%s" is not in use', array($username));
 			exit(1);
@@ -204,10 +209,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 *
 	 * @param string $username Username of the account to modify
 	 * @param string $password The new password
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function setPasswordCommand($username, $password) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function setPasswordCommand($username, $password, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('User "%s" does not exists.', array($username));
 			exit(1);
@@ -225,11 +231,12 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * Currently supported roles: "TYPO3.Neos:Editor", "TYPO3.Neos:Administrator"
 	 *
 	 * @param string $username The username of the user
-	 * @param string $role Role ot be added to the user
+	 * @param string $role Role ot be added to the use
+	 * @param string $authenticationProvider Name of the authentication provider to user
 	 * @return void
 	 */
-	public function addRoleCommand($username, $role) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function addRoleCommand($username, $role, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('User "%s" does not exists.', array($username));
 			exit(1);
@@ -259,10 +266,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 *
 	 * @param string $username The username of the user
 	 * @param string $role Role ot be removed from the user
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function removeRoleCommand($username, $role) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function removeRoleCommand($username, $role, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('User "%s" does not exists.', array($username));
 			exit(1);
@@ -295,10 +303,11 @@ class UserCommandController extends \TYPO3\Flow\Cli\CommandController {
 	 * will exit with a non-zero status code.
 	 *
 	 * @param string $username The username of the user to show.
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return void
 	 */
-	public function showCommand($username) {
-		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+	public function showCommand($username, $authenticationProvider = 'Typo3BackendProvider') {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProvider);
 		if (!$account instanceof Account) {
 			$this->outputLine('The username "%s" is not in use', array($username));
 			exit(1);

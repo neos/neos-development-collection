@@ -38,9 +38,10 @@ class UserFactory {
 	 * @param string $firstName First name of the user to be created
 	 * @param string $lastName Last name of the user to be created
 	 * @param array $roleIdentifiers A list of role identifiers to assign
+	 * @param string $authenticationProvider Name of the authentication provider to use
 	 * @return \TYPO3\Neos\Domain\Model\User The created user instance
 	 */
-	public function create($username, $password, $firstName, $lastName, array $roleIdentifiers = NULL) {
+	public function create($username, $password, $firstName, $lastName, array $roleIdentifiers = NULL, $authenticationProvider = 'Typo3BackendProvider') {
 		$user = new \TYPO3\Neos\Domain\Model\User();
 		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $username);
 		$user->setName($name);
@@ -49,7 +50,7 @@ class UserFactory {
 			$roleIdentifiers = array('TYPO3.Neos:Editor');
 		}
 
-		$account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, 'Typo3BackendProvider');
+		$account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProvider);
 		$user->addAccount($account);
 
 		return $user;
