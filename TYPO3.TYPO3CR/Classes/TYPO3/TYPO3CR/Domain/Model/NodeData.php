@@ -400,6 +400,7 @@ class NodeData extends AbstractNodeData {
 		if ($nodeType !== NULL) {
 			$newNode->setNodeType($nodeType);
 		}
+		$this->nodeDataRepository->persistEntities();
 
 		return $newNode;
 	}
