@@ -540,7 +540,7 @@ class NodeDataTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
 		$this->inject($this->nodeData, 'nodeDataRepository', $nodeDataRepository);
 
-		$nodeDataRepository->expects($this->atLeastOnce())->method('add')->with($this->attributeEqualTo('workspace', $this->mockWorkspace));
+		$nodeDataRepository->expects($this->atLeastOnce())->method('setNewIndex');
 
 		$this->nodeData->createNodeData('foo', NULL, NULL, $this->mockWorkspace);
 	}
