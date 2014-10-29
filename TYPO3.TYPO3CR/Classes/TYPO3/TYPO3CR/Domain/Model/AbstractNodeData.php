@@ -98,25 +98,6 @@ abstract class AbstractNodeData {
 	protected $nodeTypeManager;
 
 	/**
-	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description
-	 * of this node.
-	 *
-	 * @return string
-	 */
-	public function getLabel() {
-		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
-	}
-
-	/**
-	 * Returns a full length plain text description of this node
-	 *
-	 * @return string
-	 */
-	public function getFullLabel() {
-		return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this, FALSE);
-	}
-
-	/**
 	 * Sets the specified property.
 	 * If the node has a content object attached, the property will be set there
 	 * if it is settable.

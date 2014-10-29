@@ -22,3 +22,14 @@ TYPO3:
     #         'all':
     #           values: ['everybody']
     contentDimensions: []
+
+    # Configures defaults for node label generation
+    labelGenerator:
+      eel:
+        defaultContext:
+          String: 'TYPO3\Eel\Helper\StringHelper'
+          Array: 'TYPO3\Eel\Helper\ArrayHelper'
+          Date: 'TYPO3\Eel\Helper\DateHelper'
+          Configuration: 'TYPO3\Eel\Helper\ConfigurationHelper'
+          Math: 'TYPO3\Eel\Helper\MathHelper'
+          Json: 'TYPO3\Eel\Helper\JsonHelper'

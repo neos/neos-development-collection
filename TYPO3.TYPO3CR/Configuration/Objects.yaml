@@ -8,3 +8,7 @@
   className: TYPO3\TYPO3CR\Domain\Model\Node
 'TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface':
   className: TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource
+'TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface':
+  className: TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator
+'TYPO3\TYPO3CR\Domain\Model\NodeDataLabelGeneratorInterface':
+  className: TYPO3\TYPO3CR\Domain\Model\FallbackNodeDataLabelGenerator

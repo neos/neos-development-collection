@@ -89,6 +89,12 @@
 'TYPO3.TYPO3CR.Testing:Chapter':
   superTypes: ['TYPO3.TYPO3CR.Testing:Page']
 
+'TYPO3.TYPO3CR.Testing:PageWithConfiguredLabel':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Page']
+  label: "${q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')')}"
+  ui:
+    label: 'Labeled Page'
+
 'TYPO3.TYPO3CR.Testing:Column':
   superTypes: ['TYPO3.TYPO3CR.Testing:Content']
   abstract: TRUE
