@@ -1,14 +1,12 @@
 {namespace neos=TYPO3\Neos\ViewHelpers}
-<f:if condition="{node.context.workspace.name} != 'live'">
-	<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
-		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}"></script>
-		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-			<f:then>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
-			</f:then>
-			<f:else>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
-			</f:else>
-		</f:if>
-	</f:security.ifAccess>
-</f:if>
+<f:security.ifAccess resource="TYPO3_Neos_Backend_GeneralAccess">
+	<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}"></script>
+	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+		<f:then>
+			<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}"></script>
+		</f:then>
+		<f:else>
+			<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
+		</f:else>
+	</f:if>
+</f:security.ifAccess>

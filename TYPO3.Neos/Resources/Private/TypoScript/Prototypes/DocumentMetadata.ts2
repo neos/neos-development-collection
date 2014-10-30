@@ -10,7 +10,5 @@ prototype(TYPO3.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
 	}
 
 	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
-
-	@process.onlyRenderMetadataWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live' ? value : ''}
-	@process.onlyRenderMetadataWhenNotInLiveWorkspace.@position = 'end 9999'
+	@if.onlyRenderWhenNotInLiveWorkspace = ${node.context.workspace.name != 'live'}
 }
