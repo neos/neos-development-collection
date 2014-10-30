@@ -16,6 +16,7 @@
   constraints:
     nodeTypes:
       'TYPO3.TYPO3CR.Testing:NodeType': TRUE
+      'TYPO3.TYPO3CR.Testing:Document': TRUE
 
 'TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor':
   properties:

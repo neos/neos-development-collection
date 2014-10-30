@@ -427,11 +427,37 @@ class NodeType {
 	 * If nothing is specified, the fallback "*" is used. If that one is also not specified, we DENY by
 	 * default.
 	 *
+	 * Super types of the given node types are also checked, so if a super type is constrained
+	 * it will also take affect on the inherited node types. The closest constrained super type match is used.
+	 *
+	 * @param NodeType $nodeType
+	 * @param array $constraints
+	 * @return boolean
+	 */
+	protected function isNodeTypeAllowedByConstraints(NodeType $nodeType, array $constraints) {
+		$directConstraintsResult = $this->isNodeTypeAllowedByDirectConstraints($nodeType, $constraints);
+		if ($directConstraintsResult !== NULL) {
+			return $directConstraintsResult;
+		}
+
+		$inheritanceConstraintsResult = $this->isNodeTypeAllowedByInheritanceConstraints($nodeType, $constraints);
+		if ($inheritanceConstraintsResult !== NULL) {
+			return $inheritanceConstraintsResult;
+		}
+
+		if (isset($constraints['*'])) {
+			return (boolean)$constraints['*'];
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * @param NodeType $nodeType
 	 * @param array $constraints
 	 * @return boolean TRUE if the passed $nodeType is allowed by the $constraints
 	 */
-	protected function isNodeTypeAllowedByConstraints(NodeType $nodeType, array $constraints) {
+	protected function isNodeTypeAllowedByDirectConstraints(NodeType $nodeType, array $constraints) {
 		if ($constraints === array()) {
 			return TRUE;
 		}
@@ -444,11 +470,75 @@ class NodeType {
 			return FALSE;
 		}
 
-		if (array_key_exists('*', $constraints)) {
-			return (boolean)$constraints['*'];
+		return NULL;
+	}
+
+	/**
+	 * This method loops over the constraints and finds node types that the given node type inherits from. For all
+	 * matched super types, their super types are traversed to find the closest super node with a constraint which
+	 * is used to evaluated if the node type is allowed. It finds the closest results for true and false, and uses
+	 * the distance to choose which one wins (lowest). If no result is found the node type is allowed.
+	 *
+	 * @param NodeType $nodeType
+	 * @param array $constraints
+	 * @return boolean|NULL if no constraint matched
+	 */
+	protected function isNodeTypeAllowedByInheritanceConstraints(NodeType $nodeType, array $constraints) {
+		$constraintDistanceForTrue = NULL;
+		$constraintDistanceForFalse = NULL;
+		foreach ($constraints as $superType => $constraint) {
+			if ($nodeType->isOfType($superType)) {
+				$distance = $this->traverseSuperTypes($nodeType, $superType, 0);
+
+				if ($constraint === TRUE && ($constraintDistanceForTrue === NULL || $constraintDistanceForTrue > $distance)) {
+					$constraintDistanceForTrue = $distance;
+				}
+				if ($constraint === FALSE && ($constraintDistanceForFalse === NULL || $constraintDistanceForFalse > $distance)) {
+					$constraintDistanceForFalse = $distance;
+				}
+			}
 		}
 
-		return FALSE;
+		if ($constraintDistanceForTrue !== NULL && $constraintDistanceForFalse !== NULL) {
+			return $constraintDistanceForTrue < $constraintDistanceForFalse ? TRUE : FALSE;
+		}
+
+		if ($constraintDistanceForFalse !== NULL) {
+			return FALSE;
+		}
+
+		if ($constraintDistanceForTrue !== NULL) {
+			return TRUE;
+		}
+
+		return NULL;
+	}
+
+	/**
+	 * This method traverses the given node type to find the first super type that matches the constraint node type.
+	 * In case the hierarchy has more than one way of finding a path to the node type it's not taken into account,
+	 * since the first matched is returned. This is accepted on purpose for performance reasons and due to the fact
+	 * that such hierarchies should be avoided.
+	 *
+	 * @param NodeType $currentNodeType
+	 * @param string $constraintNodeTypeName
+	 * @param integer $distance
+	 * @return integer or NULL if no NodeType matched
+	 */
+	protected function traverseSuperTypes(NodeType $currentNodeType, $constraintNodeTypeName, $distance) {
+		if ($currentNodeType->getName() === $constraintNodeTypeName) {
+			return $distance;
+		}
+
+		$distance++;
+		foreach ($currentNodeType->getDeclaredSuperTypes() as $superType) {
+			$result = $this->traverseSuperTypes($superType, $constraintNodeTypeName, $distance);
+			if ($result !== NULL) {
+				return $result;
+			}
+		}
+
+		return NULL;
 	}
 
 	/**
