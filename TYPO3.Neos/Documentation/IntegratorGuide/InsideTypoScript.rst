@@ -396,6 +396,18 @@ This allows to use string keys for the processor name, and support ``@position``
 Processors are Eel Expressions or TypoScript objects operating on the ``value`` property of the context. Additionally,
 they can access the current TypoScript object they are operating on as ``this``.
 
+Conditions
+==========
+
+Conditions can be added to all values to prevent evaluation of the value. A condition is applied to
+a property using the ``@if`` meta-property::
+
+	myObject = Menu {
+		@if.1 = ${q(node).property('showMenu') == true}
+	}
+	# results in the menu object only being evaluated if the node's showMenu property is ``true``
+
+Multiple conditions can be used, and if one of them doesn't return ``true`` the condition stops evaluation.
 
 .. Important TypoScript objects and patterns
 .. =========================================
