@@ -1,2 +1,2 @@
-include: resource://TYPO3.Neos/Private/TypoScript/DefaultTypoScript.ts2
-include: resource://TYPO3.Neos/Private/TypoScript/RawContentMode.ts2
+include: DefaultTypoScript.ts2
+include: RawContentMode.ts2
