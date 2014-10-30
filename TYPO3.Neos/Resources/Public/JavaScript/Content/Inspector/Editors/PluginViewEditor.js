@@ -1,10 +1,12 @@
 define(
 [
+	'emberjs',
 	'Library/jquery-with-dependencies',
 	'Content/Inspector/Editors/SelectBoxEditor',
 	'Content/Inspector/InspectorController'
 ],
 function(
+	Ember,
 	$,
 	SelectBoxEditor,
 	InspectorController
@@ -13,7 +15,7 @@ function(
 		init: function() {
 			this.set('placeholder', 'Loading ...');
 			this._loadOptionsOnChange();
-			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange')
+			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange');
 
 			this._super();
 		},
@@ -27,7 +29,9 @@ function(
 				this._loadValuesFromController(
 					$('link[rel="neos-pluginviews"]').attr('href') + '?node=' + nodePath + '@' + workspaceName,
 					function(results) {
-						var values = {}, placeholder, i = 0;
+						var values = {},
+							placeholder,
+							i = 0;
 
 						values[''] = {};
 

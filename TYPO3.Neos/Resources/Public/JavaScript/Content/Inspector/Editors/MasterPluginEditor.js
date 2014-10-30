@@ -18,7 +18,6 @@ function(
 			this.set('placeholder', 'Loading ...');
 			this._loadValuesFromController(url + '?node=' + nodePath, function(results) {
 				var values = {}, placeholder, i = 0;
-
 				values[''] = {};
 
 				for (var key in results) {
@@ -38,9 +37,9 @@ function(
 					values = {};
 				}
 				that.setProperties({
-				   placeholder: placeholder,
-				   values: values
-			   });
+					placeholder: placeholder,
+					values: values
+				});
 			});
 
 			this._super();

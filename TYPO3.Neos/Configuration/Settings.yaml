@@ -145,6 +145,11 @@ TYPO3:
             editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
           'boolean':
             editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
+          'array':
+            editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+            editorOptions:
+              multiple: TRUE
+              placeholder: 'Choose'
           'TYPO3\Media\Domain\Model\ImageVariant':
             editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
           'TYPO3\Media\Domain\Model\Asset':

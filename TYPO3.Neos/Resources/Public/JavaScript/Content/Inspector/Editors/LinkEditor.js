@@ -39,7 +39,7 @@ define(
 						return markup;
 					},
 					formatResult: function(item) {
-						var $itemContent = $('<span><b>' + item.text + '</b></span>');
+						var $itemContent = $('<span>' + item.text + '</span>');
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
@@ -55,7 +55,7 @@ define(
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var $itemContent = $('<span><b>' + item.text + '</b></span>');
+						var $itemContent = $('<span>' + item.text + '</span>');
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
