@@ -10,7 +10,7 @@
         label: 'Layout for this page only'
         reloadIfChanged: TRUE
         inspector:
-          group: 'layout'
+          group: ~
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: 'Inherit from parent'
@@ -22,7 +22,7 @@
       ui:
         label: 'Layout for subpages of this page'
         inspector:
-          group: 'layout'
+          group: ~
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: 'Inherit from parent'
