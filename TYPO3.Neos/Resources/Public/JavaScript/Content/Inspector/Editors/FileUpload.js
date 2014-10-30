@@ -20,6 +20,8 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 		// File filters
 		allowedFileTypes: null,
 
+		maximumFileSize: null,
+
 		_uploader: null,
 		_uploadInProgress: false,
 		_containerId: null,
@@ -48,6 +50,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 				runtimes : 'html5',
 				browse_button : this._browseButtonId,
 				container : this._containerId,
+				max_file_size : this.get('maximumFileSize') ? this.get('maximumFileSize') : Configuration.get('maximumFileUploadSize'),
 				url : $('link[rel="neos-asset-upload"]').attr('href'),
 				multipart_params: {}
 			});
@@ -60,11 +63,9 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 
 			this._uploader.bind('Error', function(uploader, error) {
 				that.set('_uploadInProgress', false);
+				that.set('_uploadButtonShown', false);
 				Notification.error(error.message);
-				// FilesAdded gets the unfiltered list, so we have to disable the upload on errors
-				if (error.code === plupload.FILE_EXTENSION_ERROR) {
-					that.set('_uploadButtonShown', false);
-				}
+				uploader.splice();
 			});
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {

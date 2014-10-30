@@ -866,7 +866,12 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			this._super();
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
-				uploader.settings.multipart_params['metadata'] = 'Image';
+				uploader.settings.multipart_params.metadata = 'Image';
+			});
+
+			var that = this;
+			this._uploader.bind('Error', function(uploader, error) {
+				that.cancel();
 			});
 		},
 
