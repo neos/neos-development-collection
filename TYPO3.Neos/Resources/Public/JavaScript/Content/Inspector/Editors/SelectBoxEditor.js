@@ -122,8 +122,8 @@ define([
 			var content = this.get('content'),
 				value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value'),
 				valuePath = this.get('optionValuePath').replace(/^content\.?/, ''),
-				selection = content ? content.filter(function(obj) {
-					var optionValue = valuePath ? Ember.get(obj, valuePath) : obj;
+				selection = content ? content.filter(function(object) {
+					var optionValue = valuePath ? Ember.get(object, valuePath) : object;
 					return Array.isArray(value) ? value.indexOf(optionValue) !== -1 : value === optionValue;
 				}) : null;
 			if (!selection) {
@@ -181,8 +181,8 @@ define([
 				$('.neos-select2-offscreen', '#neos-inspector').not(this).each(function() {
 					$(this).select2('close');
 				});
-				document.on('click.select2-custom', document, function(e) {
-					if (!$.contains(parent, e.target)) {
+				document.on('click.select2-custom', document, function(event) {
+					if (!$.contains(parent, event.target)) {
 						$(that).select2('close');
 						document.off('click.select2-custom');
 					}
