@@ -4,7 +4,7 @@
     - 'TYPO3.Neos.NodeTypes:TitleMixin'
   ui:
     label: 'Headline'
-    icon: 'icon-file-text'
+    icon: 'icon-font'
     position: 100
 
 'TYPO3.Neos.NodeTypes:Text':
