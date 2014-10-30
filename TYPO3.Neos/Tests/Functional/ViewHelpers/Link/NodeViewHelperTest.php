@@ -86,7 +86,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
 
-		$this->viewHelper = new \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper();
+		$this->viewHelper = new \TYPO3\Neos\ViewHelpers\Link\NodeViewHelper();
 		/** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$httpRequest = $requestHandler->getHttpRequest();
@@ -106,6 +106,12 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
 		$viewHelperVariableContainer->setView($mockView);
 		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
+		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
+		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
+		$this->viewHelper->setRenderChildrenClosure(function() use ($templateVariableContainer) {
+			return 'Content';
+		});
+		$this->viewHelper->initialize();
 	}
 
 	public function tearDown() {
@@ -120,26 +126,26 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	public function viewHelperRendersUriViaGivenNodeObject() {
 		$targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
 
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render($targetNode));
+		$this->assertSame('<a href="/home.html">Content</a>', $this->viewHelper->render($targetNode));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRendersUriViaAbsoluteNodePathString() {
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission'));
+		$this->assertSame('<a href="/home.html">Content</a>', $this->viewHelper->render('/sites/example/home'));
+		$this->assertSame('<a href="/home/about-us.html">Content</a>', $this->viewHelper->render('/sites/example/home/about-us'));
+		$this->assertSame('<a href="/home/about-us/mission.html">Content</a>', $this->viewHelper->render('/sites/example/home/about-us/mission'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
-		$this->assertOutputLinkValid('/', $this->viewHelper->render('~'));
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('~/home'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('~/home/about-us'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('~/home/about-us/mission'));
+		$this->assertSame('<a href="/">Content</a>', $this->viewHelper->render('~'));
+		$this->assertSame('<a href="/home.html">Content</a>', $this->viewHelper->render('~/home'));
+		$this->assertSame('<a href="/home/about-us.html">Content</a>', $this->viewHelper->render('~/home/about-us'));
+		$this->assertSame('<a href="/home/about-us/mission.html">Content</a>', $this->viewHelper->render('~/home/about-us/mission'));
 	}
 
 	/**
@@ -147,10 +153,10 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 */
 	public function viewHelperRendersUriViaStringPointingToSubNodes() {
 		$this->tsRuntime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
-		$this->assertOutputLinkValid('home/about-us/history.html', $this->viewHelper->render('../history'));
+		$this->assertSame('<a href="/home/about-us/history.html">Content</a>', $this->viewHelper->render('../history'));
 		$this->tsRuntime->popContext();
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('about-us/mission'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('./about-us/mission'));
+		$this->assertSame('<a href="/home/about-us/mission.html">Content</a>', $this->viewHelper->render('about-us/mission'));
+		$this->assertSame('<a href="/home/about-us/mission.html">Content</a>', $this->viewHelper->render('./about-us/mission'));
 	}
 
 	/**
@@ -160,39 +166,30 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaContextNodePathString() {
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
-		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
-		$this->assertOutputLinkValid('home.html', $this->viewHelper->render('/sites/example/home@live'));
-		$this->assertOutputLinkValid('home/about-us.html', $this->viewHelper->render('/sites/example/home/about-us@live'));
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
+		$this->assertSame('<a href="/home.html">Content</a>', $this->viewHelper->render('/sites/example/home@live'));
+		$this->assertSame('<a href="/home/about-us.html">Content</a>', $this->viewHelper->render('/sites/example/home/about-us@live'));
+		$this->assertSame('<a href="/home/about-us/mission.html">Content</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsAbsoluteParameter() {
-		$this->assertOutputLinkValid('http://neos.test/home.html', $this->viewHelper->render(NULL, NULL, TRUE));
+		$this->assertSame('<a href="http://neos.test/home.html">Content</a>', $this->viewHelper->render(NULL, NULL, TRUE));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsBaseNodeNameParameter() {
-		$this->assertOutputLinkValid('home/about-us/mission.html', $this->viewHelper->render(NULL, NULL, FALSE, array(), '', FALSE, array(), 'alternativeDocumentNode'));
+		$this->assertSame('<a href="/home/about-us/mission.html">Content</a>', $this->viewHelper->render(NULL, NULL, FALSE, array(), '', FALSE, array(), 'alternativeDocumentNode'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function viewHelperRespectsArgumentsParameter() {
-		$this->assertOutputLinkValid('home.html?foo=bar', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
+		$this->assertSame('<a href="/home.html?foo=bar">Content</a>', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
 	}
 
-	/**
-	 * A wrapper function for the appropriate assertion for the Link- and its Uri-ViewHelper derivate.
-	 * Is overridden in the FunctionalTest for the LinkViewHelper.
-	 */
-	protected function assertOutputLinkValid($expected, $actual) {
-		$this->assertStringEndsWith($expected, $actual);
-	}
 }
