@@ -16,8 +16,8 @@ able to create nested chapters, and not pages or shortcuts. Using node type cons
         'TYPO3.NeosDemoTypo3Org:Chapter': TRUE
         '*': FALSE
 
-In the above example, we disable all node types using ``*: FALSE``, and then explicitely enable the ``Chapter``
-node type.
+In the above example, we disable all node types using ``*: FALSE``, and then enable the ``Chapter`` node type as well
+as any node type that super types it. The closest matching constraint of a super type is used to determine the constraint.
 
 You might now wonder why it is still possible to create content inside the chapter (because everything except Chapter
 is disabled with the above configuration): The reason is that node type constraints are *only enforced* for nodes
@@ -45,7 +45,7 @@ additional constraints for each *auto-created child node*::
 Examples
 ========
 
-Disallow nested Two/Three/FourColumn inside a Multicolumn element::
+Disallow nested Two/Three/FourColumn inside a multi column element::
 
   'TYPO3.Neos.NodeTypes:Column':
     childNodes:
@@ -74,6 +74,6 @@ To sum it up, the following rules apply:
 	- setting the value to `TRUE` is an explicit *allow*
 	- setting the value to `FALSE` is an explicit *deny*
 	- setting the value to `NULL` (i.e. using `~` in YAML) is an *abstain*, so that means the fallback of `*` is used.
-- the node types must be listed *explicitly*, so if allowing/disallowing "Foo", the subtypes of "Foo" are not automatically
-  allowed/disallowed.
+- Inheritance is taking into account, so if allowing/disallowing "Foo", the subtypes of "Foo" are automatically
+  allowed/disallowed. To constraint subtypes you must be more specific for those types.
 - The default is to *always deny* (in case "*" is not specified).
