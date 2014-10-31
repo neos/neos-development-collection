@@ -63,7 +63,7 @@ define(
 			Ember.bind(this, 'value', 'inspector.nodeProperties.' + propertyDefinition.key);
 			Ember.assert('Type defaults for "' + propertyDefinition.type + '" not found!', !!typeDefinition);
 
-			var editorOptions = $.extend(
+			var editorOptions = $.extend(true,
 				{
 					elementId: propertyDefinition.elementId,
 					property: propertyDefinition.key,
