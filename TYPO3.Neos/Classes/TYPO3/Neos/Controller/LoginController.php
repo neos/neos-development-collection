@@ -54,6 +54,18 @@ class LoginController extends AbstractAuthenticationController {
 	);
 
 	/**
+	 * @return void
+	 */
+	public function initializeIndexAction() {
+		if (is_array($this->request->getInternalArgument('__authentication'))) {
+			$authentication = $this->request->getInternalArgument('__authentication');
+			if (isset($authentication['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username'])) {
+				$this->request->setArgument('username', $authentication['TYPO3']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['username']);
+			}
+		}
+	}
+
+	/**
 	 * Default action, displays the login screen
 	 *
 	 * @param string $username Optional: A username to pre-fill into the username field
