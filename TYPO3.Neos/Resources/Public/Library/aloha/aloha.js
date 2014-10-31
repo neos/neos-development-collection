@@ -3397,7 +3397,7 @@ define('util/json2', [], function () {
 				// Added try/catch as fix for issue #21
 				try {
 
-					var isNativeIE7 = (jQuery.browser.msie && jQuery.browser.version < 8 && (typeof document.documentMode === 'undefined'));
+					var isNativeIE7 = (Aloha.browser.msie && Aloha.browser.version < 8 && (typeof document.documentMode === 'undefined'));
 					if (!isNativeIE7) {
 						this.docSelection.empty();
 					}
@@ -4796,7 +4796,8 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 						// text node
 						secondPart = document.createTextNode(element.data.substring(splitPosition, element.data.length));
 						element.data = element.data.substring(0, splitPosition);
-						if (this.isEmpty(secondPart) && jQuery('br', newDom).length === 0) {
+						// this is done to make sure that empty block elements are visible.
+						if (this.isBlockLevelElement(element.parentElement) && this.isEmpty(secondPart) && jQuery('br', newDom).length === 0) {
 							secondPart = jQuery('<br/>').addClass('aloha-end-br');
 						}
 					} else {
@@ -6116,7 +6117,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 			}
 
 			// check whether the node itself is visible
-			if ((node.nodeType == $_.Node.TEXT_NODE && this.isEmpty(node)) || (node.nodeType == $_.Node.ELEMENT_NODE && node.offsetHeight == 0 && jQuery.inArray(node.nodeName.toLowerCase(), this.nonEmptyTags) === -1)) {
+			if ((node.nodeType == $_.Node.TEXT_NODE && this.isEmpty(node)) || (node.nodeType == $_.Node.ELEMENT_NODE && this.getOffsetHeight(node) === 0 && jQuery.inArray(node.nodeName.toLowerCase(), this.nonEmptyTags) === -1)) {
 				return null;
 			}
 
@@ -6150,7 +6151,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 			}
 
 			// check whether the node itself is visible
-			if ((node.nodeType == $_.Node.TEXT_NODE && this.isEmpty(node)) || (node.nodeType == $_.Node.ELEMENT_NODE && node.offsetHeight == 0 && jQuery.inArray(node.nodeName.toLowerCase(), this.nonEmptyTags) === -1)) {
+			if ((node.nodeType == $_.Node.TEXT_NODE && this.isEmpty(node)) || (node.nodeType == $_.Node.ELEMENT_NODE && this.getOffsetHeight(node) === 0 && jQuery.inArray(node.nodeName.toLowerCase(), this.nonEmptyTags) === -1)) {
 				return null;
 			}
 
@@ -6169,6 +6170,25 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 			}
 
 			return null;
+		},
+
+		/**
+		 * Workaround to get the offsetHeight from a DOM node. IE7 (and all IEs in IE7 mode) have a very weird bug that
+		 * returns 0 when reading the offsetHeight from a DOM node for the first time. When reading again (without any
+		 * modification in between), the correct value would be returned.
+		 * Therefore, this method will get the offsetHeight and if it is 0, read it again.
+		 * @param {DOMObject} node
+		 * @return {number} offsetHeight
+		 */
+		getOffsetHeight: function (node) {
+			if (!node) {
+				return 0;
+			}
+			var offsetHeight = node.offsetHeight;
+			if (offsetHeight === 0) {
+				offsetHeight = node.offsetHeight;
+			}
+			return offsetHeight;
 		}
 	});
 
@@ -6430,11 +6450,13 @@ define('aloha/core',[
 	 * @return {boolean} True if Aloha supports the current browser.
 	 */
 	function isBrowserSupported() {
-		var browser = $.browser;
+		var browser = Aloha.browser;
 		var version = browser.version;
 		return !(
-			// Chrome/Safari 4
-			(browser.webkit && parseFloat(version) < 532.5 && !browser.chrome) ||
+			// Chrome 21
+			(browser.chrome && parseFloat(version) < 21) ||
+			// Safari 4
+			(browser.webkit && !browser.chrome && parseFloat(version) < 532.5) ||
 			// FF 3.5
 			(browser.mozilla && parseFloat(version) < 1.9) ||
 			// IE 7
@@ -6498,13 +6520,13 @@ define('aloha/core',[
 
 		// Because different css is to be applied based on what the user-agent
 		// supports.  For example: outlines do not render in IE7.
-		if ($.browser.webkit) {
+		if (Aloha.browser.webkit) {
 			$('html').addClass('aloha-webkit');
-		} else if ($.browser.opera) {
+		} else if (Aloha.browser.opera) {
 			$('html').addClass('aloha-opera');
-		} else if ($.browser.msie) {
-			$('html').addClass('aloha-ie' + parseInt($.browser.version, 10));
-		} else if ($.browser.mozilla) {
+		} else if (Aloha.browser.msie) {
+			$('html').addClass('aloha-ie' + parseInt(Aloha.browser.version, 10));
+		} else if (Aloha.browser.mozilla) {
 			$('html').addClass('aloha-mozilla');
 		}
 
@@ -7005,7 +7027,46 @@ define('aloha/core',[
 		 */
 		toString: function () {
 			return 'Aloha';
-		}
+		},
+
+		/**
+		 * Shim to replace $.browser
+		 *
+		 * @hide
+		 */
+		browser: (function () {
+			function uaMatch(ua) {
+				ua = ua.toLowerCase();
+
+				var match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
+					/(webkit)[ \/]([\w.]+)/.exec(ua) ||
+					/(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
+					/(msie) ([\w.]+)/.exec(ua) ||
+					(ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua)) || [];
+
+				return {
+					browser: match[1] || "",
+					version: match[2] || "0"
+				};
+			}
+
+			var matched = uaMatch(navigator.userAgent);
+			var browser = {};
+
+			if (matched.browser) {
+				browser[matched.browser] = true;
+				browser.version = matched.version;
+			}
+
+			// Chrome is Webkit, but Webkit is also Safari.
+			if (browser.chrome) {
+				browser.webkit = true;
+			} else if (browser.webkit) {
+				browser.safari = true;
+			}
+
+			return browser;
+		}())
 	});
 
 	return Aloha;
@@ -7710,7 +7771,16 @@ define('util/range',[
 
 			// update the selection
 			sel = rangy.getSelection();
-			sel.setSingleRange(range);
+			// Selection type 'Control' (elements selected), 'Text' (text selected), 'None' (nothing selected) 
+			// (http://help.dottoro.com/ljitmswc.php)
+			// If the selection is 'Text' or 'Control' and the range is collapsed then there is nothing selected, and 
+			// this can produce a Javascript Error only in IE. (Reproducible: Just by dragging and drop block elements)
+			// catching the exception so the execution can continue
+			try {
+				sel.setSingleRange(range);
+			} catch (e) {
+				console.warn(e);
+			}
 		},
 
 		/**
@@ -7897,7 +7967,7 @@ define('util/range',[
 					adjacentTextNode = GENTICS.Utils.Dom.searchAdjacentTextNode(this.startContainer.parentNode, GENTICS.Utils.Dom.getIndexInParent(this.startContainer), true);
 					//only move the selection if the adjacentTextNode is inside the current editable
 					//the cursor should not be outside the editable
-					if (adjacentTextNode && jQuery(adjacentTextNode).closest(Aloha.activeEditable.obj).length > 0) {
+					if (adjacentTextNode && Aloha.activeEditable && jQuery(adjacentTextNode).closest(Aloha.activeEditable.obj).length > 0) {
 						this.startContainer = this.endContainer = adjacentTextNode;
 						this.startOffset = this.endOffset = adjacentTextNode.data.length;
 					}
@@ -8320,6 +8390,194 @@ define('util/range',[
 	return GENTICS.Utils.RangeObject;
 });
 
+/*!
+ * Aloha Editor
+ * Author & Copyright (c) 2012 Gentics Software GmbH
+ * aloha-sales@gentics.com
+ * Licensed under the terms of http://www.aloha-editor.com/license.html
+ *
+ * @overview Provides methods to broker publish/subscribe facilities.
+ */
+define('PubSub', [], function () {
+	
+
+	/**
+	 * A hash of channel names mapped to an array of ids of subscriptions that
+	 * are listening on that channel.
+	 *
+	 * @type {Object<String, Array.<Number>>}
+	 */
+	var channels = {};
+
+	/**
+	 * A hash of subscription tuples (channel, callback), mapped against unique
+	 * ids assigned to each subscription.
+	 * As subscriptions are removed from this object via `unsub()' this object
+	 * will become a sparse array.
+	 *
+	 * @type {Object<Number, Object>}
+	 */
+	var subscriptions = {};
+
+	/**
+	 * The last used subscription id.  This values is only used and modified in
+	 * `sub().'
+	 *
+	 * @type {number}
+	 */
+	var sid = 0;
+
+	/**
+	 * Returns the channel to which a subscription matching the given sid is
+	 * listening on.
+	 *
+	 * @param {Number} sid Id of subscription.
+	 * @return {Array.<Object>} sid Id of subscription.
+	 */
+	function getSubscriptionChannel(sid) {
+		return subscriptions[sid] && channels[subscriptions[sid].channel];
+	}
+
+	/**
+	 * Publishes a message `message' on the given channel.
+	 * All callbacks that have sub()scribed to listen on this channel will be
+	 * invoked and receive `message' as their only argument.
+	 *
+	 * @private
+	 * @param {String} channel Name of channel to publish the message on.
+	 * @param {*} message Variable to pass to all callbacks listening on the
+	 *                    given channel.
+	 * @return {Number} The number of subscribed callbacks that were invoked.
+	 */
+	function pub(channel, message) {
+		if (!channels[channel]) {
+			return 0;
+		}
+
+		if (!message) {
+			message = {};
+		} else if (typeof message !== 'object') {
+			message = {
+				data: message
+			};
+		}
+
+		message.channel = channel;
+
+		// Clone a immutable snapshot of the subscription ids that we can
+		// safetly iterate over.
+		var sids = channels[channel].slice();
+
+		// NB: It is necessary to read the size of the `sids' array on each
+		// iteration, in case the size changes (via unsubscription) between
+		// iterations.
+		var i;
+		for (i = 0; i < sids.length; ++i) {
+			subscriptions[sids[i]].callback(message);
+		}
+
+		return i;
+	}
+
+	var PubSub = {
+
+		/**
+		 * Subscribes a callback function to a channel.  Whenever this channel
+		 * publishes, this function will be invoked.  The return value is an id
+		 * which identifies this subscription (a channel, and callback tuple).
+		 * This id can be used to unsubscribe this subscription from the given
+		 * channel.
+		 *
+		 * @param {String} channel Name of channel to listen on.
+		 * @param {Function(Object)} callback Function to be invoked when
+		 *                                    messages are published on the
+		 *                                    given channel.
+		 * @return {Number} Positive integer representing the sid of this
+		 *                  subscription, that can be used with unsub() if
+		 *                  subscription succeeds.  Otherwise the return value
+		 *                  is -1;
+		 */
+		sub: function (channel, callback) {
+			if (typeof callback !== 'function') {
+				return -1;
+			}
+
+			var subscriptionIds = channels[channel];
+
+			if (!subscriptionIds) {
+				subscriptionIds = channels[channel] = [];
+			}
+
+			subscriptionIds.push(++sid);
+			subscriptions[sid] = {
+				channel  : channel,
+				callback : callback
+			};
+
+			return sid;
+		},
+
+		/**
+		 * Unsubscribes callback using an sid which was returned by sub() when
+		 * the callback was subscribed.  Returns true if a subscription for
+		 * this sid was found and removed, otherwise returns false.
+		 *
+		 * @param {Number} sid Id of subscription.
+		 * @return {Boolean} True if a a subscription matching this sid was
+		 *                   removed.
+		 */
+		unsub: function (sid) {
+			if (-1 === sid || !subscriptions[sid]) {
+				return false;
+			}
+
+			var subscriptionIds = getSubscriptionChannel(sid);
+
+			// assert(typeof subscriptionIds === 'array')
+
+			delete subscriptions[sid];
+			var j = subscriptionIds.length;
+
+			while (j) {
+				if (subscriptionIds[--j] === sid) {
+					subscriptionIds.splice(j, 1);
+					return true;
+				}
+			}
+
+			return false;
+		},
+
+		/**
+		 * Publishes a message `message' on all channels that can be derived
+		 * from the given channel name.
+		 *
+		 * @param {String} channel Name of channel to publish the message on.
+		 * @param {*} message Variable to pass to all callbacks listening on
+		 *                    the given channel.
+		 * @return {Number} The number of subscribed callbacks that were
+		 *                  invoked.
+		 */
+		pub: function (channel, message) {
+			var segments = channel.split('.');
+			var i;
+			var len = segments.length;
+			var channelName = '';
+			var tally = 0;
+
+			for (i = 0; i < len; ++i) {
+				channelName += (0 === i ? '' : '.') + segments[i];
+				tally += pub(channelName, message);
+			}
+
+			return tally;
+		}
+
+	};
+
+	return PubSub;
+});
+
 /* functions.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
@@ -8380,6 +8638,137 @@ define('util/functions',[], function () {
 		returnTrue: returnTrue,
 		returnFalse: returnFalse,
 		complement: complement
+	};
+});
+
+/* maps.js is part of Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php 
+ * 
+ * Aloha Editor is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * Aloha Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * 
+ * As an additional permission to the GNU GPL version 2, you may distribute
+ * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
+ * source code without the copy of the GNU GPL normally required,
+ * provided you include this license notice and a URL through which
+ * recipients can access the Corresponding Source.
+ */
+define('util/maps',[], function () {
+	
+
+	/**
+	 * Checks whether the given object has no own or inherited properties.
+	 *
+	 * @param {!Object} obj The object to check.
+	 * @return {boolean} True if the object is empty. eg: isEmpty({}) == true
+	 */
+	function isEmpty(obj) {
+		var name;
+		for (name in obj) {
+			if (obj.hasOwnProperty(name)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Fill the given map with the given keys mapped to the given value.
+	 *
+	 * @param map
+	 *        The given map will have one entry added for each given key.
+	 * @param keys
+	 *        An array of string keys. Javascript maps can only
+	 *        contain string keys, so these must be strings or
+	 *        or they will be cast to string.
+	 * @param value
+	 *        A single value that each given key will map to.
+	 * @return
+	 *        The given map.
+	 */
+	function fillKeys(map, keys, value) {
+		var i = keys.length;
+		while (i--) {
+			map[keys[i]] = value;
+		}
+		return map;
+	}
+
+	/**
+	 * Fill the given map with entries from the given tuples.
+	 *
+	 * @param map
+	 *        The given map will have one entry added for each item in
+	 *        the given array.
+	 * @param tuples
+	 *        An array of [key, value] tuples. Javascript maps can only
+	 *        contain string keys, so the keys must be strings or
+	 *        or they will be cast to string.
+	 * @return
+	 *        The given map.
+	 */
+	function fillTuples(map, tuples) {
+		var i = tuples.length,
+			tuple;
+		while (i--) {
+			tuple = tuples[i];
+			map[tuple[0]] = tuple[1];
+		}
+		return map;
+	}
+
+	/**
+	 * Returns an array of the map's keys.
+	 */
+	function keys(map) {
+		var ks = [],
+			k;
+		for (k in map) {
+			if (map.hasOwnProperty(k)) {
+				ks.push(k);
+			}
+		}
+		return ks;
+	}
+
+	/**
+	 * For each mapping, call cb(value, key, map).
+	 *
+	 * Emulates ECMAScript edition 5 Array.forEach.
+	 *
+	 * Contrary to "for (key in map)" iterates only over the
+	 * "hasOwnProperty" properties of the map, which is usually what you
+	 * want.
+	 */
+	function forEach(map, cb) {
+		var key;
+		for (key in map) {
+			if (map.hasOwnProperty(key)) {
+				cb(map[key], key, map);
+			}
+		}
+	}
+
+	return {
+		isEmpty: isEmpty,
+		fillTuples: fillTuples,
+		fillKeys: fillKeys,
+		keys: keys,
+		forEach: forEach
 	};
 });
 
@@ -8631,6 +9020,16 @@ define('util/arrays',['util/functions'], function (Fn) {
 	}
 
 	/**
+	 * Returns concatenation of two arrays.
+	 * @param {Array} xs
+	 * @param {Array} zx
+	 * @returns {Array}
+	 */
+	function concat(xs, zx) {
+		return xs.concat(zx);
+	}
+
+	/**
 	 * Returns all items in xs that are also contained in zs.
 	 */
 	function intersect(xs, zs) {
@@ -8662,6 +9061,32 @@ define('util/arrays',['util/functions'], function (Fn) {
 		return xs[1];
 	}
 
+	/**
+	 * Coerces the given object (NodeList, arguments) to an array.
+	 * @param  {*} list
+	 * @return {Array}
+	 */
+	function coerce(list) {
+		var i;
+		var len;
+		var resultArray = [];
+
+		for (i = 0, len = list.length; i < len; i++) {
+			resultArray.push(list[i]);
+		}
+
+		return resultArray;
+	}
+
+	/**
+	 * Checks if `array` is empty.
+	 * @param {Array.<*>} array
+	 * @return {boolean}
+	 */
+	function isEmpty(array) {
+		return array.length === 0;
+	}
+
 	return {
 		filter: filter,
 		indexOf: indexOf,
@@ -8677,7 +9102,10 @@ define('util/arrays',['util/functions'], function (Fn) {
 		intersect: intersect,
 		subtract: subtract,
 		second: second,
-		last: last
+		last: last,
+		coerce: coerce,
+		isEmpty: isEmpty,
+		concat: concat
 	};
 });
 
@@ -8804,195 +9232,43 @@ define('util/strings',['jquery'], function ($) {
 	};
 });
 
-/*!
- * Aloha Editor
- * Author & Copyright (c) 2012 Gentics Software GmbH
- * aloha-sales@gentics.com
- * Licensed under the terms of http://www.aloha-editor.com/license.html
+/* ephemera.js is part of Aloha Editor project http://aloha-editor.org
  *
- * @overview Provides methods to broker publish/subscribe facilities.
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php
+ *
+ * Aloha Editor is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * Aloha Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * As an additional permission to the GNU GPL version 2, you may distribute
+ * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
+ * source code without the copy of the GNU GPL normally required,
+ * provided you include this license notice and a URL through which
+ * recipients can access the Corresponding Source.
  */
-define('PubSub', [], function () {
+define('util/browser',['aloha/core'], function (Aloha) {
 	
-
-	/**
-	 * A hash of channel names mapped to an array of ids of subscriptions that
-	 * are listening on that channel.
-	 *
-	 * @type {Object<String, Array.<Number>>}
-	 */
-	var channels = {};
-
-	/**
-	 * A hash of subscription tuples (channel, callback), mapped against unique
-	 * ids assigned to each subscription.
-	 * As subscriptions are removed from this object via `unsub()' this object
-	 * will become a sparse array.
-	 *
-	 * @type {Object<Number, Object>}
-	 */
-	var subscriptions = {};
-
-	/**
-	 * The last used subscription id.  This values is only used and modified in
-	 * `sub().'
-	 *
-	 * @type {number}
-	 */
-	var sid = 0;
-
-	/**
-	 * Returns the channel to which a subscription matching the given sid is
-	 * listening on.
-	 *
-	 * @param {Number} sid Id of subscription.
-	 * @return {Array.<Object>} sid Id of subscription.
-	 */
-	function getSubscriptionChannel(sid) {
-		return subscriptions[sid] && channels[subscriptions[sid].channel];
-	}
-
-	/**
-	 * Publishes a message `message' on the given channel.
-	 * All callbacks that have sub()scribed to listen on this channel will be
-	 * invoked and receive `message' as their only argument.
-	 *
-	 * @private
-	 * @param {String} channel Name of channel to publish the message on.
-	 * @param {*} message Variable to pass to all callbacks listening on the
-	 *                    given channel.
-	 * @return {Number} The number of subscribed callbacks that were invoked.
-	 */
-	function pub(channel, message) {
-		if (!channels[channel]) {
-			return 0;
-		}
-
-		if (!message) {
-			message = {};
-		} else if (typeof message !== 'object') {
-			message = {
-				data: message
-			};
-		}
-
-		message.channel = channel;
-
-		// Clone a immutable snapshot of the subscription ids that we can
-		// safetly iterate over.
-		var sids = channels[channel].slice();
-
-		// NB: It is necessary to read the size of the `sids' array on each
-		// iteration, in case the size changes (via unsubscription) between
-		// iterations.
-		var i;
-		for (i = 0; i < sids.length; ++i) {
-			subscriptions[sids[i]].callback(message);
-		}
-
-		return i;
-	}
-
-	var PubSub = {
-
-		/**
-		 * Subscribes a callback function to a channel.  Whenever this channel
-		 * publishes, this function will be invoked.  The return value is an id
-		 * which identifies this subscription (a channel, and callback tuple).
-		 * This id can be used to unsubscribe this subscription from the given
-		 * channel.
-		 *
-		 * @param {String} channel Name of channel to listen on.
-		 * @param {Function(Object)} callback Function to be invoked when
-		 *                                    messages are published on the
-		 *                                    given channel.
-		 * @return {Number} Positive integer representing the sid of this
-		 *                  subscription, that can be used with unsub() if
-		 *                  subscription succeeds.  Otherwise the return value
-		 *                  is -1;
-		 */
-		sub: function (channel, callback) {
-			if (typeof callback !== 'function') {
-				return -1;
-			}
-
-			var subscriptionIds = channels[channel];
-
-			if (!subscriptionIds) {
-				subscriptionIds = channels[channel] = [];
-			}
-
-			subscriptionIds.push(++sid);
-			subscriptions[sid] = {
-				channel  : channel,
-				callback : callback
-			};
-
-			return sid;
-		},
-
-		/**
-		 * Unsubscribes callback using an sid which was returned by sub() when
-		 * the callback was subscribed.  Returns true if a subscription for
-		 * this sid was found and removed, otherwise returns false.
-		 *
-		 * @param {Number} sid Id of subscription.
-		 * @return {Boolean} True if a a subscription matching this sid was
-		 *                   removed.
-		 */
-		unsub: function (sid) {
-			if (-1 === sid || !subscriptions[sid]) {
-				return false;
-			}
-
-			var subscriptionIds = getSubscriptionChannel(sid);
-
-			// assert(typeof subscriptionIds === 'array')
-
-			delete subscriptions[sid];
-			var j = subscriptionIds.length;
-
-			while (j) {
-				if (subscriptionIds[--j] === sid) {
-					subscriptionIds.splice(j, 1);
-					return true;
-				}
-			}
-
-			return false;
-		},
-
-		/**
-		 * Publishes a message `message' on all channels that can be derived
-		 * from the given channel name.
-		 *
-		 * @param {String} channel Name of channel to publish the message on.
-		 * @param {*} message Variable to pass to all callbacks listening on
-		 *                    the given channel.
-		 * @return {Number} The number of subscribed callbacks that were
-		 *                  invoked.
-		 */
-		pub: function (channel, message) {
-			var segments = channel.split('.');
-			var i;
-			var len = segments.length;
-			var channelName = '';
-			var tally = 0;
-
-			for (i = 0; i < len; ++i) {
-				channelName += (0 === i ? '' : '.') + segments[i];
-				tally += pub(channelName, message);
-			}
-
-			return tally;
-		}
-
+	return {
+		mozilla : Aloha.browser.mozilla,
+		ie8     : Aloha.browser.msie && parseInt(Aloha.browser.version, 10) < 9,
+		ie7     : Aloha.browser.msie && parseInt(Aloha.browser.version, 10) < 8,
+		ie      : Aloha.browser.msie
 	};
-
-	return PubSub;
 });
 
-/* maps.js is part of Aloha Editor project http://aloha-editor.org
+/* dom2.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
  * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
@@ -9018,108 +9294,1265 @@ define('PubSub', [], function () {
  * provided you include this license notice and a URL through which
  * recipients can access the Corresponding Source.
  */
-define('util/maps',[], function () {
+define('util/dom2',[
+	'aloha/core',
+	'jquery',
+	'util/functions',
+	'util/maps',
+	'util/arrays',
+	'util/strings',
+	'util/browser',
+	'util/dom',
+	'util/range'
+], function (
+	Aloha,
+	$,
+	Fn,
+	Maps,
+	Arrays,
+	Strings,
+	Browser,
+	Dom1,
+	RangeObject
+) {
+	
+
+	var spacesRx = /\s+/;
+	var attrRegex = /\s([^\/<>\s=]+)(?:=(?:"[^"]*"|'[^']*'|[^>\/\s]+))?/g;
+
+	/**
+	 * Like insertBefore, inserts firstChild into parent before
+	 * refChild, except also inserts all the following siblings of
+	 * firstChild.
+	 */
+	function moveNextAll(parent, firstChild, refChild) {
+		while (firstChild) {
+			var nextChild = firstChild.nextSibling;
+			parent.insertBefore(firstChild, refChild);
+			firstChild = nextChild;
+		}
+	}
+
+	/**
+	 * Used to serialize outerHTML of DOM elements in older (pre-HTML5) Gecko,
+	 * Safari, and Opera browsers.
+	 *
+	 * Beware that XMLSerializer generates an XHTML string (<div class="team" />
+	 * instead of <div class="team"></div>).  It is noted here:
+	 * http://stackoverflow.com/questions/1700870/how-do-i-do-outerhtml-in-firefox
+	 * that some browsers (like older versions of Firefox) have problems with
+	 * XMLSerializer, and an alternative, albeit more expensive option, is
+	 * described.
+	 *
+	 * @type {XMLSerializer|null}
+	 */
+	var Serializer = window.XMLSerializer && new window.XMLSerializer();
+
+	/**
+	 * Gets the serialized HTML that describes the given DOM element and its
+	 * innerHTML.
+	 *
+	 * Polyfill for older versions of Gecko, Safari, and Opera browsers.
+	 * @see https://bugzilla.mozilla.org/show_bug.cgi?id=92264 for background.
+	 *
+	 * @param {HTMLElement} node DOM Element.
+	 * @return {String}
+	 */
+	function outerHtml(node) {
+		var html = node.outerHTML;
+		if (typeof html !== 'undefined') {
+			return html;
+		}
+		try {
+			return Serializer ? Serializer.serializeToString(node) : node.xml;
+		} catch (e) {
+			return node.xml;
+		}
+	}
+
+	/**
+	 * Retrieves the names of all attributes from the given elmenet.
+	 *
+	 * Correctly handles the case that IE7 and IE8 have approx 70-90
+	 * default attributes on each and every element.
+	 *
+	 * This implementation does not iterate over the elem.attributes
+	 * property since that is much slower on IE7 (even when
+	 * checking the attrNode.specified property). Instead it parses the
+	 * HTML of the element. For elements with few attributes the
+	 * performance on IE7 is improved by an order of magnitued.
+	 *
+	 * On IE7, when you clone a <button disabled="disabled"/> or an
+	 * <input checked="checked"/> element the boolean properties will
+	 * not be set on the cloned node. We choose the speed optimization
+	 * over correctness in this case. The dom-to-xhtml plugin has a
+	 * workaround for this case.
+	 */
+	function attrNames(elem) {
+		var names = [];
+		var html = outerHtml(elem.cloneNode(false));
+		var match;
+		while (null != (match = attrRegex.exec(html))) {
+			names.push(match[1]);
+		}
+		return names;
+	}
+
+	/**
+	 * Gets the attributes of the given element.
+	 *
+	 * See attrNames() for an edge case on IE7.
+	 *
+	 * @param elem
+	 *        An element to get the attributes for.
+	 * @return
+	 *        An array containing [name, value] tuples for each attribute.
+	 *        Attribute values will always be strings, but possibly empty strings.
+	 */
+	function attrs(elem) {
+		var as = [];
+		var names = attrNames(elem);
+		var i;
+		var len;
+		for (i = 0, len = names.length; i < len; i++) {
+			var name = names[i];
+			var value = $.attr(elem, name);
+			if (null == value) {
+				value = "";
+			} else {
+				value = value.toString();
+			}
+			as.push([name, value]);
+		}
+		return as;
+	}
+
+	/**
+	 * Like indexByClass() but operates on a list of elements instead.
+	 * The given list may be a NodeList, HTMLCollection, or an array.
+	 */
+	function indexByClassHaveList(elems, classMap) {
+		var index = {},
+		    indexed,
+		    classes,
+		    elem,
+		    cls,
+		    len,
+		    i,
+		    j;
+		for (i = 0, len = elems.length; i < len; i++) {
+			elem = elems[i];
+			if (elem.className) {
+				classes = Strings.words(elem.className);
+				for (j = 0; j < classes.length; j++) {
+					cls = classes[j];
+					if (classMap[cls]) {
+						indexed = index[cls];
+						if (indexed) {
+							indexed.push(elem);
+						} else {
+							index[cls] = [elem];
+						}
+					}
+				}
+			}
+		}
+		return index;
+	}
+
+	/**
+	 * Indexes descendant elements based on the individual classes in
+	 * the class attribute.
+	 *
+	 * Based on these observations;
+	 * 
+	 * * $('.class1, .class2') takes twice as long as $('.class1') on IE7.
+	 *
+	 * * $('.class1, .class2') is fast on IE8 (approx the same as
+	 *   $('.class'), no matter how many classes), but if the individual
+	 *   elements in the result set should be handled differently, the
+	 *   subsequent hasClass('.class1') and hasClass('.class2') calls
+	 *   slow things down again.
+	 *
+	 * * DOM traversal with elem.firstChild elem.nextSibling is very
+	 *   slow on IE7 compared to just iterating over
+	 *   root.getElementsByTagName('*').
+	 *
+	 * * $('name.class') is much faster than just $('.class'), but as
+	 *   soon as you need a single class in classMap that may be present
+	 *   on any element, that optimization doesn't gain anything since
+	 *   then you have to examine every element.
+	 *
+	 * This function will always take approx. the same amount of time
+	 * (on IE7 approx. equivalent to a single call to $('.class')) no
+	 * matter how many entries there are in classMap to index.
+	 *
+	 * This function only makes sense for multiple entries in
+	 * classMap. For a single class lookup, $('.class') or
+	 * $('name.class') is fine (even better in the latter case).
+	 *
+	 * @param root
+	 *        The root element to search for elements to index
+	 *        (will not be included in search).
+	 * @param classMap
+	 *        A map from class name to boolean true.
+	 * @return
+	 *        A map from class name to an array of elements with that class.
+	 *        Every entry in classMap for which elements have been found
+	 *        will have a corresponding entry in the returned
+	 *        map. Entries for which no elements have been found, may or
+	 *        may not have an entry in the returned map.
+	 */
+	function indexByClass(root, classMap) {
+		var elems;
+		if (Browser.ie7) {
+			elems = root.getElementsByTagName('*');
+		} else {
+			// Optimize for browsers that support querySelectorAll/getElementsByClassName.
+			// On IE8 for example, if there is a relatively high
+			// elems/resultSet ratio, performance can improve by a factor of 2.
+			elems = $(root).find('.' + Maps.keys(classMap).join(',.'));
+		}
+		return indexByClassHaveList(elems, classMap);
+	}
+
+	/**
+	 * Indexes descendant elements based on elem.nodeName.
+	 *
+	 * Based on these observations:
+	 *
+	 * * On IE8, for moderate values of names.length, individual calls to
+	 *   getElementsByTagName is just as fast as $root.find('name, name,
+	 *   name, name').
+	 *
+	 * * On IE7, $root.find('name, name, name, name') is extemely slow
+	 *   (can be an order of magnitude slower than individual calls to
+	 *    getElementsByTagName, why is that?).
+	 *
+	 * * Although getElementsByTagName is very fast even on IE7, when
+	 *   names.length > 7 an alternative implementation that iterates
+	 *   over all tags and checks names from a hashmap (similar to how
+	 *   indexByClass does it) may become interesting, but
+	 *   names.length > 7 is unlikely.
+	 *
+	 * This function only makes sense if the given names array has many
+	 * entries. For only one or two different names, calling $('name')
+	 * or context.getElementsByTagName(name) directly is fine (but
+	 * beware of $('name, name, ...') as explained above).
+	 *
+	 * The signature of this function differs from indexByClass by not
+	 * taking a map but instead an array of names.
+	 *
+	 * @param root
+	 *        The root element to search for elements to index
+	 *        (will not be included in search).
+	 * @param names
+	 *        An array of element names to look for.
+	 *        Names must be in all-uppercase (the same as elem.nodeName).
+	 * @return
+	 *        A map from element name to an array of elements with that name.
+	 *        Names will be all-uppercase.
+	 *        Arrays will be proper arrays, not NodeLists.
+	 *        Every entry in classMap for which elements have been found
+	 *        will have a corresponding entry in the returned
+	 *        map. Entries for which no elements have been found, may or
+	 *        may not have an entry in the returned map.
+	 */
+	function indexByName(root, names) {
+		var i,
+		    index = {},
+		    len;
+		for (i = 0, len = names.length; i < len; i++) {
+			var name = names[i];
+			index[name] = $.makeArray(root.getElementsByTagName(name));
+		}
+		return index;
+	}
+
+	function nodeIndex(node) {
+		var ret = 0;
+		while (node.previousSibling) {
+			ret++;
+			node = node.previousSibling;
+		}
+		return ret;
+	}
+
+	/**
+	 * Can't use elem.childNodes.length because
+	 * http://www.quirksmode.org/dom/w3c_core.html
+	 * "IE up to 8 does not count empty text nodes."
+	 */
+	function numChildren(elem) {
+		var count = 0;
+		var child = elem.firstChild;
+		while (child) {
+			count += 1;
+			child = child.nextSibling;
+		}
+		return count;
+	}
+
+	function nodeLength(node) {
+		if (1 === node.nodeType) {
+			return numChildren(node);
+		}
+		if (3 === node.nodeType) {
+			return node.length;
+		}
+		return 0;
+	}
+
+	function isAtEnd(node, offset) {
+		return (1 === node.nodeType
+				&& offset >= numChildren(node))
+			|| (3 === node.nodeType
+				&& offset === node.length
+				&& !node.nextSibling);
+	}
+
+	/**
+	 * @param node if a text node, should have a parent node.
+	 */
+	function nodeAtOffset(node, offset) {
+		if (1 === node.nodeType && offset < numChildren(node)) {
+			node = node.childNodes[offset];
+		} else if (3 === node.nodeType && offset === node.length) {
+			node = node.nextSibling || node.parentNode;
+		}
+		return node;
+	}
+
+	function removeShallow(node) {
+		var parent = node.parentNode;
+		moveNextAll(parent, node.firstChild, node);
+		parent.removeChild(node);
+	}
+
+	/**
+	 * Removes `node`.
+	 * @param {Node} node
+	 */
+	function remove(node) {
+		var parent = node.parentNode;
+		if (parent) {
+			parent.removeChild(node);
+		}
+	}
+
+	function wrap(node, wrapper) {
+		node.parentNode.replaceChild(wrapper, node);
+		wrapper.appendChild(node);
+	}
+
+	function insert(node, ref, atEnd) {
+		if (atEnd) {
+			ref.appendChild(node);
+		} else {
+			ref.parentNode.insertBefore(node, ref);
+		}
+	}
+
+	function Cursor(node, atEnd) {
+		this.node = node;
+		this.atEnd = atEnd;
+	}
+
+	/**
+	 * A cursor has the added utility over other iteration methods of
+	 * iterating over the end position of an element. The start and end
+	 * positions of an element are immediately before the element and
+	 * immediately after the last child respectively. All node positions
+	 * except end positions can be identified just by a node. To
+	 * distinguish between element start and end positions, the
+	 * additional atEnd boolean is necessary.
+	 */
+	function cursor(node, atEnd) {
+		return new Cursor(node, atEnd);
+	}
+
+	Cursor.prototype.next = function () {
+		var node = this.node;
+		var next;
+		if (this.atEnd || 1 !== node.nodeType) {
+			next = node.nextSibling;
+			if (next) {
+				this.atEnd = false;
+			} else {
+				next = node.parentNode;
+				if (!next) {
+					return false;
+				}
+				this.atEnd = true;
+			}
+			this.node = next;
+		} else {
+			next = node.firstChild;
+			if (next) {
+				this.node = next;
+			} else {
+				this.atEnd = true;
+			}
+		}
+		return true;
+	};
+
+	Cursor.prototype.prev = function () {
+		var node = this.node;
+		var prev;
+		if (this.atEnd) {
+			prev = node.lastChild;
+			if (prev) {
+				this.node = prev;
+			} else {
+				this.atEnd = false;
+			}
+		} else {
+			prev = node.previousSibling;
+			if (prev) {
+				if (1 === node.nodeType) {
+					this.atEnd = true;
+				}
+			} else {
+				prev = node.parentNode;
+				if (!prev) {
+					return false;
+				}
+			}
+			this.node = prev;
+		}
+		return true;
+	};
+
+	Cursor.prototype.equals = function (cursor) {
+		return cursor.node === this.node && cursor.atEnd === this.atEnd;
+	};
+
+	Cursor.prototype.clone = function (cursor) {
+		return cursor(cursor.node, cursor.atEnd);
+	};
+
+	Cursor.prototype.insert = function (node) {
+		return insert(node, this.node, this.atEnd);
+	};
+
+	/**
+	 * @param offset if node is a text node, the offset will be ignored.
+	 * @param node if a text node, should have a parent node.
+	 */
+	function cursorFromBoundaryPoint(node, offset) {
+		return cursor(nodeAtOffset(node, offset), isAtEnd(node, offset));
+	}
+
+	function parentsUntil(node, pred) {
+		var parents = [];
+		var parent = node.parentNode;
+		while (parent && !pred(parent)) {
+			parents.push(parent);
+			parent = parent.parentNode;
+		}
+		return parents;
+	}
+
+	function parentsUntilIncl(node, pred) {
+		var parents = parentsUntil(node, pred);
+		var topmost = parents.length ? parents[parents.length - 1] : node;
+		if (topmost.parentNode) {
+			parents.push(topmost.parentNode);
+		}
+		return parents;
+	}
+
+	function childAndParentsUntil(node, pred) {
+		if (pred(node)) {
+			return [];
+		}
+		var parents = parentsUntil(node, pred);
+		parents.unshift(node);
+		return parents;
+	}
+
+	function childAndParentsUntilIncl(node, pred) {
+		if (pred(node)) {
+			return [node];
+		}
+		var parents = parentsUntilIncl(node, pred);
+		parents.unshift(node);
+		return parents;
+	}
+
+	function childAndParentsUntilNode(node, untilNode) {
+		return childAndParentsUntil(node, function (nextNode) {
+			return nextNode === untilNode;
+		});
+	}
+
+	function childAndParentsUntilInclNode(node, untilInclNode) {
+		return childAndParentsUntilIncl(node, function (nextNode) {
+			return nextNode === untilInclNode;
+		});
+	}
+
+	function next(node, until, arg) {
+		while (node && !until(node, arg)) {
+			node = node.nextSibling;
+		}
+		return node;
+	}
+
+	function parent(node, until, arg) {
+		while (node && !until(node, arg)) {
+			node = node.parentNode;
+		}
+		return node;
+	}
+
+	function isTextNode(node) {
+		return 3 === node.nodeType;
+	}
+
+	function splitTextNode(node, offset) {
+		// Because node.splitText() is buggy on IE, split it manually.
+		// http://www.quirksmode.org/dom/w3c_core.html
+		var parent = node.parentNode;
+		var text = node.nodeValue;
+		if (0 === offset || offset >= text.length) {
+			return node;
+		}
+		var before = document.createTextNode(text.substring(0, offset));
+		var after = document.createTextNode(text.substring(offset, text.length));
+		parent.insertBefore(before, node);
+		parent.insertBefore(after, node);
+		parent.removeChild(node);
+		return before;
+	}
+
+	function adjustRangeAfterSplit(range, container, offset, setProp, splitNode, newNodeBeforeSplit) {
+		if (container !== splitNode) {
+			return;
+		}
+		var newNodeLength = newNodeBeforeSplit.length;
+		if (offset === 0) {
+			container = newNodeBeforeSplit.parentNode;
+			offset = nodeIndex(newNodeBeforeSplit);
+		} else if (offset < newNodeLength) {
+			container = newNodeBeforeSplit;
+		} else if (offset === newNodeLength) {
+			container = newNodeBeforeSplit.parentNode;
+			offset = nodeIndex(newNodeBeforeSplit) + 1;
+		} else {// offset > newNodeLength
+			var newNodeAfterSplit = newNodeBeforeSplit.nextSibling;
+			container = newNodeAfterSplit;
+			offset -= newNodeLength;
+		}
+		range[setProp].call(range, container, offset);
+	}
+
+	/**
+	 * Splits the given text node at the given offset and, if the given
+	 * range happens to have start or end containers equal to the given
+	 * text node, adjusts it such that start and end position will point
+	 * at the same position in the new text nodes.
+	 *
+	 * It is guaranteed that an adjusted boundary point will not point
+	 * to the end of a text node. Instead, it will point to the next
+	 * node. This guarantee often happens to be useful.
+	 *
+	 * If splitNode is not a text node, does nothing.
+	 */
+	function splitTextNodeAdjustRange(splitNode, splitOffset, range) {
+		if (3 !== splitNode.nodeType) {
+			return;
+		}
+		var sc = range.startContainer;
+		var so = range.startOffset;
+		var ec = range.endContainer;
+		var eo = range.endOffset;
+		var newNodeBeforeSplit = splitTextNode(splitNode, splitOffset);
+		adjustRangeAfterSplit(range, sc, so, 'setStart', splitNode, newNodeBeforeSplit);
+		adjustRangeAfterSplit(range, ec, eo, 'setEnd', splitNode, newNodeBeforeSplit);
+	}
+
+	function splitTextContainers(range) {
+		var sc = range.startContainer;
+		var so = range.startOffset;
+		splitTextNodeAdjustRange(sc, so, range);
+		// Because the range may have been adjusted.
+		var ec = range.endContainer;
+		var eo = range.endOffset;
+		splitTextNodeAdjustRange(ec, eo, range);
+	}
+
+	function walkUntil(node, fn, until, arg) {
+		while (node && !until(node, arg)) {
+			var next = node.nextSibling;
+			fn(node, arg);
+			node = next;
+		}
+	}
+
+	function walk(node, fn, arg) {
+		walkUntil(node, fn, Fn.returnFalse, arg);
+	}
+
+	/**
+	 * Depth-first postwalk of the given DOM node.
+	 */
+	function walkRec(node, fn, arg) {
+		if (1 === node.nodeType) {
+			walk(node.firstChild, function (node) {
+				walkRec(node, fn, arg);
+			});
+		}
+		fn(node, arg);
+	}
+
+	function walkUntilNode(node, fn, untilNode, arg) {
+		walkUntil(node, fn, function (nextNode) {
+			return nextNode === untilNode;
+		}, arg);
+	}
+
+	function StableRange(range) {
+		if (!range) {
+			return;
+		}
+		this.startContainer = range.startContainer;
+		this.startOffset = range.startOffset;
+		this.endContainer = range.endContainer;
+		this.endOffset = range.endOffset;
+		this.commonAncestorContainer = range.commonAncestorContainer;
+		this.collapsed = range.collapsed;
+	}
+
+	StableRange.prototype.update = function () {
+		if (!this.startContainer || !this.endContainer) {
+			return;
+		}
+		this.collapsed = (this.startContainer === this.endContainer
+						  && this.startOffset === this.endOffset);
+		var start = childAndParentsUntil(this.startContainer, Fn.returnFalse);
+		var end   = childAndParentsUntil(this.endContainer, Fn.returnFalse);
+		this.commonAncestorContainer = Arrays.intersect(start, end)[0];
+	};
+
+	StableRange.prototype.setStart = function (sc, so) {
+		this.startContainer = sc;
+		this.startOffset = so;
+		this.update();
+	};
+
+	StableRange.prototype.setEnd = function (ec, eo) {
+		this.endContainer = ec;
+		this.endOffset = eo;
+		this.update();
+	};
+
+	function setRangeStartFromCursor(range, cursor) {
+		if (cursor.atEnd) {
+			range.setStart(cursor.node, numChildren(cursor.node));
+		} else {
+			range.setStart(cursor.node.parentNode, nodeIndex(cursor.node));
+		}
+	}
+
+	function setRangeEndFromCursor(range, cursor) {
+		if (cursor.atEnd) {
+			range.setEnd(cursor.node, numChildren(cursor.node));
+		} else {
+			range.setEnd(cursor.node.parentNode, nodeIndex(cursor.node));
+		}
+	}
+
+	function setRangeFromRef(range, ref) {
+		range.setStart(ref.startContainer, ref.startOffset);
+		range.setEnd(ref.endContainer, ref.endOffset);
+	}
+
+	/**
+	 * A native range is live, which means that modifying the DOM may
+	 * mutate the range. Also, using setStart/setEnd may not set the
+	 * properties correctly (the browser may perform its own
+	 * normalization of boundary points). The behaviour of a native
+	 * range is very erratic and should be converted to a stable range
+	 * as the first thing in any algorithm.
+	 */
+	function stableRange(range) {
+		return new StableRange(range);
+	}
+
+	/**
+	 * The dom cursor passed to ignoreLeft and ignoreRight does not
+	 * traverse positions inside text nodes. The exact rules for when
+	 * text node containers are passed are as follows: If the left
+	 * boundary point is inside a text node, trimming will start before
+	 * it. If the right boundary point is inside a text node, trimming
+	 * will start after it.
+	 */
+	function trimRange(range, ignoreLeft, ignoreRight) {
+		if (range.collapsed) {
+			return;
+		}
+		var start = cursorFromBoundaryPoint(range.startContainer, range.startOffset);
+		var end = cursorFromBoundaryPoint(range.endContainer, range.endOffset);
+		var setStart = false;
+		while (!start.equals(end) && ignoreLeft(start) && start.next()) {
+			setStart = true;
+		}
+		ignoreRight = ignoreRight || ignoreLeft;
+		var setEnd = false;
+		// Because if the right boundary points is inside a text node,
+		// trimming starts after it.
+		if (3 === range.endContainer.nodeType
+			    && range.endOffset > 0
+			    // Because the cursor already normalizes
+			    // endOffset == endContainer.length to the node next after it.
+			    && range.endOffset < range.endContainer.length
+			    && end.next()) {
+			if (ignoreRight(end)) {
+				end.prev();
+			}
+		}
+		while (!end.equals(start) && ignoreRight(end) && end.prev()) {
+			setEnd = true;
+		}
+		if (setStart) {
+			setRangeStartFromCursor(range, start);
+		}
+		if (setEnd) {
+			setRangeEndFromCursor(range, end);
+		}
+	}
+
+	function trimRangeClosingOpening(range, ignoreLeft, ignoreRight) {
+		ignoreRight = ignoreRight || ignoreLeft;
+		trimRange(range, function (cursor) {
+			return cursor.atEnd || ignoreLeft(cursor.node);
+		}, function (cursor) {
+			var prev = cursor.atEnd ? cursor.node.lastChild : cursor.node.previousSibling;
+			return !prev || ignoreRight(prev);
+		});
+	}
+
+	function areRangesEq(a, b) {
+		return a.startContainer === b.startContainer
+			&& a.startOffset    === b.startOffset
+			&& a.endContainer   === b.endContainer
+			&& a.endOffset      === b.endOffset;
+	}
+
+	function insertSelectText(text, range) {
+		// Because empty text nodes are generally not nice and even
+		// cause problems with IE8 (elem.childNodes).
+		if (!text.length) {
+			return;
+		}
+		splitTextNodeAdjustRange(range.startContainer, range.startOffset, range);
+		var node = nodeAtOffset(range.startContainer, range.startOffset);
+		var atEnd = isAtEnd(range.startContainer, range.startOffset);
+		// Because if the node following the insert position is already
+		// a text node we can just reuse it.
+		if (!atEnd && 3 === node.nodeType) {
+			node.insertData(0, text);
+			range.setStart(node, 0);
+			range.setEnd(node, text.length);
+			return;
+		}
+		// Because if the node preceding the insert position is already
+		// a text node we can just reuse it.
+		var prev;
+		if (!atEnd) {
+			prev = node.previousSibling;
+		} else {
+			prev = node.lastChild;
+		}
+		if (prev && 3 === prev.nodeType) {
+			prev.insertData(prev.length, text);
+			range.setStart(prev, prev.length - text.length);
+			range.setEnd(prev, prev.length);
+			return;
+		}
+		// Because if we can't reuse any text nodes, we have to insert a
+		// new one.
+		var textNode = document.createTextNode(text);
+		insert(textNode, node, atEnd);
+		range.setStart(textNode, 0);
+		range.setEnd(textNode, textNode.length);
+	}
+
+	function collapseToEnd(range) {
+		range.setStart(range.endContainer, range.endOffset);
+	}
+
+	function rangeFromRangeObject(alohaRange) {
+		var range = Aloha.createRange();
+		range.setStart(alohaRange.startContainer, alohaRange.startOffset);
+		range.setEnd(alohaRange.endContainer, alohaRange.endOffset);
+		return range;
+	}
+
+	function extendToWord(range) {
+		var rangeObject = new RangeObject(range);
+		Dom1.extendToWord(rangeObject);
+		setRangeFromRef(range, rangeObject);
+	}
+
+	function cloneShallow(node) {
+		return node.cloneNode(false);
+	}
+
+	/**
+	 * Sets a style on the given element by modifying it's style attribute.
+	 */
+	function setStyle(node, name, value) {
+		// Because only the empty string removes a style.
+		$(node).css(name, null == value ? '' : value);
+	}
+
+	/**
+	 * Gets a style from the given element's style attribute.
+	 * Note that this is different from the computed/inherited style.
+	 */
+	function getStyle(node, name) {
+		// Because IE7 needs dashesToCamelCase().
+		name = Strings.dashesToCamelCase(name);
+		return node.nodeType === 1 ? node.style[name] : null;
+	}
+
+	/**
+	 * Gets the computed/inherited style of the given node.
+	 * @param node may be a text node.
+	 */
+	function getComputedStyle(node, name) {
+		if (node.currentStyle) {
+			return node.currentStyle[name];
+		}
+		var doc = node.ownerDocument;
+		if (doc.defaultView && doc.defaultView.getComputedStyle) {
+			var styles = doc.defaultView.getComputedStyle(node, null);
+			if (styles) {
+				return styles[name] || styles.getPropertyValue(name);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Given a node, will return node that succeeds it in the document order.
+	 *
+	 * For example, if this function is called recursively, starting from the
+	 * text node "one" in the below DOM tree:
+	 *
+	 *	"one"
+	 *	<b>
+	 *		"two"
+	 *		<u>
+	 *			<i>
+	 *				"three"
+	 *			</i>
+	 *		</u>
+	 *		"four"
+	 *	</b>
+	 *	"five"
+	 *
+	 * forward() will return nodes in the following order:
+	 *
+	 * <b>...</b>, "two", <u>...</u>, <i>...</i>, "three", "four", "five"
+	 *
+	 * @param {DOMObject} node
+	 * @return {DOMObject}
+	 *         The succeeding node or null if the given node has no previous
+	 *         siblings and no parent.
+	 */
+	function forward(node) {
+		if (node.firstChild) {
+			return node.firstChild;
+		}
+		var next = node;
+		while (next && !next.nextSibling) {
+			next = next.parentNode;
+		}
+		return next && next.nextSibling;
+	}
+
+	/**
+	 * Given a node, will return node that preceeds it in the document order.
+	 *
+	 * For example, if this function is called recursively, starting from the
+	 * text node "five" in the below DOM tree:
+	 *
+	 *	"one"
+	 *	<b>
+	 *		"two"
+	 *		<u>
+	 *			<i>
+	 *				"three"
+	 *			</i>
+	 *		</u>
+	 *		"four"
+	 *	</b>
+	 *	"five"
+	 *
+	 * backward() will return nodes in the following order:
+	 *
+	 * "four", "three", <i>...</i>, <u>...</u>, "two", <b>...</b>, "one"
+	 *
+	 * @param {DOMObject} node
+	 * @return {DOMObject}
+	 *         The preceeding node or null if the given node has no previous
+	 *         siblings and no parent.
+	 */
+	function backward(node) {
+		var prev = node.previousSibling;
+		while (prev && prev.lastChild) {
+			prev = prev.lastChild;
+		}
+		return prev || node.parentNode;
+	}
+
+	/**
+	 * Starting from the given node, and moving forwards through the DOM tree,
+	 * searches for a node which returns `true` when applied to the predicate
+	 * `match()`.
+	 *
+	 * @param {DOMObject} node
+	 * @param {Function(DOMObject):Boolean} match
+	 * @param {Function(DOMObject):Boolean} until
+	 * @return {DOMObject}
+	 */
+	function findForward(node, match, until) {
+		while (node && !until(node)) {
+			if (match(node)) {
+				return node;
+			}
+			node = forward(node);
+		}
+		return null;
+	}
+
+	/**
+	 * Starting from the given node, and moving backwards through the DOM tree,
+	 * searches for a node which returns `true` when applied to the predicate
+	 * `match()`.
+	 *
+	 * @param {DOMObject} node
+	 * @param {Function(DOMObject):Boolean} match
+	 * @param {Function(DOMObject):Boolean} until
+	 * @return {DOMObject}
+	 */
+	function findBackward(node, match, until) {
+		while (node && !until(node)) {
+			if (match(node)) {
+				return node;
+			}
+			node = backward(node);
+		}
+		return null;
+	}
+
+	return {
+		backward: backward,
+		forward: forward,
+		findForward: findForward,
+		findBackward: findBackward,
+		moveNextAll: moveNextAll,
+		attrNames: attrNames,
+		attrs: attrs,
+		indexByClass: indexByClass,
+		indexByName: indexByName,
+		indexByClassHaveList: indexByClassHaveList,
+		outerHtml: outerHtml,
+		removeShallow: removeShallow,
+		remove: remove,
+		wrap: wrap,
+		insert: insert,
+		cursor: cursor,
+		cursorFromBoundaryPoint: cursorFromBoundaryPoint,
+		nodeAtOffset: nodeAtOffset,
+		isAtEnd: isAtEnd,
+		parentsUntil: parentsUntil,
+		parentsUntilIncl: parentsUntilIncl,
+		childAndParentsUntil: childAndParentsUntil,
+		childAndParentsUntilIncl: childAndParentsUntilIncl,
+		childAndParentsUntilNode: childAndParentsUntilNode,
+		childAndParentsUntilInclNode: childAndParentsUntilInclNode,
+		next: next,
+		parent: parent,
+		isTextNode: isTextNode,
+		nodeIndex: nodeIndex,
+		splitTextNode: splitTextNode,
+		splitTextContainers: splitTextContainers,
+		walk: walk,
+		walkRec: walkRec,
+		walkUntil: walkUntil,
+		walkUntilNode: walkUntilNode,
+		stableRange: stableRange,
+		trimRange: trimRange,
+		trimRangeClosingOpening: trimRangeClosingOpening,
+		setRangeFromRef: setRangeFromRef,
+		setRangeStartFromCursor: setRangeStartFromCursor,
+		setRangeEndFromCursor: setRangeEndFromCursor,
+		splitTextNodeAdjustRange: splitTextNodeAdjustRange,
+		insertSelectText: insertSelectText,
+		areRangesEq: areRangesEq,
+		collapseToEnd: collapseToEnd,
+		extendToWord: extendToWord,
+		rangeFromRangeObject: rangeFromRangeObject,
+		cloneShallow: cloneShallow,
+		setStyle: setStyle,
+		getStyle: getStyle,
+		getComputedStyle: getComputedStyle,
+		nodeLength: nodeLength
+	};
+});
+
+/* content-rules.js is part of the Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php
+ * License http://aloha-editor.org/license.php
+ */
+define('aloha/content-rules',[
+	'PubSub',
+	'aloha/core',
+	'util/dom2',
+	'util/arrays',
+	'aloha/jquery'
+], function (
+	PubSub,
+	Aloha,
+	Dom,
+	Arrays,
+	$
+) {
 	
 
 	/**
-	 * Checks whether the given object has no own or inherited properties.
-	 *
-	 * @param {!Object} obj The object to check.
-	 * @return {boolean} True if the object is empty. eg: isEmpty({}) == true
+	 * White list node names for list elements.
+	 * @type {Array.<string>}
 	 */
-	function isEmpty(obj) {
-		var name;
-		for (name in obj) {
-			if (obj.hasOwnProperty(name)) {
+	var LIST_WHITELIST_NODE_NAMES = ['li'];
+
+	/**
+	 * White list node names for table elements.
+	 * @type {Array.<string>}
+	 */
+	var TABLE_WHITELIST_NODE_NAMES = ['caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot', 'td', 'th'];
+
+	/**
+	 * Add default rules for some elements.
+	 * @returns {Object.<string, Array.<string>>}
+	 */
+	function addDefaultRules(mapRules) {
+		var selector;
+		for (selector in mapRules) {
+			if (mapRules.hasOwnProperty(selector)) {
+				if (Arrays.contains(mapRules[selector], 'ol') || Arrays.contains(mapRules[selector], 'ul')) {
+					mapRules[selector] = Arrays.concat(mapRules[selector], LIST_WHITELIST_NODE_NAMES);
+				} else if (Arrays.contains(mapRules[selector], 'table')) {
+					mapRules[selector] = Arrays.concat(mapRules[selector], TABLE_WHITELIST_NODE_NAMES);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Whitelist rules.
+	 *
+	 * @private
+	 * @type {Object.<string, Array.<string>>}
+	 */
+	var whitelist = addDefaultRules((
+		Aloha.settings &&
+		Aloha.settings.contentRules &&
+		Aloha.settings.contentRules.whitelist
+	) || {});
+
+	/**
+	 * Blacklist rules.
+	 *
+	 * @private
+	 * @type {Object.<string, Array.<string>>}
+	 */
+	var blacklist = (
+		Aloha.settings &&
+		Aloha.settings.contentRules &&
+		Aloha.settings.contentRules.blacklist
+	) || {};
+
+	/**
+	 * Translation rules.
+	 *
+	 * @private
+	 * @type {Object<string, string>}
+	 */
+	var translations = (
+		Aloha.settings &&
+		Aloha.settings.contentRules &&
+		Aloha.settings.contentRules.translate
+	) || {};
+
+	/**
+	 * Retrieves a list of all rules in a specified table that are applicable
+	 * the given editable.
+	 *
+	 * @private
+	 * @param {Element}                        editable
+	 * @param {Object<string, Array.<string>}} table
+	 */
+	function getRules(editable, table) {
+		var $editable = $(editable);
+		var rules = [];
+		var selector;
+		for (selector in table) {
+			if (table.hasOwnProperty(selector) && $editable.is(selector)) {
+				rules.push(table[selector]);
+			}
+		}
+		return rules;
+	}
+
+	/**
+	 * Concatenates the given list of lists into a single set.
+	 *
+	 * @private
+	 * @param  {Array.<Array<string>>} lists
+	 * @return {Array.<string>}
+	 */
+	function setcat(lists) {
+		var result = [];
+		$.each(lists, function (index, item) {
+			result = result.concat(item);
+		});
+		$.unique(result);
+		return result;
+	}
+
+	/**
+	 * These element's cannot be simply unwrapped because they have dependent
+	 * children.
+	 *
+	 * @private
+	 * @see  GROUPED_ELEMENTS
+	 * @type {<string, boolean>}
+	 */
+	var GROUP_CONTAINERS = {
+		FIELDSET : true,
+		OBJECT   : true,
+		FIGURE   : true,
+		AUDIO    : true,
+		SELECT   : true,
+		COLGROUP : true,
+		HGROUP   : true,
+		TABLE    : true,
+		TBODY    : true,
+		TR       : true,
+		OL       : true,
+		UL       : true,
+		DL       : true,
+		MENU     : true
+	};
+
+	/**
+	 * These element's cannot be simply unwrapped because their parents only
+	 * allow these as their immediate child nodes.
+	 *
+	 * @private
+	 * @see  GROUP_CONTAINERS
+	 * @type {<string, Array.<string>}
+	 */
+	var GROUPED_ELEMENTS = {
+		LI    : ['OL', 'UL', 'DL'],
+		DT    : ['DL'],
+		DD    : ['DL'],
+		TBODY : ['TABLE'],
+		TR    : ['TABLE', 'TBODY'],
+		TH    : ['TABLE', 'TBODY'],
+		TD    : ['TR', 'TH']
+	};
+
+	/**
+	 * Checks whether nodes of the specified nodeName are allowed in the given
+	 * editable.
+	 *
+	 * @param  {Element} editable
+	 * @param  {string}  nodeName
+	 * @return {boolean}
+	 */
+	function isAllowed(editable, nodeName) {
+		var white = getRules(editable, whitelist);
+		// Because if no rules are configured for this editable then permit all
+		if (white.length > 0) {
+			// Because textnode are always to be permitted by default. They
+			// must be explicitly blacklisted if undesired
+			if (!Arrays.contains(setcat(['#text'].concat(white)), nodeName.toLowerCase())) {
 				return false;
 			}
+		}
+		var black = getRules(editable, blacklist);
+		if (black.length > 0) {
+			return !Arrays.contains(setcat(black), nodeName.toLowerCase());
 		}
 		return true;
 	}
 
 	/**
-	 * Fill the given map with the given keys mapped to the given value.
+	 * Translates nodes from one name to another (eg: i to em) if translation is
+	 * configured for the given editable.
 	 *
-	 * @param map
-	 *        The given map will have one entry added for each given key.
-	 * @param keys
-	 *        An array of string keys. Javascript maps can only
-	 *        contain string keys, so these must be strings or
-	 *        or they will be cast to string.
-	 * @param value
-	 *        A single value that each given key will map to.
-	 * @return
-	 *        The given map.
+	 * @param  {Element} editable
+	 * @param  {string}  nodeName
+	 * @return {string}  Translated nodeName
 	 */
-	function fillKeys(map, keys, value) {
-		var i = keys.length;
-		while (i--) {
-			map[keys[i]] = value;
-		}
-		return map;
+	function translate(editable, nodeName) {
+		var rules = $.extend.apply({}, getRules(editable, translations));
+		return rules[nodeName.toLowerCase()] || nodeName;
 	}
 
 	/**
-	 * Fill the given map with entries from the given tuples.
+	 * Given a string of html content to be inserted in a specified editable
+	 * element, will strip away any elements which are disallowed and translate
+	 * any according to the Content Rules configuration.
 	 *
-	 * @param map
-	 *        The given map will have one entry added for each item in
-	 *        the given array.
-	 * @param tuples
-	 *        An array of [key, value] tuples. Javascript maps can only
-	 *        contain string keys, so the keys must be strings or
-	 *        or they will be cast to string.
-	 * @return
-	 *        The given map.
+	 * @param  {string}  content
+	 * @param  {Element} editable
+	 * @return {string}
 	 */
-	function fillTuples(map, tuples) {
-		var i = tuples.length,
-			tuple;
-		while (i--) {
-			tuple = tuples[i];
-			map[tuple[0]] = tuple[1];
-		}
-		return map;
-	}
-
-	/**
-	 * Returns an array of the map's keys.
-	 */
-	function keys(map) {
-		var ks = [],
-			k;
-		for (k in map) {
-			if (map.hasOwnProperty(k)) {
-				ks.push(k);
+	function applyRules(content, editable) {
+		var doc = editable.ownerDocument;
+		var container = doc.createElement('div');
+		container.innerHTML = content;
+		var node = Dom.forward(container);
+		while (node) {
+			var translation = translate(editable, node.nodeName);
+			if (translation !== node.nodeName) {
+				var replacement = doc.createElement(translation);
+				replacement.innerHTML = node.innerHTML;
+				node.parentNode.replaceChild(replacement, node);
+				node = replacement;
+			}
+			if (isAllowed(editable, node.nodeName)) {
+				node = Dom.forward(node);
+			} else if (GROUP_CONTAINERS[node.nodeName] || GROUPED_ELEMENTS[node.nodeName]) {
+				// Because `node` is being entirely removed, we skip over, and
+				// do not descend its subtree
+				var prev = Dom.backward(node);
+				node.parentNode.removeChild(node);
+				node = Dom.forward(prev);
+			} else {
+				var next = Dom.forward(node);
+				Dom.removeShallow(node);
+				node = next;
 			}
 		}
-		return ks;
-	}
-
-	/**
-	 * For each mapping, call cb(value, key, map).
-	 *
-	 * Emulates ECMAScript edition 5 Array.forEach.
-	 *
-	 * Contrary to "for (key in map)" iterates only over the
-	 * "hasOwnProperty" properties of the map, which is usually what you
-	 * want.
-	 */
-	function forEach(map, cb) {
-		var key;
-		for (key in map) {
-			if (map.hasOwnProperty(key)) {
-				cb(map[key], key, map);
-			}
-		}
+		return container.innerHTML;
 	}
 
 	return {
-		isEmpty: isEmpty,
-		fillTuples: fillTuples,
-		fillKeys: fillKeys,
-		keys: keys,
-		forEach: forEach
+		isAllowed  : isAllowed,
+		translate  : translate,
+		applyRules : applyRules
 	};
 });
 
@@ -9359,6 +10792,22 @@ define('util/html',[
 	}
 
 	/**
+	 * Checks is `elem` has only White Spaces chilren.
+	 * @paran {Element} elem
+	 */
+	function hasOnlyWhiteSpaceChildren(elem) {
+		var children = elem.childNodes;
+		var i, len;
+		for (i = 0, len = children.length; i < len; i++) {
+			if (!isWSPorZWSPNode(children[i])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Map containing lowercase and uppercase tagnames of block element as keys
 	 * mapped against true.
 	 *
@@ -9471,6 +10920,11 @@ define('util/html',[
 			.replace(ZWSP_CHARACTERS_RIGHT, '');
 	}
 
+	/**
+	 * Checks if `node` is unrendered.
+	 * @param {Node} node Node to be checked
+	 * @return {boolean} true if `node` is unrendered, false otherwise.
+	 */
 	function isUnrenderedNode(node) {
 		if (3 === node.nodeType && 0 === node.data.length) {
 			return true;
@@ -9483,6 +10937,14 @@ define('util/html',[
 		return isWSPorZWSPNode(node);
 	}
 
+	/**
+	 * Checks if `node` is rendered.
+	 * @param {Node} node Node to be checked
+	 * @return {boolean} true if `node` is rendered, false otherwise.
+	 */
+	function isRenderedNode(node) {
+		return !isUnrenderedNode(node);
+	}
 	return {
 		BLOCKLEVEL_ELEMENTS: BLOCKLEVEL_ELEMENTS,
 		VOID_ELEMENTS: VOID_ELEMENTS,
@@ -9498,7 +10960,9 @@ define('util/html',[
 		trimWhitespaceCharacters: trimWhitespaceCharacters,
 		isWSPorZWSPNode: isWSPorZWSPNode,
 		isWSPorZWSPText: isWSPorZWSPText,
-		isUnrenderedNode: isUnrenderedNode
+		isUnrenderedNode: isUnrenderedNode,
+		isRenderedNode: isRenderedNode,
+		hasOnlyWhiteSpaceChildren: hasOnlyWhiteSpaceChildren
 	};
 });
 
@@ -9508,14 +10972,20 @@ define('aloha/engine',[
 	'util/maps',
 	'util/html',
 	'util/dom',
-	'jquery'
+	'util/dom2',
+	'jquery',
+	'aloha/content-rules',
+	'PubSub'
 ], function (
 	Aloha,
 	$_,
 	Maps,
 	Html,
 	Dom,
-	jQuery
+	Dom2,
+	jQuery,
+	ContentRules,
+	PubSub
 ) {
 	
 
@@ -10606,7 +12076,7 @@ define('aloha/engine',[
 
 		ref.style.height = 'auto';
 		ref.style.maxHeight = 'none';
-		if (!(jQuery.browser.msie && jQuery.browser.version < 8)) {
+		if (!(Aloha.browser.msie && Aloha.browser.version < 8)) {
 			ref.style.minHeight = '0';
 		}
 		var space = document.createTextNode('\u200b');
@@ -10620,7 +12090,7 @@ define('aloha/engine',[
 
 		ref.style.height = origStyle.height;
 		ref.style.maxHeight = origStyle.maxHeight;
-		if (!(jQuery.browser.msie && jQuery.browser.version < 8)) {
+		if (!(Aloha.browser.msie && Aloha.browser.version < 8)) {
 			ref.style.minHeight = origStyle.minHeight;
 		}
 
@@ -10663,7 +12133,7 @@ define('aloha/engine',[
 		ref.style.maxHeight = 'none';
 		ref.style.minHeight = '0';
 		// IE7 would ignore display:none in contentEditable, so we temporarily set it to false
-		if (jQuery.browser.msie && jQuery.browser.version <= 7) {
+		if (Aloha.browser.msie && Aloha.browser.version <= 7) {
 			ref.contentEditable = 'false';
 		}
 
@@ -10681,14 +12151,14 @@ define('aloha/engine',[
 		ref.style.maxHeight = origStyle.maxHeight;
 		ref.style.minHeight = origStyle.minHeight;
 		// reset contentEditable for IE7
-		if (jQuery.browser.msie && jQuery.browser.version <= 7) {
+		if (Aloha.browser.msie && Aloha.browser.version <= 7) {
 			ref.contentEditable = origStyle.contentEditable;
 		}
 		br.style.display = origBrDisplay;
 
 		// https://github.com/alohaeditor/Aloha-Editor/issues/516
 		// look like it works in msie > 7
-		/* if (jQuery.browser.msie && jQuery.browser.version < 8) {
+		/* if (Aloha.browser.msie && Aloha.browser.version < 8) {
 		   br.removeAttribute("style");
 		   ref.removeAttribute("style");
 		   } */
@@ -11258,7 +12728,7 @@ define('aloha/engine',[
 		//    This invokation somehow crashes the ie7. We assume that the access of
 		//    shared expando attribute updates internal references which are not
 		//    correclty handled during clone();
-		if (jQuery.browser.msie && jQuery.browser.version >= 7 && typeof element.attributes[jQuery.expando] !== 'undefined') {
+		if (Aloha.browser.msie && Aloha.browser.version >= 7 && typeof element.attributes[jQuery.expando] !== 'undefined') {
 			jQuery(element).removeAttr(jQuery.expando);
 		}
 
@@ -11435,8 +12905,7 @@ define('aloha/engine',[
 		}
 
 		// "If new parent's parent is null:"
-		var newParentParentNode = newParent.parentNode;
-		if (!newParentParentNode) {
+		if (!newParent.parentNode) {
 			// "Insert new parent into the parent of the first member of node list
 			// immediately before the first member of node list."
 			nodeList[0].parentNode.insertBefore(newParent, nodeList[0]);
@@ -11452,10 +12921,10 @@ define('aloha/engine',[
 				endOffset = range.endOffset,
 			    newParentIndex = Dom.getIndexInParent(newParent);
 
-			if (startOffset >= newParentIndex && startContainer == newParentParentNode) {
+			if (startOffset >= newParentIndex && startContainer == newParent.parentNode) {
 				range.setStart(startContainer, startOffset + 1);
 			}
-			if (endOffset >= newParentIndex && endContainer == newParentParentNode) {
+			if (endOffset >= newParentIndex && endContainer == newParent.parentNode) {
 				range.setEnd(endContainer, endOffset + 1);
 			}
 
@@ -11465,10 +12934,10 @@ define('aloha/engine',[
 				startOffset = globalRange.startOffset;
 				endContainer = globalRange.endContainer;
 				endOffset = globalRange.endOffset;
-				if (startContainer == newParentParentNode && startOffset >= newParentIndex) {
+				if (startContainer == newParent.parentNode && startOffset >= newParentIndex) {
 					globalRange.setStart(startContainer, startOffset + 1);
 				}
-				if (endContainer == newParentParentNode && endOffset >= newParentIndex) {
+				if (endContainer == newParent.parentNode && endOffset >= newParentIndex) {
 					globalRange.setEnd(endContainer, endOffset + 1);
 				}
 			}
@@ -11537,7 +13006,7 @@ define('aloha/engine',[
 			}
 
 			// "Remove new parent's nextSibling from its parent."
-			newParentParentNode.removeChild(newParent.nextSibling);
+			newParent.parentNode.removeChild(newParent.nextSibling);
 		}
 
 		// "Remove extraneous line breaks from new parent."
@@ -13998,10 +15467,10 @@ define('aloha/engine',[
 			return;
 		}
 
-		if (!jQuery.browser.msie) {
+		if (!Aloha.browser.msie) {
 			// for normal browsers, the end-br will do
 			container.appendChild(createEndBreak());
-		} else if (jQuery.browser.msie && jQuery.browser.version <= 7 && isHtmlElementInArray(container, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "blockquote"])) {
+		} else if (Aloha.browser.msie && Aloha.browser.version <= 7 && isHtmlElementInArray(container, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "blockquote"])) {
 			// for IE7, we need to insert a text node containing a single zero-width whitespace character
 			if (!container.firstChild) {
 				container.appendChild(document.createTextNode('\u200b'));
@@ -14009,6 +15478,23 @@ define('aloha/engine',[
 		}
 	}
 
+	/**
+	 * Node names that can not be unwrapped.
+	 *
+	 * @const
+	 * @type {string[]}
+	 */
+	var NOT_UNWRAPPABLE_NODES = ['TABLE', 'OL', 'UL', 'DL'];
+
+	/**
+	 * Checks if `node` can be unwrapped.
+	 *
+	 * @param  {Element} node
+	 * @return {boolean}
+	 */
+	function isUnwrappable(node) {
+		return jQuery.inArray(node.nodeName, NOT_UNWRAPPABLE_NODES) === -1;
+	}
 	//@}
 	///// Assorted block formatting command algorithms /////
 	//@{
@@ -14104,7 +15590,9 @@ define('aloha/engine',[
 			// now that the parent has only the node as child (because we
 			// removed any existing empty text nodes), we can safely unwrap the
 			// node's contents, and correct the range if necessary
-			if (node.parentNode.childNodes.length == 1) {
+			// if the node is unwrappable (table, lists) the node is not unwrapped
+			// but splitted.
+			if (node.parentNode.childNodes.length == 1 && isUnwrappable(node)) {
 				newStartOffset = range.startOffset;
 				newEndOffset = range.endOffset;
 
@@ -15344,6 +16832,39 @@ define('aloha/engine',[
 		}
 	}
 
+	/**
+	 * Determines whether a node must be removed to make the insertparagraph command work in list contexts.
+	 *
+	 * @param {Node} node DOM node to check
+	 * @return {boolean} true if the node should be deleted
+	 */
+	function isListWhitespaceToRemove(node) {
+		// no whitespace node –> no need to remove
+		if (!isWhitespaceNode(node)) {
+			return false;
+		}
+
+		// always remove whitespace children from ul and ol
+		if (node.parentNode.nodeName === 'UL' || node.parentNode.nodeName === 'OL') {
+			return true;
+		}
+
+		if (node.parentNode.nodeName !== 'LI') {
+			return false;
+		}
+
+		// only remove whitespace from li if it is between (the opening tag/a block level element)
+		// and (a block level element/the closing tag)
+		var index = Dom.getIndexInParent(node);
+		var last = node.parentNode.childNodes.length - 1;
+		var cleanElements = Dom.blockLevelElements.concat(Dom.listElements);
+
+		return (index === 0 ||
+		         cleanElements.indexOf(node.previousSibling.nodeName.toLowerCase()) > -1) &&
+		       (index === last ||
+		         cleanElements.indexOf(node.nextSibling.nodeName.toLowerCase()) > -1);
+	}
+
 	//@}
 	///// Indenting and outdenting /////
 	//@{
@@ -15353,7 +16874,7 @@ define('aloha/engine',[
 		if (node) {
 			jQuery(node).find('ul,ol,li').each(function () {
 				jQuery(this).contents().each(function () {
-					if (isWhitespaceNode(this)) {
+					if (isListWhitespaceToRemove(this)) {
 						var index = Dom.getIndexInParent(this);
 
 						// if the range points to somewhere behind the removed text node, we reduce the offset
@@ -16064,7 +17585,7 @@ define('aloha/engine',[
 			var i;
 
 			// special behaviour for skipping zero-width whitespaces in IE7
-			if (jQuery.browser.msie && jQuery.browser.version <= 7) {
+			if (Aloha.browser.msie && Aloha.browser.version <= 7) {
 				moveOverZWSP(range, false);
 			}
 
@@ -16166,7 +17687,7 @@ define('aloha/engine',[
 			// when inserting a special char via the plugin
 			// there where problems deleting them again with backspace after insertation
 			// see https://github.com/alohaeditor/Aloha-Editor/issues/517
-			if (node.nodeType == $_.Node.TEXT_NODE && offset == 0 && jQuery.browser.msie) {
+			if (node.nodeType == $_.Node.TEXT_NODE && offset == 0 && Aloha.browser.msie) {
 				offset = 1;
 				range.setStart(node, offset);
 				range.setEnd(node, offset);
@@ -16648,7 +18169,7 @@ define('aloha/engine',[
 	commands.forwarddelete = {
 		action: function (value, range) {
 			// special behaviour for skipping zero-width whitespaces in IE7
-			if (jQuery.browser.msie && jQuery.browser.version <= 7) {
+			if (Aloha.browser.msie && Aloha.browser.version <= 7) {
 				moveOverZWSP(range, true);
 			}
 
@@ -17002,12 +18523,35 @@ define('aloha/engine',[
 		}
 	};
 
+	/**
+	 * Publish a message for the links that will be inserted at paste.
+	 * @param {DocumentFragment} frag
+	 */
+	function publishPastedLinks(frag) {
+		var children = frag.childNodes;
+		var links;
+		var c;
+		var i;
+		var len;
+
+		for (c = 0; c < children.length; c++) {
+			links = jQuery(children[c]).find('a');
+			for (i = 0, len = links.length; i < len; i++) {
+				PubSub.pub('aloha.link.pasted', {
+					href: links[i].getAttribute('href'),
+					element: links[i]
+				});
+			}
+		}
+	}
+
 	//@}
 	///// The insertHTML command /////
 	//@{
 	commands.inserthtml = {
-		action: function (value, range) {
-
+		action: function (raw, range) {
+			var editable = Dom.getEditingHostOf(range.commonAncestorContainer);
+			var value = editable ? ContentRules.applyRules(raw, editable) : raw;
 
 			// "Delete the contents of the active range."
 			deleteContents(range);
@@ -17021,6 +18565,8 @@ define('aloha/engine',[
 			// "Let frag be the result of calling createContextualFragment(value)
 			// on the active range."
 			var frag = range.createContextualFragment(value);
+
+			publishPastedLinks(frag);
 
 			// "Let last child be the lastChild of frag."
 			var lastChild = frag.lastChild;
@@ -17217,7 +18763,7 @@ define('aloha/engine',[
 
 			// IE7 is adding this styles: height: auto; min-height: 0px; max-height: none;
 			// with that there is the ugly "IE-editable-outline"
-			if (jQuery.browser.msie && jQuery.browser.version < 8) {
+			if (Aloha.browser.msie && Aloha.browser.version < 8) {
 				br.parentNode.removeAttribute("style");
 			}
 		}
@@ -17268,6 +18814,12 @@ define('aloha/engine',[
 				return;
 			}
 
+			var editable = Dom.getEditingHostOf(range.commonAncestorContainer);
+
+			if (!editable) {
+				return;
+			}
+
 			// "Let node and offset be the active range's start node and offset."
 			var node = range.startContainer;
 			var offset = range.startOffset;
@@ -17310,6 +18862,12 @@ define('aloha/engine',[
 			// "If container is not editable or not in the same editing host as
 			// node or is not a single-line container:"
 			if (!isEditable(container) || !inSameEditingHost(container, node) || !isSingleLineContainer(container)) {
+				editable = Dom.getEditingHostOf(container);
+
+				if (!editable || !ContentRules.isAllowed(editable, defaultSingleLineContainerName)) {
+					return;
+				}
+
 				// "Let tag be the default single-line container name."
 				var tag = defaultSingleLineContainerName;
 
@@ -17387,6 +18945,11 @@ define('aloha/engine',[
 			// "If container's local name is "address", "listing", or "pre":"
 			var oldHeight, newHeight;
 			if (container.tagName == "ADDRESS" || container.tagName == "LISTING" || container.tagName == "PRE") {
+
+				if (!ContentRules.isAllowed(editable, 'br')) {
+					return;
+				}
+
 				// "Let br be the result of calling createElement("br") on the
 				// context object."
 				var br = document.createElement("br");
@@ -17525,6 +19088,11 @@ define('aloha/engine',[
 				// "Otherwise, let new container name be the local name of container."
 			} else {
 				newContainerName = container.tagName.toLowerCase();
+			}
+
+			if (!listRelatedElements[newContainerName.toUpperCase()]
+					&& !ContentRules.isAllowed(editable, newContainerName)) {
+				return;
 			}
 
 			// "Let new container be the result of calling createElement(new
@@ -18201,10 +19769,10 @@ define('aloha/engine',[
 ;
 /* selection.js is part of Aloha Editor project http://aloha-editor.org
  *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
  * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
+ * Contributors http://aloha-editor.org/contribution.php
+ *
  * Aloha Editor is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18218,7 +19786,7 @@ define('aloha/engine',[
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * As an additional permission to the GNU GPL version 2, you may distribute
  * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
  * source code without the copy of the GNU GPL normally required,
@@ -18232,6 +19800,10 @@ define('aloha/selection',[
 	'util/range',
 	'util/arrays',
 	'util/strings',
+	'util/dom',
+	'util/dom2',
+	'util/browser',
+	'util/html',
 	'aloha/console',
 	'PubSub',
 	'aloha/engine',
@@ -18244,6 +19816,10 @@ define('aloha/selection',[
 	Range,
 	Arrays,
 	Strings,
+	Dom,
+	Dom2,
+	Browser,
+	Html,
 	console,
 	PubSub,
 	Engine,
@@ -18345,6 +19921,113 @@ define('aloha/selection',[
 	}
 
 	/**
+	 * Checks if `range` is contained inside an Aloha-Block
+	 * @param {Range} range
+	 * @return {*}
+	 */
+	function rangeStartInBlock(range) {
+		return jQuery(range.startContainer).closest('.aloha-editable,.aloha-block,.aloha-table-cell-editable,.aloha-table-cell_active')
+		                   .first()
+			               .hasClass('aloha-block');
+	}
+
+	/**
+	 * Gets parent block element
+	 *
+	 * @param {Element} element
+	 * @return {*}
+	 */
+	function getBlockElement(element) {
+		while (element && !Html.isBlock(element)) {
+			element = element.parentNode;
+		}
+		return element;
+	}
+
+	/**
+	 * Checks if `rangeObject` ends at the beginning of a text Node.
+	 *
+	 * @param {RangeObject} rangeObject
+	 * @return {boolean}
+	 */
+	function isEndContainerAtBeginTexNode(rangeObject) {
+		var endContainer = rangeObject.endContainer;
+		var endOffset = rangeObject.endOffset;
+		var i;
+
+		if (!Dom2.isTextNode(endContainer)) {
+			return false;
+		}
+
+		for (i = endOffset - 1; i >= 0; i--) {
+			if (jQuery.trim(endContainer.textContent[i]).length !== 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Checks if ranges ends in the beginning of a block element.
+	 *
+	 * @param {RangeObejct} rangeObejct
+	 * @return {boolean}
+	 */
+	function rangeEndsInBeginningBlockElement(rangeObejct) {
+		var endContainer = rangeObejct.endContainer;
+		var node = endContainer;
+
+		var blockElement = getBlockElement(rangeObejct.endContainer);
+
+		if (!isEndContainerAtBeginTexNode(rangeObejct)) {
+			return false;
+		}
+
+		node = node.previousSibling || node.parentNode;
+
+		while (node !== blockElement) {
+			if (node.previousSibling) {
+				node = node.previousSibling;
+				if (Html.isRenderedNode(node)) {
+					return false;
+				}
+			} else {
+				node = node.parentNode;
+			}
+		}
+
+		return node === blockElement;
+	}
+
+	/**
+	 * Sets the end of `range` before `element`.
+	 * @param {Range} range
+	 * @param {Element} element
+	 */
+	function setEndRangeBeforeElement(range, element) {
+		range.setEndBefore(element);
+
+		Aloha.getSelection().removeAllRanges();
+		Aloha.getSelection().addRange(range);
+	}
+
+	/**
+	 * Corrects the range if the range is expanded and it ends in the beginning of a
+	 * block element.
+	 *
+	 * @param {RangeObject} rangeObject
+	 */
+	function correctFirefoxRangeIssue(rangeObject) {
+		if (!rangeObject.isCollapsed() && rangeEndsInBeginningBlockElement(rangeObject)) {
+			var blockElement = getBlockElement(rangeObject.endContainer);
+			var range = Aloha.getSelection().getRangeAt(0);
+
+			setEndRangeBeforeElement(range, blockElement);
+		}
+	}
+
+	/**
 	 * @namespace Aloha
 	 * @class Selection
 	 * This singleton class always represents the current user selection
@@ -18356,6 +20039,8 @@ define('aloha/selection',[
 			this.rangeObject = {};
 
 			this.preventSelectionChangedFlag = false; // will remember if someone urged us to skip the next aloha-selection-changed event
+
+			this.correctSelectionFlag = false; // this is true, when the current selection is corrected (to prevent endless loops)
 
 			// define basics first
 			this.tagHierarchy = {
@@ -18454,6 +20139,42 @@ define('aloha/selection',[
 				'ol': {
 					'li': true
 				},
+				'dl': {
+					'dt': true,
+					'dd': true
+				},
+				'dt': {
+					'textNode': true
+				},
+				'dd': {
+					'textNode': true,
+					'b': true,
+					'i': true,
+					'em': true,
+					'sup': true,
+					'sub': true,
+					'br': true,
+					'span': true,
+					'img': true,
+					'ul': true,
+					'ol': true,
+					'dt': true,
+					'table': true,
+					'h1': true,
+					'h2': true,
+					'h3': true,
+					'h4': true,
+					'h5': true,
+					'h6': true,
+					'del': true,
+					'ins': true,
+					'u': true,
+					'p': true,
+					'div': true,
+					'pre': true,
+					'blockquote': true,
+					'a': true
+				},
 				'li': {
 					'textNode': true,
 					'b': true,
@@ -18496,6 +20217,7 @@ define('aloha/selection',[
 					'img': true,
 					'ul': true,
 					'ol': true,
+					'dt': true,
 					'table': true,
 					'h1': true,
 					'h2': true,
@@ -18555,8 +20277,8 @@ define('aloha/selection',[
 				'a': this.tagHierarchy.b,
 				'ul': this.tagHierarchy.ul,
 				'ol': this.tagHierarchy.ol,
+				'dl': this.tagHierarchy.dl,
 				'li': this.tagHierarchy.li,
-				'td': this.tagHierarchy.li,
 				'div': this.tagHierarchy.div,
 				'h1': this.tagHierarchy.h1,
 				'h2': this.tagHierarchy.h1,
@@ -18564,7 +20286,14 @@ define('aloha/selection',[
 				'h4': this.tagHierarchy.h1,
 				'h5': this.tagHierarchy.h1,
 				'h6': this.tagHierarchy.h1,
-				'table': this.tagHierarchy.table
+				// for tables (and all related tags) we set the hierarchy to div
+				// this enables to add anything into tables. We also need to set this
+				// for tr, td and th, because the check in canTag1WrapTag2 does not check
+				// transitively
+				'table': this.tagHierarchy.div,
+				'tr': this.tagHierarchy.div,
+				'th': this.tagHierarchy.div,
+				'td': this.tagHierarchy.div
 			};
 
 			// When applying this elements to selection they will replace the assigned elements
@@ -18632,7 +20361,7 @@ define('aloha/selection',[
 		 * @return true when rangeObject was modified, false otherwise
 		 * @hide
 		 */
-		onChange: function (objectClicked, event, timeout) {
+		onChange: function (objectClicked, event, timeout, editableChanged) {
 			if (this.updateSelectionTimeout) {
 				window.clearTimeout(this.updateSelectionTimeout);
 			}
@@ -18654,6 +20383,24 @@ define('aloha/selection',[
 						selection.onChange(objectClicked, event, 10 + (timeout || 5) * 2);
 					}
 					return;
+				} else {
+					// And yet another IE workaround. Somehow the caret is not
+					// positioned inside the clicked editable. This occures only
+					// when switching editables in IE. In those cases the caret is
+					// invisible. I tried to trace the origin of the issue but i
+					// could not find the place where the caret is mispositioned.
+					// I noticed that IE is sometimes adding drag handles to
+					// editables. Aloha is removing those handles.
+					// If those handles are visible it apears that two clicks are needed
+					// to activate the editable. The first click is to select the
+					// editable and the second to enable it and activeate it. I added a
+					// range select call that will cirumvent this issue by resetting
+					// the selection. I also checked the range object. In all cases
+					// i found the range object contained correct properties. The
+					// workaround will only be applied for IE.
+					if (Aloha.browser.msie && editableChanged) {
+						range.select();
+					}
 				}
 				Aloha.Selection._updateSelection(event, range);
 			}, timeout || 5);
@@ -18748,24 +20495,42 @@ define('aloha/selection',[
 
 			// Workaround for nasty IE bug that allows the user to select
 			// text nodes inside areas with contenteditable "false"
-			if (range && range.startContainer && range.endContainer) {
+			if (range && range.startContainer && range.endContainer && !this.correctSelectionFlag) {
 				var inEditable =
 						jQuery(range.commonAncestorContainer)
 							.closest('.aloha-editable').length > 0;
 
-				if (inEditable) {
-					var validStartPosition = !(3 === range.startContainer.nodeType &&
-							!jQuery(range.startContainer.parentNode).contentEditable());
+				if (inEditable && !rangeStartInBlock(range)) {
+					var validStartPosition = this._validEditablePosition(range.startContainer);
+					var validEndPosition = this._validEditablePosition(range.endContainer);
+					var newPos;
+					// when we are moving down (with the cursor down key), we want to position the
+					// cursor AFTER the non-editable area
+					// otherwise BEFORE the non-editable area
+					var movingDown = event && (event.keyCode === 40);
 
-					var validEndPosition = !(3 === range.endContainer.nodeType &&
-							!jQuery(range.endContainer.parentNode).contentEditable());
-
+					if (!validStartPosition) {
+						newPos = this._getNearestEditablePosition(range.startContainer, movingDown);
+						if (newPos) {
+							range.startContainer = newPos.container;
+							range.startOffset = newPos.offset;
+						}
+					}
+					if (!validEndPosition) {
+						newPos = this._getNearestEditablePosition(range.endContainer, movingDown);
+						if (newPos) {
+							range.endContainer = newPos.container;
+							range.endOffset = newPos.offset;
+						}
+					}
 					if (!validStartPosition || !validEndPosition) {
-						Aloha.getSelection().removeAllRanges();
-						return true;
+						this.correctSelectionFlag = true;
+						range.correctRange();
+						range.select();
 					}
 				}
 			}
+			this.correctSelectionFlag = false;
 
 			// check if aloha-selection-changed event has been prevented
 			if (this.isSelectionChangedPrevented()) {
@@ -18783,6 +20548,71 @@ define('aloha/selection',[
 			Aloha.trigger('aloha-selection-changed-after', [this.rangeObject, event]);
 
 			return true;
+		},
+
+		/**
+		 * Check whether a position with the given node as container is a valid editable position
+		 * @param {DOMObject} node DOM node
+		 * @return true if the position is editable, false if not
+		 */
+		_validEditablePosition: function (node) {
+			if (!node) {
+				return false;
+			}
+			switch (node.nodeType) {
+			case 1:
+				return jQuery(node).contentEditable();
+			case 3:
+				return jQuery(node.parentNode).contentEditable();
+			default:
+				return false;
+			}
+		},
+
+		/**
+		 * Starting with the given node (which is supposed to be not editable)
+		 * find the nearest editable position
+		 * 
+		 * @param {DOMObject} node DOM node
+		 * @param {Boolean} forward true for searching forward, false for searching backward
+		 */
+		_getNearestEditablePosition: function (node, forward) {
+			var current = node;
+			var parent = current.parentNode;
+			while (parent !== null && !jQuery(parent).contentEditable()) {
+				current = parent;
+				parent = parent.parentNode;
+			}
+			if (current === null) {
+				return false;
+			}
+			if (forward) {
+				// check whether the element after the non editable element is editable and a blocklevel element
+				if (Dom.isBlockLevelElement(current.nextSibling) && jQuery(current.nextSibling).contentEditable()) {
+					return {
+						container: current.nextSibling,
+						offset: 0
+					};
+				} else {
+					return {
+						container: parent,
+						offset: Dom.getIndexInParent(current) + 1
+					};
+				}
+			} else {
+				// check whether the element before the non editable element is editable and a blocklevel element
+				if (Dom.isBlockLevelElement(current.previousSibling) && jQuery(current.previousSibling).contentEditable()) {
+					return {
+						container: current.previousSibling,
+						offset: current.previousSibling.childNodes.length
+					};
+				} else {
+					return {
+						container: parent,
+						offset: Dom.getIndexInParent(current)
+					};
+				}
+			}
 		},
 
 		/**
@@ -19261,7 +21091,7 @@ define('aloha/selection',[
 					}
 
 					// setting the focus is needed for mozilla and IE 7 to have a working rangeObject.select()
-					if (Aloha.activeEditable && jQuery.browser.mozilla) {
+					if (Aloha.activeEditable && Aloha.browser.mozilla) {
 						Aloha.activeEditable.obj.focus();
 					}
 
@@ -19551,12 +21381,26 @@ define('aloha/selection',[
 		},
 
 		/**
+		 * Checks for Firefox incorrect range. When selecting a paragraph with the
+		 * command 'shift+keydown', the selection ends in the start of the next paragraph
+		 * instead of at the end of the selected paragraph. This produces an unexpected
+		 * behaviour when formatting the selected text to a heading or a list, because the
+		 * result included one extra paragraph.
+		 */
+		checkForFirefoxIncorrectRange: function () {
+			if (Browser.mozilla && Aloha.getSelection().getRangeCount() !== 0) {
+				correctFirefoxRangeIssue(this.getRangeObject());
+			}
+		},
+
+		/**
 		 * apply a certain markup to the current selection
 		 * @param markupObject jQuery object of the markup to be applied (e.g. created with obj = jQuery('<b></b>'); )
 		 * @return void
 		 * @hide
 		 */
 		changeMarkupOnSelection: function (markupObject) {
+			this.checkForFirefoxIncorrectRange();
 			var rangeObject = this.getRangeObject();
 
 			// change the markup
@@ -19780,7 +21624,7 @@ define('aloha/selection',[
 
 				// make a fix for text nodes in <li>'s in ie
 				jQuery.each(objects2wrap, function (index, element) {
-					if (jQuery.browser.msie && element.nodeType == 3 && !element.nextSibling && !element.previousSibling && element.parentNode && element.parentNode.nodeName.toLowerCase() == 'li') {
+					if (Aloha.browser.msie && element.nodeType == 3 && !element.nextSibling && !element.previousSibling && element.parentNode && element.parentNode.nodeName.toLowerCase() == 'li') {
 						element.data = jQuery.trim(element.data);
 					}
 				});
@@ -20332,7 +22176,7 @@ define('aloha/selection',[
 	 */
 	function nestedListInIEWorkaround(range) {
 		var nextSibling;
-		if (jQuery.browser.msie && range.startContainer === range.endContainer && range.startOffset === range.endOffset && range.startContainer.nodeType == 3 && range.startOffset == range.startContainer.data.length && range.startContainer.nextSibling) {
+		if (Aloha.browser.msie && range.startContainer === range.endContainer && range.startOffset === range.endOffset && range.startContainer.nodeType == 3 && range.startOffset == range.startContainer.data.length && range.startContainer.nextSibling) {
 			nextSibling = range.startContainer.nextSibling;
 			if ('OL' === nextSibling.nodeName || 'UL' === nextSibling.nodeName) {
 				if (range.startContainer.data[range.startContainer.data.length - 1] == ' ') {
@@ -20376,7 +22220,7 @@ define('aloha/selection',[
 		anchorNode: null,
 
 		/**
-		 * Returns the offset of the start of the selection relative to the element that contains the start 
+		 * Returns the offset of the start of the selection relative to the element that contains the start
 		 * of the selection. Returns 0 if there's no selection.
 		 * @readonly
 		 * @type int
@@ -20392,7 +22236,7 @@ define('aloha/selection',[
 		focusNode: null,
 
 		/**
-		 * Returns the offset of the end of the selection relative to the element that contains the end 
+		 * Returns the offset of the end of the selection relative to the element that contains the end
 		 * of the selection. Returns 0 if there's no selection.
 		 * @readonly
 		 * @type int
@@ -20433,7 +22277,7 @@ define('aloha/selection',[
 			throw "NOT_IMPLEMENTED";
 		},
 
-		/** 
+		/**
 		 * @void
 		 */
 		extend: function (parentNode, offset) {
@@ -20441,9 +22285,9 @@ define('aloha/selection',[
 		},
 
 		/**
-		 * @param alter DOMString 
-		 * @param direction DOMString 
-		 * @param granularity DOMString 
+		 * @param alter DOMString
+		 * @param direction DOMString
+		 * @param granularity DOMString
 		 * @void
 		 */
 		modify: function (alter, direction, granularity) {
@@ -20483,13 +22327,13 @@ define('aloha/selection',[
 		 * so even if we normalize it during getRangeAt, in IE, we will be
 		 * correcting the range to the "correct" place, but still not the place
 		 * where it was originally set.
-		 * 
+		 *
 		 * Returns the given range.
-		 * The getRangeAt(index) method returns the indexth range in the list. 
+		 * The getRangeAt(index) method returns the indexth range in the list.
 		 * NOTE: Aloha Editor only support 1 range! index can only be 0
-		 * @throws INDEX_SIZE_ERR DOM exception if index is less than zero or 
+		 * @throws INDEX_SIZE_ERR DOM exception if index is less than zero or
 		 * greater or equal to the value returned by the rangeCount.
-		 * @param index int 
+		 * @param index int
 		 * @return Range return the selected range from index
 		 */
 		getRangeAt: function (index) {
@@ -20503,12 +22347,12 @@ define('aloha/selection',[
 		/**
 		 * Adds the given range to the selection.
 		 * The addRange(range) method adds the given range Range object to the list of
-		 * selections, at the end (so the newly added range is the new last range). 
-		 * NOTE: Aloha Editor only support 1 range! The added range will replace the 
+		 * selections, at the end (so the newly added range is the new last range).
+		 * NOTE: Aloha Editor only support 1 range! The added range will replace the
 		 * range at index 0
 		 * see http://html5.org/specs/dom-range.html#selection note about addRange
 		 * @throws an INVALID_NODE_TYPE_ERR exception if the given Range has a boundary point
-		 * node that's not a Text or Element node, and an INVALID_MODIFICATION_ERR exception 
+		 * node that's not a Text or Element node, and an INVALID_MODIFICATION_ERR exception
 		 * if it has a boundary point node that doesn't descend from a Document.
 		 * @param range Range adds the range to the selection
 		 * @void
@@ -20527,7 +22371,7 @@ define('aloha/selection',[
 
 		/**
 		 * Removes the given range from the selection, if the range was one of the ones in the selection.
-		 * NOTE: Aloha Editor only support 1 range! The added range will replace the 
+		 * NOTE: Aloha Editor only support 1 range! The added range will replace the
 		 * range at with index 0
 		 * @param range Range removes the range from the selection
 		 * @void
@@ -20549,7 +22393,7 @@ define('aloha/selection',[
 		 * Aloha, has no use otherwise Updates the rangeObject
 		 * according to the current user selection Method is
 		 * always called on selection change
-		 * 
+		 *
 		 * @param event
 		 *            jQuery browser event object
 		 * @return true when rangeObject was modified, false
@@ -20562,7 +22406,7 @@ define('aloha/selection',[
 
 		/**
 		 * String representation
-		 * 
+		 *
 		 * @return "Aloha.Selection"
 		 * @hide
 		 */
@@ -20586,7 +22430,7 @@ define('aloha/selection',[
 	Aloha.getSelection = function (target) {
 		target = (target !== document || target !== window) ? window : target;
 		// Aloha.Selection.refresh()
-		// implement Aloha Selection 
+		// implement Aloha Selection
 		// TODO cache
 		return new AlohaSelection(window.rangy.getSelection(target));
 	};
@@ -20812,7 +22656,7 @@ define('aloha/markup',[
 
 	var GENTICS = window.GENTICS;
 
-	var isOldIE = !!(jQuery.browser.msie && 9 > parseInt(jQuery.browser.version, 10));
+	var isOldIE = !!(Aloha.browser.msie && 9 > parseInt(Aloha.browser.version, 10));
 
 	function isBR(node) {
 		return 'BR' === node.nodeName;
@@ -20898,8 +22742,21 @@ define('aloha/markup',[
 		return null;
 	}
 
+	/**
+	 * Checks if the caret (the passed offset) is at the start
+	 * of the passed node. This also trims whitespace before checking.
+	 *
+	 * @param {Object} node    A DOM node
+	 * @param {number} offset  Offset into the node, this is 0 or 1 for elements
+	 * @return {boolean}       True or false
+	 */
 	function isFrontPosition(node, offset) {
-		return (0 === offset) || (offset <= node.data.length - node.data.replace(/^\s+/, '').length);
+		if (isTextNode(node)
+				&& offset <= node.data.length - node.data.replace(/^\s+/, '').length) {
+			return true;
+		}
+
+		return offset === 0;
 	}
 
 	function isBlockInsideEditable($block) {
@@ -21428,7 +23285,7 @@ define('aloha/markup',[
 			var sibling, offset;
 
 			// special handling for moving Cursor around zero-width whitespace in IE7
-			if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) <= 7 && isTextNode(node)) {
+			if (Aloha.browser.msie && parseInt(Aloha.browser.version, 10) <= 7 && isTextNode(node)) {
 				if (keyCode == 37) {
 					// moving left -> skip zwsp to the left
 					offset = range.startOffset;
@@ -21522,7 +23379,7 @@ define('aloha/markup',[
 		processEnter: function (rangeObject) {
 			if (rangeObject.splitObject) {
 				// now comes a very evil hack for ie, when the enter is pressed in a text node in an li element, we just append an empty text node
-				// if ( jQuery.browser.msie
+				// if ( Aloha.browser.msie
 				//      && GENTICS.Utils.Dom
 				//           .isListElement( rangeObject.splitObject ) ) {
 				//  jQuery( rangeObject.splitObject ).append(
@@ -21678,7 +23535,7 @@ define('aloha/markup',[
 		 */
 		needEndingBreak: function () {
 			// currently, all browser except IE need ending breaks
-			return !jQuery.browser.msie;
+			return !Aloha.browser.msie;
 		},
 
 		/**
@@ -21977,7 +23834,7 @@ define('aloha/markup',[
 		 * @return fillUpElement HTML Code
 		 */
 		getFillUpElement: function (splitObject) {
-			if (jQuery.browser.msie) {
+			if (Aloha.browser.msie) {
 				return false;
 			}
 			return jQuery('<br class="aloha-cleanme"/>');
@@ -22965,1066 +24822,6 @@ define('util/trees',['jquery'], function ($) {
 	};
 });
 
-/* ephemera.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('util/browser',['jquery'], function ($) {
-	
-	return {
-		ie7: $.browser.msie && parseInt($.browser.version, 10) < 8,
-		ie : $.browser.msie
-	};
-});
-
-/* dom2.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('util/dom2',[
-	'aloha/core',
-	'jquery',
-	'util/functions',
-	'util/maps',
-	'util/arrays',
-	'util/strings',
-	'util/browser',
-	'util/dom',
-	'util/range'
-], function (
-	Aloha,
-	$,
-	Fn,
-	Maps,
-	Arrays,
-	Strings,
-	Browser,
-	Dom1,
-	RangeObject
-) {
-	
-
-	var spacesRx = /\s+/;
-	var attrRegex = /\s([^\/<>\s=]+)(?:=(?:"[^"]*"|'[^']*'|[^>\/\s]+))?/g;
-
-	/**
-	 * Like insertBefore, inserts firstChild into parent before
-	 * refChild, except also inserts all the following siblings of
-	 * firstChild.
-	 */
-	function moveNextAll(parent, firstChild, refChild) {
-		while (firstChild) {
-			var nextChild = firstChild.nextSibling;
-			parent.insertBefore(firstChild, refChild);
-			firstChild = nextChild;
-		}
-	}
-
-	/**
-	 * Used to serialize outerHTML of DOM elements in older (pre-HTML5) Gecko,
-	 * Safari, and Opera browsers.
-	 *
-	 * Beware that XMLSerializer generates an XHTML string (<div class="team" />
-	 * instead of <div class="team"></div>).  It is noted here:
-	 * http://stackoverflow.com/questions/1700870/how-do-i-do-outerhtml-in-firefox
-	 * that some browsers (like older versions of Firefox) have problems with
-	 * XMLSerializer, and an alternative, albeit more expensive option, is
-	 * described.
-	 *
-	 * @type {XMLSerializer|null}
-	 */
-	var Serializer = window.XMLSerializer && new window.XMLSerializer();
-
-	/**
-	 * Gets the serialized HTML that describes the given DOM element and its
-	 * innerHTML.
-	 *
-	 * Polyfill for older versions of Gecko, Safari, and Opera browsers.
-	 * @see https://bugzilla.mozilla.org/show_bug.cgi?id=92264 for background.
-	 *
-	 * @param {HTMLElement} node DOM Element.
-	 * @return {String}
-	 */
-	function outerHtml(node) {
-		var html = node.outerHTML;
-		if (typeof html !== 'undefined') {
-			return html;
-		}
-		try {
-			return Serializer ? Serializer.serializeToString(node) : node.xml;
-		} catch (e) {
-			return node.xml;
-		}
-	}
-
-	/**
-	 * Retrieves the names of all attributes from the given elmenet.
-	 *
-	 * Correctly handles the case that IE7 and IE8 have approx 70-90
-	 * default attributes on each and every element.
-	 *
-	 * This implementation does not iterate over the elem.attributes
-	 * property since that is much slower on IE7 (even when
-	 * checking the attrNode.specified property). Instead it parses the
-	 * HTML of the element. For elements with few attributes the
-	 * performance on IE7 is improved by an order of magnitued.
-	 *
-	 * On IE7, when you clone a <button disabled="disabled"/> or an
-	 * <input checked="checked"/> element the boolean properties will
-	 * not be set on the cloned node. We choose the speed optimization
-	 * over correctness in this case. The dom-to-xhtml plugin has a
-	 * workaround for this case.
-	 */
-	function attrNames(elem) {
-		var names = [];
-		var html = outerHtml(elem.cloneNode(false));
-		var match;
-		while (null != (match = attrRegex.exec(html))) {
-			names.push(match[1]);
-		}
-		return names;
-	}
-
-	/**
-	 * Gets the attributes of the given element.
-	 *
-	 * See attrNames() for an edge case on IE7.
-	 *
-	 * @param elem
-	 *        An element to get the attributes for.
-	 * @return
-	 *        An array containing [name, value] tuples for each attribute.
-	 *        Attribute values will always be strings, but possibly empty strings.
-	 */
-	function attrs(elem) {
-		var as = [];
-		var names = attrNames(elem);
-		var i;
-		var len;
-		for (i = 0, len = names.length; i < len; i++) {
-			var name = names[i];
-			var value = $.attr(elem, name);
-			if (null == value) {
-				value = "";
-			} else {
-				value = value.toString();
-			}
-			as.push([name, value]);
-		}
-		return as;
-	}
-
-	/**
-	 * Like indexByClass() but operates on a list of elements instead.
-	 * The given list may be a NodeList, HTMLCollection, or an array.
-	 */
-	function indexByClassHaveList(elems, classMap) {
-		var index = {},
-		    indexed,
-		    classes,
-		    elem,
-		    cls,
-		    len,
-		    i,
-		    j;
-		for (i = 0, len = elems.length; i < len; i++) {
-			elem = elems[i];
-			if (elem.className) {
-				classes = Strings.words(elem.className);
-				for (j = 0; j < classes.length; j++) {
-					cls = classes[j];
-					if (classMap[cls]) {
-						indexed = index[cls];
-						if (indexed) {
-							indexed.push(elem);
-						} else {
-							index[cls] = [elem];
-						}
-					}
-				}
-			}
-		}
-		return index;
-	}
-
-	/**
-	 * Indexes descendant elements based on the individual classes in
-	 * the class attribute.
-	 *
-	 * Based on these observations;
-	 * 
-	 * * $('.class1, .class2') takes twice as long as $('.class1') on IE7.
-	 *
-	 * * $('.class1, .class2') is fast on IE8 (approx the same as
-	 *   $('.class'), no matter how many classes), but if the individual
-	 *   elements in the result set should be handled differently, the
-	 *   subsequent hasClass('.class1') and hasClass('.class2') calls
-	 *   slow things down again.
-	 *
-	 * * DOM traversal with elem.firstChild elem.nextSibling is very
-	 *   slow on IE7 compared to just iterating over
-	 *   root.getElementsByTagName('*').
-	 *
-	 * * $('name.class') is much faster than just $('.class'), but as
-	 *   soon as you need a single class in classMap that may be present
-	 *   on any element, that optimization doesn't gain anything since
-	 *   then you have to examine every element.
-	 *
-	 * This function will always take approx. the same amount of time
-	 * (on IE7 approx. equivalent to a single call to $('.class')) no
-	 * matter how many entries there are in classMap to index.
-	 *
-	 * This function only makes sense for multiple entries in
-	 * classMap. For a single class lookup, $('.class') or
-	 * $('name.class') is fine (even better in the latter case).
-	 *
-	 * @param root
-	 *        The root element to search for elements to index
-	 *        (will not be included in search).
-	 * @param classMap
-	 *        A map from class name to boolean true.
-	 * @return
-	 *        A map from class name to an array of elements with that class.
-	 *        Every entry in classMap for which elements have been found
-	 *        will have a corresponding entry in the returned
-	 *        map. Entries for which no elements have been found, may or
-	 *        may not have an entry in the returned map.
-	 */
-	function indexByClass(root, classMap) {
-		var elems;
-		if (Browser.ie7) {
-			elems = root.getElementsByTagName('*');
-		} else {
-			// Optimize for browsers that support querySelectorAll/getElementsByClassName.
-			// On IE8 for example, if there is a relatively high
-			// elems/resultSet ratio, performance can improve by a factor of 2.
-			elems = $(root).find('.' + Maps.keys(classMap).join(',.'));
-		}
-		return indexByClassHaveList(elems, classMap);
-	}
-
-	/**
-	 * Indexes descendant elements based on elem.nodeName.
-	 *
-	 * Based on these observations:
-	 *
-	 * * On IE8, for moderate values of names.length, individual calls to
-	 *   getElementsByTagName is just as fast as $root.find('name, name,
-	 *   name, name').
-	 *
-	 * * On IE7, $root.find('name, name, name, name') is extemely slow
-	 *   (can be an order of magnitude slower than individual calls to
-	 *    getElementsByTagName, why is that?).
-	 *
-	 * * Although getElementsByTagName is very fast even on IE7, when
-	 *   names.length > 7 an alternative implementation that iterates
-	 *   over all tags and checks names from a hashmap (similar to how
-	 *   indexByClass does it) may become interesting, but
-	 *   names.length > 7 is unlikely.
-	 *
-	 * This function only makes sense if the given names array has many
-	 * entries. For only one or two different names, calling $('name')
-	 * or context.getElementsByTagName(name) directly is fine (but
-	 * beware of $('name, name, ...') as explained above).
-	 *
-	 * The signature of this function differs from indexByClass by not
-	 * taking a map but instead an array of names.
-	 *
-	 * @param root
-	 *        The root element to search for elements to index
-	 *        (will not be included in search).
-	 * @param names
-	 *        An array of element names to look for.
-	 *        Names must be in all-uppercase (the same as elem.nodeName).
-	 * @return
-	 *        A map from element name to an array of elements with that name.
-	 *        Names will be all-uppercase.
-	 *        Arrays will be proper arrays, not NodeLists.
-	 *        Every entry in classMap for which elements have been found
-	 *        will have a corresponding entry in the returned
-	 *        map. Entries for which no elements have been found, may or
-	 *        may not have an entry in the returned map.
-	 */
-	function indexByName(root, names) {
-		var i,
-		    index = {},
-		    len;
-		for (i = 0, len = names.length; i < len; i++) {
-			var name = names[i];
-			index[name] = $.makeArray(root.getElementsByTagName(name));
-		}
-		return index;
-	}
-
-	function nodeIndex(node) {
-		var ret = 0;
-		while (node.previousSibling) {
-			ret++;
-			node = node.previousSibling;
-		}
-		return ret;
-	}
-
-	/**
-	 * Can't use elem.childNodes.length because
-	 * http://www.quirksmode.org/dom/w3c_core.html
-	 * "IE up to 8 does not count empty text nodes."
-	 */
-	function numChildren(elem) {
-		var count = 0;
-		var child = elem.firstChild;
-		while (child) {
-			count += 1;
-			child = child.nextSibling;
-		}
-		return count;
-	}
-
-	function nodeLength(node) {
-		if (1 === node.nodeType) {
-			return numChildren(node);
-		}
-		if (3 === node.nodeType) {
-			return node.length;
-		}
-		return 0;
-	}
-
-	function isAtEnd(node, offset) {
-		return (1 === node.nodeType
-				&& offset >= numChildren(node))
-			|| (3 === node.nodeType
-				&& offset === node.length
-				&& !node.nextSibling);
-	}
-
-	/**
-	 * @param node if a text node, should have a parent node.
-	 */
-	function nodeAtOffset(node, offset) {
-		if (1 === node.nodeType && offset < numChildren(node)) {
-			node = node.childNodes[offset];
-		} else if (3 === node.nodeType && offset === node.length) {
-			node = node.nextSibling || node.parentNode;
-		}
-		return node;
-	}
-
-	function removeShallow(node) {
-		var parent = node.parentNode;
-		moveNextAll(parent, node.firstChild, node);
-		parent.removeChild(node);
-	}
-
-	function wrap(node, wrapper) {
-		node.parentNode.replaceChild(wrapper, node);
-		wrapper.appendChild(node);
-	}
-
-	function insert(node, ref, atEnd) {
-		if (atEnd) {
-			ref.appendChild(node);
-		} else {
-			ref.parentNode.insertBefore(node, ref);
-		}
-	}
-
-	function Cursor(node, atEnd) {
-		this.node = node;
-		this.atEnd = atEnd;
-	}
-
-	/**
-	 * A cursor has the added utility over other iteration methods of
-	 * iterating over the end position of an element. The start and end
-	 * positions of an element are immediately before the element and
-	 * immediately after the last child respectively. All node positions
-	 * except end positions can be identified just by a node. To
-	 * distinguish between element start and end positions, the
-	 * additional atEnd boolean is necessary.
-	 */
-	function cursor(node, atEnd) {
-		return new Cursor(node, atEnd);
-	}
-
-	Cursor.prototype.next = function () {
-		var node = this.node;
-		var next;
-		if (this.atEnd || 1 !== node.nodeType) {
-			next = node.nextSibling;
-			if (next) {
-				this.atEnd = false;
-			} else {
-				next = node.parentNode;
-				if (!next) {
-					return false;
-				}
-				this.atEnd = true;
-			}
-			this.node = next;
-		} else {
-			next = node.firstChild;
-			if (next) {
-				this.node = next;
-			} else {
-				this.atEnd = true;
-			}
-		}
-		return true;
-	};
-
-	Cursor.prototype.prev = function () {
-		var node = this.node;
-		var prev;
-		if (this.atEnd) {
-			prev = node.lastChild;
-			if (prev) {
-				this.node = prev;
-			} else {
-				this.atEnd = false;
-			}
-		} else {
-			prev = node.previousSibling;
-			if (prev) {
-				if (1 === node.nodeType) {
-					this.atEnd = true;
-				}
-			} else {
-				prev = node.parentNode;
-				if (!prev) {
-					return false;
-				}
-			}
-			this.node = prev;
-		}
-		return true;
-	};
-
-	Cursor.prototype.equals = function (cursor) {
-		return cursor.node === this.node && cursor.atEnd === this.atEnd;
-	};
-
-	Cursor.prototype.clone = function (cursor) {
-		return cursor(cursor.node, cursor.atEnd);
-	};
-
-	Cursor.prototype.insert = function (node) {
-		return insert(node, this.node, this.atEnd);
-	};
-
-	/**
-	 * @param offset if node is a text node, the offset will be ignored.
-	 * @param node if a text node, should have a parent node.
-	 */
-	function cursorFromBoundaryPoint(node, offset) {
-		return cursor(nodeAtOffset(node, offset), isAtEnd(node, offset));
-	}
-
-	function parentsUntil(node, pred) {
-		var parents = [];
-		var parent = node.parentNode;
-		while (parent && !pred(parent)) {
-			parents.push(parent);
-			parent = parent.parentNode;
-		}
-		return parents;
-	}
-
-	function parentsUntilIncl(node, pred) {
-		var parents = parentsUntil(node, pred);
-		var topmost = parents.length ? parents[parents.length - 1] : node;
-		if (topmost.parentNode) {
-			parents.push(topmost.parentNode);
-		}
-		return parents;
-	}
-
-	function childAndParentsUntil(node, pred) {
-		if (pred(node)) {
-			return [];
-		}
-		var parents = parentsUntil(node, pred);
-		parents.unshift(node);
-		return parents;
-	}
-
-	function childAndParentsUntilIncl(node, pred) {
-		if (pred(node)) {
-			return [node];
-		}
-		var parents = parentsUntilIncl(node, pred);
-		parents.unshift(node);
-		return parents;
-	}
-
-	function childAndParentsUntilNode(node, untilNode) {
-		return childAndParentsUntil(node, function (nextNode) {
-			return nextNode === untilNode;
-		});
-	}
-
-	function childAndParentsUntilInclNode(node, untilInclNode) {
-		return childAndParentsUntilIncl(node, function (nextNode) {
-			return nextNode === untilInclNode;
-		});
-	}
-
-	function next(node, until, arg) {
-		while (node && !until(node, arg)) {
-			node = node.nextSibling;
-		}
-		return node;
-	}
-
-	function parent(node, until, arg) {
-		while (node && !until(node, arg)) {
-			node = node.parentNode;
-		}
-		return node;
-	}
-
-	function isTextNode(node) {
-		return 3 === node.nodeType;
-	}
-
-	function splitTextNode(node, offset) {
-		// Because node.splitText() is buggy on IE, split it manually.
-		// http://www.quirksmode.org/dom/w3c_core.html
-		var parent = node.parentNode;
-		var text = node.nodeValue;
-		if (0 === offset || offset >= text.length) {
-			return node;
-		}
-		var before = document.createTextNode(text.substring(0, offset));
-		var after = document.createTextNode(text.substring(offset, text.length));
-		parent.insertBefore(before, node);
-		parent.insertBefore(after, node);
-		parent.removeChild(node);
-		return before;
-	}
-
-	function adjustRangeAfterSplit(range, container, offset, setProp, splitNode, newNodeBeforeSplit) {
-		if (container !== splitNode) {
-			return;
-		}
-		var newNodeLength = newNodeBeforeSplit.length;
-		if (offset === 0) {
-			container = newNodeBeforeSplit.parentNode;
-			offset = nodeIndex(newNodeBeforeSplit);
-		} else if (offset < newNodeLength) {
-			container = newNodeBeforeSplit;
-		} else if (offset === newNodeLength) {
-			container = newNodeBeforeSplit.parentNode;
-			offset = nodeIndex(newNodeBeforeSplit) + 1;
-		} else {// offset > newNodeLength
-			var newNodeAfterSplit = newNodeBeforeSplit.nextSibling;
-			container = newNodeAfterSplit;
-			offset -= newNodeLength;
-		}
-		range[setProp].call(range, container, offset);
-	}
-
-	/**
-	 * Splits the given text node at the given offset and, if the given
-	 * range happens to have start or end containers equal to the given
-	 * text node, adjusts it such that start and end position will point
-	 * at the same position in the new text nodes.
-	 *
-	 * It is guaranteed that an adjusted boundary point will not point
-	 * to the end of a text node. Instead, it will point to the next
-	 * node. This guarantee often happens to be useful.
-	 *
-	 * If splitNode is not a text node, does nothing.
-	 */
-	function splitTextNodeAdjustRange(splitNode, splitOffset, range) {
-		if (3 !== splitNode.nodeType) {
-			return;
-		}
-		var sc = range.startContainer;
-		var so = range.startOffset;
-		var ec = range.endContainer;
-		var eo = range.endOffset;
-		var newNodeBeforeSplit = splitTextNode(splitNode, splitOffset);
-		adjustRangeAfterSplit(range, sc, so, 'setStart', splitNode, newNodeBeforeSplit);
-		adjustRangeAfterSplit(range, ec, eo, 'setEnd', splitNode, newNodeBeforeSplit);
-	}
-
-	function splitTextContainers(range) {
-		var sc = range.startContainer;
-		var so = range.startOffset;
-		splitTextNodeAdjustRange(sc, so, range);
-		// Because the range may have been adjusted.
-		var ec = range.endContainer;
-		var eo = range.endOffset;
-		splitTextNodeAdjustRange(ec, eo, range);
-	}
-
-	function walkUntil(node, fn, until, arg) {
-		while (node && !until(node, arg)) {
-			var next = node.nextSibling;
-			fn(node, arg);
-			node = next;
-		}
-	}
-
-	function walk(node, fn, arg) {
-		walkUntil(node, fn, Fn.returnFalse, arg);
-	}
-
-	/**
-	 * Depth-first postwalk of the given DOM node.
-	 */
-	function walkRec(node, fn, arg) {
-		if (1 === node.nodeType) {
-			walk(node.firstChild, function (node) {
-				walkRec(node, fn, arg);
-			});
-		}
-		fn(node, arg);
-	}
-
-	function walkUntilNode(node, fn, untilNode, arg) {
-		walkUntil(node, fn, function (nextNode) {
-			return nextNode === untilNode;
-		}, arg);
-	}
-
-	function StableRange(range) {
-		if (!range) {
-			return;
-		}
-		this.startContainer = range.startContainer;
-		this.startOffset = range.startOffset;
-		this.endContainer = range.endContainer;
-		this.endOffset = range.endOffset;
-		this.commonAncestorContainer = range.commonAncestorContainer;
-		this.collapsed = range.collapsed;
-	}
-
-	StableRange.prototype.update = function () {
-		if (!this.startContainer || !this.endContainer) {
-			return;
-		}
-		this.collapsed = (this.startContainer === this.endContainer
-						  && this.startOffset === this.endOffset);
-		var start = childAndParentsUntil(this.startContainer, Fn.returnFalse);
-		var end   = childAndParentsUntil(this.endContainer, Fn.returnFalse);
-		this.commonAncestorContainer = Arrays.intersect(start, end)[0];
-	};
-
-	StableRange.prototype.setStart = function (sc, so) {
-		this.startContainer = sc;
-		this.startOffset = so;
-		this.update();
-	};
-
-	StableRange.prototype.setEnd = function (ec, eo) {
-		this.endContainer = ec;
-		this.endOffset = eo;
-		this.update();
-	};
-
-	function setRangeStartFromCursor(range, cursor) {
-		if (cursor.atEnd) {
-			range.setStart(cursor.node, numChildren(cursor.node));
-		} else {
-			range.setStart(cursor.node.parentNode, nodeIndex(cursor.node));
-		}
-	}
-
-	function setRangeEndFromCursor(range, cursor) {
-		if (cursor.atEnd) {
-			range.setEnd(cursor.node, numChildren(cursor.node));
-		} else {
-			range.setEnd(cursor.node.parentNode, nodeIndex(cursor.node));
-		}
-	}
-
-	function setRangeFromRef(range, ref) {
-		range.setStart(ref.startContainer, ref.startOffset);
-		range.setEnd(ref.endContainer, ref.endOffset);
-	}
-
-	/**
-	 * A native range is live, which means that modifying the DOM may
-	 * mutate the range. Also, using setStart/setEnd may not set the
-	 * properties correctly (the browser may perform its own
-	 * normalization of boundary points). The behaviour of a native
-	 * range is very erratic and should be converted to a stable range
-	 * as the first thing in any algorithm.
-	 */
-	function stableRange(range) {
-		return new StableRange(range);
-	}
-
-	/**
-	 * The dom cursor passed to ignoreLeft and ignoreRight does not
-	 * traverse positions inside text nodes. The exact rules for when
-	 * text node containers are passed are as follows: If the left
-	 * boundary point is inside a text node, trimming will start before
-	 * it. If the right boundary point is inside a text node, trimming
-	 * will start after it.
-	 */
-	function trimRange(range, ignoreLeft, ignoreRight) {
-		if (range.collapsed) {
-			return;
-		}
-		var start = cursorFromBoundaryPoint(range.startContainer, range.startOffset);
-		var end = cursorFromBoundaryPoint(range.endContainer, range.endOffset);
-		var setStart = false;
-		while (!start.equals(end) && ignoreLeft(start) && start.next()) {
-			setStart = true;
-		}
-		ignoreRight = ignoreRight || ignoreLeft;
-		var setEnd = false;
-		// Because if the right boundary points is inside a text node,
-		// trimming starts after it.
-		if (3 === range.endContainer.nodeType
-			    && range.endOffset > 0
-			    // Because the cursor already normalizes
-			    // endOffset == endContainer.length to the node next after it.
-			    && range.endOffset < range.endContainer.length
-			    && end.next()) {
-			if (ignoreRight(end)) {
-				end.prev();
-			}
-		}
-		while (!end.equals(start) && ignoreRight(end) && end.prev()) {
-			setEnd = true;
-		}
-		if (setStart) {
-			setRangeStartFromCursor(range, start);
-		}
-		if (setEnd) {
-			setRangeEndFromCursor(range, end);
-		}
-	}
-
-	function trimRangeClosingOpening(range, ignoreLeft, ignoreRight) {
-		ignoreRight = ignoreRight || ignoreLeft;
-		trimRange(range, function (cursor) {
-			return cursor.atEnd || ignoreLeft(cursor.node);
-		}, function (cursor) {
-			var prev = cursor.atEnd ? cursor.node.lastChild : cursor.node.previousSibling;
-			return !prev || ignoreRight(prev);
-		});
-	}
-
-	function areRangesEq(a, b) {
-		return a.startContainer === b.startContainer
-			&& a.startOffset    === b.startOffset
-			&& a.endContainer   === b.endContainer
-			&& a.endOffset      === b.endOffset;
-	}
-
-	function insertSelectText(text, range) {
-		// Because empty text nodes are generally not nice and even
-		// cause problems with IE8 (elem.childNodes).
-		if (!text.length) {
-			return;
-		}
-		splitTextNodeAdjustRange(range.startContainer, range.startOffset, range);
-		var node = nodeAtOffset(range.startContainer, range.startOffset);
-		var atEnd = isAtEnd(range.startContainer, range.startOffset);
-		// Because if the node following the insert position is already
-		// a text node we can just reuse it.
-		if (!atEnd && 3 === node.nodeType) {
-			node.insertData(0, text);
-			range.setStart(node, 0);
-			range.setEnd(node, text.length);
-			return;
-		}
-		// Because if the node preceding the insert position is already
-		// a text node we can just reuse it.
-		var prev;
-		if (!atEnd) {
-			prev = node.previousSibling;
-		} else {
-			prev = node.lastChild;
-		}
-		if (prev && 3 === prev.nodeType) {
-			prev.insertData(prev.length, text);
-			range.setStart(prev, prev.length - text.length);
-			range.setEnd(prev, prev.length);
-			return;
-		}
-		// Because if we can't reuse any text nodes, we have to insert a
-		// new one.
-		var textNode = document.createTextNode(text);
-		insert(textNode, node, atEnd);
-		range.setStart(textNode, 0);
-		range.setEnd(textNode, textNode.length);
-	}
-
-	function collapseToEnd(range) {
-		range.setStart(range.endContainer, range.endOffset);
-	}
-
-	function rangeFromRangeObject(alohaRange) {
-		var range = Aloha.createRange();
-		range.setStart(alohaRange.startContainer, alohaRange.startOffset);
-		range.setEnd(alohaRange.endContainer, alohaRange.endOffset);
-		return range;
-	}
-
-	function extendToWord(range) {
-		var rangeObject = new RangeObject(range);
-		Dom1.extendToWord(rangeObject);
-		setRangeFromRef(range, rangeObject);
-	}
-
-	function cloneShallow(node) {
-		return node.cloneNode(false);
-	}
-
-	/**
-	 * Sets a style on the given element by modifying it's style attribute.
-	 */
-	function setStyle(node, name, value) {
-		// Because only the empty string removes a style.
-		$(node).css(name, null == value ? '' : value);
-	}
-
-	/**
-	 * Gets a style from the given element's style attribute.
-	 * Note that this is different from the computed/inherited style.
-	 */
-	function getStyle(node, name) {
-		// Because IE7 needs dashesToCamelCase().
-		name = Strings.dashesToCamelCase(name);
-		return node.nodeType === 1 ? node.style[name] : null;
-	}
-
-	/**
-	 * Gets the computed/inherited style of the given node.
-	 * @param node may be a text node.
-	 */
-	function getComputedStyle(node, name) {
-		if (node.currentStyle) {
-			return node.currentStyle[name];
-		}
-		var doc = node.ownerDocument;
-		if (doc.defaultView && doc.defaultView.getComputedStyle) {
-			var styles = doc.defaultView.getComputedStyle(node, null);
-			if (styles) {
-				return styles[name] || styles.getPropertyValue(name);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Given a node, will return node that succeeds it in the document order.
-	 *
-	 * For example, if this function is called recursively, starting from the
-	 * text node "one" in the below DOM tree:
-	 *
-	 *	"one"
-	 *	<b>
-	 *		"two"
-	 *		<u>
-	 *			<i>
-	 *				"three"
-	 *			</i>
-	 *		</u>
-	 *		"four"
-	 *	</b>
-	 *	"five"
-	 *
-	 * forward() will return nodes in the following order:
-	 *
-	 * <b>...</b>, "two", <u>...</u>, <i>...</i>, "three", "four", "five"
-	 *
-	 * @param {DOMObject} node
-	 * @return {DOMObject}
-	 *         The succeeding node or null if the given node has no previous
-	 *         siblings and no parent.
-	 */
-	function forward(node) {
-		if (node.firstChild) {
-			return node.firstChild;
-		}
-		var next = node;
-		while (next && !next.nextSibling) {
-			next = next.parentNode;
-		}
-		return next && next.nextSibling;
-	}
-
-	/**
-	 * Given a node, will return node that preceeds it in the document order.
-	 *
-	 * For example, if this function is called recursively, starting from the
-	 * text node "five" in the below DOM tree:
-	 *
-	 *	"one"
-	 *	<b>
-	 *		"two"
-	 *		<u>
-	 *			<i>
-	 *				"three"
-	 *			</i>
-	 *		</u>
-	 *		"four"
-	 *	</b>
-	 *	"five"
-	 *
-	 * backward() will return nodes in the following order:
-	 *
-	 * "four", "three", <i>...</i>, <u>...</u>, "two", <b>...</b>, "one"
-	 *
-	 * @param {DOMObject} node
-	 * @return {DOMObject}
-	 *         The preceeding node or null if the given node has no previous
-	 *         siblings and no parent.
-	 */
-	function backward(node) {
-		var prev = node.previousSibling;
-		while (prev && prev.lastChild) {
-			prev = prev.lastChild;
-		}
-		return prev || node.parentNode;
-	}
-
-	/**
-	 * Starting from the given node, and moving forwards through the DOM tree,
-	 * searches for a node which returns `true` when applied to the predicate
-	 * `match()`.
-	 *
-	 * @param {DOMObject} node
-	 * @param {Function(DOMObject):Boolean} match
-	 * @param {Function(DOMObject):Boolean} until
-	 * @return {DOMObject}
-	 */
-	function findForward(node, match, until) {
-		while (node && !until(node)) {
-			if (match(node)) {
-				return node;
-			}
-			node = forward(node);
-		}
-		return null;
-	}
-
-	/**
-	 * Starting from the given node, and moving backwards through the DOM tree,
-	 * searches for a node which returns `true` when applied to the predicate
-	 * `match()`.
-	 *
-	 * @param {DOMObject} node
-	 * @param {Function(DOMObject):Boolean} match
-	 * @param {Function(DOMObject):Boolean} until
-	 * @return {DOMObject}
-	 */
-	function findBackward(node, match, until) {
-		while (node && !until(node)) {
-			if (match(node)) {
-				return node;
-			}
-			node = backward(node);
-		}
-		return null;
-	}
-
-	return {
-		backward: backward,
-		forward: forward,
-		findForward: findForward,
-		findBackward: findBackward,
-		moveNextAll: moveNextAll,
-		attrNames: attrNames,
-		attrs: attrs,
-		indexByClass: indexByClass,
-		indexByName: indexByName,
-		indexByClassHaveList: indexByClassHaveList,
-		outerHtml: outerHtml,
-		removeShallow: removeShallow,
-		wrap: wrap,
-		insert: insert,
-		cursor: cursor,
-		cursorFromBoundaryPoint: cursorFromBoundaryPoint,
-		nodeAtOffset: nodeAtOffset,
-		isAtEnd: isAtEnd,
-		parentsUntil: parentsUntil,
-		parentsUntilIncl: parentsUntilIncl,
-		childAndParentsUntil: childAndParentsUntil,
-		childAndParentsUntilIncl: childAndParentsUntilIncl,
-		childAndParentsUntilNode: childAndParentsUntilNode,
-		childAndParentsUntilInclNode: childAndParentsUntilInclNode,
-		next: next,
-		parent: parent,
-		isTextNode: isTextNode,
-		nodeIndex: nodeIndex,
-		splitTextNode: splitTextNode,
-		splitTextContainers: splitTextContainers,
-		walk: walk,
-		walkRec: walkRec,
-		walkUntil: walkUntil,
-		walkUntilNode: walkUntilNode,
-		stableRange: stableRange,
-		trimRange: trimRange,
-		trimRangeClosingOpening: trimRangeClosingOpening,
-		setRangeFromRef: setRangeFromRef,
-		setRangeStartFromCursor: setRangeStartFromCursor,
-		setRangeEndFromCursor: setRangeEndFromCursor,
-		splitTextNodeAdjustRange: splitTextNodeAdjustRange,
-		insertSelectText: insertSelectText,
-		areRangesEq: areRangesEq,
-		collapseToEnd: collapseToEnd,
-		extendToWord: extendToWord,
-		rangeFromRangeObject: rangeFromRangeObject,
-		cloneShallow: cloneShallow,
-		setStyle: setStyle,
-		getStyle: getStyle,
-		getComputedStyle: getComputedStyle,
-		nodeLength: nodeLength
-	};
-});
-
 /* misc.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
@@ -24150,6 +24947,7 @@ define('aloha/ephemera',[
 	'util/maps',
 	'util/dom2',
 	'util/functions',
+	'util/html',
 	'util/misc',
 	'util/browser',
 	'PubSub'
@@ -24163,6 +24961,7 @@ define('aloha/ephemera',[
 	Maps,
 	Dom,
 	Functions,
+	Html,
 	Misc,
 	Browser,
 	PubSub
@@ -24384,6 +25183,15 @@ define('aloha/ephemera',[
 	}
 
 	/**
+	 * Marks an element as a ephemeral. If all subnodes are White Spaces,
+	 * the elements would be removed completed. Otherwise only the wrapper
+	 * will be removed, without deleting the subnodes. 
+	 */
+	function markWhiteSpaceWrapper(elem) {
+		$(elem).addClass('aloha-ephemera-empty-wrapper');
+	}
+
+	/**
 	 * Marks an element as ephemeral, excluding subnodes.
 	 *
 	 * Adds the class 'aloha-ephemera-filler' to the given element.
@@ -24471,7 +25279,10 @@ define('aloha/ephemera',[
 	 */
 	function pruneElem(elem, emap) {
 		var className = elem.className;
-		if (className && -1 !== className.indexOf(commonClsSubstr)) {
+		// Because SVG elements will (sometimes) hold a SVGAnimatedString object
+		// (http://mdn.beonex.com/en/DOM/SVGStylable.html#Properties) instead of
+		// a string for the className property
+		if ('string' === typeof className && -1 !== className.indexOf(commonClsSubstr)) {
 			var classes = Strings.words(className);
 
 			// Ephemera.markElement()
@@ -24483,6 +25294,15 @@ define('aloha/ephemera',[
 			// Ephemera.markWrapper() and Ephemera.markFiller()
 			if (-1 !== Arrays.indexOf(classes, 'aloha-ephemera-wrapper') || -1 !== Arrays.indexOf(classes, 'aloha-ephemera-filler')) {
 				Dom.moveNextAll(elem.parentNode, elem.firstChild, elem.nextSibling);
+				$.removeData(elem);
+				return false;
+			}
+
+			// Ephemera.markWhiteSpaceWrapper() and Ephemera.markFiller()
+			if (-1 !== Arrays.indexOf(classes, 'aloha-ephemera-empty-wrapper')) {
+				if (!Html.hasOnlyWhiteSpaceChildren(elem)) {
+					Dom.moveNextAll(elem.parentNode, elem.firstChild, elem.nextSibling);
+				}
 				$.removeData(elem);
 				return false;
 			}
@@ -24564,6 +25384,7 @@ define('aloha/ephemera',[
 		markElement: markElement,
 		markAttr: markAttr,
 		markWrapper: markWrapper,
+		markWhiteSpaceWrapper: markWhiteSpaceWrapper,
 		markFiller: markFiller,
 		prune: prune,
 		isAttrEphemeral: isAttrEphemeral
@@ -25118,36 +25939,18 @@ define('aloha/state-override',[
 	};
 });
 
-/* editable.js is part of Aloha Editor project http://aloha-editor.org
+/* editable.js is part of the Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
  * Contributors http://aloha-editor.org/contribution.php
- *
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
+ * License http://aloha-editor.org/license.php
  */
 define('aloha/editable',[
 	'aloha/core',
 	'util/class',
 	'jquery',
+	'aloha/content-rules',
 	'aloha/pluginmanager',
 	'aloha/selection',
 	'aloha/markup',
@@ -25164,6 +25967,7 @@ define('aloha/editable',[
 	Aloha,
 	Class,
 	$,
+	ContentRules,
 	PluginManager,
 	Selection,
 	Markup,
@@ -25298,10 +26102,12 @@ define('aloha/editable',[
 		$editable.mousedown(function (event) {
 			if (!Aloha.eventHandled) {
 				Aloha.eventHandled = true;
+				if (Aloha.activeEditable == null || typeof Aloha.activeEditable === 'undefined' || $editable[0] !== Aloha.activeEditable.obj[0]) {
+					Aloha.mouseEventChangedEditable = true;
+				}
 				return editable.activate(event);
 			}
 		});
-
 		$editable.mouseup(function (event) {
 			Aloha.eventHandled = false;
 		});
@@ -25336,7 +26142,10 @@ define('aloha/editable',[
 		});
 
 		$editable.contentEditableSelectionChange(function (event) {
-			Selection.onChange($editable, event);
+			Selection.onChange($editable, event, 0, Aloha.mouseEventChangedEditable);
+			if (Aloha.mouseEventChangedEditable) {
+				Aloha.mouseEventChangedEditable = false;
+			}
 			return $editable;
 		});
 	}
@@ -25468,7 +26277,7 @@ define('aloha/editable',[
 				contenthandler: Aloha.settings.contentHandler.initEditable,
 				command: 'initEditable'
 			}, me);
-			me.obj.html(content);
+			me.obj.html(ContentRules.applyRules(content, me.obj[0]));
 
 			// Because editables can only properly be initialized when Aloha
 			// plugins are loaded.
@@ -25515,7 +26324,10 @@ define('aloha/editable',[
 				 * @param {Array} a an array which contains a reference to the currently created editable on its first position
 				 */
 				Aloha.trigger('aloha-editable-created', [me]);
-				PubSub.pub('aloha.editable.created', {data: me});
+				PubSub.pub('aloha.editable.created', {
+					editable: me,
+					data: me // deprecated
+				});
 			});
 		},
 
@@ -25746,7 +26558,10 @@ define('aloha/editable',[
 			 * @param {Array} a an array which contains a reference to the currently created editable on its first position
 			 */
 			Aloha.trigger('aloha-editable-destroyed', [this]);
-			PubSub.pub('aloha.editable.destroyed', {data: this});
+			PubSub.pub('aloha.editable.destroyed', {
+				editable: this,
+				data: this // deprecated
+			});
 
 			// finally register the editable with Aloha
 			Aloha.unregisterEditable(this);
@@ -25858,6 +26673,9 @@ define('aloha/editable',[
 				'editable': this
 			});
 			PubSub.pub('aloha.editable.activated', {
+				old: oldActive,
+				editable: this,
+				// deprecated
 				data: {
 					old: oldActive,
 					editable: this
@@ -25883,10 +26701,10 @@ define('aloha/editable',[
 			 * @param {Event} e the event object
 			 * @param {Array} a an array which contains a reference to this editable
 			 */
-			Aloha.trigger('aloha-editable-deactivated', {
-				editable: this
-			});
+			Aloha.trigger('aloha-editable-deactivated', {editable: this});
 			PubSub.pub('aloha.editable.deactivated', {
+				editable: this,
+				// deprecated
 				data: {
 					editable: this
 				}
@@ -26196,6 +27014,19 @@ define('aloha/plugin',[
 	
 
 	/**
+	 * Gets the original object from the editable. If the editable is an input or textarea,
+	 * aloha creates a editable div, but sometimes we need the original object and not the div
+	 * created by aloha.
+	 * @param {jQuery} editableElement
+	 * @returns {jQuery}
+	 */
+	function getEditableOriginalObj(editableElement) {
+		var editable = Aloha.getEditableById(editableElement.attr('id'));
+
+		return editable ? editable.originalObj : editableElement;
+	}
+
+	/**
 	 * Abstract Plugin Object
 	 * @namespace Aloha
 	 * @class Plugin
@@ -26331,6 +27162,9 @@ define('aloha/plugin',[
 				that = this;
 
 			if (this.settings.editables) {
+				// When editable is an input or textarea we need the original object.
+				obj = getEditableOriginalObj(obj);
+
 				// check if the editable's selector matches and if so add its configuration to object configuration
 				jQuery.each(this.settings.editables, function (selector, selectorConfig) {
 					var k;
@@ -26531,7 +27365,7 @@ define('aloha/jquery.aloha',[
 		var ce = 'contenteditable';
 
 		// Check
-		if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) == 7) {
+		if (Aloha.browser.msie && parseInt(Aloha.browser.version, 10) == 7) {
 			ce = 'contentEditable';
 		}
 
@@ -27026,7 +27860,6 @@ define('aloha/sidebar',[
 	var uid = +(new Date());
 
 	// Extend jQuery easing animations.
-	//debugger;
 	if (!$.easing.easeOutExpo) {
 		$.extend($.easing, {
 			easeOutExpo: function (x, t, b, c, d) {
@@ -27085,7 +27918,7 @@ define('aloha/sidebar',[
 			// ugliness.  Our solution is to fallback to swapping icon images.
 			// We set this as a sidebar property so that it can overridden by
 			// whoever thinks they are smarter than we are.
-			rotateIcons: !$.browser.msie,
+			rotateIcons: !Aloha.browser.msie,
 			overlayPage: true
 		};
 
@@ -28971,24 +29804,28 @@ define('aloha/repositorymanager',[
 				return;
 			}
 
-			var manager = this;
+			var manager = this, $obj = $(obj);
 
 			if (item) {
 				var repository = manager.getRepository(item.repositoryId);
 				if (repository) {
-					$(obj).attr({
-						'data-gentics-aloha-repository': item.repositoryId,
-						'data-gentics-aloha-object-id': item.id
-					});
-					repository.markObject(obj, item);
+					// only mark the object if something changed
+					if ($obj.attr('data-gentics-aloha-repository') !== item.repositoryId ||
+							$obj.attr('data-gentics-aloha-object-id') !== item.id) {
+						$obj.attr({
+							'data-gentics-aloha-repository': item.repositoryId,
+							'data-gentics-aloha-object-id': item.id
+						});
+						repository.markObject(obj, item);
+					}
 				} else {
 					Console.error(manager, 'Trying to apply a repository "'
 							+ item.name
 							+ '" to an object, but item has no repositoryId.');
 				}
 			} else {
-				$(obj).removeAttr('data-gentics-aloha-repository')
-				      .removeAttr('data-gentics-aloha-object-id');
+				$obj.removeAttr('data-gentics-aloha-repository')
+				    .removeAttr('data-gentics-aloha-object-id');
 			}
 		},
 
@@ -29725,10 +30562,6 @@ define('aloha/repository',[
 			baseUrl: Aloha.settings.baseUrl,
 			map: moduleMap
 		};
-		
-		var DependencyManagement = global.__DEPS__ || (global.__DEPS__ = {});
-		
-		DependencyManagement.lang = defaultConfig.config.i18n.locale;
 
 		var defaultPaths = {
 			jquery: 'vendor/jquery-1.7.2',
@@ -29741,7 +30574,7 @@ define('aloha/repository',[
 			RepositoryBrowser: 'vendor/repository-browser/js/repository-browser-unminified',
 			jstree: 'vendor/jquery.jstree',              // Mutates jquery
 			jqgrid: 'vendor/jquery.jqgrid',              // Mutates jquery
-			'jquery-layout': 'vendor/jquery.layout-1.3.0-rc30.7',     // Mutates jquery
+			'jquery-layout': 'vendor/jquery.layout-1.3.0-rc29.14',     // Mutates jquery
 			'jqgrid-locale-en': 'vendor/grid.locale.en', // Mutates jqgrid
 			'jqgrid-locale-de': 'vendor/grid.locale.de', // Mutates jqgrid
 			'repository-browser-i18n-de': 'vendor/repository-browser/js/repository-browser-unminified',
@@ -29935,6 +30768,12 @@ define('aloha/repository',[
 	} // end load()
 
 	global.Aloha = global.Aloha || {};
+	global.Aloha.settings = global.Aloha.settings || {};
+
+	// set the locale in the global __DEPS__ here to enable i18n of dependencies
+	// like repository browser
+	global.__DEPS__ = global.__DEPS__ || {};
+	global.__DEPS__.lang = global.Aloha.settings.locale || 'en';
 	if (global.Aloha.deferInit || isDeferInit()) {
 		global.Aloha.deferInit = load;
 	} else {
@@ -29977,7 +30816,7 @@ define('ui/context',[
 	'aloha',
 	'jquery',
 	'util/class'
-], function(
+], function (
 	Aloha,
 	$,
 	Class
@@ -30224,7 +31063,7 @@ define('ui/container',[
 	'jquery',
 	'util/class',
 	'ui/scopes'
-], function(
+], function (
 	$,
 	Class,
 	Scopes
@@ -30267,7 +31106,7 @@ define('ui/container',[
 
 	var scopeFns = {};
 
-	var returnTrue = function() {
+	var returnTrue = function () {
 		return true;
 	};
 
@@ -30286,7 +31125,7 @@ define('ui/container',[
 				if (scopeFns[showOn.scope]) {
 					return scopeFns[showOn.scope];
 				}
-				return scopeFns[showOn.scope] = function() {
+				return scopeFns[showOn.scope] = function () {
 					return Scopes.isActiveScope(showOn.scope);
 				};
 			} else {
@@ -30318,7 +31157,7 @@ define('ui/container',[
 		 * @param {object=} settings Optional properties, and override methods.
 		 * @constructor
 		 */
-		_constructor: function(context, settings) {
+		_constructor: function (context, settings) {
 			var showOn = normalizeShowOn(this, settings.showOn),
 			    key = getShowOnId(showOn),
 			    group = context.containers[key];
@@ -30342,36 +31181,36 @@ define('ui/container',[
 		/**
 		 * A container is also a component; this is part of the component API.
 		 */
-		show: function() {},
+		show: function () {},
 		/**
 		 * A container is also a component; this is part of the component API.
 		 */
-		hide: function() {},
+		hide: function () {},
 		/**
 		 * A container is also a component; this is part of the component API.
 		 */
-		focus: function() {},
+		focus: function () {},
 		/**
 		 * A container is also a component; this is part of the component API.
 		 */
-		foreground: function() {},
+		foreground: function () {},
 
 		/**
 		 * The container was previously hidden, and now has become visible. This
 		 * allows a container to let its children react to this.
 		 */
-		childVisible: function(childComponent, visible) {},
+		childVisible: function (childComponent, visible) {},
 		/**
 		 * The container was given focus; this method must give focus to all
 		 * children of the container.
 		 * Optional. (E.g. tab.js doesn't implement this.)
 		 */
-		childFocus: function(childComponent) {},
+		childFocus: function (childComponent) {},
 		/**
 		 * The container was foregrounded; this method must foreground all children
 		 * of the container.
 		 */
-		childForeground: function(childComponent) {}
+		childForeground: function (childComponent) {}
 
 		/**
 		 * @} End of "ingroup api".
@@ -30389,7 +31228,7 @@ define('ui/container',[
 		 * @param {string} eventType Type of the event triggered (optional)
 		 * @static
 		 */
-		showContainersForContext: function(context, eventType) {
+		showContainersForContext: function (context, eventType) {
 			var group,
 			    groupKey,
 			    containerGroups;
@@ -30416,7 +31255,7 @@ define('ui/surface',[
 	'jquery',
 	'util/class',
 	'ui/container'
-], function(
+], function (
 	Aloha,
 	$,
 	Class,
@@ -30431,7 +31270,7 @@ define('ui/surface',[
 	 * @base
 	 */
 	var Surface = Class.extend({
-		_constructor: function(context) {
+		_constructor: function (context) {
 			context.surfaces.push(this);
 		},
 
@@ -30441,7 +31280,7 @@ define('ui/surface',[
 		 *
 		 * @eturn {boolean} True if this surface is visible.
 		 */
-		isActive: function() {
+		isActive: function () {
 			return true;
 		}
 	});
@@ -30467,8 +31306,8 @@ define('ui/surface',[
 		 *
 		 * @param {!Object} context.
 		 */
-		show: function(context) {
-			$.each(context.surfaces, function(i, surface) {
+		show: function (context) {
+			$.each(context.surfaces, function (i, surface) {
 				surface.show();
 			});
 		},
@@ -30478,7 +31317,7 @@ define('ui/surface',[
 		 *
 		 * @param {!Object} context
 		 */
-		hide: function(context) {
+		hide: function (context) {
 			$.each(context.surfaces, function (i, surface) {
 				surface.hide();
 			});
@@ -30493,21 +31332,20 @@ define('ui/surface',[
 		 *                                      when the user interacts with
 		 *                                      it.
 		 */
-		trackRange: function(element) {
-			element.bind('mousedown', function(e) {
+		trackRange: function (element) {
+			element.bind('mousedown', function (e) {
 				e.originalEvent.stopSelectionUpdate = true;
 				Aloha.eventHandled = true;
 				Surface.suppressHide = true;
 
 				if (Aloha.activeEditable) {
 					var selection = Aloha.getSelection();
-					Surface.range = (0 < selection.getRangeCount())
-					              ? selection.getRangeAt(0)
-								  : null;
+					Surface.range = (0 < selection.getRangeCount()) ?
+						selection.getRangeAt(0) : null;
 				}
 			});
 			
-			element.bind('mouseup', function(e) {
+			element.bind('mouseup', function (e) {
 				e.originalEvent.stopSelectionUpdate = true;
 				Aloha.eventHandled = false;
 				Surface.suppressHide = false;
@@ -30659,15 +31497,15 @@ define('ui/tab',[
 	var idCounter = 0;
 	var slottedComponents = {};
 
-	function hasVisibleComponents(tab){
+	function hasVisibleComponents(tab) {
 		var i, slot, component, hasVisible = false;
 
 		// the problem is, a container component had a button to expand the options
-		if( $(
+		if ($(
 				'button:not(.aloha-multisplit-toggle)',
 				tab.panel
 			).length !== 0
-		){
+		) {
 			hasVisible = true;
 		}
 
@@ -30675,7 +31513,7 @@ define('ui/tab',[
 		// @todo this algorithm must be enhanced, asking each component if is visible
 		// this is the longest aproach, I iterate the components registered in
 		// this tab
-		for(i = 0; i < tab._slotsList.length; i++){
+		for (i = 0; i < tab._slotsList.length; i++){
 			if(undefined !== slottedComponents[slotName]){
 				if($(
 						'button:not(.aloha-multisplit-toggle)',
@@ -30731,12 +31569,12 @@ define('ui/tab',[
 		 */
 		_constructor: function (context, settings, components) {
 			var thisTab = this,
-			    i, j,
-			    elem,
-			    groupedComponents,
-			    group,
-			    groupProps,
-			    componentName;
+				i, j,
+				elem,
+				groupedComponents,
+				group,
+				groupProps,
+				componentName;
 
 			this._elemBySlot = {};
 			this._groupBySlot = {};
@@ -30795,7 +31633,7 @@ define('ui/tab',[
 			alohaTabs.push(this);
 		},
 
-		adoptInto: function(slot, component) {
+		adoptInto: function (slot, component) {
 			var elem = this._elemBySlot[slot],
 			    group;
 			if (!elem) {
@@ -30818,11 +31656,11 @@ define('ui/tab',[
 			return true;
 		},
 
-		foreground: function() {
+		foreground: function () {
 			this.container.tabs('option', 'active', this.index);
 		},
 
-		childForeground: function(childComponent) {
+		childForeground: function (childComponent) {
 			this.foreground();
 		},
 
@@ -30839,7 +31677,7 @@ define('ui/tab',[
 			return false;
 		},
 
-		childVisible: function(childComponent, visible) {
+		childVisible: function (childComponent, visible) {
 			if (visible) {
 				childComponent.container.show();
 			} else if (!childComponent.container.hasVisibleComponents()) {
@@ -30865,7 +31703,7 @@ define('ui/tab',[
 		/**
 		 * @override
 		 */
-		show: function() {
+		show: function () {
 			if (!this.list.children().length || !hasVisibleComponents(this)) {
 				return;
 			}
@@ -30878,8 +31716,8 @@ define('ui/tab',[
 			this.container.show();
 
 			// If no tabs are selected, then select the tab which was just shown.
-			if (   !this.container.find('.ui-tabs-active').length
-			    ||  this.container.tabs('option', 'selected') === this.index) {
+			if (!this.container.find('.ui-tabs-active').length ||
+				this.container.tabs('option', 'selected') === this.index) {
 				this.foreground();
 			}
 		},
@@ -30887,9 +31725,9 @@ define('ui/tab',[
 		/**
 		 * @override
 		 */
-		hide: function() {
+		hide: function () {
 			var tabs = this.list.children();
-			if ( 0 === tabs.length ) {
+			if (0 === tabs.length) {
 				return;
 			}
 			this.handle.hide();
@@ -30898,13 +31736,13 @@ define('ui/tab',[
 			// If the tab we just hid was the selected tab, then we need to
 			// select another tab in its stead.  We will select the first
 			// visible tab we find, or else we deselect all tabs.
-			if ( this.index === this.container.tabs( 'option', 'selected' ) ) {
-				tabs = this.container.data( 'aloha-tabs' );
+			if (this.index === this.container.tabs('option', 'selected')) {
+				tabs = this.container.data('aloha-tabs');
 
 				var i;
-				for ( i = 0; i < tabs.length; ++i ) {
-					if ( tabs[ i ].visible ) {
-						this.container.tabs( 'select', i );
+				for (i = 0; i < tabs.length; ++i) {
+					if (tabs[i].visible) {
+						this.container.tabs('select', i);
 						return;
 					}
 				}
@@ -30913,7 +31751,7 @@ define('ui/tab',[
 				// this.container.tabs( 'select', -1 );
 
 				// Why do we remove this class?
-				this.handle.removeClass( 'ui-tabs-active' );
+				this.handle.removeClass('ui-tabs-active');
 
 				// It doesn't make any sense to leave the toolbar
 				// visible after all tabs have been hidden.
@@ -31341,7 +32179,7 @@ if ( window.globalStorage ) {
 		// http://www.w3.org/TR/REC-xml/#NT-Name
 		// simplified to assume the starting character is valid
 		// also removed colon as it is invalid in HTML attribute names
-		key = key.replace( /[^-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u37f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
+		key = key.replace( /[^-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
 
 		if ( value === undefined ) {
 			attr = div.getAttribute( key );
@@ -32099,6 +32937,7 @@ define('ui/nls/i18n',{
 		"tab.abbr.label": "Abbreviation",
 		"tab.img.label": "Image",
 		"tab.link.label": "Link",
+		"tab.cite.label": "Cite",
 		"tab.list.label": "List",
 		"tab.table.label": "Table",
 		"tab.col.label": "Table Column",
@@ -32230,9 +33069,9 @@ define('ui/toolbar',[
 			// caluclated.
 			var toolbar = this;
 			if (toolbar._moveTimeout) {
-				clearTimeout(toolbar._moveTimeout);
+				window.clearTimeout(toolbar._moveTimeout);
 			}
-			toolbar._moveTimeout = setTimeout(function () {
+			toolbar._moveTimeout = window.setTimeout(function () {
 				toolbar._moveTimeout = null;
 				if (Aloha.activeEditable && Toolbar.isFloatingMode) {
 					floating.floatSurface(
@@ -32351,7 +33190,9 @@ define('ui/toolbar',[
 
 			// In the built aloha.js, init will happend before the body has
 			// finished loading, so we have to defer appending the element.
-			$(function () { Toolbar.$surfaceContainer.appendTo('body'); });
+			$(function () {
+				Toolbar.$surfaceContainer.appendTo('body');
+			});
 			Surface.trackRange(Toolbar.$surfaceContainer);
 			var pinState = floating.getPinState();
 			Toolbar.pinTop = pinState.top;
@@ -32377,7 +33218,7 @@ define('ui/toolbar',[
 	return Toolbar;
 });
 
-define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], function($, Arrays, Maps, Trees){
+define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], function ($, Arrays, Maps, Trees) {
 	var defaultToolbarSettings = {
 		tabs: [
 			// Format Tab
@@ -32387,13 +33228,13 @@ define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], funct
 				components: [
 					[
 						'bold', 'strong', 'italic', 'emphasis', 'underline', '\n',
-						'subscript', 'superscript', 'strikethrough', 'quote'
+						'subscript', 'superscript', 'strikethrough', 'code', 'quote'
 					], [
 						'formatLink', 'formatAbbr', 'formatNumeratedHeaders', 'toggleDragDrop', '\n',
 						'toggleMetaView', 'wailang', 'toggleFormatlessPaste'
 					], [
 						'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', '\n',
-						'orderedList', 'unorderedList', 'indentList', 'outdentList', 'colorPicker'
+						'orderedListFormatSelector', 'unorderedListFormatSelector', 'definitionListFormatSelector', '\n', 'indentList', 'outdentList', 'colorPicker'
 					], [
 						'formatBlock'
 					]
@@ -32414,6 +33255,12 @@ define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], funct
 				label: 'tab.link.label',
 				showOn: { scope: 'link' },
 				components: [ 'editLink', 'removeLink', 'linkBrowser' ]
+			},
+			// Cite Tab
+			{
+				label : 'tab.cite.label',
+				showOn : { scope : 'cite' },
+				components : [ 'editCite', 'removeCite', '\n', 'editNote' ]
 			},
             // Image Tab
             {
@@ -32513,7 +33360,7 @@ define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], funct
 		var exclusionLookup = makeExclusionMap(userTabs, exclude);
 		function pruneDefaultComponents(form) {
 			return 'array' === $.type(form) ? !form.length : exclusionLookup[form];
-		};
+		}
 		userTabs = mergeDefaultComponents(userTabs, defaultTabsByLabel, pruneDefaultComponents);
 		defaultTabs = remainingDefaultTabs(defaultTabs, exclusionLookup, pruneDefaultComponents);
 		return userTabs.concat(defaultTabs);
@@ -32541,12 +33388,13 @@ define('ui/settings',['jquery', 'util/arrays', 'util/maps', 'util/trees'], funct
 
 	function mergeDefaultComponents(userTabs, defaultTabsByLabel, pruneDefaultComponents) {
 		var i,
-            tab,
-		    tabs = [],
-		    userTab,
-		    components,
-		    defaultTab,
-		    defaultComponents;
+			tab,
+			tabs = [],
+			userTab,
+			components,
+			defaultTab,
+			defaultComponents;
+
 		for (i = 0; i < userTabs.length; i++) {
 			userTab = userTabs[i];
 			components = userTab.components || [];
@@ -32636,9 +33484,9 @@ define('ui/ui-plugin', [
 	
 
 	var context = new Context(),
-        toolbar = new Toolbar(context, getToolbarSettings());
+		toolbar = new Toolbar(context, getToolbarSettings());
 
-	Aloha.bind('aloha-editable-activated', function(event, alohaEvent) {
+	Aloha.bind('aloha-editable-activated', function (event, alohaEvent) {
 		Surface.show(context);
 		Container.showContainersForContext(context, event);
 	});
@@ -32842,7 +33690,7 @@ define('ui/ui', [
 	'jquery',
 	'ui/ui-plugin'
 ],
-function(
+function (
 	$,
 	UiPlugin
 ) {
@@ -32985,7 +33833,7 @@ define('ui/utils',['jquery', 'jqueryui'], function ($) {
 	}
 
 	function makeButton(button, props, hasMenu) {
-		button.button({
+		button.uibutton({
 			label: makeButtonLabel(props),
 			text: !!(props.text || props.html),
 			icons: {
@@ -32994,7 +33842,7 @@ define('ui/utils',['jquery', 'jqueryui'], function ($) {
 			}
 		});
 		if (props.iconUrl) {
-			button.button('widget')
+			button.uibutton('widget')
 				.children('.ui-button-icon-primary')
 				.append(makeButtonIconFromUrl(props.iconUrl));
 		}
@@ -33169,7 +34017,7 @@ define('ui/port-helper-attribute-field',[
 
 		component = Ui.adopt(props.name, Component, {
 			scope: props.scope,
-			init: function(){
+			init: function () {
 
 				if (props.element) {
 					this.element = element;
@@ -33189,12 +34037,12 @@ define('ui/port-helper-attribute-field',[
 				element.autocomplete({
 					'html': true,
 					'appendTo': Context.selector,
-					'source': function( req, res ) {
+					'source': function (req, res) {
 						RepositoryManager.query({
 							queryString: req.term,
 							objectTypeFilter: objectTypeFilter
-						}, function( data ) {
-							res($.map(data.items, function(item) {
+						}, function (data) {
+							res($.map(data.items, function (item) {
 								return {
 									label: parse(template, item),
 									value: item.name,
@@ -33203,6 +34051,7 @@ define('ui/port-helper-attribute-field',[
 							}));
 						});
 					},
+					"open": props.open,
 					"select": onSelect
 				});
 			}
@@ -33233,7 +34082,7 @@ define('ui/port-helper-attribute-field',[
 		}
 
 		function onFocus(event, ui) {
-			if ( ! $(event.target).is(':visible') ) {
+			if (!$(event.target).is(':visible')) {
 				// The check for visible fixes the bug that the background
 				// color of the target element is not restored.
 				// Rationale: it's possible for the input to receive the focus event,
@@ -33253,9 +34102,9 @@ define('ui/port-helper-attribute-field',[
 			}
 		}
 
-		function onKeyDown(event){
+		function onKeyDown(event) {
 			// on ENTER or ESC leave the editing
-			if ( event.keyCode == 13 || event.keyCode == 27 ) {
+			if (event.keyCode == 13 || event.keyCode == 27) {
 				event.preventDefault();
 			}
 		}
@@ -33285,12 +34134,12 @@ define('ui/port-helper-attribute-field',[
 		function finishEditing() {
 			restoreTargetBackground();
 
-			if ( ! targetObject || lastAttributeValue === $(targetObject).attr(targetAttribute)) {
+			if (!targetObject || lastAttributeValue === $(targetObject).attr(targetAttribute)) {
 				return;
 			}
 
 			// when no resource item was selected, remove any marking of the target object
-			if ( ! resourceItem ) {
+			if (!resourceItem) {
 				RepositoryManager.markObject( targetObject );
 			}
 
@@ -33321,7 +34170,7 @@ define('ui/port-helper-attribute-field',[
 			var target = $(targetObject);
 			if (targetHighlightClass) {
 				executeForTargets(function (target) {
-					target.addClass(targetHighlightClass)
+					target.addClass(targetHighlightClass);
 				});
 			}
 
@@ -33373,8 +34222,8 @@ define('ui/port-helper-attribute-field',[
 		}
 
 		function parse(template, item) {
-			return template.replace( /\{([^}]+)\}/g, function(_, name) {
-				return name in item ? item[ name ] : "";
+			return template.replace(/\{([^}]+)\}/g, function (_, name) {
+				return name in item ? item[name] : "";
 			});
 		}
 
@@ -33386,7 +34235,7 @@ define('ui/port-helper-attribute-field',[
 			element.val(placeholder);
 		}
 
-		function setTemplate(tmpl){
+		function setTemplate(tmpl) {
 			template = tmpl;
 		}
 
@@ -33429,6 +34278,8 @@ define('ui/port-helper-attribute-field',[
 				resourceValue = v;
 				setAttribute(targetAttribute, item[valueField]);
 				RepositoryManager.markObject(targetObject, item);
+				
+				element.trigger('item-change');
 			} else {
 				resourceValue = null;
 			}
@@ -33511,6 +34362,20 @@ define('ui/port-helper-attribute-field',[
 		function hide() {
 			element.hide();
 		}
+		
+		/**
+		 * Disables input text, so the text can not be edit.
+		 */
+		function disableInput() {
+			element.attr('disabled','disabled'); 
+		}
+		
+		/**
+		 * Enables input text, so the text can be edit.
+		 */
+		function enableInput() {
+			element.removeAttr('disabled');
+		}
 
 		function getInputId(){
 			return element.attr("id");
@@ -33548,7 +34413,9 @@ define('ui/port-helper-attribute-field',[
 			setObjectTypeFilter: setObjectTypeFilter,
 			setTemplate: setTemplate,
 			setPlaceholder: setPlaceholder,
-			getInputJQuery: getInputJQuery
+			getInputJQuery: getInputJQuery,
+			enableInput: enableInput,
+			disableInput: disableInput
 		};
 
 		return attrField;
@@ -33602,7 +34469,7 @@ function (jQuery, Component, Utils) {
 			this._super();
 			this.createButtonElement();
 			Utils.makeButton(this.buttonElement, this)
-				.button('widget')
+				.uibutton('widget')
 				.tooltip({
 					tooltipClass: 'aloha aloha-ui-tooltip',
 					position: {
@@ -33619,10 +34486,15 @@ function (jQuery, Component, Utils) {
 					// cells are merged or split.
 					// IE needs the force argument to be true, Chrome doesn't.
 					// The event argument can be ignored.
-					this.buttonElement.tooltip('close', null/*event*/, true/*force*/);
+					this.closeTooltip();
 
 					this._onClick();
 				}, this));
+		},
+
+		closeTooltip: function () {
+			// 'close', /*event*/, /*force*/
+			this.buttonElement.tooltip('close', null, true);
 		},
 
 		/**
@@ -33648,25 +34520,32 @@ function (jQuery, Component, Utils) {
 		 */
 		createButtonElement: function () {
 			var button = Utils.makeButtonElement();
+
 			if (this['class']) {
 				button.addClass(this['class']);
 			}
 			this.element = this.buttonElement = button;
+
+			var that = this;
+			button.bind('mouseleave', function () {
+				that.closeTooltip();
+			});
+
 			return button;
 		},
 
 		/**
 		 * Shows the button in a greyed-out inactive (unclickable) state.
 		 */
-		disable: function() {
-			this.element.button('option', 'disabled', false);
+		disable: function () {
+			this.element.uibutton('option', 'disabled', false);
 		},
 
 		/**
 		 * Enables the button again after it has previously been disabled.
 		 */
-		enable: function(enable_opt) {
-			this.element.button('option', 'disabled', enable_opt === false);
+		enable: function (enable_opt) {
+			this.element.uibutton('option', 'disabled', enable_opt === false);
 		}
 	});
 
@@ -33678,7 +34557,7 @@ define('ui/toggleButton',[
 	'ui/button',
 	'jqueryui'
 ],
-function( jQuery, Button ) {
+function (jQuery, Button) {
 	
 
 	var idCounter = 0;
@@ -33703,7 +34582,7 @@ function( jQuery, Button ) {
 		 * @param {boolean} toggled Whether the button is to be set to the
 		 *                          "toggled/checked" state.
 		 */
-		setState: function( toggled ) {
+		setState: function (toggled) {
 			// It is very common to set the button state on every
 			// selection change even if the state hasn't changed.
 			// Profiling showed that this is very inefficient.
@@ -33718,12 +34597,12 @@ function( jQuery, Button ) {
 			}
 		},
 
-		getState: function() {
+		getState: function () {
 			return this._checked;
 		},
 
-		_onClick: function() {
-			this.setState( ! this._checked );
+		_onClick: function () {
+			this.setState(! this._checked);
 			this.click();
 		}
 	});
@@ -33744,28 +34623,8 @@ define('link/nls/i18n',{
 		"link.target.framename": "Framename",
 		"link.target.legend": "Target",
 		"link.title.legend": "Title",
+		"href.lang.legend": "Language",
 		"insertLink": "ctrl+k"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-define('aloha/nls/i18n',{
-	"root":  {
-		"plugin.abbr.floatingmenu.tab.abbr": "Abbreviation",
-		"floatingmenu.tab.format": "Format",
-		"floatingmenu.tab.insert": "Insert",
-		"yes": "Yes",
-		"no": "No",
-		"cancel": "Cancel",
-		"repository.no_item_found": "No item found.",
-		"repository.loading": "Loading",
-		"repository.no_items_found_yet": "No items found yet..."
 	},
 		"ca": true,
 		"de": true,
@@ -33842,31 +34701,4540 @@ define('util/keys',['jquery'], function ($) {
 	};
 });
 
-/* link-plugin.js is part of Aloha Editor project http://aloha-editor.org
+
+
+define('link/../../../shared/languages/./iso639-1-de',
+		[],
+		function() {
+
+			var iso = {
+				"aa" : {
+					"name" : "Afar"
+				},
+				"ab" : {
+					"name" : "Abchasen"
+				},
+				"af" : {
+					"name" : "Afrikaans"
+				},
+				"ak" : {
+					"name" : "Akan"
+				},
+				"sq" : {
+					"name" : "Albanisch"
+				},
+				"am" : {
+					"name" : "Amharisch"
+				},
+				"ar" : {
+					"name" : "Arabisch",
+					"flag" : "ae"
+				},
+				"an" : {
+					"name" : "Aragonesisch"
+				},
+				"hy" : {
+					"name" : "Armenisch"
+				},
+				"as" : {
+					"name" : "Assamesisch"
+				},
+				"av" : {
+					"name" : "Avarisch"
+				},
+				"ae" : {
+					"name" : "Avestan"
+				},
+				"ay" : {
+					"name" : "Aymara"
+				},
+				"az" : {
+					"name" : "Aserbaidschanisch"
+				},
+				"ba" : {
+					"name" : "Baschkirisch"
+				},
+				"bm" : {
+					"name" : "Bambara"
+				},
+				"eu" : {
+					"name" : "Baskisch"
+				},
+				"be" : {
+					"name" : "Weißrussisch",
+					"flag" : "by"
+				},
+				"bn" : {
+					"name" : "Bengalisch"
+				},
+				"bh" : {
+					"name" : "Bihari Sprachen"
+				},
+				"bi" : {
+					"name" : "Bislama"
+				},
+				"bs" : {
+					"name" : "Bosnisch"
+				},
+				"br" : {
+					"name" : "Bretonisch"
+				},
+				"bg" : {
+					"name" : "Bulgarisch",
+					"flag" : "bg"
+				},
+				"my" : {
+					"name" : "Birmanisch"
+				},
+				"ca" : {
+					"name" : "Katalanisch, Valencia",
+					"flag" : "es"
+				},
+				"ch" : {
+					"name" : "Chamorro"
+				},
+				"ce" : {
+					"name" : "Tschetschenisch"
+				},
+				"zh" : {
+					"name" : "Chinesisch"
+				},
+				"cu" : {
+					"name" : "Kirchenslawisch; Altslawisch; Altbulgarisch; Altkirchenslawisch"
+				},
+				"cv" : {
+					"name" : "Tschuwaschische Sprache"
+				},
+				"kw" : {
+					"name" : "Cornish"
+				},
+				"co" : {
+					"name" : "Korsisch"
+				},
+				"cr" : {
+					"name" : "Cree"
+				},
+				"cs" : {
+					"name" : "Tschechisch"
+				},
+				"da" : {
+					"name" : "Dänisch",
+					"flag" : "dk"
+				},
+				"dv" : {
+					"name" : "Divehi; Dhivehi; maledivische"
+				},
+				"nl" : {
+					"name" : "Niederländisch, Flämisch"
+				},
+				"dz" : {
+					"name" : "Dzongkha"
+				},
+				"en" : {
+					"name" : "Englisch",
+					"flag" : "gb"
+				},
+				"eo" : {
+					"name" : "Esperanto"
+				},
+				"et" : {
+					"name" : "Estnisch",
+					"flag" : "ee"
+				},
+				"ee" : {
+					"name" : "Ewe"
+				},
+				"fo" : {
+					"name" : "Färöisch"
+				},
+				"fj" : {
+					"name" : "Fidschi"
+				},
+				"fi" : {
+					"name" : "Finnisch",
+					"flag" : "fi"
+				},
+				"fr" : {
+					"name" : "Französisch"
+				},
+				"fy" : {
+					"name" : "Westfriesisch"
+				},
+				"ff" : {
+					"name" : "Fulah"
+				},
+				"ka" : {
+					"name" : "Georgisch"
+				},
+				"de" : {
+					"name" : "Deutsch",
+					"flag" : "de"
+				},
+				"gd" : {
+					"name" : "Gälisch, Schottisch-Gälisch"
+				},
+				"ga" : {
+					"name" : "Irisch",
+					"flag" : "ie"
+				},
+				"gl" : {
+					"name" : "Galizisch"
+				},
+				"gv" : {
+					"name" : "Manx"
+				},
+				"el" : {
+					"name" : "Griechisch, Modern (1453 -)"
+				},
+				"gn" : {
+					"name" : "Guarani"
+				},
+				"gu" : {
+					"name" : "Gujarati"
+				},
+				"ht" : {
+					"name" : "Haitianisch"
+				},
+				"ha" : {
+					"name" : "Hausa"
+				},
+				"he" : {
+					"name" : "Hebräisch",
+					"flag" : "il"
+				},
+				"hz" : {
+					"name" : "Herero"
+				},
+				"hi" : {
+					"name" : "Hindi",
+					"flag" : "in"
+				},
+				"ho" : {
+					"name" : "Hiri Motu"
+				},
+				"hr" : {
+					"name" : "Kroatisch",
+					"flag" : "hr"
+				},
+				"hu" : {
+					"name" : "Ungarisch",
+					"flag" : "hu"
+				},
+				"ig" : {
+					"name" : "Igbo"
+				},
+				"is" : {
+					"name" : "Isländisch"
+				},
+				"io" : {
+					"name" : "Ido"
+				},
+				"ii" : {
+					"name" : "Sichuan Yi; Nuosu"
+				},
+				"iu" : {
+					"name" : "Inuktitut"
+				},
+				"ie" : {
+					"name" : "Interlingue; Okzidental"
+				},
+				"ia" : {
+					"name" : "Interlingua (International Auxiliary Language Association)"
+				},
+				"id" : {
+					"name" : "Indonesisch",
+					"flag" : "id"
+				},
+				"ik" : {
+					"name" : "Inupiaq"
+				},
+				"it" : {
+					"name" : "Italienisch",
+					"flag" : "it"
+				},
+				"jv" : {
+					"name" : "Javaner"
+				},
+				"ja" : {
+					"name" : "Japanisch",
+					"flag" : "jp"
+				},
+				"kl" : {
+					"name" : "Kalaallisut; Grönländisch"
+				},
+				"kn" : {
+					"name" : "Kannada"
+				},
+				"ks" : {
+					"name" : "Kashmiri"
+				},
+				"kr" : {
+					"name" : "Kanuri"
+				},
+				"kk" : {
+					"name" : "Kasachisch"
+				},
+				"km" : {
+					"name" : "Mittel-Khmer"
+				},
+				"ki" : {
+					"name" : "Kikuyu; Gikuyu"
+				},
+				"rw" : {
+					"name" : "Kinyarwanda"
+				},
+				"ky" : {
+					"name" : "Kirgisisch"
+				},
+				"kv" : {
+					"name" : "Komi"
+				},
+				"kg" : {
+					"name" : "Kongo"
+				},
+				"ko" : {
+					"name" : "Koreanisch",
+					"flag" : "kr"
+				},
+				"kj" : {
+					"name" : "Kuanyama; Kwanyama"
+				},
+				"ku" : {
+					"name" : "Kurdisch"
+				},
+				"lo" : {
+					"name" : "Lao"
+				},
+				"la" : {
+					"name" : "Latein"
+				},
+				"lv" : {
+					"name" : "Lettisch",
+					"flag" : "lv"
+				},
+				"li" : {
+					"name" : "Limburgisch"
+				},
+				"ln" : {
+					"name" : "Lingála"
+				},
+				"lt" : {
+					"name" : "Litauisch",
+					"flag" : "lt"
+				},
+				"lb" : {
+					"name" : "Luxemburgisch, Lëtzebuergesch"
+				},
+				"lu" : {
+					"name" : "Luba-Katanga"
+				},
+				"lg" : {
+					"name" : "Ganda"
+				},
+				"mk" : {
+					"name" : "Mazedonisch"
+				},
+				"mh" : {
+					"name" : "Marshallese"
+				},
+				"ml" : {
+					"name" : "Malayalam"
+				},
+				"mi" : {
+					"name" : "Maori"
+				},
+				"mr" : {
+					"name" : "Marathi"
+				},
+				"ms" : {
+					"name" : "Malaiisch"
+				},
+				"mg" : {
+					"name" : "Malagasy"
+				},
+				"mt" : {
+					"name" : "Maltesisch",
+					"flag" : "mt"
+				},
+				"mn" : {
+					"name" : "Mongolisch"
+				},
+				"na" : {
+					"name" : "Nauru"
+				},
+				"nv" : {
+					"name" : "Navajo; Navaho"
+				},
+				"nr" : {
+					"name" : "Ndebele, Süd, Süd-Ndebele"
+				},
+				"nd" : {
+					"name" : "Ndebele, Nord, Nord-Ndebele"
+				},
+				"ng" : {
+					"name" : "Ndonga"
+				},
+				"ne" : {
+					"name" : "Nepali"
+				},
+				"nn" : {
+					"name" : "Norwegisch Nynorsk"
+				},
+				"nb" : {
+					"name" : "Bokmål, Norwegisch, Norwegisch Bokmål"
+				},
+				"no" : {
+					"name" : "Norwegisch",
+					"flag" : "no"
+				},
+				"ny" : {
+					"name" : "Chichewa; Chewa; Nyanja"
+				},
+				"oc" : {
+					"name" : "Occitan (post 1500); provenzalischen"
+				},
+				"oj" : {
+					"name" : "Ojibwa"
+				},
+				"or" : {
+					"name" : "Oriya"
+				},
+				"om" : {
+					"name" : "Oromo"
+				},
+				"os" : {
+					"name" : "Ossetisch"
+				},
+				"pa" : {
+					"name" : "Panjabi, Punjabi"
+				},
+				"fa" : {
+					"name" : "Persisch"
+				},
+				"pi" : {
+					"name" : "Pali"
+				},
+				"pl" : {
+					"name" : "Polnisch",
+					"flag" : "pl"
+				},
+				"pt" : {
+					"name" : "Portugiesisch",
+					"flag" : "pt"
+				},
+				"ps" : {
+					"name" : "Paschtu, Paschtu"
+				},
+				"qu" : {
+					"name" : "Quechua"
+				},
+				"rm" : {
+					"name" : "Rätoromanisch"
+				},
+				"ro" : {
+					"name" : "Rumänisch; Moldawisch; Moldauisch"
+				},
+				"rn" : {
+					"name" : "Rundi"
+				},
+				"ru" : {
+					"name" : "Russisch",
+					"flag" : "ru"
+				},
+				"sg" : {
+					"name" : "Sango"
+				},
+				"sa" : {
+					"name" : "Sanskrit"
+				},
+				"si" : {
+					"name" : "Singhalesisch"
+				},
+				"sk" : {
+					"name" : "Slowakisch"
+				},
+				"sl" : {
+					"name" : "Slowenisch",
+					"flag" : "si"
+				},
+				"se" : {
+					"name" : "Nord Sami"
+				},
+				"sm" : {
+					"name" : "Samoaner"
+				},
+				"sn" : {
+					"name" : "Shona"
+				},
+				"sd" : {
+					"name" : "Sindhi"
+				},
+				"so" : {
+					"name" : "Somali"
+				},
+				"st" : {
+					"name" : "Sotho, Südlich"
+				},
+				"es" : {
+					"name" : "Spanisch, Kastilisch",
+					"flag" : "es"
+				},
+				"sc" : {
+					"name" : "Sardisch"
+				},
+				"sr" : {
+					"name" : "Serbisch",
+					"flag" : "rs"
+				},
+				"ss" : {
+					"name" : "Swati"
+				},
+				"su" : {
+					"name" : "Sundanesisch"
+				},
+				"sw" : {
+					"name" : "Swahili"
+				},
+				"sv" : {
+					"name" : "Schwedisch",
+					"flag" : "se"
+				},
+				"ty" : {
+					"name" : "Tahitianisch"
+				},
+				"ta" : {
+					"name" : "Tamilisch"
+				},
+				"tt" : {
+					"name" : "Tatar"
+				},
+				"te" : {
+					"name" : "Telugu"
+				},
+				"tg" : {
+					"name" : "Tadschikisch"
+				},
+				"tl" : {
+					"name" : "Tagalog"
+				},
+				"th" : {
+					"name" : "Thailändisch",
+					"flag" : "th"
+				},
+				"bo" : {
+					"name" : "Tibetisch"
+				},
+				"ti" : {
+					"name" : "Tigrinya"
+				},
+				"to" : {
+					"name" : "Tonga (Tonga-Inseln)"
+				},
+				"tn" : {
+					"name" : "Tswana"
+				},
+				"ts" : {
+					"name" : "Tsonga"
+				},
+				"tk" : {
+					"name" : "Turkmenisch"
+				},
+				"tr" : {
+					"name" : "Türkisch",
+					"flag" : "tr"
+				},
+				"tw" : {
+					"name" : "Twi"
+				},
+				"ug" : {
+					"name" : "Uigurisch"
+				},
+				"uk" : {
+					"name" : "Ukrainisch",
+					"flag" : "ua"
+				},
+				"ur" : {
+					"name" : "Urdu"
+				},
+				"uz" : {
+					"name" : "Usbekisch"
+				},
+				"ve" : {
+					"name" : "Venda"
+				},
+				"vi" : {
+					"name" : "Vietnamesisch",
+					"flag" : "vn"
+				},
+				"vo" : {
+					"name" : "Volapük"
+				},
+				"cy" : {
+					"name" : "Walisisch"
+				},
+				"wa" : {
+					"name" : "Wallonisch"
+				},
+				"wo" : {
+					"name" : "Wolof"
+				},
+				"xh" : {
+					"name" : "Xhosa"
+				},
+				"yi" : {
+					"name" : "Jiddisch"
+				},
+				"yo" : {
+					"name" : "Yoruba"
+				},
+				"za" : {
+					"name" : "Zhuang; Chuang"
+				},
+				"zu" : {
+					"name" : "Zulu"
+				}
+			};
+			
+			return iso;
+		});
+
+define('link/../../../shared/languages/./iso639-2-de',
+		[],
+		function() {
+
+			var iso = {
+				"aar" : {
+					"name" : "Afar"
+				},
+				"abk" : {
+					"name" : "Abchasen"
+				},
+				"ace" : {
+					"name" : "Achinese"
+				},
+				"ach" : {
+					"name" : "Acholi"
+				},
+				"ada" : {
+					"name" : "Adangme"
+				},
+				"ady" : {
+					"name" : "Adyghe; Adygei"
+				},
+				"afa" : {
+					"name" : "Afro-Asiatische Sprachen"
+				},
+				"afh" : {
+					"name" : "Afrihili"
+				},
+				"afr" : {
+					"name" : "Afrikaans"
+				},
+				"ain" : {
+					"name" : "Ainu"
+				},
+				"aka" : {
+					"name" : "Akan"
+				},
+				"akk" : {
+					"name" : "Akkadisch"
+				},
+				"alb" : {
+					"name" : "Albanisch"
+				},
+				"sqi" : {
+					"name" : "Albanisch",
+					"flag" : "al"
+				},
+				"ale" : {
+					"name" : "Aleutisch"
+				},
+				"alg" : {
+					"name" : "Algonkin-Sprachen"
+				},
+				"alt" : {
+					"name" : "Südaltai"
+				},
+				"amh" : {
+					"name" : "Amharisch"
+				},
+				"ang" : {
+					"name" : "Englisch, Alt (ca.450-1100)"
+				},
+				"anp" : {
+					"name" : "Angika"
+				},
+				"apa" : {
+					"name" : "Apache Sprachen"
+				},
+				"ara" : {
+					"name" : "Arabisch",
+					"flag" : "ae"
+				},
+				"arc" : {
+					"name" : "Offizielles Aramäisch (700-300 v. Chr.); Reichsaramäisch (700-300 v. Chr.)"
+				},
+				"arg" : {
+					"name" : "Aragonesisch"
+				},
+				"arm" : {
+					"name" : "Armenisch"
+				},
+				"hye" : {
+					"name" : "Armenisch"
+				},
+				"arn" : {
+					"name" : "Mapudungun; Mapuche"
+				},
+				"arp" : {
+					"name" : "Arapaho"
+				},
+				"art" : {
+					"name" : "Künstliche Sprachen"
+				},
+				"arw" : {
+					"name" : "Arawak"
+				},
+				"asm" : {
+					"name" : "Assamesisch"
+				},
+				"ast" : {
+					"name" : "Asturisch"
+				},
+				"ath" : {
+					"name" : "Athapascan Sprachen"
+				},
+				"aus" : {
+					"name" : "Australische Sprachen"
+				},
+				"ava" : {
+					"name" : "Avarisch"
+				},
+				"ave" : {
+					"name" : "Avestan"
+				},
+				"awa" : {
+					"name" : "Awadhi"
+				},
+				"aym" : {
+					"name" : "Aymara"
+				},
+				"aze" : {
+					"name" : "Aserbaidschanisch"
+				},
+				"bad" : {
+					"name" : "Banda Sprachen"
+				},
+				"bai" : {
+					"name" : "Bamileke Sprachen"
+				},
+				"bak" : {
+					"name" : "Baschkirisch"
+				},
+				"bal" : {
+					"name" : "Baluchi"
+				},
+				"bam" : {
+					"name" : "Bambara"
+				},
+				"ban" : {
+					"name" : "Balinesisch"
+				},
+				"baq" : {
+					"name" : "Baskisch"
+				},
+				"eus" : {
+					"name" : "Baskisch"
+				},
+				"bas" : {
+					"name" : "Basa"
+				},
+				"bat" : {
+					"name" : "Baltische Sprachen"
+				},
+				"bej" : {
+					"name" : "Beja; Bedawiyet"
+				},
+				"bel" : {
+					"name" : "Weißrussisch",
+					"flag" : "by"
+				},
+				"bem" : {
+					"name" : "Bemba"
+				},
+				"ben" : {
+					"name" : "Bengalisch"
+				},
+				"ber" : {
+					"name" : "Berbersprachen"
+				},
+				"bho" : {
+					"name" : "Bhojpuri"
+				},
+				"bih" : {
+					"name" : "Bihari Sprachen"
+				},
+				"bik" : {
+					"name" : "Bikol"
+				},
+				"bin" : {
+					"name" : "Bini, Edo"
+				},
+				"bis" : {
+					"name" : "Bislama"
+				},
+				"bla" : {
+					"name" : "Siksika"
+				},
+				"bnt" : {
+					"name" : "Bantusprachen"
+				},
+				"bos" : {
+					"name" : "Bosnisch"
+				},
+				"bra" : {
+					"name" : "Braj"
+				},
+				"bre" : {
+					"name" : "Bretonisch"
+				},
+				"btk" : {
+					"name" : "Batak Sprachen"
+				},
+				"bua" : {
+					"name" : "Buriatisch"
+				},
+				"bug" : {
+					"name" : "Buginesisch"
+				},
+				"bul" : {
+					"name" : "Bulgarisch",
+					"flag" : "bg"
+				},
+				"bur" : {
+					"name" : "Birmanisch"
+				},
+				"mya" : {
+					"name" : "Birmanisch"
+				},
+				"byn" : {
+					"name" : "Blin; Bilin"
+				},
+				"cad" : {
+					"name" : "Caddo"
+				},
+				"cai" : {
+					"name" : "Zentralamerikanische indische Sprachen"
+				},
+				"car" : {
+					"name" : "Galibi Carib"
+				},
+				"cat" : {
+					"name" : "Katalanisch, Valencia",
+					"flag" : "es"
+				},
+				"cau" : {
+					"name" : "Kaukasische Sprachen"
+				},
+				"ceb" : {
+					"name" : "Cebuano"
+				},
+				"cel" : {
+					"name" : "Keltische Sprachen"
+				},
+				"cha" : {
+					"name" : "Chamorro"
+				},
+				"chb" : {
+					"name" : "Chibcha"
+				},
+				"che" : {
+					"name" : "Tschetschenisch"
+				},
+				"chg" : {
+					"name" : "Dschag."
+				},
+				"chi" : {
+					"name" : "Chinesisch"
+				},
+				"zho" : {
+					"name" : "Chinesisch",
+					"flag" : "cn"
+				},
+				"chk" : {
+					"name" : "Chuukese"
+				},
+				"chm" : {
+					"name" : "Mari"
+				},
+				"chn" : {
+					"name" : "Chinook-Jargon"
+				},
+				"cho" : {
+					"name" : "Choctaw"
+				},
+				"chp" : {
+					"name" : "Chipewyan; Dene Suline"
+				},
+				"chr" : {
+					"name" : "Cherokee"
+				},
+				"chu" : {
+					"name" : "Kirchenslawisch; Altslawisch; Altbulgarisch; Altkirchenslawisch"
+				},
+				"chv" : {
+					"name" : "Tschuwaschische Sprache"
+				},
+				"chy" : {
+					"name" : "Cheyenne"
+				},
+				"cmc" : {
+					"name" : "Chamic Sprachen"
+				},
+				"cop" : {
+					"name" : "Koptisch"
+				},
+				"cor" : {
+					"name" : "Cornish"
+				},
+				"cos" : {
+					"name" : "Korsisch"
+				},
+				"cpe" : {
+					"name" : "Kreolsprachen, englisch-basiert"
+				},
+				"cpf" : {
+					"name" : "Kreolsprachen, französisch-basiert"
+				},
+				"cpp" : {
+					"name" : "Kreolsprachen, portugiesisch-basiert"
+				},
+				"cre" : {
+					"name" : "Cree"
+				},
+				"crh" : {
+					"name" : "Krimtatarisch; Krim-türkisch"
+				},
+				"crp" : {
+					"name" : "Kreolsprachen"
+				},
+				"csb" : {
+					"name" : "Kaschubisch"
+				},
+				"cus" : {
+					"name" : "Kuschitische Sprachen"
+				},
+				"cze" : {
+					"name" : "Tschechisch"
+				},
+				"ces" : {
+					"name" : "Tschechisch",
+					"flag" : "cz"
+				},
+				"dak" : {
+					"name" : "Dakota"
+				},
+				"dan" : {
+					"name" : "Dänisch",
+					"flag" : "dk"
+				},
+				"dar" : {
+					"name" : "Dargwa"
+				},
+				"day" : {
+					"name" : "Land Dayak Sprachen"
+				},
+				"del" : {
+					"name" : "Delaware"
+				},
+				"den" : {
+					"name" : "Slave (Athapascan)"
+				},
+				"dgr" : {
+					"name" : "Dogrib"
+				},
+				"din" : {
+					"name" : "Dinka"
+				},
+				"div" : {
+					"name" : "Divehi; Dhivehi; maledivische"
+				},
+				"doi" : {
+					"name" : "Dogri"
+				},
+				"dra" : {
+					"name" : "Dravidische Sprachen"
+				},
+				"dsb" : {
+					"name" : "Niedersorbisch"
+				},
+				"dua" : {
+					"name" : "Duala"
+				},
+				"dum" : {
+					"name" : "Niederländisch, Mittel (ca.1050-1350)"
+				},
+				"dut" : {
+					"name" : "Niederländisch, Flämisch"
+				},
+				"nld" : {
+					"name" : "Niederländisch, Flämisch",
+					"flag" : "nl"
+				},
+				"dyu" : {
+					"name" : "Dyula"
+				},
+				"dzo" : {
+					"name" : "Dzongkha"
+				},
+				"efi" : {
+					"name" : "Efik"
+				},
+				"egy" : {
+					"name" : "Ägyptisch (Altertümlich)"
+				},
+				"eka" : {
+					"name" : "Ekajuk"
+				},
+				"elx" : {
+					"name" : "Elamite"
+				},
+				"eng" : {
+					"name" : "Englisch",
+					"flag" : "gb"
+				},
+				"enm" : {
+					"name" : "Englisch, Mittle (1100-1500)"
+				},
+				"epo" : {
+					"name" : "Esperanto"
+				},
+				"est" : {
+					"name" : "Estnisch",
+					"flag" : "ee"
+				},
+				"ewe" : {
+					"name" : "Ewe"
+				},
+				"ewo" : {
+					"name" : "Ewondo"
+				},
+				"fan" : {
+					"name" : "Fang"
+				},
+				"fao" : {
+					"name" : "Färöisch"
+				},
+				"fat" : {
+					"name" : "Fanti"
+				},
+				"fij" : {
+					"name" : "Fidschi"
+				},
+				"fil" : {
+					"name" : "Filipinisch"
+				},
+				"fin" : {
+					"name" : "Finnisch",
+					"flag" : "fi"
+				},
+				"fiu" : {
+					"name" : "Finno-ugrischen Sprachen"
+				},
+				"fon" : {
+					"name" : "Fon"
+				},
+				"fre" : {
+					"name" : "Französisch"
+				},
+				"fra" : {
+					"name" : "Französisch",
+					"flag" : "fr"
+				},
+				"frm" : {
+					"name" : "Französisch, Mittel (ca.1400-1600)"
+				},
+				"fro" : {
+					"name" : "Französisch, Alt (842-ca.1400)"
+				},
+				"frr" : {
+					"name" : "Nordfriesisch"
+				},
+				"frs" : {
+					"name" : "Ostfriesisch"
+				},
+				"fry" : {
+					"name" : "Westfriesisch"
+				},
+				"ful" : {
+					"name" : "Fulah"
+				},
+				"fur" : {
+					"name" : "Friaulisch"
+				},
+				"gaa" : {
+					"name" : "Ga"
+				},
+				"gay" : {
+					"name" : "Gayo"
+				},
+				"gba" : {
+					"name" : "Gbaya"
+				},
+				"gem" : {
+					"name" : "Germanische Sprachen"
+				},
+				"geo" : {
+					"name" : "Georgisch"
+				},
+				"kat" : {
+					"name" : "Georgisch"
+				},
+				"ger" : {
+					"name" : "Deutsch",
+					"flag" : "de"
+				},
+				"deu" : {
+					"name" : "Deutsch",
+					"flag" : "de"
+				},
+				"gez" : {
+					"name" : "Geez"
+				},
+				"gil" : {
+					"name" : "Gilbertesisch"
+				},
+				"gla" : {
+					"name" : "Gälisch, Schottisch-Gälisch"
+				},
+				"gle" : {
+					"name" : "Irisch",
+					"flag" : "ie"
+				},
+				"glg" : {
+					"name" : "Galizisch"
+				},
+				"glv" : {
+					"name" : "Manx"
+				},
+				"gmh" : {
+					"name" : "Deutsch, Mittlehoch (ca.1050-1500)"
+				},
+				"goh" : {
+					"name" : "Deutsch, Althoch (ca.750-1050)"
+				},
+				"gon" : {
+					"name" : "Gondi"
+				},
+				"gor" : {
+					"name" : "Gorontalo"
+				},
+				"got" : {
+					"name" : "Gotisch"
+				},
+				"grb" : {
+					"name" : "Grebo"
+				},
+				"grc" : {
+					"name" : "Altgriechisch (bis 1453)"
+				},
+				"gre" : {
+					"name" : "Griechisch, Modern (1453 -)"
+				},
+				"ell" : {
+					"name" : "Griechisch, Modern (1453 -)",
+					"flag" : "gr"
+				},
+				"grn" : {
+					"name" : "Guarani"
+				},
+				"gsw" : {
+					"name" : "Schweizerdeutsch, Alemannisch, Elsässisch"
+				},
+				"guj" : {
+					"name" : "Gujarati"
+				},
+				"gwi" : {
+					"name" : "Gwich'in"
+				},
+				"hai" : {
+					"name" : "Haida"
+				},
+				"hat" : {
+					"name" : "Haitianisch"
+				},
+				"hau" : {
+					"name" : "Hausa"
+				},
+				"haw" : {
+					"name" : "Hawaii"
+				},
+				"heb" : {
+					"name" : "Hebräisch",
+					"flag" : "il"
+				},
+				"her" : {
+					"name" : "Herero"
+				},
+				"hil" : {
+					"name" : "Hiligaynon"
+				},
+				"him" : {
+					"name" : "Himachali Sprachen; Pahari westliche Sprachen"
+				},
+				"hin" : {
+					"name" : "Hindi",
+					"flag" : "in"
+				},
+				"hit" : {
+					"name" : "Hethitisch"
+				},
+				"hmn" : {
+					"name" : "Hmong, Mong"
+				},
+				"hmo" : {
+					"name" : "Hiri Motu"
+				},
+				"hrv" : {
+					"name" : "Kroatisch",
+					"flag" : "hr"
+				},
+				"hsb" : {
+					"name" : "Obersorbisch"
+				},
+				"hun" : {
+					"name" : "Ungarisch",
+					"flag" : "hu"
+				},
+				"hup" : {
+					"name" : "Hupa"
+				},
+				"iba" : {
+					"name" : "Iban"
+				},
+				"ibo" : {
+					"name" : "Igbo"
+				},
+				"ice" : {
+					"name" : "Isländisch"
+				},
+				"isl" : {
+					"name" : "Isländisch",
+					"flag" : "is"
+				},
+				"ido" : {
+					"name" : "Ido"
+				},
+				"iii" : {
+					"name" : "Sichuan Yi; Nuosu"
+				},
+				"ijo" : {
+					"name" : "Ijo Sprachen"
+				},
+				"iku" : {
+					"name" : "Inuktitut"
+				},
+				"ile" : {
+					"name" : "Interlingue; Okzidental"
+				},
+				"ilo" : {
+					"name" : "Iloko"
+				},
+				"ina" : {
+					"name" : "Interlingua (International Auxiliary Language Association)"
+				},
+				"inc" : {
+					"name" : "Indische Sprachen"
+				},
+				"ind" : {
+					"name" : "Indonesisch",
+					"flag" : "id"
+				},
+				"ine" : {
+					"name" : "Indoeuropäische Sprachen"
+				},
+				"inh" : {
+					"name" : "Inguschisch"
+				},
+				"ipk" : {
+					"name" : "Inupiaq"
+				},
+				"ira" : {
+					"name" : "Iranische Sprachen"
+				},
+				"iro" : {
+					"name" : "Irokesen Sprachen"
+				},
+				"ita" : {
+					"name" : "Italienisch",
+					"flag" : "it"
+				},
+				"jav" : {
+					"name" : "Javaner"
+				},
+				"jbo" : {
+					"name" : "Lojban"
+				},
+				"jpn" : {
+					"name" : "Japanisch",
+					"flag" : "jp"
+				},
+				"jpr" : {
+					"name" : "Jüdisch-persisch"
+				},
+				"jrb" : {
+					"name" : "Jüdisch-arabisch"
+				},
+				"kaa" : {
+					"name" : "Kara-Kalpak"
+				},
+				"kab" : {
+					"name" : "Kabyle"
+				},
+				"kac" : {
+					"name" : "Kachin; Jingpho"
+				},
+				"kal" : {
+					"name" : "Kalaallisut; Grönländisch"
+				},
+				"kam" : {
+					"name" : "Kamba"
+				},
+				"kan" : {
+					"name" : "Kannada"
+				},
+				"kar" : {
+					"name" : "Karen Sprachen"
+				},
+				"kas" : {
+					"name" : "Kashmiri"
+				},
+				"kau" : {
+					"name" : "Kanuri"
+				},
+				"kaw" : {
+					"name" : "Kawi"
+				},
+				"kaz" : {
+					"name" : "Kasachisch"
+				},
+				"kbd" : {
+					"name" : "Kabardinisch"
+				},
+				"kha" : {
+					"name" : "Khasi"
+				},
+				"khi" : {
+					"name" : "Khoisan-Sprache"
+				},
+				"khm" : {
+					"name" : "Mittel-Khmer"
+				},
+				"kho" : {
+					"name" : "Khotanesisch; Sakan"
+				},
+				"kik" : {
+					"name" : "Kikuyu; Gikuyu"
+				},
+				"kin" : {
+					"name" : "Kinyarwanda"
+				},
+				"kir" : {
+					"name" : "Kirgisisch"
+				},
+				"kmb" : {
+					"name" : "Kimbundu"
+				},
+				"kok" : {
+					"name" : "Konkani"
+				},
+				"kom" : {
+					"name" : "Komi"
+				},
+				"kon" : {
+					"name" : "Kongo"
+				},
+				"kor" : {
+					"name" : "Koreanisch",
+					"flag" : "kr"
+				},
+				"kos" : {
+					"name" : "Kosraeanisch"
+				},
+				"kpe" : {
+					"name" : "Kpelle"
+				},
+				"krc" : {
+					"name" : "Karatschai-Balkar"
+				},
+				"krl" : {
+					"name" : "Karelisch"
+				},
+				"kro" : {
+					"name" : "Kru Sprachen"
+				},
+				"kru" : {
+					"name" : "Kurukh"
+				},
+				"kua" : {
+					"name" : "Kuanyama; Kwanyama"
+				},
+				"kum" : {
+					"name" : "Kumykisch"
+				},
+				"kur" : {
+					"name" : "Kurdisch"
+				},
+				"kut" : {
+					"name" : "Kutenai"
+				},
+				"lad" : {
+					"name" : "Ladino"
+				},
+				"lah" : {
+					"name" : "Lahnda"
+				},
+				"lam" : {
+					"name" : "Lamba"
+				},
+				"lao" : {
+					"name" : "Lao"
+				},
+				"lat" : {
+					"name" : "Latein"
+				},
+				"lav" : {
+					"name" : "Lettisch",
+					"flag" : "lv"
+				},
+				"lez" : {
+					"name" : "Lesgisch"
+				},
+				"lim" : {
+					"name" : "Limburgisch"
+				},
+				"lin" : {
+					"name" : "Lingála"
+				},
+				"lit" : {
+					"name" : "Litauisch",
+					"flag" : "lt"
+				},
+				"lol" : {
+					"name" : "Mongo"
+				},
+				"loz" : {
+					"name" : "Lozi"
+				},
+				"ltz" : {
+					"name" : "Luxemburgisch, Lëtzebuergesch"
+				},
+				"lua" : {
+					"name" : "Luba-Lulua"
+				},
+				"lub" : {
+					"name" : "Luba-Katanga"
+				},
+				"lug" : {
+					"name" : "Ganda"
+				},
+				"lui" : {
+					"name" : "Luiseno"
+				},
+				"lun" : {
+					"name" : "Lunda"
+				},
+				"luo" : {
+					"name" : "Luo (Kenia und Tansania)"
+				},
+				"lus" : {
+					"name" : "Lushai"
+				},
+				"mac" : {
+					"name" : "Mazedonisch"
+				},
+				"mkd" : {
+					"name" : "Mazedonisch",
+					"flag" : "mk"
+				},
+				"mad" : {
+					"name" : "Maduresisch"
+				},
+				"mag" : {
+					"name" : "Magahi"
+				},
+				"mah" : {
+					"name" : "Marshallese"
+				},
+				"mai" : {
+					"name" : "Maithili"
+				},
+				"mak" : {
+					"name" : "Makasar"
+				},
+				"mal" : {
+					"name" : "Malayalam"
+				},
+				"man" : {
+					"name" : "Mandingo"
+				},
+				"mao" : {
+					"name" : "Maori"
+				},
+				"mri" : {
+					"name" : "Maori"
+				},
+				"map" : {
+					"name" : "Austronesische Sprachen"
+				},
+				"mar" : {
+					"name" : "Marathi"
+				},
+				"mas" : {
+					"name" : "Masai"
+				},
+				"may" : {
+					"name" : "Malaiisch"
+				},
+				"msa" : {
+					"name" : "Malaiisch",
+					"flag" : "my"
+				},
+				"mdf" : {
+					"name" : "Moksha"
+				},
+				"mdr" : {
+					"name" : "Mandar"
+				},
+				"men" : {
+					"name" : "Mende"
+				},
+				"mga" : {
+					"name" : "Irisch, Mittel (900-1200)"
+				},
+				"mic" : {
+					"name" : "Mi'kmaq; Micmac"
+				},
+				"min" : {
+					"name" : "Minangkabau"
+				},
+				"mis" : {
+					"name" : "Unkodierte Sprachen"
+				},
+				"mkh" : {
+					"name" : "Mon-Khmer-Sprachen"
+				},
+				"mlg" : {
+					"name" : "Malagasy"
+				},
+				"mlt" : {
+					"name" : "Maltesisch",
+					"flag" : "mt"
+				},
+				"mnc" : {
+					"name" : "Manchu"
+				},
+				"mni" : {
+					"name" : "Manipuri"
+				},
+				"mno" : {
+					"name" : "Manobo Sprachen"
+				},
+				"moh" : {
+					"name" : "Mohawk"
+				},
+				"mon" : {
+					"name" : "Mongolisch"
+				},
+				"mos" : {
+					"name" : "Mossi"
+				},
+				"mul" : {
+					"name" : "Mehrere Sprachen"
+				},
+				"mun" : {
+					"name" : "Munda-Sprachen"
+				},
+				"mus" : {
+					"name" : "Bach"
+				},
+				"mwl" : {
+					"name" : "Mirandesisch"
+				},
+				"mwr" : {
+					"name" : "Marwari"
+				},
+				"myn" : {
+					"name" : "Maya-Sprachen"
+				},
+				"myv" : {
+					"name" : "Erzya"
+				},
+				"nah" : {
+					"name" : "Nahuatl Sprachen"
+				},
+				"nai" : {
+					"name" : "Nordamerikanische Indianer Sprachen"
+				},
+				"nap" : {
+					"name" : "Neapolitanisch"
+				},
+				"nau" : {
+					"name" : "Nauru"
+				},
+				"nav" : {
+					"name" : "Navajo; Navaho"
+				},
+				"nbl" : {
+					"name" : "Ndebele, Süd, Süd-Ndebele"
+				},
+				"nde" : {
+					"name" : "Ndebele, Nord, Nord-Ndebele"
+				},
+				"ndo" : {
+					"name" : "Ndonga"
+				},
+				"nds" : {
+					"name" : "Plattdeutsch; Niedersächsisch, Deutsch"
+				},
+				"nep" : {
+					"name" : "Nepali"
+				},
+				"new" : {
+					"name" : "Nepal Bhasa; Newari"
+				},
+				"nia" : {
+					"name" : "Nias"
+				},
+				"nic" : {
+					"name" : "Niger-Kordofanianische Sprachen"
+				},
+				"niu" : {
+					"name" : "Niuean"
+				},
+				"nno" : {
+					"name" : "Norwegisch Nynorsk"
+				},
+				"nob" : {
+					"name" : "Bokmål, Norwegisch, Norwegisch Bokmål"
+				},
+				"nog" : {
+					"name" : "Nogai"
+				},
+				"non" : {
+					"name" : "Norwegisch, Alt"
+				},
+				"nor" : {
+					"name" : "Norwegisch",
+					"flag" : "no"
+				},
+				"nqo" : {
+					"name" : "N'Ko"
+				},
+				"nso" : {
+					"name" : "Pedi; Sepedi; Nord Sotho"
+				},
+				"nub" : {
+					"name" : "Nubische Sprachen"
+				},
+				"nwc" : {
+					"name" : "Klassische Newari; Alt Newari; Klassische Nepal Bhasa"
+				},
+				"nya" : {
+					"name" : "Chichewa; Chewa; Nyanja"
+				},
+				"nym" : {
+					"name" : "Nyamwezi"
+				},
+				"nyn" : {
+					"name" : "Nyankole"
+				},
+				"nyo" : {
+					"name" : "Nyoro"
+				},
+				"nzi" : {
+					"name" : "Nzima"
+				},
+				"oci" : {
+					"name" : "Occitan (post 1500); provenzalischen"
+				},
+				"oji" : {
+					"name" : "Ojibwa"
+				},
+				"ori" : {
+					"name" : "Oriya"
+				},
+				"orm" : {
+					"name" : "Oromo"
+				},
+				"osa" : {
+					"name" : "Osage"
+				},
+				"oss" : {
+					"name" : "Ossetisch"
+				},
+				"ota" : {
+					"name" : "Türkisch, osmanische (1500-1928)"
+				},
+				"oto" : {
+					"name" : "Otomian Sprachen"
+				},
+				"paa" : {
+					"name" : "Papua-Sprachen"
+				},
+				"pag" : {
+					"name" : "Pangasinan"
+				},
+				"pal" : {
+					"name" : "Pahlavi"
+				},
+				"pam" : {
+					"name" : "Pampanga; Kapampangan"
+				},
+				"pan" : {
+					"name" : "Panjabi, Punjabi"
+				},
+				"pap" : {
+					"name" : "Papiamento"
+				},
+				"pau" : {
+					"name" : "Palau"
+				},
+				"peo" : {
+					"name" : "Persisch, Alt (ca.600-400 v. Chr.)"
+				},
+				"per" : {
+					"name" : "Persisch"
+				},
+				"fas" : {
+					"name" : "Persisch"
+				},
+				"phi" : {
+					"name" : "Philippinische Sprachen"
+				},
+				"phn" : {
+					"name" : "Phönizisch"
+				},
+				"pli" : {
+					"name" : "Pali"
+				},
+				"pol" : {
+					"name" : "Polnisch",
+					"flag" : "pl"
+				},
+				"pon" : {
+					"name" : "Pohnpeian"
+				},
+				"por" : {
+					"name" : "Portugiesisch",
+					"flag" : "pt"
+				},
+				"pra" : {
+					"name" : "Prakrit Sprachen"
+				},
+				"pro" : {
+					"name" : "Provençal, Alt (bis 1500)"
+				},
+				"pus" : {
+					"name" : "Paschtu, Paschtu"
+				},
+				"qaa-qtz" : {
+					"name" : "Reserviert für den lokalen Gebrauch"
+				},
+				"que" : {
+					"name" : "Quechua"
+				},
+				"raj" : {
+					"name" : "Rajasthani"
+				},
+				"rap" : {
+					"name" : "Rapanui"
+				},
+				"rar" : {
+					"name" : "Rarotongan; Cook Islands Maori"
+				},
+				"roa" : {
+					"name" : "Romanische Sprachen"
+				},
+				"roh" : {
+					"name" : "Rätoromanisch"
+				},
+				"rom" : {
+					"name" : "Roma"
+				},
+				"rum" : {
+					"name" : "Rumänisch; Moldawisch; Moldauisch"
+				},
+				"ron" : {
+					"name" : "Rumänisch; Moldawisch; Moldauisch",
+					"flag" : "ro"
+				},
+				"run" : {
+					"name" : "Rundi"
+				},
+				"rup" : {
+					"name" : "Aromunischen; Arumanian; Macedo-Rumänischen"
+				},
+				"rus" : {
+					"name" : "Russisch",
+					"flag" : "ru"
+				},
+				"sad" : {
+					"name" : "Sandawe"
+				},
+				"sag" : {
+					"name" : "Sango"
+				},
+				"sah" : {
+					"name" : "Yakut"
+				},
+				"sai" : {
+					"name" : "Südamerikanische Indianer (Andere)"
+				},
+				"sal" : {
+					"name" : "Salishan Sprachen"
+				},
+				"sam" : {
+					"name" : "Samariter Aramäisch"
+				},
+				"san" : {
+					"name" : "Sanskrit"
+				},
+				"sas" : {
+					"name" : "Sasak"
+				},
+				"sat" : {
+					"name" : "Santali"
+				},
+				"scn" : {
+					"name" : "Sizilianisch"
+				},
+				"sco" : {
+					"name" : "Schottisch"
+				},
+				"sel" : {
+					"name" : "Selkupisch"
+				},
+				"sem" : {
+					"name" : "Semitische Sprachen"
+				},
+				"sga" : {
+					"name" : "Irisch, Alt (bis 900)"
+				},
+				"sgn" : {
+					"name" : "Registrierte Sprachen"
+				},
+				"shn" : {
+					"name" : "Shan"
+				},
+				"sid" : {
+					"name" : "Sidamo"
+				},
+				"sin" : {
+					"name" : "Singhalesisch"
+				},
+				"sio" : {
+					"name" : "Sioux-Sprachen"
+				},
+				"sit" : {
+					"name" : "Sino-tibetische Sprachen"
+				},
+				"sla" : {
+					"name" : "Slawische Sprachen"
+				},
+				"slo" : {
+					"name" : "Slowakisch"
+				},
+				"slk" : {
+					"name" : "Slowakisch",
+					"flag" : "sk"
+				},
+				"slv" : {
+					"name" : "Slowenisch",
+					"flag" : "si"
+				},
+				"sma" : {
+					"name" : "Süd Sami"
+				},
+				"sme" : {
+					"name" : "Nord Sami"
+				},
+				"smi" : {
+					"name" : "Sami Sprachen"
+				},
+				"smj" : {
+					"name" : "Lulesamisch"
+				},
+				"smn" : {
+					"name" : "Inari-Samen"
+				},
+				"smo" : {
+					"name" : "Samoaner"
+				},
+				"sms" : {
+					"name" : "Skolt Sami"
+				},
+				"sna" : {
+					"name" : "Shona"
+				},
+				"snd" : {
+					"name" : "Sindhi"
+				},
+				"snk" : {
+					"name" : "Soninke"
+				},
+				"sog" : {
+					"name" : "Sogdisch"
+				},
+				"som" : {
+					"name" : "Somali"
+				},
+				"son" : {
+					"name" : "Songhai Sprachen"
+				},
+				"sot" : {
+					"name" : "Sotho, Südlich"
+				},
+				"spa" : {
+					"name" : "Spanisch, Kastilisch",
+					"flag" : "es"
+				},
+				"srd" : {
+					"name" : "Sardisch"
+				},
+				"srn" : {
+					"name" : "Sranan Tongo"
+				},
+				"srp" : {
+					"name" : "Serbisch",
+					"flag" : "rs"
+				},
+				"srr" : {
+					"name" : "Serer"
+				},
+				"ssa" : {
+					"name" : "Nilosaharanische Sprachen"
+				},
+				"ssw" : {
+					"name" : "Swati"
+				},
+				"suk" : {
+					"name" : "Sukuma"
+				},
+				"sun" : {
+					"name" : "Sundanesisch"
+				},
+				"sus" : {
+					"name" : "Susu"
+				},
+				"sux" : {
+					"name" : "Sumerisch"
+				},
+				"swa" : {
+					"name" : "Swahili"
+				},
+				"swe" : {
+					"name" : "Schwedisch",
+					"flag" : "se"
+				},
+				"syc" : {
+					"name" : "Klassisch Syrisch"
+				},
+				"syr" : {
+					"name" : "Syrisch"
+				},
+				"tah" : {
+					"name" : "Tahitianisch"
+				},
+				"tai" : {
+					"name" : "Tai Sprachen"
+				},
+				"tam" : {
+					"name" : "Tamilisch"
+				},
+				"tat" : {
+					"name" : "Tatar"
+				},
+				"tel" : {
+					"name" : "Telugu"
+				},
+				"tem" : {
+					"name" : "Timne"
+				},
+				"ter" : {
+					"name" : "Tereno"
+				},
+				"tet" : {
+					"name" : "Tetum"
+				},
+				"tgk" : {
+					"name" : "Tadschikisch"
+				},
+				"tgl" : {
+					"name" : "Tagalog"
+				},
+				"tha" : {
+					"name" : "Thailändisch",
+					"flag" : "th"
+				},
+				"tib" : {
+					"name" : "Tibetisch"
+				},
+				"bod" : {
+					"name" : "Tibetisch"
+				},
+				"tig" : {
+					"name" : "Tigre"
+				},
+				"tir" : {
+					"name" : "Tigrinya"
+				},
+				"tiv" : {
+					"name" : "Tiv"
+				},
+				"tkl" : {
+					"name" : "Tokelau"
+				},
+				"tlh" : {
+					"name" : "Klingonisch; tlhIngan-Hol"
+				},
+				"tli" : {
+					"name" : "Tlingit"
+				},
+				"tmh" : {
+					"name" : "Tamashek"
+				},
+				"tog" : {
+					"name" : "Tonga (Nyasa)"
+				},
+				"ton" : {
+					"name" : "Tonga (Tonga-Inseln)"
+				},
+				"tpi" : {
+					"name" : "Tok Pisin"
+				},
+				"tsi" : {
+					"name" : "Tsimshian"
+				},
+				"tsn" : {
+					"name" : "Tswana"
+				},
+				"tso" : {
+					"name" : "Tsonga"
+				},
+				"tuk" : {
+					"name" : "Turkmenisch"
+				},
+				"tum" : {
+					"name" : "Tumbuka"
+				},
+				"tup" : {
+					"name" : "Tupi-Sprachen"
+				},
+				"tur" : {
+					"name" : "Türkisch",
+					"flag" : "tr"
+				},
+				"tut" : {
+					"name" : "Altaische Sprachen"
+				},
+				"tvl" : {
+					"name" : "Tuvalu"
+				},
+				"twi" : {
+					"name" : "Twi"
+				},
+				"tyv" : {
+					"name" : "Tuvinisch"
+				},
+				"udm" : {
+					"name" : "Udmurtisch"
+				},
+				"uga" : {
+					"name" : "Ugaritisch"
+				},
+				"uig" : {
+					"name" : "Uigurisch"
+				},
+				"ukr" : {
+					"name" : "Ukrainisch",
+					"flag" : "ua"
+				},
+				"umb" : {
+					"name" : "Umbundu"
+				},
+				"und" : {
+					"name" : "Unbestimmt"
+				},
+				"urd" : {
+					"name" : "Urdu"
+				},
+				"uzb" : {
+					"name" : "Usbekisch"
+				},
+				"vai" : {
+					"name" : "Vai"
+				},
+				"ven" : {
+					"name" : "Venda"
+				},
+				"vie" : {
+					"name" : "Vietnamesisch",
+					"flag" : "vn"
+				},
+				"vol" : {
+					"name" : "Volapük"
+				},
+				"vot" : {
+					"name" : "Wotisch"
+				},
+				"wak" : {
+					"name" : "Wakashan Sprachen"
+				},
+				"wal" : {
+					"name" : "Walamo"
+				},
+				"war" : {
+					"name" : "Waray"
+				},
+				"was" : {
+					"name" : "Washo"
+				},
+				"wel" : {
+					"name" : "Walisisch"
+				},
+				"cym" : {
+					"name" : "Walisisch"
+				},
+				"wen" : {
+					"name" : "Sorbische Sprachen"
+				},
+				"wln" : {
+					"name" : "Wallonisch"
+				},
+				"wol" : {
+					"name" : "Wolof"
+				},
+				"xal" : {
+					"name" : "Kalmücken; Oirat"
+				},
+				"xho" : {
+					"name" : "Xhosa"
+				},
+				"yao" : {
+					"name" : "Yao"
+				},
+				"yap" : {
+					"name" : "Yap"
+				},
+				"yid" : {
+					"name" : "Jiddisch"
+				},
+				"yor" : {
+					"name" : "Yoruba"
+				},
+				"ypk" : {
+					"name" : "Yupik Sprachen"
+				},
+				"zap" : {
+					"name" : "Zapoteken"
+				},
+				"zbl" : {
+					"name" : "Bliss-Symbole; Blissymbolics; Bliss"
+				},
+				"zen" : {
+					"name" : "Zenaga"
+				},
+				"zha" : {
+					"name" : "Zhuang; Chuang"
+				},
+				"znd" : {
+					"name" : "Zande Sprachen"
+				},
+				"zul" : {
+					"name" : "Zulu"
+				},
+				"zun" : {
+					"name" : "Zuni"
+				},
+				"zxx" : {
+					"name" : "Kein sprachlicher Inhalt; Entfällt"
+				},
+				"zza" : {
+					"name" : "Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki"
+				}
+			};
+			
+			return iso;
+		});
+
+define('link/../../../shared/languages/./iso639-1-en',
+		[],
+		function() {
+
+			var iso = {
+				"aa" : {
+					"name" : "Afar"
+				},
+				"ab" : {
+					"name" : "Abkhazian"
+				},
+				"af" : {
+					"name" : "Afrikaans"
+				},
+				"ak" : {
+					"name" : "Akan"
+				},
+				"sq" : {
+					"name" : "Albanian"
+				},
+				"am" : {
+					"name" : "Amharic"
+				},
+				"ar" : {
+					"name" : "Arabic",
+					"flag" : "ae"
+				},
+				"an" : {
+					"name" : "Aragonese"
+				},
+				"hy" : {
+					"name" : "Armenian"
+				},
+				"as" : {
+					"name" : "Assamese"
+				},
+				"av" : {
+					"name" : "Avaric"
+				},
+				"ae" : {
+					"name" : "Avestan"
+				},
+				"ay" : {
+					"name" : "Aymara"
+				},
+				"az" : {
+					"name" : "Azerbaijani"
+				},
+				"ba" : {
+					"name" : "Bashkir"
+				},
+				"bm" : {
+					"name" : "Bambara"
+				},
+				"eu" : {
+					"name" : "Basque"
+				},
+				"be" : {
+					"name" : "Belarusian",
+					"flag" : "by"
+				},
+				"bn" : {
+					"name" : "Bengali"
+				},
+				"bh" : {
+					"name" : "Bihari languages"
+				},
+				"bi" : {
+					"name" : "Bislama"
+				},
+				"bs" : {
+					"name" : "Bosnian"
+				},
+				"br" : {
+					"name" : "Breton"
+				},
+				"bg" : {
+					"name" : "Bulgarian",
+					"flag" : "bg"
+				},
+				"my" : {
+					"name" : "Burmese"
+				},
+				"ca" : {
+					"name" : "Catalan; Valencian",
+					"flag" : "es"
+				},
+				"ch" : {
+					"name" : "Chamorro"
+				},
+				"ce" : {
+					"name" : "Chechen"
+				},
+				"zh" : {
+					"name" : "Chinese"
+				},
+				"cu" : {
+					"name" : "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic"
+				},
+				"cv" : {
+					"name" : "Chuvash"
+				},
+				"kw" : {
+					"name" : "Cornish"
+				},
+				"co" : {
+					"name" : "Corsican"
+				},
+				"cr" : {
+					"name" : "Cree"
+				},
+				"cs" : {
+					"name" : "Czech"
+				},
+				"da" : {
+					"name" : "Danish",
+					"flag" : "dk"
+				},
+				"dv" : {
+					"name" : "Divehi; Dhivehi; Maldivian"
+				},
+				"nl" : {
+					"name" : "Dutch; Flemish"
+				},
+				"dz" : {
+					"name" : "Dzongkha"
+				},
+				"en" : {
+					"name" : "English",
+					"flag" : "gb"
+				},
+				"eo" : {
+					"name" : "Esperanto"
+				},
+				"et" : {
+					"name" : "Estonian",
+					"flag" : "ee"
+				},
+				"ee" : {
+					"name" : "Ewe"
+				},
+				"fo" : {
+					"name" : "Faroese"
+				},
+				"fj" : {
+					"name" : "Fijian"
+				},
+				"fi" : {
+					"name" : "Finnish",
+					"flag" : "fi"
+				},
+				"fr" : {
+					"name" : "French"
+				},
+				"fy" : {
+					"name" : "Western Frisian"
+				},
+				"ff" : {
+					"name" : "Fulah"
+				},
+				"ka" : {
+					"name" : "Georgian"
+				},
+				"de" : {
+					"name" : "German",
+					"flag" : "de"
+				},
+				"gd" : {
+					"name" : "Gaelic; Scottish Gaelic"
+				},
+				"ga" : {
+					"name" : "Irish",
+					"flag" : "ie"
+				},
+				"gl" : {
+					"name" : "Galician"
+				},
+				"gv" : {
+					"name" : "Manx"
+				},
+				"el" : {
+					"name" : "Greek, Modern (1453-)"
+				},
+				"gn" : {
+					"name" : "Guarani"
+				},
+				"gu" : {
+					"name" : "Gujarati"
+				},
+				"ht" : {
+					"name" : "Haitian; Haitian Creole"
+				},
+				"ha" : {
+					"name" : "Hausa"
+				},
+				"he" : {
+					"name" : "Hebrew",
+					"flag" : "il"
+				},
+				"hz" : {
+					"name" : "Herero"
+				},
+				"hi" : {
+					"name" : "Hindi",
+					"flag" : "in"
+				},
+				"ho" : {
+					"name" : "Hiri Motu"
+				},
+				"hr" : {
+					"name" : "Croatian",
+					"flag" : "hr"
+				},
+				"hu" : {
+					"name" : "Hungarian",
+					"flag" : "hu"
+				},
+				"ig" : {
+					"name" : "Igbo"
+				},
+				"is" : {
+					"name" : "Icelandic"
+				},
+				"io" : {
+					"name" : "Ido"
+				},
+				"ii" : {
+					"name" : "Sichuan Yi; Nuosu"
+				},
+				"iu" : {
+					"name" : "Inuktitut"
+				},
+				"ie" : {
+					"name" : "Interlingue; Occidental"
+				},
+				"ia" : {
+					"name" : "Interlingua (International Auxiliary Language Association)"
+				},
+				"id" : {
+					"name" : "Indonesian",
+					"flag" : "id"
+				},
+				"ik" : {
+					"name" : "Inupiaq"
+				},
+				"it" : {
+					"name" : "Italian",
+					"flag" : "it"
+				},
+				"jv" : {
+					"name" : "Javanese"
+				},
+				"ja" : {
+					"name" : "Japanese",
+					"flag" : "jp"
+				},
+				"kl" : {
+					"name" : "Kalaallisut; Greenlandic"
+				},
+				"kn" : {
+					"name" : "Kannada"
+				},
+				"ks" : {
+					"name" : "Kashmiri"
+				},
+				"kr" : {
+					"name" : "Kanuri"
+				},
+				"kk" : {
+					"name" : "Kazakh"
+				},
+				"km" : {
+					"name" : "Central Khmer"
+				},
+				"ki" : {
+					"name" : "Kikuyu; Gikuyu"
+				},
+				"rw" : {
+					"name" : "Kinyarwanda"
+				},
+				"ky" : {
+					"name" : "Kirghiz; Kyrgyz"
+				},
+				"kv" : {
+					"name" : "Komi"
+				},
+				"kg" : {
+					"name" : "Kongo"
+				},
+				"ko" : {
+					"name" : "Korean",
+					"flag" : "kr"
+				},
+				"kj" : {
+					"name" : "Kuanyama; Kwanyama"
+				},
+				"ku" : {
+					"name" : "Kurdish"
+				},
+				"lo" : {
+					"name" : "Lao"
+				},
+				"la" : {
+					"name" : "Latin"
+				},
+				"lv" : {
+					"name" : "Latvian",
+					"flag" : "lv"
+				},
+				"li" : {
+					"name" : "Limburgan; Limburger; Limburgish"
+				},
+				"ln" : {
+					"name" : "Lingala"
+				},
+				"lt" : {
+					"name" : "Lithuanian",
+					"flag" : "lt"
+				},
+				"lb" : {
+					"name" : "Luxembourgish; Letzeburgesch"
+				},
+				"lu" : {
+					"name" : "Luba-Katanga"
+				},
+				"lg" : {
+					"name" : "Ganda"
+				},
+				"mk" : {
+					"name" : "Macedonian"
+				},
+				"mh" : {
+					"name" : "Marshallese"
+				},
+				"ml" : {
+					"name" : "Malayalam"
+				},
+				"mi" : {
+					"name" : "Maori"
+				},
+				"mr" : {
+					"name" : "Marathi"
+				},
+				"ms" : {
+					"name" : "Malay"
+				},
+				"mg" : {
+					"name" : "Malagasy"
+				},
+				"mt" : {
+					"name" : "Maltese",
+					"flag" : "mt"
+				},
+				"mn" : {
+					"name" : "Mongolian"
+				},
+				"na" : {
+					"name" : "Nauru"
+				},
+				"nv" : {
+					"name" : "Navajo; Navaho"
+				},
+				"nr" : {
+					"name" : "Ndebele, South; South Ndebele"
+				},
+				"nd" : {
+					"name" : "Ndebele, North; North Ndebele"
+				},
+				"ng" : {
+					"name" : "Ndonga"
+				},
+				"ne" : {
+					"name" : "Nepali"
+				},
+				"nn" : {
+					"name" : "Norwegian Nynorsk; Nynorsk, Norwegian"
+				},
+				"nb" : {
+					"name" : "Bokmål, Norwegian; Norwegian Bokmål"
+				},
+				"no" : {
+					"name" : "Norwegian",
+					"flag" : "no"
+				},
+				"ny" : {
+					"name" : "Chichewa; Chewa; Nyanja"
+				},
+				"oc" : {
+					"name" : "Occitan (post 1500); Provençal"
+				},
+				"oj" : {
+					"name" : "Ojibwa"
+				},
+				"or" : {
+					"name" : "Oriya"
+				},
+				"om" : {
+					"name" : "Oromo"
+				},
+				"os" : {
+					"name" : "Ossetian; Ossetic"
+				},
+				"pa" : {
+					"name" : "Panjabi; Punjabi"
+				},
+				"fa" : {
+					"name" : "Persian"
+				},
+				"pi" : {
+					"name" : "Pali"
+				},
+				"pl" : {
+					"name" : "Polish",
+					"flag" : "pl"
+				},
+				"pt" : {
+					"name" : "Portuguese",
+					"flag" : "pt"
+				},
+				"ps" : {
+					"name" : "Pushto; Pashto"
+				},
+				"qu" : {
+					"name" : "Quechua"
+				},
+				"rm" : {
+					"name" : "Romansh"
+				},
+				"ro" : {
+					"name" : "Romanian; Moldavian; Moldovan"
+				},
+				"rn" : {
+					"name" : "Rundi"
+				},
+				"ru" : {
+					"name" : "Russian",
+					"flag" : "ru"
+				},
+				"sg" : {
+					"name" : "Sango"
+				},
+				"sa" : {
+					"name" : "Sanskrit"
+				},
+				"si" : {
+					"name" : "Sinhala; Sinhalese"
+				},
+				"sk" : {
+					"name" : "Slovak"
+				},
+				"sl" : {
+					"name" : "Slovenian",
+					"flag" : "si"
+				},
+				"se" : {
+					"name" : "Northern Sami"
+				},
+				"sm" : {
+					"name" : "Samoan"
+				},
+				"sn" : {
+					"name" : "Shona"
+				},
+				"sd" : {
+					"name" : "Sindhi"
+				},
+				"so" : {
+					"name" : "Somali"
+				},
+				"st" : {
+					"name" : "Sotho, Southern"
+				},
+				"es" : {
+					"name" : "Spanish; Castilian",
+					"flag" : "es"
+				},
+				"sc" : {
+					"name" : "Sardinian"
+				},
+				"sr" : {
+					"name" : "Serbian",
+					"flag" : "rs"
+				},
+				"ss" : {
+					"name" : "Swati"
+				},
+				"su" : {
+					"name" : "Sundanese"
+				},
+				"sw" : {
+					"name" : "Swahili"
+				},
+				"sv" : {
+					"name" : "Swedish",
+					"flag" : "se"
+				},
+				"ty" : {
+					"name" : "Tahitian"
+				},
+				"ta" : {
+					"name" : "Tamil"
+				},
+				"tt" : {
+					"name" : "Tatar"
+				},
+				"te" : {
+					"name" : "Telugu"
+				},
+				"tg" : {
+					"name" : "Tajik"
+				},
+				"tl" : {
+					"name" : "Tagalog"
+				},
+				"th" : {
+					"name" : "Thai",
+					"flag" : "th"
+				},
+				"bo" : {
+					"name" : "Tibetan"
+				},
+				"ti" : {
+					"name" : "Tigrinya"
+				},
+				"to" : {
+					"name" : "Tonga (Tonga Islands)"
+				},
+				"tn" : {
+					"name" : "Tswana"
+				},
+				"ts" : {
+					"name" : "Tsonga"
+				},
+				"tk" : {
+					"name" : "Turkmen"
+				},
+				"tr" : {
+					"name" : "Turkish",
+					"flag" : "tr"
+				},
+				"tw" : {
+					"name" : "Twi"
+				},
+				"ug" : {
+					"name" : "Uighur; Uyghur"
+				},
+				"uk" : {
+					"name" : "Ukrainian",
+					"flag" : "ua"
+				},
+				"ur" : {
+					"name" : "Urdu"
+				},
+				"uz" : {
+					"name" : "Uzbek"
+				},
+				"ve" : {
+					"name" : "Venda"
+				},
+				"vi" : {
+					"name" : "Vietnamese",
+					"flag" : "vn"
+				},
+				"vo" : {
+					"name" : "Volapük"
+				},
+				"cy" : {
+					"name" : "Welsh"
+				},
+				"wa" : {
+					"name" : "Walloon"
+				},
+				"wo" : {
+					"name" : "Wolof"
+				},
+				"xh" : {
+					"name" : "Xhosa"
+				},
+				"yi" : {
+					"name" : "Yiddish"
+				},
+				"yo" : {
+					"name" : "Yoruba"
+				},
+				"za" : {
+					"name" : "Zhuang; Chuang"
+				},
+				"zu" : {
+					"name" : "Zulu"
+				}
+			};
+			
+			return iso;
+		});
+
+define('link/../../../shared/languages/./iso639-2-en',
+		[],
+		function() {
+
+			var iso = {
+				"aar" : {
+					"name" : "Afar"
+				},
+				"abk" : {
+					"name" : "Abkhazian"
+				},
+				"ace" : {
+					"name" : "Achinese"
+				},
+				"ach" : {
+					"name" : "Acoli"
+				},
+				"ada" : {
+					"name" : "Adangme"
+				},
+				"ady" : {
+					"name" : "Adyghe; Adygei"
+				},
+				"afa" : {
+					"name" : "Afro-Asiatic languages"
+				},
+				"afh" : {
+					"name" : "Afrihili"
+				},
+				"afr" : {
+					"name" : "Afrikaans"
+				},
+				"ain" : {
+					"name" : "Ainu"
+				},
+				"aka" : {
+					"name" : "Akan"
+				},
+				"akk" : {
+					"name" : "Akkadian"
+				},
+				"alb" : {
+					"name" : "Albanian"
+				},
+				"sqi" : {
+					"name" : "Albanian",
+					"flag" : "al"
+				},
+				"ale" : {
+					"name" : "Aleut"
+				},
+				"alg" : {
+					"name" : "Algonquian languages"
+				},
+				"alt" : {
+					"name" : "Southern Altai"
+				},
+				"amh" : {
+					"name" : "Amharic"
+				},
+				"ang" : {
+					"name" : "English, Old (ca.450-1100)"
+				},
+				"anp" : {
+					"name" : "Angika"
+				},
+				"apa" : {
+					"name" : "Apache languages"
+				},
+				"ara" : {
+					"name" : "Arabic",
+					"flag" : "ae"
+				},
+				"arc" : {
+					"name" : "Official Aramaic (700-300 BCE); Imperial Aramaic (700-300 BCE)"
+				},
+				"arg" : {
+					"name" : "Aragonese"
+				},
+				"arm" : {
+					"name" : "Armenian"
+				},
+				"hye" : {
+					"name" : "Armenian"
+				},
+				"arn" : {
+					"name" : "Mapudungun; Mapuche"
+				},
+				"arp" : {
+					"name" : "Arapaho"
+				},
+				"art" : {
+					"name" : "Artificial languages"
+				},
+				"arw" : {
+					"name" : "Arawak"
+				},
+				"asm" : {
+					"name" : "Assamese"
+				},
+				"ast" : {
+					"name" : "Asturian; Bable; Leonese; Asturleonese"
+				},
+				"ath" : {
+					"name" : "Athapascan languages"
+				},
+				"aus" : {
+					"name" : "Australian languages"
+				},
+				"ava" : {
+					"name" : "Avaric"
+				},
+				"ave" : {
+					"name" : "Avestan"
+				},
+				"awa" : {
+					"name" : "Awadhi"
+				},
+				"aym" : {
+					"name" : "Aymara"
+				},
+				"aze" : {
+					"name" : "Azerbaijani"
+				},
+				"bad" : {
+					"name" : "Banda languages"
+				},
+				"bai" : {
+					"name" : "Bamileke languages"
+				},
+				"bak" : {
+					"name" : "Bashkir"
+				},
+				"bal" : {
+					"name" : "Baluchi"
+				},
+				"bam" : {
+					"name" : "Bambara"
+				},
+				"ban" : {
+					"name" : "Balinese"
+				},
+				"baq" : {
+					"name" : "Basque"
+				},
+				"eus" : {
+					"name" : "Basque"
+				},
+				"bas" : {
+					"name" : "Basa"
+				},
+				"bat" : {
+					"name" : "Baltic languages"
+				},
+				"bej" : {
+					"name" : "Beja; Bedawiyet"
+				},
+				"bel" : {
+					"name" : "Belarusian",
+					"flag" : "by"
+				},
+				"bem" : {
+					"name" : "Bemba"
+				},
+				"ben" : {
+					"name" : "Bengali"
+				},
+				"ber" : {
+					"name" : "Berber languages"
+				},
+				"bho" : {
+					"name" : "Bhojpuri"
+				},
+				"bih" : {
+					"name" : "Bihari languages"
+				},
+				"bik" : {
+					"name" : "Bikol"
+				},
+				"bin" : {
+					"name" : "Bini; Edo"
+				},
+				"bis" : {
+					"name" : "Bislama"
+				},
+				"bla" : {
+					"name" : "Siksika"
+				},
+				"bnt" : {
+					"name" : "Bantu (Other)"
+				},
+				"bos" : {
+					"name" : "Bosnian"
+				},
+				"bra" : {
+					"name" : "Braj"
+				},
+				"bre" : {
+					"name" : "Breton"
+				},
+				"btk" : {
+					"name" : "Batak languages"
+				},
+				"bua" : {
+					"name" : "Buriat"
+				},
+				"bug" : {
+					"name" : "Buginese"
+				},
+				"bul" : {
+					"name" : "Bulgarian",
+					"flag" : "bg"
+				},
+				"bur" : {
+					"name" : "Burmese"
+				},
+				"mya" : {
+					"name" : "Burmese"
+				},
+				"byn" : {
+					"name" : "Blin; Bilin"
+				},
+				"cad" : {
+					"name" : "Caddo"
+				},
+				"cai" : {
+					"name" : "Central American Indian languages"
+				},
+				"car" : {
+					"name" : "Galibi Carib"
+				},
+				"cat" : {
+					"name" : "Catalan; Valencian",
+					"flag" : "es"
+				},
+				"cau" : {
+					"name" : "Caucasian languages"
+				},
+				"ceb" : {
+					"name" : "Cebuano"
+				},
+				"cel" : {
+					"name" : "Celtic languages"
+				},
+				"cha" : {
+					"name" : "Chamorro"
+				},
+				"chb" : {
+					"name" : "Chibcha"
+				},
+				"che" : {
+					"name" : "Chechen"
+				},
+				"chg" : {
+					"name" : "Chagatai"
+				},
+				"chi" : {
+					"name" : "Chinese"
+				},
+				"zho" : {
+					"name" : "Chinese",
+					"flag" : "cn"
+				},
+				"chk" : {
+					"name" : "Chuukese"
+				},
+				"chm" : {
+					"name" : "Mari"
+				},
+				"chn" : {
+					"name" : "Chinook jargon"
+				},
+				"cho" : {
+					"name" : "Choctaw"
+				},
+				"chp" : {
+					"name" : "Chipewyan; Dene Suline"
+				},
+				"chr" : {
+					"name" : "Cherokee"
+				},
+				"chu" : {
+					"name" : "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic"
+				},
+				"chv" : {
+					"name" : "Chuvash"
+				},
+				"chy" : {
+					"name" : "Cheyenne"
+				},
+				"cmc" : {
+					"name" : "Chamic languages"
+				},
+				"cop" : {
+					"name" : "Coptic"
+				},
+				"cor" : {
+					"name" : "Cornish"
+				},
+				"cos" : {
+					"name" : "Corsican"
+				},
+				"cpe" : {
+					"name" : "Creoles and pidgins, English based"
+				},
+				"cpf" : {
+					"name" : "Creoles and pidgins, French-based "
+				},
+				"cpp" : {
+					"name" : "Creoles and pidgins, Portuguese-based "
+				},
+				"cre" : {
+					"name" : "Cree"
+				},
+				"crh" : {
+					"name" : "Crimean Tatar; Crimean Turkish"
+				},
+				"crp" : {
+					"name" : "Creoles and pidgins "
+				},
+				"csb" : {
+					"name" : "Kashubian"
+				},
+				"cus" : {
+					"name" : "Cushitic languages"
+				},
+				"cze" : {
+					"name" : "Czech"
+				},
+				"ces" : {
+					"name" : "Czech",
+					"flag" : "cz"
+				},
+				"dak" : {
+					"name" : "Dakota"
+				},
+				"dan" : {
+					"name" : "Danish",
+					"flag" : "dk"
+				},
+				"dar" : {
+					"name" : "Dargwa"
+				},
+				"day" : {
+					"name" : "Land Dayak languages"
+				},
+				"del" : {
+					"name" : "Delaware"
+				},
+				"den" : {
+					"name" : "Slave (Athapascan)"
+				},
+				"dgr" : {
+					"name" : "Dogrib"
+				},
+				"din" : {
+					"name" : "Dinka"
+				},
+				"div" : {
+					"name" : "Divehi; Dhivehi; Maldivian"
+				},
+				"doi" : {
+					"name" : "Dogri"
+				},
+				"dra" : {
+					"name" : "Dravidian languages"
+				},
+				"dsb" : {
+					"name" : "Lower Sorbian"
+				},
+				"dua" : {
+					"name" : "Duala"
+				},
+				"dum" : {
+					"name" : "Dutch, Middle (ca.1050-1350)"
+				},
+				"dut" : {
+					"name" : "Dutch; Flemish"
+				},
+				"nld" : {
+					"name" : "Dutch; Flemish",
+					"flag" : "nl"
+				},
+				"dyu" : {
+					"name" : "Dyula"
+				},
+				"dzo" : {
+					"name" : "Dzongkha"
+				},
+				"efi" : {
+					"name" : "Efik"
+				},
+				"egy" : {
+					"name" : "Egyptian (Ancient)"
+				},
+				"eka" : {
+					"name" : "Ekajuk"
+				},
+				"elx" : {
+					"name" : "Elamite"
+				},
+				"eng" : {
+					"name" : "English",
+					"flag" : "gb"
+				},
+				"enm" : {
+					"name" : "English, Middle (1100-1500)"
+				},
+				"epo" : {
+					"name" : "Esperanto"
+				},
+				"est" : {
+					"name" : "Estonian",
+					"flag" : "ee"
+				},
+				"ewe" : {
+					"name" : "Ewe"
+				},
+				"ewo" : {
+					"name" : "Ewondo"
+				},
+				"fan" : {
+					"name" : "Fang"
+				},
+				"fao" : {
+					"name" : "Faroese"
+				},
+				"fat" : {
+					"name" : "Fanti"
+				},
+				"fij" : {
+					"name" : "Fijian"
+				},
+				"fil" : {
+					"name" : "Filipino; Pilipino"
+				},
+				"fin" : {
+					"name" : "Finnish",
+					"flag" : "fi"
+				},
+				"fiu" : {
+					"name" : "Finno-Ugrian languages"
+				},
+				"fon" : {
+					"name" : "Fon"
+				},
+				"fre" : {
+					"name" : "French"
+				},
+				"fra" : {
+					"name" : "French",
+					"flag" : "fr"
+				},
+				"frm" : {
+					"name" : "French, Middle (ca.1400-1600)"
+				},
+				"fro" : {
+					"name" : "French, Old (842-ca.1400)"
+				},
+				"frr" : {
+					"name" : "Northern Frisian"
+				},
+				"frs" : {
+					"name" : "Eastern Frisian"
+				},
+				"fry" : {
+					"name" : "Western Frisian"
+				},
+				"ful" : {
+					"name" : "Fulah"
+				},
+				"fur" : {
+					"name" : "Friulian"
+				},
+				"gaa" : {
+					"name" : "Ga"
+				},
+				"gay" : {
+					"name" : "Gayo"
+				},
+				"gba" : {
+					"name" : "Gbaya"
+				},
+				"gem" : {
+					"name" : "Germanic languages"
+				},
+				"geo" : {
+					"name" : "Georgian"
+				},
+				"kat" : {
+					"name" : "Georgian"
+				},
+				"ger" : {
+					"name" : "German",
+					"flag" : "de"
+				},
+				"deu" : {
+					"name" : "German",
+					"flag" : "de"
+				},
+				"gez" : {
+					"name" : "Geez"
+				},
+				"gil" : {
+					"name" : "Gilbertese"
+				},
+				"gla" : {
+					"name" : "Gaelic; Scottish Gaelic"
+				},
+				"gle" : {
+					"name" : "Irish",
+					"flag" : "ie"
+				},
+				"glg" : {
+					"name" : "Galician"
+				},
+				"glv" : {
+					"name" : "Manx"
+				},
+				"gmh" : {
+					"name" : "German, Middle High (ca.1050-1500)"
+				},
+				"goh" : {
+					"name" : "German, Old High (ca.750-1050)"
+				},
+				"gon" : {
+					"name" : "Gondi"
+				},
+				"gor" : {
+					"name" : "Gorontalo"
+				},
+				"got" : {
+					"name" : "Gothic"
+				},
+				"grb" : {
+					"name" : "Grebo"
+				},
+				"grc" : {
+					"name" : "Greek, Ancient (to 1453)"
+				},
+				"gre" : {
+					"name" : "Greek, Modern (1453-)"
+				},
+				"ell" : {
+					"name" : "Greek, Modern (1453-)",
+					"flag" : "gr"
+				},
+				"grn" : {
+					"name" : "Guarani"
+				},
+				"gsw" : {
+					"name" : "Swiss German; Alemannic; Alsatian"
+				},
+				"guj" : {
+					"name" : "Gujarati"
+				},
+				"gwi" : {
+					"name" : "Gwich'in"
+				},
+				"hai" : {
+					"name" : "Haida"
+				},
+				"hat" : {
+					"name" : "Haitian; Haitian Creole"
+				},
+				"hau" : {
+					"name" : "Hausa"
+				},
+				"haw" : {
+					"name" : "Hawaiian"
+				},
+				"heb" : {
+					"name" : "Hebrew",
+					"flag" : "il"
+				},
+				"her" : {
+					"name" : "Herero"
+				},
+				"hil" : {
+					"name" : "Hiligaynon"
+				},
+				"him" : {
+					"name" : "Himachali languages; Western Pahari languages"
+				},
+				"hin" : {
+					"name" : "Hindi",
+					"flag" : "in"
+				},
+				"hit" : {
+					"name" : "Hittite"
+				},
+				"hmn" : {
+					"name" : "Hmong; Mong"
+				},
+				"hmo" : {
+					"name" : "Hiri Motu"
+				},
+				"hrv" : {
+					"name" : "Croatian",
+					"flag" : "hr"
+				},
+				"hsb" : {
+					"name" : "Upper Sorbian"
+				},
+				"hun" : {
+					"name" : "Hungarian",
+					"flag" : "hu"
+				},
+				"hup" : {
+					"name" : "Hupa"
+				},
+				"iba" : {
+					"name" : "Iban"
+				},
+				"ibo" : {
+					"name" : "Igbo"
+				},
+				"ice" : {
+					"name" : "Icelandic"
+				},
+				"isl" : {
+					"name" : "Icelandic",
+					"flag" : "is"
+				},
+				"ido" : {
+					"name" : "Ido"
+				},
+				"iii" : {
+					"name" : "Sichuan Yi; Nuosu"
+				},
+				"ijo" : {
+					"name" : "Ijo languages"
+				},
+				"iku" : {
+					"name" : "Inuktitut"
+				},
+				"ile" : {
+					"name" : "Interlingue; Occidental"
+				},
+				"ilo" : {
+					"name" : "Iloko"
+				},
+				"ina" : {
+					"name" : "Interlingua (International Auxiliary Language Association)"
+				},
+				"inc" : {
+					"name" : "Indic languages"
+				},
+				"ind" : {
+					"name" : "Indonesian",
+					"flag" : "id"
+				},
+				"ine" : {
+					"name" : "Indo-European languages"
+				},
+				"inh" : {
+					"name" : "Ingush"
+				},
+				"ipk" : {
+					"name" : "Inupiaq"
+				},
+				"ira" : {
+					"name" : "Iranian languages"
+				},
+				"iro" : {
+					"name" : "Iroquoian languages"
+				},
+				"ita" : {
+					"name" : "Italian",
+					"flag" : "it"
+				},
+				"jav" : {
+					"name" : "Javanese"
+				},
+				"jbo" : {
+					"name" : "Lojban"
+				},
+				"jpn" : {
+					"name" : "Japanese",
+					"flag" : "jp"
+				},
+				"jpr" : {
+					"name" : "Judeo-Persian"
+				},
+				"jrb" : {
+					"name" : "Judeo-Arabic"
+				},
+				"kaa" : {
+					"name" : "Kara-Kalpak"
+				},
+				"kab" : {
+					"name" : "Kabyle"
+				},
+				"kac" : {
+					"name" : "Kachin; Jingpho"
+				},
+				"kal" : {
+					"name" : "Kalaallisut; Greenlandic"
+				},
+				"kam" : {
+					"name" : "Kamba"
+				},
+				"kan" : {
+					"name" : "Kannada"
+				},
+				"kar" : {
+					"name" : "Karen languages"
+				},
+				"kas" : {
+					"name" : "Kashmiri"
+				},
+				"kau" : {
+					"name" : "Kanuri"
+				},
+				"kaw" : {
+					"name" : "Kawi"
+				},
+				"kaz" : {
+					"name" : "Kazakh"
+				},
+				"kbd" : {
+					"name" : "Kabardian"
+				},
+				"kha" : {
+					"name" : "Khasi"
+				},
+				"khi" : {
+					"name" : "Khoisan languages"
+				},
+				"khm" : {
+					"name" : "Central Khmer"
+				},
+				"kho" : {
+					"name" : "Khotanese; Sakan"
+				},
+				"kik" : {
+					"name" : "Kikuyu; Gikuyu"
+				},
+				"kin" : {
+					"name" : "Kinyarwanda"
+				},
+				"kir" : {
+					"name" : "Kirghiz; Kyrgyz"
+				},
+				"kmb" : {
+					"name" : "Kimbundu"
+				},
+				"kok" : {
+					"name" : "Konkani"
+				},
+				"kom" : {
+					"name" : "Komi"
+				},
+				"kon" : {
+					"name" : "Kongo"
+				},
+				"kor" : {
+					"name" : "Korean",
+					"flag" : "kr"
+				},
+				"kos" : {
+					"name" : "Kosraean"
+				},
+				"kpe" : {
+					"name" : "Kpelle"
+				},
+				"krc" : {
+					"name" : "Karachay-Balkar"
+				},
+				"krl" : {
+					"name" : "Karelian"
+				},
+				"kro" : {
+					"name" : "Kru languages"
+				},
+				"kru" : {
+					"name" : "Kurukh"
+				},
+				"kua" : {
+					"name" : "Kuanyama; Kwanyama"
+				},
+				"kum" : {
+					"name" : "Kumyk"
+				},
+				"kur" : {
+					"name" : "Kurdish"
+				},
+				"kut" : {
+					"name" : "Kutenai"
+				},
+				"lad" : {
+					"name" : "Ladino"
+				},
+				"lah" : {
+					"name" : "Lahnda"
+				},
+				"lam" : {
+					"name" : "Lamba"
+				},
+				"lao" : {
+					"name" : "Lao"
+				},
+				"lat" : {
+					"name" : "Latin"
+				},
+				"lav" : {
+					"name" : "Latvian",
+					"flag" : "lv"
+				},
+				"lez" : {
+					"name" : "Lezghian"
+				},
+				"lim" : {
+					"name" : "Limburgan; Limburger; Limburgish"
+				},
+				"lin" : {
+					"name" : "Lingala"
+				},
+				"lit" : {
+					"name" : "Lithuanian",
+					"flag" : "lt"
+				},
+				"lol" : {
+					"name" : "Mongo"
+				},
+				"loz" : {
+					"name" : "Lozi"
+				},
+				"ltz" : {
+					"name" : "Luxembourgish; Letzeburgesch"
+				},
+				"lua" : {
+					"name" : "Luba-Lulua"
+				},
+				"lub" : {
+					"name" : "Luba-Katanga"
+				},
+				"lug" : {
+					"name" : "Ganda"
+				},
+				"lui" : {
+					"name" : "Luiseno"
+				},
+				"lun" : {
+					"name" : "Lunda"
+				},
+				"luo" : {
+					"name" : "Luo (Kenya and Tanzania)"
+				},
+				"lus" : {
+					"name" : "Lushai"
+				},
+				"mac" : {
+					"name" : "Macedonian"
+				},
+				"mkd" : {
+					"name" : "Macedonian",
+					"flag" : "mk"
+				},
+				"mad" : {
+					"name" : "Madurese"
+				},
+				"mag" : {
+					"name" : "Magahi"
+				},
+				"mah" : {
+					"name" : "Marshallese"
+				},
+				"mai" : {
+					"name" : "Maithili"
+				},
+				"mak" : {
+					"name" : "Makasar"
+				},
+				"mal" : {
+					"name" : "Malayalam"
+				},
+				"man" : {
+					"name" : "Mandingo"
+				},
+				"mao" : {
+					"name" : "Maori"
+				},
+				"mri" : {
+					"name" : "Maori"
+				},
+				"map" : {
+					"name" : "Austronesian languages"
+				},
+				"mar" : {
+					"name" : "Marathi"
+				},
+				"mas" : {
+					"name" : "Masai"
+				},
+				"may" : {
+					"name" : "Malay"
+				},
+				"msa" : {
+					"name" : "Malay",
+					"flag" : "my"
+				},
+				"mdf" : {
+					"name" : "Moksha"
+				},
+				"mdr" : {
+					"name" : "Mandar"
+				},
+				"men" : {
+					"name" : "Mende"
+				},
+				"mga" : {
+					"name" : "Irish, Middle (900-1200)"
+				},
+				"mic" : {
+					"name" : "Mi'kmaq; Micmac"
+				},
+				"min" : {
+					"name" : "Minangkabau"
+				},
+				"mis" : {
+					"name" : "Uncoded languages"
+				},
+				"mkh" : {
+					"name" : "Mon-Khmer languages"
+				},
+				"mlg" : {
+					"name" : "Malagasy"
+				},
+				"mlt" : {
+					"name" : "Maltese",
+					"flag" : "mt"
+				},
+				"mnc" : {
+					"name" : "Manchu"
+				},
+				"mni" : {
+					"name" : "Manipuri"
+				},
+				"mno" : {
+					"name" : "Manobo languages"
+				},
+				"moh" : {
+					"name" : "Mohawk"
+				},
+				"mon" : {
+					"name" : "Mongolian"
+				},
+				"mos" : {
+					"name" : "Mossi"
+				},
+				"mul" : {
+					"name" : "Multiple languages"
+				},
+				"mun" : {
+					"name" : "Munda languages"
+				},
+				"mus" : {
+					"name" : "Creek"
+				},
+				"mwl" : {
+					"name" : "Mirandese"
+				},
+				"mwr" : {
+					"name" : "Marwari"
+				},
+				"myn" : {
+					"name" : "Mayan languages"
+				},
+				"myv" : {
+					"name" : "Erzya"
+				},
+				"nah" : {
+					"name" : "Nahuatl languages"
+				},
+				"nai" : {
+					"name" : "North American Indian languages"
+				},
+				"nap" : {
+					"name" : "Neapolitan"
+				},
+				"nau" : {
+					"name" : "Nauru"
+				},
+				"nav" : {
+					"name" : "Navajo; Navaho"
+				},
+				"nbl" : {
+					"name" : "Ndebele, South; South Ndebele"
+				},
+				"nde" : {
+					"name" : "Ndebele, North; North Ndebele"
+				},
+				"ndo" : {
+					"name" : "Ndonga"
+				},
+				"nds" : {
+					"name" : "Low German; Low Saxon; German, Low; Saxon, Low"
+				},
+				"nep" : {
+					"name" : "Nepali"
+				},
+				"new" : {
+					"name" : "Nepal Bhasa; Newari"
+				},
+				"nia" : {
+					"name" : "Nias"
+				},
+				"nic" : {
+					"name" : "Niger-Kordofanian languages"
+				},
+				"niu" : {
+					"name" : "Niuean"
+				},
+				"nno" : {
+					"name" : "Norwegian Nynorsk; Nynorsk, Norwegian"
+				},
+				"nob" : {
+					"name" : "Bokmål, Norwegian; Norwegian Bokmål"
+				},
+				"nog" : {
+					"name" : "Nogai"
+				},
+				"non" : {
+					"name" : "Norse, Old"
+				},
+				"nor" : {
+					"name" : "Norwegian",
+					"flag" : "no"
+				},
+				"nqo" : {
+					"name" : "N'Ko"
+				},
+				"nso" : {
+					"name" : "Pedi; Sepedi; Northern Sotho"
+				},
+				"nub" : {
+					"name" : "Nubian languages"
+				},
+				"nwc" : {
+					"name" : "Classical Newari; Old Newari; Classical Nepal Bhasa"
+				},
+				"nya" : {
+					"name" : "Chichewa; Chewa; Nyanja"
+				},
+				"nym" : {
+					"name" : "Nyamwezi"
+				},
+				"nyn" : {
+					"name" : "Nyankole"
+				},
+				"nyo" : {
+					"name" : "Nyoro"
+				},
+				"nzi" : {
+					"name" : "Nzima"
+				},
+				"oci" : {
+					"name" : "Occitan (post 1500); Provençal"
+				},
+				"oji" : {
+					"name" : "Ojibwa"
+				},
+				"ori" : {
+					"name" : "Oriya"
+				},
+				"orm" : {
+					"name" : "Oromo"
+				},
+				"osa" : {
+					"name" : "Osage"
+				},
+				"oss" : {
+					"name" : "Ossetian; Ossetic"
+				},
+				"ota" : {
+					"name" : "Turkish, Ottoman (1500-1928)"
+				},
+				"oto" : {
+					"name" : "Otomian languages"
+				},
+				"paa" : {
+					"name" : "Papuan languages"
+				},
+				"pag" : {
+					"name" : "Pangasinan"
+				},
+				"pal" : {
+					"name" : "Pahlavi"
+				},
+				"pam" : {
+					"name" : "Pampanga; Kapampangan"
+				},
+				"pan" : {
+					"name" : "Panjabi; Punjabi"
+				},
+				"pap" : {
+					"name" : "Papiamento"
+				},
+				"pau" : {
+					"name" : "Palauan"
+				},
+				"peo" : {
+					"name" : "Persian, Old (ca.600-400 B.C.)"
+				},
+				"per" : {
+					"name" : "Persian"
+				},
+				"fas" : {
+					"name" : "Persian"
+				},
+				"phi" : {
+					"name" : "Philippine languages"
+				},
+				"phn" : {
+					"name" : "Phoenician"
+				},
+				"pli" : {
+					"name" : "Pali"
+				},
+				"pol" : {
+					"name" : "Polish",
+					"flag" : "pl"
+				},
+				"pon" : {
+					"name" : "Pohnpeian"
+				},
+				"por" : {
+					"name" : "Portuguese",
+					"flag" : "pt"
+				},
+				"pra" : {
+					"name" : "Prakrit languages"
+				},
+				"pro" : {
+					"name" : "Provençal, Old (to 1500)"
+				},
+				"pus" : {
+					"name" : "Pushto; Pashto"
+				},
+				"qaa-qtz" : {
+					"name" : "Reserved for local use"
+				},
+				"que" : {
+					"name" : "Quechua"
+				},
+				"raj" : {
+					"name" : "Rajasthani"
+				},
+				"rap" : {
+					"name" : "Rapanui"
+				},
+				"rar" : {
+					"name" : "Rarotongan; Cook Islands Maori"
+				},
+				"roa" : {
+					"name" : "Romance languages"
+				},
+				"roh" : {
+					"name" : "Romansh"
+				},
+				"rom" : {
+					"name" : "Romany"
+				},
+				"rum" : {
+					"name" : "Romanian; Moldavian; Moldovan"
+				},
+				"ron" : {
+					"name" : "Romanian; Moldavian; Moldovan",
+					"flag" : "ro"
+				},
+				"run" : {
+					"name" : "Rundi"
+				},
+				"rup" : {
+					"name" : "Aromanian; Arumanian; Macedo-Romanian"
+				},
+				"rus" : {
+					"name" : "Russian",
+					"flag" : "ru"
+				},
+				"sad" : {
+					"name" : "Sandawe"
+				},
+				"sag" : {
+					"name" : "Sango"
+				},
+				"sah" : {
+					"name" : "Yakut"
+				},
+				"sai" : {
+					"name" : "South American Indian (Other)"
+				},
+				"sal" : {
+					"name" : "Salishan languages"
+				},
+				"sam" : {
+					"name" : "Samaritan Aramaic"
+				},
+				"san" : {
+					"name" : "Sanskrit"
+				},
+				"sas" : {
+					"name" : "Sasak"
+				},
+				"sat" : {
+					"name" : "Santali"
+				},
+				"scn" : {
+					"name" : "Sicilian"
+				},
+				"sco" : {
+					"name" : "Scots"
+				},
+				"sel" : {
+					"name" : "Selkup"
+				},
+				"sem" : {
+					"name" : "Semitic languages"
+				},
+				"sga" : {
+					"name" : "Irish, Old (to 900)"
+				},
+				"sgn" : {
+					"name" : "Sign Languages"
+				},
+				"shn" : {
+					"name" : "Shan"
+				},
+				"sid" : {
+					"name" : "Sidamo"
+				},
+				"sin" : {
+					"name" : "Sinhala; Sinhalese"
+				},
+				"sio" : {
+					"name" : "Siouan languages"
+				},
+				"sit" : {
+					"name" : "Sino-Tibetan languages"
+				},
+				"sla" : {
+					"name" : "Slavic languages"
+				},
+				"slo" : {
+					"name" : "Slovak"
+				},
+				"slk" : {
+					"name" : "Slovak",
+					"flag" : "sk"
+				},
+				"slv" : {
+					"name" : "Slovenian",
+					"flag" : "si"
+				},
+				"sma" : {
+					"name" : "Southern Sami"
+				},
+				"sme" : {
+					"name" : "Northern Sami"
+				},
+				"smi" : {
+					"name" : "Sami languages"
+				},
+				"smj" : {
+					"name" : "Lule Sami"
+				},
+				"smn" : {
+					"name" : "Inari Sami"
+				},
+				"smo" : {
+					"name" : "Samoan"
+				},
+				"sms" : {
+					"name" : "Skolt Sami"
+				},
+				"sna" : {
+					"name" : "Shona"
+				},
+				"snd" : {
+					"name" : "Sindhi"
+				},
+				"snk" : {
+					"name" : "Soninke"
+				},
+				"sog" : {
+					"name" : "Sogdian"
+				},
+				"som" : {
+					"name" : "Somali"
+				},
+				"son" : {
+					"name" : "Songhai languages"
+				},
+				"sot" : {
+					"name" : "Sotho, Southern"
+				},
+				"spa" : {
+					"name" : "Spanish; Castilian",
+					"flag" : "es"
+				},
+				"srd" : {
+					"name" : "Sardinian"
+				},
+				"srn" : {
+					"name" : "Sranan Tongo"
+				},
+				"srp" : {
+					"name" : "Serbian",
+					"flag" : "rs"
+				},
+				"srr" : {
+					"name" : "Serer"
+				},
+				"ssa" : {
+					"name" : "Nilo-Saharan languages"
+				},
+				"ssw" : {
+					"name" : "Swati"
+				},
+				"suk" : {
+					"name" : "Sukuma"
+				},
+				"sun" : {
+					"name" : "Sundanese"
+				},
+				"sus" : {
+					"name" : "Susu"
+				},
+				"sux" : {
+					"name" : "Sumerian"
+				},
+				"swa" : {
+					"name" : "Swahili"
+				},
+				"swe" : {
+					"name" : "Swedish",
+					"flag" : "se"
+				},
+				"syc" : {
+					"name" : "Classical Syriac"
+				},
+				"syr" : {
+					"name" : "Syriac"
+				},
+				"tah" : {
+					"name" : "Tahitian"
+				},
+				"tai" : {
+					"name" : "Tai languages"
+				},
+				"tam" : {
+					"name" : "Tamil"
+				},
+				"tat" : {
+					"name" : "Tatar"
+				},
+				"tel" : {
+					"name" : "Telugu"
+				},
+				"tem" : {
+					"name" : "Timne"
+				},
+				"ter" : {
+					"name" : "Tereno"
+				},
+				"tet" : {
+					"name" : "Tetum"
+				},
+				"tgk" : {
+					"name" : "Tajik"
+				},
+				"tgl" : {
+					"name" : "Tagalog"
+				},
+				"tha" : {
+					"name" : "Thai",
+					"flag" : "th"
+				},
+				"tib" : {
+					"name" : "Tibetan"
+				},
+				"bod" : {
+					"name" : "Tibetan"
+				},
+				"tig" : {
+					"name" : "Tigre"
+				},
+				"tir" : {
+					"name" : "Tigrinya"
+				},
+				"tiv" : {
+					"name" : "Tiv"
+				},
+				"tkl" : {
+					"name" : "Tokelau"
+				},
+				"tlh" : {
+					"name" : "Klingon; tlhIngan-Hol"
+				},
+				"tli" : {
+					"name" : "Tlingit"
+				},
+				"tmh" : {
+					"name" : "Tamashek"
+				},
+				"tog" : {
+					"name" : "Tonga (Nyasa)"
+				},
+				"ton" : {
+					"name" : "Tonga (Tonga Islands)"
+				},
+				"tpi" : {
+					"name" : "Tok Pisin"
+				},
+				"tsi" : {
+					"name" : "Tsimshian"
+				},
+				"tsn" : {
+					"name" : "Tswana"
+				},
+				"tso" : {
+					"name" : "Tsonga"
+				},
+				"tuk" : {
+					"name" : "Turkmen"
+				},
+				"tum" : {
+					"name" : "Tumbuka"
+				},
+				"tup" : {
+					"name" : "Tupi languages"
+				},
+				"tur" : {
+					"name" : "Turkish",
+					"flag" : "tr"
+				},
+				"tut" : {
+					"name" : "Altaic languages"
+				},
+				"tvl" : {
+					"name" : "Tuvalu"
+				},
+				"twi" : {
+					"name" : "Twi"
+				},
+				"tyv" : {
+					"name" : "Tuvinian"
+				},
+				"udm" : {
+					"name" : "Udmurt"
+				},
+				"uga" : {
+					"name" : "Ugaritic"
+				},
+				"uig" : {
+					"name" : "Uighur; Uyghur"
+				},
+				"ukr" : {
+					"name" : "Ukrainian",
+					"flag" : "ua"
+				},
+				"umb" : {
+					"name" : "Umbundu"
+				},
+				"und" : {
+					"name" : "Undetermined"
+				},
+				"urd" : {
+					"name" : "Urdu"
+				},
+				"uzb" : {
+					"name" : "Uzbek"
+				},
+				"vai" : {
+					"name" : "Vai"
+				},
+				"ven" : {
+					"name" : "Venda"
+				},
+				"vie" : {
+					"name" : "Vietnamese",
+					"flag" : "vn"
+				},
+				"vol" : {
+					"name" : "Volapük"
+				},
+				"vot" : {
+					"name" : "Votic"
+				},
+				"wak" : {
+					"name" : "Wakashan languages"
+				},
+				"wal" : {
+					"name" : "Walamo"
+				},
+				"war" : {
+					"name" : "Waray"
+				},
+				"was" : {
+					"name" : "Washo"
+				},
+				"wel" : {
+					"name" : "Welsh"
+				},
+				"cym" : {
+					"name" : "Welsh"
+				},
+				"wen" : {
+					"name" : "Sorbian languages"
+				},
+				"wln" : {
+					"name" : "Walloon"
+				},
+				"wol" : {
+					"name" : "Wolof"
+				},
+				"xal" : {
+					"name" : "Kalmyk; Oirat"
+				},
+				"xho" : {
+					"name" : "Xhosa"
+				},
+				"yao" : {
+					"name" : "Yao"
+				},
+				"yap" : {
+					"name" : "Yapese"
+				},
+				"yid" : {
+					"name" : "Yiddish"
+				},
+				"yor" : {
+					"name" : "Yoruba"
+				},
+				"ypk" : {
+					"name" : "Yupik languages"
+				},
+				"zap" : {
+					"name" : "Zapotec"
+				},
+				"zbl" : {
+					"name" : "Blissymbols; Blissymbolics; Bliss"
+				},
+				"zen" : {
+					"name" : "Zenaga"
+				},
+				"zha" : {
+					"name" : "Zhuang; Chuang"
+				},
+				"znd" : {
+					"name" : "Zande languages"
+				},
+				"zul" : {
+					"name" : "Zulu"
+				},
+				"zun" : {
+					"name" : "Zuni"
+				},
+				"zxx" : {
+					"name" : "No linguistic content; Not applicable"
+				},
+				"zza" : {
+					"name" : "Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki"
+				}
+			};
+
+			return iso;
+		});
+/*global define: true, require: true */
+/*!
+ * Aloha Editor
+ * Author & Copyright (c) 2011 Gentics Software GmbH
+ * aloha-sales@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ *
+ * Language Repository
+ * -------------------
+ * Provides a set of language codes and images
+ */
+define('link/../../../shared/languages/languages',[
+	'aloha',
+	'jquery',
+	'./iso639-1-de',
+	'./iso639-2-de',
+	'./iso639-1-en',
+	'./iso639-2-en'
+], function(
+	Aloha,
+	jQuery,
+	iso1de,
+	iso2de,
+	iso1en,
+	iso2en
+) {
+	
+	
+	/**
+	 * Keeps reference to the language codes and names.
+	 */
+	var ISO_MAP = {
+		'iso639-1-de': iso1de,
+		'iso639-2-de': iso2de,
+		'iso639-1-en': iso1en,
+		'iso639-2-en': iso2en
+	};
+	
+	/**
+	 * Path to the languages files.
+	 */
+	var PATH = Aloha.getAlohaUrl() + '/../plugins/shared/languages/';
+
+	return Aloha.AbstractRepository.extend({
+		
+		/**
+		 * Set of language codes
+		 */
+		languageCodes: [],
+		
+		/**
+		 * Set default locale
+		 */
+		locale: 'de',
+		
+		/**
+		 * Set default iso
+		 */
+		iso: 'iso639-1',
+		
+		/**
+		 * Object type of the values for this repository.
+		 */
+		objectType: 'language',
+
+		/**
+		 * Whether to show flags or not
+		 */
+		flags: false,
+
+		_constructor: function (name, flags, iso, locale, objectType) {
+			this._super(name);
+
+			if (typeof flags !== 'undefined') {
+				this.flags = flags;
+			}
+
+			if (typeof iso !== 'undefined') {
+				this.iso = ('iso639-1' === iso) ? 'iso639-1' : 'iso639-2';
+			}
+
+			if (typeof locale !== 'undefined') {
+				this.locale = locale;
+			}
+			
+			if (typeof objectType !== 'undefined') {
+				this.objectType = objectType;
+			}
+			
+			
+			var data = ISO_MAP[this.iso + '-' + this.locale];
+			
+			this.storeLanguageCodes(data);
+			this.languageData = data;
+		},
+
+		/**
+		 * Initializes the repository: loads the language files and prepares the data.
+		 */
+		init: function () {
+			
+		},
+
+		markObject: function (obj, item) {
+			// Copied from wai-lang-plugin makeVisible to avoid a circular dependency
+			// We do not need to add this class here since it already being
+			// done in the wai-lang plugin
+			// jQuery( obj ).addClass( 'aloha-wai-lang' );
+		},
+
+		/**
+		 * This method will invoked if a error occurres while loading data via ajax
+		 */
+		errorHandler: function (text, error) {
+			console.log("error", this, "Error while loading languages. " + text);
+		},
+
+		/**
+		 * Stores the retrieved language code data in this object
+		 */
+		storeLanguageCodes: function (data) {
+			var that = this;
+			var path = PATH + 'img/';
+			// Transform loaded json into a set of repository documents
+			jQuery.each(data, function (key, value) {
+				var el = value;
+				el.id = key;
+				el.repositoryId = that.repositoryId;
+				el.type = that.objectType;
+				if (that.flags) {
+					if (el.flag) {
+						el.url = path + el.flag + '.png';
+					} else {
+						el.url = path + 'default.png';
+					}
+				}
+				// el.renditions.url = "img/flags/" + e.id + ".png";
+				// el.renditions.kind.thumbnail = true;
+				that.languageCodes.push(new Aloha.RepositoryDocument(el));
+			});
+		},
+		
+		/**
+		 * Searches a repository for object items matching query if objectTypeFilter.
+		 * If none found it returns null.
+		 * Not supported: filter, orderBy, maxItems, skipcount, renditionFilter
+		 */
+		_searchInLanguageCodes: function (p, callback) {
+			var query = new RegExp('^' + p.queryString, 'i'),
+		    i,
+		    d = [],
+		    matchesName,
+		    matchesType,
+		    currentElement;
+
+			for (i = 0; i < this.languageCodes.length; ++i) {
+				currentElement = this.languageCodes[i];
+				matchesName = (!p.queryString || currentElement.name.match(query));
+				matchesType = (!p.objectTypeFilter || (!p.objectTypeFilter.length) || jQuery.inArray(currentElement.type, p.objectTypeFilter) > -1);
+	
+				if (matchesName && matchesType) {
+					d.push(currentElement);
+				}
+			}
+	
+			callback.call(this, d);
+		},
+
+		/**
+		 * Fetches the languageCodes if they are not already loaded and
+		 * searches the collection with the given query.
+		 */
+		query: function (p, callback) {
+			this._searchInLanguageCodes(p, callback);
+		},
+
+		/**
+		 * Get the repositoryItem with given id
+		 * @param itemId {String} id of the repository item to fetch
+		 * @param callback {function} callback function
+		 * @return {Aloha.Repository.Object} item with given id
+		 */
+		getObjectById: function (itemId, callback) {
+			var i, currentElement;
+
+			for (i = 0; i < this.languageCodes.length; ++i) {
+				currentElement = this.languageCodes[i];
+				if (currentElement.id === itemId) {
+					callback.call(this, [currentElement]);
+					break;
+				}
+			}
+
+		}
+	});
+});
+
+/* link-plugin.js is part of the Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2013 Gentics Software GmbH, Vienna, Austria.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
  * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
+ * License http://aloha-editor.org/license.php
  */
 /* Aloha Link Plugin
  * -----------------
@@ -33876,45 +39244,120 @@ define('util/keys',['jquery'], function ($) {
  * Clicking on any links inside the editable activates the this plugin's
  * floating menu scope.
  */
-define('link/link-plugin', [
+define('link/link-plugin',[
+	'jquery',
 	'aloha',
 	'aloha/plugin',
 	'aloha/ephemera',
-	'jquery',
+	'aloha/content-rules',
+	'util/dom',
 	'ui/port-helper-attribute-field',
 	'ui/ui',
 	'ui/scopes',
-	'ui/surface',
 	'ui/button',
 	'ui/toggleButton',
 	'i18n!link/nls/i18n',
-	'i18n!aloha/nls/i18n',
-	'aloha/console',
 	'PubSub',
-	'util/keys'
+	'util/keys',
+	'../../../shared/languages/languages'
 ], function (
+	$,
 	Aloha,
 	Plugin,
 	Ephemera,
-	jQuery,
+	ContentRules,
+	Dom,
 	AttributeField,
 	Ui,
 	Scopes,
-	Surface,
 	Button,
 	ToggleButton,
 	i18n,
-	i18nCore,
-	console,
 	PubSub,
-	Keys
+	Keys,
+	LanguageRepository
 ) {
 	
+
+	var configurations = {};
+	var jQuery = $;
+	var pluginNamespace = 'aloha-link';
+	var oldValue = '';
+	var newValue;
+
+	/**
+	 * Regular expression that matches if an URL is an external link.
+	 */
+	var EXTERNAL_LINK_REG_EXP = /^([a-z]){3,10}:\/\/.+/i;
 	
-	var GENTICS = window.GENTICS,
-	    pluginNamespace = 'aloha-link',
-	    oldValue = '',
-	    newValue;
+	/**
+	 * Field for hrefLang value in the link sidebar.
+	 */
+	var hrefLangField;
+	
+	/**
+	 * Language repository
+	 */
+	var LANG_REPOSITORY;
+	
+	/**
+	 * Initializes href lang input text.
+	 */
+	function initHrefLang(plugin, sidebar) {
+		hrefLangField = AttributeField({
+			name: 'hreflangfield',
+			valueField: 'id',
+			minChars: 1,
+			scope: 'Aloha.continuoustext',
+			open: function (elm, ui) {
+				// known issue http://bugs.jquery.com/ticket/10079
+				// $.css('z-index') return 1e+9, and when call partseInt, then 
+				// parseInt($.css('z-index'), 10) returns 1.
+				// Only firefox issue
+				// Everytime is open the autocomple the z-index must be set,
+				// because is automatically changed. 
+				if (Aloha.browser.mozilla) {
+					hrefLangField.getInputJQuery().autocomplete('widget').css('z-index', '9999999999');
+				}
+			}
+		});
+		
+		if (plugin.flags) {
+			hrefLangField.setTemplate(
+				 '<div class="aloha-wai-lang-img-item">' +
+				  '<img class="aloha-wai-lang-img" src="{url}" />' +
+				  '<div class="aloha-wai-lang-label-item">{name} ({id})</div>' +
+				  '</div>');
+		} else {
+			hrefLangField.setTemplate('<div class="aloha-wai-lang-img-item">' +
+				  '<div class="aloha-wai-lang-label-item">{name} ({id})</div>' +
+				  '</div>'
+			);
+		}
+		
+		hrefLangField.setObjectTypeFilter(['language/link']);
+		
+		hrefLangField.addListener('item-change', function() {
+			if (this.getItem()) {
+				jQuery(sidebar.effective ).attr( 'hreflang', this.getItem().id);
+			}
+		});
+		
+		hrefLangField.addListener('keyup', function() {
+			if (jQuery.trim(this.getValue()).length === 0) {
+				this.setValue('');
+				jQuery(sidebar.effective ).attr( 'hreflang', '');
+			}
+		});
+	}
+	
+	/**
+	 * Gets the language name for laguage code 'langCode'.
+	 * @param {string} langCode Language code
+	 */
+	function getLanguageName(langCode) {
+		return LANG_REPOSITORY.languageData ? LANG_REPOSITORY.languageData[langCode].name : langCode;
+	}
 
 	/**
 	 * Properties for cleaning up markup immediately after inserting new link
@@ -33929,16 +39372,15 @@ define('link/link-plugin', [
 	var insertLinkPostCleanup = {
 		merge: true,
 		mergeable: function (node) {
-			return ('aloha-new-link' === node.className && node.nextSibling
-			     && 'aloha-new-link' === node.nextSibling.className);
+			return ('aloha-new-link' === node.className && node.nextSibling &&
+				'aloha-new-link' === node.nextSibling.className);
 		}
 	};
 	
 	Ephemera.classes('aloha-link-pointer', 'aloha-link-text');
 
 	function setupMousePointerFix() {
-		jQuery(document)
-			.bind('keydown.aloha-link.pointer-fix', function (e) {
+		jQuery(document).bind('keydown.aloha-link.pointer-fix', function (e) {
 				// metaKey for OSX, 17 for PC (we can't check
 				// e.ctrlKey because it's only set on keyup or
 				// keypress, not on keydown).
@@ -34059,7 +39501,12 @@ define('link/link-plugin', [
 		hrefValue: 'http://',
 		
 		/**
-		 * Initialize the plugin
+		 * Shows the flags when setting language ('hreflang' attribute).
+		 */
+		flags: true,
+		
+		/**
+		 * Initializes the plugin.
 		 */
 		init: function () {
 			var plugin = this;
@@ -34070,28 +39517,28 @@ define('link/link-plugin', [
 			if ('undefined' !== typeof this.settings.titleregex) {
 				this.titleregex = this.settings.titleregex;
 			}
-			if ( typeof this.settings.targetregex != 'undefined' ) {
+			if (typeof this.settings.targetregex != 'undefined') {
 				this.targetregex = this.settings.targetregex;
 			}
-			if ( typeof this.settings.target != 'undefined' ) {
+			if (typeof this.settings.target != 'undefined') {
 				this.target = this.settings.target;
 			}
-			if ( typeof this.settings.cssclassregex != 'undefined' ) {
+			if (typeof this.settings.cssclassregex != 'undefined') {
 				this.cssclassregex = this.settings.cssclassregex;
 			}
-			if ( typeof this.settings.cssclass != 'undefined' ) {
+			if (typeof this.settings.cssclass != 'undefined') {
 				this.cssclass = this.settings.cssclass;
 			}
-			if ( typeof this.settings.objectTypeFilter != 'undefined' ) {
+			if (typeof this.settings.objectTypeFilter != 'undefined') {
 				this.objectTypeFilter = this.settings.objectTypeFilter;
 			}
-			if ( typeof this.settings.onHrefChange != 'undefined' ) {
+			if (typeof this.settings.onHrefChange != 'undefined') {
 				this.onHrefChange = this.settings.onHrefChange;
 			}
-			if ( typeof this.settings.hotKey != 'undefined' ) {
+			if (typeof this.settings.hotKey != 'undefined') {
 				jQuery.extend(true, this.hotKey, this.settings.hotKey);
 			}
-			if ( typeof this.settings.hrefValue != 'undefined' ) {
+			if (typeof this.settings.hrefValue != 'undefined') {
 				this.hrefValue = this.settings.hrefValue;
 			}
 			
@@ -34103,32 +39550,30 @@ define('link/link-plugin', [
 				plugin.initSidebar(Aloha.Sidebar.right);
 				PubSub.pub('aloha.link.ready', {
 					plugin: plugin
-				})
+				});
 			});
 		},
 
 		nsSel: function () {
 			var stringBuilder = [], prefix = pluginNamespace;
-			jQuery.each( arguments, function () {
-				stringBuilder.push( '.' + ( this == '' ? prefix : prefix + '-' + this ) );
-			} );
+			jQuery.each(arguments, function () {
+				stringBuilder.push('.' + (this == '' ? prefix : prefix + '-' + this));
+			});
 			return jQuery.trim(stringBuilder.join(' '));
 		},
 
 		//Creates string with this component's namepsace prefixed the each classname
 		nsClass: function () {
 			var stringBuilder = [], prefix = pluginNamespace;
-			jQuery.each( arguments, function () {
-				stringBuilder.push( this == '' ? prefix : prefix + '-' + this );
-			} );
+			jQuery.each(arguments, function () {
+				stringBuilder.push(this == '' ? prefix : prefix + '-' + this);
+			});
 			return jQuery.trim(stringBuilder.join(' '));
 		},
 
-		initSidebar: function ( sidebar ) {
+		initSidebar: function (sidebar) {
 			var pl = this;
-			pl.sidebar = sidebar;
 			sidebar.addPanel( {
-				
 				id       : pl.nsClass( 'sidebar-panel-target' ),
 				title    : i18n.t( 'floatingmenu.tab.link' ),
 				content  : '',
@@ -34136,6 +39581,8 @@ define('link/link-plugin', [
 				activeOn : 'a, link',
 				
 				onInit: function () {
+					initHrefLang(pl, this);
+
 					 var that = this,
 						 content = this.setContent(
 							'<div class="' + pl.nsClass( 'target-container' ) + '"><fieldset><legend>' + i18n.t( 'link.target.legend' ) + '</legend><ul><li><input type="radio" name="targetGroup" class="' + pl.nsClass( 'radioTarget' ) + '" value="_self" /><span>' + i18n.t( 'link.target.self' ) + '</span></li>' + 
@@ -34144,8 +39591,12 @@ define('link/link-plugin', [
 							'<li><input type="radio" name="targetGroup" class="' + pl.nsClass( 'radioTarget' ) + '" value="_top" /><span>' + i18n.t( 'link.target.top' ) + '</span></li>' + 
 							'<li><input type="radio" name="targetGroup" class="' + pl.nsClass( 'radioTarget' ) + '" value="framename" /><span>' + i18n.t( 'link.target.framename' ) + '</span></li>' + 
 							'<li><input type="text" class="' + pl.nsClass( 'framename' ) + '" /></li></ul></fieldset></div>' + 
-							'<div class="' + pl.nsClass( 'title-container' ) + '" ><fieldset><legend>' + i18n.t( 'link.title.legend' ) + '</legend><input type="text" class="' + pl.nsClass( 'linkTitle' ) + '" /></fieldset></div>'
+							'<div class="' + pl.nsClass( 'title-container' ) + '" ><fieldset><legend>' + i18n.t( 'link.title.legend' ) + '</legend><input type="text" class="' + pl.nsClass( 'linkTitle' ) + '" /></fieldset></div>' +
+							'<div class="' + pl.nsClass( 'href-lang-container' ) + '" ><fieldset><legend>' + i18n.t( 'href.lang.legend' ) + '</legend></fieldset></div>'
 						).content; 
+					 
+					 jQuery(hrefLangField.getInputElem()).addClass(pl.nsClass( 'hrefLang' ));
+					 jQuery(content).find("." + pl.nsClass( 'href-lang-container' ) + " fieldset").append(hrefLangField.getInputElem());
 					 
 					 jQuery( pl.nsSel( 'framename' ) ).live( 'keyup', function () {
 						jQuery( that.effective ).attr( 'target', jQuery( this ).val().replace( '\"', '&quot;' ).replace( "'", "&#39;" ) );
@@ -34155,8 +39606,8 @@ define('link/link-plugin', [
 						if ( jQuery( this ).val() == 'framename' ) {
 							jQuery( pl.nsSel( 'framename' ) ).slideDown();
 						} else {
-							jQuery( pl.nsSel( 'framename' ) ).slideUp().val( '' );
-							jQuery( that.effective ).attr( 'target', jQuery( this ).val() );
+							jQuery(pl.nsSel('framename')).slideUp().val( '' );
+							jQuery(that.effective).attr('target', jQuery( this ).val());
 						}
 					 } );
 					 
@@ -34192,6 +39643,21 @@ define('link/link-plugin', [
 					var that = this;
 					that.effective = effective;
 					jQuery( pl.nsSel( 'linkTitle' ) ).val( jQuery( that.effective ).attr( 'title' ) );
+					
+					var hrefLangAttr = jQuery(effective).attr('hreflang');
+					
+					if (hrefLangAttr && hrefLangAttr.length > 0) {
+						var languageName = getLanguageName(hrefLangAttr);
+						hrefLangField.setValue(languageName);
+					} else {
+						hrefLangField.setValue('');
+					}
+					
+					if (EXTERNAL_LINK_REG_EXP.test(jQuery(effective).attr('href'))) {
+						hrefLangField.enableInput();
+					} else {
+						hrefLangField.disableInput();
+					}
 				}
 				
 			} );
@@ -34203,36 +39669,35 @@ define('link/link-plugin', [
 		 * Subscribe for events
 		 */
 		subscribeEvents: function () {
-			var that = this,
-			    isEnabled = {};
-
+			var plugin = this;
 			var editablesCreated = 0;
 
-			// add the event handler for creation of editables
-			Aloha.bind('aloha-editable-created', function (event, editable) {
-				var config = that.getEditableConfig(editable.obj),
-				    enabled = (jQuery.inArray('a', config) !== -1);
+			PubSub.sub('aloha.editable.created', function (message) {
+				var editable = message.editable;
+				var config = plugin.getEditableConfig(editable.obj);
+				var enabled = config
+				           && (jQuery.inArray('a', config) > -1)
+				           && ContentRules.isAllowed(editable.obj[0], 'a');
 
-				isEnabled[editable.getId()] = enabled;
+				configurations[editable.getId()] = !!enabled;
 
 				if (!enabled) {
 					return;
 				}
 
 				// enable hotkey for inserting links
-				editable.obj.bind('keydown.aloha-link', that.hotKey.insertLink, function() {
-					if ( that.findLinkMarkup() ) {
-						// open the tab containing the href
-						that.hrefField.foreground();
-						that.hrefField.focus();
+				editable.obj.bind('keydown.aloha-link', plugin.hotKey.insertLink, function () {
+					if (plugin.findLinkMarkup()) {
+						plugin.hrefField.foreground();
+						plugin.hrefField.focus();
 					} else {
-						that.insertLink(true);
+						plugin.insertLink(true);
 					}
 					return false;
-				} );
+				});
 
 				editable.obj.find('a').each(function() {
-					that.addLinkEventHandlers(this);
+					plugin.addLinkEventHandlers(this);
 				});
 
 				if (0 === editablesCreated++) {
@@ -34240,57 +39705,58 @@ define('link/link-plugin', [
 				}
 			});
 
-			Aloha.bind('aloha-editable-destroyed', function (event, editable) {
-				editable.obj.unbind('.aloha-link');
+			PubSub.sub('aloha.editable.destroyed', function (message) {
+				message.editable.obj.unbind('.aloha-link');
 				if (0 === --editablesCreated) {
 					teardownMousePointerFix();
 				}
 			});
 
-			Aloha.bind('aloha-editable-activated', function(event, props) {
-				if (isEnabled[Aloha.activeEditable.getId()]) {
-					that._formatLinkButton.show();
-					that._insertLinkButton.show();
+			PubSub.sub('aloha.editable.activated', function (message) {
+				if (configurations[message.editable.getId()]) {
+					plugin._formatLinkButton.show();
+					plugin._insertLinkButton.show();
 				} else {
-					that._formatLinkButton.hide();
-					that._insertLinkButton.hide();
+					plugin._formatLinkButton.hide();
+					plugin._insertLinkButton.hide();
 				}
-				setupMetaClickLink(props.editable);
+				setupMetaClickLink(message.editable);
 			});
 
 			var insideLinkScope = false;
 
-			Aloha.bind('aloha-selection-changed', function(event, rangeObject){
+			PubSub.sub('aloha.selection.context-change', function (message) {
+				if (!Aloha.activeEditable) {
+					return;
+				}
 				var enteredLinkScope = false;
-				if (Aloha.activeEditable && isEnabled[Aloha.activeEditable.getId()]) {
-					enteredLinkScope = selectionChangeHandler(that, rangeObject);
-					// Only foreground the tab containing the href field
-					// the first time the user enters the link scope to
-					// avoid intefering with the user's manual tab
-					// selection.
+				if (configurations[Aloha.activeEditable.getId()]) {
+					enteredLinkScope = selectionChangeHandler(plugin, message.range);
+					// Only foreground the tab containing the href field the
+					// first time the user enters the link scope to avoid
+					// intefering with the user's manual tab selection
 					if (enteredLinkScope && insideLinkScope !== enteredLinkScope) {
-						that.hrefField.foreground();
+						plugin.hrefField.foreground();
 					}
 				}
 				insideLinkScope = enteredLinkScope;
 			});
 
-			// Fixes problem: if one clicks from inside an aloha link
-			// outside the editable and thereby deactivates the
-			// editable, the link scope will remain active.
-			var linkPlugin = this;
-			Aloha.bind('aloha-editable-deactivated', function (event, props) {
+			// Fixes problem: if one clicks from inside an aloha link outside
+			// the editable and thereby deactivates the editable, the link scope
+			// will remain active
+			PubSub.sub('aloha.editable.deactivated', function (message) {
 				if (insideLinkScope) {
-					// Leave the link scope lazily to avoid flickering
-					// when switching between anchor element editables.
+					// Leave the link scope lazily to avoid flickering when
+					// switching between anchor element editables
 					setTimeout(function () {
 						if (!insideLinkScope) {
-							linkPlugin.toggleLinkScope(false);
+							plugin.toggleLinkScope(false);
 						}
 					}, 100);
 					insideLinkScope = false;
 				}
-				teardownMetaClickLink(props.editable);
+				teardownMetaClickLink(message.editable);
 			});
 		},
 
@@ -34426,6 +39892,11 @@ define('link/link-plugin', [
 		bindInteractions: function () {
 			var that = this;
 
+			this.hrefField.addListener('item-change', function(){
+				// because 'hrefChange()' references 'this' object.
+				that.hrefChange();
+			});
+			
 			// update link object when src changes
 			this.hrefField.addListener( 'keyup', function ( event ) {
 				if (Keys.getToken(event.keyCode) === 'escape') {
@@ -34433,7 +39904,7 @@ define('link/link-plugin', [
 					if ( curval[ 0 ] == '/' || // local link
 						 curval[ 0 ] == '#' || // inner document link
 						 curval.match( /^.*\.([a-z]){2,4}$/i ) || // local file with extension
-						 curval.match( /^([a-z]){3,10}:\/\/.+/i ) || // external link (http(s), ftp(s), ssh, file, skype, ... )
+						 curval.match( EXTERNAL_LINK_REG_EXP ) || // external link (http(s), ftp(s), ssh, file, skype, ... )
 						 curval.match( /^(mailto|tel):.+/i ) // mailto / tel link
 					) {
 						// could be a link better leave it as it is
@@ -34467,15 +39938,12 @@ define('link/link-plugin', [
 					// The first one we need to ignore is the one trigger when
 					// we reposition the selection to right at the end of the
 					// link.
-					// Not sure what the next event is yet but we need to
-					// ignore it as well, ignoring it prevents the value of
-					// hrefField from being set to the old value.
+
 					that.ignoreNextSelectionChangedEvent = true;
 					range.startContainer = range.endContainer;
 					range.startOffset = range.endOffset;
 					range.select();
-					that.ignoreNextSelectionChangedEvent = true;
-					
+
 					var hrefValue = jQuery( that.hrefField.getInputElem() ).attr( 'value' );
 					
 					if ( hrefValue == that.hrefValue || hrefValue == '' ) {
@@ -34528,7 +39996,7 @@ define('link/link-plugin', [
 
 		/**
 		 * Check whether inside a link tag
-		 * @param {GENTICS.Utils.RangeObject} range range where to insert the
+		 * @param {RangeObject} range range where to insert the
 		 *			object (at start or end)
 		 * @return markup
 		 * @hide
@@ -34593,20 +40061,20 @@ define('link/link-plugin', [
 			
 			// if selection is collapsed then extend to the word.
 			if ( range.isCollapsed() && extendToWord !== false ) {
-				GENTICS.Utils.Dom.extendToWord( range );
+				Dom.extendToWord( range );
 			}
 			if ( range.isCollapsed() ) {
 				// insert a link with text here
 				linkText = i18n.t( 'newlink.defaulttext' );
 				newLink = jQuery( '<a href="' + that.hrefValue + '" class="aloha-new-link">' + linkText + '</a>' );
-				GENTICS.Utils.Dom.insertIntoDOM( newLink, range, jQuery( Aloha.activeEditable.obj ) );
+				Dom.insertIntoDOM( newLink, range, jQuery( Aloha.activeEditable.obj ) );
 				range.startContainer = range.endContainer = newLink.contents().get( 0 );
 				range.startOffset = 0;
 				range.endOffset = linkText.length;
 			} else {
 				newLink = jQuery( '<a href="' + that.hrefValue + '" class="aloha-new-link"></a>' );
-				GENTICS.Utils.Dom.addMarkup( range, newLink, false );
-				GENTICS.Utils.Dom.doCleanup(insertLinkPostCleanup, range);
+				Dom.addMarkup( range, newLink, false );
+				Dom.doCleanup(insertLinkPostCleanup, range);
 			}
 
 			Aloha.activeEditable.obj.find( 'a.aloha-new-link' ).each( function ( i ) {
@@ -34642,12 +40110,14 @@ define('link/link-plugin', [
 		removeLink: function ( terminateLinkScope ) {
 			var	range = Aloha.Selection.getRangeObject(),
 				foundMarkup = this.findLinkMarkup();
-			
+			var linkText;
+
 			// clear the current item from the href field
 			this.hrefField.setItem(null);
 			if ( foundMarkup ) {
+				linkText = jQuery(foundMarkup).text();
 				// remove the link
-				GENTICS.Utils.Dom.removeFromDOM( foundMarkup, range, true );
+				Dom.removeFromDOM( foundMarkup, range, true );
 
 				range.startContainer = range.endContainer;
 				range.startOffset = range.endOffset;
@@ -34659,6 +40129,16 @@ define('link/link-plugin', [
 						terminateLinkScope === true ) {
 					Scopes.setScope('Aloha.continuoustext');
 				}
+
+				// trigger an event for removing the link
+				var apiRange = Aloha.createRange();
+				apiRange.setStart(range.startContainer, range.startOffset);
+				apiRange.setEnd(range.endContainer, range.endOffset);
+
+				PubSub.pub('aloha.link.remove', {
+					range: apiRange,
+					text: linkText
+				});
 			}
 		},
 
@@ -34738,6 +40218,25 @@ define('link/link-plugin', [
 					this.hrefField.getValue(),
 					this.hrefField.getItem()
 				);
+			}
+			
+			var hrefFieldItem = this.hrefField.getItem();
+			// If href has been set to an item (Page)
+			if (hrefFieldItem && hrefFieldItem.language) {
+				var languageName = getLanguageName(hrefFieldItem.language);
+				
+				this.hrefField.setAttribute('hreflang', hrefFieldItem.language);
+				hrefLangField.setValue(languageName);
+				hrefLangField.disableInput();
+			}
+			// href is an external link
+			else if (EXTERNAL_LINK_REG_EXP.test(href)){
+				hrefLangField.enableInput();
+			}
+			// href is being defined
+			else {
+				hrefLangField.setValue('');
+				hrefLangField.disableInput();
 			}
 		}
 	});
@@ -35085,7 +40584,7 @@ define('ui/multiSplit',[
 				click: function () {
 					multiSplit.toggle();
 				}
-			}).button().appendTo(element);
+			}).uibutton().appendTo(element);
 
 			this.buttons = [];
 
@@ -35388,6 +40887,27 @@ define('table/nls/i18n',{
 		"zh-hans": true
 });
 
+define('aloha/nls/i18n',{
+	"root":  {
+		"plugin.abbr.floatingmenu.tab.abbr": "Abbreviation",
+		"floatingmenu.tab.format": "Format",
+		"floatingmenu.tab.insert": "Insert",
+		"yes": "Yes",
+		"no": "No",
+		"cancel": "Cancel",
+		"repository.no_item_found": "No item found.",
+		"repository.loading": "Loading",
+		"repository.no_items_found_yet": "No items found yet..."
+	},
+		"ca": true,
+		"de": true,
+		"mk": true,
+		"pt-br": true,
+		"ru": true,
+		"uk": true,
+		"zh-hans": true
+});
+
 define('table/table-create-layer',
 ['jquery'],
 function (jQuery) {
@@ -35611,7 +41131,7 @@ define('table/table-plugin-utils',[
 	$,
 	CopyPaste,
 	Browser,
-    Console
+	Console
 ) {
 	
 
@@ -36134,11 +41654,11 @@ define('table/table-plugin-utils',[
 			var anchor = getAnchorCell(selection);
 			if (anchor) {
 				var element = $('>.aloha-table-cell-editable', anchor)[0];
-				if (Browser.ie7) {
+				if (Browser.ie && anchor.ownerDocument.documentMode <= 8) {
 					try {
-						CopyPaste.selectAllOf(element)
+						CopyPaste.selectAllOf(element);
 					} catch (e) {
-						Console.error ('Table', e.message);
+						Console.warn('Table Plugin', e.message);
 					}
 				} else {
 					CopyPaste.selectAllOf(element);
@@ -36155,12 +41675,14 @@ define('table/table-cell',[
 	'aloha',
 	'aloha/jquery',
 	'aloha/ephemera',
-	'table/table-plugin-utils'
+	'table/table-plugin-utils',
+	'util/browser'
 ], function (
 	Aloha,
 	jQuery,
 	Ephemera,
-	Utils
+	Utils,
+	Browser
 ) {
 	/**
 	 * Constructs a TableCell.
@@ -36173,7 +41695,7 @@ define('table/table-cell',[
 	 */
 	var TableCell = function (originalTd, tableObj) {
 		if (null == originalTd) {
-			originalTd = '<td>&nbsp;</td>';
+			originalTd = '<td></td>';
 		}
 
 		//original Td must be a DOM node so that the this.obj.context property is available
@@ -36475,7 +41997,6 @@ define('table/table-cell',[
 			var that = this;
 			jQuery('body').bind('mouseup.cellselection', function(event) {
 				that._endCellSelection();
-				event.stopPropagation();
 			});
 
 			this.tableObj.selection.baseCellPosition = [this._virtualY(), this._virtualX()];
@@ -36648,7 +42169,16 @@ define('table/table-cell',[
 			// only add a row on a single key-press of tab (so check that alt-,
 			// shift- or ctrl-key are NOT pressed)
 			if (KEYCODE_TAB == jqEvent.keyCode && !jqEvent.altKey && !jqEvent.shiftKey && !jqEvent.ctrlKey) {
-				this.tableObj.addRow(this.obj.parent().index() + 1);
+				var lastInsertedRow = this.tableObj.addRow(this.obj.parent().index() + 1);
+
+				if (Browser.mozilla) {
+					// After the row is inserted, mozilla sets the cursor outside
+					// the Table in weird places.
+					jqEvent.preventDefault();
+
+					// Place focus into first editable cell of new row
+					$(lastInsertedRow).find('td:nth-child(2) .aloha-table-cell-editable').focus();
+				}
 			}
 		}
 	};
@@ -36671,7 +42201,7 @@ define('table/table-cell',[
 
 		// if empty insert a blank space and blur and focus the wrapper
 		if (text === '') {
-			this.wrapper.text('\u00a0');
+			this.wrapper.text('');
 			this.wrapper.get(0).blur();
 			this.wrapper.get(0).focus();
 		}
@@ -37845,7 +43375,7 @@ define('table/table',[
 		// tha data-block-skip-scope attribute will keep the block plugin from setting the
 		// FloatingMenu's scope when the block is clicked
 		tableWrapper = jQuery(
-			'<div class="' + this.get( 'classTableWrapper' ) + '" data-block-skip-scope="true"></div>'
+			'<div class="' + this.get( 'classTableWrapper' ) + ' aloha-block-collection" data-block-skip-scope="true"></div>'
 		);
 		tableWrapper.contentEditable( false );
 
@@ -38599,36 +44129,37 @@ define('table/table',[
 	 *
 	 * @param {int} rowIndex
 	 *        the index at which the new row shall be inserted
+	 * @return <HTMLElemenet> last row inserted
 	 */
 	Table.prototype.addRow = function(newRowIndex) {
-
-		var that = this;
 		var rowsToInsert = 1;
+		var $insertionRow;
+		var classSelectionColumn = this.get('classSelectionColumn');
 
-		var numCols = this.countVirtualCols();
 		var $rows = this.obj.children().children('tr');
 		for (var j = 0; j < rowsToInsert; j++) {
-			var insertionRow = jQuery('<tr>');
+			$insertionRow = jQuery('<tr>');
 
 			// create the first column, the "select row" column
-			var selectionColumn = jQuery('<td>');
-			selectionColumn.addClass(this.get('classSelectionColumn'));
-			this.attachRowSelectionEventsToCell(selectionColumn);
-			insertionRow.append(selectionColumn);
+			var $selectionColumn = jQuery('<td>');
+			$selectionColumn.addClass(classSelectionColumn);
+			this.attachRowSelectionEventsToCell($selectionColumn);
+			$insertionRow.append($selectionColumn);
 
 			var grid = Utils.makeGrid($rows);
 			var selectColOffset = 1;
 			if ( newRowIndex >= grid.length ) {
 				for (var i = selectColOffset; i < grid[0].length; i++) {
-					insertionRow.append(this.newActiveCell().obj);
+					$insertionRow.append(this.newActiveCell().obj);
 				}
 			} else {
-				for (var i = selectColOffset; i < grid[newRowIndex].length; ) {
-					var cellInfo = grid[newRowIndex][i];
+				var newRow = grid[newRowIndex];
+				for (var i = selectColOffset, len = newRow.length; i < len; ) {
+					var cellInfo = newRow[i];
 					if (Utils.containsDomCell(cellInfo)) {
 						var colspan = cellInfo.colspan;
 						while (colspan--) {
-							insertionRow.append(this.newActiveCell().obj);
+							$insertionRow.append(this.newActiveCell().obj);
 						}
 					} else {
 						jQuery( cellInfo.cell ).attr('rowspan', cellInfo.rowspan + 1);
@@ -38638,13 +44169,15 @@ define('table/table',[
 			}
 
 			if ( newRowIndex >= $rows.length ) {
-				$rows.eq( $rows.length - 1 ).after( insertionRow );
+				$rows.eq( $rows.length - 1 ).after( $insertionRow );
 			} else {
-				$rows.eq( newRowIndex ).before( insertionRow );
+				$rows.eq( newRowIndex ).before( $insertionRow );
 			}
 		}
 
 		this.numRows += rowsToInsert;
+
+		return $insertionRow[0];
 	};
 
 	/**
@@ -39343,37 +44876,20 @@ define('table/table',[
 	return Table;
 });
 
-/* table-plugin.js is part of Aloha Editor project http://aloha-editor.org
+/* table-plugin.js is part of the Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
- * Copyright (c) 2010-2013 Gentics Software GmbH, Vienna, Austria.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
  * Contributors http://aloha-editor.org/contribution.php
- *
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
+ * License http://aloha-editor.org/license.php
  */
 define('table/table-plugin',[
 	'aloha',
 	'jquery',
+	'PubSub',
 	'aloha/plugin',
 	'aloha/pluginmanager',
+	'aloha/content-rules',
 	'ui/ui',
 	'ui/scopes',
 	'ui/button',
@@ -39389,11 +44905,13 @@ define('table/table-plugin',[
 	'util/dom',
 	'aloha/ephemera',
 	'aloha/console'
-], function(
+], function (
 	Aloha,
-	jQuery,
+	$,
+	PubSub,
 	Plugin,
 	PluginManager,
+	ContentRules,
 	Ui,
 	Scopes,
 	Button,
@@ -39410,8 +44928,9 @@ define('table/table-plugin',[
 	Ephemera,
 	Console
 ) {
-	var $ = jQuery;
+	var jQuery = $;
 	var GENTICS = window.GENTICS;
+	var configurations = {};
 
 	/**
 	 * Register the TablePlugin as Aloha.Plugin
@@ -39607,7 +45126,6 @@ define('table/table-plugin',[
 			j,
 			allHeaders = table.selection.isHeader(),
 			domCell, // representation of the cell in the dom
-			tableCell, // table-cell object
 			bufferCell; // temporary buffer
 
 		for (i = 0; i < table.selection.selectedCells.length; i++) {
@@ -39691,22 +45209,18 @@ define('table/table-plugin',[
 	 * @return void
 	 */
 	TablePlugin.init = function() {
-		var that = this,
-		    isEnabled = {};
+		var that = this;
 
-		// register ephemeral classes
 		Ephemera.classes(this.get('className'), this.get('classCellSelected'));
 
-		// apply settings
-		this.tableConfig = this.checkConfig(this.tableConfig||this.settings.tableConfig);
-		this.columnConfig = this.checkConfig(this.columnConfig||this.settings.columnConfig);
-		this.rowConfig = this.checkConfig(this.rowConfig||this.settings.rowConfig);
-		this.cellConfig = this.checkConfig(this.cellConfig||this.settings.cellConfig);
+		this.tableConfig  = this.checkConfig(this.tableConfig  || this.settings.tableConfig);
+		this.columnConfig = this.checkConfig(this.columnConfig || this.settings.columnConfig);
+		this.rowConfig    = this.checkConfig(this.rowConfig    || this.settings.rowConfig);
+		this.cellConfig   = this.checkConfig(this.cellConfig   || this.settings.cellConfig);
 
-		// table resize settings
 		this.tableResize = this.settings.tableResize === undefined ? false : this.settings.tableResize;
-		this.colResize = this.settings.colResize === undefined ? false : this.settings.colResize;
-		this.rowResize = this.settings.rowResize === undefined ? false : this.settings.rowResize;
+		this.colResize   = this.settings.colResize   === undefined ? false : this.settings.colResize;
+		this.rowResize   = this.settings.rowResize   === undefined ? false : this.settings.rowResize;
 
 		// disable table resize settings on browsers below IE8
 		if (jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 8) {
@@ -39716,65 +45230,74 @@ define('table/table-plugin',[
 		}
 
 		// add reference to the create layer object
-		this.createLayer = new CreateLayer( this );
+		this.createLayer = new CreateLayer(this);
 
-		// subscribe for the 'editableActivated' event to activate all tables in the editable
-		Aloha.bind( 'aloha-editable-created', function (event, editable) {
+		PubSub.sub('aloha.editable.created', function (message) {
+			var editable = message.editable;
 			var config = that.getEditableConfig(editable.obj);
-			isEnabled[editable.getId()] = (-1 !== jQuery.inArray('table', config));
+			var enabled = config
+			           && ($.inArray('table', config) > -1)
+			           && ContentRules.isAllowed(editable.obj[0], 'table');
 
-			// add a mousedown event to all created editables to check if focus leaves a table
-			editable.obj.bind( 'mousedown', function ( jqEvent ) {
-				TablePlugin.setFocusedTable( undefined );
-			} );
+			configurations[editable.getId()] = !!enabled;
 
-			editable.obj.find('table').each(function (__unused__, elem) {
+			editable.obj.bind('mousedown', function () {
+				TablePlugin.setFocusedTable(undefined);
+			});
+
+			editable.obj.find('table').each(function (index, elem) {
 				createNewTable(elem);
 			});
-		} );
+		});
 
 		// initialize the table buttons
 		this.initTableButtons();
 
 		Aloha.bind( 'aloha-table-selection-changed', function () {
-
 			// check if selected cells are split/merge able and set button status
-			if ( typeof TablePlugin.activeTable !== 'undefined' &&
-				TablePlugin.activeTable.selection ) {
-
-				TablePlugin.updateFloatingMenuScope();
-
-				if ( TablePlugin.activeTable.selection.cellsAreSplitable() ) {
-					that._splitcellsButton.enable(true);
-					that._splitcellsRowButton.enable(true);
-					that._splitcellsColumnButton.enable(true);
-				} else {
-					that._splitcellsButton.enable(false);
-					that._splitcellsRowButton.enable(false);
-					that._splitcellsColumnButton.enable(false);
-				}
-
-				if ( TablePlugin.activeTable.selection.cellsAreMergeable() ) {
-					that._mergecellsButton.enable(true);
-					that._mergecellsRowButton.enable(true);
-					that._mergecellsColumnButton.enable(true);
-				} else {
-					that._mergecellsButton.enable(false);
-					that._mergecellsRowButton.enable(false);
-					that._mergecellsColumnButton.enable(false);
-				}
+			if (!TablePlugin.activeTable || !TablePlugin.activeTable.selection) {
+				return;
 			}
 
+			TablePlugin.updateFloatingMenuScope();
+
+			if (TablePlugin.activeTable.selection.cellsAreSplitable()) {
+				that._splitcellsButton.enable(true);
+				that._splitcellsRowButton.enable(true);
+				that._splitcellsColumnButton.enable(true);
+			} else {
+				that._splitcellsButton.enable(false);
+				that._splitcellsRowButton.enable(false);
+				that._splitcellsColumnButton.enable(false);
+			}
+
+			if (TablePlugin.activeTable.selection.cellsAreMergeable()) {
+				that._mergecellsButton.enable(true);
+				that._mergecellsRowButton.enable(true);
+				that._mergecellsColumnButton.enable(true);
+			} else {
+				that._mergecellsButton.enable(false);
+				that._mergecellsRowButton.enable(false);
+				that._mergecellsColumnButton.enable(false);
+			}
 		});
 
-		Aloha.bind( 'aloha-selection-changed', function (event, rangeObject) {
+		//		PubSub.sub('aloha.selection.context-change', function (message) {
+		// Problem with this PubSub.sub event:
+		// This event is only thrown if the context has changed. (selection.js:126:triggerSelectionContextChanged)
+		// This makes that the scope changes to Aloha.continuoustext (scopes.js:43).
+		// This is because selection is called a least twice (selection.js:525). The second time the context has not changed.
+		Aloha.bind('aloha-selection-changed', function (event, rangeObject) {
+			var range = rangeObject;
+			var editable = Aloha.activeEditable;
+
 			// this case probably occurs when the selection is empty?
-			if (!rangeObject.startContainer || !Aloha.activeEditable) {
+			if (!range.startContainer || !editable) {
 				return;
 			}
 
 			// show hide buttons regarding configuration and DOM position
-			if (isEnabled[Aloha.activeEditable.getId()] && Aloha.Selection.mayInsertTag('table') ) {
+			if (configurations[Aloha.activeEditable.getId()] && Aloha.Selection.mayInsertTag('table') ) {
 				that._createTableButton.show();
 			} else {
 				that._createTableButton.hide();
@@ -39784,10 +45307,10 @@ define('table/table-plugin',[
 				return;
 			}
 
-			// check wheater we are inside a table
-			var table = rangeObject.findMarkup(function() {
+			var table = range.findMarkup(function () {
 				return this.nodeName === 'TABLE';
-			}, Aloha.activeEditable.obj);
+			}, editable.obj);
+
 			if (table) {
 				TablePlugin.updateFloatingMenuScope();
 				TablePlugin.setActiveCellStyle();
@@ -39799,7 +45322,7 @@ define('table/table-plugin',[
 			}
 		});
 
-		Aloha.bind('aloha-editable-activated', function (__event__, data) {
+		PubSub.sub('aloha.editable.activated', function (message) {
 			that._splitcellsButton.enable(false);
 			that._mergecellsButton.enable(false);
 			that._splitcellsRowButton.enable(false);
@@ -39807,7 +45330,7 @@ define('table/table-plugin',[
 			that._splitcellsColumnButton.enable(false);
 			that._mergecellsColumnButton.enable(false);
 
-			data.editable.obj.find('table').each(function () {
+			message.editable.obj.find('table').each(function () {
 				var registry = TablePlugin.TableRegistry;
 				for (var i = 0; i < registry.length; i++) {
 					if (registry[i].obj.attr('id') === jQuery(this).attr('id')) {
@@ -39815,15 +45338,13 @@ define('table/table-plugin',[
 						return true;
 					}
 				}
-
 				// Because table this is a new table that is not yet in the
-				// registry.
+				// registry
 				createNewTable(this);
 			});
-
 		});
 
-		Aloha.bind('aloha-editable-deactivated', function () {
+		PubSub.sub('aloha.editable.deactivated', function () {
 			if (TablePlugin.activeTable) {
 				TablePlugin.activeTable.selection.unselectCells();
 			}
@@ -39853,40 +45374,43 @@ define('table/table-plugin',[
 		}
 	};
 
-	//namespace prefix for this plugin
 	var tableNamespace = 'aloha-table';
 
-	function nsSel () {
+	function nsSel() {
 		var stringBuilder = [], prefix = tableNamespace;
-		jQuery.each(arguments, function () { stringBuilder.push('.' + (this == '' ? prefix : prefix + '-' + this)); });
+		jQuery.each(arguments, function () {
+			stringBuilder.push('.' + (this == '' ? prefix : prefix + '-' + this));
+		});
 		return jQuery.trim(stringBuilder.join(' '));
-	};
+	}
 
 	//Creates string with this component's namepsace prefixed the each classname
-	function nsClass () {
+	function nsClass() {
 		var stringBuilder = [], prefix = tableNamespace;
-		jQuery.each(arguments, function () { stringBuilder.push(this == '' ? prefix : prefix + '-' + this); });
+		jQuery.each(arguments, function () { 
+			stringBuilder.push(this == '' ? prefix : prefix + '-' + this);
+		});
 		return jQuery.trim(stringBuilder.join(' '));
-	};
+	}
 
-	TablePlugin.initSidebar = function(sidebar) {
+	TablePlugin.initSidebar = function (sidebar) {
 		var pl = this;
 		pl.sidebar = sidebar;
 		pl.sidebarPanel = sidebar.addPanel({
 
-            id       : nsClass('sidebar-panel'),
-            title    : i18n.t('table.sidebar.title'),
-            content  : '',
-            expanded : true,
-            activeOn : 'table',
+			id       : nsClass('sidebar-panel'),
+			title    : i18n.t('table.sidebar.title'),
+			content  : '',
+			expanded : true,
+			activeOn : 'table',
 
-            onInit   : function () {
-            	var that = this,
+			onInit   : function () {
+				var that = this,
 	            content = this.setContent(
 	                '<label class="' + nsClass('label') + '" for="' + nsClass('textarea') + '" >' + i18n.t('table.label.target') + '</label>' +
 	                	'<textarea id="' + nsClass('textarea') + '" class="' + nsClass('textarea') + '" />').content;
 
-            	jQuery(nsSel('textarea')).live('keyup', function() {
+				jQuery(nsSel('textarea')).live('keyup', function () {
 					//The original developer thought that escaping the
 					//quote characters of the textarea value are
 					//necessary to work around a bug in IE. I could not
@@ -40153,8 +45677,9 @@ define('table/table-plugin',[
 
 					toggleHeaderStatus(that.activeTable, 'col');
 
-					that.activeTable.selection.unselectCells();
+					// Update selection to the new row
 					that.activeTable.selection.selectRows(that.activeTable.selection.selectedRowIdxs);
+					that.activeTable.selection.unselectCells();
 				}
 			}
 		});
@@ -40265,8 +45790,9 @@ define('table/table-plugin',[
 
 					toggleHeaderStatus(that.activeTable, 'row');
 
-					that.activeTable.selection.unselectCells();
+					// Update selection to the new column
 					that.activeTable.selection.selectColumns(that.activeTable.selection.selectedColumnIdxs);
+					that.activeTable.selection.unselectCells();
 				}
 			}
 		});
@@ -40616,7 +46142,7 @@ define('table/table-plugin',[
 				var tr = document.createElement( 'tr' );
 				// create "cols"-number of columns
 				for ( var j = 0; j < cols; j++ ) {
-					var text = document.createTextNode( '\u00a0' );
+					var text = document.createTextNode('');
 					var td = document.createElement( 'td' );
 					td.appendChild( text );
 					tr.appendChild( td );
@@ -41035,63 +46561,51 @@ define('format/nls/i18n',{
 		"zh-hans": true
 });
 
-/* format-plugin.js is part of Aloha Editor project http://aloha-editor.org
+/* format-plugin.js is part of the Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
  * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
+ * License http://aloha-editor.org/license.php
  */
 define('format/format-plugin', [
+	'jquery',
 	'aloha',
+	'PubSub',
 	'aloha/plugin',
 	'aloha/state-override',
-	'jquery',
+	'aloha/content-rules',
+	'aloha/ephemera',
+	'aloha/selection',
 	'util/arrays',
+	'util/html',
+	'util/dom',
 	'util/maps',
 	'ui/ui',
 	'ui/toggleButton',
 	'ui/port-helper-multi-split',
-	'PubSub',
-	'i18n!format/nls/i18n',
-	'i18n!aloha/nls/i18n',
-	'aloha/selection'
+	'i18n!format/nls/i18n'
 ], function (
+	jQuery,
 	Aloha,
+	PubSub,
 	Plugin,
 	StateOverride,
-	jQuery,
+	ContentRules,
+	Ephemera,
+	Selection,
 	Arrays,
+	Html,
+	Dom,
 	Maps,
 	Ui,
 	ToggleButton,
 	MultiSplitButton,
-	PubSub,
-	i18n,
-	i18nCore
+	i18n
 ) {
 	
 
-	var GENTICS = window.GENTICS;
+	var $ = jQuery;
 	var pluginNamespace = 'aloha-format';
 	var commandsByElement = {
 		'b': 'bold',
@@ -41104,7 +46618,7 @@ define('format/format-plugin', [
 		'u': 'underline',
 		's': 'strikethrough'
 	};
-	var componentNameByElement = { "code": "code", 
+	var componentNameByElement = { 'code': 'code',
 		'strong': 'strong',
 		'em': 'emphasis',
 		's': 'strikethrough2'
@@ -41140,6 +46654,156 @@ define('format/format-plugin', [
 		"STRONG": ["STRONG", "B"],
 		"EM": ["EM", "I"]
 	};
+
+	/**
+	 * Checks if the selection spans a whole node (HTML element)
+	 * @param Range range
+	 * @return {boolean}
+	 */
+	function isEntireNodeInRange(range) {
+		var sc = range.startContainer;
+		var	so = range.startOffset;
+		var	ec = range.endContainer;
+		var	eo = range.endOffset;
+		return (sc === ec && so === 0 && eo === ec.length);
+	}
+
+	/**
+	 * Alias for isInlineFormatable function from Html lib
+	 */
+	var isInlineNode = Html.isInlineFormattable;
+
+	/**
+	 * Expands the (invisible) range to encompass the whole node
+	 * that was selected by the user
+	 * @param Range range
+	 * @return void
+	 */
+	function expandRange(range) {
+		var cac = range.commonAncestorContainer;
+
+		if (isInlineNode(cac)) {
+			var parent = cac.parentNode;
+			range.startContainer = parent;
+			range.endContainer = parent;
+			range.commonAncestorContainer = parent;
+			range.startOffset = 0;
+			range.endOffset = 1;
+			expandRange(range);
+			return;
+		}
+
+		// Because at this point there will be no further recursion, we should
+		// finally update the state of `range`
+		range.update();
+	}
+
+	/**
+	 * Collision map to determine if we are
+	 * working on a list related node.
+	 */
+	var LIST_ELEMENT = {
+		'OL': true,
+		'UL': true,
+		'LI': true,
+		'DL': true,
+		'DT': true,
+		'DD': true
+	};
+
+	/**
+	 * Determine if we are working on a list element
+	 * using the previous LIST_ELEMENT hash map.
+	 * @param DOM node
+	 * @return {boolean}
+	 */
+	function isListElement(node){
+		return LIST_ELEMENT[node.nodeName];
+	}
+
+	/**
+	 * Determines if a markup is a heading
+	 * @param string markup
+	 * @returns {boolean}
+	 */
+	function isHeading(markup){
+		return jQuery.inArray(markup,['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) >= 0;
+	}
+
+	/**
+	 * Checks whether range spans multiple lists
+	 * @param Range range
+	 * @return {boolean}
+	 */
+	function spansMultipleLists(range){
+		return range.startContainer !== range.endContainer;
+	}
+
+	/**
+	 * Take list items out of their encompassing list element.
+	 * Wrap items in <p> and delete any remaining empty lists.
+	 * @param Range range
+	 * @return void
+	 */
+	function unformatList(range){
+		expandRange(range);
+
+		var cac = range.commonAncestorContainer;
+
+		if (!isListElement(cac)){
+			return;
+		}
+
+		if (!isEntireNodeInRange(range) && !spansMultipleLists(range)) {
+			return;
+		}
+
+		var selectedNodes = jQuery(range.startContainer.parentNode).nextUntil(jQuery(range.endContainer.parentNode).next()).andSelf();
+		var prevNodes = jQuery(range.startContainer.parentNode).prevAll();
+		var nextNodes = jQuery(range.endContainer.parentNode).nextAll();
+		var listName = range.startContainer.parentNode.parentNode.nodeName;
+
+		// first list item
+		if (selectedNodes.length === 1 && prevNodes.length === 0) { 
+			selectedNodes.each(function(){
+				jQuery(this).addClass('_moved');
+			}).remove().insertBefore(nextNodes.parent());
+		}
+		// last list item
+		else if (selectedNodes.length === 1 && nextNodes.length === 0) {
+			selectedNodes.each(function(){
+				jQuery(this).addClass('_moved');
+			}).remove().insertAfter(prevNodes.parent());
+		} 
+		// one list item in middle
+		else if (selectedNodes.length === 1 && nextNodes.length > 1) {
+			selectedNodes.each(function(){
+				jQuery(this).addClass('_moved');
+			}).remove().insertAfter(prevNodes.parent());
+			jQuery('<' + listName.toLowerCase() + '>').append(nextNodes).insertAfter(jQuery(range.endContainer));
+		}
+		// multiple list items up to whole list
+		else {
+			selectedNodes.each(function(){
+				jQuery(this).addClass('_moved');
+			}).remove().insertAfter(cac);
+			if (nextNodes.length > 0) {
+				jQuery('<' + listName.toLowerCase() + '>').append(nextNodes).insertAfter(jQuery(range.endContainer));
+			}
+		}
+
+
+		// unwrap moved list elements
+		jQuery('._moved').each(function() {
+			jQuery(this).contents().unwrap().wrap('<p>');
+		});
+
+
+		// If we are at the first list element, get rid of original (now empty) list
+		if (prevNodes.length === 0) {
+			cac.remove();
+		}
+	}
 
 	function formatInsideTableWorkaround(button) {
 		var selectedCells = jQuery('.aloha-cell-selected');
@@ -41204,7 +46868,9 @@ define('format/format-plugin', [
 			tooltip : i18n.t('button.' + button + '.tooltip'),
 			icon: 'aloha-icon aloha-icon-' + componentName,
 			scope: 'Aloha.continuoustext',
-			click: function () { return textLevelButtonClickHandler(formatPlugin, button); }
+			click: function () {
+				return textLevelButtonClickHandler(formatPlugin, button); 
+			}
 		});
 		return component;
 	}
@@ -41215,7 +46881,9 @@ define('format/format-plugin', [
 			tooltip: i18n.t('button.' + button + '.tooltip'),
 			iconClass: 'aloha-icon ' + i18n.t('aloha-large-icon-' + button),
 			markup: jQuery('<' + button + '>'),
-			click: function () { return blockLevelButtonClickHandler(formatPlugin, button); }
+			click: function () { 
+				return blockLevelButtonClickHandler(formatPlugin, button); 
+			}
 		};
 	}
 
@@ -41232,33 +46900,108 @@ define('format/format-plugin', [
 		};
 	}
 
+	/**
+	 * Checks the hierarchy of headings (h1, h2, ..., h6) and adds a class
+	 * "aloha-heading-hierarchy-violated" if the hierarchy is violated.
+	 * The hierarchy is violated if a heading is more than one hierarchy lower
+	 * than the previous heading.
+	 * It is also checked, if the hierarchy is higher than the highest hierarchy
+	 * found in the plugin configuration.
+	 * For example if the plugin configuration contains the possible headings:
+	 * 'h2', 'h3', 'h4', 'h5', 'h6', then all occurrences of 'h1' will be marked.
+	 * @param {config} the plugin config
+	 * @returns {undefined}
+	 */
+	function checkHeadingHierarchy(config) {
+		var parent = Aloha.activeEditable.obj,
+			startHeading,
+			lastCorrectHeading,
+			currentHeading;
+
+		if (config.length === 0) {
+			return;
+		}
+
+		//set startheading to heading with smallest number available in the config
+		for (var i = 0; i < config.length; i++){
+			if (isHeading(config[i])) {
+				if (typeof startHeading !== 'undefined') {
+					if (parseInt(config[i].charAt(1),10) < startHeading) {
+						startHeading = parseInt(config[i].charAt(1),10);
+					}
+				} else {
+					//first heading found in config
+					startHeading = parseInt(config[i].charAt(1),10);
+				}
+			}
+		}
+
+		//check the heading hierarchy of every heading
+		if (typeof startHeading !== 'undefined') {
+			//this find() returns all headings in tree order
+			parent.find("h1,h2,h3,h4,h5,h6").each(function (){
+				currentHeading = parseInt(this.nodeName.charAt(1),10);
+				if (typeof lastCorrectHeading !== 'undefined') {
+					//the current heading hierarchy must be lower than the startHeading hierarchy
+					if (currentHeading < startHeading) {
+						$(this).addClass("aloha-heading-hierarchy-violated");
+					} else {
+						//heading hierarchy is violated if a heading is more
+						//than one hierarchy lower than the last correct heading
+						if (currentHeading > (lastCorrectHeading+1)) {
+							$(this).addClass("aloha-heading-hierarchy-violated");
+						} else {
+							//only set the last heading if the hierarchy is not violated
+							lastCorrectHeading = currentHeading;
+							$(this).removeClass("aloha-heading-hierarchy-violated");
+						}
+					}
+				} else {
+					//first heading! see if it starts with correct heading
+					if (currentHeading === startHeading) {
+						lastCorrectHeading = currentHeading;
+						$(this).removeClass("aloha-heading-hierarchy-violated");
+					} else {
+						$(this).addClass("aloha-heading-hierarchy-violated");
+					}
+				}
+			});
+		}
+	}
+
 	function changeMarkup(button) {
-		Aloha.Selection.changeMarkupOnSelection(jQuery('<' + button + '>'));
+		Selection.changeMarkupOnSelection(jQuery('<' + button + '>'));
+		if (Aloha.settings.plugins.format && Aloha.settings.plugins.format.checkHeadingHierarchy === true) {
+			checkHeadingHierarchy(this.formatOptions);
+		}
 	}
 
 	function updateUiAfterMutation(formatPlugin, rangeObject) {
 		// select the modified range
 		rangeObject.select();
-		// update Button toggle state. We take 'Aloha.Selection.getRangeObject()'
+		// update Button toggle state. We take Selection.getRangeObject()
 		// because rangeObject is not up-to-date
-		onSelectionChanged(formatPlugin, Aloha.Selection.getRangeObject());
+		onSelectionChanged(formatPlugin, Selection.getRangeObject());
 	}
 
 	function format(formatPlugin, rangeObject, markup) {
-		GENTICS.Utils.Dom.addMarkup(rangeObject, markup);
+		Dom.addMarkup(rangeObject, markup);
 		updateUiAfterMutation(formatPlugin, rangeObject);
 	}
 
 	function isFormatAllowed(tagname, plugin, editable) {
+		if (!ContentRules.isAllowed(editable.obj[0], tagname)) {
+			return false;
+		}
 		var config = plugin.getEditableConfig(editable.obj);
-		return jQuery.inArray(tagname, config) > -1;
+		return config ? $.inArray(tagname, config) > -1 : false;
 	}
 
 	function addMarkup(button) {
-		var formatPlugin = this;
-		var markup = jQuery('<'+button+'>');
-		var rangeObject = Aloha.Selection.rangeObject;
-		
+		var formatPlugin = this,
+			markup = jQuery('<'+button+'>'),
+			rangeObject = Selection.rangeObject;
+
 		if ( typeof button === "undefined" || button == "" ) {
 			return;
 		}
@@ -41273,16 +47016,16 @@ define('format/format-plugin', [
 			// remove the markup
 			if (rangeObject.isCollapsed()) {
 				// when the range is collapsed, we remove exactly the one DOM element
-				GENTICS.Utils.Dom.removeFromDOM(foundMarkup, rangeObject, true);
+				Dom.removeFromDOM(foundMarkup, rangeObject, true);
 			} else {
 				// the range is not collapsed, so we remove the markup from the range
-				GENTICS.Utils.Dom.removeMarkup(rangeObject, jQuery(foundMarkup), Aloha.activeEditable.obj);
+				Dom.removeMarkup(rangeObject, jQuery(foundMarkup), Aloha.activeEditable.obj);
 			}
 			updateUiAfterMutation(formatPlugin, rangeObject);
 		} else {
 			// when the range is collapsed, extend it to a word
 			if (rangeObject.isCollapsed()) {
-				GENTICS.Utils.Dom.extendToWord(rangeObject);
+				Dom.extendToWord(rangeObject);
 				if (rangeObject.isCollapsed()) {
 					if (StateOverride.enabled()) {
 						StateOverride.setWithRangeObject(
@@ -41310,7 +47053,7 @@ define('format/format-plugin', [
 			for (i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
 				effectiveMarkup = rangeObject.markupEffectiveAtStart[i];
 				for (j = 0; j < nodeNames.length; j++) {
-					if (Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup, jQuery('<' + nodeNames[j] + '>'))) {
+					if (Selection.standardTextLevelSemanticsComparator(effectiveMarkup, jQuery('<' + nodeNames[j] + '>'))) {
 						button.handle.setState(true);
 						statusWasSet = true;
 					}
@@ -41336,7 +47079,7 @@ define('format/format-plugin', [
 					}
 
 					// now check whether one of the multiSplitItems fits to the effective markup
-					if (Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup, multiSplitItem.markup)) {
+					if (Selection.standardTextLevelSemanticsComparator(effectiveMarkup, multiSplitItem.markup)) {
 						formatPlugin.multiSplitButton.setActiveItem(multiSplitItem.name);
 						foundMultiSplit = true;
 					}
@@ -41360,7 +47103,7 @@ define('format/format-plugin', [
 
 		/**
 		 * available options / buttons
-		 * 
+		 *
 		 * @todo new buttons needed for 'code'
 		 */
 		availableButtons: [ 'code', 'u', 'strong', 'del', 'em', 'b', 'i', 's', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat' ],
@@ -41368,28 +47111,30 @@ define('format/format-plugin', [
 		/**
 		 * HotKeys used for special actions
 		 */
-		hotKey: { 
-			formatBold: 'ctrl+b',
-			formatItalic: 'ctrl+i',
-			formatParagraph: 'alt+ctrl+0',
-			formatH1: 'alt+ctrl+1',
-			formatH2: 'alt+ctrl+2',
-			formatH3: 'alt+ctrl+3',
-			formatH4: 'alt+ctrl+4',
-			formatH5: 'alt+ctrl+5',
-			formatH6: 'alt+ctrl+6',
-			formatPre: 'ctrl+p',
-			formatDel: 'ctrl+d',
-			formatSub: 'alt+shift+s',
-			formatSup: 'ctrl+shift+s'
+		hotKey: {
+			formatBold:      'ctrl+b meta+b',
+			formatItalic:    'ctrl+i meta+i',
+			formatUnderline: 'ctrl+u meta+u',
+			formatParagraph: 'alt+ctrl+0 alt+meta+0',
+			formatH1:        'alt+ctrl+1 alt+meta+1',
+			formatH2:        'alt+ctrl+2 alt+meta+2',
+			formatH3:        'alt+ctrl+3 alt+meta+3',
+			formatH4:        'alt+ctrl+4 alt+meta+4',
+			formatH5:        'alt+ctrl+5 alt+meta+5',
+			formatH6:        'alt+ctrl+6 alt+meta+6',
+			formatPre:       'ctrl+p meta+p',
+			formatDel:       'ctrl+d meta+d',
+			formatSub:       'alt+shift+s',
+			formatSup:       'ctrl+shift+s'
 		},
 
 		/**
 		 * Initialize the plugin and set initialize flag on true
 		 */
 		init: function () {
-			// Prepare
 			var me = this;
+
+			Ephemera.classes('aloha-heading-hierarchy-violated');
 
 			if (typeof this.settings.hotKey !== 'undefined') {
 				jQuery.extend(true, this.hotKey, this.settings.hotKey);
@@ -41402,45 +47147,69 @@ define('format/format-plugin', [
 				me.initSidebar(Aloha.Sidebar.right);
 			});
 
+			var shouldCheckHeadingHierarchy = (true === this.settings.checkHeadingHierarchy);
+
+			var checkHeadings = function () {
+				checkHeadingHierarchy(me.formatOptions);
+			};
+
+			if (shouldCheckHeadingHierarchy) {
+				Aloha.bind('aloha-smart-content-changed', checkHeadings);
+				Aloha.bind('aloha-markup-change', checkHeadings);
+			}
+
 			// apply specific configuration if an editable has been activated
-			Aloha.bind('aloha-editable-activated',function (e, params) {
-				me.applyButtonConfig(params.editable.obj);
+			PubSub.sub('aloha.editable.activated', function (message) {
+				var editable = message.editable;
+				me.applyButtonConfig(editable.obj);
+
+				if (shouldCheckHeadingHierarchy) {
+					checkHeadings();
+				}
 
 				var createAdder = function (tagname) {
-					return function () {
-						if (isFormatAllowed(tagname, me, params.editable)) {
+					if (isFormatAllowed(tagname, me, editable)) {
+						return function addFormat() {
 							me.addMarkup(tagname);
-						}
+							return false;
+						};
+					}
+					return function () {
 						return false;
 					};
 				};
 
 				var createChanger = function (tagname) {
-					return function () {
-						if (isFormatAllowed(tagname, me, params.editable)) {
+					if (isFormatAllowed(tagname, me, editable)) {
+						return function changeFormat() {
 							me.changeMarkup(tagname);
-						}
+							return false;
+						};
+					}
+					return function () {
 						return false;
 					};
 				};
 
-				params.editable.obj.bind('keydown.aloha.format',  me.hotKey.formatBold,     createAdder('b'));
-				params.editable.obj.bind('keydown.aloha.format',  me.hotKey.formatItalic,   createAdder('i'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatDel,       createAdder('del'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatSub,       createAdder('sub'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatSup,       createAdder('sup'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatParagraph, createChanger('p'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH1,        createChanger('h1'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH2,        createChanger('h2'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH3,        createChanger('h3'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH4,        createChanger('h4'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH5,        createChanger('h5'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatH6,        createChanger('h6'));
-				params.editable.obj.bind('keydown.aloha.format', me.hotKey.formatPre,       createChanger('pre'));
+				var $editable = editable.obj;
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatBold,      createAdder('b'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatItalic,    createAdder('i'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatUnderline, createAdder('u'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatDel,       createAdder('del'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatSub,       createAdder('sub'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatSup,       createAdder('sup'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatParagraph, createChanger('p'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatH1,        createChanger('h1'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatH2,        createChanger('h2'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatH3,        createChanger('h3'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatH4,        createChanger('h4'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatH5,        createChanger('h5'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatH6,        createChanger('h6'));
+				$editable.bind('keydown.aloha.format',  me.hotKey.formatPre,       createChanger('pre'));
 			});
 
-			Aloha.bind('aloha-editable-deactivated',function (e, params) {
-				params.editable.obj.unbind('keydown.aloha.format');
+			PubSub.sub('aloha.editable.deactivated', function (message) {
+				message.editable.obj.unbind('keydown.aloha.format');
 			});
 		},
 
@@ -41450,8 +47219,8 @@ define('format/format-plugin', [
 		 * @param {Object} id of the activated editable
 		 * @return void
 		 */
-		applyButtonConfig: function (obj) {
-			var config = this.getEditableConfig(obj),
+		applyButtonConfig: function ($editable) {
+			var config = this.getEditableConfig($editable),
 			    button, i, len;
 
 			if ( typeof config === 'object' ) {
@@ -41468,10 +47237,14 @@ define('format/format-plugin', [
 			}
 			this.formatOptions = config;
 
+			var editable = $editable[0];
+
 			// now iterate all buttons and show/hide them according to the config
 			for ( button in this.buttons) {
 				if (this.buttons.hasOwnProperty(button)) {
-					if (jQuery.inArray(button, config) !== -1) {
+					if (!ContentRules.isAllowed(editable, button)) {
+						this.buttons[button].handle.hide();
+					} else if (jQuery.inArray(button, config) !== -1) {
 						this.buttons[button].handle.show();
 					} else {
 						this.buttons[button].handle.hide();
@@ -41482,10 +47255,13 @@ define('format/format-plugin', [
 			// and the same for multisplit items
 			len = this.multiSplitItems.length;
 			for (i = 0; i < len; i++) {
-				if (jQuery.inArray(this.multiSplitItems[i].name, config) !== -1) {
-					this.multiSplitButton.showItem(this.multiSplitItems[i].name);
+				var name = this.multiSplitItems[i].name;
+				if (!ContentRules.isAllowed(editable, name)) {
+					this.multiSplitButton.hideItem(name);
+				} else if (jQuery.inArray(name, config) !== -1) {
+					this.multiSplitButton.showItem(name);
 				} else {
-					this.multiSplitButton.hideItem(this.multiSplitItems[i].name);
+					this.multiSplitButton.hideItem(name);
 				}
 			}
 		},
@@ -41501,7 +47277,7 @@ define('format/format-plugin', [
 			this.buttons = {};
 			this.multiSplitItems = [];
 
-			jQuery.each(this.availableButtons, function(j, button) {
+			$.each(this.availableButtons, function(j, button) {
 				var button_config = false;
 
 				if (typeof j !== 'number' && typeof button !== 'string') {
@@ -41523,7 +47299,7 @@ define('format/format-plugin', [
 				}
 			});
 
-			this.multiSplitButton = MultiSplitButton({
+			this.multiSplitButton = new MultiSplitButton({
 				name: 'formatBlock',
 				items: this.multiSplitItems,
 				hideIfEmpty: true,
@@ -41576,15 +47352,12 @@ define('format/format-plugin', [
 
 					html += '</select></fieldset></div>';
 
-					var that = this,
-					content = this.setContent(html).content; 
+					var content = this.setContent(html).content;
 
 					jQuery( pl.nsSel( 'framename' ) ).live( 'keyup', function () {
 						jQuery( that.effective ).attr( 'target', jQuery( this ).val().replace( '\"', '&quot;' ).replace( "'", "&#39;" ) );
 					} );
-					
 
-					var that = this;
 					that.effective = effective;
 					jQuery( pl.nsSel( 'linkTitle' ) ).val( jQuery( that.effective ).attr( 'title' ) );
 				}
@@ -41618,10 +47391,15 @@ define('format/format-plugin', [
 
 		/**
 		 * Removes all formatting from the current selection.
+		 * And deconstructs lists via unformatList method.
 		 */
 		removeFormat: function() {
-			var formats = [ 'u', 'strong', 'em', 'b', 'i', 'q', 'del', 's', 'code', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'quote', 'blockquote' ],
-			    rangeObject = Aloha.Selection.rangeObject,
+			var formats = [
+				'u', 'strong', 'em', 'b', 'i', 'q', 'del', 's', 'code', 'sub', 'sup', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'quote', 'blockquote',
+				'section', 'article', 'aside', 'header', 'footer', 'address', 'main', 'hr', 'figure', 'figcaption', 'div', 'small', 'cite', 'dfn',
+				'abbr', 'data', 'time', 'var', 'samp', 'kbd', 'mark', 'span', 'wbr', 'ins'
+				],
+			    rangeObject = Selection.rangeObject,
 			    i;
 
 			// formats to be removed by the removeFormat button may now be configured using Aloha.settings.plugins.format.removeFormats = ['b', 'strong', ...]
@@ -41634,12 +47412,13 @@ define('format/format-plugin', [
 			}
 
 			for (i = 0; i < formats.length; i++) {
-				GENTICS.Utils.Dom.removeMarkup(rangeObject, jQuery('<' + formats[i] + '>'), Aloha.activeEditable.obj);
+				Dom.removeMarkup(rangeObject, jQuery('<' + formats[i] + '>'), Aloha.activeEditable.obj);
 			}
+			unformatList(rangeObject);
 
 			// select the modified range
 			rangeObject.select();
-			// TODO: trigger event - removed Format
+			Aloha.activeEditable.smartContentChange({type: 'block-change'});
 		},
 
 		/**
@@ -41650,6 +47429,177 @@ define('format/format-plugin', [
 			return 'format';
 		}
 	});
+});
+
+define('ui/menuButton',[
+	'jquery',
+	'ui/component',
+	'ui/utils',
+	'jqueryui'
+], function (
+	$,
+	Component,
+	Utils
+) {
+	
+
+	var MenuButton = Component.extend({
+		init: function () {
+			this.element = MenuButton.makeMenuButton(this);
+		}
+	});
+
+	// static functions
+
+	/**
+	 * @param props button properties:
+	 *        click - if provided will generate a split button,
+	 *                  otherwise just a normal select button.
+	 *        menu - array of props for nested buttons
+	 *        text - button text
+	 *        html - button html
+	 *        iconUrl - button icon url
+	 *        siblingContainer
+	 *             - a $ object that will be searched for other split buttons.
+	 *               If a split button is expanded, all the other split buttons in
+	 *               this container will be closed.
+	 */
+	MenuButton.makeMenuButton = function (props) {
+		var wrapper = $('<div>'   , {'class': 'aloha-ui-menubutton-container'});
+		var expand  = Utils.makeButtonElement({'class': 'aloha-ui-menubutton-expand'});
+		var menu    = $('<ul>'    , {'class': 'aloha-ui-menubutton-menu'});
+		var action = null;
+		var buttonset = null;
+
+		if ($.browser.msie) {
+			wrapper.addClass('aloha-ui-menubutton-iehack');
+		}
+
+		if (props.click) {
+			action = Utils.makeButton(Utils.makeButtonElement({'class': 'aloha-ui-menubutton-action'}), props)
+				.click(props.click);
+
+			Utils.makeButton(expand, {}, true);
+
+			buttonset = $('<div>')
+				.buttonset()
+				.append(action)
+				.append(expand);
+		} else {
+			Utils.makeButton(expand, props, true)
+			      .addClass('aloha-ui-menubutton-single');
+		}
+
+		if (!props.menu) {
+			return wrapper.append(action);
+		}
+
+		function hideMenu(menu) {
+			menu.hide().parent().removeClass('aloha-ui-menubutton-pressed');
+		}
+
+		expand.click(function () {
+				wrapper.addClass('aloha-ui-menubutton-pressed');
+
+				if (props.siblingContainer) {
+					props.siblingContainer
+						.find('.aloha-ui-menubutton-menu')
+						.each(function () {
+							if (this !== menu[0]) {
+								hideMenu($(this));
+							}
+						});
+				}
+
+				if (menu.is(':visible')) {
+					hideMenu(menu);
+					return;
+				}
+
+				menu.show().position({
+					my: 'left top',
+					at: 'left bottom',
+					of: action || expand
+				});
+
+				// In order to prevent the floating menu from being partially
+				// covered by the ribbon, we use "position: relative" and an
+				// invisible border to pad the top of the document.  This
+				// throws off the offset to the menu button so we need to
+				// compensate in ordet to ensure that the menu is placed
+				// underneatht the menubutton.
+				// NB: For the time being we are not using the above fix.
+				/*
+				var target = action || expand;
+				var bodyOffset = parseInt($('body').css('border-top-width'), 10) || 0;
+				menu.css('top', target.height() + target.offset().top + bodyOffset);
+				*/
+
+				$(document).bind('click', function (event) {
+					$(this).unbind(event);
+					menu.hide();
+					wrapper.removeClass('aloha-ui-menubutton-pressed');
+				});
+
+				return false;
+			});
+
+		wrapper.append(buttonset || expand).append(menu);
+
+		menu.append(makeNestedMenus(makeCloseHandler(menu), props.menu));
+
+		menu.hide().menu({
+			'select': onSelect
+		});
+
+		return wrapper;
+	};
+
+	function makeNestedMenus(parentCloseHandler, menu){
+		var elems = [];
+		$.each(menu, function (_, item) {
+			var elem = $('<li>');
+			elem.append($('<a>', {'href': 'javascript:void 0', 'html': Utils.makeButtonLabelWithIcon(item)}));
+			if (item.click) {
+				elem.click(function (){
+					parentCloseHandler();
+					item.click();
+				});
+			}
+			if (item.menu) {
+				var nestedMenu = $('<ul>').appendTo(elem);
+				nestedMenu.append(
+					makeNestedMenus(makeCloseHandler(nestedMenu, parentCloseHandler),
+									item.menu));
+			}
+			elems.push(elem[0]);
+		});
+		return elems;
+	}
+
+	function makeCloseHandler(menu, parentCloseHandler) {
+		parentCloseHandler = parentCloseHandler || $.noop;
+		return function () {
+			// We must blur the parent menu otherwise it will remain in
+			// focused state and not expand the next time it is hovered over
+			// after the user has selected an item.
+			menu.blur().hide();
+			menu.parent().removeClass('aloha-ui-menubutton-pressed');
+			parentCloseHandler();
+		};
+	}
+
+	function onSelect(event, ui) {
+		var clickHandler = ui.item.data('aloha-ui-menubutton-select');
+		if (clickHandler) {
+			clickHandler(event, ui);
+		}
+		// We use preventDefault() to keep a click on a menu item from
+		// scrolling to the top of the page.
+		event.preventDefault();
+	}
+
+	return MenuButton;
 });
 
 define('list/nls/i18n',{
@@ -41669,61 +47619,236 @@ define('list/nls/i18n',{
 		"zh-hans": true
 });
 
-/* list-plugin.js is part of Aloha Editor project http://aloha-editor.org
+/* list-plugin.js is part of the Aloha Editor project http://aloha-editor.org
  *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php
+ * License http://aloha-editor.org/license.php
  */
 define('list/list-plugin',[
 	'aloha',
 	'jquery',
 	'aloha/plugin',
+	'aloha/content-rules',
+	'aloha/engine',
+	'util/dom',
 	'ui/ui',
 	'ui/scopes',
 	'ui/button',
-	'ui/toggleButton',
-	'i18n!list/nls/i18n',
-	'i18n!aloha/nls/i18n',
-	'aloha/engine',
-	'PubSub'
-], function(
+    'ui/menuButton',
+	'PubSub',
+	'i18n!list/nls/i18n'
+], function (
 	Aloha,
-	jQuery,
+	$,
 	Plugin,
+	ContentRules,
+	Engine,
+	Dom,
 	Ui,
 	Scopes,
 	Button,
-	ToggleButton,
-	i18n,
-	i18nCore,
-	Engine,
-	PubSub
+	MenuButton,
+	PubSub,
+	i18n
 ) {
 	
 
-	var GENTICS = window.GENTICS;
-	
+	var jQuery = $;
+	var configurations = {};
+
+	/**
+	 * Initializes the list templates button menus.
+	 *
+	 * @private
+	 * @param {ListPlugin} plugin
+	 */
+	function initializeTemplates(plugin) {
+		if (plugin.templates.dl) {
+			$.each(plugin.templates.dl.classes, function (i, cssClass) {
+				plugin.definitionListStyleButtons.push(plugin.makeListStyleButton('dl', cssClass));
+			});
+
+			plugin._definitionListFormatSelectorButton = Ui.adopt(
+				'definitionListFormatSelector',
+				MenuButton,
+				{
+					click: function () {
+						plugin.transformList('dl');
+					},
+					html: '<span class="ui-button-icon-primary ui-icon aloha-icon aloha-icon-definitionlist"></span>',
+					menu: (plugin.definitionListStyleButtons.length) ? plugin.definitionListStyleButtons : null
+				}
+			);
+		}
+
+		if (plugin.templates.ol) {
+			$.each(plugin.templates.ol.classes, function (i, cssClass) {
+				plugin.orderedListStyleButtons.push(plugin.makeListStyleButton('ol', cssClass));
+			});
+
+			plugin._orderedListFormatSelectorButton = Ui.adopt(
+				'orderedListFormatSelector',
+				MenuButton,
+				{
+					click: function () {
+						plugin.transformList('ol');
+					},
+					html: '<span class="ui-button-icon-primary ui-icon aloha-icon aloha-icon-orderedlist"></span>',
+					menu: (plugin.orderedListStyleButtons.length) ? plugin.orderedListStyleButtons : null
+				}
+			);
+		}
+
+		if (plugin.templates.ul) {
+			$.each(plugin.templates.ul.classes, function (i, cssClass) {
+				plugin.unorderedListStyleButtons.push(plugin.makeListStyleButton('ul', cssClass));
+			});
+
+			plugin._unorderedListFormatSelectorButton = Ui.adopt(
+				'unorderedListFormatSelector',
+				MenuButton,
+				{
+					click: function () {
+						plugin.transformList('ul');
+					},
+					html: '<span class="ui-button-icon-primary ui-icon aloha-icon aloha-icon-unorderedlist"></span>',
+					menu: (plugin.unorderedListStyleButtons.length) ? plugin.unorderedListStyleButtons : null
+				}
+			);
+		}
+	}
+
+	/**
+	 * Subscribes event handlers to facilitate user interaction on editables.
+	 *
+	 * @private
+	 * @param {ListPlugin} plugin
+	 */
+	function registerEventHandlers(plugin) {
+		PubSub.sub('aloha.editable.created', function (message) {
+			var editable = message.editable.obj[0];
+			var config = plugin.getEditableConfig(message.editable.obj);
+			configurations[message.editable.getId()] = {
+				dl: config && ($.inArray('dl', config) > -1) && ContentRules.isAllowed(editable, 'dl'),
+				ol: config && ($.inArray('ol', config) > -1) && ContentRules.isAllowed(editable, 'ol'),
+				ul: config && ($.inArray('ul', config) > -1) && ContentRules.isAllowed(editable, 'ul')
+			};
+		});
+
+		PubSub.sub('aloha.editable.destroyed', function (message) {
+			delete configurations[message.editable.getId()];
+		});
+
+		PubSub.sub('aloha.editable.activated', function (message) {
+			var config = configurations[message.editable.getId()];
+			if (config) {
+				toggleListOption(plugin, 'dl', config.dl);
+				toggleListOption(plugin, 'ol', config.ol);
+				toggleListOption(plugin, 'ul', config.ul);
+			}
+		});
+
+		var $dlIcon = $('.aloha-icon-definitionlist').parent('.aloha-ui-menubutton-container');
+		var $olIcon = $('.aloha-icon-orderedlist').parent('.aloha-ui-menubutton-container');
+		var $ulIcon = $('.aloha-icon-unorderedlist').parent('.aloha-ui-menubutton-container');
+
+		PubSub.sub('aloha.selection.context-change', function (message) {
+			$dlIcon.removeClass('aloha-button-active');
+			$olIcon.removeClass('aloha-button-active');
+			$ulIcon.removeClass('aloha-button-active');
+
+			plugin._outdentListButton.show(false);
+			plugin._indentListButton.show(false);
+
+			var i;
+			var markup;
+			var range = message.range;
+
+			for (i = 0; i < range.markupEffectiveAtStart.length; i++) {
+				markup = range.markupEffectiveAtStart[i];
+				switch (markup.nodeName) {
+				case 'DL':
+					$dlIcon.addClass('aloha-button-active');
+					$(markup).addClass('alohafocus');
+					break;
+				case 'OL':
+					$olIcon.addClass('aloha-button-active');
+					plugin._outdentListButton.show(true);
+					plugin._indentListButton.show(true);
+					break;
+				case 'UL':
+					$ulIcon.addClass('aloha-button-active');
+					plugin._outdentListButton.show(true);
+					plugin._indentListButton.show(true);
+					break;
+				}
+			}
+
+			// Remove jQuery UI menu classes/attributes from list-templates in submenus
+			$('div.aloha-list-templates ul').removeClass('ui-menu ui-widget ui-widget-content ui-corner-all')
+			          .attr('role', '')
+			          .attr('aria-hidden', '')
+			          .attr('aria-expanded', '')
+			          .css('display', 'block');
+		});
+
+		Aloha.Markup.addKeyHandler(9, function (event) {
+			return plugin.processTab(event);
+		});
+	}
+
+	/**
+	 * Small JS template function.
+	 *
+	 * @param  {string} str The template where substitution takes place
+	 * @param  {object} obj The object containing strings to insert into template
+	 * @return {string}
+	 */
+	function tmpl(str, obj) {
+	    var replacer = function (wholeMatch, key) {
+	            return obj[key] === undefined ? wholeMatch : obj[key];
+	        },
+	        regexp = /\${\s*([a-z0-9\-_]+)\s*}/ig;
+
+	    do {
+	        var beforeReplace = str;
+	        str = str.replace(regexp, replacer);
+	        var afterReplace = str !== beforeReplace;
+	    } while (afterReplace);
+
+	    return str;
+	}
+
+	/**
+	 * Shows or hides the ul, ol or dl buttons in Aloha floating menu if they are
+	 * configured.
+	 *
+	 * @param {plugin}  plugin the list plugin
+	 * @param {string}  listtype the type of listbutton to toggle (ul, ol, dl)
+	 * @param {boolean} show hide or show the button
+	 */
+	function toggleListOption(plugin, listtype, show) {
+		switch (listtype) {
+		case 'ul':
+			if (plugin.templates.ul) {
+				plugin._unorderedListFormatSelectorButton.show(show);
+			}
+			break;
+		case 'ol':
+			if (plugin.templates.ol) {
+				plugin._orderedListFormatSelectorButton.show(show);
+			}
+			break;
+		case 'dl':
+			if (plugin.templates.dl) {
+				plugin._definitionListFormatSelectorButton.show(show);
+			}
+			break;
+		}
+	}
+
 	/**
 	 * Transforms the given list element and its sub elements (if they are in the selection) into
 	 * the given transformTo target.
@@ -41732,7 +47857,7 @@ define('list/list-plugin',[
 	 */
 	function transformExistingListAndSubLists (domToTransform, transformTo) {
 		// find and transform sublists if they are in the selection
-		jQuery(domToTransform).find(domToTransform.nodeName).each(function(){
+		jQuery(domToTransform).find(domToTransform.nodeName).each(function () {
 			if (isListInSelection(this)) {
 				Aloha.Markup.transformDomObject(this, transformTo, Aloha.Selection.rangeObject);
 			}
@@ -41759,7 +47884,7 @@ define('list/list-plugin',[
 	 */
 	function checkSelectionTreeEntryForElement(treeElementArray, needle) {
 		var found = false;
-		jQuery.each(treeElementArray, function(index, element){
+		jQuery.each(treeElementArray, function (index, element) {
 			if ((element.domobj === needle && element.selection !== "none") || checkSelectionTreeEntryForElement(element.children, needle)) {
 				found = true;
 			}
@@ -41774,122 +47899,156 @@ define('list/list-plugin',[
 		/**
 		 * default button configuration
 		 */
-		config: [ 'ul', 'ol' ],
+		config: [ 'ul', 'ol', 'dl' ],
 
 		/**
 		 * List of transformable elements
 		 */
-		transformableElements: {'p' : true, 'h1' : true, 'h2' : true, 'h3' : true, 'h4' : true, 'h5' : true, 'h6' : true, 'ul' : true, 'ol' : true},
+		transformableElements: {'p' : true, 'h1' : true, 'h2' : true, 'h3' : true, 'h4' : true, 'h5' : true, 'h6' : true, 'ul' : true, 'ol' : true, 'dl': true},
 
 		/**
-		 * Initialize the plugin, register the buttons
-		 */
-		init: function() {
-
-			var that = this;
-
-			this._orderedListButton = Ui.adopt("orderedList", ToggleButton, {
-				tooltip: i18n.t("button.createolist.tooltip"),
-				icon: "aloha-icon aloha-icon-orderedlist",
-				scope: 'Aloha.continuoustext',
-				click: function(){
-					that.transformList(true);
+		* Default list styles
+		*/
+		templates: {
+			ul: {
+				classes: ['aloha-list-disc', 'aloha-list-circle', 'aloha-list-square'],
+				template: '<ul class="${cssClass}"><li>${first}<ul class="${cssClass}"><li>${second}<ul class="${cssClass}"><li>${third}</li></ul></li></ul></li></ul>',
+				locale: {
+					fallback: {first: 'first layer', second: 'second layer', third: 'third layer'},
+					de: {first: 'erste Ebene', second: 'zweite Ebene', third: 'dritte Ebene'}
 				}
-			});
-
-			this._unorderedListButton = Ui.adopt("unorderedList", ToggleButton, {
-				tooltip: i18n.t("button.createulist.tooltip"),
-				icon: "aloha-icon aloha-icon-unorderedlist",
-				scope: 'Aloha.continuoustext',
-				click: function(){
-					that.transformList(false);
+			},
+			ol: {
+				classes: ['aloha-list-decimal', 'aloha-list-decimal-leading-zero',
+					'aloha-list-lower-roman', 'aloha-list-upper-roman', 'aloha-list-lower-greek',
+					'aloha-list-lower-latin', 'aloha-list-upper-latin' ],
+				template: '<ol class="${cssClass}"><li>${first}<ol class="${cssClass}"><li>${second}<ol class="${cssClass}"><li>${third}</li></ol></li></ol></li></ol>',
+				locale: {
+					fallback: {first: 'first layer', second: 'second layer', third: 'third layer'},
+					de: {first: 'erste Ebene', second: 'zweite Ebene', third: 'dritte Ebene'}
 				}
-			});
-
-			this._indentListButton = Ui.adopt("indentList", Button, {
-				tooltip: i18n.t('button.indentlist.tooltip'),
-				icon: 'aloha-icon aloha-icon-indent',
-				scope: 'Aloha.continuoustext',
-				click: function() {
-					that.indentList();
+			},
+			dl: {
+				classes: ['aloha-list-blue', 'aloha-list-green', 'aloha-list-red'],
+				template: '<dl class="${cssClass}"><dt>${first}<dt><dd>${second}</dd></dl>',
+				locale: {
+					fallback: {first: 'first item', second: 'second item'},
+					de: {first: 'erstes Element', second: 'zweites Element'}
 				}
-			});
-
-			this._outdentListButton = Ui.adopt("outdentList", Button, {
-				tooltip: i18n.t('button.outdentlist.tooltip'),
-				icon: 'aloha-icon aloha-icon-outdent',
-				scope: 'Aloha.continuoustext',
-				click: function() {
-					that.outdentList();
-				}
-			});
-
-			Scopes.createScope('Aloha.List', 'Aloha.continuoustext');
-
-			// add the event handler for context selection change
-			PubSub.sub('aloha.selection.context-change', function(message){
-				var i,
-					effectiveMarkup,
-					rangeObject = message.range;
-				
-				// Hide all buttons in the list tab will make the list tab disappear
-				that._outdentListButton.show(false);
-				that._indentListButton.show(false);
-				that._unorderedListButton.setState(false);
-				that._orderedListButton.setState(false);
-				
-				for ( i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
-					effectiveMarkup = rangeObject.markupEffectiveAtStart[ i ];
-					if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ul></ul>'))) {
-						that._unorderedListButton.setState(true);
-						// Show all buttons in the list tab
-						that._outdentListButton.show(true);
-						that._indentListButton.show(true);
-						break;
-					}
-					if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ol></ol>'))) {
-						that._orderedListButton.setState(true);
-						// Show all buttons in the list tab
-						that._outdentListButton.show(true);
-						that._indentListButton.show(true);
-						break;
-					}
-				}
-
-				if (Aloha.activeEditable) {
-					that.applyButtonConfig(Aloha.activeEditable.obj);
-				}
-			});
-
-			// add the key handler for Tab
-			Aloha.Markup.addKeyHandler(9, function(event) {
-				return that.processTab(event);
-			});
+			}
 		},
 
 		/**
-		 * Applys a configuration specific for an editable
-		 * buttons not available in this configuration are hidden
-		 * @param {jQuery} obj jQuery object of the activated editable
+		 * Toggle selected CSS class on current list elemnet
+		 * @param String listtype: ol, ul or dl
+		 * @param String style: selected CSS class
+		 * @return void
 		 */
-		applyButtonConfig: function (obj) {
-			var config = this.getEditableConfig(obj);
+		toggleListStyle: function (listtype, style) {
+			var domObject = this.getStartingDomObjectToTransform();
+			var nodeName = domObject.nodeName.toLowerCase();
+			var listToStyle =  jQuery(domObject);
+			var remove = false;
 
-			if (Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0]) {
-				// show/hide them according to the config
-				if (jQuery.inArray('ul', config) != -1 && Aloha.Selection.canTag1WrapTag2(Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName, "ul") != -1) {
-					this._unorderedListButton.show(true);
-				} else {
-					this._unorderedListButton.show(false);
-				}
-
-				if (jQuery.inArray('ol', config) != -1 && Aloha.Selection.canTag1WrapTag2(Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName, "ol") != -1) {
-					this._orderedListButton.show(true);
-				} else {
-					this._orderedListButton.show(false);
-				}
-
+			if (nodeName !== 'ul' && nodeName !== 'ol' && nodeName !== 'dl') {
+				// we don't have a list yet, so transform selection to list
+				this.transformList(listtype);
+				domObject = this.getStartingDomObjectToTransform();
+				nodeName = domObject.nodeName.toLowerCase();
+				listToStyle = jQuery(this.getStartingDomObjectToTransform());
 			}
+
+			if (listtype === nodeName) {
+				// remove all classes
+				jQuery.each(this.templates[nodeName].classes, function (i, cssClass) {
+					if (listToStyle.hasClass(cssClass) && cssClass === style) {
+						remove = true;
+					}
+					listToStyle.removeClass(cssClass);
+				});
+
+				if (!remove) {
+					listToStyle.addClass(style);
+				}
+			}
+		},
+
+		/**
+		* Array for ordered list style buttons
+		*/
+		orderedListStyleButtons: [],
+
+		/**
+		* Array for unordered list style buttons
+		*/
+		unorderedListStyleButtons: [],
+
+		/**
+		* Array for unordered definition style buttons
+		*/
+		definitionListStyleButtons: [],
+
+		/**
+		 * Construct button for list styles (CSS classes).
+		 *
+		 * @param  {String} listtype ol, ul or dl
+		 * @param  {String} cssClass selected list style
+		 * @return {Object} MenuButton menu property
+		 */
+		makeListStyleButton: function (listtype, cssClass) {
+			var that = this;
+
+			var template = that.templates[listtype];
+
+			var locale = template.locale[Aloha.settings.locale]
+			          || template.locale['fallback'];
+
+			var html = tmpl(template.template, {
+				cssClass : cssClass,
+				first    : locale.first,
+				second   : locale.second,
+				third    : locale.third
+			});
+
+			return {
+				html: '<div class="aloha-list-templates">' + html + '</div>',
+				click: function () {
+					that.toggleListStyle(listtype, cssClass);
+				}
+			};
+		},
+
+		/**
+		 * Initializes the plugin. Register buttons, menus, and event handlers.
+		 */
+		init: function () {
+			var plugin = this;
+
+			plugin._indentListButton = Ui.adopt('indentList', Button, {
+				tooltip: i18n.t('button.indentlist.tooltip'),
+				icon: 'aloha-icon aloha-icon-indent',
+				scope: 'Aloha.continuoustext',
+				click: function () {
+					plugin.indentList();
+				}
+			});
+
+			plugin._outdentListButton = Ui.adopt('outdentList', Button, {
+				tooltip: i18n.t('button.outdentlist.tooltip'),
+				icon: 'aloha-icon aloha-icon-outdent',
+				scope: 'Aloha.continuoustext',
+				click: function () {
+					plugin.outdentList();
+				}
+			});
+
+			if (Aloha.settings.plugins && Aloha.settings.plugins.list && Aloha.settings.plugins.list.templates) {
+				plugin.templates = Aloha.settings.plugins.list.templates;
+			}
+
+			initializeTemplates(plugin);
+			registerEventHandlers(plugin);
+			Scopes.createScope('Aloha.List', 'Aloha.continuoustext');
 		},
 
 		/**
@@ -41911,6 +48070,7 @@ define('list/list-plugin',[
 		 * @return dom object or false
 		 */
 		getStartingDomObjectToTransform: function () {
+			Aloha.Selection.checkForFirefoxIncorrectRange();
 			var rangeObject = Aloha.Selection.rangeObject,
 				i, effectiveMarkup;
 
@@ -41934,7 +48094,7 @@ define('list/list-plugin',[
 
 			for ( i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
 				effectiveMarkup = rangeObject.markupEffectiveAtStart[ i ];
-				if (GENTICS.Utils.Dom.isListElement(effectiveMarkup)) {
+				if (Dom.isListElement(effectiveMarkup)) {
 					return effectiveMarkup;
 				}
 			}
@@ -41943,217 +48103,263 @@ define('list/list-plugin',[
 		},
 
 		/**
+		* Transforms a list into paragraphs
+		* @param Dom domToTransform element to transform
+		* @param String listElement the list element to transform (li, dt, dd)
+		*/
+		transformListToParagraph: function (domToTransform, listElement) {
+			var newPara;
+			var jqToTransform = jQuery(domToTransform);
+			jQuery.each(jqToTransform.children(listElement), function (index, el) {
+				newPara = Aloha.Markup.transformDomObject(el, 'p', Aloha.Selection.rangeObject);
+				// if any lists are in the paragraph, move the to after the paragraph
+				newPara.after(newPara.children('ol,ul,dl'));
+				Engine.ensureContainerEditable(newPara.get(0));
+			});
+
+			// unwrap the elements (remove the enclosing list)
+			jqToTransform.children().unwrap();
+		},
+
+		/**
+		* When the list is nested into another, our list items will be
+		* added to the list items of the outer list.
+		* @param Dom List Dom element
+		*/
+		fixupNestedLists: function (jqParentList) {
+				// find the place where to put the children of the inner list
+				if (jqParentList.get(0).nodeName.toLowerCase() === 'li') {
+					// inner list is nested in a li (this conforms to the html5 spec)
+					jqParentList.after(jqList.children());
+					jqList.remove();
+				} else {
+					// inner list is nested in the outer list directly (this violates the html5 spec)
+					jqList.children().unwrap();
+				}
+		},
+
+		/**
+		* Creates a list out of allowed elements
+		* @param String listtype type of list we want to create (ul, ol, dl)
+		* @param Dom domToTransform DOM object to transform
+		*/
+		createList: function (listtype, domToTransform) {
+			var selectedSiblings = Aloha.Selection.rangeObject.getSelectedSiblings(domToTransform);
+			var jqList;
+			var jqNewEl;
+			var lastAppendedEl;
+			var el;
+			var listElement;
+
+			// create a new list
+			switch (listtype) {
+				case 'ol':
+					jqList = jQuery('<ol></ol>');
+					jqNewEl = jQuery('<li></li>');
+					break;
+				case 'ul':
+					jqList = jQuery('<ul></ul>');
+					jqNewEl = jQuery('<li></li>');
+					break;
+				case 'dl':
+					jqList = jQuery('<dl></dl>');
+					jqNewEl = jQuery('<dt></dt>');
+					break;
+			}
+
+			// add the li into the list
+			jqList.append(jqNewEl);
+			// append the contents of the old dom element to the li
+			jQuery(domToTransform).contents().appendTo(jqNewEl);
+			// replace the old dom element with the new list
+			jQuery(domToTransform).replaceWith(jqList);
+
+			// update the selection range
+			if (Aloha.Selection.rangeObject.startContainer == domToTransform) {
+				Aloha.Selection.rangeObject.startContainer = jqNewEl.get(0);
+			}
+			if (Aloha.Selection.rangeObject.endContainer == domToTransform) {
+				Aloha.Selection.rangeObject.endContainer = jqNewEl.get(0);
+			}
+
+			lastAppendedEl = jqNewEl;
+
+			// now also transform all siblings
+			if (selectedSiblings) {
+				var o = true;
+				var lastEl = false;
+				for (var i = 0; i < selectedSiblings.length; ++i) {
+					if (Dom.isBlockLevelElement(selectedSiblings[i])) {
+						if (lastEl) {
+							lastEl = false;
+						}
+						// transform the block level element
+						if (listtype === 'dl') {
+							if (!o) {
+								jqNewEl = Aloha.Markup.transformDomObject(selectedSiblings[i], 'dt', Aloha.Selection.rangeObject);
+							} else {
+								jqNewEl = Aloha.Markup.transformDomObject(selectedSiblings[i], 'dd', Aloha.Selection.rangeObject);
+							}
+							o = !o;
+						} else {
+							jqNewEl = Aloha.Markup.transformDomObject(selectedSiblings[i], 'li', Aloha.Selection.rangeObject);
+						}
+						jqList.append(jqNewEl);
+						lastAppendedEl = jqNewEl;
+					} else {
+						if (selectedSiblings[i].nodeType == 3 && jQuery.trim(selectedSiblings[i].data).length === 0) {
+							continue;
+						}
+						if (!lastEl) {
+							lastEl = jqNewEl;
+							jqList.append(lastEl);
+							lastAppendedEl = lastEl;
+						}
+						lastEl.append(selectedSiblings[i]);
+					}
+				}
+			}
+
+			// merge adjacent lists
+			this.mergeAdjacentLists(jqList);
+
+			//use rangy to change the selection to the contents of
+			//the last li that was appended to the list
+			el = lastAppendedEl.get(0);
+			if (Dom.isEmpty(el)) {
+				var range = Aloha.createRange();
+				var selection = Aloha.getSelection();
+				//IE7 requires an (empty or non-empty) text node
+				//inside the li for the selection to work.
+				el.appendChild(document.createTextNode(""));
+				range.selectNodeContents( el.lastChild );
+				selection.removeAllRanges();
+				selection.addRange( range );
+				Aloha.Selection.updateSelection();
+			}
+		},
+
+		/**
+		* Set up a new empty list
+		* @param String listtype type of list we want to create (ul, ol, dl)
+		* @return Dom domToTransform DOM object to transform
+		*/
+		prepareNewList: function (listtype) {
+			var jqList;
+			var jqNewEl;
+			var el;
+			var editable;
+			var range;
+			var selection;
+			// wrap a paragraph around the selection
+			Aloha.Selection.changeMarkupOnSelection(jQuery('<p></p>'));
+			var domToTransform = this.getStartingDomObjectToTransform();
+
+			if (!domToTransform) {
+				if ( Aloha.Selection.rangeObject.startContainer.contentEditable ) {
+					// create a new list with an empty item
+					switch (listtype) {
+						case 'ol':
+							jqList = jQuery('<ol></ol>');
+							jqNewEl = jQuery('<li></li>');
+							break;
+						case 'ul':
+							jqList = jQuery('<ul></ul>');
+							jqNewEl = jQuery('<li></li>');
+							break;
+						case 'dl':
+							jqList = jQuery('<dl></dl>');
+							jqNewEl = jQuery('<dt></dt>');
+							break;
+					}
+
+					jqList.append(jqNewEl);
+
+					el = jqNewEl.get(0);
+					editable = Aloha.getActiveEditable().obj;
+					//IE7 requires an (empty or non-empty) text node
+					//inside the li for the selection to work.
+					el.appendChild(document.createTextNode(""));
+
+					editable.append(jqList);
+					editable.focus();
+
+					range = Aloha.createRange();
+					selection = Aloha.getSelection();
+					range.setStart( el.firstChild, 0 );
+					range.setEnd( el.firstChild, 0 );
+					selection.removeAllRanges();
+					selection.addRange( range );
+					Aloha.Selection.updateSelection();
+				} else {
+					Aloha.Log.error(this, 'Could not transform selection into a list');
+				}
+			}
+			return domToTransform;
+		},
+
+		/**
 		 * Transform the current selection to/from a list
-		 * @param ordered true when transforming to/from an ordered list, false for unordered lists
+		 * @param String listtype type of list we want to transform to (ul, ol, dl)
 		 */
-		transformList: function (ordered) {
-			var domToTransform = this.getStartingDomObjectToTransform(),
-				lastLi, i, jqNewLi, jqList, selectedSiblings, jqParentList,
-				newPara, jqToTransform, nodeName;
+		transformList: function (listtype) {
+			var domToTransform = this.getStartingDomObjectToTransform();
+			var jqList;
+			var jqParentList;
+			var	nodeName;
 
 			// visible is set to true, but the button is not visible
 			this._outdentListButton.show(true);
 			this._indentListButton.show(true);
 
 			if (!domToTransform) {
-				// wrap a paragraph around the selection
-				Aloha.Selection.changeMarkupOnSelection(jQuery('<p></p>'));
-				domToTransform = this.getStartingDomObjectToTransform();
-
-				if (!domToTransform) {
-					if ( Aloha.Selection.rangeObject.startContainer.contentEditable ) {
-						// create a new list with an empty item
-						jqList = ordered ? jQuery('<ol></ol>') : jQuery('<ul></ul>');
-						jqNewLi = jQuery('<li></li>');
-						jqList.append(jqNewLi);
-						
-						var li = jqNewLi.get(0);
-						var editable = Aloha.getActiveEditable().obj;
-						//IE7 requires an (empty or non-empty) text node
-						//inside the li for the selection to work.
-						li.appendChild(document.createTextNode(""));
-
-						editable.append(jqList);
-						editable.focus();
-
-						var range = Aloha.createRange();
-						var selection = Aloha.getSelection();
-						range.setStart( li.firstChild, 0 );
-						range.setEnd( li.firstChild, 0 );
-						selection.removeAllRanges();
-						selection.addRange( range );
-						Aloha.Selection.updateSelection();
-						
-						return;
-					} else {
-					Aloha.Log.error(this, 'Could not transform selection into a list');
-					return;
-				}
-			}
+				domToTransform = this.prepareNewList(listtype);
 			}
 
 			// check the dom object
 			nodeName = domToTransform.nodeName.toLowerCase();
 
-			if (nodeName == 'ul' && !ordered) {
-				// first check whether the list is nested into another list
+			if (nodeName === listtype) {
 				jqList = jQuery(domToTransform);
-
 				jqParentList = jqList.parent();
-				if (jqParentList.length > 0
-						&& GENTICS.Utils.Dom.isListElement(jqParentList.get(0))) {
-					// when the list is nested into another, our list items will be
-					// added to the list items of the outer list
-
-					// find the place where to put the children of the inner list
-					if (jqParentList.get(0).nodeName.toLowerCase() === 'li') {
-						// inner table is nested in a li (this conforms to the html5 spec)
-						jqParentList.after(jqList.children());
-						jqList.remove();
-					} else {
-						// inner table is nested in the outer list directly (this violates the html5 spec)
-						jqList.children().unwrap();
-					}
+				if (jqParentList.length > 0 && Dom.isListElement(jqParentList.get(0))) {
+					// we are in a nested list
+					this.fixupNestedLists(jqParentList);
 				} else {
-					// we are in an unordered list and shall transform it to paragraphs
-
-					// transform all li into p
-					jqToTransform = jQuery(domToTransform);
-					jQuery.each(jqToTransform.children('li'), function(index, li) {
-						newPara = Aloha.Markup.transformDomObject(li, 'p', Aloha.Selection.rangeObject);
-						// if any lists are in the paragraph, move the to after the paragraph
-						newPara.after(newPara.children('ol,ul'));
-						Engine.ensureContainerEditable(newPara.get(0));
-					});
-
-					// unwrap the li (remove the enclosing ul)
-					jqToTransform.children().unwrap();
+					// we are in an list and shall transform it to paragraphs
+					if (listtype === 'dl') {
+						this.transformListToParagraph(domToTransform, 'dd, dt');
+					} else {
+						this.transformListToParagraph(domToTransform, 'li');
+					}
 				}
-			} else if (nodeName == 'ul' && ordered) {
-				// we are in an unordered list and shall transform it to an ordered list
 
-				// transform the ul into an ol
+			} else if (nodeName == 'ul' && listtype === 'ol') {
 				transformExistingListAndSubLists(domToTransform, 'ol');
-				
-				// merge adjacent lists
 				this.mergeAdjacentLists(jQuery(domToTransform));
-			} else if (nodeName == 'ol' && !ordered) {
-				// we are in an ordered list and shall transform it to an unordered list
-
-				// transform the ol into an ul
+			} else if (nodeName == 'ol' && listtype === 'ul') {
 				transformExistingListAndSubLists(domToTransform, 'ul');
-
-				// merge adjacent lists
 				this.mergeAdjacentLists(jQuery(domToTransform));
-			} else if (nodeName == 'ol' && ordered) {
-				// first check whether the list is nested into another list
-				jqList = jQuery(domToTransform);
-
-				jqParentList = jqList.parent();
-				if (jqParentList.length > 0
-						&& GENTICS.Utils.Dom.isListElement(jqParentList.get(0))) {
-					// when the list is nested into another, our list items will be
-					// added to the list items of the outer list
-
-					// find the place where to put the children of the inner list
-					if (jqParentList.get(0).nodeName.toLowerCase() === 'li') {
-						// inner table is nested in a li (this conforms to the html5 spec)
-						jqParentList.after(jqList.children());
-						jqList.remove();
-					} else {
-						// inner table is nested in the outer list directly (this violates the html5 spec)
-						jqList.children().unwrap();
-					}
-				} else {
-					// we are in an unordered list and shall transform it to paragraphs
-
-					// transform all li into p
-					jqToTransform = jQuery(domToTransform);
-					jQuery.each(jqToTransform.children('li'), function(index, li) {
-						newPara = Aloha.Markup.transformDomObject(li, 'p', Aloha.Selection.rangeObject);
-						// if any lists are in the paragraph, move the to after the paragraph
-						newPara.after(newPara.children('ol,ul'));
-						Engine.ensureContainerEditable(newPara.get(0));
-					});
-
-					// unwrap the li (remove the enclosing ul)
-					jqToTransform.children().unwrap();
-				}
+			} else if (nodeName === 'ul' && listtype === 'dl') {
+				this.transformListToParagraph(domToTransform, 'li');
+				domToTransform = this.prepareNewList(listtype);
+				this.createList(listtype, domToTransform);
+			} else if (nodeName === 'ol' && listtype === 'dl') {
+				this.transformListToParagraph(domToTransform, 'li');
+				domToTransform = this.prepareNewList(listtype);
+				this.createList(listtype, domToTransform);
+			} else if (nodeName === 'dl' && listtype === 'ol' ) {
+				this.transformListToParagraph(domToTransform, 'dd, dt');
+				domToTransform = this.prepareNewList(listtype);
+				this.createList(listtype, domToTransform);
+			} else if (nodeName === 'dl' && listtype === 'ul' ) {
+				this.transformListToParagraph(domToTransform, 'dd, dt');
+				domToTransform = this.prepareNewList(listtype);
+				this.createList(listtype, domToTransform);
 			} else {
-				// we are in something different from a list and shall transform it into a list
-
-				// get the also selected siblings of the dom object
-				selectedSiblings = Aloha.Selection.rangeObject.getSelectedSiblings(domToTransform);
-
-				// create a new list
-				jqList = ordered ? jQuery('<ol></ol>') : jQuery('<ul></ul>');
-				// add a new list item
-				jqNewLi = jQuery('<li></li>');
-				// add the li into the list
-				jqList.append(jqNewLi);
-				// append the contents of the old dom element to the li
-				jQuery(domToTransform).contents().appendTo(jqNewLi);
-				// replace the old dom element with the new list
-				jQuery(domToTransform).replaceWith(jqList);
-
-				// update the selection range
-				if (Aloha.Selection.rangeObject.startContainer == domToTransform) {
-					Aloha.Selection.rangeObject.startContainer = jqNewLi.get(0);
-				}
-				if (Aloha.Selection.rangeObject.endContainer == domToTransform) {
-					Aloha.Selection.rangeObject.endContainer = jqNewLi.get(0);
-				}
-
-				var lastAppendedLi = jqNewLi;
-
-				// now also transform all siblings
-				if (selectedSiblings) {
-					lastLi = false;
-					for ( i = 0; i < selectedSiblings.length; ++i) {
-						if (GENTICS.Utils.Dom.isBlockLevelElement(selectedSiblings[i])) {
-							if (lastLi) {
-								lastLi = false;
-							}
-
-							// transform the block level element
-							jqNewLi = Aloha.Markup.transformDomObject(selectedSiblings[i], 'li', Aloha.Selection.rangeObject);
-							jqList.append(jqNewLi);
-							lastAppendedLi = jqNewLi;
-						} else {
-							if (selectedSiblings[i].nodeType == 3
-									&& jQuery.trim(selectedSiblings[i].data).length === 0) {
-								continue;
-							}
-							if (!lastLi) {
-								lastLi = jQuery('<li></li>');
-								jqList.append(lastLi);
-								lastAppendedLi = lastLi;
-							}
-							lastLi.append(selectedSiblings[i]);
-						}
-					}
-				}
-
-				// merge adjacent lists
-				this.mergeAdjacentLists(jqList);
-
-				//use rangy to change the selection to the contents of
-				//the last li that was appended to the list
-				var li = lastAppendedLi.get(0);
-				if (GENTICS.Utils.Dom.isEmpty(li)) {
-					var range = Aloha.createRange();
-					var selection = Aloha.getSelection();
-					//IE7 requires an (empty or non-empty) text node
-					//inside the li for the selection to work.
-					li.appendChild(document.createTextNode(""));
-					range.selectNodeContents( li.lastChild );
-					selection.removeAllRanges();
-					selection.addRange( range );
-					Aloha.Selection.updateSelection();
-				}
+				this.createList(listtype, domToTransform);
 			}
 
-			// refresh the selection
 			this.refreshSelection();
 		},
 
@@ -42226,7 +48432,7 @@ define('list/list-plugin',[
 				wrappingLi = jqList.parent('li');
 
 				if (jqParentList.length > 0
-						&& GENTICS.Utils.Dom.isListElement(jqParentList.get(0))) {
+						&& Dom.isListElement(jqParentList.get(0))) {
 					// the list is nested into another list
 
 					// get the also selected siblings of the dom object
@@ -42344,12 +48550,9 @@ define('list/list-plugin',[
 		}
 	});
 
-	/**
-	 * 
-	 */
-	Engine.commands['insertorderedlist'] = {
-		action: function(value, range) {
-			ListPlugin.transformList(true);
+	Engine.commands['insertdefinitionlist'] = {
+		action: function (value, range) {
+			ListPlugin.transformList('dl');
 			if (range && Aloha.Selection.rangeObject) {
 				range.startContainer = Aloha.Selection.rangeObject.startContainer;
 				range.startOffset = Aloha.Selection.rangeObject.startOffset;
@@ -42357,16 +48560,19 @@ define('list/list-plugin',[
 				range.endOffset = Aloha.Selection.rangeObject.endOffset;
 			}
 		},
-		indeterm: function() {
+		indeterm: function () {
 			// TODO
 		},
-		state: function() {
+		state: function () {
 			for ( i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
 				effectiveMarkup = rangeObject.markupEffectiveAtStart[ i ];
 				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ul></ul>'))) {
 					return false;
 				}
 				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ol></ol>'))) {
+					return false;
+				}
+				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<dl></dl>'))) {
 					return true;
 				}
 			}
@@ -42375,9 +48581,10 @@ define('list/list-plugin',[
 		}
 	};
 
-	Engine.commands['insertunorderedlist'] = {
-		action: function(value, range) {
-			ListPlugin.transformList(false);
+
+	Engine.commands['insertorderedlist'] = {
+		action: function (value, range) {
+			ListPlugin.transformList('ol');
 			if (range && Aloha.Selection.rangeObject) {
 				range.startContainer = Aloha.Selection.rangeObject.startContainer;
 				range.startOffset = Aloha.Selection.rangeObject.startOffset;
@@ -42385,16 +48592,50 @@ define('list/list-plugin',[
 				range.endOffset = Aloha.Selection.rangeObject.endOffset;
 			}
 		},
-		indeterm: function() {
+		indeterm: function () {
 			// TODO
 		},
-		state: function() {
+		state: function () {
+			for ( i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
+				effectiveMarkup = rangeObject.markupEffectiveAtStart[ i ];
+				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ul></ul>'))) {
+					return false;
+				}
+				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ol></ol>'))) {
+					return true;
+				}
+				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<dl></dl>'))) {
+					return false;
+				}
+			}
+
+			return false;
+		}
+	};
+
+	Engine.commands['insertunorderedlist'] = {
+		action: function (value, range) {
+			ListPlugin.transformList('ul');
+			if (range && Aloha.Selection.rangeObject) {
+				range.startContainer = Aloha.Selection.rangeObject.startContainer;
+				range.startOffset = Aloha.Selection.rangeObject.startOffset;
+				range.endContainer = Aloha.Selection.rangeObject.endContainer;
+				range.endOffset = Aloha.Selection.rangeObject.endOffset;
+			}
+		},
+		indeterm: function () {
+			// TODO
+		},
+		state: function () {
 			for ( i = 0; i < rangeObject.markupEffectiveAtStart.length; i++) {
 				effectiveMarkup = rangeObject.markupEffectiveAtStart[ i ];
 				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ul></ul>'))) {
 					return true;
 				}
 				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<ol></ol>'))) {
+					return false;
+				}
+				if (Aloha.Selection.standardTagNameComparator(effectiveMarkup, jQuery('<dl></dl>'))) {
 					return false;
 				}
 			}
@@ -42404,7 +48645,7 @@ define('list/list-plugin',[
 	};
 
 	Engine.commands['indent'] = {
-		action: function(value, range) {
+		action: function (value, range) {
 			ListPlugin.indentList();
 			if (range && Aloha.Selection.rangeObject) {
 				range.startContainer = Aloha.Selection.rangeObject.startContainer;
@@ -42413,17 +48654,17 @@ define('list/list-plugin',[
 				range.endOffset = Aloha.Selection.rangeObject.endOffset;
 			}
 		},
-		indeterm: function() {
+		indeterm: function () {
 			// TODO
 		},
-		state: function() {
+		state: function () {
 			// TODO
 			return false;
 		}
 	};
 
 	Engine.commands['outdent'] = {
-		action: function(value, range) {
+		action: function (value, range) {
 			ListPlugin.outdentList();
 			if (range && Aloha.Selection.rangeObject) {
 				range.startContainer = Aloha.Selection.rangeObject.startContainer;
@@ -42432,10 +48673,10 @@ define('list/list-plugin',[
 				range.endOffset = Aloha.Selection.rangeObject.endOffset;
 			}
 		},
-		indeterm: function() {
+		indeterm: function () {
 			// TODO
 		},
-		state: function() {
+		state: function () {
 			// TODO
 			return false;
 		}
@@ -42487,7 +48728,7 @@ define('list/list-plugin',[
 	 * </ul>
 	 *
 	 * And similar situations, some of which are not so easy to reproduce.
-	 * 
+	 *
 	 * @param event a jQuery key event
 	 * @return false if no action needed to be taken, true if cleanup has been performed
 	 */
@@ -42501,11 +48742,11 @@ define('list/list-plugin',[
 
 		//the hack is only relevant if after the deletion has been
 		//performed we are inside a li of a nested list
-		var $nestedList = jQuery(startContainer).closest('ul, ol');
+		var $nestedList = jQuery(startContainer).closest('ul, ol, dl');
 		if ( ! $nestedList.length ) {
 			return false;
 		}
-		var $parentList = $nestedList.parent().closest('ul, ol');
+		var $parentList = $nestedList.parent().closest('ul, ol, dl');
 		if ( ! $parentList.length ) {
 			return false;
 		}
@@ -42513,7 +48754,7 @@ define('list/list-plugin',[
 		var ranges = Aloha.getSelection().getAllRanges();
 
 		var actionPerformed = false;
-		$parentList.each(function(){
+		$parentList.each(function () {
 			actionPerformed = actionPerformed || fixListNesting(jQuery(this));
 		});
 
@@ -42528,17 +48769,25 @@ define('list/list-plugin',[
 	}
 
 	/**
-	 * If uls or ols are nested directly inside the given list (invalid
+	 * If dls, uls or ols are nested directly inside the given list (invalid
 	 * HTML), they will be cleaned up by being appended to the preceding
-	 * li.
+	 * element.
 	 */
 	function fixListNesting($list) {
 		var actionPerformed = false;
-		$list.children('ul, ol').each(function(){
+		$list.children('ul, ol').each(function () {
 			Aloha.Log.debug("performing list-nesting cleanup");
 			if ( ! jQuery(this).prev('li').append(this).length ) {
 				//if there is no preceding li, create a new one and append to that
 				jQuery(this).parent().prepend(document.createElement('li')).append(this);
+			}
+			actionPerformed = true;
+		});
+		$list.children('dl').each(function () {
+			Aloha.Log.debug("performing list-nesting cleanup");
+			if ( ! jQuery(this).prev('dt').append(this).length ) {
+				//if there is no preceding dt, create a new one and append to that
+				jQuery(this).parent().prepend(document.createElement('dt')).append(this);
 			}
 			actionPerformed = true;
 		});
@@ -42585,7 +48834,7 @@ define('dom-to-xhtml/dom-to-xhtml',[
 	'aloha/ephemera',
 	'aloha/console'
 ],
-function(
+function (
 	$,
 	Dom,
 	Misc,
@@ -42863,10 +49112,10 @@ function(
 		} else if (8 === node.nodeType) {
 			xhtml.push('<' + '!--' + node.nodeValue + '-->');
 		} else {
-			console.warn('Unknown node type encountered during serialization, ignoring it:'
-						 + ' type=' + node.nodeType
-						 + ' name=' + node.nodeName
-						 + ' value=' + node.nodeValue);
+			console.warn('Unknown node type encountered during serialization, ignoring it:' +
+						' type=' + node.nodeType +
+						' name=' + node.nodeName +
+						' value=' + node.nodeValue);
 		}
 	}
 	
@@ -42887,7 +49136,7 @@ function(
 		 *        The result may look like an XML fragment with multiple top-level elements and text nodes.
 		 * @see nodeToXhtml()
 		 */
-		contentsToXhtml: function(element, ephemera) {
+		contentsToXhtml: function (element, ephemera) {
 			var xhtml = [];
 			serializeChildren(element, element.firstChild, false, ephemera, xhtml);
 			return xhtml.join("");
@@ -42956,7 +49205,7 @@ function(
 		 * @return
 		 *        The serialized XHTML string represnting the given DOM node.
 		 */
-		nodeToXhtml: function(node, ephemera) {
+		nodeToXhtml: function (node, ephemera) {
 			var xhtml = [];
 			serialize(node, ephemera, xhtml);
 			return xhtml.join("");
@@ -43019,17 +49268,16 @@ define('dom-to-xhtml/dom-to-xhtml-plugin',[
 		 */
 		init: function () {
 			var that = this;
-			Aloha.Editable.setContentSerializer(function(editableElement) {
-				if ( !that.settings.editables && !that.settings.config ) {
+			Aloha.Editable.setContentSerializer(function (editableElement) {
+				if (!that.settings.editables && !that.settings.config) {
 					return domToXhtml.contentsToXhtml(editableElement);
 				}
 
-				if ( that.settings.editables &&
-					that.settings.editables['#'+$(editableElement).attr('id')] == 'dom-to-xhtml' ) {
+				if (that.settings.editables && that.settings.editables['#' + $(editableElement).attr('id')] == 'dom-to-xhtml') {
 					return domToXhtml.contentsToXhtml(editableElement, Ephemera.ephemera());
-				} else if ( that.settings.config &&
-					that.settings.config == 'dom-to-xhtml' &&
-					!that.settings.editables['#'+$(editableElement).attr('id')] ) {
+				} else if (that.settings.config &&
+						that.settings.config == 'dom-to-xhtml' &&
+						!that.settings.editables['#' + $(editableElement).attr('id')]) {
 					return domToXhtml.contentsToXhtml(editableElement, Ephemera.ephemera());
 				} else {
 					return $(editableElement).html();
@@ -43048,7 +49296,13 @@ define('dom-to-xhtml/dom-to-xhtml-plugin',[
 * @overview
 * Utility functions for content handling.
 */
-define('contenthandler/contenthandler-utils',['jquery'], function ($) {
+define('contenthandler/contenthandler-utils',[
+	'jquery',
+	'util/html'
+], function (
+	$,
+	Html
+) {
 	
 
 	/**
@@ -43071,15 +49325,16 @@ define('contenthandler/contenthandler-utils',['jquery'], function ($) {
 		if (!trimmed) {
 			return false;
 		}
-		var node = $('<div>' + trimmed + '</div>')[0];
-		var containsSingleP = node.firstChild === node.lastChild
-		                   && 'p' === node.firstChild.nodeName.toLowerCase();
-		if (containsSingleP) {
-			var kids = node.firstChild.children;
-			return (kids && 1 === kids.length &&
-					'br' === kids[0].nodeName.toLowerCase());
+		var div = $('<div>' + trimmed + '</div>')[0];
+		var first = div.firstChild;
+		var containsSingleP = first === div.lastChild && 'P' === first.nodeName;
+		if (!containsSingleP) {
+			return false;
 		}
-		return false;
+		var $visible = $(first.childNodes).filter(function (i, node) {
+			return Html.isRenderedNode(node);
+		});
+		return $visible.length === 1 && $visible[0].nodeName === 'BR';
 	}
 
 	function wrapContent(content) {
@@ -43129,13 +49384,15 @@ define('contenthandler/wordcontenthandler',[
 	'aloha',
 	'aloha/contenthandlermanager',
 	'contenthandler/contenthandler-utils',
-	'util/dom'
+	'util/dom2',
+	'util/html'
 ], function (
 	$,
 	Aloha,
 	Manager,
 	Utils,
-	Dom
+	Dom2,
+    Html
 ) {
 	
 
@@ -43210,6 +49467,22 @@ define('contenthandler/wordcontenthandler',[
 	}
 
 	/**
+	 * Removes unrendered child nodes from `$content`.
+	 * @param {jQuery.<HTMLElement> $content
+	 */
+	function removeUnrenderedChildNodes($content) {
+		var childNodes = $content[0].childNodes;
+		var i;
+		var len;
+
+		for (i = 0, len = childNodes.length; i < len; i++) {
+			if (childNodes[i] && Html.isUnrenderedNode(childNodes[i])) {
+				$content[0].removeChild(childNodes[i]);
+			}
+		}
+	}
+
+	/**
 	 * Cleanup MS Word HTML.
 	 *
 	 * @param {jQuery.<HTMLElement>} $content
@@ -43220,7 +49493,9 @@ define('contenthandler/wordcontenthandler',[
 		var $node;
 		var href;
 		var i;
-		for (i = 0; i < $nodes.length; i++) {
+		var len;
+
+		for (i = 0, len = $nodes.length; i < len; i++) {
 			$node = $nodes.eq(i);
 			nodeName = $node[0].nodeName.toLowerCase();
 
@@ -43244,6 +49519,8 @@ define('contenthandler/wordcontenthandler',[
 				$node.contents().unwrap();
 			}
 		}
+
+		removeUnrenderedChildNodes($content);
 	}
 
 	/**
@@ -43287,13 +49564,13 @@ define('contenthandler/wordcontenthandler',[
 		 * @param listSpan
 		 * @return true for ordered lists, false for unordered
 		 */
-		isOrderedList: function(listSpan) {
+		isOrderedList: function (listSpan) {
 			// when the span has fontFamily "Wingdings" it is an unordered list
 			if (listSpan.css('fontFamily') == 'Wingdings' || listSpan.css('fontFamily') == 'Symbol') {
 				return false;
 			}
 			// otherwise check for a number, letter or '(' as first character
-			return listSpan.text().match(/^([0-9]{1,3}\.)|([0-9]{1,3}\)|([a-zA-Z]{1,5}\.)|([a-zA-Z]{1,5}\)))$/) ? true : false;
+			return $.trim(listSpan.text()).match(/^([0-9]{1,3}\.)|([0-9]{1,3}\)|([a-zA-Z]{1,5}\.)|([a-zA-Z]{1,5}\)))$/) ? true : false;
 		},
 
 		/**
@@ -43312,7 +49589,7 @@ define('contenthandler/wordcontenthandler',[
 			// first step is to find all paragraphs which will be converted into list elements and mark them by adding the class 'aloha-list-element'
 			detectionFilter = 'p.MsoListParagraphCxSpFirst,p.MsoListParagraphCxSpMiddle,p.MsoListParagraphCxSpLast,p.MsoListParagraph,p span';
 			paragraphs = content.find(detectionFilter);
-			paragraphs.each(function() {
+			paragraphs.each(function () {
 				var jqElem = jQuery(this),
 					fontFamily = jqElem.css('font-family') || '',
 					msoList = jqElem.css('mso-list') || '',
@@ -43335,7 +49612,7 @@ define('contenthandler/wordcontenthandler',[
 			// now we search for paragraphs with three levels of nested spans, where the innermost span contains nothing but &nbsp;
 			detectionFilter = 'p span span span';
 			spans = content.find(detectionFilter);
-			spans.each(function() {
+			spans.each(function () {
 				var jqElem = jQuery(this),
 				    innerText = jQuery.trim(jqElem.text()).replace(/&nbsp;/g, ''),
 					outerText;
@@ -43367,13 +49644,13 @@ define('contenthandler/wordcontenthandler',[
 			paragraphs = content.find(detectionFilter);
 
 			if (paragraphs.length > 0) {
-				paragraphs.each(function() {
+				paragraphs.each(function () {
 					var jqElem = jQuery(this),
 						jqNewLi, jqList, ordered, firstSpan, following, lists, margin, nestLevel;
 
 					jqElem.removeClass(listElementClass);
 					// first remove all font tags
-					jqElem.find('font').each(function() {
+					jqElem.find('font').each(function () {
 						jQuery(this).contents().unwrap();
 					});
 
@@ -43414,7 +49691,7 @@ define('contenthandler/wordcontenthandler',[
 					jqElem.replaceWith(jqList);
 
 					// now proceed all following list elements
-					following.each(function() {
+					following.each(function () {
 						var jqElem = jQuery(this),
 							newMargin, jqNewList;
 						
@@ -43424,7 +49701,7 @@ define('contenthandler/wordcontenthandler',[
 						}
 
 						// remove all font tags
-						jqElem.find('font').each(function() {
+						jqElem.find('font').each(function () {
 							jQuery(this).contents().unwrap();
 						});
 						// check the new margin
@@ -43484,25 +49761,25 @@ define('contenthandler/wordcontenthandler',[
 		 * Remove paragraph numbering from TOC feature
 		 * @param content
 		*/
-		removeParagraphNumbering: function( content ) {
+		removeParagraphNumbering: function ( content ) {
 			var detectionFilter = 'h1,h2,h3,h4,h5,h6',
 				paragraphs = content.find(detectionFilter);
 			
 			if (paragraphs.length > 0) {
-				paragraphs.each(function() {
+				paragraphs.each(function () {
 					var jqElem = jQuery(this),
 						spans = jqElem.find('span'),
 						links = jqElem.find('a');
 				
 					// remove TOC numbering
-					spans.each(function() {
+					spans.each(function () {
 						if ( jQuery.trim(jQuery(this).text()).match(/^([\.\(]?[\d\D][\.\(]?){1,4}$/) ) {
 							jQuery(this).remove();
 						}
-					})
+					});
 				
 					// remove TOC anchor links
-					links.each(function() {
+					links.each(function () {
 						// no href, so it's an anchor
 						if ( typeof jQuery(this).attr('href') === 'undefined' ) {
 							jQuery(this).contents().unwrap();
@@ -43518,11 +49795,11 @@ define('contenthandler/wordcontenthandler',[
 		 * Transform TOC
 		 * @param content
 		*/
-		transformToc: function( content ) {
+		transformToc: function ( content ) {
 			var detectionFilter = '[class*=MsoToc]',
 				paragraphs = content.find(detectionFilter);
 
-			paragraphs.each(function() {
+			paragraphs.each(function () {
 				var jqElem = jQuery(this),
 					spans = jqElem.find('span'),
 					links = jqElem.find('a');
@@ -43530,7 +49807,7 @@ define('contenthandler/wordcontenthandler',[
 				// a table of contents entry looks like
 				// 1. Title text ... 5
 				// we get rid of the "... 5" part which repesents the page number
-				spans.each(function() {
+				spans.each(function () {
 					if ( jQuery(this).attr('style') && jQuery(this).attr('style').search('mso-hide') > -1 ) {
 						jQuery(this).remove();
 					}
@@ -43538,7 +49815,7 @@ define('contenthandler/wordcontenthandler',[
 				});
 
 				// remove the anchor link of the toc item
-				links.each(function() {
+				links.each(function () {
 					jQuery(this).contents().unwrap();
 				});
 			});
@@ -43607,38 +49884,6 @@ define('contenthandler/genericcontenthandler',[
 	var formattingTags = ['strong', 'em', 's', 'u', 'strike'];
 
 	/**
-	 * Checks whether the markup describes a paragraph that is propped by
-	 * a <br> tag but is otherwise empty.
-	 * 
-	 * Will return true for:
-	 *
-	 * <p id="foo"><br class="bar" /></p>
-	 *
-	 * as well as:
-	 *
-	 * <p><br></p>
-	 *
-	 * @param {string} html Markup
-	 * @return {boolean} True if html describes a propped paragraph.
-	 */
-	function isProppedParagraph(html) {
-		var trimmed = $.trim(html);
-		if (!trimmed) {
-			return false;
-		}
-		var node = $('<div>' + trimmed + '</div>')[0];
-		var containsSingleP = node.firstChild === node.lastChild
-		    && 'p' === node.firstChild.nodeName.toLowerCase();
-		if (containsSingleP) {
-			var kids = node.firstChild.children;
-			return (kids && 1 === kids.length &&
-					'br' === kids[0].nodeName.toLowerCase());
-		}
-		return false;
-	}
-
-
-	/**
 	 * Transforms all tables in the given content to make them ready to for
 	 * use with Aloha's table handling.
 	 *
@@ -43667,7 +49912,7 @@ define('contenthandler/genericcontenthandler',[
 			// like empty cells, it simplifies the handeling of cells to
 			// normalize these table cells to contain actual white space
 			// instead.
-			if (isProppedParagraph(td.innerHTML)) {
+			if (Utils.isProppedParagraph(td.innerHTML)) {
 				td.innerHTML = '&nbsp;';
 			}
 
@@ -43699,12 +49944,12 @@ define('contenthandler/genericcontenthandler',[
 	 * 
 	 * @return {Boolean}
 	 */
-	function isAllowedNodeName(nodeType){
+	function isAllowedNodeName(nodeType) {
 		return !!(
-			Aloha.settings.contentHandler
-			&& Aloha.settings.contentHandler.allows
-			&& Aloha.settings.contentHandler.allows.elements
-			&& ($.inArray(
+			Aloha.settings.contentHandler &&
+			Aloha.settings.contentHandler.allows &&
+			Aloha.settings.contentHandler.allows.elements &&
+			($.inArray(
 		              nodeType.toLowerCase(), 
 				      Aloha.settings.contentHandler.allows.elements
 				         ) !== -1
@@ -43745,11 +49990,11 @@ define('contenthandler/genericcontenthandler',[
 
 			var transformFormatting = true;
 
-			if (Aloha.settings.contentHandler
-				&& Aloha.settings.contentHandler.handler
-				&& Aloha.settings.contentHandler.handler.generic
-				&& typeof Aloha.settings.contentHandler.handler.generic.transformFormattings !== 'undefinded'
-				&& !Aloha.settings.contentHandler.handler.generic.transformFormattings ) {
+			if (Aloha.settings.contentHandler &&
+				Aloha.settings.contentHandler.handler &&
+				Aloha.settings.contentHandler.handler.generic &&
+				typeof Aloha.settings.contentHandler.handler.generic.transformFormattings !== 'undefinded' &&
+				!Aloha.settings.contentHandler.handler.generic.transformFormattings) {
 				transformFormatting = false;
 			}
 
@@ -43779,13 +50024,12 @@ define('contenthandler/genericcontenthandler',[
 		 * Transform formattings
 		 * @param content
 		 */
-		transformFormattings: function ( content ) {
+		transformFormattings: function (content) {
 			// find all formattings we will transform
 			// @todo this makes troubles -- don't change semantics! at least in this way...
 
 			var selectors = [],
-				i
-			;
+				i;
 
 			for (i = 0; i < formattingTags.length; i++) {
 				if (!isAllowedNodeName(formattingTags[i])) {
@@ -43814,12 +50058,12 @@ define('contenthandler/genericcontenthandler',[
 		 * Transform links
 		 * @param content
 		 */
-		transformLinks: function ( content ) {
+		transformLinks: function (content) {
 			// find all links and remove the links without href (will be destination anchors from word table of contents)
 			// aloha is not supporting anchors at the moment -- maybe rewrite anchors in headings to "invisible"
 			// in the test document there are anchors for whole paragraphs --> the whole P appear as link
 			content.find('a').each(function () {
-				if ( typeof $(this).attr('href') === 'undefined' ) {
+				if (typeof $(this).attr('href') === 'undefined') {
 					$(this).contents().unwrap();
 				}
 			});
@@ -43829,7 +50073,7 @@ define('contenthandler/genericcontenthandler',[
 		 * Remove all comments
 		 * @param content
 		 */
-		removeComments: function ( content ) {
+		removeComments: function (content) {
 			var that = this;
 
 			// ok, remove all comments
@@ -43847,7 +50091,7 @@ define('contenthandler/genericcontenthandler',[
 		 * Remove some unwanted tags from content pasted
 		 * @param content
 		 */
-		unwrapTags: function ( content ) {
+		unwrapTags: function (content) {
 			var that = this;
 
 			// Note: we exclude all elements (they will be spans) here, that have the class aloha-wai-lang
@@ -43859,7 +50103,7 @@ define('contenthandler/genericcontenthandler',[
 					if (this.innerHTML === '<br>') {
 						$(this).contents().unwrap();
 					} else {
-						$( Aloha.Markup.transformDomObject($(this), 'p').append('<br>') ).contents().unwrap();
+						$(Aloha.Markup.transformDomObject($(this), 'p').append('<br>')).contents().unwrap();
 					}
 				} else {
 					$(this).contents().unwrap();
@@ -43871,7 +50115,7 @@ define('contenthandler/genericcontenthandler',[
 		 * Remove styles
 		 * @param content
 		 */
-		removeStyles: function ( content ) {
+		removeStyles: function (content) {
 			var that = this;
 
 			// completely remove style tags
@@ -43902,7 +50146,7 @@ define('contenthandler/genericcontenthandler',[
 						: (this.scopeName ? this.scopeName : undefined);
 				// when the prefix is set (and different from 'HTML'), we remove the
 				// element
-				if ((nsPrefix && nsPrefix !== 'HTML') || this.nodeName.indexOf(':') >= 0 ) {
+				if ((nsPrefix && nsPrefix !== 'HTML') || this.nodeName.indexOf(':') >= 0) {
 					var $this = $(this), $contents = $this.contents();
 					if ($contents.length) {
 						// the element has contents, so unwrap the contents
@@ -44069,7 +50313,7 @@ Sanitize.prototype.clean_node = function(container) {
     var i, len, parent_element, name, allowed_attributes, attr, attr_name, attr_node, protocols, del, attr_ok;
     var transform = _transform_element.call(this, elem);
     var jQuery = this.jQuery;
-    var isIE7 = jQuery.browser.msie && jQuery.browser.version === "7.0";
+    var isIE7 = Aloha.browser.msie && Aloha.browser.version === "7.0";
     
     elem = transform.node;
     name = elem.nodeName.toLowerCase();
@@ -44246,20 +50490,20 @@ define('contenthandler/sanitizecontenthandler',[
 	'aloha/console',
 	'vendor/sanitize'
 ],
-function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
+function ( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 	
 	
 	var sanitize;
 	
 	// predefined set of sanitize options if no dynamic or custom config is used
 	if( !Aloha.defaults.sanitize ) {
-		Aloha.defaults.sanitize = {}
+		Aloha.defaults.sanitize = {};
 	}
 
 	// very restricted sanitize config
 	Aloha.defaults.sanitize.restricted = {
 		elements: [ 'b', 'em', 'i', 'strong', 'u', 'del', 'p', 'span', 'div', 'br' ]
-	}
+	};
 
 	// sanitize  config allowing a bit more (no tables)
 	Aloha.defaults.sanitize.basic = {
@@ -44284,7 +50528,7 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 			'blockquote' : {'cite': ['http', 'https', '__relative__']},
 			'q' : {'cite': ['http', 'https', '__relative__']}
 		}
-	}
+	};
 
 	// relaxed sanitize config allows also tables
 	Aloha.defaults.sanitize.relaxed = {
@@ -44322,25 +50566,27 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 			'img': {'src' : ['http', 'https', '__relative__']},
 			'q': {'cite': ['http', 'https', '__relative__']}
 		}
-	}
+	};
 
 	function initSanitize (configAllows) {
 		var 
 			filter = [ 'restricted', 'basic', 'relaxed' ],
 			config = Aloha.defaults.supports; // @TODO: needs to be implemented into all plugins
 
-		// @TODO think about Aloha.settings.contentHandler.sanitize name/options
-		if (Aloha.settings.contentHandler.sanitize &&
-			jQuery.inArray(Aloha.settings.contentHandler.sanitize, filter) > -1) {
-			config = Aloha.defaults.sanitize[Aloha.settings.contentHandler.sanitize];
-		} else {
-			// use relaxed filter by default
-			config = Aloha.defaults.sanitize.relaxed;
-		}
-
 		// @TODO move to Aloha.settings.contentHandler.sanitize.allows ?
 		if (Aloha.settings.contentHandler.allows) {
 			config = Aloha.settings.contentHandler.allows;
+		}
+
+		// @TODO think about Aloha.settings.contentHandler.sanitize name/options
+		if (typeof Aloha.settings.contentHandler.sanitize === 'string' &&
+			jQuery.inArray(Aloha.settings.contentHandler.sanitize, filter) > -1) {
+			config = Aloha.defaults.sanitize[Aloha.settings.contentHandler.sanitize];
+		} else if (typeof Aloha.settings.contentHandler.sanitize === 'object') {
+			config = Aloha.settings.contentHandler.sanitize;
+		} else if (!config) {
+			// use relaxed filter by default
+			config = Aloha.defaults.sanitize.relaxed;
 		}
 
 		if (configAllows) {
@@ -44348,10 +50594,10 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 		}
 
 		// add a filter to stop cleaning elements with contentEditable "false"
-		config.filters = [function( elem ) {
+		config.filters = [function (elem) {
 			return elem.contentEditable != "false";
 		}];
-		sanitize = new Sanitize( config, jQuery );
+		sanitize = new Sanitize(config, jQuery);
 	}
 
 	var SanitizeContentHandler = ContentHandlerManager.createHandler({
@@ -44375,10 +50621,12 @@ function( Aloha, jQuery, ContentHandlerManager, Plugin, console ) {
 					contentHandlerConfig = Aloha.settings.contentHandler.handler.sanitize;
 				}
 				var containerId = contentHandlerConfig['#' + editable.getId()];
+				var containerClassAttr = editable.obj.attr('class');
+
 				if (typeof containerId !== 'undefined') {
 					sanitizeConfig = contentHandlerConfig;
-				} else {
-					var containerClasses = editable.obj.attr('class').split(' ');
+				} else if (typeof containerClassAttr !== 'undefined') {
+					var containerClasses = containerClassAttr.split(' ');
 					for (var i = 0; i < containerClasses.length; i++) {
 						if (typeof contentHandlerConfig['.' + containerClasses[i]] !== 'undefined') {
 							sanitizeConfig = contentHandlerConfig['.' + containerClasses[i]];
@@ -44621,486 +50869,6 @@ define('contenthandler/contenthandler-plugin',[
 	return ContentHandler;
 });
 
-define('characterpicker/nls/i18n',{
-	"root":  {
-		"button.addcharacter.tooltip": "pick special characters"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-/* characterpicker-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
- * Copyright (c) 2010-2013 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php
- *
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-
-define('characterpicker/characterpicker-plugin',[
-	'aloha',
-	'jquery',
-	'aloha/plugin',
-	'ui/ui',
-	'ui/button',
-	'ui/floating',
-	'PubSub',
-	'i18n!characterpicker/nls/i18n'
-], function (
-	Aloha,
-	$,
-	Plugin,
-	Ui,
-	Button,
-	Floating,
-	PubSub,
-	i18n
-) {
-	
-
-	var $DOCUMENT = $(document);
-	var $WINDOW = $(window);
-
-	/**
-	 * Tracks the range at the point at which the editor opens the character
-	 * picker.
-	 *
-	 * @type {Range}
-	 */
-	var rangeAtOpen;
-
-	/**
-	 * A cache of all the overlay configurations. If all editables have the same
-	 * configuration, only a single overlay will be created that will be used by
-	 * all editables.
-	 *
-	 * @type {object<string, Overlay>}
-	 */
-	var configs = {};
-
-	/**
-	 * Checks whether the character picker overlay is visible.
-	 *
-	 * @param {Overlay} overlay
-	 * @return {boolean} True if the overlay is visible.
-	 */
-	function isOverlayVisible(overlay) {
-		return overlay.$element.css('display') === 'table';
-	}
-
-	/**
-	 * Prepares the overlay to close when a click event is triggered on the body
-	 * document.
-	 *
-	 * @param {Overlay} overlay
-	 */
-	function hideOnBodyClick(overlay) {
-		overlay.$element.click(function ($event) {
-			$event.stopPropagation();
-		});
-
-		$('body').click(function ($event) {
-			// Because click events on the overlay ui should not cause it to
-			// hide itself.
-			if (!overlay._overlayActive
-					|| ($event.target === overlay.$element[0])
-					|| $($event.target).is('.aloha-icon-characterpicker')
-					|| $($event.target).find('.aloha-icon-characterpicker').length) {
-				return;
-			}
-			overlay.hide();
-		});
-	}
-
-	/**
-	 * Prepares the given overlay to close when the ESC button is clicked.
-	 *
-	 * @param {Overlay} overlay
-	 */
-	function hideOnEsc(overlay) {
-		$DOCUMENT.keyup(function ($event) {
-			if ((27 === $event.keyCode) && isOverlayVisible(overlay)) {
-				overlay.hide();
-			}
-		});
-	}
-
-	/**
-	 * Helper function that takes the computed style-property of one element and
-	 * applies it to another one, depending on the browser implementation.
-	 *
-	 * @param {HTMLElement} source The element of which the style element is
-	 *                             taken.
-	 * @param {jQuery.<HTMLElement>} target Where the style will be applied.
-	 * @param {string} styleProp The css property which shall be copied.
-	 */
-	function copyStyle(source, $target, styleProp) {
-		// TODO: Move to strings.js
-		var camelize = function (str) {
-			return str.replace(/\-(\w)/g, function (str, letter) {
-				return letter.toUpperCase();
-			});
-		};
-
-		var style;
-
-		if (source.currentStyle) {
-			style = source.currentStyle[camelize(styleProp)];
-		} else if (document.defaultView
-		        && document.defaultView.getComputedStyle) {
-			style = document.defaultView
-			                .getComputedStyle(source, null)
-			                .getPropertyValue(styleProp);
-		} else {
-			style = source.style[camelize(styleProp)];
-		}
-
-		if (style) {
-			$target.css(styleProp, style);
-		}
-	}
-
-	/**
-	 * Enables navigation through the character table with the arrow keys and
-	 * select one with the enter key.
-	 *
-	 * @param {Overlay} overlay
-	 * @param {function} onSelect Function to invoke when Enter is pressed.
-	 */
-	function cursorMovements(overlay, onSelect) {
-		var movements = {
-			// ←┘
-			13: function select($current) {
-				overlay.hide();
-				onSelect($current.text());
-			},
-			// ←
-			37: function left($current) {
-				var $prev = $current.prev();
-				if ($prev.length) {
-					$prev.addClass('focused');
-					$current.removeClass('focused');
-				}
-			},
-			// ↑
-			38: function up($current) {
-				var $prevRow = $current.parent().prev();
-				if ($prevRow.length) {
-					var $prev = $(
-						$prevRow.children()[$current.index()]
-					).addClass('focused');
-					if ($prev.length) {
-						$current.removeClass('focused');
-					}
-				}
-			},
-			// →
-			39: function right($current) {
-				var $next = $current.next().addClass('focused');
-				if ($next.length) {
-					$current.removeClass('focused');
-				}
-			},
-			// ↓
-			40: function down($current) {
-				var $nextRow = $current.parent().next();
-				if ($nextRow.length) {
-					var $next = $(
-						$nextRow.children()[$current.index()]
-					).addClass('focused');
-					if ($next.length) {
-						$current.removeClass('focused');
-					}
-				}
-			}
-		};
-
-		$DOCUMENT.keydown(function ($event) {
-			$event.stopPropagation();
-			if (movements[$event.keyCode] && isOverlayVisible(overlay)) {
-				movements[$event.keyCode](overlay.$element.find('.focused'));
-				return false;
-			}
-		});
-	}
-
-	/**
-	 * Generates a map of the given list character on the overlay.
-	 *
-	 * @param {Overlay} overlay
-	 * @param {String} characters
-	 */
-	function generateCharacterTable(overlay, characters) {
-		var textarea = document.createElement('textarea');
-		textarea.innerHTML = characters;
-
-		var list = $.grep(textarea.value.split(' '), function (chr) {
-			return '' !== chr;
-		});
-
-		var table = ['<tr>'];
-		var i = 0;
-		var chr;
-		while ((chr = list[i])) {
-			// New row every 15 characters
-			if (0 !== i && (0 === (i % 15))) {
-				table.push('</tr><tr>');
-			}
-			table.push('<td unselectable="on">' + chr + '</td>');
-			i++;
-		}
-		table.push('</tr>');
-
-		overlay.$tbody.empty().append(table.join(''));
-
-		overlay.$element.delegate('td', 'mouseover', function () {
-			overlay.$element.find('.focused').removeClass('focused');
-			$(this).addClass('focused');
-		}).delegate('td', 'mouseout', function () {
-			$(this).removeClass('focused');
-		}).delegate('td', 'click', function () {
-			overlay.$element.hide();
-			overlay.onSelect($(this).text());
-		});
-	}
-
-	/**
-	 * Calculates the offset at which to position the overlay element.
-	 *
-	 * @param {jQuery.<HTMLElement>} $element A DOM element around which to
-	 *                                        calculate the offset.
-	 */
-	function calculateOffset($element) {
-		var offset = $element.offset();
-		if ('fixed' === Floating.POSITION_STYLE) {
-			offset.top -= $WINDOW.scrollTop();
-			offset.left -= $WINDOW.scrollLeft();
-		}
-		return offset;
-	}
-
-	/**
-	 * Inserts the selected character, at the editor's selection.
-	 *
-	 * @param {String} character
-	 */
-	function onSelectCharacter(character) {
-		if (Aloha.activeEditable) {
-			rangeAtOpen.select();
-			Aloha.execCommand('insertHTML', false, character);
-
-			// Because after the character was inserted, move the selection
-			// forward.
-			rangeAtOpen.endContainer = rangeAtOpen.startContainer;
-			rangeAtOpen.endOffset = ++rangeAtOpen.startOffset;
-			rangeAtOpen.select();
-		}
-	}
-
-	/**
-	 * The Character Picker Overlay.
-	 *
-	 * @param {function} onSelect
-	 * @type {Overlay}
-	 */
-	function Overlay(onSelect) {
-		var overlay = this;
-
-		overlay.$element = $('<table class="aloha-character-picker-overlay" ' +
-			'unselectable="on" role="dialog"><tbody></tbody></table>');
-
-		// Because if mousedown bubbles up, there won't be an activeEditable.
-		// FIXME: The above needs to be better explained.
-		overlay.$element.mousedown(function ($event) {
-			return false;
-		});
-
-		overlay.onSelect = onSelect;
-		overlay.$tbody = overlay.$element.find('tbody');
-		overlay.$element.appendTo($('body'));
-
-		hideOnBodyClick(overlay);
-		hideOnEsc(overlay);
-		cursorMovements(overlay, onSelect);
-
-		Aloha.bind('aloha-editable-deactivated', function () {
-			overlay.hide();
-		});
-	}
-
-	Overlay.prototype = {
-
-		/**
-		 * Shows the character overlay at the insert button's position.
-		 *
-		 * @param {jQuery.<HTMLElement>} $insert Insert button.
-		 */
-		show: function ($insert) {
-			var overlay = this;
-
-			// Because the overlay needs to be reposition relative its button.
-			overlay.$element
-			       .css(calculateOffset($insert))
-			       .css('position', Floating.POSITION_STYLE)
-			       .show()
-			       .find('.focused')
-			       .removeClass('focused');
-
-			overlay.$element
-			       .find('td')
-			       .eq(0)
-			       .addClass('focused');
-
-			overlay._overlayActive = true;
-		},
-
-		/**
-		 * Hides the character overlay.
-		 */
-		hide: function () {
-			this.$element.hide();
-			this._overlayActive = false;
-		}
-	};
-
-	/**
-	 * Generates an character picker overlay for the given editable.
-	 *
-	 * Because each editable may have its own configuration and therefore may
-	 * have its own overlay.
-	 *
-	 * @param {CharacterPicker} characterpicker
-	 * @param {Aloha.Editable} editable
-	 * @return {Overlay|null} The generated character picker overlay, or null
-	 *                        of the editable is not configured for the
-	 *                        character picker.
-	 */
-	function generateOverlay(characterpicker, editable) {
-		var config = characterpicker.getEditableConfig(editable.obj);
-		if (!config) {
-			return null;
-		}
-		var characters = $.isArray(config) ? config.join(' ') : config;
-		var overlay = configs[characters];
-		if (!overlay) {
-			overlay = new Overlay(onSelectCharacter);
-			generateCharacterTable(overlay, characters);
-			configs[characters] = overlay;
-		}
-		return overlay;
-	}
-
-	/**
-	 * @type {Plugin}
-	 */
-	var CharacterPicker =  Plugin.create('characterpicker', {
-
-		settings: {},
-
-		config: '&#38; &#34; &#162; &#8364; &#163; &#165; &#169; &#174; &#8482; &#8240; &#181; &#183; &#8226; &#8230; &#8242; &#8243; &#167; &#182; &#223; &#8249; &#8250; &#171; &#187; &#8216; &#8217; &#8220; &#8221; &#8218; &#8222; &#60; &#62; &#8804; &#8805; &#8211; &#8212; &#175; &#8254; &#164; &#166; &#168; &#161; &#191; &#710; &#732; &#176; &#8722; &#177; &#247; &#8260; &#215; &#185; &#178; &#179; &#188; &#189; &#190; &#402; &#8747; &#8721; &#8734; &#8730; &#8764; &#8773; &#8776; &#8800; &#8801; &#8712; &#8713; &#8715; &#8719; &#8743; &#8744; &#172; &#8745; &#8746; &#8706; &#8704; &#8707; &#8709; &#8711; &#8727; &#8733; &#8736; &#180; &#184; &#170; &#186; &#8224; &#8225; &#192; &#193; &#194; &#195; &#196; &#197; &#198; &#199; &#200; &#201; &#202; &#203; &#204; &#205; &#206; &#207; &#208; &#209; &#210; &#211; &#212; &#213; &#214; &#216; &#338; &#352; &#217; &#218; &#219; &#220; &#221; &#376; &#222; &#224; &#225; &#226; &#227; &#228; &#229; &#230; &#231; &#232; &#233; &#234; &#235; &#236; &#237; &#238; &#239; &#240; &#241; &#242; &#243; &#244; &#245; &#246; &#248; &#339; &#353; &#249; &#250; &#251; &#252; &#253; &#254; &#255; &#913; &#914; &#915; &#916; &#917; &#918; &#919; &#920; &#921; &#922; &#923; &#924; &#925; &#926; &#927; &#928; &#929; &#931; &#932; &#933; &#934; &#935; &#936; &#937; &#945; &#946; &#947; &#948; &#949; &#950; &#951; &#952; &#953; &#954; &#955; &#956; &#957; &#958; &#959; &#960; &#961; &#962; &#963; &#964; &#965; &#966; &#967; &#968; &#969; &#8501; &#982; &#8476; &#977; &#978; &#8472; &#8465; &#8592; &#8593; &#8594; &#8595; &#8596; &#8629; &#8656; &#8657; &#8658; &#8659; &#8660; &#8756; &#8834; &#8835; &#8836; &#8838; &#8839; &#8853; &#8855; &#8869; &#8901; &#8968; &#8969; &#8970; &#8971; &#9001; &#9002; &#9674; &#9824; &#9827; &#9829; &#9830;',
-
-		_constructor: function () {
-			this._super('characterpicker');
-		},
-
-		init: function () {
-			var characterpicker = this;
-
-			if (Aloha.settings.plugins
-					&& Aloha.settings.plugins.characterpicker) {
-				characterpicker.settings
-						= Aloha.settings.plugins.characterpicker;
-			}
-
-			var button = Ui.adopt('characterPicker', Button, {
-				tooltip: i18n.t('button.addcharacter.tooltip'),
-				icon: 'aloha-icon-characterpicker',
-				scope: 'Aloha.continuoustext',
-				click: function () {
-					if (characterpicker.overlay) {
-						rangeAtOpen = Aloha.Selection.rangeObject;
-
-						var from = rangeAtOpen.startContainer.parentNode;
-						var $to = characterpicker.overlay.$element;
-
-						copyStyle(from, $to, 'font-family');
-						copyStyle(from, $to, 'font-weight');
-						copyStyle(from, $to, 'font-style');
-
-						characterpicker.overlay.show(this.element);
-					}
-				}
-			});
-
-			/**
-			 * Pre-generates overlays so that they will be ready when the editor
-			 * click on an editable.
-			 *
-			 * @param {number} editableIndex
-			 */
-			function pregenerateOverlays(editableIndex) {
-				if (editableIndex < Aloha.editables.length) {
-					generateOverlay(characterpicker,
-							Aloha.editables[editableIndex]);
-					setTimeout(function () {
-						pregenerateOverlays(editableIndex + 1);
-					}, 100);
-				}
-			}
-
-			// FIXME: ... but why?
-			setTimeout(function () {
-				pregenerateOverlays(0);
-			}, 100);
-
-			Aloha.bind('aloha-editable-activated', function ($event, data) {
-				characterpicker.overlay =
-						generateOverlay(characterpicker, data.editable);
-				if (characterpicker.overlay) {
-					button.show();
-				} else {
-					button.hide();
-				}
-			});
-
-			PubSub.sub('aloha.floating.changed', function (message) {
-				if (characterpicker.overlay) {
-					characterpicker.overlay.$element.css(
-						calculateOffset(button.element)
-					);
-				}
-			});
-		}
-
-	});
-
-	return CharacterPicker;
-});
-
 /* inserthtml.js is part of Aloha Editor project http://aloha-editor.org
  *
  * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
@@ -45129,12 +50897,12 @@ define('characterpicker/characterpicker-plugin',[
  */
 define('commands/inserthtml',
 ['aloha/core', 'jquery', 'aloha/command', 'aloha/selection', 'util/dom', 'aloha/contenthandlermanager', 'aloha/console'],
-function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console) {
+function (Aloha, jQuery, command, selection, dom, ContentHandlerManager, console) {
 	
 
 	// Exported commands
-	command.register( 'inserthtml', {
-		action: function(value, range) {
+	command.register('inserthtml', {
+		action: function (value, range) {
 			var 
 				$editable = jQuery(dom.getEditingHostOf(range.startContainer)),
 				cac = range.commonAncestorContainer,
@@ -45156,7 +50924,7 @@ function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console)
 				if (!dom.insertIntoDOM($object, range, $editable, false)) {
 					
 					// if that is not possible, we unwrap the content and insert every child element
-					 contents = $object.contents();
+					contents = $object.contents();
 
 					// when a block level element was unwrapped, we at least insert a break
 					if (dom.isBlockLevelElement(object) || dom.isListElement(object)) {
@@ -45164,25 +50932,25 @@ function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console)
 					}
 
 					// and now all children (starting from the back)
-					for ( i = contents.length - 1; i >= 0; --i) {
+					for (var i = contents.length - 1; i >= 0; --i) {
 						pasteElement(contents[i]);
 					}
 				}
-			};
+			}
 
 			// apply content handler to cleanup inserted data
 			//if (typeof Aloha.settings.contentHandler.insertHtml === 'undefined') {
 			// just use all registerd content handler or specity Aloha.defaults.contentHandler.insertHtml manually?
 			//	Aloha.settings.contentHandler.insertHtml = Aloha.defaults.contentHandler.insertHtml;
 			//}
-			value = ContentHandlerManager.handleContent( value, { contenthandler: Aloha.settings.contentHandler.insertHtml } );
+			value = ContentHandlerManager.handleContent(value, { contenthandler: Aloha.settings.contentHandler.insertHtml});
 
 			// allowed values are string or jQuery objects
 			// add value to a container div
-			if ( typeof value === 'string' ){
-				value = jQuery( '<div>' + value + '</div>' );
-			} else if ( value instanceof jQuery ) {
-				value = jQuery( '<div>' ).append(value);
+			if (typeof value === 'string') {
+				value = jQuery('<div>' + value + '</div>');
+			} else if (value instanceof jQuery) {
+				value = jQuery('<div>').append(value);
 			} else {
 				throw "INVALID_VALUE_ERR";
 			}
@@ -45191,14 +50959,14 @@ function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console)
 			domNodes = value.contents();
 			
 			// check if range starts an ends in same editable host
-//			if ( !(dom.inSameEditingHost(range.startContainer, range.endContainer)) ) {
+//			if (!(dom.inSameEditingHost(range.startContainer, range.endContainer))) {
 //				throw "INVALID_RANGE_ERR";
 //			}
 			
 			// delete currently selected contents
 			dom.removeRange(range);
 			
-			for ( i = domNodes.length - 1; i >= 0; --i) {
+			for (i = domNodes.length - 1; i >= 0; --i) {
 				// insert the elements
 				pasteElement(domNodes[i]);
 			}
@@ -45212,7 +50980,7 @@ function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console)
 				range.select();
 			}
 
-			dom.doCleanup({merge:true, removeempty: true}, range, cac);
+			dom.doCleanup({merge: true, removeempty: true}, range, cac);
 			//In some cases selecting the range does not work properly 
 			//e.g. when pasting from word in an h2 after the first character in IE
 			//in these cases we should fail gracefully.
@@ -45220,7 +50988,7 @@ function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console)
 			try {
 				range.select();
 			} catch (e) {
-				console.warn('Error:',e);
+				console.warn('Error:', e);
 			}
 
 		}
@@ -45256,22 +51024,29 @@ function(Aloha, jQuery, command, selection, dom, ContentHandlerManager, console)
  */
 define('commands/commands-plugin',
 ['aloha/command', './inserthtml'],
-function( command, commands ) {
+function (command, commands) {
 	
-
-		
 });
 
 define('block/block-utils',[
+	'jquery',
 	'util/dom',
 	'util/dom2',
-	'util/html'
+	'util/html',
+	'aloha/ephemera'
 ], function (
+	$,
 	DomLegacy,
 	Dom,
-	Html
+	Html,
+	Ephemera
 ) {
 	
+
+	/**
+	 * Class name for landing element.
+	 */
+	var LANDING_ELEMENT_CLASS = 'aloha-caret-landing';
 
 	/**
 	 * Check if a white space span should be removed
@@ -45280,19 +51055,34 @@ define('block/block-utils',[
 	 * @returns {Boolean}
 	 */
 	function isObsoleteLandingNode(node) {
-		return 'SPAN' === node.nodeName
-		    && (node.childNodes.length === 0 || node.innerHTML === '&nbsp;');
+		return 'SPAN' === node.nodeName &&
+			(node.childNodes.length === 0 || node.innerHTML === '&nbsp;');
+	}
+	
+	/**
+	 * Creates unique class name for `$blockELement`.
+	 */
+	function createLandingClassName ($blockElement) {
+		return LANDING_ELEMENT_CLASS + '_' + $blockElement.attr('id');
 	}
 
-	function createLandingElement() {
+	/**
+	 * Creates landing element.
+	 * @return {HTMLElement}
+	 */
+	function createLandingElement($blockElement) {
 		var node = document.createElement('span');
+		node.className = createLandingClassName($blockElement);
 		node.appendChild(document.createTextNode('\u00A0'));
+		
+		Ephemera.markWhiteSpaceWrapper(node);
+		
 		return node;
 	}
 
 	function isVisibleNode(node) {
-		return (Html.isBlock(node) || Dom.isTextNode(node))
-		    && !Html.isUnrenderedNode(node);
+		return (Html.isBlock(node) || Dom.isTextNode(node)) &&
+			!Html.isUnrenderedNode(node);
 	}
 
 	function skipNodeForward(node) {
@@ -45310,26 +51100,25 @@ define('block/block-utils',[
 		var previous = Dom.findBackward(
 			Dom.backward($block[0]),
 			isVisibleNode,
-			function(node) {
+			function (node) {
 				return Html.isBlock(node) || DomLegacy.isEditingHost(node);
 			}
 		);
 		if (!previous) {
-			$block.before(createLandingElement());
+			$block.before(createLandingElement($block));
 		}
 		var next = Dom.findForward(
 			skipNodeForward($block[0]),
 			isVisibleNode,
 			function (node) {
 				return Html.isBlock(node) || DomLegacy.isEditingHost(node) || (
-					node.previousSibling
-					&&
+					node.previousSibling &&
 					DomLegacy.isEditingHost(node.previousSibling)
 				);
 			}
 		);
 		if (!next) {
-			$block.after(createLandingElement());
+			$block.after(createLandingElement($block));
 		}
 	}
 
@@ -45339,14 +51128,14 @@ define('block/block-utils',[
 	 * @param {jQuery<DOMElement>} $block
 	 */
 	function unpad($block) {
-		var previous = $block[0].previousSibling;
-		var next = $block[0].nextSibling;
-		if (previous && isObsoleteLandingNode(previous)) {
-			previous.parentNode.removeChild(previous);
-		}
-		if (next && isObsoleteLandingNode(next)) {
-			next.parentNode.removeChild(next);
-		}
+		var className = createLandingClassName($block);
+		$('.' + className).each(function (index, elem) {
+			if (Html.hasOnlyWhiteSpaceChildren(elem)) {
+				elem.parentNode.removeChild(elem);
+			} else {
+				$(elem.childNodes).unwrap();
+			}
+		});
 	}
 
 	/**
@@ -45378,26 +51167,26 @@ define('block/block-utils',[
         return $block.parents('.aloha-editable').filter(':first');
     }
 
-    /**
-     * Get table inside the block or null if this block is not for a table
-     *
-     * @param $block
-     * @returns {jQuery Element} jQuery table or null if this block
-     * is not for a Table
-     */
-    function getTableByBlock($block) {
-        return isTable($block)? $block.find('table').filter(':first') : null;
-    }
+	/**
+	 * Get table inside the block or null if this block is not for a table
+	 *
+	 * @param $block
+	 * @returns {jQuery Element} jQuery table or null if this block
+	 * is not for a Table
+	 */
+	function getTableByBlock($block) {
+		return isTable($block) ? $block.find('table').filter(':first') : null;
+	}
 
-    /**
-     * Check if a block element is a table.
-     *
-     * @param {jQuery Element} $blockElement
-     * @returns {Boolean} true if it is a table, false otherwise
-     */
-    function isTable($blockElement) {
-        return $blockElement.hasClass('aloha-table-wrapper');
-    }
+	/**
+	 * Check if a block element is a table.
+	 *
+	 * @param {jQuery Element} $blockElement
+	 * @returns {Boolean} true if it is a table, false otherwise
+	 */
+	function isTable($blockElement) {
+		return $blockElement.hasClass('aloha-table-wrapper');
+	}
 
 	return {
 		pad: pad,
@@ -45445,8 +51234,7 @@ define('block/blockmanager',[
 	'util/class',
 	'util/strings',
 	'util/maps',
-    'block/block-utils',
-    'table/table-plugin'
+	'block/block-utils'
 ], function (
 	Aloha,
 	$,
@@ -45456,14 +51244,33 @@ define('block/blockmanager',[
 	Class,
 	Strings,
 	Maps,
-    BlockUitls,
-    Table
+    BlockUtils
 ) {
 	
 
 	var jQuery = $;
 
 	var GENTICS = window.GENTICS;
+
+	/**
+	 * Selects the entire `block` for cut/copy.
+	 * @param {Block} block
+	 */
+	function selectWholeBlockForCopy(block) {
+		block.$element.attr('data-aloha-block-copy-only-block', 'true');
+		GENTICS.Utils.Dom.selectDomNode(block.$element[0]);
+	}
+
+	/**
+	 * Checks if actual range is collapsed.
+	 * @return {boolean}
+	 */
+	function isRangeExpanded() {
+		if (!Aloha.getSelection().getRangeCount()) {
+			return false;
+		}
+		return !Aloha.getSelection().getRangeAt(0).collapsed;
+	}
 
 	/**
 	 * This is the block manager, which is the central entity for maintaining the lifecycle of blocks.
@@ -45709,22 +51516,26 @@ define('block/blockmanager',[
 					}
 				}
 
-				// IF: Ctrl/Command C pressed -- COPY
-				if (that._activeBlock && (e.ctrlKey || e.metaKey) && e.which === 67) {
-					currentlyCopying = true;
-					//selectionBeforeCopying = new GENTICS.Utils.RangeObject(true);
-					that._activeBlock.$element.attr('data-aloha-block-copy-only-block', 'true');
-					GENTICS.Utils.Dom.selectDomNode(that._activeBlock.$element[0]);
-				}
+				// If the block is a table do not select whole table,
+				// table has its own selection methods.
+				if (that._activeBlock
+					&& (e.ctrlKey || e.metaKey)
+					&& !isRangeExpanded()
+					&& !BlockUtils.isTable(that._activeBlock.$element)) {
 
-				// IF: Ctrl/Command X pressed -- CUT
-				if (that._activeBlock && (e.ctrlKey || e.metaKey) && e.which === 88) {
-					currentlyCutting = true;
-					//selectionBeforeCopying = new GENTICS.Utils.RangeObject(true);
-					that._activeBlock.$element.attr('data-aloha-block-copy-only-block', 'true');
-					GENTICS.Utils.Dom.selectDomNode(that._activeBlock.$element[0]);
+					// IF: Ctrl/Command C pressed -- COPY
+					if (e.which === 67) {
+						currentlyCopying = true;
+						selectWholeBlockForCopy(that._activeBlock);
+					}
+					// IF: Ctrl/Command X pressed -- CUT
+					else if (e.which === 88) {
+						currentlyCutting = true;
+						selectWholeBlockForCopy(that._activeBlock);
+					}
 				}
 			});
+
 			jQuery(window.document).keyup(function (e) {
 				// IF: Release of ctrl / command C
 				if (!currentlyCutting && currentlyCopying && (e.which === 67 || e.which === 18 || e.which === 91)) {
@@ -45764,80 +51575,13 @@ define('block/blockmanager',[
 		 * drop targets for block-level aloha blocks.
 		 */
 		initializeBlockLevelDragDrop: function () {
-			var that = this;
+			var blockmanager = this;
 			jQuery.each(Aloha.editables, function (i, editable) {
-				editable.obj.data("block-dragdrop", that._dragdropEnabled);
-				that.createBlockLevelSortableForEditableOrBlockCollection(editable.obj);
+				editable.obj.data('block-dragdrop', blockmanager._dragdropEnabled);
 			});
 			Aloha.bind('aloha-editable-created', function (e, editable) {
-				editable.obj.data("block-dragdrop", that._dragdropEnabled);
-				that.createBlockLevelSortableForEditableOrBlockCollection(editable.obj);
+				editable.obj.data('block-dragdrop', blockmanager._dragdropEnabled);
 			});
-		},
-
-		/**
-		 * We make editables or block collections sortable using jQuery UI here, if we
-		 * did not do this before.
-		 *
-		 * This is an internal method a user should never call!
-		 */
-		createBlockLevelSortableForEditableOrBlockCollection: function ($editableOrBlockCollection) {
-			var that = this;
-
-			if (!$editableOrBlockCollection.hasClass('aloha-block-blocklevel-sortable')) {
-
-				// We only want to make "block-level" aloha blocks sortable. According to the docs,
-				// sortable.cancel should have a CSS selector and if this matches, the element is only
-				// a drop target but NOT draggable. However, passing :not(.aloha-block) does not work somehow :-(
-				//
-				// Thus, we implemented the following alternative:
-				// Every "block-level" aloha block drag handle gets a new CSS class, and we only select this as
-				// drag handle. As only "block-level" aloha blocks have this CSS class, this will also only make
-				// aloha blocks draggable.
-				$editableOrBlockCollection.addClass("aloha-block-blocklevel-sortable").sortable({
-					revert: 100,
-					handle: ".aloha-block-draghandle-blocklevel",
-					connectWith: ".aloha-block-blocklevel-sortable.aloha-block-dropzone", // we want to be able to drag an element to other editables
-					disabled: !that._dragdropEnabled, // if drag & drop is disabled, sortable should also be disabled
-					start: function (event, ui) {
-						// check if the block's parent is a dropzone
-						ui.item.data("block-sort-allowed", (ui.item.parents(".aloha-block-dropzone").length > 0));
-					},
-					change: function (event, ui) {
-						ui.item.data("block-sort-allowed", (ui.placeholder.parents(".aloha-block-dropzone").length > 0));
-					},
-					stop: function (event, ui) {
-						var $blockItem = ui.item;
-						if (!$blockItem.data("block-sort-allowed")) {
-							jQuery(this).sortable("cancel");
-						}
-						$blockItem.removeData("block-sort-allowed");
-
-						var $table = BlockUitls.getTableByBlock($blockItem);
-						if ($table !== null) {
-							var actualParentEditable = Aloha.getEditableById(
-								BlockUitls.getEditableByBlock($blockItem)
-								          .attr('id'));
-							Table.getTableFromRegistry($table.get(0))
-							     .parentEditable = actualParentEditable;
-						}
-					}
-				});
-
-				// Hack for Internet Explorer 8:
-				// If you first click inside an editable, and THEN want to drag a block-level block,
-				// it sometimes occurs that the *whole editable* is selected and should be dragged away.
-				// This breaks dragging of Aloha Blocks.
-				// Bugfix: We disable the "ondragstart" event on every editable.
-				// However, as the "ondragstart" is also fired when a nested (inline) editable is moved using drag/drop,
-				// we need to allow this case.
-				$editableOrBlockCollection.get(0).ondragstart = function (e, ui) {
-					if (!ui || !ui.helper || !ui.helper.is('.aloha-block')) {
-						// You tried to move something else than an aloha block
-						return false;
-					}
-				};
-			}
 		},
 
 		/**
@@ -46093,8 +51837,7 @@ define('block/blockmanager',[
  * recipients can access the Corresponding Source.
  */
 define('block/editormanager',
-['aloha/registry'],
-function(Registry) {
+['aloha/registry'], function (Registry) {
 	
 
 	/**
@@ -46112,7 +51855,7 @@ function(Registry) {
 		 *
 		 * @param {Object} definition
 		 */
-		createEditor: function(definition) {
+		createEditor: function (definition) {
 			if (!this.has(definition.type)) {
 				throw 'Editor for type "' + definition.type + '" not found.';
 			}
@@ -46159,11 +51902,16 @@ define('block/sidebarattributeeditor',[ 'jquery', 'block/blockmanager', 'aloha/s
 	 * @name block.sidebarattributeeditor
 	 * @class Sidebar attribute editor singleton
 	 */
-	return new (Class.extend(
-	/** @lends block.sidebarattributeeditor */
-	{
+		return new (Class.extend(
+		/** @lends block.sidebarattributeeditor */
+		{
 
-		_sidebar: null,
+			_sidebar: null,
+
+		/**
+		 * Panels, which were added to the sidebar for blocks
+		 */
+		_blockPanels: [],
 
 		/**
 		 * Initialize the sidebar attribute editor and bind events
@@ -46178,14 +51926,20 @@ define('block/sidebarattributeeditor',[ 'jquery', 'block/blockmanager', 'aloha/s
 		 * @param {Array} selectedBlocks
 		 */
 		_onBlockSelectionChange: function(selectedBlocks) {
-			var that = this;
+			var that = this, panel;
 			if (!this._sidebar) {
 				return;
 			}
-			// TODO: Clearing the whole sidebar might not be what we want; instead we might only want
-			// to clear certain panels.
-			// that._sidebar.container.find('.aloha-sidebar-panels').children().remove();
-			// that._sidebar.panels = {};
+
+			// remove all panels from the sidebar, which were added for blocks
+			for (panel in that._blockPanels) {
+				if (that._blockPanels.hasOwnProperty(panel)) {
+					panel = that._blockPanels[panel];
+					jQuery(panel.element).remove();
+					delete this._sidebar.panels[panel.id];
+				}
+			}
+			this._blockPanels = [];
 
 			jQuery.each(selectedBlocks, function() {
 				var schema = this.getSchema(),
@@ -46197,7 +51951,7 @@ define('block/sidebarattributeeditor',[ 'jquery', 'block/blockmanager', 'aloha/s
 					return;
 				}
 
-				that._sidebar.addPanel({
+				that._blockPanels.push(that._sidebar.addPanel({
 					title: block.getTitle(),
 					expanded: true,
 					onInit: function() {
@@ -46212,29 +51966,29 @@ define('block/sidebarattributeeditor',[ 'jquery', 'block/blockmanager', 'aloha/s
 							// Editor -> Block binding
 							editor.bind('change', function(value) {
 								block.attr(attributeName, value);
+								});
+
+								// Block -> Editor binding
+								block.bind('change', function () {
+									editor.setValue(block.attr(attributeName));
 							});
 
-							// Block -> Editor binding
-							block.bind('change', function() {
+								$form.append(editor.render());
+
+								// Set initial value Block -> Editor
 								editor.setValue(block.attr(attributeName));
-							})
+	
+								editors.push(editor);
+							});
+							this.setContent($form);
+						},
 
-							$form.append(editor.render());
-
-							// Set initial value Block -> Editor
-							editor.setValue(block.attr(attributeName));
-
-							editors.push(editor);
-						});
-						this.setContent($form);
-					},
-
-					deactivate: function() {
-						// On deactivating the panel, we need to tell each editor to deactivate itself,
-						// so it can throw another change event if the value has been modified.
-						jQuery.each(editors, function(index, editor) {
-							editor._deactivate();
-						});
+						deactivate: function () {
+							// On deactivating the panel, we need to tell each editor to deactivate itself,
+							// so it can throw another change event if the value has been modified.
+							jQuery.each(editors, function (index, editor) {
+								editor._deactivate();
+							});
 
 						// This code is from the superclass
 						this.isActive = false;
@@ -46242,7 +51996,7 @@ define('block/sidebarattributeeditor',[ 'jquery', 'block/blockmanager', 'aloha/s
 						// this.content.parent('li').hide();
 						this.effectiveElement = null;
 					}
-				});
+				}));
 			});
 		}
 	}))();
@@ -46289,8 +52043,9 @@ define('block/block',[
 	'util/class',
 	'PubSub',
 	'block/block-utils',
-	'util/html'
-], function(
+	'util/html',
+	'util/functions'
+], function (
 	Aloha,
 	jQuery,
 	BlockManager,
@@ -46299,8 +52054,9 @@ define('block/block',[
 	Class,
 	PubSub,
 	BlockUtils,
-    Html
-){
+	Html,
+	Fn
+) {
 	
 
 	var GENTICS = window.GENTICS;
@@ -46405,14 +52161,14 @@ define('block/block',[
 
 				try {
 					$element.find('a').attr('draggable', 'false');
-				} catch(e) {
+				} catch (e) {
 					// If we get in here, it is most likely an issue with IE 10 in documentmode 7
 					// and IE10 compatibility mode. It maybe happens in older versions too.
 					// Error: Member not found
 					// https://connect.microsoft.com/IE/feedback/details/774078
 					// http://bugs.jquery.com/ticket/12577
 					// Our fallback solution:
-					$element.find('a').each(function() {
+					$element.find('a').each(function () {
 						this.setAttribute('draggable', 'false');
 					});
 				}
@@ -46495,8 +52251,8 @@ define('block/block',[
 		 * NOTE: Purely internal, "this" is not available inside this method!
 		 */
 		_preventSelectionChangedEventHandler: function ($event) {
-			if (('dblclick' !== $event.type)
-					&& !jQuery($event.target).is('.aloha-editable')) {
+			if (('dblclick' !== $event.type) && 
+				!jQuery($event.target).is('.aloha-editable')) {
 				Aloha.Selection.preventSelectionChanged();
 			}
 		},
@@ -46515,7 +52271,7 @@ define('block/block',[
 		 * a block inside a nested block with editable in between is detected
 		 * as inconsistent.
 		 */
-		_connectThisBlockToDomElement: function(newElement, callback) {
+		_connectThisBlockToDomElement: function (newElement, callback) {
 			var that = this;
 			var $newElement = jQuery(newElement);
 			this._disconnectFromDomElement();
@@ -46526,7 +52282,7 @@ define('block/block',[
 			this.$element.bind('focus', this._preventSelectionChangedEventHandler);
 			this.$element.bind('dblclick', this._preventSelectionChangedEventHandler);
 
-			this.init(this.$element, function() {
+			this.init(this.$element, function () {
 				// WORKAROUND against loading order dependencies. If we have
 				// nested Blocks inside each other (with no editables in between)
 				// it could be that the *inner* block is initialized *before* the outer one.
@@ -46536,7 +52292,7 @@ define('block/block',[
 				//
 				// In order to fix this case, we delay the the drag-handle-rendering (and all the other
 				// post-processing) to the next JavaScript Run Loop using a small timeout.
-				window.setTimeout(function() {
+				window.setTimeout(function () {
 					that._postProcessElementIfNeeded();
 					if (callback) {
 						callback();
@@ -46548,7 +52304,7 @@ define('block/block',[
 		/**
 		 * Disconnect the block from the DOM element
 		 */
-		_disconnectFromDomElement: function() {
+		_disconnectFromDomElement: function () {
 			if (this.$element) {
 				this.$element.unbind('click', this._onElementClickHandler);
 				this.$element.unbind('mousedown', this._preventSelectionChangedEventHandler);
@@ -46565,9 +52321,9 @@ define('block/block',[
 		 * We can detect this and scroll right back; although this will flicker
 		 * a little (but still a lot better than before)
 		 */
-		_fixScrollPositionBugsInIE: function() {
+		_fixScrollPositionBugsInIE: function () {
 			var scrollPositionBefore = jQuery(window).scrollTop();
-			window.setTimeout(function() {
+			window.setTimeout(function () {
 				if (jQuery(window).scrollTop() !== scrollPositionBefore) {
 					jQuery(window).scrollTop(scrollPositionBefore);
 				}
@@ -46590,7 +52346,7 @@ define('block/block',[
 		 * @param {Function} postProcessFn this function MUST be called at all times the $element has been updated; as it adds drag/drop/delete/... handles if necessary
 		 * @api
 		 */
-		init: function($element, postProcessFn) {
+		init: function ($element, postProcessFn) {
 			postProcessFn();
 		},
 
@@ -46601,7 +52357,7 @@ define('block/block',[
 		 *
 		 * @return {Boolean} true of destruction should happen, false otherwise
 		 */
-		shouldDestroy: function() {
+		shouldDestroy: function () {
 			var $closest = this.$element.parent().closest('.aloha-block,.aloha-editable,.aloha-block-collection');
 			if ($closest.hasClass('aloha-block-collection') && this.$element[0].tagName.toLowerCase() === 'div') {
 				return true;
@@ -46617,24 +52373,28 @@ define('block/block',[
 		 * @param {Boolean} force TRUE if you want to force deletion, despite shouldDestroy() returning false.
 		 * @api
 		 */
-		destroy: function(force) {
-			if (!this.shouldDestroy() && force !== true) return;
+		destroy: function (force) {
+			if (!this.shouldDestroy() && force !== true) {
+				return;
+			}
 
 			var that = this;
 			var newRange = new GENTICS.Utils.RangeObject();
 
 			newRange.startContainer = newRange.endContainer = this.$element.parent()[0];
 			newRange.startOffset = newRange.endOffset = GENTICS.Utils.Dom.getIndexInParent(this.$element[0]);
+			
+			BlockUtils.unpad(this.$element);
 
 			BlockManager.trigger('block-delete', this);
 			this.free();
 
 			var isInlineElement = this.$element[0].tagName.toLowerCase() === 'span';
 
-			this.$element.fadeOut('fast', function() {
+			this.$element.fadeOut('fast', function () {
 				that.$element.remove();
 				BlockManager.trigger('block-selection-change', []);
-				window.setTimeout(function() {
+				window.setTimeout(function () {
 					if (isInlineElement) {
 						newRange.select();
 					}
@@ -46649,6 +52409,7 @@ define('block/block',[
 			// TODO set old value of contentEditable
 			// TODO set old values for draggable attributes
 
+			BlockUtils.unpad(this.$element);
 			// deactivate
 			this.deactivate();
 			// remove handlers
@@ -46685,7 +52446,7 @@ define('block/block',[
 		 * Get the id of the block
 		 * @returns {String}
 		 */
-		getId: function() {
+		getId: function () {
 			return this.id;
 		},
 
@@ -46696,7 +52457,7 @@ define('block/block',[
 		 * @api
 		 * @returns {Object}
 		 */
-		getSchema: function() {
+		getSchema: function () {
 			return null;
 		},
 
@@ -46706,7 +52467,7 @@ define('block/block',[
 		 *
 		 * @api
 		 */
-		getTitle: function() {
+		getTitle: function () {
 			return this.title;
 		},
 
@@ -46718,7 +52479,7 @@ define('block/block',[
 		 *
 		 * @return Boolean
 		 */
-		isDraggable: function() {
+		isDraggable: function () {
 			if (this.$element[0].nodeName === 'DIV' &&
 				this.$element.parents('.aloha-editable,.aloha-block:not(.aloha-table-wrapper),.aloha-block-collection').first().hasClass('aloha-block-collection')) {
 				// Here, we are inside an aloha-block-collection, and thus also need to be draggable.
@@ -46738,11 +52499,11 @@ define('block/block',[
 		 * When calling programmatically, do not set eventTarget or event arguments.
 		 * @api
 		 */
-		activate: function(eventTarget, event) {
+		activate: function (eventTarget, event) {
 			var highlightedBlocks = [];
 
 			// Deactivate currently highlighted blocks
-			jQuery.each(BlockManager._getHighlightedBlocks(), function() {
+			jQuery.each(BlockManager._getHighlightedBlocks(), function () {
 				this.deactivate();
 			});
 
@@ -46755,7 +52516,7 @@ define('block/block',[
 			highlightedBlocks.push(this);
 
 			// Highlight parent blocks
-			this.$element.parents('.aloha-block').each(function() {
+			this.$element.parents('.aloha-block').each(function () {
 				var block = BlockManager.getBlock(this);
 				if (block) {
 					block._highlight();
@@ -46763,12 +52524,11 @@ define('block/block',[
 				}
 			});
 
-			// Browsers do not remove the cursor, so we enforce it when an aditable is clicked.
+			// Browsers do not remove the cursor, so we enforce it when an editable is clicked.
 			// However, when the user clicked inside a nested editable, we will not remove the cursor (as the user wants to start typing then)
 			// small HACK: we also do not deactivate if we are inside an aloha-table-cell-editable.
 			if (jQuery(eventTarget).closest('.aloha-editable,.aloha-block,.aloha-table-cell-editable,.aloha-table-cell_active').first().hasClass('aloha-block')) {
 				this._isInsideNestedEditable = false;
-				Aloha.getSelection().removeAllRanges();
 			} else {
 				this._isInsideNestedEditable = true;
 				if (event) {
@@ -46784,11 +52544,11 @@ define('block/block',[
 		/**
 		 * Deactive the block
 		 */
-		deactivate: function() {
+		deactivate: function () {
 			var that = this;
 			var deactivatedBlocks = [this];
 			this._unhighlight();
-			this.$element.parents('.aloha-block').each(function() {
+			this.$element.parents('.aloha-block').each(function () {
 				deactivatedBlocks.push(this);
 				that._unhighlight();
 			});
@@ -46803,7 +52563,7 @@ define('block/block',[
 		/**
 		 * @returns {Boolean} True if this block is active
 		 */
-		isActive: function() {
+		isActive: function () {
 			return this.$element.hasClass('aloha-block-active');
 		},
 
@@ -46811,7 +52571,7 @@ define('block/block',[
 		 * Internal helper which sets a block as highlighted, because the block itself
 		 * or a child block has been activated.
 		 */
-		_highlight: function() {
+		_highlight: function () {
 			this.$element.addClass('aloha-block-highlighted');
 			BlockManager._setHighlighted(this);
 		},
@@ -46819,7 +52579,7 @@ define('block/block',[
 		/**
 		 * Internal helper which sets a block as un-highlighted.
 		 */
-		_unhighlight: function() {
+		_unhighlight: function () {
 			this.$element.removeClass('aloha-block-highlighted');
 			BlockManager._setUnhighlighted(this);
 		},
@@ -46832,14 +52592,19 @@ define('block/block',[
 		 * Internal _update method, which needs to be called internally if a property
 		 * changed. This is just a wrapper around update().
 		 */
-		_update: function() {
+		_update: function () {
 			var that = this;
-			if (this._currentlyRendering) return;
-			if (!this._initialized) return;
+			if (this._currentlyRendering) {
+				return;
+			}
+
+			if (!this._initialized) {
+				return;
+			}
 
 			this._currentlyRendering = true;
 
-			this.update(this.$element, function() {
+			this.update(this.$element, function () {
 				that._postProcessElementIfNeeded();
 			});
 
@@ -46862,7 +52627,7 @@ define('block/block',[
 		 *
 		 * @api
 		 */
-		update: function($element, postProcessFn) {
+		update: function ($element, postProcessFn) {
 			postProcessFn();
 		},
 
@@ -46873,7 +52638,7 @@ define('block/block',[
 		 * This method must be idempotent. I.e. it must produce the same results
 		 * when called once or twice.
 		 */
-		_postProcessElementIfNeeded: function() {
+		_postProcessElementIfNeeded: function () {
 			this.createEditablesIfNeeded();
 			this._checkThatNestedBlocksAreStillConsistent();
 			this._makeNestedBlockCollectionsSortable();
@@ -46901,8 +52666,8 @@ define('block/block',[
 		 * This is the case we detect here; and if it happens, we reconnect the
 		 * block to its currently visible DOM element.
 		 */
-		_checkThatNestedBlocksAreStillConsistent: function() {
-			this.$element.find('.aloha-block').each(function() {
+		_checkThatNestedBlocksAreStillConsistent: function () {
+			this.$element.find('.aloha-block').each(function () {
 				var block = BlockManager.getBlock(this);
 				if (block && block.$element[0] !== this) {
 					block._connectThisBlockToDomElement(this);
@@ -46915,28 +52680,29 @@ define('block/block',[
 		 * we want to make it sortable, by calling the appropriate Block Manager
 		 * function.
 		 */
-		_makeNestedBlockCollectionsSortable: function() {
+		_makeNestedBlockCollectionsSortable: function () {
 			var that = this;
-			this.$element.find('.aloha-block-collection').each(function() {
+			this.$element.find('.aloha-block-collection').each(function () {
 				var $blockCollection = jQuery(this);
 				if ($blockCollection.closest('.aloha-block').get(0) === that.$element.get(0)) {
 					// We are only responsible for one-level-down Block Collections, not
 					// for nested ones.
 					BlockManager.createBlockLevelSortableForEditableOrBlockCollection($blockCollection);
 				}
-			})
+			});
 		},
 
 		/**
 		 * Helper which disables the ugly IE drag handles. They are still shown, but at
 		 * least they do not work anymore
 		 */
-		_disableUglyInternetExplorerDragHandles: function() {
+		_disableUglyInternetExplorerDragHandles: function () {
 			if (jQuery.browser.msie) {
-				this.$element.get( 0 ).onresizestart = function ( e ) { return false; };
-				this.$element.get( 0 ).oncontrolselect = function ( e ) { return false; };
+				var $elem = this.$element.get(0);
+				$elem.onresizestart = Fn.returnFalse;
+				$elem.oncontrolselect = Fn.returnFalse;
 				// We do NOT abort the "ondragstart" event as it is required for drag/drop.
-				this.$element.get( 0 ).onmovestart = function ( e ) { return false; };
+				$elem.onmovestart = Fn.returnFalse;
 				// We do NOT abort the "onselectstart" event because this would disable selection in nested editables
 			}
 		},
@@ -46945,8 +52711,8 @@ define('block/block',[
          * Removes the draghandle class from block handle,
          * if drag & drop is disabled for the editable
          */
-        _hideDragHandlesIfDragDropDisabled: function() {
-			if ( !this._dd_isDragdropEnabled() ){
+        _hideDragHandlesIfDragDropDisabled: function () {
+			if (!this._dd_isDragdropEnabled()) {
 				this.$element.find('.aloha-block-draghandle').each(function () {
 					var $draghandle = jQuery(this);
 					if (!BlockUtils.isDragdropEnabledForElement($draghandle)) {
@@ -46960,26 +52726,26 @@ define('block/block',[
          * Attach mousedown/up events to block's draghandle 
          * to toggle dropzones when dragging starts and ends.
          */
-        _attachDropzoneHighlightEvents: function() {
+        _attachDropzoneHighlightEvents: function () {
             var that = this;
 
-            this.$element.delegate( ".aloha-block-draghandle", "mousedown", function() {
-                var dropzones = that.$element.parents( ".aloha-editable" ).first().data( "block-dropzones" ) || [];
-                jQuery.each( dropzones, function(i, editable_selector) {
-                    var editables = jQuery( editable_selector );
-                    jQuery( editables ).each(function() {
-                        if (jQuery( this ).data( "block-dragdrop" )) {
-                            jQuery( this ).addClass( "aloha-block-dropzone" );      
+            this.$element.delegate(".aloha-block-draghandle", "mousedown", function () {
+                var dropzones = that.$element.parents(".aloha-editable").first().data("block-dropzones") || [];
+                jQuery.each(dropzones, function (i, editable_selector) {
+                    var editables = jQuery(editable_selector);
+                    jQuery(editables).each(function () {
+                        if (jQuery(this).data("block-dragdrop")) {
+                            jQuery(this).addClass("aloha-block-dropzone");
                         }
                     });
                 });
 
                 // Remove the dropzones as soon as the mouse is released,
                 // irrespective of where the drop took place.
-                jQuery( document ).one( "mouseup.aloha-block-dropzone", function(e) {
-                    var dropzones = that.$element.parents( ".aloha-editable" ).first().data( "block-dropzones" ) || [];
-                    jQuery.each( dropzones, function(i, editable_selector) {
-                        jQuery( editable_selector ).removeClass( "aloha-block-dropzone" );      
+                jQuery(document).one("mouseup.aloha-block-dropzone", function () {
+                    var dropzones = that.$element.parents(".aloha-editable").first().data("block-dropzones") || [];
+                    jQuery.each(dropzones, function (i, editable_selector) {
+                        jQuery(editable_selector).removeClass("aloha-block-dropzone");
                     });
                 });
             });
@@ -46988,7 +52754,7 @@ define('block/block',[
 		/**************************
 		 * SECTION: Drag&Drop for INLINE elements
 		 **************************/
-		_setupDragDropForInlineElements: function() {
+		_setupDragDropForInlineElements: function () {
 			var that = this;
 
 			// Here, we store the character DOM element which has been hovered upon recently.
@@ -47018,7 +52784,7 @@ define('block/block',[
 			// This dropFn is the callback which handles the actual moving of
 			// nodes. We created a separate function for it, as it is called inside the "stop" callback
 			// in IE7 and inside the "drop" callback in all other browsers.
-			var dropFn = function() {
+			var dropFn = function () {
 				if (lastHoveredCharacter) {
 					// the user recently hovered over a character
 					var $dropReferenceNode = jQuery(lastHoveredCharacter);
@@ -47050,7 +52816,7 @@ define('block/block',[
 				jQuery('.aloha-block-dropInlineElementIntoEmptyBlock').removeClass('aloha-block-dropInlineElementIntoEmptyBlock');
 
                 // clear the created droppables
-                $createdDroppables.droppable( "destroy" );
+                $createdDroppables.droppable("destroy");
                 $createdDroppables = null;
 
                 blockDroppedProperly = true;
@@ -47060,22 +52826,22 @@ define('block/block',[
 				handle: '.aloha-block-draghandle',
 				scope: 'aloha-block-inlinedragdrop',
 				disabled: !this._dd_isDragdropEnabled(),
-				revert: function() {
+				revert: function () {
 					return (lastHoveredCharacter === null || !blockDroppedProperly);
 				},
 				revertDuration: 250,
-				stop: function() {
+				stop: function () {
 					if (jQuery.browser.msie && 7 === parseInt(jQuery.browser.version, 10)) {
 						dropFn();
 					}
-					jQuery.each(editablesWhichNeedToBeCleaned, function() {
+					jQuery.each(editablesWhichNeedToBeCleaned, function () {
 						that._dd_traverseDomTreeAndRemoveSpans(this);
 					});
 					$currentDraggable = null;
 
 					editablesWhichNeedToBeCleaned = [];
 				},
-				start: function() {
+				start: function () {
 					blockDroppedProperly = false;
 					editablesWhichNeedToBeCleaned = [];
 
@@ -47096,7 +52862,7 @@ define('block/block',[
 						 * When hovering over a paragraph, we make convert its contents into spans, to make
 						 * them droppable.
 						 */
-						over: function(event, ui) {
+						over: function (event, ui) {
 							if (jQuery.inArray(this, editablesWhichNeedToBeCleaned) === -1) {
 								editablesWhichNeedToBeCleaned.push(this);
 							}
@@ -47123,7 +52889,7 @@ define('block/block',[
 								tolerance: 'pointer',
 								addClasses: false,
 								scope: 'aloha-block-inlinedragdrop',
-								over: function() {
+								over: function () {
 									if (lastHoveredCharacter) {
 										// Just to be sure, we remove the css class of the last hovered character.
 										// This is needed such that spans are deselected which contain multiple
@@ -47133,7 +52899,7 @@ define('block/block',[
 									lastHoveredCharacter = this;
 									jQuery(this).addClass('aloha-block-droppable');
 								},
-								out: function() {
+								out: function () {
 									jQuery(this).removeClass('aloha-block-droppable');
 									if (lastHoveredCharacter === this) {
 										lastHoveredCharacter = null;
@@ -47144,7 +52910,7 @@ define('block/block',[
 							// the Drag Drop offsets.
 							jQuery.ui.ddmanager.prepareOffsets(ui.draggable.data('draggable'), event);
 						},
-						out: function() {
+						out: function () {
 							jQuery(this).removeClass('aloha-block-dropInlineElementIntoEmptyBlock');
 						},
 
@@ -47152,15 +52918,15 @@ define('block/block',[
 						 * When dropping over a paragraph, we use the "lastHoveredCharacter"
 						 * as drop target.
 						 */
-						drop: function() {
+						drop: function () {
 							if (!(jQuery.browser.msie && 7 === parseInt(jQuery.browser.version, 10))) {
 								dropFn();
 							}
 						}
 					};
 
-					$createdDroppables = jQuery( ".aloha-editable.aloha-block-dropzone" ).children( ":not(.aloha-block)" );
-					$createdDroppables.droppable( droppableCfg );
+					$createdDroppables = jQuery(".aloha-editable.aloha-block-dropzone").children(":not(.aloha-block)");
+					$createdDroppables.droppable(droppableCfg);
 					// Small HACK: Also make table cells droppable
 					jQuery('.aloha-table-cell-editable').droppable(droppableCfg);
 				}
@@ -47173,9 +52939,9 @@ define('block/block',[
 		 *
 		 * @param {DomElement} el
 		 */
-		_dd_traverseDomTreeAndWrapCharactersWithSpans: function(el) {
+		_dd_traverseDomTreeAndWrapCharactersWithSpans: function (el) {
 			var child;
-			for(var i=0, l=el.childNodes.length; i < l; i++) {
+			for (var i = 0, l = el.childNodes.length; i < l; i++) {
 				child = el.childNodes[i];
 				if (child.nodeType === 1) { // DOM Nodes
 					if (!~child.className.indexOf('aloha-block') && child.attributes['data-i'] === undefined) {
@@ -47200,12 +52966,12 @@ define('block/block',[
 		 * - " Hello world" -> [" Hello", " world"]
 		 * --> see the unit tests for the specification
 		 */
-		_dd_splitText: function(text) {
+		_dd_splitText: function (text) {
 			var textParts = text.split(/(?=\b)/);
 			var cleanedTextParts = [];
 
 			var isWhitespace = false;
-			for (var i=0,l=textParts.length; i<l; i++) {
+			for (var i = 0, l = textParts.length; i < l; i++) {
 				if (!/[^\t\n\r ]/.test(textParts[i])) {
 					// if the current text part is just whitespace, we add a flag...
 					isWhitespace = true;
@@ -47232,7 +52998,7 @@ define('block/block',[
 		 * This function returns the number of additional DOM elements inserted.
 		 * This is "numberOfSpansCreated - 1" (because one text node has been initially there)
 		 */
-		_dd_insertSpans: function(el) {
+		_dd_insertSpans: function (el) {
 			var text = el.nodeValue;
 
 			// If node just contains empty strings, we do not do anything.
@@ -47248,12 +53014,14 @@ define('block/block',[
 			var x, word, leftWordPartLength, t;
 			var numberOfSpansInserted = 0;
 
-			for (var i=0; i<l; i++) {
+			for (var i = 0; i < l; i++) {
 				// left half of word
 				word = splitText[i];
-				if (word.length === 0) continue;
+				if (word.length === 0) {
+					continue;
+				}
 				// We use "floor" here such that sentence delimiters like "!" can have a block placed afterwards
-				leftWordPartLength = Math.floor(word.length/2);
+				leftWordPartLength = Math.floor(word.length / 2);
 
 				// For Internet Explorer, we only make dropping AFTER words possible to improve performance
 				var browserMajorVersion = parseInt(jQuery.browser.version, 10);
@@ -47281,19 +53049,19 @@ define('block/block',[
 				numberOfSpansInserted++;
 			}
 			el.parentNode.replaceChild(newNodes, el);
-			return numberOfSpansInserted-1;
+			return numberOfSpansInserted - 1;
 		},
 
 		/**
 		 * After the Drag/Drop operation, we need to remove the SPAN elements
 		 * again.
 		 */
-		_dd_traverseDomTreeAndRemoveSpans: function(el) {
+		_dd_traverseDomTreeAndRemoveSpans: function (el) {
 			var nodesToDelete = [], convertBack;
-			convertBack = function(el) {
+			convertBack = function (el) {
 				var currentlyTraversingExpandedText = false, currentText, lastNode;
 				var child;
-				for(var i=0, l=el.childNodes.length; i < l; i++) {
+				for (var i = 0, l = el.childNodes.length; i < l; i++) {
 					child = el.childNodes[i];
 					if (child.nodeType === 1) { // Node
 						if (child.attributes['data-i'] !== undefined) {
@@ -47345,7 +53113,7 @@ define('block/block',[
 
 			convertBack(el);
 
-			for (var i=0, l=nodesToDelete.length; i<l; i++) {
+			for (var i = 0, l = nodesToDelete.length; i < l; i++) {
 				nodesToDelete[i].parentNode.removeChild(nodesToDelete[i]);
 			}
 		},
@@ -47362,7 +53130,7 @@ define('block/block',[
 		 * SECTION: Drag&Drop for Block elements
 		 **************************/
 
-		_setupDragDropForBlockElements: function() {
+		_setupDragDropForBlockElements: function () {
 			// Mark the drag handle with an extra CSS class, such that it is picked up by BlockManager.initializeBlockLevelDragDrop()
 			this.$element.find('.aloha-block-draghandle').addClass('aloha-block-draghandle-blocklevel');
 		},
@@ -47382,7 +53150,7 @@ define('block/block',[
 		 * Override to use a custom implementation and to pass
 		 * special configuration to .aloha()
 		 */
-		createEditablesIfNeeded: function() {
+		createEditablesIfNeeded: function () {
 			// TODO: only create them if they are no aloha element yet...
 			// TODO: should only happen inside Aloha
 			this.$element.find('.aloha-editable').aloha();
@@ -47397,7 +53165,7 @@ define('block/block',[
 		 * Template method to render custom block UI.
 		 * @api
 		 */
-		renderBlockHandlesIfNeeded: function() {
+		renderBlockHandlesIfNeeded: function () {
 			if (this.isDraggable()) {
 				if (this.$element.children('.aloha-block-draghandle').length === 0) {
 					this.$element.prepend('<span class="aloha-block-handle aloha-block-draghandle aloha-cleanme"></span>');
@@ -47423,7 +53191,7 @@ define('block/block',[
 		 * @param {String} attributeValue
 		 * @param {Boolean} Optional. If true, we do not fire change events.
 		 */
-		attr: function(attributeNameOrObject, attributeValue, suppressEvents) {
+		attr: function (attributeNameOrObject, attributeValue, suppressEvents) {
 			var that = this, attributeChanged = false;
 
 			if (arguments.length >= 2) {
@@ -47436,7 +53204,7 @@ define('block/block',[
 				}
 				this._setAttribute(attributeNameOrObject, attributeValue);
 			} else if (typeof attributeNameOrObject === 'object') {
-				jQuery.each(attributeNameOrObject, function(key, value) {
+				jQuery.each(attributeNameOrObject, function (key, value) {
 					if (key.substr(0, 12) === 'aloha-block-') {
 						Aloha.Log.error('block/block', 'It is not allowed to set internal block attributes (starting with aloha-block-) through Block.attr() (You tried to set ' + key + ')');
 						return;
@@ -47464,25 +53232,25 @@ define('block/block',[
 		/**
 		 * Internal helper for setting  a single attribute.
 		 */
-		_setAttribute: function(name, value) {
+		_setAttribute: function (name, value) {
 			this.$element.attr('data-' + name.toLowerCase(), value);
 		},
 
 		/**
 		 * Internal helper for getting an attribute
 		 */
-		_getAttribute: function(name) {
+		_getAttribute: function (name) {
 			return this.$element.attr('data-' + name.toLowerCase());
 		},
 
 		/**
 		 * Internal helper for getting all attributes
 		 */
-		_getAttributes: function() {
+		_getAttributes: function () {
 			var attributes = {};
 
 			// element.data() not always up-to-date, that's why we iterate over the attributes directly.
-			jQuery.each(this.$element[0].attributes, function(i, attribute) {
+			jQuery.each(this.$element[0].attributes, function (i, attribute) {
 				if (attribute.name.substr(0, 5) === 'data-') {
 					attributes[attribute.name.substr(5).toLowerCase()] = attribute.value;
 				}
@@ -47500,7 +53268,7 @@ define('block/block',[
 	var DefaultBlock = AbstractBlock.extend(
 	/** @lends block.block.DefaultBlock */
 	{
-		update: function($element, postProcessFn) {
+		update: function ($element, postProcessFn) {
 			postProcessFn();
 		}
 	});
@@ -47514,13 +53282,13 @@ define('block/block',[
 	/** @lends block.block.DebugBlock */
 	{
 		title: 'Debugging',
-		init: function($element, postProcessFn) {
+		init: function ($element, postProcessFn) {
 			this.update($element, postProcessFn);
 		},
-		update: function($element, postProcessFn) {
+		update: function ($element, postProcessFn) {
 			$element.css({display: 'block'});
 			var renderedAttributes = '<table class="debug-block">';
-			jQuery.each(this.attr(), function(k, v) {
+			jQuery.each(this.attr(), function (k, v) {
 				renderedAttributes += '<tr><th>' + k + '</th><td>' + v + '</td></tr>';
 			});
 
@@ -47536,11 +53304,11 @@ define('block/block',[
 	 * @class An empty block doesn't render any tag fill icons or borders (no Aloha tags)
 	 * @extends block.block.AbstractBlock
 	 */
-	var EmptyBlock = AbstractBlock.extend (
+	var EmptyBlock = AbstractBlock.extend(
 	/** @lends block.block.EmptyBlock */
 	{
 		title: 'EmptyBlock',
-		init: function() {},
+		init: function () {},
 		activate: function () {},
 		deactivate: function () {},
 		renderBlockHandlesIfNeeded: function () {},
@@ -47583,7 +53351,7 @@ define('block/block',[
  */
 define('block/blockcontenthandler',
 ['jquery', 'aloha/contenthandlermanager', 'block/blockmanager'],
-function(jQuery, ContentHandlerManager, BlockManager) {
+function (jQuery, ContentHandlerManager, BlockManager) {
 
 	/**
 	 * @name block.BlockContentHandler
@@ -47608,11 +53376,11 @@ function(jQuery, ContentHandlerManager, BlockManager) {
 		 * do additional cleanups.
 		 * @param {jQuery} content
 		 */
-		handleContent: function( content ) {
-			if ( typeof content === 'string' ){
-				content = jQuery( '<div>' + content + '</div>' );
-			} else if ( content instanceof jQuery ) {
-				content = jQuery( '<div>' ).append(content);
+		handleContent: function (content) {
+			if (typeof content === 'string') {
+				content = jQuery('<div>' + content + '</div>');
+			} else if (content instanceof jQuery) {
+				content = jQuery('<div>').append(content);
 			}
 
 			if (content.find('.aloha-block[data-aloha-block-copy-only-block="true"]').length > 0) {
@@ -47636,13 +53404,15 @@ function(jQuery, ContentHandlerManager, BlockManager) {
 
 			}
 
-			content.find('.aloha-block').each(function() {
+			content.find('.aloha-block').each(function () {
 				var oldBlock = jQuery(this);
 
 				var elementAttributes = {}; // all attributes except data-*
 				var blockAttributes = {}; // all data* attributes
-				jQuery.each(oldBlock[0].attributes, function(k, v) {
-					if (v.nodeName === 'id') return;
+				jQuery.each(oldBlock[0].attributes, function (k, v) {
+					if (v.nodeName === 'id') {
+						return;
+					}
 
 					if (v.nodeName.match(/^data-/)) {
 						blockAttributes[v.nodeName.substr(5)] = v.nodeValue;
@@ -47663,7 +53433,7 @@ function(jQuery, ContentHandlerManager, BlockManager) {
 				oldBlock.replaceWith(newBlock);
 
 				// We need to blockify the contents with a timeout, as we need the connected DOM node for it.
-				window.setTimeout(function() {
+				window.setTimeout(function () {
 					BlockManager._blockify(jQuery('#' + newBlockId), blockAttributes);
 				}, 50);
 			});
@@ -47705,7 +53475,7 @@ function(jQuery, ContentHandlerManager, BlockManager) {
  * @namespace Block attribute editors
  */
 define('block/editor',['jquery', 'aloha/observable', 'util/class'],
-function(jQuery, Observable, Class) {
+function (jQuery, Observable, Class) {
 	
 
 	/**
@@ -47730,7 +53500,7 @@ function(jQuery, Observable, Class) {
 		/**
 		 * @constructor
 		 */
-		_constructor: function(schema) {
+		_constructor: function (schema) {
 			this.schema = schema;
 		},
 
@@ -47742,7 +53512,7 @@ function(jQuery, Observable, Class) {
 		 * @return {jQuery}
 		 * @api
 		 */
-		render: function() {
+		render: function () {
 			// Implement in subclass!
 		},
 
@@ -47754,7 +53524,7 @@ function(jQuery, Observable, Class) {
 		 * @return {String}
 		 * @api
 		 */
-		getValue: function() {
+		getValue: function () {
 			// Implement in subclass!
 		},
 
@@ -47768,7 +53538,7 @@ function(jQuery, Observable, Class) {
 		 * @param {String} value
 		 * @api
 		 */
-		setValue: function(value) {
+		setValue: function (value) {
 			// Implement in subclass!
 		},
 
@@ -47776,7 +53546,7 @@ function(jQuery, Observable, Class) {
 		 * Destroy the editor elements and unbind events
 		 * @api
 		 */
-		destroy: function() {
+		destroy: function () {
 			// Implement in subclass!
 		},
 
@@ -47785,7 +53555,7 @@ function(jQuery, Observable, Class) {
 		 *
 		 * @private
 		 */
-		_deactivate: function() {
+		_deactivate: function () {
 			this.trigger('change', this.getValue());
 			this.destroy();
 		}
@@ -47825,7 +53595,7 @@ function(jQuery, Observable, Class) {
 		 * Render the label and form element
 		 * @return {jQuery}
 		 */
-		render: function() {
+		render: function () {
 			var $wrapper = jQuery('<div class="aloha-block-editor" />');
 			var guid = GENTICS.Utils.guid();
 			$wrapper.append(this.renderLabel().attr('id', guid));
@@ -47839,7 +53609,7 @@ function(jQuery, Observable, Class) {
 		 *
 		 * @return {jQuery}
 		 */
-		renderLabel: function() {
+		renderLabel: function () {
 			var element = jQuery('<label />');
 			element.html(this.schema.label);
 			return element;
@@ -47849,13 +53619,13 @@ function(jQuery, Observable, Class) {
 		 * Render the form input element
 		 * @return {jQuery}
 		 */
-		renderFormElement: function() {
+		renderFormElement: function () {
 			var that = this;
 			this._$formInputElement = jQuery(this.formInputElementDefinition);
 
 			this.afterRenderFormElement(this._$formInputElement);
 
-			this._$formInputElement.change(function() {
+			this._$formInputElement.change(function () {
 				that.trigger('change', that.getValue());
 			});
 
@@ -47869,28 +53639,28 @@ function(jQuery, Observable, Class) {
 		 * @param {jQuery} $formElement the form element being rendered
 		 * @api
 		 */
-		afterRenderFormElement: function($formElement) {
+		afterRenderFormElement: function ($formElement) {
 
 		},
 
 		/**
 		 * @return {String}
 		 */
-		getValue: function() {
+		getValue: function () {
 			return this._$formInputElement.val();
 		},
 
 		/**
 		 * We do not throw any change event here, as we need to break the loop "Block" -> "Editor" -> "Block"
 		 */
-		setValue: function(value) {
+		setValue: function (value) {
 			this._$formInputElement.val(value);
 		},
 
 		/**
 		 * Cleanup and remove the input element
 		 */
-		destroy: function() {
+		destroy: function () {
 			this._$formInputElement.remove();
 		}
 
@@ -47918,8 +53688,10 @@ function(jQuery, Observable, Class) {
 		// TODO Range should be an option
 		formInputElementDefinition: '<input type="range" />',
 
-		afterRenderFormElement: function($formElement) {
-			if (!this.schema.range) return;
+		afterRenderFormElement: function ($formElement) {
+			if (!this.schema.range) {
+				return;
+			}
 
 			if (this.schema.range.min) {
 				$formElement.attr('min', this.schema.range.min);
@@ -47967,8 +53739,8 @@ function(jQuery, Observable, Class) {
 	{
 		formInputElementDefinition: '<select />',
 
-		afterRenderFormElement: function($formElement) {
-			jQuery.each(this.schema.values, function() {
+		afterRenderFormElement: function ($formElement) {
+			jQuery.each(this.schema.values, function () {
 				var el = this;
 				$formElement.append(jQuery('<option />').attr('value', el.key).html(el.label));
 			});
@@ -47985,10 +53757,10 @@ function(jQuery, Observable, Class) {
 	{
 		formInputElementDefinition: '<button />',
 
-		afterRenderFormElement: function($formElement) {
+		afterRenderFormElement: function ($formElement) {
 			var that = this;
 			$formElement.html(this.schema.buttonLabel);
-			$formElement.click(function() {
+			$formElement.click(function () {
 				that.schema.callback();
 			})
 		}
@@ -48037,12 +53809,14 @@ define('block/dragbehavior',[
 	'aloha/jquery',
 	'aloha',
 	'PubSub',
-	'aloha/copypaste'
+	'aloha/copypaste',
+	'block/block-utils'
 ], function (
 	$,
 	Aloha,
 	PubSub,
-	CopyPaste
+	CopyPaste,
+	BlockUtils
 ) {
 	
 
@@ -48072,6 +53846,21 @@ define('block/dragbehavior',[
 			'.ui-draggable-dragging'
 		];
 
+
+	/**
+	 * Checks if the drag and drop is for a nested Table.
+	 *
+	 * @param  {jQuery<Element>} $hovering
+	 * @param  {jQuery<Element>} $dragging
+	 * @return {boolean}
+	 */
+	function isNestedTable ($hovering, $dragging) {
+		return $hovering
+			&& $dragging
+			&& $hovering.parents('table').length !== 0
+			&& BlockUtils.isTable($dragging);
+	}
+
 	/**
 	 * Checks whether or not the element over which we are hovering should allow
 	 * drop a region, in or around it?
@@ -48082,8 +53871,7 @@ define('block/dragbehavior',[
 	 */
 	function allowDropRegions($hovering, $dragging) {
 		return !$hovering || !(
-			$hovering.is('.ui-draggable-dragging')
-			||
+			$hovering.is('.ui-draggable-dragging') ||
 			$hovering.closest($dragging).length > 0
 		);
 	}
@@ -48151,8 +53939,7 @@ define('block/dragbehavior',[
 		var range = null;
 		var x = 0;
 		var y = 0;
-		return $.browser.msie
-			? {
+		return $.browser.msie ? {
 
 				/**
 				 * Remember the selection state.
@@ -48171,11 +53958,18 @@ define('block/dragbehavior',[
 				 * before dragging is started.
 				 */
 				restore: function restoreSelection() {
+					if (!range) {
+						return;
+					}
 					var editable = CopyPaste.getEditableAt(range);
 					if (editable) {
 						editable.obj.focus();
 					}
-					CopyPaste.setSelectionAt(range);
+					try {
+						CopyPaste.setSelectionAt(range);
+					} catch (e) {
+						Console.warn(e);
+					}
 					window.scrollTo(x, y);
 				}
 			}
@@ -48199,7 +53993,15 @@ define('block/dragbehavior',[
 
 		// Prevent the prevention of drag inside a cell
 		element.ondragstart = function (e) {
-			e.stopPropagation();
+			if (e) {
+				if (typeof e.stopPropagation === 'function') {
+					e.stopPropagation();
+				} else {
+					e.cancelBubble = true;
+				}
+			} else {
+				window.event.cancelBubble = true;
+			}
 		};
 
 		$handle
@@ -48279,7 +54081,7 @@ define('block/dragbehavior',[
 	};
 
 	/**
-	 * Check the element that is below of the draggable element in a drag
+	 * Checks the element that is below of the draggable element in a drag
 	 * operation, if is a valid element, this method call to highlight methods
 	 *
 	 * @param {HTMLElement} elm
@@ -48288,14 +54090,12 @@ define('block/dragbehavior',[
 	 * @return {Boolean}
 	 */
 	DragBehavior.prototype.onMouseover = function (elm, event) {
-		if (this.$overElement) {
-			this.disableInsertBeforeOrAfter(this.$overElement);
-		}
+		this.disableInsertBeforeOrAfter(this.$overElement);
 		this.$overElement = $(elm);
 		if (!this._isAllowedOverElement(elm)) {
 			this.enableInsertBeforeOrAfter(elm);
 
-			return true; // to continue bubbleing to find a element where can insert the block
+			return true; // to continue bubbling to find a element where can insert the block
 		} else {
 			this.highlightElement(elm);
 			event.stopImmediatePropagation();
@@ -48311,10 +54111,10 @@ define('block/dragbehavior',[
 	 */
 	DragBehavior.prototype.highlightElement = function (elm) {
 
-		if (elm.nodeName === 'DIV'
-				&& elm.parentNode.nodeName === 'TD'
-				&& elm.parentNode.firstChild === elm
-				&& elm.parentNode.lastChild === elm) {
+		if (elm.nodeName === 'DIV' &&
+				elm.parentNode.nodeName === 'TD' &&
+				elm.parentNode.firstChild === elm &&
+				elm.parentNode.lastChild === elm) {
 
 			elm = elm.parentNode;
 		}
@@ -48367,7 +54167,9 @@ define('block/dragbehavior',[
 	 */
 	DragBehavior.prototype.disableInsertBeforeOrAfter = function ($elm) {
 		this.insertBeforeOrAfterMode = false;
-		$elm.unbind('.brIBOA');
+		if ($elm) {
+			$elm.unbind('.brIBOA');
+		}
 	};
 
 	/**
@@ -48421,6 +54223,10 @@ define('block/dragbehavior',[
 				return false;
 			}
 
+			if (isNestedTable($elm, this.$element)) {
+				return false;
+			}
+
 			return true;
 		} else {
 			return false;
@@ -48435,8 +54241,8 @@ define('block/dragbehavior',[
 	DragBehavior.prototype.onDragStop = function () {
 		// @todo check if the $overElement is a Valid element to drop the block
 		if (allowDropRegions(this.$overElement, this.$element)) {
-			if (this.$overElement
-					&& !this._isAllowedOverElement(this.$overElement[0])) {
+			if (this.$overElement &&
+				!this._isAllowedOverElement(this.$overElement[0])) {
 				this.enableInsertBeforeOrAfter(this.$overElement[0]);
 			}
 
@@ -48452,7 +54258,6 @@ define('block/dragbehavior',[
 		}
 
 		this.disableInsertBeforeOrAfter(this.$overElement);
-
 	};
 
 	/**
@@ -48545,20 +54350,20 @@ define('block/block-plugin',[
 	'i18n!block/nls/i18n',
 	'i18n!aloha/nls/i18n',
 	'jqueryui'
-], function(
+], function (
 	Aloha,
- 	Plugin,
- 	jQuery,
- 	ContentHandlerManager, 
+	Plugin,
+	jQuery,
+	ContentHandlerManager, 
 	BlockManager,
- 	SidebarAttributeEditor,
- 	block,
- 	EditorManager,
- 	BlockContentHandler,
- 	editor,
- 	dragBehavior,
- 	Ui,
- 	ToggleButton, 
+	SidebarAttributeEditor,
+	block,
+	EditorManager,
+	BlockContentHandler,
+	editor,
+	dragBehavior,
+	Ui,
+	ToggleButton, 
 	i18n,
 	i18nCore
 ) {
@@ -48569,7 +54374,7 @@ define('block/block-plugin',[
 	/**
 	 * Register the 'block' plugin
 	 */
-	var BlockPlugin = Plugin.create( 'block', {
+	var BlockPlugin = Plugin.create('block', {
 		
 		/**
 		 * default button configuration
@@ -48619,7 +54424,7 @@ define('block/block-plugin',[
 			// set the dropzones for the initialized editable
 			Aloha.bind('aloha-editable-created', function (e, editable) {
 				that.setDropzones(editable.obj);
- 			});
+			});
 
 			// apply specific configuration if an editable has been activated
 			Aloha.bind('aloha-editable-activated', function (e, params) {
@@ -48663,12 +54468,12 @@ define('block/block-plugin',[
 			// toggle drag & drop option can be set as
 			// config: {'toggeleDragdrop': true} or
 			// config: ['toggleDragdrop']
-			var toggleDragdropConfigured = function() {
+			var toggleDragdropConfigured = function () {
 				return (config[0] === "toggleDragdrop") ||
-								config.toggleDragdrop == true   ||
-								config.toggleDragdrop == 'true' ||
-								config.toggleDragdrop == 1      ||
-								config.toggleDragdrop == '1'
+								config.toggleDragdrop == true	||
+								config.toggleDragdrop == 'true'	||
+								config.toggleDragdrop == 1		||
+								config.toggleDragdrop == '1';
 			};
 
 			var toggleGloballyOrPerEditable =
@@ -48728,11 +54533,11 @@ define('block/block-plugin',[
 		createButtons: function () {
 			var that = this;
 
-			this._toggleDragDropButton = Ui.adopt( "toggleDragDrop", ToggleButton, {
-				tooltip: i18n.t( 'button.toggledragdrop.tooltip' ),
+			this._toggleDragDropButton = Ui.adopt("toggleDragDrop", ToggleButton, {
+				tooltip: i18n.t('button.toggledragdrop.tooltip'),
 				icon: 'aloha-icon aloha-icon-toggledragdrop',
 				scope: 'Aloha.continuoustext',
-				click: function() {
+				click: function () {
 					that._toggleDragdropState(Aloha.activeEditable);
 				}
 			});
@@ -48747,11 +54552,11 @@ define('block/block-plugin',[
 			var config = that.getEditableConfig(editable);
 			var dropzones = (config && config.dropzones) || that.settings.dropzones;
 
-			if ( dropzones ) {
-				editable.data( 'block-dropzones', dropzones );	
+			if (dropzones) {
+				editable.data('block-dropzones', dropzones);	
 			} else {
 				// if dropzones are undefined all editables should be dropzones
-				editable.data( 'block-dropzones', [".aloha-editable"] );	
+				editable.data('block-dropzones', [".aloha-editable"]);	
 			}
 		},
 
@@ -48759,8 +54564,8 @@ define('block/block-plugin',[
 		 * Checks whether drag & drop is enabled for blocks.
 		 * @return boolean 
 		 */
-		isDragDropEnabled: function() {
-			if ( this.settings && typeof this.settings.dragdrop !== "undefined" ) {
+		isDragDropEnabled: function () {
+			if (this.settings && typeof this.settings.dragdrop !== "undefined") {
 				// Normalize config
 				return (
 					this.settings.dragdrop === true   ||
@@ -48776,34 +54581,34 @@ define('block/block-plugin',[
 		/**
 		 * Create blocks from default settings
 		 */
-		_createBlocks: function() {
+		_createBlocks: function () {
 			if (!this.settings.defaults) {
 				this.settings.defaults = {};
 			}
-			jQuery.each( this.settings.defaults, function(selector, instanceDefaults) {
-				jQuery( selector ).alohaBlock( instanceDefaults );
+			jQuery.each(this.settings.defaults, function (selector, instanceDefaults) {
+				jQuery(selector).alohaBlock(instanceDefaults);
 			});
 		},
 
 		/**
 		 * Set the drag & drop state for the given editable.
 		 */
-		_setDragDropStateForEditable: function($editable, state) {
-			$editable.data( "block-dragdrop", state );
+		_setDragDropStateForEditable: function ($editable, state) {
+			$editable.data("block-dragdrop", state);
 
-			if ( $editable.hasClass("ui-sortable") ) {
-				$editable.sortable( "option", "disabled", !state );	
+			if ($editable.hasClass("ui-sortable")) {
+				$editable.sortable("option", "disabled", !state);	
 			}
 
-			$editable.find( ".aloha-block.ui-draggable" ).each( function() {
-				jQuery( this ).draggable( "option", "disabled", !state );	
+			$editable.find(".aloha-block.ui-draggable").each(function () {
+				jQuery(this).draggable("option", "disabled", !state);
 			});
 
-			$editable.find( ".aloha-block-handle" ).each( function() {
+			$editable.find(".aloha-block-handle").each(function () {
 				if (state) {
-					jQuery( this ).addClass( "aloha-block-draghandle" );	
+					jQuery(this).addClass("aloha-block-draghandle");
 				} else {
-					jQuery( this ).removeClass( "aloha-block-draghandle" );	
+					jQuery(this).removeClass("aloha-block-draghandle");
 				}
 			});
 		}
@@ -48822,14 +54627,14 @@ define('block/block-plugin',[
 	 * @api
 	 * @param {Object} instanceDefaults
 	 */
-	jQuery.fn.alohaBlock = function(instanceDefaults) {
+	jQuery.fn.alohaBlock = function (instanceDefaults) {
 		instanceDefaults = instanceDefaults || {};
-		jQuery( this ).each( function(index, element) {
-			BlockManager._blockify( element, instanceDefaults );
+		jQuery(this).each(function (index, element) {
+			BlockManager._blockify(element, instanceDefaults);
 		});
 
 		// Chain
-		return jQuery( this );
+		return jQuery(this);
 	};
 
 	/**
@@ -48838,7 +54643,7 @@ define('block/block-plugin',[
 	 * 
 	 * @api
 	 */
-	jQuery.fn.mahaloBlock = function() {
+	jQuery.fn.mahaloBlock = function () {
 		jQuery(this).each(function (index, element) {
 			BlockManager._unblockify(element);
 		});
@@ -48846,6 +54651,143 @@ define('block/block-plugin',[
 
 	// jQuery.fn.mahaloBlock = TODO
 	return BlockPlugin;
+});
+
+/* align-table-utils.js is part of Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor.
+ * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php
+ *
+ * Aloha Editor is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * Aloha Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * As an additional permission to the GNU GPL version 2, you may distribute
+ * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
+ * source code without the copy of the GNU GPL normally required,
+ * provided you include this license notice and a URL through which
+ * recipients can access the Corresponding Source.
+ */
+define('align/align-table-utils',[
+	'util/arrays',
+	'util/dom',
+	'jquery'
+], function(
+	Arrays,
+	DomLegacy,
+	jQuery
+) {
+	
+
+	/**
+	 * Gets cells selected in the table.
+	 *
+	 * @param {Element} tableElement
+	 * @return {Array}
+	 */
+	function getCellsInSelection(tableElement) {
+		return Arrays.coerce(jQuery(tableElement).find('.aloha-cell-selected'));
+	}
+
+	/**
+	 * Checks if `tableElement` has any cells selected.
+	 * @param {Element} tableElement
+	 * @return {boolean}
+	 */
+	function hasCellSelection(tableElement) {
+		return jQuery(tableElement).find('.aloha-cell-selected').length !== 0;
+	}
+
+	/**
+	 * Checks if node is an editing host, ignoring table cells editing host.
+	 * @param {Node} node
+	 * @returns {boolean}
+	 */
+	function isEditingHostIgnoreEditableTableCells(node) {
+		return DomLegacy.isEditingHost(node)
+			&& (node.className.match("aloha-table-cell-editable") == null);
+	}
+
+	/**
+	 * Gets the cell node which contains `node` if exists. Otherwise null.
+	 * @param {Node} node
+	 * @return {node|null}
+	 */
+	function getParentCellElement(node) {
+		while (node && !isEditingHostIgnoreEditableTableCells(node)) {
+			if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+				return node;
+			}
+			node = node.parentNode;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the parent Table if exists. Otherwise null.
+	 * @param {Node} node
+	 * @return {node|null}
+	 */
+	function getTable(node) {
+		while (node) {
+			if (node.nodeName === 'TABLE') {
+				return node;
+			}
+			node = node.parentNode;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Checks if `node` is inside a table.
+	 * @param {Node} node
+	 * @return {boolean}
+	 */
+	function isInsideTable (node) {
+		return getParentCellElement(node) != null;
+	}
+
+	/**
+	 * Get selected cells inside a Table.
+	 * @param {Node} node
+	 * @param {Array.<Element> elements
+	 * @returns {Array.<Element>}
+	 */
+	function getSelectedTableCells(node, elements) {
+		var cellElement = getParentCellElement(node);
+		var table;
+
+		table = getTable(cellElement);
+
+		if (hasCellSelection(table)) {
+			return getCellsInSelection(table);
+		}
+
+		if (Arrays.isEmpty(elements)) {
+			// If there is nothing selected, we add the cell.
+			return [cellElement];
+		}
+
+		return elements;
+	}
+
+	return {
+		isInsideTable: isInsideTable,
+		getSelectedTableCells: getSelectedTableCells
+	};
 });
 
 define('align/nls/i18n',{
@@ -48896,38 +54838,88 @@ define('align/nls/i18n',{
 define('align/align-plugin',[
 	'aloha',
 	'aloha/plugin',
+	'align/align-table-utils',
+	'util/arrays',
+	'util/html',
+	'util/dom',
 	'ui/ui',
 	'ui/toggleButton',
 	'i18n!align/nls/i18n',
 	'i18n!aloha/nls/i18n',
 	'jquery',
 	'PubSub'
-], function(
-		Aloha,
-    Plugin,
-    Ui,
-    ToggleButton,
-    i18n,
-    i18nCore,
-    jQuery,
-    PubSub
+], function (
+	Aloha,
+	Plugin,
+	AlignTableUtils,
+	Arrays,
+	Html,
+	DomLegacy,
+	Ui,
+	ToggleButton,
+	i18n,
+	i18nCore,
+	jQuery,
+	PubSub
 ) {
 	
 
-	var GENTICS = window.GENTICS;
+	/**
+	 * Gets block elements inside `range`.
+	 * @return {Array}
+	 */
+	function getCurrentSelectedBlockElements() {
+		var range = Aloha.Selection.getRangeObject();
+		var selection = range.getRangeTree(),
+			cac = range.getCommonAncestorContainer(),
+			elements = [];
+		var cells, i, len;
+
+		jQuery.each(selection, function () {
+			var node = this.domobj;
+			if (this.type === 'none' || !node) {
+				return;
+			}
+			if (Html.isBlock(node)) {
+				elements.push(node);
+				return;
+			}
+			// Because the align-text property needs to be set on a block-level
+			// element in order for it to have visual effect
+			while (node && !Html.isBlock(node)) {
+				if ((Html.isBlock(cac) && cac === node.parentNode) ||
+					DomLegacy.isEditingHost(node.parentNode)) {
+					break;
+				}
+				node = node.parentNode;
+			}
+			if (Html.isBlock(node)) {
+				elements.push(node);
+			}
+		});
+
+		if (elements.length === 0 && selection.length > 0 && Html.isBlock(cac) && !DomLegacy.isEditingHost(cac)) {
+			elements.push(cac);
+		}
+
+		if (AlignTableUtils.isInsideTable(cac)) {
+			elements = AlignTableUtils.getSelectedTableCells(cac, elements);
+		}
+		return elements;
+	}
 
 	/**
 	 * register the plugin with unique name
 	 */
-	 return Plugin.create('align', {
-		_constructor: function(){
+	return Plugin.create('align', {
+		_constructor: function () {
 			this._super('align');
 		},
 		/**
 		 * Configuration (available align options)
 		 */
 		config: {
-			alignment: ['right','left','center','justify','top','middle','bottom']
+			alignment: ['right', 'left', 'center', 'justify', 'top', 'middle', 'bottom']
 		},
 
 		/**
@@ -48967,11 +54959,11 @@ define('align/align-plugin',[
 		},
 
 		buttonPressed: function (rangeObject) {
-			this.horizontalButtonPressed( rangeObject );
-			this.verticalButtonPressed( rangeObject );
+			this.horizontalButtonPressed(rangeObject);
+			this.verticalButtonPressed(rangeObject);
 		},
 
-		horizontalButtonPressed: function(rangeObject) {
+		horizontalButtonPressed: function (rangeObject) {
 			var that = this;
 
 			this.lastAlignment = this.alignment;
@@ -48979,15 +54971,15 @@ define('align/align-plugin',[
 			//reset current alignment
 			this.alignment = '';
 
-			rangeObject.findMarkup(function() {
+			rangeObject.findMarkup(function () {
 				// try to find explicitly defined text-align style property
-				if(this.style.textAlign !== "") {
+				if (this.style.textAlign !== "") {
 					that.alignment = this.style.textAlign;
 					return true;
 				}
 
 				that.alignment = jQuery(this).css('text-align');
-		  }, Aloha.activeEditable.obj);
+			}, Aloha.activeEditable.obj);
 
 			// set horizontal button states
 			if (this.alignment != this.lastAlignment) {
@@ -49015,7 +55007,7 @@ define('align/align-plugin',[
 			}
 		},
 
-		verticalButtonPressed: function(rangeObject) {
+		verticalButtonPressed: function (rangeObject) {
 			var that = this;
 
 			this.lastVerticalAlignment = this.verticalAlignment;
@@ -49023,15 +55015,15 @@ define('align/align-plugin',[
 			//reset current alignment
 			this.verticalAlignment = '';
 
-			rangeObject.findMarkup(function() {
+			rangeObject.findMarkup(function () {
 				// try to find explicitly defined vertical-align style property
-				if(this.style.verticalAlign !== "") {
+				if (this.style.verticalAlign !== "") {
 					that.verticalAlignment = this.style.verticalAlign;
 					return true;
 				}
 
 				that.verticalAlignment = jQuery(this).css('vertical-align');
-		  }, Aloha.activeEditable.obj);
+			}, Aloha.activeEditable.obj);
 
 			// set vertical button states
 			if (this.verticalAlignment != this.lastVerticalAlignment) {
@@ -49059,7 +55051,7 @@ define('align/align-plugin',[
 		},
 
 		/**
-		 * applys a configuration specific for an editable
+		 * applies a configuration specific for an editable
 		 * buttons not available in this configuration are hidden
 		 * @param {Object} id of the activated editable
 		 * @return void
@@ -49071,7 +55063,7 @@ define('align/align-plugin',[
 				config = config;
 			} else if ( config[0] && config[0].alignment) {
 				config = config[0];
-			} else if ( this.settings.alignment ) {
+			} else if (this.settings.alignment) {
 				config.alignment = this.settings.alignment;
 			}
 
@@ -49079,43 +55071,43 @@ define('align/align-plugin',[
 				config = this.config;
 			}
 
-			if ( jQuery.inArray('right', config.alignment) != -1) {
+			if (jQuery.inArray('right', config.alignment) != -1) {
 				this._alignRightButton.show(true);
 			} else {
 				this._alignRightButton.show(false);
 			}
 
-			if ( jQuery.inArray('left', config.alignment) != -1) {
+			if (jQuery.inArray('left', config.alignment) != -1) {
 				this._alignLeftButton.show(true);
 			} else {
 				this._alignLeftButton.show(false);
 			}
 
-			if ( jQuery.inArray('center', config.alignment) != -1) {
+			if (jQuery.inArray('center', config.alignment) != -1) {
 				this._alignCenterButton.show(true);
 			} else {
 				this._alignCenterButton.show(false);
 			}
 
-			if ( jQuery.inArray('justify', config.alignment) != -1) {
+			if (jQuery.inArray('justify', config.alignment) != -1) {
 				this._alignJustifyButton.show(true);
 			} else {
 				this._alignJustifyButton.show(false);
 			}
 
-			if ( jQuery.inArray('top', config.alignment) != -1) {
+			if (jQuery.inArray('top', config.alignment) != -1) {
 				this._alignTopButton.show(true);
 			} else {
 				this._alignTopButton.show(false);
 			}
 
-			if ( jQuery.inArray('middle', config.alignment) != -1) {
+			if (jQuery.inArray('middle', config.alignment) != -1) {
 				this._alignMiddleButton.show(true);
 			} else {
 				this._alignMiddleButton.show(false);
 			}
 
-			if ( jQuery.inArray('bottom', config.alignment) != -1) {
+			if (jQuery.inArray('bottom', config.alignment) != -1) {
 				this._alignBottomButton.show(true);
 			} else {
 				this._alignBottomButton.show(false);
@@ -49123,60 +55115,74 @@ define('align/align-plugin',[
 		},
 
 		createButtons: function () {
-		    var that = this;
+			var that = this;
 
 			this._alignLeftButton = Ui.adopt("alignLeft", ToggleButton, {
 				tooltip: i18n.t('button.alignleft.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-left',
 				scope: 'Aloha.continuoustext',
-				click: function(){ that.align('left'); }
+				click: function () {
+					that.align('left');
+				}
 			});
 
 			this._alignCenterButton = Ui.adopt("alignCenter", ToggleButton, {
 				tooltip: i18n.t('button.aligncenter.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-center',
 				scope: 'Aloha.continuoustext',
-				click: function(){ that.align('center'); }
+				click: function () {
+					that.align('center');
+				}
 			});
 
 			this._alignRightButton = Ui.adopt("alignRight", ToggleButton, {
 				tooltip: i18n.t('button.alignright.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-right',
 				scope: 'Aloha.continuoustext',
-				click: function(){ that.align('right'); }
+				click: function () {
+					that.align('right');
+				}
 			});
 
 			this._alignJustifyButton = Ui.adopt("alignJustify", ToggleButton, {
 				tooltip: i18n.t('button.alignjustify.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-justify',
 				scope: 'Aloha.continuoustext',
-				click: function(){ that.align('justify'); }
+				click: function () {
+					that.align('justify'); 
+				}
 			});
 
 			this._alignTopButton = Ui.adopt("alignTop", ToggleButton, {
 				tooltip: i18n.t('button.aligntop.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-top',
 				scope: 'table.cell',
-				click: function(){ that.verticalAlign('top'); }
+				click: function () {
+					that.verticalAlign('top'); 
+				}
 			});
 
 			this._alignMiddleButton = Ui.adopt("alignMiddle", ToggleButton, {
 				tooltip: i18n.t('button.alignmiddle.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-middle',
 				scope: 'table.cell',
-				click: function(){ that.verticalAlign('middle'); }
+				click: function () {
+					that.verticalAlign('middle');
+				}
 			});
 
 			this._alignBottomButton = Ui.adopt("alignBottom", ToggleButton, {
 				tooltip: i18n.t('button.alignbottom.tooltip'),
 				icon: 'aloha-icon aloha-icon-align aloha-icon-align-bottom',
 				scope: 'table.cell',
-				click: function(){ that.verticalAlign('bottom'); }
+				click: function () {
+					that.verticalAlign('bottom');
+				}
 			});
 
 		},
 
-		verticalAlign: function ( tempAlignment ) {
+		verticalAlign: function (tempAlignment) {
 
 			var that = this;
 			var range = Aloha.Selection.getRangeObject();
@@ -49185,26 +55191,26 @@ define('align/align-plugin',[
 			this.verticalAlignment = tempAlignment;
 
 			// check if the selection range is inside a table
-			var selectedCells = this.getSelectedCells( range );
+			var selectedCells = this.getSelectedCells(range);
 
-			if ( selectedCells ) {
-				that.toggleAlign ( selectedCells, 'vertical-align');
+			if (selectedCells) {
+				that.toggleAlign(selectedCells, 'vertical-align');
 			}
 
 			// reset previous button states
-			if ( this.verticalAlignment != this.lastVerticalAlignment ) {
-				switch ( this.lastVerticalAlignment ) {
-					case 'top':
-						this._alignTopButton.setState(false);
-						break;
+			if (this.verticalAlignment != this.lastVerticalAlignment) {
+				switch (this.lastVerticalAlignment) {
+				case 'top':
+					this._alignTopButton.setState(false);
+					break;
 
-					case 'middle':
-						this._alignMiddleButton.setState(false);
-						break;
+				case 'middle':
+					this._alignMiddleButton.setState(false);
+					break;
 
-					case 'bottom':
-						this._alignBottomButton.setState(false);
-						break;
+				case 'bottom':
+					this._alignBottomButton.setState(false);
+					break;
 				}
 			}
 
@@ -49214,100 +55220,71 @@ define('align/align-plugin',[
 		},
 
 		/**
-		 * Align the selection or remove it
+		 * Sets or removes the alignment on the selected range.
+		 *
+		 * @param {string} alignment
 		 */
-		align: function ( tempAlignment ) {
-
-			var that = this;
-			var range = Aloha.Selection.getRangeObject();
-
+		align: function (alignment) {
 			this.lastAlignment = this.alignment;
-			this.alignment = tempAlignment;
+			this.alignment = alignment;
 
-			var rangeParent = range.getCommonAncestorContainer();
-
-			// check if the selection range is inside a table
-			var selectedCells = this.getSelectedCells( range );
-
-			if ( selectedCells ) {
-				that.toggleAlign( selectedCells );
-			} else if (!GENTICS.Utils.Dom.isEditingHost(rangeParent)) {
-
-				// if the parent node is not the main editable node and align
-				// OR iterates the whole selectionTree and align
-					that.toggleAlign( rangeParent );
-			}	else {
-				var alignableElements = [];
-				jQuery.each(Aloha.Selection.getRangeObject().getSelectionTree(), function () {
-					if (this.selection !== 'none' && this.domobj.nodeType !== 3) {
-						alignableElements.push( this.domobj );
-					}
-				});
-
-				that.toggleAlign( alignableElements );
-			}
+			var elements = getCurrentSelectedBlockElements();
+			this.toggleAlign(elements);
 
 			// reset previous button states
-			if ( this.alignment != this.lastAlignment ) {
-				switch ( this.lastAlignment ) {
-					case 'right':
-						this._alignRightButton.setState(false);
-						break;
-
-					case 'left':
-						this._alignLeftButton.setState(false);
-						break;
-
-					case 'center':
-						this._alignCenterButton.setState(false);
-						break;
-
-					case 'justify':
-						this._alignJustifyButton.setState(false);
-						break;
+			if (this.alignment !== this.lastAlignment) {
+				switch (this.lastAlignment) {
+				case 'right':
+					this._alignRightButton.setState(false);
+					break;
+				case 'left':
+					this._alignLeftButton.setState(false);
+					break;
+				case 'center':
+					this._alignCenterButton.setState(false);
+					break;
+				case 'justify':
+					this._alignJustifyButton.setState(false);
+					break;
 				}
 			}
-
-			// select the (possibly modified) range
-			range.select();
-
 		},
 
-		getSelectedCells: function( range ) {
+		getSelectedCells: function (range) {
 
 			var selectedCell;
 
-			var activeTable = range.findMarkup(function() {
-				if ( jQuery(this).is( 'td,th' ) ) {
+			var activeTable = range.findMarkup(function () {
+				if (jQuery(this).is('td,th')) {
 					selectedCell = this;
 				}
-				return jQuery( this ).is( 'table.aloha-table' );
+				return jQuery(this).is('table.aloha-table');
 			}, Aloha.activeEditable.obj);
 
-			var selectedCells = jQuery( activeTable ).find( '.aloha-cell-selected' );
+			var selectedCells = jQuery(activeTable).find('.aloha-cell-selected');
 
-			return (  selectedCells.length ? selectedCells : selectedCell );
+			return selectedCells.length ? selectedCells : selectedCell;
 
 		},
 
 		/**
 		 * Toggle the align property of given DOM object(s)
 		 */
-		toggleAlign: function ( domObj, property ) {
+		toggleAlign: function (domObj, property) {
 
 			var that = this;
 
 			property = property || 'text-align';
 
-			var newAlignment = ( property === 'vertical-align' ) ? that.verticalAlignment : that.alignment;
+			var newAlignment = (property === 'vertical-align') ? that.verticalAlignment : that.alignment;
 
 			var shouldRemoveAlignment = true;
 
-			jQuery( domObj ).each( function() {
+			jQuery(domObj).each(function () {
 
-				var currentAlignment = jQuery( this ).css( property );
+				var currentAlignment = jQuery(this).css(property);
 
-				if ( currentAlignment != newAlignment ) {
+				if (currentAlignment != newAlignment) {
 					shouldRemoveAlignment = false;
 					return false;
 				}
@@ -49315,14 +55292,14 @@ define('align/align-plugin',[
 			});
 
 
-			jQuery( domObj ).each( function() {
+			jQuery(domObj).each(function () {
 
-				var currentAlignment = jQuery( this ).css( property );
+				var currentAlignment = jQuery(this).css(property);
 
-				if ( ( currentAlignment == newAlignment ) && shouldRemoveAlignment ) {
-					jQuery( this ).css( property, '' );
+				if ((currentAlignment == newAlignment) && shouldRemoveAlignment) {
+					jQuery(this).css(property, '');
 				} else {
-					jQuery( this ).css( property, newAlignment );
+					jQuery(this).css(property, newAlignment);
 				}
 
 			});
@@ -49332,459 +55309,6 @@ define('align/align-plugin',[
 	});
 
 });
-
-define('abbr/nls/i18n',{
-	"root":  {
-		"floatingmenu.tab.abbr": "Abbreviation",
-		"button.addabbr.tooltip": "insert abbreviation",
-		"button.abbr.tooltip": "format as abbreviation",
-		"newabbr.defaulttext": "Abbr"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-/* abbr-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('abbr/abbr-plugin',[
-	'aloha',
-	'jquery',
-	'aloha/plugin',
-	'ui/ui',
-	'ui/toggleButton',
-	'ui/button',
-	'ui/scopes',
-	'ui/port-helper-attribute-field',
-	'i18n!abbr/nls/i18n',
-	'i18n!aloha/nls/i18n'
-], function (
-	Aloha,
-	jQuery,
-	Plugin,
-	Ui,
-	ToggleButton,
-	Button,
-	Scopes,
-	AttributeField,
-	i18n,
-	i18nCore
-) {
-	
-	var GENTICS = window.GENTICS;
-
-	/**
-	 * Add additional target objects, in case the selection includes
-	 * several abbrs tag
-	 *
-	 * @param {RangeObject} rangeObject Selection Range
-	 * @param {LinkPlugin} that Link Plugin object
-	 */
-	function addAdditionalTargetObject(rangeObject, field) {
-		var abbrs = rangeObject.findAllMarkupByTagName('ABBR', rangeObject);
-		for (var i = 0, len = abbrs.length; i < len; i++) {
-			field.addAdditionalTargetObject(abbrs[i]);
-		}
-	}
-	/**
-	 * register the plugin with unique name
-	 */
-	return Plugin.create( 'abbr', {
-		/**
-		 * default button configuration
-		 */
-		config: [ 'abbr' ],
-
-		/**
-		 * Initialize the plugin and set initialize flag on true
-		 */
-		init: function () {
-			this.createButtons();
-		    this.subscribeEvents();
-		    this.bindInteractions();
-		},
-
-		/**
-		 * Initialize the buttons
-		 */
-		createButtons: function () {
-		    var me = this;
-
-			this._formatAbbrButton = Ui.adopt("formatAbbr", ToggleButton, {
-				tooltip: i18n.t("button.abbr.tooltip"),
-				icon: "aloha-icon aloha-icon-abbr",
-				scope: 'Aloha.continuoustext',
-				click: function(){
-					me.formatAbbr();
-				}
-			});
-
-			this._insertAbbrButton = Ui.adopt("insertAbbr", Button, {
-				tooltip: i18n.t('button.addabbr.tooltip'),
-				icon: 'aloha-icon aloha-icon-abbr',
-				scope: 'Aloha.continuoustext',
-				click: function(){
-					me.insertAbbr( false );
-				}
-			});
-
-		    this.abbrField = AttributeField({
-		    	width: 320,
-		    	name: 'abbrText',
-		        scope: 'Aloha.continuoustext'
-		    });
-		    
-		    this.remAbbrButton = Ui.adopt("removeAbbr", Button, {
-				tooltip: i18n.t('button.remabbr.tooltip'),
-				icon: 'aloha-icon aloha-icon-abbr-rem',
-				scope: 'Aloha.continuoustext',
-				click: function () {
-					me.removeAbbr();
-				}
-			});
-		},
-
-		/**
-		 * Parse a all editables for abbreviations
-		 * Add the abbr shortcut to all edtiables
-		 */
-		bindInteractions: function () {
-			var me = this;
-			
-		    // on blur check if abbr title is empty. If so remove the a tag
-		    this.abbrField.addListener( 'blur', function ( obj, event ) {
-		        if ( this.getValue() == '' ) {
-		            me.removeAbbr();
-		        }
-		    } );
-
-		    // add to all editables the abbr shortcut
-		    for ( var i = 0; i < Aloha.editables.length; i++ ) {
-		        // CTRL+G
-		        Aloha.editables[ i ].obj.keydown( function ( e ) {
-		    		if ( e.metaKey && e.which == 71 ) {
-				        if ( me.findAbbrMarkup() ) {
-							me.abbrField.foreground();
-							me.abbrField.focus();
-				        } else {
-				        	me.insertAbbr();
-				        }
-						
-				        // prevent from further handling
-			            // on a MAC Safari cursor would jump to location bar. Use ESC then META+L
-				        e.stopPropagation();
-				        e.preventDefault();
-						
-			            return false;
-		    		}
-		        } );
-		    }
-		},
-
-		subscribeEvents: function () {
-			var me = this;
-			var editableConfig = {};
-
-			Aloha.bind('aloha-editable-activated', function () {
-				if (!Aloha.activeEditable || !Aloha.activeEditable.obj) {
-					return;
-				}
-				var config = me.getEditableConfig(Aloha.activeEditable.obj);
-				editableConfig[Aloha.activeEditable.getId()] =
-						jQuery.inArray('abbr', config) !== -1;
-			});
-
-			Aloha.bind('aloha-editable-destroyed', function () {
-				if (Aloha.activeEditable && Aloha.activeEditable.obj) {
-					delete editableConfig[Aloha.activeEditable.getId()];
-				}
-			});
-
-			Aloha.bind('aloha-selection-changed', function (event, range) {
-		        if (!Aloha.activeEditable) {
-					return;
-				}
-
-				if (editableConfig[Aloha.activeEditable.getId()]) {
-					me._formatAbbrButton.show();
-					me._insertAbbrButton.show();
-				} else {
-					me._formatAbbrButton.hide();
-					me._insertAbbrButton.hide();
-					return;
-				}
-
-				var foundMarkup = me.findAbbrMarkup(range);
-				if (foundMarkup) {
-					me._insertAbbrButton.hide();
-					me._formatAbbrButton.setState(true);
-					// show the field and button for abbreviation
-					me.abbrField.show();
-					me.remAbbrButton.show();
-
-					Scopes.enterScope(me.name, 'abbr');
-
-					me.abbrField.setTargetObject(foundMarkup, 'title');
-					addAdditionalTargetObject(range, me.abbrField);
-				} else {
-					// hide the field and button for abbreviation
-					me.abbrField.hide();
-					me.remAbbrButton.hide();
-
-					Scopes.leaveScope(me.name, 'abbr', true);
-
-					me._formatAbbrButton.setState(false);
-					me.abbrField.setTargetObject(null);
-				}
-		    });
-		},
-
-		/**
-		 * Check whether inside a abbr tag
-		 * @param {GENTICS.Utils.RangeObject} range range where to insert the object (at start or end)
-		 * @return markup
-		 * @hide
-		 */
-		findAbbrMarkup: function ( range ) {
-			if ( typeof range == 'undefined' ) {
-		        var range = Aloha.Selection.getRangeObject();
-		    }
-			
-			if ( Aloha.activeEditable ) {
-			    return range.findMarkup( function() {
-			        return this.nodeName.toLowerCase() == 'abbr';
-			    }, Aloha.activeEditable.obj );
-			} else {
-				return null;
-			}
-		},
-
-		/**
-		 * Format the current selection or if collapsed the current word as abbr.
-		 * If inside a abbr tag the abbr is removed.
-		 */
-		formatAbbr: function () {
-			var range = Aloha.Selection.getRangeObject();
-
-		    if ( Aloha.activeEditable ) {
-		        if ( this.findAbbrMarkup( range ) ) {
-		            this.removeAbbr();
-		        } else {
-		            this.insertAbbr();
-		        }
-		    }
-		},
-
-		/**
-		 * Insert a new abbr at the current selection. When the selection is collapsed,
-		 * the abbr will have a default abbr text, otherwise the selected text will be
-		 * the abbr text.
-		 */
-		insertAbbr: function ( extendToWord ) {
-		    // current selection or cursor position
-		    var range = Aloha.Selection.getRangeObject();
-
-		    // do not insert a abbr in a abbr
-		    if ( this.findAbbrMarkup( range ) ) {
-		        return;
-		    }
-
-		    // if selection is collapsed then extend to the word.
-		    if ( range.isCollapsed() && extendToWord != false ) {
-		        GENTICS.Utils.Dom.extendToWord( range );
-		    }
-			
-		    if ( range.isCollapsed() ) {
-		        // insert a abbr with text here
-		        var abbrText = i18n.t( 'newabbr.defaulttext' );
-		        var newAbbr = jQuery( '<abbr title="">' + abbrText + '</abbr>' );
-		        GENTICS.Utils.Dom.insertIntoDOM( newAbbr, range, jQuery( Aloha.activeEditable.obj ) );
-		        range.startContainer = range.endContainer = newAbbr.contents().get( 0 );
-		        range.startOffset = 0;
-		        range.endOffset = abbrText.length;
-		    } else {
-		        var newAbbr = jQuery( '<abbr title=""></abbr>' );
-		        GENTICS.Utils.Dom.addMarkup( range, newAbbr, false );
-		    }
-			
-		    range.select();
-
-			this.abbrField.foreground();
-			this.abbrField.focus();
-		},
-
-		/**
-		 * Remove an a tag.
-		 */
-		removeAbbr: function () {
-		    var range = Aloha.Selection.getRangeObject();
-		    var foundMarkup = this.findAbbrMarkup();
-		    if ( foundMarkup ) {
-		        // remove the abbr
-		        GENTICS.Utils.Dom.removeFromDOM( foundMarkup, range, true );
-		        // select the (possibly modified) range
-		        range.select();
-		    }
-		},
-
-		/**
-		 * Make the given jQuery object (representing an editable) clean for saving
-		 * Find all abbrs and remove editing objects
-		 * @param obj jQuery object to make clean
-		 * @return void
-		 */
-		makeClean: function ( obj ) {
-			// nothing to do...
-		},
-
-		/**
-		* toString method
-		* @return string
-		*/
-		toString: function () {
-			return 'abbr';
-		}
-
-	} );
-	
-} );
-
-define('horizontalruler/nls/i18n',{
-	"root":  {
-		"button.addhr.tooltip": "Add a horizontal ruler"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-/* horizontalruler-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('horizontalruler/horizontalruler-plugin',[
-	'aloha',
-	'jquery',
-	'aloha/plugin',
-	'ui/ui',
-	'ui/button',
-	'i18n!horizontalruler/nls/i18n',
-	'i18n!aloha/nls/i18n'
-], function(Aloha,
-            jQuery,
-			Plugin,
-			Ui,
-			Button,
-			i18n,
-			i18nCore) {
-	
-
-	var GENTICS = window.GENTICS;
-
-	return Plugin.create('horizontalruler', {
-		_constructor: function(){
-			this._super('horizontalruler');
-		},
-		config: ['hr'],
-		init: function() {
-			var that = this;
-
-			this._insertHorizontalRuleButton = Ui.adopt("insertHorizontalRule", Button, {
-				tooltip: i18n.t('button.addhr.tooltip'),
-				iconOnly: true,
-				icon: 'aloha-icon-horizontalruler',
-				scope: 'Aloha.continuoustext',
-				click: function(){
-					that.insertHR();
-				}
-			});
-
-			Aloha.bind( 'aloha-editable-activated', function ( event, rangeObject ) {
-				if (Aloha.activeEditable) {
-					that.cfg = that.getEditableConfig( Aloha.activeEditable.obj );
-
-					if ( jQuery.inArray( 'hr', that.cfg ) != -1 ) {
-						that._insertHorizontalRuleButton.show(true);
-		        	} else {
-						that._insertHorizontalRuleButton.show(false);
-		        		return;
-		        	}
-				}
-			});
-
-		},
-		insertHR: function(character) {
-			var self = this;
-			var range = Aloha.Selection.getRangeObject();
-			if(Aloha.activeEditable) {
-				var hr = jQuery('<hr>');
-				GENTICS.Utils.Dom.insertIntoDOM(
-					hr,
-					range,
-					jQuery(Aloha.activeEditable.obj),
-					true
-				);
-				range.select();
-			}
-		}
-	});
-
-});
-
 
 /* paste-plugin.js is part of Aloha Editor project http://aloha-editor.org
  *
@@ -49826,7 +55350,8 @@ define('paste/paste-plugin',[
 	'contenthandler/contenthandler-utils',
 	'aloha/console',
 	'aloha/copypaste',
-	'aloha/contenthandlermanager'
+	'aloha/contenthandlermanager',
+	'util/browser'
 ], function (
 	$,
 	Aloha,
@@ -49835,7 +55360,8 @@ define('paste/paste-plugin',[
 	ContentHandlerUtils,
 	Console,
 	CopyPaste,
-	ContentHandlerManager
+	ContentHandlerManager,
+	Browser
 ) {
 	
 
@@ -49853,7 +55379,7 @@ define('paste/paste-plugin',[
 	 * @type {boolean}
 	 * @const
 	 */
-	var IS_IE = !!$.browser.msie;
+	var IS_IE = !!Aloha.browser.msie;
 
 	/**
 	 * Matches as string consisting of a single white space character.
@@ -50063,6 +55589,15 @@ define('paste/paste-plugin',[
 	}
 
 	/**
+	 * Checks if browser and document mode are 9 or above versions.
+	 * @param  {Document} doc
+	 * @return {boolean}
+	 */
+	function isIEorDocModeGreater9(doc) {
+		return Browser.ie && doc.documentMode >= 9;
+	}
+
+	/**
 	 * Gets the pasted content and inserts them into the current active
 	 * editable.
 	 *
@@ -50150,13 +55685,14 @@ define('paste/paste-plugin',[
 	 *
 	 * @param {jQuery.<HTMLElement>} $editable jQuery object containing an
 	 *                                         editable DOM element.
-	 * @param {boolean} hasClipboardAccess Whether clipboard access is possible.
 	 */
-	function prepare($editable, hasClipboardAccess) {
-		// FIXME: Because the alternative method, which relies on clipboard
-		//        access, leads to incorrect cursor positions after pasting.
-		// if (IS_IE && !hasClipboardAccess) {
-		if (IS_IE) {
+	function prepare($editable) {
+		// Clipboard in IE can no be used, because it does not return HTML content, just text
+		// (http://msdn.microsoft.com/en-us/library/ie/ms536436(v=vs.85).aspx).
+		// We relay on range.execCommand('paste') for the paste, but for IE9 and above the pasted content
+		// is treated differently (it replaces '\n' by '<br>').
+		var doc = $editable[0].ownerDocument;
+		if (isIEorDocModeGreater9(doc)) {
 			$editable.bind('beforepaste', function ($event) {
 				scrollPositionBeforePaste.x = window.scrollX ||
 					document.documentElement.scrollLeft;
@@ -50177,6 +55713,7 @@ define('paste/paste-plugin',[
 				var range = CopyPaste.getRange();
 				redirect(range, $CLIPBOARD);
 				if (IS_IE) {
+					$event.preventDefault();
 					var tmpRange = document.selection.createRange();
 					tmpRange.execCommand('paste');
 				}
@@ -50192,16 +55729,13 @@ define('paste/paste-plugin',[
 		init: function () {
 			$('body').append($CLIPBOARD);
 
-			var hasClipboardAccess = !this.settings.noclipboardaccess;
-
 			Aloha.bind('aloha-editable-created', function ($event, editable) {
-				prepare(editable.obj, hasClipboardAccess);
+				prepare(editable.obj);
 			});
 
-			// Bind a handler to the paste event of the pasteDiv to get the
-			// pasted content (but do this only once, not for every editable)
-			// if (IS_IE && !hasClipboardAccess) {
-			if (IS_IE) {
+			if (isIEorDocModeGreater9($CLIPBOARD[0].ownerDocument)) {
+				// Bind a handler to the paste event of the pasteDiv to get the
+				// pasted content (but do this only once, not for every editable)
 				$CLIPBOARD.bind('paste', function ($event) {
 					onPaste($event, ieRangeBeforePaste, function () {
 						ieRangeBeforePaste = null;
@@ -50224,623 +55758,184 @@ define('paste/paste-plugin',[
 	});
 });
 
-define('cite/nls/i18n',{
-	"root":  {
-		"cite.button.add.quote": "Format selection as quote",
-		"cite.button.add.blockquote": "Format selection as blockquote"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-/*global window: true define: true */
-/*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
-*/
-
-define('cite/cite-plugin',[
-    'aloha',
+/* autoparagraph-plugin.js is part of the Aloha Editor project http://aloha-editor.org
+ *
+ * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
+ * Copyright (c) 2010-2014 Gentics Software GmbH, Vienna, Austria.
+ * Contributors http://aloha-editor.org/contribution.php 
+ * License http://aloha-editor.org/license.php
+ */
+/**
+ * @name autoparagraph
+ * @namespace Autoparagraph plugin
+ */
+define('autoparagraph/autoparagraph-plugin',[
 	'jquery',
-	'aloha/plugin',
-	'ui/ui',
-	'ui/toggleButton',
-	'format/format-plugin',
-	'util/dom',
 	'PubSub',
-	'i18n!cite/nls/i18n',
-	'i18n!aloha/nls/i18n'
+	'aloha/plugin',
+	'aloha/core',
+	'aloha/content-rules',
+	'util/html',
+	'util/dom'
 ], function (
-	Aloha,
-	jQuery,
-	Plugin,
-	Ui,
-	ToggleButton,
-	Format,
-	domUtils,
+	$,
 	PubSub,
-    i18n,
-	i18nCore
+	Plugin,
+	Aloha,
+	ContentRules,
+	Html,
+	Dom
 ) {
 	
 
-	var $ = jQuery,
-		ns  = 'aloha-cite',
-		uid = (new Date()).getTime();
+	/**
+	 * Name of this plugin
+	 */
+	var pluginName = 'autoparagraph';
 
-	// namespaced classnames
-	var nsClasses = {
-		quote         : nsClass('quote'),
-		blockquote    : nsClass('blockquote'),
-		'panel-label' : nsClass('panel-label'),
-		'panel-field' : nsClass('panel-field'),
-		'panel-btns'  : nsClass('panel-btns'),
-		'link-field'  : nsClass('link-field'),
-		'note-field'  : nsClass('note-field'),
-		references    : nsClass('references')
-	};
+	var configurations = {};
 
 	/**
-	 * Simple templating
-	 *
-	 * @param {String} str - The string containing placeholder keys in curly
-	 *                       brackets
-	 * @param {Object} obj - Associative array of replacing placeholder keys
-	 *                       with corresponding values
+	 * Auto-generate missing paragraphs in the given editable, when the editable allows insertion of paragraphs.
+	 * If the editable is the currently active one, the current selection will be modified according to the content
+	 * changes and the corrected range will be selected.
+	 * This means that the visual selection should remain in its original state
+	 * 
+	 * @param {Editable} editable
 	 */
-	function supplant(str, obj) {
-		return str.replace(/\{([a-z0-9\-\_]+)\}/ig,
-			function (str, p1, offset, s) {
-				var replacement = obj[p1] || str;
-				return (typeof replacement === 'function') ?
-					replacement() :
-					replacement;
-			});
-	}
-
-	/**
-	 * Wrapper to call the supplant method on a given string, taking the
-	 * nsClasses object as the associative array containing the replacement
-	 * pairs
-	 *
-	 * @param {String} str
-	 * @return {String}
-	 */
-	function renderTemplate(str) {
-		return (typeof str === 'string') ? supplant(str, nsClasses) : str;
-	}
-
-	/**
-	 * Generates a selector string with this plugins's namespace prefixed the
-	 * each classname.
-	 *
-	 * Usage:
-	 *    nsSel('header,', 'main,', 'foooter ul')
-	 *    will return
-	 *    ".aloha-myplugin-header, .aloha-myplugin-main, .aloha-mypluzgin-footer ul"
-	 *
-	 * @return {string}
-	 */
-	function nsSel() {
-		var strBldr = [], prx = ns;
-		jQuery.each(arguments, function () {
-			strBldr.push('.' + ('' === this ? prx : prx + '-' + this));
-		});
-		return jQuery.trim(strBldr.join(' '));
-	}
-
-	/**
-	 * Generates a string with this plugins's namespace prefixed the each
-	 * classname.
-	 *
-	 * Usage:
-	 *		nsClass('header', 'innerheaderdiv')
-	 *		will return
-	 *		"aloha-myplugin-header aloha-myplugin-innerheaderdiv"
-	 *
-	 * @return {string}
-	 */
-	function nsClass() {
-		var strBldr = [], prx = ns;
-		jQuery.each(arguments, function () {
-			strBldr.push('' === this ? prx : prx + '-' + this);
-		});
-		return jQuery.trim(strBldr.join(' '));
-	}
-
-	/**
-	 * Coverts hexidecimal string #00ffcc into rgb array [0, 255, 127]
-	 *
-	 * @param {string} hex Hexidecimal string representing color. In the form
-	 *					   #ff3344 or #f34 or f34.
-	 * @return {Array.<number>} RGB representation of hexidecimal color.
-	 */
-	function hex2rgb(hex) {
-		hex = hex.replace('#', '').split('');
-		if (3 === hex.length) {
-			hex[5] = hex[4] = hex[2];
-			hex[3] = hex[2] = hex[1];
-			hex[1] = hex[0];
+	function autogenerateParagraphs(editable) {
+		if (!editable) {
+			return;
 		}
-		var rgb = [];
-		var i;
-		for (i = 0; i < 3; ++i) {
-			rgb[i] = parseInt('0x' + hex[i * 2] + hex[i * 2 + 1], 16);
+		var $obj = editable.obj;
+		if (!$obj) {
+			return;
 		}
-		return rgb;
-	}
+		var obj = $obj[0], i, j, selectionRange = Aloha.Selection.rangeObject, contentChanged = false;
 
-	return Plugin.create('cite', {
+		// check whether nesting of paragraphs inside the editable is allowed
+		if (!Dom.allowsNesting(obj, $('<p></p>')[0])) {
+			return;
+		}
 
-		citations: [],
-		referenceContainer: null,
-		settings: null,
-		sidebar: null,
-		config: ['quote', 'blockquote'],
-
-		init: function () {
-			var that = this;
-
-			// Harverst configuration options that may be defined outside of
-			// the plugin.
-			if (Aloha.settings && Aloha.settings.plugins && Aloha.settings.plugins.cite) {
-
-				var referenceContainer = jQuery(Aloha.settings.plugins.cite.referenceContainer);
-
-				if (referenceContainer.length) {
-					that.referenceContainer = referenceContainer;
+		// collect lists of subsequent child elements of the editable,
+		// that are no block level elements (and thus need to be wrapped
+		// into a paragraph)
+		var nonBlockRanges = [];
+		var current;
+		$obj.contents().each(function () {
+			if (!Html.isBlock(this)) {
+				if (!current) {
+					// start a new list
+					current = {
+						objs: []
+					};
+					nonBlockRanges.push(current);
 				}
 
-				if (typeof Aloha.settings.plugins.cite !== 'undefined') {
-					that.settings = Aloha.settings.plugins.cite;
-				}
-
-				if (typeof that.settings.sidebar === 'undefined') {
-					that.settings.sidebar = {};
-				}
-
-				if (typeof that.settings.sidebar.open === 'undefined') {
-					that.settings.sidebar.open = true;
-				}
-
-				// be tolerant about the setting: 'false' and '0' (as strings) will be interpreted as false (boolean)
-				if (typeof that.settings.sidebar.open === 'string') {
-					that.settings.sidebar.open = that.settings.sidebar.open.toLowerCase();
-					if (that.settings.sidebar.open === 'false' || that.settings.sidebar.open === '0') {
-						// disable button only if 'false' or '0' is specified
-						that.settings.sidebar.open = false;
-					} else {
-						// otherwise the button will always be shown
-						that.settings.sidebar.open = true;
-					}
-				}
-			}
-
-			this._quoteButton = Ui.adopt('quote', ToggleButton, {
-				tooltip: i18n.t('cite.button.add.quote'),
-				icon: nsClass('button', 'inline-button'),
-				scope: 'Aloha.continuoustext',
-				click: function () {
-					that.addInlineQuote();
-				}
-			});
-
-			// We brute-forcishly push our button settings into the
-			// multiSplitButton. The multiSplitButton will pick it up
-			// and render it.
-			Format.multiSplitButton.pushItem({
-				name: 'blockquote',
-				tooltip: i18n.t('cite.button.add.blockquote'),
-				icon: nsClass('button', 'block-button'),
-				click: function () {
-					that.addBlockQuote();
-				}
-			});
-
-			var citePlugin = this;
-
-			// Note that if the sidebar is not loaded,
-			// aloha-sidebar-initialized will not fire and this listener will
-			// not be called, which is what we would want if there are no
-			// sidebars
-			Aloha.ready(function (ev) {
-				citePlugin.sidebar = Aloha.Sidebar.right.show();
-				// citePlugin.sidebar.settings.overlayPage = false;
-				citePlugin.sidebar.addPanel({
-					id       : nsClass('sidebar-panel'),
-					title    : 'Citation',
-					content  : '',
-					expanded : true,
-					activeOn : 'q, blockquote',
-
-					// Executed once, when this panel object is instantialized
-					onInit   : function () {
-						var that = this;
-						var additionalReferenceContainer = '';
-						
-						if (citePlugin.referenceContainer) {
-							additionalReferenceContainer = '<label class="{panel-label}" for="{note-field}-textarea">Note</label> ' +
-															'<div class="{panel-field} {note-field}" ' +
-															'style="margin: 5px;">' +
-															'<textarea id="{note-field}-textarea"></textarea></div>';
-						}
-						
-						var content = this.setContent(renderTemplate(
-								'<label class="{panel-label}" for="{link-field}-input">Link</label>' +
-								'<div class="{panel-field} {link-field}" ' + 
-								'style="margin: 5px;"><input type="text" id="{link-field}-input" /></div>' +
-								additionalReferenceContainer
-							)).content;
-
-						content.find('input, textarea')
-							.bind('keypress change', function () {
-								citePlugin.addCiteDetails(
-									that.content.attr('data-cite-id'),
-									that.content.find(nsSel('link-field input')).val(),
-									that.content.find(nsSel('note-field textarea')).val()
-								);
-							});
-					},
-
-					/**
-					 * Invoked during aloha-selection-changed, if activeOn
-					 * function returns true for the current selection.  Will
-					 * populate panel fields with the details of the selected
-					 * citation if they are already available.  If no citation
-					 * exists for the selected quotation, then one will be
-					 * created for it first.
-					 */
-					onActivate: function (effective) {
-						var activeUid = effective.attr('data-cite-id');
-						if (!activeUid) {
-							activeUid = ++uid;
-							var classes = [nsClass('wrapper')].join(' ');
-							effective.addClass(classes);
-							effective.attr('data-cite-id', activeUid);
-						}
-						var index = that.getIndexOfCitation(activeUid);
-
-						if (-1 === index) {
-							index = that.citations.push({
-								uid   : activeUid,
-								link  : null,
-								notes : null
-							}) - 1;
-						}
-
-						this.content.attr('data-cite-id', activeUid);
-						this.content.find(nsSel('link-field input'))
-						    .val(effective.attr('cite'));
-						this.content.find(nsSel('note-field textarea'))
-						    .val(that.citations[index].note);
-					}
-
-				});
-			});
-
-			Aloha.bind('aloha-editable-activated', function (event, params) {
-				var config = that.getEditableConfig(params.editable.obj);
-
-				if (!config) {
-					return;
-				}
-				
-				if ( jQuery.inArray('quote', config ) !== -1 ) {
-					that._quoteButton.show(true);
-				} else {
-					that._quoteButton.show(false);
-				}
-				
-				if ( jQuery.inArray( 'blockquote', config ) !== -1 ) {
-					Format.multiSplitButton.showItem('blockquote');
-				} else {
-					Format.multiSplitButton.hideItem('blockquote');
-				}
-				
-			});
-
-			PubSub.sub('aloha.selection.context-change', function (message) {
-				var rangeObject = message.range;
-
-				// Set to false to prevent multiple buttons being active
-				// when they should not.
-				var quoteFound = false, blockquoteFound = false;
-				var nodeName;
-				var effective = rangeObject.markupEffectiveAtStart;
-				var i = effective.length;
-
-				// Check whether any of the effective items are citation
-				// tags.
-				while (i) {
-					nodeName = effective[--i].nodeName;
-					if (nodeName === 'Q') {
-						quoteFound = true;
-					} else if (nodeName === 'BLOCKQUOTE') {
-						blockquoteFound = true;
-					}
-				}
-
-				// set the toggle status for the quote button
-				that._quoteButton.setState(quoteFound);
-
-				// activate the blockquote multisplit item
-				if (blockquoteFound) {
-					Format.multiSplitButton.setActiveItem('blockquote');
-				}
-				
-				// switch item visibility according to config
-				var config = [];
-				if (Aloha.activeEditable) {
-					config = that.getEditableConfig(Aloha.activeEditable.obj);
-				}
-
-				// quote
-				if (jQuery.inArray('quote', config) !== -1) {
-					that._quoteButton.show(true);
-				} else {
-					that._quoteButton.show(false);
-				}
-
-				// blockquote
-				if (jQuery.inArray('blockquote', config) !== -1) {
-					Format.multiSplitButton.showItem('blockquote');
-				} else {
-					Format.multiSplitButton.hideItem('blockquote');
-				}
-			});
-		},
-
-		/**
-		 * Do a binary search through all citations for a given uid.  The bit
-		 * shifting may be a *bit* of an overkill, but with big lists it proves
-		 * to be significantly more performant.
-		 *
-		 * @param {string} uid Th uid of the citation to retreive.
-		 * @return {number} The 0-based index of the first citation found that
-		 *                  matches the given uid. -1 of no citation is found
-		 *                  for the given uid,
-		 */
-		getIndexOfCitation: function (uid) {
-			var c = this.citations;
-			var max = c.length;
-			var min = 0;
-			var mid;
-			var cuid;
-
-			// Infinite loop guard for debugging...  So your tab/browser
-			// doesn't freeze up like a Christmas turkey ;-)
-			// var __guard = 1000;
-
-			while (min < max /* && --__guard */ ) {
-				mid = (min + max) >> 1; // Math.floor(i) / 2 == i >> 1 == ~~(i / 2)
-				cuid = c[mid].uid;
-
-				// Don't do strict comparison here or you'll get an endless loop
-				if (cuid == uid) {
-					return mid;
-				}
-				
-				if (cuid > uid) {
-					max = mid;
-				} else if (cuid < uid) {
-					min = mid + 1;
-				}
-			}
-
-			return -1;
-		},
-
-		addBlockQuote: function () {
-			var classes = [nsClass('wrapper'), nsClass(++uid)].join(' ');
-
-			var markup = jQuery(supplant(
-					'<blockquote class="{classes}" data-cite-id="{uid}"></blockquote>',
-					{uid: uid, classes: classes}
-			));
-
-			// Now re-enable the editable...
-			if (Aloha.activeEditable) {
-				jQuery(Aloha.activeEditable.obj[0]).click();
-			}
-
-			Aloha.Selection.changeMarkupOnSelection(markup);
-
-			if (this.referenceContainer) {
-				this.addCiteToReferences(uid);
-			}
-
-			if (this.sidebar && this.settings && this.settings.sidebar &&
-			     this.settings.sidebar.open) {
-				this.sidebar.open();
-			}
-			//	.activatePanel(nsClass('sidebar-panel'), markup);
-		},
-
-		addInlineQuote: function () {
-			var classes = [nsClass('wrapper'), nsClass(++uid)].join(' ');
-			
-			var markup = jQuery(supplant(
-					'<q class="{classes}" data-cite-id="{uid}"></q>',
-					{ uid: uid, classes: classes }
-			));
-
-			var rangeObject = Aloha.Selection.rangeObject;
-			var foundMarkup;
-
-			if (Aloha.activeEditable) {
-				jQuery(Aloha.activeEditable.obj[0]).click();
-			}
-
-			// Check whether the markup is found in the range (at the start of
-			// the range).
-			foundMarkup = rangeObject.findMarkup(function () {
-				if (this.nodeName && markup.length &&
-					(typeof this.nodeName === 'string') &&
-					(typeof markup[0].nodeName === 'string')) {
-					return this.nodeName.toLowerCase() ===
-						markup[0].nodeName.toLowerCase();
-				}
-
-				return false;
-			}, Aloha.activeEditable.obj);
-
-			// If the we click the quote button on a range that contains quote
-			// markup, then we will remove the quote markup, otherwise we will
-			// wrap the selection in a quote.
-
-			if (foundMarkup) {
-				if (rangeObject.isCollapsed()) {
-					// The range is collapsed; remove exactly the one DOM
-					// element.
-					domUtils.removeFromDOM(foundMarkup, rangeObject, true);
-				} else {
-					// The range is not collapsed; remove the markup from the
-					// range.
-					domUtils.removeMarkup(rangeObject, markup,
-						Aloha.activeEditable.obj);
-				}
+				// add the DOM element to the current list
+				current.objs.push(this);
 			} else {
-				// When the range is collapsed, extend it to a word.
-				if (rangeObject.isCollapsed()) {
-					domUtils.extendToWord(rangeObject);
+				// we found a block element, so we are done with the current list
+				current = null;
+			}
+		});
+
+		// wrap all non-block lists into p Tags
+		// in other words: replace the list of sibling DOM elements with
+		// a single (new) paragraph, that will contain the list of DOM
+		// elements as children
+		for (i = 0; i < nonBlockRanges.length; i++) {
+			var range = nonBlockRanges[i];
+			var indexStart = Dom.getIndexInParent(range.objs[0]);
+			var indexEnd = Dom.getIndexInParent(range.objs[range.objs.length - 1]);
+			var $p = $('<p></p>');
+
+			// correct the start of the selection range, if necessary
+			if (selectionRange.startContainer === obj) {
+				if (selectionRange.startOffset > indexStart && selectionRange.startOffset <= indexEnd) {
+					selectionRange.startContainer = $p[0];
+					selectionRange.startOffset -= indexStart;
+				} else if (selectionRange.startOffset > indexEnd) {
+					selectionRange.startOffset -= (indexEnd - indexStart);
 				}
-
-				domUtils.addMarkup(rangeObject, markup);
 			}
-
-			// select the modified range
-			rangeObject.select();
-
-			if (this.referenceContainer) {
-				this.addCiteToReferences(uid);
-			}
-
-			if (this.sidebar && this.settings && this.settings.sidebar &&
-			     this.settings.sidebar.open) {
-				this.sidebar.open();
-			}
-
-			//	.activatePanel(nsClass('sidebar-panel'), markup);
-
-			return false;
-		},
-
-		/**
-		 * Adds an item for the citation matching the given uid to the
-		 * references list. If no OL list for references exist, we create one.
-		 * This method will assume that this.referenceContainer is a jQuery
-		 * object container into which the references list should be built.
-		 *
-		 * @param {string} uid The uid of the citation to add.
-		 */
-		addCiteToReferences: function (uid) {
-			var index = this.getIndexOfCitation(uid);
-
-			if (-1 === index) {
-				return;
-			}
-
-			var wrapper = jQuery('.aloha-editable-active ' + nsSel(uid));
-			var note = 'cite-note-' + uid;
-			var ref = 'cite-ref-'  + uid;
-
-			wrapper.append(
-				supplant(
-					'<sup id="{ref}" contenteditable="false"><a href="#{note}">[{count}]</a></sup>',
-					{ ref   : ref, note  : note, count : index + 1 }
-				)
-			);
-
-			if (0 === this.referenceContainer.find('ol.references').length) {
-				this.referenceContainer
-				    .append('<h2>References</h2>')
-				    .append('<ol class="references"></ol>');
-			}
-
-			this.referenceContainer.find('ol.references').append(
-				supplant(
-					'<li id="{note}"><a href="#{ref}">^</a> &nbsp; <span></span></li>',
-					{ ref  : ref, note : note }
-				)
-			);
-		},
-
-		/**
-		 * Responsible for updating the citation reference in memory, and in
-		 * the references list when a user adds or changes information for a
-		 * given citation.
-		 *
-		 * @param {string} uid
-		 * @param {string} link
-		 * @param {string} note
-		 */
-		addCiteDetails: function (uid, link, note) {
-			this.citations[this.getIndexOfCitation(uid)] = {
-				uid  : uid,
-				link : link,
-				note : note
-			};
-
-			if (link) {
-				// Update link attribute
-				var el = jQuery(nsSel(uid)).attr('cite', link);
-			}
-
-			// Update information in references list for this citation.
-			if (this.referenceContainer) {
-				jQuery('li#cite-note-' + uid + ' span').html(
-					supplant(
-						link ? '<a class="external" target="_blank" href="{url}">{url}</a>' : '',
-						{ url: link }
-					) + (note ? '. ' + note : '')
-				);
-			}
-		},
-
-		toString: function () {
-			return 'aloha-citiation-plugin';
-		},
-		
-		/**
-		 * Make the given jQuery object (representing an editable) clean for saving
-		 * Find all quotes and remove editing objects
-		 * @param obj jQuery object to make clean
-		 * @return void
-		 */
-		makeClean: function (obj) {
-
-			// find all quotes
-			obj.find('q, blockquote').each(function () {
-				// Remove empty class attributes
-				if (jQuery.trim(jQuery(this).attr('class')) === '') {
-					jQuery(this).removeAttr('class');
+			// correct the end of the selection range, if necessary
+			if (selectionRange.endContainer === obj) {
+				if (selectionRange.endOffset > indexStart && selectionRange.endOffset <= indexEnd) {
+					selectionRange.endContainer = $p[0];
+					selectionRange.endOffset -= indexStart;
+				} else if (selectionRange.endOffset > indexEnd) {
+					selectionRange.endOffset -= (indexEnd - indexStart);
 				}
-				// Only remove the data cite attribute when no reference container was set
-				if (!this.referenceContainer) {
-					jQuery(this).removeClass('aloha-cite-' + jQuery(this).attr('data-cite-id'));
-			
-					// We need to read this attribute for IE7. Otherwise it will
-					// crash when the attribute gets removed. In IE7 this removal 
-					// does not work at all. (no wonders here.. :.( )
-					if (jQuery(this).attr('data-cite-id') != null) {
-						jQuery(this).removeAttr('data-cite-id');
-					}
-				}
-				
-				jQuery(this).removeClass('aloha-cite-wrapper');
-				
-			});
+			}
+
+			// insert the paragraph right before the old dom elements
+			$(range.objs[0]).before($p);
+			// move all old dom elements into the paragraph
+			for (j = 0; j < range.objs.length; j++) {
+				$p[0].appendChild(range.objs[j]);
+			}
+			contentChanged = true;
 		}
 
+		// select the corrected selection, but only if we changed
+		// something in the content and the editable is the active one
+		if (contentChanged && editable.isActive) {
+			selectionRange.select();
+		}
+	}
+
+	/**
+	 * Checks whether or not pluginName is activated for an editable.
+	 *
+	 * @param {object} The plugin/editable configuration.
+	 * @return {boolean} True if activated.
+	 */
+	function isPluginActivated(config) {
+		return (
+			$.type(config) === 'array' && $.inArray(pluginName, config) !== -1
+		);
+	}
+
+	/**
+	 * @type {Aloha.Plugin}
+	 */
+	var autoParagraphPlugin = Plugin.create(pluginName, {
+		/**
+		 * Default config: plugin active for all editables
+		 */
+		config: [pluginName],
+
+		/**
+		 * Initialize the plugin
+		 */
+		init: function () {
+			var plugin = this;
+
+			// autogenerate paragraphs when a new editable is created
+			PubSub.sub('aloha.editable.created', function (message) {
+				var editable = message.editable;
+				var config = plugin.getEditableConfig(editable.obj);
+				var enabled = config
+				           && ($.inArray(pluginName, config) > -1)
+				           && ContentRules.isAllowed(editable.obj[0], 'p');
+				configurations[editable.getId()] = !!enabled;
+				if (enabled) {
+					autogenerateParagraphs(editable);
+				}
+			});
+
+			// autogenerate paragraphs upon smart content change
+			Aloha.bind('aloha-smart-content-changed', function (event, data) {
+				if (configurations[data.editable.getId()]) {
+					autogenerateParagraphs(data.editable);
+				}
+			});
+		}
 	});
 
+	return autoParagraphPlugin;
 });
 
 /* formatlesshandler.js is part of Aloha Editor project http://aloha-editor.org
@@ -50888,7 +55983,11 @@ define('formatlesspaste/formatlesshandler',[
 	 */
 	function removeFormatting($content, toStrip) {
 		$content.find(toStrip.join(',')).each(function () {
-			$(this).contents().unwrap();
+			if ($(this).contents().length === 0) {
+				$(this).remove();
+			} else {
+				$(this).contents().unwrap();
+			}
 		});
 	}
 
@@ -50943,7 +56042,7 @@ define('formatlesspaste/formatlesshandler',[
 
 define('formatlesspaste/nls/i18n',{
 	"root":  {
-		"button.formatlessPaste.tooltip": "Toggle Formatless Pasting"
+		"button.formatlessPaste.tooltip": "Keep/Discard formatting"
 	},
 		"ca": true,
 		"de": true,
@@ -51039,9 +56138,9 @@ define('formatlesspaste/formatlesspaste-plugin',[
 		$.extend(obj, config);
 	}
 
-	function registerFormatlessPasteHandler(plugin) {
+	function registerFormatlessPasteHandler(plugin, config) {
 		ContentHandlerManager.register('formatless', FormatlessPasteHandler);
-		FormatlessPasteHandler.strippedElements = Html.TEXT_LEVEL_SEMANTIC_ELEMENTS;
+		FormatlessPasteHandler.strippedElements = config.strippedElements || Html.TEXT_LEVEL_SEMANTIC_ELEMENTS;
 
 		plugin._toggleFormatlessPasteButton =
 			Ui.adopt('toggleFormatlessPaste', ToggleButton, {
@@ -51122,9 +56221,10 @@ define('formatlesspaste/formatlesspaste-plugin',[
 		init: function () {
 			var plugin = this;
 			var config = plugin.settings.config || plugin.settings;
+			var parsedConfig = parseConfiguration(config);
 
-			applyConfiguration(plugin, parseConfiguration(config));
-			registerFormatlessPasteHandler(plugin);
+			applyConfiguration(plugin, parsedConfig);
+			registerFormatlessPasteHandler(plugin, parsedConfig);
 
 			Aloha.bind('aloha-editable-activated', function ($event, data) {
 				var config = getEditableConfig(plugin, data.editable);
@@ -51147,1463 +56247,6 @@ define('formatlesspaste/formatlesspaste-plugin',[
 		}
 	});
 });
-
-define('ui/menuButton',[
-	'jquery',
-	'ui/component',
-	'ui/utils',
-	'jqueryui'
-], function (
-	$,
-	Component,
-	Utils
-) {
-	
-
-	var MenuButton = Component.extend({
-		init: function () {
-			this.element = MenuButton.makeMenuButton(this);
-		}
-	});
-
-	// static functions
-
-	/**
-	 * @param props button properties:
-	 *        click - if provided will generate a split button,
-	 *                  otherwise just a normal select button.
-	 *        menu - array of props for nested buttons
-	 *        text - button text
-	 *        html - button html
-	 *        iconUrl - button icon url
-	 *        siblingContainer
-	 *             - a $ object that will be searched for other split buttons.
-	 *               If a split button is expanded, all the other split buttons in
-	 *               this container will be closed.
-	 */
-	MenuButton.makeMenuButton = function (props) {
-		var wrapper = $('<div>'   , {'class': 'aloha-ui-menubutton-container'});
-		var expand  = Utils.makeButtonElement({'class': 'aloha-ui-menubutton-expand'});
-		var menu    = $('<ul>'    , {'class': 'aloha-ui-menubutton-menu'});
-		var action = null;
-		var buttonset = null;
-
-		if ($.browser.msie) {
-			wrapper.addClass('aloha-ui-menubutton-iehack');
-		}
-
-		if (props.click) {
-			action = Utils.makeButton(Utils.makeButtonElement({'class': 'aloha-ui-menubutton-action'}), props)
-				.click(props.click);
-
-			Utils.makeButton(expand, {}, true);
-
-			buttonset = $('<div>')
-				.buttonset()
-				.append(action)
-				.append(expand);
-		} else {
-			Utils.makeButton(expand, props, true)
-			      .addClass('aloha-ui-menubutton-single');
-		}
-
-		if (!props.menu) {
-			return wrapper.append(action);
-		}
-
-		function hideMenu(menu) {
-			menu.hide().parent().removeClass('aloha-ui-menubutton-pressed');
-		}
-
-		expand
-			.click(function (){
-				wrapper.addClass('aloha-ui-menubutton-pressed');
-
-				if (props.siblingContainer) {
-					props.siblingContainer
-						.find('.aloha-ui-menubutton-menu')
-						.each(function (){
-							if (this !== menu[0]) {
-								hideMenu($(this));
-							}
-						});
-				}
-
-				if (menu.is(':visible')) {
-					hideMenu(menu);
-					return;
-				}
-
-				menu.show().position({
-					my: 'left top',
-					at: 'left bottom',
-					of: action || expand
-				});
-
-				// In order to prevent the floating menu from being partially
-				// covered by the ribbon, we use "position: relative" and an
-				// invisible border to pad the top of the document.  This
-				// throws off the offset to the menu button so we need to
-				// compensate in ordet to ensure that the menu is placed
-				// underneatht the menubutton.
-				// NB: For the time being we are not using the above fix.
-				/*
-				var target = action || expand;
-				var bodyOffset = parseInt($('body').css('border-top-width'), 10) || 0;
-				menu.css('top', target.height() + target.offset().top + bodyOffset);
-				*/
-
-				$(document).bind('click', function (event){
-					$(this).unbind(event);
-					menu.hide();
-					wrapper.removeClass('aloha-ui-menubutton-pressed');
-				});
-
-				return false;
-			});
-
-		wrapper.append(buttonset || expand).append(menu);
-
-		menu.append(makeNestedMenus(makeCloseHandler(menu), props.menu));
-
-		menu.hide().menu({
-			'select': onSelect
-		});
-
-		return wrapper;
-	};
-
-	function makeNestedMenus(parentCloseHandler, menu){
-		var elems = [];
-		$.each(menu, function (_, item) {
-			var elem = $('<li>');
-			elem.append($('<a>', {'href': 'javascript:void 0', 'html': Utils.makeButtonLabelWithIcon(item)}));
-			if (item.click) {
-				elem.data('aloha-ui-menubutton-select', function (){
-					parentCloseHandler();
-					item.click();
-				});
-			}
-			if (item.menu) {
-				var nestedMenu = $('<ul>').appendTo(elem);
-				nestedMenu.append(
-					makeNestedMenus(makeCloseHandler(nestedMenu, parentCloseHandler),
-									item.menu));
-			}
-			elems.push(elem[0]);
-		});
-		return elems;
-	}
-
-	function makeCloseHandler(menu, parentCloseHandler) {
-		parentCloseHandler = parentCloseHandler || $.noop;
-		return function (){
-			// We must blur the parent menu otherwise it will remain in
-			// focused state and not expand the next time it is hovered over
-			// after the user has selected an item.
-			menu.blur().hide();
-			menu.parent().removeClass('aloha-ui-menubutton-pressed');
-			parentCloseHandler();
-		};
-	}
-
-	function onSelect(event, ui) {
-		var clickHandler = ui.item.data('aloha-ui-menubutton-select');
-		clickHandler && clickHandler(event, ui);
-		// We use preventDefault() to keep a click on a menu item from
-		// scrolling to the top of the page.
-		event.preventDefault();
-	}
-
-	return MenuButton;
-});
-
-/* ribbon-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('ribbon/ribbon-plugin',[
-    'jquery',
-    'aloha/plugin',
-    'ui/menuButton',
-    'ui/utils',
-    'jqueryui'
-], function (
-	$,
-	Plugin,
-	MenuButton,
-	Utils
-) {
-	
-
-	var ribbon = Plugin.create('ribbon', {
-
-		init: function () {
-			if (!this.settings.enable &&
-				typeof this.settings.enable !== 'undefined') {
-				return;
-			}
-
-			var that = this;
-			this._visible = false;
-            this._toolbar = $('<div>', {'class':
-				'aloha-ribbon-toolbar ui-menubar ui-widget-header ui-helper-clearfix'});
-
-			var fadeIn = Utils.makeButtonElement({'class': 'aloha-ribbon-in'})
-				.button()
-				.hide()
-				.click(function () {
-					that._toolbar.animate({
-						'left': 0
-					});
-					$('body').animate({paddingTop: 30});
-					fadeIn.hide();
-				})
-			    .appendTo(this._toolbar);
-
-			var fadeOut = Utils.makeButtonElement({'class': 'aloha-ribbon-out'})
-				.button()
-				.click(function () {
-					that._toolbar.animate({
-						'left': -that._toolbar.outerWidth()
-						        + fadeIn.outerWidth()
-						        + 10
-					});
-					$('body').animate({paddingTop: 0});
-					fadeIn.show();
-				})
-				.appendTo(this._toolbar);
-
-			var wrapper = $('<div>', {'class': 'aloha aloha-ribbon'})
-				.appendTo('body');
-
-			this._icon = $('<div>').prependTo(this._toolbar);
-			this.setIcon('');
-
-			this._toolbar.appendTo(wrapper);
-
-			$('body').css({
-				position: 'relative',
-				paddingTop: 30
-			});
-		},
-
-		/**
-		 * Sets the icon class for the ribbon icon
-		 * @param {String} iconClass CSS class for the icon
-		 */
-		setIcon: function (iconClass) {
-			if (!this._icon) {
-				return;
-			}
-			this._icon.attr('class', 'aloha-ribbon-icon ' + iconClass);
-		},
-
-		addButton: function (props) {
-			if (!this._toolbar) {
-				return;
-			}
-			props = $.extend({}, props, {'siblingContainer': this._toolbar});
-			this._toolbar.append(MenuButton.makeMenuButton(props));
-		},
-
-		/**
-		 * Shows the Ribbon
-		 */
-		hide: function () {
-			if (!this._toolbar) {
-				return;
-			}
-			this._toolbar.hide();
-			this._visible = false;
-		},
-
-		/**
-		 * Hides the Ribbon
-		 */
-		show: function () {
-			if (!this._toolbar) {
-				return;
-			}
-			this._toolbar.show();
-			this._visible = true;
-		},
-
-		/**
-		 * Check whether the ribbon is visible right now
-		 * @return true when the ribbon is visible, false when not
-		 */
-		isVisible: function () {
-			return this._visible;
-		}
-	});
-
-	return ribbon;
-});
-
-define('wai-lang/nls/i18n',{
-	"root":  {
-		"floatingmenu.tab.wai-lang": "Language annotation",
-		"button.add-wai-lang-remove.tooltip": "Remove language annotation",
-		"button.add-wai-lang.tooltip": "Add language annotation"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-/* flag-icons-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-/**
- * Provides flag icons that are shared among various plugins.  Plugins that
- * rely on the icon images provided by this plugin should require this plugin
- * to ensure that the images are indeed there.
- *
- * This plugin's require module exports an object containing a single property:
- * the url of the plugins.  This url can be used as the path to 
- * programmatically determine the absolute urls of the icon images.
- *
- * USAGE:
- * require('flag-icons/flag-icons-plugin', function (FlagsIcons) {
- *	   // ...
- *     FlagIcons.path + languageCode;
- *     // ...
- * });
- */
-define('flag-icons/flag-icons-plugin',[], function () {
-	'use strict'
-	return { path: Aloha.getPluginUrl( 'flag-icons' ) };
-} );
-
-/*global define: true, require: true */
-/*!
- * Aloha Editor
- * Author & Copyright (c) 2011 Gentics Software GmbH
- * aloha-sales@gentics.com
- * Licensed unter the terms of http://www.aloha-editor.com/license.html
- *
- * Language Repository
- * -------------------
- * Provides a set of language codes and images
- */
-define('wai-lang/languages',['aloha', 'jquery', 'flag-icons/flag-icons-plugin', 'aloha/console', 'wai-lang/wai-lang-plugin'],
-function(Aloha, jQuery, FlagIcons, console) {
-	
-	
-	/**
-	 * global Deferred Object
-	 */
-	var deferred = jQuery.Deferred();
-
-	return new (Aloha.AbstractRepository.extend({
-
-		/**
-		 * Set of language codes
-		 */
-		languageCodes: [],
-		
-		/**
-		 * Set default locale
-		 */
-		locale: 'de',
-		
-		/**
-		 * Set default iso
-		 */
-		iso: 'iso639-1',
-
-		/**
-		 * Whether to show flags or not
-		 */
-		flags: false,
-
-		_constructor: function () {
-			this._super('wai-languages');
-		},
-
-		/**
-		 * Initialize WAI Languages, load the language file and prepare the data.
-		 */
-		init: function () {
-			
-			var that = this;
-			var waiLang = Aloha.require('wai-lang/wai-lang-plugin');
-			var locale = Aloha.settings.locale;
-			var iso = waiLang.iso639;
-
-			if (locale !== 'de') {
-				this.locale = 'en';
-			}
-
-			if (iso !== 'iso639-1') {
-				this.iso = 'iso639-2';
-			}
-
-			this.flags = waiLang.flags;
-
-			this.repositoryName = 'WaiLanguages';
-			
-			Aloha.require(['wai-lang/' + this.iso + '-' + this.locale], function (data) {
-				that.storeLanguageCodes(data);
-				deferred.resolve();
-			});
-			
-		},
-
-		markObject: function (obj, item) {
-			//copied from wai-lang-plugin makeVisible to avoid a circular dependency
-			// We do not need to add this class here since it already being
-			// done in the wai-lang plugin
-			// jQuery( obj ).addClass( 'aloha-wai-lang' );
-		},
-
-		/**
-		 * This method will invoked if a error occurres while loading data via ajax
-		 */
-		errorHandler: function (text, error) {
-			console.log("error", this, "Error while loading languages. " + text);
-		},
-
-		/**
-		 * Stores the retrieved language code data in this object
-		 */
-		storeLanguageCodes: function (data) {
-			var that = this;
-			var waiLangPath = Aloha.getPluginUrl('wai-lang');
-
-			// Transform loaded json into a set of repository documents
-			jQuery.each(data, function (key, value) {
-				var el = value;
-				el.id = key;
-				el.repositoryId = that.repositoryId;
-				el.type = 'language';
-				if (that.flags) {
-					if (el.flag) {
-						el.url =  FlagIcons.path + '/img/flags/' + el.flag + '.png';
-					} else {
-						el.url =  waiLangPath + '/img/button.png';
-					}
-				}
-				// el.renditions.url = "img/flags/" + e.id + ".png";
-				// el.renditions.kind.thumbnail = true;
-				that.languageCodes.push(new Aloha.RepositoryDocument(el));
-			});
-		},
-		
-		/**
-		 * Searches a repository for object items matching query if objectTypeFilter.
-		 * If none found it returns null.
-		 * Not supported: filter, orderBy, maxItems, skipcount, renditionFilter
-		 */
-		_searchInLanguageCodes: function (p, callback) {
-			var query = new RegExp('^' + p.queryString, 'i'),
-		    i,
-		    d = [],
-		    matchesName,
-		    matchesType,
-		    currentElement;
-
-			for (i = 0; i < this.languageCodes.length; ++i) {
-				currentElement = this.languageCodes[i];
-				matchesName = (!p.queryString || currentElement.name.match(query));
-				matchesType = (!p.objectTypeFilter || (!p.objectTypeFilter.length) || jQuery.inArray(currentElement.type, p.objectTypeFilter) > -1);
-	
-				if (matchesName && matchesType) {
-					d.push(currentElement);
-				}
-			}
-	
-			callback.call(this, d);
-		},
-
-		/**
-		 * Fetches the languageCodes if they are not already loaded and
-		 * searches the collection with the given query.
-		 */
-		query: function (p, callback) {
-			var that = this;
-			
-			deferred.done(function(){
-				that._searchInLanguageCodes(p, callback);
-			});
-			
-		},
-
-		/**
-		 * Get the repositoryItem with given id
-		 * @param itemId {String} id of the repository item to fetch
-		 * @param callback {function} callback function
-		 * @return {Aloha.Repository.Object} item with given id
-		 */
-		getObjectById: function (itemId, callback) {
-			var i, currentElement;
-
-			for (i = 0; i < this.languageCodes.length; ++i) {
-				currentElement = this.languageCodes[i];
-				if (currentElement.id === itemId) {
-					callback.call(this, [currentElement]);
-					break;
-				}
-			}
-
-		}
-	}))();
-});
-
-/*!
- * Aloha Editor
- * Author & Copyright (c) 2011-2013 Gentics Software GmbH
- * aloha-sales@gentics.com
- * Licensed under the terms of http://www.aloha-editor.com/license.html
- */
-define('wai-lang/wai-lang-plugin',[
-	'aloha',
-	'jquery',
-	'PubSub',
-	'aloha/plugin',
-	'aloha/selection',
-	'util/dom',
-	'ui/ui',
-	'ui/scopes',
-	'ui/button',
-	'ui/toggleButton',
-	'ui/port-helper-attribute-field',
-	'i18n!wai-lang/nls/i18n',
-	'wai-lang/languages'
-], function WaiLangPlugin(
-	Aloha,
-	$,
-	PubSub,
-	Plugin,
-	Selection,
-	Dom,
-	Ui,
-	Scopes,
-	Button,
-	ToggleButton,
-	attributeField,
-	i18n
-) {
-	
-
-	var WAI_LANG_CLASS = 'aloha-wai-lang';
-
-	/**
-	 * Ui Attribute Field singleton.
-	 *
-	 * Needs to be defined in prepareUi(), because of a problem with the
-	 * stateful initialization of jQuery UI autocomplete implementation for
-	 * Aloha Editor.
-	 *
-	 * @type {AttributeField}
-	 */
-	var FIELD = null;
-
-	/**
-	 * UI Button to remove wai-lang
-	 */
-	var removeButton = null;
-
-	/**
-	 * Sets focus on the given field.
-	 *
-	 * @param {AttributeField} field
-	 */
-	function focusOn(field) {
-		if (field) {
-			field.foreground();
-			field.focus();
-		}
-		// show the field and remove button
-		FIELD.show();
-		removeButton.show();
-	}
-
-	/**
-	 * Maps the given value to boolean.
-	 *
-	 * We need to do this to support Gentics Content.Node which provides Aloha
-	 * Editor configuration from serialized PHP.
-	 *
-	 * @return {boolean}
-	 */
-	function isTrue(value) {
-		return (
-			true === value
-			|| 1 === value
-			|| 'true' === value
-			|| '1' === value
-		);
-	}
-
-	/**
-	 * Checks whether this element is a wai-lang wrapper element.
-	 *
-	 * @this {HTMLElement}
-	 * @return {boolean} True if the given markup denotes wai-lang wrapper.
-	 */
-	function filterForWaiLangMarkup() {
-		var $elem = $(this);
-		return $elem.hasClass(WAI_LANG_CLASS) || $elem.is('[lang]');
-	}
-
-	/**
-	 * Looks for a wai-Lang wrapper DOM element within the the given range.
-	 *
-	 * @param {RangeObject} range
-	 * @return {HTMLElement|null} Wai-lang wrapper node; null otherwise.
-	 */
-	function findWaiLangMarkup(range) {
-		return (
-			Aloha.activeEditable
-				? range.findMarkup(filterForWaiLangMarkup,
-				                   Aloha.activeEditable.obj)
-				: null
-		);
-	}
-
-	/**
-	 * Wraps the contents at the current range in a wai-lang wrapper element.
-	 *
-	 * @param {RangeObject} range
-	 */
-	function addMarkup(range) {
-		if (range.isCollapsed()) {
-			Dom.extendToWord(range);
-		}
-		Dom.addMarkup(
-			range,
-			$('<span class="' + WAI_LANG_CLASS + '"></span>'),
-			false
-		);
-		range.select();
-	}
-
-	/**
-	 * Removes wai-lang wrapper on the markup at the given range.
-	 *
-	 * @param {RangeObject} range
-	 */
-	function removeMarkup(range) {
-		var markup = findWaiLangMarkup(range);
-		if (markup) {
-			Dom.removeFromDOM(markup, range, true);
-			range.select();
-		}
-	}
-
-	/**
-	 * Prepares the markup at the current range for language annotation.
-	 */
-	function prepareAnnotation() {
-		var range = Selection.getRangeObject();
-
-		// Because we don't want to add markup to an area that already contains
-		// wai-lang markup.
-		if (!findWaiLangMarkup(range)) {
-			addMarkup(range);
-		}
-
-		focusOn(FIELD);
-	}
-
-	/**
-	 * Toggles language annotation on the markup at the current range.
-	 */
-	function toggleAnnotation() {
-		if (Aloha.activeEditable) {
-			var range = Selection.getRangeObject();
-			if (findWaiLangMarkup(range)) {
-				removeMarkup(range);
-			} else {
-				addMarkup(range);
-				focusOn(FIELD);
-			}
-		}
-	}
-
-	/**
-	 * Mark the given element as a wai-lang wrapper, with a class and
-	 * annotation.
-	 *
-	 * @param {HTMLElement} element
-	 */
-	function annotate(element) {
-		var $element = $(element);
-		$element.addClass(WAI_LANG_CLASS)
-		        .attr('data-gentics-aloha-repository', 'wai-languages')
-		        .attr('data-gentics-aloha-object-id', $element.attr('lang'));
-	}
-
-	/**
-	 * Initialize the buttons:
-	 * Places the Wai-Lang UI buttons into the floating menu.
-	 *
-	 * Initializes `FIELD`.
-	 *
-	 * @param {Plugin} plugin Wai-lang plugin instance
-	 */
-	function prepareUi(plugin) {
-		FIELD = attributeField({
-			name: 'wailangfield',
-			width: 320,
-			valueField: 'id',
-			minChars: 1,
-			scope: 'Aloha.continuoustext'
-		});
-
-		plugin._wailangButton = Ui.adopt('wailang', ToggleButton, {
-			tooltip: i18n.t('button.add-wai-lang.tooltip'),
-			icon: 'aloha-icon aloha-icon-wai-lang',
-			scope: 'Aloha.continuoustext',
-			click: toggleAnnotation
-		});
-
-		removeButton = Ui.adopt('removewailang', Button, {
-			tooltip: i18n.t('button.add-wai-lang-remove.tooltip'),
-			icon: 'aloha-icon aloha-icon-wai-lang-remove',
-			scope: 'Aloha.continuoustext',
-			click: function onButtonClick() {
-				removeMarkup(Selection.getRangeObject());
-			}
-		});
-
-		FIELD.setTemplate(plugin.flags
-				? '<div class="aloha-wai-lang-img-item">' +
-				  '<img class="aloha-wai-lang-img" src="{url}" />' +
-				  '<div class="aloha-wai-lang-label-item">{name} ({id})</div>' +
-				  '</div>'
-				: '<div class="aloha-wai-lang-img-item">' +
-				  '<div class="aloha-wai-lang-label-item">{name} ({id})</div>' +
-				  '</div>'
-			);
-
-		FIELD.setObjectTypeFilter(plugin.objectTypeFilter);
-	}
-
-	/**
-	 * Create a unique id prefixed with the specified prefix.
-	 *
-	 * @param {string} prefix
-	 * @return {string} Unique identifier string
-	 */
-	var uniqueId = (function (prefix) {
-		var idCounter = 0;
-		return function uniqueId() {
-			return prefix + '-' + (++idCounter);
-		};
-	}());
-
-	/**
-	 * Return the unique id of the given wai-lang plugin instance.
-	 * For use with the caching editable configurations.
-	 *
-	 * @param {Plugin} plugin Wai-lang plugin instance
-	 * @return {string} Unique id of plugin instance
-	 */
-	function getPluginInstanceId(plugin) {
-		return plugin._instanceId;
-	}
-
-	/**
-	 * Cache of editable configuration for quicker lookup.
-	 *
-	 * Note that each configuration is the product of the per-editable
-	 * configuration and the plugin configuration, and therefore the cache key
-	 * for each configuration entry must be a function of both their
-	 * identifiers.
-	 *
-	 * @type {string, object}
-	 */
-	var configurations = {};
-
-	/**
-	 * Get this plugin's configuration for the given editable.
-	 *
-	 * @param {Editable} editable
-	 * @param {Plugin} plugin A wai-lang plugin instance
-	 * @return {object} configuration
-	 */
-	function getConfig(editable, plugin) {
-		var key = editable.getId() + ':' + getPluginInstanceId(plugin);
-		if (!configurations[key]) {
-			configurations[key] = plugin.getEditableConfig(editable.obj);
-		}
-		return configurations[key];
-	}
-
-	/**
-	 * Registers event handlers for the given plugin instance.
-	 *
-	 * Assumes `FIELD` is initialized.
-	 *
-	 * @param {Plugin} plugin Instance of wai-lang plugin.
-	 */
-	function subscribeEvents(plugin) {
-		PubSub.sub('aloha.editable.activated',
-			function onEditableActivated(msg) {
-				var config = getConfig(msg.data.editable, plugin);
-				if ($.inArray('span', config) > -1) {
-					plugin._wailangButton.show();
-				} else {
-					plugin._wailangButton.hide();
-				}
-			});
-
-		Aloha.bind('aloha-selection-changed',
-			function onSelectionChanged($event, range) {
-				var markup = findWaiLangMarkup(range);
-				if (markup) {
-					plugin._wailangButton.setState(true);
-					FIELD.setTargetObject(markup, 'lang');
-
-					// show the field and remove button
-					FIELD.show();
-					removeButton.show();
-
-					Scopes.enterScope(plugin.name, 'wai-lang');
-				} else {
-					plugin._wailangButton.setState(false);
-					FIELD.setTargetObject(null);
-
-					// hide the field and remove button
-					FIELD.hide();
-					removeButton.hide();
-
-					Scopes.leaveScope(plugin.name, 'wai-lang', true);
-				}
-			});
-
-		FIELD.addListener('blur', function onFieldBlur() {
-			// @TODO Validate value to not permit values outside the set of
-			//       configured language codes.
-			if (!this.getValue()) {
-				removeMarkup(Selection.getRangeObject());
-			}
-		});
-
-		Aloha.bind('aloha-editable-created',
-			function onEditableCreated($event, editable) {
-				editable.obj.bind('keydown', plugin.hotKey.insertAnnotation,
-					function () {
-						prepareAnnotation();
-
-						// Because on a MAC Safari, cursor would otherwise
-						// automatically jump to location bar.  We therefore
-						// prevent bubbling, so that the editor must hit ESC and
-						// then META+I to manually do that.
-						return false;
-					});
-
-				editable.obj.find('span[lang]').each(function () {
-					annotate(this);
-				});
-			});
-	}
-
-	return Plugin.create('wai-lang', {
-
-		/**
-		 * Default configuration, allows spans everywhere.
-		 *
-		 * @type {Array.<string>}
-		 */
-		config: ['span'],
-
-		/**
-		 * Define the exact standard of language codes to use (possible values
-		 * are 'iso639-1' and 'iso639-2', default is 'iso639-1')
-		 *
-		 * @type {string}
-		 */
-		iso639: 'iso639-1',
-
-		/**
-		 * Whether or not to show flag icons.
-		 *
-		 * @type {boolean}
-		 */
-		flags: false,
-
-		/**
-		 * The object types to be used for for annotations.
-		 *
-		 * @type {Array.<string>}
-		 */
-		objectTypeFilter: ['language'],
-
-		/**
-		 * HotKeys used for special actions.
-		 *
-		 * @type {object<string, string>}
-		 */
-		hotKey: {
-			insertAnnotation: i18n.t('insertAnnotation', 'ctrl+shift+l')
-		},
-
-		init: function init() {
-			this._instanceId = uniqueId('wai-lang');
-			if (this.settings.objectTypeFilter) {
-				this.objectTypeFilter = this.settings.objectTypeFilter;
-			}
-			if (this.settings.hotKey) {
-				$.extend(true, this.hotKey, this.settings.hotKey);
-			}
-			if (this.settings.iso639) {
-				this.iso639 = this.settings.iso639;
-			}
-			this.flags = isTrue(this.settings.flags);
-			prepareUi(this);
-			subscribeEvents(this);
-		},
-
-		/**
-		 * Toggle language annotation on the current selection, or if collapsed,
-		 * the current word.
-		 */
-		formatLanguageSpan: toggleAnnotation,
-
-		/**
-		 * Makes the given editable DOM element clean for export.  Find all
-		 * elements with lang attributes and remove the attribute.
-		 *
-		 * It also removes data attributes attached by the repository manager.
-		 * It adds a xml:lang attribute with the value of the lang attribute.
-		 *
-		 * @param {jQuery<HTMLElement>} $element jQuery unit set containing
-		 *                                       element to clean up.
-		 */
-		makeClean: function makeClean($element) {
-			$element.find('span[lang]').each(function onEachLangSpan() {
-				var $span = $(this);
-				$span.removeClass(WAI_LANG_CLASS)
-				     .removeAttr('data-gentics-aloha-repository')
-				     .removeAttr('data-gentics-aloha-object-id')
-				     .attr('xml:lang', $span.attr('lang'));
-			});
-		}
-
-	});
-});
-
-define('headerids/nls/i18n',{
-	"root":  {
-		"headerids.label.target": "Target",
-		"headerids.button.reset": "Reset",
-		"headerids.button.set": "Set",
-		"internal_hyperlink": "Internal Hyperlink"
-	},
-		"ca": true,
-		"de": true,
-		"mk": true,
-		"pt-br": true,
-		"ru": true,
-		"uk": true,
-		"zh-hans": true
-});
-
-/* headerids-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-define('headerids/headerids-plugin',[
-	'aloha',
-	'jquery',
-	'PubSub',
-	'aloha/plugin',
-	'util/html',
-	'i18n!headerids/nls/i18n'
-], function (
-	Aloha,
-	jQuery,
-	PubSub,
-	Plugin,
-	html,
-	i18n
-) {
-	
-
-	var $ = jQuery;
-
-	// namespace prefix for this plugin
-    var ns = 'aloha-headerids';
-    
-    
-    // ------------------------------------------------------------------------
-    // Local (helper) functions
-    // ------------------------------------------------------------------------
-    
-    // Creates a selector string with this component's namepsace prefixed the each classname
-    function nsSel () {
-        var strBldr = [], prx = ns;
-        $.each(arguments, function () { strBldr.push('.' + (this == '' ? prx : prx + '-' + this)); });
-        return jQuery.trim(strBldr.join(' '));
-    }
-    
-    // Creates string with this component's namepsace prefixed the each classname
-    function nsClass () {
-        var strBldr = [], prx = ns;
-        $.each(arguments, function () { strBldr.push(this == '' ? prx : prx + '-' + this); });
-        return jQuery.trim(strBldr.join(' '));
-    }
-
-	/**
-	 * Returns a jQuery collection of all heading elements in the given editable
-	 * which are safe to have their ids automatically set.
-	 *
-	 * Do not include heading elements which are annotated with the class
-	 * "aloha-customized" because these have had their ids manually set.
-	 *
-	 * Do not include heading elements which are Aloha editables or blocks because
-	 * implementations often use the ids of these elements to track them in the
-	 * DOM.
-	 *
-	 * @param {jQuery.<HTMLElement>} $editable
-	 * @return {jQuery.<HTMLHeadingElement>} A jQuery container with a
-	 *                                       collection of zero or more heading
-	 *                                       elements.
-	 */
-	function getHeadingElements($editable) {
-		return (
-			$editable.find('h1,h2,h3,h4,h5,h6')
-			        .not('.aloha-customized,.aloha-editable,.aloha-block')
-		);
-	}
-	
-	/**
-	 * Check in the entire document if has a element with the same ID, and try 
-	 * to get an unique ID
-	 * 
-	 * @param {String} proposedID ID to check, uses this as base and concatenate
-	 *                 a dangling with a number
-	 * 
-	 * @return {String}
-	 */
-	function checkDuplicatedID(proposedID){
-		var baseID = proposedID, i = 1;
-		
-		while($('#' + proposedID).length > 0){
-			proposedID = baseID + '_' + ( ++i ).toString();
-		}
-		
-		return proposedID;
-	}
-	
-	return Plugin.create('headerids', {
-		_constructor: function(){
-			this._super('headerids');
-		},
-		
-		config: ['true'],
-				
-		/**
-		 * Initialize the plugin
-		 */
-		init: function () {
-			var plugin = this,
-				invokeCheck = function(msg){
-					var $editable = msg.data.obj || msg.data.editable.obj;
-					plugin.check($editable);
-				}
-			;
-			
-			
-			
-			PubSub.sub('aloha.editable.created', invokeCheck);
-
-			// mark active Editable with a css class
-			PubSub.sub('aloha.editable.activated', invokeCheck);
-			PubSub.sub('aloha.editable.deactivated', invokeCheck);
-
-			Aloha.bind('aloha-plugins-loaded', function (ev) {
-				plugin.initSidebar(Aloha.Sidebar.right);
-			});
-		},
-
-		/**
-		 * Automatically sets the id attribute of heading elements in the given
-		 * editable element wherever it is safe to do so.
-		 *
-		 * @TODO: This function should be removed from being a plugin method and
-		 *        made a local closure function.
-		 *
-		 * @TODO: Rename to setHeadingIds()
-		 *
-		 * @param {jQuery.<HTMLElement>} $editable
-		 */
-		check: function($editable) {
-			var plugin = this;
-			if($.inArray('true', plugin.getEditableConfig($editable)) > -1) {
-				getHeadingElements($editable).each(function (i, heading) {
-					plugin.processH(heading);
-				});
-			}
-		},
-
-		/**
-		 * Automatically sets the id of the given heading element to a sanitized
-		 * version of the element's content text string, only if the heading has
-		 * not a ID already set.
-		 *
-		 * @TODO: Rename to setHeadingId()
-		 *
-		 * @TODO: Make this function a local closure function rather than a
-		 *        plugin method.
-		 *
-		 * @param {HTMLHeadingElement} heading One of the six HTML heading
-		 *                                     elements.
-		 * @returns {String} ID attribute of the Heading element
-		 */
-		processH: function (heading) {
-			var headingId = heading.id;
-			if (!headingId) {
-				// We prefix the Id with "heading_" to not run accross
-				// problems with the Id starting with a number which
-				// would be disallowedÜ in HTML.
-				var $heading = $(heading);
-				headingId = "heading_" + this.sanitize($heading.text());
-
-				headingId = checkDuplicatedID(headingId);
-
-				$heading.attr('id', headingId);
-			}
-			return headingId;
-		},
-
-		/**
-		 * Tranforms the given string into a ideal HTMLElement id attribute
-		 * string by replacing non-alphanumeric characters with an underscore.
-		 *
-		 * @TODO: This method should be removed from being a plugin method and
-		 *        made into a local closure function.
-		 *
-		 * @TODO: The regular expression should be defined once (as a constant)
-		 *        outside of the scope of this function.
-		 *
-		 * @param {String} str
-		 * @return {String} Santized copy of `str`.
-		 */
-		sanitize: function(str) {
-			return html.trimWhitespaceCharacters(str)
-				.replace(/[^a-z0-9]+/gi, '_');
-		},
-
-		//ns = headerids
-		initSidebar: function(sidebar) {
-			var thisPlugin = this;
-			thisPlugin.sidebar = sidebar;
-			sidebar.addPanel({
-				id: nsClass('sidebar-panel'),
-				title: i18n.t('internal_hyperlink'),
-				content: '',
-				expanded: true,
-				activeOn: 'h1, h2, h3, h4, h5, h6',
-
-				onInit: function () {
-					var thisSidebarPanel = this,
-					    content = this.setContent('<label class="' + nsClass('label') + '" for="' + nsClass('input') + '">' + i18n.t('headerids.label.target') + '</label><input id="' + nsClass('input') + '" class="' + nsClass('input') + '" type="text" name="value"/> <button class="' + nsClass('reset-button') + '">' + i18n.t('headerids.button.reset') + '</button><button class="' + nsClass('set-button') + '">' + i18n.t('headerids.button.set') + '</button>').content;
-
-					content.find(nsSel('set-button')).click(function () {
-						var content = thisSidebarPanel.content;
-						jQuery(thisSidebarPanel.effective)
-							.attr('id', jQuery(nsSel('input')).val())
-							.addClass('aloha-customized');
-					});
-
-					content.find(nsSel('reset-button')).click(function () {
-						var content = thisSidebarPanel.content;
-						thisPlugin.processH(thisSidebarPanel.effective);
-						jQuery(thisSidebarPanel.effective)
-							.removeClass('aloha-customized');
-						thisSidebarPanel.content.find(nsSel('input')).val(thisSidebarPanel.effective.attr('id'));
-					});
-				},
-
-				onActivate: function (effective) {
-					this.effective = effective;
-					this.content.find(nsSel('input')).val(thisPlugin.processH(effective[0]));
-				}
-			});
-
-			sidebar.show();
-		},
-		
-		/**
-		 * Make the given jQuery object (representing an editable) clean for saving
-		 * If the headerids plugin is active it checks the current editable and 
-		 * generates ids for headers.
-		 * 
-		 * @param {jQuery} obj jQuery object to make clean
-		 */
-		makeClean: function (obj) {
-			this.check(obj);
-		}
-		
-	});
-});
-
-/* listenforcer-plugin.js is part of Aloha Editor project http://aloha-editor.org
- *
- * Aloha Editor is a WYSIWYG HTML5 inline editing library and editor. 
- * Copyright (c) 2010-2012 Gentics Software GmbH, Vienna, Austria.
- * Contributors http://aloha-editor.org/contribution.php 
- * 
- * Aloha Editor is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * Aloha Editor is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
- * As an additional permission to the GNU GPL version 2, you may distribute
- * non-source (e.g., minimized or compacted) forms of the Aloha-Editor
- * source code without the copy of the GNU GPL normally required,
- * provided you include this license notice and a URL through which
- * recipients can access the Corresponding Source.
- */
-/* Aloha List Enforcer
- * -------------------
- * Enforces a one top-level list per editable policy ;-)
- * This plugin will register editables and enforce lists in them. List enforced
- * editables will be permitted to contain, exactly one top-level element which
- * must be a (OL or a UL) list element.
- */
-define('listenforcer/listenforcer-plugin', [
-	'aloha',
-	'jquery',
-	'aloha/plugin',
-	'aloha/console'
-], function( Aloha, jQuery, Plugin, console ) {
-	
-
-	/**
-	 * An internal array of all editables inwhich to enforce lists.
-	 *
-	 * @private
-	 */
-	var listEnforcedEditables = [];
-
-	/**
-	 * Given an editable which has been configured to enforce lists,
-	 * ensures that there is exactly one top-level list in the editable.
-	 * If there are no lists, one will be added, using the
-	 * placeHolderListString. If there is more than one list, they will be
-	 * merged into the first list.
-	 * If there is any other content in the editable it will be removed.
-	 *
-	 * @private
-	 * @param {jQuery} $editable
-	 * @param {String} placeHolderListString
-	 */
-	function enforce ( $editable, placeHolderListString ) {
-		// Check if this editable is configured to enforce lists
-		if ( jQuery.inArray( $editable[ 0 ], listEnforcedEditables ) === -1 ) {
-			return;
-		}
-
-		// Remove all temporary <br>s in the editable, which we may have
-		// inserted when we activated this editable and found it empty. These
-		// <br>s are needed to make the otherwise empty <li> visible (in IE).
-		//
-		// Note: We no longer insert  temporary <br>s with the "aloha-end-br"
-		// class on them.  But we should leave this removal here to ensure that
-		// content that was generated with legacy Aloha Editor is cleaned
-		// correctly.
-		$editable.find('.aloha-end-br').remove();
-
-		// Check for the presence of at least one non-empty list. We consider
-		// a list to be not empty if it has atleast one item whose contents are
-		// more than a single (propping) <br> tag.
-
-		var hasList = false;
-
-		$editable.find( 'li' ).each( function(){
-			// nb: jQuery text() method returns the text contents of the
-			// element without <br>s being rendered.
-			if ( jQuery.trim( jQuery( this ).text() ) !== '' ) {
-				hasList = true;
-				// Stop looking for lists as soon as we find our first
-				// non-empty list
-				return false;
-			}
-		} );
-
-		// If we found no non-empty list, then we add our empty dummy list that
-		// the user can work with.
-		if ( !hasList ) {
-			$editable.html( placeHolderListString );
-		}
-
-		// Concatinate all top-level lists into the first, before, thereby
-		// merging all top-level lists into one.
-		var $lists = $editable.find( '>ul,>ol' ),
-		    j = $lists.length,
-		    i;
-		if ( j > 1 ) {
-			var $firstList = jQuery( $lists[0] );
-			for ( i = 1; i < j; ++i ) {
-				$firstList.append( jQuery( $lists[ i ] ).find( '>li' ) );
-				jQuery( $lists[ i ] ).remove();
-			}
-		}
-
-		// Remove all top-level elements which are not lists
-		$editable.find( '>*:not(ul,ol)' ).remove();
-	};
-
-	return Plugin.create( 'listenforcer', {
-
-		_constructor: function() {
-			this._super( 'listenforcer' );
-		},
-
-		/**
-		 * Initializes the listenforcer plugin:
-		 * We read the aloha configuration settings to determine which
-		 * editables are to have list enforced in them.
-		 * We bind handlers to 3 events (aloha-editable-activated,
-		 * aloha-editable-deactivated, and aloha-smart-content-changed) on
-		 * which we will process the current active editable and enfore lists
-		 * in it.
-		 */
-		init: function() {
-			var that = this,
-			    elemsToEnforce = this.settings.editables || [],
-				elemToEnforce,
-				i,
-				j = elemsToEnforce.length;
-
-			// Register all editables that are to enforce lists.
-			// The following types of items can be used as jQuery selectors:
-			// String, DOMElement, and jQuery
-			for ( i = 0; i < j; i++ ) {
-				elemToEnforce = elemsToEnforce[ i ];
-				if ( typeof elemToEnforce === 'string' ||
-						elemToEnforce.nodeName ||
-							elemToEnforce instanceof jQuery ) {
-					jQuery(elemToEnforce).each(function(){
-						that.addEditableToEnforcementList( this );
-					});
-				} else {
-					console.warn(
-						'Aloha List Enforcer Plugin',
-						'Object "' + elemToEnforce.toString() + '" can not ' +
-						'be used as a jQuery selector with which to register' +
-						' an editable to be list enforced.'
-					);
-				}
-			}
-
-			Aloha.bind('aloha-editable-activated', function ($event, params) {
-				enforce(params.editable.obj,
-					'<ul><li><br /></li></ul>');
-			});
-
-			Aloha.bind('aloha-editable-deactivated', function ($event, params) {
-				enforce(params.editable.obj, '');
-			});
-
-			Aloha.bind('aloha-smart-content-changed', function ($event, params) {
-				//We only want to do this is if the editable is actually active
-			 	if (Aloha.activeEditable && Aloha.activeEditable.isActive === true) {
-			 		enforce( params.editable.obj,
-			 			'<ul><li><br /></li></ul>');
-			 	}
-			});
-		},
-
-		/**
-		 * Registers the given editable to be list-enforced.
-		 *
-		 * @param {DOMElement} editable
-		 */
-		addEditableToEnforcementList: function( editable ) {
-			if ( editable ) {
-				listEnforcedEditables.push( editable );
-			}
-		}
-
-	} );
-} );
 	if (Aloha._load) {
 		Aloha._load(); // initialized in aloha.js
 	}

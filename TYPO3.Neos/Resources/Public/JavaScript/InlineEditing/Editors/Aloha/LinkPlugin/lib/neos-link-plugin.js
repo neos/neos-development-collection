@@ -54,7 +54,16 @@ define([
 				var value = that.hrefField.getValue();
 				require({context: 'neos'}, ['Shared/Utility'], function(Utility) {
 					if (!Utility.isValidLink(value)) {
-						$(that.hrefField.getTargetObject()).attr('href', 'http://' + value);
+						var url = 'http://' + value;
+						$(that.hrefField.getTargetObject()).attr('href', url);
+						if (that.target) {
+							that.hrefField.setAttribute(
+								'target',
+								that.target,
+								that.targetregex,
+								url
+							);
+						}
 					}
 				});
 			}

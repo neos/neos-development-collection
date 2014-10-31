@@ -473,12 +473,12 @@
 .neos .icon-font:before {
   content: "";
 }
-.neos .icon-bold:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold:before,
-.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strong:before {
+.neos .icon-bold:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-bold:before,
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-strong:before {
   content: "";
 }
-.neos .icon-italic:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic:before,
-.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-emphasis:before {
+.neos .icon-italic:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-italic:before,
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-emphasis:before {
   content: "";
 }
 .neos .icon-text-height:before {
@@ -487,25 +487,25 @@
 .neos .icon-text-width:before {
   content: "";
 }
-.neos .icon-align-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-left:before {
+.neos .icon-align-left:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-align-left:before {
   content: "";
 }
-.neos .icon-align-center:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-center:before {
+.neos .icon-align-center:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-align-center:before {
   content: "";
 }
-.neos .icon-align-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-right:before {
+.neos .icon-align-right:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-align-right:before {
   content: "";
 }
-.neos .icon-align-justify:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-justify:before {
+.neos .icon-align-justify:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-align-justify:before {
   content: "";
 }
 .neos .icon-list:before {
   content: "";
 }
-.neos .icon-indent-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-outdent:before {
+.neos .icon-indent-left:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-outdent:before {
   content: "";
 }
-.neos .icon-indent-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-indent:before {
+.neos .icon-indent-right:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-indent:before {
   content: "";
 }
 .neos .icon-facetime-video:before {
@@ -535,7 +535,7 @@
 .neos .icon-check:before {
   content: "";
 }
-.neos .icon-move:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-toggledragdrop:before {
+.neos .icon-move:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-toggledragdrop:before {
   content: "";
 }
 .neos .icon-step-backward:before {
@@ -844,7 +844,7 @@
 .neos .icon-group:before {
   content: "";
 }
-.neos .icon-link:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-link:before {
+.neos .icon-link:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-link:before {
   content: "";
 }
 .neos .icon-cloud:before {
@@ -872,19 +872,19 @@
 .neos .icon-reorder:before {
   content: "";
 }
-.neos .icon-list-ul:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-unorderedlist:before {
+.neos .icon-list-ul:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-unorderedlist:before {
   content: "";
 }
-.neos .icon-list-ol:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-orderedlist:before {
+.neos .icon-list-ol:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-orderedlist:before {
   content: "";
 }
-.neos .icon-strikethrough:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strikethrough:before {
+.neos .icon-strikethrough:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-strikethrough:before {
   content: "";
 }
-.neos .icon-underline:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-underline:before {
+.neos .icon-underline:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-underline:before {
   content: "";
 }
-.neos .icon-table:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-createTable:before {
+.neos .icon-table:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-createTable:before {
   content: "";
 }
 .neos .icon-magic:before {
@@ -963,7 +963,7 @@
 .neos .icon-umbrella:before {
   content: "";
 }
-.neos .icon-paste:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-formatless-paste:before {
+.neos .icon-paste:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-formatless-paste:before {
   content: "";
 }
 .neos .icon-lightbulb:before {
@@ -1117,7 +1117,7 @@
 .neos .icon-terminal:before {
   content: "";
 }
-.neos .icon-code:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-code:before {
+.neos .icon-code:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-code:before {
   content: "";
 }
 .neos .icon-reply-all:before {
@@ -1151,10 +1151,10 @@
 .neos .icon-exclamation:before {
   content: "";
 }
-.neos .icon-superscript:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-superscript:before {
+.neos .icon-superscript:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-superscript:before {
   content: "";
 }
-.neos .icon-subscript:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-subscript:before {
+.neos .icon-subscript:before, .neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon-subscript:before {
   content: "";
 }
 .neos .icon-eraser:before {
@@ -9007,14 +9007,121 @@
 .neos-menu-panel-open.neos-menu-panel-sticky.neos-navigate-panel-open .neos #neos-aloha-topmenu #aloha-attribute-field-editLink {
   margin-left: 373px;
 }
-.neos #neos-aloha-topmenu .aloha .ui-state-default {
+.neos #neos-aloha-topmenu .aloha .aloha-ui-hidden {
+  display: none;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container {
+  display: inline-block;
+  /**
+   * Predefined list styles
+   **/
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .ui-button .ui-button-text {
+  display: block;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container a {
+  color: #fff;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+  line-height: 40px;
+  padding-left: 16px;
+  text-align: center;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container a:hover {
+  background: #00b5ff;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container a.ui-state-focus {
+  border: none;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul.ui-widget-content {
+  background: #323232;
+  border: none;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
+  border-top: 1px solid #3f3f3f;
+  min-width: 67px;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul.ui-widget-content ul ul,
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul.ui-widget-content ol ol {
+  display: none !important;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul li,
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol li {
+  list-style: inherit;
+  border: none;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul li + li,
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol li + li {
+  border-top: 1px solid #3f3f3f;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ul {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol {
+  list-style-type: decimal;
+  list-style-position: inside;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ul ul, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol ul {
+  list-style-type: circle;
+  list-style-position: inside;
+  margin-left: 15px;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol ol, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul ol {
+  list-style-type: lower-latin;
+  list-style-position: inside;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ul.neos-list-disc, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul.neos-list-disc {
+  list-style-type: disc;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ul.neos-list-circle, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul.neos-list-circle {
+  list-style-type: circle;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ul.neos-list-square, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ul.neos-list-square {
+  list-style-type: square;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-decimal, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-decimal {
+  list-style-type: decimal;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-decimal-leading-zero, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-decimal-leading-zero {
+  list-style-type: decimal-leading-zero;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-lower-roman, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-lower-roman {
+  list-style-type: lower-roman;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-upper-roman, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-upper-roman {
+  list-style-type: upper-roman;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-lower-greek, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-lower-greek {
+  list-style-type: lower-greek;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-lower-latin, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-lower-latin {
+  list-style-type: lower-latin;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates ol.neos-list-upper-latin, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container ol.neos-list-upper-latin {
+  list-style-type: upper-latin;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates dl.neos-list-red, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container dl.neos-list-red {
+  color: red;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates dl.neos-list-blue, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container dl.neos-list-blue {
+  color: blue;
+}
+.neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container .aloha-list-templates dl.neos-list-green, .neos #neos-aloha-topmenu .aloha .aloha-ui-menubutton-container dl.neos-list-green {
+  color: green;
+}
+.neos #neos-aloha-topmenu .aloha .ui-button {
   background: none;
   border: 0px;
+  padding: 0;
 }
-.neos #neos-aloha-topmenu .aloha .ui-state-default .ui-button-icon-only {
+.neos #neos-aloha-topmenu .aloha .ui-button .ui-button-icon-only {
   width: 32px;
 }
-.neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon {
+.neos #neos-aloha-topmenu .aloha .ui-button .aloha-icon {
   background: none;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -9027,11 +9134,8 @@
   padding: 0px;
   text-indent: 0px;
 }
-.neos #neos-aloha-topmenu .aloha .ui-state-default.ui-state-hover .aloha-icon, .neos #neos-aloha-topmenu .aloha .ui-state-default.aloha-button-active .aloha-icon {
+.neos #neos-aloha-topmenu .aloha .ui-button.ui-state-hover .aloha-icon, .neos #neos-aloha-topmenu .aloha .ui-button.aloha-button-active .aloha-icon {
   color: #00b5ff;
-}
-.neos #neos-aloha-topmenu .aloha .ui-state-default .ui-button-text {
-  display: none;
 }
 .neos .neos-handle-container {
   position: absolute;
@@ -11087,6 +11191,11 @@ body.neos-preview-mode .neos .neos-modal-backdrop {
 }
 .neos-nprogress-busy body {
   cursor: wait !important;
+}
+
+.neos-inline-editable > *:empty::before {
+  content: '';
+  display: inline-block;
 }
 
 #neos-document-metadata {

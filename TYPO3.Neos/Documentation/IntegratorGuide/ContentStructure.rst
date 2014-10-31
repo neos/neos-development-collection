@@ -202,8 +202,10 @@ The following options are allowed:
 
         aloha:
           'format': # Enable specific formatting options.
-            'b': TRUE
-            'i': TRUE
+            'strong': TRUE
+            'b': FALSE
+            'em': TRUE
+            'i': FALSE
             'u': TRUE
             'sub': TRUE
             'sup': TRUE

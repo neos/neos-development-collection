@@ -4,5 +4,5 @@ if [ $(basename $(pwd)) != 'aloha' ]; then
 	exit 1
 fi
 
-git clone -b dev --recursive git://github.com/alohaeditor/Aloha-Editor.git src
+git clone -b master --recursive git://github.com/alohaeditor/Aloha-Editor.git src
 ./update-to-currently-working-version.sh
