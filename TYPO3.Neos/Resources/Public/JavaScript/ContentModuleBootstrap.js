@@ -27,6 +27,7 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
+		'ExternalApi',
 		'Shared/NodeTypeService',
 		'Shared/HttpClient',
 		'InlineEditing/PositioningHelper',
@@ -39,10 +40,9 @@ require(
 		PublishMenu,
 		ResourceCache,
 		Notification,
-		Configuration
+		Configuration,
+		ExternalApi
 	) {
-		var T3 = window.T3;
-
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 
 		Ember.$(document).ready(function() {
@@ -58,5 +58,8 @@ require(
 				}
 			});
 		});
+
+		// Export external Neos API
+		window.Typo3Neos = ExternalApi;
 	}
 );
