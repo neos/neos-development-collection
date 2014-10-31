@@ -3,7 +3,7 @@
 	<span>
 		{{view view.inputField classNames="neos-editor-datetimepicker-hrvalue" placeholderBinding="view.placeholder" valueBinding="view.hrValue"}}
 	</span>
-	<span class="neos-add-on" {{action "reset" target="view"}}><i class="icon-remove"></i></span>
+	<a href="#" class="neos-add-on" {{action "reset" target="view"}}><i class="icon-remove"></i></a>
 	{{view Ember.TextField valueBinding="view.value" type="hidden"}}
 </div>
 <div class="neos-editor-datetimepicker"></div>
