@@ -69,6 +69,12 @@ class NodeExportService {
 	protected $nodeTypeManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 */
+	protected $nodeDataRepository;
+
+	/**
 	 * @var ImportExportPropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
@@ -98,9 +104,10 @@ class NodeExportService {
 	 * @param boolean $tidy
 	 * @param boolean $endDocument
 	 * @param string $resourceSavePath
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
 	 * @return \XMLWriter
 	 */
-	public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = NULL, $tidy = TRUE, $endDocument = TRUE, $resourceSavePath = NULL) {
+	public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = NULL, $tidy = TRUE, $endDocument = TRUE, $resourceSavePath = NULL, $nodeTypeFilter = NULL) {
 		$this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceSavePath);
 		$this->exceptionsDuringExport = array();
 		$this->exportedNodePaths = array();
@@ -117,7 +124,7 @@ class NodeExportService {
 			$this->xmlWriter->startDocument('1.0', 'UTF-8');
 		}
 
-		$nodeDataList = $this->findNodeDataListToExport($startingPointNodePath, $workspaceName);
+		$nodeDataList = $this->findNodeDataListToExport($startingPointNodePath, $workspaceName, $nodeTypeFilter);
 		$this->exportNodeDataList($nodeDataList);
 
 		if ($endDocument) {
@@ -135,9 +142,10 @@ class NodeExportService {
 	 *
 	 * @param string $pathStartingPoint Absolute path specifying the starting point
 	 * @param string $workspace The containing workspace
+	 * @param string $nodeTypeFilter
 	 * @return array an array of node-data in array format.
 	 */
-	protected function findNodeDataListToExport($pathStartingPoint, $workspace = 'live') {
+	protected function findNodeDataListToExport($pathStartingPoint, $workspace = 'live', $nodeTypeFilter = NULL) {
 		/** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
 		$queryBuilder = $this->entityManager->createQueryBuilder();
 		$queryBuilder->select(
@@ -145,7 +153,7 @@ class NodeExportService {
 			. ' n.identifier AS identifier,'
 			. ' n.index AS sortingIndex,'
 			. ' n.properties AS properties, '
-			. ' n.nodeType as nodeType,'
+			. ' n.nodeType AS nodeType,'
 			. ' n.removed AS removed,'
 			. ' n.hidden,'
 			. ' n.hiddenBeforeDateTime AS hiddenBeforeDateTime,'
@@ -172,6 +180,10 @@ class NodeExportService {
 			->setParameter('pathPrefixMatch', ($pathStartingPoint === '/' ? '%' : $pathStartingPoint . '/%'))
 			->orderBy('n.identifier', 'ASC')
 			->orderBy('n.path', 'ASC');
+
+		if ($nodeTypeFilter) {
+			$this->nodeDataRepository->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+		}
 
 		$nodeDataList = $queryBuilder->getQuery()->getResult();
 		// Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
@@ -384,7 +396,7 @@ class NodeExportService {
 				$exceptionMessages .= "\n" . $i . ': ' . get_class($exception) . "\n" . $exception->getMessage() . "\n";
 			}
 
-			throw new ExportException(sprintf('%s exceptions occured during export. Please see the log for the full exceptions (including stack traces). The exception messages follow below: %s', count($this->exceptionsDuringExport), $exceptionMessages), 1409057360);
+			throw new ExportException(sprintf('%s exceptions occurred during export. Please see the log for the full exceptions (including stack traces). The exception messages follow below: %s', count($this->exceptionsDuringExport), $exceptionMessages), 1409057360);
 		}
 	}
 }

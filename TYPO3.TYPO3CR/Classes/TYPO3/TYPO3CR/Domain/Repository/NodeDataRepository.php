@@ -928,7 +928,7 @@ class NodeDataRepository extends Repository {
 	 * @param string $nodeTypeFilter
 	 * @return void
 	 */
-	protected function addNodeTypeFilterConstraintsToQueryBuilder(QueryBuilder $queryBuilder, $nodeTypeFilter) {
+	public function addNodeTypeFilterConstraintsToQueryBuilder(QueryBuilder $queryBuilder, $nodeTypeFilter) {
 		$constraints = $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter);
 		if (count($constraints['includeNodeTypes']) > 0) {
 			$queryBuilder->andWhere('n.nodeType IN (:includeNodeTypes)')
