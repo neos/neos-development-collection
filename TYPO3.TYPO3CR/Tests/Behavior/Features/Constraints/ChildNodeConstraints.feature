@@ -18,7 +18,7 @@ Feature: ChildNode Constraints
     - setting the value to `FALSE` is an explicit *DENY*
     - setting the value to `NULL` (i.e. using `~` in YAML) is an *ABSTAIN*, so that means the fallback of `*` is used.
 
-  - the node types must be listed *explicitly*, so if allowing/disallowing "Foo", the subtypes of "Foo" are NOT automatically allowed/disallowed.
+  - The node type inheritance is taken into account, so if allowing/disallowing "Foo", the subtypes of "Foo" are automatically allowed/disallowed.
   - The default is to *ALWAYS DENY* (in case "*" is not specified).
 
   Background:
@@ -102,8 +102,8 @@ Feature: ChildNode Constraints
       | Workspace |
       | live      |
     Then I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
     And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
-    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
 
   @fixtures
   Scenario: Disallow node types for auto-created child nodes, taking child node type constraints into account
@@ -121,8 +121,8 @@ Feature: ChildNode Constraints
       | Workspace |
       | live      |
     Then I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
     And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
-    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
 
   @fixtures
   Scenario: Inherit constraints from super-types
@@ -140,8 +140,8 @@ Feature: ChildNode Constraints
       | Workspace |
       | live      |
     Then I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
     And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
-    And I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
 
   @fixtures
   Scenario: Reset constraints from super-types
@@ -234,3 +234,24 @@ Feature: ChildNode Constraints
       | Workspace |
       | live      |
     Then I should have one node
+
+  @fixtures
+  Scenario: Allow node types for auto-created child nodes and disallow inherited subtype
+    Given I have the following additional NodeTypes configuration:
+    """
+    'TYPO3.TYPO3CR.Testing:Page':
+      childNodes:
+        main:
+          type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+          constraints:
+            nodeTypes:
+              'TYPO3.TYPO3CR.Testing:Text': TRUE
+              'TYPO3.TYPO3CR.Testing:TextWithImage': FALSE
+              '*': FALSE
+    """
+    When I get a node by path "/sites/typo3cr/main" with the following context:
+      | Workspace |
+      | live      |
+    Then I should be able to create a child node of type "TYPO3.TYPO3CR.Testing:Text"
+    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:TextWithImage"
+    And I should not be able to create a child node of type "TYPO3.TYPO3CR.Testing:Image"
