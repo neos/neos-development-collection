@@ -11,6 +11,7 @@ First of all, the necessary layouts have to be configured inside `VendorName.Ven
         layout:
           ui:
             inspector:
+              group: layout
               editorOptions:
                 values:
                   'default':
@@ -20,6 +21,7 @@ First of all, the necessary layouts have to be configured inside `VendorName.Ven
         subpageLayout:
           ui:
             inspector:
+              group: layout
               editorOptions:
                 values:
                   'default':
@@ -32,6 +34,9 @@ Here, the properties `layout` and `subpageLayout` are configured inside `TYPO3.N
 * `layout`: Changes the layout of the current page
 * `subpageLayout`: Changes the layout of subpages if nothing else was chosen.
 
+.. note::
+
+	Notice that the group is set for both properties as well, because they're hidden by default.
 
 
 When all this is done we need to bind the layout to a rendering and this is done in TypoScript,
