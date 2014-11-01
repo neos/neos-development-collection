@@ -115,9 +115,10 @@ class SiteCommandController extends CommandController {
 	 * @param boolean $tidy Whether to export formatted XML
 	 * @param string $filename relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
 	 * @param string $packageKey Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
+	 * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
 	 * @return void
 	 */
-	public function exportCommand($siteNode = NULL, $tidy = FALSE, $filename = NULL, $packageKey = NULL) {
+	public function exportCommand($siteNode = NULL, $tidy = FALSE, $filename = NULL, $packageKey = NULL, $nodeTypeFilter = NULL) {
 		if ($siteNode === NULL) {
 			$sites = $this->siteRepository->findAll()->toArray();
 		} else {
@@ -130,21 +131,21 @@ class SiteCommandController extends CommandController {
 		}
 
 		if ($packageKey !== NULL) {
-			$this->siteExportService->exportToPackage($sites, $tidy, $packageKey);
+			$this->siteExportService->exportToPackage($sites, $tidy, $packageKey, $nodeTypeFilter);
 			if ($siteNode !== NULL) {
 				$this->outputLine('The site "%s" has been exported to package "%s".', array($siteNode, $packageKey));
 			} else {
 				$this->outputLine('All sites have been exported to package "%s".', array($packageKey));
 			}
 		} elseif ($filename !== NULL) {
-			$this->siteExportService->exportToFile($sites, $tidy, $filename);
+			$this->siteExportService->exportToFile($sites, $tidy, $filename, $nodeTypeFilter);
 			if ($siteNode !== NULL) {
 				$this->outputLine('The site "%s" has been exported to "%s".', array($siteNode, $filename));
 			} else {
 				$this->outputLine('All sites have been exported to "%s".', array($filename));
 			}
 		} else {
-			$this->output($this->siteExportService->export($sites, $tidy));
+			$this->output($this->siteExportService->export($sites, $tidy, $nodeTypeFilter));
 		}
 	}
 
