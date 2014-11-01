@@ -274,7 +274,7 @@
   superTypes: ['TYPO3.Neos:Node']
   ui:
     label: 'Content Collection'
-    icon: 'icon-unchecked'
+    icon: 'icon-folder-open-alt'
   constraints:
     nodeTypes:
       '*': TRUE
