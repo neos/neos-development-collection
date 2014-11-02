@@ -198,13 +198,13 @@
 				<source>Content</source>
 			<target xml:lang="uk" state="translated">Вміст</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
-				<source>This will delete the page</source>
+				<source>This will delete the element</source>
 			<target xml:lang="uk" state="translated">Це призведе до видалення сторінки</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
-				<source>and it's subpages</source>
+				<source>and it's children</source>
 			<target xml:lang="uk" state="translated">і на її підсторінках</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
-				<source>This operation can be undone in the workspace management.</source>
+				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="uk" state="translated">Цю операцію можна скасувати в модулі керування робочими областями.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>

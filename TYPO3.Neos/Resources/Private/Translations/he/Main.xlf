@@ -198,14 +198,14 @@
 				<source>Content</source>
 			<target xml:lang="he" state="needs-translation">Content</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
-				<source>This will delete the page</source>
-			<target xml:lang="he" state="needs-translation">This will delete the page</target></trans-unit>
+				<source>This will delete the element</source>
+			<target xml:lang="he" state="needs-translation">This will delete the element</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
-				<source>and it's subpages</source>
-			<target xml:lang="he" state="needs-translation">and it's subpages</target></trans-unit>
+				<source>and it's children</source>
+			<target xml:lang="he" state="needs-translation">and it's children</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
-				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="he" state="needs-translation">This operation can be undone in the workspace management.</target></trans-unit>
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="he" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="he" state="needs-translation">Height</target></trans-unit>
