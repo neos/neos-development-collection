@@ -27,7 +27,12 @@
 							<f:for each="{sites}" as="site">
 								<f:for each="{site.documents}" key="documentPath" as="document">
 									<tr class="neos-folder">
-										<td colspan="2" class="neos-priority1">
+										<td colspan="5" class="neos-priority1">
+											<f:if condition="{sites -> f:count()} > 1">
+												<div class="neos-pull-right">
+													<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
+												</div>
+											</f:if>
 											<strong>Path:
 												<f:if condition="{document.documentNode.removed}">
 													<f:then>
@@ -40,19 +45,7 @@
 													</f:else>
 												</f:if>
 											</strong>
-											<f:if condition="{sites -> f:count()} > 1">
-												<div class="neos-pull-right">
-													<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
-												</div>
-											</f:if>
 										</td>
-										<td class="neos-priority1">
-											<f:if condition="{sites -> f:count()} > 1">
-												<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
-											</f:if>
-										</td>
-										<td class="neos-priority3">&nbsp;</td>
-										<td class="neos-priority4">&nbsp;</td>
 										<td class="neos-priority1 neos-aRight">
 											<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
 										</td>
@@ -95,7 +88,7 @@
 													<f:if condition="{change.configuration.ui.icon}">
 														<i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}"></i>
 													</f:if>
-													{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.nodeType.name)}
+													{f:if(condition: change.node.nodeType.label, then: change.node.nodeType.label, else: change.node.nodeType.name)}
 												</label>
 											</td>
 											<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>

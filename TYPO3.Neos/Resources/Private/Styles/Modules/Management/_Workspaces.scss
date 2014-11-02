@@ -36,6 +36,12 @@
 	i[class*="icon-"],
 	i.legend {
 		vertical-align: baseline;
+		text-align: center;
+	}
+
+	td.node-type i {
+		text-align: center;
+		padding-right: $tightMargin;
 	}
 
 	.fold-toggle {
@@ -64,6 +70,8 @@
 
 		.legend {
 			margin-left: 15px;
+			text-align: center;
+			padding-right: $tightMargin;
 		}
 	}
 }
