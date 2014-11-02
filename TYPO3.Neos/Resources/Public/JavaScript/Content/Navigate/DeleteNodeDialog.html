@@ -1,17 +1,17 @@
-<div class="neos-modal" id="neos-navigate-delete-node-dialog">
+<div class="neos-modal">
 	<div class="neos-modal-header">
-		<button class="neos-close neos-button" data-dismiss="modal" title="Close" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">Are you sure you want to delete the page "{{view.title}}"?</div>
+		<button class="neos-close neos-button" title="Close" {{action "cancel" target="view"}}></button>
+		<div class="neos-header">Do you really want to delete "{{view.title}}"?</div>
 	</div>
 	<div>
 		<div class="neos-subheader">
-			This will delete the page{{#if view.numberOfChildren}} and it's subpages{{/if}}.<br />
-			This operation can be undone in the workspace management.
+			This will delete the element{{#if view.numberOfChildren}} and it's children{{/if}}.<br />
+			This action can be undone in the workspace management.
 		</div>
 	</div>
 	<div class="neos-modal-footer">
-		<button data-dismiss="modal" class="neos-button" title="Close" {{action "cancel" target="view"}}>Cancel</button>
-		<button class="neos-button neos-button-danger" title="Delete" {{action "deleteNode" target="view"}}>Delete</button>
+		<button class="neos-button" title="Cancel" {{action "cancel" target="view"}}>Cancel</button>
+		<button class="neos-button neos-button-danger" title="Delete the element" {{action "deleteNode" target="view"}}>Yes, delete the element</button>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>
