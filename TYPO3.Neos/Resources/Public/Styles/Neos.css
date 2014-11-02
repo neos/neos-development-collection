@@ -9467,6 +9467,11 @@
 .neos.neos-module.neos-module-management-workspaces i[class*="icon-"],
 .neos.neos-module.neos-module-management-workspaces i.legend {
   vertical-align: baseline;
+  text-align: center;
+}
+.neos.neos-module.neos-module-management-workspaces td.node-type i {
+  text-align: center;
+  padding-right: 4px;
 }
 .neos.neos-module.neos-module-management-workspaces .fold-toggle {
   cursor: pointer;
@@ -9490,6 +9495,8 @@
 }
 .neos.neos-module.neos-module-management-workspaces tfoot .legend {
   margin-left: 15px;
+  text-align: center;
+  padding-right: 4px;
 }
 .neos.neos-module > .neos-module-wrap {
   position: relative;
