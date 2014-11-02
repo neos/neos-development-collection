@@ -168,7 +168,6 @@ define(
 					}
 				}.property('_numberOfWorkspaceWideChanges'),
 				controller: PublishableNodes,
-				confirmationDialog: PublishAllDialog.create(),
 
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
@@ -177,7 +176,7 @@ define(
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				click: function() {
-					this.confirmationDialog.createElement();
+					PublishAllDialog.create();
 				},
 
 				didInsertElement: function() {
@@ -207,7 +206,6 @@ define(
 					}
 				}.property('_numberOfWorkspaceWideChanges'),
 				controller: PublishableNodes,
-				confirmationDialog: DiscardAllDialog.create(),
 
 				_noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
 				_numberOfWorkspaceWideChangesBinding: 'controller.numberOfWorkspaceWidePublishableNodes',
@@ -216,7 +214,7 @@ define(
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 
 				click: function() {
-					this.confirmationDialog.createElement();
+					DiscardAllDialog.create();
 				},
 
 				disabled: function() {

@@ -1,29 +1,34 @@
 define(
 	[
 		'emberjs',
-		'Library/jquery-with-dependencies'
+		'Library/jquery-with-dependencies',
+		'LibraryExtensions/Mousetrap'
 	],
-	function (Ember, $) {
+	function (Ember, $, Mousetrap) {
 		return Ember.View.extend({
 			classNames: ['neos-overlay-component'],
 
-			createElement: function () {
-				var that = this;
-				that._super();
-				that.$().appendTo($('#neos-application'));
-
-				Mousetrap.bind('esc', function () {
-					that.cancel();
-				});
+			init: function() {
+				this._super();
+				this.appendTo('#neos-application');
 			},
 
-			destroyElement: function () {
+			didInsertElement: function() {
+				var that = this;
+				Mousetrap.bind('esc', function() {
+					that.cancel();
+				});
+
+				this.$().find('button:last').focus();
+			},
+
+			destroy: function() {
 				this._super();
 				Mousetrap.unbind('esc');
 			},
 
-			cancel: function () {
-				this.destroyElement();
+			cancel: function() {
+				this.destroy();
 			}
 		});
 	}

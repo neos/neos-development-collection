@@ -156,9 +156,7 @@ function (
 
 		/** Content element actions **/
 		remove: function() {
-			DeleteNodeDialog.create({
-				_node: this.get('nodeSelection.selectedNode')
-			}).appendTo($('#neos-application'));
+			DeleteNodeDialog.create({_node: this.get('nodeSelection.selectedNode')});
 		},
 
 		newAfter: function() {
