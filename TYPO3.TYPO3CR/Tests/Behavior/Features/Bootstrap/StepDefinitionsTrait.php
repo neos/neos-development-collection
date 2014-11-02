@@ -156,7 +156,23 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @Then /^I should (not |)be able to rename the node to "([^"]*)"$/
+	 */
+	public function iShouldBeAbleToRenameTheNodeTo($not, $newName) {
+		try {
+			$this->iRenameTheNodeTo($newName);
+		} catch (\Exception $exception) {}
+
+		if (!empty($not) && !isset($exception)) {
+			Assert::fail('Expected an exception while renaming the node');
+		} elseif (empty($not) && isset($exception)) {
+			throw $exception;
+		}
+	}
+
+	/**
 	 * @Given /^I rename the node to "([^"]*)"$/
+	 *
 	 */
 	public function iRenameTheNodeTo($newName) {
 		$node = $this->iShouldHaveOneNode();

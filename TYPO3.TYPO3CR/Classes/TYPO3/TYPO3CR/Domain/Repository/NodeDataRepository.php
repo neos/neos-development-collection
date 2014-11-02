@@ -1167,9 +1167,10 @@ class NodeDataRepository extends Repository {
 	 *
 	 * @param string $path
 	 * @param Workspace $workspace
+	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
 	 * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
 	 */
-	public function findByPathWithoutReduce($path, Workspace $workspace) {
+	public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = FALSE) {
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -1190,6 +1191,10 @@ class NodeDataRepository extends Repository {
 		}
 
 		$foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
+
+		if ($includeRemovedNodes === FALSE) {
+			$foundNodes = $this->filterRemovedNodes($foundNodes, FALSE);
+		}
 
 		return $foundNodes;
 	}
