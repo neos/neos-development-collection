@@ -97,7 +97,7 @@ define(
 		 * When clicking the click protection, we show a dialog
 		 */
 		_showUnappliedDialog: function() {
-			UnappliedChangesDialog.create().appendTo('#neos-application');
+			UnappliedChangesDialog.create();
 		}
 	});
 });

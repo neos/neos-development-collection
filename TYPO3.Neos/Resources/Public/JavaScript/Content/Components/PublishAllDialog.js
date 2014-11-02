@@ -12,7 +12,7 @@ define(
 
 			publish: function() {
 				PublishableNodes.publishAll();
-				this.destroyElement();
+				this.destroy();
 			}
 		});
 	}

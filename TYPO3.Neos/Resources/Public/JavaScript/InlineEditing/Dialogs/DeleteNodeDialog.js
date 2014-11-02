@@ -15,16 +15,11 @@ define(
 	) {
 		return AbstractDialog.extend({
 			template: Ember.Handlebars.compile(template),
-			classNames: ['neos-ui neos-overlay-component'],
-
-			id: 'deleteNodeDialog',
-
 			_node: null,
 
 			'delete': function() {
 				this.get('_node').$element.remove();
 				NodeActions.remove(this.get('_node'));
-
 				this.destroy();
 			}
 		});

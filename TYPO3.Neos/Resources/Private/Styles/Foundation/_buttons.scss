@@ -46,14 +46,14 @@ button,
 			color: #fff;
 			background-color: $blue;
 			text-decoration: none;
-			outline: none;
 		}
 	}
 
 	// Focus state for keyboard and accessibility
 	&:focus {
 		@include tab-focus();
-		outline: 1px dotted $blue;
+		outline: 1px dotted #fff;
+		outline-offset: 0;
 	}
 
 	// Disabled state
@@ -70,6 +70,10 @@ button,
 
 	&.neos-button-primary {
 		background-color: $blue;
+
+		&:focus {
+			outline: 1px dotted #fff;
+		}
 	}
 
 	&.neos-button-success {
@@ -78,6 +82,10 @@ button,
 		&:hover,
 		&:active {
 			background-color: $green;
+		}
+
+		&:focus {
+			outline: 1px dotted #fff;
 		}
 	}
 
@@ -88,6 +96,10 @@ button,
 		&:active {
 			background-color: $orange;
 		}
+
+		&:focus {
+			outline: 1px dotted #fff;
+		}
 	}
 
 	&.neos-button-danger {
@@ -96,6 +108,10 @@ button,
 		&:hover,
 		&:active {
 			background-color: $warning;
+		}
+
+		&:focus {
+			outline: 1px dotted #fff;
 		}
 	}
 

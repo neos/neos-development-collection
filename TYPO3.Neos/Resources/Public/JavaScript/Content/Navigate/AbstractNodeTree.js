@@ -757,12 +757,13 @@ define(
 				}
 
 				var that = this;
-				DeleteNodeDialog.createElement();
-				DeleteNodeDialog.set('title', activeNode.data.title);
-				DeleteNodeDialog.set('numberOfChildren', activeNode.data.children ? activeNode.data.children.length : 0);
-				DeleteNodeDialog.set('deleteNode', function() {
-					that.deleteNode(activeNode);
-					this.cancel();
+				DeleteNodeDialog.create({
+					title: activeNode.data.title,
+					numberOfChildren: activeNode.data.children ? activeNode.data.children.length : 0,
+					deleteNode: function() {
+						that.deleteNode(activeNode);
+						this.cancel();
+					}
 				});
 			},
 

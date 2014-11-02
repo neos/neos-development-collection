@@ -10,11 +10,6 @@ function(Ember, $, AbstractDialog, template) {
 		template: Ember.Handlebars.compile(template),
 		title: '',
 		numberOfChildren: 0,
-		deleteNode: Ember.K,
-
-		cancel: function() {
-			this._super();
-			this.set('deleteNode', Ember.K);
-		}
-	}).create();
+		deleteNode: Ember.required
+	});
 });

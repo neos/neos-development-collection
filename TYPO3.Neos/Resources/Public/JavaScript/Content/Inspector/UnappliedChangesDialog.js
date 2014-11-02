@@ -16,7 +16,6 @@ define(
 	return AbstractDialog.extend({
 		classNames: ['inspector-dialog'],
 		template: Ember.Handlebars.compile(template),
-
 		controller: InspectorController,
 
 		apply: function() {

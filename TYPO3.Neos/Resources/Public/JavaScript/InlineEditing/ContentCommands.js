@@ -146,7 +146,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 					$('.neos-modal .neos-close').trigger('click');
 				}
 
-				DeleteNodeDialog.create({_node: node}).appendTo($('#neos-application'));
+				DeleteNodeDialog.create({_node: node});
 			});
 		},
 

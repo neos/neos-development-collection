@@ -12,7 +12,7 @@ define(
 
 			discard: function() {
 				PublishableNodes.discardAll();
-				this.destroyElement();
+				this.destroy();
 			}
 		});
 	}
