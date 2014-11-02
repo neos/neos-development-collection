@@ -5,11 +5,11 @@
     "description": "The next generation of the popular open-source CMS.",
     "require": {
         "typo3/flow": "*",
-        "typo3/media": "*",
+        "typo3/media": "1.2.*@dev",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
-        "typo3/typo3cr": "*",
-        "typo3/typoscript": "*"
+        "typo3/typo3cr": "1.2.*@dev",
+        "typo3/typoscript": "1.2.*@dev"
     },
     "suggest": {
         "typo3/neos-kickstarter": "Helps with creating new packages for TYPO3 Neos."
