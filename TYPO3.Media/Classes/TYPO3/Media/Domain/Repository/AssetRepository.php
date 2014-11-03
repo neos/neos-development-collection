@@ -21,6 +21,15 @@ use TYPO3\Flow\Annotations as Flow;
 class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 
 	/**
+	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
+	 * interface ...
+	 *
+	 * @Flow\Inject
+	 * @var \Doctrine\Common\Persistence\ObjectManager
+	 */
+	protected $entityManager;
+
+	/**
 	 * @var array
 	 */
 	protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
@@ -62,12 +71,14 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	 * Counts Assets with the given Tag assigned
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Tag $tag
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @return integer
 	 */
 	public function countByTag(\TYPO3\Media\Domain\Model\Tag $tag) {
-		$query = $this->createQuery();
-
-		return $query->matching($query->contains('tags', $tag))->count();
+		$rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+		$rsm->addScalarResult('c', 'c');
+		$query = $this->entityManager->createNativeQuery('SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_asset_tags_join mm ON a.persistence_object_identifier = mm.media_asset WHERE mm.media_tag = ?', $rsm);
+		$query->setParameter(1, $tag);
+		return $query->getSingleScalarResult();
 	}
 
 	/**
@@ -84,7 +95,7 @@ class AssetRepository extends \TYPO3\Flow\Persistence\Repository {
 	/**
 	 * Counts Assets without any tag
 	 *
-	 * @return \TYPO3\Flow\Persistence\QueryResultInterface
+	 * @return integer
 	 */
 	public function countUntagged() {
 		$query = $this->createQuery();
