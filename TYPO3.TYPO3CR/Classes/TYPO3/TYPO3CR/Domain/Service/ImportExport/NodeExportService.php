@@ -37,6 +37,12 @@ class NodeExportService {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -48,13 +54,11 @@ class NodeExportService {
 	protected $propertyMapper;
 
 	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
 	 */
 	protected $imageRepository;
 
 	/**
-	 * @Flow\Inject
 	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
 	 */
 	protected $assetRepository;
@@ -295,6 +299,7 @@ class NodeExportService {
 					 */
 					if ($data[$propertyName] instanceof \TYPO3\Media\Domain\Model\AssetInterface) {
 						if ($data[$propertyName]->getResource() === NULL) {
+							$this->injectMediaRepositories();
 							if ($data[$propertyName] instanceof \TYPO3\Media\Domain\Model\Image) {
 								$data[$propertyName] = $this->imageRepository->findByIdentifier($data[$propertyName]->getIdentifier());
 							} else {
@@ -321,6 +326,22 @@ class NodeExportService {
 			}
 
 			$this->xmlWriter->endElement();
+		}
+	}
+
+	/**
+	 * Fetch AssetRepository and ImageRepository.
+	 *
+	 * They are not injected because there must not be a hard dependency to TYPO3.Media.
+	 *
+	 * @return void
+	 */
+	protected function injectMediaRepositories() {
+		if ($this->imageRepository === NULL) {
+			$this->imageRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\ImageRepository');
+		}
+		if ($this->assetRepository === NULL) {
+			$this->assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
 		}
 	}
 
