@@ -223,8 +223,8 @@ class FeatureContext extends MinkContext {
 	 */
 	public function clearContentCache() {
 		$directories = array_merge(
-			glob(FLOW_PATH_DATA . 'Data/Temporary/*/Cache/Data/TYPO3_TypoScript_Content'),
-			glob(FLOW_PATH_DATA . 'Data/Temporary/*/*/Cache/Data/TYPO3_TypoScript_Content')
+			glob(FLOW_PATH_DATA . 'Temporary/*/Cache/Data/TYPO3_TypoScript_Content'),
+			glob(FLOW_PATH_DATA . 'Temporary/*/*/Cache/Data/TYPO3_TypoScript_Content')
 		);
 		if (is_array($directories)) {
 			foreach ($directories as $directory) {
@@ -436,6 +436,7 @@ class FeatureContext extends MinkContext {
 		// Persist any pending entity insertions (caused by lazy creation of live Workspace)
 		// This is a workaround which should be solved by properly isolating all read-only steps
 		$this->getSubContext('flow')->persistAll();
+		$this->resetNodeInstances();
 
 		/** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
 		$siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
