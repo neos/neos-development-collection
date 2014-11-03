@@ -63,7 +63,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface {
 	 * Render a node label
 	 *
 	 * @param NodeInterface $node
-	 * @param boolean $crop
+	 * @param boolean $crop This argument is deprecated as of Neos 1.2 and will be removed. Don't rely on this behavior and crop labels in the view.
 	 * @return string
 	 */
 	public function getLabel(NodeInterface $node, $crop = TRUE) {
@@ -73,7 +73,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface {
 			return $label;
 		}
 
-		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, NodeInterface::LABEL_MAXIMUM_CHARACTERS);
+		$croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, 30);
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}
 }

@@ -5,6 +5,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
+ *
  * the terms of the GNU General Public License, either version 3 of the   *
  * License, or (at your option) any later version.                        *
  *                                                                        *
@@ -22,9 +23,8 @@ interface NodeDataLabelGeneratorInterface {
 	 * Render a node label
 	 *
 	 * @param AbstractNodeData $nodeData
-	 * @param boolean $crop
 	 * @return string
 	 * @api
 	 */
-	public function getLabel(AbstractNodeData $nodeData, $crop = TRUE);
+	public function getLabel(AbstractNodeData $nodeData);
 }

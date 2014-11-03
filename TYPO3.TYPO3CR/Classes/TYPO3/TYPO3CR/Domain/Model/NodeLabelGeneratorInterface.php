@@ -22,9 +22,8 @@ interface NodeLabelGeneratorInterface {
 	 * Render a node label
 	 *
 	 * @param NodeInterface $node
-	 * @param boolean $crop
 	 * @return string
 	 * @api
 	 */
-	public function getLabel(NodeInterface $node, $crop = TRUE);
+	public function getLabel(NodeInterface $node);
 }
