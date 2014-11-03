@@ -4807,7 +4807,6 @@
   border: none;
   width: 100%;
   height: 100%;
-  margin: 0;
   white-space: nowrap;
   display: table;
 }
@@ -4831,14 +4830,12 @@
   display: none;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node {
-  display: block;
+  display: table-cell;
+  min-width: 100%;
   float: left;
   position: relative;
-  min-width: 100%;
-  display: table-cell;
   height: 24px;
   line-height: 24px;
-  white-space: nowrap;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -5034,9 +5031,11 @@
   color: #fff;
   vertical-align: top;
   line-height: 24px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+  padding-right: 8px;
 }
 .neos ul.neos-dynatree-container .neos-dynatree-node a:hover, .neos ul.neos-dynatree-container .neos-dynatree-node a:focus {
   text-decoration: none;
@@ -5404,6 +5403,11 @@
 }
 .neos #neos-inspector .neos-inspector-datetime-editor .neos-add-on {
   cursor: pointer;
+}
+.neos #neos-inspector .neos-inspector-datetime-editor a.neos-add-on:hover, .neos #neos-inspector .neos-inspector-datetime-editor a.neos-add-on:focus {
+  background-color: #00b5ff;
+  text-decoration: none;
+  outline: none;
 }
 .neos #neos-inspector .neos-inspector-datetime-editor input {
   cursor: pointer;
