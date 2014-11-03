@@ -887,7 +887,7 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$bravoNode->copyInto($alfaNode, 'charlie');
 
-		$this->assertSame($alfaNode->getNode('charlie')->getProperty('test'), TRUE);
+		$this->assertSame(TRUE, $alfaNode->getNode('charlie')->getProperty('test'));
 	}
 
 	/**
@@ -901,8 +901,8 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 		$bravoNode = $alfaNode->copyInto($alfaNode, 'bravo');
 
-		$this->assertSame($bravoNode->getProperty('test'), TRUE);
-		$this->assertSame($alfaNode->getNode('bravo'), $bravoNode);
+		$this->assertSame(TRUE, $bravoNode->getProperty('test'));
+		$this->assertSame($bravoNode, $alfaNode->getNode('bravo'));
 	}
 
 	/**

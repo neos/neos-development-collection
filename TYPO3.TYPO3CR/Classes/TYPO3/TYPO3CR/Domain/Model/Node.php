@@ -62,6 +62,12 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 	/**
 	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
+	 * @Flow\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
 	 */
 	protected $contextFactory;
@@ -736,22 +742,33 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	public function getProperty($propertyName, $returnNodesAsIdentifiers = FALSE) {
 		$value = $this->nodeData->getProperty($propertyName, $returnNodesAsIdentifiers, $this->context);
-		if (!empty($value) && $returnNodesAsIdentifiers === FALSE) {
-			switch($this->getNodeType()->getPropertyType($propertyName)) {
-				case 'references' :
-					$nodes = array();
-					foreach ($value as $nodeData) {
-						$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
-						// $node can be NULL if the node is not visible according to the current content context:
-						if ($node !== NULL) {
-							$nodes[] = $node;
+		if (!empty($value)) {
+			$nodeType = $this->getNodeType();
+			if ($nodeType->hasConfiguration('properties.' . $propertyName)) {
+				$expectedPropertyType = $nodeType->getPropertyType($propertyName);
+				switch ($expectedPropertyType) {
+					case 'references' :
+						if ($returnNodesAsIdentifiers === FALSE) {
+							$nodes = array();
+							foreach ($value as $nodeData) {
+								$node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+								// $node can be NULL if the node is not visible according to the current content context:
+								if ($node !== NULL) {
+									$nodes[] = $node;
+								}
+							}
+							$value = $nodes;
 						}
-					}
-					$value = $nodes;
-				break;
-				case 'reference' :
-					$value = $this->nodeFactory->createFromNodeData($value, $this->context);
-				break;
+						break;
+					case 'reference' :
+						if ($returnNodesAsIdentifiers === FALSE) {
+							$value = $this->nodeFactory->createFromNodeData($value, $this->context);
+						}
+						break;
+					default:
+						$value = $this->propertyMapper->convert($value, $expectedPropertyType);
+						break;
+				}
 			}
 		}
 		return $value;

@@ -39,6 +39,9 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	/**
 	 */
 	protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = NULL) {
+		$propertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper', array(), array(), '', FALSE);
+		$propertyMapper->expects($this->any())->method('convert')->willReturnArgument(0);
+
 		$userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', FALSE);
@@ -66,10 +69,12 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
 
 		$contextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($originalNode, $context);
+		$this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
 		$this->assertEquals('originalNodeResult', $contextualizedNode->$methodName($argument1));
 
 		$contextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($newNode, $context);
+		$this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
 		$this->assertEquals('newNodeResult', $contextualizedNode->$methodName($argument1));
 	}

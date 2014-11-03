@@ -388,6 +388,9 @@ class NodeImportService {
 	 * @param string $currentClassName class name of element
 	 * @param string $currentIdentifier identifier of element
 	 * @return mixed
+	 * @throws \Exception
+	 * @throws \TYPO3\Flow\Property\Exception
+	 * @throws \TYPO3\Flow\Security\Exception
 	 */
 	protected function convertElementToValue(\XMLReader $reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier = '') {
 		switch ($currentType) {
@@ -396,10 +399,9 @@ class NodeImportService {
 					$value = $this->propertyMapper->convert($reader->value, $currentClassName, $this->propertyMappingConfiguration);
 				} elseif ($currentEncoding === 'json') {
 					$value = $this->propertyMapper->convert(json_decode($reader->value, TRUE), $currentClassName, $this->propertyMappingConfiguration);
-					if ($currentIdentifier !== '') {
+					if ($currentIdentifier !== '' && $currentIdentifier !== NULL) {
 						ObjectAccess::setProperty($value, 'Persistence_Object_Identifier', $currentIdentifier, TRUE);
 					}
-					$this->persistObjects($value);
 				} else {
 					throw new \Exception(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
 				}
@@ -414,31 +416,6 @@ class NodeImportService {
 		}
 
 		return $value;
-	}
-
-	/**
-	 * This takes care of persisting the "embedded" objects in an ImageVariant
-	 * not really nice, will hopefully go away with a rewritten resource handling.
-	 *
-	 * @param object $value
-	 * @return void
-	 */
-	protected function persistObjects($value) {
-		if ($value instanceof AssetInterface) {
-			if ($value instanceof ImageVariant) {
-				$value = $value->getOriginalImage();
-			}
-
-			$existingResource = $this->persistenceManager->getObjectByIdentifier($this->persistenceManager->getIdentifierByObject($value->getResource()), 'TYPO3\Flow\Resource\Resource');
-			if ($existingResource === NULL || $this->persistenceManager->isNewObject($existingResource)) {
-				$this->persistenceManager->add($value->getResource());
-			}
-
-			$existingAsset = $this->persistenceManager->getObjectByIdentifier($this->persistenceManager->getIdentifierByObject($value), 'TYPO3\Media\Domain\Model\Asset');
-			if ($existingAsset === NULL || $this->persistenceManager->isNewObject($existingAsset)) {
-				$this->persistenceManager->add($value);
-			}
-		}
 	}
 
 	/**
@@ -525,19 +502,23 @@ class NodeImportService {
 			return;
 		}
 
+		// cleanup old data
+		/** @var \Doctrine\DBAL\Connection $connection */
+		$connection = $this->entityManager->getConnection();
+
 		// prepare node dimensions
 		$dimensionValues = $nodeData['dimensionValues'];
 		$dimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
 
+		$objectArrayDataTypeHandler = \TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::getType(\TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::OBJECTARRAY);
+
 		// post-process node data
 		$nodeData['dimensionsHash'] = $dimensionsHash;
 		$nodeData['dimensionValues'] = serialize($dimensionValues);
-		$nodeData['properties'] = serialize($nodeData['properties']);
+		$nodeData['properties'] = $objectArrayDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
 		$nodeData['accessRoles'] = serialize($nodeData['accessRoles']);
 
-		// cleanup old data
-		/** @var \Doctrine\DBAL\Connection $connection */
-		$connection = $this->entityManager->getConnection();
+
 		$connection->prepare('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
 			. ' WHERE nodedata IN ('
 			. '   SELECT persistence_object_identifier FROM typo3_typo3cr_domain_model_nodedata'

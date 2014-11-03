@@ -79,6 +79,10 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
 			return TRUE;
 		}
 
+		if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ObjectConverter' && $key === self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) {
+			return TRUE;
+		}
+
 		if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ArrayConverter' && $key === ArrayConverter::CONFIGURATION_STRING_FORMAT) {
 			return ArrayConverter::STRING_FORMAT_JSON;
 		}
@@ -137,6 +141,10 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
 	 * @api
 	 */
 	public function getTargetPropertyName($sourcePropertyName) {
+		// TODO: This if statement is necessary for smooth migration to the new resource/media management. "originalImage" is deprecated, this can be removed in 3 versions.
+		if ($sourcePropertyName === 'originalImage') {
+			return 'originalAsset';
+		}
 		return $sourcePropertyName;
 	}
 

@@ -253,6 +253,7 @@ class NodeConverter extends AbstractTypeConverter {
 				} catch(\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
 				}
 			}
+
 			if ($this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
 				$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $nodePropertyType);
 			}
