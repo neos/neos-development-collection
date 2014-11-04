@@ -417,14 +417,14 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
-	 * @When /^I adopt the node to the following context:$/
+	 * @When /^I adopt the node (recursively |)to the following context:$/
 	 */
-	public function iTransferNodeToTheFollowingContext(TableNode $table) {
+	public function iTransferNodeToTheFollowingContext($recursive, TableNode $table) {
 		$rows = $table->getHash();
 		$context = $this->getContextForProperties($rows[0]);
 
 		$currentNode = $this->iShouldHaveOneNode();
-		$this->currentNodes = array($context->adoptNode($currentNode));
+		$this->currentNodes = array($context->adoptNode($currentNode, $recursive !== ''));
 	}
 
 	/**

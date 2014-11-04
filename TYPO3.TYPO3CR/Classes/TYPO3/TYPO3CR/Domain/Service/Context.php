@@ -269,20 +269,32 @@ class Context {
 	 * new, more specific node is created and returned.
 	 *
 	 * @param NodeInterface $node The node with a different context. If the context of the given node is the same as this context the operation will have no effect.
+	 * @param boolean $recursive If TRUE also adopt all descendant nodes which are non-aggregate
 	 * @return NodeInterface A new or existing node that matches this context
 	 */
-	public function adoptNode(NodeInterface $node) {
+	public function adoptNode(NodeInterface $node, $recursive = FALSE) {
 		if ($node->getContext() === $this && $node->dimensionsAreMatchingTargetDimensionValues()) {
 			return $node;
 		}
 
 		$existingNode = $this->getNodeByIdentifier($node->getIdentifier());
 		if ($existingNode !== NULL && $existingNode->dimensionsAreMatchingTargetDimensionValues()) {
-			return $existingNode;
+			$adoptedNode = $existingNode;
+		} else {
+			$adoptedNode = $node->createVariantForContext($this);
+			$this->firstLevelNodeCache->setByIdentifier($adoptedNode->getIdentifier(), $adoptedNode);
 		}
 
-		$adoptedNode = $node->createVariantForContext($this);
-		$this->firstLevelNodeCache->setByIdentifier($adoptedNode->getIdentifier(), $adoptedNode);
+		if ($recursive) {
+			$childNodes = $node->getChildNodes();
+			/** @var NodeInterface $childNode */
+			foreach ($childNodes as $childNode) {
+				if (!$childNode->getNodeType()->isAggregate()) {
+					$this->adoptNode($childNode, TRUE);
+				}
+			}
+		}
+
 		return $adoptedNode;
 	}
 

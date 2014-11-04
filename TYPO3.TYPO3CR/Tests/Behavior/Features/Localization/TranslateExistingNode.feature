@@ -137,3 +137,26 @@ Feature: Translate existing node
       | Language      |
       | de_ZZ, mul_ZZ |
     Then I should have one node
+
+  @fixtures
+  Scenario: Recursive adopt creates node variants for all non-aggregate descendants
+    Given I have the following nodes:
+      | Identifier                           | Path                                              | Node Type                       | Language |
+      | cc302952-6442-11e4-9935-14109fd7a2dd | /sites/typo3cr/company/contact                    | TYPO3.TYPO3CR.Testing:Page      | en_ZZ    |
+      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | TYPO3.TYPO3CR.Testing:TwoColumn | en_ZZ    |
+      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text0 | TYPO3.TYPO3CR.Testing:Text      | en_ZZ    |
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Language      |
+      | en_ZZ, mul_ZZ |
+    And I adopt the node recursively to the following context:
+      | Language      |
+      | de_ZZ, mul_ZZ |
+    And I set the node property "title" to "Unternehmen"
+    And I get a node by path "/sites/typo3cr/company/main/two-col/column0/text0" with the following context:
+      | Language      |
+      | de_ZZ, mul_ZZ |
+    Then I should have one node
+    When I get a node by path "/sites/typo3cr/company/contact" with the following context:
+      | Language      |
+      | de_ZZ, mul_ZZ |
+    Then I should have 0 nodes

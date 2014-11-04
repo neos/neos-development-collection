@@ -73,7 +73,8 @@
       'TYPO3.TYPO3CR.Testing:TwoColumn': TRUE
       'TYPO3.TYPO3CR.Testing:Text': TRUE
 
-'TYPO3.TYPO3CR.Testing:Document': []
+'TYPO3.TYPO3CR.Testing:Document':
+  aggregate: TRUE
 
 'TYPO3.TYPO3CR.Testing:Page':
   superTypes: ['TYPO3.TYPO3CR.Testing:Document']
