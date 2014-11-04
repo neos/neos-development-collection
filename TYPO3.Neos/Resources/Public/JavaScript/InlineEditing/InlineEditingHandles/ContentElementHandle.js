@@ -87,14 +87,14 @@ function (
 			// Collections are now always auto-created
 			if (NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:ContentCollection')) {
 				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
-					selectedNode.$element.attr('data-neos-_parentnodetype'),
-					selectedNode.$element.attr('data-neos-_nodename')
+					selectedNode.$element.data('node-__parent-node-type'),
+					selectedNode.$element.data('node-_name')
 				);
-			} else if (selectedNode.$element.attr('data-neos-_grandparentnodetype') && selectedNode.$element.attr('data-neos-_parentnodename')) {
+			} else if (selectedNode.$element.data('node-__grandparent-node-type') && selectedNode.$element.data('node-__parent-node-name')) {
 				// The currently selected node is no collection, so we check the constraints on the parent collection
 				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(
-					selectedNode.$element.attr('data-neos-_grandparentnodetype'),
-					selectedNode.$element.attr('data-neos-_parentnodename')
+					selectedNode.$element.data('node-__grandparent-node-type'),
+					selectedNode.$element.data('node-__parent-node-name')
 				);
 			}
 

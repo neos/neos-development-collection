@@ -90,7 +90,7 @@ define(
 		 */
 		_isEntityPublishable: function(entity) {
 			var attributes = EntityWrapper.extractAttributesFromVieEntity(entity);
-			return attributes.__workspacename && attributes.__workspacename !== 'live';
+			return attributes.__workspaceName && attributes.__workspaceName !== 'live';
 		},
 
 		/**
@@ -117,7 +117,7 @@ define(
 
 						if (autoPublish !== true) {
 							var documentMetadata = $('#neos-document-metadata'),
-								nodeType = documentMetadata.data('neos-_node-type'),
+								nodeType = documentMetadata.data('node-_node-type'),
 								page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
 								namespace = Configuration.get('TYPO3_NAMESPACE'),
 								title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
@@ -139,7 +139,7 @@ define(
 				entity = vie.entities.get(entitySubject);
 			if (workspaceOverride) {
 				// This is done silently to avoid VIE overriding the existing inline values
-				entity.set('typo3:__workspacename', workspaceOverride, {silent: true});
+				entity.set('typo3:__workspaceName', workspaceOverride, {silent: true});
 			}
 
 			var nodeContextPath = entitySubject.slice(1, entitySubject.length - 1),
@@ -184,7 +184,7 @@ define(
 						}
 					);
 					var documentMetadata = $('#neos-document-metadata'),
-						nodeType = documentMetadata.data('neos-_node-type'),
+						nodeType = documentMetadata.data('node-_node-type'),
 						page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
 						namespace = Configuration.get('TYPO3_NAMESPACE'),
 						title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
@@ -202,7 +202,7 @@ define(
 		publishAll: function() {
 			var that = this,
 				entitySubjects = this.get('publishableEntitySubjects'),
-				workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename');
+				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 
 			WorkspaceEndpoint.publishAll(workspaceName).then(
 				function() {
@@ -226,7 +226,7 @@ define(
 		 */
 		discardAll: function() {
 			var that = this,
-				workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename');
+				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 
 			WorkspaceEndpoint.discardAll(workspaceName).then(
 				function() {
@@ -261,7 +261,7 @@ define(
 		 * @return {void}
 		 */
 		getWorkspaceWideUnpublishedNodes: function() {
-			var workspaceName = $('#neos-document-metadata').attr('data-context-__workspacename'),
+			var workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name'),
 				that = this;
 
 			WorkspaceEndpoint.getWorkspaceWideUnpublishedNodes(workspaceName).then(

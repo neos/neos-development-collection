@@ -151,7 +151,7 @@ define(
 					return;
 				}
 
-				var siteName = documentMetadata.data('__sitename'),
+				var siteName = documentMetadata.data('neos-site-name'),
 					nodeType = documentMetadata.attr('typeof').substr(6);
 				this.set('treeConfiguration', $.extend(true, this.get('treeConfiguration'), {
 					autoFocus: true,
@@ -161,7 +161,7 @@ define(
 							title: siteName,
 							tooltip: siteName + ' (' + nodeType + ')',
 							href: $('link[rel="neos-site"]').attr('href'),
-							key: this.get('siteRootNodePath'),
+							key: this.get('siteNodeContextPath'),
 							isFolder: true,
 							expand: false,
 							isLazy: true,
@@ -470,7 +470,7 @@ define(
 					this.set('filtering', true);
 					node._currentlySendingServerRequest = true;
 					NodeEndpoint.filterChildNodesForTree(
-						this.get('siteRootNodePath'),
+						this.get('siteNodeContextPath'),
 						this.get('searchTerm'),
 						this.get('nodeType')
 					).then(

@@ -60,7 +60,7 @@ define(
 			loadingDepth: 4,
 
 			pageNodePath: null,
-			siteRootNodePath: null,
+			siteNodeContextPath: null,
 			siteRootUri: null,
 
 			baseNodeType: Ember.K,
@@ -141,14 +141,14 @@ define(
 			_updateMetaInformation: function() {
 				var documentMetadata = $('#neos-document-metadata');
 				this.set('pageNodePath', documentMetadata.attr('about'));
-				this.set('siteRootNodePath', documentMetadata.data('__siteroot'));
+				this.set('siteNodeContextPath', documentMetadata.data('neos-site-node-context-path'));
 				this.set('siteRootUri', $('link[rel="neos-site"]').attr('href'));
 
-				// Make sure we update the siteRootNodePath in case the dimensions changed
+				// Make sure we update the siteNodeContextPath in case the dimensions changed
 				if (this.$nodeTree) {
 					var rootNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
 					if (rootNode) {
-						rootNode.data.key = this.get('siteRootNodePath');
+						rootNode.data.key = this.get('siteNodeContextPath');
 						rootNode.data.href = this.get('siteRootUri');
 						rootNode.render();
 					}
@@ -426,7 +426,7 @@ define(
 					onDragStart: function(node) {
 						var parent = node.tree.options.parent;
 						// the root node should not be draggable
-						if (node.data.key !== parent.get('siteRootNodePath')) {
+						if (node.data.key !== parent.get('siteNodeContextPath')) {
 							parent.set('dragInProgress', true);
 							Mousetrap.bind('esc', function() {
 								parent.$nodeTree.dynatree('getTree').cancelDrag();
