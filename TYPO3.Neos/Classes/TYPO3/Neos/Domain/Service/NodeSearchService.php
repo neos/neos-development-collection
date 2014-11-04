@@ -23,7 +23,7 @@ use TYPO3\TYPO3CR\Domain\Service\Context;
  *
  * @Flow\Scope("singleton")
  */
-class NodeSearchService {
+class NodeSearchService implements NodeSearchServiceInterface {
 
 	/**
 	 * @Flow\Inject
@@ -51,7 +51,7 @@ class NodeSearchService {
 	 * @param string $term
 	 * @param array $searchNodeTypes
 	 * @param Context $context
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
 	 */
 	public function findByProperties($term, array $searchNodeTypes, Context $context) {
 		$searchResult = array();
