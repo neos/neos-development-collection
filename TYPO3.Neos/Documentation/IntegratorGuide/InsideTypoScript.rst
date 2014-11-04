@@ -45,6 +45,48 @@ are in widespread use in modern frontend development.
 
 .. TODO there is probably more to say here...
 
+TypoScript files
+================
+
+TypoScript is read from files. In the context of Neos, some of these files are loaded automatically,
+and TypoScript files can be split into parts to organize things as needed.
+
+Automatic TypoScript file inclusion
+-----------------------------------
+
+All TypoScript files are expected to be in the folder *Resources/Private/TypoScript* when it comes to
+automatic inclusion.
+
+Neos will include the *Root.ts2* file of all packages listed in the Setting ``TYPO3.Neos.typoScript.autoInclude``
+in the order of packages as returned by the package management.
+
+Neos will then always include the *Root.ts2* file of the current site package.
+
+Manual TypoScript file inclusion
+--------------------------------
+
+In any TypoScript file further files can be included using the ``include`` statement. The path is either
+relative to the current file or can be given with the ``resource`` wrapper::
+
+	include: NodeTypes/CustomElements.ts2
+	include: resource://Acme.Demo/Private/TypoScript/Quux.ts2
+
+In addition to giving exact filenames, globbing is possible in two variants::
+
+	# Include all .ts2 files in NodeTypes
+	include: NodeTypes/*
+
+	# Include all .ts2 files in NodeTypes and it's subfolders recursively
+	include: NodeTypes/**/*
+
+The first includes all TypoScript files in the *NodeTypes* folder, the latter will recursively include all
+TypoScript files in NodeTypes and any folders below.
+
+The globbing can be combined with the ``resource`` wrapper::
+
+	include: resource://Acme.Demo/Private/TypoScript/NodeTypes/*
+	include: resource://Acme.Demo/Private/TypoScript/**/*
+
 TypoScript Objects
 ==================
 
