@@ -14,4 +14,36 @@
 			</select>
 		</div>
 	{{/each}}
+
+
+	<div {{bindAttr class=":neos-modal :neos-content-dimension-selector-initial-translation-dialog controller.showInitialTranslationDialog:neos-show:neos-hide"}}>
+		<div class="neos-modal-header">
+			<button class="neos-close neos-button" data-dismiss="modal" title="Close" {{action "cancelCreateAction" target="controller"}}></button>
+			<div class="neos-header">Start with an empty or pre-filled document?</div>
+		</div>
+		<div>
+			<div class="neos-subheader">
+				<div>This {{view.nodeSelection.nodes.lastObject.nodeTypeSchema.ui.label}} does not exist yet in {{controller.currentDimensionChoiceText}}.</div>
+
+				<div>
+					You can create it now, either starting with an empty {{view.nodeSelection.nodes.lastObject.nodeTypeSchema.ui.label}}
+					or copying all content from the currently visible {{view.nodeSelection.nodes.lastObject.nodeTypeSchema.ui.label}}
+					in {{controller.currentDocumentDimensionChoiceText}}.
+				</div>
+
+				{{#if controller.showInitialTranslationDialog.numberOfNodesMissingInRootline}}
+					<div>
+						Additionally, there are {{controller.showInitialTranslationDialog.numberOfNodesMissingInRootline}} ancestor documents
+						which do not exist in the chosen variant either, and which will be created as well.
+					</div>
+				{{/if}}
+			</div>
+		</div>
+		<div class="neos-modal-footer">
+			<button class="neos-button" title="Cancel" {{action "cancelCreateAction" target="controller"}}>Cancel</button>
+			<button class="neos-button" {{action "createEmptyDocumentAction" target="controller"}}>Create empty</button>
+			<button class="neos-button" {{action "createDocumentAndCopyContentAction" target="controller"}}>Create and copy</button>
+		</div>
+	</div>
+	<div {{bindAttr class=":neos-modal-backdrop :neos-in controller.showInitialTranslationDialog:neos-show:neos-hide"}}></div>
 </div>
