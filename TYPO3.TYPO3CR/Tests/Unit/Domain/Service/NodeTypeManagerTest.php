@@ -84,6 +84,13 @@ class NodeTypeManagerTest extends UnitTestCase {
 					'label' => 'Image'
 				)
 			)
+		),
+		'TYPO3.TYPO3CR.Testing:Document' => array(
+			'abstract' => TRUE,
+			'aggregate' => TRUE
+		),
+		'TYPO3.TYPO3CR.Testing:Page' => array(
+			'superTypes' => array('TYPO3.TYPO3CR.Testing:Document'),
 		)
 	);
 
@@ -201,7 +208,9 @@ class NodeTypeManagerTest extends UnitTestCase {
 			'TYPO3.TYPO3CR.Testing:MyFinalType',
 			'TYPO3.TYPO3CR.Testing:AbstractType',
 			'TYPO3.TYPO3CR.Testing:Text',
-			'TYPO3.TYPO3CR.Testing:TextWithImage'
+			'TYPO3.TYPO3CR.Testing:TextWithImage',
+			'TYPO3.TYPO3CR.Testing:Document',
+			'TYPO3.TYPO3CR.Testing:Page'
 		);
 		$this->assertEquals($expectedNodeTypes, array_keys($nodeTypeManager->getNodeTypes()));
 	}
@@ -269,6 +278,27 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
 		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:MyFinalType')->isFinal());
 	}
+
+	/**
+	 * @test
+	 */
+	public function aggregateNodeTypeFlagIsFalseByDefault() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+
+		$this->assertFalse($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text')->isAggregate());
+	}
+
+	/**
+	 * @test
+	 */
+	public function aggregateNodeTypeFlagIsInherited() {
+		$nodeTypeManager = new NodeTypeManager();
+		$this->inject($nodeTypeManager, 'configurationManager', $this->configurationManager);
+		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document')->isAggregate());
+		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Page')->isAggregate());
+	}
+
 
 	/**
 	 * @test
