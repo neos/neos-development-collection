@@ -13,8 +13,17 @@ namespace TYPO3\Neos\Service\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Neos\Domain\Service\NodeSearchService;
+use TYPO3\Neos\Service\NodeNameGenerator;
+use TYPO3\Neos\Service\View\NodeView;
+use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Exception\NodeException;
+use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
 /**
  * Service Controller for managing Nodes
@@ -26,7 +35,7 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 class NodeController extends AbstractServiceController {
 
 	/**
-	 * @var \TYPO3\Neos\Service\View\NodeView
+	 * @var NodeView
 	 */
 	protected $view;
 
@@ -37,27 +46,33 @@ class NodeController extends AbstractServiceController {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+	 * @var NodeTypeManager
 	 */
 	protected $nodeTypeManager;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Domain\Service\NodeSearchService
+	 * @var NodeSearchService
 	 */
 	protected $nodeSearchService;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Neos\Service\NodeNameGenerator
+	 * @var NodeNameGenerator
 	 */
 	protected $nodeNameGenerator;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeDataRepository
+	 */
+	protected $nodeDataRepository;
 
 	/**
 	 * Select special error action
@@ -66,7 +81,7 @@ class NodeController extends AbstractServiceController {
 	 */
 	protected function initializeAction() {
 		if ($this->arguments->hasArgument('referenceNode')) {
-			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', \TYPO3\TYPO3CR\TypeConverter\NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
+			$this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
 		$this->uriBuilder->setRequest($this->request->getMainRequest());
 	}
@@ -81,22 +96,22 @@ class NodeController extends AbstractServiceController {
 	 * @param Node $node The node to find child nodes for
 	 * @param string $nodeTypeFilter A node type filter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
+	 * @param Node $untilNode expand the child nodes until $untilNode is reached, independent of $depth
 	 * @return void
 	 */
 	public function getChildNodesForTreeAction(Node $node, $nodeTypeFilter, $depth, Node $untilNode) {
-		$this->view->assignChildNodes($node, $nodeTypeFilter, \TYPO3\Neos\Service\View\NodeView::STYLE_TREE, $depth, $untilNode);
+		$this->view->assignChildNodes($node, $nodeTypeFilter, NodeView::STYLE_TREE, $depth, $untilNode);
 	}
 
 	/**
 	 * Return child nodes of specified node for usage in a TreeLoader based on filter
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node The node to find child nodes for
+	 * @param Node $node The node to find child nodes for
 	 * @param string $term
 	 * @param string $nodeType
 	 * @return void
 	 */
-	public function filterChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\Node $node, $term, $nodeType) {
+	public function filterChildNodesForTreeAction(Node $node, $term, $nodeType) {
 		$nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', FALSE));
 		$this->view->assignFilteredChildNodes(
 			$node,
@@ -133,7 +148,7 @@ class NodeController extends AbstractServiceController {
 	public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position) {
 		$newNode = $this->createNewNode($referenceNode, $nodeData, $position);
 
-		$view = new \TYPO3\Neos\View\TypoScriptView();
+		$view = new TypoScriptView();
 		$this->controllerContext->getRequest()->setFormat('html');
 		$view->setControllerContext($this->controllerContext);
 		$view->setOption('enableContentCache', FALSE);
@@ -205,6 +220,7 @@ class NodeController extends AbstractServiceController {
 			}
 		}
 
+		$this->nodeDataRepository->persistEntities();
 		return $newNode;
 	}
 
@@ -215,11 +231,11 @@ class NodeController extends AbstractServiceController {
 	 * @param Node $targetNode
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @throws NodeException
 	 */
 	public function moveAction(Node $node, Node $targetNode, $position) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
+			throw new NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
 		}
 
 		switch ($position) {
@@ -232,6 +248,7 @@ class NodeController extends AbstractServiceController {
 			case 'after':
 				$node->moveAfter($targetNode);
 		}
+		$this->nodeDataRepository->persistEntities();
 
 		$data = array('newNodePath' => $node->getContextPath());
 		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
@@ -248,11 +265,11 @@ class NodeController extends AbstractServiceController {
 	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @param string $nodeName optional node name (if empty random node name will be generated)
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @throws NodeException
 	 */
 	public function copyAction(Node $node, Node $targetNode, $position, $nodeName = NULL) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
+			throw new NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
 		}
 
 		if (!empty($nodeName)) {
@@ -272,6 +289,7 @@ class NodeController extends AbstractServiceController {
 			default:
 				$copiedNode = $node->copyInto($targetNode, $nodeName);
 		}
+		$this->nodeDataRepository->persistEntities();
 
 		$q = new FlowQuery(array($copiedNode));
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
@@ -300,6 +318,7 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function updateAction(Node $node) {
+		$this->nodeDataRepository->persistEntities();
 		$q = new FlowQuery(array($node));
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
@@ -313,6 +332,7 @@ class NodeController extends AbstractServiceController {
 	 * @return void
 	 */
 	public function deleteAction(Node $node) {
+		$this->nodeDataRepository->persistEntities();
 		$q = new FlowQuery(array($node));
 		$node->remove();
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
@@ -331,6 +351,7 @@ class NodeController extends AbstractServiceController {
 		$searchResult = array();
 
 		$documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document');
+		/** @var NodeInterface $node */
 		foreach ($this->nodeSearchService->findByProperties($query, $documentNodeTypes, $this->createContext('live')) as $node) {
 			$searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
 		}

@@ -11,7 +11,9 @@ namespace TYPO3\Neos;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * The TYPO3 Neos Package
@@ -19,10 +21,10 @@ use TYPO3\Flow\Package\Package as BasePackage;
 class Package extends BasePackage {
 
 	/**
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
+	public function boot(Bootstrap $bootstrap) {
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 
 		$flushConfigurationCache = function () use ($bootstrap) {
@@ -35,18 +37,22 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', $flushConfigurationCache);
 		$dispatcher->connect('TYPO3\Neos\Domain\Model\Site', 'siteChanged', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
 
-		// TODO: re-think this:
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePublished', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeDiscarded', 'TYPO3\Flow\Mvc\Routing\RouterCachingService', 'flushCaches');
-
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodeDiscarded', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nodePathChanged', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodePathChange');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
+		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
 		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodeDiscarded', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function(NodeInterface $node, $propertyName) use($bootstrap) {
+			if ($propertyName === 'uriPathSegment') {
+				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
+			}
+		});
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', 'repositoryObjectsPersisted', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'commit');
 	}
 
 }
