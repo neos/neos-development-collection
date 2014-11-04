@@ -218,7 +218,7 @@ class ConvertUrisImplementationTest extends UnitTestCase {
 
 		$this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
 
-		$expectedResult = 'This string contains an unresolvable node URI:  and a <a href="">link</a>.';
+		$expectedResult = 'This string contains an unresolvable node URI:  and a link.';
 		$actualResult = $this->convertUrisImplementation->evaluate();
 		$this->assertSame($expectedResult, $actualResult);
 	}
