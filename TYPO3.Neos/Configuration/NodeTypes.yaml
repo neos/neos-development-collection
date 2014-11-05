@@ -81,6 +81,7 @@
     - 'TYPO3.Neos:Hidable'
     - 'TYPO3.Neos:Timable'
   abstract: TRUE
+  aggregate: TRUE
   constraints:
     nodeTypes:
       '*': TRUE
