@@ -647,9 +647,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 		if (!$this->isNodeDataMatchingContext()) {
 			$this->materializeNodeData();
 		}
+		$oldValue = $this->hasProperty($propertyName) ? $this->getProperty($propertyName) : NULL;
 		$this->nodeData->setProperty($propertyName, $value);
 
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitNodePropertyChanged($this, $propertyName, $oldValue, $value);
 		$this->emitNodeUpdated($this);
 	}
 
@@ -1505,4 +1507,16 @@ class Node implements NodeInterface, CacheAwareInterface {
 	protected function emitNodeRemoved(NodeInterface $node) {
 	}
 
+	/**
+	 * Signals that the property of a node was changed.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @param string $propertyName name of the property that has been changed/added
+	 * @param mixed $oldValue the property value before it was changed or NULL if the property is new
+	 * @param mixed $newValue the new property value
+	 * @return void
+	 */
+	protected function emitNodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $newValue) {
+	}
 }
