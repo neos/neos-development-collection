@@ -69,7 +69,7 @@ define(
 						} else if (componentObject.buttonElement) {
 							editorClass = 'AlohaButtonEditor';
 						} else {
-							editorClass = 'AlohaNonDefinedEditor';
+							return;
 						}
 
 						nodeTypeProperties[componentKey] = {
@@ -95,12 +95,12 @@ define(
 					nodeType: 'ALOHA-CONTROL',
 					$element: nodesWithVirtualNode.get('lastObject.$element'),
 					_enableTransactionalInspector: false,
-					attributes: Ember.Object.create({
-					}),
+					attributes: Ember.Object.create(),
 					nodeTypeSchema: Ember.Object.create({
 						properties: nodeTypeProperties,
 						ui: {
 							label: nodeTypeLabel,
+							icon: 'icon-table',
 							inspector: {
 								groups: nodeTypeGroups
 							}
