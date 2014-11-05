@@ -54,7 +54,9 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'html'
-          editor: 'TYPO3.Neos/Inspector/Editors/HtmlEditor'
+          editor: 'TYPO3.Neos/Inspector/Editors/CodeEditor'
+          editorOptions:
+            buttonLabel: 'Edit HTML source'
       defaultValue: '<p>Enter HTML here</p>'
 
 'TYPO3.Neos.NodeTypes:Menu':
