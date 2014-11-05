@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache;
 
@@ -39,6 +40,12 @@ class Context {
 	 * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
 	 */
 	protected $nodeFactory;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
@@ -231,6 +238,30 @@ class Context {
 		}
 		$this->firstLevelNodeCache->setByIdentifier($identifier, $node);
 		return $node;
+	}
+
+	/**
+	 * Get all node variants for the given identifier
+	 *
+	 * A variant of a node can have different dimension values and path (for non-aggregate nodes).
+	 * The resulting node instances might belong to a different context.
+	 *
+	 * @param string $identifier The identifier of a node
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+	 */
+	public function getNodeVariantsByIdentifier($identifier) {
+		$nodeVariants = array();
+		$nodeDataElements = $this->nodeDataRepository->findByIdentifierWithoutReduce($identifier, $this->getWorkspace(FALSE));
+		/** @var NodeData $nodeData */
+		foreach ($nodeDataElements as $nodeData) {
+			$contextProperties = $this->getProperties();
+			$contextProperties['dimensions'] = $nodeData->getDimensionValues();
+			unset($contextProperties['targetDimensions']);
+			$adjustedContext = $this->contextFactory->create($contextProperties);
+			$nodeVariant = $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
+			$nodeVariants[] = $nodeVariant;
+		}
+		return $nodeVariants;
 	}
 
 	/**

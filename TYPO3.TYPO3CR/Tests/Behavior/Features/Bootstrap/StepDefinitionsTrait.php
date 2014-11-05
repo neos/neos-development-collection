@@ -437,29 +437,59 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
-	 * @Then /^I should have the following nodes:$/
+	 * @Then /^I should have the following nodes(| in any order):$/
 	 */
-	public function iShouldHaveTheFollowingNodes(TableNode $table) {
+	public function iShouldHaveTheFollowingNodes($orderIndependent, TableNode $table) {
 		$rows = $table->getHash();
 
 		Assert::assertCount(count($rows), $this->currentNodes, 'Current nodes should match count of examples');
 
-		foreach ($rows as $index => $row) {
-			if (isset($row['Path'])) {
-				Assert::assertEquals($row['Path'], $this->currentNodes[$index]->getPath(), 'Path should match on element ' . $index);
-			}
-			if (isset($row['Properties'])) {
-				$nodeProperties = $this->currentNodes[$index]->getProperties();
-				$testProperties = json_decode($row['Properties'], TRUE);
-				foreach ($testProperties as $property => $value) {
-					Assert::assertArrayHasKey($property, $nodeProperties, 'Expected property should exist');
-					Assert::assertEquals($value, $nodeProperties[$property], 'The value for property "' . $property . '" should match the expected value');
+		if ($orderIndependent === '') {
+			foreach ($rows as $index => $row) {
+				if (isset($row['Path'])) {
+					Assert::assertEquals($row['Path'], $this->currentNodes[$index]->getPath(), 'Path should match on element ' . $index);
+				}
+				if (isset($row['Properties'])) {
+					$nodeProperties = $this->currentNodes[$index]->getProperties();
+					$testProperties = json_decode($row['Properties'], TRUE);
+					foreach ($testProperties as $property => $value) {
+						Assert::assertArrayHasKey($property, $nodeProperties, 'Expected property should exist');
+						Assert::assertEquals($value, $nodeProperties[$property], 'The value for property "' . $property . '" should match the expected value');
+					}
+				}
+				if (isset($row['Language'])) {
+					$dimensions = $this->currentNodes[$index]->getDimensions();
+					Assert::assertEquals($row['Language'], implode(',', $dimensions['language']), 'Language should match');
 				}
 			}
-			if (isset($row['Language'])) {
-				$dimensions = $this->currentNodes[$index]->getDimensions();
-				Assert::assertEquals($row['Language'], implode(',', $dimensions['language']), 'Language should match');
+		} else {
+			$currentNodes = $this->currentNodes;
+			foreach ($currentNodes as $nodeIndex => $node) {
+				foreach ($rows as $rowIndex => $row) {
+					if (isset($row['Path']) && $row['Path'] !== $node->getPath()) {
+						continue;
+					}
+					if (isset($row['Properties'])) {
+						$nodeProperties = $node->getProperties();
+						$testProperties = json_decode($row['Properties'], TRUE);
+						foreach ($testProperties as $property => $value) {
+							if (!isset($nodeProperties[$property]) || $nodeProperties[$property] !== $value) {
+								continue 2;
+							}
+						}
+					}
+					if (isset($row['Language'])) {
+						$dimensions = $node->getDimensions();
+						if ($row['Language'] !== implode(',', $dimensions['language'])) {
+							continue;
+						}
+					}
+					unset($currentNodes[$nodeIndex]);
+					unset($rows[$rowIndex]);
+				}
 			}
+			Assert::assertEquals(array(), $rows, 'All examples should have matched');
+			Assert::assertCount(0, $currentNodes, 'All nodes should be matched');
 		}
 	}
 
@@ -527,6 +557,24 @@ trait StepDefinitionsTrait {
 				// Expected exception
 			}
 		}
+	}
+
+	/**
+	 * @When /^I get other node variants of the node$/
+	 */
+	public function iGetOtherNodeVariantsOfTheNode() {
+		$currentNode = $this->iShouldHaveOneNode();
+		$this->currentNodes = $currentNode->getOtherNodeVariants();
+	}
+
+	/**
+	 * @When /^I get node variants of "([^"]*)" with the following context:$/
+	 */
+	public function iGetNodeVariantsOfWithTheFollowingContext($identifier, TableNode $table) {
+		$rows = $table->getHash();
+		$context = $this->getContextForProperties($rows[0]);
+
+		$this->currentNodes = $context->getNodeVariantsByIdentifier($identifier);
 	}
 
 	/**
