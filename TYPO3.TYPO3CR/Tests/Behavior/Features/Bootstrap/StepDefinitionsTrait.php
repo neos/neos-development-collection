@@ -204,6 +204,15 @@ trait StepDefinitionsTrait {
 		$rows = $table->getHash();
 		$context = $this->getContextForProperties($rows[0]);
 
+		if ($context->getWorkspace(FALSE) === NULL) {
+			$context->getWorkspace(TRUE);
+
+			$this->getSubcontext('flow')->persistAll();
+			$this->resetNodeInstances();
+
+			$context = $this->getContextForProperties($rows[0]);
+		}
+
 		$node = $context->getNode($path);
 		if ($node !== NULL) {
 			$this->currentNodes = array($node);
@@ -419,7 +428,7 @@ trait StepDefinitionsTrait {
 	/**
 	 * @When /^I adopt the node (recursively |)to the following context:$/
 	 */
-	public function iTransferNodeToTheFollowingContext($recursive, TableNode $table) {
+	public function iAdoptTheNodeToTheFollowingContext($recursive, TableNode $table) {
 		$rows = $table->getHash();
 		$context = $this->getContextForProperties($rows[0]);
 
