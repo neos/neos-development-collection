@@ -15,7 +15,7 @@ define(
 		return Ember.View.extend({
 			template: Ember.Handlebars.compile(template),
 			elementId: 'neos-publish-menu',
-			classNames: ['neos-button-group'],
+			classNameBindings: [':neos-button-group', '_actionRunning:neos-publish-menu-action-running'],
 			autoPublish: function(key, value) {
 				if (arguments.length > 1) {
 					LocalStorage.setItem('isAutoPublishEnabled', value);
@@ -24,6 +24,10 @@ define(
 			}.property(),
 
 			controller: PublishableNodes,
+
+			_actionRunning: function() {
+				return this.get('controller.publishAllRunning') || this.get('controller.discardRunning') || this.get('controller.discardAllRunning');
+			}.property('controller.publishAllRunning', 'controller.discardRunning', 'controller.discardAllRunning'),
 
 			/**
 			 * The URI of the Workspaces Management backend module
@@ -56,18 +60,20 @@ define(
 				_saveRunningBinding: '_nodeEndpoint._saveRunning',
 				_savePendingBinding: '_storageManager.savePending',
 
+				_publishRunningBinding: 'controller.publishRunning',
 				_noChangesBinding: 'controller.noChanges',
 				_numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
 				label: function() {
 					if (this.get('_savePending')) {
-						return 'Saving...';
-					}
-					if (this.get('autoPublish')) {
+						return 'Saving<span class="neos-ellipsis"></span>'.htmlSafe();
+					} else if (this.get('_publishRunning')) {
+						return 'Publishing<span class="neos-ellipsis"></span>'.htmlSafe();
+					} else if (this.get('autoPublish')) {
 						return 'Auto-Publish';
 					}
 					return this.get('_noChanges') ? 'Published' : 'Publish' + ' ('  + this.get('_numberOfChanges') + ')';
-				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending'),
+				}.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning'),
 
 				title: function() {
 					var titleText = 'Publish all ' + this.get('_numberOfChanges') + ' changes for current page';
@@ -96,12 +102,15 @@ define(
 				}.observes('autoPublish').on('init'),
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending');
-				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending'),
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('_savePending') || this.get('_publishRunning');
+				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending', '_publishRunning'),
 
 				_hasChanges: function() {
-					return !this.get('_noChanges') && !this.get('autoPublish');
-				}.property('_noChanges', 'autoPublish'),
+					if (this.get('autoPublish')) {
+						return false;
+					}
+					return !this.get('_noChanges') || this.get('_saveRunning') || this.get('_savePending');
+				}.property('_noChanges', 'autoPublish', '_saveRunning', '_savePending'),
 
 				connectionStatusClass: function() {
 					var className = 'neos-connection-status-';
@@ -135,8 +144,8 @@ define(
 				}.property('_noChanges', '_numberOfChanges'),
 
 				disabled: function() {
-					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning');
-				}.property('_noChanges', 'autoPublish', '_saveRunning'),
+					return this.get('_noChanges') || this.get('autoPublish') || this.get('_saveRunning') || this.get('controller.discardRunning');
+				}.property('_noChanges', 'autoPublish', '_saveRunning', 'controller.discardRunning'),
 
 				connectionStatusClass: function() {
 					var className = 'neos-connection-status-';
@@ -176,8 +185,8 @@ define(
 				},
 
 				disabled: function() {
-					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning');
-				}.property('_noWorkspaceWideChanges', '_saveRunning'),
+					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') || this.get('controller.publishAllRunning');
+				}.property('_noWorkspaceWideChanges', '_saveRunning', 'controller.publishAllRunning'),
 
 				disabledClass: function() {
 					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';
@@ -211,8 +220,8 @@ define(
 				},
 
 				disabled: function() {
-					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning');
-				}.property('_noWorkspaceWideChanges', '_saveRunning'),
+					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') || this.get('controller.discardAllRunning');
+				}.property('_noWorkspaceWideChanges', '_saveRunning', 'controller.discardAllRunning'),
 
 				disabledClass: function() {
 					return this.get('_noWorkspaceWideChanges') || this.get('_saveRunning') ? 'disabled' : '';

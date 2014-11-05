@@ -30,6 +30,10 @@ define(
 	return Ember.Object.extend({
 		publishableEntitySubjects: [],
 		workspaceWidePublishableEntitySubjects: [],
+		publishRunning: false,
+		publishAllRunning: false,
+		discardRunning: false,
+		discardAllRunning: false,
 
 		noChanges: function() {
 			return this.get('publishableEntitySubjects').length === 0;
@@ -108,12 +112,14 @@ define(
 				});
 
 			if (nodes.length > 0) {
+				that.set('publishRunning', true);
 				WorkspaceEndpoint.publishNodes(nodes, targetWorkspace).then(
 					function() {
 						entitySubjects.forEach(function(subject) {
 							that._removeNodeFromPublishableEntitySubjects(subject, 'live');
 						});
 						that._updatePublishableEntities();
+						that.getWorkspaceWideUnpublishedNodes();
 
 						if (autoPublish !== true) {
 							var documentMetadata = $('#neos-document-metadata'),
@@ -124,6 +130,11 @@ define(
 								nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
 							Notification.ok('Published changes for ' + nodeTypeDefinition.ui.label + ' "' + $('<a />').html(title).text() + '"');
 						}
+						that.set('publishRunning', false);
+					},
+					function(error) {
+						that.set('publishRunning', false);
+						Notification.error('Unexpected error while publishing changes: ' + JSON.stringify(error));
 					}
 				);
 			}
@@ -161,37 +172,45 @@ define(
 					return vie.entities.get(subject).fromReference(subject);
 				});
 
-			WorkspaceEndpoint.discardNodes(nodes).then(
-				function() {
-					entitySubjects.forEach(function(subject) {
-						that._removeNodeFromPublishableEntitySubjects(subject);
-					});
-					that._updatePublishableEntities();
-					that.set('publishableEntitySubjects', []);
-					require(
-						{context: 'neos'},
-						[
-							'Content/Application'
-						],
-						function(ContentModule) {
-							ContentModule.reloadPage();
-							ContentModule.one('pageLoaded', function() {
-								Ember.run.next(function() {
-									EventDispatcher.trigger('nodesInvalidated');
-									EventDispatcher.trigger('contentChanged');
+			if (nodes.length > 0) {
+				that.set('discardRunning', true);
+				WorkspaceEndpoint.discardNodes(nodes).then(
+					function () {
+						entitySubjects.forEach(function (subject) {
+							that._removeNodeFromPublishableEntitySubjects(subject);
+						});
+						that.set('publishableEntitySubjects', []);
+						that.getWorkspaceWideUnpublishedNodes();
+						require(
+							{context: 'neos'},
+							[
+								'Content/Application'
+							],
+							function (ContentModule) {
+								ContentModule.reloadPage();
+								ContentModule.one('pageLoaded', function () {
+									Ember.run.next(function () {
+										EventDispatcher.trigger('nodesInvalidated');
+										EventDispatcher.trigger('contentChanged');
+									});
 								});
-							});
-						}
-					);
-					var documentMetadata = $('#neos-document-metadata'),
-						nodeType = documentMetadata.data('node-_node-type'),
-						page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
-						namespace = Configuration.get('TYPO3_NAMESPACE'),
-						title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
-						nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
-					Notification.ok('Discarded changes for ' + nodeTypeDefinition.ui.label + ' "' + title + '"');
-				}
-			);
+							}
+						);
+						var documentMetadata = $('#neos-document-metadata'),
+							nodeType = documentMetadata.data('node-_node-type'),
+							page = vie.entities.get(vie.service('rdfa').getElementSubject(documentMetadata)),
+							namespace = Configuration.get('TYPO3_NAMESPACE'),
+							title = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : '',
+							nodeTypeDefinition = NodeTypeService.getNodeTypeDefinition(nodeType);
+						Notification.ok('Discarded changes for ' + nodeTypeDefinition.ui.label + ' "' + title + '"');
+						that.set('discardRunning', false);
+					},
+					function (error) {
+						that.set('discardRunning', false);
+						Notification.error('Unexpected error while discarding changes: ' + JSON.stringify(error));
+					}
+				);
+			}
 		},
 
 		/**
@@ -204,6 +223,7 @@ define(
 				entitySubjects = this.get('publishableEntitySubjects'),
 				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 
+			that.set('publishAllRunning', true);
 			WorkspaceEndpoint.publishAll(workspaceName).then(
 				function() {
 					entitySubjects.forEach(function(subject) {
@@ -212,8 +232,10 @@ define(
 					that._updatePublishableEntities();
 					that.set('workspaceWidePublishableEntitySubjects', []);
 					Notification.ok('Published all changes.');
+					that.set('publishAllRunning', false);
 				},
 				function(error) {
+					that.set('publishAllRunning', false);
 					Notification.error('Unexpected error while publishing all changes: ' + JSON.stringify(error));
 				}
 			);
@@ -228,6 +250,7 @@ define(
 			var that = this,
 				workspaceName = $('#neos-document-metadata').data('neos-context-workspace-name');
 
+			that.set('discardAllRunning', true);
 			WorkspaceEndpoint.discardAll(workspaceName).then(
 				function() {
 					that.set('publishableEntitySubjects', []);
@@ -248,8 +271,10 @@ define(
 						}
 					);
 					Notification.ok('Discarded all changes.');
+					that.set('discardAllRunning', false);
 				},
 				function(error) {
+					that.set('discardAllRunning', false);
 					Notification.error('Unexpected error while discarding all changes: ' + JSON.stringify(error));
 				}
 			);
