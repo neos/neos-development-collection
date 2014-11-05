@@ -16,7 +16,6 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 		 */
 		fileChooserLabel: 'Choose file',
 		uploaderLabel: 'Upload',
-		cropLabel: 'Crop',
 
 		// File filters
 		allowedFileTypes: null,

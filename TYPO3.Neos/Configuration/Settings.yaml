@@ -152,6 +152,35 @@ TYPO3:
               placeholder: 'Choose'
           'TYPO3\Media\Domain\Model\ImageVariant':
             editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
+            editorOptions:
+              crop:
+                aspectRatio:
+                  options:
+                    square:
+                      width: 1
+                      height: 1
+                      label: 'Square'
+                    fourFive:
+                      width: 4
+                      height: 5
+                    fiveSeven:
+                      width: 5
+                      height: 7
+                    twoThree:
+                      width: 2
+                      height: 3
+                    fourThree:
+                      width: 4
+                      height: 3
+                    sixteenNine:
+                      width: 16
+                      height: 9
+                  enableOriginal: TRUE
+                  allowCustom: TRUE
+                  locked:
+                    width: 0
+                    height: 0
+
           'TYPO3\Media\Domain\Model\Asset':
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
           'array<TYPO3\Media\Domain\Model\Asset>':

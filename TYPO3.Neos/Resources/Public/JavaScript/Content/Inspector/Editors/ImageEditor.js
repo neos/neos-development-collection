@@ -4,6 +4,7 @@ define(
 	'Library/jquery-with-dependencies',
 	'Content/Inspector/Editors/FileUpload',
 	'text!./ImageEditor.html',
+	'text!./ImageEditorCrop.html',
 	'Content/Inspector/Editors/BooleanEditor',
 	'Library/spinjs/spin',
 	'Content/Inspector/SecondaryInspectorController',
@@ -11,7 +12,7 @@ define(
 	'Shared/Utility',
 	'Shared/HttpClient'
 ],
-function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient) {
+function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, SecondaryInspectorController, Notification, Utility, HttpClient) {
 	/**
 	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
 	 * error messages otherwise.
@@ -20,11 +21,12 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 		/****************************************
 		 * GENERAL SETUP
 		 ***************************************/
-		fileChooserLabel: 'Choose Image',
+		fileChooserLabel: 'Choose',
 
 		uploaderLabel: 'Upload!',
 		removeButtonLabel: 'Remove',
 		uploadCancelLabel: 'Cancel',
+		cropLabel: 'Crop',
 
 		/**
 		 * Size of the image preview. Public configuration.
@@ -260,6 +262,7 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 					that.set('_uploadPreviewShown', false);
+					that.set('_imageFullyLoaded', false);
 					that.set('_loadPreviewImageHandler', HttpClient.getResource(
 						that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
 						{dataType: 'json'}
@@ -353,8 +356,15 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 			this.set('_finalImageScale.w', response.originalSize.w);
 
 			this._resetCropPropertiesToCurrentPreviewImageSize();
+			this.set('_imageFullyLoaded', false);
 			this.set('_imageFullyLoaded', true);
 			this._updateValue();
+
+			if (SecondaryInspectorController.get('_viewClass') === this.get('_cropView')) {
+				// Set empty view for secondary inspector to re-initialize crop view
+				SecondaryInspectorController.toggle(Ember.View.extend());
+				SecondaryInspectorController.hide();
+			}
 		},
 
 		_setPreviewImage: function(responseJson) {
@@ -376,47 +386,250 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 			this.set('_cropProperties.h', this.get('_previewImageSize.h'));
 		},
 
+		_imageFullyLoadedDidChange: function() {
+			// Apply locked aspect ratio if defined
+			if (this.get('_imageFullyLoaded') === true && this.get('crop.aspectRatio.locked.width') > 0) {
+				var lockedAspectRatioWidth = this.get('crop.aspectRatio.locked.width'),
+					lockedAspectRatioHeight = this.get('crop.aspectRatio.locked.height'),
+					lockedAspectRatio = lockedAspectRatioWidth / lockedAspectRatioHeight;
+				if (this.get('_cropProperties.aspectRatio') !== lockedAspectRatio) {
+					if (lockedAspectRatioWidth > lockedAspectRatioHeight) {
+						this.set('_cropProperties.h', parseInt(this.get('_cropProperties.h') / lockedAspectRatio * this.get('_cropProperties.aspectRatio'), 10));
+					} else if (lockedAspectRatioWidth === lockedAspectRatioHeight) {
+						if (this.get('_cropProperties.w') > this.get('_cropProperties.h')) {
+							this.set('_cropProperties.w', parseInt(this.get('_cropProperties.w') * lockedAspectRatio / this.get('_cropProperties.aspectRatio'), 10));
+						} else {
+							this.set('_cropProperties.h', parseInt(this.get('_cropProperties.h') / lockedAspectRatio * this.get('_cropProperties.aspectRatio'), 10));
+						}
+					} else {
+						this.set('_cropProperties.w', parseInt(this.get('_cropProperties.w') * lockedAspectRatio / this.get('_cropProperties.aspectRatio'), 10));
+					}
+				}
+			}
+		}.observes('_imageFullyLoaded'),
+
 		/****************************************
 		 * CROPPING
 		 ***************************************/
 		_cropView: function() {
-			var that = this;
+			var parent = this;
 
 			return Ember.View.extend({
 				classNames: ['neos-secondary-inspector-image-crop'],
+				template: Ember.Handlebars.compile(cropTemplate),
+				aspectRatioWidth: null,
+				aspectRatioHeight: null,
+				aspectRatioReducedNumerator: 0,
+				aspectRatioReducedDenominator: 0,
+				aspectRatioAllowCustom: false,
+				aspectRatioLocked: false,
+				aspectRatioOptions: [],
+				api: null,
+				selection: null,
 
-				template: Ember.Handlebars.compile('<img />'),
+				init: function() {
+					this._super();
+					var that = this,
+						configuration = parent.get('crop');
+					if (configuration.aspectRatio) {
+						if (configuration.aspectRatio.locked && configuration.aspectRatio.locked.width > 0 && configuration.aspectRatio.locked.height > 0) {
+							this.set('aspectRatioWidth', configuration.aspectRatio.locked.width);
+							this.set('aspectRatioHeight', configuration.aspectRatio.locked.height);
+							this.set('aspectRatioLocked', true);
+						} else {
+							var options = Ember.A(),
+								option = Ember.Object.extend({
+									init: function() {
+										this._super();
+										var reducedRatio = that.reduceRatio(this.get('width'), this.get('height'));
+										this.set('reducedNominator', reducedRatio[0]);
+										this.set('reducedDenominator', reducedRatio[1]);
+									},
+									label: function() {
+										return this.get('reducedNominator') + ':' + this.get('reducedDenominator');
+									}.property()
+								});
+							// Add empty option to allow deselect
+							options.push(option.create({label: ''}));
+							if (configuration.aspectRatio.enableOriginal !== false) {
+								options.push(option.create({
+									key: 'original',
+									label: 'Original',
+									width: parent.get('_originalImageSize.w'),
+									height: parent.get('_originalImageSize.h')
+								}));
+							}
+							if (configuration.aspectRatio.allowCustom !== false) {
+								that.set('aspectRatioAllowCustom', true);
+								options.push(option.create({
+									key: 'custom',
+									label: 'Custom'
+								}));
+							}
+							for (var key in configuration.aspectRatio.options) {
+								if (configuration.aspectRatio.options.hasOwnProperty(key) && configuration.aspectRatio.options[key]) {
+									options.push(option.create($.extend(configuration.aspectRatio.options[key], {key: key})));
+								}
+							}
+							this.set('aspectRatioOptions', options);
+						}
+					}
+				},
+
+				_selectionDidChange: function() {
+					var option = this.get('aspectRatioOptions').findBy('key', this.get('selection'));
+					if (!option) {
+						return;
+					}
+					clearTimeout(this.get('customTimeout'));
+					if (option.get('key') !== 'custom') {
+						this.set('aspectRatioWidth', option.width);
+						this.set('aspectRatioHeight', option.height);
+					} else {
+						var that = this;
+						// Use timeout since selection is changed multiple times
+						this.set('customTimeout', setTimeout(function() {
+							if (that.$().find('input[type="number"]:focus').length === 0) {
+								that.$().find('.neos-image-editor-crop-aspect-ratio input[type="number"]:first').focus();
+							}
+						}, 50));
+					}
+				}.observes('selection'),
+
+				aspectRatioReduced: function() {
+					var aspectRatioReducedNumerator = this.get('aspectRatioReducedNumerator'),
+						aspectRatioReducedDenominator = this.get('aspectRatioReducedDenominator');
+					return aspectRatioReducedNumerator ? aspectRatioReducedNumerator + ':' + aspectRatioReducedDenominator : '';
+				}.property('aspectRatioReducedNumerator', 'aspectRatioReducedDenominator'),
+
+				originalAspectRatio: function() {
+					var aspectRatioWidth = this.get('aspectRatioWidth'),
+						aspectRatioHeight = this.get('aspectRatioHeight'),
+						originalImageWidth = parent.get('_originalImageSize.w'),
+						originalImageHeight = parent.get('_originalImageSize.h');
+					return aspectRatioWidth / aspectRatioHeight === originalImageWidth / originalImageHeight;
+				}.property('aspectRatioWidth', 'aspectRatioHeight'),
+
+				selectedAspectRatioOption: function() {
+					var aspectRatioWidth = this.get('aspectRatioWidth'),
+						aspectRatioHeight = this.get('aspectRatioHeight'),
+						aspectRatio = aspectRatioWidth / aspectRatioHeight,
+						matchesOption = false,
+						options = this.get('aspectRatioOptions');
+					options.forEach(function(option) {
+						if (option.width / option.height === aspectRatio) {
+							option.set('active', true);
+							matchesOption = true;
+						} else {
+							option.set('active', false);
+						}
+					});
+					if (this.get('aspectRatioAllowCustom') && !this.get('originalAspectRatio') && !matchesOption && aspectRatioWidth > 0 && aspectRatioHeight > 0) {
+						options.findBy('label', 'Custom').set('active', true);
+					}
+					var activeOption = options.findBy('active', true);
+					if (activeOption) {
+						this.set('selection', activeOption.get('key'));
+					} else {
+						this.set('selection', null);
+					}
+					var that = this;
+					Ember.run.next(function() {
+						that.$().find('select').trigger('change');
+					});
+				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
+
+				_aspectRatioDidChange: function() {
+					var aspectRatioWidth = this.get('aspectRatioWidth'),
+						aspectRatioHeight = this.get('aspectRatioHeight'),
+						api = this.get('api');
+					if (api) {
+						api.setOptions({aspectRatio: aspectRatioWidth > 0 && aspectRatioHeight > 0 ? aspectRatioWidth / aspectRatioHeight : 0});
+					}
+					var reducedRatio;
+					if (aspectRatioWidth && aspectRatioHeight) {
+						reducedRatio = this.reduceRatio(aspectRatioWidth, aspectRatioHeight);
+					}
+					this.set('aspectRatioReducedNumerator', reducedRatio ? reducedRatio[0] : null);
+					this.set('aspectRatioReducedDenominator', reducedRatio ? reducedRatio[1] : null);
+				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
+
+				actions: {
+					exchangeAspectRatio: function() {
+						var aspectRatioWidth = this.get('aspectRatioWidth'),
+							aspectRatioHeight = this.get('aspectRatioHeight');
+						this.setProperties({'aspectRatioWidth': aspectRatioHeight, 'aspectRatioHeight': aspectRatioWidth});
+					}
+				},
+
+				/**
+				 * Reduce a numerator and denominator to it's smallest, integer ratio using Euclid's Algorithm
+				 */
+				reduceRatio: function(numerator, denominator) {
+					var temp,
+						divisor,
+						isInteger = function(n) {
+							return n % 1 === 0;
+						},
+						greatestCommonDivisor = function(a, b) {
+							if (b === 0) {
+								return a;
+							}
+							return greatestCommonDivisor(b, a % b);
+						};
+
+					if (numerator === denominator) {
+						return [1, 1];
+					}
+
+					// make sure numerator is always the larger number
+					if (+numerator < +denominator) {
+						temp = numerator;
+						numerator = denominator;
+						denominator = temp;
+					}
+
+					divisor = greatestCommonDivisor(+numerator, +denominator);
+
+					if (typeof temp === 'undefined') {
+						return [numerator / divisor, denominator / divisor];
+					} else {
+						return [denominator / divisor, numerator / divisor];
+					}
+				},
+
 				didInsertElement: function() {
 					var $image = this.$().find('img');
-					$image.attr('src', that.get('_previewImageUri'));
+					$image.attr('src', parent.get('_previewImageUri'));
 
-					var settings = {
-							// Triggered when the selection is finished
-						onSelect: function(previewImageCoordinates) {
-
+					var update = function(previewImageCoordinates) {
 							// Besides updating the crop dimensions (_cropProperties.*), we also update
 							// the *width* of the final image, to make sure that if we select only a part
 							// of the final image, the image is not up-scaled but keeps the same resolution.
 							//
 							// NOTE: The height of the image is auto-calculated, so we only need to set the width.
-							var imageWidthBeforeChange = that.get('_finalImageScale.w');
-							var imageWidthScalingFactor = previewImageCoordinates.w / that.get('_cropProperties.w');
+							var imageWidthBeforeChange = parent.get('_finalImageScale.w');
+							var imageWidthScalingFactor = previewImageCoordinates.w / parent.get('_cropProperties.w');
 
 							Ember.beginPropertyChanges();
-							that.set('_finalImageScale.w', parseInt(imageWidthBeforeChange * imageWidthScalingFactor, 10));
+							parent.set('_finalImageScale.w', parseInt(imageWidthBeforeChange * imageWidthScalingFactor, 10));
 
-							that.set('_cropProperties.x', previewImageCoordinates.x);
-							that.set('_cropProperties.y', previewImageCoordinates.y);
-							that.set('_cropProperties.w', previewImageCoordinates.w);
-							that.set('_cropProperties.h', previewImageCoordinates.h);
+							parent.set('_cropProperties.x', previewImageCoordinates.x);
+							parent.set('_cropProperties.y', previewImageCoordinates.y);
+							parent.set('_cropProperties.w', previewImageCoordinates.w);
+							parent.set('_cropProperties.h', previewImageCoordinates.h);
 							Ember.endPropertyChanges();
-							that._updateValue();
-						}
-					};
+							parent._updateValue();
+						},
+						settings = {
+							// Triggered when the selection is finished or updated
+							onSelect: update,
+							onChange: update
+						};
 
-						// If we have all crop options set, we preselect this in the cropping tool.
-					if (that.get('_cropProperties.initialized')) {
-						var cropOptions = that.get('_cropProperties.full');
+					// If we have all crop options set, we preselect this in the cropping tool.
+					if (parent.get('_cropProperties.initialized')) {
+						var cropOptions = parent.get('_cropProperties.full');
 
 						settings.setSelect = [
 							cropOptions.x,
@@ -425,7 +638,23 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 							cropOptions.y + cropOptions.h
 						];
 					}
-					$image.Jcrop(settings);
+
+					if (this.get('aspectRatioLocked')) {
+						settings.aspectRatio = this.get('aspectRatioWidth') / this.get('aspectRatioHeight');
+					}
+
+					var that = this;
+					$image.Jcrop(settings, function() {
+						that.set('api', this);
+					});
+
+					this.$().find('select').select2({
+						maximumSelectionSize: 1,
+						minimumResultsForSearch: 10,
+						allowClear: true,
+						placeholder: 'Aspect ratio',
+						dropdownCssClass: 'neos-select2-large'
+					});
 				}
 			});
 		}.property(),
@@ -436,47 +665,46 @@ function(Ember, $, FileUpload, template, BooleanEditor, Spinner, SecondaryInspec
 		 *
 		 * - set the preview bounding box size
 		 * - set the preview bounding box offset such that the image is centered
-		 * - scale the preview image and sete the offsets correctly.
+		 * - scale the preview image and set the offsets correctly.
 		 */
 		_updateCropPreviewImage: function() {
-			if (!this.get('_previewImageUri')) {
-				return;
-			}
+			var that = this;
+			// Make sure the image has been updated before altering styles
+			Ember.run.next(function() {
+				var cropProperties = that.get('_cropProperties.full'),
+					container = that.$().find('.neos-inspector-image-thumbnail-inner'),
+					image = container.find('img');
 
-			var cropProperties = this.get('_cropProperties.full'),
-				container = this.$().find('.neos-inspector-image-thumbnail-inner'),
-				image = container.find('img');
-
-			if (!this.get('_uploadPreviewShown') && (cropProperties.w !== this.get('_previewImageSize.w') || cropProperties.h !== this.get('_previewImageSize.h'))) {
-				var scalingFactorX = this.imagePreviewMaximumDimensions.w / cropProperties.w,
-					scalingFactorY = this.imagePreviewMaximumDimensions.h / cropProperties.h,
-					overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
-					previewBoundingBoxSize = {
-						w: Math.floor(cropProperties.w * overallScalingFactor),
-						h: Math.floor(cropProperties.h * overallScalingFactor)
-					};
-					// Update size of preview bounding box
-					// and Center preview image thumbnail
-				container.css({
-					width: previewBoundingBoxSize.w + 'px',
-					height: previewBoundingBoxSize.h + 'px',
-					position: 'absolute',
-					left: ((this.imagePreviewMaximumDimensions.w - previewBoundingBoxSize.w) / 2 ) + 'px',
-					top: ((this.imagePreviewMaximumDimensions.h - previewBoundingBoxSize.h) / 2) + 'px'
-				}).addClass('neos-inspector-image-thumbnail-cropped');;
+				if (that.get('_originalImageUri') && !that.get('_uploadPreviewShown') && (cropProperties.w !== that.get('_previewImageSize.w') || cropProperties.h !== that.get('_previewImageSize.h'))) {
+					var scalingFactorX = that.imagePreviewMaximumDimensions.w / cropProperties.w,
+						scalingFactorY = that.imagePreviewMaximumDimensions.h / cropProperties.h,
+						overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
+						previewBoundingBoxSize = {
+							w: Math.floor(cropProperties.w * overallScalingFactor),
+							h: Math.floor(cropProperties.h * overallScalingFactor)
+						};
+					// Update size of preview bounding box and center preview image thumbnail
+					container.css({
+						width: previewBoundingBoxSize.w + 'px',
+						height: previewBoundingBoxSize.h + 'px',
+						position: 'absolute',
+						left: ((that.imagePreviewMaximumDimensions.w - previewBoundingBoxSize.w) / 2 ) + 'px',
+						top: ((that.imagePreviewMaximumDimensions.h - previewBoundingBoxSize.h) / 2) + 'px'
+					}).addClass('neos-inspector-image-thumbnail-cropped');
 
 					// Scale Preview image and update relative image position
-				image.css({
-					width: Math.floor(this.get('_previewImageSize').w * overallScalingFactor) + 'px',
-					height:  Math.floor(this.get('_previewImageSize').h * overallScalingFactor) + 'px',
-					marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
-					marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
-				});
-			} else {
-				container.attr('style', null).removeClass('neos-inspector-image-thumbnail-cropped');
-				image.attr('style', null);
-			}
-		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_previewImageUri', '_uploadPreviewShown'),
+					image.css({
+						width: Math.floor(that.get('_previewImageSize').w * overallScalingFactor) + 'px',
+						height:  Math.floor(that.get('_previewImageSize').h * overallScalingFactor) + 'px',
+						marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
+						marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
+					});
+				} else {
+					container.attr('style', null).removeClass('neos-inspector-image-thumbnail-cropped');
+					image.attr('style', null);
+				}
+			});
+		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_originalImageUri', '_uploadPreviewShown'),
 
 		/****************************************
 		 * Saving / Loading

@@ -22,6 +22,10 @@
 	border-radius: 0;
 	@include box-shadow(1px 2px 5px $grayDark);
 
+	&.neos-select2-large .neos-select2-results {
+		max-height: $unit * 10.5 + 10px;
+	}
+
 	.neos-select2-input {
 		min-height: $unit;
 		background: white;
