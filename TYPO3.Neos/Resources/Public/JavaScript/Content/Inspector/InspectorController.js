@@ -95,7 +95,7 @@ define(
 			$.each(inspectorGroups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
 				$.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
-					if (propertyName in nodeProperties) {
+					if (Object.keys(nodeProperties).length === 0 || propertyName in nodeProperties) {
 						if (Ember.get(propertyConfiguration, 'ui.inspector.group') === groupIdentifier) {
 							properties.push($.extend({key: propertyName, elementId: Ember.generateGuid(), isBoolean: propertyConfiguration.type === 'boolean'}, propertyConfiguration));
 						}
