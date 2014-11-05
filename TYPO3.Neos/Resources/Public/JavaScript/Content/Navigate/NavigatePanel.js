@@ -5,6 +5,7 @@ define(
 	'../Navigate/NavigatePanelController',
 	'./NodeTree',
 	'./ContextStructureTree',
+	'Shared/EventDispatcher',
 	'text!./NavigatePanel.html'
 ], function(
 	Ember,
@@ -12,6 +13,7 @@ define(
 	NavigatePanelController,
 	NodeTree,
 	ContextStructureTree,
+	EventDispatcher,
 	template
 ) {
 	return Ember.View.extend({
@@ -24,6 +26,17 @@ define(
 		controller: NavigatePanelController,
 
 		onNavigatePanelModeChanged: function() {
+			if (this.$()) {
+				var that = this;
+				this.$().one('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function () {
+					if (that.get('controller.navigatePanelMode') === true) {
+						EventDispatcher.triggerExternalEvent('Neos.NavigatePanelOpened');
+					} else {
+						EventDispatcher.triggerExternalEvent('Neos.NavigatePanelClosed');
+					}
+					EventDispatcher.triggerExternalEvent('Neos.LayoutChanged');
+				});
+			}
 			if (this.get('controller.navigatePanelMode') === true) {
 				$('body').addClass('neos-navigate-panel-open');
 			} else {
