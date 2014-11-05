@@ -5,10 +5,10 @@ Feature: Translate existing node
 
   Background:
     Given I have the following nodes:
-      | Identifier                           | Path                   | Node Type                  | Properties           | Language |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured               |                      | mul_ZZ   |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | mul_ZZ   |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | en_ZZ    |
+      | Identifier                           | Path                   | Node Type                  | Properties           | Language | Workspace |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured               |                      | mul_ZZ   | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | mul_ZZ   | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | en_ZZ    | live      |
 
   @fixtures
   Scenario: An existing node can be translated to a new language by adopting it from a different context
@@ -33,10 +33,32 @@ Feature: Translate existing node
     And the node property "title" should be "Company"
 
   @fixtures
+  Scenario: An existing node can be translated to a new language in a workspace
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Language      | Workspace  |
+      | en_ZZ, mul_ZZ | user-admin |
+    And I adopt the node to the following context:
+      | Language      | Workspace  |
+      | de_ZZ, mul_ZZ | user-admin |
+    And I set the node property "title" to "Unternehmen"
+
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Language      | Workspace  |
+      | de_ZZ, mul_ZZ | user-admin |
+    Then I should have one node
+    And the node property "title" should be "Unternehmen"
+
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Language      | Workspace  |
+      | en_ZZ, mul_ZZ | user-admin |
+    Then I should have one node
+    And the node property "title" should be "Company"
+
+  @fixtures
   Scenario: An existing node variant will be re-used when adopting a node
     Given I have the following nodes:
-      | Identifier                           | Path                   | Node Type                  | Properties               | Language |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Unternehmen"} | de_ZZ    |
+      | Identifier                           | Path                   | Node Type                  | Properties               | Language | Workspace |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Unternehmen"} | de_ZZ    | live      |
     When I get a node by path "/sites/typo3cr/company" with the following context:
       | Language      |
       | en_ZZ, mul_ZZ |

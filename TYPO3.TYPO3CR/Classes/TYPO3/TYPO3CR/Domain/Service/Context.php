@@ -344,7 +344,7 @@ class Context {
 	 * @return array
 	 */
 	public function getTargetDimensionValues() {
-		return array_map(function ($value) { return array ($value); }, $this->getTargetDimensions());
+		return array_map(function ($value) { return array($value); }, $this->getTargetDimensions());
 	}
 
 	/**

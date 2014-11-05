@@ -1365,8 +1365,8 @@ class Node implements NodeInterface, CacheAwareInterface {
 			}
 		}
 
-		$nodeData = clone $this->nodeData;
-		$nodeData->adjustToContext($context);
+		$nodeData = new NodeData($this->nodeData->getPath(), $context->getWorkspace(), $this->nodeData->getIdentifier(), $context->getTargetDimensionValues());
+		$nodeData->similarize($this->nodeData);
 
 		$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
 

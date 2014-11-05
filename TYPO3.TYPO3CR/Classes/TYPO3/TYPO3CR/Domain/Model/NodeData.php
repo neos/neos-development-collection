@@ -782,31 +782,6 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Adjust this instance to the given context.
-	 *
-	 * Internal use only!
-	 *
-	 * @param Context $context
-	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeContextException
-	 */
-	public function adjustToContext(Context $context) {
-		$this->setWorkspace($context->getWorkspace());
-
-		$nodeDimensions = array();
-		$targetDimensionValues = $context->getTargetDimensions();
-		foreach ($context->getDimensions() as $dimensionName => $dimensionValues) {
-			if (!isset($targetDimensionValues[$dimensionName])) {
-				throw new \TYPO3\TYPO3CR\Exception\InvalidNodeContextException(sprintf('Missing target value for dimension "%"', $dimensionName), 1391686089);
-			}
-			$dimensionValueToSet = $targetDimensionValues[$dimensionName];
-			$nodeDimensions[] = new NodeDimension($this, $dimensionName, $dimensionValueToSet);
-		}
-		$this->setDimensions($nodeDimensions);
-		$this->addOrUpdate();
-	}
-
-	/**
 	 * Checks if this instance matches the given workspace and dimensions.
 	 *
 	 * @param Workspace $workspace
