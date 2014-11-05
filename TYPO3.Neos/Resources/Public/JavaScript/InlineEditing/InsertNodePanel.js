@@ -34,7 +34,7 @@ function(
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				$collectionElement = this.get('_node._vieEntity._enclosingCollectionWidget').element,
 				// $collectionElement is currently *ALWAYS* autocreated!!!
-				types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode($collectionElement.attr('data-neos-_parentnodetype'), $collectionElement.attr('data-neos-_nodename'));
+				types = NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode($collectionElement.data('node-__parent-node-type'), $collectionElement.data('node-_name'));
 
 			types = _.map(types, function(nodeType) {
 				return 'typo3:' + nodeType;

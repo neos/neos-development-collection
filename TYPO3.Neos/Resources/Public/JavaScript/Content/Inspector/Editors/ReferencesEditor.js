@@ -33,13 +33,13 @@ define(
 						currentQueryTimer = window.setTimeout(function() {
 							currentQueryTimer = null;
 
-							var arguments = {
+							var parameters = {
 								searchTerm: query.term,
-								workspaceName: $('#neos-document-metadata').attr('data-context-__workspacename'),
+								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
-							HttpRestClient.getResource('neos-service-nodes', null, {data: arguments}).then(function(result) {
+							HttpRestClient.getResource('neos-service-nodes', null, {data: parameters}).then(function(result) {
 								var data = {results: []};
 								$(result.resource).find('li').each(function(index, value) {
 									data.results.push({
@@ -84,10 +84,10 @@ define(
 
 						that.get('content').pushObject(item);
 
-						var arguments = {
-							workspaceName: $('#neos-document-metadata').attr('data-context-__workspacename')
-						}
-						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: arguments}).then(function(result) {
+						var parameters = {
+							workspaceName: $('#neos-document-metadata').data('neos-context-__workspace-name')
+						};
+						HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 							item.set('text', $('.node-label', result.resource).text());
 							that._updateSelect2();
 						});

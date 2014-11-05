@@ -11,8 +11,8 @@ define([
 		init: function () {
 			var $metaInformation = $('#neos-document-metadata');
 			new NodeRepository(
-				$metaInformation.data('context-__workspacename'),
-				$metaInformation.data('context-__dimensions')
+				$metaInformation.data('neos-context-workspace-name'),
+				$metaInformation.data('neos-context-dimensions')
 			);
 		},
 
