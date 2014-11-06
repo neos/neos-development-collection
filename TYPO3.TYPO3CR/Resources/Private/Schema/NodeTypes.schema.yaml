@@ -7,6 +7,7 @@ additionalProperties:
 
     'abstract': { type: boolean, description: "Abstract node type for default/mixin usage" }
     'final': { type: boolean, description: "If final, this node type cannot be subclassed" }
+    'aggregate': { type: boolean, description: "INTERNAL. If aggregate, this node type is something like a Document. If not aggregate, it is seen as part of an aggregate node type - has influence on how e.g. moving of nodes across dimensions work." }
 
     'superTypes':
       type: array
