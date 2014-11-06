@@ -103,12 +103,15 @@ define([
 				options.push(Ember.Object.create(emptyOptionValues));
 			}
 
-			$.each(values, function(value) {
+			$.each(values, function(value, configuration) {
+				if (configuration === null) {
+					return;
+				}
 				options.push(Ember.Object.create($.extend({
 					selected: that.get('multiple') && Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : value === currentValue,
 					value: value,
 					disabled: value && values[value] && values[value].disabled
-				}, this)));
+				}, configuration)));
 			});
 
 			Ember.run.next(function() {
