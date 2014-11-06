@@ -79,7 +79,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 				InsertNodePanel.create({
 					_node: referenceNode,
 					_index: position === 'after' ? index : 0
-				}).appendTo($('#neos-application'));
+				});
 			});
 		},
 

@@ -163,7 +163,7 @@ function (
 			InsertNodePanel.create({
 				_node: this.get('nodeSelection.selectedNode'),
 				_index: this.get('_collectionIndex')
-			}).appendTo($('#neos-application'));
+			});
 		},
 
 		_hideToggleTitle: function() {

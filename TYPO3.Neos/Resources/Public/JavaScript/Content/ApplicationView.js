@@ -14,7 +14,6 @@ define(
 	'./Inspector/InspectorController',
 	'./Inspector/SecondaryInspectorView',
 	'./../InlineEditing/InlineEditingHandles',
-	'./../InlineEditing/InsertNodePanel',
 	'../Shared/EventDispatcher'
 ],
 function(
@@ -29,7 +28,6 @@ function(
 	InspectorController,
 	SecondaryInspectorView,
 	InlineEditingHandles,
-	InsertNodePanel,
 	EventDispatcher
 ) {
 	return Ember.View.extend({
@@ -47,7 +45,6 @@ function(
 
 		SecondaryInspectorView: SecondaryInspectorView,
 		InlineEditingHandles: InlineEditingHandles,
-		InsertNodePanel: InsertNodePanel,
 
 		didInsertElement: function() {
 			// Make sure to create the top bar *after* the DOM is loaded completely,

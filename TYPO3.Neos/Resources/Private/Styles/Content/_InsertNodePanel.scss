@@ -1,24 +1,57 @@
-.neos-content-new-selecttype-button {
-	float: left;
-	margin: 0px 0px $defaultMargin 0px;
-	width: 100 / 3 * 1%;
-	vertical-align: top;
+.neos-insert-node-panel {
+	.neos-subheader {
+		padding: 0 $defaultMargin $relatedMargin;
+		margin: 0;
 
-	a {
-		display: block;
-		line-height: 16px;
-		vertical-align: bottom;
-		position: relative;
-		padding-left: 14px + $relatedMargin;
-		@include box-sizing(border-box);
+		~ .neos-subheader {
+			padding: $defaultMargin $defaultMargin $relatedMargin;
+			border-top: 1px solid $grayLight;
+		}
+	}
 
-		i {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 14px;
-			padding-right: $relatedMargin;
-			color: $blue;
+	.neos-modal-body {
+		border-bottom: 1px solid $grayLight;
+		max-height: $unit * 12;
+		overflow-y: auto;
+	}
+
+	ul {
+		font-size: 0;
+	}
+
+	.neos-content-new-selecttype-button {
+		float: left;
+		margin: 0;
+		width: 100 / 3 * 1%;
+		vertical-align: top;
+
+		button {
+			width: 100%;
+			line-height: 16px;
+			height: $unit;
+			text-align: left;
+			background-color: transparent;
+			@include box-sizing(border-box);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			&:focus,
+			&:hover {
+				background-color: $blue;
+				outline: none;
+
+				i {
+					color: #fff;
+				}
+			}
+
+			i {
+				width: 14px;
+				padding-right: $relatedMargin;
+				color: $blue;
+				text-align: center;
+			}
 		}
 	}
 }
