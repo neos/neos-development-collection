@@ -61,6 +61,12 @@ class Node implements NodeInterface, CacheAwareInterface {
 	protected $nodeFactory;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 */
+	protected $contextFactory;
+
+	/**
 	 * @param NodeData $nodeData
 	 * @param Context $context
 	 * @throws \InvalidArgumentException if you give a Node as originalNode.
@@ -129,44 +135,55 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * This method is only for internal use by the content repository or node methods. Changing
 	 * the path of a node manually may lead to unexpected behavior.
 	 *
-	 * To achieve a correct behavior when changing the path (moving the node) in a worspace, a shadow node data that will
+	 * To achieve a correct behavior when changing the path (moving the node) in a workspace, a shadow node data that will
 	 * hide the node data in the base workspace will be created. Thus queries do not need to worry about moved nodes.
 	 * Through a movedTo reference the shadow node data will be removed when publishing the moved node.
 	 *
 	 * @param string $path
-	 * @param boolean $recursive
 	 * @return void
 	 * @throws NodeException
 	 */
-	public function setPath($path, $recursive = TRUE) {
+	public function setPath($path) {
 		$existingNodeData = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
 		if ($existingNodeData !== array()) {
-			throw new NodeException(sprintf('Can not rename the node as a node already exists on path "%s"', $path), 1414436551);
+			throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath() , $path), 1414436551);
 		}
 
+		$this->setPathInternal($path);
+	}
+
+	/**
+	 * Internal setPath method, will not check for existence of node at path
+	 *
+	 * @param string $path
+	 * @return void
+	 */
+	protected function setPathInternal($path) {
 		$originalPath = $this->nodeData->getPath();
 		if ($originalPath === $path) {
 			return;
 		}
-		if ($recursive === TRUE) {
-			/** @var $childNode NodeInterface */
-			foreach ($this->getChildNodes() as $childNode) {
-				$childNode->setPath($path . '/' . $childNode->getNodeData()->getName(), TRUE);
-			}
-		}
 
 		if ($this->getNodeType()->isAggregate()) {
-			$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE);
+			$nodeDataVariants = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), TRUE, TRUE);
+
+			/** @var NodeData $nodeData */
 			foreach ($nodeDataVariants as $nodeData) {
-				$this->moveNodeVariant($nodeData, $path, $originalPath);
+				$nodeVariant = $this->createNodeForVariant($nodeData);
+				$pathSuffix = substr($nodeVariant->getPath(), strlen($originalPath));
+				$nodeVariant->moveNodeData($path . $pathSuffix);
 			}
 		} else {
-			$this->moveNodeVariant($this->nodeData, $path, $originalPath);
+			/** @var Node $childNode */
+			foreach ($this->getChildNodes() as $childNode) {
+				$childNode->setPathInternal($path . '/' . $childNode->getName());
+			}
+			$this->moveNodeData($path);
 		}
 	}
 
 	/**
-	 * Move a single node variant (NodeData) of this node
+	 * Move the NodeData of this node
 	 *
 	 * Basically 4 scenarios have to be covered here, depending on:
 	 *
@@ -176,24 +193,21 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * Because unique key constraints and Doctrine ORM don't support arbitrary removal and update combinations,
 	 * existing NodeData instances are re-used and the metadata and content is swapped around.
 	 *
-	 * @param NodeData $nodeData
 	 * @param string $path
-	 * @param string $originalPath
 	 * @return void
 	 */
-	protected function moveNodeVariant(NodeData $nodeData, $path, $originalPath) {
+	protected function moveNodeData($path) {
 		$nodeDataWasMaterialized = FALSE;
+		$nodeData = $this->nodeData;
+		$originalPath = $this->nodeData->getPath();
 
-		$isCurrentNodeInContext = $nodeData === $this->nodeData;
 		if ($nodeData->getWorkspace()->getName() !== $this->context->getWorkspace()->getName()) {
 			$nodeData = $this->materializeNodeDataToWorkspace($nodeData);
 			$nodeDataWasMaterialized = TRUE;
 			$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
 			$nodeData->setPath($path, FALSE);
-			if ($isCurrentNodeInContext) {
-				// Workaround to set the new index in move* methods
-				$this->nodeData = $nodeData;
-			}
+
+			$this->nodeData = $nodeData;
 		} else {
 			$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
 		}
@@ -236,9 +250,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 				$shadowNodeData->shadowMovedNodeData($movedNodeData);
 			}
 
-			if ($isCurrentNodeInContext) {
-				$this->nodeData = $movedNodeData;
-			}
+			$this->nodeData = $movedNodeData;
 		}
 	}
 
@@ -1496,6 +1508,20 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 */
 	public function setNodeDataIsMatchingContext($status) {
 		$this->nodeDataIsMatchingContext = $status;
+	}
+
+	/**
+	 * Create a node for the given NodeData, given that it is a variant of the current node
+	 *
+	 * @param NodeData $nodeData
+	 * @return Node
+	 */
+	protected function createNodeForVariant($nodeData) {
+		$contextProperties = $this->context->getProperties();
+		$contextProperties['dimensions'] = $nodeData->getDimensionValues();
+		unset($contextProperties['targetDimensions']);
+		$adjustedContext = $this->contextFactory->create($contextProperties);
+		return $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
 	}
 
 	/**

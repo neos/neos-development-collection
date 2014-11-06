@@ -58,6 +58,45 @@ Feature: Move node with dimension support
     Then I should have 0 nodes
 
   @fixtures
+  Scenario: Moving an aggregate node (Document) with a partially translated subtree should move across all dimensions
+    Given I have the following nodes:
+      | Identifier                           | Path                             | Node Type                  | Properties             | Workspace | Language |
+      | 9de83f6c-6596-11e4-b3aa-14109fd7a2dd | /sites/typo3cr/service/downloads | TYPO3.TYPO3CR.Testing:Page | {"title": "Downloads"} | live      | en       |
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  | Language |
+      | user-admin | de       |
+    And I move the node into the node with path "/sites/typo3cr/company"
+    And I get a node by path "/sites/typo3cr/company/service/downloads" with the following context:
+      | Workspace  | Language |
+      | user-admin | en       |
+    Then I should have one node
+    And I get a node by path "/sites/typo3cr/service/downloads" with the following context:
+      | Workspace  | Language |
+      | user-admin | en       |
+    Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Moving an aggregate node (Document) with a partially translated subtree with fallbacks should move across all dimensions
+    Given I have the following nodes:
+      | Identifier                           | Path                                     | Node Type                  | Properties             | Workspace | Language |
+      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr                           | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}      | live      | mul_ZZ   |
+      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service                   | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"}   | live      | mul_ZZ   |
+      | 9de83f6c-6596-11e4-b3aa-14109fd7a2dd | /sites/typo3cr/service/downloads         | TYPO3.TYPO3CR.Testing:Page | {"title": "Downloads"} | live      | mul_ZZ   |
+      | 4e80336e-65c1-11e4-8f8f-14109fd7a2dd | /sites/typo3cr/service/downloads/drivers | TYPO3.TYPO3CR.Testing:Page | {"title": "Drivers"}   | live      | en       |
+    When I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  | Language   |
+      | user-admin | de, mul_ZZ |
+    And I move the node into the node with path "/sites/typo3cr/company"
+    And I get a node by path "/sites/typo3cr/company/service/downloads/drivers" with the following context:
+      | Workspace  | Language |
+      | user-admin | en       |
+    Then I should have one node
+    And I get a node by path "/sites/typo3cr/service/downloads/drivers" with the following context:
+      | Workspace  | Language |
+      | user-admin | en       |
+    Then I should have 0 nodes
+
+  @fixtures
   Scenario: Moving an aggregate node (Document) in user workspace should move across all dimensions after being published to live workspace
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  | Language |
