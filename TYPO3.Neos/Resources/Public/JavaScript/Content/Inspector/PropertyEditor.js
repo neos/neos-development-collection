@@ -67,6 +67,7 @@ define(
 				{
 					elementId: propertyDefinition.elementId,
 					property: propertyDefinition.key,
+					propertyType: propertyDefinition.type,
 					inspectorBinding: this.inspectorBinding,
 					valueBinding: 'inspector.nodeProperties.' + propertyDefinition.key
 				},
