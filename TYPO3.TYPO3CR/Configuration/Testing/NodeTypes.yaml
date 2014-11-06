@@ -71,7 +71,10 @@
     nodeTypes:
       'TYPO3.TYPO3CR.Testing:Headline': TRUE
       'TYPO3.TYPO3CR.Testing:TwoColumn': TRUE
+      'TYPO3.TYPO3CR.Testing:ThreeColumn': TRUE
       'TYPO3.TYPO3CR.Testing:Text': TRUE
+      'TYPO3.TYPO3CR.Testing:Html': TRUE
+      'TYPO3.TYPO3CR.Testing:List': TRUE
 
 'TYPO3.TYPO3CR.Testing:Document':
   aggregate: TRUE
@@ -109,6 +112,16 @@
     column1:
       type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
 
+'TYPO3.TYPO3CR.Testing:ThreeColumn':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Column']
+  childNodes:
+    column0:
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+    column1:
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+    column2:
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+
 'TYPO3.TYPO3CR.Testing:Content':
   constraints:
     nodeTypes:
@@ -131,3 +144,25 @@
 'TYPO3.TYPO3CR.Testing:TextWithImage':
   superTypes: [ 'TYPO3.TYPO3CR.Testing:Text', 'TYPO3.TYPO3CR.Testing:Image' ]
 
+'TYPO3.TYPO3CR.Testing:Html':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  properties:
+    source:
+      type: string
+      defaultValue: '<p>Enter HTML here</p>'
+
+'TYPO3.TYPO3CR.Testing:List':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  childNodes:
+    items:
+      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      constraints:
+        nodeTypes:
+          'TYPO3.TYPO3CR.Testing:ListItem': TRUE
+          '*': FALSE
+
+'TYPO3.TYPO3CR.Testing:ListItem':
+  superTypes: ['TYPO3.TYPO3CR.Testing:Content']
+  properties:
+    text:
+      type: 'string'
