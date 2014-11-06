@@ -3,17 +3,17 @@ define(
 		'Library/jquery-with-dependencies',
 		'emberjs',
 		'Content/Model/NodeActions',
-		'Shared/AbstractDialog',
+		'Shared/AbstractModal',
 		'text!InlineEditing/Dialogs/DeleteNodeDialog.html'
 	],
 	function(
 		$,
 		Ember,
 		NodeActions,
-		AbstractDialog,
+		AbstractModal,
 		template
 	) {
-		return AbstractDialog.extend({
+		return AbstractModal.extend({
 			template: Ember.Handlebars.compile(template),
 			_node: null,
 

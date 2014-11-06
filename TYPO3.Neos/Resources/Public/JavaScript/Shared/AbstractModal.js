@@ -19,6 +19,10 @@ define(
 					that.cancel();
 				});
 
+				this.focus();
+			},
+
+			focus: function() {
 				this.$().find('button:last').focus();
 			},
 

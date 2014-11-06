@@ -5,15 +5,15 @@ define(
 [
 	'emberjs',
 	'./InspectorController',
-	'Shared/AbstractDialog',
+	'Shared/AbstractModal',
 	'text!./UnappliedChangesDialog.html'
 ], function(
 	Ember,
 	InspectorController,
-	AbstractDialog,
+	AbstractModal,
 	template
 ) {
-	return AbstractDialog.extend({
+	return AbstractModal.extend({
 		classNames: ['inspector-dialog'],
 		template: Ember.Handlebars.compile(template),
 		controller: InspectorController,

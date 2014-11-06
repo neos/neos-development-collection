@@ -3,33 +3,28 @@ define(
 	'emberjs',
 	'Library/underscore',
 	'vie',
+	'Content/Components/AbstractInsertNodePanel',
 	'Content/Application',
 	'Shared/Configuration',
 	'Content/Model/NodeActions',
 	'Shared/NodeTypeService',
-	'LibraryExtensions/Mousetrap',
-	'text!./InsertNodePanel.html'
+	'LibraryExtensions/Mousetrap'
 ],
 function(
 	Ember,
 	_,
 	vie,
+	AbstractInsertNodePanel,
 	ContentModule,
 	Configuration,
 	NodeActions,
-	NodeTypeService,
-	Mousetrap,
-	template
+	NodeTypeService
 ) {
-	return Ember.View.extend({
-		template: Ember.Handlebars.compile(template),
-
-		classNames: ['neos-overlay-component'],
-
+	return AbstractInsertNodePanel.extend({
 		_node: null,
 		_index: null,
 
-		content: function() {
+		nodeTypeGroups: function() {
 			var groups = {},
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				$collectionElement = this.get('_node._vieEntity._enclosingCollectionWidget').element,
@@ -46,17 +41,20 @@ function(
 					return;
 				}
 
-				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
-
 				if (type.metadata.ui && type.metadata.ui.group) {
 					if (!groups[type.metadata.ui.group]) {
 						groups[type.metadata.ui.group] = {
 							name: type.metadata.ui.group,
 							label: '',
-							children: []
+							nodeTypes: []
 						};
 					}
-					groups[type.metadata.ui.group].children.push(type.metadata);
+					groups[type.metadata.ui.group].nodeTypes.push({
+						'nodeType': type.id.substring(1, type.id.length - 1).replace(namespace, ''),
+						'label': type.metadata.ui.label,
+						'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
+						'position': type.metadata.ui.position
+					});
 				}
 			}, this);
 
@@ -64,7 +62,7 @@ function(
 			var data = [];
 			Configuration.get('nodeTypes.groups').forEach(function(group) {
 				if (groups[group.name]) {
-					groups[group.name].children.sort(function(a, b) {
+					groups[group.name].nodeTypes.sort(function(a, b) {
 						return (Ember.get(a, 'ui.position') || 9999) - (Ember.get(b, 'ui.position') || 9999);
 					});
 					groups[group.name].label = group.label;
@@ -75,18 +73,6 @@ function(
 			return data;
 		}.property(),
 
-		didInsertElement: function() {
-			var that = this;
-			Mousetrap.bind('esc', function() {
-				that.cancel();
-			});
-		},
-
-		destroyElement: function() {
-			Mousetrap.unbind('esc');
-			this._super();
-		},
-
 		insertNode: function(nodeType) {
 			NodeActions.set('_elementIsAddingNewContent', this.get('_node.nodePath'));
 
@@ -94,10 +80,6 @@ function(
 				'@type': 'typo3:' + nodeType
 			}, {at: this.get('_index')});
 
-			this.destroy();
-		},
-
-		cancel: function() {
 			this.destroy();
 		}
 	});
