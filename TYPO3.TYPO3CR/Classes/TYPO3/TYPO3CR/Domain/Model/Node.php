@@ -303,6 +303,20 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function getOtherNodeVariants() {
+		$otherNodeVariants = array();
+		$allNodeVariants = $this->context->getNodeVariantsByIdentifier($this->getIdentifier());
+		foreach ($allNodeVariants as $index => $node) {
+			if ($node->getNodeData() !== $this->nodeData) {
+				$otherNodeVariants[] = $node;
+			}
+		}
+		return $otherNodeVariants;
+	}
+
+	/**
 	 * Returns the path of this node
 	 *
 	 * @return string

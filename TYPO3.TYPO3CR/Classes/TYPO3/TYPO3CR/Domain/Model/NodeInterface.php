@@ -641,4 +641,15 @@ interface NodeInterface {
 	 * @return boolean TRUE if this node is auto-created by the parent.
 	 */
 	public function isAutoCreated();
+
+	/**
+	 * Get other variants of this node (with different dimension values)
+	 *
+	 * A variant of a node can have different dimension values and path (for non-aggregate nodes).
+	 * The resulting node instances might belong to a different context.
+	 *
+	 * @return array<NodeInterface> All node variants of this node (excluding the current node)
+	 */
+	public function getOtherNodeVariants();
+
 }

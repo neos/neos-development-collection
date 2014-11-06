@@ -534,6 +534,31 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
+	 * Find NodeData by identifier path without any dimension reduction
+	 *
+	 * Only used internally for finding whether the node exists in another dimension
+	 *
+	 * @param string $identifier
+	 * @param Workspace $workspace
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> A unreduced array of NodeData
+	 */
+	public function findByIdentifierWithoutReduce($identifier, Workspace $workspace) {
+		$workspaces = array();
+		while ($workspace !== NULL) {
+			$workspaces[] = $workspace;
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		$queryBuilder = $this->createQueryBuilder($workspaces);
+		$this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
+
+		$query = $queryBuilder->getQuery();
+		$foundNodes = $query->getResult();
+
+		return $foundNodes;
+	}
+
+	/**
 	 * Finds nodes by its parent and (optionally) by its node type given a Context
 	 *
 	 * TODO Move to a new Node operation getDescendantNodes(...)
