@@ -299,10 +299,9 @@ interface NodeInterface {
 	 * the path of a node manually may lead to unexpected behavior and bad breath.
 	 *
 	 * @param string $path
-	 * @param boolean $recursive
 	 * @return void
 	 */
-	public function setPath($path, $recursive = TRUE);
+	public function setPath($path);
 
 	/**
 	 * Returns the path of this node

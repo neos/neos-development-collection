@@ -1168,9 +1168,10 @@ class NodeDataRepository extends Repository {
 	 * @param string $path
 	 * @param Workspace $workspace
 	 * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
+	 * @param boolean $recursive
 	 * @return array<NodeData> Node data reduced by workspace but with all existing content dimension variants, includes removed nodes
 	 */
-	public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = FALSE) {
+	public function findByPathWithoutReduce($path, Workspace $workspace, $includeRemovedNodes = FALSE, $recursive = FALSE) {
 		$workspaces = array();
 		while ($workspace !== NULL) {
 			$workspaces[] = $workspace;
@@ -1178,7 +1179,7 @@ class NodeDataRepository extends Repository {
 		}
 
 		$queryBuilder = $this->createQueryBuilder($workspaces);
-		$this->addPathConstraintToQueryBuilder($queryBuilder, $path);
+		$this->addPathConstraintToQueryBuilder($queryBuilder, $path, $recursive);
 
 		$query = $queryBuilder->getQuery();
 		$foundNodes = $query->getResult();
@@ -1394,7 +1395,7 @@ class NodeDataRepository extends Repository {
 	 * @return void
 	 */
 	protected function addParentPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $parentPath, $recursive = FALSE) {
-		if ($recursive !== TRUE) {
+		if (!$recursive) {
 			$queryBuilder->andWhere('n.parentPathHash = :parentPathHash')
 				->setParameter('parentPathHash', md5($parentPath));
 		} else {
@@ -1406,11 +1407,17 @@ class NodeDataRepository extends Repository {
 	/**
 	 * @param QueryBuilder $queryBuilder
 	 * @param string $path
+	 * @param boolean $recursive
 	 * @return void
 	 */
-	protected function addPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $path) {
-		$queryBuilder->andWhere('n.path = :path')
-				->setParameter('path', $path);
+	protected function addPathConstraintToQueryBuilder(QueryBuilder $queryBuilder, $path, $recursive = FALSE) {
+		if (!$recursive) {
+			$queryBuilder->andWhere('n.pathHash = :pathHash')
+				->setParameter('pathHash', md5($path));
+		} else {
+			$queryBuilder->andWhere('n.path LIKE :path')
+				->setParameter('path', $path . '%');
+		}
 	}
 
 	/**
