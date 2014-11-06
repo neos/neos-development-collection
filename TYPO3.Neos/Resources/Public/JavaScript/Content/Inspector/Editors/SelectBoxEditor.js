@@ -108,9 +108,9 @@ define([
 					return;
 				}
 				options.push(Ember.Object.create($.extend({
-					selected: that.get('multiple') && Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : value === currentValue,
+					selected: that.get('multiple') && Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : (that.get('propertyType') === 'integer' ? parseInt(value, 10) === parseInt(currentValue, 10) : value === currentValue),
 					value: value,
-					disabled: value && values[value] && values[value].disabled
+					disabled: configuration.disabled
 				}, configuration)));
 			});
 
@@ -122,19 +122,19 @@ define([
 		}.property('values.@each'),
 
 		valueDidChange: function() {
-			var content = this.get('content'),
+			var that = this,
+				content = this.get('content'),
 				value = this.get('multiple') && this.get('value') ? JSON.parse(this.get('value')) : this.get('value'),
 				valuePath = this.get('optionValuePath').replace(/^content\.?/, ''),
 				selection = content ? content.filter(function(object) {
 					var optionValue = valuePath ? Ember.get(object, valuePath) : object;
-					return Array.isArray(value) ? value.indexOf(optionValue) !== -1 : value === optionValue;
+					return Array.isArray(value) ? value.indexOf(optionValue) !== -1 : (that.get('propertyType') === 'integer' ? parseInt(value, 10) === parseInt(optionValue, 10) : value === optionValue);
 				}) : null;
 			if (!selection) {
 				return;
 			}
 			if (this.get('multiple') || (value !== (valuePath ? this.get('selection.' + valuePath) : this.get('selection')))) {
 				this.set('selection', this.get('multiple') ? selection : selection[0]);
-				var that = this;
 				Ember.run.next(function() {
 					if (that.$()) {
 						that.$().trigger('change');
@@ -151,7 +151,7 @@ define([
 				}) : null;
 				this.set('value', selectedValues ? JSON.stringify(selectedValues) : '');
 			} else if (selection) {
-				this.set('value', selection.value && isFinite(selection.value) ? parseFloat(selection.value) : selection.value);
+				this.set('value', this.get('propertyType') === 'integer' ? parseInt(selection.value, 10) : selection.value);
 			}
 		},
 
