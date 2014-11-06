@@ -5,18 +5,25 @@ Neos UI Development
 Setting up your machine for Neos UI development
 ===============================================
 
-For user interface development of TYPO3 Neos we utilize `grunt`.
+For user interface development of TYPO3 Neos we utilize `grunt` and some other
+tools.
 
 Setting up your machine could be done by using the installation script that can
-be found in ``TYPO3.Neos/Scripts/install-grunt.sh``. If you want to do a manual
+be found in ``TYPO3.Neos/Scripts/install-dev-tools.sh``. If you want to do a manual
 installation you will need to install the following software:
 
 * nodejs
 * npm
 * grunt-cli (global, ``sudo npm install -g grunt-cli``)
 * requirejs (``sudo npm install -g requirejs``)
+* bower (``sudo npm install -g bower``)
 * bundler (``sudo gem install bundler``)
 * sass & compass (``sudo gem install sass compass``)
+
+.. note::
+
+	Make sure you call ``npm install``, ``bundle install --binstubs --path bundle``
+	and ``bower install`` before running the grunt tasks.
 
 Grunt tasks types
 =================
@@ -39,6 +46,12 @@ We have different types of grunt tasks. All tasks have different purposes:
 	Those commands are used for watching file changes. When a change is detected
 	the compile commands for development are executed. Use those commands during
 	your daily work for a fast development experience.
+
+* test commmands
+
+	Used for running automated tests. Those tests use phantomjs which is automatically
+	installed by calling ``npm install``. Phantomjs needs some other dependencies though,
+	check ``TYPO3.Neos/Scripts/install-phantomjs-dependencies.sh`` for ubuntu based systems.
 
 Available grunt tasks
 =====================
@@ -97,3 +110,10 @@ Watch
 * ``watch``
 
 	All of the above.
+
+Test
+----
+
+* ``grunt test``
+
+	Runs QUnit tests for javascript modules.

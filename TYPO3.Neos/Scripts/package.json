@@ -13,6 +13,7 @@
     "grunt-contrib-requirejs": "~0.4.4",
     "grunt-contrib-watch": "~0.4.0",
     "grunt-trimtrailingspaces": "~0.4.0",
-    "matchdep": "^0.3.0"
+    "matchdep": "^0.3.0",
+    "grunt-contrib-qunit": "~0.5.2"
   }
 }
