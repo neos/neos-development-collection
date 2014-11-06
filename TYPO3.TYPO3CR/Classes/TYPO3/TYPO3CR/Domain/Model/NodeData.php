@@ -11,13 +11,13 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
@@ -221,7 +221,7 @@ class NodeData extends AbstractNodeData {
 		$this->workspace = $workspace;
 		$this->identifier = ($identifier === NULL) ? Algorithms::generateUUID() : $identifier;
 
-		$this->dimensions = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->dimensions = new ArrayCollection();
 		if ($dimensions !== NULL) {
 			foreach ($dimensions as $dimensionName => $dimensionValues) {
 				foreach ($dimensionValues as $dimensionValue) {
@@ -282,7 +282,7 @@ class NodeData extends AbstractNodeData {
 		if ($pathBeforeChange !== NULL) {
 			// this method is called both for changing the path AND in the constructor of Node; so we only want to do
 			// these things below if called OUTSIDE a constructor.
-			$this->emitNodePathChanged();
+			$this->emitNodePathChanged($this);
 			$this->addOrUpdate();
 		}
 	}
@@ -863,7 +863,8 @@ class NodeData extends AbstractNodeData {
 	public function __clone() {
 		if ($this->dimensions instanceof Collection) {
 			$existingDimensions = $this->dimensions->toArray();
-			$this->dimensions = new \Doctrine\Common\Collections\ArrayCollection();
+			$this->dimensions = new ArrayCollection();
+			/** @var NodeDimension $existingDimension */
 			foreach ($existingDimensions as $existingDimension) {
 				$this->dimensions->add(new NodeDimension($this, $existingDimension->getName(), $existingDimension->getValue()));
 			}
@@ -871,11 +872,12 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
-	 * Signals that a node has changed it's path.
+	 * Signals that a node has changed its path.
 	 *
 	 * @Flow\Signal
+	 * @param NodeData $nodeData the node data instance that has been changed
 	 * @return void
 	 */
-	protected function emitNodePathChanged() {
+	protected function emitNodePathChanged(NodeData $nodeData) {
 	}
 }
