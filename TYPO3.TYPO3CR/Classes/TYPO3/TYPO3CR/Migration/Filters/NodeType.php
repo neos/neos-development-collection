@@ -19,12 +19,6 @@ use TYPO3\Flow\Annotations as Flow;
 class NodeType implements FilterInterface {
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
-	 * @Flow\Inject
-	 */
-	protected $nodeTypeManager;
-
-	/**
 	 * The node type to match on.
 	 *
 	 * @var string
@@ -70,7 +64,7 @@ class NodeType implements FilterInterface {
 	 */
 	public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($this->withSubTypes === TRUE) {
-			return $this->nodeTypeManager->getNodeType($node->getNodeType())->isOfType($this->nodeTypeName);
+			return $node->getNodeType()->isOfType($this->nodeTypeName);
 		} else {
 			$nodeData = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeData', TRUE);
 			$nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($nodeData, 'nodeType', TRUE);
