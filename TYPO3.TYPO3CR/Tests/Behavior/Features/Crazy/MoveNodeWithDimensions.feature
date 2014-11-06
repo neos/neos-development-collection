@@ -1,7 +1,7 @@
 Feature: Move node with dimension support
   In order to move nodes
   As an API user of the content repository
-  I need support to move nodes and child nodes considering dimensions; moving all nodes across dimensions consistently.
+  I need support to move nodes and child nodes considering dimensions; moving all nodes across dimensions consistently (for aggregate nodes).
 
   Background:
     Given I have the following nodes:

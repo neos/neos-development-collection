@@ -144,6 +144,8 @@ trait StepDefinitionsTrait {
 		} else {
 			$node->copyBefore($referenceNode, $node->getName() . '-1');
 		}
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
 	}
 
 	/**

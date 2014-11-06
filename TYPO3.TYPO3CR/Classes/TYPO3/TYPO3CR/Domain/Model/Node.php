@@ -603,11 +603,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1402050232);
 		}
 
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
-
-		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName);
+		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName, $this->getNodeType()->isAggregate());
 		$copiedNode->moveBefore($referenceNode);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -635,11 +631,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648170);
 		}
 
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
-
-		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName);
+		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName, $this->getNodeType()->isAggregate());
 		$copiedNode->moveAfter($referenceNode);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -659,6 +651,22 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function copyInto(NodeInterface $referenceNode, $nodeName) {
+		return $this->copyIntoInternal($referenceNode, $nodeName, $this->getNodeType()->isAggregate());
+	}
+
+	/**
+	 * Internal method to do the actual copying.
+	 *
+	 * For behavior of the $detachedCopy parameter, see method Node::createRecursiveCopy().
+	 *
+	 * @param NodeInterface $referenceNode
+	 * @param $nodeName
+	 * @param boolean $detachedCopy
+	 * @return NodeInterface
+	 * @throws NodeConstraintException
+	 * @throws NodeExistsException
+	 */
+	protected function copyIntoInternal(NodeInterface $referenceNode, $nodeName, $detachedCopy) {
 		if ($referenceNode->getNode($nodeName) !== NULL) {
 			throw new NodeExistsException('Node with path "' . $referenceNode->getPath() . '/' . $nodeName . '" already exists.', 1292503467);
 		}
@@ -669,13 +677,10 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException(sprintf('Cannot copy "%s" into "%s" due to node type constraints.', $this->__toString(), $referenceNode->__toString()), 1404648177);
 		}
 
-		if (!$this->isNodeDataMatchingContext()) {
-			$this->materializeNodeData();
-		}
-
-		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName);
+		$copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName, $detachedCopy);
 
 		$this->context->getFirstLevelNodeCache()->flush();
+
 		$this->emitNodeAdded($copiedNode);
 
 		return $copiedNode;
@@ -1320,18 +1325,43 @@ class Node implements NodeInterface, CacheAwareInterface {
 	/**
 	 * Create a recursive copy of this node below $referenceNode with $nodeName.
 	 *
+	 * $detachedCopy only has an influence if we are copying from one dimension to the other, possibly creating a new
+	 * node variant:
+	 *
+	 * - If $detachedCopy is TRUE, the whole (recursive) copy is done without connecting original and copied node,
+	 *   so NOT CREATING a new node variant.
+	 * - If $detachedCopy is FALSE, and the node does not yet have a variant in the target dimension, we are CREATING
+	 *   a new node variant.
+	 *
+	 * As a caller of this method, $detachedCopy should be TRUE if $this->getNodeType()->isAggregate() is TRUE, and FALSE
+	 * otherwise.
+	 *
 	 * @param NodeInterface $referenceNode
+	 * @param boolean $detachedCopy
 	 * @param string $nodeName
 	 * @return NodeInterface
 	 */
-	protected function createRecursiveCopy(NodeInterface $referenceNode, $nodeName) {
-		$copiedNode = $referenceNode->createSingleNode($nodeName);
+	protected function createRecursiveCopy(NodeInterface $referenceNode, $nodeName, $detachedCopy) {
+		$identifier = NULL;
+
+		$referenceNodeDimensions = $referenceNode->getDimensions();
+		$referenceNodeDimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($referenceNodeDimensions);
+		$thisDimensions = $this->getDimensions();
+		$thisNodeDimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($thisDimensions);
+		if ($detachedCopy === FALSE && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNode->getContext()->getNodeByIdentifier($this->getIdentifier()) === NULL) {
+			// If the target dimensions are different than this one, and there is no node shadowing this one in the target dimension yet, we use the same
+			// node identifier, effectively creating a new node variant.
+			$identifier = $this->getIdentifier();
+		}
+
+		$copiedNode = $referenceNode->createSingleNode($nodeName, NULL, $identifier);
+
 		$copiedNode->similarize($this);
 		/** @var $childNode Node */
 		foreach ($this->getChildNodes() as $childNode) {
 			// Prevent recursive copy when copying into itself
 			if ($childNode->getIdentifier() !== $copiedNode->getIdentifier()) {
-				$childNode->copyInto($copiedNode, $childNode->getName());
+				$childNode->copyIntoInternal($copiedNode, $childNode->getName(), $detachedCopy);
 			}
 		}
 
