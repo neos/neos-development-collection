@@ -7,12 +7,15 @@ use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 
 require_once(__DIR__ . '/../../../../../Flowpack.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 
 /**
  * Features context
  */
 class FeatureContext extends MinkContext {
+
+	use IsolatedBehatStepsTrait;
 
 	use NodeOperationsTrait;
 
@@ -39,6 +42,13 @@ class FeatureContext extends MinkContext {
 	public function __construct(array $parameters) {
 		$this->useContext('flow', new \Flowpack\Behat\Tests\Behat\FlowContext($parameters));
 		$this->objectManager = $this->getSubcontext('flow')->getObjectManager();
+	}
+
+	/**
+	 * @return \TYPO3\Flow\Object\ObjectManagerInterface
+	 */
+	protected function getObjectManager() {
+		return $this->objectManager;
 	}
 
 	/**
