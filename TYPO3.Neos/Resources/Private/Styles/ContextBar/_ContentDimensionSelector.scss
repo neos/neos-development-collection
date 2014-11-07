@@ -104,5 +104,18 @@
 				width: $unit * 8 !important;
 			}
 		}
+
+		.neos-content-dimension-selector-initial-translation-dialog {
+
+			.neos-close.neos-button {
+				float: right !important;
+			}
+			.neos-modal-footer .neos-button {
+				float: none !important;
+			}
+
+			white-space: normal;
+
+		}
 	}
 }

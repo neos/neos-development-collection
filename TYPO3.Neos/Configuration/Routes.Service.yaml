@@ -21,6 +21,15 @@
   appendExceedingArguments: TRUE
   httpMethods: ['HEAD', 'GET']
 
+-
+  name: 'Nodes - create/adopt node'
+  uriPattern: 'nodes'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'create'
+  appendExceedingArguments: TRUE
+  httpMethods: ['POST']
+
 # UserPreferencesController routes
 -
   name: 'Services - UserPreferencesController->index'

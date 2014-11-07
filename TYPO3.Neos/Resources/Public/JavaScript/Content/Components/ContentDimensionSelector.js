@@ -4,6 +4,7 @@ define(
 	'Library/jquery-with-dependencies',
 	'./ContentDimensionController',
 	'Shared/EventDispatcher',
+	'Content/Model/NodeSelection',
 	'text!./ContentDimensionSelector.html'
 ],
 function(
@@ -11,6 +12,7 @@ function(
 	$,
 	ContentDimensionController,
 	EventDispatcher,
+	NodeSelection,
 	template
 ) {
 
@@ -28,6 +30,7 @@ function(
 		isActiveBinding: 'controller.selectorIsActive',
 
 		controller: ContentDimensionController,
+		nodeSelection: NodeSelection,
 
 		/**
 		 * Initialize the click handler for the dimensions selector panel
