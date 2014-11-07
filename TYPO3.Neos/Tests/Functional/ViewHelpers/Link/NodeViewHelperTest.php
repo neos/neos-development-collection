@@ -11,49 +11,60 @@ namespace TYPO3\Neos\Tests\Functional\ViewHelpers\Link;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
+use TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
+use TYPO3\Fluid\View\AbstractTemplateView;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Functional test for the NodeViewHelper
  */
-class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
+class NodeViewHelperTest extends FunctionalTestCase {
 
 	protected $testableSecurityEnabled = TRUE;
 
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+	 * @var NodeDataRepository
 	 */
 	protected $nodeDataRepository;
 
 	/**
-	 * @var \TYPO3\Flow\Property\PropertyMapper
+	 * @var PropertyMapper
 	 */
 	protected $propertyMapper;
 
 	/**
-	 * @var \TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper
+	 * @var NodeViewHelper
 	 */
 	protected $viewHelper;
 
 	/**
-	 * @var \TYPO3\TypoScript\Core\Runtime
+	 * @var Runtime
 	 */
 	protected $tsRuntime;
 
 	/**
-	 * @var \TYPO3\Neos\Domain\Service\ContentContext
+	 * @var ContentContext
 	 */
 	protected $contentContext;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+	 * @var ContextFactoryInterface
 	 */
 	protected $contextFactory;
 
@@ -71,6 +82,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		$siteImportService->importFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
 		$this->persistenceManager->persistAll();
 
+		/** @var Domain $currentDomain */
 		$currentDomain = $domainRepository->findOneByActiveRequest();
 		if ($currentDomain !== NULL) {
 			$contextProperties['currentSite'] = $currentDomain->getSite();
@@ -88,7 +100,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 		/** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
 		$requestHandler = self::$bootstrap->getActiveRequestHandler();
 		$httpRequest = $requestHandler->getHttpRequest();
-		$httpRequest->setBaseUri('http://neos.test/');
+		$httpRequest->setBaseUri(new Uri('http://neos.test/'));
 		$controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder(), new FlashMessageContainer());
 		$this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
@@ -99,15 +111,17 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 			'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
 		));
 		$this->inject($typoScriptObject, 'tsRuntime', $this->tsRuntime);
+		/** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
 		$mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', FALSE);
 		$mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($typoScriptObject));
-		$viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+		$viewHelperVariableContainer = new ViewHelperVariableContainer();
 		$viewHelperVariableContainer->setView($mockView);
 		$this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
+		$templateVariableContainer = new TemplateVariableContainer(array());
 		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
 		$this->viewHelper->setRenderChildrenClosure(function() use ($templateVariableContainer) {
-			return $templateVariableContainer->get('linkedNode')->getLabel();
+			$linkedNode = $templateVariableContainer->get('linkedNode');
+			return $linkedNode !== NULL ? $linkedNode->getLabel() : '';
 		});
 		$this->viewHelper->initialize();
 	}
@@ -140,7 +154,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
-		$this->assertSame('<a href="/">example.org</a>', $this->viewHelper->render('~'));
+		$this->assertSame('<a href="/en/home.html">example.org</a>', $this->viewHelper->render('~'));
 		$this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('~/home'));
 		$this->assertSame('<a href="/en/home/about-us.html">About Us Test</a>', $this->viewHelper->render('~/home/about-us'));
 		$this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('~/home/about-us/mission'));
@@ -193,8 +207,43 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function viewHelperCatchesExceptionExceptionIfTargetNodeDoesNotExist() {
+		$this->assertSame('<a></a>', $this->viewHelper->render('/sites/example/non-existing-node'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperResolvesLinksToChildNodeShortcutPages() {
+		$this->assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/child-node.html">Shortcut to child node</a>', $this->viewHelper->render('/sites/example/home/shortcuts/shortcut-to-child-node'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperResolvesLinksToParentNodeShortcutPages() {
+		$this->assertSame('<a href="/en/home/shortcuts.html">Shortcut to parent node</a>', $this->viewHelper->render('/sites/example/home/shortcuts/shortcut-to-parent-node'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperResolvesLinksToTargetNodeShortcutPages() {
+		$this->assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/target-node.html">Shortcut to target node</a>', $this->viewHelper->render('/sites/example/home/shortcuts/shortcut-to-target-node'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperResolvesLinksToUriShortcutPages() {
+		$this->assertSame('<a href="/en/home/shortcuts/shortcut-to-child-node/target-node.html">Shortcut to target node</a>', $this->viewHelper->render('/sites/example/home/shortcuts/shortcut-to-target-node'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function viewHelperUsesNodeTitleIfEmpty() {
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
+		$templateVariableContainer = new TemplateVariableContainer(array());
 		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
 		$this->viewHelper->setRenderChildrenClosure(function() use ($templateVariableContainer) {
 			return NULL;
@@ -206,7 +255,7 @@ class NodeViewHelperTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperAssignsLinkedNodeToNodeVariableName() {
-		$templateVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer(array());
+		$templateVariableContainer = new TemplateVariableContainer(array());
 		$this->inject($this->viewHelper, 'templateVariableContainer', $templateVariableContainer);
 		$this->viewHelper->setRenderChildrenClosure(function() use ($templateVariableContainer) {
 			return $templateVariableContainer->get('alternativeLinkedNode')->getLabel();

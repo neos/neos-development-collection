@@ -99,9 +99,7 @@ class NodeViewHelper extends AbstractViewHelper {
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @return string The rendered URI or NULL if no URI could be resolved for the given node
-	 * @throws \TYPO3\Neos\Exception
-	 * @throws \InvalidArgumentException
-	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+	 * @throws ViewHelperException
 	 */
 	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode') {
 		$baseNode = NULL;
@@ -115,22 +113,27 @@ class NodeViewHelper extends AbstractViewHelper {
 			if (isset($currentContext[$baseNodeName])) {
 				$baseNode = $currentContext[$baseNodeName];
 			} else {
-				throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+				throw new ViewHelperException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
 			}
 		}
 		$controllerContext = $this->controllerContext;
 
-		return $this->linkingService->createNodeUri(
-			$controllerContext,
-			$node,
-			$baseNode,
-			$format,
-			$absolute,
-			$arguments,
-			$section,
-			$addQueryString,
-			$argumentsToBeExcludedFromQueryString
-		);
+		try {
+			return $this->linkingService->createNodeUri(
+				$controllerContext,
+				$node,
+				$baseNode,
+				$format,
+				$absolute,
+				$arguments,
+				$section,
+				$addQueryString,
+				$argumentsToBeExcludedFromQueryString
+			);
+		} catch (NeosException $exception) {
+			$this->systemLogger->logException($exception);
+			return '';
+		}
 	}
 
 }
