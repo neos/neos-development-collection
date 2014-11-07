@@ -1,6 +1,7 @@
 <?php
 
-use TYPO3\Flow\Cache\CacheManager;
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
@@ -9,7 +10,7 @@ use TYPO3\TYPO3CR\Service\PublishingServiceInterface;
 /**
  * A trait with shared step definitions for common use by other contexts
  *
- * Note that this trait requires that the Flow Object Manager must be available via $this->objectManager().
+ * Note that this trait requires that the Flow Object Manager must be available via $this->getObjectManager().
  *
  * Note: This trait expects the IsolatedBehatStepsTrait to be available!
  */
@@ -51,7 +52,7 @@ trait NodeOperationsTrait {
 	 * @Given /^I have the following nodes:$/
 	 * @When /^I create the following nodes:$/
 	 */
-	public function iHaveTheFollowingNodes($table) {
+	public function iHaveTheFollowingNodes(TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))), TRUE);
 		} else {
@@ -119,7 +120,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Given /^I have the following content dimensions:$/
 	 */
-	public function iHaveTheFollowingContentDimensions($table) {
+	public function iHaveTheFollowingContentDimensions(TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -137,7 +138,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I copy the node (into|after|before) path "([^"]*)" with the following context:$/
 	 */
-	public function iCopyANodeToPath($position, $path, $table) {
+	public function iCopyANodeToPath($position, $path, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -161,7 +162,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I move the node (into|after|before) path "([^"]*)" with the following context:$/
 	 */
-	public function iMoveANodeToPath($position, $path, $table) {
+	public function iMoveANodeToPath($position, $path, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($position), 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -183,7 +184,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get a node by path "([^"]*)" with the following context:$/
 	 */
-	public function iGetANodeByPathWithTheFollowingContext($path, $table) {
+	public function iGetANodeByPathWithTheFollowingContext($path, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -211,7 +212,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get a node by identifier "([^"]*)" with the following context:$/
 	 */
-	public function iGetANodeByIdentifierWithTheFollowingContext($identifier, $table) {
+	public function iGetANodeByIdentifierWithTheFollowingContext($identifier, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -230,7 +231,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get the child nodes of "([^"]*)" with the following context:$/
 	 */
-	public function iGetTheChildNodesOfWithTheFollowingContext($path, $table) {
+	public function iGetTheChildNodesOfWithTheFollowingContext($path, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($path), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -246,7 +247,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get the child nodes of "([^"]*)" with filter "([^"]*)" and the following context:$/
 	 */
-	public function iGetTheChildNodesOfWithFilterAndTheFollowingContext($path, $filter, $table) {
+	public function iGetTheChildNodesOfWithFilterAndTheFollowingContext($path, $filter, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($filter), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -262,7 +263,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get the nodes on path "([^"]*)" to "([^"]*)" with the following context:$/
 	 */
-	public function iGetTheNodesOnPathToWithTheFollowingContext($startingPoint, $endPoint, $table) {
+	public function iGetTheNodesOnPathToWithTheFollowingContext($startingPoint, $endPoint, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg($startingPoint), 'string', escapeshellarg($endPoint), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -313,7 +314,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I use the publishing service to publish nodes in the workspace "([^"]*)" with the following context:$/
 	 */
-	public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, $table) {
+	public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -516,7 +517,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Then /^I should have a node with path "([^"]*)" and value "([^"]*)" for property "([^"]*)" for the following context:$/
 	 */
-	public function iShouldHaveANodeWithPathAndValueForPropertyForTheFollowingContext($path, $propertyValue, $propertyName, $table) {
+	public function iShouldHaveANodeWithPathAndValueForPropertyForTheFollowingContext($path, $propertyValue, $propertyName, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg($path), 'string', escapeshellarg($propertyValue), 'string', escapeshellarg($propertyName), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -528,7 +529,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I adopt the node (recursively |)to the following context:$/
 	 */
-	public function iAdoptTheNodeToTheFollowingContext($recursive, $table) {
+	public function iAdoptTheNodeToTheFollowingContext($recursive, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($recursive), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -543,7 +544,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Then /^I should have the following nodes(| in any order):$/
 	 */
-	public function iShouldHaveTheFollowingNodes($orderIndependent, $table) {
+	public function iShouldHaveTheFollowingNodes($orderIndependent, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($orderIndependent), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -643,7 +644,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Given /^I have the following (additional |)NodeTypes configuration:$/
 	 */
-	public function iHaveTheFollowingNodetypesConfiguration($additional, $nodeTypesConfiguration) {
+	public function iHaveTheFollowingNodetypesConfiguration($additional, PyStringNode $nodeTypesConfiguration) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($additional), 'integer', escapeshellarg($nodeTypesConfiguration)));
 		} else {
@@ -702,7 +703,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @When /^I get node variants of "([^"]*)" with the following context:$/
 	 */
-	public function iGetNodeVariantsOfWithTheFollowingContext($identifier, $table) {
+	public function iGetNodeVariantsOfWithTheFollowingContext($identifier, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($identifier), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
@@ -798,7 +799,7 @@ trait NodeOperationsTrait {
 	/**
 	 * @Then /^I expect to have (\d+) unpublished node[s]? for the following context:$/
 	 */
-	public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, $table) {
+	public function iExpectToHaveUnpublishedNodesForTheFollowingContext($nodeCount, TableNode $table) {
 		if ($this->isolated === TRUE) {
 			$this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'integer', escapeshellarg($nodeCount), escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
 		} else {
