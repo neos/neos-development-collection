@@ -135,7 +135,7 @@ class NodeViewHelperTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function viewHelperRendersUriViaStringStartingWithTilde() {
-		$this->assertOutputLinkValid('/', $this->viewHelper->render('~'));
+		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('~'));
 		$this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('~/home'));
 		$this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('~/home/about-us'));
 		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('~/home/about-us/mission'));
@@ -183,6 +183,13 @@ class NodeViewHelperTest extends FunctionalTestCase {
 	 */
 	public function viewHelperRespectsArgumentsParameter() {
 		$this->assertOutputLinkValid('en/home.html?foo=bar', $this->viewHelper->render('/sites/example/home@live', NULL, FALSE, array('foo' => 'bar')));
+	}
+
+	/**
+	 * @test
+	 */
+	public function viewHelperCatchesExceptionIfTargetNodeDoesNotExist() {
+		$this->assertSame('', $this->viewHelper->render('/sites/example/non-existing-node'));
 	}
 
 	/**

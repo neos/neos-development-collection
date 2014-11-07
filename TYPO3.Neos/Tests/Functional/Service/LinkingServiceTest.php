@@ -17,6 +17,7 @@ use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Neos\Exception as NeosException;
 
 /**
  * Test case for the LinkingService
@@ -135,7 +136,7 @@ class LinkingServiceTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function linkingServiceCreatesUriViaStringStartingWithTilde() {
-		$this->assertOutputLinkValid('/', $this->linkingService->createNodeUri($this->controllerContext, '~', $this->baseNode));
+		$this->assertOutputLinkValid('en/home.html', $this->linkingService->createNodeUri($this->controllerContext, '~', $this->baseNode));
 		$this->assertOutputLinkValid('en/home.html', $this->linkingService->createNodeUri($this->controllerContext, '~/home', $this->baseNode));
 		$this->assertOutputLinkValid('en/home/about-us.html', $this->linkingService->createNodeUri($this->controllerContext, '~/home/about-us', $this->baseNode));
 		$this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->linkingService->createNodeUri($this->controllerContext, '~/home/about-us/mission', $this->baseNode));
@@ -226,8 +227,32 @@ class LinkingServiceTest extends FunctionalTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\Neos\Exception
 	 */
-	public function nodeLinkingServiceReturnsLastLinkedNode() {
+	public function linkingServiceThrowsAnExceptionWhenTryingToLinkToANonExistingNode() {
+		$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/not-found', $this->baseNode);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Neos\Exception
+	 */
+	public function linkingServiceThrowsAnExceptionWhenItIsGivenAnEmptyString() {
+		$this->linkingService->createNodeUri($this->controllerContext, '', $this->baseNode);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function linkingServiceThrowsAnExceptionWhenItIsGivenADifferentObject() {
+		$this->linkingService->createNodeUri($this->controllerContext, new \stdClass());
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceStoresLastLinkedNode() {
 		$targetNodeA = $this->baseNode;
 		$targetNodeB = $this->baseNode->getNode('about-us');
 		$this->linkingService->createNodeUri($this->controllerContext, $targetNodeA);
@@ -239,12 +264,24 @@ class LinkingServiceTest extends FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function nodeLinkingServiceUnsetsLastLinkedNodeOnFailure() {
+	public function linkingServiceStoresLastLinkedNodeEvenIfItsAShortcutToAnExternalUri() {
+		$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/shortcuts/shortcut-to-target-uri', $this->baseNode);
+		$this->assertNotNull($this->linkingService->getLastLinkedNode());
+	}
+
+	/**
+	 * @test
+	 */
+	public function linkingServiceUnsetsLastLinkedNodeOnFailure() {
 		$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode);
 		$this->assertNotNull($this->linkingService->getLastLinkedNode());
-		$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/not-found', $this->baseNode);
+		try {
+			$this->linkingService->createNodeUri($this->controllerContext, '/sites/example/non-existing-node', $this->baseNode);
+		} catch (NeosException $exception) {
+		}
 		$this->assertNull($this->linkingService->getLastLinkedNode());
 	}
+
 
 	/**
 	 * A wrapper function for the appropriate assertion for the Link- and its Uri-ViewHelper derivate.

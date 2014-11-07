@@ -180,6 +180,102 @@
 					</properties>
 				</node>
 			</node>
+			<node identifier="bbf90c0a-a9f8-1bf3-1d6b-2eac028bd104" nodeName="shortcuts" type="TYPO3.Neos.NodeTypes:Page">
+				<properties>
+					<title><![CDATA[<h1>Shurcut tests</h1>]]></title>
+					<uriPathSegment>shortcuts</uriPathSegment>
+				</properties>
+				<node identifier="2e991434-efd7-209b-48ff-b7370a500518" nodeName="main" type="TYPO3.Neos:ContentCollection">
+					<node identifier="cd373cee-7e67-816d-ff81-01b20ab10888" nodeName="asset-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;asset://71a21bed-bbc2-7baf-0974-dd5b1e14d833&quot; data-gentics-aloha-repository=&quot;asset-repository&quot; data-gentics-aloha-object-id=&quot;71a21bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Asset link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="a8240758-ed13-a38c-ade0-77ac0d557cfc" nodeName="broken-asset-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;asset://00021bed-bbc2-7baf-0974-dd5b1e14d833&quot; data-gentics-aloha-repository=&quot;asset-repository&quot; data-gentics-aloha-object-id=&quot;00021bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Broken asset link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="774fe387-a772-ac5a-222e-15663ddac0c6" nodeName="broken-node-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;node://00090c0a-a9f8-1bf3-1d6b-2eac028bd104&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;00090c0a-a9f8-1bf3-1d6b-2eac028bd104&quot;&gt;Broken node link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="2a1bf251-7a57-ceda-2f56-90cc32d1c158" nodeName="empty-asset-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;asset://&quot;&gt;Empty asset link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="7ca679e4-593d-29d1-00d2-8c124b38c2a3" nodeName="empty-node-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;node://&quot;&gt;Empty node link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="ad58c465-2790-a675-dbbe-80c8ec3a80bf" nodeName="shortcut-to-child-node-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;node://b05acbc1-b445-b12e-4410-dca62e6fcf4a&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;b05acbc1-b445-b12e-4410-dca62e6fcf4a&quot;&gt;Shortcut to child node link&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="f19e5c84-26da-3239-34df-19e3328eb784" nodeName="shortcut-to-parent-node-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;node://5ebb87d5-aa6d-ec9d-4867-e6164878e33c&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;5ebb87d5-aa6d-ec9d-4867-e6164878e33c&quot;&gt;Shortcut to parent node link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="7a982455-768c-d750-5d2b-7f7b7390baa6" nodeName="shortcut-to-target-node-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;node://b1111f14-dcaa-13ed-5bf4-d186113ce455&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;b1111f14-dcaa-13ed-5bf4-d186113ce455&quot;&gt;Shortcut to target node link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+					<node identifier="ba178461-f13a-2355-3902-f2f7c7266dd5" nodeName="shortcut-to-target-uri-link" type="TYPO3.Neos.NodeTypes:Text">
+						<properties>
+							<text>&lt;p&gt;&lt;a href=&quot;node://60cba99a-6fea-30c9-b395-a7eec69d04b4&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;60cba99a-6fea-30c9-b395-a7eec69d04b4&quot;&gt;Shortcut to target URI link&lt;/a&gt;&lt;/p&gt;</text>
+						</properties>
+					</node>
+				</node>
+				<node identifier="b05acbc1-b445-b12e-4410-dca62e6fcf4a" nodeName="shortcut-to-child-node" type="TYPO3.Neos:Shortcut">
+					<properties>
+						<title>Shortcut to child node</title>
+						<uriPathSegment>shortcut-to-child-node</uriPathSegment>
+						<targetMode>firstChildNode</targetMode>
+					</properties>
+					<node identifier="fce12ede-b404-abc7-9820-ff6b45858713" nodeName="child-node" type="TYPO3.Neos.NodeTypes:Page">
+						<properties>
+							<title>Child node</title>
+							<uriPathSegment>child-node</uriPathSegment>
+						</properties>
+					</node>
+					<node identifier="f1d0332e-8032-7e41-704e-860c65849fca" nodeName="target-node" type="TYPO3.Neos.NodeTypes:Page">
+						<properties>
+							<title>Target node</title>
+							<uriPathSegment>target-node</uriPathSegment>
+						</properties>
+					</node>
+				</node>
+				<node identifier="5ebb87d5-aa6d-ec9d-4867-e6164878e33c" nodeName="shortcut-to-parent-node" type="TYPO3.Neos:Shortcut">
+					<properties>
+						<title>Shortcut to parent node</title>
+						<uriPathSegment>shortcut-to-parent-node</uriPathSegment>
+						<targetMode>parentNode</targetMode>
+						<target></target>
+					</properties>
+				</node>
+				<node identifier="b1111f14-dcaa-13ed-5bf4-d186113ce455" nodeName="shortcut-to-target-node" type="TYPO3.Neos:Shortcut">
+					<properties>
+						<title>Shortcut to target node</title>
+						<uriPathSegment>shortcut-to-target-node</uriPathSegment>
+						<targetMode>selectedTarget</targetMode>
+						<target>node://f1d0332e-8032-7e41-704e-860c65849fca</target>
+					</properties>
+				</node>
+				<node identifier="60cba99a-6fea-30c9-b395-a7eec69d04b4" nodeName="shortcut-to-target-uri" type="TYPO3.Neos:Shortcut">
+					<properties>
+						<title>Shortcut to target URI</title>
+						<uriPathSegment>shortcut-to-target-uri</uriPathSegment>
+						<targetMode>selectedTarget</targetMode>
+						<target>http://www.google.com</target>
+					</properties>
+				</node>
+			</node>
 		</node>
 	</site>
 </root>

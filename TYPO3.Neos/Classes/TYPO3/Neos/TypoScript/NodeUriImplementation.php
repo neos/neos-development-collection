@@ -12,6 +12,7 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\Neos\Exception as NeosException;
@@ -20,6 +21,12 @@ use TYPO3\Neos\Exception as NeosException;
  * Create a link to a node
  */
 class NodeUriImplementation extends AbstractTypoScriptObject {
+
+	/**
+	 * @Flow\Inject
+	 * @var SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * @Flow\Inject
@@ -124,17 +131,22 @@ class NodeUriImplementation extends AbstractTypoScriptObject {
 			throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
 		}
 
-		return $this->linkingService->createNodeUri(
-			$this->tsRuntime->getControllerContext(),
-			$this->getNode(),
-			$baseNode,
-			$this->getFormat(),
-			$this->isAbsolute(),
-			$this->getAdditionalParams(),
-			$this->getSection(),
-			$this->getAddQueryString(),
-			$this->getArgumentsToBeExcludedFromQueryString()
-		);
+		try {
+			return $this->linkingService->createNodeUri(
+				$this->tsRuntime->getControllerContext(),
+				$this->getNode(),
+				$baseNode,
+				$this->getFormat(),
+				$this->isAbsolute(),
+				$this->getAdditionalParams(),
+				$this->getSection(),
+				$this->getAddQueryString(),
+				$this->getArgumentsToBeExcludedFromQueryString()
+			);
+		} catch (NeosException $exception) {
+			$this->systemLogger->logException($exception);
+			return '';
+		}
 	}
 
 }
