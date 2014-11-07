@@ -7,9 +7,9 @@
 				<source>The account identifier (username) is already in use.</source>
 			<target xml:lang="da">Konto-id (Brugernavn) er allerede i brug.</target></trans-unit>
       <!-- HostnameValidator -->
-      <trans-unit id="1324641097" xml:space="preserve">
+      <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target xml:lang="da">Den angivne adgangskode var tom.</target></trans-unit>
+			<target xml:lang="da">The hostname "{0}" was not valid.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>

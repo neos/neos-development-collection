@@ -8,7 +8,7 @@
 			</trans-unit>
 
 			<!-- HostnameValidator -->
-			<trans-unit id="1324641097" xml:space="preserve">
+			<trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
 			</trans-unit>
 
