@@ -7,9 +7,9 @@
 				<source>The account identifier (username) is already in use.</source>
 			<target xml:lang="tr">Bu hesap belirleyici (kullanıcı adı) zaten kullanılıyor.</target></trans-unit>
       <!-- HostnameValidator -->
-      <trans-unit id="1324641097" xml:space="preserve">
+      <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target xml:lang="tr">Verilen şifre boş.</target></trans-unit>
+			<target xml:lang="tr">The hostname "{0}" was not valid.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>
