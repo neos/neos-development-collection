@@ -7,14 +7,14 @@ use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 
 require_once(__DIR__ . '/../../../../../Flowpack.Behat/Tests/Behat/FlowContext.php');
-require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/StepDefinitionsTrait.php');
+require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 
 /**
  * Features context
  */
 class FeatureContext extends MinkContext {
 
-	use StepDefinitionsTrait;
+	use NodeOperationsTrait;
 
 	/**
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface
