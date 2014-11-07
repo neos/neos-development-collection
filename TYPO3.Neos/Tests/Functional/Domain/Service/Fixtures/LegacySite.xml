@@ -7,7 +7,7 @@
 			<layout>landingPage</layout>
 			<subpageLayout></subpageLayout>
 			<state>1</state>
-			<siteResourcesPackageKey>TYPO3.NeosDemoTypo3Org</siteResourcesPackageKey>
+			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
 		</properties>
 		<node identifier="f380fbcd-2c5a-4c9b-b1c3-da9e1dc803cc" type="TYPO3.Neos:ContentCollection" nodeName="teaser">
 			<node identifier="d17caff2-f50c-d30b-b735-9b9216de02e9" type="TYPO3.Neos.NodeTypes:Headline" nodeName="node52697bdfee199">
