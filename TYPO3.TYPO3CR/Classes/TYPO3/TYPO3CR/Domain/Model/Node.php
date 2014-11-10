@@ -519,6 +519,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
 		}
 
+		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -531,6 +532,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 		$this->emitNodeUpdated($this);
 	}
 
@@ -561,6 +563,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
 		}
 
+		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 		if ($referenceNode->getParentPath() !== $this->getParentPath()) {
 			$parentPath = $referenceNode->getParentPath();
 			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
@@ -573,6 +576,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 		$this->emitNodeUpdated($this);
 	}
 
@@ -603,13 +607,35 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
 		}
 
+		$this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
 		$parentPath = $referenceNode->getPath();
 		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 		$this->nodeDataRepository->persistEntities();
 
 		$this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
 		$this->context->getFirstLevelNodeCache()->flush();
+		$this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
 		$this->emitNodeUpdated($this);
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $movedNode
+	 * @param NodeInterface $referenceNode
+	 * @param integer $movePosition
+	 * @return void
+	 */
+	protected function emitBeforeNodeMove($movedNode, $referenceNode, $movePosition) {
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $movedNode
+	 * @param NodeInterface $referenceNode
+	 * @param integer $movePosition
+	 * @return void
+	 */
+	protected function emitAfterNodeMove($movedNode, $referenceNode, $movePosition) {
 	}
 
 	/**
@@ -631,13 +657,31 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1402050232);
 		}
 
+		$this->emitBeforeNodeCopy($this, $referenceNode->getParent());
 		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName, $this->getNodeType()->isAggregate());
 		$copiedNode->moveBefore($referenceNode);
 
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($copiedNode);
+		$this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
 
 		return $copiedNode;
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function emitBeforeNodeCopy(NodeInterface $sourceNode, NodeInterface $targetParentNode) {
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function emitAfterNodeCopy(NodeInterface $copiedNode, NodeInterface $targetParentNode) {
 	}
 
 	/**
@@ -659,11 +703,13 @@ class Node implements NodeInterface, CacheAwareInterface {
 			throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648170);
 		}
 
+		$this->emitBeforeNodeCopy($this, $referenceNode->getParent());
 		$copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName, $this->getNodeType()->isAggregate());
 		$copiedNode->moveAfter($referenceNode);
 
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($copiedNode);
+		$this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
 
 		return $copiedNode;
 	}
@@ -679,7 +725,11 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function copyInto(NodeInterface $referenceNode, $nodeName) {
-		return $this->copyIntoInternal($referenceNode, $nodeName, $this->getNodeType()->isAggregate());
+		$this->emitBeforeNodeCopy($this, $referenceNode);
+		$copiedNode = $this->copyIntoInternal($referenceNode, $nodeName, $this->getNodeType()->isAggregate());
+		$this->emitAfterNodeCopy($this, $referenceNode);
+
+		return $copiedNode;
 	}
 
 	/**
@@ -730,6 +780,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 			$this->materializeNodeData();
 		}
 		$oldValue = $this->hasProperty($propertyName) ? $this->getProperty($propertyName) : NULL;
+		$this->emitBeforeNodePropertyChange($this, $propertyName, $oldValue, $value);
 		$this->nodeData->setProperty($propertyName, $value);
 
 		$this->context->getFirstLevelNodeCache()->flush();
@@ -926,6 +977,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @api
 	 */
 	public function createNode($name, NodeType $nodeType = NULL, $identifier = NULL, array $dimensions = NULL) {
+		$this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier, $dimensions);
 		$newNode = $this->createSingleNode($name, $nodeType, $identifier, $dimensions);
 		if ($nodeType !== NULL) {
 			foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
@@ -944,6 +996,7 @@ class Node implements NodeInterface, CacheAwareInterface {
 
 		$this->context->getFirstLevelNodeCache()->flush();
 		$this->emitNodeAdded($newNode);
+		$this->emitAfterNodeCreate($newNode);
 
 		return $newNode;
 	}
@@ -1610,6 +1663,30 @@ class Node implements NodeInterface, CacheAwareInterface {
 	}
 
 	/**
+	 * Signals that a node will be created.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @param string $name
+	 * @param string $nodeType
+	 * @param string $identifier
+	 * @param array $dimensions
+	 * @return void
+	 */
+	protected function emitBeforeNodeCreate(NodeInterface $node, $name, $nodeType, $identifier, $dimensions) {
+	}
+
+	/**
+	 * Signals that a node was created.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @return void
+	 */
+	protected function emitAfterNodeCreate(NodeInterface $node) {
+	}
+
+	/**
 	 * Signals that a node was added.
 	 *
 	 * @Flow\Signal
@@ -1637,6 +1714,19 @@ class Node implements NodeInterface, CacheAwareInterface {
 	 * @return void
 	 */
 	protected function emitNodeRemoved(NodeInterface $node) {
+	}
+
+	/**
+	 * Signals that the property of a node will be changed.
+	 *
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @param string $propertyName name of the property that has been changed/added
+	 * @param mixed $oldValue the property value before it was changed or NULL if the property is new
+	 * @param mixed $newValue the new property value
+	 * @return void
+	 */
+	protected function emitBeforeNodePropertyChange(NodeInterface $node, $propertyName, $oldValue, $newValue) {
 	}
 
 	/**
