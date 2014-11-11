@@ -84,49 +84,85 @@ class ChildrenOperation extends AbstractOperation {
 	/**
 	 * Optimize for typical use cases, filter by node name and filter
 	 * by NodeType (instanceof). These cases are now optimized and will
-	 * only load the Nodes that match the filter.
+	 * only load the nodes that match the filters.
 	 *
 	 * @param FlowQuery $flowQuery
 	 * @param array $parsedFilter
 	 * @return boolean
 	 */
 	protected function earlyOptimizationOfFilters(FlowQuery $flowQuery, array $parsedFilter) {
-		$filter = $parsedFilter['Filters'][0];
-
-		if (isset($filter['PropertyNameFilter'])) {
+		$optimized = FALSE;
+		$output = array();
+		$outputNodePaths = array();
+		foreach ($parsedFilter['Filters'] as $filter) {
+			$instanceOfFilters = array();
+			$attributeFilters = array();
 			if (isset($filter['AttributeFilters'])) {
 				foreach ($filter['AttributeFilters'] as $attributeFilter) {
-					$flowQuery->pushOperation('filter', array($attributeFilter['text']));
-				}
-			}
-			$flowQuery->pushOperation('find', array($parsedFilter['Filters'][0]['PropertyNameFilter']));
-			return TRUE;
-		}
-
-		if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof' && $filter['AttributeFilters'][0]['Identifier'] === NULL) {
-			$output = array();
-			$outputNodePaths = array();
-			/** @var NodeInterface $contextNode */
-			foreach ($flowQuery->getContext() as $contextNode) {
-				/** @var NodeInterface $childNode */
-				foreach ($contextNode->getChildNodes($filter['AttributeFilters'][0]['Operand']) as $childNode) {
-					if (!isset($outputNodePaths[$childNode->getPath()])) {
-						$output[] = $childNode;
-						$outputNodePaths[$childNode->getPath()] = TRUE;
+					if ($attributeFilter['Operator'] === 'instanceof' && $attributeFilter['Identifier'] === NULL) {
+						$instanceOfFilters[] = $attributeFilter;
+					} else {
+						$attributeFilters[] = $attributeFilter;
 					}
 				}
 			}
-			$flowQuery->setContext($output);
 
-			if (count($filter['AttributeFilters']) > 1) {
-				array_shift($filter['AttributeFilters']);
-				foreach ($filter['AttributeFilters'] as $attributeFilter) {
-					$flowQuery->pushOperation('filter', array($attributeFilter['text']));
+			// Only apply optimization if there's a property name filter or a instanceof filter or another filter already did optimization
+			if (isset($filter['PropertyNameFilter']) || count($instanceOfFilters) > 0 || $optimized === TRUE) {
+				$optimized = TRUE;
+				$filteredOutput = array();
+				$filteredOutputNodePaths = array();
+				// Optimize property name filter if present
+				if (isset($filter['PropertyNameFilter'])) {
+					/** @var NodeInterface $contextNode */
+					foreach ($flowQuery->getContext() as $contextNode) {
+						$childNode = $contextNode->getNode($filter['PropertyNameFilter']);
+						if ($childNode !== NULL && !isset($filteredOutputNodePaths[$childNode->getPath()])) {
+							$filteredOutput[] = $childNode;
+							$filteredOutputNodePaths[$childNode->getPath()] = TRUE;
+						}
+					}
+				} elseif (count($instanceOfFilters) > 0) {
+					// Optimize node type filter if present
+					$allowedNodeTypes = array_map(function($instanceOfFilter) {
+						return $instanceOfFilter['Operand'];
+					}, $instanceOfFilters);
+					/** @var NodeInterface $contextNode */
+					foreach ($flowQuery->getContext() as $contextNode) {
+						/** @var NodeInterface $childNode */
+						foreach ($contextNode->getChildNodes(implode($allowedNodeTypes, ',')) as $childNode) {
+							if (!isset($filteredOutputNodePaths[$childNode->getPath()])) {
+								$filteredOutput[] = $childNode;
+								$filteredOutputNodePaths[$childNode->getPath()] = TRUE;
+							}
+						}
+					}
+				}
+
+				// Apply attribute filters if present
+				if (isset($filter['AttributeFilters'])) {
+					$attributeFilters = array_reduce($filter['AttributeFilters'], function($filters, $attributeFilter) {
+						return $filters . $attributeFilter['text'];
+					});
+					$filteredFlowQuery = new FlowQuery($filteredOutput);
+					$filteredFlowQuery->pushOperation('filter', array($attributeFilters));
+					$filteredOutput = $filteredFlowQuery->get();
+				}
+
+				// Add filtered nodes to output
+				foreach ($filteredOutput as $filteredNode) {
+					if (!isset($outputNodePaths[$filteredNode->getPath()])) {
+						$output[] = $filteredNode;
+					}
 				}
 			}
-			return TRUE;
 		}
 
-		return FALSE;
+		if ($optimized === TRUE) {
+			$flowQuery->setContext($output);
+		}
+
+		return $optimized;
 	}
+
 }
