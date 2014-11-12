@@ -11,8 +11,6 @@ namespace TYPO3\Flow\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Utility\Files;
-
 /**
  * Change node type and TS object names in NodeTypes.yaml and PHP code.
  *
@@ -21,7 +19,18 @@ use TYPO3\Flow\Utility\Files;
  *
  * TYPO3.Neos:Page -> TYPO3.Neos.NodeTypes:Page
  */
-class Version201309111655 extends AbstractMigration {
+class Version20130911165500 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'Typo3.Neos.NodeTypes-201309111655';
+	}
 
 	/**
 	 * @return void
