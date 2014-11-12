@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\Exception;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 
 /**
  * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
@@ -108,7 +109,7 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 		// Fallback for deprecated image argument
 		$asset = $asset === NULL && $this->hasArgument('image') ? $this->arguments['image'] : $asset;
 		if (!$asset instanceof AssetInterface) {
-			throw new Exception('No asset given for rendering.');
+			throw new ViewHelperException('No asset given for rendering.', 1415797903);
 		}
 		if ($asset instanceof ImageInterface) {
 			$thumbnailImage = $this->getImageThumbnailImage($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling);
