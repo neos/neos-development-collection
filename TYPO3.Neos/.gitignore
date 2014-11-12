@@ -1,6 +1,9 @@
 /Scripts/node_modules/
+/Scripts/.bundle
+/Scripts/bundle/
+/Scripts/bin/
 .sass-cache
 .DS_Store
 /Scripts/**/src
 /Tests/Behavior/behat.yml
-/Resources/Public/JavaScript/ContentModule-built.js.*
+/Resources/Public/JavaScript/ContentModule-built.js
