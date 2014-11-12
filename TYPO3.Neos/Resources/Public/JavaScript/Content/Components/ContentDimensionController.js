@@ -67,7 +67,6 @@ function(
 		 */
 		init: function() {
 			this._updateSelectedDimensionsFromCurrentDocument();
-			this._loadConfiguration();
 		},
 
 		/**
@@ -102,7 +101,7 @@ function(
 						icon: $('.contentdimension-icon', contentDimensionSnippet).text(),
 						defaultPreset: $('.contentdimension-defaultpreset .contentdimension-preset-identifier', contentDimensionSnippet).text(),
 						presets: presets
-					}
+					};
 				});
 				that.set('configuration', configuration);
 			}, function(error) {
@@ -206,14 +205,14 @@ function(
 			this.set('showInitialTranslationDialog', false);
 			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 				that.set('selectorIsActive', false);
-				ContentModule.loadPage($("link[rel='node-frontend']", result.resource).attr('href'), false, function() {
+				ContentModule.loadPage($('link[rel="node-frontend"]', result.resource).attr('href'), false, function() {
 					EventDispatcher.trigger('contentDimensionsSelectionChanged');
 
 					that._updateSelectedDimensionsFromCurrentDocument();
 					that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
 				});
 			}, function(error) {
-				if (error.xhr.status == 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
+				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
 					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
 				} else {
 					Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
@@ -239,7 +238,7 @@ function(
 			var that = this,
 				$documentMetadata = $('#neos-document-metadata'),
 				nodeIdentifier = $documentMetadata.data('node-_identifier'),
-				arguments = {
+				parameters = {
 					identifier: nodeIdentifier,
 					dimensions: this.get('dimensionValues'),
 					sourceDimensions: $documentMetadata.data('neos-context-dimensions'),
@@ -247,11 +246,11 @@ function(
 					mode: mode
 				};
 
-			HttpRestClient.createResource('neos-service-nodes', {data: arguments}).then(function(result) {
+			HttpRestClient.createResource('neos-service-nodes', {data: parameters}).then(function(result) {
 				that.set('selectorIsActive', false);
 				that.set('showInitialTranslationDialog', false);
 
-				ContentModule.loadPage($("link[rel='node-frontend']", result.resource).attr('href'), false, function() {
+				ContentModule.loadPage($('link[rel="node-frontend"]', result.resource).attr('href'), false, function() {
 					that._updateSelectedDimensionsFromCurrentDocument();
 					that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
 					Notification.ok('Created ' + that.get('currentDimensionChoiceText'));
