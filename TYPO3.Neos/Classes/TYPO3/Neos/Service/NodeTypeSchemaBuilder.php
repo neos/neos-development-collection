@@ -60,6 +60,7 @@ class NodeTypeSchemaBuilder {
 				$configuration = $nodeType->getFullConfiguration();
 				$this->flattenAlohaFormatOptions($configuration);
 				$schema['nodeTypes'][$nodeTypeName] = $configuration;
+				$schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
 			}
 
 			$schema['inheritanceMap']['subTypes'][$nodeTypeName] = array();
