@@ -47,6 +47,20 @@ module.exports = function (grunt) {
 		}
 	});
 
+	/**
+	 * QUnit tasks
+	 *
+	 * We run the tests on phantomjs, if you don't have that installed and running a ubuntu like machine
+	 * run ./install-phantomjs.sh first
+	 */
+	grunt.config.merge({
+		qunit: {
+			all: [
+				'../Tests/JavaScript/**/*.html'
+			]
+		}
+	});
+
 	grunt.config.merge({
 		concat: {
 			requirejs: {
@@ -540,4 +554,9 @@ module.exports = function (grunt) {
 	grunt.registerTask('watch-js', function() { console.log('JavaScript sources are loaded by requirejs. Use the setting "TYPO3.Neos.userInterface.loadMinifiedJavascript: FALSE" instead')});
 	grunt.registerTask('watch-css', ['watch:css']);
 	grunt.registerTask('watch-docs', ['watch:documentation']);
+
+	/**
+	 * Testing commands
+	 */
+	grunt.registerTask('test', ['qunit']);
 };

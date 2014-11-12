@@ -13,6 +13,9 @@ fi
 # Only require and use bundler if it is used (i.e. a Gemfile exists)
 NEED_BUNDLER=$(test -f Gemfile && echo 1 || echo 0)
 
+# Only require and use bower if it is used (i.e. bower.json exists)
+NEED_BOWER=$(test -f bower.json && echo 1 || echo 0)
+
 MISSING_PACKAGES=0
 
 # Find node
@@ -102,6 +105,21 @@ if [ "${NEED_BUNDLER}" -eq 1 ] ; then
 	fi
 fi
 
+# Find bower if it is needed
+if [ "${NEED_BOWER}" -eq 1 ] ; then
+	BOWER="$(which bower || true)"
+	if [ -z "${BOWER}" ] ; then
+		echo "We need bower installed for some tasks." >&2
+		if [ -z "${NPM}" ] ; then
+			echo "    To install bower you have first to install npm, see above." >&2
+		fi
+		echo "    Install bower using" >&2
+		echo "        npm install -g bower" >&2
+		echo "    Depending on your system you might need administrator privileges for this." >&2
+		MISSING_PACKAGES=1
+	fi
+fi
+
 if [ ${MISSING_PACKAGES} -ne 0 ] ; then
 	echo >&2
 	echo "Missing packages detected. Exiting." >&2
@@ -114,4 +132,9 @@ fi
 # Install ruby gems
 if [ "${NEED_BUNDLER}" -eq 1 ] ; then
 	"${BUNDLE}" install --binstubs --path bundle
+fi
+
+# Install bundles
+if [ "${NEED_BOWER}" -eq 1 ] ; then
+	"${BOWER}" install
 fi
