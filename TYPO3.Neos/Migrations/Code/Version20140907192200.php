@@ -14,7 +14,18 @@ namespace TYPO3\Flow\Core\Migrations;
 /**
  * Adjust to updated folder name for TypoScript in site packages
  */
-class Version201409071922 extends AbstractMigration {
+class Version20140907192200 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Neos-201409071922';
+	}
 
 	/**
 	 * @return void
