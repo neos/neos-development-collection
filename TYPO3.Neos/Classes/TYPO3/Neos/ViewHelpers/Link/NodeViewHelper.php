@@ -18,6 +18,7 @@ use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 use TYPO3\Fluid\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -135,8 +136,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	 * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 	 * @return string The rendered link
-	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
-	 * @throws \TYPO3\Neos\Exception
+	 * @throws ViewHelperException
 	 */
 	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode') {
 		$baseNode = NULL;
@@ -145,29 +145,32 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 			if (!$view instanceof TypoScriptAwareViewInterface) {
 				throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
 			}
+			/** @var TemplateImplementation $typoScriptObject */
 			$typoScriptObject = $view->getTypoScriptObject();
 			$currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
 			if (isset($currentContext[$baseNodeName])) {
 				$baseNode = $currentContext[$baseNodeName];
 			} else {
-				throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+				throw new ViewHelperException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
 			}
 		}
 		$controllerContext = $this->controllerContext;
-		$uri = $this->linkingService->createNodeUri(
-			$controllerContext,
-			$node,
-			$baseNode,
-			$format,
-			$absolute,
-			$arguments,
-			$section,
-			$addQueryString,
-			$argumentsToBeExcludedFromQueryString
-		);
 
-		if ($uri !== NULL) {
+		try {
+			$uri = $this->linkingService->createNodeUri(
+				$controllerContext,
+				$node,
+				$baseNode,
+				$format,
+				$absolute,
+				$arguments,
+				$section,
+				$addQueryString,
+				$argumentsToBeExcludedFromQueryString
+			);
 			$this->tag->addAttribute('href', $uri);
+		} catch (NeosException $exception) {
+			$this->systemLogger->logException($exception);
 		}
 
 		$linkedNode = $this->linkingService->getLastLinkedNode();
@@ -175,11 +178,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 		$content = $this->renderChildren();
 		$this->templateVariableContainer->remove($nodeVariableName, $linkedNode);
 
-		if ($content === NULL) {
+		if ($content === NULL && $linkedNode !== NULL) {
 			$content = $linkedNode->getLabel();
 		}
 
 		$this->tag->setContent($content);
+		$this->tag->forceClosingTag(TRUE);
 		return $this->tag->render();
 	}
 }

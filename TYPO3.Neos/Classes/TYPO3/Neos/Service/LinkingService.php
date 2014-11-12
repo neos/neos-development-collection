@@ -14,9 +14,14 @@ namespace TYPO3\Neos\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Uri;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -58,15 +63,21 @@ class LinkingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
+	 * @var AssetRepository
 	 */
 	protected $assetRepository;
 
 	/**
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
 	 * @Flow\Inject
+	 * @var ResourcePublisher
 	 */
 	protected $resourcePublisher;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeShortcutResolver
+	 */
+	protected $nodeShortcutResolver;
 
 	/**
 	 * @Flow\Inject
@@ -119,12 +130,11 @@ class LinkingService {
 	 * @param NodeInterface $contextNode
 	 * @param ControllerContext $controllerContext
 	 * @return string
-	 * @throws \TYPO3\Flow\Mvc\Routing\Exception\MissingActionNameException
 	 */
 	public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext) {
 		$targetObject = $this->convertUriToObject($uri, $contextNode);
 		if ($targetObject === NULL) {
-			$this->systemLogger->log(sprintf('Could not resolve %s to an existing node; The node was probably deleted.', $uri));
+			$this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
 			return NULL;
 		}
 		return $this->createNodeUri($controllerContext, $targetObject);
@@ -139,7 +149,7 @@ class LinkingService {
 	public function resolveAssetUri($uri) {
 		$targetObject = $this->convertUriToObject($uri);
 		if ($targetObject === NULL) {
-			$this->systemLogger->log(sprintf('Could not resolve %s to an existing asset; The asset was probably deleted.', $uri));
+			$this->systemLogger->log(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri));
 			return NULL;
 		}
 		return $this->resourcePublisher->getPersistentResourceWebUri($targetObject->getResource());
@@ -174,7 +184,7 @@ class LinkingService {
 	}
 
 	/**
-	 * Renders the URI.
+	 * Renders the URI to a given node instance or -path.
 	 *
 	 * @param ControllerContext $controllerContext
 	 * @param mixed $node A node object or a string node path, if a relative path is provided the baseNode argument is required
@@ -185,9 +195,9 @@ class LinkingService {
 	 * @param string $section
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-	 * @return string|NULL The rendered URI or NULL if no URI could be resolved for the given node
-	 * @throws \TYPO3\Neos\Exception
-	 * @throws \InvalidArgumentException
+	 * @return string The rendered URI
+	 * @throws \InvalidArgumentException if the given node/baseNode is not valid
+	 * @throws NeosException if no URI could be resolved for the given node
 	 */
 	public function createNodeUri(ControllerContext $controllerContext, $node = NULL, NodeInterface $baseNode = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
 		$this->lastLinkedNode = NULL;
@@ -195,51 +205,53 @@ class LinkingService {
 			throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
 		}
 
-		if (is_string($node) && $node !== '') {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $node, $matches);
+		if (is_string($node)) {
+			$nodeString = $node;
+			if ($nodeString === '') {
+				throw new NeosException(sprintf('Empty strings can not be resolved to nodes.', $nodeString), 1415709942);
+			}
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
 			if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
-				$node = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+				$node = $this->propertyMapper->convert($nodeString, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 			} else {
 				if ($baseNode === NULL) {
 					throw new NeosException('The baseNode argument is required for linking to nodes with a relative path.', 1407879905);
 				}
+				/** @var ContentContext $contentContext */
 				$contentContext = $baseNode->getContext();
-
-				if ($node === '~' || $node === '~/') {
+				if ($nodeString === '~' || $nodeString === '~/') {
 					$node = $contentContext->getCurrentSiteNode();
-				} elseif (substr($node, 0, 2) === '~/') {
-					$node = $contentContext->getCurrentSiteNode()->getNode(substr($node, 2));
+				} elseif (substr($nodeString, 0, 2) === '~/') {
+					$node = $contentContext->getCurrentSiteNode()->getNode(substr($nodeString, 2));
 				} else {
-					if (substr($node, 0, 1) === '/') {
-						$node = $contentContext->getNode($node);
+					if (substr($nodeString, 0, 1) === '/') {
+						$node = $contentContext->getNode($nodeString);
 					} else {
-						$node = $baseNode->getNode($node);
+						$node = $baseNode->getNode($nodeString);
 					}
 				}
+			}
+			if (!$node instanceof NodeInterface) {
+				throw new NeosException(sprintf('The string "%s" could not be resolved to an existing node.', $nodeString), 1415709674);
 			}
 		} elseif (!$node instanceof NodeInterface) {
 			$node = $baseNode;
 		}
 
 		if (!$node instanceof NodeInterface) {
-			return NULL;
+			throw new NeosException(sprintf('Node must be an instance of NodeInterface or string, given "%s".', gettype($node)), 1414772029);
+		}
+		$this->lastLinkedNode = $node;
+
+		$resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+		if (is_string($resolvedNode)) {
+			return $resolvedNode;
+		}
+		if (!$resolvedNode instanceof NodeInterface) {
+			throw new NeosException(sprintf('Could not resolve shortcut target for node "%s"', $node->getPath()), 1414771137);
 		}
 
-		if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut') && $node->getProperty('targetMode') === 'selectedTarget') {
-			$target = $node->getProperty('target');
-			if (!$this->hasSupportedScheme($target)) {
-				return $target;
-			}
-
-			$targetObject = $this->convertUriToObject($target, $node);
-
-			if ($targetObject === NULL) {
-				return NULL;
-			} elseif ($targetObject instanceof AssetInterface) {
-				return $this->resourcePublisher->getPersistentResourceWebUri($targetObject->getResource());
-			}
-		}
-
+		/** @var ActionRequest $request */
 		$request = $controllerContext->getRequest()->getMainRequest();
 
 		$uriBuilder = clone $controllerContext->getUriBuilder();
@@ -252,15 +264,14 @@ class LinkingService {
 			->setAddQueryString($addQueryString)
 			->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
 			->setFormat($format ?: $request->getFormat())
-			->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+			->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'TYPO3.Neos');
 
-		$this->lastLinkedNode = $node;
 		return $uri;
 	}
 
 	/**
 	 * Returns the node that was last used to resolve a link to.
-	 * May return NULL in case no link has been generated or an error occured on the last linking run.
+	 * May return NULL in case no link has been generated or an error occurred on the last linking run.
 	 *
 	 * @return NodeInterface
 	 */

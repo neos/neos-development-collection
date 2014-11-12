@@ -12,14 +12,14 @@ namespace TYPO3\Neos\TypoScript;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Exception as TypoScriptException;
+use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A TypoScript Menu object
  */
-class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation {
+class MenuImplementation extends TemplateImplementation {
 
 	/**
 	 * Hard limit for the maximum number of levels supported by this menu
@@ -29,12 +29,6 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 	const STATE_NORMAL = 'normal';
 	const STATE_CURRENT = 'current';
 	const STATE_ACTIVE = 'active';
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeShortcutResolver
-	 */
-	protected $nodeShortcutResolver;
 
 	/**
 	 * Internal cache for the startingPoint tsValue.
@@ -251,19 +245,8 @@ class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImp
 			return NULL;
 		}
 
-		$possibleFinalNode = $this->nodeShortcutResolver->resolveShortcutTarget($currentNode);
-		if (is_string($possibleFinalNode)) {
-			$possibleFinalNode = $currentNode;
-		} elseif ($possibleFinalNode === NULL || $possibleFinalNode->isAccessible() === FALSE || $possibleFinalNode->isVisible() === FALSE) {
-			return NULL;
-		} elseif (!$possibleFinalNode instanceof NodeInterface) {
-			// Shortcut resolved to an unsupported type.
-			return NULL;
-		}
-
 		$item = array(
-			'node' => $possibleFinalNode,
-			'originalNode' => $currentNode,
+			'node' => $currentNode,
 			'state' => self::STATE_NORMAL,
 			'label' => $currentNode->getLabel()
 		);
