@@ -11,12 +11,21 @@ namespace TYPO3\Flow\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Utility\Files;
-
 /**
  * Adjust to updated date format for inspector date editor
  */
-class Version201407061038 extends AbstractMigration {
+class Version20140706103800 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Neos-201407061038';
+	}
 
 	/**
 	 * @return void
