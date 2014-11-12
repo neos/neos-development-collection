@@ -62,9 +62,7 @@ function(
 		 * Initialization
 		 */
 		init: function() {
-			var that = this;
 			this._updateSelectedDimensionsFromCurrentDocument();
-			this._loadConfiguration();
 		},
 
 		/**

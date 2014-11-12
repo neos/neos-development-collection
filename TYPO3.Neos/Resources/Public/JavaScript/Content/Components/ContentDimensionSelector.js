@@ -49,6 +49,7 @@ function(
 		init: function() {
 			this._super();
 			this._initialize();
+			this.get('controller')._loadConfiguration();
 		},
 
 		/**
