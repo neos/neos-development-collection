@@ -1,6 +1,6 @@
 # Base node, which just configures the "removed" property of the node.
 'TYPO3.Neos:Node':
-  label: "${String.stripTags(q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')'))}"
+  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
   abstract: TRUE
   properties:
     _removed:
