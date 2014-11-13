@@ -29,7 +29,7 @@ class Version20130911165500 extends AbstractMigration {
 	 * @return string
 	 */
 	public function getIdentifier() {
-		return 'Typo3.Neos.NodeTypes-201309111655';
+		return 'TYPO3.Neos.NodeTypes-201309111655';
 	}
 
 	/**
