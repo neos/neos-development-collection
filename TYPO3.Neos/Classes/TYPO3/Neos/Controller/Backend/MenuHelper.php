@@ -28,10 +28,10 @@ class MenuHelper {
 	protected $siteRepository;
 
 	/**
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
 	 * @Flow\Inject
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @var array
@@ -99,13 +99,13 @@ class MenuHelper {
 	public function buildModuleList(ControllerContext $controllerContext) {
 		$modules = array();
 		foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
-			if (isset($moduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($moduleConfiguration['resource'])) {
+			if (isset($moduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])) {
 				continue;
 			}
 			$submodules = array();
 			if (isset($moduleConfiguration['submodules'])) {
 				foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
-					if (isset($submoduleConfiguration['resource']) && !$this->accessDecisionManager->hasAccessToResource($submoduleConfiguration['resource'])) {
+					if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
 						continue;
 					}
 					$submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);

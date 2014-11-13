@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
 
 require_once(FLOW_PATH_PACKAGES . 'Framework/TYPO3.Fluid/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
 
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Neos\Domain\Service\ContentContext;
@@ -34,9 +34,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 	protected $editableViewHelper;
 
 	/**
-	 * @var AccessDecisionManagerInterface
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $mockAccessDecisionManager;
+	protected $mockPrivilegeManager;
 
 	/**
 	 * @var TemplateImplementation
@@ -77,8 +77,8 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		parent::setUp();
 		$this->editableViewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper', array('renderChildren'));
 
-		$this->mockAccessDecisionManager = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface')->getMock();
-		$this->inject($this->editableViewHelper, 'accessDecisionManager', $this->mockAccessDecisionManager);
+		$this->mockPrivilegeManager = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface')->getMock();
+		$this->inject($this->editableViewHelper, 'privilegeManager', $this->mockPrivilegeManager);
 
 		$this->mockTemplateImplementation = $this->getMockBuilder('TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation')->disableOriginalConstructor()->getMock();
 
@@ -195,7 +195,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		);
 
 		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-		$this->mockAccessDecisionManager->expects($this->atLeastOnce())->method('hasAccessToResource')->with('TYPO3_Neos_Backend_GeneralAccess')->will($this->returnValue(FALSE));
+		$this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(FALSE));
 		$this->tagBuilder->expects($this->never())->method('addAttribute');
 
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);
@@ -212,7 +212,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase {
 		);
 
 		$this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-		$this->mockAccessDecisionManager->expects($this->atLeastOnce())->method('hasAccessToResource')->with('TYPO3_Neos_Backend_GeneralAccess')->will($this->returnValue(TRUE));
+		$this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(TRUE));
 		$this->tagBuilder->expects($this->atLeastOnce())->method('addAttribute');
 
 		$this->injectDependenciesIntoViewHelper($this->editableViewHelper);

@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -42,9 +42,9 @@ class ContentElementWrappingService {
 
 	/**
 	 * @Flow\Inject
-	 * @var AccessDecisionManagerInterface
+	 * @var PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
@@ -63,7 +63,7 @@ class ContentElementWrappingService {
 	public function wrapContentObject(NodeInterface $node, $typoScriptPath, $content) {
 		/** @var $contentContext ContentContext */
 		$contentContext = $node->getContext();
-		if ($contentContext->getWorkspaceName() === 'live' || !$this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess')) {
+		if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
 			return $content;
 		}
 		$nodeType = $node->getNodeType();

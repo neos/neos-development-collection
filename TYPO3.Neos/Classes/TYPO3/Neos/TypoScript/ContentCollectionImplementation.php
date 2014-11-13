@@ -25,9 +25,9 @@ class ContentCollectionImplementation extends AbstractCollectionImplementation {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
 	 */
-	protected $accessDecisionManager;
+	protected $privilegeManager;
 
 	/**
 	 * @Flow\Inject
