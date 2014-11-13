@@ -7,9 +7,13 @@
 				<source>Active</source>
 				<target xml:lang="de">Aktiv</target>
 			</trans-unit>
-			<trans-unit id="inactive" xml:space="preserve">
-				<source>Inactive</source>
-				<target xml:lang="de">Inaktiv</target>
+			<trans-unit id="activate" xml:space="preserve">
+				<source>Activate</source>
+				<target xml:lang="de">Aktivieren</target>
+			</trans-unit>
+			<trans-unit id="clickToActivate" xml:space="preserve">
+				<source>Click to activate</source>
+				<target xml:lang="de">Zum Aktivieren klicken</target>
 			</trans-unit>
 			<trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
@@ -23,9 +27,21 @@
 				<source>Apply changes</source>
 				<target xml:lang="de">Änderungen zustimmen</target>
 			</trans-unit>
+			<trans-unit id="asset" xml:space="preserve">
+				<source>Asset</source>
+				<target xml:lang="de">Medieninhalt</target>
+			</trans-unit>
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 				<target xml:lang="de">Abbrechen</target>
+			</trans-unit>
+			<trans-unit id="contentDimensions" xml:space="preserve">
+				<source>Content dimensions</source>
+				<target xml:lang="de">Inhaltsdimensionen</target>
+			</trans-unit>
+			<trans-unit id="contentDimension" xml:space="preserve">
+				<source>Content dimension</source>
+				<target xml:lang="de">Inhaltsdimension</target>
 			</trans-unit>
 			<trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
@@ -35,6 +51,10 @@
 				<source>Create new</source>
 				<target xml:lang="de">Neu erstellen</target>
 			</trans-unit>
+			<trans-unit id="clickToCreate" xml:space="preserve">
+				<source>Create to create new</source>
+				<target xml:lang="de">Zum Erstellen klicken</target>
+			</trans-unit>
 			<trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
 				<target xml:lang="de">Schließen</target>
@@ -43,9 +63,21 @@
 				<source>Copy</source>
 				<target xml:lang="de">Kopieren</target>
 			</trans-unit>
+			<trans-unit id="discard">
+				<source>Discard</source>
+				<target xml:lang="de">Verwerfen</target>
+			</trans-unit>
+			<trans-unit id="discardAllChanges">
+				<source>Discard all changes</source>
+				<target xml:lang="de">Alle Änderungen verwerfen</target>
+			</trans-unit>
 			<trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
 				<target xml:lang="de">Inhalt</target>
+			</trans-unit>
+			<trans-unit id="created" xml:space="preserve">
+				<source>created</source>
+				<target xml:lang="de">neu erstellt</target>
 			</trans-unit>
 			<trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
@@ -54,6 +86,14 @@
 			<trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 				<target xml:lang="de">Verstecken/Anzeigen</target>
+			</trans-unit>
+			<trans-unit id="deactivate" xml:space="preserve">
+				<source>Dectivate</source>
+				<target xml:lang="de">Deaktivieren</target>
+			</trans-unit>
+			<trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+				<target xml:lang="de">löschen</target>
 			</trans-unit>
 			<trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
@@ -71,25 +111,29 @@
 				<source>Refresh</source>
 				<target xml:lang="de">Neu laden</target>
 			</trans-unit>
-			<trans-unit id="delete" xml:space="preserve">
-				<source>Delete</source>
-				<target xml:lang="de">löschen</target>
+			<trans-unit id="configuration" xml:space="preserve">
+				<source>Configuration</source>
+				<target xml:lang="de">Konfiguration</target>
 			</trans-unit>
 			<trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-				<target xml:lang="de">ja, Element löschen</target>
+				<target xml:lang="de">Ja, Element löschen</target>
 			</trans-unit>
 			<trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
 				<target xml:lang="de">Element löschen</target>
 			</trans-unit>
-			<trans-unit id="discard" xml:space="preserve">
-				<source>Discard</source>
-				<target xml:lang="de">Zurücknehmen</target>
+			<trans-unit id="description" xml:space="preserve">
+				<source>Description</source>
+				<target xml:lang="de">Beschreibung</target>
 			</trans-unit>
 			<trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
 				<target xml:lang="de">Änderungen zurücknehmen</target>
+			</trans-unit>
+			<trans-unit id="discardSelectedChanges" xml:space="preserve">
+				<source>Discard slected changes</source>
+				<target xml:lang="de">Gewählte Änderungen zurücknehmen</target>
 			</trans-unit>
 			<trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
@@ -103,6 +147,91 @@
 				<source>Edit</source>
 				<target xml:lang="de">Bearbeiten</target>
 			</trans-unit>
+			<trans-unit id="clickToEdit" xml:space="preserve">
+				<source>Click to edit</source>
+				<target xml:lang="de">Klicke zum Bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="domain.domain" xml:space="preserve">
+				<source>Domain</source>
+				<target xml:lang="de">Domain</target>
+			</trans-unit>
+			<trans-unit id="domains" xml:space="preserve">
+				<source>Domains</source>
+				<target xml:lang="de">Domains</target>
+			</trans-unit>
+			<trans-unit id="edited" xml:space="preserve">
+				<source>edited</source>
+				<target xml:lang="de">bearbeitet</target>
+			</trans-unit>
+			<trans-unit id="fullScreen" xml:space="preserve">
+				<source>Full Screen</source>
+				<target xml:lang="de">Vollbild</target>
+			</trans-unit>
+			<trans-unit id="hidden" xml:space="preserve">
+				<source>hidden</source>
+				<target xml:lang="de">versteckt</target>
+			</trans-unit>
+			<trans-unit id="inactive" xml:space="preserve">
+				<source>Inactive</source>
+				<target xml:lang="de">Inaktiv</target>
+			</trans-unit>
+			<trans-unit id="label" xml:space="preserve">
+				<source>Label</source>
+				<target xml:lang="de">Kennzeichen</target>
+			</trans-unit>
+			<trans-unit id="logout" xml:space="preserve">
+				<source>Logout</source>
+				<target xml:lang="de">Abmelden</target>
+			</trans-unit>
+			<trans-unit id="login.login" xml:space="preserve">
+				<source>Login</source>
+				<target xml:lang="de">Anmelden</target>
+			</trans-unit>
+			<trans-unit id="inspector" xml:space="preserve">
+				<source>Inspector</source>
+				<target xml:lang="de">Inspektor</target>
+			</trans-unit>
+			<trans-unit id="legend" xml:space="preserve">
+				<source>Legend</source>
+				<target xml:lang="de">Legende</target>
+			</trans-unit>
+			<trans-unit id="moved" xml:space="preserve">
+				<source>moved</source>
+				<target xml:lang="de">verschoben</target>
+			</trans-unit>
+			<trans-unit id="nodeType" xml:space="preserve">
+				<source>Node type</source>
+				<target xml:lang="de">Kontentyp</target>
+			</trans-unit>
+			<trans-unit id="path" xml:space="preserve">
+				<source>path</source>
+				<target xml:lang="de">Pfad</target>
+			</trans-unit>
+			<trans-unit id="realtivePath" xml:space="preserve">
+				<source>Realtive path</source>
+				<target xml:lang="de">Relativer Pfad</target>
+			</trans-unit>
+			<trans-unit id="packageKey" xml:space="preserve">
+				<source>package key</source>
+				<target xml:lang="de">Packetschlüssel</target>
+			</trans-unit>
+			<trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+				<target xml:lang="de">Vorschau</target>
+			</trans-unit>
+			<trans-unit id="publish" xml:space="preserve">
+				<source>Publish</source>
+				<target xml:lang="de">Veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="publishAllChages" xml:space="preserve">
+				<source>Publish all changes</source>
+				<target xml:lang="de">Alle Änderungen veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="publishSelectedChages" xml:space="preserve">
+				<source>Publish selected changes</source>
+				<target xml:lang="de">Gewählte Änderungen veröffentlichen</target>
+			</trans-unit>
+
 			<trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 				<target xml:lang="de">Neu dahinter</target>
@@ -114,6 +243,14 @@
 			<trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
 				<target xml:lang="de">Neu darin</target>
+			</trans-unit>
+			<trans-unit id="node" xml:space="preserve">
+				<source>Node</source>
+				<target xml:lang="de">Knoten</target>
+			</trans-unit>
+			<trans-unit id="nodes.nodes" xml:space="preserve">
+				<source>Nodes</source>
+				<target xml:lang="de">Knoten</target>
 			</trans-unit>
 			<trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
@@ -135,29 +272,53 @@
 				<source>Paste Into</source>
 				<target xml:lang="de">Darin einfügen</target>
 			</trans-unit>
-			<trans-unit id="preview" xml:space="preserve">
-				<source>Preview</source>
-				<target xml:lang="de">Vorschau</target>
-			</trans-unit>
-			<trans-unit id="publish" xml:space="preserve">
-				<source>Publish</source>
-				<target xml:lang="de">Veröffentlichen</target>
-			</trans-unit>
 			<trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
 				<target xml:lang="de">Speichern...</target>
+			</trans-unit>
+			<trans-unit id="rawContentMode" xml:space="preserve">
+				<source>Raw Content Mode</source>
+				<target xml:lang="de">Nur-Inhaltsmodus</target>
+			</trans-unit>
+			<trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+				<target xml:lang="de">Speichern</target>
 			</trans-unit>
 			<trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
 				<target xml:lang="de">Gespeichert</target>
 			</trans-unit>
+			<trans-unit id="unnamed" xml:space="preserve">
+				<source>unnamed</source>
+				<target xml:lang="de">nicht benannt</target>
+			</trans-unit>
+			<trans-unit id="site" xml:space="preserve">
+				<source>Site</source>
+				<target xml:lang="de">Seite</target>
+			</trans-unit>
+			<trans-unit id="state" xml:space="preserve">
+				<source>State</source>
+				<target xml:lang="de">Status</target>
+			</trans-unit>
 			<trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 				<target xml:lang="de">Inspektor anzeigen/verstecken</target>
 			</trans-unit>
+			<trans-unit id="toggle" xml:space="preserve">
+				<source>Toggle</source>
+				<target xml:lang="de">Anzeigen/verstecken</target>
+			</trans-unit>
 			<trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-				<target xml:lang="de">Username</target>
+				<target xml:lang="de">Benutzername</target>
+			</trans-unit>
+			<trans-unit id="workspace" xml:space="preserve">
+				<source>Workspace</source>
+				<target xml:lang="de">Arbeitsumgebung</target>
+			</trans-unit>
+			<trans-unit id="workspaces" xml:space="preserve">
+				<source>Workspaces</source>
+				<target xml:lang="de">Arbeitsumgebungen</target>
 			</trans-unit>
 
 			<!-- Login -->
@@ -165,11 +326,28 @@
 				<source>TYPO3 Neos Login</source>
 				<target xml:lang="de">TYPO3 Neos Anmeldung</target>
 			</trans-unit>
+			<trans-unit id="login.footer" xml:space="preserve">
+				<source><![CDATA[
+				<a href="http://neos.typo3.org" target="_blank">TYPO3 Neos</a> – © 2006-{0}
+				This is free software, licensed under GPL3 or higher, and you are welcome to redistribute it under certain conditions; <a href="http://typo3.org/licenses" target="_blank">click for details.</a>
+				TYPO3 Neos comes with ABSOLUTELY NO WARRANTY; <a href="http://typo3.org/licenses" target="_blank">click for details.</a>
+				See <a href="http://neos.typo3.org" target="_blank">neos.typo3.org</a> for more details.
+				Obstructing the appearance of this notice is prohibited by law.
+				]]></source>
+				<target xml:lang="de"><![CDATA[
+				<a href="http://neos.typo3.org" target="_blank">TYPO3 Neos</a> – © 2006-{0}
+				Dies ist freie software, lizensiert  unter GPL3 oder höher, und Sie können sie unter bestimmten Bedingungen weiterveröffentlichen; <a href="http://typo3.org/licenses" target="_blank">Klicke hier für weitere Details</a>
+				TYPO3 Neos kommt mit ABSOLUT KEINER GARANTIE; <a href="http://typo3.org/licenses" target="_blank">Klicke hier für weitere Details</a>
+				Gehe zu <a href="http://neos.typo3.org" target="_blank">neos.typo3.org</a> für weitere Details.
+				Obstructing the appearance of this notice is prohibited by law.
+
+				]]></target>
+			</trans-unit>
 
 			<!-- ErrorHandlers -->
 			<trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
 				<source>Page Not Found</source>
-				<target xml:lang="de">Seite nciht gefunden</target>
+				<target xml:lang="de">Seite nicht gefunden</target>
 			</trans-unit>
 			<trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
@@ -192,6 +370,7 @@
 			<trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to create or import a site in the setup.</source>
 			</trans-unit>
+
 			<!-- Templates -->
 			<trans-unit id="userSettings.editUser" xml:space="preserve">
 				<source>Edit User</source>
@@ -299,8 +478,300 @@
 				<source>The following errors occurred</source>
 				<target xml:lang="de">Der folgende Fehler wurde festgestellt</target>
 			</trans-unit>
+			<trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+				<target xml:lang="de">Wollen Sie wirklich die Domain "{0}" löschen? Die Aktion kann nciht rückgängig gemacht werden.</target>
+			</trans-unit>
+			<trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+				<target xml:lang="de">Wurzelknotenname</target>
+			</trans-unit>
+			<trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+				<target xml:lang="de">Seite aktivieren</target>
+			</trans-unit>
+			<trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+				<target xml:lang="de">Seite deaktivieren</target>
+			</trans-unit>
+			<trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete site</source>
+				<target xml:lang="de">Seite löschen</target>
+			</trans-unit>
+			<trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>site package</source>
+				<target xml:lang="de">Seitenpacket</target>
+			</trans-unit>
+			<trans-unit id="sites.add" xml:space="preserve">
+				<source>Add site</source>
+				<target xml:lang="de">Seite hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="sites.create" xml:space="preserve">
+				<source>Create site</source>
+				<target xml:lang="de">Seite erstellen</target>
+			</trans-unit>
+			<trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+				<target xml:lang="de">leere Seite erstellen</target>
+			</trans-unit>
+			<trans-unit id="sites.new" xml:space="preserve">
+				<source>New site</source>
+				<target xml:lang="de">Neue Seite</target>
+			</trans-unit>
+			<trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+				<target xml:lang="de">Kein Seitenpacket verfügbar. Stellen Sie sicher, dass Sie ein Seitenpacket aktiviert haben.</target>
+			</trans-unit>
+			<trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>A valid package key should be in the form "VendorName.MyPackageKey".</source>
+				<target xml:lang="de">Ein gültiger Packetschlüssel sollte die Form "verkaeuferName.MeinPacketSchlüssel" haben.</target>
+			</trans-unit>
+
+			<trans-unit id="shortcut.toSpecificTarget" xml:space="preserve">
+				<source>This is a shortcut to a specific target:</source>
+				<target xml:lang="de">Das ist eine Verknüpfung zu eine speziellen Ziel:</target>
+			</trans-unit>
+
+			<trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The "Neos Kickstarter" package is not installed, install it to kickstart new sites.</source>
+				<target xml:lang="de">Das "Neos Kickstarter"-Packet ist nicht installiert. Installieren Sie es, um eine neue Seite anzulegen.</target>
+			</trans-unit>
+			<trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+				<target xml:lang="de">Seitenname</target>
+			</trans-unit>
+			<trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+				<target xml:lang="de">Seite importieren</target>
+			</trans-unit>
+			<trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+				<target xml:lang="de">Wollen Sie wirklich die Seite "{0}" löschen?</target>
+			</trans-unit>
+			<trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site.</source>
+				<target xml:lang="de">Ja, ich möchte die Seite löschen.</target>
+			</trans-unit>
+			<trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site</source>
+				<target xml:lang="de">Seite auswählen</target>
+			</trans-unit>
+
+
+			<trans-unit id="domain.add" xml:space="preserve">
+				<source>Add domain</source>
+				<target xml:lang="de">Domain hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+				<target xml:lang="de">Domain bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+				<target xml:lang="de">Neue Domain</target>
+			</trans-unit>
+			<trans-unit id="domain.activate" xml:space="preserve">
+				<source>Activate domain</source>
+				<target xml:lang="de">Domain aktivieren</target>
+			</trans-unit>
+			<trans-unit id="domain.deactivate" xml:space="preserve">
+				<source>Deactivate domain</source>
+				<target xml:lang="de">Domain deaktivieren</target>
+			</trans-unit>
+			<trans-unit id="domain.delete" xml:space="preserve">
+				<source>Delete domain</source>
+				<target xml:lang="de">Domain löschen</target>
+			</trans-unit>
+			<trans-unit id="nodes.properties" xml:space="preserve">
+				<source>Node Properties</source>
+				<target xml:lang="de">Knoteneigentschaften</target>
+			</trans-unit>
+			<trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+				<source>Unpublished changes</source>
+				<target xml:lang="de">Nicht veröffentlichte Änderungen</target>
+			</trans-unit>
+			<trans-unit id="workspaces.unpublishedChangesInfo" xml:space="preserve">
+				<source>There are no unpublished changes in this workspace.</source>
+				<target xml:lang="de">In dieser Arbeitsumgebung gibt es keine unveröffentlichten Änderungen.</target>
+			</trans-unit>
+			<trans-unit id="workspaces.discardAllChangesInWorkspace" xml:space="preserve">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+				<target xml:lang="de">Wollen sie wirklich alle Änderungen in der Arbeitsumgebung "{0}" verwerfen?</target>
+			</trans-unit>
+			<trans-unit id="workspaces.noTitle" xml:space="preserve">
+				<source>[No title]</source>
+				<target xml:lang="de">[Ohne Titel]</target>
+			</trans-unit>
+
+			<!-- Modules -->
+
+			<trans-unit id="package.Name" xml:space="preserve">
+				<source>Available packages</source>
+				<target xml:lang="de">Vorhandene Pakete</target>
+			</trans-unit>
+			<trans-unit id="package.Key" xml:space="preserve">
+				<source>Package Key</source>
+				<target xml:lang="de">Paketschlüssel</target>
+			</trans-unit>
+			<trans-unit id="package.Type" xml:space="preserve">
+				<source>Package Type</source>
+				<target xml:lang="de">Pakettyp</target>
+			</trans-unit>
+			<trans-unit id="package.version" xml:space="preserve">
+				<source>Version</source>
+				<target xml:lang="de">Version</target>
+			</trans-unit>
+			<trans-unit id="package.deleteSelectedConfirm" xml:space="preserve">
+				<source>Do you really want to delete the selected packages? This action cannot be undone.</source>
+				<target xml:lang="de">Wollen Sie wirklich das ausgewählte Paket löschen? Diese Aktion kann nicht rückgängig gemacht werden.</target>
+			</trans-unit>
+			<trans-unit id="package.deleteSelected" xml:space="preserve">
+				<source>Delete  selected packages</source>
+				<target xml:lang="de">Gewählte Pakete löschen</target>
+			</trans-unit>
+			<trans-unit id="package.freezeSelected" xml:space="preserve">
+				<source>Freeze  selected packages</source>
+				<target xml:lang="de">Gewählte Pakete einfrieren</target>
+			</trans-unit>
+			<trans-unit id="package.unfreezeSelected" xml:space="preserve">
+				<source>Unfreeze  selected packages</source>
+				<target xml:lang="de">Gewählte Pakete auftauen</target>
+			</trans-unit>
+			<trans-unit id="package.activateSelected" xml:space="preserve">
+				<source>Activate  selected packages</source>
+				<target xml:lang="de">Gewählte Pakete aktivieren</target>
+			</trans-unit>
+			<trans-unit id="package.deactivateSelected" xml:space="preserve">
+				<source>Deactivate  selected packages</source>
+				<target xml:lang="de">Gewählte Pakete deaktivieren</target>
+			</trans-unit>
+			<trans-unit id="package.deletePackageKey" xml:space="preserve">
+				<source>Do you really want to delete "{0}"?</source>
+				<target xml:lang="de">Wollen Sie wirklich "{0}" löschen?</target>
+			</trans-unit>
+			<trans-unit id="package.noDactivateInfo" xml:space="preserve">
+				<source>This package is protected and cannot be deactivated.</source>
+				<target xml:lang="de">Das Paket ist geschützt und kann nicht deaktiviert werden.?</target>
+			</trans-unit>
+			<trans-unit id="package.clickFreezeInfo" xml:space="preserve">
+				<source>Click here to freeze the package in order to speed up your website.</source>
+				<target xml:lang="de">Hier klicken um das Paket einzufrieren und Ihre Webseite zu beschleunigen.</target>
+			</trans-unit>
+			<trans-unit id="package.clickToUnfreeze" xml:space="preserve">
+				<source>his package is currently frozen. Click here to unfreeze it.</source>
+				<target xml:lang="de">Das Paket ist im Moment eingefroren. Hier klicken zum Auftauen.</target>
+			</trans-unit>
+
+			<!-- javascript -->
+			<trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
+				<source>Full Screen</source>
+				<target xml:lang="de">Vollbild</target>
+			</trans-unit>
+			<trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
+				<source>Discard all changes</source>
+				<target xml:lang="de">Alle Änderungen verwerfen</target>
+			</trans-unit>
+			<trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+				<target xml:lang="de">Sind sicher, dass Sie alle Änderungen in dieser Arbeitsumgebung verwerfen wollen?</target>
+			</trans-unit>
+			<trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
+				<source>Publish all changes</source>
+				<target xml:lang="de">Alle Änderungen veröffentlichen.</target>
+			</trans-unit>
+			<trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
+				<source>Are you sure that you want to publish all changes?</source>
+				<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen wollen?</target>
+			</trans-unit>
+			<trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
+				<source>Editing Modes</source>
+				<target xml:lang="de">Bearbeitungsarten</target>
+			</trans-unit>
+			<trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
+				<source>Preview Central</source>
+				<target xml:lang="de">Zentrale Vorschau</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
+				<source>You still have changes. What do you want to do with them?</source>
+				<target xml:lang="de">Sie haben noch unveröffentlichte Änderungen. Wass wollen Sie it diesen amchen?</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
+				<source>Selected element</source>
+				<target xml:lang="de">Gewähltes Element</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
+				<source>There are fields that are not correctly filled in.</source>
+				<target xml:lang="de">Einige Felder wurden nicht korrekt ausgefüllt</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+				<target xml:lang="de">Die als Fehler markierte Felder sind nicht korrekt ausgefüllt. Bitte füllen Sie diese korrekt aus.</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
+				<source>Continue editing</source>
+				<target xml:lang="de">Weiter bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
+				<source>Throw away</source>
+				<target xml:lang="de">Verwerfen</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
+				<source>Apply</source>
+				<target xml:lang="de">Zustimmen</target>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
+				<source>view is displayed on page</source>
+			</trans-unit>
+			<trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
+				<source>view is displayed on current page</source>
+				<target xml:lang="de">View wird auf der aktuellen Seite angezeigt.</target>
+			</trans-unit>
+			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
+				<source>This will delete the page</source>
+				<target xml:lang="de">Die Seite wird hierdurch gelöscht</target>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
+				<source>and it's subpages</source>
+				<target xml:lang="de">und seine Unterpakete</target>
+			</trans-unit>
+			<trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This operation can be undone in the workspace management.</source>
+				<target xml:lang="de">Die Operation kann im Modul "Managment - Arbeitsumgebungen" rückgängig gemacht werden.</target>
+			</trans-unit>
+			<trans-unit id="height.ucfirst" xml:space="preserve">
+				<source>Height</source>
+				<target xml:lang="de">Höhe</target>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
+				<source>Do you really want to delete</source>
+				<target xml:lang="de">Wollen sie wirklich löschen</target>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
+				<source>this element</source>
+				<target xml:lang="de">dieses Element</target>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
+				<source>This will delete the element.</source>
+				<target xml:lang="de">Das Element wird hierdurch gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
+				<source>This action can be undone in the workspace management.</source>
+				<target xml:lang="de">Die Operation kann im Modul "Managment - Arbeitsumgebungen" rückgängig gemacht werden.</target>
+			</trans-unit>
+			<trans-unit id="width.ucfirst" xml:space="preserve">
+				<source>Width</source>
+				<target xml:lang="de">Breite</target>
+			</trans-unit>
+			<trans-unit id="translate.requiredProperty" xml:space="preserve">
+				<source>Missing required property: </source>
+				<target xml:lang="de">Eine benötigtes Attribute fehlt.</target>
+			</trans-unit>
 
 			<!-- Flashmessages -->
+			<!-- userControler -->
 			<trans-unit id="flashMessage.1412196610" xml:space="preserve">
 				<source>The user profile has been updated.</source>
 				<target xml:lang="de">Die Änderungen am Userprofil wurden gespeichert.</target>
@@ -323,7 +794,203 @@
 				<source>Please specify a valid email address</source>
 				<target xml:lang="de">Bitte geben Sie eine gültige Email-Adresse an.</target>
 			</trans-unit>
-					<trans-unit id="error.1343235498" xml:space="preserve">
+			<trans-unit id="flashMessage.1412372021" xml:space="preserve">
+				<source> The package key "{0}" already exists.</source>
+				<target xml:lang="de">Der Packetschlüssel {0} existiert bereits.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412372266" xml:space="preserve">
+				<source> The site has been created.</source>
+				<target xml:lang="de">Die Seite wurde angelgt.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412372375" xml:space="preserve">
+				<source> "Error: During the import of the "Sites.xml" from the package "{0}" an exception occurred: {1}"</source>
+				<target xml:lang="de">Fehler: Beim Importiernen der Datei "Sites.XML" aus dem Packet "{1}" ist ein Fehler aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412372554" xml:space="preserve">
+				<source> No site selected for import and no package name provided.</source>
+				<target xml:lang="de">Sie haben keine Seite für denImport gewählt oder keinen Packetnamen angegeben.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412372689" xml:space="preserve">
+				<source>The site "{0}" has been deleted.</source>
+				<target xml:lang="de">Die Seite "{0}" wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412372881" xml:space="preserve">
+				<source>The site "{0}" has been activated.</source>
+				<target xml:lang="de">Die Seite "{0}" wurde aktiviert </target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412372975" xml:space="preserve">
+				<source>The site "{0}" has been deactivated.</source>
+				<target xml:lang="de">Die Seite "{0}" wurde deaktiviert </target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373069" xml:space="preserve">
+				<source>The domain "{0}" has been updated.</source>
+				<target xml:lang="de">Die Änderungen der Domain "{0}" wurden gespeichert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373192" xml:space="preserve">
+				<source>The domain "{0}" has been created.</source>
+				<target xml:lang="de">Die Domain "{0}" wurde angelegt.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373310" xml:space="preserve">
+				<source>The domain "{0}" has been deleted.</source>
+				<target xml:lang="de">Die Domain "{0}" wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373425" xml:space="preserve">
+				<source>The domain "{0}" has been deactivated.</source>
+				<target xml:lang="de">Die Domain "{0}" wurde deaktiviert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373539" xml:space="preserve">
+				<source>The domain "{0}" has been activated.</source>
+				<target xml:lang="de">Die Domain "{0}" wurde aktiviert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373972" xml:space="preserve">
+				<source>An error occurred during validation of the configuration.</source>
+				<target xml:lang="de">Bei der Validierung der Konfiguration ist ein Fehler aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412373998" xml:space="preserve">
+				<source>Configuration type not found.</source>
+				<target xml:lang="de">Die Art der Konfiguration wurde nicht gefunden.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412374498" xml:space="preserve">
+				<source>The user profile has been updated.</source>
+				<target xml:lang="de">Die Änderungen im Benutzerprofil wurden gespeichert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412374814" xml:space="preserve">
+				<source>An electronic "{0}" address has been added.</source>
+				<target xml:lang="de">Eine elektronische Adresse "{0}" wurde hinzugefügt.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412374678" xml:space="preserve">
+				<source>The electronic address "{0}" has been deleted for the person "{1}".</source>
+				<target xml:lang="de">Die elektronische Adresse "{0}" des Benutzers "{1}" wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412375050" xml:space="preserve">
+				<source>Asset has been deleted.</source>
+				<target xml:lang="de">Der Asset wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412422767" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it.</source>
+				<target xml:lang="de">Der Asset kann nicht gelöscht werden, da er noch von anderen Knoten genutzt wird.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412375167" xml:space="preserve">
+				<source>Node has been discarded</source>
+				<target xml:lang="de">Der Knoten wurde verworfen.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1325156008" xml:space="preserve">
+				<source>The account identifier (username) is already in use.</source>
+				<target xml:lang="de">Der Benutzername ist schon vergeben.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412422009" xml:space="preserve">
+				<source>You can not remove current logged in user.</source>
+				<target xml:lang="de">Sie können ein Benutzer, der gerade angemeldet ist, nicht löschen.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412374546" xml:space="preserve">
+				<source>The user has been deleted.</source>
+				<target xml:lang="de">Der Benutzer wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412421581" xml:space="preserve">
+				<source>Node has been published</source>
+				<target xml:lang="de">Der Knoten wurde veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412420835" xml:space="preserve">
+				<source>Changes in workspace "{0}" have been discarded</source>
+				<target xml:lang="de">Die Änderungen in der Arbeitsungebung "{0}" wurden verworfen.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412420808" xml:space="preserve">
+				<source>Changes in workspace "{0}" have been published</source>
+				<target xml:lang="de">Die Änderungen in der Arbeitsungebung "{0}" wurden veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.412420851" xml:space="preserve">
+				<source>Selected changes have been discarded</source>
+				<target xml:lang="de">Die gewählten Änderungen wurden verworfen.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.412420736" xml:space="preserve">
+				<source>Selected changes have been published</source>
+				<target xml:lang="de">Die gewählten Änderungen wurden veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412375330" xml:space="preserve">
+				<source>The user profile has been updated.</source>
+				<target xml:lang="de">Die Änderungen am Benutzerprofil wurden gespeichert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412375475" xml:space="preserve">
+				<source>An electronic address has been added.</source>
+				<target xml:lang="de">Eine elektronische Adresse wurde hinzugefügt.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412375529" xml:space="preserve">
+				<source>The electronic address has been deleted.</source>
+				<target xml:lang="de">Die elektronische Adresse wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1347016771" xml:space="preserve">
+				<source>The entered username or password was wrong.</source>
+				<target xml:lang="de">Der angebebene Benutzername oder das Passwort sind falsch.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1222204027" xml:space="preserve">
+				<source>The entered username or password was wrong.</source>
+				<target xml:lang="de">Der angebebene Benutzername oder das Passwort sind falsch.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1343231680" xml:space="preserve">
+				<source>The package "{0}" is activated.</source>
+				<target xml:lang="de">Das Paket "{0}" wurde aktiviert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1343231681" xml:space="preserve">
+				<source>The package "{0}" is not present and can not be activated. </source>
+				<target xml:lang="de">Das Paket "{0}" ist nicht vorhanden und kann nicht aktiviert weden.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1343231678" xml:space="preserve">
+				<source>The package "{0}" was deactivated.</source>
+				<target xml:lang="de">Das Paket "{0}" wurde deaktiviert.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1343231679" xml:space="preserve">
+				<source>The package "{0}" is protected and can not be deactivated.</source>
+				<target xml:lang="de">Das Paket "{0}" ist geschützt und kann nicht deaktiviert werden.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1343231685" xml:space="preserve">
+				<source>The package "{0}" has been deleted. </source>
+				<target xml:lang="de">Das Paket "{0}" wurde gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1343231689," xml:space="preserve">
+				<source>The package "{0}" has been frozen.</source>
+				<target xml:lang="de">Das Paket "{0}" wurde eingefroren.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412546138" xml:space="preserve">
+				<source>Unable to delete the selected packages.</source>
+				<target xml:lang="de">Es ist nicht möglich, das vewählte Paket zu löschen.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412547479" xml:space="preserve">
+				<source>Following packages have been deleted: {0}.</source>
+				<target xml:lang="de">Die folgendenPakete wurden gelöscht: {0}.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412545976" xml:space="preserve">
+				<source>Unable to deactivate the selected packages.</source>
+				<target xml:lang="de">Es ist nicht möglich, die gewählten Pakete zu deaktivieren.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412545904" xml:space="preserve">
+				<source>Following packages have been deactivated: {0}</source>
+				<target xml:lang="de">Die folgenden Pakete wurden deaktiviert: {0}</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.412547324" xml:space="preserve">
+				<source>Unable to activate the selected packages.</source>
+				<target xml:lang="de">Es ist nicht möglich, die gewählten Pakete zu aktivieren.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412547283" xml:space="preserve">
+				<source>Following packages have been activated: {0}.</source>
+				<target xml:lang="de">Die folgenden Pakete wurden aktiviert: {0}</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412547219" xml:space="preserve">
+				<source>Following packages have been unfrozen: {0}.</source>
+				<target xml:lang="de">Die folgenden Pakete wurden ausgefroren: {0}</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412547216" xml:space="preserve">
+				<source>Unable to freeze the selected packages.</source>
+				<target xml:lang="de">Es ist nicht möglich, die gewählten Pakete zu einzufrieren.</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1412547087" xml:space="preserve">
+				<source>Following packages have been frozen: {0}.</source>
+				<target xml:lang="de">Die folgenden Pakete wurden eingefroren: {0}</target>
+			</trans-unit>
+			<trans-unit id="flashMessage.1347464246" xml:space="preserve">
+				<source>The package {0} has been unfrozen.</source>
+				<target xml:lang="de">Das Paket "{0}" wurde aufgetaut.</target>
+			</trans-unit>
+			<trans-unit id="error.1343235498" xml:space="preserve">
 				<source>Please specify a valid AIM address.</source>
 				<target xml:lang="de">Bitte geben Sie eine gültige AIM-Adresse an.</target>
 			</trans-unit>

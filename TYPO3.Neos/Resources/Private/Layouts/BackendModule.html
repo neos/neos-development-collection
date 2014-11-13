@@ -1,3 +1,4 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <div class="neos-content neos-indented neos-fluid-container">
 	<f:render section="subtitle" optional="1" />
 
@@ -7,7 +8,9 @@
 		<f:if condition="{validationResults.flattenedErrors}">
 			<ul class="neos-error">
 				<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
-					<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
+					<li>
+						<f:for each="{errors}" as="error">{neos:backend.translate(id: '{error.code}', source: 'ValidationErrors', arguments: "{error.arguments}", value:'{error}')}</f:for>
+					</li>
 				</f:for>
 			</ul>
 		</f:if>

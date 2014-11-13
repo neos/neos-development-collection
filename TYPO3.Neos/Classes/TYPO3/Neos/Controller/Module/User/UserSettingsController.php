@@ -94,7 +94,7 @@ class UserSettingsController extends AbstractModuleController {
 
 		$this->partyRepository->update($user);
 
-		$this->addFlashMessage('The user profile has been updated.');
+		$this->addFlashMessage('The user profile has been updated.', NULL, NULL, array(), 1412375330);
 		$this->redirect('index');
 	}
 
@@ -118,10 +118,7 @@ class UserSettingsController extends AbstractModuleController {
 		$party = $this->securityContext->getAccount()->getParty();
 		$party->addElectronicAddress($electronicAddress);
 		$this->partyRepository->update($party);
-		$this->addFlashMessage(sprintf(
-			'An electronic "%s" address has been added.',
-			$electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')'
-		));
+		$this->addFlashMessage('An electronic "%s" (%s) address has been added.', NULL, NULL, array($electronicAddress->getIdentifier(), $electronicAddress->getType()), 1412375475);
 		$this->redirect('index');
 	}
 
@@ -136,11 +133,7 @@ class UserSettingsController extends AbstractModuleController {
 		$party = $this->securityContext->getAccount()->getParty();
 		$party->removeElectronicAddress($electronicAddress);
 		$this->partyRepository->update($party);
-		$this->addFlashMessage(sprintf(
-			'The electronic address "%s" has been deleted for the person "%s".',
-			$electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')',
-			$party->getName()
-		));
+		$this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', NULL, NULL, array($electronicAddress->getIdentifier(), $electronicAddress->getType(), $party->getName()), 1412375529);
 		$this->redirect('index');
 	}
 

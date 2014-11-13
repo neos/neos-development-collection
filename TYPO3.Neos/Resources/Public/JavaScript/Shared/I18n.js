@@ -28,7 +28,6 @@ define(
 			if (!options['id']) {
 				return Ember.I18n.translate('TYPO3.Neos.translate.requiredProperty') + 'id';
 			}
-
 			// {{translate id="foo"}}
 			if (translateId.length > 0) {
 				// Set the translateId to the correct path
@@ -39,12 +38,10 @@ define(
 					translatedById = Ember.I18n.translate(translateId);
 					return translatedById;
 				}
-
 				// {{#translate id="foo"}}this is the default content{{/translate}}
 				if (arguments[0].fn) {
 					defaultContent = arguments[0].fn(this);
 				}
-
 				// Handle the actual translation
 				if (translateId && defaultContent) {
 					translatedById = Ember.I18n.translate(translateId);

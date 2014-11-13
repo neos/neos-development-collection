@@ -55,13 +55,13 @@ class AssetController extends \TYPO3\Media\Controller\AssetController {
 			'TYPO3\Media\Domain\Model\ImageVariant' => 'originalImage'
 		));
 		if (count($relatedNodes) > 0) {
-			$this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING);
+			$this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
 			$this->redirect('index');
 		}
 
 		// FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
 		$this->assetRepository->remove($asset);
-		$this->addFlashMessage('Asset has been deleted.');
+		$this->addFlashMessage('Asset has been deleted.', NULL, NULL, array(), 1412375050);
 		$this->redirect('index');
 	}
 

@@ -1,30 +1,31 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <div class="neos-row-fluid neos-module-container">
 	<fieldset class="neos-span5">
 		<f:form.hidden property="site" value="{f:if(condition: domain.site, then: domain.site, else: site)}" />
-		<legend>Domain data</legend>
+		<legend>{neos:backend.translate(id: 'domainform.domainData', value: 'Domain data')}</legend>
 
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="host-pattern">Host pattern</label>
+			<label class="neos-control-label" for="host-pattern">{neos:backend.translate(id: 'hostPattern', value: 'Host pattern')}</label>
 			<div class="neos-controls">
-				<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host-pattern" class="neos-span12" placeholder="e.g. www.typo3.org" />
+				<f:form.textfield property="hostPattern" value="{domain.hostPattern}" id="host-pattern" class="neos-span12" placeholder="{neos:backend.translate(id: 'domainform.hostPatternPlaceholder', value: 'e.g. www.typo3.org')}" />
 			</div>
 		</div>
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="active">State</label>
+			<label class="neos-control-label" for="active">{neos:backend.translate(id: 'domainform.state', value: 'State')}</label>
 			<div class="neos-controls">
 				<label class="neos-radio neos-inline">
 					<f:form.radio property="active" value="1" id="active" /><span></span>
-					Active
+					{neos:backend.translate(id: 'active', value: 'Active')}
 				</label>
 				<label class="neos-radio neos-inline">
 					<f:form.radio property="active" value="0" checked="{f:if(condition: domain.active, else: 'checked')}" /><span></span>
-					Inactive
+					{neos:backend.translate(id: 'inactive', value: 'Inactive')}
 				</label>
 			</div>
 		</div>
 	</fieldset>
 </div>
 <div class="neos-footer">
-	<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="neos-button">Cancel</f:link.action>
-	<f:form.submit value="{f:if(condition: saveText, then: saveText, else: 'Save Domain')}" class="neos-button neos-button-primary" />
+	<f:link.action action="edit" arguments="{site: '{f:if(condition: domain.site, then: domain.site, else: site)}'}" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
+	<f:form.submit value="{f:if(condition: saveText, then: saveText, else: '{neos:backend.translate(id: \'save\', value: \'Save\')}')}" class="neos-button neos-button-primary" />
 </div>

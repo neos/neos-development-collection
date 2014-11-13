@@ -115,7 +115,7 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 	 */
 	public function unfreezeAction($packageKey) {
 		$this->packageManager->unfreezePackage($packageKey);
-		$this->flashMessageContainer->addMessage(new Message($packageKey . ' has been unfrozen', 1347464246));
+		$this->flashMessageContainer->addMessage(new Message('%s has been unfrozen', 1347464246, array($packageKey)));
 		$this->redirect('index');
 	}
 
@@ -138,16 +138,16 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 					}
 				}
 				if (count($frozenPackages) > 0) {
-					$message = new Message('Following packages have been frozen: ' . implode(', ', $frozenPackages));
+					$message = new Message('Following packages have been frozen: %s', 1412547087, array(implode(', ', $frozenPackages)));
 				} else {
-					$message = new Warning('Unable to freeze the selected packages');
+					$message = new Warning('Unable to freeze the selected packages', 1412547216);
 				}
 			break;
 			case 'unfreeze':
 				foreach ($packageKeys as $packageKey) {
 					$this->packageManager->unfreezePackage($packageKey);
 				}
-				$message = new Message('Following packages have been unfrozen: ' . implode(', ', $packageKeys));
+				$message = new Message('Following packages have been unfrozen: %s', 1412547219, array(implode(', ', $packageKeys)));
 			break;
 			case 'activate':
 				$activatedPackages = array();
@@ -160,9 +160,9 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 					}
 				}
 				if (count($activatedPackages) > 0) {
-					$message = new Message('Following packages have been activated: ' . implode(', ', $activatedPackages));
+					$message = new Message('Following packages have been activated: %s', 1412547283, array(implode(', ', $activatedPackages)));
 				} else {
-					$message = new Warning('Unable to activate the selected packages');
+					$message = new Warning('Unable to activate the selected packages', 1412547324);
 				}
 			break;
 			case 'deactivate':
@@ -176,9 +176,9 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 					}
 				}
 				if (count($deactivatedPackages) > 0) {
-					$message = new Message('Following packages have been deactivated: ' . implode(', ', $deactivatedPackages));
+					$message = new Message('Following packages have been deactivated: %s', 1412545904, array(implode(', ', $deactivatedPackages)));
 				} else {
-					$message = new Warning('Unable to deactivate the selected packages');
+					$message = new Warning('Unable to deactivate the selected packages', 1412545976);
 				}
 			break;
 			case 'delete':
@@ -192,9 +192,9 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 					}
 				}
 				if (count($deletedPackages) > 0) {
-					$message = new Message('Following packages have been deleted: ' . implode(', ', $deletedPackages));
+					$message = new Message('Following packages have been deleted: %s', 1412547479, array(implode(', ', $deletedPackages)));
 				} else {
-					$message = new Warning('Unable to delete the selected packages');
+					$message = new Warning('Unable to delete the selected packages', 1412546138);
 				}
 			break;
 			default:
@@ -212,9 +212,9 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 	protected function activatePackage($packageKey) {
 		try {
 			$this->packageManager->activatePackage($packageKey);
-			$message = new Message('The package ' . $packageKey . ' is activated', 1343231680);
+			$message = new Message('The package %s is activated', 1343231680, array($packageKey));
 		} catch (UnknownPackageException $exception) {
-			$message = new Error('The package ' . $packageKey . ' is not present and can not be activated', 1343231681);
+			$message = new Error('The package %s is not present and can not be activated', 1343231681, array($packageKey));
 		}
 		return $message;
 	}
@@ -226,9 +226,9 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 	protected function deactivatePackage($packageKey) {
 		try {
 			$this->packageManager->deactivatePackage($packageKey);
-			$message = new Message($packageKey . ' was deactivated', 1343231678);
+			$message = new Message('%s was deactivated', 1343231678, array($packageKey));
 		} catch (ProtectedPackageKeyException $exception) {
-			$message = new Error('The package ' . $packageKey . ' is protected and can not be deactivated', 1343231679);
+			$message = new Error('The package %s is protected and can not be deactivated', 1343231679, array($packageKey));
 		}
 		return $message;
 	}
@@ -240,7 +240,7 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 	protected function deletePackage($packageKey) {
 		try {
 			$this->packageManager->deletePackage($packageKey);
-			$message = new Message($packageKey . ' has been deleted', 1343231685);
+			$message = new Message('Package %s has been deleted', 1343231685, array($packageKey));
 		} catch (UnknownPackageException $exception) {
 			$message = new Error($exception->getMessage(), 1343231686);
 		} catch (ProtectedPackageKeyException $exception) {
@@ -258,7 +258,7 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
 	protected function freezePackage($packageKey) {
 		try {
 			$this->packageManager->freezePackage($packageKey);
-			$message = new Message($packageKey . ' has been frozen', 1343231689);
+			$message = new Message('Package %s has been frozen', 1343231689, array($packageKey));
 		} catch (\LogicException $exception) {
 			$message = new Error($exception->getMessage(), 1343231690);
 		} catch (UnknownPackageException $exception) {

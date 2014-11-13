@@ -202,7 +202,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		$this->accountRepository->update($account);
 		$this->partyRepository->update($user);
 
-		$this->addFlashMessage('The user profile has been updated.');
+		$this->addFlashMessage('The user profile has been updated.', NULL, NULL, array(), 1412374498);
 		$this->redirect('index');
 	}
 
@@ -213,11 +213,11 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 */
 	public function deleteAction(Account $account) {
 		if ($this->securityContext->getAccount() === $account) {
-			$this->addFlashMessage('You can not remove current logged in user');
+			$this->addFlashMessage('You can not remove current logged in user', NULL, NULL, array(), 1412374546);
 			$this->redirect('index');
 		}
 		$this->accountRepository->remove($account);
-		$this->addFlashMessage('The user has been deleted.');
+		$this->addFlashMessage('The user has been deleted.', NULL, NULL, array(), 1412374546);
 		$this->redirect('index');
 	}
 
@@ -245,10 +245,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		$party = $account->getParty();
 		$party->addElectronicAddress($electronicAddress);
 		$this->partyRepository->update($party);
-		$this->addFlashMessage(sprintf(
-			'An electronic "%s" address has been added.',
-			$electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')'
-		));
+		$this->addFlashMessage('An electronic "%s" (%s) address has been added.', '', NULL, array($electronicAddress->getIdentifier(), $electronicAddress->getType()), 1412374814);
 		$this->redirect('edit', NULL, NULL, array('account' => $account));
 	}
 
@@ -264,11 +261,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 		$party = $account->getParty();
 		$party->removeElectronicAddress($electronicAddress);
 		$this->partyRepository->update($party);
-		$this->addFlashMessage(sprintf(
-			'The electronic address "%s" has been deleted for the person "%s".',
-			$electronicAddress->getType() . ' (' . $electronicAddress->getIdentifier() . ')',
-			$party->getName()
-		));
+		$this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', '', NULL, array($electronicAddress->getIdentifier(), $electronicAddress->getType(), $party->getName()), 1412374678);
 		$this->redirect('edit', NULL, NULL, array('account' => $account));
 	}
 
