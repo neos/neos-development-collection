@@ -308,6 +308,9 @@ class NodeExportService {
 						$this->writeConvertedElement($data[$propertyName], $key, 'entry' . $key);
 					}
 				} else {
+					if (is_object($data[$propertyName]) && $data[$propertyName] instanceof \DateTime) {
+						$this->xmlWriter->writeAttribute('__classname', 'DateTime');
+					}
 					$this->xmlWriter->text($this->propertyMapper->convert($data[$propertyName], 'string', $this->propertyMappingConfiguration));
 				}
 			} catch (\Exception $exception) {

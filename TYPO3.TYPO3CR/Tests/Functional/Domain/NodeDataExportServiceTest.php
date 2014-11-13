@@ -68,6 +68,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase {
 	public function aSingleNodeExportedWithNodeDataExportCanBeImportedWithNodeDataImport() {
 		$originalNode = $this->rootNode->createNode('foo');
 		$originalNode->setProperty('description', 'Some node with a property');
+		$originalNode->setProperty('someDate', new \DateTime());
 		$this->persistenceManager->persistAll();
 
 		$exportService = new NodeExportService();
@@ -88,6 +89,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase {
 		$this->assertNotNull($importedNode, 'Expected node not found');
 		$this->assertSame($originalNode->getIdentifier(), $importedNode->getIdentifier());
 		$this->assertSame($originalNode->getProperty('description'), $importedNode->getProperty('description'));
+		$this->assertEquals($originalNode->getProperty('someDate'), $importedNode->getProperty('someDate'));
 	}
 
 	protected function setUpRootNodeAndRepository() {
