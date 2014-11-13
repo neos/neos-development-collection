@@ -11,15 +11,24 @@ namespace TYPO3\Flow\Core\Migrations;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Utility\Files;
-
 /**
  * Change TS object names in TypoScript files:
  *
  * ContentCollection.Default -> ContentCollection
  * PrimaryContentCollection -> PrimaryContent
  */
-class Version201310021548 extends AbstractMigration {
+class Version20131002154800 extends AbstractMigration {
+
+	/**
+	 * NOTE: This method is overridden for historical reasons. Previously code migrations were expected to consist of the
+	 * string "Version" and a 12-character timestamp suffix. The suffix has been changed to a 14-character timestamp.
+	 * For new migrations the classname pattern should be "Version<YYYYMMDDhhmmss>" (14-character timestamp) and this method should *not* be implemented
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return 'TYPO3.Neos-201310021548';
+	}
 
 	/**
 	 * @return void
