@@ -392,7 +392,9 @@ class NodeImportService {
 	protected function convertElementToValue(\XMLReader $reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier = '') {
 		switch ($currentType) {
 			case 'object':
-				if ($currentEncoding === 'json') {
+				if ($currentClassName === 'DateTime') {
+					$value = $this->propertyMapper->convert($reader->value, $currentClassName, $this->propertyMappingConfiguration);
+				} elseif ($currentEncoding === 'json') {
 					$value = $this->propertyMapper->convert(json_decode($reader->value, TRUE), $currentClassName, $this->propertyMappingConfiguration);
 					if ($currentIdentifier !== '') {
 						ObjectAccess::setProperty($value, 'Persistence_Object_Identifier', $currentIdentifier, TRUE);
