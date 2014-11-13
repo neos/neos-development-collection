@@ -11168,7 +11168,8 @@ button.neos-create-new-content {
   margin-top: 16px;
   margin-bottom: 16px;
 }
-.neos-rendering-exception .neos-rendering-exception-title, .neos-rendering-exception .neos-exception-message {
+.neos-rendering-exception .neos-rendering-exception-title,
+.neos-rendering-exception .neos-exception-message {
   color: #ff460d;
   font-weight: bold;
 }
