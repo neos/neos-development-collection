@@ -51,7 +51,7 @@ class DimensionMenuImplementation extends AbstractMenuImplementation {
 	public function buildItems() {
 		$output = array();
 
-		foreach ($this->getPresetsInCorrectOrder() as $presetConfiguration) {
+		foreach ($this->getPresetsInCorrectOrder() as $presetName => $presetConfiguration) {
 			$q = new FlowQuery(array($this->currentNode));
 			$nodeInOtherDimension = $q->context(
 				array(
@@ -71,7 +71,9 @@ class DimensionMenuImplementation extends AbstractMenuImplementation {
 			$item = array(
 				'node' => $nodeInOtherDimension,
 				'state' => $this->calculateItemState($nodeInOtherDimension),
-				'label' => $presetConfiguration['label']
+				'label' => $presetConfiguration['label'],
+				'presetName' => $presetName,
+				'preset' => $presetConfiguration
 			);
 			$output[] = $item;
 		}
@@ -101,11 +103,14 @@ class DimensionMenuImplementation extends AbstractMenuImplementation {
 			throw new TypoScriptException('The configured preset in TypoScript was no array.', 1415888652);
 		}
 
-		return array_map(function($presetName) use($allPresetsOfChosenDimension) {
+		$resultingPresets = array();
+		foreach ($presetNames as $presetName) {
 			if (!isset($allPresetsOfChosenDimension[$presetName])) {
 				throw new TypoScriptException(sprintf('The preset name "%s" does not exist in the chosen dimension. Valid values are: %s', $presetName, implode(', ', array_keys($allPresetsOfChosenDimension))), 1415889492);
 			}
-			return $allPresetsOfChosenDimension[$presetName];
-		}, $presetNames);
+			$resultingPresets[$presetName] = $allPresetsOfChosenDimension[$presetName];
+		}
+
+		return $resultingPresets;
 	}
 }
