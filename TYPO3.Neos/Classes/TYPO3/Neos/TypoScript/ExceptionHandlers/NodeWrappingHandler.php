@@ -13,6 +13,7 @@ namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
+use TYPO3\Flow\Security\Authorization\AccessDecisionManagerInterface;
 
 /**
  * Provides a nicely formatted html error message
@@ -34,6 +35,18 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler {
 	protected $contentElementWrappingService;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
+	 * @Flow\Inject
+	 * @var AccessDecisionManagerInterface
+	 */
+	protected $accessDecisionManager;
+
+	/**
 	 * renders the exception to nice html content element to display, edit, remove, ...
 	 *
 	 * @param string $typoScriptPath - path causing the exception
@@ -42,25 +55,17 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler {
 	 * @return string
 	 */
 	protected function handle($typoScriptPath, \Exception $exception, $referenceCode) {
-		$path = sprintf(
-			'<div class="neos-typoscript-path"><div class="neos-typoscript-rootpath">%s</div></div>',
-			$this->formatScriptPath($typoScriptPath, '</div><div class="neos-typoscript-subpath">')
-		);
-		$message = sprintf(
-			'<div class="neos-exception-message">%s</div>',
-			$this->getMessage($exception, $referenceCode)
-		);
-		$output = sprintf(
-			'<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element</div> %s %s</div>',
-			$path,
-			$message
-		);
+		$handler = new ContextDependentHandler();
+		$handler->setRuntime($this->runtime);
+		$output = $handler->handleRenderingException($typoScriptPath, $exception);
 
-		$this->systemLogger->logException($exception);
-
-		$context = $this->getRuntime()->getCurrentContext();
-		if (isset($context['node'])) {
-			$node = $context['node'];
+		$currentContext = $this->getRuntime()->getCurrentContext();
+		if (isset($currentContext['node'])) {
+			$context = $this->environment->getContext();
+			if ($context->isProduction() && $this->accessDecisionManager->hasAccessToResource('TYPO3_Neos_Backend_GeneralAccess') && $currentContext['site']->getContext()->getWorkspace()->getName() !== 'live') {
+				$output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
+			}
+			$node = $currentContext['node'];
 			return $this->contentElementWrappingService->wrapContentObject($node, $typoScriptPath, $output);
 		}
 

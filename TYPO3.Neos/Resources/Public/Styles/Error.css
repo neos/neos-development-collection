@@ -1857,6 +1857,7 @@ body {
   margin-top: -60px;
   margin-left: -240px;
   color: #fff;
+  font-size: 16px;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
@@ -1865,23 +1866,49 @@ body {
   border-radius: none;
 }
 .neos .neos-error-screen .neos-message-icon {
-  font-size: 4em;
   color: #ff460d;
   float: left;
-  margin-right: .75em;
+  margin-right: 12px;
+  line-height: 76px;
+}
+.neos .neos-error-screen .neos-message-icon i {
+  font-size: 64px;
 }
 .neos .neos-error-screen h1 {
-  font-size: 1.6em;
-  margin-top: .3em;
-  margin-bottom: .25em;
+  font-size: 26px;
+  line-height: 1.2;
+  margin-top: 8px;
+  margin-bottom: 6px;
   margin-left: 112px;
 }
 .neos .neos-error-screen p {
-  margin-left: 112px;
-  margin-top: 0;
+  margin: 0 0 0 112px;
+  font-size: 16px;
 }
 .neos .neos-error-screen a {
   color: #00b5ff;
+}
+.neos .neos-error-screen .neos-rendering-exception {
+  background-color: transparent;
+  border: 2px dashed #ff460d;
+  padding: 16px;
+  font-weight: bold;
+  margin: 50px -100px 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.neos .neos-error-screen .neos-rendering-exception .neos-rendering-exception-title,
+.neos .neos-error-screen .neos-rendering-exception .neos-exception-message {
+  color: #ff460d;
+  font-weight: bold;
+}
+.neos .neos-error-screen .neos-rendering-exception .neos-typoscript-path {
+  font-weight: normal;
+  color: #fff;
+  margin: 16px 0;
+}
+.neos .neos-error-screen .neos-rendering-exception .neos-typoscript-subpath {
+  padding-left: 2em;
 }
 
 @media (min-width: 320px) and (max-width: 480px) {
