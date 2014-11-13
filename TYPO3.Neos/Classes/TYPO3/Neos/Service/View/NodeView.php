@@ -124,39 +124,6 @@ class NodeView extends \TYPO3\Flow\Mvc\View\JsonView {
 	}
 
 	/**
-	 * Collect node data for this node
-	 *
-	 * @param NodeInterface $node
-	 * @return void
-	 */
-	public function assignOneNodeForTree(NodeInterface $node) {
-		$uriBuilder = $this->controllerContext->getUriBuilder();
-
-		$contextNodePath = $node->getContextPath();
-		$nodeType = $node->getNodeType()->getName();
-		$title = $nodeType === 'TYPO3.Neos:Document' ? $node->getProperty('title'): $node->getLabel();
-		$expand = 0;
-		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-			$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
-		} else {
-			$uriForNode = '#';
-		}
-
-		$treeNode = array(
-			'key' => $contextNodePath,
-			'title' => $title,
-			'href' => $uriForNode,
-			'isFolder' => 0,
-			'isLazy' => 0,
-			'nodeType' => $nodeType,
-			'expand' => $expand,
-			'addClass' => strtolower(str_replace(array('.', ':'), array('_', '-'), $nodeType))
-		);
-
-		$this->assign('value', array('data' => $treeNode, 'success' => TRUE));
-	}
-
-	/**
 	 * Collect node data and traverse child nodes
 	 *
 	 * @param array &$nodes
