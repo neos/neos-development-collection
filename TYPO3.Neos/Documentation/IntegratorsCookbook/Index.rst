@@ -28,7 +28,15 @@ Integrators Cookbook
 	RenderingMetaNavigation
 	EditableSharedFooter
 	ExtendingPages
+	RenderingSpecialFormats
 	AddingSimpleContactForm
 	CreatingPlugin
-	ChangingDefaultsDependingOnContentPlacement
+	TranslatingContent
 
+.. currently unused:
+..	NavigatingNodesEelFlowQuery
+..	RenderingBreadcrumb
+..	StructuringSitePackage
+..	WellBehavedJavaScriptForContentEditing
+..	WorkingWithConditions
+..	WrappingListOfContentElements
