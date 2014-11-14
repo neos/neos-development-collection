@@ -19,11 +19,30 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2013-12-10
+The following reference was automatically generated from code on 2014-11-14
 
 
 Package *TYPO3.NEOS*
 --------------------
+
+
+``typo3.neos:domain:activate``
+******************************
+
+**Activate a domain record**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--host-pattern``
+  The host pattern of the domain to activate
+
+
+
+
+
 
 
 ``typo3.neos:domain:add``
@@ -40,6 +59,25 @@ Arguments
   The nodeName of the site rootNode, e.g. "neostypo3org
 ``--host-pattern``
   The host pattern to match on, e.g. "neos.typo3.org
+
+
+
+
+
+
+
+``typo3.neos:domain:deactivate``
+********************************
+
+**Deactivate a domain record**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--host-pattern``
+  The host pattern of the domain to deactivate
 
 
 
@@ -85,50 +123,21 @@ Options
 
 
 
-``typo3.neos:node:autocreatechildnodes``
-****************************************
-
-**Create missing childNodes for a node type**
-
-This command automatically creates missing child nodes for a node type
-based on the structure defined in the NodeTypes configuration.
-
-Example for creating child nodes for the TYPO3.Neos.NodeTypes:Page node type in the
-live workspace:
-
-./flow node:autocreatechildnodes --node-type TYPO3.Neos.NodeTypes:Page
-
-Arguments
-^^^^^^^^^
-
-``--node-type``
-  Node type name
-
-
-
-Options
-^^^^^^^
-
-``--workspace``
-  Workspace name, default is 'live'
-
-
-
-
-
 ``typo3.neos:site:export``
 **************************
 
 **Export sites content**
 
-This command exports all or one specific site with all its content into an XML
-format.
+This command exports all or one specific site with all its content into an XML format.
 
-If the filename option is given, any resources will be exported
-to files in a folder named "Resources" alongside the XML file.
+If the package key option is given, the site(s) will be exported to the given package in the default
+location Resources/Private/Content/Sites.xml.
 
-If not given, the XML will be printed to standard output and assets will be embedded
-into the XML in base64 encoded form.
+If the filename option is given, any resources will be exported to files in a folder named "Resources"
+alongside the XML file.
+
+If neither the filename nor the package key option are given, the XML will be printed to standard output and
+assets will be embedded into the XML in base64 encoded form.
 
 
 
@@ -140,7 +149,9 @@ Options
 ``--tidy``
   Whether to export formatted XML
 ``--filename``
-  relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources". If omitted the export will be printed to standard output
+  relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
+``--package-key``
+  Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
 
 
 
@@ -154,11 +165,11 @@ Options
 This command allows for importing one or more sites or partial content from an XML source. The format must
 be identical to that produced by the export command.
 
-If a filename is specified, this command expects the corresponding file to contain the XML structure
+If a filename is specified, this command expects the corresponding file to contain the XML structure. The
+filename php://stdin can be used to read from standard input.
 
 If a package key is specified, this command expects a Sites.xml file to be located in the private resources
-directory of the given package:
-.../Resources/Private/Content/Sites.xml
+directory of the given package (Resources/Private/Content/Sites.xml).
 
 
 
@@ -199,8 +210,33 @@ Options
 Options
 ^^^^^^^
 
-``--confirmation``
-  
+``--site-node-name``
+  Name of a site root node to clear only content of this site.
+
+
+
+
+
+``typo3.neos:user:activate``
+****************************
+
+**Activate a user which has access to the backend user interface.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--username``
+  The username of the user to be activated.
+
+
+
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to use
 
 
 
@@ -220,9 +256,15 @@ Arguments
 ``--username``
   The username of the user
 ``--role``
-  Role ot be added to the user
+  Role ot be added to the use
 
 
+
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to user
 
 
 
@@ -255,6 +297,52 @@ Options
 
 ``--roles``
   A comma separated list of roles to assign
+``--authentication-provider``
+  Name of the authentication provider to use
+
+
+
+
+
+``typo3.neos:user:deactivate``
+******************************
+
+**Deactivate a user which has access to the backend user interface.**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--username``
+  The username of the user to be deactivated.
+
+
+
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to use
+
+
+
+
+
+``typo3.neos:user:list``
+************************
+
+**List all users**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to use
 
 
 
@@ -280,6 +368,8 @@ Options
 
 ``--confirmation``
   
+``--authentication-provider``
+  Name of the authentication provider to use
 
 
 
@@ -302,6 +392,12 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to use
+
 
 
 
@@ -323,22 +419,54 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to use
 
 
 
 
-``typo3.neos:workspace:discardall``
-***********************************
 
-**Discard everything in the workspace with the given workspace name.**
+``typo3.neos:user:show``
+************************
 
+**Shows the given user**
 
+This command shows some basic details about the given user. If such a user does not exist, this command
+will exit with a non-zero status code.
 
 Arguments
 ^^^^^^^^^
 
-``--workspace-name``
-  
+``--username``
+  The username of the user to show.
+
+
+
+Options
+^^^^^^^
+
+``--authentication-provider``
+  Name of the authentication provider to use
+
+
+
+
+
+``typo3.neos:workspace:discard``
+********************************
+
+**Discard changes in workspace**
+
+This command discards all modified, created or deleted nodes in the specified workspace.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace, for example "user-john
 
 
 
@@ -346,7 +474,80 @@ Options
 ^^^^^^^
 
 ``--verbose``
-  
+  If enabled, information about individual nodes will be displayed
+``--dry-run``
+  If set, only displays which nodes would be discarded, no real changes are committed
+
+
+
+
+
+``typo3.neos:workspace:discardall``
+***********************************
+
+**Discard changes in workspace &lt;b&gt;(DEPRECATED)&lt;/b&gt;**
+
+This command discards all modified, created or deleted nodes in the specified workspace.
+
+Arguments
+^^^^^^^^^
+
+``--workspace-name``
+  Name of the workspace, for example "user-john
+
+
+
+Options
+^^^^^^^
+
+``--verbose``
+  If enabled, information about individual nodes will be displayed
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.neos:workspace:discard``
+  Discard changes in workspace
+
+
+
+``typo3.neos:workspace:list``
+*****************************
+
+**Display a list of existing workspaces**
+
+
+
+
+
+
+
+
+
+``typo3.neos:workspace:publish``
+********************************
+
+**Publish changes of a workspace**
+
+This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
+
+Arguments
+^^^^^^^^^
+
+``--workspace``
+  Name of the workspace containing the changes to publish, for example "user-john
+
+
+
+Options
+^^^^^^^
+
+``--verbose``
+  If enabled, some information about individual nodes will be displayed
+``--dry-run``
+  If set, only displays which nodes would be published, no real changes are committed
 
 
 
@@ -355,15 +556,15 @@ Options
 ``typo3.neos:workspace:publishall``
 ***********************************
 
-**Publish everything in the workspace with the given workspace name.**
+**Publish changes of a workspace &lt;b&gt;(DEPRECATED)&lt;/b&gt;**
 
-
+This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
 
 Arguments
 ^^^^^^^^^
 
 ``--workspace-name``
-  
+  Name of the workspace, for example "user-john
 
 
 
@@ -371,9 +572,15 @@ Options
 ^^^^^^^
 
 ``--verbose``
-  
+  If enabled, information about individual nodes will be displayed
 
 
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``typo3.neos:workspace:publish``
+  Publish changes of a workspace
 
 
 

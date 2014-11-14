@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2014-08-29
+This reference was automatically generated from code on 2014-11-14
 
 
 add
@@ -35,7 +35,7 @@ Example:
 
 	q(node).context({'invisibleContentShown': true}).children().cacheLifetime()
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\CacheLifetimeOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\CacheLifetimeOperation
 :Priority: 1
 :Final: Yes
 :Returns: integer The cache lifetime in seconds or NULL if either no content collection was given or no child node had a "hiddenBeforeDateTime" or "hiddenAfterDateTime" property set
@@ -68,7 +68,7 @@ children
 context elements and returns all child nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ChildrenOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ChildrenOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -84,7 +84,7 @@ closest
 get the first node that matches the selector by testing the node itself and
 traversing up through its ancestors.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ClosestOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ClosestOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -105,7 +105,7 @@ Example:
 
 	q(node).context({'invisibleContentShown': true}).children()
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ContextOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ContextOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -146,7 +146,7 @@ will in fact use `isOfType()` on the `NodeType` of context elements to
 filter. This filter allow also to filter the current context by a given
 node. Anything else remains unchanged.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\FilterOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FilterOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -200,7 +200,7 @@ find
 of nodes specified by a path. The current context node is also used as a context
 for evaluating relative paths.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\FindOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FindOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -254,7 +254,7 @@ to those that have a descendant that matches the selector or given subject.
 Accepts a selector, an array, an object, a traversable object & a FlowQuery
 object as argument.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\HasOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\HasOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -301,7 +301,7 @@ next
 context elements and returns each following sibling or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\NextOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -317,7 +317,7 @@ parent
 context elements and returns each direct parent nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ParentOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -333,7 +333,7 @@ parents
 context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\ParentsOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -349,7 +349,7 @@ prev
 context elements and returns each preceding sibling or only those matching
 the filter expression specified as optional argument
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\PrevOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -365,7 +365,7 @@ Used to access properties of a TYPO3CR Node. If the property mame is
 prefixed with _, internal node properties like start time, end time,
 hidden are accessed.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\PropertyOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PropertyOperation
 :Priority: 100
 :Final: Yes
 :Returns: mixed
@@ -399,7 +399,7 @@ siblings
 context elements and returns all sibling nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\TypoScript\\FlowQueryOperations\\SiblingsOperation
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\SiblingsOperation
 :Priority: 100
 :Final: No
 :Returns: void

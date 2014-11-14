@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2014-09-07
+This reference was automatically generated from code on 2014-11-14
 
 
 neos:backend.configurationCacheVersion
@@ -32,7 +32,7 @@ the Neos backend into a website.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface):
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface): 
 
 
 
@@ -79,11 +79,11 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface):
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface): 
 
-* ``page`` (boolean, *optional*):
+* ``page`` (boolean, *optional*): 
 
-* ``tag`` (string, *optional*):
+* ``tag`` (string, *optional*): 
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -384,9 +384,9 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths (defaults to "documentNode")
+* ``baseNodeName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
-* ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content (defaults to "linkedNode")
+* ``nodeVariableName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -618,7 +618,7 @@ Arguments
 
 * ``arguments`` (array, *optional*): Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 
-* ``section`` (string, *optional*):
+* ``section`` (string, *optional*): 
 
 * ``addQueryString`` (boolean, *optional*): If set, the current query parameters will be kept in the URI
 
