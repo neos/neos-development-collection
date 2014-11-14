@@ -23,6 +23,8 @@ All aspects of a node – which is the technical term for any kind of content - 
 
 For a first impression you might want to watch a talk about multi language websites with Neos 1.2 from this year’s T3CON: http://rlmk.me/neosmulti1-2
 
+Information about the general UI approach to localization and full use of content dimensions, some of the planned concepts are explained at  http://rasmusskjoldan.com/post/82289319462/localization-is-not-about-localization
+
 Many more features regarding content translation and content dimensions in general are on our roadmap.
 
 See the chapter :ref:`content-dimensions` for details.
@@ -221,6 +223,8 @@ Additional features
    This is considered breaking if you added your own Transformations or Filters for Node Migrations or rely on them to only apply to a specific workspace.
 - Change handling of empty, false and null attribute values
    This will be breaking if code relied on the previous conversion of values or the output is used for XML, where the new meta property ``@allowEmpty`` should be used to disable empty attributes.
+
+**Further details can be found in the commit messages of the changes**
 
 ====================
 Overview of changes
