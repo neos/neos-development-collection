@@ -9,6 +9,7 @@ use PHPUnit_Framework_Assert as Assert;
 require_once(__DIR__ . '/../../../../../Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
 /**
  * Features context
@@ -18,6 +19,8 @@ class FeatureContext extends MinkContext {
 	use IsolatedBehatStepsTrait;
 
 	use NodeOperationsTrait;
+
+	use HistoryDefinitionsTrait;
 
 	/**
 	 * @var \TYPO3\Flow\Object\ObjectManagerInterface

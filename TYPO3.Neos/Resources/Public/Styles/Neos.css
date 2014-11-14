@@ -6,25 +6,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1408190103') format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url('../Fonts/NotoSans/NotoSans-Regular.ttf?1407089064') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url('../Fonts/NotoSans/NotoSans-Bold.ttf?1407089064') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url('../Fonts/NotoSans/NotoSans-Italic.ttf?1407089064') format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1408190103') format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url('../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1407089064') format('truetype');
 }
 @font-face {
   font-family: 'neos-language';
@@ -5218,7 +5218,7 @@
 .neos .neos-ellipsis::after,
 .neos #neos-publish-menu.neos-button-group.neos-publish-menu-action-running .neos-dropdown-toggle::after {
   display: inline-block;
-  width: 11px;
+  width: 12px;
   content: '...';
   overflow: hidden;
   vertical-align: top;
@@ -6356,6 +6356,106 @@
   float: right;
   background-color: #00a338;
   width: 172px;
+}
+.neos #neos-inspector .widget {
+  margin: 0 16px 20px 16px;
+  height: auto;
+}
+.neos #neos-inspector .widget .neos-widget-subtitle {
+  color: #adadad;
+  float: right;
+}
+.neos #neos-inspector .widget .neos-widget-loading {
+  color: #adadad;
+}
+.neos #neos-inspector .widget .neos-widget-error i {
+  color: #ff460d;
+}
+.neos #neos-inspector .neos-columnview-columns-3 .neos-columnview-column {
+  width: 33%;
+}
+.neos #neos-inspector .neos-columnview-columns-2 .neos-columnview-column {
+  width: 50%;
+}
+.neos #neos-inspector .neos-columnview-hero {
+  line-height: 54px;
+  margin-bottom: 16px;
+}
+.neos #neos-inspector .neos-columnview-hero .neos-columnview-value {
+  font-size: 54px;
+}
+.neos #neos-inspector .neos-columnview-hero .neos-columnview-label {
+  color: #adadad;
+  margin-left: 6px;
+}
+.neos #neos-inspector .neos-columnview-column {
+  float: left;
+}
+.neos #neos-inspector .neos-columnview-column .neos-columnview-value {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+.neos #neos-inspector .neos-columnview-column .neos-columnview-label {
+  color: #adadad;
+}
+.neos #neos-inspector table.neos-tableview-table {
+  width: 100%;
+}
+.neos #neos-inspector table.neos-tableview-table td {
+  padding-bottom: 8px;
+}
+.neos #neos-inspector table.neos-tableview-table td:last-child {
+  padding-bottom: 0;
+}
+.neos #neos-inspector table.neos-tableview-table td .neos-icon {
+  padding-right: 4px;
+}
+.neos #neos-inspector .neos-timeseriesview svg {
+  display: block;
+}
+.neos #neos-inspector .neos-timeseriesview svg .chart-background {
+  fill: transparent;
+}
+.neos #neos-inspector .neos-timeseriesview svg .axis line,
+.neos #neos-inspector .neos-timeseriesview svg .axis path {
+  fill: none;
+  stroke: #3f3f3f;
+  stroke-width: 1px;
+}
+.neos #neos-inspector .neos-timeseriesview svg text {
+  cursor: default;
+  fill: #fff;
+  font-size: 11px;
+  shape-rendering: crispEdges;
+  stroke-width: 0;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path {
+  stroke-width: 2.5;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-0 {
+  stroke: #00b5ff;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-1 {
+  stroke: #fb2286;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-2 {
+  stroke: #adea02;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-3 {
+  stroke: #fd9d00;
+}
+.neos #neos-inspector .neos-timeseriesview .chart-time-series .line {
+  fill: none;
+}
+.neos #neos-inspector .neos-timeseriesview .chart-time-series .axis .tick {
+  fill: none;
+  stroke: #3f3f3f;
+  stroke-width: 1px;
+  opacity: 1;
+  font-size: 11px;
+}
+.neos #neos-inspector .neos-timeseriesview .chart-time-series .axis path {
+  opacity: 0;
 }
 .neos #neos-inspector-clickprotection {
   position: fixed;
@@ -9481,6 +9581,91 @@
   text-align: center;
   padding-right: 4px;
 }
+.neos.neos-module.neos-module-management-history .neos-history-events-divider {
+  margin: 0;
+  padding: 0;
+  border: 2px solid #323232;
+}
+.neos.neos-module.neos-module-management-history .neos-history {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-date {
+  margin-left: 50%;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-date .neos-history-date-inner {
+  text-align: center;
+  line-height: 80px;
+  overflow: hidden;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  background: #007fb2;
+  margin-left: -42px;
+  font-size: 100%;
+  border: solid 4px #323232;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events {
+  width: 50%;
+  padding-top: 20px;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events::after {
+  border: 1px solid transparent;
+  content: "";
+  clear: both;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-left {
+  text-align: right;
+  border-right: 4px solid #323232;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-left .neos-history-event-time {
+  float: right;
+  margin-right: 10px;
+  width: 65px;
+  text-align: right;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-right {
+  text-align: left;
+  margin-left: 50%;
+  border-left: 4px solid #323232;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events.neos-history-events-right .neos-history-event-time {
+  float: left;
+  margin-left: 10px;
+  width: 65px;
+  text-align: left;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event {
+  text-align: left;
+  clear: both;
+  position: relative;
+  padding-top: 8px;
+  padding-right: 16px;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event::after {
+  border: 1px solid transparent;
+  content: "";
+  clear: both;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event .neos-history-event-user {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: #007fb2;
+  overflow: hidden;
+  text-align: center;
+  line-height: 40px;
+  float: left;
+  border: 4px solid #323232;
+  margin-right: 20px;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event .neos-history-event-description {
+  padding: 5px;
+  margin-right: 20px;
+}
+.neos.neos-module.neos-module-management-history .neos-history-day .neos-history-events .neos-history-event .neos-history-event-description a {
+  text-decoration: underline;
+}
 .neos.neos-module > .neos-module-wrap {
   position: relative;
   background: #222;
@@ -10300,6 +10485,7 @@
   padding-right: 8px;
   color: #00b5ff;
   text-align: center;
+  vertical-align: baseline;
 }
 .neos #neos-nprogress {
   background-color: #323232;
