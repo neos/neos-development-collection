@@ -226,6 +226,13 @@ Additional features
 
 **Further details can be found in the commit messages of the changes**
 
+~~~~~~~~~~~~~~
+Known issues
+~~~~~~~~~~~~~~
+
+- Kickstarting a new site is not working if the demo site package is active
+    Deactivate the demo site package with ./flow package:deactivate TYPO3.NeosDemoTypo3Org before you kickstart a new site
+
 ====================
 Overview of changes
 ====================
