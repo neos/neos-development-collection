@@ -1,0 +1,280 @@
+# Base node, which just configures the "removed" property of the node.
+'TYPO3.Neos:Node':
+  label: "${String.stripTags(q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')'))}"
+  abstract: TRUE
+  properties:
+    _removed:
+      type: boolean
+  ui:
+    inspector:
+      tabs:
+        default:
+          label: 'General'
+          position: 10
+          icon: 'icon-pencil'
+        meta:
+          label: 'Metadata'
+          position: 20
+          icon: 'icon-cog'
+
+# Hidable Mixin
+'TYPO3.Neos:Hidable':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        visibility:
+          label: 'Visibility'
+          position: 100
+          tab: meta
+  properties:
+    _hidden:
+      type: boolean
+      ui:
+        label: 'Hide'
+        inspector:
+          group: 'visibility'
+          position: 30
+
+# Timable Mixin
+'TYPO3.Neos:Timable':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        visibility:
+          label: 'Visibility'
+          position: 100
+          tab: meta
+  properties:
+    _hiddenBeforeDateTime:
+      type: date
+      ui:
+        label: 'Hide before'
+        inspector:
+          group: 'visibility'
+          position: 10
+          editorOptions:
+            format: 'd-m-Y H:i'
+      validation:
+        'TYPO3.Neos/Validation/DateTimeValidator': []
+    _hiddenAfterDateTime:
+      type: date
+      ui:
+        label: 'Hide after'
+        inspector:
+          group: 'visibility'
+          position: 20
+          editorOptions:
+            format: 'd-m-Y H:i'
+      validation:
+        'TYPO3.Neos/Validation/DateTimeValidator': []
+
+
+# Abstract Document type.
+# "Documents" always have a publicly-visible URL.
+# The most prominent subclass of Document is "TYPO3.Neos.ContentTypes:Page", but
+# anything page-like (like a blog post) should subclass "TYPO3.Neos:Document".
+'TYPO3.Neos:Document':
+  superTypes:
+    - 'TYPO3.Neos:Node'
+    - 'TYPO3.Neos:Hidable'
+    - 'TYPO3.Neos:Timable'
+  abstract: TRUE
+  constraints:
+    nodeTypes:
+      '*': TRUE
+  ui:
+    label: 'Document'
+    search:
+      searchCategory: 'Documents'
+    inspector:
+      groups:
+        document:
+          label: 'Document options'
+          position: 10
+        type:
+          label: 'Change type'
+          position: 1000
+          tab: meta
+  properties:
+    _nodeType:
+      type: string
+      ui:
+        label: 'Type'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'type'
+          position: 100
+          editor: Content/Inspector/Editors/NodeTypeEditor
+          editorOptions:
+            baseNodeType: 'TYPO3.Neos:Document'
+    title:
+      type: string
+      ui:
+        label: 'Title'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'document'
+      validation:
+        'TYPO3.Neos/Validation/NotEmptyValidator': []
+        'TYPO3.Neos/Validation/StringLengthValidator':
+          minimum: 1
+          maximum: 255
+    uriPathSegment:
+      type: string
+      ui:
+        label: 'URL path segment'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'document'
+      validation:
+        'TYPO3.Neos/Validation/NotEmptyValidator': []
+        'TYPO3.Neos/Validation/StringLengthValidator':
+          minimum: 1
+          maximum: 255
+        regularExpression:
+          regularExpression: '/^[a-z0-9\-]+$/i'
+    _hidden:
+      ui:
+        reloadIfChanged: TRUE
+    _hiddenInIndex:
+      type: boolean
+      ui:
+        label: 'Hide in menus'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'visibility'
+          position: 40
+
+
+# A shortcut.
+# "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
+'TYPO3.Neos:Shortcut':
+  superTypes: ['TYPO3.Neos:Document']
+  ui:
+    label: 'Shortcut'
+    icon: 'icon-share'
+    position: 200
+    inspector:
+      groups:
+        document:
+          label: 'Shortcut options'
+  properties:
+    targetMode:
+      type: string
+      defaultValue: 'firstChildNode'
+      ui:
+        label: 'Target mode'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'document'
+          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            values:
+              firstChildNode:
+                label: 'First child node'
+              parentNode:
+                label: 'Parent node'
+              selectedTarget:
+                label: 'Selected target'
+    target:
+      type: string
+      ui:
+        label: 'Target'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'document'
+          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+
+# Base class for all "Plugins"; that are PHP controllers being called during the rendering.
+'TYPO3.Neos:Plugin':
+  superTypes: ['TYPO3.Neos:Content']
+  abstract: TRUE
+  ui:
+    label: 'Plugin'
+    group: 'plugins'
+    icon: 'icon-puzzle-piece'
+    inspector:
+      groups:
+        pluginSettings:
+          label: 'Plugin Settings'
+  postprocessors:
+    'PluginPostprocessor':
+      postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
+
+'TYPO3.Neos:PluginView':
+  superTypes: ['TYPO3.Neos:Content']
+  ui:
+    label: 'Plugin View'
+    group: 'plugins'
+    position: 100
+    inspector:
+      groups:
+        pluginViews:
+          label: 'Plugin Views'
+          position: 100
+  properties:
+    plugin:
+      type: string
+      ui:
+        label: 'Master View'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginViews'
+          position: 20
+          editor: 'TYPO3.Neos/Inspector/Editors/MasterPluginEditor'
+    view:
+      type: string
+      ui:
+        label: 'Plugin View'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'pluginViews'
+          position: 20
+          editor: 'TYPO3.Neos/Inspector/Editors/PluginViewEditor'
+
+
+'TYPO3.Neos:Content':
+  superTypes:
+    - 'TYPO3.Neos:Node'
+    - 'TYPO3.Neos:Hidable'
+    - 'TYPO3.Neos:Timable'
+  abstract: TRUE
+  ui:
+    label: 'Content'
+    icon: 'icon-unchecked'
+    group: 'general'
+    search:
+      searchCategory: 'Content'
+    inspector:
+      groups:
+        type:
+          label: 'Change type'
+          position: 100
+          tab: meta
+  properties:
+    _nodeType:
+      type: string
+      ui:
+        label: 'Type'
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'type'
+          editor: Content/Inspector/Editors/NodeTypeEditor
+          editorOptions:
+            placeholder: 'Loading ...'
+            baseNodeType: 'TYPO3.Neos:Content'
+
+# A content collection is a collection of "TYPO3.Neos:Content" (and its subclasses),
+# i.e. contains variable number of children.
+#
+# Cannot be subclassed.
+'TYPO3.Neos:ContentCollection':
+  superTypes: ['TYPO3.Neos:Node']
+  ui:
+    label: 'Content Collection'
+    icon: 'icon-unchecked'
+  constraints:
+    nodeTypes:
+      '*': TRUE

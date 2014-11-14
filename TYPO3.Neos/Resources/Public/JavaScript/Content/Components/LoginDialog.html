@@ -1,0 +1,23 @@
+<div class="neos-modal">
+	<form>
+		<div class="neos-modal-header">
+			<div class="neos-header">
+				Your login has expired. Please log in again.
+			</div>
+		</div>
+		<div class="neos-modal-body">
+			<fieldset>
+				<div class="neos-controls">
+					{{view Ember.TextField required="required" placeholder="Username" id="neos-login-dialog-username" type="text" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" valueBinding="view._username"}}
+				</div>
+				<div class="neos-controls">
+					{{view Ember.TextField required="required" placeholder="Password" id="neos-login-dialog-password" type="password" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" valueBinding="view._password"}}
+				</div>
+				<div class="neos-controls">
+					<button class="neos-button neos-button-primary" type="submit" {{action "login" target="view"}}>Login</button>
+				</div>
+			</fieldset>
+		</div>
+	</form>
+</div>
+<div class="neos-modal-backdrop neos-in"></div>
