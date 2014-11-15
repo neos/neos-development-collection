@@ -15,6 +15,9 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="pl">Cancel</target></trans-unit>
+      <trans-unit id="content" xml:space="preserve">
+				<source>Content</source>
+			<target xml:lang="pl">Content</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="pl">Create after</target></trans-unit>
@@ -95,8 +98,7 @@
 			<target xml:lang="pl">Paste Into</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-				<target xml:lang="pl">Password</target>
-			</trans-unit>
+			<target xml:lang="pl">Password</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
 			<target xml:lang="pl">Preview</target></trans-unit>
@@ -203,6 +205,39 @@
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="pl">Workspaces</target></trans-unit>
+      <!-- Login -->
+      <trans-unit id="login.index.title" xml:space="preserve">
+				<source>TYPO3 Neos Login</source>
+			<target xml:lang="pl">TYPO3 Neos Login</target></trans-unit>
+      <!-- ErrorHandlers -->
+      <trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
+				<source>Page Not Found</source>
+			<target xml:lang="pl">Page Not Found</target></trans-unit>
+      <trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			<target xml:lang="pl">Sorry, the page you requested was not found.</target></trans-unit>
+      <trans-unit id="databaseConnectionExceptions.errorTitle" xml:space="preserve">
+				<source>Database Error</source>
+			<target xml:lang="pl">Database Error</target></trans-unit>
+      <trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
+			<target xml:lang="pl">Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</target></trans-unit>
+      <trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="pl">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+      <trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
+				<source>Missing Homepage</source>
+			<target xml:lang="pl">Missing Homepage</target></trans-unit>
+      <trans-unit id="noHomepageException.errorDescription" xml:space="preserve">
+				<source>Either no site has been defined yet or the site does not contain a homepage.</source>
+			<target xml:lang="pl">Either no site has been defined yet or the site does not contain a homepage.</target></trans-unit>
+      <trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to create or import a site in the setup.</source>
+			<target xml:lang="pl">You might want to create or import a site in the setup.</target></trans-unit>
+      <!-- Errors -->
+      <trans-unit id="error.index.goToSetup" xml:space="preserve">
+				<source>Go to Setup</source>
+			<target xml:lang="pl">Go to Setup</target></trans-unit>
     </body>
   </file>
 </xliff>
