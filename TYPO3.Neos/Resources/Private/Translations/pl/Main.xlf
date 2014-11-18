@@ -5,239 +5,239 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="pl">Auto-Publish</target></trans-unit>
+			<target xml:lang="pl">Auto-publikacja</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="pl">Apply</target></trans-unit>
+			<target xml:lang="pl">Zastosuj</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="pl">Apply changes</target></trans-unit>
+			<target xml:lang="pl">Zastosuj zmiany</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="pl">Cancel</target></trans-unit>
+			<target xml:lang="pl">Anuluj</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="pl">Content</target></trans-unit>
+			<target xml:lang="pl">Treść</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="pl">Create after</target></trans-unit>
+			<target xml:lang="pl">Stwórz po</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="pl">Create new</target></trans-unit>
+			<target xml:lang="pl">Utwórz nowy</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="pl">Close</target></trans-unit>
+			<target xml:lang="pl">Zamknij</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="pl">Copy</target></trans-unit>
+			<target xml:lang="pl">Kopiuj</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="pl">Cut</target></trans-unit>
+			<target xml:lang="pl">Wytnij</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="pl">Hide / Unhide</target></trans-unit>
+			<target xml:lang="pl">Ukryj / Pokaż</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="pl">Navigate</target></trans-unit>
+			<target xml:lang="pl">Nawiguj</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
 			<target xml:lang="pl">OK</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="pl">Remove</target></trans-unit>
+			<target xml:lang="pl">Usuń</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="pl">Refresh</target></trans-unit>
+			<target xml:lang="pl">Odśwież</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="pl">Delete</target></trans-unit>
+			<target xml:lang="pl">Usuń</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="pl">Yes, delete the element</target></trans-unit>
+			<target xml:lang="pl">Tak, usuń element</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="pl">Delete the element</target></trans-unit>
+			<target xml:lang="pl">Usuń element</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="pl">Discard</target></trans-unit>
+			<target xml:lang="pl">Odrzuć</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="pl">Discard changes</target></trans-unit>
+			<target xml:lang="pl">Odrzuć zmiany</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="pl">Edit title</target></trans-unit>
+			<target xml:lang="pl">Edytuj tytuł</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="pl">Edit / Preview</target></trans-unit>
+			<target xml:lang="pl">Edycja / Podgląd</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="pl">Edit</target></trans-unit>
+			<target xml:lang="pl">Edytuj</target></trans-unit>
       <trans-unit id="Navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="pl">Navigate</target></trans-unit>
+			<target xml:lang="pl">Nawiguj</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="pl">New After</target></trans-unit>
+			<target xml:lang="pl">Nowy po</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="pl">New Before</target></trans-unit>
+			<target xml:lang="pl">Nowy przed</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="pl">New Into</target></trans-unit>
+			<target xml:lang="pl">Nowy w</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="pl">Paste</target></trans-unit>
+			<target xml:lang="pl">Wklej</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="pl">Paste After</target></trans-unit>
+			<target xml:lang="pl">Wklej po</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="pl">Paste Before</target></trans-unit>
+			<target xml:lang="pl">Wklej przed</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="pl">Paste Into</target></trans-unit>
+			<target xml:lang="pl">Wklej do</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="pl">Password</target></trans-unit>
+			<target xml:lang="pl">Hasło</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="pl">Preview</target></trans-unit>
+			<target xml:lang="pl">Pogdląd</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="pl">Publish</target></trans-unit>
+			<target xml:lang="pl">Publikuj</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
-			<target xml:lang="pl">Saving...</target></trans-unit>
+			<target xml:lang="pl">Zapisywanie...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="pl">Saved</target></trans-unit>
+			<target xml:lang="pl">Zapisano</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="pl">Toggle inspector</target></trans-unit>
+			<target xml:lang="pl">Pokaż/schowaj inspektor</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="pl">Username</target></trans-unit>
+			<target xml:lang="pl">Użytkownik</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="pl">Full Screen</target></trans-unit>
+			<target xml:lang="pl">Pełny ekran</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="pl">Discard all changes</target></trans-unit>
+			<target xml:lang="pl">Odrzuć wszystkie zmiany</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="pl">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="pl">Czy na pewno chcesz odrzucić wszystkie zmiany w tym obszarze roboczym?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="pl">Publish all changes</target></trans-unit>
+			<target xml:lang="pl">Publikuj wszystkie zmiany</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="pl">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="pl">Czy jesteś pewien, że chcesz opublikować wszystkie zmiany?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="pl">Editing Modes</target></trans-unit>
+			<target xml:lang="pl">Tryby edycji</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="pl">Preview Central</target></trans-unit>
+			<target xml:lang="pl">Centrum podglądu</target></trans-unit>
       <trans-unit id="inspector" xml:space="preserve">
 				<source>Inspector</source>
-			<target xml:lang="pl">Inspector</target></trans-unit>
+			<target xml:lang="pl">Inspektor</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="pl">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="pl">Masz niezachowane zmiany. Co chcesz z nimi zrobić?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="pl">Selected element</target></trans-unit>
+			<target xml:lang="pl">Wybrany element</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="pl">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="pl">Niektóre pola nie zostały poprawnie wypełnione.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="pl">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+			<target xml:lang="pl">Oznaczone pola zawierają błędy. Proszę popraw je.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="pl">Continue editing</target></trans-unit>
+			<target xml:lang="pl">Kontynuuj edycję</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="pl">Throw away</target></trans-unit>
+			<target xml:lang="pl">Porzuć zmiany</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="pl">Apply</target></trans-unit>
+			<target xml:lang="pl">Zastosuj</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="pl">view is displayed on page</target></trans-unit>
+			<target xml:lang="pl">Widok jest wyświetlany na stronie</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="pl">view is displayed on current page</target></trans-unit>
+			<target xml:lang="pl">Widok jest wyświetlany na bieżącej stronie</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="pl">Content</target></trans-unit>
+			<target xml:lang="pl">Treść</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the page</source>
-			<target xml:lang="pl">This will delete the page</target></trans-unit>
+			<target xml:lang="pl">To spowoduje usunięcie strony</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's subpages</source>
-			<target xml:lang="pl">and it's subpages</target></trans-unit>
+			<target xml:lang="pl">wraz z jej podstronami</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="pl">This operation can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="pl">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="pl">Height</target></trans-unit>
+			<target xml:lang="pl">Wysokość</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="pl">Do you really want to delete</target></trans-unit>
+			<target xml:lang="pl">Czy na pewno chcesz usunąć</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="pl">this element</target></trans-unit>
+			<target xml:lang="pl">ten element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="pl">This will delete the element.</target></trans-unit>
+			<target xml:lang="pl">To spowoduje usunięcie elementu.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="pl">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="pl">Tę operację można cofnąć w panelu zarządzania obszarem roboczym.</target></trans-unit>
       <trans-unit id="width.ucfirst" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="pl">Width</target></trans-unit>
+			<target xml:lang="pl">Szerokość</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="pl">Missing required property:</target></trans-unit>
+			<target xml:lang="pl">Brak wymaganej właściwości:</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="pl">Workspaces</target></trans-unit>
+			<target xml:lang="pl">Obszary robocze</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="pl">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="pl">Logowanie do TYPO3 Neos</target></trans-unit>
       <!-- ErrorHandlers -->
       <trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="pl">Page Not Found</target></trans-unit>
+			<target xml:lang="pl">Nie znaleziono strony</target></trans-unit>
       <trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="pl">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="pl">Niestety, nie znaleziono podanej strony.</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.errorTitle" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="pl">Database Error</target></trans-unit>
+			<target xml:lang="pl">Błąd bazy danych</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
-			<target xml:lang="pl">Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="pl">Wystąpił błąd bazy danych. Sprawdź pliki logów w Data/Logs/* aby uzyskać więcej informacji.</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="pl">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="pl">Sprawdź ustawienia bazy danych.</target></trans-unit>
       <trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="pl">Missing Homepage</target></trans-unit>
+			<target xml:lang="pl">Brak strony głównej</target></trans-unit>
       <trans-unit id="noHomepageException.errorDescription" xml:space="preserve">
 				<source>Either no site has been defined yet or the site does not contain a homepage.</source>
-			<target xml:lang="pl">Either no site has been defined yet or the site does not contain a homepage.</target></trans-unit>
+			<target xml:lang="pl">Nie zdefiniowano jeszcze pakietu strony lub pakietu nie zawiera strony głównej.</target></trans-unit>
       <trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to create or import a site in the setup.</source>
-			<target xml:lang="pl">You might want to create or import a site in the setup.</target></trans-unit>
+			<target xml:lang="pl">Uwórz lub zaimportuj pakiet strony w konfiguracji.</target></trans-unit>
       <!-- Errors -->
       <trans-unit id="error.index.goToSetup" xml:space="preserve">
 				<source>Go to Setup</source>
-			<target xml:lang="pl">Go to Setup</target></trans-unit>
+			<target xml:lang="pl">Przejdź do konfiguracji</target></trans-unit>
     </body>
   </file>
 </xliff>

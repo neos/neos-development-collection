@@ -5,32 +5,32 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="fr">Management</target></trans-unit>
+			<target xml:lang="fr">Gestion</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="fr">Contains multiple modules related to management of content</target></trans-unit>
+			<target xml:lang="fr">Contient plusieurs modules liés à la gestion de contenu</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="fr">Workspaces</target></trans-unit>
+			<target xml:lang="fr">Espaces de travail</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="fr">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
+			<target xml:lang="fr">Ce module contient une vue d'ensemble de tous les éléments dans l'espace de travail actuel et vous permet de poursuivre le travail de révision et de publication.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="fr">Media</target></trans-unit>
+			<target xml:lang="fr">Médias</target><alt-trans><target xml:lang="fr">Média</target></alt-trans></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="fr">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
+			<target xml:lang="fr">Ce module permet la gestion des ressources multimédias, y compris les images, vidéos, audio et des documents.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
 			<target xml:lang="fr">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="fr">Contains multiple modules related to administration</target></trans-unit>
+			<target xml:lang="fr">Contient plusieurs modules associés à l'administration</target><alt-trans><target xml:lang="fr">Contient plusieurs modules associés à l'administration </target></alt-trans></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="fr">User Management</target></trans-unit>
+			<target xml:lang="fr">Gestion des utilisateurs</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
 			<target xml:lang="fr">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>

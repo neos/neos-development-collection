@@ -5,239 +5,239 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="ru">Auto-Publish</target></trans-unit>
+			<target xml:lang="ru">Автоматическая публикация</target><alt-trans><target xml:lang="ru">Авто-публикация</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ru">Apply</target></trans-unit>
+			<target xml:lang="ru">Применить</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="ru">Apply changes</target></trans-unit>
+			<target xml:lang="ru">Применить изменения</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ru">Cancel</target></trans-unit>
+			<target xml:lang="ru">Отмена</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="ru">Content</target></trans-unit>
+			<target xml:lang="ru">Содержимое</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="ru">Create after</target></trans-unit>
+			<target xml:lang="ru">Создать после</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="ru">Create new</target></trans-unit>
+			<target xml:lang="ru">Создать новый</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="ru">Close</target></trans-unit>
+			<target xml:lang="ru">Закрыть</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="ru">Copy</target></trans-unit>
+			<target xml:lang="ru">Копировать</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="ru">Cut</target></trans-unit>
+			<target xml:lang="ru">Вырезать</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="ru">Hide / Unhide</target></trans-unit>
+			<target xml:lang="ru">Скрыть / Показать</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="ru">Navigate</target></trans-unit>
+			<target xml:lang="ru">Навигация</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="ru">OK</target></trans-unit>
+			<target xml:lang="ru">ОК</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="ru">Remove</target></trans-unit>
+			<target xml:lang="ru">Удалить</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="ru">Refresh</target></trans-unit>
+			<target xml:lang="ru">Обновить</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="ru">Delete</target></trans-unit>
+			<target xml:lang="ru">Удалить</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="ru">Yes, delete the element</target></trans-unit>
+			<target xml:lang="ru">Да, удалить элемент</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="ru">Delete the element</target></trans-unit>
+			<target xml:lang="ru">Удалить элемент</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="ru">Discard</target></trans-unit>
+			<target xml:lang="ru">Отменить</target><alt-trans><target xml:lang="ru">Отемнить</target></alt-trans><alt-trans><target xml:lang="ru">Сбросить</target></alt-trans></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="ru">Discard changes</target></trans-unit>
+			<target xml:lang="ru">Отменить изменения</target><alt-trans><target xml:lang="ru">Сбросить изменения</target></alt-trans></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="ru">Edit title</target></trans-unit>
+			<target xml:lang="ru">Редактировать заголовок</target><alt-trans><target xml:lang="ru">Редактировать название</target></alt-trans></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="ru">Edit / Preview</target></trans-unit>
+			<target xml:lang="ru">Редактирование / предпросмотр</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ru">Edit</target></trans-unit>
+			<target xml:lang="ru">Редактировать</target></trans-unit>
       <trans-unit id="Navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="ru">Navigate</target></trans-unit>
+			<target xml:lang="ru">Навигация</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="ru">New After</target></trans-unit>
+			<target xml:lang="ru">Новый после</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="ru">New Before</target></trans-unit>
+			<target xml:lang="ru">Новый до</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="ru">New Into</target></trans-unit>
+			<target xml:lang="ru">Новый внутри</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="ru">Paste</target></trans-unit>
+			<target xml:lang="ru">Вставить</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="ru">Paste After</target></trans-unit>
+			<target xml:lang="ru">Вставить после</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="ru">Paste Before</target></trans-unit>
+			<target xml:lang="ru">Вставить до</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="ru">Paste Into</target></trans-unit>
+			<target xml:lang="ru">Вставить внутри</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ru">Password</target></trans-unit>
+			<target xml:lang="ru">Пароль</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="ru">Preview</target></trans-unit>
+			<target xml:lang="ru">Предпросмотр</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="ru">Publish</target></trans-unit>
+			<target xml:lang="ru">Опубликовать</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
-			<target xml:lang="ru">Saving...</target></trans-unit>
+			<target xml:lang="ru">Сохранение...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="ru">Saved</target></trans-unit>
+			<target xml:lang="ru">Сохранено</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="ru">Toggle inspector</target></trans-unit>
+			<target xml:lang="ru">Переключить инспектор</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ru">Username</target></trans-unit>
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="ru">Full Screen</target></trans-unit>
+			<target xml:lang="ru">Во весь экран</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ru">Discard all changes</target></trans-unit>
+			<target xml:lang="ru">Отменить все изменения</target><alt-trans><target xml:lang="ru">Сбросить все изменения</target></alt-trans></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="ru">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="ru">Вы уверены, что хотите отменить все изменения в этом рабочем пространстве?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="ru">Publish all changes</target></trans-unit>
+			<target xml:lang="ru">Опубликовать все изменения</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="ru">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="ru">Вы уверены, что хотите опубликовать все изменения?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="ru">Editing Modes</target></trans-unit>
+			<target xml:lang="ru">Режимы редактирования</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="ru">Preview Central</target></trans-unit>
+			<target xml:lang="ru">Центр предпросмотра</target></trans-unit>
       <trans-unit id="inspector" xml:space="preserve">
 				<source>Inspector</source>
-			<target xml:lang="ru">Inspector</target></trans-unit>
+			<target xml:lang="ru">Инспектор</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="ru">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="ru">Имеются несохраненные изменения. Что вы хотите с ними сделать?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="ru">Selected element</target></trans-unit>
+			<target xml:lang="ru">Выбранный элемент</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="ru">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="ru">Имеются неправильно заполненные поля.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="ru">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+			<target xml:lang="ru">Отмеченные поля заполнены некорректно. Пожалуйста, заполните их правильно.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="ru">Continue editing</target></trans-unit>
+			<target xml:lang="ru">Продолжить редактирование</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="ru">Throw away</target></trans-unit>
+			<target xml:lang="ru">Выбросить</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ru">Apply</target></trans-unit>
+			<target xml:lang="ru">Применить</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="ru">view is displayed on page</target></trans-unit>
+			<target xml:lang="ru">представление отображено на странице</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="ru">view is displayed on current page</target></trans-unit>
+			<target xml:lang="ru">представление отображено на данной странице</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="ru">Content</target></trans-unit>
+			<target xml:lang="ru">Содержимое</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the page</source>
-			<target xml:lang="ru">This will delete the page</target></trans-unit>
+			<target xml:lang="ru">Это удалит страницу</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's subpages</source>
-			<target xml:lang="ru">and it's subpages</target></trans-unit>
+			<target xml:lang="ru">и ее подстраницы</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="ru">This operation can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="ru">Данная операция может быть отменена в управлении рабочими пространствами.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="ru">Height</target></trans-unit>
+			<target xml:lang="ru">Высота</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ru">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ru">Вы действительно хотите удалить</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="ru">this element</target></trans-unit>
+			<target xml:lang="ru">этот элемент</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="ru">This will delete the element.</target></trans-unit>
+			<target xml:lang="ru">Это приведет к удалению элемента.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="ru">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="ru">Данная операция может быть отменена в управлении рабочими пространствами.</target></trans-unit>
       <trans-unit id="width.ucfirst" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="ru">Width</target></trans-unit>
+			<target xml:lang="ru">Ширина</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="ru">Missing required property:</target></trans-unit>
+			<target xml:lang="ru">Отсутствует обязательное свойство:</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="ru">Workspaces</target></trans-unit>
+			<target xml:lang="ru">Рабочее пространство</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="ru">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="ru">Вход в систему TYPO3 Neos</target></trans-unit>
       <!-- ErrorHandlers -->
       <trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="ru">Page Not Found</target></trans-unit>
+			<target xml:lang="ru">Страница не найдена</target></trans-unit>
       <trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="ru">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="ru">К сожалению, запрашиваемая вами страница не найдена.</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.errorTitle" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="ru">Database Error</target></trans-unit>
+			<target xml:lang="ru">Ошибка базы данных</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
-			<target xml:lang="ru">Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="ru">К сожалению, мы обнаружили ошибку с вашей базой данных. Смотрите файлы журнала в Data/Logs/* для получения более подробной информации.</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="ru">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="ru">Может потребоваться настроить или проверить конфигурацию базы данных в программе установки.</target><alt-trans><target xml:lang="ru">Возможно стоит проверить конфигурацию вашей базы данных в настройках.</target></alt-trans></trans-unit>
       <trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="ru">Missing Homepage</target></trans-unit>
+			<target xml:lang="ru">Домашняя страница отсутствует</target></trans-unit>
       <trans-unit id="noHomepageException.errorDescription" xml:space="preserve">
 				<source>Either no site has been defined yet or the site does not contain a homepage.</source>
-			<target xml:lang="ru">Either no site has been defined yet or the site does not contain a homepage.</target></trans-unit>
+			<target xml:lang="ru">Сайт не содержит домашнюю страницу либо сайт еще не был настроен.</target></trans-unit>
       <trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to create or import a site in the setup.</source>
-			<target xml:lang="ru">You might want to create or import a site in the setup.</target></trans-unit>
+			<target xml:lang="ru">Вы можете создавать или импортировать сайт в программе установки.</target></trans-unit>
       <!-- Errors -->
       <trans-unit id="error.index.goToSetup" xml:space="preserve">
 				<source>Go to Setup</source>
-			<target xml:lang="ru">Go to Setup</target></trans-unit>
+			<target xml:lang="ru">Перейти к установке</target></trans-unit>
     </body>
   </file>
 </xliff>

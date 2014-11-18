@@ -9,7 +9,7 @@
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
-			<target xml:lang="de">The hostname "{0}" was not valid.</target></trans-unit>
+			<target xml:lang="de">Der Hostname "{0}" ist ungültig.</target></trans-unit>
       <!-- PasswordValidator -->
       <trans-unit id="1324641097" xml:space="preserve">
 				<source>The given password was empty.</source>
