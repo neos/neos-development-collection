@@ -7,7 +7,7 @@
 				{neos:backend.translate( id: '{item.label}', source="Modules", value="{item.label}")}
 			</f:then>
 			<f:else>
-				<neos:link.node node="{item.node}">{neos:backend.translate( id: '{item.label}', source="Modules", value="{item.label}")} </neos:link.node>
+				<neos:link.node node="{item.node}" />
 			</f:else>
 		</f:if>
 	</f:for>

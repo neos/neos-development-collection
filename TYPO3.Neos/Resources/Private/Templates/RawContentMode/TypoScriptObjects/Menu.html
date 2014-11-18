@@ -4,7 +4,7 @@
 	<ul class="neos-nav neos-nav-list">
 		<f:for each="{items}" as="item">
 			<li class="neos-{item.state}">
-				<neos:link.node node="{item.node}">{neos:backend.translate(id: '{item.label}', value:'{item.label}', source: 'Modules' )</neos:link.node>
+				<neos:link.node node="{item.node}" />
 				<f:if condition="{item.subItems}">
 					<f:render section="subList" arguments="{items: item.subItems}" />
 				</f:if>
@@ -17,7 +17,7 @@
 	<ul>
 		<f:for each="{items}" as="item">
 			<li class="neos-{item.state}">
-				<neos:link.node node="{item.node}">{neos:backend.translate(id: '{item.label}', value:'{item.label}', source: 'Modules' )</neos:link.node>
+				<neos:link.node node="{item.node}" />
 				<f:if condition="{item.subItems}">
 					<f:render section="subList" arguments="{items: item.subItems}"/>
 				</f:if>
