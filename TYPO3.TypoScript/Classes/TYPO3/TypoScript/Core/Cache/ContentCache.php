@@ -14,7 +14,7 @@ namespace TYPO3\TypoScript\Core\Cache;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\TypoScript\Exception;
-use \Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Proxy\Proxy;
 
 /**
  * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)
