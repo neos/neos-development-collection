@@ -275,7 +275,7 @@ class RenderingTest extends AbstractNodeTest {
 	 */
 	protected function buildMockControllerContext() {
 		$httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
-		$request = $httpRequest->createActionRequest();
+		$request = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
 		$response = new \TYPO3\Flow\Http\Response();
 
 		$mockUriBuilder = $this->getMock('TYPO3\Flow\Mvc\Routing\UriBuilder');
