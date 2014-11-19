@@ -6,5 +6,5 @@ privilegeTargets:
 
   'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
-    'TYPO3.Media.ManageAssets':
+    'TYPO3.Media:ManageAssets':
       matcher: 'method(TYPO3\Media\Controller\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|deleteTag)Action())'
