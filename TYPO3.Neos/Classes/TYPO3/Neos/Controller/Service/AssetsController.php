@@ -65,7 +65,7 @@ class AssetsController extends ActionController {
 			$this->tagRepository->findBySearchTerm($searchTerm)->toArray()
 		);
 
-		$this->view->assign('assets', $assets->toArray());
+		$this->view->assign('assets', $assets);
 	}
 
 	/**
