@@ -43,9 +43,9 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+	 * @var \TYPO3\Flow\Resource\ResourceManager
 	 */
-	protected $resourcePublisher;
+	protected $resourceManager;
 
 	/**
 	 * @Flow\Inject
@@ -83,6 +83,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 			'window.T3Configuration.nodeTypes = {};',
 			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
 			'window.T3Configuration.requirejs = {};',
+			'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('TYPO3.Neos', '')) . ';',
 			'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';'
 		);
 
@@ -115,16 +116,18 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	 */
 	protected function getStaticResourceWebBaseUri($resourcePath) {
 		$localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
+
 		$matches = array();
 		try {
 			if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
-				$package = $matches[1];
+				$packageKey = $matches[1];
 				$path = $matches[2];
-				return $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $package . '/' . $path;
+				return $this->resourceManager->getPublicPackageResourceUri($packageKey, $path);
 			}
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
 		}
+		return '';
 	}
 
 	/**

@@ -157,7 +157,7 @@ TYPO3:
             editorOptions:
               multiple: TRUE
               placeholder: 'Choose'
-          'TYPO3\Media\Domain\Model\ImageVariant':
+          'TYPO3\Media\Domain\Model\ImageInterface':
             editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
             editorOptions:
               crop:

@@ -1,0 +1,13 @@
+up:
+  comments: 'Migrate to new ImageVariants.'
+  warnings: 'No down migration possible for this migration. There is no way back. Make sure you have a backup of your database.'
+  migration:
+    -
+      filters: []
+      transformations:
+        -
+          type: 'TYPO3\Neos\TYPO3CR\Transformations\ImageVariantTransformation'
+          settings: []
+
+down:
+  comments: 'No down migration possible.'

@@ -18,6 +18,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 	 * error messages otherwise.
 	 */
 	return FileUpload.extend({
+
 		/****************************************
 		 * GENERAL SETUP
 		 ***************************************/
@@ -31,7 +32,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		/**
 		 * Size of the image preview. Public configuration.
 		 */
-		imagePreviewMaximumDimensions: {w: 288, h: 216},
+		imagePreviewMaximumDimensions: {width: 288, height: 216},
 
 		/**
 		 * Comma-separated list of allowed file types.
@@ -43,16 +44,6 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		BooleanEditor: BooleanEditor,
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
 
-		/**
-		 * The Upload Preview is the image being shown *before* the user presses
-		 * "upload".
-		 */
-		_uploadPreviewShown: true,
-		_uploadPreviewNotShown: function() {
-			return !this.get('_uploadPreviewShown');
-		}.property('_uploadPreviewShown'),
-
-		_uploadPreviewImageSource: '',
 		_defaultUploadPreviewImageSource: $('link[rel="neos-public-resources"]').attr('href') + 'Images/dummy-image.svg',
 
 		/**
@@ -66,9 +57,9 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * IMAGE SIZING
 		 ***************************************/
 		/**
-		 * This is the UUID of the full-size image; which is being stored.
+		 * This is the original object data used to update.
 		 */
-		_originalImageUuid: null,
+		_object: null,
 
 		/**
 		 * The "original" image is shown in the sidebar.
@@ -78,7 +69,12 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		/**
 		 * size of the original (base) image ("w" + "h")
 		 */
-		_originalImageSize: null,
+		_originalImageDimensions: null,
+
+		/**
+		 * Current image adjustments
+		 */
+		_adjustments: {},
 
 		/**
 		 * The "preview" image is used for cropping.
@@ -89,18 +85,25 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * This is the size of the image being used for cropping
 		 * Object "w" + "h"
 		 */
-		_previewImageSize: null,
+		_previewImageDimensions: null,
 
 		/**
 		 * Crop properties, as being used by jCrop editor.
-		 * ALL COORDINATES are relative to _previewImageSize.
+		 * ALL COORDINATES are relative to _previewImageDimensions.
 		 */
 		_cropProperties: null,
 
 		/**
-		 * After cropping, we still scale the cropped image
+		 * Object representing the dimensions of the final image.
+		 *
+		 * As width and height are always connected through the aspect ratio, we cannot directly change
+		 * the height. Instead, we need to adjust the width as needed and let the bindings update the height
+		 * property instead.
+		 *
+		 * As a result, the input field for the image height is bound to "computedHeight", and not just
+		 * to "height".
 		 */
-		_finalImageScale: null,
+		_finalImageDimensions: null,
 
 		/**
 		 * Contains the handler for the AJAX request loading the preview image
@@ -112,7 +115,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 */
 		_imageServiceEndpointUri: null,
 
-		loadingindicator: null,
+		loadingIndicator: null,
 
 		init: function() {
 			var that = this;
@@ -120,15 +123,13 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 
 			this.set('_imageServiceEndpointUri', $('link[rel="neos-images"]').attr('href'));
 
-			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
-
-			this.set('_finalImageScale', Ember.Object.extend({
-				w: null,
-				h: null,
+			this.set('_finalImageDimensions', Ember.Object.extend({
+				width: null,
+				height: null,
 
 				_updateValueIfWidthAndHeightChange: function() {
 					that._updateValue();
-				}.observes('w', 'h'),
+				}.observes('width', 'height'),
 
 				/**
 				 * As width and height are always connected through the aspect ratio,
@@ -140,106 +141,129 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				 */
 				computedHeight: function(key, value) {
 					if (arguments.length === 1) {
-						return this.get('h');
+						return this.get('height');
 					} else {
-						this.set('w', Math.ceil(that.get('_cropProperties.aspectRatio') * value));
+						this.set('width', Math.ceil(that.get('_cropProperties.aspectRatio') * value));
 						return value;
 					}
-				}.property('h')
+				}.property('height')
 			}).create());
 
+			/**
+			 * Object representing the parameters for a potential cropping operation
+			 */
 			this.set('_cropProperties',  Ember.Object.extend({
 				x: null,
 				y: null,
-				w: null,
-				h: null,
+				width: null,
+				height: null,
 
 				full: function() {
 					return {
+						height: Math.ceil(this.get('height')),
+						width: Math.ceil(this.get('width')),
 						x: this.get('x'),
-						y: this.get('y'),
-						w: this.get('w'),
-						h: this.get('h')
+						y: this.get('y')
 					};
-				}.property('w', 'h', 'x', 'y'),
+				}.property('width', 'height', 'x', 'y'),
 
 				initialized: function() {
-					return this.get('w') !== null && this.get('h') !== null && this.get('x') !== null && this.get('y') !== null;
-				}.property('w', 'h', 'x', 'y'),
+					return this.get('width') !== null && this.get('height') !== null && this.get('x') !== null && this.get('y') !== null;
+				}.property('width', 'height', 'x', 'y'),
 
 				aspectRatio: function() {
-					if (isNaN(this.get('w'))
-						|| isNaN(this.get('h'))
-						|| this.get('w') === 0
-						|| this.get('h') === 0) {
-						return 1;
+					var ratio = 1,
+						width = this.get('width'),
+						height = this.get('height');
+					if (width > 0 && height > 0) {
+						ratio = parseFloat(width) / parseFloat(height);
 					}
 
-					return parseFloat(this.get('w')) / parseFloat(this.get('h'));
-				}.property('w', 'h')
+					return ratio;
+				}.property('width', 'height')
 			}).create());
 		},
 
+		/**
+		 * Logic for the checkbox next to the image width text field
+		 */
 		_imageWidthToggle: function(propertyName, value) {
 			if (typeof value === 'boolean') {
 				if (value === false) {
-					this.set('_finalImageScale.w', null);
-					this.set('_finalImageScale.h', null);
+					this.set('_finalImageDimensions.width', null);
+					this.set('_finalImageDimensions.height', null);
 				} else {
-					this.set('_finalImageScale.w', this.get('_originalImageSize.w'));
-					this.set('_finalImageScale.h', this.get('_originalImageSize.h'));
+					this.set('_finalImageDimensions.width', this.get('_originalImageDimensions.width'));
+					this.set('_finalImageDimensions.height', this.get('_originalImageDimensions.height'));
 				}
 			}
-			if (this.get('_finalImageScale.w') > 0) {
+			if (this.get('_finalImageDimensions.width') > 0) {
 				return true;
 			}
-			this.set('_finalImageScale.w', null);
-			this.set('_finalImageScale.h', null);
+			this.set('_finalImageDimensions.width', null);
+			this.set('_finalImageDimensions.height', null);
 			return false;
-		}.property('_finalImageScale.w'),
+		}.property('_finalImageDimensions.width'),
 
+		/**
+		 * Logic for the checkbox next to the image height text field
+		 */
 		_imageHeightToggle: function(propertyName, value) {
 			if (typeof value === 'boolean') {
 				if (value === false) {
-					this.set('_finalImageScale.w', null);
-					this.set('_finalImageScale.h', null);
+					this.set('_finalImageDimensions.width', null);
+					this.set('_finalImageDimensions.height', null);
 				} else {
-					this.set('_finalImageScale.w', this.get('_originalImageSize.w'));
-					this.set('_finalImageScale.h', this.get('_originalImageSize.h'));
+					this.set('_finalImageDimensions.width', this.get('_originalImageDimensions.width'));
+					this.set('_finalImageDimensions.height', this.get('_originalImageDimensions.height'));
 				}
 			}
-			if (this.get('_finalImageScale.w') > 0) {
+			if (this.get('_finalImageDimensions.width') > 0) {
 				return true;
 			}
-			this.set('_finalImageScale.w', null);
-			this.set('_finalImageScale.h', null);
+			this.set('_finalImageDimensions.width', null);
+			this.set('_finalImageDimensions.height', null);
 			return false;
-		}.property('_finalImageScale.h'),
+		}.property('_finalImageDimensions.height'),
 
+		/**
+		 * If the aspect ratio changes, adjust the height based on the width and the aspect ratio
+		 */
 		_aspectRatioChanged: function() {
-			this.set('_finalImageScale.h', parseInt(this.get('_finalImageScale.w') / this.get('_cropProperties.aspectRatio'), 10));
-		}.observes('_finalImageScale.w', '_cropProperties.aspectRatio'),
+			this.set('_finalImageDimensions.height', parseInt(this.get('_finalImageDimensions.width') / this.get('_cropProperties.aspectRatio'), 10));
+		}.observes('_finalImageDimensions.width', '_cropProperties.aspectRatio'),
 
 		/****************************************
 		 * INITIALIZATION
 		 ***************************************/
+
 		/**
 		 * Lifecycle callback; sets some CSS for the image preview area to sensible defaults,
 		 * and reads the image if possible
 		 */
 		didInsertElement: function() {
 			var that = this;
-
 			this._super();
+
+			this.$().find('.neos-inspector-image-thumbnail-inner').css({
+				width: this.get('imagePreviewMaximumDimensions.width') + 'px',
+				height: this.get('imagePreviewMaximumDimensions.height') + 'px'
+			});
+			this.$().find('.neos-inspector-image-thumbnail-container').css({
+				width: this.get('imagePreviewMaximumDimensions.width') + 'px',
+				height: this.get('imagePreviewMaximumDimensions.height') + 'px'
+			});
+
 			this.$().find('.neos-inspector-image-thumbnail').click(function() {
-				if (!that.get('_uploadPreviewShown')) {
-					SecondaryInspectorController.toggle(that.get('_cropView'));
-				}
+				SecondaryInspectorController.toggle(that.get('_cropView'));
 			});
 
 			this._readAndDeserializeValue();
 		},
 
+		/**
+		 * Hide the popover as soon as the image editor looses focus
+		 */
 		willDestroyElement: function() {
 				// Hide popover when the focus changes
 			if (this.get('_loadPreviewImageHandler')) {
@@ -260,9 +284,6 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				assetChosen: function(assetIdentifier) {
 					that._displayImageLoader();
 
-					// we hide the default upload preview image; as we only want the loading indicator to be visible
-					that.set('_uploadPreviewShown', false);
-					that.set('_imageFullyLoaded', false);
 					that.set('_loadPreviewImageHandler', HttpClient.getResource(
 						that.get('_imageServiceEndpointUri') + '?image=' + assetIdentifier,
 						{dataType: 'json'}
@@ -280,25 +301,19 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * IMAGE REMOVE
 		 ***************************************/
 		remove: function() {
-			this.set('_originalImageUuid', null);
+			this.set('_object', null);
 			this.set('_originalImageUri', null);
 			this.set('_previewImageUri', null);
-			this.set('_finalImageScale.w', null);
-			this.set('_finalImageScale.h', null);
-			this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
-			this.set('_uploadPreviewShown', true);
+			this.set('_finalImageDimensions.width', null);
+			this.set('_finalImageDimensions.height', null);
 			this.set('value', '');
 		},
 
 		cancel: function() {
 			if (this.get('value') !== '') {
 				this._readAndDeserializeValue();
-			} else {
-				this.set('_uploadPreviewImageSource', this.get('_defaultUploadPreviewImageSource'));
 			}
-			this.set('_uploadPreviewShown', true);
 			this.set('_uploadInProgress', false);
-			this.set('_uploadButtonShown', false);
 		},
 
 		/****************************************
@@ -310,26 +325,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		filesScheduledForUpload: function(files) {
 			var that = this;
 			if (files.length > 0) {
-				var image = files[0];
-
-				if (typeof window.FileReader === 'function') {
-					var reader = new FileReader();
-					reader.onload = function(event) {
-						var binaryData = event.target.result;
-						that.set('_uploadPreviewImageSource', binaryData);
-
-						var imageObjForFindingSize = new window.Image();
-						imageObjForFindingSize.onload = function() {
-							that.set('_uploadPreviewShown', true);
-						};
-						imageObjForFindingSize.src = binaryData;
-					};
-
-					reader.readAsDataURL(image);
-				}
-			} else {
-				that.set('_uploadPreviewShown', false);
-				that.set('_uploadButtonShown', false);
+				this._displayImageLoader();
+				this.upload();
 			}
 		},
 
@@ -337,80 +334,42 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 * Callback after file upload is complete
 		 */
 		fileUploaded: function(response) {
+			var metadata;
+			this._hideImageLoader();
 			// if used directly as callback for in filesScheduledForUpload and not in the media
 			// browser via getJSON() a string will be handed over.
 			if (typeof response === 'string') {
-				response = JSON.parse(response);
+				metadata = JSON.parse(response);
+			} else {
+				metadata = response;
 			}
 			if (response === null) {
 				Notification.error('Tried to fetch image metadata: Unexpected result format.');
 				return;
 			}
 			this._super();
-
-			this.set('_originalImageUuid', response.imageUuid);
-			this._setPreviewImage(response);
-
-				// We only need to set the width here; as the height is automatically
-				// calculated from the aspect ratio in the cropper
-			this.set('_finalImageScale.w', response.originalSize.w);
-
-			this._resetCropPropertiesToCurrentPreviewImageSize();
-			this.set('_imageFullyLoaded', false);
+			Ember.beginPropertyChanges();
+			this._applyLoadedMetadata(metadata);
+			this._resetCropPropertiesToCurrentPreviewImageDimensions();
+			// We only need to set the width here; as the height is automatically
+			// calculated from the aspect ratio in the cropper
+			this.set('_finalImageDimensions.width', metadata.originalDimensions.width);
+			Ember.endPropertyChanges();
 			this.set('_imageFullyLoaded', true);
 			this._updateValue();
-
-			if (SecondaryInspectorController.get('_viewClass') === this.get('_cropView')) {
-				// Set empty view for secondary inspector to re-initialize crop view
-				SecondaryInspectorController.toggle(Ember.View.extend());
-				SecondaryInspectorController.hide();
-			}
 		},
 
-		_setPreviewImage: function(responseJson) {
-			Ember.beginPropertyChanges();
-
-			this.set('_originalImageSize', responseJson.originalSize);
-			this.set('_originalImageUri', responseJson.originalImageResourceUri);
-			this.set('_previewImageSize', responseJson.previewSize);
-			this.set('_previewImageUri', responseJson.previewImageResourceUri);
-			this.set('_uploadPreviewShown', false);
-
-			Ember.endPropertyChanges();
-		},
-
-		_resetCropPropertiesToCurrentPreviewImageSize: function() {
+		_resetCropPropertiesToCurrentPreviewImageDimensions: function() {
+			this.set('_cropProperties.width', this.get('_previewImageDimensions.width'));
+			this.set('_cropProperties.height', this.get('_previewImageDimensions.height'));
 			this.set('_cropProperties.x', 0);
 			this.set('_cropProperties.y', 0);
-			this.set('_cropProperties.w', this.get('_previewImageSize.w'));
-			this.set('_cropProperties.h', this.get('_previewImageSize.h'));
 		},
-
-		_imageFullyLoadedDidChange: function() {
-			// Apply locked aspect ratio if defined
-			if (this.get('_imageFullyLoaded') === true && this.get('crop.aspectRatio.locked.width') > 0) {
-				var lockedAspectRatioWidth = this.get('crop.aspectRatio.locked.width'),
-					lockedAspectRatioHeight = this.get('crop.aspectRatio.locked.height'),
-					lockedAspectRatio = lockedAspectRatioWidth / lockedAspectRatioHeight;
-				if (this.get('_cropProperties.aspectRatio') !== lockedAspectRatio) {
-					if (lockedAspectRatioWidth > lockedAspectRatioHeight) {
-						this.set('_cropProperties.h', parseInt(this.get('_cropProperties.h') / lockedAspectRatio * this.get('_cropProperties.aspectRatio'), 10));
-					} else if (lockedAspectRatioWidth === lockedAspectRatioHeight) {
-						if (this.get('_cropProperties.w') > this.get('_cropProperties.h')) {
-							this.set('_cropProperties.w', parseInt(this.get('_cropProperties.w') * lockedAspectRatio / this.get('_cropProperties.aspectRatio'), 10));
-						} else {
-							this.set('_cropProperties.h', parseInt(this.get('_cropProperties.h') / lockedAspectRatio * this.get('_cropProperties.aspectRatio'), 10));
-						}
-					} else {
-						this.set('_cropProperties.w', parseInt(this.get('_cropProperties.w') * lockedAspectRatio / this.get('_cropProperties.aspectRatio'), 10));
-					}
-				}
-			}
-		}.observes('_imageFullyLoaded'),
 
 		/****************************************
 		 * CROPPING
 		 ***************************************/
+
 		_cropView: function() {
 			var parent = this;
 
@@ -455,8 +414,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 								options.push(option.create({
 									key: 'original',
 									label: 'Original',
-									width: parent.get('_originalImageSize.w'),
-									height: parent.get('_originalImageSize.h')
+									width: parent.get('_originalImageDimensions.width'),
+									height: parent.get('_originalImageDimensions.height')
 								}));
 							}
 							if (configuration.aspectRatio.allowCustom !== false) {
@@ -505,8 +464,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				originalAspectRatio: function() {
 					var aspectRatioWidth = this.get('aspectRatioWidth'),
 						aspectRatioHeight = this.get('aspectRatioHeight'),
-						originalImageWidth = parent.get('_originalImageSize.w'),
-						originalImageHeight = parent.get('_originalImageSize.h');
+						originalImageWidth = parent.get('_originalImageDimensions.width'),
+						originalImageHeight = parent.get('_originalImageDimensions.height');
 					return aspectRatioWidth / aspectRatioHeight === originalImageWidth / originalImageHeight;
 				}.property('aspectRatioWidth', 'aspectRatioHeight'),
 
@@ -608,16 +567,16 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 							// of the final image, the image is not up-scaled but keeps the same resolution.
 							//
 							// NOTE: The height of the image is auto-calculated, so we only need to set the width.
-							var imageWidthBeforeChange = parent.get('_finalImageScale.w');
-							var imageWidthScalingFactor = previewImageCoordinates.w / parent.get('_cropProperties.w');
+							var imageWidthBeforeChange = parent.get('_finalImageDimensions.width');
+							var imageWidthScalingFactor = previewImageCoordinates.width / parent.get('_cropProperties.width');
 
 							Ember.beginPropertyChanges();
-							parent.set('_finalImageScale.w', parseInt(imageWidthBeforeChange * imageWidthScalingFactor, 10));
+							parent.set('_finalImageDimensions.width', parseInt(imageWidthBeforeChange * imageWidthScalingFactor, 10));
 
+							parent.set('_cropProperties.width', previewImageCoordinates.w);
+							parent.set('_cropProperties.height', previewImageCoordinates.h);
 							parent.set('_cropProperties.x', previewImageCoordinates.x);
 							parent.set('_cropProperties.y', previewImageCoordinates.y);
-							parent.set('_cropProperties.w', previewImageCoordinates.w);
-							parent.set('_cropProperties.h', previewImageCoordinates.h);
 							Ember.endPropertyChanges();
 							parent._updateValue();
 						},
@@ -634,8 +593,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						settings.setSelect = [
 							cropOptions.x,
 							cropOptions.y,
-							cropOptions.x + cropOptions.w,
-							cropOptions.y + cropOptions.h
+							cropOptions.x + cropOptions.width,
+							cropOptions.y + cropOptions.height
 						];
 					}
 
@@ -659,107 +618,90 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			});
 		}.property(),
 
+
 		/**
-		 *  Update the preview image when the crop options change or the preview image
+		 * Update the preview image when the crop options change or the preview image
 		 * is initially loaded. This includes:
 		 *
 		 * - set the preview bounding box size
 		 * - set the preview bounding box offset such that the image is centered
-		 * - scale the preview image and set the offsets correctly.
+		 * - scale the preview image and set the offsets correctly
 		 */
 		_updateCropPreviewImage: function() {
-			var that = this;
-			// Make sure the image has been updated before altering styles
-			Ember.run.next(function() {
-				var cropProperties = that.get('_cropProperties.full'),
-					container = that.$().find('.neos-inspector-image-thumbnail-inner'),
-					image = container.find('img');
+			if (!this.get('_previewImageUri')) {
+				return;
+			}
 
-				if (that.get('_originalImageUri') && !that.get('_uploadPreviewShown') && (cropProperties.w !== that.get('_previewImageSize.w') || cropProperties.h !== that.get('_previewImageSize.h'))) {
-					var scalingFactorX = that.imagePreviewMaximumDimensions.w / cropProperties.w,
-						scalingFactorY = that.imagePreviewMaximumDimensions.h / cropProperties.h,
-						overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
-						previewBoundingBoxSize = {
-							w: Math.floor(cropProperties.w * overallScalingFactor),
-							h: Math.floor(cropProperties.h * overallScalingFactor)
-						};
-					// Update size of preview bounding box and center preview image thumbnail
-					container.css({
-						width: previewBoundingBoxSize.w + 'px',
-						height: previewBoundingBoxSize.h + 'px',
-						position: 'absolute',
-						left: ((that.imagePreviewMaximumDimensions.w - previewBoundingBoxSize.w) / 2 ) + 'px',
-						top: ((that.imagePreviewMaximumDimensions.h - previewBoundingBoxSize.h) / 2) + 'px'
-					}).addClass('neos-inspector-image-thumbnail-cropped');
+			var cropProperties = this.get('_cropProperties.full'),
+				container = this.$().find('.neos-inspector-image-thumbnail-inner'),
+				image = container.find('img');
+
+			if (cropProperties.width !== this.get('_previewImageDimensions.width') || cropProperties.height !== this.get('_previewImageDimensions.height')) {
+				var scalingFactorX = this.imagePreviewMaximumDimensions.width / cropProperties.width,
+					scalingFactorY = this.imagePreviewMaximumDimensions.height / cropProperties.height,
+					overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
+					previewBoundingBoxDimensions = {
+						width: Math.floor(cropProperties.width * overallScalingFactor),
+						height: Math.floor(cropProperties.height * overallScalingFactor)
+					};
+					// Update size of preview bounding box
+					// and Center preview image thumbnail
+				container.css({
+					width: previewBoundingBoxDimensions.width + 'px',
+					height: previewBoundingBoxDimensions.height + 'px',
+					position: 'absolute',
+					left: ((this.imagePreviewMaximumDimensions.width - previewBoundingBoxDimensions.width) / 2 ) + 'px',
+					top: ((this.imagePreviewMaximumDimensions.height - previewBoundingBoxDimensions.height) / 2) + 'px'
+				}).addClass('neos-inspector-image-thumbnail-cropped');
 
 					// Scale Preview image and update relative image position
-					image.css({
-						width: Math.floor(that.get('_previewImageSize').w * overallScalingFactor) + 'px',
-						height:  Math.floor(that.get('_previewImageSize').h * overallScalingFactor) + 'px',
-						marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
-						marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
-					});
-				} else {
-					container.attr('style', null).removeClass('neos-inspector-image-thumbnail-cropped');
-					image.attr('style', null);
-				}
-			});
-		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_originalImageUri', '_uploadPreviewShown'),
+				image.css({
+					width: Math.floor(this.get('_previewImageDimensions').width * overallScalingFactor) + 'px',
+					height:  Math.floor(this.get('_previewImageDimensions').height * overallScalingFactor) + 'px',
+					marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
+					marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
+				});
+			} else {
+				container.attr('style', null).removeClass('neos-inspector-image-thumbnail-cropped');
+				image.attr('style', null);
+			}
+		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.width', '_cropProperties.height', '_object'),
 
 		/****************************************
 		 * Saving / Loading
 		 ***************************************/
+
 		/**
-		 * This function must be triggered *explicitly* when either:
-		 * _originalImageUuid, _cropProperties or _finalImageScale are modified, as it
-		 * writes these changes back into a JSON object.
+		 * This function must be triggered *explicitly* when either* _originalImage, _cropProperties or
+		 * _finalImageDimensions are modified, as it writes these changes back into a JSON object.
 		 *
-		 * We don't use value observing here, as this might end up with a circular
-		 * dependency.
+		 * We don't use value observing here, as this might end up with a circular dependency.
 		 */
 		_updateValue: function() {
 			if (!this.get('_cropProperties.initialized') || !this.get('_imageFullyLoaded')) {
 				return;
 			}
-			// Prevent the user from setting width and height to empty
 
-			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.get('_cropProperties.full')),
-				width = this.get('_finalImageScale.w'),
-				height = this.get('_finalImageScale.h'),
-				processingInstructions = [{
-					command: 'crop',
-					options: {
-						start: {
-							x: originalImageCropDimensions.x,
-							y: originalImageCropDimensions.y
-						},
-						size: {
-							width: originalImageCropDimensions.w,
-							height: originalImageCropDimensions.h
-						}
-					}
-				}];
+			var value = this.get('_object');
 
-			if (width > 0 && height > 0) {
-				processingInstructions.push({
-					command: 'resize',
-					options: {
-						size: {
-							width: width,
-							height: height
-						}
-					}
-				});
+			this._applyEditorChangesToAdjustments();
+			if (Object.keys(this.get('_adjustments')).length > 0) {
+				// we need to transform this into an ImageVariant
+				if (value.__type === 'TYPO3\\Media\\Domain\\Model\\Image') {
+					value = {
+						__type: 'TYPO3\\Media\\Domain\\Model\\ImageVariant',
+						originalAsset: value.__identity
+					};
+				}
+				value.adjustments = this.get('_adjustments');
 			}
 
-			this.set('value', JSON.stringify({
-				originalImage: this.get('_originalImageUuid'),
-				processingInstructions: processingInstructions
-			}));
+			this.set('value', JSON.stringify(value));
 		},
 
 		/**
-		 * On startup, we deserialize the JSON string and fill _originalImageUuid, _scaleOptions and _cropOptions
+		 * On startup, we deserialize the JSON string found in the editor's "value" property and fill _originalImage,
+		 * _scaleOptions and _cropOptions with their respective values.
 		 */
 		_readAndDeserializeValue: function() {
 			var that = this,
@@ -775,55 +717,160 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				return;
 			}
 			if (imageVariant) {
-					// We now load the metadata for the image variant, and as soon as we have it fully initialize the
-					// widget.
+				// We now load more detailed data  for the image variant, and as soon as we have it fully initialize
+				// the widget.
 				this._displayImageLoader();
 
-					// we hide the default upload preview image; as we only want the loading indicator to be visible
-				this.set('_uploadPreviewShown', false);
 				that.set('_loadPreviewImageHandler', HttpClient.getResource(
-					$('link[rel="neos-images"]').attr('href') + '?image=' + imageVariant.originalImage,
+					that.get('_imageServiceEndpointUri') + '?image=' + imageVariant.__identity,
 					{dataType: 'json'}
 				));
 				that.get('_loadPreviewImageHandler').then(function(metadata) {
 					that._hideImageLoader();
 					that.beginPropertyChanges();
-					that._setPreviewImage(metadata);
-					that.set('_originalImageUuid', imageVariant.originalImage);
-
-					$.each(imageVariant.processingInstructions, function(index, instruction) {
-						if (instruction.command === 'crop') {
-							var finalSizeCropProperties = {
-								x: Ember.get(instruction, 'options.start.x'),
-								y: Ember.get(instruction, 'options.start.y'),
-								w: Ember.get(instruction, 'options.size.width'),
-								h: Ember.get(instruction, 'options.size.height')
-							};
-
-							var previewImageCropProperties = that._convertCropOptionsToPreviewImageCoordinates(finalSizeCropProperties);
-
-							that.set('_cropProperties.x', previewImageCropProperties.x);
-							that.set('_cropProperties.y', previewImageCropProperties.y);
-							that.set('_cropProperties.w', previewImageCropProperties.w);
-							that.set('_cropProperties.h', previewImageCropProperties.h);
-						} else if (instruction.command === 'resize') {
-							that.set('_finalImageScale.w', Ember.get(instruction, 'options.size.width'));
-								// Height does not need to be set, as it is automatically calculated from crop properties + width
-						}
-					});
-
+					that._applyLoadedMetadata(metadata);
+					that._updateAdjustmentsFromObject();
+					that._resetCropPropertiesToCurrentPreviewImageDimensions();
 					that.endPropertyChanges();
 					that.set('_imageFullyLoaded', true);
+					that._updateValue();
 				});
 			}
 		},
 
-		_displayImageLoader: function() {
-			if (this.loadingindicator !== null) {
-				this.loadingindicator.spin(this.$().find('.neos-inspector-image-thumbnail').get(0));
+		_applyLoadedMetadata: function(metadata) {
+			this.set('_object', metadata.object);
+			this.set('_originalImageDimensions', metadata.originalDimensions);
+			this.set('_originalImageUri', metadata.originalImageResourceUri);
+			this.set('_previewImageDimensions', metadata.previewDimensions);
+			this.set('_previewImageUri', metadata.previewImageResourceUri);
+		},
+
+		_applyEditorChangesToAdjustments: function() {
+			// Prevent the user from setting width and height to empty
+			var finalWidth = this.get('_finalImageDimensions.width'),
+				finalHeight = this.get('_finalImageDimensions.height'),
+				originalWidth = this.get('_originalImageDimensions.width'),
+				originalHeight = this.get('_originalImageDimensions.height'),
+				cropProperties = this._convertCropOptionsFromPreviewImageCoordinates(this.get('_cropProperties.full'));
+
+			if ((finalWidth > 0 && finalHeight > 0) && (this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] || (finalWidth != originalWidth || finalHeight != originalHeight))) {
+				this._applyResizeAdjustment(finalWidth, finalHeight);
+			}
+
+			if (this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || (cropProperties.x != 0 && cropProperties.y != 0 && cropProperties.width != originalWidth && cropProperties.height != originalHeight)) {
+				this._applyCropAdjustment(cropProperties);
+			}
+		},
+
+		_applyResizeAdjustment: function(finalWidth, finalHeight) {
+			this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
+				height: finalHeight,
+				maximumHeight: null,
+				maximumWidth: null,
+				minimumHeight: null,
+				minimumWidth: null,
+				ratioMode: null,
+				width: finalWidth
+			};
+		},
+
+		_applyCropAdjustment: function(cropProperties) {
+			this['_adjustments']['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] = cropProperties;
+		},
+
+		/**
+		 *
+		 */
+		_updateAdjustmentsFromObject: function () {
+			var that = this,
+				adjustments = {};
+			if (this.get('_object.adjustments')) {
+				adjustments = this.get('_object.adjustments');
+				$.each(adjustments, function (index, adjustment) {
+					if (index === 'TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment') {
+						var finalSizeCropProperties = {
+							height: Ember.get(adjustment, 'height'),
+							width: Ember.get(adjustment, 'width'),
+							x: Ember.get(adjustment, 'x'),
+							y: Ember.get(adjustment, 'y')
+						};
+
+						var previewImageCropProperties = that._convertCropOptionsToPreviewImageCoordinates(finalSizeCropProperties);
+
+						that.set('_cropProperties.height', previewImageCropProperties.height);
+						that.set('_cropProperties.width', previewImageCropProperties.width);
+						that.set('_cropProperties.x', previewImageCropProperties.x);
+						that.set('_cropProperties.y', previewImageCropProperties.y);
+					}
+					if (index === 'TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment') {
+						that.set('_finalImageDimensions.width', Ember.get(adjustment, 'width'));
+						// Height does not need to be set, as it is automatically calculated from crop properties + width
+					}
+				});
+			}
+
+			this.set('_adjustments', adjustments);
+		}.observes('_object'),
+
+		/**
+		 * Helper
+		 *
+		 * Convert the crop options from the *preview image* coordinate system to the
+		 * *master image* coordinate system which is stored persistently.
+		 *
+		 * The inverse function to this method is _convertCropOptionsToPreviewImageCoordinates
+		 */
+		_convertCropOptionsFromPreviewImageCoordinates: function(previewImageCoordinates) {
+			var previewImageDimensions = this.get('_previewImageDimensions'),
+				originalImageDimensions = this.get('_originalImageDimensions');
+
+			return {
+				height: Math.round(previewImageCoordinates.height * (originalImageDimensions.height / previewImageDimensions.height)),
+				width: Math.round(previewImageCoordinates.width * (originalImageDimensions.width / previewImageDimensions.width)),
+				x: Math.round(previewImageCoordinates.x * (originalImageDimensions.width / previewImageDimensions.width)),
+				y: Math.round(previewImageCoordinates.y * (originalImageDimensions.height / previewImageDimensions.height))
+			};
+		},
+
+		/**
+		 * Helper
+		 *
+		 * Convert the crop options from the *master image* coordinate system to the
+		 * *preview image* coordinate system. We need this as the *preview image* used as
+		 * basis for cropping might be smaller than the original one.
+		 *
+		 * The inverse function to this method is _convertCropOptionsFromPreviewImageCoordinates
+		 */
+		_convertCropOptionsToPreviewImageCoordinates: function(coordinates) {
+			var previewImageDimensions = this.get('_previewImageDimensions'),
+				originalImageDimensions = this.get('_originalImageDimensions');
+
+			return {
+				height: Math.round(coordinates.height / (originalImageDimensions.height / previewImageDimensions.height), 10),
+				width: Math.round(coordinates.width / (originalImageDimensions.width / previewImageDimensions.width), 10),
+				x: Math.round(coordinates.x / (originalImageDimensions.width / previewImageDimensions.width), 10),
+				y: Math.round(coordinates.y / (originalImageDimensions.height / previewImageDimensions.height), 10)
+			};
+		},
+
+		_initializeUploader: function() {
+			this._super();
+
+			this._uploader.bind('BeforeUpload', function(uploader, file) {
+				uploader.settings.multipart_params['metadata'] = 'Image';
+			});
+		},
+
+		/**
+		 * Image Loader
+		 */
+		_displayImageLoader: function () {
+			if (this.loadingIndicator !== null) {
+				this.loadingIndicator.spin(this.$().find('.neos-inspector-image-thumbnail').get(0));
 				return;
 			}
-			this.loadingindicator = new Spinner({
+			this.loadingIndicator = new Spinner({
 				lines: 13, // The number of lines to draw
 				length: 15, // The length of each line
 				width: 4, // The line thickness
@@ -842,57 +889,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			}).spin(this.$().find('.neos-inspector-image-thumbnail').get(0));
 		},
 
-		_hideImageLoader: function() {
-			this.loadingindicator.stop();
-		},
-
-		/**
-		 * Helper.
-		 *
-		 * Convert the crop options from the *preview image* coordinate system to the
-		 * *master image* coordinate system which is stored persistently.
-		 *
-		 * The inverse function to this method is _convertCropOptionsToPreviewImageCoordinates
-		 */
-		_convertCropOptionsFromPreviewImageCoordinates: function(previewImageCoordinates) {
-			var previewImageSize = this.get('_previewImageSize'),
-				originalImageSize = this.get('_originalImageSize');
-
-			return {
-				x: previewImageCoordinates.x * (originalImageSize.w / previewImageSize.w),
-				y: previewImageCoordinates.y * (originalImageSize.h / previewImageSize.h),
-				w: previewImageCoordinates.w * (originalImageSize.w / previewImageSize.w),
-				h: previewImageCoordinates.h * (originalImageSize.h / previewImageSize.h)
-			};
-		},
-
-		/**
-		 * Helper.
-		 *
-		 * Convert the crop options from the *master image* coordinate system to the
-		 * *preview image* coordinate system. We need this as the *preview image* used as
-		 * basis for cropping might be smaller than the original one.
-		 *
-		 * The inverse function to this method is _convertCropOptionsFromPreviewImageCoordinates
-		 */
-		_convertCropOptionsToPreviewImageCoordinates: function(coordinates) {
-			var previewImageSize = this.get('_previewImageSize'),
-				originalImageSize = this.get('_originalImageSize');
-
-			return {
-				x: parseInt(coordinates.x / (originalImageSize.w / previewImageSize.w), 10),
-				y: parseInt(coordinates.y / (originalImageSize.h / previewImageSize.h), 10),
-				w: parseInt(coordinates.w / (originalImageSize.w / previewImageSize.w), 10),
-				h: parseInt(coordinates.h / (originalImageSize.h / previewImageSize.h), 10)
-			};
-		},
-
-		_initializeUploader: function() {
-			this._super();
-
-			this._uploader.bind('BeforeUpload', function(uploader, file) {
-				uploader.settings.multipart_params['metadata'] = 'Image';
-			});
+		_hideImageLoader: function () {
+			this.loadingIndicator.stop();
 		}
 	});
 });

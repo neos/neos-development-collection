@@ -48,7 +48,6 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 				runtimes : 'html5',
 				browse_button : this._browseButtonId,
 				container : this._containerId,
-				max_file_size : '10mb',
 				url : $('link[rel="neos-asset-upload"]').attr('href'),
 				multipart_params: {}
 			});
@@ -58,14 +57,6 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 					extensions: this.allowedFileTypes
 				}];
 			}
-
-			this._uploader.bind('FilesAdded', function(uploader, files) {
-				if (files.length > 0) {
-					that.set('_uploadButtonShown', true);
-				} else {
-					that.set('_uploadButtonShown', false);
-				}
-			});
 
 			this._uploader.bind('Error', function(uploader, error) {
 				that.set('_uploadInProgress', false);
@@ -100,7 +91,7 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 
 		// The "files" is taken from the DOM event when a file changes
 		filesScheduledForUpload: function(files) {
-			// Template method
+			this.upload();
 		},
 
 		fileUploaded: function() {
@@ -112,5 +103,6 @@ function(Ember, $, template, plupload, Notification, Configuration) {
 			this.set('_uploadInProgress', true);
 			this._uploader.start();
 		}
+
 	});
 });

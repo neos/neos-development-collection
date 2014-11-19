@@ -177,6 +177,11 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
+	 * Helper method for creating a new node.
+	 *
+	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+	 * because they might be connected to images / resources which need to be updated at the same time.
+	 *
 	 * @param Node $referenceNode
 	 * @param array $nodeData
 	 * @param string $position
@@ -220,12 +225,17 @@ class NodeController extends AbstractServiceController {
 			}
 		}
 
-		$this->nodeDataRepository->persistEntities();
+		if ($this->request->getHttpRequest()->isMethodSafe()) {
+			$this->persistenceManager->persistAll();
+		}
 		return $newNode;
 	}
 
 	/**
 	 * Move $node before, into or after $targetNode
+	 *
+	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+	 * because they might be connected to images / resources which need to be updated at the same time.
 	 *
 	 * @param Node $node
 	 * @param Node $targetNode
@@ -248,7 +258,10 @@ class NodeController extends AbstractServiceController {
 			case 'after':
 				$node->moveAfter($targetNode);
 		}
-		$this->nodeDataRepository->persistEntities();
+
+		if ($this->request->getHttpRequest()->isMethodSafe()) {
+			$this->persistenceManager->persistAll();
+		}
 
 		$data = array('newNodePath' => $node->getContextPath());
 		if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
@@ -259,6 +272,9 @@ class NodeController extends AbstractServiceController {
 
 	/**
 	 * Copy $node before, into or after $targetNode
+	 *
+	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+	 * because they might be connected to images / resources which need to be updated at the same time.
 	 *
 	 * @param Node $node
 	 * @param Node $targetNode
@@ -289,7 +305,10 @@ class NodeController extends AbstractServiceController {
 			default:
 				$copiedNode = $node->copyInto($targetNode, $nodeName);
 		}
-		$this->nodeDataRepository->persistEntities();
+
+		if ($this->request->getHttpRequest()->isMethodSafe()) {
+			$this->persistenceManager->persistAll();
+		}
 
 		$q = new FlowQuery(array($copiedNode));
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
@@ -307,18 +326,26 @@ class NodeController extends AbstractServiceController {
 	}
 
 	/**
-	 * Updates the specified node. Returns the following data:
+	 * Updates the specified node.
+	 *
+	 * Returns the following data:
+	 *
 	 * - the (possibly changed) workspace name of the node
 	 * - the URI of the closest document node. If $node is a document node (f.e. a Page), the own URI is returned.
-	 *   This is important to handle renamings of nodes correctly.
+	 *   This is important to handle renames of nodes correctly.
 	 *
 	 * Note: We do not call $nodeDataRepository->update() here, as TYPO3CR has a stateful API for now.
+	 *       We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+	 *       because they might be connected to images / resources which need to be updated at the same time.
 	 *
 	 * @param Node $node
 	 * @return void
 	 */
 	public function updateAction(Node $node) {
-		$this->nodeDataRepository->persistEntities();
+		if ($this->request->getHttpRequest()->isMethodSafe()) {
+			$this->persistenceManager->persistAll();
+		}
+
 		$q = new FlowQuery(array($node));
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
@@ -328,11 +355,17 @@ class NodeController extends AbstractServiceController {
 	/**
 	 * Deletes the specified node and all of its sub nodes
 	 *
+	 * We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
+	 * because they might be connected to images / resources which need to be removed at the same time.
+	 *
 	 * @param Node $node
 	 * @return void
 	 */
 	public function deleteAction(Node $node) {
-		$this->nodeDataRepository->persistEntities();
+		if ($this->request->getHttpRequest()->isMethodSafe()) {
+			$this->persistenceManager->persistAll();
+		}
+
 		$q = new FlowQuery(array($node));
 		$node->remove();
 		$closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
