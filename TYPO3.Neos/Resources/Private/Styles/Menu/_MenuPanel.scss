@@ -143,13 +143,13 @@
 			}
 
 			&.neos-collapsed::before {
-				@include rotate(-90deg);
-				left: 13px;
+				@include rotate(90deg);
+				left: 19px;
 			}
 
 			&.neos-open::before {
-				@include rotate(90deg);
-				left: 19px;
+				@include rotate(-90deg);
+				left: 13px;
 			}
 		}
 
