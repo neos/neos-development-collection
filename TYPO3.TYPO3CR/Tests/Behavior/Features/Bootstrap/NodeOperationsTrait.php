@@ -603,7 +603,7 @@ trait NodeOperationsTrait {
 	}
 
 	/**
-	 * @Given /^the unpublished node count in workspace "([^"]*)" should be (\d+)$/
+	 * @Then /^the unpublished node count in workspace "([^"]*)" should be (\d+)$/
 	 */
 	public function theUnpublishedNodeCountInWorkspaceShouldBe($workspaceName, $count) {
 		if ($this->isolated === TRUE) {

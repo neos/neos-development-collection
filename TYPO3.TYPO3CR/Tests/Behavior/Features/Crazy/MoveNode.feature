@@ -114,8 +114,8 @@ Feature: Move node
       | user-admin |
     Then I should have 0 nodes
 
-    # TODO This would be nice, but right now we might not be able to do this reliably
-    # And the unpublished node count in workspace "user-admin" should be 0
+    When I publish the workspace "user-admin"
+    And the unpublished node count in workspace "user-admin" should be 0
 
   @fixtures
   Scenario: Move a node (before) in user workspace and get by path
@@ -186,6 +186,8 @@ Feature: Move node
       | live      |
     Then I should have one node
     And the node property "title" should be "Our services"
+    And the unpublished node count in workspace "user-jack" should be 0
+    And the unpublished node count in workspace "user-john" should be 0
 
   @fixtures
   Scenario: Reordering nodes only applies in user workspace
@@ -222,6 +224,7 @@ Feature: Move node
       | Path                   | Properties           |
       | /sites/typo3cr/service | {"title": "Service"} |
       | /sites/typo3cr/company | {"title": "Company"} |
+    And the unpublished node count in workspace "user-admin" should be 0
 
   @fixtures
   Scenario: Move a node with updated property (materialized node data) in user workspace
@@ -258,6 +261,56 @@ Feature: Move node
     Then I should have one node
 
     When I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Move a published node twice and publish
+    Given I have the following nodes:
+      | Identifier                           | Path                      | Node Type                  | Workspace |
+      | cf96e226-6fdb-11e4-aa3f-14109fd7a2dd | /sites/typo3cr/main/text1 | TYPO3.TYPO3CR.Testing:Text | live      |
+    When I get a node by path "/sites/typo3cr/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/company/main"
+    And I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/service/main"
+    And I publish the workspace "user-admin"
+    And the unpublished node count in workspace "user-admin" should be 0
+
+  @fixtures
+  Scenario: Move a published node twice in columns and publish
+    Given I have the following nodes:
+      | Identifier                           | Path                        | Node Type                       | Workspace |
+      | cf96e226-6fdb-11e4-aa3f-14109fd7a2dd | /sites/typo3cr/main/text1   | TYPO3.TYPO3CR.Testing:Text      | live      |
+      | be085b0e-73da-11e4-994f-14109fd7a2dd | /sites/typo3cr/main/two-col | TYPO3.TYPO3CR.Testing:TwoColumn | live      |
+    When I get a node by path "/sites/typo3cr/main/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/main/two-col/column0"
+    And I get a node by path "/sites/typo3cr/main/two-col/column0/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/main/two-col/column1"
+    And I get a node by path "/sites/typo3cr/main/two-col/column1/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+
+    When I publish the workspace "user-admin"
+    Then the unpublished node count in workspace "user-admin" should be 0
+    When I get a node by path "/sites/typo3cr/main/two-col/column1/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+    When I get a node by path "/sites/typo3cr/main/two-col/column0/text1" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+    When I get a node by path "/sites/typo3cr/main/text1" with the following context:
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
