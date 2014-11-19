@@ -140,7 +140,7 @@ roles:
         permission: GRANT
 
       -
-        privilegeTarget: 'TYPO3.Media.ManageAssets'
+        privilegeTarget: 'TYPO3.Media:ManageAssets'
         permission: GRANT
 
       -
