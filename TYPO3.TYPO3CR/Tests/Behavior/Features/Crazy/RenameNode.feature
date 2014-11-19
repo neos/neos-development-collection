@@ -68,3 +68,29 @@ Feature: Rename node
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Rename a node with updated property (materialized node data) to a previously moved path in user workspace
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I rename the node to "enterprise"
+    And I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I set the node property "title" to "Our service"
+    And I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I rename the node to "company"
+    And I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+    And I get a node by path "/sites/typo3cr/service" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
+
+    When I publish the workspace "user-admin"
+    Then the unpublished node count in workspace "user-admin" should be 0

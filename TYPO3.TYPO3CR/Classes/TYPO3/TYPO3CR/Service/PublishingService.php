@@ -17,6 +17,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
+use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
 
 /**
  * A generic TYPO3CR Publishing Service
@@ -76,6 +77,8 @@ class PublishingService implements PublishingServiceInterface {
 			}
 		}
 
+		$unpublishedNodes = $this->sortNodesForPublishing($unpublishedNodes);
+
 		return $unpublishedNodes;
 	}
 
@@ -119,6 +122,8 @@ class PublishingService implements PublishingServiceInterface {
 	 * @api
 	 */
 	public function publishNodes(array $nodes, Workspace $targetWorkspace = NULL) {
+		$nodes = $this->sortNodesForPublishing($nodes);
+
 		foreach ($nodes as $node) {
 			$this->publishNode($node, $targetWorkspace);
 		}
@@ -154,6 +159,18 @@ class PublishingService implements PublishingServiceInterface {
 		foreach ($nodes as $node) {
 			$this->discardNode($node);
 		}
+	}
+
+	/**
+	 * Sort an unsorted list of nodes in a publishable order
+	 *
+	 * @param array $nodes Unsorted list of nodes (unpublished nodes)
+	 * @return array Sorted list of nodes for publishing
+	 * @throws WorkspaceException
+	 */
+	protected function sortNodesForPublishing(array $nodes) {
+		$sorter = new NodePublishingDependencySolver();
+		return $sorter->sort($nodes);
 	}
 
 	/**

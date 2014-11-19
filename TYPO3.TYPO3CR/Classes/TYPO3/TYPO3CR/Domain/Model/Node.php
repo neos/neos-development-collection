@@ -164,20 +164,20 @@ class Node implements NodeInterface, CacheAwareInterface {
 			if ($nodeData->getWorkspace()->getName() !== $this->context->getWorkspace()->getName()) {
 				$nodeData = $this->materializeNodeDataToWorkspace($nodeData);
 				$nodeDataWasMaterialized = TRUE;
-				$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
+				$targetPathShadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
 				$nodeData->setPath($path, FALSE);
 				if ($isCurrentNodeInContext) {
 					// Workaround to set the new index in move* methods
 					$this->nodeData = $nodeData;
 				}
 			} else {
-				$shadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
+				$targetPathShadowNodeData = $this->getExistingShadowNodeData($path, $nodeData);
 			}
 
 			if ($nodeDataWasMaterialized) {
-				if ($shadowNodeData !== NULL) {
+				if ($targetPathShadowNodeData !== NULL) {
 					// The existing shadow node on the target path will be used as the moved node and the current node data will be removed
-					$movedNodeData = $shadowNodeData;
+					$movedNodeData = $targetPathShadowNodeData;
 					$movedNodeData->setMovedTo(NULL);
 					$movedNodeData->setRemoved(FALSE);
 					$movedNodeData->similarize($nodeData);
@@ -192,24 +192,45 @@ class Node implements NodeInterface, CacheAwareInterface {
 					$this->createShadowNodeData($originalPath, $nodeData);
 				}
 			} else {
-				if ($shadowNodeData !== NULL) {
-					// If there is already shadow node (with the same path as the move target), we need to make that shadow node the actual moved node and remove the current node data (which cannot be live)
-					// We cannot remove the shadow node and update the current node data, since the order of Doctrine queries would cause unique key conflicts
-					$movedNodeData = $shadowNodeData;
-					$movedNodeData->setMovedTo(NULL);
-					$movedNodeData->setRemoved(FALSE);
-					$movedNodeData->similarize($nodeData);
-					$movedNodeData->setPath($path, FALSE);
-					$this->nodeDataRepository->remove($nodeData);
+				$referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($nodeData);
+				if ($targetPathShadowNodeData !== NULL) {
+					if ($referencedShadowNode === NULL) {
+						// Turn the target path shadow node into the moved node (and adjust the identifier!)
+						// Do not reset the movedTo property to keep tracing the original move operation
+						$movedNodeData = $targetPathShadowNodeData;
+						// Since the shadow node at the target path does not belong to the current node, we have to adjust the identifier
+						$movedNodeData->setIdentifier($nodeData->getIdentifier());
+						$movedNodeData->setRemoved(FALSE);
+						$movedNodeData->similarize($nodeData);
+						$movedNodeData->setPath($path, FALSE);
+						// Create a shadow node from the current node that shadows the recycled node
+						$shadowNodeData = $nodeData;
+						$shadowNodeData->shadowMovedNodeData($movedNodeData);
+					} else {
+						// If there is already shadow node on the target path, we need to make that shadow node the actual moved node and remove the current node data (which cannot be live)
+						// We cannot remove the shadow node and update the current node data, since the order of Doctrine queries would cause unique key conflicts.
+						$movedNodeData = $targetPathShadowNodeData;
+						$movedNodeData->setMovedTo(NULL);
+						$movedNodeData->setRemoved(FALSE);
+						$movedNodeData->similarize($nodeData);
+						$movedNodeData->setPath($path, FALSE);
+						$this->nodeDataRepository->remove($nodeData);
+					}
 				} else {
-					// There is no shadow node, so the current node data will be turned to a shadow node and a new node data will be created for the moved node
-					// We cannot just create a new shadow node, since the order of Doctrine queries would cause unique key conflicts
-					$movedNodeData = new NodeData($originalPath, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
-					$movedNodeData->similarize($nodeData);
-					$movedNodeData->setPath($path, FALSE);
+					if ($referencedShadowNode === NULL) {
+						// There is no shadow node on the original or target path, so the current node data will be turned to a shadow node and a new node data will be created for the moved node.
+						// We cannot just create a new shadow node, since the order of Doctrine queries would cause unique key conflicts
+						$movedNodeData = new NodeData($originalPath, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+						$movedNodeData->similarize($nodeData);
+						$movedNodeData->setPath($path, FALSE);
 
-					$shadowNodeData = $nodeData;
-					$shadowNodeData->shadowMovedNodeData($movedNodeData);
+						$shadowNodeData = $nodeData;
+						$shadowNodeData->shadowMovedNodeData($movedNodeData);
+					} else {
+						// A shadow node that references this node data already exists, so we just move the current node data
+						$movedNodeData = $nodeData;
+						$movedNodeData->setPath($path, FALSE);
+					}
 				}
 
 				if ($isCurrentNodeInContext) {
