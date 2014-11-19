@@ -1,3 +1,8 @@
-<f:for each="{roles}" as="role" iteration="iterator">
-	{role}<f:if condition="{role.parentRoles}"> (<i><f:for each="{role.parentRoles}" as="parentRole" iteration="parentRoleIiterator">{parentRole}<f:if condition="{parentRoleIiterator.isLast}"><f:else>, </f:else></f:if></f:for></i>)</f:if><f:if condition="{iterator.isLast}"><f:else>, </f:else></f:if>
+<f:for each="{roles}" as="role" iteration="iteration">
+	<span title="{f:render(section: 'tooltip', arguments: '{role: role}')}">
+		{role.name}{f:if(condition: iteration.isLast, else: ', ')}
+	</span>
 </f:for>
+
+<f:section name="tooltip">Package: {role.packageKey}<f:if condition="{role.parentRoles}">
+Parent role(s): <f:for each="{role.parentRoles}" as="parentRole" iteration="iteration">{parentRole}{f:if(condition: iteration.isLast, else: ', ')}</f:for></f:if></f:section>

@@ -5,7 +5,7 @@
 </f:section>
 
 <f:section name="content">
-	<f:form action="create" class="user user-edit" name="account">
+	<f:form action="create" class="user user-edit" objectName="account">
 		<div class="neos-row-fluid">
 			<fieldset class="neos-span5">
 				<legend>User data</legend>
@@ -13,7 +13,8 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="identifier">Username</label>
 					<div class="neos-controls">
-						<f:form.textfield name="identifier" id="identifier" class="neos-span12" />
+						<f:form.textfield property="accountIdentifier" id="identifier" class="neos-span12" />
+						<f:form.hidden property="authenticationProviderName" value="Typo3BackendProvider" />
 					</div>
 				</div>
 
@@ -32,15 +33,15 @@
 				</div>
 
 				<div class="neos-control-group">
-					<label class="neos-control-label" for="roleIdentifier">Role</label>
-					<div class="neos-controls">
-						<f:for each="{neosRoles}" as="role">
-							<label class="neos-radio neos-inline">
-								<f:form.radio name="roleIdentifier" value="{role.identifier}" checked="{f:if(condition: '{role.identifier} == \'TYPO3.Neos:Editor\'', then: 'checked')}" /><span></span>
-								{role.name}
+					<label class="neos-control-label">Role(s)</label>
+					<f:for each="{roles}" as="role" iteration="rolesIteration">
+						<div class="neos-controls">
+							<label for="roles-{rolesIteration.cycle}" class="neos-checkbox">
+								<f:form.checkbox property="roles" multiple="true" value="{role}" id="roles-{rolesIteration.cycle}" /><span></span>
+								<span>{role.name} <span class="neos-help-inline">({role.packageKey})</span></span>
 							</label>
-						</f:for>
-					</div>
+						</div>
+					</f:for>
 				</div>
 			</fieldset>
 
@@ -50,13 +51,13 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="firstName">First Name</label>
 					<div class="neos-controls">
-							<f:form.textfield name="firstName" id="firstName" class="neos-span12" />
+						<f:form.textfield property="party.name.firstName" id="firstName" class="neos-span12" />
 					</div>
 				</div>
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="lastName">Last Name</label>
 					<div class="neos-controls">
-							<f:form.textfield name="lastName" id="lastName" class="neos-span12" />
+						<f:form.textfield property="party.name.lastName" id="lastName" class="neos-span12" />
 					</div>
 				</div>
 			</fieldset>
@@ -66,16 +67,16 @@
 				<legend>User Preferences</legend>
 
 				<div class="neos-control-group">
-					<label class="neos-control-label" for="userPreferences[preferences][interfaceLocale]">Interface language</label>
+					<label class="neos-control-label" for="interfaceLocale">Interface language</label>
 					<div class="neos-controls">
-						<f:form.select name="userPreferences[preferences][interfaceLocale]" options="{settings.userInterface.availableLocales}" />
+						<f:form.select property="party.preferences.interfaceLocale" id="interfaceLocale" options="{settings.userInterface.availableLocales}" />
 					</div>
 				</div>
 			</fieldset>
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">Cancel</f:link.action>
-			<f:form.submit value="Save user" class="neos-button neos-button-primary" />
+			<f:form.submit value="Create user" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>
 </f:section>
