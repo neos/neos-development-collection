@@ -77,6 +77,6 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 	 * @return string the relative image path, to be used as src attribute for <img /> tags
 	 */
 	public function render(AssetInterface $asset = NULL, $maximumWidth = NULL, $maximumHeight = NULL, $allowCropping = FALSE, $allowUpScaling = FALSE) {
-		return $this->assetService->getThumbnailUriForAsset($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling)['src'];
+		return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $maximumWidth, $maximumHeight, $allowCropping, $allowUpScaling)['src'];
 	}
 }
