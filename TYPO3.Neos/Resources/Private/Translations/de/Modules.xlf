@@ -33,19 +33,19 @@
 			<target xml:lang="de">Benutzerverwaltung</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="de">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+			<target xml:lang="de">Das Benutzer-Management-Modul bietet Ihnen einen Überblick über alle Backend-Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeit, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="de">Benutzer erstellen</target></trans-unit>
       <trans-unit id="users.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="de">Benutzer erstellen</target></trans-unit>
+			<target xml:lang="de">Neuen Benutzer erstellen</target><alt-trans><target xml:lang="de">Benutzer erstellen</target></alt-trans></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
 			<target xml:lang="de">Paketverwaltung</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="de">The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</target></trans-unit>
+			<target xml:lang="de">Das Paket-Management-Modul bietet Ihnen einen Überblick über alle Pakete. Hier können Sie einzelne Pakete aktivieren und deaktivieren, sowie neue Pakete importieren und vorhandene löschen. Es bietet Ihnen auch die Möglichkeit, einzelne Pakete für die Entwicklung einzufrieren bzw. wieder aufzutauen.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target xml:lang="de">Seitenverwaltung</target></trans-unit>

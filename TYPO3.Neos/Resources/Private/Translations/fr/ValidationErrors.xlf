@@ -16,7 +16,7 @@
 			<target xml:lang="fr">Le mot de passe donné est vide.</target></trans-unit>
       <trans-unit id="1324640997" xml:space="preserve">
 				<source>The passwords did not match.</source>
-			<target xml:lang="fr">Le mot de passe ne correspondent pas.</target></trans-unit>
+			<target xml:lang="fr">Les mots de passe ne correspondent pas.</target><alt-trans><target xml:lang="fr">Le mot de passe ne correspondent pas.</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="de">Auto-Publish</target></trans-unit>
+			<target xml:lang="de">Auto-Publish</target><alt-trans><target xml:lang="de">Auto-Veröffentlichung</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="de">Übernehmen</target></trans-unit>
@@ -38,7 +38,7 @@
 			<target xml:lang="de">Verbergen / Anzeigen</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="de">Navigate</target></trans-unit>
+			<target xml:lang="de">Navigieren</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
 			<target xml:lang="de">OK</target></trans-unit>
@@ -74,7 +74,7 @@
 			<target xml:lang="de">Bearbeiten</target></trans-unit>
       <trans-unit id="Navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="de">Navigate</target></trans-unit>
+			<target xml:lang="de">Navigieren</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="de">Neues Element danach</target></trans-unit>
@@ -144,7 +144,7 @@
 			<target xml:lang="de">Inspector</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="de">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="de">Es sind noch Änderungen vorhanden. Was soll mit ihnen geschehen?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
 			<target xml:lang="de">Ausgewähltes Element</target></trans-unit>
@@ -174,13 +174,13 @@
 			<target xml:lang="de">Inhalt</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the page</source>
-			<target xml:lang="de">This will delete the page</target></trans-unit>
+			<target xml:lang="de">Dadurch wird die Seite gelöscht</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's subpages</source>
-			<target xml:lang="de">and it's subpages</target></trans-unit>
+			<target xml:lang="de">und ihre Unterseiten</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="de">This operation can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="de">Höhe</target></trans-unit>
@@ -192,7 +192,7 @@
 			<target xml:lang="de">Dieses Element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="de">This will delete the element.</target></trans-unit>
+			<target xml:lang="de">Dadurch wird das Element gelöscht.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></trans-unit>
@@ -201,7 +201,7 @@
 			<target xml:lang="de">Breite</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="de">Missing required property:</target></trans-unit>
+			<target xml:lang="de">Erforderlicher Wert fehlt:</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="de">Arbeitsbereiche</target></trans-unit>
@@ -221,10 +221,10 @@
 			<target xml:lang="de">Datenbankfehler</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
-			<target xml:lang="de">Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="de">Es tut uns Leid, es wurde ein Fehler mit ihrer Datenbank festgestellt. Überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target></trans-unit>
       <trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="de">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="de">Bitte überprüfen Sie ihre Datenbankkonfiguration in der Installation.</target></trans-unit>
       <trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target xml:lang="de">Fehlende Homepage</target></trans-unit>
@@ -233,7 +233,7 @@
 			<target xml:lang="de">Entweder wurde noch keine Seite definiert oder die Seite enthält keine Homepage.</target><alt-trans><target xml:lang="de">Entweder es wurde noch keine Site definiert wurde oder die Site enthält keine Homepage.</target></alt-trans></trans-unit>
       <trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to create or import a site in the setup.</source>
-			<target xml:lang="de">You might want to create or import a site in the setup.</target></trans-unit>
+			<target xml:lang="de">Bitte erstellen Sie eine neue oder importieren eine bestehende Seite im Setup.</target></trans-unit>
       <!-- Errors -->
       <trans-unit id="error.index.goToSetup" xml:space="preserve">
 				<source>Go to Setup</source>
