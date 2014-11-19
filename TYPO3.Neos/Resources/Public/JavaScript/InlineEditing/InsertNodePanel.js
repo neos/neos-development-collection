@@ -40,6 +40,8 @@ function(
 				return 'typo3:' + nodeType;
 			});
 
+			var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content');
+
 			_.each(types, function(nodeType) {
 				var type = this.get('_node._vieEntity._enclosingCollectionWidget').options.vie.types.get(nodeType);
 				if (!type || !type.metadata || type.metadata.abstract === true) {
@@ -47,6 +49,9 @@ function(
 				}
 
 				type.metadata.nodeType = type.id.substring(1, type.id.length - 1).replace(namespace, '');
+				if (!contentTypes.hasOwnProperty(type.metadata.nodeType)) {
+					return;
+				}
 
 				if (type.metadata.ui && type.metadata.ui.group) {
 					if (!groups[type.metadata.ui.group]) {
