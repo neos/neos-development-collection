@@ -2,26 +2,20 @@ define(
 	[
 		'emberjs',
 		'Library/jquery-with-dependencies',
+		'Content/Components/AbstractInsertNodePanel',
 		'Shared/Configuration',
-		'Shared/NodeTypeService',
-		'LibraryExtensions/Mousetrap',
-		'text!./InsertNodePanel.html'
+		'Shared/NodeTypeService'
 	],
 	function(
 		Ember,
 		$,
+		AbstractInsertNodePanel,
 		Configuration,
-		NodeTypeService,
-		Mousetrap,
-		template
+		NodeTypeService
 	) {
-		return Ember.View.extend({
-			template: Ember.Handlebars.compile(template),
-			classNames: ['neos-overlay-component'],
-			// Callback function after selecting a node type
-			insertNode: Ember.K,
+		return AbstractInsertNodePanel.extend({
 			// List of allowed node types (strings); with constraints already evaluated.
-			allowedNodeTypes: Ember.K,
+			allowedNodeTypes: Ember.required,
 
 			nodeTypeGroups: function() {
 				var groupedNodeTypes = {},
@@ -41,11 +35,11 @@ define(
 						groupedNodeTypes[groupName] = {
 							'name': groupName,
 							'label': '',
-							'children': []
+							'nodeTypes': []
 						};
 					}
 
-					groupedNodeTypes[groupName].children.push({
+					groupedNodeTypes[groupName].nodeTypes.push({
 						'nodeType': nodeTypeName,
 						'label': nodeType.ui.label,
 						'icon': 'icon' in nodeType.ui ? nodeType.ui.icon : 'icon-file',
@@ -55,7 +49,7 @@ define(
 
 				Configuration.get('nodeTypes.groups').forEach(function(group) {
 					if (groupedNodeTypes[group.name]) {
-						groupedNodeTypes[group.name].children.sort(function(a, b) {
+						groupedNodeTypes[group.name].nodeTypes.sort(function(a, b) {
 							return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 						});
 						groupedNodeTypes[group.name].label = group.label;
@@ -64,24 +58,7 @@ define(
 				});
 
 				return nodeTypeGroups;
-			}.property('allowedNodeTypes'),
-
-			init: function() {
-				this._super();
-				var that = this;
-				Mousetrap.bind('esc', function() {
-					that.cancel();
-				});
-			},
-
-			destroy: function() {
-				Mousetrap.unbind('esc');
-				this._super();
-			},
-
-			cancel: function() {
-				this.destroy();
-			}
+			}.property('allowedNodeTypes')
 		});
 	}
 );

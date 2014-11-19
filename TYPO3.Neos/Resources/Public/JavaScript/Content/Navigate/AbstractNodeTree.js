@@ -33,8 +33,6 @@ define(
 		Mousetrap,
 		NodeEndpoint
 	) {
-
-
 		var _getAllowedChildNodeTypesForNode = function(node) {
 			if (node.data.isAutoCreated) {
 				return NodeTypeService.getAllowedChildNodeTypesForAutocreatedNode(node.parent.data.nodeType, node.data.name);
@@ -728,18 +726,17 @@ define(
 					});
 				});
 
-				InsertNodePanel.extend({
+				InsertNodePanel.create({
 					allowedNodeTypes: allowedNodeTypes,
-					insertNode: function(nodeTypeInfo) {
+					insertNode: function(nodeType, icon) {
 						that.set('insertNodePanelShown', false);
-						that.createNode(activeNode, null, nodeTypeInfo.nodeType, nodeTypeInfo.icon);
+						that.createNode(activeNode, null, nodeType, icon);
 						this.cancel();
 					},
-					cancel: function() {
+					willDestroyElement: function() {
 						that.set('insertNodePanelShown', false);
-						this._super();
 					}
-				}).create().appendTo($('#neos-application'));
+				});
 			},
 
 			/**

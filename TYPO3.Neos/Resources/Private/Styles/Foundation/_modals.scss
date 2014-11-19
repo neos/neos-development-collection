@@ -103,24 +103,6 @@
 		color: $textSubtleLight;
 	}
 
-	ul {
-		border-bottom: 1px solid $grayLight;
-		padding: 0px $defaultMargin;
-		margin: 0px;
-		width: 100%;
-		@include box-sizing(border-box);
-
-		a {
-			color: #fff;
-
-			&:hover {
-				color: $blue;
-				cursor: pointer;
-				text-decoration: none;
-			}
-		}
-	}
-
 	// Footer area
 	.neos-modal-footer {
 		background: transparent;

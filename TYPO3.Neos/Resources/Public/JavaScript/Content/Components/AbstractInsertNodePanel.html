@@ -1,21 +1,22 @@
-<div class="neos-modal neos-modal-wide" id="insertNodeDialog">
+<div class="neos-modal neos-modal-wide neos-insert-node-panel">
 	<div class="neos-modal-header">
-		<button class="neos-close neos-button" data-dismiss="modal" {{action "cancel" target="view"}}></button>
+		<button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view"}}></button>
 		<div class="neos-header">{{translate id="createNew" value="Create new"}}</div>
-
-		{{#each view.content}}
+	</div>
+	<div class="neos-modal-body">
+		{{#each view.nodeTypeGroups}}
 			<div class="neos-subheader">{{unbound label}}</div>
 			<ul class="neos-clearfix">
-				{{#each children}}
+				{{#each nodeTypes}}
 					<li class="neos-content-new-selecttype-button">
-						<a class="neos-content-new" {{action "insertNode" nodeType target="view"}}>
-							{{#if ui.icon}}
-								<i class="{{unbound ui.icon}}"></i>
+						<button class="neos-content-new" {{bindAttr title="label"}} {{action "insertNode" nodeType icon target="view"}}>
+							{{#if icon}}
+								<i class="{{unbound icon}}"></i>
 							{{else}}
 								<i class="icon-sign-blank"></i>
 							{{/if}}
 							{{unbound label}}
-						</a>
+						</button>
 					</li>
 				{{/each}}
 			</ul>
