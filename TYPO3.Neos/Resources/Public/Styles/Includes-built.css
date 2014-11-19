@@ -3390,14 +3390,14 @@
   color: #fff;
   background-color: #00b5ff;
   text-decoration: none;
-  outline: none;
 }
 .neos button:focus,
 .neos .neos-button:focus {
   outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
-  outline: 1px dotted #00b5ff;
+  outline: 1px dotted #fff;
+  outline-offset: 0;
 }
 .neos button.neos-disabled, .neos button[disabled],
 .neos .neos-button.neos-disabled,
@@ -3415,6 +3415,10 @@
 .neos .neos-button.neos-button-primary {
   background-color: #00b5ff;
 }
+.neos button.neos-button-primary:focus,
+.neos .neos-button.neos-button-primary:focus {
+  outline: 1px dotted #fff;
+}
 .neos button.neos-button-success,
 .neos .neos-button.neos-button-success {
   background-color: #00a338;
@@ -3423,6 +3427,10 @@
 .neos .neos-button.neos-button-success:hover,
 .neos .neos-button.neos-button-success:active {
   background-color: #00a338;
+}
+.neos button.neos-button-success:focus,
+.neos .neos-button.neos-button-success:focus {
+  outline: 1px dotted #fff;
 }
 .neos button.neos-button-warning,
 .neos .neos-button.neos-button-warning {
@@ -3433,6 +3441,10 @@
 .neos .neos-button.neos-button-warning:active {
   background-color: #ff8700;
 }
+.neos button.neos-button-warning:focus,
+.neos .neos-button.neos-button-warning:focus {
+  outline: 1px dotted #fff;
+}
 .neos button.neos-button-danger,
 .neos .neos-button.neos-button-danger {
   background-color: #ff460d;
@@ -3441,6 +3453,10 @@
 .neos .neos-button.neos-button-danger:hover,
 .neos .neos-button.neos-button-danger:active {
   background-color: #ff460d;
+}
+.neos button.neos-button-danger:focus,
+.neos .neos-button.neos-button-danger:focus {
+  outline: 1px dotted #fff;
 }
 .neos button i,
 .neos .neos-button i {
