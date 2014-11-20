@@ -53,36 +53,6 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 	protected $currentSite = FALSE;
 
 	/**
-	 * Returns a list of nodes contained in the given workspace which are not yet published
-	 *
-	 * @param Workspace $workspace
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
-	 * @api
-	 */
-	public function getUnpublishedNodes(Workspace $workspace) {
-		if ($workspace->getName() === 'live') {
-			return array();
-		}
-
-		$nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
-
-		$unpublishedNodes = array();
-		foreach ($nodeData as $singleNodeData) {
-			/** @var NodeData $singleNodeData */
-			// Skip the root entry from the workspace as it can't be published
-			if ($singleNodeData->getPath() === '/') {
-				continue;
-			}
-			$node = $this->nodeFactory->createFromNodeData($singleNodeData, $this->createContext($workspace, $singleNodeData->getDimensionValues()));
-			if ($node !== NULL) {
-				$unpublishedNodes[] = $node;
-			}
-		}
-
-		return $unpublishedNodes;
-	}
-
-	/**
 	 * Publishes the given node to the specified target workspace. If no workspace is specified, "live" is assumed.
 	 *
 	 * @param NodeInterface $node
