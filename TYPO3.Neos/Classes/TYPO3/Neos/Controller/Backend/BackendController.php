@@ -58,7 +58,7 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	 * @return string
 	 */
 	public function getXliffAsJsonAction() {
-		$locale = new Locale($this->userService->getUserLocale());
+		$locale = new Locale($this->userService->getInterfaceLanguage());
 
 		return $this->xliffService->getCachedJson($locale);
 	}

@@ -70,15 +70,15 @@ class UserPreferences {
 	 * @param string $localeIdentifier
 	 * @return void
 	 */
-	public function setInterfaceLocale($localeIdentifier) {
-		$this->set('interfaceLocale', $localeIdentifier);
+	public function setInterfaceLanguage($localeIdentifier) {
+		$this->set('interfaceLanguage', $localeIdentifier);
 	}
 
 	/**
 	 * @return string the locale identifier
 	 */
-	public function getInterfaceLocale() {
-		return $this->get('interfaceLocale');
+	public function getInterfaceLanguage() {
+		return $this->get('interfaceLanguage');
 	}
 
 }
