@@ -35,9 +35,16 @@ function(
 				return 'typo3:' + nodeType;
 			});
 
+			var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content');
+
 			_.each(types, function(nodeType) {
 				var type = this.get('_node._vieEntity._enclosingCollectionWidget').options.vie.types.get(nodeType);
 				if (!type || !type.metadata || type.metadata.abstract === true) {
+					return;
+				}
+
+				var nodeTypeName = type.id.substring(1, type.id.length - 1).replace(namespace, '');
+				if (!contentTypes.hasOwnProperty(nodeTypeName)) {
 					return;
 				}
 
@@ -50,7 +57,7 @@ function(
 						};
 					}
 					groups[type.metadata.ui.group].nodeTypes.push({
-						'nodeType': type.id.substring(1, type.id.length - 1).replace(namespace, ''),
+						'nodeType': nodeTypeName,
 						'label': type.metadata.ui.label,
 						'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
 						'position': type.metadata.ui.position
