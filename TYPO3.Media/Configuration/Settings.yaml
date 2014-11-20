@@ -6,10 +6,6 @@ TYPO3:
           'TYPO3\Media\Domain\EventListener\ImageEventListener':
             events: ['prePersist', 'preUpdate', 'postRemove']
             listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
-  Neos:
-    typoScript:
-      autoInclude:
-        'TYPO3.Media': TRUE
   Media:
     image:
       defaultOptions:
