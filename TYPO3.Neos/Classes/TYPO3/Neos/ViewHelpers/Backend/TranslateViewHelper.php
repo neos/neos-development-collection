@@ -100,7 +100,7 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 
 		$defaultLocale = !empty($this->locale) ? $this->locale : 'en';
 
-		if ($locale == NULL) {
+		if ($locale === NULL && $this->securityContext->canBeInitialized()) {
 			if ($this->securityContext->getAccount()) {
 				/** @var User $user */
 				$user = $this->securityContext->getAccount()->getParty();
