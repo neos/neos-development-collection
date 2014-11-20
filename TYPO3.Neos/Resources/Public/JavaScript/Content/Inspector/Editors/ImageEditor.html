@@ -28,9 +28,11 @@
 				{{unbound view.removeButtonLabel}}
 			</button>
 		{{/if}}
-		{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
+		{{#if view.features.crop}}
+			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" labelBinding="view.cropLabel"}}
+		{{/if}}
 	</div>
-
+	{{#if view.features.resize}}
 	<div class="neos-inspector-image-width">
 		<label {{bindAttr for="view.imageWidthField.elementId"}}>{{translate id='width-ucfirst' value='Width'}}:</label>
 		<div class="neos-input-prepend neos-input-append">
@@ -51,4 +53,5 @@
 			<span class="neos-add-on">px</span>
 		</div>
 	</div>
+	{{/if}}
 </div>

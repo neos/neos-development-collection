@@ -40,6 +40,14 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		 */
 		allowedFileTypes: 'jpg,jpeg,png,gif',
 
+		/**
+		 * Feature flags for this editor. Currently we have cropping and resize which can be enabled/disabled via NodeTypes editorOptions.
+		 */
+		features: {
+			crop: false,
+			resize: false
+		},
+
 		template: Ember.Handlebars.compile(template),
 		BooleanEditor: BooleanEditor,
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
