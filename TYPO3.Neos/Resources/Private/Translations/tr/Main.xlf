@@ -117,6 +117,25 @@
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
 			<target xml:lang="tr">Username</target></trans-unit>
+      <!-- shortcuts -->
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
+				<source>Click here to continue to the {0} page.</source>
+			<target xml:lang="tr">Click here to continue to the {0} page.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
+				<source>Click here to continue to the {0} asset.</source>
+			<target xml:lang="tr">Click here to continue to the {0} asset.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
+				<source>Click here to continue to the {0} ext page.</source>
+			<target xml:lang="tr">Click here to continue to the {0} ext page.</target></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
+				<source>(no target has been selected)</source>
+			<target xml:lang="tr">(no target has been selected)</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
+				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="tr">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
+				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="tr">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
 				<source>Full Screen</source>
