@@ -65,6 +65,10 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+          editorOptions:
+            features:
+              crop: TRUE
+              resize: TRUE
     alternativeText:
       type: string
       ui:
