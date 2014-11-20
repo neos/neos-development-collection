@@ -75,10 +75,10 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 	protected $securityContext;
 
 	/**
-	 * @Flow\Inject(setting="userInterface.locale")
+	 * @Flow\Inject(setting="userInterface.defaultLanguage")
 	 * @var string
 	 */
-	protected $locale;
+	protected $defaultLanguageIdentifier;
 
 	/**
 	 * Renders the translated label.
@@ -92,22 +92,21 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 	 * @param string $source Name of file with translations
 	 * @param string $package Target package key. If not set, the current package key will be used
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param string $locale An identifier of locale to use (NULL for use the default locale)
+	 * @param string $languageIdentifier An identifier of a language to use (NULL for using the default language)
 	 * @return string Translated label or source label / ID key
 	 * @throws ViewHelper\Exception
 	 */
-	public function render($id = NULL, $value = NULL, array $arguments = array(), $source = 'Main', $package = NULL, $quantity = NULL, $locale = NULL) {
-		$defaultLocale = !empty($this->locale) ? $this->locale : 'en';
+	public function render($id = NULL, $value = NULL, array $arguments = array(), $source = 'Main', $package = NULL, $quantity = NULL, $languageIdentifier = NULL) {
 
-		if ($locale === NULL && $this->securityContext->canBeInitialized()) {
+		if ($languageIdentifier === NULL && $this->securityContext->canBeInitialized()) {
 			if ($this->securityContext->getAccount()) {
 				/** @var User $user */
 				$user = $this->securityContext->getAccount()->getParty();
-				$locale = $user->getPreferences()->get('interfaceLocale') ? $user->getPreferences()->get('interfaceLocale') : $defaultLocale;
+				$languageIdentifier = $user->getPreferences()->get('interfaceLanguage') ? $user->getPreferences()->get('interfaceLanguage') : $this->defaultLanguageIdentifier;
 			}
 		}
 
-		return parent::render($id, $value, $arguments, $source, $package, $quantity, $locale);
+		return parent::render($id, $value, $arguments, $source, $package, $quantity, $languageIdentifier);
 	}
 
 }

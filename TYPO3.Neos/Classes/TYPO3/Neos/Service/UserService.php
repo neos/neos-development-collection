@@ -38,10 +38,10 @@ class UserService {
 	protected $workspaceRepository;
 
 	/**
-	 * @Flow\Inject(setting="userInterface.locale")
+	 * @Flow\Inject(setting="userInterface.defaultLanguage")
 	 * @var string
 	 */
-	protected $locale;
+	protected $defaultLanguageIdentifier;
 
 	/**
 	 * @return User
@@ -94,12 +94,11 @@ class UserService {
 	}
 
 	/**
-	 * Returns the user preferred locale if set. Else will fallback to the original settings
+	 * Returns the interface language the user selected. Will fall back to the default language defined in settings
 	 *
 	 * @return string
 	 */
-	public function getUserLocale() {
-		$userLocale = $this->getUserPreference('interfaceLocale');
-		return $userLocale ? $userLocale : $this->locale;
+	public function getInterfaceLanguage() {
+		return $this->getUserPreference('interfaceLanguage') ?: $this->defaultLanguageIdentifier;
 	}
 }

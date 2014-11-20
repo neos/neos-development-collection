@@ -79,9 +79,9 @@
 
 		<legend>{neos:backend.translate(id: 'userSettings.userPrefrences', value: 'User Preferences')}</legend>
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="interfaceLocale">{neos:backend.translate(id: 'userSettings.interfaceLanguage', value: 'Interface language')}</label>
+			<label class="neos-control-label" for="interfaceLanguage">{neos:backend.translate(id: 'userSettings.interfaceLanguage', value: 'Interface language')}</label>
 			<div class="neos-controls">
-				<f:form.select property="preferences.preferences.interfaceLocale" id="interfaceLocale" options="{settings.userInterface.availableLocales}" />
+				<f:form.select property="preferences.preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" />
 			</div>
 		</div>
 	</fieldset>
