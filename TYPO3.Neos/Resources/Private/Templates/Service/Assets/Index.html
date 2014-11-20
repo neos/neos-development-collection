@@ -5,13 +5,13 @@
 	</head>
 	<body>
 		<div>
-			<h1>{neos:backend.translate(id: 'nodes', value: 'Nodes')}</h1>
+			<h1>{neos:backend.translate(id: 'assets', value: 'Assets')}</h1>
 			<ul class="assets"><f:for each="{assets}" as="asset">
 				<li class="asset">
 					<label class="asset-label">{asset.label}</label>
 					(<span class="asset-identifier">{asset.identifier}</span>)
-					<a rel="thumbnail" href="{media:uri.image(asset: asset, maximumWidth: 40, maximumHeight: 40, allowCropping: 1, allowUpScaling: 1)}">{neos:backend.translate(id: 'thumbnail', value:'thumbnail'  )</a>
-					<f:link.action rel="asset-show" controller="Service\Assets" action="thumbnail" arguments="{identifier: asset.identifier}" format="html">{neos:backend.translate(id: 'show', value:'show'  )</f:link.action>
+					<a rel="thumbnail" href="{media:uri.image(asset: asset, maximumWidth: 40, maximumHeight: 40, allowCropping: 1, allowUpScaling: 1)}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a>
+					<f:link.action rel="asset-show" controller="Service\Assets" action="show" arguments="{identifier: asset.identifier}" format="html">{neos:backend.translate(id: 'show', value: 'show')}</f:link.action>
 				</li></f:for>
 			</ul>
 		</div>

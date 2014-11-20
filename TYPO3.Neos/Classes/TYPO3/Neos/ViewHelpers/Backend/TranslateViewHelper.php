@@ -97,7 +97,6 @@ class TranslateViewHelper extends FluidTranslateViewHelper {
 	 * @throws ViewHelper\Exception
 	 */
 	public function render($id = NULL, $value = NULL, array $arguments = array(), $source = 'Main', $package = NULL, $quantity = NULL, $locale = NULL) {
-
 		$defaultLocale = !empty($this->locale) ? $this->locale : 'en';
 
 		if ($locale === NULL && $this->securityContext->canBeInitialized()) {
