@@ -22,11 +22,6 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var boolean
-	 */
-	protected $testableSecurityEnabled = TRUE;
-
-	/**
 	 * @var string the Nodes fixture
 	 */
 	protected $fixtureFileName;
