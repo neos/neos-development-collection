@@ -128,7 +128,7 @@ TYPO3:
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
 
       # the default language for the backend interface (can be overridden by user preference through availableLanguages)
-      defautLanguage: 'en'
+      defaultLanguage: 'en'
 
       # the languages the backend user can choose from (the xliff file for this language should be present!)
       availableLanguages:
