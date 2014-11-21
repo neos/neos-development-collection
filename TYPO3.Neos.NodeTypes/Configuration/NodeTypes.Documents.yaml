@@ -40,9 +40,3 @@
         layout:
           label: 'Layout'
           position: 150
-
-# DEPRECATED with Neos 1.0: for ease of upgrading, we add the "old" TYPO3.Neos:Page again in order to
-# make this change less breaking and have an easier upgrading period.
-'TYPO3.Neos:Page':
-  superTypes: ['TYPO3.Neos.NodeTypes:Page']
-  abstract: TRUE
