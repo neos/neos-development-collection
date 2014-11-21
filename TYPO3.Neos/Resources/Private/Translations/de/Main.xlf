@@ -120,22 +120,22 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click here to continue to the {0} page.</source>
-			<target xml:lang="de">Click here to continue to the {0} page.</target></trans-unit>
+			<target xml:lang="de">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click here to continue to the {0} asset.</source>
-			<target xml:lang="de">Click here to continue to the {0} asset.</target></trans-unit>
+			<target xml:lang="de">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click here to continue to the {0} ext page.</source>
-			<target xml:lang="de">Click here to continue to the {0} ext page.</target></trans-unit>
+			<target xml:lang="de">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="de">(no target has been selected)</target></trans-unit>
+			<target xml:lang="de">(kein Ziel ausgewählt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
 				<source>Full Screen</source>
@@ -172,7 +172,7 @@
 			<target xml:lang="de">Einige Felder sind nicht korrekt ausgefüllt.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="de">Die markierten Felder sind nicht noch korrekt ausgefüllt. Bitte korrigieren Sie sie.</target></trans-unit>
+			<target xml:lang="de">Die markierten Felder sind noch nicht korrekt ausgefüllt. Bitte korrigieren Sie diese.</target><alt-trans><target xml:lang="de">Die markierten Felder sind nicht noch korrekt ausgefüllt. Bitte korrigieren Sie sie.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
 			<target xml:lang="de">Bearbeitung fortsetzen</target></trans-unit>
@@ -199,7 +199,7 @@
 			<target xml:lang="de">und ihre Unterseiten</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></trans-unit>
+			<target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="de">Höhe</target></trans-unit>
@@ -214,7 +214,7 @@
 			<target xml:lang="de">Dadurch wird das Element gelöscht.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></trans-unit>
+			<target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
       <trans-unit id="width.ucfirst" xml:space="preserve">
 				<source>Width</source>
 			<target xml:lang="de">Breite</target></trans-unit>
@@ -223,7 +223,7 @@
 			<target xml:lang="de">Erforderlicher Wert fehlt:</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="de">Arbeitsbereiche</target></trans-unit>
+			<target xml:lang="de">Arbeitsbereiche</target><alt-trans><target xml:lang="de">Workspaces</target></alt-trans></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
