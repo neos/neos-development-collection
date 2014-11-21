@@ -36,11 +36,18 @@ class NodeType {
 	protected $name;
 
 	/**
-	 * Configuration for this node type, can be an arbitrarily nested array.
+	 * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
 	 *
 	 * @var array
 	 */
-	protected $configuration;
+	protected $localConfiguration;
+
+	/**
+	 * Full configuration for this node type, can be an arbitrarily nested array. Includes any inherited configuration.
+	 *
+	 * @var array
+	 */
+	protected $fullConfiguration;
 
 	/**
 	 * Is this node type marked abstract
@@ -99,7 +106,7 @@ class NodeType {
 		$this->name = $name;
 
 		foreach ($declaredSuperTypes as $type) {
-			if (!$type instanceof NodeType) {
+			if ($type !== NULL && !$type instanceof NodeType) {
 				throw new \InvalidArgumentException('$declaredSuperTypes must be an array of NodeType objects', 1291300950);
 			}
 		}
@@ -115,7 +122,7 @@ class NodeType {
 			unset($configuration['final']);
 		}
 
-		$this->configuration = $configuration;
+		$this->localConfiguration = $configuration;
 	}
 
 	/**
@@ -128,7 +135,21 @@ class NodeType {
 			return;
 		}
 		$this->initialized = TRUE;
+		$this->buildFullConfiguration();
 		$this->applyPostprocessing();
+	}
+
+	/**
+	 *
+	 *
+	 * @return void
+	 */
+	protected function buildFullConfiguration() {
+		$mergedConfiguration = array();
+		foreach ($this->declaredSuperTypes as $key => $superType) {
+			$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getFullConfiguration());
+		}
+		$this->fullConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 	}
 
 	/**
@@ -138,10 +159,10 @@ class NodeType {
 	 * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException
 	 */
 	protected function applyPostprocessing() {
-		if (!isset($this->configuration['postprocessors'])) {
+		if (!isset($this->fullConfiguration['postprocessors'])) {
 			return;
 		}
-		foreach ($this->configuration['postprocessors'] as $postprocessorConfiguration) {
+		foreach ($this->fullConfiguration['postprocessors'] as $postprocessorConfiguration) {
 			$postprocessor = new $postprocessorConfiguration['postprocessor']();
 			if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
 				throw new InvalidNodeTypePostprocessorException(sprintf('Expected NodeTypePostprocessorInterface but got "%s"', get_class($postprocessor)), 1364759955);
@@ -150,7 +171,7 @@ class NodeType {
 			if (isset($postprocessorConfiguration['postprocessorOptions'])) {
 				$postprocessorOptions = $postprocessorConfiguration['postprocessorOptions'];
 			}
-			$postprocessor->process($this, $this->configuration, $postprocessorOptions);
+			$postprocessor->process($this, $this->fullConfiguration, $postprocessorOptions);
 		}
 	}
 
@@ -224,7 +245,7 @@ class NodeType {
 			return TRUE;
 		}
 		foreach ($this->declaredSuperTypes as $superType) {
-			if ($superType->isOfType($nodeType) === TRUE) {
+			if ($superType !== NULL && $superType->isOfType($nodeType) === TRUE) {
 				return TRUE;
 			}
 		}
@@ -240,7 +261,7 @@ class NodeType {
 	 */
 	public function getFullConfiguration() {
 		$this->initialize();
-		return $this->configuration;
+		return $this->fullConfiguration;
 	}
 
 	/**
@@ -263,7 +284,7 @@ class NodeType {
 	 */
 	public function getConfiguration($configurationPath) {
 		$this->initialize();
-		return ObjectAccess::getPropertyPath($this->configuration, $configurationPath);
+		return ObjectAccess::getPropertyPath($this->fullConfiguration, $configurationPath);
 	}
 
 	/**
@@ -274,7 +295,7 @@ class NodeType {
 	 */
 	public function getLabel() {
 		$this->initialize();
-		return isset($this->configuration['ui']) && isset($this->configuration['ui']['label']) ? $this->configuration['ui']['label'] : '';
+		return isset($this->fullConfiguration['ui']) && isset($this->fullConfiguration['ui']['label']) ? $this->fullConfiguration['ui']['label'] : '';
 	}
 
 	/**
@@ -285,7 +306,7 @@ class NodeType {
 	 */
 	public function getOptions() {
 		$this->initialize();
-		return (isset($this->configuration['options']) ? $this->configuration['options'] : array());
+		return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : array());
 	}
 
 	/**
@@ -329,7 +350,7 @@ class NodeType {
 	 */
 	public function getProperties() {
 		$this->initialize();
-		return (isset($this->configuration['properties']) ? $this->configuration['properties'] : array());
+		return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : array());
 	}
 
 	/**
@@ -339,10 +360,10 @@ class NodeType {
 	 * @return string
 	 */
 	public function getPropertyType($propertyName) {
-		if (!isset($this->configuration['properties']) || !isset($this->configuration['properties'][$propertyName]) || !isset($this->configuration['properties'][$propertyName]['type'])) {
+		if (!isset($this->fullConfiguration['properties']) || !isset($this->fullConfiguration['properties'][$propertyName]) || !isset($this->fullConfiguration['properties'][$propertyName]['type'])) {
 			return 'string';
 		}
-		return $this->configuration['properties'][$propertyName]['type'];
+		return $this->fullConfiguration['properties'][$propertyName]['type'];
 	}
 
 	/**
@@ -355,12 +376,12 @@ class NodeType {
 	 */
 	public function getDefaultValuesForProperties() {
 		$this->initialize();
-		if (!isset($this->configuration['properties'])) {
+		if (!isset($this->fullConfiguration['properties'])) {
 			return array();
 		}
 
 		$defaultValues = array();
-		foreach ($this->configuration['properties'] as $propertyName => $propertyConfiguration) {
+		foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
 			if (isset($propertyConfiguration['defaultValue'])) {
 				$type = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : '';
 				switch ($type) {
@@ -384,12 +405,12 @@ class NodeType {
 	 */
 	public function getAutoCreatedChildNodes() {
 		$this->initialize();
-		if (!isset($this->configuration['childNodes'])) {
+		if (!isset($this->fullConfiguration['childNodes'])) {
 			return array();
 		}
 
 		$autoCreatedChildNodes = array();
-		foreach ($this->configuration['childNodes'] as $childNodeName => $childNodeConfiguration) {
+		foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
 			if (isset($childNodeConfiguration['type'])) {
 				$autoCreatedChildNodes[$childNodeName] = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
 			}

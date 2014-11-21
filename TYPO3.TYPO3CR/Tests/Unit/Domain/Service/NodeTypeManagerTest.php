@@ -299,7 +299,6 @@ class NodeTypeManagerTest extends UnitTestCase {
 		$this->assertTrue($nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Page')->isAggregate());
 	}
 
-
 	/**
 	 * @test
 	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException

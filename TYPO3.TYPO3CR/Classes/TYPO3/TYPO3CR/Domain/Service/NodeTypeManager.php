@@ -179,22 +179,32 @@ class NodeTypeManager {
 
 		$nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];
 
-		$mergedConfiguration = array();
 		$superTypes = array();
 		if (isset($nodeTypeConfiguration['superTypes'])) {
-			foreach ($nodeTypeConfiguration['superTypes'] as $superTypeName) {
+			foreach ($nodeTypeConfiguration['superTypes'] as $key => $superTypeName) {
+
+				// when removing supertypes by setting them to null, only string keys can be overridden
+				if ($superTypeName === NULL && is_string($key)) {
+					$superTypes[$key] = NULL;
+					continue;
+				} elseif ($superTypeName === NULL) {
+					throw new \TYPO3\TYPO3CR\Exception\NodeConfigurationException('Node type "' . $nodeTypeName . '" sets supertype with a non-string key to NULL.', 1416578395);
+				}
+
 				$superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
 				if ($superType->isFinal() === TRUE) {
 					throw new \TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException('Node type "' . $nodeTypeName . '" has a supertype "' . $superType->getName() . '" which is final.', 1316452423);
 				}
-				$superTypes[] = $superType;
-				$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getFullConfiguration());
-			}
-			unset($mergedConfiguration['superTypes']);
-		}
-		$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $nodeTypeConfiguration);
 
-		$nodeType = new NodeType($nodeTypeName, $superTypes, $mergedConfiguration);
+				if (is_string($key)) {
+					$superTypes[$key] = $superType;
+				} else {
+					$superTypes[] = $superType;
+				}
+			}
+		}
+
+		$nodeType = new NodeType($nodeTypeName, $superTypes, $nodeTypeConfiguration);
 
 		$this->cachedNodeTypes[$nodeTypeName] = $nodeType;
 		return $nodeType;
