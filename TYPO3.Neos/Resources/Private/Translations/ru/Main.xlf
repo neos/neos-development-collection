@@ -120,22 +120,22 @@
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click here to continue to the {0} page.</source>
-			<target xml:lang="ru">Click here to continue to the {0} page.</target></trans-unit>
+			<target xml:lang="ru">Нажмите здесь, чтобы перейти на страницу {0}.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click here to continue to the {0} asset.</source>
-			<target xml:lang="ru">Click here to continue to the {0} asset.</target></trans-unit>
+			<target xml:lang="ru">Нажмите здесь, для перехода к ресурсы {0}.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click here to continue to the {0} ext page.</source>
-			<target xml:lang="ru">Click here to continue to the {0} ext page.</target></trans-unit>
+			<target xml:lang="ru">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="ru">(no target has been selected)</target></trans-unit>
+			<target xml:lang="ru">(цель не была выбрана)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="ru">Это ярлык для первой дочерней страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="ru">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="ru">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
 				<source>Full Screen</source>
