@@ -65,6 +65,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+          position: 50
           editorOptions:
             features:
               crop: TRUE
@@ -76,6 +77,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+          position: 100
     title:
       type: string
       ui:
@@ -83,6 +85,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+          position: 150
 
 # Image caption mixin
 'TYPO3.Neos.NodeTypes:ImageCaptionMixin':
@@ -95,6 +98,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+          position: 200
     caption:
       type: string
       defaultValue: '<p>Enter caption here</p>'
@@ -113,6 +117,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
+          position: 400
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: 'Default'
@@ -136,6 +141,7 @@
         label: 'Link'
         reloadIfChanged: TRUE
         inspector:
+          position: 300
           editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
 
 # Content image mixin
@@ -151,4 +157,3 @@
       ui:
         inspector:
           group: 'image'
-
