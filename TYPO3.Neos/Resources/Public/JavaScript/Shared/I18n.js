@@ -3,11 +3,13 @@
  */
 define(
 [
+	'emberjs',
 	'Library/jquery-with-dependencies',
 	'Library/underscore',
 	'Shared/Configuration',
 	'Library/handlebars'
 ], function(
+	Ember,
 	$,
 	_,
 	Configuration,
