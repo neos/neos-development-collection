@@ -4,25 +4,25 @@
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Noto Sans"), local("NotoSans"), url(../Fonts/NotoSans/NotoSans-Regular.ttf) format('truetype');
+  src: local("Noto Sans"), local("NotoSans"), url(../Fonts/NotoSans/NotoSans-Regular.ttf?1409499848) format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url(../Fonts/NotoSans/NotoSans-Bold.ttf) format('truetype');
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url(../Fonts/NotoSans/NotoSans-Bold.ttf?1409499848) format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url(../Fonts/NotoSans/NotoSans-Italic.ttf) format('truetype');
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url(../Fonts/NotoSans/NotoSans-Italic.ttf?1409499848) format('truetype');
 }
 @font-face {
   font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 700;
-  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url(../Fonts/NotoSans/NotoSans-BoldItalic.ttf) format('truetype');
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url(../Fonts/NotoSans/NotoSans-BoldItalic.ttf?1409499848) format('truetype');
 }
 /*!
  *  Font Awesome 3.2.1
@@ -185,46 +185,6 @@
   
   
   
-  @-moz-keyframes spin {
-    0% {
-      -moz-transform: rotate(0deg);
-    }
-    100% {
-      -moz-transform: rotate(359deg);
-    }
-}
-  @-webkit-keyframes spin {
-    0% {
-      -webkit-transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(359deg);
-    }
-}
-  @-o-keyframes spin {
-    0% {
-      -o-transform: rotate(0deg);
-    }
-    100% {
-      -o-transform: rotate(359deg);
-    }
-}
-  @-ms-keyframes spin {
-    0% {
-      -ms-transform: rotate(0deg);
-    }
-    100% {
-      -ms-transform: rotate(359deg);
-    }
-}
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(359deg);
-    }
-}
   
   
 }
@@ -262,6 +222,46 @@
 .neos a .icon-spin {
   display: inline-block;
   text-decoration: none;
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
+}
+@-ms-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(359deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 .neos .icon-rotate-90:before {
   -webkit-transform: rotate(90deg);
@@ -305,1113 +305,1113 @@
   display: inline-block;
 }
 .neos .icon-glass:before {
-  content: "\f000";
+  content: "";
 }
 .neos .icon-music:before {
-  content: "\f001";
+  content: "";
 }
 .neos .icon-search:before {
-  content: "\f002";
+  content: "";
 }
 .neos .icon-envelope-alt:before {
-  content: "\f003";
+  content: "";
 }
 .neos .icon-heart:before {
-  content: "\f004";
+  content: "";
 }
 .neos .icon-star:before {
-  content: "\f005";
+  content: "";
 }
 .neos .icon-star-empty:before {
-  content: "\f006";
+  content: "";
 }
 .neos .icon-user:before {
-  content: "\f007";
+  content: "";
 }
 .neos .icon-film:before {
-  content: "\f008";
+  content: "";
 }
 .neos .icon-th-large:before {
-  content: "\f009";
+  content: "";
 }
 .neos .icon-th:before {
-  content: "\f00a";
+  content: "";
 }
 .neos .icon-th-list:before {
-  content: "\f00b";
+  content: "";
 }
 .neos .icon-ok:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .icon-success:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-success .neos .icon-success:before {
-  content: "\f00c";
+  content: "";
 }
 .neos .icon-remove:before {
-  content: "\f00d";
+  content: "";
 }
 .neos .icon-zoom-in:before {
-  content: "\f00e";
+  content: "";
 }
 .neos .icon-zoom-out:before {
-  content: "\f010";
+  content: "";
 }
 .neos .icon-power-off:before,
 .neos .icon-off:before {
-  content: "\f011";
+  content: "";
 }
 .neos .icon-signal:before {
-  content: "\f012";
+  content: "";
 }
 .neos .icon-gear:before,
 .neos .icon-cog:before {
-  content: "\f013";
+  content: "";
 }
 .neos .icon-trash:before {
-  content: "\f014";
+  content: "";
 }
 .neos .icon-home:before {
-  content: "\f015";
+  content: "";
 }
 .neos .icon-file-alt:before {
-  content: "\f016";
+  content: "";
 }
 .neos .icon-time:before {
-  content: "\f017";
+  content: "";
 }
 .neos .icon-road:before {
-  content: "\f018";
+  content: "";
 }
 .neos .icon-download-alt:before {
-  content: "\f019";
+  content: "";
 }
 .neos .icon-download:before {
-  content: "\f01a";
+  content: "";
 }
 .neos .icon-upload:before {
-  content: "\f01b";
+  content: "";
 }
 .neos .icon-inbox:before {
-  content: "\f01c";
+  content: "";
 }
 .neos .icon-play-circle:before {
-  content: "\f01d";
+  content: "";
 }
 .neos .icon-rotate-right:before,
 .neos .icon-repeat:before {
-  content: "\f01e";
+  content: "";
 }
 .neos .icon-refresh:before {
-  content: "\f021";
+  content: "";
 }
 .neos .icon-list-alt:before {
-  content: "\f022";
+  content: "";
 }
 .neos .icon-lock:before {
-  content: "\f023";
+  content: "";
 }
 .neos .icon-flag:before {
-  content: "\f024";
+  content: "";
 }
 .neos .icon-headphones:before {
-  content: "\f025";
+  content: "";
 }
 .neos .icon-volume-off:before {
-  content: "\f026";
+  content: "";
 }
 .neos .icon-volume-down:before {
-  content: "\f027";
+  content: "";
 }
 .neos .icon-volume-up:before {
-  content: "\f028";
+  content: "";
 }
 .neos .icon-qrcode:before {
-  content: "\f029";
+  content: "";
 }
 .neos .icon-barcode:before {
-  content: "\f02a";
+  content: "";
 }
 .neos .icon-tag:before {
-  content: "\f02b";
+  content: "";
 }
 .neos .icon-tags:before {
-  content: "\f02c";
+  content: "";
 }
 .neos .icon-book:before {
-  content: "\f02d";
+  content: "";
 }
 .neos .icon-bookmark:before {
-  content: "\f02e";
+  content: "";
 }
 .neos .icon-print:before {
-  content: "\f02f";
+  content: "";
 }
 .neos .icon-camera:before {
-  content: "\f030";
+  content: "";
 }
 .neos .icon-font:before {
-  content: "\f031";
+  content: "";
 }
 .neos .icon-bold:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-bold:before,
 .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strong:before {
-  content: "\f032";
+  content: "";
 }
 .neos .icon-italic:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-italic:before,
 .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-emphasis:before {
-  content: "\f033";
+  content: "";
 }
 .neos .icon-text-height:before {
-  content: "\f034";
+  content: "";
 }
 .neos .icon-text-width:before {
-  content: "\f035";
+  content: "";
 }
 .neos .icon-align-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-left:before {
-  content: "\f036";
+  content: "";
 }
 .neos .icon-align-center:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-center:before {
-  content: "\f037";
+  content: "";
 }
 .neos .icon-align-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-right:before {
-  content: "\f038";
+  content: "";
 }
 .neos .icon-align-justify:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-align-justify:before {
-  content: "\f039";
+  content: "";
 }
 .neos .icon-list:before {
-  content: "\f03a";
+  content: "";
 }
 .neos .icon-indent-left:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-outdent:before {
-  content: "\f03b";
+  content: "";
 }
 .neos .icon-indent-right:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-indent:before {
-  content: "\f03c";
+  content: "";
 }
 .neos .icon-facetime-video:before {
-  content: "\f03d";
+  content: "";
 }
 .neos .icon-picture:before {
-  content: "\f03e";
+  content: "";
 }
 .neos .icon-pencil:before {
-  content: "\f040";
+  content: "";
 }
 .neos .icon-map-marker:before {
-  content: "\f041";
+  content: "";
 }
 .neos .icon-adjust:before {
-  content: "\f042";
+  content: "";
 }
 .neos .icon-tint:before {
-  content: "\f043";
+  content: "";
 }
 .neos .icon-edit:before {
-  content: "\f044";
+  content: "";
 }
 .neos .icon-share:before {
-  content: "\f045";
+  content: "";
 }
 .neos .icon-check:before {
-  content: "\f046";
+  content: "";
 }
 .neos .icon-move:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-toggledragdrop:before {
-  content: "\f047";
+  content: "";
 }
 .neos .icon-step-backward:before {
-  content: "\f048";
+  content: "";
 }
 .neos .icon-fast-backward:before {
-  content: "\f049";
+  content: "";
 }
 .neos .icon-backward:before {
-  content: "\f04a";
+  content: "";
 }
 .neos .icon-play:before {
-  content: "\f04b";
+  content: "";
 }
 .neos .icon-pause:before {
-  content: "\f04c";
+  content: "";
 }
 .neos .icon-stop:before {
-  content: "\f04d";
+  content: "";
 }
 .neos .icon-forward:before {
-  content: "\f04e";
+  content: "";
 }
 .neos .icon-fast-forward:before {
-  content: "\f050";
+  content: "";
 }
 .neos .icon-step-forward:before {
-  content: "\f051";
+  content: "";
 }
 .neos .icon-eject:before {
-  content: "\f052";
+  content: "";
 }
 .neos .icon-chevron-left:before {
-  content: "\f053";
+  content: "";
 }
 .neos .icon-chevron-right:before {
-  content: "\f054";
+  content: "";
 }
 .neos .icon-plus-sign:before {
-  content: "\f055";
+  content: "";
 }
 .neos .icon-minus-sign:before {
-  content: "\f056";
+  content: "";
 }
 .neos .icon-remove-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification i.neos-close-button:before, #neos-notification-container.neos-notification-top > .neos-notification .neos i.neos-close-button:before {
-  content: "\f057";
+  content: "";
 }
 .neos .icon-ok-sign:before {
-  content: "\f058";
+  content: "";
 }
 .neos .icon-question-sign:before {
-  content: "\f059";
+  content: "";
 }
 .neos .icon-info-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .icon-info-circle:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-info .neos .icon-info-circle:before {
-  content: "\f05a";
+  content: "";
 }
 .neos .icon-screenshot:before {
-  content: "\f05b";
+  content: "";
 }
 .neos .icon-remove-circle:before {
-  content: "\f05c";
+  content: "";
 }
 .neos .icon-ok-circle:before {
-  content: "\f05d";
+  content: "";
 }
 .neos .icon-ban-circle:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .icon-error:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-error .neos .icon-error:before {
-  content: "\f05e";
+  content: "";
 }
 .neos .icon-arrow-left:before {
-  content: "\f060";
+  content: "";
 }
 .neos .icon-arrow-right:before {
-  content: "\f061";
+  content: "";
 }
 .neos .icon-arrow-up:before {
-  content: "\f062";
+  content: "";
 }
 .neos .icon-arrow-down:before {
-  content: "\f063";
+  content: "";
 }
 .neos .icon-mail-forward:before,
 .neos .icon-share-alt:before {
-  content: "\f064";
+  content: "";
 }
 .neos .icon-resize-full:before {
-  content: "\f065";
+  content: "";
 }
 .neos .icon-resize-small:before {
-  content: "\f066";
+  content: "";
 }
 .neos .icon-plus:before {
-  content: "\f067";
+  content: "";
 }
 .neos .icon-minus:before {
-  content: "\f068";
+  content: "";
 }
 .neos .icon-asterisk:before {
-  content: "\f069";
+  content: "";
 }
 .neos .icon-exclamation-sign:before {
-  content: "\f06a";
+  content: "";
 }
 .neos .icon-gift:before {
-  content: "\f06b";
+  content: "";
 }
 .neos .icon-leaf:before {
-  content: "\f06c";
+  content: "";
 }
 .neos .icon-fire:before {
-  content: "\f06d";
+  content: "";
 }
 .neos .icon-eye-open:before {
-  content: "\f06e";
+  content: "";
 }
 .neos .icon-eye-close:before {
-  content: "\f070";
+  content: "";
 }
 .neos .icon-warning-sign:before, .neos #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .icon-warning:before, #neos-notification-container.neos-notification-top > .neos-notification.neos-notification-warning .neos .icon-warning:before {
-  content: "\f071";
+  content: "";
 }
 .neos .icon-plane:before {
-  content: "\f072";
+  content: "";
 }
 .neos .icon-calendar:before {
-  content: "\f073";
+  content: "";
 }
 .neos .icon-random:before {
-  content: "\f074";
+  content: "";
 }
 .neos .icon-comment:before {
-  content: "\f075";
+  content: "";
 }
 .neos .icon-magnet:before {
-  content: "\f076";
+  content: "";
 }
 .neos .icon-chevron-up:before {
-  content: "\f077";
+  content: "";
 }
 .neos .icon-chevron-down:before {
-  content: "\f078";
+  content: "";
 }
 .neos .icon-retweet:before {
-  content: "\f079";
+  content: "";
 }
 .neos .icon-shopping-cart:before {
-  content: "\f07a";
+  content: "";
 }
 .neos .icon-folder-close:before {
-  content: "\f07b";
+  content: "";
 }
 .neos .icon-folder-open:before {
-  content: "\f07c";
+  content: "";
 }
 .neos .icon-resize-vertical:before {
-  content: "\f07d";
+  content: "";
 }
 .neos .icon-resize-horizontal:before {
-  content: "\f07e";
+  content: "";
 }
 .neos .icon-bar-chart:before {
-  content: "\f080";
+  content: "";
 }
 .neos .icon-twitter-sign:before {
-  content: "\f081";
+  content: "";
 }
 .neos .icon-facebook-sign:before {
-  content: "\f082";
+  content: "";
 }
 .neos .icon-camera-retro:before {
-  content: "\f083";
+  content: "";
 }
 .neos .icon-key:before {
-  content: "\f084";
+  content: "";
 }
 .neos .icon-gears:before,
 .neos .icon-cogs:before {
-  content: "\f085";
+  content: "";
 }
 .neos .icon-comments:before {
-  content: "\f086";
+  content: "";
 }
 .neos .icon-thumbs-up-alt:before {
-  content: "\f087";
+  content: "";
 }
 .neos .icon-thumbs-down-alt:before {
-  content: "\f088";
+  content: "";
 }
 .neos .icon-star-half:before {
-  content: "\f089";
+  content: "";
 }
 .neos .icon-heart-empty:before {
-  content: "\f08a";
+  content: "";
 }
 .neos .icon-signout:before {
-  content: "\f08b";
+  content: "";
 }
 .neos .icon-linkedin-sign:before {
-  content: "\f08c";
+  content: "";
 }
 .neos .icon-pushpin:before {
-  content: "\f08d";
+  content: "";
 }
 .neos .icon-external-link:before {
-  content: "\f08e";
+  content: "";
 }
 .neos .icon-signin:before {
-  content: "\f090";
+  content: "";
 }
 .neos .icon-trophy:before {
-  content: "\f091";
+  content: "";
 }
 .neos .icon-github-sign:before {
-  content: "\f092";
+  content: "";
 }
 .neos .icon-upload-alt:before {
-  content: "\f093";
+  content: "";
 }
 .neos .icon-lemon:before {
-  content: "\f094";
+  content: "";
 }
 .neos .icon-phone:before {
-  content: "\f095";
+  content: "";
 }
 .neos .icon-unchecked:before,
 .neos .icon-check-empty:before {
-  content: "\f096";
+  content: "";
 }
 .neos .icon-bookmark-empty:before {
-  content: "\f097";
+  content: "";
 }
 .neos .icon-phone-sign:before {
-  content: "\f098";
+  content: "";
 }
 .neos .icon-twitter:before {
-  content: "\f099";
+  content: "";
 }
 .neos .icon-facebook:before {
-  content: "\f09a";
+  content: "";
 }
 .neos .icon-github:before {
-  content: "\f09b";
+  content: "";
 }
 .neos .icon-unlock:before {
-  content: "\f09c";
+  content: "";
 }
 .neos .icon-credit-card:before {
-  content: "\f09d";
+  content: "";
 }
 .neos .icon-rss:before {
-  content: "\f09e";
+  content: "";
 }
 .neos .icon-hdd:before {
-  content: "\f0a0";
+  content: "";
 }
 .neos .icon-bullhorn:before {
-  content: "\f0a1";
+  content: "";
 }
 .neos .icon-bell:before {
-  content: "\f0a2";
+  content: "";
 }
 .neos .icon-certificate:before {
-  content: "\f0a3";
+  content: "";
 }
 .neos .icon-hand-right:before {
-  content: "\f0a4";
+  content: "";
 }
 .neos .icon-hand-left:before {
-  content: "\f0a5";
+  content: "";
 }
 .neos .icon-hand-up:before {
-  content: "\f0a6";
+  content: "";
 }
 .neos .icon-hand-down:before {
-  content: "\f0a7";
+  content: "";
 }
 .neos .icon-circle-arrow-left:before {
-  content: "\f0a8";
+  content: "";
 }
 .neos .icon-circle-arrow-right:before {
-  content: "\f0a9";
+  content: "";
 }
 .neos .icon-circle-arrow-up:before {
-  content: "\f0aa";
+  content: "";
 }
 .neos .icon-circle-arrow-down:before {
-  content: "\f0ab";
+  content: "";
 }
 .neos .icon-globe:before {
-  content: "\f0ac";
+  content: "";
 }
 .neos .icon-wrench:before {
-  content: "\f0ad";
+  content: "";
 }
 .neos .icon-tasks:before {
-  content: "\f0ae";
+  content: "";
 }
 .neos .icon-filter:before {
-  content: "\f0b0";
+  content: "";
 }
 .neos .icon-briefcase:before {
-  content: "\f0b1";
+  content: "";
 }
 .neos .icon-fullscreen:before {
-  content: "\f0b2";
+  content: "";
 }
 .neos .icon-group:before {
-  content: "\f0c0";
+  content: "";
 }
 .neos .icon-link:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-link:before {
-  content: "\f0c1";
+  content: "";
 }
 .neos .icon-cloud:before {
-  content: "\f0c2";
+  content: "";
 }
 .neos .icon-beaker:before {
-  content: "\f0c3";
+  content: "";
 }
 .neos .icon-cut:before {
-  content: "\f0c4";
+  content: "";
 }
 .neos .icon-copy:before {
-  content: "\f0c5";
+  content: "";
 }
 .neos .icon-paperclip:before,
 .neos .icon-paper-clip:before {
-  content: "\f0c6";
+  content: "";
 }
 .neos .icon-save:before {
-  content: "\f0c7";
+  content: "";
 }
 .neos .icon-sign-blank:before {
-  content: "\f0c8";
+  content: "";
 }
 .neos .icon-reorder:before {
-  content: "\f0c9";
+  content: "";
 }
 .neos .icon-list-ul:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-unorderedlist:before {
-  content: "\f0ca";
+  content: "";
 }
 .neos .icon-list-ol:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-orderedlist:before {
-  content: "\f0cb";
+  content: "";
 }
 .neos .icon-strikethrough:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-strikethrough:before {
-  content: "\f0cc";
+  content: "";
 }
 .neos .icon-underline:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-underline:before {
-  content: "\f0cd";
+  content: "";
 }
 .neos .icon-table:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-createTable:before {
-  content: "\f0ce";
+  content: "";
 }
 .neos .icon-magic:before {
-  content: "\f0d0";
+  content: "";
 }
 .neos .icon-truck:before {
-  content: "\f0d1";
+  content: "";
 }
 .neos .icon-pinterest:before {
-  content: "\f0d2";
+  content: "";
 }
 .neos .icon-pinterest-sign:before {
-  content: "\f0d3";
+  content: "";
 }
 .neos .icon-google-plus-sign:before {
-  content: "\f0d4";
+  content: "";
 }
 .neos .icon-google-plus:before {
-  content: "\f0d5";
+  content: "";
 }
 .neos .icon-money:before {
-  content: "\f0d6";
+  content: "";
 }
 .neos .icon-caret-down:before {
-  content: "\f0d7";
+  content: "";
 }
 .neos .icon-caret-up:before {
-  content: "\f0d8";
+  content: "";
 }
 .neos .icon-caret-left:before {
-  content: "\f0d9";
+  content: "";
 }
 .neos .icon-caret-right:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-e .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-ed .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-el .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-exp-edl .neos-dynatree-expander:before, .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node .neos-dynatree-expander:before {
-  content: "\f0da";
+  content: "";
 }
 .neos .icon-columns:before {
-  content: "\f0db";
+  content: "";
 }
 .neos .icon-sort:before {
-  content: "\f0dc";
+  content: "";
 }
 .neos .icon-sort-down:before {
-  content: "\f0dd";
+  content: "";
 }
 .neos .icon-sort-up:before {
-  content: "\f0de";
+  content: "";
 }
 .neos .icon-envelope:before {
-  content: "\f0e0";
+  content: "";
 }
 .neos .icon-linkedin:before {
-  content: "\f0e1";
+  content: "";
 }
 .neos .icon-rotate-left:before,
 .neos .icon-undo:before {
-  content: "\f0e2";
+  content: "";
 }
 .neos .icon-legal:before {
-  content: "\f0e3";
+  content: "";
 }
 .neos .icon-dashboard:before {
-  content: "\f0e4";
+  content: "";
 }
 .neos .icon-comment-alt:before {
-  content: "\f0e5";
+  content: "";
 }
 .neos .icon-comments-alt:before {
-  content: "\f0e6";
+  content: "";
 }
 .neos .icon-bolt:before {
-  content: "\f0e7";
+  content: "";
 }
 .neos .icon-sitemap:before {
-  content: "\f0e8";
+  content: "";
 }
 .neos .icon-umbrella:before {
-  content: "\f0e9";
+  content: "";
 }
 .neos .icon-paste:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-formatless-paste:before {
-  content: "\f0ea";
+  content: "";
 }
 .neos .icon-lightbulb:before {
-  content: "\f0eb";
+  content: "";
 }
 .neos .icon-exchange:before {
-  content: "\f0ec";
+  content: "";
 }
 .neos .icon-cloud-download:before {
-  content: "\f0ed";
+  content: "";
 }
 .neos .icon-cloud-upload:before {
-  content: "\f0ee";
+  content: "";
 }
 .neos .icon-user-md:before {
-  content: "\f0f0";
+  content: "";
 }
 .neos .icon-stethoscope:before {
-  content: "\f0f1";
+  content: "";
 }
 .neos .icon-suitcase:before {
-  content: "\f0f2";
+  content: "";
 }
 .neos .icon-bell-alt:before {
-  content: "\f0f3";
+  content: "";
 }
 .neos .icon-coffee:before {
-  content: "\f0f4";
+  content: "";
 }
 .neos .icon-food:before {
-  content: "\f0f5";
+  content: "";
 }
 .neos .icon-file-text-alt:before {
-  content: "\f0f6";
+  content: "";
 }
 .neos .icon-building:before {
-  content: "\f0f7";
+  content: "";
 }
 .neos .icon-hospital:before {
-  content: "\f0f8";
+  content: "";
 }
 .neos .icon-ambulance:before {
-  content: "\f0f9";
+  content: "";
 }
 .neos .icon-medkit:before {
-  content: "\f0fa";
+  content: "";
 }
 .neos .icon-fighter-jet:before {
-  content: "\f0fb";
+  content: "";
 }
 .neos .icon-beer:before {
-  content: "\f0fc";
+  content: "";
 }
 .neos .icon-h-sign:before {
-  content: "\f0fd";
+  content: "";
 }
 .neos .icon-plus-sign-alt:before {
-  content: "\f0fe";
+  content: "";
 }
 .neos .icon-double-angle-left:before {
-  content: "\f100";
+  content: "";
 }
 .neos .icon-double-angle-right:before {
-  content: "\f101";
+  content: "";
 }
 .neos .icon-double-angle-up:before {
-  content: "\f102";
+  content: "";
 }
 .neos .icon-double-angle-down:before {
-  content: "\f103";
+  content: "";
 }
 .neos .icon-angle-left:before {
-  content: "\f104";
+  content: "";
 }
 .neos .icon-angle-right:before {
-  content: "\f105";
+  content: "";
 }
 .neos .icon-angle-up:before {
-  content: "\f106";
+  content: "";
 }
 .neos .icon-angle-down:before {
-  content: "\f107";
+  content: "";
 }
 .neos .icon-desktop:before {
-  content: "\f108";
+  content: "";
 }
 .neos .icon-laptop:before {
-  content: "\f109";
+  content: "";
 }
 .neos .icon-tablet:before {
-  content: "\f10a";
+  content: "";
 }
 .neos .icon-mobile-phone:before {
-  content: "\f10b";
+  content: "";
 }
 .neos .icon-circle-blank:before {
-  content: "\f10c";
+  content: "";
 }
 .neos .icon-quote-left:before {
-  content: "\f10d";
+  content: "";
 }
 .neos .icon-quote-right:before {
-  content: "\f10e";
+  content: "";
 }
 .neos .icon-spinner:before {
-  content: "\f110";
+  content: "";
 }
 .neos .icon-circle:before {
-  content: "\f111";
+  content: "";
 }
 .neos .icon-mail-reply:before,
 .neos .icon-reply:before {
-  content: "\f112";
+  content: "";
 }
 .neos .icon-github-alt:before {
-  content: "\f113";
+  content: "";
 }
 .neos .icon-folder-close-alt:before {
-  content: "\f114";
+  content: "";
 }
 .neos .icon-folder-open-alt:before {
-  content: "\f115";
+  content: "";
 }
 .neos .icon-expand-alt:before {
-  content: "\f116";
+  content: "";
 }
 .neos .icon-collapse-alt:before {
-  content: "\f117";
+  content: "";
 }
 .neos .icon-smile:before {
-  content: "\f118";
+  content: "";
 }
 .neos .icon-frown:before {
-  content: "\f119";
+  content: "";
 }
 .neos .icon-meh:before {
-  content: "\f11a";
+  content: "";
 }
 .neos .icon-gamepad:before {
-  content: "\f11b";
+  content: "";
 }
 .neos .icon-keyboard:before {
-  content: "\f11c";
+  content: "";
 }
 .neos .icon-flag-alt:before {
-  content: "\f11d";
+  content: "";
 }
 .neos .icon-flag-checkered:before {
-  content: "\f11e";
+  content: "";
 }
 .neos .icon-terminal:before {
-  content: "\f120";
+  content: "";
 }
 .neos .icon-code:before {
-  content: "\f121";
+  content: "";
 }
 .neos .icon-reply-all:before {
-  content: "\f122";
+  content: "";
 }
 .neos .icon-mail-reply-all:before {
-  content: "\f122";
+  content: "";
 }
 .neos .icon-star-half-full:before,
 .neos .icon-star-half-empty:before {
-  content: "\f123";
+  content: "";
 }
 .neos .icon-location-arrow:before {
-  content: "\f124";
+  content: "";
 }
 .neos .icon-crop:before {
-  content: "\f125";
+  content: "";
 }
 .neos .icon-code-fork:before {
-  content: "\f126";
+  content: "";
 }
 .neos .icon-unlink:before {
-  content: "\f127";
+  content: "";
 }
 .neos .icon-question:before {
-  content: "\f128";
+  content: "";
 }
 .neos .icon-info:before {
-  content: "\f129";
+  content: "";
 }
 .neos .icon-exclamation:before {
-  content: "\f12a";
+  content: "";
 }
 .neos .icon-superscript:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-superscript:before {
-  content: "\f12b";
+  content: "";
 }
 .neos .icon-subscript:before, .neos #neos-aloha-topmenu .aloha .ui-state-default .aloha-icon-subscript:before {
-  content: "\f12c";
+  content: "";
 }
 .neos .icon-eraser:before {
-  content: "\f12d";
+  content: "";
 }
 .neos .icon-puzzle-piece:before {
-  content: "\f12e";
+  content: "";
 }
 .neos .icon-microphone:before {
-  content: "\f130";
+  content: "";
 }
 .neos .icon-microphone-off:before {
-  content: "\f131";
+  content: "";
 }
 .neos .icon-shield:before {
-  content: "\f132";
+  content: "";
 }
 .neos .icon-calendar-empty:before {
-  content: "\f133";
+  content: "";
 }
 .neos .icon-fire-extinguisher:before {
-  content: "\f134";
+  content: "";
 }
 .neos .icon-rocket:before {
-  content: "\f135";
+  content: "";
 }
 .neos .icon-maxcdn:before {
-  content: "\f136";
+  content: "";
 }
 .neos .icon-chevron-sign-left:before {
-  content: "\f137";
+  content: "";
 }
 .neos .icon-chevron-sign-right:before {
-  content: "\f138";
+  content: "";
 }
 .neos .icon-chevron-sign-up:before {
-  content: "\f139";
+  content: "";
 }
 .neos .icon-chevron-sign-down:before {
-  content: "\f13a";
+  content: "";
 }
 .neos .icon-html5:before {
-  content: "\f13b";
+  content: "";
 }
 .neos .icon-css3:before {
-  content: "\f13c";
+  content: "";
 }
 .neos .icon-anchor:before {
-  content: "\f13d";
+  content: "";
 }
 .neos .icon-unlock-alt:before {
-  content: "\f13e";
+  content: "";
 }
 .neos .icon-bullseye:before {
-  content: "\f140";
+  content: "";
 }
 .neos .icon-ellipsis-horizontal:before {
-  content: "\f141";
+  content: "";
 }
 .neos .icon-ellipsis-vertical:before {
-  content: "\f142";
+  content: "";
 }
 .neos .icon-rss-sign:before {
-  content: "\f143";
+  content: "";
 }
 .neos .icon-play-sign:before {
-  content: "\f144";
+  content: "";
 }
 .neos .icon-ticket:before {
-  content: "\f145";
+  content: "";
 }
 .neos .icon-minus-sign-alt:before {
-  content: "\f146";
+  content: "";
 }
 .neos .icon-check-minus:before {
-  content: "\f147";
+  content: "";
 }
 .neos .icon-level-up:before {
-  content: "\f148";
+  content: "";
 }
 .neos .icon-level-down:before {
-  content: "\f149";
+  content: "";
 }
 .neos .icon-check-sign:before {
-  content: "\f14a";
+  content: "";
 }
 .neos .icon-edit-sign:before {
-  content: "\f14b";
+  content: "";
 }
 .neos .icon-external-link-sign:before {
-  content: "\f14c";
+  content: "";
 }
 .neos .icon-share-sign:before {
-  content: "\f14d";
+  content: "";
 }
 .neos .icon-compass:before {
-  content: "\f14e";
+  content: "";
 }
 .neos .icon-collapse:before {
-  content: "\f150";
+  content: "";
 }
 .neos .icon-collapse-top:before {
-  content: "\f151";
+  content: "";
 }
 .neos .icon-expand:before {
-  content: "\f152";
+  content: "";
 }
 .neos .icon-euro:before,
 .neos .icon-eur:before {
-  content: "\f153";
+  content: "";
 }
 .neos .icon-gbp:before {
-  content: "\f154";
+  content: "";
 }
 .neos .icon-dollar:before,
 .neos .icon-usd:before {
-  content: "\f155";
+  content: "";
 }
 .neos .icon-rupee:before,
 .neos .icon-inr:before {
-  content: "\f156";
+  content: "";
 }
 .neos .icon-yen:before,
 .neos .icon-jpy:before {
-  content: "\f157";
+  content: "";
 }
 .neos .icon-renminbi:before,
 .neos .icon-cny:before {
-  content: "\f158";
+  content: "";
 }
 .neos .icon-won:before,
 .neos .icon-krw:before {
-  content: "\f159";
+  content: "";
 }
 .neos .icon-bitcoin:before,
 .neos .icon-btc:before {
-  content: "\f15a";
+  content: "";
 }
 .neos .icon-file:before {
-  content: "\f15b";
+  content: "";
 }
 .neos .icon-file-text:before {
-  content: "\f15c";
+  content: "";
 }
 .neos .icon-sort-by-alphabet:before {
-  content: "\f15d";
+  content: "";
 }
 .neos .icon-sort-by-alphabet-alt:before {
-  content: "\f15e";
+  content: "";
 }
 .neos .icon-sort-by-attributes:before {
-  content: "\f160";
+  content: "";
 }
 .neos .icon-sort-by-attributes-alt:before {
-  content: "\f161";
+  content: "";
 }
 .neos .icon-sort-by-order:before {
-  content: "\f162";
+  content: "";
 }
 .neos .icon-sort-by-order-alt:before {
-  content: "\f163";
+  content: "";
 }
 .neos .icon-thumbs-up:before {
-  content: "\f164";
+  content: "";
 }
 .neos .icon-thumbs-down:before {
-  content: "\f165";
+  content: "";
 }
 .neos .icon-youtube-sign:before {
-  content: "\f166";
+  content: "";
 }
 .neos .icon-youtube:before {
-  content: "\f167";
+  content: "";
 }
 .neos .icon-xing:before {
-  content: "\f168";
+  content: "";
 }
 .neos .icon-xing-sign:before {
-  content: "\f169";
+  content: "";
 }
 .neos .icon-youtube-play:before {
-  content: "\f16a";
+  content: "";
 }
 .neos .icon-dropbox:before {
-  content: "\f16b";
+  content: "";
 }
 .neos .icon-stackexchange:before {
-  content: "\f16c";
+  content: "";
 }
 .neos .icon-instagram:before {
-  content: "\f16d";
+  content: "";
 }
 .neos .icon-flickr:before {
-  content: "\f16e";
+  content: "";
 }
 .neos .icon-adn:before {
-  content: "\f170";
+  content: "";
 }
 .neos .icon-bitbucket:before {
-  content: "\f171";
+  content: "";
 }
 .neos .icon-bitbucket-sign:before {
-  content: "\f172";
+  content: "";
 }
 .neos .icon-tumblr:before {
-  content: "\f173";
+  content: "";
 }
 .neos .icon-tumblr-sign:before {
-  content: "\f174";
+  content: "";
 }
 .neos .icon-long-arrow-down:before {
-  content: "\f175";
+  content: "";
 }
 .neos .icon-long-arrow-up:before {
-  content: "\f176";
+  content: "";
 }
 .neos .icon-long-arrow-left:before {
-  content: "\f177";
+  content: "";
 }
 .neos .icon-long-arrow-right:before {
-  content: "\f178";
+  content: "";
 }
 .neos .icon-apple:before {
-  content: "\f179";
+  content: "";
 }
 .neos .icon-windows:before {
-  content: "\f17a";
+  content: "";
 }
 .neos .icon-android:before {
-  content: "\f17b";
+  content: "";
 }
 .neos .icon-linux:before {
-  content: "\f17c";
+  content: "";
 }
 .neos .icon-dribbble:before {
-  content: "\f17d";
+  content: "";
 }
 .neos .icon-skype:before {
-  content: "\f17e";
+  content: "";
 }
 .neos .icon-foursquare:before {
-  content: "\f180";
+  content: "";
 }
 .neos .icon-trello:before {
-  content: "\f181";
+  content: "";
 }
 .neos .icon-female:before {
-  content: "\f182";
+  content: "";
 }
 .neos .icon-male:before {
-  content: "\f183";
+  content: "";
 }
 .neos .icon-gittip:before {
-  content: "\f184";
+  content: "";
 }
 .neos .icon-sun:before {
-  content: "\f185";
+  content: "";
 }
 .neos .icon-moon:before {
-  content: "\f186";
+  content: "";
 }
 .neos .icon-archive:before {
-  content: "\f187";
+  content: "";
 }
 .neos .icon-bug:before {
-  content: "\f188";
+  content: "";
 }
 .neos .icon-vk:before {
-  content: "\f189";
+  content: "";
 }
 .neos .icon-weibo:before {
-  content: "\f18a";
+  content: "";
 }
 .neos .icon-renren:before {
-  content: "\f18b";
+  content: "";
 }
 .neos {
   
   font-size: 14px;
   line-height: 1em;
   text-align: left;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   
@@ -1532,11 +1532,6 @@
   vertical-align: top;
 }
 @media print {
-  .neos {
-    @page {
-      margin: 0.5cm;
-}
-  }
   .neos * {
     text-shadow: none !important;
     color: #000 !important;
@@ -1572,6 +1567,11 @@
   }
   .neos img {
     max-width: 100% !important;
+  }
+  @page {
+    .neos {
+      margin: 0.5cm;
+    }
   }
   .neos p,
   .neos h2,
@@ -1950,7 +1950,7 @@
   margin-bottom: 10px;
   font-size: 100%;
   line-height: 20px;
-  color: #555555;
+  color: #555;
   vertical-align: middle;
 }
 .neos input,
@@ -1977,8 +1977,8 @@
 .neos input[type="tel"],
 .neos input[type="color"],
 .neos .neos-uneditable-input {
-  background-color: white;
-  border: 1px solid #cccccc;
+  background-color: #fff;
+  border: 1px solid #ccc;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -2039,8 +2039,8 @@
 }
 .neos select {
   width: 220px;
-  border: 1px solid #cccccc;
-  background-color: white;
+  border: 1px solid #ccc;
+  background-color: #fff;
 }
 .neos select[multiple],
 .neos select[size] {
@@ -2058,7 +2058,7 @@
 .neos .neos-uneditable-textarea {
   color: #3f3f3f;
   background-color: #fcfcfc;
-  border-color: #cccccc;
+  border-color: #ccc;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
@@ -2074,15 +2074,15 @@
 }
 .neos input:-moz-placeholder,
 .neos textarea:-moz-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos input:-ms-input-placeholder,
 .neos textarea:-ms-input-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos input::-webkit-input-placeholder,
 .neos textarea::-webkit-input-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos .neos-radio,
 .neos .neos-checkbox {
@@ -2235,7 +2235,7 @@
 .neos .neos-uneditable-input {
   opacity: .65;
   cursor: not-allowed;
-  background-color: #eeeeee;
+  background-color: #eee;
 }
 .neos input[type="radio"][disabled],
 .neos input[type="checkbox"][disabled],
@@ -2397,7 +2397,7 @@
   padding: 19px 20px 20px;
   margin-top: 20px;
   margin-bottom: 20px;
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
   border-top: 1px solid #e5e5e5;
   *zoom: 1;
 }
@@ -2478,8 +2478,8 @@
   font-weight: normal;
   line-height: 20px;
   text-align: center;
-  text-shadow: 0 1px 0 white;
-  background-color: #eeeeee;
+  text-shadow: 0 1px 0 #fff;
+  background-color: #eee;
   border: 1px solid #ccc;
 }
 .neos .neos-input-append .neos-add-on,
@@ -2727,8 +2727,8 @@
   line-height: 20px;
   text-align: left;
   vertical-align: top;
-  border-top: 1px solid #dddddd;
-  color: white;
+  border-top: 1px solid #ddd;
+  color: #fff;
 }
 .neos .neos-table th {
   font-weight: bold;
@@ -2759,18 +2759,18 @@
   vertical-align: top;
 }
 .neos .neos-table tbody + tbody {
-  border-top: 2px solid #dddddd;
+  border-top: 2px solid #ddd;
 }
 .neos .neos-table .neos-table {
-  background-color: white;
+  background-color: #fff;
 }
 .neos .neos-table-condensed th,
 .neos .neos-table-condensed td {
   padding: 4px 5px;
-  color: white;
+  color: #fff;
 }
 .neos .neos-table-bordered {
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
   border-collapse: separate;
   *border-collapse: collapse;
   border-left: 0;
@@ -2780,7 +2780,7 @@
 }
 .neos .neos-table-bordered th,
 .neos .neos-table-bordered td {
-  border-left: 1px solid #dddddd;
+  border-left: 1px solid #ddd;
 }
 .neos .neos-table-bordered caption + thead tr:first-child th,
 .neos .neos-table-bordered caption + tbody tr:first-child th,
@@ -2857,7 +2857,7 @@
 }
 .neos .neos-table-hover tbody tr:hover > td,
 .neos .neos-table-hover tbody tr:hover > th {
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
 }
 .neos table td[class*="neos-span"],
 .neos table th[class*="neos-span"],
@@ -3003,7 +3003,7 @@
   width: 0;
   height: 0;
   vertical-align: top;
-  border-top: 4px solid black;
+  border-top: 4px solid #000;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
   content: "";
@@ -3023,7 +3023,7 @@
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   *border-right-width: 2px;
@@ -3049,7 +3049,7 @@
   *margin: -5px 0 5px;
   overflow: hidden;
   background-color: #e5e5e5;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #fff;
 }
 .neos .neos-dropdown-menu > li > a {
   display: block;
@@ -3057,7 +3057,7 @@
   clear: both;
   font-weight: normal;
   line-height: 20px;
-  color: #333333;
+  color: #333;
   white-space: nowrap;
 }
 .neos .neos-dropdown-menu > li > a:hover,
@@ -3065,12 +3065,12 @@
 .neos .neos-dropdown-submenu:hover > a,
 .neos .neos-dropdown-submenu:focus > a {
   text-decoration: none;
-  color: white;
+  color: #fff;
   background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -moz-linear-gradient(top, #08c, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#08c), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #08c, #0077b3);
+  background-image: -o-linear-gradient(top, #08c, #0077b3);
   background-image: linear-gradient(to bottom, #0088cc, #0077b3);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF0088CC', endColorstr='#FF0077B3', GradientType=0);
@@ -3078,14 +3078,14 @@
 .neos .neos-dropdown-menu > .neos-active > a,
 .neos .neos-dropdown-menu > .neos-active > a:hover,
 .neos .neos-dropdown-menu > .neos-active > a:focus {
-  color: white;
+  color: #fff;
   text-decoration: none;
   outline: 0;
   background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -moz-linear-gradient(top, #08c, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#08c), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #08c, #0077b3);
+  background-image: -o-linear-gradient(top, #08c, #0077b3);
   background-image: linear-gradient(to bottom, #0088cc, #0077b3);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF0088CC', endColorstr='#FF0077B3', GradientType=0);
@@ -3116,7 +3116,7 @@
 .neos .neos-dropup .neos-caret,
 .neos .neos-navbar-fixed-bottom .neos-dropdown .neos-caret {
   border-top: 0;
-  border-bottom: 4px solid black;
+  border-bottom: 4px solid #000;
   content: "";
 }
 .neos .neos-dropup .neos-dropdown-menu,
@@ -3163,7 +3163,7 @@
   margin-right: -10px;
 }
 .neos .neos-dropdown-submenu:hover > a:after {
-  border-left-color: white;
+  border-left-color: #fff;
 }
 .neos .neos-dropdown-submenu.neos-pull-left {
   float: none;
@@ -3190,7 +3190,7 @@
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
   border: 1px solid #e3e3e3;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -3242,13 +3242,13 @@
   font-size: 20px;
   font-weight: bold;
   line-height: 20px;
-  color: black;
+  color: #000;
   text-shadow: 0 1px 0 white;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2;
 }
 .neos .neos-close:hover, .neos .neos-close:focus {
-  color: black;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
@@ -3300,7 +3300,7 @@
 }
 .neos a.neos-thumbnail:hover,
 .neos a.neos-thumbnail:focus {
-  border-color: #0088cc;
+  border-color: #08c;
   -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
@@ -3313,7 +3313,7 @@
 }
 .neos .neos-thumbnail .neos-caption {
   padding: 9px;
-  color: #555555;
+  color: #555;
 }
 .neos button,
 .neos .neos-button {
@@ -3542,7 +3542,7 @@
   background-color: #2f96b4;
 }
 .neos .neos-button-group.neos-open .neos-button-inverse.neos-dropdown-toggle {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-button .neos-caret {
   margin-top: 8px;
@@ -3569,8 +3569,8 @@
 .neos .neos-button-info .neos-caret,
 .neos .neos-button-success .neos-caret,
 .neos .neos-button-inverse .neos-caret {
-  border-top-color: white;
-  border-bottom-color: white;
+  border-top-color: #fff;
+  border-bottom-color: #fff;
 }
 .neos .neos-button-group-vertical {
   display: inline-block;
@@ -3624,7 +3624,7 @@
   *display: inline;
   
   *zoom: 1;
-  text-shadow: 0 1px 0 white;
+  text-shadow: 0 1px 0 #fff;
 }
 .neos .neos-breadcrumb > li > .neos-divider {
   padding: 0 5px;
@@ -3640,7 +3640,7 @@
   bottom: 0;
   left: 0;
   z-index: 10040;
-  background-color: black;
+  background-color: #000;
 }
 .neos .neos-modal-backdrop.neos-fade {
   opacity: 0;
@@ -3656,8 +3656,8 @@
   left: 50%;
   z-index: 10050;
   margin: 0px 0px 0px -17.5%;
-  color: white;
-  background: #222222;
+  color: #fff;
+  background: #222;
   border: 1px solid #3f3f3f;
   padding: 0px;
   width: 35%;
@@ -3700,7 +3700,7 @@
   margin-left: 16px;
   border-left: none;
   text-shadow: none;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
   font-family: FontAwesome;
   font-weight: normal;
@@ -3713,7 +3713,7 @@
   box-sizing: border-box;
 }
 .neos .neos-modal .neos-modal-header .neos-close:before {
-  content: "\f00d";
+  content: "";
 }
 .neos .neos-modal .neos-modal-header .neos-close:hover {
   background: #00b5ff;
@@ -3814,10 +3814,10 @@
 .neos .neos-tooltip-inner {
   max-width: 200px;
   padding: 8px;
-  color: white;
+  color: #fff;
   text-align: center;
   text-decoration: none;
-  background-color: black;
+  background-color: #000;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -3834,28 +3834,28 @@
   left: 50%;
   margin-left: -5px;
   border-width: 5px 5px 0;
-  border-top-color: black;
+  border-top-color: #000;
 }
 .neos .neos-tooltip.neos-right .neos-tooltip-arrow {
   top: 50%;
   left: 0;
   margin-top: -5px;
   border-width: 5px 5px 5px 0;
-  border-right-color: black;
+  border-right-color: #000;
 }
 .neos .neos-tooltip.neos-left .neos-tooltip-arrow {
   top: 50%;
   right: 0;
   margin-top: -5px;
   border-width: 5px 0 5px 5px;
-  border-left-color: black;
+  border-left-color: #000;
 }
 .neos .neos-tooltip.neos-bottom .neos-tooltip-arrow {
   top: 0;
   left: 50%;
   margin-left: -5px;
   border-width: 0 5px 5px;
-  border-bottom-color: black;
+  border-bottom-color: #000;
 }
 .neos .neos-label,
 .neos .neos-badge {
@@ -3864,7 +3864,7 @@
   font-size: 84.6%;
   font-weight: bold;
   line-height: 14px;
-  color: white;
+  color: #fff;
   vertical-align: baseline;
   white-space: nowrap;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -3887,7 +3887,7 @@
   display: none;
 }
 .neos a.neos-label:hover, .neos a.neos-label:focus, .neos a.neos-badge:hover, .neos a.neos-badge:focus {
-  color: white;
+  color: #fff;
   text-decoration: none;
   cursor: pointer;
 }
@@ -3904,7 +3904,7 @@
   background-color: #00b5ff;
 }
 .neos .neos-label-inverse {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-badge-important {
   background-color: #ff460d;
@@ -3919,7 +3919,7 @@
   background-color: #00b5ff;
 }
 .neos .neos-badge-inverse {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos .neos-button .neos-label,
 .neos .neos-button .neos-badge {
@@ -4831,11 +4831,6 @@
 .neos .neos-clear {
   clear: both;
 }
-.neos .neos-controls #neos-neos-top {
-  -webkit-box-shadow: 0 0 0 transparent;
-  -moz-box-shadow: 0 0 0 transparent;
-  box-shadow: 0 0 0 transparent;
-}
 .neos .neos-pageloader-wrapper {
   position: fixed;
   top: 0;
@@ -4852,9 +4847,9 @@
   left: 50% !important;
   margin-top: 41px;
   margin-left: -190px;
-  -webkit-transition-property: margin;
   -moz-transition-property: margin;
   -o-transition-property: margin;
+  -webkit-transition-property: margin;
   transition-property: margin;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -4878,7 +4873,7 @@
   background-color: #3f3f3f;
 }
 .neos ::-webkit-scrollbar-thumb {
-  background-color: #222222;
+  background-color: #222;
   border: 1px solid #3f3f3f;
 }
 .neos ::-webkit-scrollbar-corner {
@@ -4970,15 +4965,15 @@
   width: 41px;
   height: 42px;
   border: 1px solid #3f3f3f;
-  background-color: #222222;
+  background-color: #222;
   background-image: none;
   text-shadow: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  -webkit-transition-property: top;
   -moz-transition-property: top;
   -o-transition-property: top;
+  -webkit-transition-property: top;
   transition-property: top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -5007,15 +5002,15 @@
   bottom: 0;
   right: -321px;
   width: 320px;
-  background-color: #222222;
+  background-color: #222;
   z-index: 10014;
   border-top: 1px solid #3f3f3f;
   border-left: 1px solid #3f3f3f;
   padding-top: 40px;
   padding-bottom: 41px;
-  -webkit-transition-property: right;
   -moz-transition-property: right;
   -o-transition-property: right;
+  -webkit-transition-property: right;
   transition-property: right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -5139,7 +5134,7 @@
   line-height: 40px;
   border: 1px solid #323232;
   padding: 0;
-  background-color: #222222;
+  background-color: #222;
 }
 .neos #neos-inspector .neos-datetimepicker table tr td.neos-minute:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-hour:hover, .neos #neos-inspector .neos-datetimepicker table tr td.neos-day:hover {
   background-color: #00b5ff;
@@ -5187,7 +5182,7 @@
 }
 .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover {
   background-color: #00b5ff;
-  color: white;
+  color: #fff;
 }
 .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover:active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-active, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover.neos-disabled, .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active[disabled], .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active:hover[disabled], .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled[disabled], .neos #neos-inspector .neos-datetimepicker table tr td span.neos-active.neos-disabled:hover[disabled] {
   background-color: #00b5ff;
@@ -5338,7 +5333,7 @@
 }
 .neos #neos-inspector .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos #neos-inspector .chosen-container .chosen-single div:before, .neos #neos-inspector .chosen-container .chosen-single div:after {
   display: block;
@@ -5386,7 +5381,7 @@
   font-size: 17px;
   font-weight: bold;
   line-height: 18px;
-  color: #222222;
+  color: #222;
 }
 .neos #neos-inspector .chosen-container .chosen-drop {
   border: none;
@@ -5395,15 +5390,15 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
   color: inherit;
   margin-top: 0;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-search {
   padding: 0;
-  color: black;
+  color: #000;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -5417,7 +5412,7 @@
   width: 100%;
   height: 40px;
   border: none;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -5442,7 +5437,7 @@
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f002";
+  content: "";
   line-height: 100%;
   font-size: 12px;
 }
@@ -5453,7 +5448,7 @@
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
   line-height: 24px;
   padding: 8px 16px;
   -webkit-box-sizing: border-box;
@@ -5461,7 +5456,7 @@
   box-sizing: border-box;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-inspector .chosen-container .chosen-drop .chosen-results li.highlighted {
   background-color: #00b5ff;
@@ -5537,7 +5532,7 @@
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb div span {
   display: block;
   margin-right: 40px;
-  border-right: 1px solid #222222;
+  border-right: 1px solid #222;
   line-height: 40px;
   height: 40px;
   overflow: hidden;
@@ -5571,15 +5566,15 @@
   margin: 0;
   width: 100%;
   z-index: 10015;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li {
   position: relative;
   min-height: 40px;
   background-color: #323232;
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-inspector .neos-inspector-form #neos-content-breadcrumb ul li:first-child {
   background-color: #00b5ff;
@@ -5730,7 +5725,7 @@
   height: 40px;
   border: 2px solid #323232;
   background-color: #323232;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -5945,7 +5940,7 @@
   color: #fff;
   text-shadow: none;
   border: none;
-  border-right: 1px solid #222222;
+  border-right: 1px solid #222;
   padding: 9px;
   min-width: 41px;
   text-align: center;
@@ -5980,7 +5975,7 @@
   min-width: 0;
 }
 .neos #neos-inspector .neos-inspector-form span + .neos-add-on {
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
   border-right: none;
 }
 .neos #neos-inspector .neos-inspector-form .neos-tooltip.neos-bottom {
@@ -5989,7 +5984,7 @@
   margin-top: -1px;
 }
 .neos #neos-inspector .neos-inspector-form .neos-tooltip.neos-in {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
 .neos #neos-inspector .neos-inspector-form .neos-tooltip .neos-tooltip-arrow {
@@ -6014,8 +6009,8 @@
   bottom: 0;
   width: 100%;
   height: 40px;
-  border-top: 1px solid #222222;
-  background-color: #222222;
+  border-top: 1px solid #222;
+  background-color: #222;
 }
 .neos #neos-inspector .neos-actions button.neos-inspector-cancel {
   float: left;
@@ -6049,10 +6044,10 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
-  background-color: #222222;
-  -webkit-transition-property: top, left, padding-left, padding-right;
+  background-color: #222;
   -moz-transition-property: top, left, padding-left, padding-right;
   -o-transition-property: top, left, padding-left, padding-right;
+  -webkit-transition-property: top, left, padding-left, padding-right;
   transition-property: top, left, padding-left, padding-right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -6113,16 +6108,16 @@
   right: 0;
   top: 0;
   z-index: 10021;
-  background-color: #222222;
+  background-color: #222;
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   display: none;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 0;
-  -webkit-transition-property: top;
   -moz-transition-property: top;
   -o-transition-property: top;
+  -webkit-transition-property: top;
   transition-property: top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -6270,7 +6265,7 @@
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li {
   height: 40px;
   background: #323232;
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-top-bar #neos-user-actions .neos-dropdown-menu li:first-child,
 .neos #neos-top-bar #neos-publish-menu .neos-dropdown-menu li:first-child {
@@ -6332,14 +6327,14 @@
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
   background-color: #ff8700;
   cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
 .neos #neos-publish-menu.neos-button-group.neos-open .neos-dropdown-toggle {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
 .neos #neos-publish-menu.neos-button-group.neos-open .neos-dropdown-toggle::before {
@@ -6449,7 +6444,7 @@
 }
 .neos #neos-edit-preview-button {
   position: relative;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
 }
 .neos #neos-edit-preview-button:hover, .neos #neos-edit-preview-button.neos-pressed {
@@ -6483,9 +6478,9 @@
   background-color: #141414;
   z-index: 10013;
   border-bottom: 1px solid #3f3f3f;
-  -webkit-transition-property: top, left, right;
   -moz-transition-property: top, left, right;
   -o-transition-property: top, left, right;
+  -webkit-transition-property: top, left, right;
   transition-property: top, left, right;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -6547,9 +6542,9 @@
   height: 40px;
   border-bottom: 1px solid #3f3f3f;
   padding-right: 40px;
-  -webkit-transition-property: top, padding;
   -moz-transition-property: top, padding;
   -o-transition-property: top, padding;
+  -webkit-transition-property: top, padding;
   transition-property: top, padding;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -6651,7 +6646,7 @@
 }
 .neos #neos-context-bar .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos #neos-context-bar .chosen-container .chosen-single div:before, .neos #neos-context-bar .chosen-container .chosen-single div:after {
   display: block;
@@ -6699,7 +6694,7 @@
   font-size: 17px;
   font-weight: bold;
   line-height: 18px;
-  color: #222222;
+  color: #222;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop {
   border: none;
@@ -6708,15 +6703,15 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
   color: inherit;
   margin-top: 0;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
-  color: black;
+  color: #000;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -6730,7 +6725,7 @@
   width: 100%;
   height: 40px;
   border: none;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -6755,7 +6750,7 @@
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f002";
+  content: "";
   line-height: 100%;
   font-size: 12px;
 }
@@ -6766,7 +6761,7 @@
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
   line-height: 24px;
   padding: 8px 16px;
   -webkit-box-sizing: border-box;
@@ -6774,7 +6769,7 @@
   box-sizing: border-box;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-context-bar .chosen-container .chosen-drop .chosen-results li.highlighted {
   background-color: #00b5ff;
@@ -6814,11 +6809,11 @@
   float: left;
   width: 54px;
   height: 40px;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
-  -webkit-transition-property: top;
   -moz-transition-property: top;
   -o-transition-property: top;
+  -webkit-transition-property: top;
   transition-property: top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -6862,16 +6857,16 @@
   bottom: 0;
   left: -321px;
   width: 320px;
-  background-color: #222222;
+  background-color: #222;
   z-index: 10020;
   border-top: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   padding-top: 1px;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-transition-property: left, width;
   -moz-transition-property: left, width;
   -o-transition-property: left, width;
+  -webkit-transition-property: left, width;
   transition-property: left, width;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -6996,7 +6991,7 @@
 .neos #neos-menu-panel .neos-menu-section span.neos-menu-item i {
   display: block;
   position: absolute;
-  background-color: #222222;
+  background-color: #222;
   top: 0;
   left: 0;
   width: 54px;
@@ -7020,7 +7015,7 @@
   left: 0;
   width: 53px;
   height: 42px;
-  background-color: #222222;
+  background-color: #222;
   background-image: none;
   text-shadow: none;
   -webkit-box-shadow: none;
@@ -7045,7 +7040,7 @@
 }
 .neos #neos-navigate-button {
   position: relative;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
 }
 .neos #neos-navigate-button:hover, .neos #neos-navigate-button.neos-pressed {
@@ -7062,10 +7057,10 @@
   left: 0;
   bottom: -1px;
   position: absolute;
-  background-color: #222222;
+  background-color: #222;
 }
 .neos #neos-navigate-panel {
-  background-color: #222222;
+  background-color: #222;
   width: 321px;
   margin: 0;
   padding: 0;
@@ -7082,9 +7077,9 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-transition-property: left, margin-top;
   -moz-transition-property: left, margin-top;
   -o-transition-property: left, margin-top;
+  -webkit-transition-property: left, margin-top;
   transition-property: left, margin-top;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -7149,7 +7144,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f057";
+  content: "";
   position: absolute;
   left: 12px;
   top: 0px;
@@ -7171,7 +7166,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f017";
+  content: "";
   position: absolute;
   left: 12px;
   top: 0px;
@@ -7202,7 +7197,7 @@
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active span + span,
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-active a {
-  color: white;
+  color: #fff;
 }
 .neos #neos-navigate-panel ul.neos-dynatree-container .neos-dynatree-node.neos-dynatree-dirty {
   border-left: 3px solid #ff8700;
@@ -7526,7 +7521,7 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single div {
   width: 40px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single div:before, .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single div:after {
   display: block;
@@ -7574,7 +7569,7 @@
   font-size: 17px;
   font-weight: bold;
   line-height: 18px;
-  color: #222222;
+  color: #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop {
   border: none;
@@ -7583,15 +7578,15 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  -webkit-box-shadow: 1px 2px 5px #222222;
-  -moz-box-shadow: 1px 2px 5px #222222;
-  box-shadow: 1px 2px 5px #222222;
+  -webkit-box-shadow: 1px 2px 5px #222;
+  -moz-box-shadow: 1px 2px 5px #222;
+  box-shadow: 1px 2px 5px #222;
   color: inherit;
   margin-top: 0;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-search {
   padding: 0;
-  color: black;
+  color: #000;
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -7605,7 +7600,7 @@
   width: 100%;
   height: 40px;
   border: none;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -7630,7 +7625,7 @@
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f002";
+  content: "";
   line-height: 100%;
   font-size: 12px;
 }
@@ -7641,7 +7636,7 @@
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li {
   width: 100%;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
   line-height: 24px;
   padding: 8px 16px;
   -webkit-box-sizing: border-box;
@@ -7649,7 +7644,7 @@
   box-sizing: border-box;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li:first-child {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-drop .chosen-results li.highlighted {
   background-color: #00b5ff;
@@ -7667,7 +7662,7 @@
   line-height: 38px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .chosen-container .chosen-single > div {
   border-left: 1px solid #3f3f3f;
@@ -7698,7 +7693,7 @@
   *margin-right: .3em;
   height: 40px;
   font-size: 14px;
-  color: white;
+  color: #fff;
   line-height: 40px;
   width: 40px;
   text-align: center;
@@ -7731,12 +7726,12 @@
   color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before:after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 6px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after:after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 7px;
 }
@@ -7747,7 +7742,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
+  content: "";
   position: absolute;
   left: 18px;
   top: 9px;
@@ -7763,7 +7758,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
 }
@@ -7788,12 +7783,12 @@
   color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before:after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 5px;
 }
 .neos #neos-navigate-panel #neos-node-tree .neos-node-tree-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after:after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 6px;
 }
@@ -7804,7 +7799,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
+  content: "";
   position: absolute;
   left: 18px;
   top: 9px;
@@ -7820,7 +7815,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
@@ -7843,8 +7838,8 @@
   width: 100%;
   height: 40px;
   float: left;
-  background-color: #222222;
-  color: white;
+  background-color: #222;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -7957,7 +7952,7 @@
   *margin-right: .3em;
   height: 40px;
   font-size: 14px;
-  color: white;
+  color: #fff;
   line-height: 40px;
   width: 40px;
   text-align: center;
@@ -7991,12 +7986,12 @@
   color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-before:after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 6px;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-new-node.node-node-tree-new-node-after:after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 7px;
 }
@@ -8007,7 +8002,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
+  content: "";
   position: absolute;
   left: 18px;
   top: 9px;
@@ -8023,7 +8018,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
 }
@@ -8048,12 +8043,12 @@
   color: #5b5b5b;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-before:after {
-  content: "\f148";
+  content: "";
   left: 24px;
   top: 5px;
 }
 .neos #neos-navigate-panel #neos-context-structure #neos-context-structure-toolbar .neos-node-tree-paste-node.node-node-tree-paste-node-after:after {
-  content: "\f149";
+  content: "";
   left: 24px;
   top: 6px;
 }
@@ -8064,7 +8059,7 @@
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   *margin-right: .3em;
-  content: "\f178";
+  content: "";
   position: absolute;
   left: 18px;
   top: 9px;
@@ -8080,7 +8075,7 @@
   top: 40px;
   left: 0;
   z-index: 1;
-  background-color: #222222;
+  background-color: #222;
   border-left: 1px solid #3f3f3f;
   border-right: 1px solid #3f3f3f;
   border-bottom: 1px solid #3f3f3f;
@@ -8149,9 +8144,9 @@
 }
 .neos #neos-navigate-panel #neos-node-tree {
   height: 50%;
-  -webkit-transition-property: height;
   -moz-transition-property: height;
   -o-transition-property: height;
+  -webkit-transition-property: height;
   transition-property: height;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -8183,13 +8178,13 @@
   position: absolute;
   top: 40px;
   left: 0px;
-  border: 8px solid #222222;
+  border: 8px solid #222;
   padding: 8px 16px;
   color: white !important;
   background: #3f3f3f;
-  -webkit-transition-property: margin-left;
   -moz-transition-property: margin-left;
   -o-transition-property: margin-left;
+  -webkit-transition-property: margin-left;
   transition-property: margin-left;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -8261,7 +8256,7 @@
   top: -43px;
   border: 2px solid #00b5ff;
   border-bottom: 0px;
-  background-color: #eeeeee;
+  background-color: #eee;
 }
 .neos .neos-handle-container .neos-button-toolbar .neos-button-group .neos-button {
   background-color: transparent;
@@ -8436,7 +8431,7 @@
 }
 .neos.neos-module > .neos-module-wrap {
   position: relative;
-  background: #222222;
+  background: #222;
   padding: 80px 54px 40px 54px;
 }
 .neos.neos-module h1, .neos.neos-module h2, .neos.neos-module h3, .neos.neos-module h4, .neos.neos-module h5, .neos.neos-module h6 {
@@ -8566,7 +8561,7 @@
   line-height: 36px;
   border: 2px solid #3f3f3f;
   background-color: #3f3f3f;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -8637,7 +8632,7 @@
 .neos.neos-module textarea {
   border: 2px solid #3f3f3f;
   background-color: #3f3f3f;
-  color: white;
+  color: #fff;
   font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
@@ -8702,12 +8697,11 @@
 .neos.neos-module .neos-select:after {
   top: 0px;
   padding-top: 4px;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
 }
 .neos.neos-module .neos-select select {
-  -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
+  -webkit-appearance: none;
   -o-appearance: window;
   -moz-appearance: window;
   background-color: transparent;
@@ -8887,7 +8881,7 @@
   padding-right: 0 !important;
 }
 .neos.neos-module table.neos-table tr.neos-folder td {
-  background: #222222;
+  background: #222;
   padding-left: 0 !important;
   padding-right: 0 !important;
   border-top: 1px solid #323232;
@@ -8932,7 +8926,7 @@
 }
 .neos.neos-module table.neos-info-table tbody th span {
   font-weight: normal;
-  color: #eeeeee;
+  color: #eee;
   font-size: .9em;
 }
 .neos.neos-module table.neos-info-table tbody tr:first-child th,
@@ -8940,7 +8934,7 @@
   border-top: 0;
 }
 .neos.neos-module table td {
-  border-top: 1px solid #222222;
+  border-top: 1px solid #222;
 }
 .neos.neos-module table th {
   text-shadow: none;
@@ -9142,7 +9136,7 @@
   line-height: 40px;
   font-weight: normal;
   color: #fff;
-  border-bottom: 1px solid #222222;
+  border-bottom: 1px solid #222;
 }
 .neos .widget .widget-header h3 a {
   color: #fff;
@@ -9152,7 +9146,7 @@
   font-size: 12px;
   width: 40px;
   height: 40px;
-  border-right: 1px solid #222222;
+  border-right: 1px solid #222;
   margin-right: 16px;
 }
 .neos .widget .widget-header i:before {
@@ -9306,7 +9300,7 @@
 }
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle {
   float: right;
-  background-color: #222222;
+  background-color: #222;
 }
 .neos.media-browser .neos-sort-tags > h2 #neos-tags-list-edit-toggle.neos-active {
   background-color: #00b5ff;
@@ -9355,7 +9349,7 @@
   line-height: 1;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button {
-  background-color: #222222;
+  background-color: #222;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button:hover {
   background-color: #00b5ff;
@@ -9364,7 +9358,7 @@
   position: absolute;
   top: 1px;
   right: 0;
-  background-color: #222222;
+  background-color: #222;
   display: none;
 }
 .neos.media-browser .neos-sort-tags .neos-tags-list li button[type="submit"]:hover {
@@ -9710,11 +9704,12 @@
 .neos-contentelement > .neos-contentelement-overlay {
   position: absolute;
   display: none;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzMyMzIzMiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzMyMzIzMiIgc3RvcC1vcGFjaXR5PSIwLjIiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMzMjMyMzIiIHN0b3Atb3BhY2l0eT0iMC4xIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background-size: 100%;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 0.1)), color-stop(50%, rgba(50, 50, 50, 0.2)), color-stop(100%, rgba(50, 50, 50, 0.1)));
-  background-image: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: -moz-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
-  background-image: -o-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
-  background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+  background-image: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
+  background-image: linear-gradient(to bottom, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
 }
 .neos-contentcollection.neos-contentelement-active {
   outline: 2px solid #00b5ff !important;
@@ -9737,7 +9732,7 @@ button.neos-create-new-content {
   display: none;
 }
 .neos-rendering-exception {
-  background-color: #eeeeee;
+  background-color: #eee;
   padding-top: 8px;
   padding-left: 16px;
   padding-right: 16px;
@@ -9756,9 +9751,9 @@ button.neos-create-new-content {
   padding-left: 2em;
 }
 body.neos-backend {
-  -webkit-transition-property: margin;
   -moz-transition-property: margin;
   -o-transition-property: margin;
+  -webkit-transition-property: margin;
   transition-property: margin;
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
@@ -9946,7 +9941,7 @@ td.aloha-table-selectrow {
 }
 .aloha-cell-selected {
   background-color: #00b5ff !important;
-  color: white;
+  color: #fff;
 }
 .aloha-table td.aloha-table-selectrow,
 .aloha-table tr.aloha-table-selectcolumn td {
@@ -9968,7 +9963,7 @@ td.aloha-table-selectrow {
 .aloha-table-createdialog {
   z-index: 99999;
   position: absolute;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #444;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -10060,7 +10055,7 @@ td.aloha-table-selectrow {
   *margin-right: .3em;
   font-size: 16px;
   cursor: pointer;
-  color: white;
+  color: #fff;
 }
 .aloha-block-draghandle:hover {
   color: #00b5ff;
@@ -10069,7 +10064,7 @@ td.aloha-table-selectrow {
   text-decoration: inherit;
   display: inline-block;
   speak: none;
-  content: "\f047";
+  content: "";
 }
 .aloha-table-wrapper .aloha-table-leftuppercorner .aloha-wai-red,
 .aloha-table-wrapper .aloha-table-leftuppercorner .aloha-wai-green {
@@ -10099,7 +10094,7 @@ td.aloha-table-selectrow {
   background-color: #3f3f3f;
 }
 #aloha-ui-context ::-webkit-scrollbar-thumb {
-  background-color: #222222;
+  background-color: #222;
   border: 1px solid #3f3f3f;
 }
 #aloha-ui-context ::-webkit-scrollbar-corner {
@@ -10110,7 +10105,7 @@ td.aloha-table-selectrow {
   z-index: 10001;
   bottom: 0;
   overflow-y: auto;
-  background: #222222;
+  background: #222;
   padding: 0 16px 8px;
   width: 480px !important;
   border: 1px solid #3f3f3f;
@@ -10192,20 +10187,20 @@ td.aloha-table-selectrow {
   -ms-user-select: none;
   user-select: none;
   background-color: #fff;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
-  background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-  background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.5, #fff));
+  background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 50%);
+  background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 50%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0);
-  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to bottom, #ffffff 0%, #eeeeee 50%);
 }
 .neos-select2-container.neos-select2-drop-above .neos-select2-choice {
   border-bottom-color: #aaa;
   border-radius: 0 0 4px 4px;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.9, white));
-  background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 90%);
-  background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 90%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.9, #fff));
+  background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 90%);
+  background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 90%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
-  background-image: linear-gradient(top, #eeeeee 0%, #ffffff 90%);
+  background-image: linear-gradient(to bottom, #eeeeee 0%, #ffffff 90%);
 }
 .neos-select2-container.neos-select2-allowclear .neos-select2-choice .neos-select2-chosen {
   margin-right: 42px;
@@ -10302,11 +10297,11 @@ td.aloha-table-selectrow {
   border-radius: 0 4px 4px 0;
   background-clip: padding-box;
   background: #ccc;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #cccccc), color-stop(0.6, #eeeeee));
-  background-image: -webkit-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
-  background-image: -moz-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ccc), color-stop(0.6, #eee));
+  background-image: -webkit-linear-gradient(center bottom, #ccc 0%, #eee 60%);
+  background-image: -moz-linear-gradient(center bottom, #ccc 0%, #eee 60%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#cccccc', GradientType = 0);
-  background-image: linear-gradient(top, #cccccc 0%, #eeeeee 60%);
+  background-image: linear-gradient(to bottom, #cccccc 0%, #eeeeee 60%);
 }
 .neos-select2-container .neos-select2-choice .neos-select2-arrow b {
   display: block;
@@ -10338,21 +10333,21 @@ td.aloha-table-selectrow {
   border-radius: 0;
   -webkit-box-shadow: none;
   box-shadow: none;
-  background: white url(../Library/select2/select2.png) no-repeat 100% -22px;
-  background: url(../Library/select2/select2.png) no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
-  background: url(../Library/select2/select2.png) no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url(../Library/select2/select2.png) no-repeat 100% -22px, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url(../Library/select2/select2.png) no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  background: #fff url(../Library/select2/select2.png) no-repeat 100% -22px;
+  background: url(../Library/select2/select2.png) no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
+  background: url(../Library/select2/select2.png) no-repeat 100% -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url(../Library/select2/select2.png) no-repeat 100% -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url(../Library/select2/select2.png) no-repeat 100% -22px, linear-gradient(to bottom, #ffffff 85%, #eeeeee 99%);
 }
 .neos-select2-drop.neos-select2-drop-above .neos-select2-search input {
   margin-top: 4px;
 }
 .neos-select2-search input.neos-select2-active {
-  background: white url(select2-spinner.gif) no-repeat 100%;
-  background: url(select2-spinner.gif) no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
-  background: url(select2-spinner.gif) no-repeat 100%, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url(select2-spinner.gif) no-repeat 100%, -moz-linear-gradient(center bottom, white 85%, #eeeeee 99%);
-  background: url(select2-spinner.gif) no-repeat 100%, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  background: #fff url(select2-spinner.gif) no-repeat 100%;
+  background: url(select2-spinner.gif) no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
+  background: url(select2-spinner.gif) no-repeat 100%, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url(select2-spinner.gif) no-repeat 100%, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
+  background: url(select2-spinner.gif) no-repeat 100%, linear-gradient(to bottom, #ffffff 85%, #eeeeee 99%);
 }
 .neos-select2-container-active .neos-select2-choice,
 .neos-select2-container-active .neos-select2-choices {
@@ -10368,21 +10363,21 @@ td.aloha-table-selectrow {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   background-color: #eee;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, white), color-stop(0.5, #eeeeee));
-  background-image: -webkit-linear-gradient(center bottom, white 0%, #eeeeee 50%);
-  background-image: -moz-linear-gradient(center bottom, white 0%, #eeeeee 50%);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #fff), color-stop(0.5, #eee));
+  background-image: -webkit-linear-gradient(center bottom, #fff 0%, #eee 50%);
+  background-image: -moz-linear-gradient(center bottom, #fff 0%, #eee 50%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);
-  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to bottom, #ffffff 0%, #eeeeee 50%);
 }
 .neos-select2-dropdown-open.neos-select2-drop-above .neos-select2-choice,
 .neos-select2-dropdown-open.neos-select2-drop-above .neos-select2-choices {
   border: 1px solid #5897fb;
   border-top-color: transparent;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, white), color-stop(0.5, #eeeeee));
-  background-image: -webkit-linear-gradient(center top, white 0%, #eeeeee 50%);
-  background-image: -moz-linear-gradient(center top, white 0%, #eeeeee 50%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(0.5, #eee));
+  background-image: -webkit-linear-gradient(center top, #fff 0%, #eee 50%);
+  background-image: -moz-linear-gradient(center top, #fff 0%, #eee 50%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);
-  background-image: linear-gradient(bottom, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to top, #ffffff 0%, #eeeeee 50%);
 }
 .neos-select2-dropdown-open .neos-select2-choice .neos-select2-arrow {
   background: transparent;
@@ -10399,7 +10394,7 @@ td.aloha-table-selectrow {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 }
 .neos-select2-results ul.neos-select2-result-sub {
   margin: 0;
@@ -10511,10 +10506,10 @@ td.aloha-table-selectrow {
   cursor: text;
   overflow: hidden;
   background-color: #fff;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, white));
-  background-image: -webkit-linear-gradient(top, #eeeeee 1%, white 15%);
-  background-image: -moz-linear-gradient(top, #eeeeee 1%, white 15%);
-  background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eee), color-stop(15%, #fff));
+  background-image: -webkit-linear-gradient(top, #eee 1%, #fff 15%);
+  background-image: -moz-linear-gradient(top, #eee 1%, #fff 15%);
+  background-image: linear-gradient(to bottom, #eeeeee 1%, #ffffff 15%);
 }
 .neos-select2-locked {
   padding: 3px 5px 3px 5px !important;
@@ -10550,7 +10545,7 @@ td.aloha-table-selectrow {
   background: transparent !important;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-field input.neos-select2-active {
-  background: white url(select2-spinner.gif) no-repeat 100% !important;
+  background: #fff url(select2-spinner.gif) no-repeat 100% !important;
 }
 .neos-select2-default {
   color: #999 !important;
@@ -10564,8 +10559,8 @@ td.aloha-table-selectrow {
   cursor: default;
   border: 1px solid #aaaaaa;
   border-radius: 3px;
-  -webkit-box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
-  box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
   background-clip: padding-box;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -10574,10 +10569,10 @@ td.aloha-table-selectrow {
   user-select: none;
   background-color: #e4e4e4;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
-  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));
+  background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
+  background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
+  background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice .neos-select2-chosen {
   cursor: default;
@@ -10690,7 +10685,7 @@ td.aloha-table-selectrow {
   min-height: 40px !important;
   margin: 0;
   padding: 0 16px !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   background: #323232 !important;
   color: white !important;
   vertical-align: middle !important;
@@ -10715,7 +10710,7 @@ td.aloha-table-selectrow {
 .neos-select2-drop .neos-select2-results li.neos-select2-highlighted {
   background: #00b5ff !important;
   padding: 0 16px !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   color: white !important;
   vertical-align: middle !important;
 }
@@ -10748,7 +10743,7 @@ td.aloha-table-selectrow {
 }
 .neos-select2-container-multi .neos-select2-search-field input {
   min-width: 288px !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   border-left: 0 !important;
   border-right: 0 !important;
   border-bottom: 0 !important;
@@ -10763,7 +10758,7 @@ td.aloha-table-selectrow {
   background: #323232 !important;
   width: 256px !important;
   color: white !important;
-  border-top: 1px solid #222222 !important;
+  border-top: 1px solid #222 !important;
   border-left: 0 !important;
   border-right: 0 !important;
   border-bottom: 0 !important;
@@ -10777,7 +10772,7 @@ td.aloha-table-selectrow {
   height: 40px;
   width: 40px;
   background: none;
-  border-left: 1px solid #222222;
+  border-left: 1px solid #222;
   color: white;
   text-decoration: none;
 }
