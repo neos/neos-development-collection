@@ -10,7 +10,7 @@
 		padding: $relatedMargin $defaultMargin;
 		color: white !important;
 		background: $grayLight;
-		@include transition-property('margin-left');
+		@include transition-property(margin-left);
 		@include transition-duration(.2s);
 		@include font();
 		@include box-sizing(border-box);

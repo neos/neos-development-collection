@@ -10,7 +10,7 @@
 	width: 100%;
 	background-color: $grayDark;
 
-	@include transition-property('top, left, padding-left, padding-right');
+	@include transition-property(top, left, padding-left, padding-right);
 	@include transition-duration(.2s);
 
 	&.neos-secondary-inspector-open {

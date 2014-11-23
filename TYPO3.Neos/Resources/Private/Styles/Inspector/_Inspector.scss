@@ -46,7 +46,7 @@
 	border-left: 1px solid $grayLight;
 	padding-top: $unit;
 	padding-bottom: $unit + 1px;
-	@include transition-property('right');
+	@include transition-property(right);
 	@include transition-duration(.2s);
 	@include font;
 

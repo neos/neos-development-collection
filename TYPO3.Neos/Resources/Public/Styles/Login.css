@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* Color palette */
 /* Sizes & margins */
 /* Components */
@@ -36,7 +37,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
 /* FONT AWESOME CORE
  * -------------------------- */
 .neos {
@@ -171,56 +171,6 @@
   /* Stacked and layered icon */
   /* Animated rotating icon */
   /* Prevent stack and spinners from being taken inline when inside a link */
-  @-moz-keyframes spin {
-    0% {
-      -moz-transform: rotate(0deg);
-    }
-
-    100% {
-      -moz-transform: rotate(359deg);
-    }
-}
-
-  @-webkit-keyframes spin {
-    0% {
-      -webkit-transform: rotate(0deg);
-    }
-
-    100% {
-      -webkit-transform: rotate(359deg);
-    }
-}
-
-  @-o-keyframes spin {
-    0% {
-      -o-transform: rotate(0deg);
-    }
-
-    100% {
-      -o-transform: rotate(359deg);
-    }
-}
-
-  @-ms-keyframes spin {
-    0% {
-      -ms-transform: rotate(0deg);
-    }
-
-    100% {
-      -ms-transform: rotate(359deg);
-    }
-}
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(359deg);
-    }
-}
-
   /* Icon rotations and mirroring */
   /* ensure rotation occurs inside anchor tags */
 }
@@ -258,6 +208,46 @@
 .neos a .icon-spin {
   display: inline-block;
   text-decoration: none;
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
+}
+@-ms-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(359deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 .neos .icon-rotate-90:before {
   -webkit-transform: rotate(90deg);
@@ -304,1104 +294,1104 @@
 /* Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
  * readers do not read off random characters that represent icons */
 .neos .icon-glass:before {
-  content: "\f000";
+  content: "";
 }
 .neos .icon-music:before {
-  content: "\f001";
+  content: "";
 }
 .neos .icon-search:before {
-  content: "\f002";
+  content: "";
 }
 .neos .icon-envelope-alt:before {
-  content: "\f003";
+  content: "";
 }
 .neos .icon-heart:before {
-  content: "\f004";
+  content: "";
 }
 .neos .icon-star:before {
-  content: "\f005";
+  content: "";
 }
 .neos .icon-star-empty:before {
-  content: "\f006";
+  content: "";
 }
 .neos .icon-user:before {
-  content: "\f007";
+  content: "";
 }
 .neos .icon-film:before {
-  content: "\f008";
+  content: "";
 }
 .neos .icon-th-large:before {
-  content: "\f009";
+  content: "";
 }
 .neos .icon-th:before {
-  content: "\f00a";
+  content: "";
 }
 .neos .icon-th-list:before {
-  content: "\f00b";
+  content: "";
 }
 .neos .icon-ok:before {
-  content: "\f00c";
+  content: "";
 }
 .neos .icon-remove:before {
-  content: "\f00d";
+  content: "";
 }
 .neos .icon-zoom-in:before {
-  content: "\f00e";
+  content: "";
 }
 .neos .icon-zoom-out:before {
-  content: "\f010";
+  content: "";
 }
 .neos .icon-power-off:before,
 .neos .icon-off:before {
-  content: "\f011";
+  content: "";
 }
 .neos .icon-signal:before {
-  content: "\f012";
+  content: "";
 }
 .neos .icon-gear:before,
 .neos .icon-cog:before {
-  content: "\f013";
+  content: "";
 }
 .neos .icon-trash:before {
-  content: "\f014";
+  content: "";
 }
 .neos .icon-home:before {
-  content: "\f015";
+  content: "";
 }
 .neos .icon-file-alt:before {
-  content: "\f016";
+  content: "";
 }
 .neos .icon-time:before {
-  content: "\f017";
+  content: "";
 }
 .neos .icon-road:before {
-  content: "\f018";
+  content: "";
 }
 .neos .icon-download-alt:before {
-  content: "\f019";
+  content: "";
 }
 .neos .icon-download:before {
-  content: "\f01a";
+  content: "";
 }
 .neos .icon-upload:before {
-  content: "\f01b";
+  content: "";
 }
 .neos .icon-inbox:before {
-  content: "\f01c";
+  content: "";
 }
 .neos .icon-play-circle:before {
-  content: "\f01d";
+  content: "";
 }
 .neos .icon-rotate-right:before,
 .neos .icon-repeat:before {
-  content: "\f01e";
+  content: "";
 }
 .neos .icon-refresh:before {
-  content: "\f021";
+  content: "";
 }
 .neos .icon-list-alt:before {
-  content: "\f022";
+  content: "";
 }
 .neos .icon-lock:before {
-  content: "\f023";
+  content: "";
 }
 .neos .icon-flag:before {
-  content: "\f024";
+  content: "";
 }
 .neos .icon-headphones:before {
-  content: "\f025";
+  content: "";
 }
 .neos .icon-volume-off:before {
-  content: "\f026";
+  content: "";
 }
 .neos .icon-volume-down:before {
-  content: "\f027";
+  content: "";
 }
 .neos .icon-volume-up:before {
-  content: "\f028";
+  content: "";
 }
 .neos .icon-qrcode:before {
-  content: "\f029";
+  content: "";
 }
 .neos .icon-barcode:before {
-  content: "\f02a";
+  content: "";
 }
 .neos .icon-tag:before {
-  content: "\f02b";
+  content: "";
 }
 .neos .icon-tags:before {
-  content: "\f02c";
+  content: "";
 }
 .neos .icon-book:before {
-  content: "\f02d";
+  content: "";
 }
 .neos .icon-bookmark:before {
-  content: "\f02e";
+  content: "";
 }
 .neos .icon-print:before {
-  content: "\f02f";
+  content: "";
 }
 .neos .icon-camera:before {
-  content: "\f030";
+  content: "";
 }
 .neos .icon-font:before {
-  content: "\f031";
+  content: "";
 }
 .neos .icon-bold:before {
-  content: "\f032";
+  content: "";
 }
 .neos .icon-italic:before {
-  content: "\f033";
+  content: "";
 }
 .neos .icon-text-height:before {
-  content: "\f034";
+  content: "";
 }
 .neos .icon-text-width:before {
-  content: "\f035";
+  content: "";
 }
 .neos .icon-align-left:before {
-  content: "\f036";
+  content: "";
 }
 .neos .icon-align-center:before {
-  content: "\f037";
+  content: "";
 }
 .neos .icon-align-right:before {
-  content: "\f038";
+  content: "";
 }
 .neos .icon-align-justify:before {
-  content: "\f039";
+  content: "";
 }
 .neos .icon-list:before {
-  content: "\f03a";
+  content: "";
 }
 .neos .icon-indent-left:before {
-  content: "\f03b";
+  content: "";
 }
 .neos .icon-indent-right:before {
-  content: "\f03c";
+  content: "";
 }
 .neos .icon-facetime-video:before {
-  content: "\f03d";
+  content: "";
 }
 .neos .icon-picture:before {
-  content: "\f03e";
+  content: "";
 }
 .neos .icon-pencil:before {
-  content: "\f040";
+  content: "";
 }
 .neos .icon-map-marker:before {
-  content: "\f041";
+  content: "";
 }
 .neos .icon-adjust:before {
-  content: "\f042";
+  content: "";
 }
 .neos .icon-tint:before {
-  content: "\f043";
+  content: "";
 }
 .neos .icon-edit:before {
-  content: "\f044";
+  content: "";
 }
 .neos .icon-share:before {
-  content: "\f045";
+  content: "";
 }
 .neos .icon-check:before {
-  content: "\f046";
+  content: "";
 }
 .neos .icon-move:before {
-  content: "\f047";
+  content: "";
 }
 .neos .icon-step-backward:before {
-  content: "\f048";
+  content: "";
 }
 .neos .icon-fast-backward:before {
-  content: "\f049";
+  content: "";
 }
 .neos .icon-backward:before {
-  content: "\f04a";
+  content: "";
 }
 .neos .icon-play:before {
-  content: "\f04b";
+  content: "";
 }
 .neos .icon-pause:before {
-  content: "\f04c";
+  content: "";
 }
 .neos .icon-stop:before {
-  content: "\f04d";
+  content: "";
 }
 .neos .icon-forward:before {
-  content: "\f04e";
+  content: "";
 }
 .neos .icon-fast-forward:before {
-  content: "\f050";
+  content: "";
 }
 .neos .icon-step-forward:before {
-  content: "\f051";
+  content: "";
 }
 .neos .icon-eject:before {
-  content: "\f052";
+  content: "";
 }
 .neos .icon-chevron-left:before {
-  content: "\f053";
+  content: "";
 }
 .neos .icon-chevron-right:before {
-  content: "\f054";
+  content: "";
 }
 .neos .icon-plus-sign:before {
-  content: "\f055";
+  content: "";
 }
 .neos .icon-minus-sign:before {
-  content: "\f056";
+  content: "";
 }
 .neos .icon-remove-sign:before {
-  content: "\f057";
+  content: "";
 }
 .neos .icon-ok-sign:before {
-  content: "\f058";
+  content: "";
 }
 .neos .icon-question-sign:before {
-  content: "\f059";
+  content: "";
 }
 .neos .icon-info-sign:before {
-  content: "\f05a";
+  content: "";
 }
 .neos .icon-screenshot:before {
-  content: "\f05b";
+  content: "";
 }
 .neos .icon-remove-circle:before {
-  content: "\f05c";
+  content: "";
 }
 .neos .icon-ok-circle:before {
-  content: "\f05d";
+  content: "";
 }
 .neos .icon-ban-circle:before {
-  content: "\f05e";
+  content: "";
 }
 .neos .icon-arrow-left:before {
-  content: "\f060";
+  content: "";
 }
 .neos .icon-arrow-right:before {
-  content: "\f061";
+  content: "";
 }
 .neos .icon-arrow-up:before {
-  content: "\f062";
+  content: "";
 }
 .neos .icon-arrow-down:before {
-  content: "\f063";
+  content: "";
 }
 .neos .icon-mail-forward:before,
 .neos .icon-share-alt:before {
-  content: "\f064";
+  content: "";
 }
 .neos .icon-resize-full:before {
-  content: "\f065";
+  content: "";
 }
 .neos .icon-resize-small:before {
-  content: "\f066";
+  content: "";
 }
 .neos .icon-plus:before {
-  content: "\f067";
+  content: "";
 }
 .neos .icon-minus:before {
-  content: "\f068";
+  content: "";
 }
 .neos .icon-asterisk:before {
-  content: "\f069";
+  content: "";
 }
 .neos .icon-exclamation-sign:before {
-  content: "\f06a";
+  content: "";
 }
 .neos .icon-gift:before {
-  content: "\f06b";
+  content: "";
 }
 .neos .icon-leaf:before {
-  content: "\f06c";
+  content: "";
 }
 .neos .icon-fire:before {
-  content: "\f06d";
+  content: "";
 }
 .neos .icon-eye-open:before {
-  content: "\f06e";
+  content: "";
 }
 .neos .icon-eye-close:before {
-  content: "\f070";
+  content: "";
 }
 .neos .icon-warning-sign:before {
-  content: "\f071";
+  content: "";
 }
 .neos .icon-plane:before {
-  content: "\f072";
+  content: "";
 }
 .neos .icon-calendar:before {
-  content: "\f073";
+  content: "";
 }
 .neos .icon-random:before {
-  content: "\f074";
+  content: "";
 }
 .neos .icon-comment:before {
-  content: "\f075";
+  content: "";
 }
 .neos .icon-magnet:before {
-  content: "\f076";
+  content: "";
 }
 .neos .icon-chevron-up:before {
-  content: "\f077";
+  content: "";
 }
 .neos .icon-chevron-down:before {
-  content: "\f078";
+  content: "";
 }
 .neos .icon-retweet:before {
-  content: "\f079";
+  content: "";
 }
 .neos .icon-shopping-cart:before {
-  content: "\f07a";
+  content: "";
 }
 .neos .icon-folder-close:before {
-  content: "\f07b";
+  content: "";
 }
 .neos .icon-folder-open:before {
-  content: "\f07c";
+  content: "";
 }
 .neos .icon-resize-vertical:before {
-  content: "\f07d";
+  content: "";
 }
 .neos .icon-resize-horizontal:before {
-  content: "\f07e";
+  content: "";
 }
 .neos .icon-bar-chart:before {
-  content: "\f080";
+  content: "";
 }
 .neos .icon-twitter-sign:before {
-  content: "\f081";
+  content: "";
 }
 .neos .icon-facebook-sign:before {
-  content: "\f082";
+  content: "";
 }
 .neos .icon-camera-retro:before {
-  content: "\f083";
+  content: "";
 }
 .neos .icon-key:before {
-  content: "\f084";
+  content: "";
 }
 .neos .icon-gears:before,
 .neos .icon-cogs:before {
-  content: "\f085";
+  content: "";
 }
 .neos .icon-comments:before {
-  content: "\f086";
+  content: "";
 }
 .neos .icon-thumbs-up-alt:before {
-  content: "\f087";
+  content: "";
 }
 .neos .icon-thumbs-down-alt:before {
-  content: "\f088";
+  content: "";
 }
 .neos .icon-star-half:before {
-  content: "\f089";
+  content: "";
 }
 .neos .icon-heart-empty:before {
-  content: "\f08a";
+  content: "";
 }
 .neos .icon-signout:before {
-  content: "\f08b";
+  content: "";
 }
 .neos .icon-linkedin-sign:before {
-  content: "\f08c";
+  content: "";
 }
 .neos .icon-pushpin:before {
-  content: "\f08d";
+  content: "";
 }
 .neos .icon-external-link:before {
-  content: "\f08e";
+  content: "";
 }
 .neos .icon-signin:before {
-  content: "\f090";
+  content: "";
 }
 .neos .icon-trophy:before {
-  content: "\f091";
+  content: "";
 }
 .neos .icon-github-sign:before {
-  content: "\f092";
+  content: "";
 }
 .neos .icon-upload-alt:before {
-  content: "\f093";
+  content: "";
 }
 .neos .icon-lemon:before {
-  content: "\f094";
+  content: "";
 }
 .neos .icon-phone:before {
-  content: "\f095";
+  content: "";
 }
 .neos .icon-unchecked:before,
 .neos .icon-check-empty:before {
-  content: "\f096";
+  content: "";
 }
 .neos .icon-bookmark-empty:before {
-  content: "\f097";
+  content: "";
 }
 .neos .icon-phone-sign:before {
-  content: "\f098";
+  content: "";
 }
 .neos .icon-twitter:before {
-  content: "\f099";
+  content: "";
 }
 .neos .icon-facebook:before {
-  content: "\f09a";
+  content: "";
 }
 .neos .icon-github:before {
-  content: "\f09b";
+  content: "";
 }
 .neos .icon-unlock:before {
-  content: "\f09c";
+  content: "";
 }
 .neos .icon-credit-card:before {
-  content: "\f09d";
+  content: "";
 }
 .neos .icon-rss:before {
-  content: "\f09e";
+  content: "";
 }
 .neos .icon-hdd:before {
-  content: "\f0a0";
+  content: "";
 }
 .neos .icon-bullhorn:before {
-  content: "\f0a1";
+  content: "";
 }
 .neos .icon-bell:before {
-  content: "\f0a2";
+  content: "";
 }
 .neos .icon-certificate:before {
-  content: "\f0a3";
+  content: "";
 }
 .neos .icon-hand-right:before {
-  content: "\f0a4";
+  content: "";
 }
 .neos .icon-hand-left:before {
-  content: "\f0a5";
+  content: "";
 }
 .neos .icon-hand-up:before {
-  content: "\f0a6";
+  content: "";
 }
 .neos .icon-hand-down:before {
-  content: "\f0a7";
+  content: "";
 }
 .neos .icon-circle-arrow-left:before {
-  content: "\f0a8";
+  content: "";
 }
 .neos .icon-circle-arrow-right:before {
-  content: "\f0a9";
+  content: "";
 }
 .neos .icon-circle-arrow-up:before {
-  content: "\f0aa";
+  content: "";
 }
 .neos .icon-circle-arrow-down:before {
-  content: "\f0ab";
+  content: "";
 }
 .neos .icon-globe:before {
-  content: "\f0ac";
+  content: "";
 }
 .neos .icon-wrench:before {
-  content: "\f0ad";
+  content: "";
 }
 .neos .icon-tasks:before {
-  content: "\f0ae";
+  content: "";
 }
 .neos .icon-filter:before {
-  content: "\f0b0";
+  content: "";
 }
 .neos .icon-briefcase:before {
-  content: "\f0b1";
+  content: "";
 }
 .neos .icon-fullscreen:before {
-  content: "\f0b2";
+  content: "";
 }
 .neos .icon-group:before {
-  content: "\f0c0";
+  content: "";
 }
 .neos .icon-link:before {
-  content: "\f0c1";
+  content: "";
 }
 .neos .icon-cloud:before {
-  content: "\f0c2";
+  content: "";
 }
 .neos .icon-beaker:before {
-  content: "\f0c3";
+  content: "";
 }
 .neos .icon-cut:before {
-  content: "\f0c4";
+  content: "";
 }
 .neos .icon-copy:before {
-  content: "\f0c5";
+  content: "";
 }
 .neos .icon-paperclip:before,
 .neos .icon-paper-clip:before {
-  content: "\f0c6";
+  content: "";
 }
 .neos .icon-save:before {
-  content: "\f0c7";
+  content: "";
 }
 .neos .icon-sign-blank:before {
-  content: "\f0c8";
+  content: "";
 }
 .neos .icon-reorder:before {
-  content: "\f0c9";
+  content: "";
 }
 .neos .icon-list-ul:before {
-  content: "\f0ca";
+  content: "";
 }
 .neos .icon-list-ol:before {
-  content: "\f0cb";
+  content: "";
 }
 .neos .icon-strikethrough:before {
-  content: "\f0cc";
+  content: "";
 }
 .neos .icon-underline:before {
-  content: "\f0cd";
+  content: "";
 }
 .neos .icon-table:before {
-  content: "\f0ce";
+  content: "";
 }
 .neos .icon-magic:before {
-  content: "\f0d0";
+  content: "";
 }
 .neos .icon-truck:before {
-  content: "\f0d1";
+  content: "";
 }
 .neos .icon-pinterest:before {
-  content: "\f0d2";
+  content: "";
 }
 .neos .icon-pinterest-sign:before {
-  content: "\f0d3";
+  content: "";
 }
 .neos .icon-google-plus-sign:before {
-  content: "\f0d4";
+  content: "";
 }
 .neos .icon-google-plus:before {
-  content: "\f0d5";
+  content: "";
 }
 .neos .icon-money:before {
-  content: "\f0d6";
+  content: "";
 }
 .neos .icon-caret-down:before {
-  content: "\f0d7";
+  content: "";
 }
 .neos .icon-caret-up:before {
-  content: "\f0d8";
+  content: "";
 }
 .neos .icon-caret-left:before {
-  content: "\f0d9";
+  content: "";
 }
 .neos .icon-caret-right:before {
-  content: "\f0da";
+  content: "";
 }
 .neos .icon-columns:before {
-  content: "\f0db";
+  content: "";
 }
 .neos .icon-sort:before {
-  content: "\f0dc";
+  content: "";
 }
 .neos .icon-sort-down:before {
-  content: "\f0dd";
+  content: "";
 }
 .neos .icon-sort-up:before {
-  content: "\f0de";
+  content: "";
 }
 .neos .icon-envelope:before {
-  content: "\f0e0";
+  content: "";
 }
 .neos .icon-linkedin:before {
-  content: "\f0e1";
+  content: "";
 }
 .neos .icon-rotate-left:before,
 .neos .icon-undo:before {
-  content: "\f0e2";
+  content: "";
 }
 .neos .icon-legal:before {
-  content: "\f0e3";
+  content: "";
 }
 .neos .icon-dashboard:before {
-  content: "\f0e4";
+  content: "";
 }
 .neos .icon-comment-alt:before {
-  content: "\f0e5";
+  content: "";
 }
 .neos .icon-comments-alt:before {
-  content: "\f0e6";
+  content: "";
 }
 .neos .icon-bolt:before {
-  content: "\f0e7";
+  content: "";
 }
 .neos .icon-sitemap:before {
-  content: "\f0e8";
+  content: "";
 }
 .neos .icon-umbrella:before {
-  content: "\f0e9";
+  content: "";
 }
 .neos .icon-paste:before {
-  content: "\f0ea";
+  content: "";
 }
 .neos .icon-lightbulb:before {
-  content: "\f0eb";
+  content: "";
 }
 .neos .icon-exchange:before {
-  content: "\f0ec";
+  content: "";
 }
 .neos .icon-cloud-download:before {
-  content: "\f0ed";
+  content: "";
 }
 .neos .icon-cloud-upload:before {
-  content: "\f0ee";
+  content: "";
 }
 .neos .icon-user-md:before {
-  content: "\f0f0";
+  content: "";
 }
 .neos .icon-stethoscope:before {
-  content: "\f0f1";
+  content: "";
 }
 .neos .icon-suitcase:before {
-  content: "\f0f2";
+  content: "";
 }
 .neos .icon-bell-alt:before {
-  content: "\f0f3";
+  content: "";
 }
 .neos .icon-coffee:before {
-  content: "\f0f4";
+  content: "";
 }
 .neos .icon-food:before {
-  content: "\f0f5";
+  content: "";
 }
 .neos .icon-file-text-alt:before {
-  content: "\f0f6";
+  content: "";
 }
 .neos .icon-building:before {
-  content: "\f0f7";
+  content: "";
 }
 .neos .icon-hospital:before {
-  content: "\f0f8";
+  content: "";
 }
 .neos .icon-ambulance:before {
-  content: "\f0f9";
+  content: "";
 }
 .neos .icon-medkit:before {
-  content: "\f0fa";
+  content: "";
 }
 .neos .icon-fighter-jet:before {
-  content: "\f0fb";
+  content: "";
 }
 .neos .icon-beer:before {
-  content: "\f0fc";
+  content: "";
 }
 .neos .icon-h-sign:before {
-  content: "\f0fd";
+  content: "";
 }
 .neos .icon-plus-sign-alt:before {
-  content: "\f0fe";
+  content: "";
 }
 .neos .icon-double-angle-left:before {
-  content: "\f100";
+  content: "";
 }
 .neos .icon-double-angle-right:before {
-  content: "\f101";
+  content: "";
 }
 .neos .icon-double-angle-up:before {
-  content: "\f102";
+  content: "";
 }
 .neos .icon-double-angle-down:before {
-  content: "\f103";
+  content: "";
 }
 .neos .icon-angle-left:before {
-  content: "\f104";
+  content: "";
 }
 .neos .icon-angle-right:before {
-  content: "\f105";
+  content: "";
 }
 .neos .icon-angle-up:before {
-  content: "\f106";
+  content: "";
 }
 .neos .icon-angle-down:before {
-  content: "\f107";
+  content: "";
 }
 .neos .icon-desktop:before {
-  content: "\f108";
+  content: "";
 }
 .neos .icon-laptop:before {
-  content: "\f109";
+  content: "";
 }
 .neos .icon-tablet:before {
-  content: "\f10a";
+  content: "";
 }
 .neos .icon-mobile-phone:before {
-  content: "\f10b";
+  content: "";
 }
 .neos .icon-circle-blank:before {
-  content: "\f10c";
+  content: "";
 }
 .neos .icon-quote-left:before {
-  content: "\f10d";
+  content: "";
 }
 .neos .icon-quote-right:before {
-  content: "\f10e";
+  content: "";
 }
 .neos .icon-spinner:before {
-  content: "\f110";
+  content: "";
 }
 .neos .icon-circle:before {
-  content: "\f111";
+  content: "";
 }
 .neos .icon-mail-reply:before,
 .neos .icon-reply:before {
-  content: "\f112";
+  content: "";
 }
 .neos .icon-github-alt:before {
-  content: "\f113";
+  content: "";
 }
 .neos .icon-folder-close-alt:before {
-  content: "\f114";
+  content: "";
 }
 .neos .icon-folder-open-alt:before {
-  content: "\f115";
+  content: "";
 }
 .neos .icon-expand-alt:before {
-  content: "\f116";
+  content: "";
 }
 .neos .icon-collapse-alt:before {
-  content: "\f117";
+  content: "";
 }
 .neos .icon-smile:before {
-  content: "\f118";
+  content: "";
 }
 .neos .icon-frown:before {
-  content: "\f119";
+  content: "";
 }
 .neos .icon-meh:before {
-  content: "\f11a";
+  content: "";
 }
 .neos .icon-gamepad:before {
-  content: "\f11b";
+  content: "";
 }
 .neos .icon-keyboard:before {
-  content: "\f11c";
+  content: "";
 }
 .neos .icon-flag-alt:before {
-  content: "\f11d";
+  content: "";
 }
 .neos .icon-flag-checkered:before {
-  content: "\f11e";
+  content: "";
 }
 .neos .icon-terminal:before {
-  content: "\f120";
+  content: "";
 }
 .neos .icon-code:before {
-  content: "\f121";
+  content: "";
 }
 .neos .icon-reply-all:before {
-  content: "\f122";
+  content: "";
 }
 .neos .icon-mail-reply-all:before {
-  content: "\f122";
+  content: "";
 }
 .neos .icon-star-half-full:before,
 .neos .icon-star-half-empty:before {
-  content: "\f123";
+  content: "";
 }
 .neos .icon-location-arrow:before {
-  content: "\f124";
+  content: "";
 }
 .neos .icon-crop:before {
-  content: "\f125";
+  content: "";
 }
 .neos .icon-code-fork:before {
-  content: "\f126";
+  content: "";
 }
 .neos .icon-unlink:before {
-  content: "\f127";
+  content: "";
 }
 .neos .icon-question:before {
-  content: "\f128";
+  content: "";
 }
 .neos .icon-info:before {
-  content: "\f129";
+  content: "";
 }
 .neos .icon-exclamation:before {
-  content: "\f12a";
+  content: "";
 }
 .neos .icon-superscript:before {
-  content: "\f12b";
+  content: "";
 }
 .neos .icon-subscript:before {
-  content: "\f12c";
+  content: "";
 }
 .neos .icon-eraser:before {
-  content: "\f12d";
+  content: "";
 }
 .neos .icon-puzzle-piece:before {
-  content: "\f12e";
+  content: "";
 }
 .neos .icon-microphone:before {
-  content: "\f130";
+  content: "";
 }
 .neos .icon-microphone-off:before {
-  content: "\f131";
+  content: "";
 }
 .neos .icon-shield:before {
-  content: "\f132";
+  content: "";
 }
 .neos .icon-calendar-empty:before {
-  content: "\f133";
+  content: "";
 }
 .neos .icon-fire-extinguisher:before {
-  content: "\f134";
+  content: "";
 }
 .neos .icon-rocket:before {
-  content: "\f135";
+  content: "";
 }
 .neos .icon-maxcdn:before {
-  content: "\f136";
+  content: "";
 }
 .neos .icon-chevron-sign-left:before {
-  content: "\f137";
+  content: "";
 }
 .neos .icon-chevron-sign-right:before {
-  content: "\f138";
+  content: "";
 }
 .neos .icon-chevron-sign-up:before {
-  content: "\f139";
+  content: "";
 }
 .neos .icon-chevron-sign-down:before {
-  content: "\f13a";
+  content: "";
 }
 .neos .icon-html5:before {
-  content: "\f13b";
+  content: "";
 }
 .neos .icon-css3:before {
-  content: "\f13c";
+  content: "";
 }
 .neos .icon-anchor:before {
-  content: "\f13d";
+  content: "";
 }
 .neos .icon-unlock-alt:before {
-  content: "\f13e";
+  content: "";
 }
 .neos .icon-bullseye:before {
-  content: "\f140";
+  content: "";
 }
 .neos .icon-ellipsis-horizontal:before {
-  content: "\f141";
+  content: "";
 }
 .neos .icon-ellipsis-vertical:before {
-  content: "\f142";
+  content: "";
 }
 .neos .icon-rss-sign:before {
-  content: "\f143";
+  content: "";
 }
 .neos .icon-play-sign:before {
-  content: "\f144";
+  content: "";
 }
 .neos .icon-ticket:before {
-  content: "\f145";
+  content: "";
 }
 .neos .icon-minus-sign-alt:before {
-  content: "\f146";
+  content: "";
 }
 .neos .icon-check-minus:before {
-  content: "\f147";
+  content: "";
 }
 .neos .icon-level-up:before {
-  content: "\f148";
+  content: "";
 }
 .neos .icon-level-down:before {
-  content: "\f149";
+  content: "";
 }
 .neos .icon-check-sign:before {
-  content: "\f14a";
+  content: "";
 }
 .neos .icon-edit-sign:before {
-  content: "\f14b";
+  content: "";
 }
 .neos .icon-external-link-sign:before {
-  content: "\f14c";
+  content: "";
 }
 .neos .icon-share-sign:before {
-  content: "\f14d";
+  content: "";
 }
 .neos .icon-compass:before {
-  content: "\f14e";
+  content: "";
 }
 .neos .icon-collapse:before {
-  content: "\f150";
+  content: "";
 }
 .neos .icon-collapse-top:before {
-  content: "\f151";
+  content: "";
 }
 .neos .icon-expand:before {
-  content: "\f152";
+  content: "";
 }
 .neos .icon-euro:before,
 .neos .icon-eur:before {
-  content: "\f153";
+  content: "";
 }
 .neos .icon-gbp:before {
-  content: "\f154";
+  content: "";
 }
 .neos .icon-dollar:before,
 .neos .icon-usd:before {
-  content: "\f155";
+  content: "";
 }
 .neos .icon-rupee:before,
 .neos .icon-inr:before {
-  content: "\f156";
+  content: "";
 }
 .neos .icon-yen:before,
 .neos .icon-jpy:before {
-  content: "\f157";
+  content: "";
 }
 .neos .icon-renminbi:before,
 .neos .icon-cny:before {
-  content: "\f158";
+  content: "";
 }
 .neos .icon-won:before,
 .neos .icon-krw:before {
-  content: "\f159";
+  content: "";
 }
 .neos .icon-bitcoin:before,
 .neos .icon-btc:before {
-  content: "\f15a";
+  content: "";
 }
 .neos .icon-file:before {
-  content: "\f15b";
+  content: "";
 }
 .neos .icon-file-text:before {
-  content: "\f15c";
+  content: "";
 }
 .neos .icon-sort-by-alphabet:before {
-  content: "\f15d";
+  content: "";
 }
 .neos .icon-sort-by-alphabet-alt:before {
-  content: "\f15e";
+  content: "";
 }
 .neos .icon-sort-by-attributes:before {
-  content: "\f160";
+  content: "";
 }
 .neos .icon-sort-by-attributes-alt:before {
-  content: "\f161";
+  content: "";
 }
 .neos .icon-sort-by-order:before {
-  content: "\f162";
+  content: "";
 }
 .neos .icon-sort-by-order-alt:before {
-  content: "\f163";
+  content: "";
 }
 .neos .icon-thumbs-up:before {
-  content: "\f164";
+  content: "";
 }
 .neos .icon-thumbs-down:before {
-  content: "\f165";
+  content: "";
 }
 .neos .icon-youtube-sign:before {
-  content: "\f166";
+  content: "";
 }
 .neos .icon-youtube:before {
-  content: "\f167";
+  content: "";
 }
 .neos .icon-xing:before {
-  content: "\f168";
+  content: "";
 }
 .neos .icon-xing-sign:before {
-  content: "\f169";
+  content: "";
 }
 .neos .icon-youtube-play:before {
-  content: "\f16a";
+  content: "";
 }
 .neos .icon-dropbox:before {
-  content: "\f16b";
+  content: "";
 }
 .neos .icon-stackexchange:before {
-  content: "\f16c";
+  content: "";
 }
 .neos .icon-instagram:before {
-  content: "\f16d";
+  content: "";
 }
 .neos .icon-flickr:before {
-  content: "\f16e";
+  content: "";
 }
 .neos .icon-adn:before {
-  content: "\f170";
+  content: "";
 }
 .neos .icon-bitbucket:before {
-  content: "\f171";
+  content: "";
 }
 .neos .icon-bitbucket-sign:before {
-  content: "\f172";
+  content: "";
 }
 .neos .icon-tumblr:before {
-  content: "\f173";
+  content: "";
 }
 .neos .icon-tumblr-sign:before {
-  content: "\f174";
+  content: "";
 }
 .neos .icon-long-arrow-down:before {
-  content: "\f175";
+  content: "";
 }
 .neos .icon-long-arrow-up:before {
-  content: "\f176";
+  content: "";
 }
 .neos .icon-long-arrow-left:before {
-  content: "\f177";
+  content: "";
 }
 .neos .icon-long-arrow-right:before {
-  content: "\f178";
+  content: "";
 }
 .neos .icon-apple:before {
-  content: "\f179";
+  content: "";
 }
 .neos .icon-windows:before {
-  content: "\f17a";
+  content: "";
 }
 .neos .icon-android:before {
-  content: "\f17b";
+  content: "";
 }
 .neos .icon-linux:before {
-  content: "\f17c";
+  content: "";
 }
 .neos .icon-dribbble:before {
-  content: "\f17d";
+  content: "";
 }
 .neos .icon-skype:before {
-  content: "\f17e";
+  content: "";
 }
 .neos .icon-foursquare:before {
-  content: "\f180";
+  content: "";
 }
 .neos .icon-trello:before {
-  content: "\f181";
+  content: "";
 }
 .neos .icon-female:before {
-  content: "\f182";
+  content: "";
 }
 .neos .icon-male:before {
-  content: "\f183";
+  content: "";
 }
 .neos .icon-gittip:before {
-  content: "\f184";
+  content: "";
 }
 .neos .icon-sun:before {
-  content: "\f185";
+  content: "";
 }
 .neos .icon-moon:before {
-  content: "\f186";
+  content: "";
 }
 .neos .icon-archive:before {
-  content: "\f187";
+  content: "";
 }
 .neos .icon-bug:before {
-  content: "\f188";
+  content: "";
 }
 .neos .icon-vk:before {
-  content: "\f189";
+  content: "";
 }
 .neos .icon-weibo:before {
-  content: "\f18a";
+  content: "";
 }
 .neos .icon-renren:before {
-  content: "\f18b";
+  content: "";
 }
 
 body {
@@ -1529,12 +1519,6 @@ body {
   vertical-align: top;
 }
 @media print {
-  .neos {
-    @page {
-      margin: 0.5cm;
-}
-
-  }
   .neos * {
     text-shadow: none !important;
     color: #000 !important;
@@ -1570,6 +1554,11 @@ body {
   }
   .neos img {
     max-width: 100% !important;
+  }
+  @page {
+    .neos {
+      margin: 0.5cm;
+    }
   }
   .neos p,
   .neos h2,
@@ -1922,7 +1911,7 @@ body {
   margin-bottom: 10px;
   font-size: 100%;
   line-height: 20px;
-  color: #555555;
+  color: #555;
   vertical-align: middle;
 }
 .neos input,
@@ -1949,8 +1938,8 @@ body {
 .neos input[type="tel"],
 .neos input[type="color"],
 .neos .neos-uneditable-input {
-  background-color: white;
-  border: 1px solid #cccccc;
+  background-color: #fff;
+  border: 1px solid #ccc;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -2011,8 +2000,8 @@ body {
 }
 .neos select {
   width: 220px;
-  border: 1px solid #cccccc;
-  background-color: white;
+  border: 1px solid #ccc;
+  background-color: #fff;
 }
 .neos select[multiple],
 .neos select[size] {
@@ -2030,7 +2019,7 @@ body {
 .neos .neos-uneditable-textarea {
   color: #3f3f3f;
   background-color: #fcfcfc;
-  border-color: #cccccc;
+  border-color: #ccc;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
@@ -2046,15 +2035,15 @@ body {
 }
 .neos input:-moz-placeholder,
 .neos textarea:-moz-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos input:-ms-input-placeholder,
 .neos textarea:-ms-input-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos input::-webkit-input-placeholder,
 .neos textarea::-webkit-input-placeholder {
-  color: #999999;
+  color: #999;
 }
 .neos .neos-radio,
 .neos .neos-checkbox {
@@ -2207,7 +2196,7 @@ body {
 .neos .neos-uneditable-input {
   opacity: .65;
   cursor: not-allowed;
-  background-color: #eeeeee;
+  background-color: #eee;
 }
 .neos input[type="radio"][disabled],
 .neos input[type="checkbox"][disabled],
@@ -2369,7 +2358,7 @@ body {
   padding: 19px 20px 20px;
   margin-top: 20px;
   margin-bottom: 20px;
-  background-color: whitesmoke;
+  background-color: #f5f5f5;
   border-top: 1px solid #e5e5e5;
   *zoom: 1;
 }
@@ -2450,8 +2439,8 @@ body {
   font-weight: normal;
   line-height: 20px;
   text-align: center;
-  text-shadow: 0 1px 0 white;
-  background-color: #eeeeee;
+  text-shadow: 0 1px 0 #fff;
+  background-color: #eee;
   border: 1px solid #ccc;
 }
 .neos .neos-input-append .neos-add-on,
@@ -2716,10 +2705,10 @@ body {
 .neos .neos-tooltip-inner {
   max-width: 200px;
   padding: 8px;
-  color: white;
+  color: #fff;
   text-align: center;
   text-decoration: none;
-  background-color: black;
+  background-color: #000;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -2736,28 +2725,28 @@ body {
   left: 50%;
   margin-left: -5px;
   border-width: 5px 5px 0;
-  border-top-color: black;
+  border-top-color: #000;
 }
 .neos .neos-tooltip.neos-right .neos-tooltip-arrow {
   top: 50%;
   left: 0;
   margin-top: -5px;
   border-width: 5px 5px 5px 0;
-  border-right-color: black;
+  border-right-color: #000;
 }
 .neos .neos-tooltip.neos-left .neos-tooltip-arrow {
   top: 50%;
   right: 0;
   margin-top: -5px;
   border-width: 5px 0 5px 5px;
-  border-left-color: black;
+  border-left-color: #000;
 }
 .neos .neos-tooltip.neos-bottom .neos-tooltip-arrow {
   top: 0;
   left: 50%;
   margin-left: -5px;
   border-width: 0 5px 5px;
-  border-bottom-color: black;
+  border-bottom-color: #000;
 }
 .neos input[type="text"],
 .neos input[type="password"] {
@@ -2766,7 +2755,7 @@ body {
   height: 40px;
   border: 2px solid #323232;
   background-color: #323232;
-  color: white;
+  color: #fff;
   font-size: 14px;
   padding: 0 14px;
   margin: 0;
@@ -2798,7 +2787,7 @@ body {
 .neos input[type="text"]:-webkit-autofill,
 .neos input[type="password"]:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 50px #323232 inset;
-  -webkit-text-fill-color: white;
+  -webkit-text-fill-color: #fff;
 }
 .neos input[type="text"]:-webkit-autofill:focus,
 .neos input[type="password"]:-webkit-autofill:focus {
@@ -2833,8 +2822,8 @@ body {
   bottom: 0;
   width: 100%;
   height: 40px;
-  border-top: 1px solid #222222;
-  background-color: #222222;
+  border-top: 1px solid #222;
+  background-color: #222;
 }
 .neos #neos-login-box .neos-actions button {
   height: 40px;
@@ -2877,7 +2866,7 @@ body {
   margin-top: -1px;
 }
 .neos #neos-login-box .neos-tooltip.neos-in {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
   opacity: 1;
 }
 .neos #neos-login-box .neos-tooltip .neos-tooltip-arrow {
