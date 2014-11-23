@@ -137,13 +137,18 @@ class PublishingServiceTest extends UnitTestCase {
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 		$mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
 
+		$mockNode1->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData1));
+		$mockNode1->expects($this->any())->method('getPath')->will($this->returnValue('/node1'));
+		$mockNode2->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData2));
+		$mockNode2->expects($this->any())->method('getPath')->will($this->returnValue('/node2'));
+
 		$this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will($this->returnValue($mockNode1));
 		$this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will($this->returnValue($mockNode2));
 
 		$this->mockNodeDataRepository->expects($this->atLeastOnce())->method('findByWorkspace')->with($this->mockWorkspace)->will($this->returnValue(array($mockNodeData1, $mockNodeData2)));
 
 		$actualResult = $this->publishingService->getUnpublishedNodes($this->mockWorkspace);
-		$this->assertSame($actualResult, array($mockNode1, $mockNode2));
+		$this->assertSame($actualResult, array($mockNode2, $mockNode1));
 	}
 
 	/**
@@ -172,6 +177,9 @@ class PublishingServiceTest extends UnitTestCase {
 		$mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
 
 		$mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+
+		$mockNode1->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData1));
+		$mockNode1->expects($this->any())->method('getPath')->will($this->returnValue('/node1'));
 
 		$this->mockNodeFactory->expects($this->at(0))->method('createFromNodeData')->with($mockNodeData1, $mockContext)->will($this->returnValue($mockNode1));
 		$this->mockNodeFactory->expects($this->at(1))->method('createFromNodeData')->with($mockNodeData2, $mockContext)->will($this->returnValue(NULL));
