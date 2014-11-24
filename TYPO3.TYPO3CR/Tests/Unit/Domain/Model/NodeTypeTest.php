@@ -305,6 +305,22 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	}
 
 	/**
+	 * This test asserts that a supertype that has been inherited can be removed on a specific type again.
+	 * @test
+	 */
+	public function inheritedSuperTypesCanBeRemoved() {
+		$nodeType = $this->getNodeType('TYPO3.TYPO3CR.Testing:Shortcut');
+		$this->assertSame('Shortcut', $nodeType->getLabel());
+
+		$expectedProperties = array(
+			'target' => array(
+				'type' => 'string'
+			)
+		);
+		$this->assertSame($expectedProperties, $nodeType->getProperties());
+	}
+
+	/**
 	 * Return a nodetype built from the nodeTypesFixture
 	 *
 	 * @param string $nodeTypeName
@@ -318,8 +334,8 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$configuration = $this->nodeTypesFixture[$nodeTypeName];
 		$declaredSuperTypes = array();
 		if (isset($configuration['superTypes']) && is_array($configuration['superTypes'])) {
-			foreach ($configuration['superTypes'] as $superTypeName) {
-				$declaredSuperTypes[] = $this->getNodeType($superTypeName);
+			foreach ($configuration['superTypes'] as $key => $superTypeName) {
+				$declaredSuperTypes[$key] = $this->getNodeType($superTypeName);
 			}
 		}
 

@@ -140,16 +140,62 @@ class NodeType {
 	}
 
 	/**
-	 *
+	 * Builds the full configuration by merging configuration from the supertypes into the local configuration.
 	 *
 	 * @return void
 	 */
 	protected function buildFullConfiguration() {
 		$mergedConfiguration = array();
-		foreach ($this->declaredSuperTypes as $key => $superType) {
-			$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getFullConfiguration());
+		$applicableSuperTypes = $this->buildInheritanceChain();
+		foreach ($applicableSuperTypes as $superType) {
+			$mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
 		}
 		$this->fullConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
+	}
+
+	/**
+	 * Returns a flat list of supertypes to inherit from.
+	 *
+	 * @return array
+	 */
+	protected function buildInheritanceChain() {
+		$superTypes = array();
+		foreach ($this->declaredSuperTypes as $key => $superType) {
+			if ($superType !== NULL) {
+				$this->addInheritedSuperTypes($superTypes, $superType);
+				if (is_string($key)) {
+					$superTypes[$key] = $superType;
+				} else {
+					$superTypes[] = $superType;
+				}
+			}
+		}
+
+		foreach ($this->declaredSuperTypes as $key => $superType) {
+			if ($superType === NULL && is_string($key)) {
+				unset($superTypes[$key]);
+			}
+		}
+
+		return array_unique($superTypes);
+	}
+
+	/**
+	 * Recursively add supertypes
+	 *
+	 * @param array $superTypes
+	 * @param NodeType $superType
+	 * @return void
+	 */
+	protected function addInheritedSuperTypes(array &$superTypes, NodeType $superType) {
+		foreach ($superType->getDeclaredSuperTypes() as $key => $inheritedSuperType) {
+			$this->addInheritedSuperTypes($superTypes, $inheritedSuperType);
+			if (is_string($key)) {
+				$superTypes[$key] = $inheritedSuperType;
+			} else {
+				$superTypes[] = $inheritedSuperType;
+			}
+		}
 	}
 
 	/**
@@ -207,15 +253,19 @@ class NodeType {
 	 * Returns the direct, explicitly declared super types
 	 * of this node type.
 	 *
+	 * Note: NULL values are skipped since they are used only internally.
+	 *
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
 	 * @api
 	 */
 	public function getDeclaredSuperTypes() {
-		return $this->declaredSuperTypes;
+		return array_filter($this->declaredSuperTypes, function ($value) {
+			return $value !== NULL;
+		});
 	}
 
 	/**
-	 * returns whether this node type (or any parent type) is an *aggregate*.
+	 * Returns whether this node type (or any parent type) is an *aggregate*.
 	 *
 	 * The most prominent *aggregate* is a Document and everything which inherits from it, like a Page.
 	 *
@@ -250,6 +300,17 @@ class NodeType {
 			}
 		}
 		return FALSE;
+	}
+
+	/**
+	 * Get the local configuration of the node type. Should only be used internally.
+	 *
+	 * Note: post processing is not applied to this.
+	 *
+	 * @return array
+	 */
+	public function getLocalConfiguration() {
+		return $this->localConfiguration;
 	}
 
 	/**
