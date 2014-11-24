@@ -232,36 +232,38 @@
 				<source>TYPO3 Neos Login</source>
 			</trans-unit>
 
-			<!-- ErrorHandlers -->
-			<trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
-				<source>Page Not Found</source>
-			</trans-unit>
-			<trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
-				<source>Sorry, the page you requested was not found.</source>
-			</trans-unit>
-			<trans-unit id="databaseConnectionExceptions.errorTitle" xml:space="preserve">
-				<source>Database Error</source>
-			</trans-unit>
-			<trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
-			</trans-unit>
-			<trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			</trans-unit>
-			<trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
-				<source>Missing Homepage</source>
-			</trans-unit>
-			<trans-unit id="noHomepageException.errorDescription" xml:space="preserve">
-				<source>Either no site has been defined yet or the site does not contain a homepage.</source>
-			</trans-unit>
-			<trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
-				<source>You might want to create or import a site in the setup.</source>
+			<!-- Error handlers -->
+			<trans-unit id="error.exception.goToSetup" xml:space="preserve">
+				<source>Go to setup</source>
 			</trans-unit>
 
-			<!-- Errors -->
-			<trans-unit id="error.index.goToSetup" xml:space="preserve">
-				<source>Go to Setup</source>
+			<trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
+				<source>Missing Homepage</source>
 			</trans-unit>
+			<trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			</trans-unit>
+			<trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			</trans-unit>
+
+			<trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+				<source>Database Error</source>
+			</trans-unit>
+			<trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			</trans-unit>
+			<trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			</trans-unit>
+
+			<trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+				<source>Page Not Found</source>
+			</trans-unit>
+			<trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			</trans-unit>
+
 
 		</body>
 	</file>

@@ -40,35 +40,28 @@ TYPO3:
     error:
       exceptionHandler:
         renderingGroups:
-          notFoundExceptions:
+          'notFoundExceptions':
             matchingStatusCodes: [ 404 ]
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
-              variables:
-                errorTitle: 'Page Not Found'
-                errorDescription: 'Sorry, the page you requested was not found.'
-          databaseConnectionExceptions:
+          'databaseConnectionExceptions':
             matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
               variables:
-                errorTitle: 'Database Error'
-                errorDescription: 'Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.'
-                setupMessage: 'You might want to configure or check your database configuration in the setup.'
-          noHomepageException:
+                'showSetupLink': TRUE
+          'noHomepageException':
             matchingExceptionClassNames: ['TYPO3\Neos\Routing\Exception\NoHomepageException']
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
               variables:
-                errorTitle: 'Missing Homepage'
-                errorDescription: 'Either no site has been defined yet or the site does not contain a homepage.'
-                setupMessage: 'You might want to create or import a site in the setup.'
+                'showSetupLink': TRUE
 
     package:
       packagesPathByType:
