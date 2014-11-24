@@ -139,8 +139,11 @@
 			</trans-unit>
 
 			<!-- javascript -->
-			<trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
+			<trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
+			</trans-unit>
+			<trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+				<source>Open page in live workspace</source>
 			</trans-unit>
 			<trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>

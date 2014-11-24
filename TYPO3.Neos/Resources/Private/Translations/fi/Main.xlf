@@ -137,7 +137,7 @@
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="fi">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
       <!-- javascript -->
-      <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
 			<target xml:lang="fi">Full Screen</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
