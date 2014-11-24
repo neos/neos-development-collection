@@ -108,7 +108,7 @@ class VieSchemaBuilder {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
 	 * @return void
 	 */
-	protected function readNodeTypeConfiguration($nodeTypeName, $nodeType) {
+	protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType) {
 		$nodeTypeConfiguration = $nodeType->getFullConfiguration();
 		$this->superTypeConfiguration['typo3:' . $nodeTypeName] = array();
 		if (isset($nodeTypeConfiguration['superTypes']) && is_array($nodeTypeConfiguration['superTypes'])) {
