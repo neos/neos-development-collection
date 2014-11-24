@@ -300,6 +300,21 @@ trait StepDefinitionsTrait {
 	}
 
 	/**
+	 * @When /^I discard all changes in the workspace "([^"]*)"$/
+	 */
+	public function iDiscardTheWorkspace($workspaceName) {
+		$context = $this->getContextForProperties(array('Workspace' => $workspaceName));
+		$workspace = $context->getWorkspace();
+
+		/** @var PublishingServiceInterface $publishingService */
+		$publishingService = $this->getObjectManager()->get('TYPO3\TYPO3CR\Service\PublishingServiceInterface');
+		$publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
+
+		$this->getSubcontext('flow')->persistAll();
+		$this->resetNodeInstances();
+	}
+
+	/**
 	 * @When /^I use the publishing service to publish nodes in the workspace "([^"]*)" with the following context:$/
 	 */
 	public function iUseThePublishingServiceToPublishNodesInTheWorkspace($sourceWorkspaceName, TableNode $table) {
