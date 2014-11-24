@@ -142,6 +142,11 @@ class PublishingService implements PublishingServiceInterface {
 			throw new WorkspaceException('Nodes in the live workspace cannot be discarded.', 1395841899);
 		}
 
+		$possibleShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
+		if ($possibleShadowNodeData !== NULL) {
+			$this->nodeDataRepository->remove($possibleShadowNodeData);
+		}
+
 		if ($node->getPath() !== '/') {
 			$this->nodeDataRepository->remove($node);
 			$this->emitNodeDiscarded($node);
