@@ -3465,7 +3465,7 @@
 .neos a.neos-button {
   color: #fff;
 }
-.neos a.neos-button:hover {
+.neos a.neos-button:hover, .neos a.neos-button:focus {
   color: #fff;
 }
 .neos a.neos-button i {
@@ -7658,32 +7658,12 @@
 .neos #neos-context-bar .neos-button {
   background-color: #323232;
   border-left: 1px solid #3f3f3f;
-  border-right: 1px solid #3f3f3f;
   vertical-align: top;
   display: inline-block;
   float: left;
 }
 .neos #neos-context-bar .neos-button:hover, .neos #neos-context-bar .neos-button:active, .neos #neos-context-bar .neos-button.active, .neos #neos-context-bar .neos-button.neos-pressed {
   background-color: #00b5ff;
-}
-.neos #neos-context-bar .neos-button + .neos-button {
-  margin-left: 16px;
-}
-.neos #neos-context-bar .neos-context-bar-save-indicator {
-  display: inline-block;
-  float: left;
-}
-.neos #neos-context-bar .neos-context-bar-save-indicator .neos-indicator {
-  margin: 0;
-  padding: 0;
-  cursor: default;
-  background: transparent;
-  border: none;
-  padding-right: 16px;
-}
-.neos #neos-context-bar .neos-context-bar-save-indicator .neos-indicator span {
-  position: relative;
-  top: 2px;
 }
 .neos #neos-context-bar .chosen-container {
   color: #fff;
