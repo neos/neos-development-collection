@@ -208,8 +208,7 @@ function(
 				insertHtml: ['word', 'generic', 'oembed', 'sanitize'],
 				initEditable: ['sanitize'],
 				getContents: ['blockelement', 'sanitize', 'basic'],
-				sanitize: 'relaxed', // relaxed, restricted, basic
-				allows: {
+				sanitize: {
 					elements: [
 						'a', 'abbr', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'col',
 						'colgroup', 'dd', 'del', 'dl', 'dt', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -218,7 +217,7 @@ function(
 						'ul', 'span', 'hr', 'object', 'div'
 					],
 					attributes: {
-						'a': ['href', 'data-gentics-aloha-repository', 'data-gentics-aloha-object-id', 'data-ajax-repository-temporary-data'],
+						'a': ['href', 'title', 'id', 'class', 'target', 'data-gentics-aloha-repository', 'data-gentics-aloha-object-id'],
 						'blockquote': ['cite'],
 						'q': ['cite'],
 						'div': ['id', 'class', 'style'],
@@ -232,7 +231,6 @@ function(
 						'td': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'style'],
 						'th': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'scope']
 					},
-
 					protocols: {
 						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node', 'asset']},
 						'blockquote': {'cite': ['http', 'https', '__relative__']},
