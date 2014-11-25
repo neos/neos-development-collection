@@ -32,8 +32,6 @@ define(
 					formatResult: function(item) {
 						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
-					query: function(query) {
-
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');
 						}
