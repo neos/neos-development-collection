@@ -134,10 +134,7 @@ class AssetRepository extends Repository {
 	 * @return QueryInterface
 	 */
 	protected function addImageVariantFilterClause($query) {
-		/**
-		 * @var $queryBuilder \Doctrine\ORM\QueryBuilder
-		 */
-		$queryBuilder = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($query, 'queryBuilder', TRUE);
+		$queryBuilder = $query->getQueryBuilder();
 		$queryBuilder->andWhere('e NOT INSTANCE OF TYPO3\Media\Domain\Model\ImageVariant');
 		return $query;
 	}
