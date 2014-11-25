@@ -314,3 +314,23 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Move a node one level up and discard workspace
+    Given I have the following nodes:
+      | Identifier                           | Path                            | Node Type                  | Workspace |
+      | d2294ce8-73de-11e4-a420-14109fd7a2dd | /sites/typo3cr/company/about-us | TYPO3.TYPO3CR.Testing:Page | live      |
+    When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr"
+    And I discard all changes in the workspace "user-admin"
+
+    When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have one node
+    When I get a node by path "/sites/typo3cr/about-us" with the following context:
+      | Workspace  |
+      | user-admin |
+    Then I should have 0 nodes
