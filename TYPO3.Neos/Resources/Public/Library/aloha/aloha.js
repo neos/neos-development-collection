@@ -4583,8 +4583,8 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		 * @hide
 		 */
 		tags: {
-			'flow': ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'blockquote', 'br', 'button', 'canvas', 'cite', 'code', 'command', 'datalist', 'del', 'details', 'dfn', 'div', 'dl', 'em', 'embed', 'fieldset', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'map', 'mark', 'math', 'menu', 'meter', 'nav', 'noscript', 'object', 'ol', 'output', 'p', 'pre', 'progress', 'q', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'span', 'strong', 'style', 'sub', 'sup', 'svg', 'table', 'textarea', 'time', 'u', 'ul', 'var', 'video', 'wbr', '#text'],
-			'phrasing': ['a', 'abbr', 'area', 'audio', 'b', 'bdi', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'command', 'datalist', 'del', 'dfn', 'em', 'embed', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'map', 'mark', 'math', 'meter', 'noscript', 'object', 'output', 'progress', 'q', 'ruby', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'svg', 'textarea', 'time', 'u', 'var', 'video', 'wbr', '#text']
+			'flow': ['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'blockquote', 'br', 'button', 'canvas', 'cite', 'code', 'command', 'datalist', 'del', 'details', 'dfn', 'div', 'dl', 'em', 'embed', 'fieldset', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'map', 'mark', 'math', 'menu', 'meter', 'nav', 'noscript', 'object', 'ol', 'output', 'p', 'pre', 'progress', 'q', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'span', 'strong', 'style', 'sub', 'sup', 'svg', 'table', 'textarea', 'time', 'u', 'ul', 'var', 'video', 'wbr', '#text'],
+			'phrasing': ['a', 'abbr', 'acronym', 'area', 'audio', 'b', 'bdi', 'bdo', 'br', 'button', 'canvas', 'cite', 'code', 'command', 'datalist', 'del', 'dfn', 'em', 'embed', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'map', 'mark', 'math', 'meter', 'noscript', 'object', 'output', 'progress', 'q', 'ruby', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'svg', 'textarea', 'time', 'u', 'var', 'video', 'wbr', '#text']
 		},
 
 		/**
@@ -4597,6 +4597,7 @@ define('util/dom',['jquery', 'util/class', 'aloha/ecma5shims'], function (jQuery
 		children: {
 			'a': 'phrasing', // transparent
 			'abbr': 'phrasing',
+			'acronym': 'phrasing',
 			'address': 'flow',
 			'area': 'empty',
 			'article': 'flow',
@@ -18281,11 +18282,6 @@ define('aloha/engine',[
 				return;
 			}
 
-			// "If node is an inline node, abort these steps."
-			if (isInlineNode(node)) {
-				return;
-			}
-
 			// "If node has a child with index offset and that child is a br or hr
 			// or img, call collapse(node, offset) on the Selection. Then delete
 			// the contents of the range with start (node, offset) and end (node,
@@ -18294,6 +18290,11 @@ define('aloha/engine',[
 				range.setStart(node, offset);
 				range.setEnd(node, offset);
 				deleteContents(node, offset, node, offset + 1);
+				return;
+			}
+
+			// "If node is an inline node, abort these steps."
+			if (isInlineNode(node)) {
 				return;
 			}
 
@@ -20193,6 +20194,7 @@ define('aloha/selection',[
 					'h4': true,
 					'h5': true,
 					'h6': true,
+					'p': true,
 					'del': true,
 					'ins': true,
 					'u': true,
@@ -47939,16 +47941,17 @@ define('list/list-plugin',[
 		},
 
 		/**
-		 * Toggle selected CSS class on current list elemnet
+		 * Set selected CSS class on current list element and all nested
+		 * list elements that are contained in the selection
 		 * @param String listtype: ol, ul or dl
 		 * @param String style: selected CSS class
 		 * @return void
 		 */
-		toggleListStyle: function (listtype, style) {
+		setListStyle: function (listtype, style) {
 			var domObject = this.getStartingDomObjectToTransform();
 			var nodeName = domObject.nodeName.toLowerCase();
 			var listToStyle =  jQuery(domObject);
-			var remove = false;
+			var plugin = this;
 
 			if (nodeName !== 'ul' && nodeName !== 'ol' && nodeName !== 'dl') {
 				// we don't have a list yet, so transform selection to list
@@ -47961,15 +47964,21 @@ define('list/list-plugin',[
 			if (listtype === nodeName) {
 				// remove all classes
 				jQuery.each(this.templates[nodeName].classes, function (i, cssClass) {
-					if (listToStyle.hasClass(cssClass) && cssClass === style) {
-						remove = true;
-					}
-					listToStyle.removeClass(cssClass);
+					listToStyle.removeClass(this);
 				});
 
-				if (!remove) {
-					listToStyle.addClass(style);
-				}
+				listToStyle.addClass(style);
+
+				// now proceed with all selected sublists
+				listToStyle.find(listtype).each(function () {
+					if (isListInSelection(this)) {
+						var listToStyle = jQuery(this);
+						jQuery.each(plugin.templates[listtype].classes, function () {
+							listToStyle.removeClass(this);
+						});
+						listToStyle.addClass(style);
+					}
+				});
 			}
 		},
 
@@ -48013,7 +48022,7 @@ define('list/list-plugin',[
 			return {
 				html: '<div class="aloha-list-templates">' + html + '</div>',
 				click: function () {
-					that.toggleListStyle(listtype, cssClass);
+					that.setListStyle(listtype, cssClass);
 				}
 			};
 		},
@@ -48124,18 +48133,23 @@ define('list/list-plugin',[
 		/**
 		* When the list is nested into another, our list items will be
 		* added to the list items of the outer list.
-		* @param Dom List Dom element
+		* @param Dom Parent List Dom element
+		* @param Dom List Dom Element
 		*/
-		fixupNestedLists: function (jqParentList) {
-				// find the place where to put the children of the inner list
-				if (jqParentList.get(0).nodeName.toLowerCase() === 'li') {
-					// inner list is nested in a li (this conforms to the html5 spec)
-					jqParentList.after(jqList.children());
-					jqList.remove();
-				} else {
-					// inner list is nested in the outer list directly (this violates the html5 spec)
-					jqList.children().unwrap();
-				}
+		fixupNestedLists: function (jqParentList, jqList) {
+			// find the place where to put the children of the inner list
+			if (jqParentList.get(0).nodeName.toLowerCase() === 'li') {
+				// transform the list elements to be li (could by dt and dd)
+				jQuery.each(jqList.children(), function (index, el) {
+					Aloha.Markup.transformDomObject(el, 'li', Aloha.Selection.rangeObject);
+				});
+				// inner list is nested in a li (this conforms to the html5 spec)
+				jqParentList.after(jqList.children());
+				jqList.remove();
+			} else {
+				// inner list is nested in the outer list directly (this violates the html5 spec)
+				jqList.children().unwrap();
+			}
 		},
 
 		/**
@@ -48324,7 +48338,7 @@ define('list/list-plugin',[
 				jqParentList = jqList.parent();
 				if (jqParentList.length > 0 && Dom.isListElement(jqParentList.get(0))) {
 					// we are in a nested list
-					this.fixupNestedLists(jqParentList);
+					this.fixupNestedLists(jqParentList, jqList);
 				} else {
 					// we are in an list and shall transform it to paragraphs
 					if (listtype === 'dl') {
@@ -50687,7 +50701,7 @@ define('contenthandler/blockelementcontenthandler',[
 	var nonVoidBlocksSelector = Arrays.subtract(
 			Html.BLOCKLEVEL_ELEMENTS,
 			Html.VOID_ELEMENTS
-		);
+		).join();
 
 	var NOT_ALOHA_BLOCK_FILTER = ':not(.aloha-block)';
 
@@ -50720,7 +50734,7 @@ define('contenthandler/blockelementcontenthandler',[
 	function prepareForEditing(i, element) {
 		var $element = $(element);
 
-		$element.filter(nonVoidBlocksSelector).remove();
+		$element.filter(nonVoidBlocksSelector).filter(':empty').remove();
 
 		if ($.browser.msie) {
 			// Because even though content edited by Aloha Editor is no longer
@@ -50770,8 +50784,10 @@ define('contenthandler/blockelementcontenthandler',[
 	 */
 	function propBlockElements(i, element) {
 		var $element = $(element);
-		$element.filter(nonVoidBlocksSelector).filter(':empty').append('<br/>');
-		$element.children(NOT_ALOHA_BLOCK_FILTER).each(propBlockElements);
+		if ($.browser.msie) {
+			$element.filter(nonVoidBlocksSelector).filter(':empty').append('<br/>');
+			$element.children(NOT_ALOHA_BLOCK_FILTER).each(propBlockElements);
+		}
 	}
 
 	return ContentHandlerManager.createHandler({
