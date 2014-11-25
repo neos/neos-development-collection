@@ -16,7 +16,7 @@ class Version20120829124549 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("CREATE TABLE typo3_typo3cr_migration_domain_model_migrationstatus (flow3_persistence_identifier VARCHAR(40) NOT NULL, version VARCHAR(14) NOT NULL, workspacename VARCHAR(255) NOT NULL, direction VARCHAR(4) NOT NULL, applicationtimestamp DATETIME NOT NULL, PRIMARY KEY(flow3_persistence_identifier)) ENGINE = InnoDB");
+		$this->addSql("CREATE TABLE typo3_typo3cr_migration_domain_model_migrationstatus (flow3_persistence_identifier VARCHAR(40) NOT NULL, version VARCHAR(14) NOT NULL, workspacename VARCHAR(255) NOT NULL, direction VARCHAR(4) NOT NULL, applicationtimestamp DATETIME NOT NULL, PRIMARY KEY(flow3_persistence_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
 	}
 
 	/**
