@@ -89,30 +89,6 @@ define(
 					}]);
 				});
 			});
-		},
-
-		/**
-		 * Mark or modify an object as needed by that repository for handling, processing or identification.
-		 * Objects can be any DOM object as A, SPAN, ABBR, etc..
-		 * (see http://dev.w3.org/html5/spec/elements.html#embedding-custom-non-visible-data)
-		 *
-		 * @param {object} obj jQuery object to make clean
-		 * @param {object} repositoryItem
-		 * @return {void}
-		 */
-		markObject: function(obj, repositoryItem) {
-			$(obj).data(this._repositoryIdentifier + '-temporary-data', repositoryItem.name);
-		},
-
-		/**
-		 * Make the given jQuery object (representing an object marked as object of this type)
-		 * clean. All attributes needed for handling should be removed.
-		 *
-		 * @param {object} obj jQuery object to make clean
-		 * @return {void}
-		 */
-		makeClean: function(obj) {
-			$(obj).removeAttr('data-' + this._repositoryIdentifier + '-temporary-data');
 		}
 	});
 });
