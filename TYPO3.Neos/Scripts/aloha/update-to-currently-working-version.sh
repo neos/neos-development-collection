@@ -10,4 +10,5 @@ if [ ! -d "src" ]; then
 fi
 
 cd src
-git checkout alohaeditor-1.1.3
+git fetch
+git checkout alohaeditor-1.1.5
