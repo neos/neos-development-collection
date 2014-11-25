@@ -16,7 +16,7 @@ class Version20110925123120 extends AbstractMigration {
 	public function up(Schema $schema) {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
-		$this->addSql("CREATE TABLE typo3_media_domain_model_image (flow3_persistence_identifier VARCHAR(40) NOT NULL, resource VARCHAR(40) DEFAULT NULL, title VARCHAR(255) DEFAULT NULL, width INT DEFAULT NULL, height INT DEFAULT NULL, type INT DEFAULT NULL, imagevariants LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)', INDEX IDX_7FA2358DBC91F416 (resource), PRIMARY KEY(flow3_persistence_identifier)) ENGINE = InnoDB");
+		$this->addSql("CREATE TABLE typo3_media_domain_model_image (flow3_persistence_identifier VARCHAR(40) NOT NULL, resource VARCHAR(40) DEFAULT NULL, title VARCHAR(255) DEFAULT NULL, width INT DEFAULT NULL, height INT DEFAULT NULL, type INT DEFAULT NULL, imagevariants LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)', INDEX IDX_7FA2358DBC91F416 (resource), PRIMARY KEY(flow3_persistence_identifier)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB");
 		$this->addSql("ALTER TABLE typo3_media_domain_model_image ADD CONSTRAINT typo3_media_domain_model_image_ibfk_1 FOREIGN KEY (resource) REFERENCES typo3_flow3_resource_resource(flow3_persistence_identifier)");
 	}
 
