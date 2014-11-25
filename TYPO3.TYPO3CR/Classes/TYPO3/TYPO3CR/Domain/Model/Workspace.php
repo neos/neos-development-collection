@@ -61,12 +61,6 @@ class Workspace {
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
-	 */
-	protected $contextFactory;
-
-	/**
-	 * @Flow\Inject
 	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -215,8 +209,10 @@ class Workspace {
 		$nodeWasMoved = FALSE;
 		$movedShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
 		if ($movedShadowNodeData instanceof NodeData) {
-			$this->nodeDataRepository->remove($movedShadowNodeData);
 			$nodeWasMoved = TRUE;
+			if ($movedShadowNodeData->isRemoved()) {
+				$this->nodeDataRepository->remove($movedShadowNodeData);
+			}
 		}
 
 		if ($node->isRemoved() === TRUE) {
@@ -295,15 +291,7 @@ class Workspace {
 	 * @return NodeData
 	 */
 	protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace) {
-		$properties = $node->getContext()->getProperties();
-		$properties['workspaceName'] = $targetWorkspace->getName();
-		$properties['dimensions'] = $node->getDimensions();
-		$properties['targetDimensions'] = array();
-		$targetWorkspaceContext = $this->contextFactory->create($properties);
-
-		$targetNodeInstance = $targetWorkspaceContext->getNodeByIdentifier($node->getIdentifier());
-		$targetNode = $targetNodeInstance !== NULL ? $targetNodeInstance->getNodeData() : NULL;
-		return $targetNode;
+		return $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
 	}
 
 	/**

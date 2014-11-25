@@ -505,6 +505,18 @@ class NodeData extends AbstractNodeData {
 	}
 
 	/**
+	 * Change the identifier of this node data
+	 *
+	 * NOTE: This is only used for some very rare cases (to replace existing instances when moving).
+	 *
+	 * @param string $identifier
+	 * @return void
+	 */
+	public function setIdentifier($identifier) {
+		$this->identifier = $identifier;
+	}
+
+	/**
 	 * Returns all direct child node data of this node data without reducing the result (multiple variants can be returned)
 	 *
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
