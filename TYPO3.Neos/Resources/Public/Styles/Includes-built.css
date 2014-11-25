@@ -3390,14 +3390,14 @@
   color: #fff;
   background-color: #00b5ff;
   text-decoration: none;
-  outline: none;
 }
 .neos button:focus,
 .neos .neos-button:focus {
   outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
-  outline: 1px dotted #00b5ff;
+  outline: 1px dotted #fff;
+  outline-offset: 0;
 }
 .neos button.neos-disabled, .neos button[disabled],
 .neos .neos-button.neos-disabled,
@@ -3415,6 +3415,10 @@
 .neos .neos-button.neos-button-primary {
   background-color: #00b5ff;
 }
+.neos button.neos-button-primary:focus,
+.neos .neos-button.neos-button-primary:focus {
+  outline: 1px dotted #fff;
+}
 .neos button.neos-button-success,
 .neos .neos-button.neos-button-success {
   background-color: #00a338;
@@ -3423,6 +3427,10 @@
 .neos .neos-button.neos-button-success:hover,
 .neos .neos-button.neos-button-success:active {
   background-color: #00a338;
+}
+.neos button.neos-button-success:focus,
+.neos .neos-button.neos-button-success:focus {
+  outline: 1px dotted #fff;
 }
 .neos button.neos-button-warning,
 .neos .neos-button.neos-button-warning {
@@ -3433,6 +3441,10 @@
 .neos .neos-button.neos-button-warning:active {
   background-color: #ff8700;
 }
+.neos button.neos-button-warning:focus,
+.neos .neos-button.neos-button-warning:focus {
+  outline: 1px dotted #fff;
+}
 .neos button.neos-button-danger,
 .neos .neos-button.neos-button-danger {
   background-color: #ff460d;
@@ -3441,6 +3453,10 @@
 .neos .neos-button.neos-button-danger:hover,
 .neos .neos-button.neos-button-danger:active {
   background-color: #ff460d;
+}
+.neos button.neos-button-danger:focus,
+.neos .neos-button.neos-button-danger:focus {
+  outline: 1px dotted #fff;
 }
 .neos button i,
 .neos .neos-button i {
@@ -3760,23 +3776,6 @@
   line-height: 18px;
   font-weight: normal;
   color: #adadad;
-}
-.neos .neos-modal ul {
-  border-bottom: 1px solid #3f3f3f;
-  padding: 0px 16px;
-  margin: 0px;
-  width: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-.neos .neos-modal ul a {
-  color: #fff;
-}
-.neos .neos-modal ul a:hover {
-  color: #00b5ff;
-  cursor: pointer;
-  text-decoration: none;
 }
 .neos .neos-modal .neos-modal-footer {
   background: transparent;
@@ -10255,29 +10254,53 @@
 .neos .neos-button-group + .neos-button-group {
   margin-left: 8px;
 }
-.neos .neos-content-new-selecttype-button {
+.neos .neos-insert-node-panel .neos-subheader {
+  padding: 0 16px 8px;
+  margin: 0;
+}
+.neos .neos-insert-node-panel .neos-subheader ~ .neos-subheader {
+  padding: 16px 16px 8px;
+  border-top: 1px solid #3f3f3f;
+}
+.neos .neos-insert-node-panel .neos-modal-body {
+  border-bottom: 1px solid #3f3f3f;
+  max-height: 480px;
+  overflow-y: auto;
+}
+.neos .neos-insert-node-panel ul {
+  font-size: 0;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button {
   float: left;
-  margin: 0px 0px 16px 0px;
+  margin: 0;
   width: 33.33333%;
   vertical-align: top;
 }
-.neos .neos-content-new-selecttype-button a {
-  display: block;
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button button {
+  width: 100%;
   line-height: 16px;
-  vertical-align: bottom;
-  position: relative;
-  padding-left: 22px;
+  height: 40px;
+  text-align: left;
+  background-color: transparent;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.neos .neos-content-new-selecttype-button a i {
-  position: absolute;
-  top: 0;
-  left: 0;
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button button:focus, .neos .neos-insert-node-panel .neos-content-new-selecttype-button button:hover {
+  background-color: #00b5ff;
+  outline: none;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button button:focus i, .neos .neos-insert-node-panel .neos-content-new-selecttype-button button:hover i {
+  color: #fff;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button button i {
   width: 14px;
   padding-right: 8px;
   color: #00b5ff;
+  text-align: center;
 }
 .neos #neos-nprogress {
   background-color: #323232;
