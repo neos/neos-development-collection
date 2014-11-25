@@ -38,17 +38,20 @@ define(
 						}
 
 						$itemContent.attr('title', item.data.path);
+
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
 						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 
-						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
-						if (iconClass) {
-							$itemContent.prepend('<i class="' + iconClass + '"></i>');
-						}
+						if (item.data) {
+							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+							if (iconClass) {
+								$itemContent.prepend('<i class="' + iconClass + '"></i>');
+							}
 
-						$itemContent.attr('title', item.data.path);
+							$itemContent.attr('title', item.data.path);
+						}
 
 						return $itemContent.get(0).outerHTML;
 					},

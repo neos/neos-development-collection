@@ -31,6 +31,7 @@ define(
 					placeholder: this.get('placeholder'),
 					formatResult: function(item) {
 						var $itemContent = $('<span><b>' + item.text + '</b></span>');
+
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 						if (iconClass) {
 							$itemContent.prepend('<i class="' + iconClass + '"></i>');
@@ -43,16 +44,18 @@ define(
 					formatSelection: function(item) {
 						var $itemContent = $('<span><b>' + item.text + '</b></span>');
 
-						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
-						if (iconClass) {
-							$itemContent.prepend('<i class="' + iconClass + '"></i>');
-						}
+						if (item.data) {
+							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
+							if (iconClass) {
+								$itemContent.prepend('<i class="' + iconClass + '"></i>');
+							}
 
-						$itemContent.attr('title', item.data.path);
+							$itemContent.attr('title', item.data.path);
+						}
 
 						return $itemContent.get(0).outerHTML;
 					},
-					query: function (query) {
+					query: function(query) {
 						if (currentQueryTimer) {
 							window.clearTimeout(currentQueryTimer);
 						}
@@ -60,8 +63,8 @@ define(
 							currentQueryTimer = null;
 
 							var parameters = {
-								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								searchTerm: query.term,
+								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
