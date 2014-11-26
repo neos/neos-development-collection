@@ -44,6 +44,13 @@ module.exports = function (grunt) {
 					mainConfigFile: 'build.js'
 				}
 			}
+		},
+		trimtrailingspaces: {
+			js: {
+				src: [libraryPath + 'jquery-with-dependencies.js'],
+				filter: 'isFile',
+				encoding: 'utf8'
+			}
 		}
 	});
 
@@ -73,6 +80,7 @@ module.exports = function (grunt) {
 					footer: '}'
 				}
 			},
+
 			aloha: {
 				src: [
 					libraryPath + 'aloha/aloha.js'
@@ -112,6 +120,7 @@ module.exports = function (grunt) {
 					}
 				}
 			},
+
 			bootstrap: {
 				src: [
 					libraryPath + 'twitter-bootstrap/js/bootstrap-alert.js',
@@ -155,6 +164,7 @@ module.exports = function (grunt) {
 					}
 				}
 			},
+
 			select2: {
 				src: [
 					libraryPath + 'select2/select2.js'
@@ -183,6 +193,7 @@ module.exports = function (grunt) {
 					}
 				}
 			},
+
 			select2Css: {
 				src: [
 					libraryPath + 'select2/select2.css'
@@ -567,6 +578,7 @@ module.exports = function (grunt) {
 		grunt.util._.forEach(grunt.config.get().concat, function(taskConfiguration, taskName) {
 			if (taskName !== 'css') {
 				grunt.task.run('concat:' + taskName);
+				grunt.task.run('trimtrailingspaces:js');
 			}
 		});
 	});
