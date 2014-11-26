@@ -17,6 +17,7 @@ use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\AccountRepository;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Policy\PolicyService;
@@ -68,6 +69,19 @@ class UsersController extends AbstractModuleController {
 	protected $policyService;
 
 	/**
+	 * @Flow\Inject
+	 * @var PrivilegeManagerInterface
+	 */
+	protected $privilegeManager;
+
+	/**
+	 * The currently authenticated account (= backend user)
+	 *
+	 * @var Account
+	 */
+	protected $currentAccount;
+
+	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
@@ -84,6 +98,7 @@ class UsersController extends AbstractModuleController {
 				$propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 			}
 		}
+		$this->currentAccount = $this->securityContext->getAccount();
 	}
 
 	/**
@@ -91,7 +106,7 @@ class UsersController extends AbstractModuleController {
 	 */
 	public function indexAction() {
 		$this->view->assignMultiple(array(
-			'currentAccount' => $this->securityContext->getAccount(),
+			'currentAccount' => $this->currentAccount,
 			'accounts' => $this->accountRepository->findAll()
 		));
 	}
@@ -101,8 +116,10 @@ class UsersController extends AbstractModuleController {
 	 * @return void
 	 */
 	public function showAction(Account $account) {
-		$this->view->assign('account', $account);
-		$this->view->assign('currentAccount', $this->securityContext->getAccount());
+		$this->view->assignMultiple(array(
+			'account' => $account,
+			'currentAccount' => $this->currentAccount
+		));
 	}
 
 	/**
@@ -119,6 +136,7 @@ class UsersController extends AbstractModuleController {
 	/**
 	 * @param Account $account The account to create
 	 * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
+	 * @Flow\Validate(argumentName="account.accountIdentifier", type="\TYPO3\Neos\Validation\Validator\AccountExistsValidator")
 	 * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
 	 * @return void
 	 * @todo Security
@@ -158,6 +176,10 @@ class UsersController extends AbstractModuleController {
 	 * @todo Security
 	 */
 	public function updateAction(Account $account, array $password = array()) {
+		if ($account === $this->currentAccount && !$this->privilegeManager->isPrivilegeTargetGrantedForRoles($this->currentAccount->getRoles(), 'TYPO3.Neos:Backend.Module.Administration.Users')) {
+			$this->addFlashMessage('With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!', 'Don\'t lock yourself out', Message::SEVERITY_WARNING, array(), 1416501197);
+			$this->forward('edit', NULL, NULL, array('account' => $account));
+		}
 		$password = array_shift($password);
 		if (strlen(trim(strval($password))) > 0) {
 			$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
@@ -176,8 +198,8 @@ class UsersController extends AbstractModuleController {
 	 * @todo Security
 	 */
 	public function deleteAction(Account $account) {
-		if ($account === $this->securityContext->getAccount()) {
-			$this->addFlashMessage('You can not delete current logged in user', 'Current account can\'t be removed', Message::SEVERITY_WARNING, array(), 1412374546);
+		if ($account === $this->currentAccount) {
+			$this->addFlashMessage('You can not delete the currently logged in user', 'Current account can\'t be removed', Message::SEVERITY_WARNING, array(), 1412374546);
 			$this->redirect('index');
 		}
 		$this->accountRepository->remove($account);
