@@ -12419,9 +12419,9 @@ disabled look for disabled choices in the results dropdown
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   box-shadow: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
+  border: none;
+}
+.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice + .neos-select2-search-choice {
   border-bottom: 1px solid #222;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice div {
