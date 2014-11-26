@@ -71,7 +71,7 @@
 		</div>
 		<div id="neos-login-footer">
 			<p>
-				<neos:backend.translate id="login.footer" arguments="{0: '<f:format.date format=\'Y\' date=\'now\' />'}" >;
+				<neos:backend.translate id="login.footer" arguments="{0: '{f:format.date(format: \'Y\' date: \'now\')}'}" >
 				<a href="http://neos.typo3.org" target="_blank">TYPO3 Neos</a> – ©
 				2006-<f:format.date format="Y" date="now" /> This is free software,
 				licensed under GPL3 or higher, and you are welcome to redistribute
