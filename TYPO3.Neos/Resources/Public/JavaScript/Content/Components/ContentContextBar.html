@@ -4,7 +4,10 @@
 </div>
 
 <div class="neos-right">
-	<button class="neos-button neos-full-screen-open" title="{{translate id='content-components-contentContextBar-button-title' value='Full Screen'}}" {{action "toggleFullScreen" target="view.fullScreenController"}}>
+	<a class="neos-button neos-live-shortcut" target="_blank" {{bind-attr href="view.liveUri"}} title="{{translate id='content-components-contentContextBar-liveShortcutButton-title' value='Open page in live workspace'}}">
+		<i class="icon-external-link"></i>
+	</a>
+	<button class="neos-button neos-full-screen-open" title="{{translate id='content-components-contentContextBar-fullScreenButton-title' value='Full Screen'}}" {{action "toggleFullScreen" target="view.fullScreenController"}}>
 		<i class="icon-resize-full"></i>
 	</button>
 </div>
