@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\UnitTestCase;
 
 /**
