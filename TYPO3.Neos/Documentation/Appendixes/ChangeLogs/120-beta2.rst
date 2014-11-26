@@ -1,6 +1,17 @@
-====================
-1.2.0-beta2
-====================
+========================
+1.2.0-beta2 (2014-11-26)
+========================
+
+Second beta release includes two important fixes solves issues with moving nodes and linking to nodes/assets in inline editing.
+
+Read more about the linking issues in :ref:`bugfix-inline-linking-to-nodes-assets-broken`.
+
+~~~~~~~~~~~~~~
+Known issues
+~~~~~~~~~~~~~~
+
+- Kickstarting a new site is not working if the demo site package is active
+    Deactivate the demo site package with ./flow package:deactivate TYPO3.NeosDemoTypo3Org before you kickstart a new site
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Base Distribution
