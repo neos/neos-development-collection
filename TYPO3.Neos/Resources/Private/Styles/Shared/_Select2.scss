@@ -289,10 +289,11 @@
 			@include box-sizing(border-box);
 
 			box-shadow: none;
-			border-left: none;
-			border-right: none;
-			border-top: none;
-			border-bottom: 1px solid $grayDark;
+			border: none;
+
+			+ .neos-select2-search-choice {
+				border-bottom: 1px solid $grayDark;
+			}
 
 			div {
 				line-height: $relatedMargin + $defaultMargin;
