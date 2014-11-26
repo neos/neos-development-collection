@@ -107,7 +107,7 @@ class UsersController extends AbstractModuleController {
 	public function indexAction() {
 		$this->view->assignMultiple(array(
 			'currentAccount' => $this->currentAccount,
-			'accounts' => $this->accountRepository->findAll()
+			'accounts' => $this->accountRepository->findByAuthenticationProviderName('Typo3BackendProvider')
 		));
 	}
 
