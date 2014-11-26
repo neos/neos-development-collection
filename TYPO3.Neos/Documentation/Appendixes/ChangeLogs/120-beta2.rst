@@ -4,7 +4,7 @@
 
 Second beta release includes two important fixes solves issues with moving nodes and linking to nodes/assets in inline editing.
 
-Read more about the linking issues in :ref:`bugfix-inline-linking-to-nodes-assets-broken`.
+Read more about the linking issues in `the commit message <#bugfix-inline-linking-to-nodes-assets-broken>`_.
 
 ~~~~~~~~~~~~~~
 Known issues
