@@ -1,0 +1,16 @@
+/Build/
+/Configuration/
+/Data/
+/Packages/
+/Web/
+/bin/
+/Readme.txt
+/Upgrading.txt
+/flow
+/flow.bat
+
+# ignore the downloaded selenium server, config and the selenium
+# temporary directory (which starts with a quote, do not ask why...)
+/Tests/Selenium/settings.xml
+Build/Resources/Java/selenium-server-standalone*
+/"

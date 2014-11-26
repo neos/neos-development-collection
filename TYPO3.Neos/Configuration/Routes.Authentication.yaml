@@ -1,0 +1,27 @@
+#                                                                        #
+# "Authentication" subroutes configuration for the TYPO3.Neos package    #
+#                                                                        #
+
+-
+  name: 'Login form'
+  uriPattern: 'login(.{@format})'
+  defaults:
+    '@format': 'html'
+  httpMethods: ['GET']
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Authenticate'
+  uriPattern: 'login(.{@format})'
+  defaults:
+    '@action': 'authenticate'
+    '@format': 'html'
+  httpMethods: ['POST']
+
+-
+  name:  'Logout'
+  uriPattern: 'logout(.{@format})'
+  defaults:
+    '@action': 'logout'
+    '@format': 'html'
+  httpMethods: ['POST']
