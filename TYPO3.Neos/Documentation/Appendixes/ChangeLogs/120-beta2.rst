@@ -1,0 +1,380 @@
+========================
+1.2.0-beta2 (2014-11-26)
+========================
+
+Second beta release includes two important fixes solves issues with moving nodes and linking to nodes/assets in inline editing.
+
+Read more about the linking issues in :ref:`bugfix-inline-linking-to-nodes-assets-broken`.
+
+~~~~~~~~~~~~~~
+Known issues
+~~~~~~~~~~~~~~
+
+- Kickstarting a new site is not working if the demo site package is active
+    Deactivate the demo site package with ./flow package:deactivate TYPO3.NeosDemoTypo3Org before you kickstart a new site
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See https://ci.neos.typo3.org/job/TYPO3%20Neos%20Release/21/
+
+* Commit: `93f301c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/93f301c73b0c1e2dc849b715a325d79b00d47d20>`_
+
+[TASK] Various visual improvements for workspaces module
+-----------------------------------------------------------------------------------------
+
+ - Improve handling of very long node paths
+ - Use node type's name instead of configuration label
+ - Removes duplicate display of site (when multiple sites)
+ - Small adjustments to icons
+
+* Commit: `38473e7 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/38473e7b24a7e266e7edad46f01c72c7228f7bab>`_
+
+[BUGFIX] Inline linking to nodes/assets broken
+-----------------------------------------------------------------------------------------
+
+Linking to nodes/assets in inline editable properties using Aloha,
+was broken because the href attribute was removed during sanitization.
+They were removed since node:// & asset:// wasn't acknowledged as correct.
+This happened due to the sanitization configuration being overwritten,
+a regression introduced with the Aloha upgrade.
+
+Unfortunately this bug means that all links to nodes/assets made inline
+since the Aloha update are broken. However they can be fixed by clicking
+the link in the text, since the href is then added and saved correctly.
+
+Additionally removed unused marking/cleaning code.
+
+Fixes: NEOS-742
+
+* Commit: `f348817 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/f3488173c1cd558a0b762f199a5554e28fcf883a>`_
+
+[BUGFIX] Reference(s) inspector editors with selection broken
+-----------------------------------------------------------------------------------------
+
+A regression was introduced with the addition of icons
+to the reference(s) inspector editors, causing a JavaScript
+error when an existing selection should be shown.
+
+Regression change I322998d5e25363684366eaec755bb4b984be8f1c
+
+Fixes: NEOS-801
+Related: NEOS-409
+
+* Commit: `fc6c10d <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/fc6c10daf916ef0c655f2eeb0494888c2711248a>`_
+
+[TASK] Adjust to node publishing dependecy ordering
+-----------------------------------------------------------------------------------------
+
+Adjusts the publishing service test to the new dependency
+ordering in the node publishing introduced in
+I5b9ab12384c7b8298bb79752c0e90563a62c2203.
+
+Related: NEOS-770
+
+* Commit: `1f7ed7c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1f7ed7c232d5149280d5fc7ea4fa627273ce5f82>`_
+
+[TASK] Update Aloha 1.1.3 to 1.1.5
+-----------------------------------------------------------------------------------------
+
+* Commit: `8603ed4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8603ed4749dfaf8783677813b46c991b0820ca08>`_
+
+[BUGFIX] Fix typo in ReferenceEditor.js
+-----------------------------------------------------------------------------------------
+
+Removes a superfluous line that has been accidentally introduced with
+Id51aa287d57eb50e55536604878c22c6dfc52c15
+
+Related: NEOS-558
+Related: NEOS-801
+
+* Commit: `2eedbc4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2eedbc4c273ef44753be72052f11d2e13c5a9473>`_
+
+[TASK] Trim and crop default node label
+-----------------------------------------------------------------------------------------
+
+The text property is used for the label and it often contains line breaks.
+To avoid whitespace around the text, it should be trimmed.
+
+Additionally the label is cropped to a 100 characters, since it's very
+unlikely a label needs to be any longer than that. This is again necessary
+because the text property can often contain lots of text.
+
+Related: NEOS-257
+
+* Commit: `bf31e36 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bf31e367c0193871afc86b5d4c88105431de2123>`_
+
+[BUGFIX] Raise Grunt version
+-----------------------------------------------------------------------------------------
+
+Using ``grunt.config.merge`` needs at least Grunt version 0.4.5
+
+* Commit: `4226a42 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/4226a424d0432a95b44be314c17ebd3a16a936d7>`_
+
+[TASK] Insert new panel improvements
+-----------------------------------------------------------------------------------------
+
+ - Styled as cards instead of links
+ - Navigatable with tab navigation
+ - Max-height with overflow when exceeded
+ - Handling of long node type labels (ellipsis + title)
+
+Additionally some clean up:
+
+ - Renamed AbstractDialog to AbstractModal
+ - Abstracted the two different InsertNodePanels into one
+
+Fixes: NEOS-581
+Resolves: NEOS-609
+
+* Commit: `90c01ba <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/90c01baa4c08cd67813fb5fb4dc11cebb242adb1>`_
+
+[TASK] Focus action buttons when opening dialogs
+-----------------------------------------------------------------------------------------
+
+When dialog are opened the focus is moved on the action buttons of the
+dialog, which prevents allows keyboard navigation to handle the dialog.
+Additionally it prevents weird behavior when hitting enter or tab
+navigating after opening a dialog.
+
+Resolves: NEOS-596
+
+* Commit: `860beed <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/860beed7474d4bd55e736ea39f100593ca10fe80>`_
+
+[BUGFIX] ImageUriImplementation dependent on new resource management
+-----------------------------------------------------------------------------------------
+
+Moving of the new image TypoScript objects cause issues, since the
+objects had been adjusted to the new resource management. This change
+brings back the original implementation, which works for 1.2.
+
+Related: NEOS-745
+
+* Commit: `40338fd <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/40338fd9c3100da7697560011bff660245506e01>`_
+
+[TASK] Allow configurable search thresholds in reference editors
+-----------------------------------------------------------------------------------------
+
+The reference and references editor use a threshold of 1 character before
+they start a search for matches. This change makes that threshold
+configurable::
+
+  editorOptions:
+    threshold: 4
+
+The default value is now 2.
+
+Resolves: NEOS-558
+
+* Commit: `1c64a6e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/1c64a6e53029df4d114865270b8a01e55bda6c23>`_
+
+[BUGFIX] Validation errors empty for service controllers
+-----------------------------------------------------------------------------------------
+
+When a validation error is thrown in a service controller
+the errorAction tries to output it, but the output is empty
+because json_encode cannot handle objects.
+
+Relases: master, 1.2, 1.1
+Fixes: NEOS-411
+
+* Commit: `bac6e56 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bac6e56b4bfc627522080d8776dcf800d5eeefaa>`_
+
+[TASK] Move ImageTag and ImageUri TypoScript objects
+-----------------------------------------------------------------------------------------
+
+This TypoScriptObject was moved from TYPO3.Media to avoid a
+dependency on TypoScript in Media. See original change for
+usage examples, I10898dd66838f5bfedff23818e92100efb35bffe.
+
+Fixes: NEOS-745
+
+* Commit: `b7bd89c <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b7bd89ce434dd39c2cef758c83e5d0c97d6932d6>`_
+
+[TASK] Remove duplicated method from PublishingService
+-----------------------------------------------------------------------------------------
+
+* Commit: `b1f70c8 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/b1f70c882b77aa8a9697ad257772ffda570a0638>`_
+
+[TASK] Group, sort & add icons for node types in NodeTypeEditor
+-----------------------------------------------------------------------------------------
+
+Group and sort node types as defined in the node type configuration
+in the NodeTypeEditor used for changing node type in the inspector.
+Additionally add node type icon for added clarity.
+
+Resolves: NEOS-422
+
+* Commit: `bf4a066 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bf4a066c35388fb4a6bcc5dd93b5158dea0f7e0d>`_
+
+[BUGFIX] Document node types shown in inline create new panel
+-----------------------------------------------------------------------------------------
+
+If a document node type has the configuration ``ui.group`` set,
+it shows up in the inline create new panel.
+
+Fixes: NEOS-736
+
+* Commit: `563656e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/563656efbb9ab56c89afaf1318e171c5eaa80685>`_
+
+[TASK] Consistent meaning for arrow directions on buttons
+-----------------------------------------------------------------------------------------
+
+There's a mixture in the direction of various arrow buttons.
+Now they're streamlined to mean that the direction the arrow
+points is the direction that the element moves. E.g. a down
+allow opens the element when clicked.
+
+Resolves: NEOS-598
+
+* Commit: `7f24305 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7f24305b3fe377aee9a6e12ee3c523c34ff154ca>`_
+
+[BUGFIX] Search the node tree loses focus
+-----------------------------------------------------------------------------------------
+
+When the node tree is searched, the focus on the search
+field is lost after the results are returned.
+
+This causes the situation where the user hits backspace
+and then instead of deleting parts of the search term
+the page is navigated back.
+
+Fixes: NEOS-359
+
+* Commit: `dafce1f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/dafce1f6637eca4d469b7b4ac00bf85e69038cf4>`_
+
+[BUGFIX] Shortcut points to unsupported type
+-----------------------------------------------------------------------------------------
+
+When a shortcuts resolves to a node it results in the error
+500 Shortcut resolves to unsupported type. This happens as
+the check for instanceof NodeInterface in the NodeController
+fails is not imported and as such returns FALSE.
+
+Resolves: NEOS-754
+
+* Commit: `920f259 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/920f259590d19b369b1327e494b6a60aa290299f>`_
+
+[TASK] Remove deprecated TemplateImplementation
+-----------------------------------------------------------------------------------------
+
+The Neos TemplateImplementation was deprecated even before
+version 1.0 and just outputs an error message, therefor cannot
+be in productive use. Removing it will fix the possible error
+in the AbstractMenuImplementation that imports the
+TemplateImplementation from TypoScript which can  lead to a fatal
+PHP error as the name is already in use in this namespace.
+
+Resolves: NEOS-738
+
+* Commit: `7d75e1f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7d75e1f9596aac3995a13acc2c626749deeb5a8b>`_
+
+[TASK] Add known issue to 1.2.0-beta1 release notes
+-----------------------------------------------------------------------------------------
+
+* Commit: `543a873 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/543a87316d9233b78af434aa690ab860f9f89090>`_
+
+[TASK] Adjust 1.2.0-beta1 release notes
+-----------------------------------------------------------------------------------------
+
+* Commit: `2ac71db <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/2ac71db630603a7b99a02de2c112d5e692a3d186>`_
+
+[TASK] Update 1.2.0-beta1 release notes
+-----------------------------------------------------------------------------------------
+
+* Commit: `812843f <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/812843f6ff568e0e116c021064213e16e65961e5>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.Kickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Discarding of changes should consider shadow nodes
+-----------------------------------------------------------------------------------------
+
+Shadow nodes need to be removed when removing a changed node from
+a workspace.
+
+Fixes: NEOS-797
+
+* Commit: `5b9cca1 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/5b9cca12412234344586f39d8d64ed07477a1fc5>`_
+
+[BUGFIX] Multiple moves of nodes break publishing/results in lost content
+-----------------------------------------------------------------------------------------
+
+Shadow nodes must only be created if no original shadow node exists
+before. This solves moving the same node twice. In addition a
+scenario where a node is moved to and from at the same path is covered
+by storing the reference and sorting the nodes to be published by
+their dependencies (topological sorting).
+
+Fixes: NEOS-770
+
+* Commit: `1815891 <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/181589151809362af184ab67ba0d290e89f76d9f>`_
+
+[TASK] Remove empty DocBook manual stub
+-----------------------------------------------------------------------------------------
+
+* Commit: `79108ca <https://git.typo3.org/Packages/TYPO3.TYPO3CR.git/commit/79108ca807dd3fec17c17c76383ad63c5198688d>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Media
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Fix position of menu node on "Shortcuts" page
+-----------------------------------------------------------------------------------------
+
+This is a follow-up to the previous commit
+I4786908d68f99050a7a7f935e7c02b472c07f3f3 that fixes the positioning of
+the shortcut menu on the "Shortcuts" page
+
+Related: NEOS-564
+
+* Commit: `0b24c39 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/0b24c394a86ab43e92588d9c9facef3c3b53e261>`_
+
+[TASK] Add examples for the different shortcut node types
+-----------------------------------------------------------------------------------------
+
+Renames the page "Shortcut" to "Shortcuts" and adds four sub-nodes
+of the currently supported shortcut node types:
+
+* Shortcut to first child node
+* Shortcut to parent node
+* Shortcut to selected target
+* Shortcut to external URI
+
+Related: NEOS-564
+
+* Commit: `6314d12 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/6314d12ae7185120f18455ada1e20add47d989c3>`_
+
