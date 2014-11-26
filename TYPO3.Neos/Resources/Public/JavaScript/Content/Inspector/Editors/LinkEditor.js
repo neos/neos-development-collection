@@ -38,8 +38,10 @@ define(
 					escapeMarkup: function(markup) {
 						return markup;
 					},
-					formatResult: function(item) {
-						var $itemContent = $('<span>' + item.text + '</span>');
+					formatResult: function(item, container, query, escapeMarkup) {
+						var markup = [];
+						window.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
+						var $itemContent = $('<span>' + markup.join('') + '</span>');
 
 						if (item.data.icon) {
 							$itemContent.prepend('<i class="' + item.data.icon + '"></i>');
