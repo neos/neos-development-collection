@@ -78,7 +78,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\AbstractModuleContro
 	 */
 	public function indexAction() {
 		$accounts = array();
-		foreach ($this->accountRepository->findAll() as $account) {
+		foreach ($this->accountRepository->findByAuthenticationProviderName('Typo3BackendProvider') as $account) {
 			$accounts[$this->persistenceManager->getIdentifierByObject($account)] = $account;
 		}
 		$this->view->assignMultiple(array(
