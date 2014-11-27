@@ -73,7 +73,7 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 	}
 
 	/**
-	 * Prepare fluid view for rendering error page with neos backend
+	 * Prepare a Fluid view for rendering an error page with the Neos backend
 	 *
 	 * @return StandaloneView
 	 */
@@ -84,6 +84,7 @@ class PageHandler extends AbstractRenderingExceptionHandler {
 		// FIXME find a better way than using templates as partials
 		$fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
 		$fluidView->setFormat('html');
+		$fluidView->setControllerContext($this->runtime->getControllerContext());
 		return $fluidView;
 	}
 
