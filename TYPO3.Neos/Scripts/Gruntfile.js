@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		watch: {
 			css: {
-				files: path.join(packagePath, 'Resources/Private/Styles/{,*/}*.scss'),
+				files: path.join(packagePath, 'Resources/Private/Styles/**/*.scss'),
 				tasks: ['compile-css'],
 				options: {
 					spawn: false,
