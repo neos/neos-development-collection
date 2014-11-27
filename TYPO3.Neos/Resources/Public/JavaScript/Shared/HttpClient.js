@@ -128,6 +128,9 @@ define([
 							if (xhr.status === 401) {
 								LoginDialog.create({
 									callback: function() {
+										if (requestMethod !== 'GET' && requestMethod !== 'HEAD') {
+											options.data.__csrfToken = Configuration.get('CsrfToken');
+										}
 										RequestManager.add($.ajax(options));
 									}
 								}).appendTo('#neos-application');
