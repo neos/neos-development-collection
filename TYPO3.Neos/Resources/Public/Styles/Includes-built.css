@@ -5382,6 +5382,32 @@
 .neos-inspector-panel-open .neos #neos-inspector {
   right: 0;
 }
+.neos #neos-inspector .neos-inspector-file {
+  min-width: 288px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-button {
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 13px;
+}
+.neos #neos-inspector .neos-inspector-file ul {
+  padding-bottom: 5px;
+}
+.neos #neos-inspector .neos-inspector-file ul li {
+  padding: 5px 0;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width {
+  padding-bottom: 12px;
+}
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-crop-button,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-upload-button,
+.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-crop-button {
+  float: right;
+  margin-left: 4px;
+}
 .neos #neos-inspector .neos-modified .neos-inspector-datetime-editor,
 .neos #neos-inspector .neos-error .neos-inspector-datetime-editor {
   position: relative;
@@ -5648,31 +5674,8 @@
   float: right;
   margin-left: 4px;
 }
-.neos #neos-inspector .neos-inspector-file {
-  min-width: 288px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-button {
-  padding: 0 8px;
-  height: 32px;
-  line-height: 32px;
-  font-size: 13px;
-}
-.neos #neos-inspector .neos-inspector-file ul {
-  padding-bottom: 5px;
-}
-.neos #neos-inspector .neos-inspector-file ul li {
-  padding: 5px 0;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width {
-  padding-bottom: 12px;
-}
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-upload-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-upload .neos-inspector-file-crop-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-upload-button,
-.neos #neos-inspector .neos-inspector-file .neos-inspector-file-width .neos-inspector-file-crop-button {
-  float: right;
-  margin-left: 4px;
+.neos #neos-inspector .link-editor .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice {
+  border-bottom: none;
 }
 .neos #neos-inspector .neos-select2-container-multi.neos-select2-container-active .neos-select2-choices .neos-select2-search-field {
   background-color: #fff;
@@ -12209,6 +12212,9 @@ disabled look for disabled choices in the results dropdown
 }
 .neos-select2-drop .neos-select2-results li.neos-select2-disabled .neos-select2-result-label {
   cursor: not-allowed;
+}
+.neos-select2-drop .neos-select2-results li.neos-select2-disabled .neos-select2-result-label,
+.neos-select2-drop .neos-select2-results li.neos-select2-disabled .neos-select2-result-label i {
   color: #5b5b5b;
 }
 .neos-select2-drop .neos-select2-results li.neos-select2-no-results, .neos-select2-drop .neos-select2-results li.neos-select2-selection-limit {
@@ -12408,9 +12414,9 @@ disabled look for disabled choices in the results dropdown
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   box-shadow: none;
-  border: none;
-}
-.neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice + .neos-select2-search-choice {
+  border-top: none;
+  border-left: none;
+  border-right: none;
   border-bottom: 1px solid #222;
 }
 .neos-select2-container-multi .neos-select2-choices .neos-select2-search-choice div {
