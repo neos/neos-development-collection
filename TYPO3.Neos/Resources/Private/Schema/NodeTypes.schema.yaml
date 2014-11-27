@@ -31,9 +31,12 @@ additionalProperties:
                     type: 'dictionary'
                     additionalProperties: FALSE
                     properties:
+                      'strong': { type: boolean }
                       'b': { type: boolean }
+                      'em': { type: boolean }
                       'i': { type: boolean }
                       'u': { type: boolean }
+                      'del': { type: boolean }
                       'sub': { type: boolean }
                       'sup': { type: boolean }
                       'p': { type: boolean }
@@ -73,6 +76,15 @@ additionalProperties:
                       'middle': { type: boolean }
                       'bottom': { type: boolean }
 
+                  'formatlesspaste':
+                    additionalProperties: FALSE
+                    properties:
+                      'button': { type: boolean }
+                      'formatlessPasteOption': { type: boolean }
+                      'strippedElements':
+                        type: array
+                        items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
+
                   'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
 
               'inspector':
@@ -80,7 +92,7 @@ additionalProperties:
                 additionalProperties: FALSE
                 properties:
 
-                  'group': { type: string, description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
+                  'group': { type: ['string', 'null'], description: 'Identifier of the inspector group in which this property should be edited. If not set, will not appear in inspector at all.' }
 
                   'position': { type: integer, description: 'Position inside the inspector group, small numbers are sorted on top' }
 
