@@ -13,6 +13,7 @@ namespace TYPO3\TypoScript\Core\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Security\Context;
 use TYPO3\TypoScript\Exception;
 use Doctrine\ORM\Proxy\Proxy;
 
@@ -74,6 +75,12 @@ class ContentCache {
 	 * @Flow\Inject
 	 */
 	protected $propertyMapper;
+
+	/**
+	 * @var Context
+	 * @Flow\Inject
+	 */
+	protected $securityContext;
 
 	/**
 	 * Takes the given content and adds markers for later use as a cached content segment.
@@ -140,8 +147,9 @@ class ContentCache {
 				throw new Exception\CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $typoScriptPath), 1395846615);
 			}
 		}
+		$identifierSource .= 'securityContextHash=' . $this->securityContext->getContextHash();
 
-		return md5($typoScriptPath . '@' . rtrim($identifierSource, '&'));
+		return md5($typoScriptPath . '@' . $identifierSource);
 	}
 
 	/**
