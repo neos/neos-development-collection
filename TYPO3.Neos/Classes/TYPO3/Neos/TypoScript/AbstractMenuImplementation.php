@@ -119,7 +119,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation {
 			return self::STATE_CURRENT;
 		}
 
-		if ($node !== $this->currentNode->getContext()->getCurrentSiteNode() && in_array($node, $this->getCurrentNodeRootline())) {
+		if ($node !== $this->currentNode->getContext()->getCurrentSiteNode() && in_array($node, $this->getCurrentNodeRootline(), TRUE)) {
 			return self::STATE_ACTIVE;
 		}
 
