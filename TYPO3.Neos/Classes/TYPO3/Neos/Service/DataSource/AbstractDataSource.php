@@ -11,6 +11,8 @@ namespace TYPO3\Neos\Service\DataSource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+
 /**
  * Data source interface for getting data.
  *
@@ -36,6 +38,19 @@ abstract class AbstractDataSource implements DataSourceInterface {
 			throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
 		}
 		return static::$identifier;
+	}
+
+	/**
+	 * @var ControllerContext
+	 */
+	protected $controllerContext;
+
+	/**
+	 * @param ControllerContext $controllerContext
+	 * @return void
+	 */
+	public function setControllerContext(ControllerContext $controllerContext) {
+		$this->controllerContext = $controllerContext;
 	}
 
 }
