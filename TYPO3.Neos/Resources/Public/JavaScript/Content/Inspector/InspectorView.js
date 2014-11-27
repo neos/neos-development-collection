@@ -26,7 +26,7 @@ define(
 	/**
 	 * The Inspector is displayed on the right side of the page.
 	 *
-	 * Furthermore, it contains *Editors*
+	 * Furthermore, it contains *Editors* and *Views*
 	 */
 	return Ember.View.extend({
 		elementId: 'neos-inspector',

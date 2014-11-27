@@ -5,14 +5,17 @@ define(
 [
 	'emberjs',
 	'./PropertyEditor',
+	'./ViewView',
 	'Content/Model/NodeSelection'
 ], function(
 	Ember,
 	PropertyEditor,
+	ViewView,
 	NodeSelection
 ) {
 	return Ember.View.extend({
 		PropertyEditor: PropertyEditor,
+		ViewView: ViewView,
 		_hasValidationErrors: false,
 		_collapsed: false,
 		_nodeType: '',
@@ -22,15 +25,16 @@ define(
 			var that = this,
 				selectedNode = NodeSelection.get('selectedNode'),
 				nodeType = (selectedNode.$element ? selectedNode.$element.attr('typeof').replace(/\./g,'_') : 'ALOHA'),
-				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('group'));
+				collapsed = this.get('inspector.configuration.' + nodeType + '.' + this.get('group')),
+				properties = this.get('properties') || [];
 
 			this.set('_nodeType', nodeType);
 			if (collapsed) {
-				this.$().find('.neos-inspector-field').hide();
+				this.$().find('.neos-inspector-field,.neos-inspector-view').hide();
 				this.set('_collapsed', true);
 				this.set('_automaticallyCollapsed', true);
 			}
-			this.get('properties').forEach(function(property) {
+			properties.forEach(function(property) {
 				that.get('inspector.validationErrors').addObserver(property.key, that, '_validationErrorsDidChange');
 			});
 		},
@@ -45,7 +49,7 @@ define(
 		},
 
 		_onCollapsedChange: function() {
-			var $content = this.$().find('.neos-inspector-field');
+			var $content = this.$().find('.neos-inspector-field,.neos-inspector-view');
 			if (this.get('_collapsed') === true) {
 				$content.slideUp(200);
 			} else {

@@ -1,6 +1,6 @@
 <div class="neos-toolbar">
 	<div class="neos-inspector-tabs">
-		{{#each tab in groupedPropertyViews}}
+		{{#each tab in groupedViews}}
 			<button {{action toggleCurrentInspectorTab tab}} {{bindAttr class=":neos-button tab.isActive:is-active" title="tab.label"}}>
 				<i {{bindAttr class="tab.icon"}}></i>
 			</button>
@@ -12,10 +12,10 @@
 		<label for="neos-content-breadcrumb">{{translate id="content-inspector-inspectorView-selectedElement" value="Selected element"}}</label>
 		{{view view.Breadcrumb}}
 	</div>
-	{{#each tab in groupedPropertyViews}}
+	{{#each tab in groupedViews}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each group in tab.groups}}
-				{{#view view.Section classNames="neos-inspector-section" groupBinding="group.group" propertiesBinding="group.properties" inspectorBinding="controller"}}
+				{{#view view.Section classNames="neos-inspector-section" groupBinding="group.group" propertiesBinding="group.properties" viewsBinding="group.views" inspectorBinding="controller"}}
 					<div {{bindAttr class=":neos-inspector-headline view._hasValidationErrors:neos-validation-error"}}>
 						<span>{{unbound group.label}}</span>
 						{{#if view._hasValidationErrors}}<i class="icon-warning-sign"></i>{{/if}}
@@ -31,6 +31,9 @@
 							<label for="{{unbound elementId}}" title="{{unbound ui.label}}">{{unbound ui.label}}</label>
 							{{view view.parentView.parentView.PropertyEditor propertyDefinitionBinding="view.content" inspectorBinding="controller"}}
 						{{/if}}
+					{{/collection}}
+					{{#collection tagName="div" classNames="neos-inspector-view" contentBinding="group.views"}}
+						{{view view.parentView.parentView.ViewView viewDefinitionBinding="view.content" inspectorBinding="controller"}}
 					{{/collection}}
 				{{/view}}
 			{{/each}}

@@ -95,7 +95,7 @@ define(
 		 * This is a computed property which builds up a nested array powering the Inspector.
 		 * It essentially contains three levels: On the first level, the tabs are configured,
 		 * on the second level the groups are displayed, while on the third level, the properties
-		 * belonging to each group are displayed.
+		 * and views belonging to each group are displayed.
 		 *
 		 * Thus, the output looks possibly as follows:
 		 * - Default
@@ -105,10 +105,13 @@ define(
 		 *    - Image Settings
 		 *    - image (file upload)
 		 */
-		groupedPropertyViews: function() {
+		groupedViews: function() {
 			var selectedNodeSchema,
 				propertiesArray,
 				sortedPropertiesArray,
+				declaredViews,
+				viewsArray,
+				sortedViewsArray,
 				groupsObject,
 				tabsObject,
 				sortedGroupsArray,
@@ -131,8 +134,25 @@ define(
 					}, selectedNodeSchema.properties[property]));
 				}
 			}
+
 			sortedPropertiesArray = propertiesArray.sort(function(a, b) {
 				return (Ember.get(a, 'ui.inspector.position') || 9999) - (Ember.get(b, 'ui.inspector.position') || 9999);
+			});
+
+			declaredViews = Ember.get(selectedNodeSchema, 'ui.inspector.views') || [];
+
+			viewsArray = [];
+			for (var key in declaredViews) {
+				if (declaredViews.hasOwnProperty(key)) {
+					viewsArray.push($.extend({
+						key: key,
+						elementId: Ember.generateGuid()
+					}, declaredViews[key]));
+				}
+			}
+
+			sortedViewsArray = viewsArray.sort(function(a, b) {
+				return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 			});
 
 			// groups
@@ -142,13 +162,13 @@ define(
 			tabsObject = $.extend(true, {}, Ember.get(selectedNodeSchema, 'ui.inspector.tabs'));
 
 			// build nested structure
-			sortedGroupsArray = this._assignPropertiesToGroups(sortedPropertiesArray, groupsObject);
+			sortedGroupsArray = this._assignPropertiesAndViewsToGroups(sortedPropertiesArray, sortedViewsArray, groupsObject);
 			sortedTabsArray = this._assignGroupsToTabs(sortedGroupsArray, tabsObject);
 
 			return sortedTabsArray;
 		}.property('nodeSelection.selectedNodeSchema'),
 
-		_assignPropertiesToGroups: function(sortedPropertiesArray, groupsObject) {
+		_assignPropertiesAndViewsToGroups: function(sortedPropertiesArray, sortedViewsArray, groupsObject) {
 			var groupsArray;
 
 			// 1. assign properties to groups
@@ -164,15 +184,30 @@ define(
 				}
 			});
 
-			// 2. transform object into array
+			// 2. assign views to groups
+			sortedViewsArray.forEach(function(view) {
+				var groupIdentifier = Ember.get(view, 'group');
+				if (groupIdentifier in groupsObject) {
+					if (groupsObject.hasOwnProperty(groupIdentifier)) {
+						if (!groupsObject[groupIdentifier].views) {
+							groupsObject[groupIdentifier].views = [];
+						}
+						groupsObject[groupIdentifier].views.push(view);
+					}
+				}
+			});
+
+			// 3. transform object into array
 			groupsArray = [];
 			for (var groupIdentifier in groupsObject) {
-				if (groupsObject.hasOwnProperty(groupIdentifier) && groupsObject[groupIdentifier].properties && groupsObject[groupIdentifier].properties.length) {
+				if (groupsObject.hasOwnProperty(groupIdentifier)
+					&& ((groupsObject[groupIdentifier].properties && groupsObject[groupIdentifier].properties.length)
+					|| (groupsObject[groupIdentifier].views && groupsObject[groupIdentifier].views.length))) {
 					groupsArray.push($.extend({group: groupIdentifier}, groupsObject[groupIdentifier]));
 				}
 			}
 
-			// 3. sort
+			// 4. sort
 			groupsArray.sort(function(a, b) {
 				return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
 			});
@@ -220,19 +255,19 @@ define(
 		},
 
 		_ensureTabSelection: function() {
-			var groupedPropertyViews = this.get('groupedPropertyViews');
+			var groupedViews = this.get('groupedViews');
 			if (this.get('preferredTab')) {
-				var preferredTab = groupedPropertyViews.findBy('tab', this.get('preferredTab'));
+				var preferredTab = groupedViews.findBy('tab', this.get('preferredTab'));
 				if (preferredTab) {
 					this.set('activeTab', preferredTab.get('tab'));
 					this.set('preferredTab', null);
 					return;
 				}
 			}
-			var activeTabExists = groupedPropertyViews.findBy('tab', this.get('activeTab'));
+			var activeTabExists = groupedViews.findBy('tab', this.get('activeTab'));
 			if (!activeTabExists) {
 				this.set('preferredTab', this.get('activeTab'));
-				var firstTab = groupedPropertyViews.objectAt(0);
+				var firstTab = groupedViews.objectAt(0);
 				if (firstTab) {
 					this.set('activeTab', firstTab.get('tab'));
 				}
