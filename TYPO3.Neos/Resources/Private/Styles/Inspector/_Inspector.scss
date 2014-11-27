@@ -54,9 +54,10 @@
 		right: 0;
 	}
 
+	@import "Editors/AssetEditor";
 	@import "Editors/DateTimePicker";
 	@import "Editors/ImageEditor";
-	@import "Editors/AssetEditor";
+	@import "Editors/LinkEditor";
 	@import "Editors/SelectBoxEditor";
 
 	.neos-toolbar {
