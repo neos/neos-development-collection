@@ -46,6 +46,9 @@ class DataSourceController extends AbstractServiceController {
 
 		/** @var $dataSource DataSourceInterface */
 		$dataSource = new $dataSources[$dataSourceIdentifier];
+		if (\TYPO3\Flow\Reflection\ObjectAccess::isPropertySettable($dataSource, 'controllerContext')) {
+			\TYPO3\Flow\Reflection\ObjectAccess::setProperty($dataSource, 'controllerContext', $this->controllerContext);
+		}
 
 		$arguments = $this->request->getArguments();
 		unset($arguments['dataSourceIdentifier']);
