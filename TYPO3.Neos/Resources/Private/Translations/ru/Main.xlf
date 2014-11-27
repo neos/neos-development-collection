@@ -137,9 +137,12 @@
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="ru">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на страницу.</target></trans-unit>
       <!-- javascript -->
-      <trans-unit id="content.components.contentContextBar.button.title" xml:space="preserve">
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="ru">Во весь экран</target></trans-unit>
+			<target xml:lang="ru">Full Screen</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
+				<source>Open page in live workspace</source>
+			<target xml:lang="ru">Open page in live workspace</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="ru">Отменить все изменения</target><alt-trans><target xml:lang="ru">Сбросить все изменения</target></alt-trans></trans-unit>
@@ -228,35 +231,34 @@
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
 			<target xml:lang="ru">Вход в систему TYPO3 Neos</target></trans-unit>
-      <!-- ErrorHandlers -->
-      <trans-unit id="notFoundExceptions.errorTitle" xml:space="preserve">
-				<source>Page Not Found</source>
-			<target xml:lang="ru">Страница не найдена</target></trans-unit>
-      <trans-unit id="notFoundExceptions.errorDescription" xml:space="preserve">
-				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="ru">К сожалению, запрашиваемая вами страница не найдена.</target></trans-unit>
-      <trans-unit id="databaseConnectionExceptions.errorTitle" xml:space="preserve">
-				<source>Database Error</source>
-			<target xml:lang="ru">Ошибка базы данных</target></trans-unit>
-      <trans-unit id="databaseConnectionExceptions.errorDescription" xml:space="preserve">
-				<source>Sorry, we detected an error with your database. Check your logfiles in Data/Logs/* for more information.</source>
-			<target xml:lang="ru">К сожалению, мы обнаружили ошибку с вашей базой данных. Смотрите файлы журнала в Data/Logs/* для получения более подробной информации.</target></trans-unit>
-      <trans-unit id="databaseConnectionExceptions.setupMessage" xml:space="preserve">
-				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="ru">Может потребоваться настроить или проверить конфигурацию базы данных в программе установки.</target><alt-trans><target xml:lang="ru">Возможно стоит проверить конфигурацию вашей базы данных в настройках.</target></alt-trans></trans-unit>
-      <trans-unit id="noHomepageException.errorTitle" xml:space="preserve">
+      <!-- Error handlers -->
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve">
+				<source>Go to setup</source>
+			<target xml:lang="ru">Go to setup</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="ru">Домашняя страница отсутствует</target></trans-unit>
-      <trans-unit id="noHomepageException.errorDescription" xml:space="preserve">
-				<source>Either no site has been defined yet or the site does not contain a homepage.</source>
-			<target xml:lang="ru">Сайт не содержит домашнюю страницу либо сайт еще не был настроен.</target></trans-unit>
-      <trans-unit id="noHomepageException.setupMessage" xml:space="preserve">
-				<source>You might want to create or import a site in the setup.</source>
-			<target xml:lang="ru">Вы можете создавать или импортировать сайт в программе установки.</target></trans-unit>
-      <!-- Errors -->
-      <trans-unit id="error.index.goToSetup" xml:space="preserve">
-				<source>Go to Setup</source>
-			<target xml:lang="ru">Перейти к установке</target></trans-unit>
+			<target xml:lang="ru">Missing Homepage</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			<target xml:lang="ru">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			<target xml:lang="ru">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
+				<source>Database Error</source>
+			<target xml:lang="ru">Database Error</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			<target xml:lang="ru">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="ru">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
+				<source>Page Not Found</source>
+			<target xml:lang="ru">Page Not Found</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
+				<source>Sorry, the page you requested was not found.</source>
+			<target xml:lang="ru">Sorry, the page you requested was not found.</target></trans-unit>
     </body>
   </file>
 </xliff>
