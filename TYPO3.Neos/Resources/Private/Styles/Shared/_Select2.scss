@@ -67,7 +67,11 @@
 
 				.neos-select2-result-label {
 					cursor: not-allowed;
-					color: $textSubtle;
+
+					&,
+					i {
+						color: $textSubtle;
+					}
 				}
 			}
 
@@ -289,11 +293,10 @@
 			@include box-sizing(border-box);
 
 			box-shadow: none;
-			border: none;
-
-			+ .neos-select2-search-choice {
-				border-bottom: 1px solid $grayDark;
-			}
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			border-bottom: 1px solid $grayDark;
 
 			div {
 				line-height: $relatedMargin + $defaultMargin;
