@@ -14,6 +14,10 @@ additionalProperties:
       # TODO: add validator which check that these are other Node Types.
       items: { type: string, description: "List of TYPO3CR Node Types which are supertypes of this type" }
 
+    'label':
+      type: ['string', 'array']
+      description: "An EEL expression for generating a node's of this node type's label. Alternatively an array with the key generatorClass and optional options."
+
     'constraints': &constraints
       type: dictionary
       additionalProperties: FALSE
@@ -48,7 +52,7 @@ additionalProperties:
           'defaultValue': { type: any, description: "Default value of this property. Used at node creation time. Type must match specified 'type'." }
 
           'validation':
-            type: dictionary
+            type: ['dictionary', 'null']
 
           'ui':
             type: dictionary
