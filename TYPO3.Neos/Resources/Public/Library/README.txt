@@ -202,3 +202,8 @@ Used file from the Ember-i18n library
 jQuery Cookie - https://github.com/carhartl/jquery-cookie
 MIT license
 Version 1.3.1
+
+
+d3 - http://d3js.org/
+BSD license
+Version 3.4.13

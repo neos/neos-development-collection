@@ -668,6 +668,10 @@
 			color: $warning;
 		}
 	}
+
+	@import "Views/ColumnView";
+	@import "Views/TableView";
+	@import "Views/TimeSeriesView";
 }
 
 #neos-inspector-clickprotection {
