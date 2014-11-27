@@ -100,7 +100,7 @@ class LoginController extends AbstractAuthenticationController {
 	 */
 	public function onAuthenticationSuccess(ActionRequest $originalRequest = NULL) {
 		if ($this->view instanceof JsonView) {
-			$this->view->assign('value', array('success' => $this->authenticationManager->isAuthenticated()));
+			$this->view->assign('value', array('success' => $this->authenticationManager->isAuthenticated(), 'csrfToken' => $this->securityContext->getCsrfProtectionToken()));
 		} else {
 			if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
 				$this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
