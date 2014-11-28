@@ -6371,6 +6371,92 @@
 .neos #neos-inspector .widget .neos-widget-error i {
   color: #ff460d;
 }
+.neos #neos-inspector .neos-columnview-columns-3 .neos-columnview-column {
+  width: 33%;
+}
+.neos #neos-inspector .neos-columnview-columns-2 .neos-columnview-column {
+  width: 50%;
+}
+.neos #neos-inspector .neos-columnview-hero {
+  line-height: 54px;
+  margin-bottom: 16px;
+}
+.neos #neos-inspector .neos-columnview-hero .neos-columnview-value {
+  font-size: 54px;
+}
+.neos #neos-inspector .neos-columnview-hero .neos-columnview-label {
+  color: #adadad;
+  margin-left: 6px;
+}
+.neos #neos-inspector .neos-columnview-column {
+  float: left;
+}
+.neos #neos-inspector .neos-columnview-column .neos-columnview-value {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+.neos #neos-inspector .neos-columnview-column .neos-columnview-label {
+  color: #adadad;
+}
+.neos #neos-inspector table.neos-tableview-table {
+  width: 100%;
+}
+.neos #neos-inspector table.neos-tableview-table td {
+  padding-bottom: 8px;
+}
+.neos #neos-inspector table.neos-tableview-table td:last-child {
+  padding-bottom: 0;
+}
+.neos #neos-inspector table.neos-tableview-table td .neos-icon {
+  padding-right: 4px;
+}
+.neos #neos-inspector .neos-timeseriesview svg {
+  display: block;
+}
+.neos #neos-inspector .neos-timeseriesview svg .chart-background {
+  fill: transparent;
+}
+.neos #neos-inspector .neos-timeseriesview svg .axis line,
+.neos #neos-inspector .neos-timeseriesview svg .axis path {
+  fill: none;
+  stroke: #3f3f3f;
+  stroke-width: 1px;
+}
+.neos #neos-inspector .neos-timeseriesview svg text {
+  cursor: default;
+  fill: #fff;
+  font-size: 11px;
+  shape-rendering: crispEdges;
+  stroke-width: 0;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path {
+  stroke-width: 2.5;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-0 {
+  stroke: #00b5ff;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-1 {
+  stroke: #fb2286;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-2 {
+  stroke: #adea02;
+}
+.neos #neos-inspector .neos-timeseriesview svg .series path.series-3 {
+  stroke: #fd9d00;
+}
+.neos #neos-inspector .neos-timeseriesview .chart-time-series .line {
+  fill: none;
+}
+.neos #neos-inspector .neos-timeseriesview .chart-time-series .axis .tick {
+  fill: none;
+  stroke: #3f3f3f;
+  stroke-width: 1px;
+  opacity: 1;
+  font-size: 11px;
+}
+.neos #neos-inspector .neos-timeseriesview .chart-time-series .axis path {
+  opacity: 0;
+}
 .neos #neos-inspector-clickprotection {
   position: fixed;
   display: block;
