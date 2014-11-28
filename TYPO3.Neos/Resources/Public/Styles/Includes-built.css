@@ -5218,7 +5218,7 @@
 .neos .neos-ellipsis::after,
 .neos #neos-publish-menu.neos-button-group.neos-publish-menu-action-running .neos-dropdown-toggle::after {
   display: inline-block;
-  width: 11px;
+  width: 12px;
   content: '...';
   overflow: hidden;
   vertical-align: top;
@@ -6356,6 +6356,20 @@
   float: right;
   background-color: #00a338;
   width: 172px;
+}
+.neos #neos-inspector .widget {
+  margin: 0 16px 20px 16px;
+  height: auto;
+}
+.neos #neos-inspector .widget .neos-widget-subtitle {
+  color: #adadad;
+  float: right;
+}
+.neos #neos-inspector .widget .neos-widget-loading {
+  color: #adadad;
+}
+.neos #neos-inspector .widget .neos-widget-error i {
+  color: #ff460d;
 }
 .neos #neos-inspector-clickprotection {
   position: fixed;
