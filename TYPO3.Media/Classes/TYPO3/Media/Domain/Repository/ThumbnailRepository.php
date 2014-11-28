@@ -62,7 +62,7 @@ class ThumbnailRepository extends Repository {
 			$query->setDQL($query->getDQL() . ' AND t.maximumHeight IS NULL');
 		}
 
-		$query->setDQL($query->getDQL() . ' LIMIT 1');
+		$query->setMaxResults(1);
 		$result = $query->getOneOrNullResult();
 
 		return $result;
