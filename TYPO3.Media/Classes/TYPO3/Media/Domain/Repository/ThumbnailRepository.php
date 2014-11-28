@@ -11,15 +11,14 @@ namespace TYPO3\Media\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Query\Parameter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\Thumbnail;
 
 /**
  * A repository for Thumbnails
+ *
+ * Note that this repository is not part of the public API. Use the asset's getThumbnail() method instead.
  *
  * @Flow\Scope("singleton")
  */
@@ -35,18 +34,19 @@ class ThumbnailRepository extends Repository {
 	 * Returns a thumbnail of the given asset with the specified dimensions.
 	 *
 	 * @param AssetInterface $asset The asset to render a thumbnail for
+	 * @param string $ratioMode The thumbnail's ratio mode, see ImageInterface::RATIOMODE_* constants
 	 * @param integer $maximumWidth The thumbnail's maximum width in pixels
 	 * @param integer $maximumHeight The thumbnail's maximum height in pixels
 	 * @return \TYPO3\Media\Domain\Model\Thumbnail The thumbnail or NULL
 	 */
-	public function findOneByAssetAndDimensions(AssetInterface $asset, $maximumWidth, $maximumHeight) {
-		$parameters = new ArrayCollection();
+	public function findOneByAssetAndDimensions(AssetInterface $asset, $ratioMode, $maximumWidth = NULL, $maximumHeight = NULL) {
 
 		/**
 		 * @var $query \Doctrine\ORM\Query
 		 */
-		$query = $this->entityManager->createQuery('SELECT t FROM TYPO3\Media\Domain\Model\Thumbnail t WHERE t.originalAsset = :originalAsset');
+		$query = $this->entityManager->createQuery('SELECT t FROM TYPO3\Media\Domain\Model\Thumbnail t WHERE t.originalAsset = :originalAsset AND t.ratioMode = :ratioMode');
 		$query->setParameter('originalAsset', $this->persistenceManager->getIdentifierByObject($asset));
+		$query->setParameter('ratioMode', $ratioMode);
 
 		if ($maximumWidth !== NULL) {
 			$query->setDQL($query->getDQL() . ' AND t.maximumWidth = :maximumWidth');
@@ -62,6 +62,7 @@ class ThumbnailRepository extends Repository {
 			$query->setDQL($query->getDQL() . ' AND t.maximumHeight IS NULL');
 		}
 
+		$query->setDQL($query->getDQL() . ' LIMIT 1');
 		$result = $query->getOneOrNullResult();
 
 		return $result;

@@ -22,7 +22,9 @@ use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Exception\NoThumbnailAvailableException;
 
 /**
+ * An internal thumbnail service.
  *
+ * Note that this repository is not part of the public API. Use the asset's getThumbnail() method instead.
  *
  * @Flow\Scope("singleton")
  */
@@ -78,7 +80,7 @@ class ThumbnailService {
 	 * @throws \Exception
 	 */
 	public function getThumbnail(AssetInterface $asset, $maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = ImageInterface::RATIOMODE_INSET) {
-		$thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $maximumWidth, $maximumHeight);
+		$thumbnail = $this->thumbnailRepository->findOneByAssetAndDimensions($asset, $ratioMode, $maximumWidth, $maximumHeight);
 
 		if ($thumbnail === NULL) {
 			if (!$asset instanceof ImageInterface) {
