@@ -514,7 +514,7 @@ class NodeImportService {
 
 		// post-process node data
 		$nodeData['dimensionsHash'] = $dimensionsHash;
-		$nodeData['dimensionValues'] = serialize($dimensionValues);
+		$nodeData['dimensionValues'] = $objectArrayDataTypeHandler->convertToDatabaseValue($dimensionValues, $connection->getDatabasePlatform());
 		$nodeData['properties'] = $objectArrayDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
 		$nodeData['accessRoles'] = serialize($nodeData['accessRoles']);
 
