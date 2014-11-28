@@ -650,6 +650,24 @@
 			}
 		}
 	}
+
+	.widget {
+		margin: 0 $defaultMargin 20px $defaultMargin;
+		height: auto;
+
+		.neos-widget-subtitle {
+			color: $textSubtleLight;
+			float: right;
+		}
+
+		.neos-widget-loading {
+			color: $textSubtleLight;
+		}
+
+		.neos-widget-error i {
+			color: $warning;
+		}
+	}
 }
 
 #neos-inspector-clickprotection {
