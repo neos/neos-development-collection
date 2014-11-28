@@ -525,14 +525,20 @@ class NodeImportService {
 			return;
 		}
 
+		// cleanup old data
+		/** @var \Doctrine\DBAL\Connection $connection */
+		$connection = $this->entityManager->getConnection();
+
 		// prepare node dimensions
 		$dimensionValues = $nodeData['dimensionValues'];
 		$dimensionsHash = NodeData::sortDimensionValueArrayAndReturnDimensionsHash($dimensionValues);
 
+		$objectArrayDataTypeHandler = \TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::getType(\TYPO3\Flow\Persistence\Doctrine\DataTypes\ObjectArray::OBJECTARRAY);
+
 		// post-process node data
 		$nodeData['dimensionsHash'] = $dimensionsHash;
-		$nodeData['dimensionValues'] = serialize($dimensionValues);
-		$nodeData['properties'] = serialize($nodeData['properties']);
+		$nodeData['dimensionValues'] = $objectArrayDataTypeHandler->convertToDatabaseValue($dimensionValues, $connection->getDatabasePlatform());
+		$nodeData['properties'] = $objectArrayDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
 		$nodeData['accessRoles'] = serialize($nodeData['accessRoles']);
 
 		// cleanup old data
