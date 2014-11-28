@@ -8,14 +8,26 @@
 		<div class="neos-modal-body">
 			<fieldset>
 				<div class="neos-controls">
-					{{view Ember.TextField required="required" placeholder="Username" id="neos-login-dialog-username" type="text" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" valueBinding="view._username"}}
+					<input required="required" placeholder="Username" id="neos-login-dialog-username" type="text" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][username]" {{bind-attr vlaue="view._username"}} />
 				</div>
 				<div class="neos-controls">
-					{{view Ember.TextField required="required" placeholder="Password" id="neos-login-dialog-password" type="password" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" valueBinding="view._password"}}
+					<input required="required" placeholder="Password" id="neos-login-dialog-password" type="password" name="__authentication[TYPO3][Flow][Security][Authentication][Token][UsernamePassword][password]" {{bind-attr vlaue="view._password"}} />
 				</div>
 				<div class="neos-controls">
-					<button class="neos-button neos-button-primary" type="submit" {{action "login" target="view"}}>Login</button>
+					<button {{bind-attr class=":neos-button :neos-button-primary view.authenticating:neos-disabled"}} type="submit">
+						{{#if view.authenticating}}
+							{{translate id="authenticating" value="Authenticating"}}<span class="neos-ellipsis"></span>
+						{{else}}
+							{{translate id="login" value="Login"}}
+						{{/if}}
+					</button>
 				</div>
+				{{#if view.failed}}
+					<div class="neos-tooltip neos-bottom neos-in neos-tooltip-error">
+						<div class="neos-tooltip-arrow"></div>
+						<div class="neos-tooltip-inner">The entered username or password was wrong</div>
+					</div>
+				{{/if}}
 			</fieldset>
 		</div>
 	</form>

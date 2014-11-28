@@ -234,6 +234,12 @@
 			<trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
 			</trans-unit>
+			<trans-unit id="login" xml:space="preserve">
+				<source>Login</source>
+			</trans-unit>
+			<trans-unit id="authenticating" xml:space="preserve">
+				<source>Authenticating</source>
+			</trans-unit>
 
 			<!-- Error handlers -->
 			<trans-unit id="error.exception.goToSetup" xml:space="preserve">
