@@ -139,7 +139,7 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="de">Full Screen</target></trans-unit>
+			<target xml:lang="de">Vollbild</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			<target xml:lang="de">Open page in live workspace</target></trans-unit>
@@ -246,16 +246,16 @@
 			<target xml:lang="de">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="de">Database Error</target></trans-unit>
+			<target xml:lang="de">Datenbankfehler</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="de">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="de">Es tut uns Leid, es wurde ein Fehler mit ihrer Datenbank festgestellt. Überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
 			<target xml:lang="de">You might want to configure or check your database configuration in the setup.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="de">Page Not Found</target></trans-unit>
+			<target xml:lang="de">Seite nicht gefunden</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
 			<target xml:lang="de">Sorry, the page you requested was not found.</target></trans-unit>
