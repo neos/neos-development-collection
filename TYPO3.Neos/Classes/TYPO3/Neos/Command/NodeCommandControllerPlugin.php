@@ -146,11 +146,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 		foreach ($rootNode->getChildNodes('TYPO3.Neos:Document') as $node) {
 			/** @var NodeInterface $node */
 			if ($node->getProperty('uriPathSegment') == '') {
-				$uriPathSegment = Utility::renderValidNodeName($node->getLabel());
+				$uriPathSegment = Utility::renderValidNodeName($node->getName());
 				if ($dryRun === FALSE) {
 					$node->setProperty('uriPathSegment', $uriPathSegment);
 				}
-				$this->output->outputLine('%s (%s) => %s', array($node->getPath(), $node->getLabel(), $uriPathSegment));
+				$this->output->outputLine('%s (%s) => %s', array($node->getPath(), $node->getName(), $uriPathSegment));
 			}
 			if ($node->hasChildNodes('TYPO3.Neos:Document')) {
 				$this->generateUriPathSegmentsForSubtree($node, $dryRun);
