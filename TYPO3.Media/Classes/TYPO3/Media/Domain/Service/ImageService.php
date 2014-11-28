@@ -111,7 +111,8 @@ class ImageService {
 		$width = (integer)$imageSize[0];
 		$height = (integer)$imageSize[1];
 
-		$resource = $this->resourceManager->importResource($transformedImageTemporaryPathAndFilename);
+		// TODO: In the future the collectionName of the new resource should be configurable.
+		$resource = $this->resourceManager->importResource($transformedImageTemporaryPathAndFilename, $originalResource->getCollectionName());
 		if ($resource === FALSE) {
 			throw new ImageFileException('An error occurred while importing a generated image file as a resource.', 1413562208);
 		}
