@@ -10300,6 +10300,7 @@
   padding-right: 8px;
   color: #00b5ff;
   text-align: center;
+  vertical-align: baseline;
 }
 .neos #neos-nprogress {
   background-color: #323232;
