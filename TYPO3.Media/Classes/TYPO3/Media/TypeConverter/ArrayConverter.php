@@ -31,7 +31,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	/**
 	 * @var array
 	 */
-	protected $sourceTypes = array('TYPO3\Media\Domain\Model\AssetInterface');
+	protected $sourceTypes = array('TYPO3\Media\Domain\Model\AssetInterface', 'TYPO3\Media\Domain\Model\ImageInterface', 'TYPO3\Media\Domain\Model\Image', 'TYPO3\Media\Domain\Model\Asset');
 
 	/**
 	 * @var string
@@ -41,7 +41,17 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	/**
 	 * @var integer
 	 */
-	protected $priority = 1;
+	protected $priority = 2;
+
+	/**
+	 * @param mixed $source
+	 * @param string $targetType
+	 * @return boolean
+	 */
+	public function canConvertFrom($source, $targetType) {
+		return ($source instanceof \TYPO3\Media\Domain\Model\AssetInterface);
+	}
+
 
 	/**
 	 * Return a list of sub-properties inside the source object.
@@ -55,10 +65,11 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 			'resource' => $source->getResource()
 		);
 
+		if ($source instanceof \TYPO3\Media\Domain\Model\AssetVariantInterface) {
+			$sourceChildPropertiesToBeConverted['originalAsset'] = $source->getOriginalAsset();
+		}
 		if ($source instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
-			unset($sourceChildPropertiesToBeConverted['resource']);
-			$sourceChildPropertiesToBeConverted['originalImage'] = $source->getOriginalImage();
-			$sourceChildPropertiesToBeConverted['processingInstructions'] = $source->getProcessingInstructions();
+			$sourceChildPropertiesToBeConverted['adjustments'] = $source->getAdjustments();
 		}
 
 		return $sourceChildPropertiesToBeConverted;
@@ -88,15 +99,15 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		switch (TRUE) {
 			case $source instanceof \TYPO3\Media\Domain\Model\ImageVariant:
-				if (!isset($convertedChildProperties['originalImage']) || !is_array($convertedChildProperties['originalImage'])) {
+				if (!isset($convertedChildProperties['originalAsset']) || !is_array($convertedChildProperties['originalAsset'])) {
 					return NULL;
 				}
 
-				$convertedChildProperties['originalImage']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getOriginalImage());
+				$convertedChildProperties['originalAsset']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getOriginalAsset());
 
 				return array(
-					'originalImage' => $convertedChildProperties['originalImage'],
-					'processingInstructions' => $convertedChildProperties['processingInstructions']
+					'originalAsset' => $convertedChildProperties['originalAsset'],
+					'adjustments' => $convertedChildProperties['adjustments']
 				);
 			case $source instanceof \TYPO3\Media\Domain\Model\AssetInterface:
 				if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {

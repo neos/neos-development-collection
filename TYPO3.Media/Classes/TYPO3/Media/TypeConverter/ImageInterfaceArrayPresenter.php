@@ -36,7 +36,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter {
 	/**
 	 * @var integer
 	 */
-	protected $priority = 1;
+	protected $priority = 0;
 
 	/**
 	 * @Flow\Inject
