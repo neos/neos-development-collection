@@ -399,9 +399,6 @@ class NodeImportService {
 					$value = $this->propertyMapper->convert($reader->value, $currentClassName, $this->propertyMappingConfiguration);
 				} elseif ($currentEncoding === 'json') {
 					$value = $this->propertyMapper->convert(json_decode($reader->value, TRUE), $currentClassName, $this->propertyMappingConfiguration);
-					if ($currentIdentifier !== '' && $currentIdentifier !== NULL) {
-						ObjectAccess::setProperty($value, 'Persistence_Object_Identifier', $currentIdentifier, TRUE);
-					}
 				} else {
 					throw new \Exception(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
 				}
