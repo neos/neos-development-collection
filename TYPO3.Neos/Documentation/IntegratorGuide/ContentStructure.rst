@@ -88,7 +88,17 @@ A node type definition can look as follows::
 The following options are allowed:
 
 ``superTypes``
-  An array of parent node types inherited from
+  An array of parent node types inherited from. If named keys are used, it is possible to remove a defined supertype
+  again for a specific nodetype, by setting the value for that key to ``~`` (NULL)::
+
+    'TYPO3.Neos:Document':
+      superTypes:
+        'Acme.Demo.ExtraMixin': 'Acme.Demo:ExtraMixin'
+
+    'TYPO3.Neos:Shortcut':
+      superTypes:
+        'Acme.Demo.ExtraMixin': ~
+
 
 ``constraints``
   Constraint definitions stating which nested child node types are allowed. Also see the dedicated chapter
