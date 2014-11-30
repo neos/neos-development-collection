@@ -59,11 +59,13 @@ class MediaCommandController extends CommandController {
 
 		$sql = "
 			SELECT
-				r.persistence_object_identifier, r.filename, r.fileextension
+				r.persistence_object_identifier, r.filename, r.mediatype
 			FROM typo3_flow_resource_resource r
 			LEFT JOIN typo3_media_domain_model_asset a
 			ON a.resource = r.persistence_object_identifier
-			WHERE a.persistence_object_identifier IS NULL
+			LEFT JOIN typo3_media_domain_model_thumbnail t
+			ON t.resource = r.persistence_object_identifier
+			WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
 		";
 		$statement = $this->dbalConnection->prepare($sql);
 		$statement->execute();
@@ -75,7 +77,7 @@ class MediaCommandController extends CommandController {
 		}
 
 		foreach ($resourceInfos as $resourceInfo) {
-			$mediaType = MediaTypes::getMediaTypeFromFilename($resourceInfo['filename']);
+			$mediaType = $resourceInfo['mediatype'];
 
 			if (substr($mediaType, 0, 6) === 'image/') {
 				$resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], 'TYPO3\Flow\Resource\Resource');
@@ -83,11 +85,7 @@ class MediaCommandController extends CommandController {
 					$this->outputLine('Warning: Resource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
 					continue;
 				}
-				if ($resource->getResourcePointer() === NULL) {
-					$this->outputLine('Warning: Resource for file "%s" seems to be corrupt. The resource object %s did not contain a resource pointer.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
-					continue;
-				}
-				if (!file_exists('resource://' . $resource->getResourcePointer()->getHash())) {
+				if (!$resource->getStream()) {
 					$this->outputLine('Warning: Resource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
 					continue;
 				}
