@@ -61,13 +61,13 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 	/**
 	 * Converts and adds ImageAdjustments to the ImageVariant
 	 *
-	 * @param ImageInterface $asset
+	 * @param \TYPO3\Media\Domain\Model\ImageInterface $asset
 	 * @param mixed $source
 	 * @param array $convertedChildProperties
 	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return void
 	 */
-	protected function applyTypeSpecificHandling($asset, $source, $convertedChildProperties, $configuration) {
+	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {
 		if ($asset instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
 			if (isset($source['adjustments'])) {
 				foreach ($source['adjustments'] as $adjustmentType => $adjustmentOptions) {

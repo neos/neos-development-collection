@@ -104,10 +104,10 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration) {
 		switch ($propertyName) {
 			case 'resource':
 				return 'TYPO3\Flow\Resource\Resource';
@@ -125,13 +125,13 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 *
 	 * @param mixed $source
 	 * @param string $originalTargetType
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidDataTypeException
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
 	 * @throws \InvalidArgumentException
 	 */
-	public function getTargetTypeForSource($source, $originalTargetType, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = NULL) {
 		$targetType = $originalTargetType;
 		if (is_array($source) && array_key_exists('__type', $source)) {
 			$targetType = $source['__type'];
@@ -149,11 +149,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @param mixed $source
 	 * @param string $targetType must be 'TYPO3\Media\Domain\Model\Image'
 	 * @param array $convertedChildProperties
-	 * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\Flow\Validation\Error|\TYPO3\Media\Domain\Model\Image The converted Image, a Validation Error or NULL
 	 * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source) && $source !== '') {
 			$source = array('__identity' => $source);
 		}
@@ -231,5 +231,5 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 	 * @param PropertyMappingConfigurationInterface $configuration
 	 * @return void
 	 */
-	protected function applyTypeSpecificHandling($asset, $source, $convertedChildProperties, $configuration) {}
+	protected function applyTypeSpecificHandling($asset, $source, array $convertedChildProperties, PropertyMappingConfigurationInterface $configuration) {}
 }
