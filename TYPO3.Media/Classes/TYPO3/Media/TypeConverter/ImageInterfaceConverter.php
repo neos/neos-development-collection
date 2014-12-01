@@ -71,7 +71,19 @@ class ImageInterfaceConverter extends AssetInterfaceConverter {
 		if ($asset instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
 			if (isset($source['adjustments'])) {
 				foreach ($source['adjustments'] as $adjustmentType => $adjustmentOptions) {
+					if (isset($adjustmentOptions['__type'])) {
+						$adjustmentType = $adjustmentOptions['__type'];
+						unset ($adjustmentOptions['__type']);
+					}
+					$identity = NULL;
+					if (isset($adjustmentOptions['__identity'])) {
+						$identity = $adjustmentOptions['__identity'];
+						unset($adjustmentOptions['__identity']);
+					}
 					$adjustment = new $adjustmentType($adjustmentOptions);
+					if ($identity !== NULL) {
+						\TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustment, 'persistence_object_identitifer', $identity, TRUE);
+					}
 					$asset->addAdjustment($adjustment);
 				}
 			} elseif (isset($source['processingInstructions'])) {
