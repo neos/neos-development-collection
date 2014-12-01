@@ -98,8 +98,8 @@ class Parser implements ParserInterface {
 	/x';
 
 	const SPLIT_PATTERN_COMMENTTYPE = '/.*(#|\/\/|\/\*|\*\/).*/';
-	const SPLIT_PATTERN_DECLARATION = '/([a-zA-Z]+[a-zA-Z0-9]*)\s*:(.*)/';
-	const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*([a-zA-Z0-9\.]+)\s*$/';
+	const SPLIT_PATTERN_DECLARATION = '/(?P<declarationType>[a-zA-Z]+[a-zA-Z0-9]*)\s*:\s*(["\']{0,1})(?P<declaration>.*)\\2/';
+	const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*(?P<alias>[a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(?P<packageKey>[a-zA-Z0-9\.]+)\s*$/';
 	const SPLIT_PATTERN_OBJECTDEFINITION = '/
 		^\s*                      # beginning of line; with numerous whitespace
 		(?P<ObjectPath>           # begin ObjectPath
@@ -383,16 +383,16 @@ class Parser implements ParserInterface {
 	 */
 	protected function parseDeclaration($typoScriptLine) {
 		$result = preg_match(self::SPLIT_PATTERN_DECLARATION, $typoScriptLine, $matches);
-		if ($result !== 1 || count($matches) != 3) {
+		if ($result !== 1 || !(isset($matches['declarationType']) && isset($matches['declaration']))) {
 			throw new Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
 		}
 
-		switch ($matches[1]) {
+		switch ($matches['declarationType']) {
 			case 'namespace' :
-				$this->parseNamespaceDeclaration($matches[2]);
+				$this->parseNamespaceDeclaration($matches['declaration']);
 				break;
 			case 'include' :
-				$this->parseInclude($matches[2]);
+				$this->parseInclude($matches['declaration']);
 				break;
 		}
 	}
@@ -503,12 +503,12 @@ class Parser implements ParserInterface {
 	 */
 	protected function parseNamespaceDeclaration($namespaceDeclaration) {
 		$result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
-		if ($result !== 1 || count($matches) !== 3) {
+		if ($result !== 1 || !(isset($matches['alias']) && isset($matches['packageKey']))) {
 			throw new Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
 		}
 
-		$namespaceAlias = $matches[1];
-		$namespacePackageKey = $matches[2];
+		$namespaceAlias = $matches['alias'];
+		$namespacePackageKey = $matches['packageKey'];
 		$this->objectTypeNamespaces[$namespaceAlias] = $namespacePackageKey;
 	}
 
