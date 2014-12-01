@@ -310,6 +310,9 @@ class NodeImportService {
 		$values = array();
 		$currentKey = NULL;
 		$depth = 0;
+		$currentEncoding = NULL;
+		$currentClassName = NULL;
+		$currentIdentifier = NULL;
 
 		do {
 			switch ($reader->nodeType) {
@@ -348,6 +351,9 @@ class NodeImportService {
 		$properties = array();
 		$currentProperty = NULL;
 		$currentType = NULL;
+		$currentEncoding = NULL;
+		$currentClassName = NULL;
+		$currentIdentifier = NULL;
 
 		while ($reader->read()) {
 			switch ($reader->nodeType) {
