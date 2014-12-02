@@ -116,4 +116,3 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
 		return $iteration;
 	}
 }
-?>

@@ -90,12 +90,21 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase {
 	/**
 	 * StopActionException are rethrown
 	 *
-	 * @expectedException TYPO3\Flow\Mvc\Exception\StopActionException
+	 * @expectedException \TYPO3\Flow\Mvc\Exception\StopActionException
 	 * @test
 	 */
 	public function neverHandleStopActionException() {
 		$this->handler->handleRenderingException('path', new StopActionException());
 	}
-}
 
-?>
+
+	/**
+	 * SecurityException are rethrown
+	 *
+	 * @expectedException \TYPO3\Flow\Security\Exception
+	 * @test
+	 */
+	public function neverHandleSecurityException() {
+		$this->handler->handleRenderingException('path', new \TYPO3\Flow\Security\Exception());
+	}
+}
