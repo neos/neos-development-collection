@@ -163,7 +163,19 @@ class NodeExportService {
 			->orderBy('n.identifier', 'ASC')
 			->orderBy('n.path', 'ASC');
 
-		return $queryBuilder->getQuery()->getResult();
+		$nodeDataList = $queryBuilder->getQuery()->getResult();
+		// Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
+		// because there may be characters like "-" in the node path
+		// that would break the sorting order
+		usort($nodeDataList,
+			function ($node1, $node2) {
+				return strcmp(
+					str_replace("/", "!", $node1['path']),
+					str_replace("/", "!", $node2['path'])
+				);
+			}
+		);
+		return $nodeDataList;
 	}
 
 	/**
