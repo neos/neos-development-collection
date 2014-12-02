@@ -1155,9 +1155,10 @@ class NodeDataRepository extends Repository {
 			->distinct()
 			->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
 			->where('n.workspace = :workspace')
-			->andWhere('n.movedTo IS NULL OR n.removed = 0')
+			->andWhere('n.movedTo IS NULL OR n.removed = :removed')
 			->orderBy('n.path', 'ASC')
-			->setParameter('workspace', $workspace);
+			->setParameter('workspace', $workspace)
+			->setParameter('removed', FALSE, \PDO::PARAM_BOOL);
 		return $queryBuilder->getQuery()->getResult();
 	}
 
