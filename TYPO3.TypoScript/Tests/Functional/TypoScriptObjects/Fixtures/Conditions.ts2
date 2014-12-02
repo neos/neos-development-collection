@@ -31,6 +31,14 @@ conditions.objectFalse.@if.cond1 = false
 conditions.objectAtLeastOneFalse < conditions.objectTrue
 conditions.objectAtLeastOneFalse.@if.cond2 = ${2 < 1}
 
+conditions.objectThis = TYPO3.TypoScript:Value {
+	@if.cond1 = ${this.someValue}
+
+	someValue = false
+
+	value = 'Foo'
+}
+
 conditions.variableCondition = 'Rendered'
 conditions.variableCondition.@if.cond1 = ${condition}
 

@@ -27,6 +27,7 @@ class ConditionsTest extends AbstractTypoScriptObjectTest {
 			array('conditions/objectTrue', 'Foo'),
 			array('conditions/objectFalse', NULL),
 			array('conditions/objectAtLeastOneFalse', NULL),
+			array('conditions/objectThis', NULL),
 			array('conditions/rawArray', array('key' => 'foo', 'nullValue' => NULL)),
 			array('conditions/attributes', ' key="foo"')
 		);
