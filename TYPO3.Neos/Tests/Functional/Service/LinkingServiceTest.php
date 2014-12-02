@@ -205,7 +205,7 @@ class LinkingServiceTest extends FunctionalTestCase {
 	 * @test
 	 */
 	public function linkingServiceCanResolveAssetUri() {
-		$this->assertSame('_Resources/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/TYPO3_Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
+		$this->assertSame('_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/TYPO3_Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
 	}
 
 	/**
