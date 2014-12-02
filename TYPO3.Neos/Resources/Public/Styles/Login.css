@@ -2748,6 +2748,32 @@ body {
   border-width: 0 5px 5px;
   border-bottom-color: #000;
 }
+@-webkit-keyframes dot {
+  0% {
+    text-indent: -20px;
+  }
+  25% {
+    text-indent: -15px;
+  }
+  50% {
+    text-indent: -7px;
+  }
+  75% {
+    text-indent: 0px;
+  }
+  100% {
+    text-indent: -20px;
+  }
+}
+.neos .neos-ellipsis::after {
+  display: inline-block;
+  width: 11px;
+  content: '...';
+  overflow: hidden;
+  vertical-align: top;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-timing-function: step-start;
+}
 .neos input[type="text"],
 .neos input[type="password"] {
   width: 100%;
@@ -2847,6 +2873,14 @@ body {
 .neos #neos-login-box .neos-actions button.neos-login-btn {
   background-color: #00b5ff;
   width: 100%;
+}
+.neos #neos-login-box .neos-actions button.neos-hidden {
+  display: none;
+}
+.neos #neos-login-box .neos-actions button.neos-disabled {
+  cursor: not-allowed;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=65);
+  opacity: 0.65;
 }
 .neos #neos-login-box .neos-controls {
   height: 40px;

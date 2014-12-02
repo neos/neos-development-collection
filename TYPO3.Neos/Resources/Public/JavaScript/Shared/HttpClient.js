@@ -126,11 +126,12 @@ define([
 						error: function(xhr, textStatus, errorThrown) {
 							RequestManager.remove(xhr);
 							if (xhr.status === 401) {
-								LoginDialog.create({
-									callback: function() {
-										RequestManager.add($.ajax(options));
+								LoginDialog.show(function() {
+									if (requestMethod !== 'GET' && requestMethod !== 'HEAD') {
+										options.data.__csrfToken = Configuration.get('CsrfToken');
 									}
-								}).appendTo('#neos-application');
+									RequestManager.add($.ajax(options));
+								});
 							} else {
 								that.set('_failedRequest', true);
 								that.trigger('failure', xhr, textStatus, errorThrown);

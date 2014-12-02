@@ -38,9 +38,12 @@
 						</f:if>
 						<div class="neos-actions">
 							<!-- Forgot password link will be here -->
-							<f:form.button type="submit" class="neos-span5 neos-pull-right neos-button neos-button-primary neos-button-warning neos-login-btn">
+							<f:form.button type="submit" class="neos-span5 neos-pull-right neos-button neos-login-btn">
 								<neos:backend.translate id="login" value="Login" />
 							</f:form.button>
+							<button class="neos-span5 neos-pull-right neos-button neos-login-btn neos-disabled neos-hidden">
+								<neos:backend.translate id="authenticating" value="Authenticating" /><span class="neos-ellipsis"></span>
+							</button>
 							<f:flashMessages as="flashMessages">
 								<f:for each="{flashMessages}" as="flashMessage">
 									<f:if condition="{flashMessage.severity} == 'OK'">
@@ -89,6 +92,9 @@
 			if ($('#username').val()) {
 				$('#password').focus();
 			}
+			$('form').on('submit', function() {
+				$('.neos-login-btn').toggleClass('neos-hidden');
+			});
 			try {
 				$('form[name="login"] input[name="lastVisitedNode"]').val(sessionStorage.getItem('TYPO3.Neos.lastVisitedNode'));
 			} catch(e) {}

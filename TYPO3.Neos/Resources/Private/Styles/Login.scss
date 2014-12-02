@@ -21,6 +21,7 @@ body {
 	@import "Foundation/grid";
 	@import "Foundation/forms";
 	@import "Foundation/tooltip";
+	@import "Shared/Ellipsis";
 
 	@include font;
 
@@ -106,6 +107,15 @@ body {
 				&.neos-login-btn {
 					background-color: $blue;
 					width: 100%;
+				}
+
+				&.neos-hidden {
+					display: none;
+				}
+
+				&.neos-disabled {
+					cursor: not-allowed;
+					@include opacity(.65);
 				}
 			}
 		}
