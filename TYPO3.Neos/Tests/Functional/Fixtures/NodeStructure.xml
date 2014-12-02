@@ -346,7 +346,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://71a21bed-bbc2-7baf-0974-dd5b1e14d833&quot; data-gentics-aloha-repository=&quot;asset-repository&quot; data-gentics-aloha-object-id=&quot;71a21bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Asset link&lt;/a&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://71a21bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Asset link&lt;/a&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
@@ -357,7 +357,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://00021bed-bbc2-7baf-0974-dd5b1e14d833&quot; data-gentics-aloha-repository=&quot;asset-repository&quot; data-gentics-aloha-object-id=&quot;00021bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Broken asset link&lt;/a&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://00021bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Broken asset link&lt;/a&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
@@ -368,7 +368,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://00090c0a-a9f8-1bf3-1d6b-2eac028bd104&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;00090c0a-a9f8-1bf3-1d6b-2eac028bd104&quot;&gt;Broken node link&lt;/a&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://00090c0a-a9f8-1bf3-1d6b-2eac028bd104&quot;&gt;Broken node link&lt;/a&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
@@ -401,7 +401,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://b05acbc1-b445-b12e-4410-dca62e6fcf4a&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;b05acbc1-b445-b12e-4410-dca62e6fcf4a&quot;&gt;Shortcut to child node link&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://b05acbc1-b445-b12e-4410-dca62e6fcf4a&quot;&gt;Shortcut to child node link&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
@@ -412,7 +412,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://5ebb87d5-aa6d-ec9d-4867-e6164878e33c&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;5ebb87d5-aa6d-ec9d-4867-e6164878e33c&quot;&gt;Shortcut to parent node link&lt;/a&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://5ebb87d5-aa6d-ec9d-4867-e6164878e33c&quot;&gt;Shortcut to parent node link&lt;/a&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
@@ -423,7 +423,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://b1111f14-dcaa-13ed-5bf4-d186113ce455&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;b1111f14-dcaa-13ed-5bf4-d186113ce455&quot;&gt;Shortcut to target node link&lt;/a&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://b1111f14-dcaa-13ed-5bf4-d186113ce455&quot;&gt;Shortcut to target node link&lt;/a&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
@@ -434,7 +434,7 @@
          </dimensions>
          <accessRoles __type="array"/>
          <properties>
-          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://60cba99a-6fea-30c9-b395-a7eec69d04b4&quot; data-gentics-aloha-repository=&quot;node-repository&quot; data-gentics-aloha-object-id=&quot;60cba99a-6fea-30c9-b395-a7eec69d04b4&quot;&gt;Shortcut to target URI link&lt;/a&gt;&lt;/p&gt;</text>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://60cba99a-6fea-30c9-b395-a7eec69d04b4&quot;&gt;Shortcut to target URI link&lt;/a&gt;&lt;/p&gt;</text>
          </properties>
         </variant>
        </node>
