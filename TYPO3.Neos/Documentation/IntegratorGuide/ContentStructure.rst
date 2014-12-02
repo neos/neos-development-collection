@@ -233,7 +233,7 @@ The following options are allowed:
           'formatlesspaste':
             'button': TRUE # Show toggle button for formatless pasting.
             'formatlessPasteOption': FALSE # Whether the format less pasting should be enable by default.
-#           'strippedElements': ['a'] # If not set the default value is used.
+#           'strippedElements': ['a'] # If not set the default setting is used.
 
       Example of disabling all formatting options::
 
