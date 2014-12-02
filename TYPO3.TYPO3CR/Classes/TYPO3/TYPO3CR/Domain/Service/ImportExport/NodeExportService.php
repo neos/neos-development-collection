@@ -54,16 +54,6 @@ class NodeExportService {
 	protected $propertyMapper;
 
 	/**
-	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
-	 */
-	protected $imageRepository;
-
-	/**
-	 * @var \TYPO3\Media\Domain\Repository\AssetRepository
-	 */
-	protected $assetRepository;
-
-	/**
 	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
 	 * interface ...
 	 *
@@ -298,28 +288,16 @@ class NodeExportService {
 					if ($objectIdentifier !== NULL) {
 						$this->xmlWriter->writeAttribute('__identifier', $objectIdentifier);
 					}
-					$this->xmlWriter->writeAttribute('__classname', get_class($data[$propertyName]));
+					if ($data[$propertyName] instanceof \Doctrine\ORM\Proxy\Proxy) {
+						$className = get_parent_class($data[$propertyName]);
+					} else {
+						$className = get_class($data[$propertyName]);
+					}
+					$this->xmlWriter->writeAttribute('__classname', $className);
 					$this->xmlWriter->writeAttribute('__encoding', 'json');
 
-					/*
-					 * In the site import command we load images and assets and Doctrine
-					 * serializes them in when we store the node properties as ObjectArray.
-					 *
-					 * This serialize removes the resource property without a clear reason
-					 * and there's no solution for this issue available yet. THIS IS A WORKAROUND!
-					 * @see NEOS-121
-					 */
-					if ($data[$propertyName] instanceof \TYPO3\Media\Domain\Model\AssetInterface) {
-						if ($data[$propertyName]->getResource() === NULL) {
-							$this->injectMediaRepositories();
-							if ($data[$propertyName] instanceof \TYPO3\Media\Domain\Model\Image) {
-								$data[$propertyName] = $this->imageRepository->findByIdentifier($data[$propertyName]->getIdentifier());
-							} else {
-								$data[$propertyName] = $this->assetRepository->findByIdentifier($data[$propertyName]->getIdentifier());
-							}
-						}
-					}
-					$this->xmlWriter->text(json_encode($this->propertyMapper->convert($data[$propertyName], 'array', $this->propertyMappingConfiguration)));
+					$converted = json_encode($this->propertyMapper->convert($data[$propertyName], 'array', $this->propertyMappingConfiguration));
+					$this->xmlWriter->text($converted);
 				} elseif (is_array($data[$propertyName])) {
 					foreach ($data[$propertyName] as $key => $element) {
 						$this->writeConvertedElement($data[$propertyName], $key, 'entry' . $key);
@@ -338,22 +316,6 @@ class NodeExportService {
 			}
 
 			$this->xmlWriter->endElement();
-		}
-	}
-
-	/**
-	 * Fetch AssetRepository and ImageRepository.
-	 *
-	 * They are not injected because there must not be a hard dependency to TYPO3.Media.
-	 *
-	 * @return void
-	 */
-	protected function injectMediaRepositories() {
-		if ($this->imageRepository === NULL) {
-			$this->imageRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\ImageRepository');
-		}
-		if ($this->assetRepository === NULL) {
-			$this->assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
 		}
 	}
 

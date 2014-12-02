@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  *                                                                        */
 
 
+use TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\ArrayConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -69,6 +70,9 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
 			return $this->resourceLoadSavePath;
 		}
 
+		if ($typeConverterClassName === 'TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter' && $key === ArrayTypeConverter::CONFIGURATION_CONVERT_ELEMENTS) {
+			return TRUE;
+		}
 
 		// needed in IMPORT
 		if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter' && $key === PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED) {
