@@ -13,6 +13,7 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
+use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception as Exceptions;
 
@@ -53,12 +54,10 @@ abstract class AbstractRenderingExceptionHandler {
 	 * @param string $typoScriptPath
 	 * @param \Exception $exception
 	 * @return string
-	 * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-	 * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
-	 * @throws \Exception
+	 * @throws StopActionException|SecurityException
 	 */
 	public function handleRenderingException($typoScriptPath, \Exception $exception) {
-		if ($exception instanceof StopActionException) {
+		if ($exception instanceof StopActionException || $exception instanceof SecurityException) {
 			throw $exception;
 		}
 		if ($exception instanceof Exceptions\RuntimeException) {
