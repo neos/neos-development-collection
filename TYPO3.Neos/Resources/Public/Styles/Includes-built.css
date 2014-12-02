@@ -11037,6 +11037,40 @@
 .neos .neos-login-dialog .neos-button {
   width: 100%;
 }
+.neos .neos-login-dialog .neos-tooltip {
+  left: -4px;
+  top: 0;
+  width: 100%;
+  position: relative;
+  clear: both;
+  float: none;
+}
+.neos .neos-login-dialog .neos-tooltip.neos-bottom {
+  padding: 8px 0 0 0;
+  margin-left: 4px;
+  margin-top: -1px;
+}
+.neos .neos-login-dialog .neos-tooltip.neos-in {
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+  opacity: 1;
+}
+.neos .neos-login-dialog .neos-tooltip .neos-tooltip-arrow {
+  margin-left: -8px;
+  border-width: 0 8px 8px 8px;
+  border-bottom-color: #ff460d;
+}
+.neos .neos-login-dialog .neos-tooltip .neos-tooltip-inner {
+  max-width: 100%;
+  background-color: #ff460d;
+  font-size: 13px;
+  color: #fff;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .neos .page-navigation ul {
   border-top: 1px solid #3f3f3f;
   text-align: center;
