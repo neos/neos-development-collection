@@ -29,8 +29,10 @@ define(
 					multiple: true,
 					minimumInputLength: that.get('threshold'),
 					placeholder: this.get('placeholder'),
-					formatResult: function(item) {
-						var $itemContent = $('<span><b>' + item.text + '</b></span>');
+					formatResult: function(item, container, query, escapeMarkup) {
+						var markup = [];
+						window.Select2.util.markMatch(item.text, query.term, markup, escapeMarkup);
+						var $itemContent = $('<span>' + markup.join('') + '</span>');
 
 						var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
 						if (iconClass) {
@@ -42,7 +44,7 @@ define(
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var $itemContent = $('<span><b>' + item.text + '</b></span>');
+						var $itemContent = $('<span>' + item.text + '</span>');
 
 						if (item.data) {
 							var iconClass = NodeTypeService.getNodeTypeDefinition(item.data.nodeType).ui.icon;
@@ -100,9 +102,12 @@ define(
 
 			// actual value used and expected by the inspector:
 			value: function(key, value) {
-				var that = this;
+				var that = this,
+					currentValue = JSON.stringify(this.get('content').map(function(item) {
+						return item.id;
+					}));
 
-				if (value) {
+				if (value && value !== currentValue) {
 					// Remove all items so they don't appear multiple times.
 					// TODO: cache already found items and load multiple node records at once
 					that.set('content', []);
@@ -127,9 +132,7 @@ define(
 					});
 					that._updateSelect2();
 				}
-				return JSON.stringify(this.get('content').map(function(item){
-					return item.id;
-				}));
+				return currentValue;
 			}.property('content.@each')
 		});
 	}
