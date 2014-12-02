@@ -266,7 +266,7 @@
         <accessRoles __type="array"/>
         <properties>
          <assets __type="array">
-          <entry0 __type="object" __identifier="89cd85cc-270e-0902-7113-d14ac7539c75" __classname="TYPO3\Media\Domain\Model\Asset" __encoding="json">{&quot;title&quot;:&quot;&quot;,&quot;resource&quot;:{&quot;filename&quot;:&quot;TYPO3_Neos-logo_sRGB_color.pdf&quot;,&quot;hash&quot;:&quot;bed9a3e45070e97b921877e2bd9c35ba368beca0&quot;,&quot;__identity&quot;:&quot;8a4496e4-fa0d-8550-0995-01fd869728bf&quot;}}</entry0>
+          <entry0 __type="object" __identifier="1af89e5c-9e23-9a9d-ae15-1d77160cfb57" __classname="TYPO3\Media\Domain\Model\Asset" __encoding="json">{&quot;__identity&quot;:&quot;1af89e5c-9e23-9a9d-ae15-1d77160cfb57&quot;,&quot;title&quot;:&quot;&quot;,&quot;resource&quot;:{&quot;filename&quot;:&quot;TYPO3_Neos-logo_sRGB_color.pdf&quot;,&quot;hash&quot;:&quot;bed9a3e45070e97b921877e2bd9c35ba368beca0&quot;,&quot;__identity&quot;:&quot;8a4496e4-fa0d-8550-0995-01fd869728bf&quot;}}</entry0>
          </assets>
         </properties>
        </variant>
@@ -486,7 +486,6 @@
          <title __type="string">Shortcut to parent node</title>
          <uriPathSegment __type="string">shortcut-to-parent-node</uriPathSegment>
          <targetMode __type="string">parentNode</targetMode>
-         <target __type="string"></target>
         </properties>
        </variant>
       </node>
