@@ -7305,6 +7305,16 @@
   line-height: 1;
   font-size: 14px;
 }
+.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active,
+.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
+  background-color: #ff8700;
+  cursor: pointer;
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+  opacity: 1;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
 .neos #neos-publish-menu.neos-button-group .neos-publish-button {
   min-width: 165px;
   background-color: #00a338;
@@ -7353,16 +7363,6 @@
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
   left: 3px;
-}
-.neos #neos-publish-menu.neos-button-group .neos-publish-button.neos-publish-menu-active,
-.neos #neos-publish-menu.neos-button-group .neos-dropdown-toggle.neos-publish-menu-active {
-  background-color: #ff8700;
-  cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
-  opacity: 1;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
 }
 .neos #neos-publish-menu.neos-button-group .neos-dropdown-menu .neos-publish-all-button.neos-button {
   width: 100%;
