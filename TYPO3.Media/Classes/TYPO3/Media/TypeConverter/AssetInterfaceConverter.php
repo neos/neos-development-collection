@@ -167,6 +167,9 @@ class AssetInterfaceConverter extends PersistentObjectConverter {
 		$object = parent::convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
 		if ($object instanceof AssetInterface) {
+			if (isset($source['__identity'])) {
+				\TYPO3\Flow\Reflection\ObjectAccess::setProperty($object, 'persistence_object_identifier', $source['__identity'], TRUE);
+			}
 			$this->applyTypeSpecificHandling($object, $source, $convertedChildProperties, $configuration);
 
 			if ($this->persistenceManager->isNewObject($object)) {

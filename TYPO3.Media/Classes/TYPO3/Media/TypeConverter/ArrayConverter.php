@@ -97,6 +97,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 	 * @return array The converted asset or NULL
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL) {
+		$identity = $this->persistenceManager->getIdentifierByObject($source);
 		switch (TRUE) {
 			case $source instanceof \TYPO3\Media\Domain\Model\ImageVariant:
 				if (!isset($convertedChildProperties['originalAsset']) || !is_array($convertedChildProperties['originalAsset'])) {
@@ -106,6 +107,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 				$convertedChildProperties['originalAsset']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getOriginalAsset());
 
 				return array(
+					'__identity' => $identity,
 					'originalAsset' => $convertedChildProperties['originalAsset'],
 					'adjustments' => $convertedChildProperties['adjustments']
 				);
@@ -117,6 +119,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 				$convertedChildProperties['resource']['__identity'] = $this->persistenceManager->getIdentifierByObject($source->getResource());
 
 				return array(
+					'__identity' => $identity,
 					'title' => $source->getTitle(),
 					'resource' => $convertedChildProperties['resource']
 				);
