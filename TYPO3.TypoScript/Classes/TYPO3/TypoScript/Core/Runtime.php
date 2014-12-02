@@ -400,7 +400,7 @@ class Runtime {
 			$evaluateObject = TRUE;
 			if (isset($typoScriptConfiguration['__meta']['if'])) {
 				foreach ($typoScriptConfiguration['__meta']['if'] as $conditionKey => $conditionValue) {
-					$conditionValue = $this->evaluateInternal($typoScriptPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, NULL);
+					$conditionValue = $this->evaluateInternal($typoScriptPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, $tsObject);
 					if ($conditionValue === FALSE) {
 						$evaluateObject = FALSE;
 					}
