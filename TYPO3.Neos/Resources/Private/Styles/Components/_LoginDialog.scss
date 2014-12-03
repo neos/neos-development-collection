@@ -48,4 +48,37 @@
 		width: 100%;
 	}
 
+	.neos-tooltip {
+		left: -4px;
+		top: 0;
+		width: 100%;
+		position: relative;
+		clear: both;
+		float: none;
+
+		&.neos-bottom {
+			padding: $relatedMargin 0 0 0;
+			margin-left: $tightMargin;
+			margin-top: -1px;
+		}
+
+		&.neos-in {
+			@include opacity(1);
+		}
+
+		.neos-tooltip-arrow {
+			margin-left: -$relatedMargin;
+			border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
+			border-bottom-color: $warning;
+		}
+
+		.neos-tooltip-inner {
+			max-width: 100%;
+			background-color: $warning;
+			font-size: 13px;
+			color: #fff;
+			@include border-radius(0);
+			@include box-sizing(border-box);
+		}
+	}
 }
