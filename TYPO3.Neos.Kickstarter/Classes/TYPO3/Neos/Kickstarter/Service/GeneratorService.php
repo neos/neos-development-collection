@@ -16,6 +16,7 @@ use TYPO3\Flow\Package\MetaData;
 use TYPO3\Flow\Package\MetaData\PackageConstraint;
 use TYPO3\Flow\Package\MetaDataInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
 /**
  * Service to generate site packages
@@ -27,6 +28,12 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 	 * @var PackageManagerInterface
 	 */
 	protected $packageManager;
+
+	/**
+	 * @Flow\Inject
+	 * @var ContentDimensionRepository
+	 */
+	protected $contentDimensionRepository;
 
 	/**
 	 * Generate a site package and fill it with boilerplate data.
@@ -63,6 +70,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		$contextVariables['siteName'] = $siteName;
 		$packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
 		$contextVariables['siteNodeName'] = strtolower($packageKeyDomainPart);
+		$contextVariables['dimensions'] = $this->contentDimensionRepository->findAll();
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
