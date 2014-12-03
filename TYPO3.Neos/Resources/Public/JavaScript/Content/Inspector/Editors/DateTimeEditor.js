@@ -230,7 +230,7 @@ function (Ember, $, template) {
 				}
 			}
 
-			if (!/i/.test(format) && /s/.test(format)) {
+			if (!/i|s/.test(format)) {
 				minView = 1;
 				if (!/a|A|g|G|h|H/.test(format)) {
 					minView = 2;
