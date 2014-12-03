@@ -11,8 +11,10 @@ namespace TYPO3\Neos;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -53,6 +55,31 @@ class Package extends BasePackage {
 			}
 		});
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', 'repositoryObjectsPersisted', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'commit');
-	}
 
+		// Eventlog
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'beforeNodeCreate', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'beforeNodeCreate');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'afterNodeCreate', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'afterNodeCreate');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeUpdated', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'nodeUpdated');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'nodeRemoved');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'beforeNodePropertyChange', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'beforeNodePropertyChange');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'nodePropertyChanged');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'beforeNodeCopy', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'beforeNodeCopy');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'afterNodeCopy', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'afterNodeCopy');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'beforeNodeMove', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'beforeNodeMove');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'afterNodeMove', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'afterNodeMove');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Service\Context', 'beforeAdoptNode', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'beforeAdoptNode');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Service\Context', 'afterAdoptNode', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'afterAdoptNode');
+
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Workspace', 'beforeNodePublishing', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'beforeNodePublishing');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Workspace', 'afterNodePublishing', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'afterNodePublishing');
+		$dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodeDiscarded', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'nodeDiscarded');
+
+		$dispatcher->connect('TYPO3\Flow\Persistence\Doctrine\PersistenceManager', 'allObjectsPersisted', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'updateEventsAfterPublish');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', 'repositoryObjectsPersisted', 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService', 'updateEventsAfterPublish');
+	}
 }

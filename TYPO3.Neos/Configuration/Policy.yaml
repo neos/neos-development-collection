@@ -66,6 +66,9 @@ privilegeTargets:
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspace':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace.name == current.userInformation.currentWorkspaceName)) || method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|publishWorkspace|discardWorkspace)Action(workspace == NULL))'
 
+    'TYPO3.Neos:Backend.Module.Management.History':
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\HistoryController->(index)Action())'
+
     'TYPO3.Neos:Backend.Module.Media.ManageAssets':
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\AssetController->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|deleteTag)Action())'
 
@@ -173,6 +176,10 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspace'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.History'
         permission: GRANT
 
   'TYPO3.Neos:Administrator':

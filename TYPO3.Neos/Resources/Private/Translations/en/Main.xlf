@@ -117,6 +117,9 @@
 			<trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
 			</trans-unit>
+			<trans-unit id="you" xml:space="preserve">
+				<source>You</source>
+			</trans-unit>
 
 			<!-- shortcuts -->
 			<trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">

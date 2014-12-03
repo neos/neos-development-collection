@@ -37,6 +37,14 @@ TYPO3:
             events: ['postPersist', 'postUpdate', 'postRemove']
             listener: 'TYPO3\Neos\Domain\EventListener\AccountPostEventListener'
 
+          'TYPO3\Neos\EventLog\Integrations\EntityIntegrationService':
+            events: ['onFlush']
+            listener: 'TYPO3\Neos\EventLog\Integrations\EntityIntegrationService'
+
+          'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService':
+            events: ['preFlush']
+            listener: 'TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService'
+
     error:
       exceptionHandler:
         renderingGroups:
@@ -246,6 +254,12 @@ TYPO3:
             description: 'This module allows managing of media assets including pictures, videos, audio and documents.'
             icon: 'icon-camera'
             privilegeTarget: 'TYPO3.Media:ManageAssets'
+          history:
+            label: 'History'
+            controller: '\TYPO3\Neos\Controller\Module\Management\HistoryController'
+            description: 'This module contains a list of all historic changes in Neos.'
+            icon: 'icon-calendar'
+            privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.History'
       administration:
         label: 'Administration'
         controller: '\TYPO3\Neos\Controller\Module\AdministrationController'
@@ -298,6 +312,18 @@ TYPO3:
             icon: 'icon-user'
             privilegeTarget: 'TYPO3.Neos:Backend.Module.User.UserSettings'
 
+    # Settings for the TYPO3 Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
+    eventLog:
+      monitorEntities:
+        'TYPO3\Flow\Security\Account':
+          events:
+            created: 'Account.Created'
+            deleted: 'Account.Deleted'
+          data:
+            accountIdentifier: '${entity.accountIdentifier}'
+            authenticationProviderName: '${entity.authenticationProviderName}'
+            name: '${entity.party.name.fullName}'
+
   Setup:
     stepOrder: ['database', 'administrator', 'siteimport', 'final']
     steps:
@@ -330,6 +356,8 @@ TYPO3:
     defaultContext:
       'Neos.Node': 'TYPO3\Neos\TypoScript\Helper\NodeHelper'
       'Neos.Link': 'TYPO3\Neos\TypoScript\Helper\LinkHelper'
+      'Neos.Array': 'TYPO3\Neos\TypoScript\Helper\ArrayHelper'
+      'Neos.Rendering': 'TYPO3\Neos\TypoScript\Helper\RenderingHelper'
 
   #TYPO3CR:
     # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages

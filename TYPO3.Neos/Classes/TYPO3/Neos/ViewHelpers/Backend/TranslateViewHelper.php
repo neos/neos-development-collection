@@ -18,7 +18,7 @@ use TYPO3\Neos\Domain\Model\User;
 
 /**
  * Returns translated message using source message or key ID.
- * uses the selectd backend language
+ * uses the selected backend language
  * * Also replaces all placeholders with formatted versions of provided values.
  *
  * = Examples =
