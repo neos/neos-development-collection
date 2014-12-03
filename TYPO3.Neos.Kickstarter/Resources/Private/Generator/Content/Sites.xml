@@ -4,7 +4,11 @@
   <nodes formatVersion="2.0">
    <node nodeName="{siteNodeName}">
     <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-     <dimensions/>
+     <dimensions>
+     <f:for each="{dimensions}" as="dimension">
+      <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
+     </f:for>
+     </dimensions>
      <accessRoles __type="array">[]</accessRoles>
      <properties>
       <title __type="string">Home</title>
@@ -12,41 +16,25 @@
     </variant>
     <node nodeName="main">
      <variant workspace="live" nodeType="TYPO3.Neos:ContentCollection" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-      <dimensions/>
+      <dimensions>
+      <f:for each="{dimensions}" as="dimension">
+       <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
+      </f:for>
+      </dimensions>
       <accessRoles __type="array">[]</accessRoles>
      </variant>
      <node nodeName="text1">
       <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Text" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-       <dimensions/>
+       <dimensions>
+       <f:for each="{dimensions}" as="dimension">
+        <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
+       </f:for>
+       </dimensions>
        <accessRoles __type="array">[]</accessRoles>
        <properties>
         <text __type="string">&lt;p&gt;This is the homepage&lt;/p&gt;</text>
        </properties>
       </variant>
-     </node>
-    </node>
-    <node nodeName="subpage">
-     <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-      <dimensions/>
-      <accessRoles __type="array">[]</accessRoles>
-      <properties>
-       <title __type="string">A sub page</title>
-      </properties>
-     </variant>
-     <node nodeName="main">
-      <variant workspace="live" nodeType="TYPO3.Neos:ContentCollection" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-       <dimensions/>
-       <accessRoles __type="array">[]</accessRoles>
-      </variant>
-      <node nodeName="text1">
-       <variant workspace="live" nodeType="TYPO3.Neos.NodeTypes:Text" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
-        <dimensions/>
-        <accessRoles __type="array">[]</accessRoles>
-        <properties>
-         <text __type="string">&lt;p&gt;This is the first sub page&lt;/p&gt;</text>
-        </properties>
-       </variant>
-      </node>
      </node>
     </node>
    </node>
