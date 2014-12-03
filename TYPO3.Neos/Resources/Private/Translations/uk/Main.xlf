@@ -139,7 +139,7 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="uk" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="uk" state="translated">Повноекранний режим</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
 			<target xml:lang="uk" state="needs-translation">Open page in live workspace</target></trans-unit>
@@ -229,33 +229,33 @@
 			<target xml:lang="uk" state="translated">Робочі області</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="uk" state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target xml:lang="uk" state="translated">Помилка під час збереження</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
 			<target xml:lang="uk" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="uk" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="uk" state="translated">Перезавантажити інтерфейс адміністратора</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="uk" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="uk" state="translated">Перезавантаження</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
 			<target xml:lang="uk" state="translated">TYPO3 Neos Логін</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="uk" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="uk" state="translated">Вхід</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
 			<target xml:lang="uk" state="needs-translation">Authenticating</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="uk" state="needs-translation">Go to setup</target></trans-unit>
+			<target xml:lang="uk" state="translated">До установки</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="uk" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="uk" state="translated">Відсутня домашня сторінка</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
 			<target xml:lang="uk" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
@@ -264,7 +264,7 @@
 			<target xml:lang="uk" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="uk" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="uk" state="translated">Помилка бази даних</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
 			<target xml:lang="uk" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
@@ -273,10 +273,10 @@
 			<target xml:lang="uk" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="uk" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="uk" state="translated">Сторінка не знайдена</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="uk" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="uk" state="translated">На жаль, запитувану вами сторінку не знайдено.</target></trans-unit>
     </body>
   </file>
 </xliff>
