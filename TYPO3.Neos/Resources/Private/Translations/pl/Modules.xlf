@@ -5,69 +5,69 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="pl">Zarządzanie</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zarządzanie</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="pl">Zawiera moduły do zarządzania treścią</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zawiera moduły do zarządzania treścią</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="pl">Obszary robocze</target></trans-unit>
+			<target xml:lang="pl" state="translated">Obszary robocze</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="pl">Ten moduł zawiera listę wszystkich elementów w bieżącym obszarze roboczym i pozwala na ich przegląd i publikowanie.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten moduł zawiera listę wszystkich elementów w bieżącym obszarze roboczym i pozwala na ich przegląd i publikowanie.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pl">Pliki</target><alt-trans><target xml:lang="pl">Multimedia</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Pliki</target><alt-trans><target xml:lang="pl">Multimedia</target></alt-trans></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="pl">Ten moduł umożliwia zarządzanie multimediami, włączając w to zdjęcia, filmy video, pliki audio i dokumenty.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten moduł umożliwia zarządzanie multimediami, włączając w to zdjęcia, filmy video, pliki audio i dokumenty.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="pl">Administracja</target></trans-unit>
+			<target xml:lang="pl" state="translated">Administracja</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="pl">Zawiera mooduły związane z administracją</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zawiera mooduły związane z administracją</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="pl">Zarządzanie użytkownikami</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zarządzanie użytkownikami</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="pl">Moduł zarządzania użytkownikami umożliwia przegląd wszystkich back-end użytkowników. Można ich grupować wg. ich właściwości, dzięki czemu możesz monitorować ich uprawnienia, zamontowane systemy plików, członkostwa w grupach itp.. Moduł ten jest niezastąpionym narzędziem kiedy chcesz się upewnić, że użytkownicy są poprawnie skonfigurowani.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Moduł zarządzania użytkownikami umożliwia przegląd wszystkich back-end użytkowników. Można ich grupować wg. ich właściwości, dzięki czemu możesz monitorować ich uprawnienia, zamontowane systemy plików, członkostwa w grupach itp.. Moduł ten jest niezastąpionym narzędziem kiedy chcesz się upewnić, że użytkownicy są poprawnie skonfigurowani.</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="pl">Utwórz użytkownika</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz użytkownika</target></trans-unit>
       <trans-unit id="users.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="pl">Utwórz nowego użytkownika</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz nowego użytkownika</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
-			<target xml:lang="pl">Zarządzanie pakietami</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zarządzanie pakietami</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="pl">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, importować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, importować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
-			<target xml:lang="pl">Zarządzanie stroną</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zarządzanie stroną</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="pl">Moduł zarządzania stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Moduł zarządzania stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target></trans-unit>
       <trans-unit id="sites.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target xml:lang="pl">Utwórz stronę</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz stronę</target></trans-unit>
       <trans-unit id="sites.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target xml:lang="pl">Utwórz nową stronę</target></trans-unit>
+			<target xml:lang="pl" state="translated">Utwórz nową stronę</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
-			<target xml:lang="pl">Użytkownik</target></trans-unit>
+			<target xml:lang="pl" state="translated">Użytkownik</target></trans-unit>
       <trans-unit id="usersettings.label" xml:space="preserve">
 				<source>User Settings</source>
-			<target xml:lang="pl">Ustawienia użytkownika</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ustawienia użytkownika</target></trans-unit>
       <trans-unit id="usersettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="pl">Moduł ten pozwala na edycję profilu back-end użytkownika. Można tutaj zmienić aktywny język, nazwisko i adres e-mail. Istnieje też opcja konfiguracji różnych funkcjonalności systemu.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Moduł ten pozwala na edycję profilu back-end użytkownika. Można tutaj zmienić aktywny język, nazwisko i adres e-mail. Istnieje też opcja konfiguracji różnych funkcjonalności systemu.</target></trans-unit>
     </body>
   </file>
 </xliff>

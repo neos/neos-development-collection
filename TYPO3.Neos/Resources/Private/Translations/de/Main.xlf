@@ -5,260 +5,266 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="de">Auto-Publish</target><alt-trans><target xml:lang="de">Auto-Veröffentlichung</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Auto-Publish</target><alt-trans><target xml:lang="de">Auto-Veröffentlichung</target></alt-trans><alt-trans><target xml:lang="de">Automatisch Veröffentlichen</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="de">Übernehmen</target></trans-unit>
+			<target xml:lang="de" state="translated">Übernehmen</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="de">Änderungen übernehmen</target></trans-unit>
+			<target xml:lang="de" state="translated">Änderungen übernehmen</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="de">Abbrechen</target></trans-unit>
+			<target xml:lang="de" state="translated">Abbrechen</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="de">Inhalt</target></trans-unit>
+			<target xml:lang="de" state="translated">Inhalt</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="de">Erstellen nach</target></trans-unit>
+			<target xml:lang="de" state="translated">Erstellen nach</target><alt-trans><target xml:lang="de">Erstellen hinter</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="de">Neu erstellen</target></trans-unit>
+			<target xml:lang="de" state="translated">Neu erstellen</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="de">Schließen</target></trans-unit>
+			<target xml:lang="de" state="translated">Schließen</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="de">Kopieren</target></trans-unit>
+			<target xml:lang="de" state="translated">Kopieren</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="de">Ausschneiden</target></trans-unit>
+			<target xml:lang="de" state="translated">Ausschneiden</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="de">Verbergen / Anzeigen</target></trans-unit>
+			<target xml:lang="de" state="translated">Verbergen / Anzeigen</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="de">Navigieren</target></trans-unit>
+			<target xml:lang="de" state="translated">Navigieren</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="de">OK</target></trans-unit>
+			<target xml:lang="de" state="translated">OK</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="de">Entfernen</target></trans-unit>
+			<target xml:lang="de" state="translated">Entfernen</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="de">Aktualisieren</target><alt-trans><target xml:lang="de">Neu Laden</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Aktualisieren</target><alt-trans><target xml:lang="de">Neu Laden</target></alt-trans></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="de">Löschen</target></trans-unit>
+			<target xml:lang="de" state="translated">Löschen</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="de">Ja, das Element löschen</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, das Element löschen</target><alt-trans><target xml:lang="de">Ja, dieses Element löschen</target></alt-trans></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="de">Element löschen</target></trans-unit>
+			<target xml:lang="de" state="translated">Element löschen</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="de">Verwerfen</target></trans-unit>
+			<target xml:lang="de" state="translated">Verwerfen</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="de">Änderungen verwerfen</target></trans-unit>
+			<target xml:lang="de" state="translated">Änderungen verwerfen</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="de">Titel bearbeiten</target></trans-unit>
+			<target xml:lang="de" state="translated">Titel bearbeiten</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="de">Bearbeiten / Vorschau</target></trans-unit>
+			<target xml:lang="de" state="translated">Bearbeiten / Vorschau</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="de">Bearbeiten</target></trans-unit>
+			<target xml:lang="de" state="translated">Bearbeiten</target></trans-unit>
       <trans-unit id="Navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="de">Navigieren</target></trans-unit>
+			<target xml:lang="de" state="translated">Navigieren</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="de">Neues Element danach</target></trans-unit>
+			<target xml:lang="de" state="translated">Neues Element danach</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="de">Neues Element davor</target></trans-unit>
+			<target xml:lang="de" state="translated">Neues Element davor</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="de">Neues Element in</target></trans-unit>
+			<target xml:lang="de" state="translated">Neues Element in</target><alt-trans><target xml:lang="de">Neues Element innerhalb</target></alt-trans></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="de">Einfügen</target></trans-unit>
+			<target xml:lang="de" state="translated">Einfügen</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="de">Danach einfügen</target></trans-unit>
+			<target xml:lang="de" state="translated">Danach einfügen</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="de">Davor einfügen</target></trans-unit>
+			<target xml:lang="de" state="translated">Davor einfügen</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="de">Element einfügen in</target></trans-unit>
+			<target xml:lang="de" state="translated">Element einfügen in</target><alt-trans><target xml:lang="de">Innerhalb einfügen</target></alt-trans></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="de">Passwort</target></trans-unit>
+			<target xml:lang="de" state="translated">Passwort</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="de">Vorschau</target></trans-unit>
+			<target xml:lang="de" state="translated">Vorschau</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="de">Veröffentlichen</target></trans-unit>
+			<target xml:lang="de" state="translated">Veröffentlichen</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving...</source>
-			<target xml:lang="de">Speichern...</target></trans-unit>
+			<target xml:lang="de" state="translated">Speichern...</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="de">Gespeichert</target></trans-unit>
+			<target xml:lang="de" state="translated">Gespeichert</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="de">Inspector auf- / zuklappen</target></trans-unit>
+			<target xml:lang="de" state="translated">Inspector auf- / zuklappen</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="de">Benutzername</target></trans-unit>
+			<target xml:lang="de" state="translated">Benutzername</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click here to continue to the {0} page.</source>
-			<target xml:lang="de">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken Sie hier, um zur Seite {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click here to continue to the {0} asset.</source>
-			<target xml:lang="de">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken Sie hier, um zum Medienelement {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click here to continue to the {0} ext page.</source>
-			<target xml:lang="de">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken Sie hier, um zur externen Seite {0} zu gelangen.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="de">(kein Ziel ausgewählt)</target></trans-unit>
+			<target xml:lang="de" state="translated">(kein Ziel ausgewählt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;Klicken sie auf {0}, um zur Seite zu gelangen.</target><alt-trans><target xml:lang="de">Dies ist ein Verweis auf die erste Unterseite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;Klicken Sie auf {0}, um zur Seite zu gelangen.</target><alt-trans><target xml:lang="de">Dies ist ein Verweis auf die übergeordnete Seite.&lt;br /&gt;{0} klicken, um zur Seite zu gelangen.</target></alt-trans></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="de">Vollbild</target></trans-unit>
+			<target xml:lang="de" state="translated">Vollbild</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="de">Open page in live workspace</target></trans-unit>
+			<target xml:lang="de" state="translated">Seite im Live-Arbeitsbereich öffnen</target><alt-trans><target xml:lang="de">Seite im Live-Workspace öffnen</target></alt-trans></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="de">Alle Änderungen verwerfen</target></trans-unit>
+			<target xml:lang="de" state="translated">Alle Änderungen verwerfen</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target></trans-unit>
+			<target xml:lang="de" state="translated">Sind Sie sicher, dass Sie alle Änderungen in diesem Workspace verwerfen möchten?</target><alt-trans><target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen in diesem Arbeitsbereich verwerfen möchten?</target></alt-trans></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="de">Alle Änderungen veröffentlichen</target></trans-unit>
+			<target xml:lang="de" state="translated">Alle Änderungen veröffentlichen</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="de">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen möchten?</target></trans-unit>
+			<target xml:lang="de" state="translated">Sind Sie sicher, dass Sie alle Änderungen veröffentlichen möchten?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="de">Bearbeitungsmodus</target></trans-unit>
+			<target xml:lang="de" state="translated">Bearbeitungsmodus</target><alt-trans><target xml:lang="de">Bearbeitungsmodi</target></alt-trans></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="de">Vorschau Zentrale</target></trans-unit>
+			<target xml:lang="de" state="translated">Vorschau Zentrale</target></trans-unit>
       <trans-unit id="inspector" xml:space="preserve">
 				<source>Inspector</source>
-			<target xml:lang="de">Inspector</target></trans-unit>
+			<target xml:lang="de" state="translated">Inspector</target><alt-trans><target xml:lang="de">Inspektor</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="de">Es sind noch Änderungen vorhanden. Was soll mit ihnen geschehen?</target></trans-unit>
+			<target xml:lang="de" state="translated">Es sind noch Änderungen vorhanden. Was soll mit ihnen geschehen?</target><alt-trans><target xml:lang="de">Es sind Änderungen vorgenommen worden. Was soll mit ihnen geschehen?</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="de">Ausgewähltes Element</target></trans-unit>
+			<target xml:lang="de" state="translated">Ausgewähltes Element</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="de">Einige Felder sind nicht korrekt ausgefüllt.</target></trans-unit>
+			<target xml:lang="de" state="translated">Einige Felder sind nicht korrekt ausgefüllt.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="de">Die markierten Felder sind noch nicht korrekt ausgefüllt. Bitte korrigieren Sie diese.</target><alt-trans><target xml:lang="de">Die markierten Felder sind nicht noch korrekt ausgefüllt. Bitte korrigieren Sie sie.</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Die markierten Felder sind noch nicht korrekt ausgefüllt. Bitte korrigieren Sie diese.</target><alt-trans><target xml:lang="de">Die markierten Felder sind nicht noch korrekt ausgefüllt. Bitte korrigieren Sie sie.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="de">Bearbeitung fortsetzen</target></trans-unit>
+			<target xml:lang="de" state="translated">Bearbeitung fortsetzen</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="de">Verwerfen</target></trans-unit>
+			<target xml:lang="de" state="translated">Verwerfen</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="de">Übernehmen</target></trans-unit>
+			<target xml:lang="de" state="translated">Übernehmen</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
-			<target xml:lang="de">Darstellung wird angezeigt auf Seite</target></trans-unit>
+			<target xml:lang="de" state="translated">Darstellung wird auf der Seite angezeigt</target><alt-trans><target xml:lang="de">Darstellung wird angezeigt auf Seite</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve">
 				<source>view is displayed on current page</source>
-			<target xml:lang="de">Darstellung wird auf der aktuellen Seite angezeigt</target></trans-unit>
+			<target xml:lang="de" state="translated">Darstellung wird auf der aktuellen Seite angezeigt</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="de">Inhalt</target></trans-unit>
+			<target xml:lang="de" state="translated">Inhalt</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the page</source>
-			<target xml:lang="de">Dadurch wird die Seite gelöscht</target></trans-unit>
+			<target xml:lang="de" state="translated">Dadurch wird die Seite gelöscht</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's subpages</source>
-			<target xml:lang="de">und ihre Unterseiten</target></trans-unit>
+			<target xml:lang="de" state="translated">und ihre Unterseiten</target><alt-trans><target xml:lang="de">als auch die Unterseiten</target></alt-trans></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="de">Höhe</target></trans-unit>
+			<target xml:lang="de" state="translated">Höhe</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="de">Möchten Sie das Element wirklich löschen</target></trans-unit>
+			<target xml:lang="de" state="translated">Möchten Sie das Element wirklich löschen</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="de">Dieses Element</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieses Element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="de">Dadurch wird das Element gelöscht.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dadurch wird das Element gelöscht.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Diese Aktion kann im Arbeitsbereich-Modul rückgängig gemacht werden.</target><alt-trans><target xml:lang="de">Diese Aktion kann im Workspace-Modul rückgängig gemacht werden.</target></alt-trans></trans-unit>
       <trans-unit id="width.ucfirst" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="de">Breite</target></trans-unit>
+			<target xml:lang="de" state="translated">Breite</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="de">Erforderlicher Wert fehlt:</target></trans-unit>
+			<target xml:lang="de" state="translated">Erforderlicher Wert fehlt:</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="de">Arbeitsbereiche</target><alt-trans><target xml:lang="de">Workspaces</target></alt-trans></trans-unit>
+			<target xml:lang="de" state="translated">Arbeitsbereiche</target><alt-trans><target xml:lang="de">Workspaces</target></alt-trans></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="de">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="de" state="translated">TYPO3 Neos Login</target></trans-unit>
+      <trans-unit id="login" xml:space="preserve">
+				<source>Login</source>
+			<target xml:lang="de" state="needs-translation">Login</target></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve">
+				<source>Authenticating</source>
+			<target xml:lang="de" state="needs-translation">Authenticating</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="de">Go to setup</target></trans-unit>
+			<target xml:lang="de" state="translated">Zum Setup</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="de">Missing Homepage</target></trans-unit>
+			<target xml:lang="de" state="translated">Fehlende Startseite</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="de">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="de" state="translated">Entweder wurde noch keine Site definiert, eine bestehende Site enthält noch keine Startseite oder es konnte keine aktive Site ermittelt werden.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="de">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="de" state="translated">Weisen Sie entweder einer bestehenden Site eine Domain zu oder importieren Sie eine neue Site über das Setup-Tool.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="de">Datenbankfehler</target></trans-unit>
+			<target xml:lang="de" state="translated">Datenbankfehler</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="de">Es tut uns Leid, es wurde ein Fehler mit ihrer Datenbank festgestellt. Überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Es tut uns Leid, es wurde ein Fehler mit ihrer Datenbank festgestellt. Überprüfen Sie ihre Logdateien unter Data/Logs/* für weitere Informationen.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="de">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="de" state="translated">Bitte überprüfen Sie die Datenbankkonfiguration mit Hilfe des Setup-Tools.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="de">Seite nicht gefunden</target></trans-unit>
+			<target xml:lang="de" state="translated">Seite nicht gefunden</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="de">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="de" state="translated">Die angeforderte Seite konnte nicht gefunden werden.</target><alt-trans><target xml:lang="de">Die angeforderte Seite wurde leider nicht gefunden.</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

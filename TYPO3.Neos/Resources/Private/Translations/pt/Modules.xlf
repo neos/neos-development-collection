@@ -5,69 +5,69 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="pt-BR">Management</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Management</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="pt-BR">Contains multiple modules related to management of content</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="pt-BR">Workspaces</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Workspaces</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="pt-BR">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="pt-BR">Media</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="pt-BR">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="pt-BR">Administration</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Administration</target></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="pt-BR">Contains multiple modules related to administration</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Contains multiple modules related to administration</target></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
-			<target xml:lang="pt-BR">User Management</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">User Management</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="pt-BR">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</target></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="pt-BR">Create user</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Create user</target></trans-unit>
       <trans-unit id="users.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="pt-BR">Create a new user</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Create a new user</target></trans-unit>
       <trans-unit id="packages.label" xml:space="preserve">
 				<source>Package Management</source>
-			<target xml:lang="pt-BR">Package Management</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Package Management</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="pt-BR">The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
-			<target xml:lang="pt-BR">Sites Management</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Sites Management</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="pt-BR">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
       <trans-unit id="sites.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target xml:lang="pt-BR">Create site</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Create site</target></trans-unit>
       <trans-unit id="sites.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
-			<target xml:lang="pt-BR">Create a new site</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">Create a new site</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
-			<target xml:lang="pt-BR">User</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">User</target></trans-unit>
       <trans-unit id="usersettings.label" xml:space="preserve">
 				<source>User Settings</source>
-			<target xml:lang="pt-BR">User Settings</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">User Settings</target></trans-unit>
       <trans-unit id="usersettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="pt-BR">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
+			<target xml:lang="pt-BR" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
     </body>
   </file>
 </xliff>
