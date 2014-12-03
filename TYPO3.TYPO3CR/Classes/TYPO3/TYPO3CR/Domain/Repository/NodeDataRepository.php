@@ -845,6 +845,38 @@ class NodeDataRepository extends Repository {
 	}
 
 	/**
+	 * Find nodes by a value in properties
+	 *
+	 * This method is internal and will be replaced with better search capabilities.
+	 *
+	 * @param string $term Search term
+	 * @param string $nodeTypeFilter Node type filter
+	 * @param Workspace $workspace
+	 * @param array $dimensions
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+	 */
+	public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions) {
+		$workspaces = array();
+		while ($workspace !== NULL) {
+			$workspaces[] = $workspace;
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		$queryBuilder = $this->createQueryBuilder($workspaces);
+		$this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
+		$this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+		$queryBuilder->andWhere('n.properties LIKE :term')->setParameter('term', '%' . $term . '%');
+
+		$query = $queryBuilder->getQuery();
+		$foundNodes = $query->getResult();
+		$foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
+		$foundNodes = $this->filterRemovedNodes($foundNodes, FALSE);
+
+		return $foundNodes;
+
+	}
+
+	/**
 	 * Flushes the addedNodes and removedNodes registry.
 	 *
 	 * This method is (and should only be) used as a slot to the allObjectsPersisted
