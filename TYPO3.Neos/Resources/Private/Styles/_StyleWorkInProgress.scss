@@ -75,13 +75,6 @@ button.neos-create-new-content {
 	display: inline-block;
 }
 
-// Remove blue border from editing
-.neos-inline-editable {
-	&:focus {
-		outline: 1px rgba(0, 0, 0, 0.2) dashed;
-	}
-}
-
 .ui-tabs .ui-tabs-nav li a:focus {
 	outline: none;
 }

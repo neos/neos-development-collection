@@ -61,6 +61,7 @@
 
 .neos-inline-editable {
 	outline-offset: 6px;
+	min-height: 1.2em;
 
 	&:hover {
 		outline: 2px solid rgba(0, 0, 0, .2);

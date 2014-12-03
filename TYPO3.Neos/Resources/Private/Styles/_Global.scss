@@ -152,13 +152,6 @@ body {
 	}
 }
 
-.neos-inline-editable {
-	> *:empty::before {
-		content: '';
-		display: inline-block;
-	}
-}
-
 #neos-document-metadata {
 	display: none;
 }
