@@ -336,6 +336,21 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        inlineEditable: TRUE
 
 
+Property Type: reference / references
+-------------------------------------
+
+For the property type `reference` and `references` one can restrict the type of the target nodes which
+can be selected in the editor -- this is possible using the `nodeTypes editorOption` as follows::
+
+    authors:
+      type: references
+      ui:
+        label: 'Article Authors'
+        inspector:
+          editorOptions:
+            nodeTypes: ['My.Website:Author']
+
+
 Property Validation
 -------------------
 
