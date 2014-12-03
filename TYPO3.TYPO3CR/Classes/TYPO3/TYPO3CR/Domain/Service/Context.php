@@ -308,6 +308,8 @@ class Context {
 			return $node;
 		}
 
+		$this->emitBeforeAdoptNode($node, $this, $recursive);
+
 		$existingNode = $this->getNodeByIdentifier($node->getIdentifier());
 		if ($existingNode !== NULL && $existingNode->dimensionsAreMatchingTargetDimensionValues()) {
 			$adoptedNode = $existingNode;
@@ -326,7 +328,27 @@ class Context {
 			}
 		}
 
+		$this->emitAfterAdoptNode($node, $this, $recursive);
+
 		return $adoptedNode;
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @param Context $context
+	 * @param $recursive
+	 */
+	protected function emitBeforeAdoptNode(NodeInterface $node, Context $context, $recursive) {
+	}
+
+	/**
+	 * @Flow\Signal
+	 * @param NodeInterface $node
+	 * @param Context $context
+	 * @param $recursive
+	 */
+	protected function emitAfterAdoptNode(NodeInterface $node, Context $context, $recursive) {
 	}
 
 	/**
