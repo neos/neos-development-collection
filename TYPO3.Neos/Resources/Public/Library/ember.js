@@ -23411,7 +23411,7 @@ define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"
 			return new F();
 		};
 
-		var Handlebars = this.Handlebars || (Ember.imports && Ember.imports.Handlebars);
+		var Handlebars = (Ember.imports && Ember.imports.Handlebars) || (this && this.Handlebars);
 		if (!Handlebars && typeof require === 'function') {
 			Handlebars = require('handlebars');
 		}
