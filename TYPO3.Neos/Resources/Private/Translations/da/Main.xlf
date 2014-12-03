@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="da" state="translated">Publicër automatisk</target></trans-unit>
+			<target xml:lang="da" state="translated">Publicér automatisk</target><alt-trans><target xml:lang="da">Publicër automatisk</target></alt-trans></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="da" state="translated">Anvend</target></trans-unit>
@@ -126,35 +126,35 @@
 			<target xml:lang="da" state="needs-translation">Click here to continue to the {0} asset.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click here to continue to the {0} ext page.</source>
-			<target xml:lang="da" state="needs-translation">Click here to continue to the {0} ext page.</target></trans-unit>
+			<target xml:lang="da" state="translated">Klik her for at fortsætte til den eksterne side {0}.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="da" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="da" state="translated">(Ingen destination valgt)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="da" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="da" state="translated">Dette er en genvej til den første underside< br/>Klik {0} for at fortsætte til siden.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target xml:lang="da" state="needs-translation">This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="da" state="translated">Dette er en genvej til den overordnede side. &lt;br /&gt; Klik på {0} at fortsætte til siden.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
 			<target xml:lang="da" state="translated">Fuld skærm</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="da" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="da" state="translated">Åbn side i drift arbejdsrum</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="da" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="da" state="translated">Kassér alle ændringer</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="da" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="da" state="translated">Er du sikker på at du vil slette alle ændringer i dette arbejdsrum?</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="da" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="da" state="translated">Publicér alle ændringer</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="da" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="da" state="translated">Er du sikker på, at du ønsker at publicere alle ændringerne?</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
 			<target xml:lang="da" state="needs-translation">Editing Modes</target></trans-unit>
@@ -166,25 +166,25 @@
 			<target xml:lang="da" state="needs-translation">Inspector</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="da" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="da" state="translated">Du har stadig ændringer. Hvad ønsker du at gøre med dem?</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="da" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="da" state="translated">Valgte element</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="da" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="da" state="translated">Der er felter, der ikke er korrekt udfyldt.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
-			<target xml:lang="da" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
+			<target xml:lang="da" state="translated">Felterne markeret med en fejl er endnu ikke korrekt udfyldt. Udfyld dem rigtigt.</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve">
 				<source>Continue editing</source>
-			<target xml:lang="da" state="needs-translation">Continue editing</target></trans-unit>
+			<target xml:lang="da" state="translated">Fortsæt redigering</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve">
 				<source>Throw away</source>
-			<target xml:lang="da" state="needs-translation">Throw away</target></trans-unit>
+			<target xml:lang="da" state="translated">Kassér</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="da" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="da" state="translated">Anvend</target></trans-unit>
       <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve">
 				<source>view is displayed on page</source>
 			<target xml:lang="da" state="needs-translation">view is displayed on page</target></trans-unit>
@@ -193,7 +193,7 @@
 			<target xml:lang="da" state="needs-translation">view is displayed on current page</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="da" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="da" state="translated">Indhold</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the page</source>
 			<target xml:lang="da" state="translated">Dette vil slette siden</target></trans-unit>
@@ -202,45 +202,57 @@
 			<target xml:lang="da" state="translated">og dens undersider</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This operation can be undone in the workspace management.</source>
-			<target xml:lang="da" state="needs-translation">This operation can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="da" state="translated">Denne handling kan fortrydes i arbejdsrum administration.</target></trans-unit>
       <trans-unit id="height.ucfirst" xml:space="preserve">
 				<source>Height</source>
 			<target xml:lang="da" state="translated">Højde</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="da" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="da" state="translated">Er du sikker på, at du vil slette</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="da" state="needs-translation">this element</target></trans-unit>
+			<target xml:lang="da" state="translated">dette element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="da" state="needs-translation">This will delete the element.</target></trans-unit>
+			<target xml:lang="da" state="translated">Dette vil slette elementet.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="da" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="da" state="translated">Denne handling kan fortrydes i arbejdsrum administration.</target></trans-unit>
       <trans-unit id="width.ucfirst" xml:space="preserve">
 				<source>Width</source>
 			<target xml:lang="da" state="translated">Bredde</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="da" state="needs-translation">Missing required property:</target></trans-unit>
+			<target xml:lang="da" state="translated">Mangler påkrævet felt:</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="da" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="da" state="translated">Arbejdsrum</target><alt-trans><target xml:lang="da">Arbejdsområder</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			<target xml:lang="da" state="needs-translation">An error occurred during saving</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="da" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			<target xml:lang="da" state="needs-translation">Reload the backend</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			<target xml:lang="da" state="needs-translation">Reload</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
-			<target xml:lang="da" state="needs-translation">TYPO3 Neos Login</target></trans-unit>
+			<target xml:lang="da" state="translated">TYPO3 Neos Log ind</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="da" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="da" state="translated">Log ind</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="da" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="da" state="translated">Verificerer</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="da" state="needs-translation">Go to setup</target></trans-unit>
+			<target xml:lang="da" state="translated">Gå til opsætning</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
 			<target xml:lang="da" state="needs-translation">Missing Homepage</target></trans-unit>
@@ -252,19 +264,19 @@
 			<target xml:lang="da" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="da" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="da" state="translated">Database fejl</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="da" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="da" state="translated">Beklager, vi opdagede en fejl med din database. Tjek dine log filer i Data/Logs/* for mere information.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="da" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="da" state="translated">Du kan konfigurere eller tjekke din database konfiguration i opsætningen.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="da" state="translated">Siden blev ikke fundet</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="da" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="da" state="translated">Beklager, den ønskede side blev ikke fundet.</target></trans-unit>
     </body>
   </file>
 </xliff>

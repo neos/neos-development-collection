@@ -142,7 +142,7 @@
 			<target xml:lang="pl" state="translated">Pełny ekran</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="pl" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="pl" state="translated">Otwórz stronę w przestrzeni roboczej live</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="pl" state="translated">Odrzuć wszystkie zmiany</target></trans-unit>
@@ -227,16 +227,28 @@
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="pl" state="translated">Obszary robocze</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			<target xml:lang="pl" state="needs-translation">An error occurred during saving</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="pl" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			<target xml:lang="pl" state="needs-translation">Reload the backend</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			<target xml:lang="pl" state="needs-translation">Reload</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
 			<target xml:lang="pl" state="translated">Logowanie do TYPO3 Neos</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="pl" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="pl" state="translated">Zaloguj</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="pl" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="pl" state="translated">Uwierzytelnianie</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -246,10 +258,10 @@
 			<target xml:lang="pl" state="translated">Brak strony głównej</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="pl" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Prawdopodobnie żadna strona nie została zdefiniowana, witryna nie zawiera strony głównej, bądź nie można określić aktywnej strony.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="pl" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Możesz chcieć ustawić domenę strony lub zaimportować nową stronę w ustawieniach.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
 			<target xml:lang="pl" state="translated">Błąd bazy danych</target></trans-unit>
@@ -258,7 +270,7 @@
 			<target xml:lang="pl" state="translated">Przepraszamy, wykryliśmy błąd w twojej bazie danych. Sprawdź swoje pliki dziennika w Data/Logs/* aby uzyskać więcej informacji.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="pl" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Możesz chcieć skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target><alt-trans><target xml:lang="pl">Powinieneś skonfigurować lub sprawdzić konfigurację bazy danych w ustawieniach.</target></alt-trans></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
 			<target xml:lang="pl" state="translated">Nie znaleziono strony</target></trans-unit>

@@ -5,7 +5,7 @@
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="de" state="translated">Verwaltung</target></trans-unit>
+			<target xml:lang="de" state="translated">Inhaltsverwaltung</target><alt-trans><target xml:lang="de">Management</target></alt-trans><alt-trans><target xml:lang="de">Verwaltung</target></alt-trans></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
 			<target xml:lang="de" state="translated">Enthält Module zur Inhaltsverwaltung</target></trans-unit>
@@ -14,7 +14,7 @@
 			<target xml:lang="de" state="translated">Workspaces</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="de" state="translated">Dieses Modul beinhaltet den Überblick über alle Elemente innerhalb des aktuellen Workspaces und ermöglicht die Kontrolle und Veröffentlichung dieser.</target></trans-unit>
+			<target xml:lang="de" state="translated">Dieses Modul bietet einen Überblick aller geänderter Inhalte des aktuellen Workspaces und ermöglicht deren Kontrolle und Veröffentlichung.</target><alt-trans><target xml:lang="de">Dieses Modul beinhaltet den Überblick über alle Elemente innerhalb des aktuellen Workspaces und ermöglicht die Kontrolle und Veröffentlichung dieser.</target></alt-trans></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="de" state="translated">Medien</target></trans-unit>
@@ -24,16 +24,16 @@
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
-			<target xml:lang="de" state="translated">Administration</target></trans-unit>
+			<target xml:lang="de" state="translated">Administration</target><alt-trans><target xml:lang="de">Systemverwaltung</target></alt-trans></trans-unit>
       <trans-unit id="administration.description" xml:space="preserve">
 				<source>Contains multiple modules related to administration</source>
-			<target xml:lang="de" state="translated">Enthält Module zur Administration</target></trans-unit>
+			<target xml:lang="de" state="translated">Enthält Module zur Systemverwaltung</target><alt-trans><target xml:lang="de">Enthält Module zur Administration</target></alt-trans></trans-unit>
       <trans-unit id="users.label" xml:space="preserve">
 				<source>User Management</source>
 			<target xml:lang="de" state="translated">Benutzerverwaltung</target></trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-			<target xml:lang="de" state="translated">Das Benutzer-Management-Modul bietet Ihnen einen Überblick über alle Backend-Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeit, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></trans-unit>
+			<target xml:lang="de" state="translated">Das Benutzerverwaltungs-Modul bietet Ihnen einen Überblick über alle vorhandenen Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeug, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target><alt-trans><target xml:lang="de">Das Benutzer-Management-Modul bietet Ihnen einen Überblick über alle Backend-Benutzer. Sie können sie nach ihren Eigenschaften gruppieren, damit Sie ihre Berechtigungen, Filemounts, Gruppen, etc. überwachen können. Dieses Modul ist ein unverzichtbares Werkzeit, wenn Sie sicherstellen wollen, dass die Benutzer ordnungsgemäß zu konfiguriert sind.</target></alt-trans></trans-unit>
       <trans-unit id="users.new.label" xml:space="preserve">
 				<source>Create user</source>
 			<target xml:lang="de" state="translated">Benutzer erstellen</target></trans-unit>
@@ -45,16 +45,16 @@
 			<target xml:lang="de" state="translated">Paketverwaltung</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="de" state="translated">Das Paket-Management-Modul bietet Ihnen einen Überblick über alle Pakete. Hier können Sie einzelne Pakete aktivieren und deaktivieren, sowie neue Pakete importieren und vorhandene löschen. Es bietet Ihnen auch die Möglichkeit, einzelne Pakete für die Entwicklung einzufrieren bzw. wieder aufzutauen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Das Paketverwaltungs-Modul bietet Ihnen einen Überblick über alle Pakete. Hier können Sie einzelne Pakete aktivieren und deaktivieren, sowie neue Pakete importieren und vorhandene löschen. Es bietet Ihnen auch die Möglichkeit, einzelne Pakete für die Entwicklung einzufrieren bzw. wieder aufzutauen.</target><alt-trans><target xml:lang="de">Das Paket-Management-Modul bietet Ihnen einen Überblick über alle Pakete. Hier können Sie einzelne Pakete aktivieren und deaktivieren, sowie neue Pakete importieren und vorhandene löschen. Es bietet Ihnen auch die Möglichkeit, einzelne Pakete für die Entwicklung einzufrieren bzw. wieder aufzutauen.</target></alt-trans></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target xml:lang="de" state="translated">Seitenverwaltung</target></trans-unit>
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
-			<target xml:lang="de" state="translated">Das Modul zur Seitenverwaltung ermöglicht einen Überblick über alle Webseiten. Hier können Informationen über Webseiten bearbeitet, hinzugefügt und gelöscht werden, wie zum Beispiel das Hinzufügen einer neuen Domain.</target></trans-unit>
+			<target xml:lang="de" state="translated">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target><alt-trans><target xml:lang="de">Das Modul zur Seitenverwaltung ermöglicht einen Überblick über alle Webseiten. Hier können Informationen über Webseiten bearbeitet, hinzugefügt und gelöscht werden, wie zum Beispiel das Hinzufügen einer neuen Domain.</target></alt-trans></trans-unit>
       <trans-unit id="sites.newSite.label" xml:space="preserve">
 				<source>Create site</source>
-			<target xml:lang="de" state="translated">Seite erstellen</target></trans-unit>
+			<target xml:lang="de" state="translated">Website erstellen</target><alt-trans><target xml:lang="de">Seite erstellen</target></alt-trans></trans-unit>
       <trans-unit id="sites.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="de" state="translated">Eine neue Website erstellen</target></trans-unit>
@@ -67,7 +67,7 @@
 			<target xml:lang="de" state="translated">Benutzereinstellungen</target></trans-unit>
       <trans-unit id="usersettings.description" xml:space="preserve">
 				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
-			<target xml:lang="de" state="translated">Mit diesem Modul können Sie Ihr Backend Benutzerprofil anpassen. Hier können Sie die Systemsprache und E-Mailadresse editieren. Außerdem können Sie andere allgemeine Einstellungen anpassen.</target></trans-unit>
+			<target xml:lang="de" state="translated">Mit diesem Modul können Sie Ihr Benutzerprofil anpassen. Hier können Sie die Systemsprache und E-Mailadresse editieren. Außerdem können Sie andere allgemeine Einstellungen anpassen.</target><alt-trans><target xml:lang="de">Mit diesem Modul können Sie Ihr Backend Benutzerprofil anpassen. Hier können Sie die Systemsprache und E-Mailadresse editieren. Außerdem können Sie andere allgemeine Einstellungen anpassen.</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

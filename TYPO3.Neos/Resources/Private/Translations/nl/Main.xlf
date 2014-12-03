@@ -227,6 +227,18 @@
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="nl" state="translated">Workspaces</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
+				<source>An error occurred during saving</source>
+			<target xml:lang="nl" state="needs-translation">An error occurred during saving</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="nl" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+				<source>Reload the backend</source>
+			<target xml:lang="nl" state="needs-translation">Reload the backend</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+				<source>Reload</source>
+			<target xml:lang="nl" state="needs-translation">Reload</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
