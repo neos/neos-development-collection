@@ -1,0 +1,19 @@
+/**
+ *  TypoScript Fixture 07
+ *
+ *  This fixture serves for testing the unset operator for
+ *  objects, variables and properties.
+ *
+ */
+
+object1 = Text
+object1.value = "Hello world"
+
+object1 >
+
+object3 = Text
+object3 {
+	value = "Hello world"
+}
+
+object3.value >
