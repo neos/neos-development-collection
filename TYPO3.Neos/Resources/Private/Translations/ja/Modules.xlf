@@ -21,6 +21,42 @@
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="ja" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
+      <trans-unit id="history.label" xml:space="preserve">
+				<source>History</source>
+			<target xml:lang="ja" state="needs-translation">History</target></trans-unit>
+      <trans-unit id="history.description" xml:space="preserve">
+				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
+			<target xml:lang="ja" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+				<source>Here's what happened recently in Neos:</source>
+			<target xml:lang="ja" state="needs-translation">Here's what happened recently in Neos:</target></trans-unit>
+      <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
+				<source>There have not been recorded any events yet which could be displayed in this history.</source>
+			<target xml:lang="ja" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+				<source>{0} created the variant {1} of {2} {3}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
+				<source>{0} changed {1} {2}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} changed {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
+				<source>{0} moved {1} {2}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} moved {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
+				<source>{0} copied {1} {2}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} copied {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
+				<source>{0} renamed {1} "{2}" to "{3}".</source>
+			<target xml:lang="ja" state="needs-translation">{0} renamed {1} "{2}" to "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
+				<source>{0} changed content on {1} {2}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} changed content on {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
+				<source>{0} created a new user "{1}" for {2}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
+				<source>{0} deleted the account "{1}" of {2}.</source>
+			<target xml:lang="ja" state="needs-translation">{0} deleted the account "{1}" of {2}.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
