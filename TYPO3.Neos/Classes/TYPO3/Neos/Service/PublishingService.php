@@ -96,7 +96,7 @@ class PublishingService extends \TYPO3\TYPO3CR\Service\PublishingService {
 			$contextProperties['currentDomain'] = $this->currentDomain;
 		} else {
 			if ($this->currentSite === FALSE) {
-				$this->currentSite = $this->siteRepository->findOnline()->getFirst();
+				$this->currentSite = $this->siteRepository->findFirstOnline();
 			}
 			$contextProperties['currentSite'] = $this->currentSite;
 		}

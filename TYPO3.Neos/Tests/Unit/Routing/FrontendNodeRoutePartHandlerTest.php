@@ -94,8 +94,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->inject($this->routePartHandler, 'domainRepository', $this->mockDomainRepository);
 
 		$this->mockSiteRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\SiteRepository')->disableOriginalConstructor()->getMock();
-		$mockQueryResult = $this->getMock('TYPO3\Flow\Persistence\QueryResultInterface');
-		$this->mockSiteRepository->expects($this->any())->method('findOnline')->will($this->returnValue($mockQueryResult));
+		$this->mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue(NULL));
 		$this->inject($this->routePartHandler, 'siteRepository', $this->mockSiteRepository);
 
 		$this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
