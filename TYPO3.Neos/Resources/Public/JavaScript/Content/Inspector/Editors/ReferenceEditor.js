@@ -67,6 +67,7 @@ define(
 							var parameters = {
 								searchTerm: query.term,
 								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+								dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
 								nodeTypes: that.get('nodeTypes')
 							};
 
@@ -118,7 +119,10 @@ define(
 					}).create();
 					that.set('content', item);
 
-					var parameters = {workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name')};
+					var parameters = {
+						workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+						dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
+					};
 					HttpRestClient.getResource('neos-service-nodes', value, {data: parameters}).then(function(result) {
 						item.set('text', $('.node-label', result.resource).text().trim());
 						item.set('data', {identifier: $('.node-identifier', result.resource).text(), path: $('.node-path', result.resource).text(), nodeType: $('.node-type', result.resource).text()});

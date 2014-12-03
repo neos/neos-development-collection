@@ -91,7 +91,8 @@ define(
 								var requests = [];
 								if (that.get('nodeTypes')) {
 									requests.push(HttpRestClient.getResource('neos-service-nodes', null, {data: {
-										workspaceName: $('#neos-page-metainformation').data('neos-context-workspace-name'),
+										workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+										dimensions: $('#neos-document-metadata').data('neos-context-dimensions'),
 										searchTerm: query.term,
 										nodeTypes: that.get('nodeTypes')
 									}}));
@@ -183,7 +184,8 @@ define(
 						case 'node':
 							nodeIdentifier = value.substr(7, 36);
 							parameters = {
-								workspaceName: $('#neos-page-metainformation').data('neos-context-workspace-name')
+								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
+								dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
 							};
 							HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
 								var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;

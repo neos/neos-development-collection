@@ -55,56 +55,16 @@ class NodeSearchService implements NodeSearchServiceInterface {
 	 */
 	public function findByProperties($term, array $searchNodeTypes, Context $context) {
 		$searchResult = array();
-		$nodeDataRecords = $this->getNodeDataRecordsByWorkspace($term, $searchNodeTypes, $context->getWorkspace());
+		$nodeTypeFilter = implode(',', $searchNodeTypes);
+		$nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions());
 		foreach ($nodeDataRecords as $nodeData) {
-			if (array_key_exists($nodeData->getPath(), $searchResult) === FALSE) {
-				$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-				if ($node !== NULL) {
-					$searchResult[$node->getPath()] = $node;
-				}
+			$node = $this->nodeFactory->createFromNodeData($nodeData, $context);
+			if ($node !== NULL) {
+				$searchResult[$node->getPath()] = $node;
 			}
 		}
 
 		return $searchResult;
 	}
 
-	/**
-	 * Returns matching nodes for the given $term, $searchNodeTypes with workspace-fallback
-	 *
-	 * @param string $term
-	 * @param array $searchNodeTypes
-	 * @param Workspace $workspace
-	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
-	 */
-	protected function getNodeDataRecordsByWorkspace($term, array $searchNodeTypes, Workspace $workspace) {
-		$result = array();
-		while ($workspace !== NULL) {
-			$workspaceQuery = $this->nodeDataRepository->createQuery();
-			$nodes = $workspaceQuery->matching($workspaceQuery->logicalAnd(array(
-				$workspaceQuery->equals('workspace', $workspace),
-				// FIXME: This should be case insensitive (second argument FALSE) but due to properties being a blob field that doesn't work currently.
-				$workspaceQuery->like('properties', '%' . $term . '%', TRUE),
-				$workspaceQuery->in('nodeType', $searchNodeTypes)
-			)))->execute();
-
-			foreach ($nodes as $node) {
-				/** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $node */
-				if (isset($result[$node->getIdentifier()])) {
-					continue;
-				}
-				$result[$node->getIdentifier()] = $this->persistenceManager->getIdentifierByObject($workspace);
-			}
-			$workspace = $workspace->getBaseWorkspace();
-		}
-
-		$query = $this->nodeDataRepository->createQuery();
-		$constraints = array();
-		foreach ($result as $nodeIdentifier => $workspaceIdentifier) {
-			$constraints[] = $query->logicalAnd(
-				$query->equals('workspace', $workspaceIdentifier),
-				$query->equals('identifier', $nodeIdentifier)
-			);
-		}
-		return $query->matching($query->logicalOr($constraints))->execute()->toArray();
-	}
 }
