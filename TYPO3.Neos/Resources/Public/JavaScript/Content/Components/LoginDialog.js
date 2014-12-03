@@ -6,12 +6,14 @@ define(
 	'emberjs',
 	'Library/jquery-with-dependencies',
 	'text!./LoginDialog.html',
-	'Shared/Notification'
+	'Shared/Notification',
+	'Shared/Configuration'
 ], function(
 	Ember,
 	$,
 	template,
-	Notification
+	Notification,
+	Configuration
 ) {
 	return Ember.View.extend({
 		classNames: ['neos-login-dialog'],
@@ -50,6 +52,7 @@ define(
 			}).done(function(result) {
 				if (result.success === true) {
 					Notification.ok('Authentication successful.');
+					Configuration.override('CsrfToken', result.csrfToken);
 					that.destroy();
 					that.get('callback')();
 				} else {

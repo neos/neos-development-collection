@@ -51,6 +51,10 @@ function(Ember, $) {
 			}
 
 			return this._super.apply(this, arguments);
+		},
+
+		override: function(key, value) {
+			this.set('_data.' + key, value);
 		}
 	}).create();
 });
