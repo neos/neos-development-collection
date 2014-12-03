@@ -629,6 +629,7 @@ class Parser implements ParserInterface {
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEFLOATNUMBER, $unparsedValue, $matches) === 1) {
 			$processedValue = floatval($unparsedValue);
 		} elseif (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
+			// Single-line Eel Expressions
 			$processedValue = array(
 				'__eelExpression' => $matches[1],
 				'__value' => NULL,
@@ -663,7 +664,32 @@ class Parser implements ParserInterface {
 				'__eelExpression' => NULL
 			);
 		} else {
-			throw new Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
+			// Trying to match multiline Eel expressions
+			if (strpos($unparsedValue, '${') === 0) {
+				$eelExpressionSoFar = $unparsedValue;
+				// potential start of multiline Eel Expression; trying to consume next lines...
+				while (($line = $this->getNextTypoScriptLine()) !== FALSE) {
+					$eelExpressionSoFar .= chr(10) . $line;
+
+					if (substr($line, -1) === '}') {
+						// potential end-of-eel-expression marker
+						$matches = array();
+						if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
+							// Single-line Eel Expressions
+							$processedValue = array('__eelExpression' => $matches[1], '__value' => NULL, '__objectType' => NULL);
+							break;
+						}
+					}
+				}
+
+				if ($line === FALSE) {
+					// if the last line we consumed is FALSE, we have consumed the end of the file.
+					throw new Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue .'" was not closed.', 1417616064);
+				}
+
+			} else {
+				throw new Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
+			}
 		}
 		return $processedValue;
 	}

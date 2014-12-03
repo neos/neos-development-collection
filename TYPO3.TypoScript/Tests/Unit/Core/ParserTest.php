@@ -657,7 +657,7 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 								'__objectType' => NULL
 							),
 							'blah3' => array(
-								'__eelExpression' => 'my.expression("asdf")',
+								'__eelExpression' => 'my.expression("as' . "\n		some stuff }\n		" . '" + "df")',
 								'__value' => NULL,
 								'__objectType' => NULL
 							),
@@ -681,6 +681,17 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase {
 
 		$actualParseTree = $this->parser->parse($sourceCode, $fixture);
 		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TypoScript\Exception
+	 */
+	public function parserThrowsExceptionOnFixture16b() {
+		$fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16b.ts2';
+		$sourceCode = file_get_contents($fixture, FILE_TEXT);
+
+		$this->parser->parse($sourceCode, $fixture);
 	}
 
 	/**

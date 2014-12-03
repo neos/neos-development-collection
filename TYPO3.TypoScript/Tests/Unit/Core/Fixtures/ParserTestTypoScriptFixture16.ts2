@@ -3,6 +3,7 @@
 //
 // - Object Prototypes
 // - Eel
+// - multiline Eel expressions
 
 
 prototype(TYPO3.Foo:Bar).baz = 'Hallo'
@@ -21,7 +22,9 @@ foo.bar.prototype(TYPO3.Foo:Bar2) {
 	test2 = 42
 	blah = ${my.expression()}
 	blah2 = ${my.expression('asdf')}
-	blah3 = ${my.expression("asdf")}
+	blah3 = ${my.expression("as
+		some stuff }
+		" + "df")}
 }
 
 prototype(Foo.Bar:Baz) {
