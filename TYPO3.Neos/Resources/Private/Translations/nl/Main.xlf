@@ -119,7 +119,7 @@
 			<target xml:lang="nl" state="translated">Gebruikersnaam</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="nl" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="nl" state="translated">U</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click here to continue to the {0} page.</source>
@@ -142,10 +142,10 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="nl" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="nl" state="translated">Volledig scherm</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
-			<target xml:lang="nl" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pagina openen</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="nl" state="translated">Alle wijzigingen negeren</target></trans-unit>
@@ -232,54 +232,54 @@
 			<target xml:lang="nl" state="translated">Workspaces</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="nl" state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target xml:lang="nl" state="translated">Er is een fout opgetreden tijdens het opslaan</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="nl" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Herlaad de pagina om te proberen het probleem op te lossen.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="nl" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="nl" state="translated">Herlaad de backend</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="nl" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="nl" state="translated">Herladen</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>
 			<target xml:lang="nl" state="translated">TYPO3 Neos Login</target></trans-unit>
       <trans-unit id="login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="nl" state="needs-translation">Login</target></trans-unit>
+			<target xml:lang="nl" state="translated">Login</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="nl" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="nl" state="translated">Verificatie</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="nl" state="needs-translation">Go to setup</target></trans-unit>
+			<target xml:lang="nl" state="translated">Ga naar Setup</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="nl" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="nl" state="translated">Ontbrekende Homepage</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="nl" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Of er is geen site gedefinieerd, de site bevat geen homepage of de actieve site niet kon worden vastgesteld.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="nl" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Wellicht wilt u een domeinnaam aan de site koppelen of een nieuwe site importeren.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="nl" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="nl" state="translated">Databasefout</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="nl" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Er is een probleem gevonden met uw database. Controleer de logbestanden in Data/Logs/* voor verdere informatie.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
-			<target xml:lang="nl" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Wellicht wilt u uw database configuratie checken in de Setup omgeving.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="nl" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="nl" state="translated">Pagina niet gevonden</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="nl" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Sorry, de opgevraagde pagina is niet gevonden.</target></trans-unit>
     </body>
   </file>
 </xliff>

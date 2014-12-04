@@ -23,31 +23,31 @@
 			<target xml:lang="nl" state="translated">Deze module stelt u in staat media bestanden waaronder afbeeldingen, video's, audio bestanden en documenten te beheren.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="nl" state="needs-translation">History</target></trans-unit>
+			<target xml:lang="nl" state="translated">Historie</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="nl" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Deze module biedt een overzicht van alle relevante gebeurtenissen op het gebied van deze Neos-installatie.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos:</source>
-			<target xml:lang="nl" state="needs-translation">Here's what happened recently in Neos:</target></trans-unit>
+			<target xml:lang="nl" state="translated">Hier is wat er onlangs is gebeurd in Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="nl" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
+			<target xml:lang="nl" state="translated">Er zijn nog geen gebeurtenissen die kunnen worden weergegeven in deze geschiedenis.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft de variant {1} van {2} {3} gemaakt.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
 				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} changed {1} {2}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft {1} {2} gewijzigd.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
 				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} moved {1} {2}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft {1} {2} verplaatst.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
 				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} copied {1} {2}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft {1} {2} gekopieerd.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
 				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="nl" state="needs-translation">{0} renamed {1} "{2}" to "{3}".</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft {1} "{2}" hernoemd naar "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} changed content on {1} {2}.</source>
 			<target xml:lang="nl" state="needs-translation">{0} changed content on {1} {2}.</target></trans-unit>
