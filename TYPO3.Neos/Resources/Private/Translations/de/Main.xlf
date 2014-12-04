@@ -117,9 +117,9 @@
       <trans-unit id="username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="de">Benutzername</target></trans-unit>
-      <trans-unit id="you" xml:space="preserve">
+      <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target xml:lang="de" state="translated">Sie</target></trans-unit>
+			<target xml:lang="de">Sie</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click here to continue to the {0} page.</source>
@@ -233,15 +233,15 @@
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
 				<source>An error occurred during saving</source>
 			<target xml:lang="de">Beim Speichern ist ein Fehler aufgetreten</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="de" state="translated">Versuchen Sie das Problem zu beheben indem Sie die Seite neu laden.</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
+			<target xml:lang="de">Versuchen Sie das Problem zu beheben indem Sie die Seite neu laden.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
 				<source>Reload the backend</source>
-			<target xml:lang="de" state="translated">Backend neu laden</target></trans-unit>
-      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
+			<target xml:lang="de">Backend neu laden</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
 				<source>Reload</source>
-			<target xml:lang="de" state="translated">Neu laden</target></trans-unit>
+			<target xml:lang="de">Neu laden</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
 				<source>TYPO3 Neos Login</source>
