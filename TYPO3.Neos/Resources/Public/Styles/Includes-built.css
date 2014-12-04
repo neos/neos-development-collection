@@ -4941,9 +4941,6 @@
   overflow: auto;
   display: inline-block;
 }
-.neos .neos-inline-editable:focus {
-  outline: 1px rgba(0, 0, 0, 0.2) dashed;
-}
 .neos .ui-tabs .ui-tabs-nav li a:focus {
   outline: none;
 }
@@ -10590,6 +10587,7 @@
 }
 .neos-inline-editable {
   outline-offset: 6px;
+  min-height: 1.2em;
 }
 .neos-inline-editable:hover {
   outline: 2px solid rgba(0, 0, 0, 0.2);
