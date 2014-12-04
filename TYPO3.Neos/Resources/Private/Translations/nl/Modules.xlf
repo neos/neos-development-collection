@@ -50,13 +50,13 @@
 			<target xml:lang="nl" state="translated">{0} heeft {1} "{2}" hernoemd naar "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
 				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} changed content on {1} {2}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft inhoud gewijzigd op {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft een nieuwe gebruiker "{1}" gemaakt voor {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
 				<source>{0} deleted the account "{1}" of {2}.</source>
-			<target xml:lang="nl" state="needs-translation">{0} deleted the account "{1}" of {2}.</target></trans-unit>
+			<target xml:lang="nl" state="translated">{0} heeft het account "{1}" verwijderd van {2}.</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
