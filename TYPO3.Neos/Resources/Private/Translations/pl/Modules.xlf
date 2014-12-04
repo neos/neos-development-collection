@@ -23,10 +23,10 @@
 			<target xml:lang="pl" state="translated">Ten moduł umożliwia zarządzanie multimediami, włączając w to zdjęcia, filmy video, pliki audio i dokumenty.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="pl" state="needs-translation">History</target></trans-unit>
+			<target xml:lang="pl" state="translated">Historia</target></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="pl" state="needs-translation">This module provides an overview of all relevant events affecting this Neos installation.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Ten moduł zawiera przegląd wszystkich istotnych zdarzeń wpływających na działanie tej instalacji Neos.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos:</source>
 			<target xml:lang="pl" state="needs-translation">Here's what happened recently in Neos:</target></trans-unit>
@@ -81,7 +81,7 @@
 			<target xml:lang="pl" state="translated">Zarządzanie pakietami</target></trans-unit>
       <trans-unit id="packages.description" xml:space="preserve">
 				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
-			<target xml:lang="pl" state="translated">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, importować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
+			<target xml:lang="pl" state="translated">Moduł zarządzania pakietami umożliwia przeglądanie wszystkich pakietów. Pakiety można włączyć i wyłączyć, zaimportować nowe i usunąć istniejące. Istnieje także opcja zamrożenia i odmrożenia pakietów w kontekście rozwoju.</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target xml:lang="pl" state="translated">Zarządzanie stroną</target></trans-unit>

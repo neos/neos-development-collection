@@ -5,7 +5,7 @@
       <!-- AccountExistsValidator -->
       <trans-unit id="1325156008" xml:space="preserve">
 				<source>The account identifier (username) is already in use.</source>
-			<target xml:lang="pl" state="translated">Taka nazwa użytkownika (username) jest już zajęta.</target><alt-trans><target xml:lang="pl">Taka nazwa użytkownika jest już zajęta.</target></alt-trans></trans-unit>
+			<target xml:lang="pl" state="translated">Taka nazwa użytkownika (username) jest już zajęta.</target></trans-unit>
       <!-- HostnameValidator -->
       <trans-unit id="1415392993" xml:space="preserve">
 				<source>The hostname "{0}" was not valid.</source>
