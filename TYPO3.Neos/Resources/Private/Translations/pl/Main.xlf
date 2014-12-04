@@ -238,10 +238,10 @@
 			<target xml:lang="pl" state="translated">Przeładuj stronę, co może pomóc rozwiązać ten problem.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="pl" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przeładuj backend</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="pl" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="pl" state="translated">Przeładuj</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>TYPO3 Neos Login</source>

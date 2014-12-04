@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
-			<target xml:lang="fr">Publication automatique</target></trans-unit>
+			<target xml:lang="fr">Auto-publication</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="fr">Appliquer</target></trans-unit>
@@ -62,7 +62,7 @@
 			<target xml:lang="fr">Ignorer</target><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
 				<source>Discard changes</source>
-			<target xml:lang="fr">Ignorer les modifications</target></trans-unit>
+			<target xml:lang="fr">Annuler</target><alt-trans><target xml:lang="fr">Ignorer les modifications</target></alt-trans></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve" approved="yes">
 				<source>Edit title</source>
 			<target xml:lang="fr">Modifier le titre</target></trans-unit>
@@ -117,9 +117,9 @@
       <trans-unit id="username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target xml:lang="fr">Nom d'utilisateur</target></trans-unit>
-      <trans-unit id="you" xml:space="preserve">
+      <trans-unit id="you" xml:space="preserve" approved="yes">
 				<source>You</source>
-			<target xml:lang="fr" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="fr">Vous</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
 				<source>Click here to continue to the {0} page.</source>
