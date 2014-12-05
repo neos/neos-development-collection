@@ -39,6 +39,7 @@ class Event {
 	 * * for PostgreSQL it is using a sequence
 	 *
 	 * @var integer
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $uid;
 
