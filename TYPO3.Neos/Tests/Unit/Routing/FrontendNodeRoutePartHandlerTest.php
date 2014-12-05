@@ -668,6 +668,73 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase {
 		$this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
 	}
 
+	/**
+	 * data provider for dimensionRequestPathRegex
+	 */
+	public function dimensionRequestPathMatcherDataProvider() {
+		return array(
+			'an empty request path does not match' => array(
+				'requestPath' => '',
+				'doesMatch' => FALSE,
+				'expected' => array()
+			),
+			'a request path only containing a dimension matches' => array(
+				'requestPath' => 'de_global',
+				'doesMatch' => TRUE,
+				'expected' => array(
+					0 => 'de_global',
+					'dimensionPresetUriSegments' => 'de_global',
+					1 => 'de_global',
+					'remainingRequestPath' => '',
+					2 => ''
+				)
+			),
+			'a request path only containing a dimension and a workspace matches' => array(
+				'requestPath' => 'de_global@user-admin',
+				'doesMatch' => TRUE,
+				'expected' => array(
+					0 => 'de_global@user-admin',
+					'dimensionPresetUriSegments' => 'de_global',
+					1 => 'de_global',
+					'remainingRequestPath' => '@user-admin',
+					2 => '@user-admin'
+				)
+			),
+			'a longer request path is split correctly' => array(
+				'requestPath' => 'de_global/foo/bar?baz=foo[]',
+				'doesMatch' => TRUE,
+				'expected' => array(
+					0 => 'de_global/foo/bar?baz=foo[]',
+					'dimensionPresetUriSegments' => 'de_global',
+					1 => 'de_global',
+					'remainingRequestPath' => 'foo/bar?baz=foo[]',
+					2 => 'foo/bar?baz=foo[]'
+				)
+			),
+			'a longer request path is split correctly, also if it contains a workspace' => array(
+				'requestPath' => 'de_global/foo/bar@user-admin',
+				'doesMatch' => TRUE,
+				'expected' => array(
+					0 => 'de_global/foo/bar@user-admin',
+					'dimensionPresetUriSegments' => 'de_global',
+					1 => 'de_global',
+					'remainingRequestPath' => 'foo/bar@user-admin',
+					2 => 'foo/bar@user-admin'
+				)
+			)
+		);
+	}
+
+	/**
+	 * @dataProvider dimensionRequestPathMatcherDataProvider
+	 * @test
+	 */
+	public function dimensionRequestPathRegex($requestPath, $doesMatch, $expected) {
+		$matches = array();
+		$this->assertSame($doesMatch, (boolean)preg_match(FrontendNodeRoutePartHandler::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches));
+		$this->assertSame($expected, $matches);
+	}
+
 	/********************************************************************************************************************
 	 *
 	 *
