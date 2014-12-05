@@ -77,6 +77,11 @@ prototype(TYPO3.Neos:History.PublishedNode.Node.Added) < prototype(TYPO3.Neos:Hi
 	descriptionTranslationArguments = ${[this.user, Neos.Rendering.labelForNodeType(event.data.documentNodeType), this.linkedNode]}
 }
 
+prototype(TYPO3.Neos:History.PublishedNode.Node.Removed) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
+	descriptionTranslationId = 'history.eventDescription.node.removed'
+	descriptionTranslationArguments = ${[this.user, Neos.Rendering.labelForNodeType(event.data.documentNodeType), this.linkedNode]}
+}
+
 prototype(TYPO3.Neos:History.PublishedNode.Node.Copy) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.copied'
 	descriptionTranslationArguments = ${[this.user, Neos.Rendering.labelForNodeType(event.data.documentNodeType), this.linkedNode]}

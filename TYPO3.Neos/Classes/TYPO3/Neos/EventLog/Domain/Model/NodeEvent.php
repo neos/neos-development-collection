@@ -11,6 +11,7 @@ namespace TYPO3\Neos\EventLog\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -170,33 +171,47 @@ class NodeEvent extends Event {
 	/**
 	 * Returns the closest document node, if it can be resolved.
 	 *
+	 * It might happen that, if this event refers to a node contained in a site which is not available anymore,
+	 * Doctrine's proxy class of the Site domain model will fail with an EntityNotFoundException. We catch this
+	 * case and return NULL.
+	 *
 	 * @return NodeInterface
 	 */
 	public function getDocumentNode() {
-		$context = $this->contextFactory->create(array(
-			'workspaceName' => $this->userService->getCurrentWorkspace()->getName(),
-			'dimensions' => $this->dimension,
-			'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
-			'invisibleContentShown' => TRUE
-		));
-
-		return $context->getNodeByIdentifier($this->documentNodeIdentifier);
+		try {
+			$context = $this->contextFactory->create(array(
+				'workspaceName' => $this->userService->getCurrentWorkspace()->getName(),
+				'dimensions' => $this->dimension,
+				'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
+				'invisibleContentShown' => TRUE
+			));
+			return $context->getNodeByIdentifier($this->documentNodeIdentifier);
+		} catch(EntityNotFoundException $e) {
+			return NULL;
+		}
 	}
 
 	/**
 	 * Returns the node this even refers to, if it can be resolved.
 	 *
+	 * It might happen that, if this event refers to a node contained in a site which is not available anymore,
+	 * Doctrine's proxy class of the Site domain model will fail with an EntityNotFoundException. We catch this
+	 * case and return NULL.
+	 *
 	 * @return NodeInterface
 	 */
 	public function getNode() {
-		$context = $this->contextFactory->create(array(
-			'workspaceName' => $this->userService->getCurrentWorkspace()->getName(),
-			'dimensions' => $this->dimension,
-			'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
-			'invisibleContentShown' => TRUE
-		));
-
-		return $context->getNodeByIdentifier($this->nodeIdentifier);
+		try {
+			$context = $this->contextFactory->create(array(
+				'workspaceName' => $this->userService->getCurrentWorkspace()->getName(),
+				'dimensions' => $this->dimension,
+				'currentSite' => $this->siteRepository->findByIdentifier($this->data['site']),
+				'invisibleContentShown' => TRUE
+			));
+			return $context->getNodeByIdentifier($this->nodeIdentifier);
+		} catch(EntityNotFoundException $e) {
+			return NULL;
+		}
 	}
 
 	/**
