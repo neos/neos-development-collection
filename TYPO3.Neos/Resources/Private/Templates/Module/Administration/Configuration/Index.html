@@ -20,8 +20,8 @@
 	<div id="configuration">
 		<ul>
 			<li class="folder">
-				<neos:backend.translate id="configuration" value="Configuration"/>
-				<f:render section="level" arguments="{configuration: configuration}" />
+				<neos:backend.translate id="configuration" value="Configuration" />
+				<neos:backend.configurationTree configuration="{configuration}" />
 			</li>
 		</ul>
 	</div>
@@ -86,39 +86,4 @@
 			);
 		});
 	</script>
-</f:section>
-
-<f:section name="level">
-	<ul>
-		<f:for each="{configuration}" key="key" as="value">
-			<f:alias map="{type: '{value -> neos:getType()}', path: '{f:if(condition: relativePath, then: \'{relativePath}.{key}\', else: key)}'}">
-				<f:if condition="{type} == 'array'">
-					<f:then>
-						<li class="folder" title="{path}">
-							{key}&nbsp;({value -> f:count()})
-							<f:render section="level" arguments="{configuration: value, relativePath: path}" />
-						</li>
-					</f:then>
-					<f:else>
-						<li>
-							<div class="key" title="{path}">{key}:</div>
-							<div class="value" title="{type}">
-								<f:switch expression="{type}">
-									<f:case value="boolean">
-										{f:if(condition: value, then: 'TRUE', else: 'FALSE')}
-									</f:case>
-									<f:case value="NULL">
-										NULL
-									</f:case>
-									<f:defaultCase>
-										{value}
-									</f:defaultCase>
-								</f:switch>
-							</div>
-						</li>
-					</f:else>
-				</f:if>
-			</f:alias>
-		</f:for>
-	</ul>
 </f:section>
