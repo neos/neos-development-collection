@@ -79,7 +79,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	protected $scheduledNodeEventUpdates = array();
 
 	/**
-	 *
+	 * React on the Doctrine preFlush event and trigger the respective internal node events
 	 *
 	 * @return void
 	 */
@@ -88,7 +88,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
+	 * Emit a "Node Added" event
 	 *
 	 * @return void
 	 */
@@ -100,7 +100,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
+	 * Add the created node to the previously created "Added Node" event
 	 *
 	 * @param NodeInterface $node
 	 * @return void
@@ -114,7 +114,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
+	 * Emit a "Node Updated" event
 	 *
 	 * @param NodeInterface $node
 	 * @return void
@@ -128,7 +128,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
+	 * Emit an event when node properties have been changed
 	 *
 	 * @param NodeInterface $node
 	 * @param $propertyName
@@ -158,7 +158,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
+	 * Add the new label to a previously created node property changed event
 	 *
 	 * @param NodeInterface $node
 	 * @param $propertyName
@@ -172,10 +172,11 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 		}
 
 		$this->changedNodes[$node->getContextPath()]['newLabel'] = $node->getLabel();
+		$this->changedNodes[$node->getContextPath()]['node'] = $node;
 	}
 
 	/**
-	 *
+	 * Emits a "Node Removed" event
 	 *
 	 * @param NodeInterface $node
 	 * @return void
@@ -197,7 +198,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
+	 * Emits a "Node Discarded" event
 	 *
 	 * @param NodeInterface $node
 	 * @return void
@@ -248,6 +249,8 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
+	 *
+	 *
 	 * @param NodeInterface $movedNode
 	 * @param NodeInterface $referenceNode
 	 * @param integer $moveOperation
@@ -265,6 +268,8 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
+	 *
+	 * 
 	 * @param NodeInterface $movedNode
 	 * @param NodeInterface $referenceNode
 	 * @param integer $moveOperation
