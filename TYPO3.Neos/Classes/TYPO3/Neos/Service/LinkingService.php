@@ -195,11 +195,12 @@ class LinkingService {
 	 * @param string $section
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+	 * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 	 * @return string The rendered URI
 	 * @throws \InvalidArgumentException if the given node/baseNode is not valid
 	 * @throws NeosException if no URI could be resolved for the given node
 	 */
-	public function createNodeUri(ControllerContext $controllerContext, $node = NULL, NodeInterface $baseNode = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
+	public function createNodeUri(ControllerContext $controllerContext, $node = NULL, NodeInterface $baseNode = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $resolveShortcuts = TRUE) {
 		$this->lastLinkedNode = NULL;
 		if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
 			throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
@@ -243,7 +244,14 @@ class LinkingService {
 		}
 		$this->lastLinkedNode = $node;
 
-		$resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+		if ($resolveShortcuts === TRUE) {
+			$resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+		} else {
+			// this case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
+			// a link towards the *shortcut itself*, and not to its target.
+			$resolvedNode = $node;
+		}
+
 		if (is_string($resolvedNode)) {
 			return $resolvedNode;
 		}

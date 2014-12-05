@@ -17,7 +17,7 @@
 						<tr class="node-property"><th class="node-property-name">{name}</th><td class="node-property-value">{value}</td></tr>
 					</f:for>
 				</table>
-				<link rel="node-frontend" href="{neos:uri.node(node: closestDocumentNode, absolute: true)}"/>
+				<link rel="node-frontend" href="{neos:uri.node(node: closestDocumentNode, absolute: true, resolveShortcuts: false)}"/>
 				<link rel="node-show" href="{f:uri.action(action: 'show', controller: 'Service\Nodes', arguments: {identifier: node.identifier}, absolute: true)}"/>
 			</div>
 		</div>
