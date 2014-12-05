@@ -33,6 +33,9 @@
 			<trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			</trans-unit>
+			<trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+				<source>{0} created the {1} {2}.</source>
+			</trans-unit>
 			<trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
 			</trans-unit>
