@@ -47964,7 +47964,7 @@ define('list/list-plugin',[
 			if (listtype === nodeName) {
 				// remove all classes
 				jQuery.each(this.templates[nodeName].classes, function (i, cssClass) {
-					listToStyle.removeClass(this);
+					listToStyle.removeClass(cssClass);
 				});
 
 				listToStyle.addClass(style);
@@ -47973,8 +47973,8 @@ define('list/list-plugin',[
 				listToStyle.find(listtype).each(function () {
 					if (isListInSelection(this)) {
 						var listToStyle = jQuery(this);
-						jQuery.each(plugin.templates[listtype].classes, function () {
-							listToStyle.removeClass(this);
+						jQuery.each(plugin.templates[listtype].classes, function (i, cssClass) {
+							listToStyle.removeClass(cssClass);
 						});
 						listToStyle.addClass(style);
 					}
