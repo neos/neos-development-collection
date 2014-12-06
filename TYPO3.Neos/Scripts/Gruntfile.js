@@ -97,7 +97,7 @@ module.exports = function (grunt) {
 
 						// Fix broken this reference in list plugin
 						src = src.replace('jQuery.each(this.templates[nodeName].classes, function () {', 'jQuery.each(this.templates[nodeName].classes, function (i, cssClass) {');
-						src = src.replace(/listToStyle.removeClass(this);/g', 'listToStyle.removeClass(cssClass);');
+						src = src.replace(/listToStyle\.removeClass\(this\);/g, 'listToStyle.removeClass(cssClass);');
 						src = src.replace('jQuery.each(plugin.templates[listtype].classes, function () {', 'jQuery.each(plugin.templates[listtype].classes, function (i, cssClass) {');
 
 						// Workaround for jQueryUI menu issue / poorly written code in list plugin
