@@ -52,7 +52,7 @@ define(
 						}
 
 						var info = item.data.path ? item.data.path : item.data.identifier;
-						$itemContent.attr('title', item.text + (info ? ' (' + info + ')' : ''));
+						$itemContent.attr('title', $(item.text).text().trim() + (info ? ' (' + info + ')' : ''));
 
 						return $itemContent.get(0).outerHTML;
 					},
@@ -64,7 +64,7 @@ define(
 						}
 
 						var info = item.data.path ? item.data.path : item.data.identifier;
-						$itemContent.attr('title', item.text + (info ? ' (' + info + ')' : ''));
+						$itemContent.attr('title', $(item.text).text().trim() + (info ? ' (' + info + ')' : ''));
 
 						return $itemContent.get(0).outerHTML;
 					},
@@ -187,20 +187,34 @@ define(
 								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								dimensions: $('#neos-document-metadata').data('neos-context-dimensions')
 							};
-							HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
-								var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;
-								item.set('text', $('.node-label', result.resource).text().trim());
-								item.set('data', {icon: iconClass, path: $('.node-path', result.resource).text()});
-								that._updateSelect2();
-							});
+							HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(
+								function(result) {
+									var iconClass = NodeTypeService.getNodeTypeDefinition($('.node-type', result.resource).text()).ui.icon;
+									item.set('text', $('.node-label', result.resource).text().trim());
+									item.set('data', {icon: iconClass, path: $('.node-path', result.resource).text()});
+									that._updateSelect2();
+								},
+								function() {
+									item.set('text', '<i> Node missing</i>');
+									item.set('data', {icon: 'icon-warning-sign', identifier: nodeIdentifier});
+									that._updateSelect2();
+								}
+							);
 						break;
 						case 'asset':
 							var assetIdentifier = value.substr(8, 36);
-							HttpRestClient.getResource('neos-service-assets', assetIdentifier).then(function(result) {
-								item.set('text', $('.asset-label', result.resource).text().trim());
-								item.set('data', {icon: 'icon-file-alt', identifier: $('.asset-identifier', result.resource).text()});
-								that._updateSelect2();
-							});
+							HttpRestClient.getResource('neos-service-assets', assetIdentifier).then(
+								function(result) {
+									item.set('text', $('.asset-label', result.resource).text().trim());
+									item.set('data', {icon: 'icon-file-alt', identifier: $('.asset-identifier', result.resource).text()});
+									that._updateSelect2();
+								},
+								function() {
+									item.set('text', '<i> Asset missing</i>');
+									item.set('data', {icon: 'icon-warning-sign', identifier: assetIdentifier});
+									that._updateSelect2();
+								}
+							);
 						break;
 						default:
 							item.set('text', value);
