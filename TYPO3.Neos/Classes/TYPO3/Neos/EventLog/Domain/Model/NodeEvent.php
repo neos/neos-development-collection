@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
@@ -122,9 +123,11 @@ class NodeEvent extends Event {
 		$this->workspaceName = $node->getContext()->getWorkspaceName();
 		$this->dimension = $node->getContext()->getDimensions();
 
-		$siteIdentifier = NULL;
-		if ($node->getContext()->getCurrentSite() !== NULL) {
-			$siteIdentifier = $this->persistenceManager->getIdentifierByObject($node->getContext()->getCurrentSite());
+		$context = $node->getContext();
+		if ($context instanceof ContentContext && $context->getCurrentSite() !== NULL) {
+			$siteIdentifier = $this->persistenceManager->getIdentifierByObject($context->getCurrentSite());
+		} else {
+			$siteIdentifier = NULL;
 		}
 		$this->data = Arrays::arrayMergeRecursiveOverrule($this->data, array(
 			'nodeContextPath' => $node->getContextPath(),
