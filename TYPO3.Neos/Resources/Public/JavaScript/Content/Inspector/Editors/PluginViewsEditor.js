@@ -1,11 +1,13 @@
 define(
 [
+	'emberjs',
 	'Library/jquery-with-dependencies',
 	'text!./PluginViewsEditor.html',
 	'Content/Inspector/InspectorController',
 	'Shared/HttpClient'
 ],
 function(
+	Ember,
 	$,
 	template,
 	InspectorController,
