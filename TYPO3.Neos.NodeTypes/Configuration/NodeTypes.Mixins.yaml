@@ -28,6 +28,7 @@
         inlineEditable: TRUE
         aloha:
           placeholder: '<p>Enter text here</p>'
+          autoparagraph: TRUE
           'format':
             'strong': TRUE
             'em': TRUE
@@ -107,6 +108,7 @@
         inlineEditable: TRUE
         aloha:
           placeholder: '<p>Enter caption here</p>'
+          autoparagraph: TRUE
 
 # Image alignment mixin
 'TYPO3.Neos.NodeTypes:ImageAlignmentMixin':
