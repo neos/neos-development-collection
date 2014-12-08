@@ -135,10 +135,11 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
 	 * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
 	 * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+	 * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 	 * @return string The rendered link
 	 * @throws ViewHelperException
 	 */
-	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode') {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE, array $arguments = array(), $section = '', $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = TRUE) {
 		$baseNode = NULL;
 		if (!$node instanceof NodeInterface) {
 			$view = $this->viewHelperVariableContainer->getView();
@@ -166,7 +167,8 @@ class NodeViewHelper extends AbstractTagBasedViewHelper {
 				$arguments,
 				$section,
 				$addQueryString,
-				$argumentsToBeExcludedFromQueryString
+				$argumentsToBeExcludedFromQueryString,
+				$resolveShortcuts
 			);
 			$this->tag->addAttribute('href', $uri);
 		} catch (NeosException $exception) {
