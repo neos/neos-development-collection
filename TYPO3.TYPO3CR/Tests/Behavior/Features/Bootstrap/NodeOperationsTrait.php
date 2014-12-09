@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Boostrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
