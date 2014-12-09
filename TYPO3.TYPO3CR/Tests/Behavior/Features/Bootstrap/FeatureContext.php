@@ -6,6 +6,9 @@ require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/F
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Flowpack\Behat\Tests\Behat\FlowContext;
+use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
+use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
+use TYPO3\TYPO3CR\Tests\Behavior\Features\Boostrap\NodeOperationsTrait;
 
 /**
  * Features context
@@ -17,6 +20,11 @@ class FeatureContext extends Behat\Behat\Context\BehatContext {
 	use SecurityOperationsTrait;
 
 	use IsolatedBehatStepsTrait;
+
+	/**
+	 * @var string
+	 */
+	protected $behatTestHelperObjectName = 'TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper';
 
 	/**
 	 * Initializes the context
