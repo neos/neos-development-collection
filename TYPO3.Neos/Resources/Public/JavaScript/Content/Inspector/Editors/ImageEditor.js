@@ -392,7 +392,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				var lockedAspectRatioWidth = this.get('crop.aspectRatio.locked.width'),
 					lockedAspectRatioHeight = this.get('crop.aspectRatio.locked.height'),
 					lockedAspectRatio = lockedAspectRatioWidth / lockedAspectRatioHeight;
-				if (this.get('_cropProperties.aspectRatio') !== lockedAspectRatio) {
+				// Check if the existing crop aspect ratio matches the locked aspect ratio (with a margin for rounded issues)
+				if (Math.round(this.get('_cropProperties.aspectRatio') * 20) / 20 !== Math.round(lockedAspectRatio * 20) / 20) {
 					if (lockedAspectRatioWidth > lockedAspectRatioHeight) {
 						this.set('_cropProperties.h', parseInt(this.get('_cropProperties.h') / lockedAspectRatio * this.get('_cropProperties.aspectRatio'), 10));
 					} else if (lockedAspectRatioWidth === lockedAspectRatioHeight) {
@@ -525,6 +526,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						matchesOption = false,
 						options = this.get('aspectRatioOptions');
 					options.forEach(function(option) {
+						// First iteration with a strict match
 						if (Math.round(option.width / option.height * 50) / 50 === Math.round(aspectRatio * 50) / 50) {
 							option.set('active', true);
 							matchesOption = true;
@@ -533,7 +535,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						}
 					});
 					if (!matchesOption) {
-						// Do a second run if no matches were found with a less precise match
+						// Secondary iteration if no matches were found with a less strict match
 						options.forEach(function(option) {
 							if (Math.round(option.width / option.height * 20) / 20 === Math.round(aspectRatio * 20) / 20) {
 								option.set('active', true);
