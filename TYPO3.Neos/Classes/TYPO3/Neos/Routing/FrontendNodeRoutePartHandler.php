@@ -51,6 +51,15 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 	 */
 	protected $contentDimensionPresetSource;
 
+	const DIMENSION_REQUEST_PATH_MATCHER = '|^
+		(?<dimensionPresetUriSegments>[^/@]+)      # the first part of the URI, before the first slash is the encoded dimension preset
+		(?:                                        # start of non-capturing submatch for the remaining URL
+			/?                                     # a "/"; optional. it must also match en@user-admin
+			(?<remainingRequestPath>.*)            # the remaining request path
+		)?                                         # ... and this whole remaining URL is optional
+		$                                          # make sure we consume the full string
+	|x';
+
 	/**
 	 * Extracts the node path from the request path.
 	 *
@@ -407,7 +416,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 		}
 
 		$dimensionsAndDimensionValues = array();
-		preg_match('|^(?<dimensionPresetUriSegments>[^/@]+)(/(?<remainingRequestPath>[^/@]))?(?<context>.*)?|', $requestPath, $matches);
+		$matches = array();
+
+		preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
 
 		if (!isset($matches['dimensionPresetUriSegments'])) {
 			foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
@@ -429,7 +440,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 				$dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
 			}
 
-			$requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '') . (isset($matches['context']) ? $matches['context'] : '');
+			$requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
 		}
 
 		return $dimensionsAndDimensionValues;
