@@ -22,6 +22,7 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	CreatingAPlugin
 	InteractionWithTheNeosBackend
 	ContentDimensions
+	DataSources
 
 .. currently unused:
 ..	TypoScriptCookbook

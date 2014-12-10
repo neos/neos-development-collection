@@ -538,11 +538,20 @@ This helps to provide data to the editing interface without having to define rou
             # alternatively using a custom uri:
             # dataSourceUri: 'custom-route/end-point'
 
-On the server side, a class which implements ``TYPO3\\Neos\\Service\\DataSource\\DataSourceInterface`` (or, preferably,
-subclasses ``TYPO3\\Neos\\Service\\DataSource\\AbstractDataSource``), will be called to generate the values.
+See :ref:`data-sources` for more details.
 
 The output of the data source has to be a JSON formatted array matching the ``values`` option. Make sure you sort by
 group first, if using the grouping option.
+
+Example:
+
+.. code-block:: php
+
+	return json_encode(array(
+		'key' => array('label' => 'Foo', group => 'A', 'icon' => 'icon-key'),
+		'fire' => array('label' => 'Fire', group => 'A', 'icon' => 'icon-fire')
+		'legal' => array('label' => 'Legal', group => 'B', 'icon' => 'icon-legal')
+	));
 
 Options Reference:
 
