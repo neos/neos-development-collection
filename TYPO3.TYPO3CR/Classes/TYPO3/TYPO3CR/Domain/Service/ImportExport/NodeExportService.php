@@ -319,7 +319,16 @@ class NodeExportService {
 							}
 						}
 					}
-					$this->xmlWriter->text(json_encode($this->propertyMapper->convert($data[$propertyName], 'array', $this->propertyMappingConfiguration)));
+					$convertedObject = $this->propertyMapper->convert($data[$propertyName], 'array', $this->propertyMappingConfiguration);
+					if (!is_array($convertedObject)) {
+						if (is_object($convertedObject) && $convertedObject instanceof \TYPO3\Flow\Validation\Error) {
+							throw new ExportException($convertedObject->getMessage(), $convertedObject->getCode());
+						} else {
+							throw new ExportException(sprintf('Conversion of property "%s" which is a "%s" failed, please check if the data is consistent.', $propertyName, get_class($data[$propertyName])));
+						}
+					}
+
+					$this->xmlWriter->text(json_encode($convertedObject));
 				} elseif (is_array($data[$propertyName])) {
 					foreach ($data[$propertyName] as $key => $element) {
 						$this->writeConvertedElement($data[$propertyName], $key, 'entry' . $key);
