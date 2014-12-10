@@ -148,7 +148,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				}.property('h')
 			}).create());
 
-			this.set('_cropProperties',  Ember.Object.extend({
+			this.set('_cropProperties', Ember.Object.extend({
 				x: null,
 				y: null,
 				w: null,
@@ -241,7 +241,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 		},
 
 		willDestroyElement: function() {
-				// Hide popover when the focus changes
+			// Hide popover when the focus changes
 			if (this.get('_loadPreviewImageHandler')) {
 				this.get('_loadPreviewImageHandler').abort();
 			}
@@ -351,8 +351,8 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			this.set('_originalImageUuid', response.imageUuid);
 			this._setPreviewImage(response);
 
-				// We only need to set the width here; as the height is automatically
-				// calculated from the aspect ratio in the cropper
+			// We only need to set the width here; as the height is automatically
+			// calculated from the aspect ratio in the cropper
 			this.set('_finalImageScale.w', response.originalSize.w);
 
 			this._resetCropPropertiesToCurrentPreviewImageSize();
@@ -423,9 +423,11 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 				aspectRatioReducedDenominator: 0,
 				aspectRatioAllowCustom: false,
 				aspectRatioLocked: false,
+				aspectRatioDefaultOption: null,
 				aspectRatioOptions: [],
 				api: null,
 				selection: null,
+				initialized: false,
 
 				init: function() {
 					this._super();
@@ -433,10 +435,17 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						configuration = parent.get('crop');
 					if (configuration.aspectRatio) {
 						if (configuration.aspectRatio.locked && configuration.aspectRatio.locked.width > 0 && configuration.aspectRatio.locked.height > 0) {
-							this.set('aspectRatioWidth', configuration.aspectRatio.locked.width);
-							this.set('aspectRatioHeight', configuration.aspectRatio.locked.height);
+							this.setProperties({'aspectRatioWidth': configuration.aspectRatio.locked.width, 'aspectRatioHeight': configuration.aspectRatio.locked.height});
 							this.set('aspectRatioLocked', true);
 						} else {
+							var isDefaultSettings = JSON.stringify(parent.get('_cropProperties.full')) === JSON.stringify({x: 0, y: 0, w: parent.get('_previewImageSize.w'), h: parent.get('_previewImageSize.h')});
+							// Prevent selecting the original aspect ratio option if it's the default settings
+							if (!isDefaultSettings) {
+								this.setProperties({'aspectRatioWidth': parent.get('_cropProperties.w'), 'aspectRatioHeight': parent.get('_cropProperties.h')});
+							}
+							if (configuration.aspectRatio.defaultOption) {
+								this.set('aspectRatioDefaultOption', configuration.aspectRatio.defaultOption);
+							}
 							var options = Ember.A(),
 								option = Ember.Object.extend({
 									init: function() {
@@ -483,8 +492,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 					}
 					clearTimeout(this.get('customTimeout'));
 					if (option.get('key') !== 'custom') {
-						this.set('aspectRatioWidth', option.width);
-						this.set('aspectRatioHeight', option.height);
+						this.setProperties({'aspectRatioWidth': option.width, 'aspectRatioHeight': option.height});
 					} else {
 						var that = this;
 						// Use timeout since selection is changed multiple times
@@ -517,14 +525,26 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						matchesOption = false,
 						options = this.get('aspectRatioOptions');
 					options.forEach(function(option) {
-						if (option.width / option.height === aspectRatio) {
+						if (Math.round(option.width / option.height * 50) / 50 === Math.round(aspectRatio * 50) / 50) {
 							option.set('active', true);
 							matchesOption = true;
 						} else {
 							option.set('active', false);
 						}
 					});
-					if (this.get('aspectRatioAllowCustom') && !this.get('originalAspectRatio') && !matchesOption && aspectRatioWidth > 0 && aspectRatioHeight > 0) {
+					if (!matchesOption) {
+						// Do a second run if no matches were found with a less precise match
+						options.forEach(function(option) {
+							if (Math.round(option.width / option.height * 20) / 20 === Math.round(aspectRatio * 20) / 20) {
+								option.set('active', true);
+								matchesOption = true;
+							} else {
+								option.set('active', false);
+							}
+						});
+					}
+					// Select custom if allowed + it's not the original aspect ratio + no other options matched + aspect ratio width & height set + not during initialization
+					if (this.get('aspectRatioAllowCustom') && !this.get('originalAspectRatio') && !matchesOption && aspectRatioWidth > 0 && aspectRatioHeight > 0 && this.get('initialized')) {
 						options.findBy('label', 'Custom').set('active', true);
 					}
 					var activeOption = options.findBy('active', true);
@@ -639,8 +659,14 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						];
 					}
 
-					if (this.get('aspectRatioLocked')) {
+					var isDefaultSettings = JSON.stringify(parent.get('_cropProperties.full')) === JSON.stringify({x: 0, y: 0, w: parent.get('_previewImageSize.w'), h: parent.get('_previewImageSize.h')});
+					if (this.get('aspectRatioWidth') && this.get('aspectRatioHeight')) {
 						settings.aspectRatio = this.get('aspectRatioWidth') / this.get('aspectRatioHeight');
+					} else if (this.get('aspectRatioDefaultOption') && isDefaultSettings) {
+						var defaultOption = this.get('aspectRatioOptions').findBy('key', this.get('aspectRatioDefaultOption'));
+						defaultOption.set('active', true);
+						this.set('selection', defaultOption.get('key'));
+						settings.aspectRatio = defaultOption.width / defaultOption.height;
 					}
 
 					var that = this;
@@ -655,12 +681,14 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 						placeholder: 'Aspect ratio',
 						dropdownCssClass: 'neos-select2-large'
 					});
+
+					this.set('initialized', true);
 				}
 			});
 		}.property(),
 
 		/**
-		 *  Update the preview image when the crop options change or the preview image
+		 * Update the preview image when the crop options change or the preview image
 		 * is initially loaded. This includes:
 		 *
 		 * - set the preview bounding box size
@@ -695,7 +723,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 					// Scale Preview image and update relative image position
 					image.css({
 						width: Math.floor(that.get('_previewImageSize').w * overallScalingFactor) + 'px',
-						height:  Math.floor(that.get('_previewImageSize').h * overallScalingFactor) + 'px',
+						height: Math.floor(that.get('_previewImageSize').h * overallScalingFactor) + 'px',
 						marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
 						marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
 					});
@@ -771,15 +799,15 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 			try {
 				imageVariant = JSON.parse(imageVariant);
 			} catch(e) {
-					// In case we do not have valid JSON here, let's silently return
+				// In case we do not have valid JSON here, let's silently return
 				return;
 			}
 			if (imageVariant) {
-					// We now load the metadata for the image variant, and as soon as we have it fully initialize the
-					// widget.
+				// We now load the metadata for the image variant, and as soon as we have it fully initialize the
+				// widget.
 				this._displayImageLoader();
 
-					// we hide the default upload preview image; as we only want the loading indicator to be visible
+				// we hide the default upload preview image; as we only want the loading indicator to be visible
 				this.set('_uploadPreviewShown', false);
 				that.set('_loadPreviewImageHandler', HttpClient.getResource(
 					$('link[rel="neos-images"]').attr('href') + '?image=' + imageVariant.originalImage,
@@ -808,7 +836,7 @@ function(Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, S
 							that.set('_cropProperties.h', previewImageCropProperties.h);
 						} else if (instruction.command === 'resize') {
 							that.set('_finalImageScale.w', Ember.get(instruction, 'options.size.width'));
-								// Height does not need to be set, as it is automatically calculated from crop properties + width
+							// Height does not need to be set, as it is automatically calculated from crop properties + width
 						}
 					});
 
