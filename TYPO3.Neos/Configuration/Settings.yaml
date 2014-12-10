@@ -153,6 +153,10 @@ TYPO3:
           'TYPO3\Media\Domain\Model\ImageVariant':
             editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
             editorOptions:
+              # With this option you can limit the maximum file size to the specified number of bytes.
+              # Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb"
+              # If not set, the maximum upload size is used as configured in php.ini
+              maximumFileSize: ~
               crop:
                 aspectRatio:
                   options:
@@ -180,7 +184,6 @@ TYPO3:
                   locked:
                     width: 0
                     height: 0
-
           'TYPO3\Media\Domain\Model\Asset':
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
           'array<TYPO3\Media\Domain\Model\Asset>':

@@ -12,9 +12,15 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Neos\Cache\CacheManager;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -28,34 +34,42 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	protected $settings;
 
 	/**
-	 * @var \TYPO3\Neos\Cache\CacheManager
 	 * @Flow\Inject
+	 * @var CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \TYPO3\Flow\Core\Bootstrap
 	 * @Flow\Inject
+	 * @var Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+	 * @var ResourcePublisher
 	 */
 	protected $resourcePublisher;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\I18n\Service
+	 * @var Service
 	 */
 	protected $i18nService;
 
 	/**
 	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Security\Context
+	 * @var Context
 	 */
 	protected $securityContext;
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
 
 	/**
 	 * @return string
@@ -67,7 +81,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 			'window.T3Configuration.nodeTypes = {};',
 			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
 			'window.T3Configuration.requirejs = {};',
-			'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';'
+			'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
+			'window.T3Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
 		);
 
 		$neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://TYPO3.Neos/Public/JavaScript');
@@ -149,10 +164,13 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	}
 
 	/**
-	 * @param array $settings
+	 * Returns the lowest configured maximum upload file size
+	 *
+	 * @return string
 	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
+	protected function renderMaximumFileUploadSize() {
+		$maximumFileUploadSizeInBytes = min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
+		return sprintf('"%d"; // %s, as configured in php.ini', $maximumFileUploadSizeInBytes, Files::bytesToSizeString($maximumFileUploadSizeInBytes));
 	}
 
 }
