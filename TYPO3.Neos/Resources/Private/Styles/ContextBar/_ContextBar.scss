@@ -50,7 +50,6 @@
 	.neos-button {
 		background-color: $grayMedium;
 		border-left: 1px solid $grayLight;
-		border-right: 1px solid $grayLight;
 		vertical-align: top;
 		display: inline-block;
 		float: left;
@@ -60,29 +59,6 @@
 		&.active,
 		&.neos-pressed {
 			background-color: $blue;
-		}
-
-		& + .neos-button {
-			margin-left: $defaultMargin;
-		}
-	}
-
-	.neos-context-bar-save-indicator {
-		display: inline-block;
-		float: left;
-
-		.neos-indicator {
-			margin: 0;
-			padding: 0;
-			cursor: default;
-			background: transparent;
-			border: none;
-			padding-right: $defaultMargin;
-
-			span {
-				position: relative;
-				top: 2px;
-			}
 		}
 	}
 
@@ -97,7 +73,6 @@
 					border-left: 1px solid $grayLight;
 				}
 			}
-
 
 			.chosen-drop {
 				margin-top: 0;
