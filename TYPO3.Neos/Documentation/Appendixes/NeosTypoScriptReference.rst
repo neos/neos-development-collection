@@ -546,7 +546,7 @@ Example::
 	prototype(My.Package:MyContent) < prototype(TYPO3.Neos:Content) {
 		templatePath = 'resource://My.Package/Private/Templates/NodeTypes/MyContent.html'
 		# Auto-generated for all node type properties
-		# title = ${node.properties.title}
+		# title = ${q(node).property('title')}
 	}
 
 .. _TYPO3_Neos__Plugin:
