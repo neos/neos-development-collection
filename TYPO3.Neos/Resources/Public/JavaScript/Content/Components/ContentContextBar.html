@@ -4,7 +4,7 @@
 </div>
 
 <div class="neos-right">
-	<a class="neos-button neos-live-shortcut" target="_blank" {{bind-attr href="view.liveUri"}} title="{{translate id='content-components-contentContextBar-liveShortcutButton-title' value='Open page in live workspace'}}">
+	<a class="neos-button neos-live-shortcut" target="neosLive" {{bind-attr href="view.liveUri"}} title="{{translate id='content-components-contentContextBar-liveShortcutButton-title' value='Open page in live workspace'}}">
 		<i class="icon-external-link"></i>
 	</a>
 	<button class="neos-button neos-full-screen-open" title="{{translate id='content-components-contentContextBar-fullScreenButton-title' value='Full Screen'}}" {{action "toggleFullScreen" target="view.fullScreenController"}}>
