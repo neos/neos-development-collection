@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2014-12-03
+This reference was automatically generated from code on 2014-12-10
 
 
 add
@@ -249,7 +249,7 @@ has
 ---
 
 "has" operation working on NodeInterface. Reduce the set of matched elements
-to those that have a descendant that matches the selector or given subject.
+to those that have a child node that matches the selector or given subject.
 
 Accepts a selector, an array, an object, a traversable object & a FlowQuery
 object as argument.

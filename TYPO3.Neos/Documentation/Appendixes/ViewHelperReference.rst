@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2014-12-03
+This reference was automatically generated from code on 2014-12-10
 
 
 neos:backend.configurationCacheVersion
@@ -14,6 +14,26 @@ configuration cache.
 
 :Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ConfigurationCacheVersionViewHelper
 
+
+
+
+
+neos:backend.configurationTree
+------------------------------
+
+Render HTML markup for the full configuration tree in the Neos Administration -> Configuration Module.
+
+For performance reasons, this is done inside a ViewHelper instead of Fluid itself.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ConfigurationTreeViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``configuration`` (array): 
 
 
 
@@ -388,6 +408,8 @@ Arguments
 
 * ``nodeVariableName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
 
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+
 * ``class`` (string, *optional*): CSS class(es) for this element
 
 * ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
@@ -625,6 +647,8 @@ Arguments
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+
+* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
 
 
