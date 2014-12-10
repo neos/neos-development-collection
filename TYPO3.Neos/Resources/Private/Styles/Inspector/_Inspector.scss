@@ -90,6 +90,10 @@
 				line-height: 16px;
 			}
 
+			&:focus {
+				outline: none;
+			}
+
 			&.is-active {
 				background-color: $grayDark;
 				color: $blue;
