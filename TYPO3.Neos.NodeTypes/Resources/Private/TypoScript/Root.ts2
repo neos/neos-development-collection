@@ -103,10 +103,10 @@ prototype(TYPO3.Neos.NodeTypes:Form) {
 
 prototype(TYPO3.Neos.NodeTypes:AssetList).@class = 'TYPO3\\Neos\\NodeTypes\\TypoScriptObjects\\AssetListImplementation'
 
-# Insert records TS Object
-prototype(TYPO3.Neos.NodeTypes:Records) {
-	records = TYPO3.TypoScript:Collection {
-		collection = ${q(node).property('records')}
+# "Insert content references" TS Object
+prototype(TYPO3.Neos.NodeTypes:ContentReferences) {
+	referenceNodes = TYPO3.TypoScript:Collection {
+		collection = ${q(node).property('references')}
 		itemRenderer = TYPO3.Neos:ContentCase
 		itemName = 'node'
 	}
