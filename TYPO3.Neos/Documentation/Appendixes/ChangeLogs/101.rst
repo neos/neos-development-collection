@@ -1,0 +1,119 @@
+====================
+1.0.1
+====================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Base Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[TASK] Update references in documentation
+-----------------------------------------------------------------------------------------
+
+See http://ci.typo3.robertlemke.net/job/TYPO3%20Neos%20Release/3/
+
+* Commit: `7b65996 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/7b659960fe1cf40379f6999371abd9b979a8298c>`_
+
+[BUGFIX] Handle inline loading of pages without metadata correctly
+-----------------------------------------------------------------------------------------
+
+Check the response for the page metainformation and show an error with
+explanation. This can be improved by adding a link to the error message
+that opens the requested location in a new tab in a follow-up.
+
+* Fixes: `#54379 <http://forge.typo3.org/issues/54379>`_
+* Commit: `ed40c91 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/ed40c91179c800720578fe6999e30c182eb5fa80>`_
+
+[BUGFIX] Use FQ TypoScript paths for lastVisitedNode functionality
+-----------------------------------------------------------------------------------------
+
+Change Idaa3e0c5c3393533158840dc0617676f2589c628 made the shorthand
+TypoScript object names not being found in the prototype Page.ts2
+for the lastVisitedNode inclusion. This fixes this by using fully
+qualified paths.
+
+* Related: `#40304 <http://forge.typo3.org/issues/40304>`_
+* Commit: `bdaf7d4 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/bdaf7d4895812453b95c59dd7ce54acdab3097b2>`_
+
+[BUGFIX] Add a safeguard to the LIBXML_PARSEHUGE constant
+-----------------------------------------------------------------------------------------
+
+This change should fix problems with oder libxml versions not being
+able to import the content.
+
+* Fixes: `#52916 <http://forge.typo3.org/issues/52916>`_
+* Commit: `9c0f8a5 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/9c0f8a5b1ff44cccf2b40932241508b9705b4bd6>`_
+
+[BUGFIX] Fix wrong type annotation that causes compilation problems
+-----------------------------------------------------------------------------------------
+
+* Fixes: `#54314 <http://forge.typo3.org/issues/54314>`_
+* Commit: `3adc482 <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/3adc4829e2936a15c1931b58b8350f49ee73d97c>`_
+
+[BUGFIX] Fix built-in Menu TypoScript object template
+-----------------------------------------------------------------------------------------
+
+In Ic507c603e1f0ddcd1e70e7df6102a15c51a7332a, the built-in
+Menu TypoScript Object Template was broken.
+
+Thanks to Johannes Pichler for finding and reporting this issue.
+
+* Commit: `8c08b3e <https://git.typo3.org/Packages/TYPO3.Neos.git/commit/8c08b3e6b12af9de94753c6ab84df1c0d74dffb9>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.Neos.NodeTypes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.SiteKickstarter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TYPO3CR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No changes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.TypoScript
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Protypes don't use FQN
+-----------------------------------------------------------------------------------------
+
+Because the prototype definitions don't use the FQN namespace
+issues occur where TYPO3.Neos:RawArray is used instead of
+TYPO3.TypoScript:RawArray
+
+* Fixes: `#54363 <http://forge.typo3.org/issues/54363>`_
+* Commit: `8691d27 <https://git.typo3.org/Packages/TYPO3.TypoScript.git/commit/8691d27656fb761fa8435c6efaf719478a06fb28>`_
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TYPO3.NeosDemoTypo3Org
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[BUGFIX] Correctly link the Neos logo with the NodeViewHelper
+-----------------------------------------------------------------------------------------
+
+This fixes a problem that the current workspace is not appended to
+the href and the root page could not be loaded.
+
+* Related: `#54379 <http://forge.typo3.org/issues/54379>`_
+* Commit: `e3e774f <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/e3e774f503db9daff5bdb48ebe4639a18686b04f>`_
+
+[BUGFIX] Temporary accounts should be limited to role Editor
+-----------------------------------------------------------------------------------------
+
+Currently any demo account has full Administrator privileges, which also
+allows access to the package and user management. This is unexpected and
+should be changed to a less privileged role.
+
+* Commit: `a220bf0 <https://git.typo3.org/Packages/TYPO3.NeosDemoTypo3Org.git/commit/a220bf032731ae0d719832ce46ed4d552f16abd1>`_
+

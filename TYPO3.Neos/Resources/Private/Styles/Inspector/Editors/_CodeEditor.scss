@@ -1,0 +1,23 @@
+.neos-secondary-inspector-code-editor {
+	@import "../../../../Public/Library/codemirror/lib/codemirror.scss";
+	@import "../../../../Public/Library/codemirror/theme/solarized.scss";
+
+	.CodeMirror.cm-s-solarized.cm-s-dark {
+		background-color: $grayDark;
+		background-image: none;
+		height: 100%;
+		box-shadow: none;
+
+		.CodeMirror-linenumber {
+			color: $textSubtle;
+			text-shadow: none;
+		}
+
+		.CodeMirror-gutters {
+			background-image: none;
+			background-color: $grayMedium;
+			border-right-color: $grayLight;
+			box-shadow: none;
+		}
+	}
+}
