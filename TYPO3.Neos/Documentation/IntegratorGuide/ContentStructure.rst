@@ -244,6 +244,7 @@ The following options are allowed:
             'button': TRUE # Show toggle button for formatless pasting.
             'formatlessPasteOption': FALSE # Whether the format less pasting should be enable by default.
             'strippedElements': ['a'] # If not set the default setting is used.
+            'autoparagraph': TRUE # Automatically wrap non-wrapped text blocks in paragraph blocks.
 
       Example of disabling all formatting options::
 

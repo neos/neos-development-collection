@@ -85,6 +85,8 @@ additionalProperties:
                         type: array
                         items: { type: string, description: "List of HTML tags. If not set the default setting is used." }
 
+                  'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
+
                   'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
 
               'inspector':

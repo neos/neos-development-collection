@@ -37,6 +37,11 @@ function(
 						}
 					});
 
+					if (property.ui && property.ui.aloha && property.ui.aloha.autoparagraph) {
+						nodeSettings.autoparagraph = nodeSettings.autoparagraph || {};
+						nodeSettings.autoparagraph[selector] = ['autoparagraph'];
+					}
+
 					if (property.ui && property.ui.aloha && property.ui.aloha.placeholder) {
 						placeholderSettings[selector] = property.ui.aloha.placeholder;
 					}
@@ -138,7 +143,7 @@ function(
 				align: { config: [], editables: nodeSettings.alignment },
 				format: { config: ['strong', 'em', 'p', 'h1', 'h2', 'h3', 'pre', 'removeFormat'], editables: nodeSettings.format },
 				formatlesspaste: { config: [], editables: nodeSettings.formatlesspaste },
-				autoparagraph: { config: ['autoparagraph'] }
+				autoparagraph: { config: [], editables: nodeSettings.autoparagraph }
 			},
 			toolbar: {
 				tabs: [
