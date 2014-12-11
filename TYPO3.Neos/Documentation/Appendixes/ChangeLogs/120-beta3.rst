@@ -1,6 +1,6 @@
-====================
-1.2.0-beta3
-====================
+========================
+1.2.0-beta3 (2014-12-03)
+========================
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Base Distribution
@@ -213,7 +213,7 @@ Related: NEOS-594
 
 node:repair must be used for upgrading to Neos 1.2
 Nodenames with german umlauts will break the new builded
-url from the url path segment without this fix. 
+url from the url path segment without this fix.
 
 Fixes: NEOS-819
 
