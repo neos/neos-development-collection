@@ -1,6 +1,6 @@
-========================
-1.2.0-beta1 (2014-12-10)
-========================
+==================
+1.2.0 (2014-12-10)
+==================
 
 The third release of Neos focuses on adding translation support, improving the editor experience and implementing
 many new features. Neos is getting closer to being able to solve most project needs without custom code.
