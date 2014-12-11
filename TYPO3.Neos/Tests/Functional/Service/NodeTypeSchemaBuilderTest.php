@@ -67,7 +67,8 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase {
 						)
 					)
 				)
-			)
+			),
+			'label' => ''
 		);
 
 		$this->assertEquals($expectedSchema, $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']);
