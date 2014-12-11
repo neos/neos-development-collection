@@ -44,6 +44,11 @@ use TYPO3\TypoScript\View\TypoScriptView;
 class RenderViewHelper extends AbstractViewHelper {
 
 	/**
+	 * @var boolean
+	 */
+	protected $escapeOutput = FALSE;
+
+	/**
 	 * @var TypoScriptView
 	 */
 	protected $typoScriptView;
