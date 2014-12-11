@@ -48,6 +48,12 @@ class ContextFactory implements ContextFactoryInterface {
 	protected $contentDimensionRepository;
 
 	/**
+	 * @Flow\Inject(lazy=FALSE)
+	 * @var Now
+	 */
+	protected $now;
+
+	/**
 	 * Create the context from the given properties. If a context with those properties was already
 	 * created before then the existing one is returned.
 	 *
@@ -105,7 +111,7 @@ class ContextFactory implements ContextFactoryInterface {
 
 		$defaultContextProperties = array(
 			'workspaceName' => 'live',
-			'currentDateTime' => new Now(),
+			'currentDateTime' => $this->now,
 			'dimensions' => array(),
 			'targetDimensions' => array(),
 			'invisibleContentShown' => FALSE,
