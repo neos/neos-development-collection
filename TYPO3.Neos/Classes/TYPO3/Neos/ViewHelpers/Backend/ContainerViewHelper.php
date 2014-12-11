@@ -25,6 +25,11 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 class ContainerViewHelper extends AbstractViewHelper {
 
 	/**
+	 * @var boolean
+	 */
+	protected $escapeOutput = FALSE;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;
