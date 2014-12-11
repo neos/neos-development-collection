@@ -22,6 +22,7 @@ class ContextFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase {
 	 */
 	public function createMergesDefaultPropertiesBeforeSettingAnInstanceByIdentifier() {
 		$contextFactory = new \TYPO3\TYPO3CR\Domain\Service\ContextFactory();
+		$this->inject($contextFactory, 'now', new \TYPO3\Flow\Utility\Now());
 
 		$mockContentDimensionRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
 		$mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
