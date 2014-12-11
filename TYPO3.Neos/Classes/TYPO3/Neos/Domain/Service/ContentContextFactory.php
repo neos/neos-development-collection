@@ -13,7 +13,6 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Now;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
@@ -71,7 +70,7 @@ class ContentContextFactory extends ContextFactory {
 
 		$defaultContextProperties = array (
 			'workspaceName' => 'live',
-			'currentDateTime' => new Now(),
+			'currentDateTime' => $this->now,
 			'dimensions' => array(),
 			'targetDimensions' => array(),
 			'invisibleContentShown' => FALSE,
