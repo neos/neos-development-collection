@@ -3,7 +3,7 @@ Feature: Content module / Preview mode
   As an editor
   I need a way to see the page without UI elements
 
-  @fixtures @javascript
+  @fixtures @javascript @remote
   Scenario: Toggle preview mode
     Given I imported the site "TYPO3.NeosDemoTypo3Org"
     And the following users exist:

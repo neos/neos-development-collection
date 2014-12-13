@@ -10,7 +10,7 @@ Feature: Site management / List sites
       | jdoe     | password | John      | Doe      | Administrator |
     And I am authenticated with "jdoe" and "password" for the backend
 
-  @fixtures
+  @fixtures @remote
   Scenario: List sites
     When I go to the "Administration / Site Management" module
     Then I should see the following sites in a table:
@@ -19,7 +19,7 @@ Feature: Site management / List sites
 
   # Scenario: Add site from existing package
 
-  @fixtures
+  @fixtures @remote
   Scenario: Add site by creating a new package
     When I go to the "Administration / Site Management" module
     And I follow "Add new site"
@@ -31,7 +31,7 @@ Feature: Site management / List sites
       | Test Demo Site       |
       | TYPO3 Neos Demo Site |
 
-  @fixtures @javascript
+  @fixtures @javascript @remote
   Scenario: Update site name
     When I go to the "Administration / Site Management" module
     And I follow "Click to edit" for site "TYPO3 Neos Demo Site"

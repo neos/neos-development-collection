@@ -16,9 +16,9 @@ Feature: Adding Nodes
       | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | live      |
     Then I should have the following history entries:
       | ID | Event Type   | Node Identifier                      | Document Node Identifier             | Workspace | Parent Event | Explanation                             |
-      | n  | NODE_ADDED   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      |              | "features" node                         |
-      |    | NODE_ADDED   |                                      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      | n            | auto-created "features/main"            |
-      |    | NODE_UPDATED | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      |              | set property "title" on "features" node |
+      | n  | Node.Added   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      |              | "features" node                         |
+      |    | Node.Added   |                                      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      | n            | auto-created "features/main"            |
+      |    | Node.Updated | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      |              | set property "title" on "features" node |
 
 
   @fixtures
@@ -29,10 +29,10 @@ Feature: Adding Nodes
     And I publish the workspace "user-admin"
     Then I should have the following history entries:
       | ID | Event Type     | Node Identifier                      | Document Node Identifier             | Workspace  | Parent Event | Explanation                             |
-      | n  | NODE_ADDED     | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | "features" node                         |
-      |    | NODE_ADDED     |                                      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | n            | auto-created "features/main"            |
-      |    | NODE_UPDATED   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | set property "title" on "features" node |
-      | p  | NODE_PUBLISHED | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live       |              | "publish" event of the "features" node  |
+      | n  | Node.Added     | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | "features" node                         |
+      |    | Node.Added     |                                      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | n            | auto-created "features/main"            |
+      |    | Node.Updated   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | set property "title" on "features" node |
+      | p  | Node.Published | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live       |              | "publish" event of the "features" node  |
 
   @fixtures
   Scenario: Adding multiple document nodes in user workspace and publishing them yields one publish-event per document
@@ -43,11 +43,11 @@ Feature: Adding Nodes
     And I publish the workspace "user-admin"
     Then I should have the following history entries (ignoring order):
       | ID | Event Type     | Node Identifier                      | Document Node Identifier             | Workspace  | Parent Event | Explanation                             |
-      | p  | NODE_PUBLISHED | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live       |              | "publish" event of the "features" node  |
-      | n  | NODE_ADDED     | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | "features" node                         |
-      |    | NODE_ADDED     |                                      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | n            | auto-created "features/main"            |
-      |    | NODE_UPDATED   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | set property "title" on "features" node |
-      | p2 | NODE_PUBLISHED | 9c881754-6a51-11e4-9026-7831c1d118bc | 9c881754-6a51-11e4-9026-7831c1d118bc | live       |              | "publish" event of the "about-us" node  |
-      | n2 | NODE_ADDED     | 9c881754-6a51-11e4-9026-7831c1d118bc | 9c881754-6a51-11e4-9026-7831c1d118bc | user-admin | p2           | "about-us" node                         |
-      |    | NODE_ADDED     |                                      | 9c881754-6a51-11e4-9026-7831c1d118bc | user-admin | n2           | auto-created "about-us/main"            |
-      |    | NODE_UPDATED   | 9c881754-6a51-11e4-9026-7831c1d118bc | 9c881754-6a51-11e4-9026-7831c1d118bc | user-admin | p2           | set property "title" on "about-us" node |
+      | p  | Node.Published | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live       |              | "publish" event of the "features" node  |
+      | n  | Node.Added     | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | "features" node                         |
+      |    | Node.Added     |                                      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | n            | auto-created "features/main"            |
+      |    | Node.Updated   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | user-admin | p            | set property "title" on "features" node |
+      | p2 | Node.Published | 9c881754-6a51-11e4-9026-7831c1d118bc | 9c881754-6a51-11e4-9026-7831c1d118bc | live       |              | "publish" event of the "about-us" node  |
+      | n2 | Node.Added     | 9c881754-6a51-11e4-9026-7831c1d118bc | 9c881754-6a51-11e4-9026-7831c1d118bc | user-admin | p2           | "about-us" node                         |
+      |    | Node.Added     |                                      | 9c881754-6a51-11e4-9026-7831c1d118bc | user-admin | n2           | auto-created "about-us/main"            |
+      |    | Node.Updated   | 9c881754-6a51-11e4-9026-7831c1d118bc | 9c881754-6a51-11e4-9026-7831c1d118bc | user-admin | p2           | set property "title" on "about-us" node |

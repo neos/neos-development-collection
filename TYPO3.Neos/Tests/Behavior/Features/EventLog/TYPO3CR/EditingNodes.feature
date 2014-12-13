@@ -19,7 +19,7 @@ Feature: Editing Nodes
     And I set the node property "title" to "Homepage"
     Then I should have the following history entries:
       | Event Type   | Node Identifier                      | Document Node Identifier             | Workspace |
-      | NODE_UPDATED | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | live      |
+      | Node.Updated | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | live      |
 
   @fixtures
   Scenario: Change a Document node property inside a workspace
@@ -29,7 +29,7 @@ Feature: Editing Nodes
     And I set the node property "title" to "Homepage"
     Then I should have the following history entries:
       | Event Type   | Node Identifier                      | Document Node Identifier             | Workspace  |
-      | NODE_UPDATED | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin |
+      | Node.Updated | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin |
 
   @fixtures
   Scenario: Change a Document node property inside a workspace, and publishing afterwards adds the update event to the publish event.
@@ -40,8 +40,8 @@ Feature: Editing Nodes
     And I publish the workspace "user-admin"
     Then I should have the following history entries:
       | ID | Event Type     | Node Identifier                      | Document Node Identifier             | Workspace  | Parent Event |
-      |    | NODE_UPDATED   | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin | p            |
-      | p  | NODE_PUBLISHED | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | live       |              |
+      |    | Node.Updated   | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin | p            |
+      | p  | Node.Published | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | live       |              |
 
 
   @fixtures
@@ -57,6 +57,6 @@ Feature: Editing Nodes
     And I publish the workspace "user-admin"
     Then I should have the following history entries:
       | ID | Event Type     | Node Identifier                      | Document Node Identifier             | Workspace  | Parent Event |
-      |    | NODE_UPDATED   | 49f324f2-6a65-11e4-a901-7831c1d118bc | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin | p            |
-      |    | NODE_UPDATED   | be87d1dc-6a65-11e4-884b-7831c1d118bc | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin | p            |
-      | p  | NODE_PUBLISHED | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | live       |              |
+      |    | Node.Updated   | 49f324f2-6a65-11e4-a901-7831c1d118bc | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin | p            |
+      |    | Node.Updated   | be87d1dc-6a65-11e4-884b-7831c1d118bc | fd5ba6e1-4313-b145-1004-dad2f1173a35 | user-admin | p            |
+      | p  | Node.Published | fd5ba6e1-4313-b145-1004-dad2f1173a35 | fd5ba6e1-4313-b145-1004-dad2f1173a35 | live       |              |
