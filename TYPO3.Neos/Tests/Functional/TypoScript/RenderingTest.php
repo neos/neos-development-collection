@@ -238,9 +238,14 @@ class RenderingTest extends AbstractNodeTest {
 		if ($debugMode) {
 			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE, 'rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
 		}
+		$contentContext = $this->node->getContext();
+		if (!$contentContext instanceof \TYPO3\Neos\Domain\Service\ContentContext) {
+			$this->fail('Node context must be of type ContentContext');
+		}
 		$typoScriptRuntime->pushContextArray(array(
 			'node' => $this->node,
 			'documentNode' => $this->node,
+			'site' => $contentContext->getCurrentSiteNode(),
 			'fixturesDirectory' => __DIR__ . '/Fixtures'
 		));
 		$output = $typoScriptRuntime->render('page1');
