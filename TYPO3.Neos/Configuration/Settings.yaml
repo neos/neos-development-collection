@@ -317,6 +317,7 @@ TYPO3:
 
     # Settings for the TYPO3 Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
+      enabled: TRUE
       monitorEntities:
         'TYPO3\Flow\Security\Account':
           events:

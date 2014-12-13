@@ -14,6 +14,7 @@ namespace TYPO3\Neos\EventLog\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
+use TYPO3\Neos\Exception;
 
 /**
  * Main entry point for generating events
@@ -52,6 +53,19 @@ class EventEmittingService {
 	protected $eventRepository;
 
 	/**
+	 * @Flow\Inject(setting="eventLog.enabled")
+	 * @var boolean
+	 */
+	protected $enabled;
+
+	/**
+	 * @return boolean TRUE if the event log is enabled and events should be captured
+	 */
+	public function isEnabled() {
+		return (boolean)$this->enabled;
+	}
+
+	/**
 	 * Convenience method for generating an event and directly adding it afterwards to persistence.
 	 *
 	 * @param string $eventType
@@ -60,6 +74,10 @@ class EventEmittingService {
 	 * @return Event
 	 */
 	public function emit($eventType, array $data, $eventClassName = 'TYPO3\Neos\EventLog\Domain\Model\Event') {
+		if (!$this->isEnabled()) {
+			throw new Exception('Event log not enabled', 1418464933);
+		}
+
 		$event = $this->generate($eventType, $data, $eventClassName);
 		$this->add($event);
 
@@ -95,6 +113,10 @@ class EventEmittingService {
 	 * @see emit()
 	 */
 	public function add(Event $nodeEvent) {
+		if (!$this->isEnabled()) {
+			throw new Exception('Event log not enabled', 1418464935);
+		}
+
 		if ($nodeEvent->getParentEvent() === NULL) {
 			$this->eventRepository->add($nodeEvent);
 		}
@@ -147,5 +169,23 @@ class EventEmittingService {
 	 */
 	public function setCurrentAccountIdentifier($accountIdentifier) {
 		$this->currentAccountIdentifier = $accountIdentifier;
+	}
+
+	/**
+	 * Disable the event log temporarily when executing $callback
+	 *
+	 * @param callable $callback
+	 * @return void
+	 */
+	public function withoutEventLog($callback) {
+		$previouslyEnabled = $this->isEnabled();
+		$this->enabled = FALSE;
+		try {
+			$callback();
+			$this->enabled = $previouslyEnabled;
+		} catch (\Exception $exception) {
+			$this->enabled = $previouslyEnabled;
+			throw $exception;
+		}
 	}
 }

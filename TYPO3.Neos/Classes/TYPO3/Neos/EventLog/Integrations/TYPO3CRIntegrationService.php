@@ -93,6 +93,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function beforeNodeCreate() {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		/* @var $nodeEvent NodeEvent */
 		$nodeEvent = $this->eventEmittingService->generate(self::NODE_ADDED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
 		$this->currentNodeAddEvents[] = $nodeEvent;
@@ -106,6 +110,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function afterNodeCreate(NodeInterface $node) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		/* @var $nodeEvent NodeEvent */
 		$nodeEvent = array_pop($this->currentNodeAddEvents);
 		$nodeEvent->setNode($node);
@@ -120,6 +128,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function nodeUpdated(NodeInterface $node) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		if (!isset($this->changedNodes[$node->getContextPath()])) {
 			$this->changedNodes[$node->getContextPath()] = array(
 				'node' => $node
@@ -137,6 +149,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function beforeNodePropertyChange(NodeInterface $node, $propertyName, $oldValue, $value) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		if (count($this->currentNodeAddEvents) > 0) {
 			// add is currently running, during that; we do not want any update events
 			return;
@@ -167,6 +183,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function nodePropertyChanged(NodeInterface $node, $propertyName, $oldValue, $value) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		if ($oldValue === $value) {
 			return;
 		}
@@ -182,6 +202,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function nodeRemoved(NodeInterface $node) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		/* @var $nodeEvent NodeEvent */
 		$nodeEvent = $this->eventEmittingService->emit(self::NODE_REMOVED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
 		$nodeEvent->setNode($node);
@@ -204,6 +228,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function nodeDiscarded(NodeInterface $node) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		/* @var $nodeEvent NodeEvent */
 		$nodeEvent = $this->eventEmittingService->emit(self::NODE_DISCARDED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
 		$nodeEvent->setNode($node);
@@ -218,6 +246,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @throws \Exception
 	 */
 	public function beforeNodeCopy(NodeInterface $sourceNode, NodeInterface $targetParentNode) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		if ($this->currentlyCopying) {
 			throw new \Exception('TODO: already copying...');
 		}
@@ -241,6 +273,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @throws \Exception
 	 */
 	public function afterNodeCopy(NodeInterface $copiedNode, NodeInterface $targetParentNode) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		if ($this->currentlyCopying === FALSE) {
 			throw new \Exception('TODO: copying not started');
 		}
@@ -256,6 +292,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @param integer $moveOperation
 	 */
 	public function beforeNodeMove(NodeInterface $movedNode, NodeInterface $referenceNode, $moveOperation) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		$this->currentlyMoving += 1;
 
 		/* @var $nodeEvent NodeEvent */
@@ -269,7 +309,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 
 	/**
 	 *
-	 * 
+	 *
 	 * @param NodeInterface $movedNode
 	 * @param NodeInterface $referenceNode
 	 * @param integer $moveOperation
@@ -278,6 +318,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @throws \Exception
 	 */
 	public function afterNodeMove(NodeInterface $movedNode, NodeInterface $referenceNode, $moveOperation) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		if ($this->currentlyMoving === 0) {
 			throw new \Exception('TODO: moving not started');
 		}
@@ -295,6 +339,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function beforeAdoptNode(NodeInterface $node, Context $context, $recursive) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		$this->initializeAccountIdentifier();
 		if ($this->currentlyAdopting === 0) {
 			/* @var $nodeEvent NodeEvent */
@@ -319,6 +367,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function afterAdoptNode(NodeInterface $node, Context $context, $recursive) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		$this->currentlyAdopting--;
 		if ($this->currentlyAdopting === 0) {
 			$this->eventEmittingService->popContext();
@@ -326,11 +378,12 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	}
 
 	/**
-	 *
-	 *
 	 * @return void
 	 */
 	public function generateNodeEvents() {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
 
 		if (count($this->currentNodeAddEvents) > 0) {
 			return;
@@ -369,6 +422,10 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function afterNodePublishing(NodeInterface $node, Workspace $targetWorkspace) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		$documentNode = NodeEvent::getClosestAggregateNode($node);
 
 		if ($documentNode === NULL) {
@@ -392,6 +449,9 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService {
 	 * @return void
 	 */
 	public function updateEventsAfterPublish() {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
 
 		/** @var $entityManager EntityManager */
 		$entityManager = $this->entityManager;

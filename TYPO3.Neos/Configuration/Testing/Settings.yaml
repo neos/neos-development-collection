@@ -1,4 +1,9 @@
 TYPO3:
+
+  Neos:
+    eventLog:
+      enabled: FALSE
+
   TypoScript:
     rendering:
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'

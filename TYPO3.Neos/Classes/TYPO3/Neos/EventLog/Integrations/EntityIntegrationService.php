@@ -80,12 +80,15 @@ class EntityIntegrationService extends AbstractIntegrationService {
 	 * @throws \TYPO3\Eel\Exception
 	 */
 	public function onFlush(OnFlushEventArgs $eventArgs) {
+		if (!$this->eventEmittingService->isEnabled()) {
+			return;
+		}
+
 		$entityManager = $eventArgs->getEntityManager();
 		$unitOfWork = $entityManager->getUnitOfWork();
 
 		foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
 			$className = get_class($entity);
-			$this->logger->log('onFlush ' . $className, LOG_DEBUG);
 			if (isset($this->monitorEntitiesSetting[$className])) {
 				$entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
@@ -107,7 +110,6 @@ class EntityIntegrationService extends AbstractIntegrationService {
 
 		foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
 			$className = get_class($entity);
-			$this->logger->log('onFlush ' . $className, LOG_DEBUG);
 			if (isset($this->monitorEntitiesSetting[$className])) {
 				$entityMonitoringConfiguration = $this->monitorEntitiesSetting[$className];
 
@@ -131,5 +133,13 @@ class EntityIntegrationService extends AbstractIntegrationService {
 		foreach ($unitOfWork->getScheduledCollectionUpdates() as $col) {
 
 		}
+	}
+
+	/**
+	 * @param array $monitorEntitiesSetting
+	 * @return void
+	 */
+	public function setMonitorEntitiesSetting($monitorEntitiesSetting) {
+		$this->monitorEntitiesSetting = $monitorEntitiesSetting;
 	}
 }

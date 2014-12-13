@@ -106,6 +106,12 @@ class SiteImportService {
 	protected $persistenceManager;
 
 	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Neos\EventLog\Domain\Service\EventEmittingService
+	 */
+	protected $eventEmittingService;
+
+	/**
 	 * @return void
 	 */
 	public function initializeObject() {
@@ -149,39 +155,41 @@ class SiteImportService {
 	 * @throws InvalidPackageStateException
 	 */
 	public function importFromFile($pathAndFilename) {
-		$xmlReader = new \XMLReader();
-		$xmlReader->open($pathAndFilename, NULL, LIBXML_PARSEHUGE);
+		$this->eventEmittingService->withoutEventLog(function() use ($pathAndFilename) {
+			$xmlReader = new \XMLReader();
+			$xmlReader->open($pathAndFilename, NULL, LIBXML_PARSEHUGE);
 
-		while ($xmlReader->read()) {
-			if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name === 'site') {
-				$isLegacyFormat = $xmlReader->getAttribute('nodeName') !== NULL && $xmlReader->getAttribute('state') === NULL && $xmlReader->getAttribute('siteResourcesPackageKey') === NULL;
-				if ($isLegacyFormat) {
-					$this->legacySiteImportService->importSitesFromFile($pathAndFilename);
-					return;
+			while ($xmlReader->read()) {
+				if ($xmlReader->nodeType == \XMLReader::ELEMENT && $xmlReader->name === 'site') {
+					$isLegacyFormat = $xmlReader->getAttribute('nodeName') !== NULL && $xmlReader->getAttribute('state') === NULL && $xmlReader->getAttribute('siteResourcesPackageKey') === NULL;
+					if ($isLegacyFormat) {
+						$this->legacySiteImportService->importSitesFromFile($pathAndFilename);
+						return;
+					}
+
+					$site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
+					$site->setName($xmlReader->getAttribute('name'));
+					$site->setState((integer)$xmlReader->getAttribute('state'));
+
+					$siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
+					if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
+						throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
+					}
+					if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
+						throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
+					}
+					$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
+
+					$rootNode = $this->contextFactory->create()->getRootNode();
+					$sitesNode = $rootNode->getNode('/sites');
+					if ($sitesNode === NULL) {
+						$sitesNode = $rootNode->createSingleNode('sites');
+					}
+
+					$this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
 				}
-
-				$site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
-				$site->setName($xmlReader->getAttribute('name'));
-				$site->setState((integer)$xmlReader->getAttribute('state'));
-
-				$siteResourcesPackageKey = $xmlReader->getAttribute('siteResourcesPackageKey');
-				if (!$this->packageManager->isPackageAvailable($siteResourcesPackageKey)) {
-					throw new UnknownPackageException(sprintf('Package "%s" specified in the XML as site resources package does not exist.', $siteResourcesPackageKey), 1303891443);
-				}
-				if (!$this->packageManager->isPackageActive($siteResourcesPackageKey)) {
-					throw new InvalidPackageStateException(sprintf('Package "%s" specified in the XML as site resources package is not active.', $siteResourcesPackageKey), 1303898135);
-				}
-				$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
-
-				$rootNode = $this->contextFactory->create()->getRootNode();
-				$sitesNode = $rootNode->getNode('/sites');
-				if ($sitesNode === NULL) {
-					$sitesNode = $rootNode->createSingleNode('sites');
-				}
-
-				$this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
 			}
-		}
+		});
 	}
 
 	/**
