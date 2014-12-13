@@ -33,6 +33,12 @@
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="pl" state="translated">Nie zarejestrowano żadnych zdarzeń, które mogłyby być wyświetlone w tej historii.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+				<source>{0} created the {1} {2}.</source>
+			<target xml:lang="pl" state="needs-translation">{0} created the {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
+				<source>{0} removed the {1} {2}.</source>
+			<target xml:lang="pl" state="needs-translation">{0} removed the {1} {2}.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
 			<target xml:lang="pl" state="translated">{0} stworzył wariant {1} z {2} {3}.</target></trans-unit>
